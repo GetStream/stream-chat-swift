@@ -7,6 +7,7 @@ import Foundation
 
 /// This class allows you to wrap an existing `DatabaseSession` and adjust the behavior of its methods.
 class DatabaseSession_Mock: DatabaseSession {
+
     /// The wrapped session
     let underlyingSession: DatabaseSession
 
@@ -60,6 +61,14 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveQuery(query: ReactionListQuery) throws -> ReactionListQueryDTO? {
         return try underlyingSession.saveQuery(query: query)
+    }
+
+    func saveReminder(payload: ReminderPayload, cache: PreWarmedCache?) throws -> MessageReminderDTO {
+        return try underlyingSession.saveReminder(payload: payload, cache: cache)
+    }
+
+    func deleteReminder(messageId: MessageId) {
+        underlyingSession.deleteReminder(messageId: messageId)
     }
 
     func saveChannel(
@@ -139,6 +148,7 @@ class DatabaseSession_Mock: DatabaseSession {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         poll: PollPayload?,
+        location: NewLocationInfo? = nil,
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]
     ) throws -> MessageDTO {
@@ -162,6 +172,7 @@ class DatabaseSession_Mock: DatabaseSession {
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl, 
             poll: poll,
+            location: location,
             restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
@@ -259,6 +270,10 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {
         return underlyingSession.saveMessageSearch(payload: payload, for: query)
+    }
+
+    func saveLocation(payload: SharedLocationPayload, cache: PreWarmedCache?) throws -> SharedLocationDTO {
+        try underlyingSession.saveLocation(payload: payload, cache: cache)
     }
 
     func pin(message: MessageDTO, pinning: MessagePinning) throws {

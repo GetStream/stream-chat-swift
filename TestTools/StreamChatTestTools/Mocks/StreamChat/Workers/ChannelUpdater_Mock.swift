@@ -87,6 +87,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var createNewMessage_mentionedUserIds: [UserId]?
     @Atomic var createNewMessage_quotedMessageId: MessageId?
     @Atomic var createNewMessage_pinning: MessagePinning?
+    @Atomic var createNewMessage_location: NewLocationInfo?
     @Atomic var createNewMessage_extraData: [String: RawJSON]?
     @Atomic var createNewMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
     @Atomic var createNewMessage_completion_result: Result<ChatMessage, Error>?
@@ -367,6 +368,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         skipEnrichUrl: Bool,
         restrictedVisibility: [UserId] = [],
         poll: PollPayload?,
+        location: NewLocationInfo? = nil,
         extraData: [String: RawJSON] = [:],
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
     ) {
@@ -383,6 +385,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         createNewMessage_quotedMessageId = quotedMessageId
         createNewMessage_pinning = pinning
         createNewMessage_extraData = extraData
+        createNewMessage_location = location
         createNewMessage_completion = completion
         createNewMessage_completion_result?.invoke(with: completion)
     }

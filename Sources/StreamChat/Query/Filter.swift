@@ -427,6 +427,17 @@ public extension Filter {
         )
     }
 
+    /// Matches values where the given property is nil.
+    static func isNil<Value: Encodable>(_ key: FilterKey<Scope, Value>) -> Filter {
+        .init(
+            operator: .exists,
+            key: key,
+            value: false,
+            valueMapper: key.valueMapper,
+            keyPathString: key.keyPathString
+        )
+    }
+
     /// Matches if the key contains the given value.
     static func contains<Value: Encodable>(_ key: FilterKey<Scope, Value>, value: String) -> Filter {
         .init(

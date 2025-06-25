@@ -139,6 +139,7 @@ extension XCTestCase {
             searchEnabled: true,
             mutesEnabled: true,
             urlEnrichmentEnabled: true,
+            messageRemindersEnabled: true,
             messageRetention: "1000",
             maxMessageLength: 100,
             commands: [
@@ -204,7 +205,8 @@ extension XCTestCase {
                 pinnedMessages: pinnedMessages,
                 channelReads: channelReads ?? [dummyChannelRead],
                 isHidden: false,
-                draft: nil
+                draft: nil,
+                activeLiveLocations: []
             )
 
         return payload
@@ -321,7 +323,8 @@ extension XCTestCase {
                 pinnedMessages: [dummyMessageWithNoExtraData],
                 channelReads: [dummyChannelReadWithNoExtraData],
                 isHidden: nil,
-                draft: nil
+                draft: nil,
+                activeLiveLocations: []
             )
 
         return payload

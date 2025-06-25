@@ -26,11 +26,3 @@ jobs:
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
         run: bundle exec fastlane publish_release --verbose
-
-      - uses: 8398a7/action-slack@v3
-        with:
-          status: ${{ job.status }}
-          text: "🎉 The new release has been shipped! 🚢\n\n⚠️ <!subteam^S030AAHLDLN>, don't forget to merge `main` back to `develop` from `localhost` using the command: `bundle exec fastlane merge_main`"
-          fields: repo
-        env:
-          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}

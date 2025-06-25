@@ -379,6 +379,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
             try session.saveMember(payload: .dummy(), channelId: cid, query: .init(cid: cid), cache: nil)
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
+            try session.saveLocation(payload: .dummy(latitude: 10, longitude: 10), cache: nil)
             try session.saveCurrentDevice("123")
             try session.saveChannelMute(payload: .init(
                 mutedChannel: .dummy(cid: cid),
@@ -433,6 +434,16 @@ final class DatabaseContainer_Tests: XCTestCase {
                 try session.saveReaction(
                     payload: .dummy(messageId: message.id, user: .dummy(userId: currentUserId)),
                     query: .init(messageId: message.id, filter: .equal(.authorId, to: currentUserId)),
+                    cache: nil
+                )
+                try session.saveReminder(
+                    payload: .init(
+                        channelCid: cid,
+                        messageId: message.id,
+                        remindAt: .unique,
+                        createdAt: .unique,
+                        updatedAt: .unique
+                    ),
                     cache: nil
                 )
             }

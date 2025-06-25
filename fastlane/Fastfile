@@ -26,7 +26,7 @@ before_all do |lane|
   if is_ci
     setup_ci
     setup_git_config
-    select_xcode(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright].include?(lane)
+    select_xcode(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright, :merge_main].include?(lane)
   end
 end
 
@@ -68,7 +68,6 @@ end
 
 desc 'Start a new release'
 lane :release do |options|
-  previous_version_number = last_git_tag
   artifacts_path = File.absolute_path('../StreamChatArtifacts.json')
   extra_changes = lambda do |release_version|
     # Set the framework version on the artifacts
@@ -77,7 +76,9 @@ lane :release do |options|
     File.write(artifacts_path, JSON.dump(artifacts))
 
     # Set the framework version in SystemEnvironment+Version.swift
-    new_content = File.read(swift_environment_path).gsub!(previous_version_number, release_version).gsub('-SNAPSHOT', '')
+    old_content = File.read(swift_environment_path)
+    current_version = old_content[/version: String = "([^"]+)"/, 1]
+    new_content = old_content.gsub(current_version, release_version)
     File.open(swift_environment_path, 'w') { |f| f.puts(new_content) }
 
     # Update sdk sizes
@@ -104,11 +105,10 @@ end
 
 lane :merge_main do
   merge_main_to_develop
-  current_version = get_sdk_version_from_environment
-  add_snapshot_to_current_version(file_path: swift_environment_path)
+  update_release_version_to_snapshot(file_path: swift_environment_path)
   ensure_git_branch(branch: 'develop')
   sh("git add #{swift_environment_path}")
-  sh("git commit -m 'Add snapshot postfix to v#{current_version}'")
+  sh("git commit -m 'Update release version to snapshot'")
   sh('git push')
 end
 
@@ -134,6 +134,8 @@ lane :publish_release do |options|
   )
 
   update_spm(version: release_version)
+
+  sh('gh workflow run merge-main-to-develop.yml --ref main')
 end
 
 lane :get_sdk_version_from_environment do
@@ -281,25 +283,19 @@ lane :uikit_testflight_build do |options|
   match_me
 
   sdk_version = get_sdk_version_from_environment
-  app_version =
-    if is_manual_upload
-      major, minor, _patch = sdk_version.split('.').map(&:to_i)
-      minor += 1
-      "#{major}.#{minor}.0"
-    else
-      sdk_version
-    end
-  UI.important("[TestFlight] Uploading DemoApp version: #{app_version}")
+  UI.important("[TestFlight] Uploading DemoApp version: #{sdk_version}")
 
   testflight_build(
     api_key: appstore_api_key,
     xcode_project: xcode_project,
     sdk_target: 'StreamChat',
     app_target: 'DemoApp',
-    app_version: app_version,
+    app_version: sdk_version,
     app_identifier: 'io.getstream.iOS.ChatDemoApp',
     configuration: configuration,
-    extensions: ['DemoShare']
+    extensions: ['DemoShare'],
+    use_changelog: true,
+    is_manual_upload: is_manual_upload
   )
 end
 
@@ -788,6 +784,11 @@ lane :rubocop do
   next unless is_check_required(sources: sources_matrix[:ruby], force_check: @force_check)
 
   sh('bundle exec rubocop')
+end
+
+desc 'Run PR linting'
+lane :lint_pr do
+  danger(dangerfile: 'Dangerfile') if is_ci
 end
 
 lane :install_runtime do |options|

@@ -88,6 +88,11 @@ class MessageDTO: NSManagedObject {
     @NSManaged var draftReply: MessageDTO?
     @NSManaged var isDraft: Bool
 
+    @NSManaged var location: SharedLocationDTO?
+    @NSManaged var isActiveLiveLocation: Bool
+    
+    @NSManaged var reminder: MessageReminderDTO?
+
     /// If the message is sent by the current user, this field
     /// contains channel reads of other channel members (excluding the current user),
     /// where `read.lastRead >= self.createdAt`.
@@ -121,6 +126,13 @@ class MessageDTO: NSManagedObject {
 
         if let channel = channel, self.cid != channel.cid {
             self.cid = channel.cid
+        }
+
+        if let locationEndAt = location?.endAt?.bridgeDate {
+            let isActiveLiveLocation = locationEndAt > Date()
+            if isActiveLiveLocation != self.isActiveLiveLocation {
+                self.isActiveLiveLocation = isActiveLiveLocation
+            }
         }
 
         // Manually mark the channel as dirty to trigger the entity update and give the UI a chance
@@ -615,7 +627,59 @@ class MessageDTO: NSManagedObject {
         ])
         return try load(request, context: context)
     }
-    
+
+    /// Fetches all active location messages in a channel or all channels of the current user.
+    /// If `channelId` is nil, it will fetch all messages independent of the channel.
+    static func currentUserActiveLiveLocationMessagesFetchRequest(
+        currentUserId: UserId,
+        channelId: ChannelId?
+    ) -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
+        // Hard coded limit for now. 10 live locations messages at the same should be more than enough.
+        request.fetchLimit = 10
+        request.sortDescriptors = [NSSortDescriptor(
+            keyPath: \MessageDTO.createdAt,
+            ascending: true
+        )]
+        var predicates: [NSPredicate] = [
+            .init(format: "isActiveLiveLocation == YES"),
+            .init(format: "user.id == %@", currentUserId),
+            .init(format: "localMessageStateRaw == nil")
+        ]
+        if let channelId {
+            predicates.append(.init(format: "channel.cid == %@", channelId.rawValue))
+        }
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        return request
+    }
+
+    /// Fetches all active location messages in any given channel and from every user.
+    static func activeLiveLocationMessagesFetchRequest() -> NSFetchRequest<MessageDTO> {
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
+        request.fetchLimit = 25
+        request.sortDescriptors = [NSSortDescriptor(
+            keyPath: \MessageDTO.createdAt,
+            ascending: true
+        )]
+        let predicates: [NSPredicate] = [
+            .init(format: "isActiveLiveLocation == YES"),
+            .init(format: "localMessageStateRaw == nil")
+        ]
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicates)
+        return request
+    }
+
+    static func loadCurrentUserActiveLiveLocationMessages(
+        currentUserId: UserId,
+        channelId: ChannelId?,
+        context: NSManagedObjectContext
+    ) throws -> [MessageDTO] {
+        let request = currentUserActiveLiveLocationMessagesFetchRequest(currentUserId: currentUserId, channelId: channelId)
+        return try load(request, context: context)
+    }
+
     static func loadReplies(
         from fromIncludingDate: Date,
         to toIncludingDate: Date,
@@ -678,6 +742,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         poll: PollPayload?,
+        location: NewLocationInfo?,
         restrictedVisibility: [UserId],
         extraData: [String: RawJSON]
     ) throws -> MessageDTO {
@@ -689,7 +754,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             throw ClientError.ChannelDoesNotExist(cid: cid)
         }
 
-        let message = MessageDTO.loadOrCreate(id: messageId ?? .newUniqueId, context: self, cache: nil)
+        let id = messageId ?? .newUniqueId
+        let message = MessageDTO.loadOrCreate(id: id, context: self, cache: nil)
 
         // We make `createdDate` 0.1 second bigger than Channel's most recent message
         // so if the local time is not in sync, the message will still appear in the correct position
@@ -731,6 +797,23 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         if let poll {
             message.poll = try? savePoll(payload: poll, cache: nil)
+        }
+
+        if let location, let currentUser, let deviceId = currentUser.currentDevice?.id {
+            message.location = try? saveLocation(
+                payload: .init(
+                    channelId: cid.rawValue,
+                    messageId: id,
+                    userId: currentUser.user.id,
+                    latitude: location.latitude,
+                    longitude: location.longitude,
+                    createdAt: Date(),
+                    updatedAt: Date(),
+                    endAt: location.endAt,
+                    createdByDeviceId: deviceId
+                ),
+                cache: nil
+            )
         }
 
         message.attachments = Set(
@@ -947,6 +1030,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         }
 
+        if let location = payload.location {
+            dto.location = try saveLocation(payload: location, cache: cache)
+        }
+
         let user = try saveUser(payload: payload.user)
         dto.user = user
 
@@ -1003,7 +1090,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         )
         dto.attachments = attachments
-        
+
         if let poll = payload.poll {
             let pollDto = try savePoll(payload: poll, cache: cache)
             dto.poll = pollDto
@@ -1041,6 +1128,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         // Calculate reads if the message is authored by the current user.
         if payload.user.id == currentUser?.user.id {
             dto.updateReadBy(withChannelReads: channelDTO.reads)
+        }
+
+        if let reminder = payload.reminder {
+            dto.reminder = try saveReminder(payload: reminder, cache: cache)
+        } else if let reminderDTO = dto.reminder {
+            delete(reminderDTO)
+            dto.reminder = nil
         }
 
         // Refetch channel preview if the current preview has changed.
@@ -1582,6 +1676,14 @@ extension MessageDTO {
             pinExpires: pinExpires?.bridgeDate,
             pollId: poll?.id,
             restrictedVisibility: restrictedVisibilityArray,
+            location: location.map {
+                .init(
+                    latitude: $0.latitude,
+                    longitude: $0.longitude,
+                    endAt: $0.endAt?.bridgeDate,
+                    createdByDeviceId: $0.deviceId
+                )
+            },
             extraData: extraData
         )
     }
@@ -1697,6 +1799,7 @@ private extension ChatMessage {
         }
         
         let poll = try? dto.poll?.asModel()
+        let location = try? dto.location?.asModel()
 
         let currentUserReactions: Set<ChatMessageReaction>
         let isSentByCurrentUser: Bool
@@ -1789,7 +1892,13 @@ private extension ChatMessage {
             readBy: readBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
-            draftReply: draftReply.map(DraftMessage.init)
+            draftReply: draftReply.map(DraftMessage.init),
+            reminder: dto.reminder.map { .init(
+                remindAt: $0.remindAt?.bridgeDate,
+                createdAt: $0.createdAt.bridgeDate,
+                updatedAt: $0.updatedAt.bridgeDate
+            ) },
+            sharedLocation: location
         )
 
         if let transformer = chatClientConfig?.modelsTransformer {

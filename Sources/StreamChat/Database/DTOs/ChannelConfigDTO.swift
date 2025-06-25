@@ -20,10 +20,12 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var pollsEnabled: Bool
     @NSManaged var urlEnrichmentEnabled: Bool
     @NSManaged var messageRetention: String
+    @NSManaged var messageRemindersEnabled: Bool
     @NSManaged var maxMessageLength: Int32
     @NSManaged var createdAt: DBDate
     @NSManaged var updatedAt: DBDate
     @NSManaged var commands: NSOrderedSet
+    @NSManaged var sharedLocationsEnabled: Bool
 
     func asModel() throws -> ChannelConfig {
         try isNotDeleted()
@@ -40,6 +42,8 @@ final class ChannelConfigDTO: NSManagedObject {
             pollsEnabled: pollsEnabled,
             urlEnrichmentEnabled: urlEnrichmentEnabled,
             skipLastMsgAtUpdateForSystemMsg: skipLastMsgAtUpdateForSystemMsg,
+            messageRemindersEnabled: messageRemindersEnabled,
+            sharedLocationsEnabled: sharedLocationsEnabled,
             messageRetention: messageRetention,
             maxMessageLength: Int(maxMessageLength),
             commands: Array(Set(
@@ -80,6 +84,8 @@ extension ChannelConfig {
         dto.commands = NSOrderedSet(array: commands.map { $0.asDTO(context: context) })
         dto.pollsEnabled = pollsEnabled
         dto.skipLastMsgAtUpdateForSystemMsg = skipLastMsgAtUpdateForSystemMsg
+        dto.messageRemindersEnabled = messageRemindersEnabled
+        dto.sharedLocationsEnabled = sharedLocationsEnabled
         return dto
     }
 }

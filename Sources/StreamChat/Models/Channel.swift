@@ -160,6 +160,9 @@ public struct ChatChannel: Sendable {
     /// The draft message in the channel.
     public let draftMessage: DraftMessage?
 
+    /// A list of active live locations in the channel.
+    public let activeLiveLocations: [SharedLocation]
+
     // MARK: - Internal
 
     var hasUnread: Bool {
@@ -198,7 +201,8 @@ public struct ChatChannel: Sendable {
         pinnedMessages: [ChatMessage],
         muteDetails: MuteDetails?,
         previewMessage: ChatMessage?,
-        draftMessage: DraftMessage?
+        draftMessage: DraftMessage?,
+        activeLiveLocations: [SharedLocation]
     ) {
         self.cid = cid
         self.name = name
@@ -232,6 +236,7 @@ public struct ChatChannel: Sendable {
         self.muteDetails = muteDetails
         self.previewMessage = previewMessage
         self.draftMessage = draftMessage
+        self.activeLiveLocations = activeLiveLocations
     }
 
     /// Returns a new `ChatChannel` with the provided data replaced.
@@ -272,7 +277,8 @@ public struct ChatChannel: Sendable {
             pinnedMessages: pinnedMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
-            draftMessage: draftMessage
+            draftMessage: draftMessage,
+            activeLiveLocations: activeLiveLocations
         )
     }
 }
@@ -322,6 +328,7 @@ extension ChatChannel: Hashable {
         guard lhs.truncatedAt == rhs.truncatedAt else { return false }
         guard lhs.ownCapabilities == rhs.ownCapabilities else { return false }
         guard lhs.draftMessage == rhs.draftMessage else { return false }
+        guard lhs.activeLiveLocations.count == rhs.activeLiveLocations.count else { return false }
         return true
     }
 
@@ -430,6 +437,8 @@ public struct ChannelCapability: RawRepresentable, ExpressibleByStringLiteral, H
     public static let sendPoll: Self = "send-poll"
     /// Ability to cast a poll vote.
     public static let castPollVote: Self = "cast-poll-vote"
+    /// Ability to share location.
+    public static let shareLocation: Self = "share-location"
 }
 
 public extension ChatChannel {
@@ -586,5 +595,10 @@ public extension ChatChannel {
     /// Can the current user cast a poll vote in this channel.
     var canCastPollVote: Bool {
         ownCapabilities.contains(.castPollVote)
+    }
+
+    /// Can the current user share location in this channel.
+    var canShareLocation: Bool {
+        ownCapabilities.contains(.shareLocation)
     }
 }

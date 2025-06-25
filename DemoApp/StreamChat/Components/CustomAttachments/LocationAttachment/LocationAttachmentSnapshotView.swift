@@ -3,21 +3,53 @@
 //
 
 import MapKit
+import StreamChat
 import StreamChatUI
 import UIKit
 
-class LocationAttachmentSnapshotView: _View {
-    static var snapshotsCache: NSCache<NSString, UIImage> = .init()
+class LocationAttachmentSnapshotView: _View, ThemeProvider {
+    struct Content {
+        var coordinate: CLLocationCoordinate2D
+        var isLive: Bool
+        var isSharingLiveLocation: Bool
+        var message: ChatMessage?
+        var author: ChatUser?
 
-    var coordinate: LocationCoordinate? {
+        init(
+            coordinate: CLLocationCoordinate2D,
+            isLive: Bool,
+            isSharingLiveLocation: Bool,
+            message: ChatMessage?,
+            author: ChatUser?
+        ) {
+            self.coordinate = coordinate
+            self.isLive = isLive
+            self.isSharingLiveLocation = isSharingLiveLocation
+            self.message = message
+            self.author = author
+        }
+
+        var isFromCurrentUser: Bool {
+            author?.id == StreamChatWrapper.shared.client?.currentUserId
+        }
+    }
+
+    var content: Content? {
         didSet {
             updateContent()
         }
     }
 
-    var snapshotter: MKMapSnapshotter?
-
     var didTapOnLocation: (() -> Void)?
+    var didTapOnStopSharingLocation: (() -> Void)?
+
+    let mapHeightRatio: CGFloat = 0.7
+    let mapOptions: MKMapSnapshotter.Options = .init()
+
+    let avatarSize: CGFloat = 30
+
+    static var snapshotsCache: NSCache<NSString, UIImage> = .init()
+    var snapshotter: MKMapSnapshotter?
 
     lazy var imageView: UIImageView = {
         let view = UIImageView()
@@ -36,7 +68,36 @@ class LocationAttachmentSnapshotView: _View {
         return view
     }()
 
-    let mapOptions: MKMapSnapshotter.Options = .init()
+    lazy var stopButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Stop Sharing", for: .normal)
+        button.titleLabel?.font = .preferredFont(forTextStyle: .footnote)
+        button.setTitleColor(appearance.colorPalette.alert, for: .normal)
+        button.backgroundColor = .clear
+        button.layer.cornerRadius = 16
+        button.addTarget(self, action: #selector(handleStopButtonTap), for: .touchUpInside)
+        return button
+    }()
+
+    lazy var avatarView: ChatUserAvatarView = {
+        let view = ChatUserAvatarView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.shouldShowOnlineIndicator = false
+        view.layer.masksToBounds = true
+        view.layer.cornerRadius = avatarSize / 2
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor.white.cgColor
+        view.isHidden = true
+        return view
+    }()
+
+    lazy var sharingStatusView: LocationSharingStatusView = {
+        let view = LocationSharingStatusView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.isHidden = true
+        return view
+    }()
 
     override func setUp() {
         super.setUp()
@@ -48,19 +109,40 @@ class LocationAttachmentSnapshotView: _View {
         imageView.addGestureRecognizer(tapGestureRecognizer)
     }
 
+    override func setUpAppearance() {
+        super.setUpAppearance()
+
+        backgroundColor = appearance.colorPalette.background6
+    }
+
     override func setUpLayout() {
         super.setUpLayout()
 
+        stopButton.isHidden = true
+        activityIndicatorView.hidesWhenStopped = true
+
         addSubview(activityIndicatorView)
-        addSubview(imageView)
+
+        let container = VContainer(spacing: 0, alignment: .center) {
+            imageView
+            sharingStatusView
+                .height(30)
+            stopButton
+                .width(120)
+                .height(35)
+        }.embed(in: self)
+
+        addSubview(avatarView)
 
         NSLayoutConstraint.activate([
-            imageView.leadingAnchor.constraint(equalTo: leadingAnchor),
-            imageView.trailingAnchor.constraint(equalTo: trailingAnchor),
-            imageView.topAnchor.constraint(equalTo: topAnchor),
-            imageView.bottomAnchor.constraint(equalTo: bottomAnchor),
             activityIndicatorView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
-            activityIndicatorView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor)
+            activityIndicatorView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+            imageView.widthAnchor.constraint(equalTo: container.widthAnchor),
+            imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor, multiplier: mapHeightRatio),
+            avatarView.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            avatarView.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
+            avatarView.widthAnchor.constraint(equalToConstant: avatarSize),
+            avatarView.heightAnchor.constraint(equalToConstant: avatarSize)
         ])
     }
 
@@ -71,79 +153,154 @@ class LocationAttachmentSnapshotView: _View {
     override func updateContent() {
         super.updateContent()
 
-        imageView.image = nil
-
-        guard let coordinate = self.coordinate else {
+        guard let content = self.content else {
             return
         }
+ 
+        avatarView.isHidden = true
 
-        configureMapPosition(coordinate: coordinate)
-
-        if imageView.image == nil {
-            activityIndicatorView.startAnimating()
+        if content.message?.isLocalOnly == true {
+            stopButton.isHidden = true
+            sharingStatusView.isHidden = true
+        } else if content.isSharingLiveLocation && content.isFromCurrentUser {
+            stopButton.isHidden = false
+            sharingStatusView.isHidden = true
+            if let location = content.message?.sharedLocation {
+                sharingStatusView.updateStatus(location: location)
+            }
+        } else if content.isLive {
+            stopButton.isHidden = true
+            sharingStatusView.isHidden = false
+            if let location = content.message?.sharedLocation {
+                sharingStatusView.updateStatus(location: location)
+            }
+        } else {
+            stopButton.isHidden = true
+            sharingStatusView.isHidden = true
         }
 
-        if let snapshotImage = Self.snapshotsCache.object(forKey: coordinate.cachingKey) {
-            imageView.image = snapshotImage
-        } else {
-            loadMapSnapshotImage(coordinate: coordinate)
+        configureMapPosition()
+        loadMapSnapshotImage()
+    }
+
+    override func layoutSubviews() {
+        super.layoutSubviews()
+
+        if frame.size.width != mapOptions.size.width {
+            loadMapSnapshotImage()
         }
     }
 
-    private func configureMapPosition(coordinate: LocationCoordinate) {
+    private func configureMapPosition() {
+        guard let content = self.content else {
+            return
+        }
+
         mapOptions.region = .init(
-            center: CLLocationCoordinate2D(
-                latitude: coordinate.latitude,
-                longitude: coordinate.longitude
-            ),
+            center: content.coordinate,
             span: MKCoordinateSpan(
                 latitudeDelta: 0.01,
                 longitudeDelta: 0.01
             )
         )
-        mapOptions.size = CGSize(width: 250, height: 150)
     }
 
-    private func loadMapSnapshotImage(coordinate: LocationCoordinate) {
+    private func loadMapSnapshotImage() {
+        guard frame.size != .zero else {
+            return
+        }
+
+        mapOptions.size = CGSize(width: frame.width, height: frame.width * mapHeightRatio)
+
+        if let cachedSnapshot = getCachedSnapshot() {
+            imageView.image = cachedSnapshot
+            updateAnnotationView()
+            return
+        } else {
+            imageView.image = nil
+        }
+
+        activityIndicatorView.startAnimating()
         snapshotter?.cancel()
         snapshotter = MKMapSnapshotter(options: mapOptions)
         snapshotter?.start { snapshot, _ in
             guard let snapshot = snapshot else { return }
-            let image = self.generatePinAnnotation(for: snapshot, with: coordinate)
             DispatchQueue.main.async {
                 self.activityIndicatorView.stopAnimating()
-                self.imageView.image = image
-                Self.snapshotsCache.setObject(image, forKey: coordinate.cachingKey)
+
+                if let content = self.content, !content.isLive {
+                    let image = self.drawPinOnSnapshot(snapshot)
+                    self.imageView.image = image
+                    self.setCachedSnapshot(image: image)
+                } else {
+                    self.imageView.image = snapshot.image
+                    self.setCachedSnapshot(image: snapshot.image)
+                }
+                
+                self.updateAnnotationView()
             }
         }
     }
 
-    private func generatePinAnnotation(
-        for snapshot: MKMapSnapshotter.Snapshot,
-        with coordinate: LocationCoordinate
-    ) -> UIImage {
-        let image = UIGraphicsImageRenderer(size: mapOptions.size).image { _ in
+    private func drawPinOnSnapshot(_ snapshot: MKMapSnapshotter.Snapshot) -> UIImage {
+        UIGraphicsImageRenderer(size: mapOptions.size).image { _ in
             snapshot.image.draw(at: .zero)
+            
+            guard let content = self.content else { return }
 
             let pinView = MKPinAnnotationView(annotation: nil, reuseIdentifier: nil)
             let pinImage = pinView.image
-
-            var point = snapshot.point(for: CLLocationCoordinate2D(
-                latitude: coordinate.latitude,
-                longitude: coordinate.longitude
-            ))
+            
+            var point = snapshot.point(for: content.coordinate)
             point.x -= pinView.bounds.width / 2
             point.y -= pinView.bounds.height / 2
             point.x += pinView.centerOffset.x
             point.y += pinView.centerOffset.y
+            
             pinImage?.draw(at: point)
         }
-        return image
     }
-}
 
-private extension LocationCoordinate {
-    var cachingKey: NSString {
-        NSString(string: "\(latitude),\(longitude)")
+    private func updateAnnotationView() {
+        guard let content = self.content else { return }
+        
+        if content.isLive, let user = content.author {
+            avatarView.isHidden = false
+            avatarView.content = user
+        } else {
+            avatarView.isHidden = true
+        }
+    }
+
+    @objc func handleStopButtonTap() {
+        didTapOnStopSharingLocation?()
+    }
+
+    // MARK: Snapshot Caching Management
+
+    func setCachedSnapshot(image: UIImage) {
+        guard let cachingKey = cachingKey() else {
+            return
+        }
+
+        Self.snapshotsCache.setObject(image, forKey: cachingKey)
+    }
+
+    func getCachedSnapshot() -> UIImage? {
+        guard let cachingKey = cachingKey() else {
+            return nil
+        }
+
+        return Self.snapshotsCache.object(forKey: cachingKey)
+    }
+
+    private func cachingKey() -> NSString? {
+        guard let content = self.content else {
+            return nil
+        }
+        guard let messageId = content.message?.id else {
+            return nil
+        }
+        return NSString(string: "\(messageId)")
     }
 }

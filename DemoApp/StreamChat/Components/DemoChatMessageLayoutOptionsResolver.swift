@@ -8,6 +8,7 @@ import StreamChatUI
 
 extension ChatMessageLayoutOption {
     static let pinInfo: Self = "pinInfo"
+    static let saveForLaterInfo: Self = "saveForLaterInfo"
 }
 
 final class DemoChatMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolver {
@@ -26,6 +27,10 @@ final class DemoChatMessageLayoutOptionsResolver: ChatMessageLayoutOptionsResolv
         let message = messages[messageIndex]
         if message.isPinned {
             options.insert(.pinInfo)
+        }
+
+        if AppConfig.shared.demoAppConfig.isRemindersEnabled && message.reminder != nil {
+            options.insert(.saveForLaterInfo)
         }
 
         return options

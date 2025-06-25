@@ -51,7 +51,8 @@ extension MessagePayload {
         mentionedUsers: [UserPayload] = [.dummy(userId: .unique)],
         messageTextUpdatedAt: Date? = nil,
         poll: PollPayload? = nil,
-        draft: DraftPayload? = nil
+        draft: DraftPayload? = nil,
+        sharedLocation: SharedLocationPayload? = nil
     ) -> MessagePayload {
         .init(
             id: messageId,
@@ -93,7 +94,8 @@ extension MessagePayload {
             moderationDetails: moderationDetails,
             messageTextUpdatedAt: messageTextUpdatedAt,
             poll: poll,
-            draft: draft
+            draft: draft,
+            location: sharedLocation
         )
     }
 

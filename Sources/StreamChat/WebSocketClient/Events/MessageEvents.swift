@@ -294,7 +294,9 @@ private extension MessagePayload {
             readBy: [],
             poll: nil,
             textUpdatedAt: messageTextUpdatedAt,
-            draftReply: nil
+            draftReply: nil,
+            reminder: nil,
+            sharedLocation: nil
         )
     }
 }

@@ -55,6 +55,10 @@ enum EndpointPath: Codable {
     case drafts
     case draftMessage(ChannelId)
 
+    // Reminders
+    case reminders
+    case reminder(MessageId)
+
     case banMember
     case flagUser(Bool)
     case flagMessage(Bool)
@@ -69,7 +73,9 @@ enum EndpointPath: Codable {
     case deleteImage(String)
 
     case appSettings
-    
+
+    case liveLocations
+
     case polls
     case pollsQuery
     case poll(pollId: String)
@@ -103,6 +109,8 @@ enum EndpointPath: Codable {
         case let .markThreadUnread(cid):
             return "channels/\(cid.apiPath)/unread"
 
+        case .liveLocations: return "users/live_locations"
+
         case .channels: return "channels"
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
@@ -135,6 +143,9 @@ enum EndpointPath: Codable {
         case .drafts: return "drafts/query"
         case let .draftMessage(channelId): return "channels/\(channelId.apiPath)/draft"
 
+        case .reminders: return "reminders/query"
+        case let .reminder(messageId): return "messages/\(messageId)/reminders"
+
         case .banMember: return "moderation/ban"
         case let .flagUser(flag): return "moderation/\(flag ? "flag" : "unflag")"
         case let .flagMessage(flag): return "moderation/\(flag ? "flag" : "unflag")"
@@ -151,9 +162,9 @@ enum EndpointPath: Codable {
         case let .poll(pollId: pollId): return "polls/\(pollId)"
         case let .pollOption(pollId: pollId, optionId: optionId): return "polls/\(pollId)/options/\(optionId)"
         case let .pollOptions(pollId: pollId): return "polls/\(pollId)/options"
+        case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
         case let .pollVoteInMessage(messageId: messageId, pollId: pollId): return "messages/\(messageId)/polls/\(pollId)/vote"
         case let .pollVote(messageId: messageId, pollId: pollId, voteId: voteId): return "messages/\(messageId)/polls/\(pollId)/vote/\(voteId)"
-        case let .pollVotes(pollId: pollId): return "polls/\(pollId)/votes"
         }
     }
 }

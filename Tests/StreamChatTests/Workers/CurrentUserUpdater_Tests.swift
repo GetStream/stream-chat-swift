@@ -799,6 +799,70 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         XCTAssertEqual(receivedError as? TestError, expectedError)
     }
     
+    // MARK: - Load Active Live Locations
+    
+    func test_loadActiveLiveLocations_makesCorrectAPICall() {
+        // WHEN
+        currentUserUpdater.loadActiveLiveLocations { _ in }
+        
+        // THEN
+        let endpoint = apiClient.request_endpoint
+        XCTAssertEqual(endpoint?.path.value, "users/live_locations")
+        XCTAssertEqual(endpoint?.method, .get)
+    }
+    
+    func test_loadActiveLiveLocations_successfulResponse_savesToDBAndReturnsModels() throws {
+        // GIVEN
+        let payloads = [
+            SharedLocationPayload.dummy(latitude: 10, longitude: 20, endAt: Date().addingTimeInterval(100)),
+            SharedLocationPayload.dummy(latitude: 30, longitude: 40, endAt: Date().addingTimeInterval(200))
+        ]
+        let response = ActiveLiveLocationsResponsePayload(locations: payloads)
+        nonisolated(unsafe) var result: Result<[SharedLocation], Error>?
+        
+        // WHEN
+        let expectation = self.expectation(description: "loadActiveLiveLocations")
+        currentUserUpdater.loadActiveLiveLocations {
+            result = $0
+            expectation.fulfill()
+        }
+        apiClient.test_simulateResponse(.success(response))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // THEN
+        let sharedLocations = try result?.get()
+        XCTAssertEqual(sharedLocations?.count, payloads.count)
+        for (model, payload) in zip(sharedLocations ?? [], payloads) {
+            XCTAssertEqual(model.messageId, payload.messageId)
+            XCTAssertEqual(model.channelId.rawValue, payload.channelId)
+            XCTAssertEqual(model.latitude, payload.latitude)
+            XCTAssertEqual(model.longitude, payload.longitude)
+            XCTAssertEqual(model.endAt?.timeIntervalSince1970, payload.endAt?.timeIntervalSince1970)
+            XCTAssertEqual(model.createdByDeviceId, payload.createdByDeviceId)
+        }
+    }
+    
+    func test_loadActiveLiveLocations_propagatesNetworkError() {
+        // GIVEN
+        let expectedError = TestError()
+        nonisolated(unsafe) var result: Result<[SharedLocation], Error>?
+        
+        // WHEN
+        currentUserUpdater.loadActiveLiveLocations {
+            result = $0
+        }
+        apiClient.test_simulateResponse(Result<ActiveLiveLocationsResponsePayload, Error>.failure(expectedError))
+        
+        // THEN
+        switch result {
+        case .failure(let error as TestError):
+            XCTAssertEqual(error, expectedError)
+        default:
+            XCTFail("Expected TestError")
+        }
+    }
+
     // MARK: -
     
     private func setUpDownloadedAttachment(with payload: AnyAttachmentPayload, messageId: MessageId = .unique, cid: ChannelId = .unique) throws -> AttachmentId {
