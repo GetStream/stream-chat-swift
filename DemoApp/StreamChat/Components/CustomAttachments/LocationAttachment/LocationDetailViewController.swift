@@ -286,7 +286,7 @@ class LocationControlBannerView: UIView, ThemeProvider {
     }()
     
     private func setupView() {
-        backgroundColor = appearance.colorPalette.background6
+        backgroundColor = appearance.colorPalette.background
         layer.cornerRadius = 16
         layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
 
