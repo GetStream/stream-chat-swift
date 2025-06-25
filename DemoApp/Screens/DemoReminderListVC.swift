@@ -379,8 +379,10 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
         }
         
         controller.synchronize { [weak self] _ in
-            self?.loadingIndicator.stopAnimating()
-            self?.updateRemindersData()
+            Task { @MainActor in
+                self?.loadingIndicator.stopAnimating()
+                self?.updateRemindersData()
+            }
         }
     }
     
@@ -392,7 +394,9 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
 
         isPaginatingReminders = true
         controller.loadMoreReminders { [weak self] _ in
-            self?.isPaginatingReminders = false
+            Task { @MainActor in
+                self?.isPaginatingReminders = false
+            }
         }
     }
 
@@ -546,7 +550,9 @@ extension DemoReminderListVC: UITableViewDataSource, UITableViewDelegate {
             
             messageController.deleteReminder { error in
                 if let error = error {
-                    self.showErrorAlert(message: "Failed to delete reminder: \(error.localizedDescription)")
+                    Task { @MainActor in
+                        self.showErrorAlert(message: "Failed to delete reminder: \(error.localizedDescription)")
+                    }
                     completion(false)
                 } else {
                     completion(true)
