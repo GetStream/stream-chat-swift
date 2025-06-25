@@ -29,7 +29,7 @@ public protocol PollVoteListControllerDelegate: DataControllerStateDelegate {
 }
 
 /// A controller which allows querying and filtering the votes of a poll.
-public class PollVoteListController: DataController, DelegateCallable, DataStoreProvider {
+public class PollVoteListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query specifying and filtering the list of users.
     public let query: PollVoteListQuery
 
@@ -46,7 +46,12 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     }
     
     /// A Boolean value that returns whether pagination is finished.
-    public private(set) var hasLoadedAllVotes: Bool = false
+    public private(set) var hasLoadedAllVotes: Bool {
+        get { queue.sync { _hasLoadedAllVotes } }
+        set { queue.sync { _hasLoadedAllVotes = newValue } }
+    }
+
+    private var _hasLoadedAllVotes: Bool = false
 
     /// Set the delegate of `PollVoteListController` to observe the changes in the system.
     public weak var delegate: PollVoteListControllerDelegate? {
@@ -89,7 +94,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         return observer
     }()
 
-    var _basePublishers: Any?
+    @Atomic private var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
@@ -104,7 +109,12 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     private let eventsController: EventsController
     private let pollsRepository: PollsRepository
     private let environment: Environment
-    private var nextCursor: String?
+    private var nextCursor: String? {
+        get { queue.sync { _nextCursor } }
+        set { queue.sync { _nextCursor = newValue } }
+    }
+
+    private var _nextCursor: String?
 
     /// Creates a new `PollVoteListController`.
     ///
@@ -121,7 +131,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         eventsController.delegate = self
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startPollVotesListObserverIfNeeded()
 
         pollsRepository.queryPollVotes(query: query) { [weak self] result in
@@ -162,7 +172,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     ///   - completion: The completion callback.
     public func loadMoreVotes(
         limit: Int? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query

@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-class ChatMessageController_Mock: ChatMessageController {
+class ChatMessageController_Mock: ChatMessageController, @unchecked Sendable {
     /// Creates a new mock instance of `ChatMessageController`.
     static func mock(
         currentUserId: UserId = "ID",
@@ -23,23 +23,23 @@ class ChatMessageController_Mock: ChatMessageController {
         return .init(client: chatClient, cid: channelId!, messageId: messageId, replyPaginationHandler: MessagesPaginationStateHandler_Mock())
     }
 
-    var message_mock: ChatMessage?
+    @Atomic var message_mock: ChatMessage?
     override var message: ChatMessage? {
         message_mock ?? super.message
     }
 
-    var replies_mock: [ChatMessage]?
+    @Atomic var replies_mock: [ChatMessage]?
     override var replies: LazyCachedMapCollection<ChatMessage> {
         replies_mock.map { $0.lazyCachedMap { $0 } } ?? super.replies
     }
 
-    var state_mock: State?
+    @Atomic var state_mock: State?
     override var state: DataController.State {
         get { state_mock ?? super.state }
         set { super.state = newValue }
     }
 
-    var startObserversIfNeeded_mock: (() -> Void)?
+    @Atomic var startObserversIfNeeded_mock: (() -> Void)?
     override func startObserversIfNeeded() {
         if let mock = startObserversIfNeeded_mock {
             mock()
@@ -49,16 +49,16 @@ class ChatMessageController_Mock: ChatMessageController {
         super.startObserversIfNeeded()
     }
 
-    var synchronize_callCount = 0
-    var synchronize_completion: ((Error?) -> Void)?
+    @Atomic var synchronize_callCount = 0
+    @Atomic var synchronize_completion: ((Error?) -> Void)?
     override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
         synchronize_callCount += 1
         synchronize_completion = completion
     }
 
 
-    var loadPageAroundReplyId_callCount = 0
-    var loadPageAroundReplyId_completion: ((Error?) -> Void)?
+    @Atomic var loadPageAroundReplyId_callCount = 0
+    @Atomic var loadPageAroundReplyId_completion: ((Error?) -> Void)?
     override func loadPageAroundReplyId(
         _ replyId: MessageId,
         limit: Int? = nil,

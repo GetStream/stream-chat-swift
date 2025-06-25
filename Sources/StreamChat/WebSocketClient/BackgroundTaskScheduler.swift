@@ -5,11 +5,11 @@
 import Foundation
 
 /// Object responsible for platform specific handling of background tasks
-protocol BackgroundTaskScheduler {
+protocol BackgroundTaskScheduler: Sendable {
     /// It's your responsibility to finish previously running task.
     ///
     /// Returns: `false` if system forbid background task, `true` otherwise
-    func beginTask(expirationHandler: (() -> Void)?) -> Bool
+    func beginTask(expirationHandler: (@Sendable @MainActor() -> Void)?) -> Bool
     func endTask()
     func startListeningForAppStateUpdates(
         onEnteringBackground: @escaping () -> Void,
@@ -23,7 +23,7 @@ protocol BackgroundTaskScheduler {
 #if os(iOS)
 import UIKit
 
-class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
+class IOSBackgroundTaskScheduler: BackgroundTaskScheduler, @unchecked Sendable {
     private lazy var app: UIApplication? = {
         // We can't use `UIApplication.shared` directly because there's no way to convince the compiler
         // this code is accessible only for non-extension executables.
@@ -36,10 +36,12 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
 
     var isAppActive: Bool {
         if Thread.isMainThread {
-            return app?.applicationState == .active
+            return MainActor.assumeIsolated {
+                app?.applicationState == .active
+            }
         }
 
-        var isActive = false
+        nonisolated(unsafe) var isActive = false
         let group = DispatchGroup()
         group.enter()
         DispatchQueue.main.async {
@@ -50,7 +52,7 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
         return isActive
     }
 
-    func beginTask(expirationHandler: (() -> Void)?) -> Bool {
+    func beginTask(expirationHandler: (@Sendable @MainActor() -> Void)?) -> Bool {
         // Only a single task is allowed at the same time
         endTask()
         

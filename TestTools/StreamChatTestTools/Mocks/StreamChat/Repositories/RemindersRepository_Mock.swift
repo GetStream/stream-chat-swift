@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 /// Mock implementation of RemindersRepository
-final class RemindersRepository_Mock: RemindersRepository {
+final class RemindersRepository_Mock: RemindersRepository, @unchecked Sendable {
     var loadReminders_callCount: Int = 0
     var loadReminders_query: MessageReminderListQuery?
     var loadReminders_completion: ((Result<ReminderListResponse, Error>) -> Void)?

@@ -6,16 +6,16 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-final class ChannelListController_Mock: ChatChannelListController {
+final class ChannelListController_Mock: ChatChannelListController, @unchecked Sendable {
     @Atomic var synchronize_called = false
-    var synchronizeCallCount = 0
+    @Atomic var synchronizeCallCount = 0
 
-    var channels_simulated: [ChatChannel]?
+    @Atomic var channels_simulated: [ChatChannel]?
     override var channels: LazyCachedMapCollection<ChatChannel> {
         channels_simulated.map { $0.lazyCachedMap { $0 } } ?? super.channels
     }
 
-    var state_simulated: DataController.State?
+    @Atomic var state_simulated: DataController.State?
     override var state: DataController.State {
         get { state_simulated ?? super.state }
         set { super.state = newValue }

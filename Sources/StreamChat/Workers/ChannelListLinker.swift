@@ -11,17 +11,17 @@ import Foundation
 ///   so we also analyse if it should be added to the current query.
 /// - Channel is updated: We only check if we should remove it from the current query.
 ///   We don't try to add it to the current query to not mess with pagination.
-final class ChannelListLinker {
+final class ChannelListLinker: Sendable {
     private let clientConfig: ChatClientConfig
     private let databaseContainer: DatabaseContainer
-    private var eventObservers = [EventObserver]()
-    private let filter: ((ChatChannel) -> Bool)?
+    nonisolated(unsafe) private var eventObservers = [EventObserver]()
+    private let filter: (@Sendable(ChatChannel) -> Bool)?
     private let query: ChannelListQuery
     private let worker: ChannelListUpdater
     
     init(
         query: ChannelListQuery,
-        filter: ((ChatChannel) -> Bool)?,
+        filter: (@Sendable(ChatChannel) -> Bool)?,
         clientConfig: ChatClientConfig,
         databaseContainer: DatabaseContainer,
         worker: ChannelListUpdater

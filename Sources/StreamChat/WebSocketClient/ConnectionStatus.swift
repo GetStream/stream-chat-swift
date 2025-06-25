@@ -7,7 +7,7 @@ import Foundation
 // `ConnectionStatus` is just a simplified and friendlier wrapper around `WebSocketConnectionState`.
 
 /// Describes the possible states of the client connection to the servers.
-public enum ConnectionStatus: Equatable {
+public enum ConnectionStatus: Equatable, Sendable {
     /// The client is initialized but not connected to the remote server yet.
     case initialized
 

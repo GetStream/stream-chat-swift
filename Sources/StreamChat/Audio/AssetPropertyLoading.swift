@@ -71,7 +71,7 @@ public struct AssetPropertyLoadingCompositeError: Error {
 }
 
 /// Defines a type that represents the properties of an asset that can be loaded
-public struct AssetProperty: CustomStringConvertible {
+public struct AssetProperty: CustomStringConvertible, Sendable {
     /// The property's name
     public var name: String
 
@@ -84,7 +84,7 @@ public struct AssetProperty: CustomStringConvertible {
 }
 
 /// A protocol that describes an object that can be used to load properties from an AVAsset
-public protocol AssetPropertyLoading {
+public protocol AssetPropertyLoading: Sendable {
     /// A method that loads the property of an AVAsset asynchronously and
     /// returns a result through a completion handler
     /// - Parameters:
@@ -94,7 +94,7 @@ public protocol AssetPropertyLoading {
     func loadProperties<Asset: AVAsset>(
         _ properties: [AssetProperty],
         of asset: Asset,
-        completion: @escaping (Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
+        completion: @escaping @Sendable(Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
     )
 }
 
@@ -105,16 +105,19 @@ public struct StreamAssetPropertyLoader: AssetPropertyLoading {
     public func loadProperties<Asset: AVAsset>(
         _ properties: [AssetProperty],
         of asset: Asset,
-        completion: @escaping (Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
+        completion: @escaping @Sendable(Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
     ) {
         // it's worth noting here that according to the documentation, the completion
         // handler will be invoked only once, regardless of the number of
         // properties we are loading.
         // https://developer.apple.com/documentation/avfoundation/avasynchronouskeyvalueloading/1387321-loadvaluesasynchronously
+        
+        // On iOS 15 we should switch to async load methods
+        nonisolated(unsafe) let unsafeAsset = asset
         asset.loadValuesAsynchronously(forKeys: properties.map(\.name)) {
             handlePropertiesLoadingResult(
                 properties,
-                of: asset,
+                of: unsafeAsset,
                 completion: completion
             )
         }

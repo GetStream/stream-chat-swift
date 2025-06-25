@@ -9,15 +9,15 @@
 import Foundation
 @testable import StreamChat
 
-final class MessagesPaginationStateHandler_Mock: MessagesPaginationStateHandling {
+final class MessagesPaginationStateHandler_Mock: MessagesPaginationStateHandling, @unchecked Sendable {
 
-    var mockState: MessagesPaginationState = .initial
+    @Atomic var mockState: MessagesPaginationState = .initial
 
-    var beginCallCount = 0
-    var beginCalledWith: MessagesPagination?
+    @Atomic var beginCallCount = 0
+    @Atomic var beginCalledWith: MessagesPagination?
 
-    var endCallCount = 0
-    var endCalledWith: (MessagesPagination, Result<[MessagePayload], Error>)?
+    @Atomic var endCallCount = 0
+    @Atomic var endCalledWith: (MessagesPagination, Result<[MessagePayload], Error>)?
 
     var state: MessagesPaginationState {
         mockState

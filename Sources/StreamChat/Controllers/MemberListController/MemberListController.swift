@@ -19,7 +19,7 @@ extension ChatClient {
 /// `ChatChannelMemberListController` is a controller class which allows observing
 /// a list of chat users based on the provided query.
 /// - Note: For an async-await alternative of the `ChatChannelMemberListControler`, please check ``MemberList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
-public class ChatChannelMemberListController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatChannelMemberListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query specifying sorting and filtering for the list of channel members.
     @Atomic public private(set) var query: ChannelMemberListQuery
 
@@ -35,7 +35,7 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
     }
 
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var memberListUpdater = createMemberListUpdater()
+    private let memberListUpdater: ChannelMemberListUpdater
 
     /// The observer used to observe the changes in the database.
     private lazy var memberListObserver = createMemberListObserver()
@@ -50,7 +50,7 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
         }
     }
 
-    var _basePublishers: Any?
+    @Atomic private var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
@@ -73,9 +73,13 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
         self.client = client
         self.query = query
         self.environment = environment
+        memberListUpdater = environment.memberListUpdaterBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
         if case let .localDataFetchFailed(error) = state {
@@ -87,13 +91,6 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
             self.state = result.error == nil ? .remoteDataFetched : .remoteDataFetchFailed(ClientError(with: result.error))
             self.callback { completion?(result.error) }
         }
-    }
-
-    private func createMemberListUpdater() -> ChannelMemberListUpdater {
-        environment.memberListUpdaterBuilder(
-            client.databaseContainer,
-            client.apiClient
-        )
     }
 
     private func createMemberListObserver() -> BackgroundListDatabaseObserver<ChatChannelMember, MemberDTO> {
@@ -139,12 +136,13 @@ public extension ChatChannelMemberListController {
     ///                 If request fails, the completion will be called with an error.
     func loadNextMembers(
         limit: Int = 25,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
-        var updatedQuery = query
-        updatedQuery.pagination = Pagination(pageSize: limit, offset: members.count)
-        memberListUpdater.load(updatedQuery) { result in
-            self.query = updatedQuery
+        let pagination = Pagination(pageSize: limit, offset: members.count)
+        let updatedQuery = query.withPagination(pagination)
+        memberListUpdater.load(updatedQuery) { [weak self] result in
+            guard let self else { return }
+            self.query = self.query.withPagination(pagination)
             self.callback {
                 completion?(result.error)
             }

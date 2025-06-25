@@ -502,7 +502,7 @@ extension SyncRepository_Tests {
         XCTAssertCall("exitRecoveryMode()", on: apiClient)
     }
 
-    private class CancelRecoveryFlowTracker: SyncRepository {
+    private class CancelRecoveryFlowTracker: SyncRepository, @unchecked Sendable {
         var cancelRecoveryFlowClosure: () -> Void = {}
 
         override func cancelRecoveryFlow() {

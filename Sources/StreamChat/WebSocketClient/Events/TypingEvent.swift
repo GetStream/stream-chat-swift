@@ -25,7 +25,7 @@ public struct TypingEvent: ChannelSpecificEvent {
     public var isThread: Bool { parentId != nil }
 }
 
-class TypingEventDTO: EventDTO {
+final class TypingEventDTO: EventDTO {
     let user: UserPayload
     let cid: ChannelId
     let isTyping: Bool

@@ -17,7 +17,7 @@ extension ChatClient {
 /// `ChatChannelWatcherListController` is a controller class which allows observing
 /// a list of chat watchers based on the provided query.
 ///
-public class ChatChannelWatcherListController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatChannelWatcherListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query specifying sorting and filtering for the list of channel watchers.
     @Atomic public private(set) var query: ChannelWatcherListQuery
 
@@ -32,7 +32,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
         return watchersObserver.items
     }
 
-    var _basePublishers: Any?
+    @Atomic private var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
@@ -58,13 +58,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     private lazy var watchersObserver: BackgroundListDatabaseObserver<ChatUser, UserDTO> = createWatchersObserver()
 
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var updater: ChannelUpdater = self.environment.channelUpdaterBuilder(
-        client.channelRepository,
-        client.messageRepository,
-        client.makeMessagesPaginationStateHandler(),
-        client.databaseContainer,
-        client.apiClient
-    )
+    private let updater: ChannelUpdater
 
     private let environment: Environment
 
@@ -77,12 +71,19 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
         self.client = client
         self.query = query
         self.environment = environment
+        updater = environment.channelUpdaterBuilder(
+            client.channelRepository,
+            client.messageRepository,
+            client.makeMessagesPaginationStateHandler(),
+            client.databaseContainer,
+            client.apiClient
+        )
     }
 
     /// Synchronizes the channel's watchers with the backend.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
         if case let .localDataFetchFailed(error) = state {
@@ -174,10 +175,10 @@ public extension ChatChannelWatcherListController {
     ///   - limit: Limit for page size. Offset is defined automatically by the controller.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
-    func loadNextWatchers(limit: Int = .channelWatchersPageSize, completion: ((Error?) -> Void)? = nil) {
+    func loadNextWatchers(limit: Int = .channelWatchersPageSize, completion: (@Sendable(Error?) -> Void)? = nil) {
         var updatedQuery = query
         updatedQuery.pagination = .init(pageSize: limit, offset: watchers.count)
-        updater.channelWatchers(query: updatedQuery) { result in
+        updater.channelWatchers(query: updatedQuery) { [updatedQuery] result in
             self.query = updatedQuery
             self.callback { completion?(result.error) }
         }

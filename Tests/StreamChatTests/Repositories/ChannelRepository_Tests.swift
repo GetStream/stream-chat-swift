@@ -70,7 +70,7 @@ final class ChannelRepository_Tests: XCTestCase {
         let userId = UserId.unique
 
         let expectation = self.expectation(description: "markRead completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         repository.markRead(cid: cid, userId: userId) { error in
             receivedError = error
             expectation.fulfill()
@@ -90,7 +90,7 @@ final class ChannelRepository_Tests: XCTestCase {
         let userId = UserId.unique
 
         let expectation = self.expectation(description: "markRead completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         repository.markRead(cid: cid, userId: userId) { error in
             receivedError = error
             expectation.fulfill()
@@ -121,7 +121,7 @@ final class ChannelRepository_Tests: XCTestCase {
         database.writeSessionCounter = 0
 
         let expectation = self.expectation(description: "markUnread completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         repository.markUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique) { result in
             receivedError = result.error
             expectation.fulfill()
@@ -142,7 +142,7 @@ final class ChannelRepository_Tests: XCTestCase {
         let messageId = MessageId.unique
 
         let expectation = self.expectation(description: "markUnread completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         repository.markUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique) { result in
             receivedError = result.error
             expectation.fulfill()

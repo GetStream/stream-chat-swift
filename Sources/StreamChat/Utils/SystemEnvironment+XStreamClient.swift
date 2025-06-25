@@ -63,7 +63,12 @@ extension SystemEnvironment {
 
     private static var osVersion: String {
         #if os(iOS)
-        return UIDevice.current.systemVersion
+        let version = ProcessInfo.processInfo.operatingSystemVersion
+        let patch: Int? = version.patchVersion > 0 ? version.patchVersion : nil
+        return [version.majorVersion, version.minorVersion, patch]
+            .compactMap { $0 }
+            .compactMap(String.init)
+            .joined(separator: ".")
         #elseif os(macOS)
         return ProcessInfo.processInfo.operatingSystemVersionString
         #endif

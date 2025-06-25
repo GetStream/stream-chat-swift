@@ -281,6 +281,8 @@
 		4F73F3992B91BD3000563CD9 /* MessageState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F3972B91BD3000563CD9 /* MessageState.swift */; };
 		4F73F39E2B91C7BF00563CD9 /* MessageState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */; };
 		4F73F39F2B91C7BF00563CD9 /* MessageState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */; };
+		4F7B58952DCB6B5A0034CC0F /* AllocatedUnfairLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7B58942DCB6B5A0034CC0F /* AllocatedUnfairLock.swift */; };
+		4F7B58962DCB6B5A0034CC0F /* AllocatedUnfairLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F7B58942DCB6B5A0034CC0F /* AllocatedUnfairLock.swift */; };
 		4F83FA462BA43DC3008BD8CD /* MemberList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F83FA452BA43DC3008BD8CD /* MemberList.swift */; };
 		4F83FA472BA43DC3008BD8CD /* MemberList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F83FA452BA43DC3008BD8CD /* MemberList.swift */; };
 		4F862F9A2C38001000062502 /* FileManager+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F862F992C38001000062502 /* FileManager+Extensions.swift */; };
@@ -340,6 +342,8 @@
 		4FE6E1AB2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */; };
 		4FE6E1AD2BAC7A1B00C80AF1 /* UserListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */; };
 		4FE6E1AE2BAC7A1B00C80AF1 /* UserListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */; };
+		4FE913872D82C8ED0048AC16 /* BoxedAny.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE913862D82C8E90048AC16 /* BoxedAny.swift */; };
+		4FE913882D82C8ED0048AC16 /* BoxedAny.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE913862D82C8E90048AC16 /* BoxedAny.swift */; };
 		4FF2A80D2B8E011000941A64 /* ChatState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */; };
 		4FF2A80E2B8E011000941A64 /* ChatState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */; };
 		4FF9B2682C6F697300A3B711 /* AttachmentDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF9B2672C6F696B00A3B711 /* AttachmentDownloader.swift */; };
@@ -492,7 +496,7 @@
 		797EEA4624FFAF4F00C81203 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EEA4524FFAF4F00C81203 /* DataStore.swift */; };
 		797EEA4824FFB4C200C81203 /* DataStore_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EEA4724FFB4C200C81203 /* DataStore_Tests.swift */; };
 		797EEA4A24FFC37600C81203 /* ConnectionStatus_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797EEA4924FFC37600C81203 /* ConnectionStatus_Tests.swift */; };
-		7985BDAA252B1E53002B8C30 /* MainQueue+Synchronous.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985BDA9252B1E53002B8C30 /* MainQueue+Synchronous.swift */; };
+		7985BDAA252B1E53002B8C30 /* StreamConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985BDA9252B1E53002B8C30 /* StreamConcurrency.swift */; };
 		79877A092498E4BC00015F8B /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A012498E4BB00015F8B /* User.swift */; };
 		79877A0A2498E4BC00015F8B /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A022498E4BB00015F8B /* Device.swift */; };
 		79877A0B2498E4BC00015F8B /* Member.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79877A032498E4BB00015F8B /* Member.swift */; };
@@ -2152,7 +2156,7 @@
 		C121E8EC274544B200023E4C /* Publisher+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA4AA3B92502731900FAAF6E /* Publisher+Extensions.swift */; };
 		C121E8ED274544B200023E4C /* UniqueId.swift in Sources */ = {isa = PBXBuildFile; fileRef = 797E10A724EAF6DE00353791 /* UniqueId.swift */; };
 		C121E8EE274544B200023E4C /* MulticastDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79CD959124F9380B00E87377 /* MulticastDelegate.swift */; };
-		C121E8EF274544B200023E4C /* MainQueue+Synchronous.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985BDA9252B1E53002B8C30 /* MainQueue+Synchronous.swift */; };
+		C121E8EF274544B200023E4C /* StreamConcurrency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7985BDA9252B1E53002B8C30 /* StreamConcurrency.swift */; };
 		C121E8F0274544B200023E4C /* Dictionary+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EA9AD725470F6A007EE76B /* Dictionary+Extensions.swift */; };
 		C121E8F1274544B200023E4C /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 881506EB258212BF0013935B /* MultipartFormData.swift */; };
 		C121E8F2274544B200023E4C /* SystemEnvironment+Version.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7AD954E25D536AA00076DC3 /* SystemEnvironment+Version.swift */; };
@@ -3278,6 +3282,7 @@
 		4F6B840F2D008D5F005645B0 /* MemberUpdatePayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberUpdatePayload.swift; sourceTree = "<group>"; };
 		4F73F3972B91BD3000563CD9 /* MessageState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageState.swift; sourceTree = "<group>"; };
 		4F73F39D2B91C7BF00563CD9 /* MessageState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageState+Observer.swift"; sourceTree = "<group>"; };
+		4F7B58942DCB6B5A0034CC0F /* AllocatedUnfairLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllocatedUnfairLock.swift; sourceTree = "<group>"; };
 		4F83FA452BA43DC3008BD8CD /* MemberList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberList.swift; sourceTree = "<group>"; };
 		4F862F992C38001000062502 /* FileManager+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FileManager+Extensions.swift"; sourceTree = "<group>"; };
 		4F877D392D019E0400CB66EC /* ChannelPinningScope.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelPinningScope.swift; sourceTree = "<group>"; };
@@ -3311,6 +3316,7 @@
 		4FE56B8F2D5E002300589F9A /* MarkdownParser_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkdownParser_Tests.swift; sourceTree = "<group>"; };
 		4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberListState+Observer.swift"; sourceTree = "<group>"; };
 		4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListState+Observer.swift"; sourceTree = "<group>"; };
+		4FE913862D82C8E90048AC16 /* BoxedAny.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxedAny.swift; sourceTree = "<group>"; };
 		4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatState+Observer.swift"; sourceTree = "<group>"; };
 		4FF9B2672C6F696B00A3B711 /* AttachmentDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentDownloader.swift; sourceTree = "<group>"; };
 		4FFB5E9F2BA0507900F0454F /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
@@ -3484,7 +3490,7 @@
 		797EEA4524FFAF4F00C81203 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		797EEA4724FFB4C200C81203 /* DataStore_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore_Tests.swift; sourceTree = "<group>"; };
 		797EEA4924FFC37600C81203 /* ConnectionStatus_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectionStatus_Tests.swift; sourceTree = "<group>"; };
-		7985BDA9252B1E53002B8C30 /* MainQueue+Synchronous.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MainQueue+Synchronous.swift"; sourceTree = "<group>"; };
+		7985BDA9252B1E53002B8C30 /* StreamConcurrency.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamConcurrency.swift; sourceTree = "<group>"; };
 		798779F62498E47700015F8B /* Member.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Member.json; sourceTree = "<group>"; };
 		798779F72498E47700015F8B /* Channel.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = Channel.json; sourceTree = "<group>"; };
 		798779F82498E47700015F8B /* OtherUser.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = OtherUser.json; sourceTree = "<group>"; };
@@ -5722,8 +5728,10 @@
 				ADE2093B29FBEC88007D0FF3 /* MessagesPaginationStateHandling */,
 				C1E8AD5A278DDEBB0041B775 /* Operations */,
 				CF324E762832FC1200E5BBE6 /* StreamTimer */,
+				4F7B58942DCB6B5A0034CC0F /* AllocatedUnfairLock.swift */,
 				40D3962D2A0910DE0020DDC9 /* Array+Sampling.swift */,
 				79280F6F2487CD2B00CDEB89 /* Atomic.swift */,
+				4FE913862D82C8E90048AC16 /* BoxedAny.swift */,
 				797A756724814F0D003CF16D /* Bundle+Extensions.swift */,
 				792A4F3D247FFDE700EAF71D /* Codable+Extensions.swift */,
 				CF6E489E282341F2008416DC /* CountdownTracker.swift */,
@@ -5734,7 +5742,6 @@
 				84CF9C72274D473D00BCDE2D /* EventBatcher.swift */,
 				C173538D27D9F804008AC412 /* KeyedDecodingContainer+Array.swift */,
 				DBCAFE2325C44B920015AD58 /* LazyCachedMapCollection.swift */,
-				7985BDA9252B1E53002B8C30 /* MainQueue+Synchronous.swift */,
 				4FE56B8C2D5DFE3A00589F9A /* MarkdownParser.swift */,
 				79CD959124F9380B00E87377 /* MulticastDelegate.swift */,
 				881506EB258212BF0013935B /* MultipartFormData.swift */,
@@ -5744,6 +5751,7 @@
 				DAFAD6A024DC476A0043ED06 /* Result+Extensions.swift */,
 				C14D27B52869EEE40063F6F2 /* Sequence+CompactMapLoggingError.swift */,
 				4FDAD05D2BC8179E004048E8 /* StateBuilder.swift */,
+				7985BDA9252B1E53002B8C30 /* StreamConcurrency.swift */,
 				4FD2BE522B9AEE3500FFC6F2 /* StreamCollection.swift */,
 				797A756524814EF8003CF16D /* SystemEnvironment.swift */,
 				CFA41B6527DA724400427602 /* SystemEnvironment+XStreamClient.swift */,
@@ -6805,10 +6813,10 @@
 		A3227E54284A479700EBE6CC /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				A3227E75284A4C6400EBE6CC /* MessageReactionType+Position.swift */,
 				A3227E58284A484300EBE6CC /* UIImage+Resized.swift */,
 				A3227E5A284A489000EBE6CC /* UIViewController+Alert.swift */,
 				849C1B69283686EE00F9DC42 /* UserDefaults+Shared.swift */,
-				A3227E75284A4C6400EBE6CC /* MessageReactionType+Position.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -11549,7 +11557,7 @@
 				4F1BEE792BE384FE00B6685C /* ReactionListState.swift in Sources */,
 				79C5CBE825F66DBD00D98001 /* ChatChannelWatcherListController.swift in Sources */,
 				8A62706E24BF45360040BFD6 /* BanEnabling.swift in Sources */,
-				7985BDAA252B1E53002B8C30 /* MainQueue+Synchronous.swift in Sources */,
+				7985BDAA252B1E53002B8C30 /* StreamConcurrency.swift in Sources */,
 				ADF9E1F72A03E7E400109108 /* MessagesPaginationState.swift in Sources */,
 				79983C8126663436000995F6 /* ChatMessageVideoAttachment.swift in Sources */,
 				ADEEB7F22BD1368900C76602 /* MessageReactionGroupPayload.swift in Sources */,
@@ -11685,6 +11693,7 @@
 				ADB951B2291C3CE900800554 /* AnyAttachmentUpdater.swift in Sources */,
 				79617CB125F236B600D54E61 /* UserWatchingEventMiddleware.swift in Sources */,
 				ADB951A1291BD7CC00800554 /* UploadedAttachment.swift in Sources */,
+				4FE913872D82C8ED0048AC16 /* BoxedAny.swift in Sources */,
 				7962958C248147430078EB53 /* BaseURL.swift in Sources */,
 				8802F9EF25AF3D4200475159 /* HTTPHeader.swift in Sources */,
 				8A0C3BD424C1DF2100CAFD19 /* MessageEvents.swift in Sources */,
@@ -11723,6 +11732,7 @@
 				797A756824814F0D003CF16D /* Bundle+Extensions.swift in Sources */,
 				7908829C2546D95A00896F03 /* FlagMessagePayload.swift in Sources */,
 				DA0BB1612513B5F200CAEFBD /* StringInterpolation+Extensions.swift in Sources */,
+				4F7B58952DCB6B5A0034CC0F /* AllocatedUnfairLock.swift in Sources */,
 				64C8C86E26934C6100329F82 /* UserInfo.swift in Sources */,
 				C1FFD9F927ECC7C7008A6848 /* Filter+predicate.swift in Sources */,
 				4F1BEE7C2BE3851200B6685C /* ReactionListState+Observer.swift in Sources */,
@@ -12516,6 +12526,7 @@
 				ADA83B412D974DCC003B3928 /* MessageReminderListController+Combine.swift in Sources */,
 				C121E82B274544AD00023E4C /* APIPathConvertible.swift in Sources */,
 				AD8FEE5C2AA8E1E400273F88 /* ChatClientFactory.swift in Sources */,
+				4F7B58962DCB6B5A0034CC0F /* AllocatedUnfairLock.swift in Sources */,
 				40789D2E29F6AC500018C2BB /* AudioRecordingState.swift in Sources */,
 				C14D27B72869EEE40063F6F2 /* Sequence+CompactMapLoggingError.swift in Sources */,
 				C121E82C274544AD00023E4C /* APIClient.swift in Sources */,
@@ -12872,7 +12883,7 @@
 				C121E8EC274544B200023E4C /* Publisher+Extensions.swift in Sources */,
 				C121E8ED274544B200023E4C /* UniqueId.swift in Sources */,
 				C121E8EE274544B200023E4C /* MulticastDelegate.swift in Sources */,
-				C121E8EF274544B200023E4C /* MainQueue+Synchronous.swift in Sources */,
+				C121E8EF274544B200023E4C /* StreamConcurrency.swift in Sources */,
 				C121E8F0274544B200023E4C /* Dictionary+Extensions.swift in Sources */,
 				C121E8F1274544B200023E4C /* MultipartFormData.swift in Sources */,
 				AD545E672D53C271008FD399 /* DraftMessagesRepository.swift in Sources */,
@@ -12888,6 +12899,7 @@
 				C1FFD9FA27ECC7C7008A6848 /* Filter+predicate.swift in Sources */,
 				4FE6E1AE2BAC7A1B00C80AF1 /* UserListState+Observer.swift in Sources */,
 				4FE6E1AB2BAC79F400C80AF1 /* MemberListState+Observer.swift in Sources */,
+				4FE913882D82C8ED0048AC16 /* BoxedAny.swift in Sources */,
 				AD8FEE592AA8E1A100273F88 /* ChatClient+Environment.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -13935,7 +13947,7 @@
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -13964,7 +13976,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -13994,7 +14006,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
-				SWIFT_VERSION = 5.0;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Profile;
@@ -14088,7 +14100,8 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
-				SWIFT_VERSION = 5.0;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -14118,7 +14131,8 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
-				SWIFT_VERSION = 5.0;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
@@ -14840,7 +14854,8 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
-				SWIFT_VERSION = 5.0;
+				SWIFT_STRICT_CONCURRENCY = complete;
+				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Profile;

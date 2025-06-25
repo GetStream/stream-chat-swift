@@ -111,7 +111,7 @@ final class StreamAudioWaveformAnalyser_Tests: XCTestCase {
     }
 }
 
-private final class SpyAudioSamplesExtractor: AudioSamplesExtractor {
+private final class SpyAudioSamplesExtractor: AudioSamplesExtractor, @unchecked Sendable {
     private(set) var extractSamplesWasCalledWithReadSampleBuffer: CMSampleBuffer?
     private(set) var extractSamplesWasCalledWithSampleBuffer: Data?
     private(set) var extractSamplesWasCalledWithDownsamplingRate: Int?
@@ -134,7 +134,7 @@ private final class SpyAudioSamplesExtractor: AudioSamplesExtractor {
     }
 }
 
-private final class SpyAudioSamplesProcessor: AudioSamplesProcessor {
+private final class SpyAudioSamplesProcessor: AudioSamplesProcessor, @unchecked Sendable {
     private(set) var processSamplesWasCalledWithSampleBuffer: Data?
     private(set) var processSamplesWasCalledWithOutputSamples: [Float]?
     private(set) var processSamplesWasCalledWithSamplesToProcess: Int?
@@ -170,7 +170,7 @@ private final class SpyAudioSamplesProcessor: AudioSamplesProcessor {
     }
 }
 
-private final class SpyAudioSamplesPercentageTransformer: AudioValuePercentageNormaliser {
+private final class SpyAudioSamplesPercentageTransformer: AudioValuePercentageNormaliser, @unchecked Sendable {
     private(set) var transformWasCalledWithSamples: [Float]?
     private(set) var timesTransformWasCalled: Int = 0
 

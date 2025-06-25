@@ -5,7 +5,7 @@
 import Foundation
 
 /// An `Event` object representing an event in the chat system.
-public protocol Event {}
+public protocol Event: Sendable {}
 
 public extension Event {
     var name: String {
@@ -49,7 +49,7 @@ public protocol MemberEvent: Event {
 }
 
 /// A protocol custom event payload must conform to.
-public protocol CustomEventPayload: Codable, Hashable {
+public protocol CustomEventPayload: Codable, Hashable, Sendable {
     /// A type all events holding this payload have.
     static var eventType: EventType { get }
 }

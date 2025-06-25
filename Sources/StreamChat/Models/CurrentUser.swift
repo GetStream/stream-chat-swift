@@ -22,7 +22,7 @@ extension UserId {
 /// A type representing the currently logged-in user. `CurrentChatUser` is an immutable snapshot of a current user entity at
 /// the given time.
 ///
-public class CurrentChatUser: ChatUser {
+public class CurrentChatUser: ChatUser, @unchecked Sendable {
     /// A list of devices associcated with the user.
     public let devices: [Device]
 
@@ -119,7 +119,7 @@ public class CurrentChatUser: ChatUser {
 }
 
 /// The total unread information from the current user.
-public struct CurrentUserUnreads {
+public struct CurrentUserUnreads: Sendable {
     /// The total number of unread messages.
     public let totalUnreadMessagesCount: Int
     /// The total number of unread channels.
@@ -135,7 +135,7 @@ public struct CurrentUserUnreads {
 }
 
 /// The unread information of a channel.
-public struct UnreadChannel {
+public struct UnreadChannel: Sendable {
     /// The channel id.
     public let channelId: ChannelId
     /// The number of unread messages inside the channel.
@@ -145,7 +145,7 @@ public struct UnreadChannel {
 }
 
 /// The unread information from channels with a specific type.
-public struct UnreadChannelByType {
+public struct UnreadChannelByType: Sendable {
     /// The channel type.
     public let channelType: ChannelType
     /// The number of unread channels of this channel type.
@@ -155,7 +155,7 @@ public struct UnreadChannelByType {
 }
 
 /// The unread information of a thread.
-public struct UnreadThread {
+public struct UnreadThread: Sendable {
     /// The message id of the root of the thread.
     public let parentMessageId: MessageId
     /// The number of unread replies inside the thread.

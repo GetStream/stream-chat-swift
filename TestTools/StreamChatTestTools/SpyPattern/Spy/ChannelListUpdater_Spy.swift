@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of ChannelListUpdater
-final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
+final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable {
     let spyState = SpyState()
 
     @Atomic var update_queries: [ChannelListQuery] = []
@@ -20,14 +20,14 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
 
     @Atomic var markAllRead_completion: ((Error?) -> Void)?
 
-    var startWatchingChannels_callCount = 0
+    @Atomic var startWatchingChannels_callCount = 0
     @Atomic var startWatchingChannels_cids: [ChannelId] = []
     @Atomic var startWatchingChannels_completion: ((Error?) -> Void)?
 
-    var link_callCount = 0
-    var link_completion: ((Error?) -> Void)?
+    @Atomic var link_callCount = 0
+    @Atomic var link_completion: ((Error?) -> Void)?
 
-    var unlink_callCount = 0
+    @Atomic var unlink_callCount = 0
 
     func cleanUp() {
         update_queries.removeAll()

@@ -81,7 +81,7 @@ final class MemberController_Tests: XCTestCase {
 
     func test_synchronize_changesState_and_callsCompletionOnCallbackQueue() {
         // Simulate `synchronize` call.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.synchronize { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -117,7 +117,7 @@ final class MemberController_Tests: XCTestCase {
         env.memberObserverSynchronizeError = observerError
 
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
+        nonisolated(unsafe) var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             synchronizeError = error
@@ -132,7 +132,7 @@ final class MemberController_Tests: XCTestCase {
 
     func test_synchronize_changesState_and_propagatesListUpdaterErrorOnCallbackQueue() {
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
+        nonisolated(unsafe) var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             synchronizeError = error
@@ -308,7 +308,7 @@ final class MemberController_Tests: XCTestCase {
 
     func test_ban_propagatesError() {
         // Simulate `ban` call and catch the completion.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.ban { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -324,7 +324,7 @@ final class MemberController_Tests: XCTestCase {
 
     func test_ban_propagatesNilError() {
         // Simulate `ban` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.ban { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -370,7 +370,7 @@ final class MemberController_Tests: XCTestCase {
 
     func test_shadowBan_propagatesError() {
         // Simulate `shadowBan` call and catch the completion.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.shadowBan { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -386,7 +386,7 @@ final class MemberController_Tests: XCTestCase {
 
     func test_shadowBan_propagatesNilError() {
         // Simulate `shadowBan` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.shadowBan { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -432,7 +432,7 @@ final class MemberController_Tests: XCTestCase {
 
     func test_unban_propagatesError() {
         // Simulate `unban` call and catch the completion.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.unban { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -448,7 +448,7 @@ final class MemberController_Tests: XCTestCase {
 
     func test_unban_propagatesNilError() {
         // Simulate `unban` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.unban { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -490,7 +490,7 @@ final class MemberController_Tests: XCTestCase {
         let expectedError = TestError()
         
         // Simulate `partialUpdate` call and catch the completion
-        var receivedResult: Result<ChatChannelMember, Error>?
+        nonisolated(unsafe) var receivedResult: Result<ChatChannelMember, Error>?
         controller.partialUpdate(extraData: ["key": .string("value")], unsetProperties: ["field"]) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
             receivedResult = result
@@ -507,7 +507,7 @@ final class MemberController_Tests: XCTestCase {
         let expectedMember: ChatChannelMember = .mock(id: .unique)
 
         // Simulate `partialUpdate` call and catch the completion
-        var receivedResult: Result<ChatChannelMember, Error>?
+        nonisolated(unsafe) var receivedResult: Result<ChatChannelMember, Error>?
         controller.partialUpdate(extraData: ["key": .string("value")], unsetProperties: ["field"]) { [callbackQueueID] result in
             AssertTestQueue(withId: callbackQueueID)
             receivedResult = result

@@ -230,7 +230,7 @@ private extension DemoAppCoordinator {
 
     func disconnect() {
         chat.client?.disconnect { [weak self] in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 self?.showLogin(animated: true)
             }
         }

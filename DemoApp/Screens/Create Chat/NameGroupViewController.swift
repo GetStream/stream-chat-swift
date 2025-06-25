@@ -131,11 +131,13 @@ class NameGroupViewController: UIViewController {
                 name: name,
                 members: Set(selectedUsers.map(\.id))
             )
-            channelController?.synchronize { error in
-                if let error = error {
-                    self.presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
-                } else {
-                    self.navigationController?.popToRootViewController(animated: true)
+            channelController?.synchronize { [weak self] error in
+                Task { @MainActor in
+                    if let error = error {
+                        self?.presentAlert(title: "Error when creating the channel", message: error.localizedDescription)
+                    } else {
+                        self?.navigationController?.popToRootViewController(animated: true)
+                    }
                 }
             }
         } catch {

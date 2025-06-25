@@ -52,7 +52,7 @@ final class PollVoteListController_Combine_Tests: iOS13TestCase {
         weak var controller: PollVoteListController? = voteListController
         voteListController = nil
 
-        controller?.delegateCallback { $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
 
         AssertAsync.willBeEqual(recording.output, [.localDataFetched, .remoteDataFetched])
     }
@@ -73,7 +73,7 @@ final class PollVoteListController_Combine_Tests: iOS13TestCase {
 
         let vote: PollVote = .unique
         let changes: [ListChange<PollVote>] = .init([.insert(vote, index: .init())])
-        controller?.delegateCallback {
+        controller?.delegateCallback { [controller] in
             $0.controller(controller!, didChangeVotes: changes)
         }
 

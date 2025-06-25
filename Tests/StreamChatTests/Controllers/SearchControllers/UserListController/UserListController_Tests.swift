@@ -151,7 +151,7 @@ final class UserListController_Tests: XCTestCase {
         controller.callbackQueue = .testQueue(withId: queueId)
 
         // Simulate `synchronize` calls and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.synchronize { error in
             XCTAssertNil(error)
             AssertTestQueue(withId: queueId)
@@ -185,7 +185,7 @@ final class UserListController_Tests: XCTestCase {
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)
         // Simulate `synchronize` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.synchronize {
             completionCalledError = $0
             AssertTestQueue(withId: queueId)
@@ -273,7 +273,7 @@ final class UserListController_Tests: XCTestCase {
     // MARK: - Users pagination
 
     func test_loadNextUsers_callsUserListUpdater() {
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         let limit = 42
         controller.loadNextUsers(limit: limit) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
@@ -309,7 +309,7 @@ final class UserListController_Tests: XCTestCase {
 
     func test_loadNextUsers_callsUserUpdaterWithError() {
         // Simulate `loadNextUsers` call and catch the completion
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         controller.loadNextUsers { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionCalledError = $0

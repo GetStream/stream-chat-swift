@@ -44,8 +44,8 @@ final class ChatConnectionController_SwiftUI_Tests: iOS13TestCase {
     }
 }
 
-final class ChatConnectionControllerMock: ChatConnectionController {
-    var connectionStatus_simulated: ConnectionStatus?
+final class ChatConnectionControllerMock: ChatConnectionController, @unchecked Sendable {
+    @Atomic var connectionStatus_simulated: ConnectionStatus?
     override var connectionStatus: ConnectionStatus {
         connectionStatus_simulated ?? super.connectionStatus
     }

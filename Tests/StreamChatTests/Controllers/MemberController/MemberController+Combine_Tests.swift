@@ -46,7 +46,7 @@ final class MemberController_Combine_Tests: iOS13TestCase {
         memberController = nil
 
         // Simulate delegate invocation.
-        controller?.delegateCallback { $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
 
         // Assert all state changes are delivered.
         XCTAssertEqual(recording.output, [.localDataFetched, .remoteDataFetched])
@@ -68,7 +68,7 @@ final class MemberController_Combine_Tests: iOS13TestCase {
 
         // Simulate delegate invocation with the new member.
         let newMember: ChatChannelMember = .dummy
-        controller?.delegateCallback {
+        controller?.delegateCallback { [controller] in
             $0.memberController(controller!, didUpdateMember: .create(newMember))
         }
 
