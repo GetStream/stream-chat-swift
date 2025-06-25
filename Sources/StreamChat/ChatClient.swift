@@ -83,7 +83,15 @@ public class ChatClient: @unchecked Sendable {
     
     let pollsRepository: PollsRepository
 
-    let draftMessagesRepository: DraftMessagesRepository
+    /// Repository for handling draft messages
+    lazy var draftMessagesRepository: DraftMessagesRepository = {
+        environment.draftMessagesRepositoryBuilder(databaseContainer, apiClient)
+    }()
+    
+    /// Repository for handling message reminders
+    lazy var remindersRepository: RemindersRepository = {
+        environment.remindersRepositoryBuilder(databaseContainer, apiClient)
+    }()
 
     let channelListUpdater: ChannelListUpdater
 
@@ -225,7 +233,6 @@ public class ChatClient: @unchecked Sendable {
             apiClient
         )
         pollsRepository = environment.pollsRepositoryBuilder(databaseContainer, apiClient)
-        draftMessagesRepository = environment.draftMessagesRepositoryBuilder(databaseContainer, apiClient)
 
         authRepository.delegate = self
         apiClientEncoder.connectionDetailsProviderDelegate = self
@@ -650,6 +657,10 @@ public class ChatClient: @unchecked Sendable {
                 database: databaseContainer,
                 apiClient: apiClient,
                 attachmentPostProcessor: config.uploadedAttachmentPostProcessor
+            ),
+            ActiveLiveLocationsEndTimeTracker(
+                database: databaseContainer,
+                apiClient: apiClient
             )
         ]
         try? backgroundWorker(of: AttachmentQueueUploader.self)

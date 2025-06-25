@@ -1201,6 +1201,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: messageExtraData
             )
@@ -1291,6 +1292,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -1396,6 +1398,7 @@ final class MessageDTO_Tests: XCTestCase {
                     skipPush: false,
                     skipEnrichUrl: false,
                     poll: nil,
+                    location: nil,
                     restrictedVisibility: [],
                     extraData: [:]
                 )
@@ -1421,6 +1424,7 @@ final class MessageDTO_Tests: XCTestCase {
                     skipPush: false,
                     skipEnrichUrl: false,
                     poll: nil,
+                    location: nil,
                     restrictedVisibility: [],
                     extraData: [:]
                 )
@@ -1565,6 +1569,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: true,
                 skipEnrichUrl: true,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -1637,6 +1642,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: true,
                 skipEnrichUrl: true,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -1688,6 +1694,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -1736,6 +1743,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -1797,6 +1805,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -1827,6 +1836,7 @@ final class MessageDTO_Tests: XCTestCase {
                     skipPush: false,
                     skipEnrichUrl: false,
                     poll: nil,
+                    location: nil,
                     restrictedVisibility: [],
                     extraData: [:]
                 )
@@ -1871,6 +1881,7 @@ final class MessageDTO_Tests: XCTestCase {
                     skipPush: false,
                     skipEnrichUrl: false,
                     poll: nil,
+                    location: nil,
                     restrictedVisibility: [],
                     extraData: [:]
                 )
@@ -1925,6 +1936,66 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.channel!.defaultSortingAt, loadedMessage.createdAt)
     }
 
+    func test_createNewMessage_whenIsLiveLocation() throws {
+        // Prepare the current user and channel first
+        let cid: ChannelId = .unique
+        let currentUserId: UserId = .unique
+        let deviceId: DeviceId = .unique
+
+        try database.writeSynchronously { session in
+            let currentUserPayload: CurrentUserPayload = .dummy(
+                userId: currentUserId,
+                role: .admin,
+                extraData: [:]
+            )
+
+            try session.saveCurrentUser(payload: currentUserPayload)
+            try session.saveCurrentDevice(deviceId)
+            try session.saveChannel(payload: self.dummyPayload(with: cid))
+        }
+
+        // Create a new message
+        nonisolated(unsafe) var newMessageId: MessageId!
+        let newMessageText: String = .unique
+        try database.writeSynchronously { session in
+            let messageDTO = try session.createNewMessage(
+                in: cid,
+                messageId: .unique,
+                text: newMessageText,
+                pinning: nil,
+                command: nil,
+                arguments: nil,
+                parentMessageId: nil,
+                attachments: [],
+                mentionedUserIds: [],
+                showReplyInChannel: true,
+                isSilent: false,
+                isSystem: true,
+                quotedMessageId: nil,
+                createdAt: nil,
+                skipPush: true,
+                skipEnrichUrl: true,
+                poll: nil,
+                location: .init(latitude: 10, longitude: 10, endAt: .distantFuture),
+                restrictedVisibility: [],
+                extraData: [:]
+            )
+            newMessageId = messageDTO.id
+        }
+
+        let messageDTO: MessageDTO = try XCTUnwrap(database.viewContext.message(id: newMessageId))
+        XCTAssertEqual(messageDTO.isActiveLiveLocation, true)
+        XCTAssertEqual(messageDTO.location?.latitude, 10)
+        XCTAssertEqual(messageDTO.location?.longitude, 10)
+
+        let loadedMessage: ChatMessage = try messageDTO.asModel()
+        XCTAssertEqual(loadedMessage.sharedLocation?.isLiveSharingActive, true)
+        XCTAssertEqual(loadedMessage.sharedLocation?.endAt, .distantFuture)
+        XCTAssertEqual(loadedMessage.sharedLocation?.latitude, 10)
+        XCTAssertEqual(loadedMessage.sharedLocation?.longitude, 10)
+        XCTAssertEqual(loadedMessage.sharedLocation?.createdByDeviceId, deviceId)
+    }
+
     func test_replies_linkedToParentMessage_onCreatingNewMessage() throws {
         // Create current user
         try database.createCurrentUser()
@@ -1961,6 +2032,7 @@ final class MessageDTO_Tests: XCTestCase {
                 skipPush: false,
                 skipEnrichUrl: false,
                 poll: nil,
+                location: nil,
                 restrictedVisibility: [],
                 extraData: [:]
             )
@@ -4190,6 +4262,216 @@ final class MessageDTO_Tests: XCTestCase {
         let quoted3Message = quoted2Message.quotedMessage
         // 3rd level of depth is not mapped
         XCTAssertNil(quoted3Message)
+    }
+
+    // MARK: - loadActiveLiveLocationMessages
+
+    func test_loadActiveLiveLocationMessages() throws {
+        // GIVEN
+        let currentUserId: UserId = .unique
+        let otherUserId: UserId = .unique
+        let channel1Id: ChannelId = .unique
+        let channel2Id: ChannelId = .unique
+
+        let currentUser: CurrentUserPayload = .dummy(userId: currentUserId)
+        let otherUser: UserPayload = .dummy(userId: otherUserId)
+        let channel1Payload: ChannelPayload = .dummy(channel: .dummy(cid: channel1Id))
+        let channel2Payload: ChannelPayload = .dummy(channel: .dummy(cid: channel2Id))
+
+        // Create messages with different combinations:
+        // - Current user's active live location in channel 1
+        // - Current user's inactive live location in channel 1
+        // - Current user's active live location in channel 2
+        // - Other user's active live location in channel 1
+        // - Current user's non-location message in channel 1
+        let messages: [(MessageId, UserId, ChannelId, Bool)] = [
+            (.unique, currentUserId, channel1Id, true), // Current user, channel 1, active
+            (.unique, currentUserId, channel1Id, false), // Current user, channel 1, inactive
+            (.unique, currentUserId, channel2Id, true), // Current user, channel 2, active
+            (.unique, otherUserId, channel1Id, true), // Other user, channel 1, active
+            (.unique, currentUserId, channel1Id, false) // Current user, channel 1, no location
+        ]
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveUser(payload: otherUser)
+            try session.saveChannel(payload: channel1Payload)
+            try session.saveChannel(payload: channel2Payload)
+
+            // Save all test messages
+            for (id, userId, channelId, isActive) in messages {
+                let messagePayload: MessagePayload = .dummy(
+                    messageId: id,
+                    authorUserId: userId,
+                    sharedLocation: .init(
+                        channelId: channelId.rawValue,
+                        messageId: id,
+                        userId: .unique,
+                        latitude: 50,
+                        longitude: 10,
+                        createdAt: .unique,
+                        updatedAt: .unique,
+                        endAt: isActive ? .distantFuture : .distantPast,
+                        createdByDeviceId: .unique
+                    )
+                )
+
+                try session.saveMessage(
+                    payload: messagePayload,
+                    for: channelId,
+                    syncOwnReactions: false,
+                    cache: nil
+                )
+            }
+        }
+
+        // Test 1: Load all active live location messages for current user
+        do {
+            let loadedMessages = try MessageDTO.loadCurrentUserActiveLiveLocationMessages(
+                currentUserId: currentUserId,
+                channelId: nil,
+                context: database.viewContext
+            )
+            XCTAssertEqual(loadedMessages.count, 2) // Should get both active messages from channel 1 and 2
+        }
+
+        // Test 2: Load active live location messages for current user in channel 1
+        do {
+            let loadedMessages = try MessageDTO.loadCurrentUserActiveLiveLocationMessages(
+                currentUserId: currentUserId,
+                channelId: channel1Id,
+                context: database.viewContext
+            )
+            XCTAssertEqual(loadedMessages.count, 1) // Should only get the active message from channel 1
+        }
+    }
+
+    func test_loadActiveLiveLocationMessages_excludesMessagesWithLocalState() throws {
+        // GIVEN
+        let currentUserId: UserId = .unique
+        let channelId: ChannelId = .unique
+
+        let currentUser: CurrentUserPayload = .dummy(userId: currentUserId)
+        let channelPayload: ChannelPayload = .dummy(channel: .dummy(cid: channelId))
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channelPayload)
+
+            // Create test messages with different local states:
+            // 1. Message with no local state (successfully sent) - should be included
+            let sentMessagePayload: MessagePayload = .dummy(
+                messageId: .unique,
+                authorUserId: currentUserId,
+                sharedLocation: .init(
+                    channelId: channelId.rawValue,
+                    messageId: .unique,
+                    userId: .unique,
+                    latitude: 50,
+                    longitude: 10,
+                    createdAt: .unique,
+                    updatedAt: .unique,
+                    endAt: .distantFuture, // Active location
+                    createdByDeviceId: .unique
+                )
+            )
+
+            let sentMessage = try session.saveMessage(
+                payload: sentMessagePayload,
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            // Successfully sent message has no local state
+            sentMessage.localMessageState = nil
+
+            // 2. Message with pendingSend state - should be excluded
+            let pendingSendMessagePayload: MessagePayload = .dummy(
+                messageId: .unique,
+                authorUserId: currentUserId,
+                sharedLocation: .init(
+                    channelId: channelId.rawValue,
+                    messageId: .unique,
+                    userId: .unique,
+                    latitude: 51,
+                    longitude: 11,
+                    createdAt: .unique,
+                    updatedAt: .unique,
+                    endAt: .distantFuture,
+                    createdByDeviceId: .unique
+                )
+            )
+
+            let pendingSendMessage = try session.saveMessage(
+                payload: pendingSendMessagePayload,
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            pendingSendMessage.localMessageState = .pendingSend
+
+            // 3. Message with sendingFailed state - should be excluded
+            let sendingFailedMessagePayload: MessagePayload = .dummy(
+                messageId: .unique,
+                authorUserId: currentUserId,
+                sharedLocation: .init(
+                    channelId: channelId.rawValue,
+                    messageId: .unique,
+                    userId: .unique,
+                    latitude: 52,
+                    longitude: 12,
+                    createdAt: .unique,
+                    updatedAt: .unique,
+                    endAt: .distantFuture,
+                    createdByDeviceId: .unique
+                )
+            )
+
+            let sendingFailedMessage = try session.saveMessage(
+                payload: sendingFailedMessagePayload,
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            sendingFailedMessage.localMessageState = .sendingFailed
+
+            // 4. Message with pendingSync state - should be excluded
+            let pendingSyncMessagePayload: MessagePayload = .dummy(
+                messageId: .unique,
+                authorUserId: currentUserId,
+                sharedLocation: .init(
+                    channelId: channelId.rawValue,
+                    messageId: .unique,
+                    userId: .unique,
+                    latitude: 53,
+                    longitude: 13,
+                    createdAt: .unique,
+                    updatedAt: .unique,
+                    endAt: .distantFuture,
+                    createdByDeviceId: .unique
+                )
+            )
+
+            let pendingSyncMessage = try session.saveMessage(
+                payload: pendingSyncMessagePayload,
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+            pendingSyncMessage.localMessageState = .pendingSync
+        }
+
+        // WHEN
+        let loadedMessages = try MessageDTO.loadCurrentUserActiveLiveLocationMessages(
+            currentUserId: currentUserId,
+            channelId: channelId,
+            context: database.viewContext
+        )
+
+        // THEN
+        // Only the successfully sent message (with no local state) should be loaded
+        XCTAssertEqual(loadedMessages.count, 1, "Only messages with no local state should be included")
+        XCTAssertNil(loadedMessages.first?.localMessageState, "Loaded message should have no local state")
     }
 
     func test_asModel_whenModelTransformerProvided_transformsValues() throws {

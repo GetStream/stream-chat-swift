@@ -1320,6 +1320,7 @@
       "automod" : "AI",
       "read_events" : true,
       "skip_last_msg_update_for_system_msgs": true,
+      "shared_locations": true,
       "commands" : [
         {
           "set" : "fun_set",
@@ -1589,6 +1590,19 @@
           "updated_at" : "2021-03-04T15:32:36.509639Z",
           "last_active" : "2021-03-04T15:32:36.509639Z",
           "name" : "Vishal"
+      }
+  ],
+  "active_live_locations": [
+      {
+          "channel_cid": "messaging:da57d796-c37f-4fdb-8340-05313e4f4dca",
+          "created_at": "2025-06-06T17:08:57.37039Z",
+          "created_by_device_id": "801f108a7521af9233f66e763339a5faff36e534ef24bce87154544ae1b4f7add0b077ce763b0449ba774b8e59e0362fee7fb1e5416081c835060aa013ea22bd04e7fd775cfbbe7b4fbff5be9dfde484",
+          "end_at": "2025-06-06T17:10:07.199Z",
+          "latitude": 15,
+          "longitude": 15,
+          "message_id": "9596f6bd-c322-407e-b9e1-8fd10ee824e2",
+          "updated_at": "2025-06-06T17:08:57.37039Z",
+          "user_id": "leia_organa"
       }
   ]
   }

@@ -53,7 +53,9 @@ extension ChatMessage {
             readBy: [],
             poll: nil,
             textUpdatedAt: nil,
-            draftReply: nil
+            draftReply: nil,
+            reminder: nil,
+            sharedLocation: nil
         )
     }
 }

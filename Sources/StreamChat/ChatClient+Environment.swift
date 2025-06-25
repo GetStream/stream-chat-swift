@@ -182,6 +182,13 @@ extension ChatClient {
             DraftMessagesRepository(database: $0, apiClient: $1)
         }
 
+        var remindersRepositoryBuilder: @Sendable(
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> RemindersRepository = {
+            RemindersRepository(database: $0, apiClient: $1)
+        }
+        
         var channelListUpdaterBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient

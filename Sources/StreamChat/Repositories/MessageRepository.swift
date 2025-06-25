@@ -355,7 +355,32 @@ class MessageRepository: @unchecked Sendable {
             }
         }
     }
-    
+
+    func getCurrentUserActiveLiveLocationMessages(
+        for channelId: ChannelId,
+        completion: @escaping (Result<[ChatMessage], Error>) -> Void
+    ) {
+        let context = database.backgroundReadOnlyContext
+        context.perform {
+            do {
+                guard let currentUserId = context.currentUser?.user.id else {
+                    return completion(.failure(ClientError.CurrentUserDoesNotExist()))
+                }
+                let messages = try MessageDTO.loadCurrentUserActiveLiveLocationMessages(
+                    currentUserId: currentUserId,
+                    channelId: channelId,
+                    context: context
+                )
+                .map {
+                    try $0.asModel()
+                }
+                completion(.success(messages))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+
     func updateMessage(withID id: MessageId, localState: LocalMessageState?, completion: @escaping @Sendable(Result<ChatMessage, Error>) -> Void) {
         database.write(converting: {
             guard let dto = $0.message(id: id) else { throw ClientError.MessageDoesNotExist(messageId: id) }

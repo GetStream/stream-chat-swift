@@ -2,26 +2,38 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import StreamChat
 import StreamChatUI
 import UIKit
 
-class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate {
+class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDelegate, MessageReminderListControllerDelegate {
+    private var locationProvider = LocationProvider.shared
+    
     let channelListVC: UIViewController
     let threadListVC: UIViewController
     let draftListVC: UIViewController
+    let reminderListVC: UIViewController
     let currentUserController: CurrentChatUserController
+    let allRemindersListController: MessageReminderListController
+
+    // Events controller for listening to chat events
+    private var eventsController: EventsController!
 
     init(
         channelListVC: UIViewController,
         threadListVC: UIViewController,
         draftListVC: UIViewController,
-        currentUserController: CurrentChatUserController
+        reminderListVC: UIViewController,
+        currentUserController: CurrentChatUserController,
+        allRemindersListController: MessageReminderListController
     ) {
         self.channelListVC = channelListVC
         self.threadListVC = threadListVC
         self.draftListVC = draftListVC
+        self.reminderListVC = reminderListVC
         self.currentUserController = currentUserController
+        self.allRemindersListController = allRemindersListController
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -50,7 +62,14 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         super.viewDidLoad()
 
         currentUserController.delegate = self
+        currentUserController.loadActiveLiveLocationMessages()
         unreadCount = currentUserController.unreadCount
+
+        // Update reminders badge if the feature is enabled.
+        if AppConfig.shared.demoAppConfig.isRemindersEnabled {
+            allRemindersListController.delegate = self
+            updateRemindersBadge()
+        }
 
         tabBar.backgroundColor = Appearance.default.colorPalette.background
         tabBar.isTranslucent = true
@@ -63,16 +82,74 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
         threadListVC.tabBarItem.image = UIImage(systemName: "text.bubble")
         threadListVC.tabBarItem.badgeColor = .red
 
+        locationProvider.didUpdateLocation = { [weak self] location in
+            let newLocation = LocationInfo(
+                latitude: location.coordinate.latitude,
+                longitude: location.coordinate.longitude
+            )
+            self?.currentUserController.updateLiveLocation(newLocation)
+        }
         draftListVC.tabBarItem.title = "Drafts"
         draftListVC.tabBarItem.image = UIImage(systemName: "bubble.and.pencil")
+        
+        reminderListVC.tabBarItem.title = "Reminders"
+        reminderListVC.tabBarItem.image = UIImage(systemName: "bell")
 
-        viewControllers = [channelListVC, threadListVC, draftListVC]
+        // Only show reminders tab if the feature is enabled
+        if AppConfig.shared.demoAppConfig.isRemindersEnabled {
+            viewControllers = [channelListVC, threadListVC, draftListVC, reminderListVC]
+        } else {
+            viewControllers = [channelListVC, threadListVC, draftListVC]
+        }
     }
-
+    
     func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {
         let unreadCount = didChangeCurrentUserUnreadCount
         self.unreadCount = unreadCount
         let totalUnreadBadge = unreadCount.channels + unreadCount.threads
         UIApplication.shared.applicationIconBadgeNumber = totalUnreadBadge
+    }
+
+    func currentUserControllerDidStartSharingLiveLocation(
+        _ controller: CurrentChatUserController
+    ) {
+        debugPrint("[Location] Started sharing live location.")
+        locationProvider.startMonitoringLocation()
+    }
+
+    func currentUserControllerDidStopSharingLiveLocation(_ controller: CurrentChatUserController) {
+        debugPrint("[Location] Stopped sharing live location.")
+        locationProvider.stopMonitoringLocation()
+    }
+
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeActiveLiveLocationMessages messages: [ChatMessage]
+    ) {
+        guard !messages.isEmpty else {
+            return
+        }
+
+        let locations: [String] = messages.compactMap {
+            guard let location = $0.sharedLocation else {
+                return nil
+            }
+
+            return "(lat:\(location.latitude), lon:\(location.longitude), endAt: \(location.endAt?.description ?? "nil"))"
+        }
+
+        debugPrint("[Location] Updated live locations to the server: \(locations)")
+    }
+    
+    func controller(
+        _ controller: MessageReminderListController,
+        didChangeReminders changes: [ListChange<MessageReminder>]
+    ) {
+        updateRemindersBadge()
+    }
+
+    private func updateRemindersBadge() {
+        let reminders = allRemindersListController.reminders
+        reminderListVC.tabBarItem.badgeValue = reminders.isEmpty ? nil : "\(reminders.count)"
     }
 }

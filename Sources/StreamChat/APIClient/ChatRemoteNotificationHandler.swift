@@ -9,11 +9,37 @@ import UserNotifications
 public class MessageNotificationContent {
     public let message: ChatMessage
     public let channel: ChatChannel?
+    public let type: PushNotificationType
 
-    init(message: ChatMessage, channel: ChatChannel?) {
+    init(
+        message: ChatMessage,
+        channel: ChatChannel?,
+        type: PushNotificationType
+    ) {
         self.message = message
         self.channel = channel
+        self.type = type
     }
+}
+
+public struct PushNotificationType: Equatable, Sendable {
+    public var name: String
+
+    init(name: String) {
+        self.name = name
+    }
+
+    init?(eventType: EventType) {
+        switch eventType {
+        case .messageNew, .messageReminderDue:
+            self.init(name: eventType.rawValue)
+        default:
+            return nil
+        }
+    }
+
+    public static let newMessage: PushNotificationType = .init(name: EventType.messageNew.rawValue)
+    public static let reminderDue: PushNotificationType = .init(name: EventType.messageReminderDue.rawValue)
 }
 
 public class UnknownNotificationContent {
@@ -98,20 +124,26 @@ public class ChatRemoteNotificationHandler: @unchecked Sendable {
             return completion(.unknown(UnknownNotificationContent(content: content)))
         }
 
-        if EventType(rawValue: type) == .messageNew {
-            guard let cid = dict["cid"], let id = dict["id"], let channelId = try? ChannelId(cid: cid) else {
-                completion(.unknown(UnknownNotificationContent(content: content)))
+        guard let pushType = PushNotificationType(eventType: EventType(rawValue: type)) else {
+            return completion(.unknown(UnknownNotificationContent(content: content)))
+        }
+
+        guard let cid = dict["cid"], let id = dict["id"], let channelId = try? ChannelId(cid: cid) else {
+            completion(.unknown(UnknownNotificationContent(content: content)))
+            return
+        }
+
+        getContent(cid: channelId, messageId: id) { message, channel in
+            guard let message = message else {
+                completion(.unknown(UnknownNotificationContent(content: self.content)))
                 return
             }
-            getContent(cid: channelId, messageId: id) { message, channel in
-                guard let message = message else {
-                    completion(.unknown(UnknownNotificationContent(content: self.content)))
-                    return
-                }
-                completion(.message(MessageNotificationContent(message: message, channel: channel)))
-            }
-        } else {
-            completion(.unknown(UnknownNotificationContent(content: content)))
+            let content = MessageNotificationContent(
+                message: message,
+                channel: channel,
+                type: pushType
+            )
+            completion(.message(content))
         }
     }
     

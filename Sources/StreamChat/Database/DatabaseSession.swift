@@ -104,6 +104,7 @@ protocol MessageDatabaseSession {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         poll: PollPayload?,
+        location: NewLocationInfo?,
         restrictedVisibility: [UserId],
         extraData: [String: RawJSON]
     ) throws -> MessageDTO
@@ -301,6 +302,7 @@ extension MessageDatabaseSession {
             skipPush: skipPush,
             skipEnrichUrl: skipEnrichUrl,
             poll: pollPayload,
+            location: nil,
             restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
@@ -542,6 +544,23 @@ protocol ThreadReadDatabaseSession {
     )
 }
 
+protocol ReminderDatabaseSession {
+    /// Saves a reminder with the provided payload.
+    /// - Parameters:
+    ///   - payload: The `ReminderPayload` containing the details of the reminder to be saved.
+    ///   - cache: An optional `PreWarmedCache` to optimize the save operation.
+    /// - Returns: A `MessageReminderDTO` representing the saved reminder.
+    /// - Throws: An error if the save operation fails.
+    @discardableResult
+    func saveReminder(
+        payload: ReminderPayload,
+        cache: PreWarmedCache?
+    ) throws -> MessageReminderDTO
+    
+    /// Deletes a reminder for the specified message ID.
+    func deleteReminder(messageId: MessageId)
+}
+
 protocol PollDatabaseSession {
     /// Saves a poll with the provided payload.
     /// - Parameters:
@@ -656,6 +675,12 @@ protocol PollDatabaseSession {
     func delete(pollVote: PollVoteDTO)
 }
 
+protocol LocationDatabaseSession {
+    /// Saves the provided location payload to the DB.
+    @discardableResult
+    func saveLocation(payload: SharedLocationPayload, cache: PreWarmedCache?) throws -> SharedLocationDTO
+}
+
 protocol DatabaseSession: UserDatabaseSession,
     CurrentUserDatabaseSession,
     MessageDatabaseSession,
@@ -669,6 +694,9 @@ protocol DatabaseSession: UserDatabaseSession,
     QueuedRequestDatabaseSession,
     ThreadDatabaseSession,
     ThreadReadDatabaseSession,
+    PollDatabaseSession,
+    ReminderDatabaseSession,
+    LocationDatabaseSession,
     PollDatabaseSession {}
 
 extension DatabaseSession {

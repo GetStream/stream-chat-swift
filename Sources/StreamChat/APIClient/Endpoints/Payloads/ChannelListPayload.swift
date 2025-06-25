@@ -47,6 +47,8 @@ struct ChannelPayload {
     let isHidden: Bool?
 
     let draft: DraftPayload?
+
+    let activeLiveLocations: [SharedLocationPayload]
 }
 
 extension ChannelPayload {
@@ -71,6 +73,7 @@ extension ChannelPayload: Decodable {
         case watcherCount = "watcher_count"
         case hidden
         case draft
+        case activeLiveLocations = "active_live_locations"
     }
 
     init(from decoder: Decoder) throws {
@@ -87,7 +90,8 @@ extension ChannelPayload: Decodable {
             pinnedMessages: try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .pinnedMessages),
             channelReads: try container.decodeArrayIfPresentIgnoringFailures([ChannelReadPayload].self, forKey: .channelReads) ?? [],
             isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden),
-            draft: try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
+            draft: try container.decodeIfPresent(DraftPayload.self, forKey: .draft),
+            activeLiveLocations: try container.decodeArrayIfPresentIgnoringFailures([SharedLocationPayload].self, forKey: .activeLiveLocations) ?? []
         )
     }
 }
@@ -232,13 +236,15 @@ public final class ChannelConfig: Codable, Sendable {
         case createdAt = "created_at"
         case updatedAt = "updated_at"
         case skipLastMsgAtUpdateForSystemMsg = "skip_last_msg_update_for_system_msgs"
+        case messageRemindersEnabled = "user_message_reminders"
+        case sharedLocationsEnabled = "shared_locations"
     }
 
     /// If users are allowed to add reactions to messages. Enabled by default.
     public let reactionsEnabled: Bool
     /// Controls if typing indicators are shown. Enabled by default.
     public let typingEventsEnabled: Bool
-    /// Controls whether the chat shows how far you’ve read. Enabled by default.
+    /// Controls whether the chat shows how far you've read. Enabled by default.
     public let readEventsEnabled: Bool
     /// Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
     public let connectEventsEnabled: Bool
@@ -268,6 +274,10 @@ public final class ChannelConfig: Codable, Sendable {
     public let pollsEnabled: Bool
     /// Determines if system messages should not update the last message at date.
     public let skipLastMsgAtUpdateForSystemMsg: Bool
+    /// Determines if user message reminders are enabled.
+    public let messageRemindersEnabled: Bool
+    /// Determines if shared locations are enabled.
+    public let sharedLocationsEnabled: Bool
 
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -293,6 +303,8 @@ public final class ChannelConfig: Codable, Sendable {
         updatedAt = try container.decode(Date.self, forKey: .updatedAt)
         pollsEnabled = try container.decodeIfPresent(Bool.self, forKey: .pollsEnabled) ?? false
         skipLastMsgAtUpdateForSystemMsg = try container.decodeIfPresent(Bool.self, forKey: .skipLastMsgAtUpdateForSystemMsg) ?? false
+        messageRemindersEnabled = try container.decodeIfPresent(Bool.self, forKey: .messageRemindersEnabled) ?? false
+        sharedLocationsEnabled = try container.decodeIfPresent(Bool.self, forKey: .sharedLocationsEnabled) ?? false
     }
 
     internal required init(
@@ -308,6 +320,8 @@ public final class ChannelConfig: Codable, Sendable {
         pollsEnabled: Bool = false,
         urlEnrichmentEnabled: Bool = false,
         skipLastMsgAtUpdateForSystemMsg: Bool = false,
+        messageRemindersEnabled: Bool = false,
+        sharedLocationsEnabled: Bool = false,
         messageRetention: String = "",
         maxMessageLength: Int = 0,
         commands: [Command] = [],
@@ -331,5 +345,7 @@ public final class ChannelConfig: Codable, Sendable {
         self.updatedAt = updatedAt
         self.pollsEnabled = pollsEnabled
         self.skipLastMsgAtUpdateForSystemMsg = skipLastMsgAtUpdateForSystemMsg
+        self.messageRemindersEnabled = messageRemindersEnabled
+        self.sharedLocationsEnabled = sharedLocationsEnabled
     }
 }

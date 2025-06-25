@@ -36,7 +36,10 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         _basePublishers = BasePublishers(controller: self)
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
-    
+
+    /// The observer for the active live location messages.
+    private var activeLiveLocationMessagesObserver: BackgroundListDatabaseObserver<ChatMessage, MessageDTO>?
+
     /// Used for observing the current user changes in a database.
     private lazy var currentUserObserver = createUserObserver()
         .onChange { [weak self] change in
@@ -46,6 +49,22 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
                     return
                 }
                 $0.currentUserController(self, didChangeCurrentUser: change)
+            }
+
+            /// Only when we have access to the currentUserId is when we should
+            /// create the observer for the active live location messages.
+            if self?.activeLiveLocationMessagesObserver == nil {
+                let observer = self?.createActiveLiveLocationMessagesObserver()
+                self?.activeLiveLocationMessagesObserver = observer
+                try? observer?.startObserving()
+                observer?.onDidChange = { [weak self, weak observer] _ in
+                    self?.delegateCallback { [weak self, weak observer] in
+                        guard let self = self else { return }
+                        let messages = Array(observer?.items ?? [])
+                        self.isSharingLiveLocation = !messages.isEmpty
+                        $0.currentUserController(self, didChangeActiveLiveLocationMessages: messages)
+                    }
+                }
             }
         }
         .onFieldChange(\.unreadCount) { [weak self] change in
@@ -57,7 +76,24 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
                 $0.currentUserController(self, didChangeCurrentUserUnreadCount: change.unreadCount)
             }
         }
-    
+
+    /// A flag to indicate whether the current user is sharing his live location.
+    private var isSharingLiveLocation = false {
+        didSet {
+            if isSharingLiveLocation == oldValue {
+                return
+            }
+            if isSharingLiveLocation {
+                delegate?.currentUserControllerDidStartSharingLiveLocation(self)
+            } else {
+                delegate?.currentUserControllerDidStopSharingLiveLocation(self)
+            }
+        }
+    }
+
+    /// The throttler for limiting the frequency of live location updates.
+    private var locationUpdatesThrottler = Throttler(interval: 3, broadcastLatestEvent: true)
+
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<CurrentChatUserControllerDelegate> = .init()
 
@@ -75,13 +111,22 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     public var unreadCount: UnreadCount {
         currentUser?.unreadCount ?? .noUnread
     }
-    
+
+    /// a delegate of this controller.
+    public var activeLiveLocationMessages: [ChatMessage] {
+        Array(activeLiveLocationMessagesObserver?.items ?? [])
+    }
+
     /// The worker used to update the current user.
     private let currentUserUpdater: CurrentUserUpdater
     
-    /// The worker used to update the current user member for a given channel.
     private let currentMemberUpdater: ChannelMemberUpdater
-    
+
+    /// The worker used to update messages. Used for updating live locations of messages.
+    private lazy var messageUpdater = createMessageUpdater()
+
+    // MARK: - Drafts Properties
+
     /// The query used for fetching the draft messages.
     private var draftListQuery: DraftListQuery {
         get { queue.sync { _draftListQuery } }
@@ -127,6 +172,8 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
         return Array(observer.items)
     }
 
+    // MARK: - Init
+
     /// Creates a new `CurrentUserControllerGeneric`.
     ///
     /// - Parameters:
@@ -145,9 +192,10 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
             client.apiClient
         )
         draftMessagesRepository = client.draftMessagesRepository
+        super.init()
     }
 
-    /// Synchronize local data with remote. Waits for the client to connect but doesn’t initiate the connection itself.
+    /// Synchronize local data with remote. Waits for the client to connect but doesn't initiate the connection itself.
     /// This is to make sure the fetched local data is up-to-date, since the current user data is updated through WebSocket events.
     ///
     /// - Parameter completion: Called when the controller has finished fetching the local data
@@ -280,6 +328,48 @@ public extension CurrentChatUserController {
         ) { result in
             self.callback {
                 completion?(result)
+            }
+        }
+    }
+
+    /// Loads all active live location messages for the current user.
+    /// This method is only needed to be called once to make sure all live location messages are tracked.
+    func loadActiveLiveLocationMessages(completion: (@Sendable(Result<[SharedLocation], Error>) -> Void)? = nil) {
+        currentUserUpdater.loadActiveLiveLocations { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
+    /// Updates the location of all the active live location messages
+    /// for the current user that were generated by the this device.
+    ///
+    /// The updates are throttled to avoid sending too many requests.
+    ///
+    /// - Parameter location: The new location to be updated.
+    func updateLiveLocation(_ location: LocationInfo) {
+        guard let messages = activeLiveLocationMessagesObserver?.items, !messages.isEmpty else {
+            return
+        }
+
+        locationUpdatesThrottler.execute { [weak self] in
+            for message in messages {
+                self?.messageUpdater.updateLiveLocation(
+                    messageId: message.id,
+                    locationInfo: location
+                ) { [weak self] result in
+                    guard let self = self else { return }
+                    guard let error = result.error else { return }
+                    guard let location = message.sharedLocation else { return }
+                    self.delegateCallback { delegate in
+                        delegate.currentUserController(
+                            self,
+                            didFailToUpdateLiveLocation: location,
+                            with: error
+                        )
+                    }
+                }
             }
         }
     }
@@ -475,6 +565,21 @@ extension CurrentChatUserController {
             _ fetchedResultsControllerType: NSFetchedResultsController<CurrentUserDTO>.Type
         ) -> BackgroundEntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> = BackgroundEntityDatabaseObserver.init
 
+        var currentUserActiveLiveLocationMessagesObserverBuilder: (
+            _ database: DatabaseContainer,
+            _ fetchRequest: NSFetchRequest<MessageDTO>,
+            _ itemCreator: @escaping (MessageDTO) throws -> ChatMessage,
+            _ fetchedResultsControllerType: NSFetchedResultsController<MessageDTO>.Type
+        ) -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO> = {
+            .init(
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
+                fetchedResultsControllerType: $3
+            )
+        }
+        
         var draftMessagesObserverBuilder: (
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<MessageDTO>,
@@ -512,6 +617,34 @@ private extension CurrentChatUserController {
         )
     }
 
+    func createActiveLiveLocationMessagesObserver() -> BackgroundListDatabaseObserver<ChatMessage, MessageDTO>? {
+        guard let currentUserId = client.currentUserId else {
+            return nil
+        }
+        return environment.currentUserActiveLiveLocationMessagesObserverBuilder(
+            client.databaseContainer,
+            MessageDTO.currentUserActiveLiveLocationMessagesFetchRequest(
+                currentUserId: currentUserId,
+                channelId: nil
+            ),
+            { try $0.asModel() },
+            NSFetchedResultsController<MessageDTO>.self
+        )
+    }
+    
+    private func createMemberUpdater() -> ChannelMemberUpdater {
+        .init(database: client.databaseContainer, apiClient: client.apiClient)
+    }
+
+    private func createMessageUpdater() -> MessageUpdater {
+        .init(
+            isLocalStorageEnabled: client.config.isLocalStorageEnabled,
+            messageRepository: client.messageRepository,
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
+    }
+
     @discardableResult
     private func createDraftMessagesObserver(query: DraftListQuery) -> BackgroundListDatabaseObserver<DraftMessage, MessageDTO> {
         let observer = environment.draftMessagesObserverBuilder(
@@ -536,10 +669,47 @@ private extension CurrentChatUserController {
 /// `CurrentChatUserController` uses this protocol to communicate changes to its delegate.
 public protocol CurrentChatUserControllerDelegate: AnyObject {
     /// The controller observed a change in the `UnreadCount`.
-    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount)
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUserUnreadCount: UnreadCount
+    )
 
     /// The controller observed a change in the `CurrentChatUser` entity.
-    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>)
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUser: EntityChange<CurrentChatUser>
+    )
+
+    /// The current user has currently active live location attachments.
+    func currentUserControllerDidStartSharingLiveLocation(
+        _ controller: CurrentChatUserController
+    )
+
+    /// The current user has no active live location attachments.
+    func currentUserControllerDidStopSharingLiveLocation(
+        _ controller: CurrentChatUserController
+    )
+
+    /// The current user active location messages have changed.
+    ///
+    /// Whenever there are changes of the current user's live location messages, this method is called.
+    ///
+    /// - If a new live location message is added, the array will contain the new message.
+    /// - If a live location message is removed, the array will not contain it anymore.
+    /// - If all live location messages are removed, the array will be empty.
+    ///
+    /// - Parameter messages: The currently active live location messages for the current user.
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeActiveLiveLocationMessages messages: [ChatMessage]
+    )
+
+    /// There was an error when updating one of the live location messages.
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didFailToUpdateLiveLocation location: SharedLocation,
+        with error: Error
+    )
 
     /// The controller observed a change in the draft messages.
     func currentUserController(
@@ -549,9 +719,34 @@ public protocol CurrentChatUserControllerDelegate: AnyObject {
 }
 
 public extension CurrentChatUserControllerDelegate {
-    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUserUnreadCount: UnreadCount) {}
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUserUnreadCount: UnreadCount
+    ) {}
 
-    func currentUserController(_ controller: CurrentChatUserController, didChangeCurrentUser: EntityChange<CurrentChatUser>) {}
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeCurrentUser: EntityChange<CurrentChatUser>
+    ) {}
+
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didChangeActiveLiveLocationMessages messages: [ChatMessage]
+    ) {}
+
+    func currentUserControllerDidStartSharingLiveLocation(
+        _ controller: CurrentChatUserController
+    ) {}
+
+    func currentUserControllerDidStopSharingLiveLocation(
+        _ controller: CurrentChatUserController
+    ) {}
+
+    func currentUserController(
+        _ controller: CurrentChatUserController,
+        didFailToUpdateLiveLocation location: SharedLocation,
+        with error: Error
+    ) {}
 
     func currentUserController(
         _ controller: CurrentChatUserController,

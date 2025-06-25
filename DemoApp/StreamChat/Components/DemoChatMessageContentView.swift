@@ -9,6 +9,33 @@ import UIKit
 final class DemoChatMessageContentView: ChatMessageContentView {
     var pinInfoLabel: UILabel?
 
+    lazy var saveForLaterView: UIView = {
+        HContainer(spacing: 4) {
+            saveForLaterIcon
+                .height(12)
+                .width(12)
+            saveForLaterLabel
+                .height(30)
+        }
+    }()
+
+    lazy var saveForLaterIcon: UIImageView = {
+        let imageView = UIImageView()
+        imageView.contentMode = .scaleAspectFit
+        imageView.image = UIImage(systemName: "bookmark.fill")
+        imageView.tintColor = appearance.colorPalette.accentPrimary
+        return imageView
+    }()
+
+    lazy var saveForLaterLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Saved for later"
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.font = appearance.fonts.footnote
+        label.textColor = appearance.colorPalette.accentPrimary
+        return label
+    }()
+
     override func layout(options: ChatMessageLayoutOptions) {
         super.layout(options: options)
 
@@ -18,6 +45,15 @@ final class DemoChatMessageContentView: ChatMessageContentView {
             pinInfoLabel?.font = appearance.fonts.footnote
             pinInfoLabel?.textColor = appearance.colorPalette.textLowEmphasis
             bubbleThreadFootnoteContainer.insertArrangedSubview(pinInfoLabel!, at: 0)
+        }
+
+        if options.contains(.saveForLaterInfo) {
+            backgroundColor = appearance.colorPalette.highlightedAccentBackground1
+            bubbleThreadFootnoteContainer.insertArrangedSubview(saveForLaterView, at: 0)
+            saveForLaterView.topAnchor.constraint(
+                equalTo: bubbleThreadFootnoteContainer.topAnchor,
+                constant: 4
+            ).isActive = true
         }
     }
 
