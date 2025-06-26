@@ -5793,7 +5793,6 @@
 				A3227E7D284A511200EBE6CC /* DemoAppConfiguration.swift */,
 				AD7110C32B3434F700AFFE28 /* StreamRuntimeCheck+StreamInternal.swift */,
 				792DDA5B256FB69E001DB91B /* SceneDelegate.swift */,
-				ADFCA5B62D1232A7000F515F /* LocationProvider.swift */,
 				8440861528FFE85F0027849C /* Shared */,
 				A3227E56284A47F700EBE6CC /* StreamChat */,
 				A3227ECA284A607D00EBE6CC /* Screens */,
@@ -8546,6 +8545,7 @@
 		AD053B9B2B33589C003612B6 /* LocationAttachment */ = {
 			isa = PBXGroup;
 			children = (
+				ADFCA5B62D1232A7000F515F /* LocationProvider.swift */,
 				ADCC17A62E0C70BC00510415 /* LocationSelectionViewController.swift */,
 				AD053B9E2B335929003612B6 /* LocationAttachmentViewInjector.swift */,
 				AD053BA62B33624C003612B6 /* LocationAttachmentViewDelegate.swift */,
