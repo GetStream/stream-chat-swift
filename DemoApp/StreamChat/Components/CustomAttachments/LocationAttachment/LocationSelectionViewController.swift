@@ -209,16 +209,14 @@ class LocationSelectionViewController: UIViewController, ThemeProvider {
                 let endDate = Date().addingTimeInterval(duration)
                 
                 self.channelController.startLiveLocationSharing(locationInfo, endDate: endDate) { [weak self] result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case .success:
-                            self?.dismiss(animated: true)
-                        case .failure(let error):
-                            self?.presentAlert(
-                                title: "Could not start live location sharing",
-                                message: error.localizedDescription
-                            )
-                        }
+                    switch result {
+                    case .success:
+                        self?.dismiss(animated: true)
+                    case .failure(let error):
+                        self?.presentAlert(
+                            title: "Could not start live location sharing",
+                            message: error.localizedDescription
+                        )
                     }
                 }
             }
