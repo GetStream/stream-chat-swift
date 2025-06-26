@@ -104,7 +104,7 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
 
         let tapGestureRecognizer = UITapGestureRecognizer(
             target: self,
-            action: #selector(handleTapOnWorkoutAttachment)
+            action: #selector(handleTapOnLocationAttachment)
         )
         imageView.addGestureRecognizer(tapGestureRecognizer)
     }
@@ -146,7 +146,7 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         ])
     }
 
-    @objc func handleTapOnWorkoutAttachment() {
+    @objc func handleTapOnLocationAttachment() {
         didTapOnLocation?()
     }
 
