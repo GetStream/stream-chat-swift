@@ -9,28 +9,35 @@ import UIKit
 
 class LocationAttachmentSnapshotView: _View, ThemeProvider {
     struct Content {
-        var coordinate: CLLocationCoordinate2D
-        var isLive: Bool
-        var isSharingLiveLocation: Bool
-        var message: ChatMessage?
-        var author: ChatUser?
+        var message: ChatMessage
+        var location: SharedLocation
 
         init(
-            coordinate: CLLocationCoordinate2D,
-            isLive: Bool,
-            isSharingLiveLocation: Bool,
-            message: ChatMessage?,
-            author: ChatUser?
+            message: ChatMessage,
+            location: SharedLocation
         ) {
-            self.coordinate = coordinate
-            self.isLive = isLive
-            self.isSharingLiveLocation = isSharingLiveLocation
             self.message = message
-            self.author = author
+            self.location = location
         }
 
         var isFromCurrentUser: Bool {
-            author?.id == StreamChatWrapper.shared.client?.currentUserId
+            message.isSentByCurrentUser
+        }
+
+        var isLive: Bool {
+            location.isLive
+        }
+
+        var isSharingLiveLocation: Bool {
+            location.isLiveSharingActive
+        }
+
+        var author: ChatUser {
+            message.author
+        }
+
+        var coordinate: CLLocationCoordinate2D {
+            .init(latitude: location.latitude, longitude: location.longitude)
         }
     }
 
@@ -159,21 +166,17 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
  
         avatarView.isHidden = true
 
-        if content.message?.isLocalOnly == true {
+        if content.message.isLocalOnly {
             stopButton.isHidden = true
             sharingStatusView.isHidden = true
         } else if content.isSharingLiveLocation && content.isFromCurrentUser {
             stopButton.isHidden = false
             sharingStatusView.isHidden = true
-            if let location = content.message?.sharedLocation {
-                sharingStatusView.updateStatus(location: location)
-            }
+            sharingStatusView.updateStatus(location: content.location)
         } else if content.isLive {
             stopButton.isHidden = true
             sharingStatusView.isHidden = false
-            if let location = content.message?.sharedLocation {
-                sharingStatusView.updateStatus(location: location)
-            }
+            sharingStatusView.updateStatus(location: content.location)
         } else {
             stopButton.isHidden = true
             sharingStatusView.isHidden = true
@@ -264,9 +267,9 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
     private func updateAnnotationView() {
         guard let content = self.content else { return }
         
-        if content.isLive, let user = content.author {
+        if content.isLive {
             avatarView.isHidden = false
-            avatarView.content = user
+            avatarView.content = content.author
         } else {
             avatarView.isHidden = true
         }
@@ -298,9 +301,6 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         guard let content = self.content else {
             return nil
         }
-        guard let messageId = content.message?.id else {
-            return nil
-        }
-        return NSString(string: "\(messageId)")
+        return NSString(string: "\(content.message.id)")
     }
 }
