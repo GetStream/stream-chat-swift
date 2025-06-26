@@ -51,6 +51,10 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         messageController.message?.sharedLocation?.isLive == true
     }
 
+    var isFromCurrentUser: Bool {
+        messageController.message?.isSentByCurrentUser == true
+    }
+
     private lazy var locationControlBanner: LocationControlBannerView = {
         let banner = LocationControlBannerView()
         banner.translatesAutoresizingMaskIntoConstraints = false
@@ -75,7 +79,7 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
             UserAnnotationView.self,
             forAnnotationViewWithReuseIdentifier: UserAnnotationView.reuseIdentifier
         )
-        mapView.showsUserLocation = false
+        mapView.showsUserLocation = !isFromCurrentUser
         mapView.delegate = self
 
         view.backgroundColor = appearance.colorPalette.background
