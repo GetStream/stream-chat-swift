@@ -36,13 +36,10 @@ class LocationAttachmentViewInjector: AttachmentViewInjector {
     override func contentViewDidUpdateContent() {
         super.contentViewDidUpdateContent()
 
-        if let location = contentView.content?.sharedLocation {
+        if let message = contentView.content, let location = message.sharedLocation {
             locationAttachmentView.content = .init(
-                coordinate: .init(latitude: location.latitude, longitude: location.longitude),
-                isLive: location.isLive,
-                isSharingLiveLocation: location.isLiveSharingActive,
-                message: contentView.content,
-                author: contentView.content?.author
+                message: message,
+                location: location
             )
         }
     }
