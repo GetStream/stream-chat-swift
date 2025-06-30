@@ -336,9 +336,21 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
             state: .remoteDataFetched
         )
 
-        vc.channel = .mock(cid: .unique, ownCapabilities: [])
+        vc.channel = .mock(cid: .unique, ownCapabilities: [.flagMessage])
 
         XCTAssertTrue(vc.messageActions.contains(where: { $0 is FlagActionItem }))
+    }
+
+    func test_messageActions_whenMessageIsSentByAnotherUser_whenNoCapability_doesNotContainFlagAction() {
+        chatMessageController.simulateInitial(
+            message: ChatMessage.mock(isSentByCurrentUser: false),
+            replies: [],
+            state: .remoteDataFetched
+        )
+
+        vc.channel = .mock(cid: .unique, ownCapabilities: [])
+
+        XCTAssertFalse(vc.messageActions.contains(where: { $0 is FlagActionItem }))
     }
 
     func test_messageActions_whenSendingFailed_thenContainsResendActionEditActionDeleteAction() {
