@@ -114,6 +114,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             let canUpdateOwnMessage = channel?.canUpdateOwnMessage ?? true
             let canDeleteAnyMessage = channel?.canDeleteAnyMessage ?? false
             let canDeleteOwnMessage = channel?.canDeleteOwnMessage ?? true
+            let canFlagMessage = channel?.canFlagMessage ?? false
             let isSentByCurrentUser = message.isSentByCurrentUser
 
             if canQuoteMessage {
@@ -152,7 +153,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 actions.append(deleteActionItem())
             }
 
-            if !isSentByCurrentUser {
+            if !isSentByCurrentUser && canFlagMessage {
                 actions.append(flagActionItem())
             }
 

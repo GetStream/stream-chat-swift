@@ -21,6 +21,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - `didChangeActiveLiveLocationMessages()`
     - `didFailToUpdateLiveLocation()`
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix message actions view with flag action when user has no capability [#3705](https://github.com/GetStream/stream-chat-swift/pull/3705)
 
 # [4.80.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.80.0)
 _June 17, 2025_
