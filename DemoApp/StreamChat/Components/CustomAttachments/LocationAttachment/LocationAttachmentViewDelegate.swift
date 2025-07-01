@@ -33,10 +33,12 @@ extension DemoChatMessageListVC: LocationAttachmentViewDelegate {
                 case .success:
                     break
                 case .failure(let error):
-                    self.presentAlert(
-                        title: "Could not stop sharing location",
-                        message: error.localizedDescription
-                    )
+                    Task { @MainActor in
+                        self.presentAlert(
+                            title: "Could not stop sharing location",
+                            message: error.localizedDescription
+                        )
+                    }
                 }
             }
     }

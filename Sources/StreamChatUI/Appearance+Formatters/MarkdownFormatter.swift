@@ -187,7 +187,7 @@ private extension UIFont {
 @available(iOS 15.0, *)
 private extension InlinePresentationIntent {
     /// An intent that represents bold with italic presentation.
-    static var extremelyStronglyEmphasized = InlinePresentationIntent(rawValue: 3)
+    static var extremelyStronglyEmphasized: InlinePresentationIntent { InlinePresentationIntent(rawValue: 3) }
 }
 
 /// Configures the font style properties for base Markdown elements

@@ -7,7 +7,7 @@ import StreamChat
 @testable import StreamChatUI
 import XCTest
 
-final class VideoAttachmentComposerPreview_Tests: XCTestCase {
+@MainActor final class VideoAttachmentComposerPreview_Tests: XCTestCase {
     func test_whenContentIsSet_videoLoadingComponentIsInvoked() throws {
         // Create mock components
         let components: Components = .mock

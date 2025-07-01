@@ -7,7 +7,7 @@
 @testable import StreamChatUI
 import XCTest
 
-final class ChatMessageListDateSeparatorView_Tests: XCTestCase {
+@MainActor final class ChatMessageListDateSeparatorView_Tests: XCTestCase {
     private lazy var subject: ChatMessageListDateSeparatorView! = .init()
 
     override func tearDownWithError() throws {

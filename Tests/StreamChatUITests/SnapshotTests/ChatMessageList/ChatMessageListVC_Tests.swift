@@ -7,7 +7,7 @@
 @testable import StreamChatUI
 import XCTest
 
-final class ChatMessageListVC_Tests: XCTestCase {
+@MainActor final class ChatMessageListVC_Tests: XCTestCase {
     var sut: ChatMessageListVC!
     var config: ChatClientConfig!
     var mockedListView: ChatMessageListView_Mock {
@@ -171,8 +171,8 @@ final class ChatMessageListVC_Tests: XCTestCase {
         sut.client = mockedClient
 
         // Make message without a CID
-        var messageDTOWithoutCid: MessageDTO!
-        var mockedMessageWithoutCid: ChatMessage!
+        nonisolated(unsafe) var messageDTOWithoutCid: MessageDTO!
+        nonisolated(unsafe) var mockedMessageWithoutCid: ChatMessage!
         try mockedClient.databaseContainer.writeSynchronously { session in
             let messagePayload = self.dummyMessagePayload(cid: nil)
             let channel = try session.saveChannel(payload: .dummy())
