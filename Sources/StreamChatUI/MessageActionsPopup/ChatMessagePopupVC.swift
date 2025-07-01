@@ -129,6 +129,7 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
     /// Add the scroll view to the view hierarchy.
     open func addScrollView() {
         view.addSubview(scrollView)
+        scrollView.contentInsetAdjustmentBehavior = .always
 
         NSLayoutConstraint.activate([
             scrollView.widthAnchor.pin(equalTo: view.widthAnchor),
