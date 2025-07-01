@@ -18,7 +18,7 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
         chatMessageController = .mock()
         vc = ChatMessageActionsVC()
         vc.messageController = chatMessageController
-        vc.channel = .mock(cid: .unique, config: .mock(), ownCapabilities: [.sendReply, .quoteMessage, .readEvents])
+        vc.channel = .mock(cid: .unique, config: .mock(), ownCapabilities: [.sendReply, .quoteMessage, .readEvents, .flagMessage])
 
         chatMessageController.simulateInitial(
             message: ChatMessage.mock(id: .unique, cid: .unique, text: "test", author: ChatUser.mock(id: .unique)),
