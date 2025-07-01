@@ -62,7 +62,7 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
 
         let vc = TestView()
         vc.messageController = chatMessageController
-        vc.channel = .mock(cid: .unique, config: .mock(), ownCapabilities: [.sendReply, .quoteMessage, .readEvents])
+        vc.channel = .mock(cid: .unique, config: .mock(), ownCapabilities: [.sendReply, .quoteMessage, .readEvents, .flagMessage])
         AssertSnapshot(vc.embedded())
     }
 
@@ -431,7 +431,8 @@ final class ChatMessageActionsVC_Tests: XCTestCase {
                 .sendReply,
                 .readEvents,
                 .updateAnyMessage,
-                .deleteAnyMessage
+                .deleteAnyMessage,
+                .flagMessage
             ]
         )
 

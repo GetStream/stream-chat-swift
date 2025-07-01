@@ -72,6 +72,10 @@ final class ChatMessagePopupVC_Tests: XCTestCase {
         vc.reactionsController = reactionsController
         actionsController = ChatMessageActionsVC()
         actionsController.messageController = chatMessageController
+        actionsController.channel = .mock(
+            cid: .unique,
+            ownCapabilities: [.flagMessage, .sendReply, .quoteMessage, .readEvents]
+        )
         actionsController.channelConfig = .mock()
         vc.actionsController = actionsController
     }
