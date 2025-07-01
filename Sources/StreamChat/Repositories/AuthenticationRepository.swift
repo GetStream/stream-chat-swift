@@ -284,7 +284,7 @@ class AuthenticationRepository: @unchecked Sendable {
     }
 
     func completeTokenCompletions(error: Error?) {
-        let completionBlocks: [(Error?) -> Void]? = tokenQueue.sync(flags: .barrier) {
+        let completionBlocks: [@Sendable(Error?) -> Void]? = tokenQueue.sync(flags: .barrier) {
             let completions = self._tokenRequestCompletions
             self._isGettingToken = false
             self._tokenRequestCompletions = []
