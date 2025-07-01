@@ -1,10 +1,10 @@
 {
   "channel": {
-    "id": "ec2807ff-5c60-41bc-a816-49578260471a",
+    "id": "be40d16e-3f73-42a4-b3b8-89ea9b63cae8",
     "type": "messaging",
-    "cid": "messaging:ec2807ff-5c60-41bc-a816-49578260471a",
-    "created_at": "2025-06-15T00:25:33.285826Z",
-    "updated_at": "2025-06-15T00:25:33.285826Z",
+    "cid": "messaging:be40d16e-3f73-42a4-b3b8-89ea9b63cae8",
+    "created_at": "2025-07-01T00:20:16.978774Z",
+    "updated_at": "2025-07-01T00:20:16.978775Z",
     "created_by": {
       "id": "luke_skywalker",
       "name": "Luke Skywalker",
@@ -16,12 +16,12 @@
       "updated_at": "2025-06-06T08:22:36.844279Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-06-15T00:25:32.362084978Z",
+      "last_active": "2025-07-01T00:20:15.634371491Z",
       "blocked_user_ids": [],
-      "team": "test",
-      "type": "team",
       "pando": "{\"speciality\":\"ios engineer\"}",
-      "birthland": "Tatooine"
+      "birthland": "Tatooine",
+      "team": "test",
+      "type": "team"
     },
     "frozen": false,
     "disabled": false,
@@ -45,6 +45,7 @@
       "reminders": false,
       "mark_messages_pending": false,
       "polls": true,
+      "user_message_reminders": false,
       "message_retention": "infinite",
       "max_message_length": 5000,
       "automod": "AI",
@@ -130,11 +131,11 @@
         "updated_at": "2025-04-23T13:02:29.974824Z",
         "banned": false,
         "online": false,
-        "last_active": "2025-04-23T13:03:51.783496Z",
+        "last_active": "2025-06-20T12:39:25.008673Z",
         "blocked_user_ids": [],
         "birthland": "Serenno"
       },
-      "last_read": "2025-06-15T00:25:33.34121176Z",
+      "last_read": "2025-07-01T00:20:17.028918007Z",
       "unread_messages": 0
     },
     {
@@ -146,14 +147,14 @@
         "role": "user",
         "teams": [],
         "created_at": "2024-04-04T09:18:11.060737Z",
-        "updated_at": "2025-04-24T15:07:52.050477Z",
+        "updated_at": "2025-06-25T17:36:30.350528Z",
         "banned": false,
         "online": false,
-        "last_active": "2025-06-10T06:55:59.491807Z",
+        "last_active": "2025-06-28T07:08:15.980949Z",
         "blocked_user_ids": [],
         "birthland": "Corellia"
       },
-      "last_read": "2025-06-15T00:25:33.34121176Z",
+      "last_read": "2025-07-01T00:20:17.028918007Z",
       "unread_messages": 0
     },
     {
@@ -168,14 +169,14 @@
         "updated_at": "2025-06-06T08:22:36.844279Z",
         "banned": false,
         "online": true,
-        "last_active": "2025-06-15T00:25:32.362084978Z",
+        "last_active": "2025-07-01T00:20:15.634371491Z",
         "blocked_user_ids": [],
         "birthland": "Tatooine",
         "team": "test",
         "type": "team",
         "pando": "{\"speciality\":\"ios engineer\"}"
       },
-      "last_read": "2025-06-15T00:25:33.34121176Z",
+      "last_read": "2025-07-01T00:20:17.028918007Z",
       "unread_messages": 0
     }
   ],
@@ -193,13 +194,13 @@
         "updated_at": "2025-04-23T13:02:29.974824Z",
         "banned": false,
         "online": false,
-        "last_active": "2025-04-23T13:03:51.783496Z",
+        "last_active": "2025-06-20T12:39:25.008673Z",
         "blocked_user_ids": [],
         "birthland": "Serenno"
       },
       "status": "member",
-      "created_at": "2025-06-15T00:25:33.304034Z",
-      "updated_at": "2025-06-15T00:25:33.304034Z",
+      "created_at": "2025-07-01T00:20:16.983861Z",
+      "updated_at": "2025-07-01T00:20:16.983861Z",
       "banned": false,
       "shadow_banned": false,
       "role": "member",
@@ -216,16 +217,16 @@
         "role": "user",
         "teams": [],
         "created_at": "2024-04-04T09:18:11.060737Z",
-        "updated_at": "2025-04-24T15:07:52.050477Z",
+        "updated_at": "2025-06-25T17:36:30.350528Z",
         "banned": false,
         "online": false,
-        "last_active": "2025-06-10T06:55:59.491807Z",
+        "last_active": "2025-06-28T07:08:15.980949Z",
         "blocked_user_ids": [],
         "birthland": "Corellia"
       },
       "status": "member",
-      "created_at": "2025-06-15T00:25:33.304034Z",
-      "updated_at": "2025-06-15T00:25:33.304034Z",
+      "created_at": "2025-07-01T00:20:16.983861Z",
+      "updated_at": "2025-07-01T00:20:16.983861Z",
       "banned": false,
       "shadow_banned": false,
       "role": "member",
@@ -245,16 +246,16 @@
         "updated_at": "2025-06-06T08:22:36.844279Z",
         "banned": false,
         "online": true,
-        "last_active": "2025-06-15T00:25:32.362084978Z",
+        "last_active": "2025-07-01T00:20:15.634371491Z",
         "blocked_user_ids": [],
-        "pando": "{\"speciality\":\"ios engineer\"}",
-        "birthland": "Tatooine",
         "team": "test",
-        "type": "team"
+        "type": "team",
+        "pando": "{\"speciality\":\"ios engineer\"}",
+        "birthland": "Tatooine"
       },
       "status": "member",
-      "created_at": "2025-06-15T00:25:33.304034Z",
-      "updated_at": "2025-06-15T00:25:33.304034Z",
+      "created_at": "2025-07-01T00:20:16.983861Z",
+      "updated_at": "2025-07-01T00:20:16.983861Z",
       "banned": false,
       "shadow_banned": false,
       "role": "owner",
@@ -274,7 +275,7 @@
       "updated_at": "2025-06-06T08:22:36.844279Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-06-15T00:25:32.362084978Z",
+      "last_active": "2025-07-01T00:20:15.634371491Z",
       "blocked_user_ids": [],
       "team": "test",
       "type": "team",
@@ -282,8 +283,8 @@
       "birthland": "Tatooine"
     },
     "status": "member",
-    "created_at": "2025-06-15T00:25:33.304034Z",
-    "updated_at": "2025-06-15T00:25:33.304034Z",
+    "created_at": "2025-07-01T00:20:16.983861Z",
+    "updated_at": "2025-07-01T00:20:16.983861Z",
     "banned": false,
     "shadow_banned": false,
     "role": "owner",
@@ -291,5 +292,5 @@
     "notifications_muted": false
   },
   "threads": [],
-  "duration": "145.45ms"
+  "duration": "315.12ms"
 }

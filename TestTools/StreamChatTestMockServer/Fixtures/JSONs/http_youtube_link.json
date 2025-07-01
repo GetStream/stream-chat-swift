@@ -1,6 +1,6 @@
 {
   "message": {
-    "id": "cc20202e-3ec1-4407-b35f-70981d74d2c4",
+    "id": "defa1985-9259-4768-90fb-34a52aa1289b",
     "text": "https://youtube.com/watch?v=xOX7MsrbaPY",
     "html": "<p><a href=\"https://youtube.com/watch?v=xOX7MsrbaPY\" rel=\"nofollow\">https://youtube.com/watch?v=xOX7MsrbaPY</a></p>\n",
     "type": "regular",
@@ -15,23 +15,21 @@
       "updated_at": "2025-06-06T08:22:36.844279Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-06-15T00:25:32.362084978Z",
+      "last_active": "2025-07-01T00:20:15.634371491Z",
       "blocked_user_ids": [],
-      "birthland": "Tatooine",
       "team": "test",
       "type": "team",
-      "pando": "{\"speciality\":\"ios engineer\"}"
+      "pando": "{\"speciality\":\"ios engineer\"}",
+      "birthland": "Tatooine"
     },
     "attachments": [
       {
         "type": "video",
-        "author_name": "YouTube",
+        "author_name": "Introducing MotionScape",
         "title": "Introducing MotionScape: Prototype SwiftUI Animation Easings",
         "title_link": "https://www.youtube.com/watch?v=xOX7MsrbaPY",
-        "text": "MotionScape is your SwiftUI animation's playground as a developer. You can see all animations and their parameters in effect with beautifully designed and handcrafted animation examples. Best of all: directly preview and export your settings as production-ready SwiftUI code that you can use in your apps as-is.\n\nSupercharge your apps with animations and get to know how to use them - with MotionScape!\n\nDownload MotionScape from the Mac AppStore: \nhttps://gstrm.io/motionscape-yt\n\nWebpage:\nhttps://getstream.github.io/motionscape-app/\n\nSwiftUI chat messaging:\nhttps://getstream.io/chat/sdk/swiftui/\n...",
-        "image_url": "https://i.ytimg.com/vi/xOX7MsrbaPY/mqdefault.jpg",
-        "thumb_url": "https://i.ytimg.com/vi/xOX7MsrbaPY/mqdefault.jpg",
-        "asset_url": "https://www.youtube.com/watch?v=xOX7MsrbaPY",
+        "text": "MotionScape is your SwiftUI animation's playground as a developer. You can see all animations and their parameters in effect with beautifully designed and handcrafted animation examples. Best of all: directly preview and export your settings as production-ready SwiftUI code that you can use in your apps as-is.  Supercharge your apps with animations and get to know how to use them - with MotionScape!  Download MotionScape from the Mac AppStore:  https://gstrm.io/motionscape-yt  Webpage: https://getstream.github.io/motionscape-app/  SwiftUI chat messaging: https://getstream.io/chat/sdk/swiftui/  Chapters: 00:00 Introducing MotionScape 00:31 Adjusting animation parameters 00:54 Supported interpolations 01:03 Previewing animation examples 01:50 Find and download MotionScape",
+        "asset_url": "https://www.youtube.com/embed/xOX7MsrbaPY",
         "og_scrape_url": "https://youtube.com/watch?v=xOX7MsrbaPY"
       }
     ],
@@ -41,9 +39,9 @@
     "reaction_scores": {},
     "reply_count": 0,
     "deleted_reply_count": 0,
-    "cid": "messaging:ec2807ff-5c60-41bc-a816-49578260471a",
-    "created_at": "2025-06-15T00:25:40.546889Z",
-    "updated_at": "2025-06-15T00:25:40.546889Z",
+    "cid": "messaging:be40d16e-3f73-42a4-b3b8-89ea9b63cae8",
+    "created_at": "2025-07-01T00:20:22.982725Z",
+    "updated_at": "2025-07-01T00:20:22.982725Z",
     "shadowed": false,
     "mentioned_users": [],
     "i18n": {
@@ -58,5 +56,5 @@
     "pin_expires": null,
     "restricted_visibility": []
   },
-  "duration": "560.98ms"
+  "duration": "247.37ms"
 }
