@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Add support for Push v3 notification types [#3708](https://github.com/GetStream/stream-chat-swift/pull/3708)
 - Add `ChatMessageController.partialUpdateMessage()` [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
 - Add Location Sharing Support [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
   - Add `ChatMessage.sharedLocation`
