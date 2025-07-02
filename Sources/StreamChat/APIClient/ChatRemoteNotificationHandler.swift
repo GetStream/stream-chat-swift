@@ -22,6 +22,7 @@ public class MessageNotificationContent {
     }
 }
 
+/// The type of push notifications supported by the Stream Chat SDK.
 public struct PushNotificationType: Equatable {
     public var name: String
 
@@ -31,15 +32,21 @@ public struct PushNotificationType: Equatable {
 
     init?(eventType: EventType) {
         switch eventType {
-        case .messageNew, .messageReminderDue:
+        case .messageNew, .messageReminderDue, .reactionNew, .messageUpdated:
             self.init(name: eventType.rawValue)
         default:
             return nil
         }
     }
 
+    /// When the push notification is for a new message.
     public static var newMessage: PushNotificationType = .init(name: EventType.messageNew.rawValue)
+    /// When the push notification is for a message reminder that is overdue.
     public static var reminderDue: PushNotificationType = .init(name: EventType.messageReminderDue.rawValue)
+    /// When the push notification is for a message that has been updated.
+    public static var updatedMessage: PushNotificationType = .init(name: EventType.messageUpdated.rawValue)
+    /// When the push notification is for a new reaction.
+    public static var newReaction: PushNotificationType = .init(name: EventType.reactionNew.rawValue)
 }
 
 public class UnknownNotificationContent {
