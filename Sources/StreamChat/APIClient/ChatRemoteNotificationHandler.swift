@@ -26,27 +26,26 @@ public class MessageNotificationContent {
 public struct PushNotificationType: Equatable {
     public var name: String
 
-    init(name: String) {
-        self.name = name
-    }
-
-    init?(eventType: EventType) {
-        switch eventType {
-        case .messageNew, .messageReminderDue, .reactionNew, .messageUpdated:
-            self.init(name: eventType.rawValue)
-        default:
-            return nil
-        }
+    init(eventType: EventType) {
+        name = eventType.rawValue
     }
 
     /// When the push notification is for a new message.
-    public static var newMessage: PushNotificationType = .init(name: EventType.messageNew.rawValue)
+    public static var messageNew: PushNotificationType = .init(eventType: .messageNew)
     /// When the push notification is for a message reminder that is overdue.
-    public static var reminderDue: PushNotificationType = .init(name: EventType.messageReminderDue.rawValue)
+    public static var messageReminderDue: PushNotificationType = .init(eventType: .messageReminderDue)
     /// When the push notification is for a message that has been updated.
-    public static var updatedMessage: PushNotificationType = .init(name: EventType.messageUpdated.rawValue)
+    public static var messageUpdated: PushNotificationType = .init(eventType: .messageUpdated)
     /// When the push notification is for a new reaction.
-    public static var newReaction: PushNotificationType = .init(name: EventType.reactionNew.rawValue)
+    public static var reactionNew: PushNotificationType = .init(eventType: .reactionNew)
+
+    /// Checks if the push notification type is known and supported by the SDK.
+    var isKnown: Bool {
+        name == EventType.messageNew.rawValue ||
+            name == EventType.messageReminderDue.rawValue ||
+            name == EventType.messageUpdated.rawValue ||
+            name == EventType.reactionNew.rawValue
+    }
 }
 
 public class UnknownNotificationContent {
@@ -131,7 +130,8 @@ public class ChatRemoteNotificationHandler {
             return completion(.unknown(UnknownNotificationContent(content: content)))
         }
 
-        guard let pushType = PushNotificationType(eventType: EventType(rawValue: type)) else {
+        let pushType = PushNotificationType(eventType: EventType(rawValue: type))
+        guard pushType.isKnown else {
             return completion(.unknown(UnknownNotificationContent(content: content)))
         }
 
@@ -145,6 +145,7 @@ public class ChatRemoteNotificationHandler {
                 completion(.unknown(UnknownNotificationContent(content: self.content)))
                 return
             }
+            let pushType = PushNotificationType(eventType: EventType(rawValue: type))
             let content = MessageNotificationContent(
                 message: message,
                 channel: channel,

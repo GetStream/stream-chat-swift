@@ -256,10 +256,10 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         messageRepository.getMessageResult = .success(expectedMessage)
 
         let notificationTypes: [String: PushNotificationType] = [
-            "message.new": .newMessage,
-            "reaction.new": .newReaction,
-            "notification.reminder_due": .reminderDue,
-            "message.updated": .updatedMessage
+            "message.new": .messageNew,
+            "reaction.new": .reactionNew,
+            "notification.reminder_due": .messageReminderDue,
+            "message.updated": .messageUpdated
         ]
 
         var assertions: [Bool] = []
