@@ -246,13 +246,55 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         XCTAssertEqual(false, channelRepository.getChannel_store)
         XCTAssertEqual(false, messageRepository.getMessage_store)
     }
-    
+
+    func test_handleNotification_supportedPushNotificationTypes() throws {
+        let cid = ChannelId.unique
+        let expectation = XCTestExpectation()
+        let expectedChannel = ChatChannel.mock(cid: cid)
+        let expectedMessage = ChatMessage.mock()
+        channelRepository.getChannel_result = .success(expectedChannel)
+        messageRepository.getMessageResult = .success(expectedMessage)
+
+        let notificationTypes: [String: PushNotificationType] = [
+            "message.new": .messageNew,
+            "reaction.new": .reactionNew,
+            "notification.reminder_due": .messageReminderDue,
+            "message.updated": .messageUpdated
+        ]
+
+        var assertions: [Bool] = []
+        expectation.expectedFulfillmentCount = notificationTypes.count
+
+        for notificationType in notificationTypes {
+            let content = createNotificationContent(
+                cid: expectedChannel.cid,
+                messageId: expectedMessage.id,
+                type: notificationType.key
+            )
+            let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
+            let canHandle = handler.handleNotification { pushNotificationContent in
+                switch pushNotificationContent {
+                case .message(let messageNotificationContent):
+                    assertions.append(messageNotificationContent.type == notificationType.value)
+                case .unknown(let unknownNotificationContent):
+                    XCTFail(unknownNotificationContent.content.debugDescription)
+                }
+                expectation.fulfill()
+            }
+
+            XCTAssertEqual(true, canHandle)
+        }
+
+        wait(for: [expectation], timeout: defaultTimeout)
+        XCTAssertEqual(assertions, Array(repeatElement(true, count: notificationTypes.count)))
+    }
+
     // MARK: -
     
-    func createNotificationContent(cid: ChannelId, messageId: MessageId) -> UNNotificationContent {
+    func createNotificationContent(cid: ChannelId, messageId: MessageId, type: String = "message.new") -> UNNotificationContent {
         let content = UNMutableNotificationContent()
         let payload: [String: String] = [
-            "type": "message.new",
+            "type": type,
             "cid": cid.rawValue,
             "id": messageId
         ]

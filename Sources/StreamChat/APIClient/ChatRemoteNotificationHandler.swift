@@ -22,24 +22,22 @@ public class MessageNotificationContent {
     }
 }
 
+/// The type of push notifications supported by the Stream Chat SDK.
 public struct PushNotificationType: Equatable {
     public var name: String
 
-    init(name: String) {
-        self.name = name
+    init(eventType: EventType) {
+        name = eventType.rawValue
     }
 
-    init?(eventType: EventType) {
-        switch eventType {
-        case .messageNew, .messageReminderDue:
-            self.init(name: eventType.rawValue)
-        default:
-            return nil
-        }
-    }
-
-    public static var newMessage: PushNotificationType = .init(name: EventType.messageNew.rawValue)
-    public static var reminderDue: PushNotificationType = .init(name: EventType.messageReminderDue.rawValue)
+    /// When the push notification is for a new message.
+    public static var messageNew: PushNotificationType = .init(eventType: .messageNew)
+    /// When the push notification is for a message reminder that is overdue.
+    public static var messageReminderDue: PushNotificationType = .init(eventType: .messageReminderDue)
+    /// When the push notification is for a message that has been updated.
+    public static var messageUpdated: PushNotificationType = .init(eventType: .messageUpdated)
+    /// When the push notification is for a new reaction.
+    public static var reactionNew: PushNotificationType = .init(eventType: .reactionNew)
 }
 
 public class UnknownNotificationContent {
@@ -120,24 +118,23 @@ public class ChatRemoteNotificationHandler {
             return completion(.unknown(UnknownNotificationContent(content: content)))
         }
 
-        guard let type = dict["type"] else {
-            return completion(.unknown(UnknownNotificationContent(content: content)))
-        }
-
-        guard let pushType = PushNotificationType(eventType: EventType(rawValue: type)) else {
-            return completion(.unknown(UnknownNotificationContent(content: content)))
-        }
-
         guard let cid = dict["cid"], let id = dict["id"], let channelId = try? ChannelId(cid: cid) else {
             completion(.unknown(UnknownNotificationContent(content: content)))
             return
         }
+
+        guard let type = dict["type"] else {
+            return completion(.unknown(UnknownNotificationContent(content: content)))
+        }
+        
+        let pushType = PushNotificationType(eventType: EventType(rawValue: type))
 
         getContent(cid: channelId, messageId: id) { message, channel in
             guard let message = message else {
                 completion(.unknown(UnknownNotificationContent(content: self.content)))
                 return
             }
+            let pushType = PushNotificationType(eventType: EventType(rawValue: type))
             let content = MessageNotificationContent(
                 message: message,
                 channel: channel,
