@@ -38,14 +38,6 @@ public struct PushNotificationType: Equatable {
     public static var messageUpdated: PushNotificationType = .init(eventType: .messageUpdated)
     /// When the push notification is for a new reaction.
     public static var reactionNew: PushNotificationType = .init(eventType: .reactionNew)
-
-    /// Checks if the push notification type is known and supported by the SDK.
-    var isKnown: Bool {
-        name == EventType.messageNew.rawValue ||
-            name == EventType.messageReminderDue.rawValue ||
-            name == EventType.messageUpdated.rawValue ||
-            name == EventType.reactionNew.rawValue
-    }
 }
 
 public class UnknownNotificationContent {
@@ -126,19 +118,16 @@ public class ChatRemoteNotificationHandler {
             return completion(.unknown(UnknownNotificationContent(content: content)))
         }
 
-        guard let type = dict["type"] else {
-            return completion(.unknown(UnknownNotificationContent(content: content)))
-        }
-
-        let pushType = PushNotificationType(eventType: EventType(rawValue: type))
-        guard pushType.isKnown else {
-            return completion(.unknown(UnknownNotificationContent(content: content)))
-        }
-
         guard let cid = dict["cid"], let id = dict["id"], let channelId = try? ChannelId(cid: cid) else {
             completion(.unknown(UnknownNotificationContent(content: content)))
             return
         }
+
+        guard let type = dict["type"] else {
+            return completion(.unknown(UnknownNotificationContent(content: content)))
+        }
+        
+        let pushType = PushNotificationType(eventType: EventType(rawValue: type))
 
         getContent(cid: channelId, messageId: id) { message, channel in
             guard let message = message else {

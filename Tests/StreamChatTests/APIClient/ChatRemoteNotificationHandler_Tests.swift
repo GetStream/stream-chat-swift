@@ -247,7 +247,7 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         XCTAssertEqual(false, messageRepository.getMessage_store)
     }
 
-    func test_handleNotification_whenPushNotificationTypeIsRecognizable() throws {
+    func test_handleNotification_supportedPushNotificationTypes() throws {
         let cid = ChannelId.unique
         let expectation = XCTestExpectation()
         let expectedChannel = ChatChannel.mock(cid: cid)
@@ -287,33 +287,6 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
 
         wait(for: [expectation], timeout: defaultTimeout)
         XCTAssertEqual(assertions, Array(repeatElement(true, count: notificationTypes.count)))
-    }
-
-    func test_handleNotification_whenPushNotificationTypeNotRecognizable() throws {
-        let cid = ChannelId.unique
-        let expectation = XCTestExpectation()
-        let expectedChannel = ChatChannel.mock(cid: cid)
-        let expectedMessage = ChatMessage.mock()
-        channelRepository.getChannel_result = .success(expectedChannel)
-        messageRepository.getMessageResult = .success(expectedMessage)
-
-        let content = createNotificationContent(
-            cid: expectedChannel.cid,
-            messageId: expectedMessage.id,
-            type: "unknown.new"
-        )
-        let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
-        let canHandle = handler.handleNotification { pushNotificationContent in
-            switch pushNotificationContent {
-            case .message:
-                XCTFail()
-            case .unknown:
-                expectation.fulfill()
-            }
-        }
-
-        XCTAssertEqual(true, canHandle)
-        wait(for: [expectation], timeout: defaultTimeout)
     }
 
     // MARK: -
