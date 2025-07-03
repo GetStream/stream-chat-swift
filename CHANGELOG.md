@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.81.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.81.0)
+_July 03, 2025_
+
 ## StreamChat
 ### ✅ Added
 - Add support for Push v3 notification types [#3708](https://github.com/GetStream/stream-chat-swift/pull/3708)
