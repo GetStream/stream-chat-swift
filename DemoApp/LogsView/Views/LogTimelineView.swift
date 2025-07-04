@@ -289,31 +289,48 @@ struct TimelineBarView: View {
     
     var body: some View {
         NavigationLink(destination: LogDetailView(log: log)) {
-            HStack(spacing: 2) {
-                VStack(spacing: 2) {
-                    // Timestamp
-                    Text(Self.timeFormatter.string(from: log.timestamp))
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                        .frame(width: 80, alignment: .leading)
-
-                    // Duration on the left
-                    Text(durationText)
-                        .font(.caption2.weight(.semibold))
-                        .foregroundColor(statusColor)
-                        .frame(width: 80, alignment: .leading)
+            VStack(alignment: .leading, spacing: 2) {
+                // First line of log description above the timeline
+                HStack {
+                    Spacer()
+                        .frame(width: 80) // Align with column
+                    
+                    HighlightedSearchText(
+                        text: firstLineText,
+                        searchText: searchText
+                    )
+                    .font(.caption2)
+                    .foregroundColor(statusColor)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                 }
                 
-                // Timeline area
-                ZStack(alignment: .leading) {
-                    Rectangle()
-                        .fill(Color.gray.opacity(0.1))
-                        .frame(width: timelineWidth, height: 30)
+                HStack(spacing: 2) {
+                    VStack(spacing: 2) {
+                        // Timestamp
+                        Text(Self.timeFormatter.string(from: log.timestamp))
+                            .font(.caption2)
+                            .foregroundColor(.secondary)
+                            .frame(width: 80, alignment: .leading)
 
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(statusColor)
-                        .frame(width: barWidth, height: 26)
-                        .offset(x: barStartPosition)
+                        // Duration on the left
+                        Text(durationText)
+                            .font(.caption2.weight(.semibold))
+                            .foregroundColor(statusColor)
+                            .frame(width: 80, alignment: .leading)
+                    }
+                    
+                    // Timeline area
+                    ZStack(alignment: .leading) {
+                        Rectangle()
+                            .fill(Color.gray.opacity(0.1))
+                            .frame(width: timelineWidth, height: 30)
+                        
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(statusColor)
+                            .frame(width: barWidth, height: 26)
+                            .offset(x: barStartPosition)
+                    }
                 }
             }
             .padding(.vertical, 1)
