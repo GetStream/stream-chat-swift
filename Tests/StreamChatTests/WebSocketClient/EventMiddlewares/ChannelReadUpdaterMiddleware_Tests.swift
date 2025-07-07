@@ -930,6 +930,51 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
     }
 
+    func test_messageReadEvent_whenThreadEvent_doesNotResetChannelReadUnreadCount() throws {
+        // Save a channel with a channel read
+        let channelId = ChannelId.unique
+        let payload = dummyPayload(with: channelId)
+
+        assert(payload.channelReads.count == 1)
+
+        // Save dummy payload to database
+        try database.writeSynchronously { (session) in
+            try session.saveChannel(payload: payload)
+        }
+
+        // Load the channel from the db and check the if fields are correct
+        var loadedChannel: ChatChannel? {
+            try? database.viewContext.channel(cid: channelId)?.asModel()
+        }
+
+        XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
+        XCTAssertEqual(loadedChannel?.reads.first?.lastReadAt, Date(timeIntervalSince1970: 1))
+
+        // Create a MessageReadEvent
+        // with a read date later than original read
+        let newReadDate = Date(timeIntervalSince1970: 2)
+        let threadEventPayload = EventPayload(
+            eventType: .messageRead,
+            cid: channelId,
+            user: dummyCurrentUser,
+            unreadCount: .init(channels: 0, messages: 0, threads: 5),
+            createdAt: newReadDate,
+            threadDetails: .success(.dummy(parentMessageId: .unique))
+        )
+        let messageReadEvent = try MessageReadEventDTO(from: threadEventPayload)
+
+        // Let the middleware handle the event
+        // Middleware should mutate the loadedChannel's read
+        let handledEvent = middleware.handle(event: messageReadEvent, session: database.viewContext)
+        XCTAssertEqual(handledEvent?.asEquatable, messageReadEvent.asEquatable)
+
+        // Assert that the read event entity is not updated
+        AssertAsync {
+            Assert.willBeEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
+            Assert.willBeEqual(loadedChannel?.reads.first?.lastReadAt, Date(timeIntervalSince1970: 1))
+        }
+    }
+
     func test_notificationMarkReadEvent_resetsChannelReadUnreadCount() throws {
         // Save a channel with a channel read
         let channelId = ChannelId.unique
@@ -997,6 +1042,53 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         AssertAsync {
             Assert.willBeEqual(loadedChannel?.reads.first?.unreadMessagesCount, 0)
             Assert.willBeEqual(loadedChannel?.reads.first?.lastReadAt, newReadDate)
+        }
+    }
+
+    func test_notificationMarkReadEvent_whenThreadEvent_doesNotResetChannelReadUnreadCount() throws {
+        // Save a channel with a channel read
+        let channelId = ChannelId.unique
+        let payload = dummyPayload(with: channelId)
+
+        assert(payload.channelReads.count == 1)
+
+        // Save dummy payload to database
+        try database.writeSynchronously { (session) in
+            try session.saveChannel(payload: payload)
+        }
+
+        // Load the channel from the db and check the if fields are correct
+        var loadedChannel: ChatChannel? {
+            try? database.viewContext.channel(cid: channelId)?.asModel()
+        }
+
+        XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
+        XCTAssertEqual(loadedChannel?.reads.first?.lastReadAt, Date(timeIntervalSince1970: 1))
+
+        // Create a NotificationMarkReadEvent
+        // with a read date later than original read
+        let newReadDate = Date(timeIntervalSince1970: 2)
+        let channelDetailPayload = ChannelDetailPayload.dummy(cid: channelId)
+        let threadEventPayload = EventPayload(
+            eventType: .notificationMarkRead,
+            cid: channelDetailPayload.cid,
+            user: dummyCurrentUser,
+            channel: channelDetailPayload,
+            unreadCount: .init(channels: 0, messages: 0, threads: 0),
+            createdAt: newReadDate,
+            threadDetails: .success(.dummy(parentMessageId: .unique))
+        )
+        let notificationMarkReadEvent = try NotificationMarkReadEventDTO(from: threadEventPayload)
+
+        // Let the middleware handle the event
+        let handledEvent = middleware.handle(event: notificationMarkReadEvent, session: database.viewContext)
+
+        XCTAssertEqual(handledEvent?.asEquatable, notificationMarkReadEvent.asEquatable)
+
+        // Assert that the read event entity is updated
+        AssertAsync {
+            Assert.willBeEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
+            Assert.willBeEqual(loadedChannel?.reads.first?.lastReadAt, Date(timeIntervalSince1970: 1))
         }
     }
 

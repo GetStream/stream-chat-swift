@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix channel unread count cleared when a thread is marked as read [#3710](https://github.com/GetStream/stream-chat-swift/pull/3710)
 
 # [4.81.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.81.0)
 _July 03, 2025_
