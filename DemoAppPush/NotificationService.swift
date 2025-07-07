@@ -96,7 +96,7 @@ class NotificationService: UNNotificationServiceExtension {
         let chatNotification = chatHandler.handleNotification { chatContent in
             switch chatContent {
             case let .message(messageNotification):
-                if messageNotification.type == .reminderDue {
+                if messageNotification.type == .messageReminderDue || messageNotification.type == .reactionNew {
                     return contentHandler(content)
                 }
 

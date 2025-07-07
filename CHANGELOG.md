@@ -3,8 +3,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.81.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.81.0)
+_July 03, 2025_
+
 ## StreamChat
 ### ✅ Added
+- Add support for Push v3 notification types [#3708](https://github.com/GetStream/stream-chat-swift/pull/3708)
 - Add `ChatMessageController.partialUpdateMessage()` [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
 - Add Location Sharing Support [#3531](https://github.com/GetStream/stream-chat-swift/pull/3531)
   - Add `ChatMessage.sharedLocation`
@@ -21,6 +27,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
     - `didChangeActiveLiveLocationMessages()`
     - `didFailToUpdateLiveLocation()`
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix message actions view with flag action when user has no capability [#3705](https://github.com/GetStream/stream-chat-swift/pull/3705)
+- Fix reaction picker in `ChatMessagePopupVC` below the notch in rare scenarios [#3707](https://github.com/GetStream/stream-chat-swift/pull/3707)
 
 # [4.80.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.80.0)
 _June 17, 2025_
