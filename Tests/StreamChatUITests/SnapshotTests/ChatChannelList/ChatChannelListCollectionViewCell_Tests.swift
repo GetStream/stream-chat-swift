@@ -7,7 +7,7 @@ import StreamChat
 @testable import StreamChatUI
 import XCTest
 
-final class ChatChannelListCollectionViewCell_Tests: XCTestCase {
+@MainActor final class ChatChannelListCollectionViewCell_Tests: XCTestCase {
     // defaultAppearance() is called multiple times so backgroundColor is changed by
     // ChatChannelListItemView and snapshot test is not possible.
     func test_isHighlighted() {

@@ -7,7 +7,7 @@
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatCommandSuggestionView_Tests: XCTestCase {
+@MainActor final class ChatCommandSuggestionView_Tests: XCTestCase {
     /// Default width for the cell.
     private let defaultCellWidth: CGFloat = 250
 

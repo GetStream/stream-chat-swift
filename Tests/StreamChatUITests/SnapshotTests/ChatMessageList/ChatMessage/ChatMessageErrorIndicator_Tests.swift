@@ -8,7 +8,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatMessageErrorIndicator_Tests: XCTestCase {
+@MainActor final class ChatMessageErrorIndicator_Tests: XCTestCase {
     func test_appearanceCustomization_usingAppearance() {
         // Create custom appearance
         var appearance = Appearance()

@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-public protocol ChatMessageActionsVCDelegate: AnyObject {
+@preconcurrency @MainActor public protocol ChatMessageActionsVCDelegate: AnyObject {
     func chatMessageActionsVC(
         _ vc: ChatMessageActionsVC,
         message: ChatMessage,
@@ -205,7 +205,9 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                     guard confirmed else { return }
 
                     self.messageController.deleteMessage { _ in
-                        self.delegate?.chatMessageActionsVCDidFinish(self)
+                        StreamConcurrency.onMain {
+                            self.delegate?.chatMessageActionsVCDidFinish(self)
+                        }
                     }
                 }
             },
@@ -219,7 +221,9 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
             action: { [weak self] _ in
                 guard let self = self else { return }
                 self.messageController.resendMessage { _ in
-                    self.delegate?.chatMessageActionsVCDidFinish(self)
+                    StreamConcurrency.onMain {
+                        self.delegate?.chatMessageActionsVCDidFinish(self)
+                    }
                 }
             },
             appearance: appearance
@@ -237,7 +241,11 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
 
                 self.messageController.client
                     .userController(userId: author.id)
-                    .mute { _ in self.delegate?.chatMessageActionsVCDidFinish(self) }
+                    .mute { _ in
+                        StreamConcurrency.onMain {
+                            self.delegate?.chatMessageActionsVCDidFinish(self)
+                        }
+                    }
             },
             appearance: appearance
         )
@@ -254,7 +262,11 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
 
                 self.messageController.client
                     .userController(userId: author.id)
-                    .unmute { _ in self.delegate?.chatMessageActionsVCDidFinish(self) }
+                    .unmute { _ in
+                        StreamConcurrency.onMain {
+                            self.delegate?.chatMessageActionsVCDidFinish(self)
+                        }
+                    }
             },
             appearance: appearance
         )
@@ -271,7 +283,11 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
 
                 self.messageController.client
                     .userController(userId: author.id)
-                    .block { _ in self.delegate?.chatMessageActionsVCDidFinish(self) }
+                    .block { _ in
+                        StreamConcurrency.onMain {
+                            self.delegate?.chatMessageActionsVCDidFinish(self)
+                        }
+                    }
             },
             appearance: appearance
         )
@@ -288,7 +304,11 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
 
                 self.messageController.client
                     .userController(userId: author.id)
-                    .unblock { _ in self.delegate?.chatMessageActionsVCDidFinish(self) }
+                    .unblock { _ in
+                        StreamConcurrency.onMain {
+                            self.delegate?.chatMessageActionsVCDidFinish(self)
+                        }
+                    }
             },
             appearance: appearance
         )
@@ -348,7 +368,9 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                     guard confirmed else { return }
 
                     self.messageController.flag { _ in
-                        self.delegate?.chatMessageActionsVCDidFinish(self)
+                        StreamConcurrency.onMain {
+                            self.delegate?.chatMessageActionsVCDidFinish(self)
+                        }
                     }
                 }
             },

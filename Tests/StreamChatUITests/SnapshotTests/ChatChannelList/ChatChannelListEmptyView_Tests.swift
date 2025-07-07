@@ -22,7 +22,7 @@ class ChatChannelListEmptyView_Tests: XCTestCase {
         AssertSnapshot(vc)
     }
 
-    func test_appearanceCustomization_usingAppearance() {
+    @MainActor func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
         appearance.colorPalette.subtitleText = .cyan
