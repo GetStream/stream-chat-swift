@@ -7,15 +7,10 @@ import StreamChatUI
 
 class DemoAttachmentViewCatalog: AttachmentViewCatalog {
     override class func attachmentViewInjectorClassFor(message: ChatMessage, components: Components) -> AttachmentViewInjector.Type? {
-        let hasMultipleAttachmentTypes = message.attachmentCounts.keys.count > 1
         let hasLocationAttachment = message.sharedLocation != nil
-        if AppConfig.shared.demoAppConfig.isLocationAttachmentsEnabled && hasLocationAttachment {
-            if hasMultipleAttachmentTypes {
-                return MixedAttachmentViewInjector.self
-            }
+        if hasLocationAttachment {
             return LocationAttachmentViewInjector.self
         }
-
         return super.attachmentViewInjectorClassFor(message: message, components: components)
     }
 }

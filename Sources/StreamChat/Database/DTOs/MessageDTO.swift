@@ -799,12 +799,15 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             message.poll = try? savePoll(payload: poll, cache: nil)
         }
 
-        if let location, let currentUser, let deviceId = currentUser.currentDevice?.id {
+        if let location {
+            guard let deviceId = currentUserDTO.currentDevice?.id else {
+                throw ClientError.CurrentUserDoesNotHaveDeviceRegistered()
+            }
             message.location = try? saveLocation(
                 payload: .init(
                     channelId: cid.rawValue,
                     messageId: id,
-                    userId: currentUser.user.id,
+                    userId: currentUserDTO.user.id,
                     latitude: location.latitude,
                     longitude: location.longitude,
                     createdAt: Date(),
@@ -1915,6 +1918,13 @@ extension ClientError {
         override var localizedDescription: String {
             "There is no `CurrentUserDTO` instance in the DB."
                 + "Make sure to call `client.currentUserController.reloadUserIfNeeded()`"
+        }
+    }
+
+    final class CurrentUserDoesNotHaveDeviceRegistered: ClientError, @unchecked Sendable {
+        override var localizedDescription: String {
+            "There is no `DeviceDTO` instance in the DB."
+                + "Make sure to call `client.currentUserController.addDevice()`"
         }
     }
 
