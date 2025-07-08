@@ -18,6 +18,8 @@ jobs:
     steps:
     - uses: actions/checkout@v4.1.1
 
+    - uses: ./.github/actions/ruby-cache
+
     - uses: actions/github-script@v6
       id: get_pr_number
       with:
