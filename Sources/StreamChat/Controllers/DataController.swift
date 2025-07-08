@@ -58,14 +58,14 @@ public class DataController: Controller, @unchecked Sendable {
     /// the `error` variable contains more details about the problem.
     ///
     // swiftlint:disable unavailable_function
-    public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
+    public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
         fatalError("`synchronize` method must be overriden by the subclass.")
     }
 
     // swiftlint:enable unavailable_function
 
     /// The queue which is used to perform callback calls. The default value is `.main`.
-    public var callbackQueue: DispatchQueue = .main
+    public let callbackQueue: DispatchQueue = .main
 
     /// The delegate use for controller state update callbacks.
     internal var stateMulticastDelegate: MulticastDelegate<DataControllerStateDelegate> = .init()
@@ -90,7 +90,7 @@ public extension DataControllerStateDelegate {
 /// A helper protocol allowing calling delegate using existing `callback` method.
 protocol DelegateCallable: Sendable {
     associatedtype Delegate
-    func callback(_ action: @escaping @Sendable() -> Void)
+    func callback(_ action: @escaping @MainActor @Sendable() -> Void)
 
     /// The multicast delegate wrapper for all delegates of the controller
     var multicastDelegate: MulticastDelegate<Delegate> { get }
@@ -98,7 +98,7 @@ protocol DelegateCallable: Sendable {
 
 extension DelegateCallable {
     /// A helper function to ensure the delegate callback is performed using the `callback` method.
-    func delegateCallback(_ callback: @escaping @Sendable(Delegate) -> Void) {
+    func delegateCallback(_ callback: @escaping @MainActor @Sendable(Delegate) -> Void) {
         self.callback {
             self.multicastDelegate.invoke(callback)
         }

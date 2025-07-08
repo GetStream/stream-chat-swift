@@ -128,12 +128,10 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         team: channelController.channel?.team
                     ) { [unowned self] error in
                         if let error = error {
-                            Task { @MainActor in
-                                self.rootViewController.presentAlert(
-                                    title: "Couldn't update name of channel \(cid)",
-                                    message: "\(error)"
-                                )
-                            }
+                            self.rootViewController.presentAlert(
+                                title: "Couldn't update name of channel \(cid)",
+                                message: "\(error)"
+                            )
                         }
                     }
                 }
@@ -154,12 +152,10 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         extraData: channelController.channel?.extraData ?? [:]
                     ) { [unowned self] error in
                         if let error = error {
-                            Task { @MainActor in
-                                self.rootViewController.presentAlert(
-                                    title: "Couldn't update image url of channel \(cid)",
-                                    message: "\(error)"
-                                )
-                            }
+                            self.rootViewController.presentAlert(
+                                title: "Couldn't update image url of channel \(cid)",
+                                message: "\(error)"
+                            )
                         }
                     }
                 }

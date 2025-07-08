@@ -250,7 +250,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         setRepliesObserver()
     }
 
-    override public func synchronize(_ completion: (@Sendable(Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         startObserversIfNeeded()
 
         messageUpdater.getMessage(cid: cid, messageId: messageId) { result in

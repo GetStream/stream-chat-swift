@@ -115,7 +115,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         )
     }
 
-    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
         startThreadListObserverIfNeeded()
         threadsRepository.loadThreads(
             query: query

@@ -131,7 +131,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         eventsController.delegate = self
     }
 
-    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
         startPollVotesListObserverIfNeeded()
 
         pollsRepository.queryPollVotes(query: query) { [weak self] result in

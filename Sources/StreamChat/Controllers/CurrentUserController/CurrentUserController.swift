@@ -200,7 +200,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     ///
     /// - Parameter completion: Called when the controller has finished fetching the local data
     ///   and the client connection is established.
-    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
         if case let .localDataFetchFailed(error) = state {

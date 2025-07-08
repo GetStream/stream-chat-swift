@@ -118,7 +118,7 @@ public class MessageReminderListController: DataController, DelegateCallable, Da
         super.init()
     }
 
-    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
         startMessageRemindersObserverIfNeeded()
 
         remindersRepository.loadReminders(query: query) { [weak self] result in

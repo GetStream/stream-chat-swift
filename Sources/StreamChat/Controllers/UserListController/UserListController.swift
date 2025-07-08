@@ -104,7 +104,7 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
         )
     }
 
-    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
         startUserListObserverIfNeeded()
 
         worker.update(userListQuery: query) { result in

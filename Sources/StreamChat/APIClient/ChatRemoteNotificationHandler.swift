@@ -126,8 +126,6 @@ public class ChatRemoteNotificationHandler: @unchecked Sendable {
         guard let type = dict["type"] else {
             return completion(.unknown(UnknownNotificationContent(content: content)))
         }
-        
-        let pushType = PushNotificationType(eventType: EventType(rawValue: type))
 
         getContent(cid: channelId, messageId: id) { message, channel in
             guard let message = message else {

@@ -90,7 +90,7 @@ private final class RepeatingTimer: RepeatingTimerControl {
 
     private let queue = DispatchQueue(label: "io.getstream.repeating-timer")
     nonisolated(unsafe) private var _state: State = .suspended
-    private let _timer: DispatchSourceTimer
+    nonisolated(unsafe) private let _timer: DispatchSourceTimer
 
     init(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) {
         _timer = DispatchSource.makeTimerSource(queue: queue)

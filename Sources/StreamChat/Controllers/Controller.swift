@@ -10,19 +10,14 @@ import Foundation
 ///
 public protocol Controller {
     /// The queue which is used to perform callback calls
-    var callbackQueue: DispatchQueue { get set }
+    var callbackQueue: DispatchQueue { get }
 }
 
 extension Controller {
     /// A helper function to ensure the callback is performed on the callback queue.
-    func callback(_ action: @escaping @Sendable() -> Void) {
-        // We perform the callback synchronously if we're on main & `callbackQueue` is on main, too.
-        if Thread.current.isMainThread && callbackQueue == .main {
+    func callback(_ action: @escaping @MainActor @Sendable() -> Void) {
+        Task { @MainActor in
             action()
-        } else {
-            callbackQueue.async {
-                action()
-            }
         }
     }
 }

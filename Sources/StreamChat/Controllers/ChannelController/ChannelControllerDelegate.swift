@@ -5,6 +5,7 @@
 import Foundation
 
 /// `ChatChannelController` uses this protocol to communicate changes to its delegate.
+@MainActor
 public protocol ChatChannelControllerDelegate: DataControllerStateDelegate {
     /// The controller observed a change in the `Channel` entity.
     func channelController(

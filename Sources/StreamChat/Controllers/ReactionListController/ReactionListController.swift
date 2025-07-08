@@ -110,7 +110,7 @@ public class ChatReactionListController: DataController, DelegateCallable, DataS
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
         startReactionListObserverIfNeeded()
 
         worker.loadReactions(query: query) { result in

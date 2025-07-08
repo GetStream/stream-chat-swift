@@ -148,7 +148,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         super.init()
     }
 
-    override public func synchronize(_ completion: (@Sendable(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
         channelListLinker.start(with: client.eventNotificationCenter)
         client.syncRepository.startTrackingChannelListController(self)
@@ -206,7 +206,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     // MARK: - Helpers
 
     private func updateChannelList(
-        _ completion: (@Sendable(_ error: Error?) -> Void)? = nil
+        _ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil
     ) {
         let limit = query.pagination.pageSize
         worker.update(
