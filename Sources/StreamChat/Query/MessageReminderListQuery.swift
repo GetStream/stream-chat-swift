@@ -74,7 +74,7 @@ public extension MessageReminderListSortingKey {
 
 /// A query is used for querying specific message reminders from backend.
 /// You can specify filter, sorting, and pagination options.
-public struct MessageReminderListQuery: Encodable {
+public struct MessageReminderListQuery: Encodable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case filter
         case sort

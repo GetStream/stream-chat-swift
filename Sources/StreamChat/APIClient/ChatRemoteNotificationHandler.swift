@@ -23,7 +23,7 @@ public class MessageNotificationContent {
 }
 
 /// The type of push notifications supported by the Stream Chat SDK.
-public struct PushNotificationType: Equatable {
+public struct PushNotificationType: Equatable, Sendable {
     public var name: String
 
     init(eventType: EventType) {
@@ -31,13 +31,13 @@ public struct PushNotificationType: Equatable {
     }
 
     /// When the push notification is for a new message.
-    public static var messageNew: PushNotificationType = .init(eventType: .messageNew)
+    public static let messageNew: PushNotificationType = .init(eventType: .messageNew)
     /// When the push notification is for a message reminder that is overdue.
-    public static var messageReminderDue: PushNotificationType = .init(eventType: .messageReminderDue)
+    public static let messageReminderDue: PushNotificationType = .init(eventType: .messageReminderDue)
     /// When the push notification is for a message that has been updated.
-    public static var messageUpdated: PushNotificationType = .init(eventType: .messageUpdated)
+    public static let messageUpdated: PushNotificationType = .init(eventType: .messageUpdated)
     /// When the push notification is for a new reaction.
-    public static var reactionNew: PushNotificationType = .init(eventType: .reactionNew)
+    public static let reactionNew: PushNotificationType = .init(eventType: .reactionNew)
 }
 
 public class UnknownNotificationContent {
@@ -90,9 +90,9 @@ public class ChatPushNotificationInfo {
     }
 }
 
-public class ChatRemoteNotificationHandler {
-    var client: ChatClient
-    var content: UNNotificationContent
+public class ChatRemoteNotificationHandler: @unchecked Sendable {
+    let client: ChatClient
+    let content: UNNotificationContent
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
     let channelRepository: ChannelRepository
     let messageRepository: MessageRepository
@@ -104,7 +104,7 @@ public class ChatRemoteNotificationHandler {
         messageRepository = client.messageRepository
     }
 
-    public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
+    public func handleNotification(completion: @escaping @Sendable(ChatPushNotificationContent) -> Void) -> Bool {
         guard chatCategoryIdentifiers.contains(content.categoryIdentifier) else {
             return false
         }
@@ -113,7 +113,7 @@ public class ChatRemoteNotificationHandler {
         return true
     }
 
-    private func getContent(completion: @escaping (ChatPushNotificationContent) -> Void) {
+    private func getContent(completion: @escaping @Sendable(ChatPushNotificationContent) -> Void) {
         guard let payload = content.userInfo["stream"], let dict = payload as? [String: String] else {
             return completion(.unknown(UnknownNotificationContent(content: content)))
         }
@@ -144,7 +144,7 @@ public class ChatRemoteNotificationHandler {
         }
     }
     
-    private func getContent(cid: ChannelId, messageId: MessageId, completion: @escaping (ChatMessage?, ChatChannel?) -> Void) {
+    private func getContent(cid: ChannelId, messageId: MessageId, completion: @escaping @Sendable(ChatMessage?, ChatChannel?) -> Void) {
         var query = ChannelQuery(cid: cid, pageSize: 10, membersLimit: 10)
         query.options = .state
         channelRepository.getChannel(for: query, store: false) { [messageRepository] channelResult in

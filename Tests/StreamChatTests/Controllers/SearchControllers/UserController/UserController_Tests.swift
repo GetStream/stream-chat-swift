@@ -72,7 +72,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_synchronize_changesState_and_callsCompletionOnCallbackQueue() {
         // Simulate `synchronize` call.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.synchronize { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -109,7 +109,7 @@ final class UserController_Tests: XCTestCase {
         env.userObserverSynchronizeError = observerError
 
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
+        nonisolated(unsafe) var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             synchronizeError = error
@@ -124,7 +124,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_synchronize_changesState_and_propagatesUpdaterErrorOnCallbackQueue() {
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
+        nonisolated(unsafe) var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             synchronizeError = error
@@ -185,7 +185,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_muteUser_propagatesError() {
         // Simulate `mute` call and catch the completion.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.mute { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -201,7 +201,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_muteUser_propagatesNilError() {
         // Simulate `mute` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.mute { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -374,7 +374,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_unmuteUser_propagatesError() {
         // Simulate `unmute` call and catch the completion.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.unmute { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -390,7 +390,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_unmuteUser_propagatesNilError() {
         // Simulate `unmute` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.unmute { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -429,7 +429,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_flagUser_propagatesError() {
         // Simulate `flag` call and catch the completion.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.flag { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -445,7 +445,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_flagUser_propagatesNilError() {
         // Simulate `flag` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.flag { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -498,7 +498,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_unflagUser_propagatesError() {
         // Simulate `unflag` call and catch the completion.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.unflag { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -514,7 +514,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_unflagUser_propagatesNilError() {
         // Simulate `unflag` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.unflag { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -567,7 +567,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_blockUser_propagatesError() {
         // Simulate `block` call and catch the completion.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.block { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -583,7 +583,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_blockUser_propagatesNilError() {
         // Simulate `block` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.block { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)
@@ -634,7 +634,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_unblockUser_propagatesError() {
         // Simulate `unblock` call and catch the completion.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         controller.unblock { [callbackQueueID] in
             AssertTestQueue(withId: callbackQueueID)
             completionError = $0
@@ -650,7 +650,7 @@ final class UserController_Tests: XCTestCase {
 
     func test_unblockUser_propagatesNilError() {
         // Simulate `unblock` call and catch the completion.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller.unblock { [callbackQueueID] error in
             // Assert callback queue is correct.
             AssertTestQueue(withId: callbackQueueID)

@@ -5,7 +5,7 @@
 import Foundation
 
 /// An enum describing possible types of a channel.
-public enum ChannelType: Codable, Hashable {
+public enum ChannelType: Codable, Hashable, Sendable {
     /// Sensible defaults in case you want to build livestream chat like Instagram Livestream or Periscope.
     case livestream
 

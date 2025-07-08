@@ -16,17 +16,12 @@ import Foundation
 ///     state of is changed to `sendingFailed`.
 ///     5. When connection errors happen, all the queued messages are sent to offline retry which retries them one by one.
 ///
-class MessageSender: Worker {
+class MessageSender: Worker, @unchecked Sendable {
     /// Because we need to be sure messages for every channel are sent in the correct order, we create a sending queue for
     /// every cid. These queues can send messages in parallel.
     @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue] = [:]
     private var continuations = [MessageId: CheckedContinuation<ChatMessage, Error>]()
-    
-    private lazy var observer = StateLayerDatabaseObserver<ListResult, MessageDTO, MessageDTO>(
-        context: self.database.backgroundReadOnlyContext,
-        fetchRequest: MessageDTO
-            .messagesPendingSendFetchRequest()
-    )
+    private let observer: StateLayerDatabaseObserver<ListResult, MessageDTO, MessageDTO>
 
     private let sendingDispatchQueue: DispatchQueue = .init(
         label: "co.getStream.ChatClient.MessageSenderQueue",
@@ -45,9 +40,12 @@ class MessageSender: Worker {
     ) {
         self.messageRepository = messageRepository
         self.eventsNotificationCenter = eventsNotificationCenter
+        observer = StateLayerDatabaseObserver<ListResult, MessageDTO, MessageDTO>(
+            context: database.backgroundReadOnlyContext,
+            fetchRequest: MessageDTO
+                .messagesPendingSendFetchRequest()
+        )
         super.init(database: database, apiClient: apiClient)
-        // We need to initialize the observer synchronously
-        _ = observer
 
         // The rest can be done on a background queue
         sendingDispatchQueue.async { [weak self] in
@@ -158,12 +156,17 @@ private protocol MessageSendingQueueDelegate: AnyObject {
 }
 
 /// This objects takes care of sending messages to the server in the order they have been enqueued.
-private class MessageSendingQueue {
+private class MessageSendingQueue: @unchecked Sendable {
     let messageRepository: MessageRepository
     let eventsNotificationCenter: EventNotificationCenter
-    let dispatchQueue: DispatchQueue
-    weak var delegate: MessageSendingQueueDelegate?
-
+    let sendingQueue: DispatchQueue
+    private let queue = DispatchQueue(label: "io.getstream.message-sending-queue", target: .global())
+    private weak var _delegate: MessageSendingQueueDelegate?
+    weak var delegate: MessageSendingQueueDelegate? {
+        get { queue.sync { _delegate } }
+        set { queue.sync { _delegate = newValue } }
+    }
+    
     init(
         messageRepository: MessageRepository,
         eventsNotificationCenter: EventNotificationCenter,
@@ -171,7 +174,7 @@ private class MessageSendingQueue {
     ) {
         self.messageRepository = messageRepository
         self.eventsNotificationCenter = eventsNotificationCenter
-        self.dispatchQueue = dispatchQueue
+        sendingQueue = dispatchQueue
     }
 
     /// We use Set because the message Id is the main identifier. Thanks to this, it's possible to schedule message for sending
@@ -206,7 +209,7 @@ private class MessageSendingQueue {
     
     /// Gets the oldest message from the queue and tries to send it.
     private func sendNextMessage() {
-        dispatchQueue.async { [weak self] in
+        sendingQueue.async { [weak self] in
             guard let self else { return }
             guard let request = self.sortedQueuedRequests.first else { return }
 

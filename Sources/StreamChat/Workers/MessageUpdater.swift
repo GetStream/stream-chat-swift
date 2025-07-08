@@ -6,7 +6,7 @@ import CoreData
 import Foundation
 
 /// The type provides the API for getting/editing/deleting a message
-class MessageUpdater: Worker {
+class MessageUpdater: Worker, @unchecked Sendable {
     private let repository: MessageRepository
     private let isLocalStorageEnabled: Bool
 
@@ -26,7 +26,7 @@ class MessageUpdater: Worker {
     ///   - cid: The channel identifier the message relates to.
     ///   - messageId: The message identifier.
     ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
-    func getMessage(cid: ChannelId, messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+    func getMessage(cid: ChannelId, messageId: MessageId, completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil) {
         repository.getMessage(cid: cid, messageId: messageId, store: true, completion: completion)
     }
 
@@ -43,17 +43,16 @@ class MessageUpdater: Worker {
     ///   - messageId: The message identifier.
     ///   - hard: A Boolean value to determine if the message will be delete permanently on the backend.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
-    func deleteMessage(messageId: MessageId, hard: Bool, completion: ((Error?) -> Void)? = nil) {
-        var shouldDeleteOnBackend = true
-
-        database.write({ session in
+    func deleteMessage(messageId: MessageId, hard: Bool, completion: (@Sendable(Error?) -> Void)? = nil) {
+        database.write(converting: { session in
+            var shouldDeleteOnBackend = true
             guard let messageDTO = session.message(id: messageId) else {
                 // Even though the message does not exist locally
                 // we don't throw any error because we still want
                 // to try to delete the message on the backend.
-                return
+                return shouldDeleteOnBackend
             }
-
+            
             // Hard Deleting is necessary for messages which are only available locally in the DB
             // or if we want to explicitly hard delete the message with hard == true.
             let shouldBeHardDeleted = hard || messageDTO.isLocalOnly
@@ -74,22 +73,27 @@ class MessageUpdater: Worker {
             } else {
                 messageDTO.localMessageState = .deleting
             }
-        }, completion: { [weak database, weak apiClient, weak repository] error in
-            guard shouldDeleteOnBackend, error == nil else {
+            return shouldDeleteOnBackend
+        }, completion: { [weak database, weak apiClient, weak repository] result in
+            switch result {
+            case .failure(let error):
                 completion?(error)
-                return
-            }
-
-            apiClient?.request(endpoint: .deleteMessage(messageId: messageId, hard: hard)) { result in
-                switch result {
-                case let .success(response):
-                    repository?.saveSuccessfullyDeletedMessage(message: response.message, completion: completion)
-                case let .failure(error):
-                    database?.write { session in
-                        let messageDTO = session.message(id: messageId)
-                        messageDTO?.localMessageState = .deletingFailed
-                        messageDTO?.isHardDeleted = false
-                        completion?(error)
+            case .success(let shouldDeleteOnBackend):
+                if !shouldDeleteOnBackend {
+                    completion?(nil)
+                    return
+                }
+                apiClient?.request(endpoint: .deleteMessage(messageId: messageId, hard: hard)) { [weak database, weak repository] result in
+                    switch result {
+                    case let .success(response):
+                        repository?.saveSuccessfullyDeletedMessage(message: response.message, completion: completion)
+                    case let .failure(error):
+                        database?.write { session in
+                            let messageDTO = session.message(id: messageId)
+                            messageDTO?.localMessageState = .deletingFailed
+                            messageDTO?.isHardDeleted = false
+                            completion?(error)
+                        }
                     }
                 }
             }
@@ -112,10 +116,9 @@ class MessageUpdater: Worker {
         attachments: [AnyAttachmentPayload] = [],
         restrictedVisibility: [UserId],
         extraData: [String: RawJSON]? = nil,
-        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil
     ) {
-        var message: ChatMessage?
-        database.write({ session in
+        database.write(converting: { session in
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
 
             func updateMessage(localState: LocalMessageState) throws {
@@ -156,8 +159,7 @@ class MessageUpdater: Worker {
 
             if messageDTO.isBounced {
                 try updateMessage(localState: .pendingSend)
-                message = try messageDTO.asModel()
-                return
+                return try messageDTO.asModel()
             }
 
             switch messageDTO.localMessageState {
@@ -171,15 +173,9 @@ class MessageUpdater: Worker {
                     reason: "message is in `\(messageDTO.localMessageState!)` state"
                 )
             }
-            message = try messageDTO.asModel()
-        }, completion: { error in
-            if let error {
-                completion?(.failure(error))
-            } else if let message {
-                completion?(.success(message))
-            } else {
-                completion?(.failure(ClientError.MessageDoesNotExist(messageId: messageId)))
-            }
+            return try messageDTO.asModel()
+        }, completion: {
+            completion?($0)
         })
     }
 
@@ -189,7 +185,7 @@ class MessageUpdater: Worker {
         attachments: [AnyAttachmentPayload]? = nil,
         extraData: [String: RawJSON]? = nil,
         unset: [String]? = nil,
-        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         let attachmentPayloads: [MessageAttachmentPayload]? = attachments?.compactMap { attachment in
             guard let payloadData = try? JSONEncoder.default.encode(attachment.payload) else {
@@ -289,10 +285,9 @@ class MessageUpdater: Worker {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         extraData: [String: RawJSON],
-        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil
     ) {
-        var newMessage: ChatMessage?
-        database.write({ (session) in
+        database.write(converting: { (session) in
             let newMessageDTO = try session.createNewMessage(
                 in: cid,
                 messageId: messageId,
@@ -318,22 +313,17 @@ class MessageUpdater: Worker {
 
             newMessageDTO.showInsideThread = true
             newMessageDTO.localMessageState = .pendingSend
-            newMessage = try newMessageDTO.asModel()
-
-        }) { error in
-            if let message = newMessage, error == nil {
-                completion?(.success(message))
-            } else {
-                completion?(.failure(error ?? ClientError.Unknown()))
-            }
-        }
+            return try newMessageDTO.asModel()
+        }, completion: {
+            completion?($0)
+        })
     }
 
     /// Updates live location sharing for the given message.
     func updateLiveLocation(
         messageId: MessageId,
         locationInfo: LocationInfo,
-        completion: @escaping ((Result<SharedLocation, Error>) -> Void)
+        completion: @escaping @Sendable(Result<SharedLocation, Error>) -> Void
     ) {
         database.write { [weak self] session in
             // Update the location locally first so that the observers
@@ -361,7 +351,7 @@ class MessageUpdater: Worker {
             )
 
             let endpoint = Endpoint<SharedLocationPayload>.updateLiveLocation(request: request)
-            self?.apiClient.request(endpoint: endpoint) { result in
+            self?.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case let .success(payload):
                     self?.database.write { session in
@@ -380,10 +370,10 @@ class MessageUpdater: Worker {
     /// Stops live location sharing for the given message.
     func stopLiveLocationSharing(
         messageId: MessageId,
-        completion: @escaping ((Result<SharedLocation, Error>) -> Void)
+        completion: @escaping @Sendable(Result<SharedLocation, Error>) -> Void
     ) {
         // Optimistic update
-        var previousEndAt: DBDate?
+        nonisolated(unsafe) var previousEndAt: DBDate?
         database.write { session in
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
             previousEndAt = messageDTO.location?.endAt
@@ -403,7 +393,7 @@ class MessageUpdater: Worker {
             let endpoint = Endpoint<SharedLocationPayload>.stopLiveLocation(
                 request: request
             )
-            self?.apiClient.request(endpoint: endpoint) { result in
+            self?.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case let .success(payload):
                     self?.database.write { session in
@@ -436,7 +426,7 @@ class MessageUpdater: Worker {
         messageId: MessageId,
         pagination: MessagesPagination,
         paginationStateHandler: MessagesPaginationStateHandling,
-        completion: ((Result<MessageRepliesPayload, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<MessageRepliesPayload, Error>) -> Void)? = nil
     ) {
         paginationStateHandler.begin(pagination: pagination)
 
@@ -483,7 +473,7 @@ class MessageUpdater: Worker {
         cid: ChannelId,
         messageId: MessageId,
         pagination: Pagination,
-        completion: ((Result<[ChatMessageReaction], Error>) -> Void)? = nil
+        completion: (@Sendable(Result<[ChatMessageReaction], Error>) -> Void)? = nil
     ) {
         let endpoint: Endpoint<MessageReactionsPayload> = .loadReactions(
             messageId: messageId,
@@ -493,15 +483,10 @@ class MessageUpdater: Worker {
         apiClient.request(endpoint: endpoint) { result in
             switch result {
             case let .success(payload):
-                var reactions: [ChatMessageReaction] = []
-                self.database.write({ session in
-                    reactions = try session.saveReactions(payload: payload, query: nil).map { try $0.asModel() }
-                }, completion: { error in
-                    if let error = error {
-                        completion?(.failure(error))
-                    } else {
-                        completion?(.success(reactions))
-                    }
+                self.database.write(converting: { session in
+                    try session.saveReactions(payload: payload, query: nil).map { try $0.asModel() }
+                }, completion: {
+                    completion?($0)
                 })
             case let .failure(error):
                 completion?(.failure(error))
@@ -526,7 +511,7 @@ class MessageUpdater: Worker {
         in cid: ChannelId,
         reason: String? = nil,
         extraData: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         fetchAndSaveMessageIfNeeded(messageId, cid: cid) { error in
             guard error == nil else {
@@ -573,7 +558,7 @@ class MessageUpdater: Worker {
         enforceUnique: Bool,
         extraData: [String: RawJSON],
         messageId: MessageId,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         let version = UUID().uuidString
 
@@ -600,7 +585,7 @@ class MessageUpdater: Worker {
                 log.warning("Failed to optimistically add the reaction to the database: \(error)")
             }
         } completion: { [weak self, weak repository] error in
-            self?.apiClient.request(endpoint: endpoint) { result in
+            self?.apiClient.request(endpoint: endpoint) { [weak self, weak repository] result in
                 guard let error = result.error else { return }
 
                 if self?.canKeepReactionState(for: error) == true { return }
@@ -619,27 +604,30 @@ class MessageUpdater: Worker {
     func deleteReaction(
         _ type: MessageReactionType,
         messageId: MessageId,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
-        var reactionScore: Int?
-        database.write { session in
+        database.write(converting: { session in
+            var reactionScore: Int?
             do {
-                guard let reaction = try session.removeReaction(from: messageId, type: type, on: nil) else { return }
-                reaction.localState = .pendingDelete
-                reactionScore = Int(reaction.score)
+                if let reaction = try session.removeReaction(from: messageId, type: type, on: nil) {
+                    reaction.localState = .pendingDelete
+                    reactionScore = Int(reaction.score)
+                }
             } catch {
                 log.warning("Failed to remove the reaction from to the database: \(error)")
             }
-        } completion: { [weak self, weak repository] error in
-            self?.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
+            return reactionScore
+        }, completion: { [weak self, weak repository] writeResult in
+            let reactionScore = writeResult.value ?? nil
+            self?.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { [weak self, weak repository] result in
                 guard let error = result.error else { return }
 
                 if self?.canKeepReactionState(for: error) == true { return }
 
                 repository?.undoReactionDeletion(on: messageId, type: type, score: reactionScore ?? 1)
             }
-            completion?(error)
-        }
+            completion?(writeResult.error)
+        })
     }
 
     private func canKeepReactionState(for error: Error) -> Bool {
@@ -650,7 +638,7 @@ class MessageUpdater: Worker {
     ///  - Parameters:
     ///   - messageId: The message identifier.
     ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
-    func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+    func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil) {
         pinLocalMessage(on: messageId, pinning: pinning) { [weak self] pinResult in
             switch pinResult {
             case .failure(let pinError):
@@ -661,7 +649,7 @@ class MessageUpdater: Worker {
                     request: .init(set: .init(pinned: true))
                 )
 
-                self?.apiClient.request(endpoint: endpoint) { result in
+                self?.apiClient.request(endpoint: endpoint) { [weak self] result in
                     switch result {
                     case .success:
                         completion?(.success(message))
@@ -679,7 +667,7 @@ class MessageUpdater: Worker {
     ///  - Parameters:
     ///   - messageId: The message identifier.
     ///   - completion: The completion handler with the result.
-    func unpinMessage(messageId: MessageId, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+    func unpinMessage(messageId: MessageId, completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil) {
         unpinLocalMessage(on: messageId) { [weak self] unpinResult, pinning in
             switch unpinResult {
             case .failure(let unpinError):
@@ -690,7 +678,7 @@ class MessageUpdater: Worker {
                     request: .init(set: .init(pinned: false))
                 )
 
-                self?.apiClient.request(endpoint: endpoint) { result in
+                self?.apiClient.request(endpoint: endpoint) { [weak self] result in
                     switch result {
                     case .success:
                         completion?(.success(message))
@@ -707,53 +695,46 @@ class MessageUpdater: Worker {
     private func pinLocalMessage(
         on messageId: MessageId,
         pinning: MessagePinning,
-        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil
     ) {
-        var message: ChatMessage!
-        database.write { session in
+        database.write(converting: { session in
             guard let messageDTO = session.message(id: messageId) else {
                 throw ClientError.MessageDoesNotExist(messageId: messageId)
             }
             try session.pin(message: messageDTO, pinning: pinning)
-            message = try messageDTO.asModel()
-        } completion: { error in
-            if let error = error {
-                log.error("Error pinning the message with id \(messageId): \(error)")
-                completion?(.failure(error))
-            } else {
-                completion?(.success(message))
-            }
-        }
+            return try messageDTO.asModel()
+        }, completion: {
+            completion?($0)
+        })
     }
 
     private func unpinLocalMessage(
         on messageId: MessageId,
-        completion: ((Result<ChatMessage, Error>, MessagePinning) -> Void)? = nil
+        completion: (@Sendable(Result<ChatMessage, Error>, MessagePinning) -> Void)? = nil
     ) {
-        var message: ChatMessage!
-        var pinning: MessagePinning = .noExpiration
-        database.write { session in
+        database.write(converting: { session in
             guard let messageDTO = session.message(id: messageId) else {
                 throw ClientError.MessageDoesNotExist(messageId: messageId)
             }
-            pinning = .init(expirationDate: messageDTO.pinExpires?.bridgeDate)
+            let pinning = MessagePinning(expirationDate: messageDTO.pinExpires?.bridgeDate)
             session.unpin(message: messageDTO)
-            message = try messageDTO.asModel()
-        } completion: { error in
-            if let error = error {
-                log.error("Error unpinning the message with id \(messageId): \(error)")
-                completion?(.failure(error), pinning)
-            } else {
-                completion?(.success(message), pinning)
+            let message = try messageDTO.asModel()
+            return (message: message, pinning: pinning)
+        }, completion: { result in
+            switch result {
+            case .success(let messageAndPinning):
+                completion?(.success(messageAndPinning.message), messageAndPinning.pinning)
+            case .failure(let error):
+                completion?(.failure(error), .noExpiration)
             }
-        }
+        })
     }
 
     static let minSignificantDownloadingProgressChange: Double = 0.01
 
     func downloadAttachment<Payload>(
         _ attachment: ChatMessageAttachment<Payload>,
-        completion: @escaping (Result<ChatMessageAttachment<Payload>, Error>) -> Void
+        completion: @escaping @Sendable(Result<ChatMessageAttachment<Payload>, Error>) -> Void
     ) where Payload: DownloadableAttachmentPayload {
         let attachmentId = attachment.id
         let localURL = URL.streamAttachmentLocalStorageURL(forRelativePath: attachment.relativeStoragePath)
@@ -786,7 +767,7 @@ class MessageUpdater: Worker {
         )
     }
 
-    func deleteLocalAttachmentDownload(for attachmentId: AttachmentId, completion: @escaping (Error?) -> Void) {
+    func deleteLocalAttachmentDownload(for attachmentId: AttachmentId, completion: @escaping @Sendable(Error?) -> Void) {
         database.write({ session in
             let dto = session.attachment(id: attachmentId)
             guard let attachment = dto?.asAnyModel() else {
@@ -805,10 +786,9 @@ class MessageUpdater: Worker {
         payloadType: Payload.Type,
         newState: LocalAttachmentDownloadState,
         localURL: URL,
-        completion: ((Result<ChatMessageAttachment<Payload>, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<ChatMessageAttachment<Payload>, Error>) -> Void)? = nil
     ) where Payload: DownloadableAttachmentPayload {
-        var model: ChatMessageAttachment<Payload>?
-        database.write({ session in
+        database.write(converting: { session in
             guard let attachmentDTO = session.attachment(id: attachmentId) else {
                 throw ClientError.AttachmentDoesNotExist(id: attachmentId)
             }
@@ -820,25 +800,20 @@ class MessageUpdater: Worker {
                     return attachmentDTO.localDownloadState != newState
                 }
             }()
-            guard needsUpdate else { return }
-            attachmentDTO.localDownloadState = newState
-            // Store only the relative path because sandboxed base URL can change between app launchs
-            attachmentDTO.localRelativePath = localURL.relativePath
-
-            guard completion != nil else { return }
+            if needsUpdate {
+                attachmentDTO.localDownloadState = newState
+                // Store only the relative path because sandboxed base URL can change between app launchs
+                attachmentDTO.localRelativePath = localURL.relativePath
+            }
             guard let attachmentAnyModel = attachmentDTO.asAnyModel() else {
                 throw ClientError.AttachmentDoesNotExist(id: attachmentId)
             }
             guard let result = attachmentAnyModel.attachment(payloadType: Payload.self) else {
                 throw ClientError.AttachmentDownloading(id: attachmentId, reason: "Invalid payload type: \(Payload.self)")
             }
-            model = result
-        }, completion: { error in
-            if let error {
-                completion?(.failure(error))
-            } else if let model {
-                completion?(.success(model))
-            }
+            return result
+        }, completion: {
+            completion?($0)
         })
     }
 
@@ -848,7 +823,7 @@ class MessageUpdater: Worker {
     ///   - completion: Called when the attachment database entity is updated. Called with `Error` if update fails.
     func restartFailedAttachmentUploading(
         with id: AttachmentId,
-        completion: @escaping (Error?) -> Void
+        completion: @escaping @Sendable(Error?) -> Void
     ) {
         database.write({
             guard let attachmentDTO = $0.attachment(id: id) else {
@@ -872,8 +847,7 @@ class MessageUpdater: Worker {
     ///   - completion: Called when the message database entity is updated. Called with `Error` if update fails.
     func resendMessage(
         with messageId: MessageId,
-        completion: @escaping (Error?
-        ) -> Void
+        completion: @escaping @Sendable(Error?) -> Void
     ) {
         database.write({
             let messageDTO = try $0.messageEditableByCurrentUser(messageId)
@@ -904,7 +878,7 @@ class MessageUpdater: Worker {
         cid: ChannelId,
         messageId: MessageId,
         action: AttachmentAction,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable(Error?) -> Void)? = nil
     ) {
         database.write({ session in
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
@@ -955,35 +929,29 @@ class MessageUpdater: Worker {
         })
     }
 
-    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: ((Result<MessageSearchResults, Error>) -> Void)? = nil) {
+    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: (@Sendable(Result<MessageSearchResults, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .search(query: query)) { result in
             switch result {
             case let .success(payload):
-                var messages = [ChatMessage]()
-                self.database.write { session in
+                self.database.write(converting: { session in
                     if case .replace = policy {
                         let dto = session.saveQuery(query: query)
                         dto.messages.removeAll()
                     }
 
                     let dtos = session.saveMessageSearch(payload: payload, for: query)
-                    if completion != nil {
-                        messages = try dtos.map { try $0.asModel() }
-                    }
-                } completion: { error in
-                    if let error = error {
-                        completion?(.failure(error))
-                    } else {
-                        completion?(.success(MessageSearchResults(payload: payload, models: messages)))
-                    }
-                }
+                    let messages = try dtos.map { try $0.asModel() }
+                    return MessageSearchResults(payload: payload, models: messages)
+                }, completion: {
+                    completion?($0)
+                })
             case let .failure(error):
                 completion?(.failure(error))
             }
         }
     }
 
-    func clearSearchResults(for query: MessageSearchQuery, completion: ((Error?) -> Void)? = nil) {
+    func clearSearchResults(for query: MessageSearchQuery, completion: (@Sendable(Error?) -> Void)? = nil) {
         database.write { session in
             let dto = session.saveQuery(query: query)
             dto.messages.removeAll()
@@ -991,13 +959,12 @@ class MessageUpdater: Worker {
             completion?(error)
         }
     }
-
-    func translate(messageId: MessageId, to language: TranslationLanguage, completion: ((Result<ChatMessage, Error>) -> Void)? = nil) {
+    
+    func translate(messageId: MessageId, to language: TranslationLanguage, completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .translate(messageId: messageId, to: language), completion: { result in
             switch result {
             case let .success(boxedMessage):
-                var translatedMessage: ChatMessage?
-                self.database.write { session in
+                self.database.write(converting: { session in
                     let messageDTO = try session.saveMessage(
                         payload: boxedMessage.message,
                         for: boxedMessage.message.cid,
@@ -1005,16 +972,10 @@ class MessageUpdater: Worker {
                         skipDraftUpdate: true,
                         cache: nil
                     )
-                    if completion != nil {
-                        translatedMessage = try messageDTO.asModel()
-                    }
-                } completion: { error in
-                    if let translatedMessage, error == nil {
-                        completion?(.success(translatedMessage))
-                    } else {
-                        completion?(.failure(error ?? ClientError.Unknown()))
-                    }
-                }
+                    return try messageDTO.asModel()
+                }, completion: {
+                    completion?($0)
+                })
             case let .failure(error):
                 completion?(.failure(error))
             }
@@ -1024,7 +985,7 @@ class MessageUpdater: Worker {
     func markThreadRead(
         cid: ChannelId,
         threadId: MessageId,
-        completion: @escaping ((Error?) -> Void)
+        completion: @escaping (@Sendable(Error?) -> Void)
     ) {
         apiClient.request(
             endpoint: .markThreadRead(cid: cid, threadId: threadId)
@@ -1036,7 +997,7 @@ class MessageUpdater: Worker {
     func markThreadUnread(
         cid: ChannelId,
         threadId: MessageId,
-        completion: @escaping ((Error?) -> Void)
+        completion: @escaping (@Sendable(Error?) -> Void)
     ) {
         apiClient.request(
             endpoint: .markThreadUnread(cid: cid, threadId: threadId)
@@ -1045,7 +1006,7 @@ class MessageUpdater: Worker {
         }
     }
 
-    func loadThread(query: ThreadQuery, completion: @escaping ((Result<ChatThread, Error>) -> Void)) {
+    func loadThread(query: ThreadQuery, completion: @escaping @Sendable(Result<ChatThread, Error>) -> Void) {
         apiClient.request(endpoint: .thread(query: query)) { result in
             switch result {
             case .success(let response):
@@ -1062,7 +1023,7 @@ class MessageUpdater: Worker {
     func updateThread(
         for messageId: MessageId,
         request: ThreadPartialUpdateRequest,
-        completion: @escaping ((Result<ChatThread, Error>) -> Void)
+        completion: @escaping @Sendable(Result<ChatThread, Error>) -> Void
     ) {
         apiClient.request(
             endpoint: .partialThreadUpdate(
@@ -1094,7 +1055,7 @@ extension MessageUpdater {
 // MARK: - Private
 
 private extension MessageUpdater {
-    func fetchAndSaveMessageIfNeeded(_ messageId: MessageId, cid: ChannelId, completion: @escaping (Error?) -> Void) {
+    func fetchAndSaveMessageIfNeeded(_ messageId: MessageId, cid: ChannelId, completion: @escaping @Sendable(Error?) -> Void) {
         checkMessageExistsLocally(messageId) { exists in
             exists ? completion(nil) : self.getMessage(
                 cid: cid,
@@ -1114,13 +1075,13 @@ private extension MessageUpdater {
 }
 
 extension ClientError {
-    final class MessageDoesNotExist: ClientError {
+    final class MessageDoesNotExist: ClientError, @unchecked Sendable {
         init(messageId: MessageId) {
             super.init("There is no `MessageDTO` instance in the DB matching id: \(messageId).")
         }
     }
 
-    final class MessageEditing: ClientError {
+    final class MessageEditing: ClientError, @unchecked Sendable {
         init(messageId: String, reason: String) {
             super.init("Message with id: \(messageId) can't be edited (\(reason)")
         }

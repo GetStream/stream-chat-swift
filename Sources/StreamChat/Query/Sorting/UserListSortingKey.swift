@@ -34,10 +34,10 @@ public enum UserListSortingKey: String, SortingKey {
 }
 
 extension UserListSortingKey {
-    static let defaultSortDescriptor: NSSortDescriptor = {
+    static var defaultSortDescriptor: NSSortDescriptor {
         let stringKeyPath: KeyPath<UserDTO, String> = \UserDTO.id
         return .init(keyPath: stringKeyPath, ascending: false)
-    }()
+    }
 
     func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
         .init(key: rawValue, ascending: isAscending)

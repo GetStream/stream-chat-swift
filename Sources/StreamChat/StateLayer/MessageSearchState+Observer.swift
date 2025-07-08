@@ -19,7 +19,7 @@ extension MessageSearchState {
         }
         
         struct Handlers {
-            let messagesDidChange: @MainActor(StreamCollection<ChatMessage>) async -> Void
+            let messagesDidChange: @Sendable @MainActor(StreamCollection<ChatMessage>) async -> Void
         }
         
         private var handlers: Handlers?

@@ -16,7 +16,7 @@ public struct UploadedFile: Decodable {
 }
 
 /// The CDN client is responsible to upload files to a CDN.
-public protocol CDNClient {
+public protocol CDNClient: Sendable {
     static var maxAttachmentSize: Int64 { get }
 
     /// Uploads attachment as a multipart/form-data and returns only the uploaded remote file.
@@ -26,8 +26,8 @@ public protocol CDNClient {
     ///   - completion: Returns the uploaded file's information.
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<URL, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<URL, Error>) -> Void
     )
 
     /// Uploads attachment as a multipart/form-data and returns the uploaded remote file and its thumbnail.
@@ -37,16 +37,16 @@ public protocol CDNClient {
     ///   - completion: Returns the uploaded file's information.
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
     )
 }
 
 public extension CDNClient {
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
     ) {
         uploadAttachment(attachment, progress: progress, completion: { (result: Result<URL, Error>) in
             switch result {
@@ -60,14 +60,15 @@ public extension CDNClient {
 }
 
 /// Default implementation of CDNClient that uses Stream CDN
-class StreamCDNClient: CDNClient {
+final class StreamCDNClient: CDNClient, Sendable {
     static var maxAttachmentSize: Int64 { 100 * 1024 * 1024 }
 
     private let decoder: RequestDecoder
     private let encoder: RequestEncoder
     private let session: URLSession
     /// Keeps track of uploading tasks progress
-    @Atomic private var taskProgressObservers: [Int: NSKeyValueObservation] = [:]
+    private nonisolated(unsafe) var _taskProgressObservers: [Int: NSKeyValueObservation] = [:]
+    private let queue = DispatchQueue(label: "io.getstream.stream-cdn-client", target: .global())
 
     init(
         encoder: RequestEncoder,
@@ -81,8 +82,8 @@ class StreamCDNClient: CDNClient {
 
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)? = nil,
-        completion: @escaping (Result<URL, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)? = nil,
+        completion: @escaping @Sendable(Result<URL, Error>) -> Void
     ) {
         uploadAttachment(attachment, progress: progress, completion: { (result: Result<UploadedFile, Error>) in
             switch result {
@@ -96,8 +97,8 @@ class StreamCDNClient: CDNClient {
 
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)? = nil,
-        completion: @escaping (Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)? = nil,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
     ) {
         guard
             let uploadingState = attachment.uploadingState,
@@ -148,13 +149,13 @@ class StreamCDNClient: CDNClient {
 
             if let progressListener = progress {
                 let taskID = task.taskIdentifier
-                self._taskProgressObservers.mutate { observers in
-                    observers[taskID] = task.progress.observe(\.fractionCompleted) { [weak self] progress, _ in
+                queue.async {
+                    self._taskProgressObservers[taskID] = task.progress.observe(\.fractionCompleted) { [weak self] progress, _ in
                         progressListener(progress.fractionCompleted)
                         if progress.isFinished || progress.isCancelled {
-                            self?._taskProgressObservers.mutate { observers in
-                                observers[taskID]?.invalidate()
-                                observers[taskID] = nil
+                            self?.queue.async { [weak self] in
+                                self?._taskProgressObservers[taskID]?.invalidate()
+                                self?._taskProgressObservers[taskID] = nil
                             }
                         }
                     }

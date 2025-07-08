@@ -5,13 +5,13 @@
 import CoreData
 
 /// A response containing a list of reminders and pagination information.
-struct ReminderListResponse {
+struct ReminderListResponse: Sendable {
     var reminders: [MessageReminder]
     var next: String?
 }
 
 /// Repository for handling message reminders.
-class RemindersRepository {
+class RemindersRepository: @unchecked Sendable {
     /// The database container for local storage operations.
     private let database: DatabaseContainer
     
@@ -33,7 +33,7 @@ class RemindersRepository {
     ///   - completion: Called when the operation completes.
     func loadReminders(
         query: MessageReminderListQuery,
-        completion: @escaping (Result<ReminderListResponse, Error>) -> Void
+        completion: @escaping @Sendable(Result<ReminderListResponse, Error>) -> Void
     ) {
         apiClient.request(endpoint: .queryReminders(query: query)) { [weak self] result in
             switch result {
@@ -69,7 +69,7 @@ class RemindersRepository {
         messageId: MessageId,
         cid: ChannelId,
         remindAt: Date?,
-        completion: @escaping ((Result<MessageReminder, Error>) -> Void)
+        completion: @escaping @Sendable(Result<MessageReminder, Error>) -> Void
     ) {
         let requestBody = ReminderRequestBody(remindAt: remindAt)
         let endpoint: Endpoint<ReminderResponsePayload> = .createReminder(
@@ -119,13 +119,13 @@ class RemindersRepository {
         messageId: MessageId,
         cid: ChannelId,
         remindAt: Date?,
-        completion: @escaping ((Result<MessageReminder, Error>) -> Void)
+        completion: @escaping @Sendable(Result<MessageReminder, Error>) -> Void
     ) {
         let requestBody = ReminderRequestBody(remindAt: remindAt)
         let endpoint: Endpoint<ReminderResponsePayload> = .updateReminder(messageId: messageId, request: requestBody)
         
         // Save current data for potential rollback
-        var originalRemindAt: Date?
+        nonisolated(unsafe) var originalRemindAt: Date?
         
         // First optimistically update the reminder locally
         database.write { session in
@@ -169,12 +169,12 @@ class RemindersRepository {
     func deleteReminder(
         messageId: MessageId,
         cid: ChannelId,
-        completion: @escaping ((Error?) -> Void)
+        completion: @escaping @Sendable(Error?) -> Void
     ) {
         let endpoint: Endpoint<EmptyResponse> = .deleteReminder(messageId: messageId)
         
         // Save data for potential rollback
-        var originalPayload: ReminderPayload?
+        nonisolated(unsafe) var originalPayload: ReminderPayload?
         
         // First optimistically delete the reminder locally
         database.write { session in

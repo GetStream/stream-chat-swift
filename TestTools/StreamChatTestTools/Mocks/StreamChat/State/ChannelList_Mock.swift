@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-public class ChannelList_Mock: ChannelList {
+public class ChannelList_Mock: ChannelList, @unchecked Sendable {
     
     public static func mock(
         query: ChannelListQuery? = nil,
@@ -19,7 +19,7 @@ public class ChannelList_Mock: ChannelList {
     
     override init(
         query: ChannelListQuery,
-        dynamicFilter: ((ChatChannel) -> Bool)? = nil,
+        dynamicFilter: (@Sendable(ChatChannel) -> Bool)? = nil,
         client: ChatClient,
         environment: ChannelList.Environment = .init()
     ) {
@@ -35,7 +35,7 @@ public class ChannelList_Mock: ChannelList {
         state.channels = StreamCollection(channels)
     }
     
-    public var loadNextChannelsIsCalled = false
+    @Atomic public var loadNextChannelsIsCalled = false
     public override func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
         loadNextChannelsIsCalled = true
         return await MainActor.run {

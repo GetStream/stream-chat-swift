@@ -421,7 +421,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser()
 
         // Simulate `deleteMessage(messageId:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         messageUpdater.deleteMessage(messageId: messageId, hard: false) {
             completionCalledError = $0
         }
@@ -460,7 +460,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser()
 
         // Simulate `deleteMessage(messageId:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         let expectation = self.expectation(description: "Delete message completion")
         messageUpdater.deleteMessage(messageId: messageId, hard: false) {
             completionCalledError = $0
@@ -822,7 +822,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         messageRepository.getMessageResult = .success(message)
         // Simulate `getMessage(cid:, messageId:)` call
-        var result: Result<ChatMessage, Error>!
+        nonisolated(unsafe) var result: Result<ChatMessage, Error>!
         let expectation = self.expectation(description: "getMessage completes")
         messageUpdater.getMessage(cid: cid, messageId: messageId) {
             result = $0
@@ -840,7 +840,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         messageRepository.getMessageResult = .failure(error)
         // Simulate `getMessage(cid:, messageId:)` call
-        var result: Result<ChatMessage, Error>!
+        nonisolated(unsafe) var result: Result<ChatMessage, Error>!
         let expectation = self.expectation(description: "getMessage completes")
         messageUpdater.getMessage(cid: cid, messageId: messageId) {
             result = $0
@@ -1009,7 +1009,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
     func test_loadReplies_propagatesRequestError() {
         // Simulate `loadReplies` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         messageUpdater.loadReplies(cid: .unique, messageId: .unique, pagination: .init(pageSize: 25), paginationStateHandler: paginationStateHandler) {
             completionCalledError = $0.error
         }
@@ -1036,7 +1036,7 @@ final class MessageUpdater_Tests: XCTestCase {
         database.write_errorResponse = testError
 
         // Simulate `loadReplies` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25), paginationStateHandler: paginationStateHandler) {
             completionCalledError = $0.error
         }
@@ -1060,7 +1060,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createChannel(cid: cid)
 
         // Simulate `loadReplies` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         messageUpdater.loadReplies(cid: cid, messageId: .unique, pagination: .init(pageSize: 25), paginationStateHandler: paginationStateHandler) { _ in
             completionCalled = true
         }
@@ -1142,7 +1142,7 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     func test_loadReactions_propagatesRequestError() {
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         messageUpdater.loadReactions(cid: .unique, messageId: .unique, pagination: .init(pageSize: 25)) {
             completionCalledError = $0.error
         }
@@ -1169,7 +1169,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let testError = TestError()
         database.write_errorResponse = testError
 
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         messageUpdater.loadReactions(cid: cid, messageId: .unique, pagination: .init(pageSize: 25)) {
             completionCalledError = $0.error
         }
@@ -1202,7 +1202,7 @@ final class MessageUpdater_Tests: XCTestCase {
             ]
         )
 
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         messageUpdater.loadReactions(cid: cid, messageId: messageId, pagination: .init(pageSize: 25)) { result in
             XCTAssertEqual(try? result.get().count, reactionsPayload.reactions.count)
             completionCalled = true
@@ -1280,7 +1280,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate `unflagMessage` call.
-        var unflagCompletionCalled = false
+        nonisolated(unsafe) var unflagCompletionCalled = false
         messageUpdater.flagMessage(false, with: messageId, in: cid) { error in
             XCTAssertNil(error)
             unflagCompletionCalled = true
@@ -1313,7 +1313,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageRepository.getMessageResult = .failure(networkError)
 
         // Simulate `flagMessage` call and catch the error.
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason) {
             completionCalledError = $0
         }
@@ -1331,7 +1331,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createMessage(id: messageId)
 
         // Simulate `flagMessage` call and catch the error.
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason) {
             completionCalledError = $0
         }
@@ -1362,7 +1362,7 @@ final class MessageUpdater_Tests: XCTestCase {
         database.write_errorResponse = databaseError
 
         // Simulate `flagMessage` call and catch the error.
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason) {
             completionCalledError = $0
         }
@@ -1392,7 +1392,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createMessage(id: messageId)
 
         // Simulate `flagMessage` call and catch the error.
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason) {
             completionCalledError = $0
         }
@@ -2496,8 +2496,8 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Simulate `dispatchEphemeralMessageAction`
-        var completionCalledError: Error?
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalled = false
         messageUpdater.dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
@@ -2558,8 +2558,8 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Simulate `dispatchEphemeralMessageAction`
-        var completionCalledError: Error?
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalled = false
         messageUpdater.dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
@@ -2702,7 +2702,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Simulate `dispatchEphemeralMessageAction`
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         messageUpdater.dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
@@ -2757,7 +2757,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createChannel(cid: cid)
 
         // Make translate call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         messageUpdater.translate(messageId: messageId, to: language) { result in
             completionCalled = true
             XCTAssertNil(result.error)
@@ -2784,7 +2784,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let language = TranslationLanguage.allCases.randomElement()!
 
         // Make translate call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         let testError = TestError()
         messageUpdater.translate(messageId: messageId, to: language) { result in
             completionCalled = true
@@ -2811,7 +2811,7 @@ final class MessageUpdater_Tests: XCTestCase {
         database.write_errorResponse = testError
 
         // Make translate call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         messageUpdater.translate(messageId: messageId, to: language) { result in
             completionCalled = true
             XCTAssertEqual(result.error as? TestError, testError)
@@ -3038,7 +3038,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let exp = expectation(description: "updatePartialMessage completes")
         
         // Call updatePartialMessage and store result
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         messageUpdater.updatePartialMessage(messageId: messageId) { result in
             if case let .failure(error) = result {
                 completionCalledError = error
@@ -3067,7 +3067,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let exp = expectation(description: "updatePartialMessage completes")
         
         // Call updatePartialMessage
-        var receivedMessage: ChatMessage?
+        nonisolated(unsafe) var receivedMessage: ChatMessage?
         messageUpdater.updatePartialMessage(
             messageId: messageId,
             text: text
@@ -3138,7 +3138,7 @@ final class MessageUpdater_Tests: XCTestCase {
         apiClient.test_mockResponseResult(.success(payload))
 
         let exp = expectation(description: "updateLiveLocation completes")
-        var result: Result<SharedLocation, Error>?
+        nonisolated(unsafe) var result: Result<SharedLocation, Error>?
         messageUpdater.updateLiveLocation(
             messageId: messageId,
             locationInfo: .init(latitude: updatedLatitude, longitude: updatedLongitude)
@@ -3274,7 +3274,7 @@ final class MessageUpdater_Tests: XCTestCase {
         apiClient.test_mockResponseResult(.success(payload))
 
         let exp = expectation(description: "stopLiveLocationSharing completes")
-        var result: Result<SharedLocation, Error>?
+        nonisolated(unsafe) var result: Result<SharedLocation, Error>?
         messageUpdater.stopLiveLocationSharing(messageId: messageId) {
             result = $0
             exp.fulfill()
@@ -3471,7 +3471,7 @@ extension MessageUpdater_Tests {
         let attachmentId: AttachmentId = .init(cid: cid, messageId: messageId, index: 0)
         try database.createChannel(cid: cid, withMessages: false)
         try database.createMessage(id: messageId, cid: cid)
-        var result: ChatMessageAttachment<PayloadData>!
+        nonisolated(unsafe) var result: ChatMessageAttachment<PayloadData>!
         try database.writeSynchronously { session in
             let anyPayload = AnyAttachmentPayload(type: attachment.type, payload: attachment.payload, localFileURL: nil)
             let dto = try session.createNewAttachment(attachment: anyPayload, id: attachmentId)

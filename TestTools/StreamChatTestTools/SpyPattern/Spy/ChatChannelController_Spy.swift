@@ -5,8 +5,8 @@
 import Foundation
 @testable import StreamChat
 
-final class ChatChannelController_Spy: ChatChannelController, Spy {
-    var watchActiveChannelError: Error?
+final class ChatChannelController_Spy: ChatChannelController, Spy, @unchecked Sendable {
+    @Atomic var watchActiveChannelError: Error?
     let spyState = SpyState()
 
     init(client: ChatClient_Mock) {
@@ -19,20 +19,20 @@ final class ChatChannelController_Spy: ChatChannelController, Spy {
     }
 }
 
-final class ChannelControllerSpy: ChatChannelController {
+final class ChannelControllerSpy: ChatChannelController, @unchecked Sendable {
     @Atomic var synchronize_called = false
 
-    var channel_simulated: ChatChannel?
+    @Atomic var channel_simulated: ChatChannel?
     override var channel: ChatChannel? {
         channel_simulated
     }
 
-    var messages_simulated: [ChatMessage]?
+    @Atomic var messages_simulated: [ChatMessage]?
     override var messages: LazyCachedMapCollection<ChatMessage> {
         messages_simulated.map { $0.lazyCachedMap { $0 } } ?? super.messages
     }
 
-    var state_simulated: DataController.State?
+    @Atomic var state_simulated: DataController.State?
     override var state: DataController.State {
         get { state_simulated ?? super.state }
         set { super.state = newValue }

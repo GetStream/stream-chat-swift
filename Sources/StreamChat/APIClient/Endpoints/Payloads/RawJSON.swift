@@ -7,7 +7,7 @@ import Foundation
 /// A `RawJSON` type. The type used for handling extra data.
 /// Used to store and operate objects of unknown structure that's not possible to decode.
 /// https://forums.swift.org/t/new-unevaluated-type-for-decoder-to-allow-later-re-encoding-of-data-with-unknown-structure/11117
-public indirect enum RawJSON: Codable, Hashable {
+public indirect enum RawJSON: Codable, Hashable, Sendable {
     case number(Double)
     case string(String)
     case bool(Bool)

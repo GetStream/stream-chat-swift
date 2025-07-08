@@ -234,7 +234,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         messageId: MessageId,
         userId: UserId
     ) throws -> String {
-        var id: String!
+        nonisolated(unsafe) var id: String!
         try database.writeSynchronously { session in
             let reaction = try session.saveReaction(
                 payload: MessageReactionPayload(

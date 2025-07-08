@@ -22,7 +22,7 @@ extension Notification {
 }
 
 /// An Internet Connection monitor.
-class InternetConnection {
+class InternetConnection: @unchecked Sendable {
     /// The current Internet connection status.
     private(set) var status: InternetConnection.Status {
         didSet {
@@ -89,7 +89,7 @@ protocol InternetConnectionDelegate: AnyObject {
 }
 
 /// A protocol for Internet connection monitors.
-protocol InternetConnectionMonitor: AnyObject {
+protocol InternetConnectionMonitor: AnyObject, Sendable {
     /// A delegate for receiving Internet connection events.
     var delegate: InternetConnectionDelegate? { get set }
 
@@ -145,7 +145,7 @@ extension InternetConnection.Status {
 // MARK: - Internet Connection Monitor
 
 extension InternetConnection {
-    class Monitor: InternetConnectionMonitor {
+    final class Monitor: InternetConnectionMonitor, @unchecked Sendable {
         private var monitor: NWPathMonitor?
         private let queue = DispatchQueue(label: "io.getstream.internet-monitor")
 
@@ -153,7 +153,7 @@ extension InternetConnection {
 
         var status: InternetConnection.Status {
             if let path = monitor?.currentPath {
-                return status(from: path)
+                return Self.status(from: path)
             }
 
             return .unknown
@@ -176,18 +176,14 @@ extension InternetConnection {
 
             // We should be able to do `[weak self]` here, but it seems `NWPathMonitor` sometimes calls the handler
             // event after `cancel()` has been called on it.
-            monitor.pathUpdateHandler = { [weak self] in
-                self?.updateStatus(with: $0)
+            monitor.pathUpdateHandler = { [weak self] path in
+                log.info("Internet Connection info: \(path.debugDescription)")
+                self?.delegate?.internetConnectionStatusDidChange(status: Self.status(from: path))
             }
             return monitor
         }
-
-        private func updateStatus(with path: NWPath) {
-            log.info("Internet Connection info: \(path.debugDescription)")
-            delegate?.internetConnectionStatusDidChange(status: status(from: path))
-        }
-
-        private func status(from path: NWPath) -> InternetConnection.Status {
+        
+        private static func status(from path: NWPath) -> InternetConnection.Status {
             guard path.status == .satisfied else {
                 return .unavailable
             }

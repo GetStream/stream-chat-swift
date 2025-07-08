@@ -5,23 +5,23 @@
 import Foundation
 @testable import StreamChat
 
-class ChatChannelListController_Mock: ChatChannelListController, Spy {
+class ChatChannelListController_Mock: ChatChannelListController, Spy, @unchecked Sendable {
     let spyState = SpyState()
-    var loadNextChannelsIsCalled = false
-    var loadNextChannelsCallCount = 0
-    var refreshLoadedChannelsResult: Result<Set<ChannelId>, any Error>?
+    @Atomic var loadNextChannelsIsCalled = false
+    @Atomic var loadNextChannelsCallCount = 0
+    @Atomic var refreshLoadedChannelsResult: Result<Set<ChannelId>, any Error>?
 
     /// Creates a new mock instance of `ChatChannelListController`.
     static func mock(client: ChatClient? = nil) -> ChatChannelListController_Mock {
         .init(query: .init(filter: .equal(.memberCount, to: 0)), client: client ?? .mock())
     }
 
-    var channels_mock: [ChatChannel]?
+    @Atomic var channels_mock: [ChatChannel]?
     override var channels: LazyCachedMapCollection<ChatChannel> {
         channels_mock.map { $0.lazyCachedMap { $0 } } ?? super.channels
     }
 
-    var state_mock: State?
+    @Atomic var state_mock: State?
     override var state: DataController.State {
         get { state_mock ?? super.state }
         set { super.state = newValue }

@@ -58,7 +58,7 @@ public extension FilterKey where Scope: AnyUserListFilterScope {
 
 /// A query is used for querying specific users from backend.
 /// You can specify filter, sorting and pagination.
-public struct UserListQuery: Encodable {
+public struct UserListQuery: Encodable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
         case sort

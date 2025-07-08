@@ -14,7 +14,7 @@ protocol AudioPlayerObserving {
     ///   - block: The block to call once a `timeControlStatus` update occurs
     func addTimeControlStatusObserver(
         _ player: AVPlayer,
-        using block: @escaping (AVPlayer.TimeControlStatus?) -> Void
+        using block: @escaping @Sendable(AVPlayer.TimeControlStatus?) -> Void
     )
 
     /// Registers an observer that will periodically invoke the given block during playback to
@@ -28,7 +28,7 @@ protocol AudioPlayerObserving {
         _ player: AVPlayer,
         forInterval interval: CMTime,
         queue: DispatchQueue?,
-        using block: @escaping () -> Void
+        using block: @escaping @Sendable() -> Void
     )
 
     /// Registers and observer that will be called once the playback of an item stops
@@ -37,7 +37,7 @@ protocol AudioPlayerObserving {
     ///   - block: The block to call once a player's item has stopped
     func addStoppedPlaybackObserver(
         queue: OperationQueue?,
-        using block: @escaping (AVPlayerItem) -> Void
+        using block: @escaping @Sendable(AVPlayerItem) -> Void
     )
 }
 
@@ -86,7 +86,7 @@ final class StreamPlayerObserver: AudioPlayerObserving {
 
     func addTimeControlStatusObserver(
         _ player: AVPlayer,
-        using block: @escaping (AVPlayer.TimeControlStatus?) -> Void
+        using block: @escaping @Sendable(AVPlayer.TimeControlStatus?) -> Void
     ) {
         timeControlStatusObserver = player.observe(
             \.timeControlStatus,
@@ -98,7 +98,7 @@ final class StreamPlayerObserver: AudioPlayerObserving {
         _ player: AVPlayer,
         forInterval interval: CMTime,
         queue: DispatchQueue?,
-        using block: @escaping () -> Void
+        using block: @escaping @Sendable() -> Void
     ) {
         periodicTimeObservationToken = player.addPeriodicTimeObserver(
             forInterval: interval,
@@ -118,7 +118,7 @@ final class StreamPlayerObserver: AudioPlayerObserving {
 
     func addStoppedPlaybackObserver(
         queue: OperationQueue?,
-        using block: @escaping (AVPlayerItem) -> Void
+        using block: @escaping @Sendable(AVPlayerItem) -> Void
     ) {
         stoppedPlaybackObservationToken = notificationCenter.addObserver(
             forName: NSNotification.Name.AVPlayerItemDidPlayToEndTime,
