@@ -16,9 +16,9 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
     func test_text() {
         let view = contentView(
             """
-            This is **bold** text  
-            This text is _italicized_  
-            This was ~~mistaken~~ text  
+            This is **bold** text
+            This text is _italicized_
+            This was ~~mistaken~~ text
             This has backslashes for a newline\\
             This has html line break<br/>Will span two lines
             """
@@ -32,9 +32,9 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
         let view = contentView(
             styles: styles,
             """
-            This is **bold** text  
-            This text is _italicized_  
-            This was ~~mistaken~~ text  
+            This is **bold** text
+            This text is _italicized_
+            This was ~~mistaken~~ text
             This has backslashes for a newline\\
             This has html line break<br/>Will span two lines
             """
@@ -128,7 +128,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
     func test_unorderedLists_nested() {
         let view = contentView(
             """
-            Unordered (nested)  
+            Unordered (nested)
             - First list item
                 - First nested
                     - Second nested
@@ -140,7 +140,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
     func test_orderedList_nested_wrappedTextItem() {
         let view = contentView(
             """
-            Unordered (wrapped text)  
+            Unordered (wrapped text)
             - First list item which has a very long text and when wrapped, should be aligned to the same item
                 - First nested which has a very long text and when wrapped, should be aligned to the same item
                     - Second nested
@@ -170,7 +170,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
     func test_orderedLists_nested() {
         let view = contentView(
             """
-            Unordered (nested)  
+            Unordered (nested)
             1. First list item
                 1. First nested
                     1. Second nested
@@ -183,7 +183,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
     func test_mixedLists_nested() {
         let view = contentView(
             """
-            Mixed (nested)  
+            Mixed (nested)
             1. First list item
                 - First nested
                     1. Second nested
@@ -326,7 +326,7 @@ final class ChatMessageMarkdown_Tests: XCTestCase {
     func test_inlinePresentationIntents() {
         let view = contentView(
             """
-            **This is bold text with 2 letters for a newline**  
+            **This is bold text with 2 letters for a newline**
             _This text is italicized_
 
             ~~This was mistaken text with backlash for a newline~~\\

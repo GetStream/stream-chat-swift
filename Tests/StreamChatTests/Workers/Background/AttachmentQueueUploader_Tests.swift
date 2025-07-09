@@ -706,7 +706,7 @@ final class AttachmentQueueUploader_Tests: XCTestCase {
         )
     }
     
-    func uploadAttachmentsWithAppSettings(_ appSettings: AppSettings, expectedState: Dictionary<String, LocalAttachmentState>) throws {
+    func uploadAttachmentsWithAppSettings(_ appSettings: AppSettings, expectedState: [String: LocalAttachmentState]) throws {
         queueUploader.setAppSettings(appSettings)
         
         let cid: ChannelId = .unique

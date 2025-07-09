@@ -748,7 +748,7 @@ final class CurrentUserController_Tests: XCTestCase {
     private func delayExecution(of function: @escaping (((Error?) -> Void)?) -> Void, onCompletion: (() -> Void)?) {
         let exp = expectation(description: "completion called")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            function() { _ in
+            function { _ in
                 exp.fulfill()
             }
             onCompletion?()

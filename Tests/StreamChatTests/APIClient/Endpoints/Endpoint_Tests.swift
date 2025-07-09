@@ -9,7 +9,7 @@ final class Endpoint_Tests: XCTestCase {
     class SomethingDecodable: Decodable {}
 
     func test_endpointWithoutQueryItemsNorBodyEncodingAndDecoding() {
-        let endpoint = Endpoint<SomethingDecodable>.init(
+        let endpoint = Endpoint<SomethingDecodable>(
             path: .guest,
             method: .post,
             queryItems: nil,
@@ -38,7 +38,7 @@ final class Endpoint_Tests: XCTestCase {
     }
 
     func test_endpointWithBodyEncodingAndDecoding() {
-        let endpoint = Endpoint<SomethingDecodable>.init(
+        let endpoint = Endpoint<SomethingDecodable>(
             path: .guest,
             method: .post,
             queryItems: nil,
@@ -74,7 +74,7 @@ final class Endpoint_Tests: XCTestCase {
     }
 
     func test_endpointWithQueryItemsEncodingAndDecoding() {
-        let endpoint = Endpoint<SomethingDecodable>.init(
+        let endpoint = Endpoint<SomethingDecodable>(
             path: .guest,
             method: .get,
             queryItems: ["QueryHello": 2],
@@ -110,7 +110,7 @@ final class Endpoint_Tests: XCTestCase {
     }
 
     func test_endpointEncodingAndDecodingToEmptyResponse() {
-        let endpoint = Endpoint<SomethingDecodable>.init(
+        let endpoint = Endpoint<SomethingDecodable>(
             path: .guest,
             method: .post,
             queryItems: nil,

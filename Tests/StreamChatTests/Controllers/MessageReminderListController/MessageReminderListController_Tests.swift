@@ -84,7 +84,7 @@ final class MessageReminderListController_Tests: XCTestCase {
 
     func test_loadMoreReminders_whenSuccess() {
         let exp = expectation(description: "loadMoreReminders completion")
-        controller.loadMoreReminders() { result in
+        controller.loadMoreReminders { result in
             let reminders = try? result.get()
             XCTAssertNotNil(reminders)
             exp.fulfill()
@@ -121,7 +121,7 @@ final class MessageReminderListController_Tests: XCTestCase {
 
     func test_loadMoreReminders_whenFailure() {
         let exp = expectation(description: "loadMoreReminders completion")
-        controller.loadMoreReminders() { error in
+        controller.loadMoreReminders { error in
             XCTAssertNotNil(error)
             exp.fulfill()
         }
@@ -143,7 +143,7 @@ final class MessageReminderListController_Tests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
 
         let expMoreReminders = expectation(description: "loadMoreReminders1 completion")
-        controller.loadMoreReminders() { result in
+        controller.loadMoreReminders { result in
             let reminders = try? result.get()
             XCTAssertNotNil(reminders)
             expMoreReminders.fulfill()

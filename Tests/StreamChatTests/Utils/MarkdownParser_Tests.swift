@@ -66,22 +66,22 @@ final class MarkdownParser_Tests: XCTestCase {
     
     func test_style_detectPresentationIntents() throws {
         let markdown = """
-        # H1  
+        # H1
         - Unordered 1
         - Unordered 2
             - Unordered _nested_
         
-        ## H2  
+        ## H2
         1. Ordered **1**
         2. Ordered 2
             1. Ordered nested
         
         Text
         
-        ### H3  
+        ### H3
         > Text that is a quote
         
-        #### H4  
+        #### H4
         ```swift
         Code block
         ```

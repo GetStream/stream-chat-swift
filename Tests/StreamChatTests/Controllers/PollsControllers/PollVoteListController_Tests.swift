@@ -156,7 +156,7 @@ final class PollVoteListController_Tests: XCTestCase {
     
     func test_loadMoreVotes_whenFailure() {
         let exp = expectation(description: "synchronize completion")
-        controller.loadMoreVotes() { error in
+        controller.loadMoreVotes { error in
             XCTAssertNotNil(error)
             exp.fulfill()
         }

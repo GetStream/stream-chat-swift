@@ -80,7 +80,7 @@ final class ChatThreadListController_Tests: XCTestCase {
     
     func test_loadMoreThreads_whenSuccess() {
         let exp = expectation(description: "loadOlderThreads completion")
-        controller.loadMoreThreads() { result in
+        controller.loadMoreThreads { result in
             let threads = try? result.get()
             XCTAssertNotNil(threads)
             exp.fulfill()
@@ -117,7 +117,7 @@ final class ChatThreadListController_Tests: XCTestCase {
 
     func test_loadMoreThreads_whenFailure() {
         let exp = expectation(description: "synchronize completion")
-        controller.loadMoreThreads() { error in
+        controller.loadMoreThreads { error in
             XCTAssertNotNil(error)
             exp.fulfill()
         }
@@ -139,7 +139,7 @@ final class ChatThreadListController_Tests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
 
         let expOlderThreads = expectation(description: "loadOlderThreads1 completion")
-        controller.loadMoreThreads() { result in
+        controller.loadMoreThreads { result in
             let threads = try? result.get()
             XCTAssertNotNil(threads)
             expOlderThreads.fulfill()

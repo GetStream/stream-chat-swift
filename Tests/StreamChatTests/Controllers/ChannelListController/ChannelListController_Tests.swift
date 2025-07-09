@@ -832,7 +832,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         let expectation = self.expectation(description: "Refresh loaded channels")
         var receivedError: Error?
-        controller.refreshLoadedChannels() { result in
+        controller.refreshLoadedChannels { result in
             receivedError = result.error
             expectation.fulfill()
         }

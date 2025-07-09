@@ -10,7 +10,7 @@ final class ChannelListQuery_Tests: XCTestCase {
     func test_channelListQuery_encodedCorrectly() throws {
         let cid = ChannelId.unique
         let filter = Filter<ChannelListFilterScope>.equal(.cid, to: cid)
-        let sort = Sorting<ChannelListSortingKey>.init(key: .cid)
+        let sort = Sorting<ChannelListSortingKey>(key: .cid)
         let pageSize = Int.channelsPageSize
         let messagesLimit = Int.messagesPageSize
         let membersLimit = Int.channelMembersPageSize

@@ -6,7 +6,6 @@ import XCTest
 
 @testable import StreamChat
 @testable import StreamChatTestTools
-import XCTest
 
 final class ReactionList_Tests: XCTestCase {
     private var channelId: ChannelId!

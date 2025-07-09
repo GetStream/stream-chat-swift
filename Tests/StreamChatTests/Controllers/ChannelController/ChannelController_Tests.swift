@@ -2728,7 +2728,7 @@ final class ChannelController_Tests: XCTestCase {
 
         let exp = expectation(description: "loadPreviousMessage completes")
         var receivedError: Error?
-        controller.loadPreviousMessages() { error in
+        controller.loadPreviousMessages { error in
             receivedError = error
             exp.fulfill()
         }
@@ -2775,7 +2775,7 @@ final class ChannelController_Tests: XCTestCase {
         var receivedError: Error?
 
         let expectation2 = expectation(description: "loadPreviousMessage completes")
-        controller.loadPreviousMessages() { error in
+        controller.loadPreviousMessages { error in
             receivedError = error
             expectation2.fulfill()
         }
@@ -2874,7 +2874,7 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         let exp = expectation(description: "should still call the completion block")
-        controller.loadNextMessages() { error in
+        controller.loadNextMessages { error in
             XCTAssertNil(error)
             exp.fulfill()
         }
@@ -2929,7 +2929,7 @@ final class ChannelController_Tests: XCTestCase {
 
         let exp = expectation(description: "loadNextMessage completes")
         var receivedError: Error?
-        controller.loadNextMessages() { error in
+        controller.loadNextMessages { error in
             receivedError = error
             exp.fulfill()
         }
