@@ -55,15 +55,11 @@ jobs:
         with:
           fetch-depth: 100
       - uses: ./.github/actions/bootstrap
-      - name: Run Danger
-        run: bundle exec fastlane lint_pr
-      - name: Run Fastlane Linting
-        run: bundle exec fastlane rubocop
-      - name: Run SwiftFormat Linting
-        run: ./Scripts/run-linter.sh
-      - name: Run Podspec Linting
+      - run: bundle exec fastlane lint_pr
+      - run: bundle exec fastlane rubocop
+      - run: bundle exec fastlane run_swift_format strict:true
+      - run: bundle exec fastlane pod_lint
         if: startsWith(github.event.pull_request.head.ref, 'release/')
-        run: bundle exec fastlane pod_lint
 
   build-old-xcode:
     name: Build LLC + UI (Xcode 15)
