@@ -417,8 +417,9 @@ class MessageUpdater: Worker {
                         // If the request fails, we revert the optimistic update.
                         guard let messageDTO = session.message(id: messageId) else { return }
                         messageDTO.location?.endAt = previousEndAt
+                    } completion: { _ in
+                        completion(.failure(error))
                     }
-                    completion(.failure(error))
                 }
             }
         }
