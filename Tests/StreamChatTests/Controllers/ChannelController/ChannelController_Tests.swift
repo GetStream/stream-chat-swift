@@ -2026,7 +2026,6 @@ final class ChannelController_Tests: XCTestCase {
 
         // Assert cid and muted state are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.muteChannel_cid, channelId)
-        XCTAssertEqual(env.channelUpdater!.muteChannel_mute, true)
         XCTAssertFalse(completionCalled)
 
         // Simulate successful update
@@ -2060,7 +2059,6 @@ final class ChannelController_Tests: XCTestCase {
 
         // Assert cid, muted state and expiration are passed to `channelUpdater`, completion is not called yet
         XCTAssertEqual(env.channelUpdater!.muteChannel_cid, channelId)
-        XCTAssertEqual(env.channelUpdater!.muteChannel_mute, true)
         XCTAssertEqual(env.channelUpdater!.muteChannel_expiration, expiration)
         XCTAssertFalse(completionCalled)
 
@@ -2134,7 +2132,7 @@ final class ChannelController_Tests: XCTestCase {
                 AssertTestQueue(withId: callbackQueueID)
                 completion(error)
             }
-            env.channelUpdater!.muteChannel_completion?(nil)
+            env.channelUpdater!.unmuteChannel_completion?(nil)
         }
 
         XCTAssertNil(error)
@@ -2157,14 +2155,13 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Assert cid and muted state are passed to `channelUpdater`, completion is not called yet
-        XCTAssertEqual(env.channelUpdater!.muteChannel_cid, channelId)
-        XCTAssertEqual(env.channelUpdater!.muteChannel_mute, false)
+        XCTAssertEqual(env.channelUpdater!.unmuteChannel_cid, channelId)
         XCTAssertFalse(completionCalled)
 
         // Simulate successful update
-        env.channelUpdater!.muteChannel_completion?(nil)
+        env.channelUpdater!.unmuteChannel_completion?(nil)
         // Release reference of completion so we can deallocate stuff
-        env.channelUpdater!.muteChannel_completion = nil
+        env.channelUpdater!.unmuteChannel_completion = nil
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -2182,7 +2179,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Simulate failed update
         let testError = TestError()
-        env.channelUpdater!.muteChannel_completion?(testError)
+        env.channelUpdater!.unmuteChannel_completion?(testError)
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)

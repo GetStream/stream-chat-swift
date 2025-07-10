@@ -4,6 +4,14 @@
 
 import Foundation
 
+struct MutedChannelPayloadResponse: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case channelMute = "channel_mute"
+    }
+
+    let channelMute: MutedChannelPayload
+}
+
 /// An object describing the incoming muted-channel JSON payload.
 struct MutedChannelPayload: Decodable {
     private enum CodingKeys: String, CodingKey {

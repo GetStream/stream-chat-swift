@@ -206,15 +206,50 @@ class ChannelUpdater: Worker {
         }
     }
 
-    /// Mutes/unmutes the specific channel.
+    /// Mutes the specific channel.
     /// - Parameters:
     ///   - cid: The channel identifier.
-    ///   - mute: Defines if the channel with the specified **cid** should be muted.
     ///   - expiration: Duration of mute in milliseconds.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func muteChannel(cid: ChannelId, mute: Bool, expiration: Int? = nil, completion: ((Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .muteChannel(cid: cid, mute: mute, expiration: expiration)) {
-            completion?($0.error)
+    func muteChannel(cid: ChannelId, expiration: Int? = nil, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(
+            endpoint: .muteChannel(cid: cid, expiration: expiration)
+        ) { [weak self] (result: Result<MutedChannelPayloadResponse, Error>) in
+            switch result {
+            case .success(let payload):
+                self?.database.write({ session in
+                    try session.saveChannelMute(payload: payload.channelMute)
+                }) { _ in
+                    completion?(nil)
+                }
+            case .failure(let error):
+                completion?(error)
+            }
+        }
+    }
+
+    /// Unmutes the specific channel.
+    /// - Parameters:
+    ///   - cid: The channel identifier.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    func unmuteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
+        apiClient.request(
+            endpoint: .unmuteChannel(cid: cid)
+        ) { [weak self] (result: Result<EmptyResponse, Error>) in
+            switch result {
+            case .success(let payload):
+                self?.database.write({ session in
+                    let channel = session.channel(cid: cid)
+                    if let mute = channel?.mute {
+                        session.delete(mute: mute)
+                        channel?.mute = nil
+                    }
+                }) { _ in
+                    completion?(nil)
+                }
+            case .failure(let error):
+                completion?(error)
+            }
         }
     }
 
@@ -925,14 +960,22 @@ extension ChannelUpdater {
         }
     }
     
-    func muteChannel(_ mute: Bool, cid: ChannelId, expiration: Int? = nil) async throws {
+    func muteChannel(cid: ChannelId, expiration: Int? = nil) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            muteChannel(cid: cid, mute: mute, expiration: expiration) { error in
+            muteChannel(cid: cid, expiration: expiration) { error in
                 continuation.resume(with: error)
             }
         }
     }
-    
+
+    func unmuteChannel(cid: ChannelId) async throws {
+        try await withCheckedThrowingContinuation { continuation in
+            unmuteChannel(cid: cid) { error in
+                continuation.resume(with: error)
+            }
+        }
+    }
+
     func rejectInvite(cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { continuation in
             rejectInvite(cid: cid) { error in

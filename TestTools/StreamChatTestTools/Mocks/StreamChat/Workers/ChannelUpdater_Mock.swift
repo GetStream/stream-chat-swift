@@ -20,10 +20,13 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var partialChannelUpdate_completion: ((Error?) -> Void)?
 
     @Atomic var muteChannel_cid: ChannelId?
-    @Atomic var muteChannel_mute: Bool?
     @Atomic var muteChannel_expiration: Int?
     @Atomic var muteChannel_completion: ((Error?) -> Void)?
     @Atomic var muteChannel_completion_result: Result<Void, Error>?
+
+    @Atomic var unmuteChannel_cid: ChannelId?
+    @Atomic var unmuteChannel_completion: ((Error?) -> Void)?
+    @Atomic var unmuteChannel_completion_result: Result<Void, Error>?
 
     @Atomic var deleteChannel_cid: ChannelId?
     @Atomic var deleteChannel_completion: ((Error?) -> Void)?
@@ -159,9 +162,13 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         updateChannel_completion = nil
 
         muteChannel_cid = nil
-        muteChannel_mute = nil
+        muteChannel_expiration = nil
         muteChannel_completion = nil
         muteChannel_completion_result = nil
+
+        unmuteChannel_cid = nil
+        unmuteChannel_completion = nil
+        unmuteChannel_completion_result = nil
 
         deleteChannel_cid = nil
         deleteChannel_completion = nil
@@ -310,12 +317,17 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         partialChannelUpdate_completion = completion
     }
 
-    override func muteChannel(cid: ChannelId, mute: Bool, expiration: Int? = nil, completion: ((Error?) -> Void)? = nil) {
+    override func muteChannel(cid: ChannelId, expiration: Int? = nil, completion: ((Error?) -> Void)? = nil) {
         muteChannel_cid = cid
-        muteChannel_mute = mute
         muteChannel_expiration = expiration
         muteChannel_completion = completion
         muteChannel_completion_result?.invoke(with: completion)
+    }
+
+    override func unmuteChannel(cid: ChannelId, completion: (((any Error)?) -> Void)? = nil) {
+        unmuteChannel_cid = cid
+        unmuteChannel_completion = completion
+        unmuteChannel_completion_result?.invoke(with: completion)
     }
 
     override func deleteChannel(cid: ChannelId, completion: ((Error?) -> Void)? = nil) {
