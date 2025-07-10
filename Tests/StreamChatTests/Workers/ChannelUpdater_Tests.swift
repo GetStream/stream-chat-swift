@@ -828,13 +828,14 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_muteChannel_successfulResponse_isPropagatedToCompletion() throws {
-        // Simulate `muteChannel(cid:, completion:)` call
+        // Pre-save channel and current user
         let cid = ChannelId.unique
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .admin))
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
         }
 
+        // Simulate `muteChannel(cid:, completion:)` call
         let exp = expectation(description: "muteChannel completion")
         channelUpdater.muteChannel(cid: cid) { error in
             XCTAssertNil(error)
@@ -932,7 +933,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_unmuteChannel_successfulResponse_isPropagatedToCompletion() throws {
-        // Pre-save muted channgel
+        // Pre-save muted channel
         let cid = ChannelId.unique
         try database.writeSynchronously { session in
             let userId = UserId.unique
