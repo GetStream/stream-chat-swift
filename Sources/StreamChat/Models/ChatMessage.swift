@@ -162,7 +162,7 @@ public struct ChatMessage {
 
     /// The original language of the message.
     public let originalLanguage: TranslationLanguage?
-  
+
     /// The moderation details in case the message was moderated.
     public let moderationDetails: MessageModerationDetails?
 
@@ -177,7 +177,7 @@ public struct ChatMessage {
     ///
     /// - Note: For the message authored by other channel members this field always returns `0`.
     public var readByCount: Int { readBy.count }
-    
+
     /// Optional poll that is part of the message.
     public let poll: Poll?
 
@@ -369,7 +369,7 @@ public struct ChatMessage {
             extraData: extraData
         )
     }
-    
+
     /// Returns a new `ChatMessage` with the provided data replaced.
     ///
     /// If the provided data is `nil`, it will overwrite the existing value with `nil`.
@@ -541,12 +541,13 @@ public extension ChatMessage {
         if let localState = self.localState {
             return localState.isLocalOnly
         }
-        
+
         return type == .ephemeral || type == .error
     }
 }
 
 extension ChatMessage: Hashable {
+    // swiftlint:disable cyclomatic_complexity
     public static func == (lhs: Self, rhs: Self) -> Bool {
         guard lhs.id == rhs.id else { return false }
         guard lhs.localState == rhs.localState else { return false }
@@ -577,6 +578,8 @@ extension ChatMessage: Hashable {
         guard lhs.reminder == rhs.reminder else { return false }
         return true
     }
+
+    // swiftlint:enable cyclomatic_complexity
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)

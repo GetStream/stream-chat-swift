@@ -7,6 +7,7 @@ git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
 gem 'danger', group: :danger_dependencies
 gem 'fastlane', group: :fastlane_dependencies
 gem 'json'
+gem 'lefthook'
 gem 'rubocop', '1.38', group: :rubocop_dependencies
 gem 'sinatra', group: :sinatra_dependencies
 gem 'slather'

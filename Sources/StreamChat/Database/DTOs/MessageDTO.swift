@@ -927,6 +927,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         return message
     }
+    
+    // swiftlint:disable function_body_length
 
     /// Saves a message into the local DB.
     /// - Parameters:
@@ -1150,6 +1152,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         return dto
     }
+
+    // swiftlint:enable function_body_length
 
     func saveMessages(
         messagesPayload: MessageListPayload,
@@ -1741,6 +1745,7 @@ extension MessageDTO {
 }
 
 private extension ChatMessage {
+    // swiftlint:disable function_body_length
     init(fromDTO dto: MessageDTO, depth: Int) throws {
         guard StreamRuntimeCheck._canFetchRelationship(currentDepth: depth) else {
             throw RecursionLimitError()
@@ -1911,6 +1916,8 @@ private extension ChatMessage {
 
         self = message
     }
+
+    // swiftlint:enable function_body_length
 }
 
 extension ClientError {

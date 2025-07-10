@@ -98,7 +98,7 @@ class MessageRepository {
             })
         }
     }
-    
+
     /// Marks the message's local status to failed and adds it to the offline retry which sends the message when connection comes back.
     func scheduleOfflineRetry(for messageId: MessageId, completion: @escaping (Result<ChatMessage, MessageRepositoryError>) -> Void) {
         var dataEndpoint: DataEndpoint!
@@ -110,7 +110,7 @@ class MessageRepository {
             guard let channelDTO = dto.channel, let cid = try? ChannelId(cid: channelDTO.cid) else {
                 throw MessageRepositoryError.messageDoesNotHaveValidChannel
             }
-            
+
             // Send the message to offline handling
             let requestBody = dto.asRequestBody() as MessageRequestBody
             let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
@@ -120,7 +120,7 @@ class MessageRepository {
                 skipEnrichUrl: dto.skipEnrichUrl
             )
             dataEndpoint = endpoint.withDataResponse
-            
+
             // Mark it as failed
             dto.localMessageState = .sendingFailed
             messageModel = try dto.asModel()
@@ -314,7 +314,8 @@ class MessageRepository {
                         syncOwnReactions: true,
                         skipDraftUpdate: false,
                         cache: nil
-                    ).asModel()
+                    )
+                    .asModel()
                     if !store {
                         // Force load attachments before discarding changes
                         _ = message?.attachmentCounts
@@ -448,7 +449,7 @@ extension MessageRepository {
             .map { try $0.asModel() }
         }
     }
-    
+
     /// Fetches replies from the database with a date range.
     func replies(from fromDate: Date, to toDate: Date, in message: MessageId) async throws -> [ChatMessage] {
         try await database.read { session in
