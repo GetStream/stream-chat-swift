@@ -8,6 +8,7 @@
 --disable andOperator
 --disable hoistPatternLet
 --disable typeSugar
+--disable opaqueGenericParameters
 
 --disable redundantGet # it removes get async throws from getters
 
