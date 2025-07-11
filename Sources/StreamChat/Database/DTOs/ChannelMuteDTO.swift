@@ -64,4 +64,8 @@ extension NSManagedObjectContext {
 
         return dto
     }
+
+    func delete(mute: ChannelMuteDTO) {
+        delete(mute)
+    }
 }

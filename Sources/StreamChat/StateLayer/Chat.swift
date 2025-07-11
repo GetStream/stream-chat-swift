@@ -1140,14 +1140,14 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func mute(expiration: Int? = nil) async throws {
-        try await channelUpdater.muteChannel(true, cid: cid, expiration: expiration)
+        try await channelUpdater.muteChannel(cid: cid, expiration: expiration)
     }
     
     /// Unmutes the channel which enables push notifications and unread count changes for new messages.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func unmute() async throws {
-        try await channelUpdater.muteChannel(false, cid: cid)
+        try await channelUpdater.unmuteChannel(cid: cid)
     }
     
     /// Hide the channel which removes if from the query channel requests for that user until a new message is added.
