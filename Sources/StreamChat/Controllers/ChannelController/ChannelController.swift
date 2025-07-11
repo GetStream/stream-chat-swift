@@ -347,7 +347,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.muteChannel(cid: cid, mute: true, expiration: expiration) { error in
+        updater.muteChannel(cid: cid, expiration: expiration) { error in
             self.callback {
                 completion?(error)
             }
@@ -367,7 +367,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        updater.muteChannel(cid: cid, mute: false) { error in
+        updater.unmuteChannel(cid: cid) { error in
             self.callback {
                 completion?(error)
             }

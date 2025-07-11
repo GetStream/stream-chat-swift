@@ -213,55 +213,66 @@ final class ChannelEndpoints_Tests: XCTestCase {
     }
 
     func test_muteChannel_buildsCorrectly() {
-        let testCases = [true, false]
+        let channelID = ChannelId.unique
 
-        for mute in testCases {
-            let channelID = ChannelId.unique
+        let expectedEndpoint = Endpoint<MutedChannelPayloadResponse>(
+            path: .muteChannel(true),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            body: ["channel_cid": channelID]
+        )
 
-            let expectedEndpoint = Endpoint<EmptyResponse>(
-                path: .muteChannel(mute),
-                method: .post,
-                queryItems: nil,
-                requiresConnectionId: true,
-                body: ["channel_cid": channelID]
-            )
+        // Build endpoint
+        let endpoint: Endpoint<MutedChannelPayloadResponse> = .muteChannel(cid: channelID)
 
-            // Build endpoint
-            let endpoint: Endpoint<EmptyResponse> = .muteChannel(cid: channelID, mute: mute)
-
-            // Assert endpoint is built correctly
-            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual(mute ? "moderation/mute/channel" : "moderation/unmute/channel", endpoint.path.value)
-        }
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("moderation/mute/channel", endpoint.path.value)
     }
     
     func test_muteChannelWithExpiration_buildsCorrectly() {
-        let testCases = [true, false]
         let expiration = 1_000_000
+        let channelID = ChannelId.unique
 
-        for mute in testCases {
-            let channelID = ChannelId.unique
-            
-            let body: [String: AnyEncodable] = [
-                "channel_cid": AnyEncodable(channelID),
-                "expiration": AnyEncodable(expiration)
-            ]
+        let body: [String: AnyEncodable] = [
+            "channel_cid": AnyEncodable(channelID),
+            "expiration": AnyEncodable(expiration)
+        ]
 
-            let expectedEndpoint = Endpoint<EmptyResponse>(
-                path: .muteChannel(mute),
-                method: .post,
-                queryItems: nil,
-                requiresConnectionId: true,
-                body: body
-            )
+        let expectedEndpoint = Endpoint<MutedChannelPayloadResponse>(
+            path: .muteChannel(true),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            body: body
+        )
 
-            // Build endpoint
-            let endpoint: Endpoint<EmptyResponse> = .muteChannel(cid: channelID, mute: mute, expiration: expiration)
+        // Build endpoint
+        let endpoint: Endpoint<MutedChannelPayloadResponse> = .muteChannel(cid: channelID, expiration: expiration)
 
-            // Assert endpoint is built correctly
-            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual(mute ? "moderation/mute/channel" : "moderation/unmute/channel", endpoint.path.value)
-        }
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("moderation/mute/channel", endpoint.path.value)
+    }
+
+    func test_unmuteChannel_buildsCorrectly() {
+        let channelID = ChannelId.unique
+
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: .muteChannel(false),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            body: ["channel_cid": channelID]
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<EmptyResponse> = .unmuteChannel(cid: channelID)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("moderation/unmute/channel", endpoint.path.value)
     }
 
     func test_showChannel_buildsCorrectly() {

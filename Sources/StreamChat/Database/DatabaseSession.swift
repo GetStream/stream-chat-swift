@@ -215,6 +215,9 @@ protocol MessageDatabaseSession {
     /// - Parameter message: The DTO to be deleted
     func delete(message: MessageDTO)
 
+    /// Deletes a mute.
+    func delete(mute: ChannelMuteDTO)
+
     /// Fetches `MessageReactionDTO` for the given `messageId`, `userId`, and `type` from the DB.
     /// Returns `nil` if there is no matching `MessageReactionDTO`.
     func reaction(messageId: MessageId, userId: UserId, type: MessageReactionType) -> MessageReactionDTO?

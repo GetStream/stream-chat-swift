@@ -806,53 +806,66 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_muteChannel_makesCorrectAPICall() {
         let channelID = ChannelId.unique
-        let mute = true
 
-        // Simulate `muteChannel(cid:, mute:, completion:)` call
-        channelUpdater.muteChannel(cid: channelID, mute: mute)
+        // Simulate `muteChannel()` call
+        channelUpdater.muteChannel(cid: channelID)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .muteChannel(cid: channelID, mute: mute)
+        let referenceEndpoint: Endpoint<MutedChannelPayloadResponse> = .muteChannel(cid: channelID)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
     func test_muteChannelWithExpiration_makesCorrectAPICall() {
         let channelID = ChannelId.unique
-        let mute = true
         let expiration = 1_000_000
 
         // Simulate `muteChannel(cid:, mute:, completion:)` call
-        channelUpdater.muteChannel(cid: channelID, mute: mute, expiration: expiration)
+        channelUpdater.muteChannel(cid: channelID, expiration: expiration)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .muteChannel(cid: channelID, mute: mute, expiration: expiration)
+        let referenceEndpoint: Endpoint<MutedChannelPayloadResponse> = .muteChannel(cid: channelID, expiration: expiration)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
-    func test_muteChannel_successfulResponse_isPropagatedToCompletion() {
-        // Simulate `muteChannel(cid:, mute:, completion:)` call
-        var completionCalled = false
-        channelUpdater.muteChannel(cid: .unique, mute: true) { error in
-            XCTAssertNil(error)
-            completionCalled = true
+    func test_muteChannel_successfulResponse_isPropagatedToCompletion() throws {
+        // Pre-save channel and current user
+        let cid = ChannelId.unique
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .admin))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
         }
 
-        // Assert completion is not called yet
-        XCTAssertFalse(completionCalled)
+        // Simulate `muteChannel(cid:, completion:)` call
+        let exp = expectation(description: "muteChannel completion")
+        channelUpdater.muteChannel(cid: cid) { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(
+            Result<MutedChannelPayloadResponse, Error>.success(
+                .init(
+                    channelMute: .init(
+                        mutedChannel: .dummy(cid: cid),
+                        user: .dummy(userId: .unique),
+                        createdAt: .unique,
+                        updatedAt: .unique
+                    )
+                )
+            )
+        )
 
-        // Assert completion is called
-        AssertAsync.willBeTrue(completionCalled)
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssert(database.viewContext.channel(cid: cid)?.mute != nil)
     }
     
     func test_muteChannelWithExpiration_successfulResponse_isPropagatedToCompletion() {
         let expiration = 1_000_000
         
-        // Simulate `muteChannel(cid:, mute:, completion:, expiration:)` call
+        // Simulate `muteChannel(cid:, completion:, expiration:)` call
         var completionCalled = false
-        channelUpdater.muteChannel(cid: .unique, mute: true, expiration: expiration) { error in
+        channelUpdater.muteChannel(cid: .unique, expiration: expiration) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -861,20 +874,31 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(
+            Result<MutedChannelPayloadResponse, Error>.success(
+                .init(
+                    channelMute: .init(
+                        mutedChannel: .dummy(),
+                        user: .dummy(userId: .unique),
+                        createdAt: .unique,
+                        updatedAt: .unique
+                    )
+                )
+            )
+        )
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
     }
 
     func test_muteChannel_errorResponse_isPropagatedToCompletion() {
-        // Simulate `muteChannel(cid:, mute:, completion:)` call
+        // Simulate `muteChannel(cid:, completion:)` call
         var completionCalledError: Error?
-        channelUpdater.muteChannel(cid: .unique, mute: true) { completionCalledError = $0 }
+        channelUpdater.muteChannel(cid: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<MutedChannelPayloadResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
@@ -883,9 +907,75 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_muteChannelWithExpiration_errorResponse_isPropagatedToCompletion() {
         let expiration = 1_000_000
         
-        // Simulate `muteChannel(cid:, mute:, completion:, expiration:)` call
+        // Simulate `muteChannel(cid:, completion:, expiration:)` call
         var completionCalledError: Error?
-        channelUpdater.muteChannel(cid: .unique, mute: true, expiration: expiration) { completionCalledError = $0 }
+        channelUpdater.muteChannel(cid: .unique, expiration: expiration) { completionCalledError = $0 }
+
+        // Simulate API response with failure
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<MutedChannelPayloadResponse, Error>.failure(error))
+
+        // Assert the completion is called with the error
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
+    // MARK: - Unmute channel
+
+    func test_unmuteChannel_makesCorrectAPICall() {
+        let channelID = ChannelId.unique
+
+        // Simulate `unmuteChannel(cid:, completion:)` call
+        channelUpdater.unmuteChannel(cid: channelID)
+
+        // Assert correct endpoint is called
+        let referenceEndpoint: Endpoint<EmptyResponse> = .unmuteChannel(cid: channelID)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_unmuteChannel_successfulResponse_isPropagatedToCompletion() throws {
+        // Pre-save muted channel
+        let cid = ChannelId.unique
+        try database.writeSynchronously { session in
+            let userId = UserId.unique
+            try session.saveCurrentUser(payload: .dummy(userId: userId, role: .admin))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveChannelMute(
+                payload: .init(
+                    mutedChannel: .dummy(cid: cid),
+                    user: .dummy(userId: userId),
+                    createdAt: .unique,
+                    updatedAt: .unique
+                )
+            )
+        }
+        XCTAssertEqual(try? database.viewContext.channel(cid: cid)?.asModel().isMuted, true)
+
+        // Simulate `unmuteChannel(cid:, completion:)` call
+        var completionCalled = false
+        channelUpdater.unmuteChannel(cid: cid) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // Assert completion is not called yet
+        XCTAssertFalse(completionCalled)
+
+        // Simulate API response with success
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+        // Assert the channel is unmuted in the DB
+        AssertAsync.willBeEqual(
+            try? database.viewContext.channel(cid: cid)?.asModel().isMuted,
+            false
+        )
+    }
+
+    func test_unmuteChannel_errorResponse_isPropagatedToCompletion() {
+        // Simulate `unmuteChannel(cid:, completion:)` call
+        var completionCalledError: Error?
+        channelUpdater.unmuteChannel(cid: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
