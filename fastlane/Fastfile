@@ -314,7 +314,7 @@ end
 
 desc 'Runs tests in Debug config'
 lane :test do |options|
-  next unless is_check_required(sources: sources_matrix[:unit], force_check: @force_check)
+  next unless is_check_required(sources: sources_matrix[:llc], force_check: @force_check)
 
   update_testplan_on_ci(path: 'Tests/StreamChatTests/StreamChatFlakyTests.xctestplan')
 
@@ -823,7 +823,7 @@ end
 lane :sources_matrix do
   {
     e2e: ['Sources', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', xcode_project],
-    unit: ['Sources', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', xcode_project],
+    llc: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', xcode_project],
     ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', xcode_project],
     sample_apps: ['Sources', 'Examples', 'DemoApp', xcode_project],
     integration: ['Sources', 'Integration', xcode_project],
