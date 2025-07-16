@@ -43,3 +43,58 @@ public struct Sorting<Key: SortingKey>: Encodable, CustomStringConvertible {
 
 extension Sorting: Equatable where Key: Equatable {}
 extension Sorting: Hashable where Key: Hashable {}
+
+/// A sorting key that can be converted to local DB query or local runtime sorting.
+public struct LocalConvertibleSortingKey<Model>: SortingKey, Encodable, Equatable {
+    let keyPath: PartialKeyPath<Model>?
+    let localKey: String?
+    let remoteKey: String
+    var requiresRuntimeSorting: Bool {
+        localKey == nil
+    }
+
+    init(keyPath: PartialKeyPath<Model>?, localKey: String?, remoteKey: String) {
+        self.keyPath = keyPath
+        self.localKey = localKey
+        self.remoteKey = remoteKey
+    }
+
+    init(localKey: String?, remoteKey: String) {
+        keyPath = nil
+        self.localKey = localKey
+        self.remoteKey = remoteKey
+    }
+
+    public static func custom<Value>(keyPath: KeyPath<Model, Value>, key: String) -> Self {
+        .init(keyPath: keyPath, localKey: nil, remoteKey: key)
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(remoteKey)
+    }
+}
+
+extension LocalConvertibleSortingKey: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        remoteKey
+    }
+
+    func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
+        guard let localKey = self.localKey else {
+            return nil
+        }
+        return .init(key: localKey, ascending: isAscending)
+    }
+
+    var runtimeSortValue: SortValue<Model>? {
+        guard requiresRuntimeSorting else {
+            return nil
+        }
+        guard let keyPath = keyPath else {
+            return nil
+        }
+
+        return SortValue(keyPath: keyPath, isAscending: true)
+    }
+}

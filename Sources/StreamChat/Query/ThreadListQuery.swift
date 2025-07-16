@@ -126,7 +126,9 @@ public extension FilterKey where Scope == ThreadListFilterScope {
 }
 
 /// `ThreadListSortingKey` keys by which you can get sorted threads.
-public struct ThreadListSortingKey: SortingKey, Equatable {
+public typealias ThreadListSortingKey = LocalConvertibleSortingKey<ChatThread>
+
+extension ThreadListSortingKey {
     /// Sort threads by date they were created.
     public static let createdAt = Self(
         keyPath: \.createdAt,
@@ -174,70 +176,4 @@ public struct ThreadListSortingKey: SortingKey, Equatable {
         localKey: #keyPath(ThreadDTO.hasUnreadSorting),
         remoteKey: "has_unread"
     )
-
-    public static func custom<T>(keyPath: KeyPath<ChatThread, T>, key: String) -> Self {
-        .init(keyPath: keyPath, localKey: nil, remoteKey: key)
-    }
-
-    let keyPath: PartialKeyPath<ChatThread>?
-    let localKey: String?
-    let remoteKey: String
-    var requiresRuntimeSorting: Bool {
-        localKey == nil
-    }
-
-    init<T>(keyPath: KeyPath<ChatThread, T>, localKey: String?, remoteKey: String) {
-        self.keyPath = keyPath
-        self.localKey = localKey
-        self.remoteKey = remoteKey
-    }
-
-    init(localKey: String?, remoteKey: String) {
-        keyPath = nil
-        self.localKey = localKey
-        self.remoteKey = remoteKey
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(remoteKey)
-    }
-}
-
-extension ThreadListSortingKey: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        remoteKey
-    }
-}
-
-extension ThreadListSortingKey {
-    func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
-        guard let localKey = self.localKey else {
-            return nil
-        }
-        return .init(key: localKey, ascending: isAscending)
-    }
-}
-
-extension Array where Element == Sorting<ThreadListSortingKey> {
-    var runtimeSorting: [SortValue<ChatThread>] {
-        var requiresRuntime = false
-        let sortValues: [SortValue<ChatThread>] = compactMap {
-            if $0.key.requiresRuntimeSorting {
-                requiresRuntime = true
-            }
-            return $0.sortValue
-        }
-
-        return requiresRuntime ? sortValues : []
-    }
-}
-
-extension Sorting where Key == ThreadListSortingKey {
-    var sortValue: SortValue<ChatThread>? {
-        guard let keyPath = key.keyPath else {
-            return nil
-        }
-        return SortValue(keyPath: keyPath, isAscending: isAscending)
-    }
 }
