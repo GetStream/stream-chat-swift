@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Open `applicationDidMoveToBackground` and `applicationDidMoveToForeground` of the `StreamAudioPlayer` and `StreamAudioRecorder` [#3728](https://github.com/GetStream/stream-chat-swift/pull/3728)
 ### 🐞 Fixed
 - Fix channel unread count cleared when a thread is marked as read [#3710](https://github.com/GetStream/stream-chat-swift/pull/3710)
 - Fix channel mute local state not updated after mute action callback [#3718](https://github.com/GetStream/stream-chat-swift/pull/3718)
