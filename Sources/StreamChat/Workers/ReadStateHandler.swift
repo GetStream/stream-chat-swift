@@ -25,13 +25,7 @@ final class ReadStateHandler {
     }
     
     func markRead(_ channel: ChatChannel, completion: @escaping (Error?) -> Void) {
-        guard
-            !markingRead,
-            let currentUserId = authenticationRepository.currentUserId,
-            let currentUserRead = channel.reads.first(where: { $0.user.id == currentUserId }),
-            let lastMessageAt = channel.lastMessageAt,
-            currentUserRead.lastReadAt < lastMessageAt
-        else {
+        guard !markingRead, let currentUserId = authenticationRepository.currentUserId else {
             completion(nil)
             return
         }
