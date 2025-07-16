@@ -78,14 +78,14 @@ public struct ChannelListSortingKey: SortingKey, Equatable {
         .init(keyPath: keyPath, localKey: nil, remoteKey: key)
     }
 
-    let keyPath: PartialKeyPath<ChatChannel>
+    let keyPath: PartialKeyPath<ChatChannel>?
     let localKey: String?
     let remoteKey: String
     var requiresRuntimeSorting: Bool {
         localKey == nil
     }
 
-    init<T>(keyPath: KeyPath<ChatChannel, T>, localKey: String?, remoteKey: String) {
+    init<T>(keyPath: KeyPath<ChatChannel, T>?, localKey: String?, remoteKey: String) {
         self.keyPath = keyPath
         self.localKey = localKey
         self.remoteKey = remoteKey
@@ -124,7 +124,7 @@ extension Array where Element == Sorting<ChannelListSortingKey> {
             if $0.key.requiresRuntimeSorting {
                 requiresRuntime = true
             }
-            return $0.sortValue
+            return $0.runtimeSortValue
         }
 
         return requiresRuntime ? sortValues : []
@@ -132,8 +132,11 @@ extension Array where Element == Sorting<ChannelListSortingKey> {
 }
 
 extension Sorting where Key == ChannelListSortingKey {
-    var sortValue: SortValue<ChatChannel>? {
-        SortValue(keyPath: key.keyPath, isAscending: isAscending)
+    var runtimeSortValue: SortValue<ChatChannel>? {
+        guard let keyPath = key.keyPath else {
+            return nil
+        }
+        return SortValue(keyPath: keyPath, isAscending: isAscending)
     }
 }
 
