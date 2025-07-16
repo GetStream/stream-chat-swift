@@ -11,7 +11,7 @@ public protocol AnyMessageReminderListFilterScope {}
 public struct MessageReminderListFilterScope: FilterScope, AnyMessageReminderListFilterScope {}
 
 /// Filter keys for message reminder list.
-public extension FilterKey where Scope: AnyMessageReminderListFilterScope {
+public extension FilterKey where Scope == MessageReminderListFilterScope {
     /// A filter key for matching the `channel_cid` value.
     /// Supported operators: `in`, `equal`
     static var cid: FilterKey<Scope, ChannelId> { .init(
@@ -29,7 +29,7 @@ public extension FilterKey where Scope: AnyMessageReminderListFilterScope {
     static var createdAt: FilterKey<Scope, Date> { .init(rawValue: "created_at", keyPathString: #keyPath(MessageReminderDTO.createdAt)) }
 }
 
-public extension Filter where Scope: AnyMessageReminderListFilterScope {
+public extension Filter where Scope == MessageReminderListFilterScope {
     /// Returns a filter that matches message reminders without a due date.
     static var withoutRemindAt: Filter<Scope> {
         .isNil(.remindAt)

@@ -12,7 +12,7 @@ public protocol AnyUserListFilterScope {}
 public class UserListFilterScope: FilterScope, AnyUserListFilterScope {}
 
 /// Non extra-data-specific filer keys for channel list.
-public extension FilterKey where Scope: AnyUserListFilterScope {
+public extension FilterKey where Scope == UserListFilterScope {
     /// A filter key for matching the `id` value.
     static var id: FilterKey<Scope, UserId> { "id" }
 
