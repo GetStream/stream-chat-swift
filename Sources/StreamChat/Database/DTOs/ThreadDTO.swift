@@ -25,6 +25,9 @@ class ThreadDTO: NSManagedObject {
     // Only update this value when fetching thread lists, to avoid live updates
     @NSManaged private var currentUserUnreadCount: Int64
 
+    // Helper to sort by hasUnread.
+    @NSManaged var hasUnreadSorting: Int16
+
     static func loadOrCreate(
         parentMessageId: MessageId,
         context: NSManagedObjectContext,
@@ -65,16 +68,22 @@ class ThreadDTO: NSManagedObject {
         return request
     }
 
-    static func threadListFetchRequest() -> NSFetchRequest<ThreadDTO> {
+    static func threadListFetchRequest(query: ThreadListQuery) -> NSFetchRequest<ThreadDTO> {
         let request = NSFetchRequest<ThreadDTO>(entityName: ThreadDTO.entityName)
         ThreadDTO.applyPrefetchingState(to: request)
 
         // By default threads are sorted by unread + updatedAt and
         // at the moment this is not customisable.
-        let sortDescriptors: [NSSortDescriptor] = [
+        let defaultSortDescriptors: [NSSortDescriptor] = [
             .init(keyPath: \ThreadDTO.currentUserUnreadCount, ascending: false),
-            .init(keyPath: \ThreadDTO.updatedAt, ascending: false)
+            .init(keyPath: \ThreadDTO.lastMessageAt, ascending: false),
+            .init(keyPath: \ThreadDTO.parentMessageId, ascending: false)
         ]
+
+        var sortDescriptors: [NSSortDescriptor] = defaultSortDescriptors
+        if query.sort.isEmpty == false {
+            sortDescriptors = query.sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
+        }
 
         request.sortDescriptors = sortDescriptors
         return request
