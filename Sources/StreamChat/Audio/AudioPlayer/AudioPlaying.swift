@@ -181,13 +181,13 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
 
     // MARK: - AppStateObserverDelegate
 
-    func applicationDidMoveToBackground() {
+    open func applicationDidMoveToBackground() {
         guard context.state == .playing else { return }
         shouldPlayWhenComeToForeground = true
         pause()
     }
 
-    func applicationDidMoveToForeground() {
+    open func applicationDidMoveToForeground() {
         guard shouldPlayWhenComeToForeground else { return }
         shouldPlayWhenComeToForeground = false
         play()
