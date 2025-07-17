@@ -197,7 +197,9 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     threadListController: client.threadListController(query: threadListQuery),
                     eventsController: client.eventsController()
                 )
-                self.rootViewController.present(threadListVC, animated: true)
+                threadListVC.title = "Channel Threads"
+                let navVC = UINavigationController(rootViewController: threadListVC)
+                self.rootViewController.present(navVC, animated: true)
             }),
             .init(title: "Show Banned Members", handler: { [unowned self] _ in
                 guard let cid = channelController.channel?.cid else { return }

@@ -81,6 +81,8 @@ class ThreadDTO: NSManagedObject {
         }
         request.sortDescriptors = sortDescriptors
 
+        // For now, we don't have a `ThreadListQueryDTO` like the `ChannelListQueryDTO`.
+        // The automatic predicate should be enough for threads. If needed, we can always create it later.
         if let predicate = query.filter?.predicate {
             request.predicate = predicate
         }
