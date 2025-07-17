@@ -108,7 +108,7 @@ public extension FilterKey where Scope == ThreadListFilterScope {
 
     /// A filter key for matching the `parentMessageId` value.
     /// Supported operators: `equal`, `exists`.
-    static var parentMessageId: FilterKey<Scope, UserId> {
+    static var parentMessageId: FilterKey<Scope, MessageId> {
         .init(
             rawValue: "parent_message_id",
             keyPathString: #keyPath(ThreadDTO.parentMessageId)
