@@ -59,7 +59,7 @@ public struct ThreadListQuery: Encodable {
 public protocol AnyThreadListFilterScope {}
 
 /// An extra-data-specific namespace for the `FilterKey`s suitable to be used for `ThreadListQuery`.
-public struct ThreadListFilterScope: FilterScope, AnyChannelListFilterScope {}
+public struct ThreadListFilterScope: FilterScope, AnyThreadListFilterScope {}
 
 /// The `Filter` keys that can be used to filter the threads in a `ThreadListQuery`.
 public extension FilterKey where Scope == ThreadListFilterScope {
