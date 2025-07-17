@@ -157,6 +157,13 @@ extension ThreadListSortingKey {
         remoteKey: ThreadCodingKeys.participantCount.rawValue
     )
 
+    /// Sort threads by number of active participants.
+    public static let activeParticipantCount = Self(
+        keyPath: \.activeParticipantCount,
+        localKey: #keyPath(ThreadDTO.activeParticipantCount),
+        remoteKey: ThreadCodingKeys.activeParticipantCount.rawValue
+    )
+
     /// Sort threads by number of replies.
     public static let replyCount = Self(
         keyPath: \.replyCount,
@@ -173,7 +180,7 @@ extension ThreadListSortingKey {
 
     /// Sort threads by unread state.
     public static let hasUnread = Self(
-        localKey: #keyPath(ThreadDTO.hasUnreadSorting),
+        localKey: #keyPath(ThreadDTO.currentUserUnreadCount),
         remoteKey: "has_unread"
     )
 }

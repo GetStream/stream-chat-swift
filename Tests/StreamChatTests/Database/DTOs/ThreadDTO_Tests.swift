@@ -46,6 +46,7 @@ final class ThreadDTO_Tests: XCTestCase {
             createdBy: .dummy(userId: .unique),
             replyCount: 10,
             participantCount: 10,
+            activeParticipantCount: 2,
             threadParticipants: [dummyThreadParticipantPayload()],
             lastMessageAt: .unique,
             createdAt: .unique,
@@ -66,6 +67,7 @@ final class ThreadDTO_Tests: XCTestCase {
         XCTAssertEqual(dto.replyCount, 10)
         XCTAssertEqual(dto.participantCount, 10)
         XCTAssertEqual(dto.threadParticipants.count, 1)
+        XCTAssertEqual(dto.activeParticipantCount, 2)
         XCTAssertEqual(dto.latestReplies.count, 2)
         XCTAssertEqual(dto.read.count, 1)
         XCTAssertEqual(dto.parentMessageId, payload.parentMessageId)
@@ -85,6 +87,7 @@ final class ThreadDTO_Tests: XCTestCase {
             createdBy: .dummy(userId: .unique),
             replyCount: 10,
             participantCount: 10,
+            activeParticipantCount: 2,
             threadParticipants: [dummyThreadParticipantPayload()],
             lastMessageAt: .unique,
             createdAt: .unique,
@@ -106,6 +109,7 @@ final class ThreadDTO_Tests: XCTestCase {
         XCTAssertEqual(model.title, "Test")
         XCTAssertEqual(model.replyCount, 10)
         XCTAssertEqual(model.participantCount, 10)
+        XCTAssertEqual(model.activeParticipantCount, 2)
         XCTAssertEqual(model.threadParticipants.count, 1)
         XCTAssertEqual(model.latestReplies.count, 2)
         XCTAssertEqual(model.reads.count, 1)
@@ -173,6 +177,7 @@ final class ThreadDTO_Tests: XCTestCase {
             createdBy: .dummy(userId: .unique),
             replyCount: 10,
             participantCount: 10,
+            activeParticipantCount: 2,
             threadParticipants: [dummyThreadParticipantPayload()],
             lastMessageAt: .unique,
             createdAt: .unique,
@@ -234,6 +239,7 @@ final class ThreadDTO_Tests: XCTestCase {
             createdBy: .dummy(userId: .unique),
             replyCount: 10,
             participantCount: 10,
+            activeParticipantCount: 2,
             threadParticipants: [dummyThreadParticipantPayload()],
             lastMessageAt: .unique,
             createdAt: .unique,
@@ -264,6 +270,7 @@ final class ThreadDTO_Tests: XCTestCase {
             createdBy: payloadWithDraft.createdBy,
             replyCount: payloadWithDraft.replyCount,
             participantCount: payloadWithDraft.participantCount,
+            activeParticipantCount: 2,
             threadParticipants: payloadWithDraft.threadParticipants,
             lastMessageAt: payloadWithDraft.lastMessageAt,
             createdAt: payloadWithDraft.createdAt,

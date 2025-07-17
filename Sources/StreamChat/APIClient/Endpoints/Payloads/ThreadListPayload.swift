@@ -11,6 +11,7 @@ enum ThreadCodingKeys: String, CodingKey, CaseIterable {
     case createdBy = "created_by"
     case replyCount = "reply_count"
     case participantCount = "participant_count"
+    case activeParticipantCount = "active_participant_count"
     case threadParticipants = "thread_participants"
     case lastMessageAt = "last_message_at"
     case createdAt = "created_at"
@@ -52,6 +53,7 @@ struct ThreadPayload: Decodable {
     let createdBy: UserPayload
     let replyCount: Int
     let participantCount: Int
+    let activeParticipantCount: Int
     let threadParticipants: [ThreadParticipantPayload]
     let lastMessageAt: Date?
     let createdAt: Date
@@ -69,6 +71,7 @@ struct ThreadPayload: Decodable {
         createdBy: UserPayload,
         replyCount: Int,
         participantCount: Int,
+        activeParticipantCount: Int,
         threadParticipants: [ThreadParticipantPayload],
         lastMessageAt: Date?,
         createdAt: Date,
@@ -85,6 +88,7 @@ struct ThreadPayload: Decodable {
         self.createdBy = createdBy
         self.replyCount = replyCount
         self.participantCount = participantCount
+        self.activeParticipantCount = activeParticipantCount
         self.threadParticipants = threadParticipants
         self.lastMessageAt = lastMessageAt
         self.createdAt = createdAt
@@ -105,6 +109,7 @@ struct ThreadPayload: Decodable {
         createdBy = try container.decode(UserPayload.self, forKey: ThreadCodingKeys.createdBy)
         replyCount = try container.decode(Int.self, forKey: ThreadCodingKeys.replyCount)
         participantCount = try container.decode(Int.self, forKey: ThreadCodingKeys.participantCount)
+        activeParticipantCount = try container.decodeIfPresent(Int.self, forKey: ThreadCodingKeys.activeParticipantCount) ?? 0
         threadParticipants = try container.decodeArrayIfPresentIgnoringFailures(
             [ThreadParticipantPayload].self,
             forKey: ThreadCodingKeys.threadParticipants
@@ -140,6 +145,7 @@ struct ThreadPartialPayload: Decodable {
     let createdBy: UserPayload
     let replyCount: Int
     let participantCount: Int
+    let activeParticipantCount: Int?
     let lastMessageAt: Date?
     let createdAt: Date
     let updatedAt: Date?
@@ -153,6 +159,7 @@ struct ThreadPartialPayload: Decodable {
         createdBy: UserPayload,
         replyCount: Int,
         participantCount: Int,
+        activeParticipantCount: Int,
         lastMessageAt: Date?,
         createdAt: Date,
         updatedAt: Date?,
@@ -165,6 +172,7 @@ struct ThreadPartialPayload: Decodable {
         self.createdBy = createdBy
         self.replyCount = replyCount
         self.participantCount = participantCount
+        self.activeParticipantCount = activeParticipantCount
         self.lastMessageAt = lastMessageAt
         self.createdAt = createdAt
         self.updatedAt = updatedAt
@@ -181,6 +189,7 @@ struct ThreadPartialPayload: Decodable {
         createdBy = try container.decode(UserPayload.self, forKey: ThreadCodingKeys.createdBy)
         replyCount = try container.decode(Int.self, forKey: ThreadCodingKeys.replyCount)
         participantCount = try container.decode(Int.self, forKey: ThreadCodingKeys.participantCount)
+        activeParticipantCount = try container.decodeIfPresent(Int.self, forKey: ThreadCodingKeys.activeParticipantCount) ?? 0
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: ThreadCodingKeys.lastMessageAt)
         createdAt = try container.decode(Date.self, forKey: ThreadCodingKeys.createdAt)
         updatedAt = try container.decodeIfPresent(Date.self, forKey: ThreadCodingKeys.updatedAt)
@@ -228,6 +237,7 @@ struct ThreadDetailsPayload: Decodable {
         case parentMessageId = "parent_message_id"
         case replyCount = "reply_count"
         case participantCount = "participant_count"
+        case activeParticipantCount = "active_participant_count"
         case lastMessageAt = "last_message_at"
         case createdAt = "created_at"
         case updatedAt = "updated_at"
@@ -238,6 +248,7 @@ struct ThreadDetailsPayload: Decodable {
     let parentMessageId: MessageId
     let replyCount: Int
     let participantCount: Int
+    let activeParticipantCount: Int?
     let lastMessageAt: Date?
     let createdAt: Date
     let updatedAt: Date

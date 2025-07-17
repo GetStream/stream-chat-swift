@@ -263,6 +263,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
                 parentMessageId: parentMessageId,
                 replyCount: 3,
                 participantCount: 3,
+                activeParticipantCount: 2,
                 lastMessageAt: .unique,
                 createdAt: .unique,
                 updatedAt: .unique,
