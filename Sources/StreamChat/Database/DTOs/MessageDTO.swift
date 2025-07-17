@@ -663,7 +663,7 @@ class MessageDTO: NSManagedObject {
             keyPath: \MessageDTO.createdAt,
             ascending: true
         )]
-        var predicates: [NSPredicate] = [
+        let predicates: [NSPredicate] = [
             .init(format: "isActiveLiveLocation == YES"),
             .init(format: "localMessageStateRaw == nil")
         ]

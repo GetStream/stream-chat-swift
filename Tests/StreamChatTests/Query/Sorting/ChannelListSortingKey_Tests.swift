@@ -127,7 +127,7 @@ final class ChannelListSortingKey_Tests: XCTestCase {
             Sorting(key: ChannelListSortingKey.memberCount)
         ]
 
-        XCTAssertTrue(sorting.runtimeSorting.isEmpty)
+        XCTAssertTrue(sorting.compactMap(\.key.runtimeSortValue).isEmpty)
     }
 
     func test_sortingKeyArray_runtimeSorting_returnsArrayIfCustomKey() {
@@ -137,10 +137,10 @@ final class ChannelListSortingKey_Tests: XCTestCase {
             Sorting(key: ChannelListSortingKey.custom(keyPath: \.customScore, key: "score"))
         ]
 
-        XCTAssertEqual(sorting.runtimeSorting.count, 3)
-        XCTAssertTrue(sorting.runtimeSorting.contains(where: { $0.keyPath == \ChatChannel.updatedAt }))
-        XCTAssertTrue(sorting.runtimeSorting.contains(where: { $0.keyPath == \ChatChannel.memberCount }))
-        XCTAssertTrue(sorting.runtimeSorting.contains(where: { $0.keyPath == \ChatChannel.customScore }))
+        XCTAssertEqual(sorting.compactMap(\.key.runtimeSortValue).count, 3)
+        XCTAssertTrue(sorting.compactMap(\.key.runtimeSortValue).contains(where: { $0.keyPath == \ChatChannel.updatedAt }))
+        XCTAssertTrue(sorting.compactMap(\.key.runtimeSortValue).contains(where: { $0.keyPath == \ChatChannel.memberCount }))
+        XCTAssertTrue(sorting.compactMap(\.key.runtimeSortValue).contains(where: { $0.keyPath == \ChatChannel.customScore }))
     }
 }
 

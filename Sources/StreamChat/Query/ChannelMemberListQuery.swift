@@ -12,7 +12,7 @@ public protocol AnyMemberListFilterScope: AnyUserListFilterScope {}
 public class MemberListFilterScope: UserListFilterScope, AnyMemberListFilterScope {}
 
 /// Non extra-data-specific filer keys for member list.
-public extension FilterKey where Scope == MemberListFilterScope {
+public extension FilterKey where Scope: MemberListFilterScope {
     /// A filter key for matching moderators of a channel.
     /// Supported operators: `equal`, `notEqual`
     static var isModerator: FilterKey<Scope, Bool> { "is_moderator" }
