@@ -189,7 +189,7 @@ struct ThreadPartialPayload: Decodable {
         createdBy = try container.decode(UserPayload.self, forKey: ThreadCodingKeys.createdBy)
         replyCount = try container.decode(Int.self, forKey: ThreadCodingKeys.replyCount)
         participantCount = try container.decode(Int.self, forKey: ThreadCodingKeys.participantCount)
-        activeParticipantCount = try container.decodeIfPresent(Int.self, forKey: ThreadCodingKeys.activeParticipantCount) ?? 0
+        activeParticipantCount = try container.decodeIfPresent(Int.self, forKey: ThreadCodingKeys.activeParticipantCount)
         lastMessageAt = try container.decodeIfPresent(Date.self, forKey: ThreadCodingKeys.lastMessageAt)
         createdAt = try container.decode(Date.self, forKey: ThreadCodingKeys.createdAt)
         updatedAt = try container.decodeIfPresent(Date.self, forKey: ThreadCodingKeys.updatedAt)
