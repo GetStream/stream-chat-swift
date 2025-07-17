@@ -87,14 +87,14 @@ extension LocalConvertibleSortingKey: CustomDebugStringConvertible {
         return .init(key: localKey, ascending: isAscending)
     }
 
-    var sortValue: SortValue<Model>? {
+    func sortValue(isAscending: Bool) -> SortValue<Model>? {
         guard let keyPath = keyPath else {
             return nil
         }
-        return SortValue(keyPath: keyPath, isAscending: true)
+        return SortValue(keyPath: keyPath, isAscending: isAscending)
     }
 
-    var runtimeSortValue: SortValue<Model>? {
+    func runtimeSortValue(isAscending: Bool) -> SortValue<Model>? {
         guard requiresRuntimeSorting else {
             return nil
         }
@@ -102,6 +102,6 @@ extension LocalConvertibleSortingKey: CustomDebugStringConvertible {
             return nil
         }
 
-        return SortValue(keyPath: keyPath, isAscending: true)
+        return SortValue(keyPath: keyPath, isAscending: isAscending)
     }
 }

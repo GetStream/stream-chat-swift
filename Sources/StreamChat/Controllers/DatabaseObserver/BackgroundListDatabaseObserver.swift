@@ -23,7 +23,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject>: BackgroundData
             fetchRequest: fetchRequest,
             itemCreator: itemCreator,
             itemReuseKeyPaths: itemReuseKeyPaths,
-            sorting: sort.compactMap(\.key.runtimeSortValue),
+            sorting: sort.compactMap { $0.key.runtimeSortValue(isAscending: $0.isAscending) },
             fetchedResultsControllerType: fetchedResultsControllerType
         )
     }

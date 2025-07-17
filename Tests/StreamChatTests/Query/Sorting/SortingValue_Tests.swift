@@ -81,7 +81,7 @@ final class SortingValue_Tests: XCTestCase {
             Sorting(key: .createdAt, isAscending: false)
         ]
         let runtimeSortResult = channels
-            .sorted(using: sortingKeys.compactMap(\.key.sortValue))
+            .sorted(using: sortingKeys.compactMap { $0.key.sortValue(isAscending: $0.isAscending) })
             .map(\.cid.id)
         let nsArrayChannels = NSArray(array: channels.map { ChannelBoxed(channel: $0) })
         let sortDescriptors = sortingKeys.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
@@ -103,7 +103,7 @@ final class SortingValue_Tests: XCTestCase {
             Sorting(key: .lastMessageAt, isAscending: false),
             Sorting(key: .createdAt, isAscending: false)
         ]
-        let sortValues = sortingKeys.compactMap(\.key.sortValue)
+        let sortValues = sortingKeys.compactMap { $0.key.sortValue(isAscending: $0.isAscending) }
         XCTAssertEqual(2, sortValues.count)
         let runtimeSortResult = channels
             .sorted(using: sortValues)
@@ -131,7 +131,7 @@ final class SortingValue_Tests: XCTestCase {
             Sorting(key: .lastMessageAt, isAscending: false),
             Sorting(key: .createdAt, isAscending: false)
         ]
-        let sortValues = sortingKeys.compactMap(\.key.sortValue)
+        let sortValues = sortingKeys.compactMap { $0.key.sortValue(isAscending: $0.isAscending) }
         XCTAssertEqual(2, sortValues.count)
         let runtimeSortResult = channels
             .sorted(using: sortValues)
@@ -159,7 +159,7 @@ final class SortingValue_Tests: XCTestCase {
             Sorting(key: .lastMessageAt, isAscending: false),
             Sorting(key: .createdAt, isAscending: false)
         ]
-        let sortValues = sortingKeys.compactMap(\.key.sortValue)
+        let sortValues = sortingKeys.compactMap { $0.key.sortValue(isAscending: $0.isAscending) }
         XCTAssertEqual(2, sortValues.count)
         let runtimeSortResult = channels
             .sorted(using: sortValues)
@@ -187,7 +187,7 @@ final class SortingValue_Tests: XCTestCase {
             Sorting(key: .unreadCount, isAscending: false),
             Sorting(key: .createdAt, isAscending: true)
         ]
-        let sortValues = sortingKeys.compactMap(\.key.sortValue)
+        let sortValues = sortingKeys.compactMap { $0.key.sortValue(isAscending: $0.isAscending) }
         XCTAssertEqual(2, sortValues.count)
         let runtimeSortResult = channels
             .sorted(using: sortValues)
