@@ -84,13 +84,23 @@ You can still integrate our SDKs if your project is using Objective-C. In that c
 
 ## Video SDK
 
-We also offer [Video SDK](https://github.com/GetStream/stream-video-swift) that seamlessly integrates with our Chat SDK. To find out more about this product, please check our [docs](https://getstream.io/video/docs/ios/). 
+We also offer [Video SDK](https://github.com/GetStream/stream-video-swift) that seamlessly integrates with our Chat SDK.
+
+To find out more about this product, please check our [docs](https://getstream.io/video/docs/ios/).
+
+---
+
+## Feeds SDK
+
+In addition to our chat and video SDKs, we also have a [Feeds iOS SDK](https://github.com/GetStream/stream-feeds-swift) (currently available as alpha release), that integrates with our Feeds product client-side.
+
+To find out more about this product, please check our [docs](https://getstream.io/activity-feeds/docs/ios/).
 
 ---
 
 ## We are hiring
 
-We've recently closed a [\$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) and we keep actively growing.
+We've closed a [\$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) in 2021 and we keep actively growing.
 Our APIs are used by more than a billion end-users, and you'll have a chance to make a huge impact on the product within a team of the strongest engineers all over the world.
 Check out our current openings and apply via [Stream's website](https://getstream.io/team/#jobs).
 
