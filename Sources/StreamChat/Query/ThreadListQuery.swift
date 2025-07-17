@@ -20,7 +20,7 @@ public struct ThreadListQuery: Encodable {
     public let filter: Filter<ThreadListFilterScope>?
     /// A sorting for the query.
     /// By default it is sorted by unread state, last message date, and parent message ID.
-    public let sort: [Sorting<ThreadListSortingKey>]
+    public let sort: [Sorting<ThreadListSortingKey>]?
     /// A boolean indicating whether to watch for changes in the thread or not.
     public var watch: Bool
     /// The amount of threads fetched per page. Default is 20.
@@ -35,7 +35,7 @@ public struct ThreadListQuery: Encodable {
     public init(
         watch: Bool,
         filter: Filter<ThreadListFilterScope>? = nil,
-        sort: [Sorting<ThreadListSortingKey>] = [
+        sort: [Sorting<ThreadListSortingKey>]? = [
             .init(key: .hasUnread),
             .init(key: .lastMessageAt),
             .init(key: .parentMessageId)
