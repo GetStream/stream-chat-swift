@@ -3,6 +3,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
 ### ✅ Added
 - Add support for Filtering and Sorting Threads [#3731](https://github.com/GetStream/stream-chat-swift/pull/3731)
 - Add `ChatThread.activeParticipantCount` [#3731](https://github.com/GetStream/stream-chat-swift/pull/3731)
