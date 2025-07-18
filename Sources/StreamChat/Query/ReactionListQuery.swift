@@ -45,7 +45,7 @@ public class ReactionListFilterScope: FilterScope, AnyReactionListFilterScope {}
 extension MessageReactionType: FilterValue {}
 
 /// Non extra-data-specific filer keys for reaction list.
-public extension FilterKey where Scope: AnyReactionListFilterScope {
+public extension FilterKey where Scope == ReactionListFilterScope {
     /// A filter key for matching the reaction type
     static var reactionType: FilterKey<Scope, MessageReactionType> { "type" }
 

@@ -237,7 +237,7 @@ class ChannelUpdater: Worker {
             endpoint: .unmuteChannel(cid: cid)
         ) { [weak self] (result: Result<EmptyResponse, Error>) in
             switch result {
-            case .success(let payload):
+            case .success:
                 self?.database.write({ session in
                     let channel = session.channel(cid: cid)
                     if let mute = channel?.mute {

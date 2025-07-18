@@ -1811,6 +1811,7 @@
 		ADD4C0E22B30A98400F230FF /* UnsupportedAttachmentViewInjector.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD4C0DE2B30A95200F230FF /* UnsupportedAttachmentViewInjector.swift */; };
 		ADD738472A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD738462A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift */; };
 		ADD738482A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADD738462A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift */; };
+		ADDAC6512E2909CD00A01227 /* ThreadListQuery_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDAC6502E2909CD00A01227 /* ThreadListQuery_Tests.swift */; };
 		ADDB2F592954CBF500BF80DA /* ViewPaginationHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F572954CBA200BF80DA /* ViewPaginationHandling.swift */; };
 		ADDB2F5A2954CBF700BF80DA /* ViewPaginationHandling.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F572954CBA200BF80DA /* ViewPaginationHandling.swift */; };
 		ADDB2F5F2954D43D00BF80DA /* ScrollViewPaginationHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADDB2F5B2954CC0A00BF80DA /* ScrollViewPaginationHandler.swift */; };
@@ -4539,6 +4540,7 @@
 		ADD4C0DE2B30A95200F230FF /* UnsupportedAttachmentViewInjector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnsupportedAttachmentViewInjector.swift; sourceTree = "<group>"; };
 		ADD5A9E725DE8AF6006DC88A /* ChatSuggestionsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSuggestionsVC_Tests.swift; sourceTree = "<group>"; };
 		ADD738462A8D312B0011FE81 /* ChannelListMessageTimestampFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListMessageTimestampFormatter.swift; sourceTree = "<group>"; };
+		ADDAC6502E2909CD00A01227 /* ThreadListQuery_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadListQuery_Tests.swift; sourceTree = "<group>"; };
 		ADDB2F572954CBA200BF80DA /* ViewPaginationHandling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewPaginationHandling.swift; sourceTree = "<group>"; };
 		ADDB2F5B2954CC0A00BF80DA /* ScrollViewPaginationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewPaginationHandler.swift; sourceTree = "<group>"; };
 		ADDB2F5D2954CC1700BF80DA /* InvertedScrollViewPaginationHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedScrollViewPaginationHandler.swift; sourceTree = "<group>"; };
@@ -7633,6 +7635,7 @@
 		A364D0B727D12A520029857A /* Query */ = {
 			isa = PBXGroup;
 			children = (
+				ADDAC6502E2909CD00A01227 /* ThreadListQuery_Tests.swift */,
 				ADB208812D8494F0003F1059 /* MessageReminderListQuery_Tests.swift */,
 				AD545E842D5D7591008FD399 /* DraftListQuery_Tests.swift */,
 				A3C7BAD027E4E02700BBF4FA /* ChannelListFilterScope_Tests.swift */,
@@ -12190,6 +12193,7 @@
 				ADA83B532D97805A003B3928 /* ReminderPayloads_Tests.swift in Sources */,
 				4FD94FC52BCD5EF00084FEDF /* ConnectedUser_Tests.swift in Sources */,
 				AD0AD6C02A25140A00CB96CB /* MessagesPaginationState_Tests.swift in Sources */,
+				ADDAC6512E2909CD00A01227 /* ThreadListQuery_Tests.swift in Sources */,
 				C12DBE612A67E2D60045D9F0 /* SortingValue_Tests.swift in Sources */,
 				C186BFB627AAFDAB0099CCA6 /* SyncOperations_Tests.swift in Sources */,
 				A3C2700427E1DB2B0057D5A8 /* MessageSearchController_Tests.swift in Sources */,

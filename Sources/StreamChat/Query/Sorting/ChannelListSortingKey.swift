@@ -4,8 +4,10 @@
 
 import Foundation
 
-/// `ChannelListSortingKey` is keys by which you can get sorted channels after query.
-public struct ChannelListSortingKey: SortingKey, Equatable {
+/// `ChannelListSortingKey` is keys by which you can get sorted and filtered channels.
+public typealias ChannelListSortingKey = LocalConvertibleSortingKey<ChatChannel>
+
+extension ChannelListSortingKey {
     /// The default sorting is by the last message date or a channel created date if no messages.
     public static let `default` = Self(
         keyPath: \.defaultSortingAt,
@@ -73,34 +75,6 @@ public struct ChannelListSortingKey: SortingKey, Equatable {
         localKey: #keyPath(ChannelDTO.currentUserUnreadMessagesCount),
         remoteKey: "unread_count"
     )
-
-    public static func custom<T>(keyPath: KeyPath<ChatChannel, T>, key: String) -> Self {
-        .init(keyPath: keyPath, localKey: nil, remoteKey: key)
-    }
-
-    let keyPath: PartialKeyPath<ChatChannel>
-    let localKey: String?
-    let remoteKey: String
-    var requiresRuntimeSorting: Bool {
-        localKey == nil
-    }
-
-    init<T>(keyPath: KeyPath<ChatChannel, T>, localKey: String?, remoteKey: String) {
-        self.keyPath = keyPath
-        self.localKey = localKey
-        self.remoteKey = remoteKey
-    }
-
-    public func encode(to encoder: Encoder) throws {
-        var container = encoder.singleValueContainer()
-        try container.encode(remoteKey)
-    }
-}
-
-extension ChannelListSortingKey: CustomDebugStringConvertible {
-    public var debugDescription: String {
-        remoteKey
-    }
 }
 
 extension ChannelListSortingKey {
@@ -108,33 +82,6 @@ extension ChannelListSortingKey {
         let dateKeyPath: KeyPath<ChannelDTO, DBDate> = \ChannelDTO.defaultSortingAt
         return .init(keyPath: dateKeyPath, ascending: false)
     }()
-
-    func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
-        guard let localKey = self.localKey else {
-            return nil
-        }
-        return .init(key: localKey, ascending: isAscending)
-    }
-}
-
-extension Array where Element == Sorting<ChannelListSortingKey> {
-    var runtimeSorting: [SortValue<ChatChannel>] {
-        var requiresRuntime = false
-        let sortValues: [SortValue<ChatChannel>] = compactMap {
-            if $0.key.requiresRuntimeSorting {
-                requiresRuntime = true
-            }
-            return $0.sortValue
-        }
-
-        return requiresRuntime ? sortValues : []
-    }
-}
-
-extension Sorting where Key == ChannelListSortingKey {
-    var sortValue: SortValue<ChatChannel>? {
-        SortValue(keyPath: key.keyPath, isAscending: isAscending)
-    }
 }
 
 extension ChatChannel {

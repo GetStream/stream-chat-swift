@@ -18,6 +18,8 @@ public struct ChatThread {
     public let replyCount: Int
     /// The number of participants in the thread.
     public let participantCount: Int
+    /// The number of active participants in the thread.
+    public let activeParticipantCount: Int
     /// The participants in the thread.
     public let threadParticipants: [ThreadParticipant]
     /// The date of the last (newest) message in the thread.

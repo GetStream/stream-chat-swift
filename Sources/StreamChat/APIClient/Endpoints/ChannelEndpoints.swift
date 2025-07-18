@@ -92,7 +92,7 @@ extension Endpoint {
     static func unmuteChannel(
         cid: ChannelId
     ) -> Endpoint<EmptyResponse> {
-        var body: [String: AnyEncodable] = ["channel_cid": AnyEncodable(cid)]
+        let body: [String: AnyEncodable] = ["channel_cid": AnyEncodable(cid)]
 
         return .init(
             path: .muteChannel(false),

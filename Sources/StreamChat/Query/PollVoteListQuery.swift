@@ -103,7 +103,7 @@ public protocol AnyVoteListFilterScope {}
 public class VoteListFilterScope: FilterScope, AnyVoteListFilterScope {}
 
 /// Non extra-data-specific filer keys for vote list.
-public extension FilterKey where Scope: AnyVoteListFilterScope {
+public extension FilterKey where Scope == VoteListFilterScope {
     /// A filter key for matching the option id.
     static var optionId: FilterKey<Scope, String> { "option_id" }
 
