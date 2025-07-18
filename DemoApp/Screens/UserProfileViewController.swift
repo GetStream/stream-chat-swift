@@ -159,12 +159,6 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         present(hostingController, animated: true)
     }
 
-    private func showAlert(title: String, message: String) {
-        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: "OK", style: .default))
-        present(alert, animated: true)
-    }
-
     @objc private func didTapUpdateButton() {
         currentUserController.updateUserData(
             name: name,
