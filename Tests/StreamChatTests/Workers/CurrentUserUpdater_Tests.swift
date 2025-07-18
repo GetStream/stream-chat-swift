@@ -741,6 +741,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let payload = CurrentUserUnreadsPayload(
             totalUnreadCount: 10,
             totalUnreadThreadsCount: 3,
+            totalUnreadCountByTeam: ["Benfica": 3],
             channels: [
                 CurrentUserChannelUnreadPayload(
                     channelId: .init(type: .messaging, id: "channel1"),
@@ -780,6 +781,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         XCTAssertEqual(receivedUnreads?.unreadChannels.count, payload.channels.count)
         XCTAssertEqual(receivedUnreads?.unreadThreads.count, payload.threads.count)
         XCTAssertEqual(receivedUnreads?.unreadChannelsByType.count, payload.channelType.count)
+        XCTAssertEqual(receivedUnreads?.totalUnreadCountByTeam?["Benfica"], 3)
     }
     
     func test_loadAllUnreads_propagatesNetworkError() {
