@@ -5,7 +5,7 @@
 import Foundation
 
 /// A query to fetch the list of threads the current belongs to.
-public struct ThreadListQuery: Encodable, LocalConvertibleQuery {
+public struct ThreadListQuery: Encodable, LocalConvertibleSortingQuery {
     private enum CodingKeys: String, CodingKey {
         case filter
         case sort

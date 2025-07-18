@@ -96,12 +96,12 @@ extension LocalConvertibleSortingKey: CustomDebugStringConvertible {
 }
 
 /// A protocol for queries that can be converted to local sorting.
-protocol LocalConvertibleQuery {
+protocol LocalConvertibleSortingQuery {
     associatedtype Model
     var sort: [Sorting<LocalConvertibleSortingKey<Model>>] { get }
 }
 
-extension LocalConvertibleQuery {
+extension LocalConvertibleSortingQuery {
     var requiresRuntimeSorting: Bool {
         sort.contains { $0.key.requiresRuntimeSorting }
     }
