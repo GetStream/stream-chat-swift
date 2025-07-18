@@ -128,4 +128,4 @@ final class ThreadListQuery_Tests: XCTestCase {
 
         XCTAssertNil(decoded?["next"])
     }
-} 
+}

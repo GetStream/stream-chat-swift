@@ -367,25 +367,25 @@ final class ThreadDTO_Tests: XCTestCase {
             parentMessageId: .unique,
             channel: .dummy(cid: cid),
             lastMessageAt: now.addingTimeInterval(-300), // 5 minutes ago
-            updatedAt: now.addingTimeInterval(-100)       // 1 minute 40s ago
+            updatedAt: now.addingTimeInterval(-100) // 1 minute 40s ago
         )
         let payload2 = dummyThreadPayload(
             parentMessageId: .unique,
             channel: .dummy(cid: cid),
             lastMessageAt: now.addingTimeInterval(-200), // 3 minutes 20s ago
-            updatedAt: now.addingTimeInterval(-50)        // 50s ago
+            updatedAt: now.addingTimeInterval(-50) // 50s ago
         )
         let payload3 = dummyThreadPayload(
             parentMessageId: .unique,
             channel: .dummy(cid: cid),
             lastMessageAt: now.addingTimeInterval(-100), // 1 minute 40s ago
-            updatedAt: now.addingTimeInterval(-200)       // 3 minutes 20s ago
+            updatedAt: now.addingTimeInterval(-200) // 3 minutes 20s ago
         )
         let payload4 = dummyThreadPayload(
             parentMessageId: .unique,
             channel: .dummy(cid: cid),
-            lastMessageAt: now.addingTimeInterval(-50),  // 50s ago
-            updatedAt: now.addingTimeInterval(-300)       // 5 minutes ago
+            lastMessageAt: now.addingTimeInterval(-50), // 50s ago
+            updatedAt: now.addingTimeInterval(-300) // 5 minutes ago
         )
 
         // Save the threads to DB. It doesn't matter which query we use because the filter for both of them is the same.
@@ -402,33 +402,33 @@ final class ThreadDTO_Tests: XCTestCase {
         // A fetch request with a sorting by `updatedAt`.
         let fetchRequestWithUpdatedAtSorting = ThreadDTO.threadListFetchRequest(query: queryWithUpdatedAtSorting)
 
-        var threadsWithDefaultSorting: [ThreadDTO] { 
-            try! database.viewContext.fetch(fetchRequestWithDefaultSorting) 
+        var threadsWithDefaultSorting: [ThreadDTO] {
+            try! database.viewContext.fetch(fetchRequestWithDefaultSorting)
         }
-        var threadsWithUpdatedAtSorting: [ThreadDTO] { 
-            try! database.viewContext.fetch(fetchRequestWithUpdatedAtSorting) 
+        var threadsWithUpdatedAtSorting: [ThreadDTO] {
+            try! database.viewContext.fetch(fetchRequestWithUpdatedAtSorting)
         }
 
         // Check the default sorting (by lastMessageAt in this case since no unread).
         XCTAssertEqual(threadsWithDefaultSorting.count, 4)
-        let sortedByLastMessage = threadsWithDefaultSorting.map { $0.parentMessageId }
+        let sortedByLastMessage = threadsWithDefaultSorting.map(\.parentMessageId)
         let expectedLastMessageOrder = [
             payload4.parentMessageId, // most recent
             payload3.parentMessageId,
             payload2.parentMessageId,
-            payload1.parentMessageId  // oldest
+            payload1.parentMessageId // oldest
         ]
         XCTAssertEqual(sortedByLastMessage, expectedLastMessageOrder)
 
         // Check the sorting by `updatedAt`.
         XCTAssertEqual(threadsWithUpdatedAtSorting.count, 4)
 
-        let sortedByUpdatedAt = threadsWithUpdatedAtSorting.map { $0.parentMessageId }
+        let sortedByUpdatedAt = threadsWithUpdatedAtSorting.map(\.parentMessageId)
         let expectedUpdatedAtOrder = [
             payload2.parentMessageId, // most recent
             payload1.parentMessageId,
             payload3.parentMessageId,
-            payload4.parentMessageId  // oldest
+            payload4.parentMessageId // oldest
         ]
         XCTAssertEqual(sortedByUpdatedAt, expectedUpdatedAtOrder)
     }
