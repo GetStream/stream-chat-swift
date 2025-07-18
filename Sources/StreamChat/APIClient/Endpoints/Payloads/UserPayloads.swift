@@ -208,6 +208,7 @@ struct CurrentUserUnreadsPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case totalUnreadCount = "total_unread_count"
         case totalUnreadThreadsCount = "total_unread_threads_count"
+        case totalUnreadCountByTeam = "total_unread_count_by_team"
         case channels
         case channelType = "channel_type"
         case threads
@@ -215,6 +216,7 @@ struct CurrentUserUnreadsPayload: Decodable {
 
     let totalUnreadCount: Int
     let totalUnreadThreadsCount: Int
+    let totalUnreadCountByTeam: [TeamId: Int]?
     let channels: [CurrentUserChannelUnreadPayload]
     let channelType: [ChannelUnreadByTypePayload]
     let threads: [CurrentUserThreadUnreadPayload]
