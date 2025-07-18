@@ -15,7 +15,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject>: BackgroundData
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
         itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)? = nil,
-        sort: [Sorting<LocalConvertibleSortingKey<Item>>] = [],
+        runtimeSorting: [SortValue<Item>] = [],
         fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type = NSFetchedResultsController<DTO>.self
     ) {
         super.init(
@@ -23,7 +23,7 @@ class BackgroundListDatabaseObserver<Item, DTO: NSManagedObject>: BackgroundData
             fetchRequest: fetchRequest,
             itemCreator: itemCreator,
             itemReuseKeyPaths: itemReuseKeyPaths,
-            sorting: sort.compactMap { $0.key.runtimeSortValue(isAscending: $0.isAscending) },
+            sorting: runtimeSorting,
             fetchedResultsControllerType: fetchedResultsControllerType
         )
     }

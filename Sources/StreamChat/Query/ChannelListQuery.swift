@@ -6,7 +6,7 @@ import Foundation
 
 /// A query is used for querying specific channels from backend.
 /// You can specify filter, sorting, pagination, limit for fetched messages in channel and other options.
-public struct ChannelListQuery: Encodable {
+public struct ChannelListQuery: Encodable, LocalConvertibleQuery {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
         case sort

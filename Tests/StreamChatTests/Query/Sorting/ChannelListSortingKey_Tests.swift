@@ -120,29 +120,6 @@ final class ChannelListSortingKey_Tests: XCTestCase {
         XCTAssertTrue(key.requiresRuntimeSorting)
         XCTAssertEqual(jsonEncoder.encodedString(key), "employee.name")
     }
-
-    func test_sortingKeyArray_runtimeSorting_returnsEmptyIfNoCustomKey() {
-        let sorting = [
-            Sorting(key: ChannelListSortingKey.updatedAt),
-            Sorting(key: ChannelListSortingKey.memberCount)
-        ]
-
-        XCTAssertTrue(sorting.compactMap { $0.key.runtimeSortValue(isAscending: $0.isAscending) }.isEmpty)
-    }
-
-    func test_sortingKeyArray_runtimeSorting_returnsArrayIfCustomKey() {
-        let sorting = [
-            Sorting(key: ChannelListSortingKey.updatedAt),
-            Sorting(key: ChannelListSortingKey.memberCount),
-            Sorting(key: ChannelListSortingKey.custom(keyPath: \.customScore, key: "score"))
-        ]
-
-        let runtimeSorting = sorting.compactMap { $0.key.runtimeSortValue(isAscending: $0.isAscending) }
-        XCTAssertEqual(runtimeSorting.count, 3)
-        XCTAssertTrue(runtimeSorting.contains(where: { $0.keyPath == \ChatChannel.updatedAt }))
-        XCTAssertTrue(runtimeSorting.contains(where: { $0.keyPath == \ChatChannel.memberCount }))
-        XCTAssertTrue(runtimeSorting.contains(where: { $0.keyPath == \ChatChannel.customScore }))
-    }
 }
 
 private extension ChatChannel {

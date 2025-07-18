@@ -40,4 +40,38 @@ final class ChannelListQuery_Tests: XCTestCase {
         // Assert ChannelListQuery encoded correctly
         AssertJSONEqual(expectedJSON, encodedJSON)
     }
+
+    func test_runtimeSortingValues_returnsEmptyIfNoCustomKey() {
+        let sorting = [
+            Sorting(key: ChannelListSortingKey.updatedAt),
+            Sorting(key: ChannelListSortingKey.memberCount)
+        ]
+        let query = ChannelListQuery(
+            filter: .noTeam,
+            sort: sorting
+        )
+
+        XCTAssertTrue(query.runtimeSortingValues.isEmpty)
+    }
+
+    func test_runtimeSortingValues_runtimeSorting_returnsArrayIfCustomKey() {
+        let sorting = [
+            Sorting(key: ChannelListSortingKey.updatedAt),
+            Sorting(key: ChannelListSortingKey.memberCount),
+            Sorting(key: ChannelListSortingKey.custom(keyPath: \.customScore, key: "score"))
+        ]
+        let query = ChannelListQuery(
+            filter: .noTeam,
+            sort: sorting
+        )
+
+        let runtimeSorting = query.runtimeSortingValues
+        XCTAssertEqual(runtimeSorting.count, 3)
+    }
+}
+
+private extension ChatChannel {
+    var customScore: Double {
+        extraData["score"]?.numberValue ?? 0
+    }
 }

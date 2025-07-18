@@ -76,8 +76,10 @@ class ThreadDTO: NSManagedObject {
             .init(keyPath: \ThreadDTO.parentMessageId, ascending: false)
         ]
         var sortDescriptors: [NSSortDescriptor] = defaultSortDescriptors
-        if let sort = query.sort, !sort.isEmpty {
-            sortDescriptors = sort.compactMap { $0.key.sortDescriptor(isAscending: $0.isAscending) }
+        if !query.sort.isEmpty {
+            sortDescriptors = query.sort.compactMap {
+                $0.key.sortDescriptor(isAscending: $0.isAscending)
+            }
         }
         request.sortDescriptors = sortDescriptors
 

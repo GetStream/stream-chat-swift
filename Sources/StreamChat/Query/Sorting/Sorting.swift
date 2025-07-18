@@ -93,15 +93,26 @@ extension LocalConvertibleSortingKey: CustomDebugStringConvertible {
         }
         return SortValue(keyPath: keyPath, isAscending: isAscending)
     }
+}
 
-    func runtimeSortValue(isAscending: Bool) -> SortValue<Model>? {
-        guard requiresRuntimeSorting else {
-            return nil
-        }
-        guard let keyPath = keyPath else {
-            return nil
-        }
+/// A protocol for queries that can be converted to local sorting.
+protocol LocalConvertibleQuery {
+    associatedtype Model
+    var sort: [Sorting<LocalConvertibleSortingKey<Model>>] { get }
+}
 
-        return SortValue(keyPath: keyPath, isAscending: isAscending)
+extension LocalConvertibleQuery {
+    var requiresRuntimeSorting: Bool {
+        sort.contains { $0.key.requiresRuntimeSorting }
+    }
+
+    /// Returns the sort values for runtime sorting.
+    /// If one of the sort keys requires runtime sorting, all sort values will be used
+    /// for runtime sorting.
+    var runtimeSortingValues: [SortValue<Model>] {
+        if !requiresRuntimeSorting {
+            return []
+        }
+        return sort.compactMap { $0.key.sortValue(isAscending: $0.isAscending) }
     }
 }

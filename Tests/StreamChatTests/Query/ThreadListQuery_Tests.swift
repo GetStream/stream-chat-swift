@@ -49,10 +49,10 @@ final class ThreadListQuery_Tests: XCTestCase {
         let query = ThreadListQuery(watch: true)
 
         XCTAssertNil(query.filter)
-        XCTAssertEqual(query.sort?.count, 3)
-        XCTAssertEqual(query.sort?[0].key, .hasUnread)
-        XCTAssertEqual(query.sort?[1].key, .lastMessageAt)
-        XCTAssertEqual(query.sort?[2].key, .parentMessageId)
+        XCTAssertEqual(query.sort.count, 3)
+        XCTAssertEqual(query.sort[0].key, .hasUnread)
+        XCTAssertEqual(query.sort[1].key, .lastMessageAt)
+        XCTAssertEqual(query.sort[2].key, .parentMessageId)
         XCTAssertTrue(query.watch)
         XCTAssertEqual(query.limit, 20)
         XCTAssertEqual(query.replyLimit, 3)
@@ -109,15 +109,6 @@ final class ThreadListQuery_Tests: XCTestCase {
         
         XCTAssertEqual(sortData?[1]["field"] as? String, "participant_count")
         XCTAssertEqual(sortData?[1]["direction"] as? Int, -1)
-    }
-
-    func test_threadListQuery_withoutSort_doesNotEncodeSort() throws {
-        let query = ThreadListQuery(watch: true, sort: nil)
-
-        let encodedJSON = try JSONEncoder.default.encode(query)
-        let decoded = try JSONSerialization.jsonObject(with: encodedJSON) as? [String: Any]
-
-        XCTAssertNil(decoded?["sort"])
     }
 
     func test_threadListQuery_withoutFilter_doesNotEncodeFilter() throws {

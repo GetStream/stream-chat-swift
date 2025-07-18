@@ -241,7 +241,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
                 return try $0.asModel()
             },
             itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid),
-            sort: query.sort
+            runtimeSorting: query.runtimeSortingValues
         )
         _ = try channelListObserver.startObserving(onContextDidChange: { _, _ in
             expectation.fulfill()
