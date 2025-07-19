@@ -9,6 +9,7 @@ import AVFoundation
 protocol AudioSessionProtocol {
     var category: AVAudioSession.Category { get }
     var availableInputs: [AVAudioSessionPortDescription]? { get }
+    var currentRoute: AVAudioSessionRouteDescription { get }
 
     func setCategory(
         _ category: AVAudioSession.Category,
