@@ -99,7 +99,11 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
             .playAndRecord,
             mode: .default,
             policy: .default,
-            options: []
+            options: [
+                .allowBluetooth,
+                .allowBluetoothA2DP,
+                .allowAirPlay
+            ]
         )
         try activateSession()
     }
@@ -126,11 +130,29 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
             self?.handleRecordPermissionResponse($0, completionHandler: completionHandler)
         }
     }
+    
+    private func isBluetoothConnected() -> Bool {
+        return audioSession.currentRoute.outputs.contains(where: { output in
+            switch output.portType {
+            case .bluetoothA2DP, .bluetoothLE, .bluetoothHFP:
+                return true
+            default:
+                return false
+            }
+        })
+    }
 
     // MARK: - Helpers
 
     private func activateSession() throws {
-        try audioSession.overrideOutputAudioPort(.speaker)
+        // Check if Bluetooth is connected
+        if isBluetoothConnected() {
+            // Let system handle routing to Bluetooth
+            try audioSession.overrideOutputAudioPort(.none)
+        } else {
+            // Force output to bottom speaker
+            try audioSession.overrideOutputAudioPort(.speaker)
+        }
         try audioSession.setActive(true, options: [])
     }
 
