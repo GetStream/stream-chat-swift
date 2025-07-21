@@ -988,6 +988,30 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.editMessage_extraData, extraData)
     }
 
+    func test_editMessage_callsMessageUpdater_withSkipPushParameter() {
+        let updatedText: String = .unique
+
+        // Simulate `editMessage` call with skipPush set to true
+        controller.editMessage(text: updatedText, skipPush: true)
+
+        // Assert message updater is called with correct `skipPush` value
+        XCTAssertEqual(env.messageUpdater.editMessage_messageId, controller.messageId)
+        XCTAssertEqual(env.messageUpdater.editMessage_text, updatedText)
+        XCTAssertEqual(env.messageUpdater.editMessage_skipPush, true)
+    }
+
+    func test_editMessage_callsMessageUpdater_withSkipPushDefaultValue() {
+        let updatedText: String = .unique
+
+        // Simulate `editMessage` call without specifying skipPush (should use default false)
+        controller.editMessage(text: updatedText)
+
+        // Assert message updater is called with correct default `skipPush` value
+        XCTAssertEqual(env.messageUpdater.editMessage_messageId, controller.messageId)
+        XCTAssertEqual(env.messageUpdater.editMessage_text, updatedText)
+        XCTAssertEqual(env.messageUpdater.editMessage_skipPush, false)
+    }
+
     func test_editMessage_whenMessageTransformerIsProvided_callsUpdaterWithTransformedValues() throws {
         class MockTransformer: StreamModelsTransformer {
             var mockTransformedMessage = NewMessageTransformableInfo(

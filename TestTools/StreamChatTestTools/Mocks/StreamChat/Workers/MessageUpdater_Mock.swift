@@ -25,6 +25,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var editMessage_messageId: MessageId?
     @Atomic var editMessage_text: String?
     @Atomic var editMessage_skipEnrichUrl: Bool?
+    @Atomic var editMessage_skipPush: Bool?
     @Atomic var editMessage_restrictedVisibility: [UserId]?
     @Atomic var editMessage_attachments: [AnyAttachmentPayload]?
     @Atomic var editMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
@@ -132,12 +133,12 @@ final class MessageUpdater_Mock: MessageUpdater {
     var markThreadRead_threadId: MessageId?
     var markThreadRead_cid: ChannelId?
     var markThreadRead_callCount = 0
-    var markThreadRead_completion: ((Error?) -> Void)? = nil
+    var markThreadRead_completion: ((Error?) -> Void)?
 
     var markThreadUnread_threadId: MessageId?
     var markThreadUnread_cid: ChannelId?
     var markThreadUnread_callCount = 0
-    var markThreadUnread_completion: ((Error?) -> Void)? = nil
+    var markThreadUnread_completion: ((Error?) -> Void)?
 
     var updateThread_callCount = 0
     var updateThread_messageId: MessageId?
@@ -166,6 +167,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         
         editMessage_messageId = nil
         editMessage_text = nil
+        editMessage_skipPush = nil
         editMessage_completion = nil
 
         createNewReply_cid = nil
@@ -294,7 +296,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     override func downloadAttachment<Payload>(
         _ attachment: ChatMessageAttachment<Payload>,
         completion: @escaping (Result<ChatMessageAttachment<Payload>, any Error>) -> Void
-    ) where Payload : DownloadableAttachmentPayload {
+    ) where Payload: DownloadableAttachmentPayload {
         downloadAttachment_attachmentId = attachment.id
         switch downloadAttachment_completion_result {
         case .success(let anyAttachment):
@@ -309,13 +311,14 @@ final class MessageUpdater_Mock: MessageUpdater {
             break
         }
         
-        //downloadAttachment_completion_result?  .invoke(with: completion)
+        // downloadAttachment_completion_result?  .invoke(with: completion)
     }
     
     override func editMessage(
         messageId: MessageId,
         text: String,
         skipEnrichUrl: Bool,
+        skipPush: Bool,
         attachments: [AnyAttachmentPayload] = [],
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil,
@@ -324,6 +327,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         editMessage_messageId = messageId
         editMessage_text = text
         editMessage_skipEnrichUrl = skipEnrichUrl
+        editMessage_skipPush = skipPush
         editMessage_restrictedVisibility = restrictedVisibility
         editMessage_attachments = attachments
         editMessage_extraData = extraData
@@ -463,6 +467,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         deleteReaction_completion = completion
         deleteReaction_completion_result?.invoke(with: completion)
     }
+
     override func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Result<ChatMessage, any Error>) -> Void)? = nil) {
         pinMessage_messageId = messageId
         pinMessage_pinning = pinning
