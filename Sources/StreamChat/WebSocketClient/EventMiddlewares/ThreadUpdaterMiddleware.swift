@@ -69,7 +69,7 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
                 break
             }
 
-            /// If the thread does not exist, we do not create one on propose,
+            /// If the thread does not exist, we do not create one on purpose,
             /// so that the Thread List is not automatically updated in the UI.
             /// It should be updated manually by the user.
             /// In the future, we can make this configurable if needed.
