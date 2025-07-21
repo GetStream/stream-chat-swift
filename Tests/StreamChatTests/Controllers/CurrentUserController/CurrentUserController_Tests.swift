@@ -801,6 +801,7 @@ final class CurrentUserController_Tests: XCTestCase {
             totalUnreadMessagesCount: 10,
             totalUnreadChannelsCount: 5,
             totalUnreadThreadsCount: 3,
+            totalUnreadCountByTeam: ["Benfica": 3],
             unreadChannels: [
                 UnreadChannel(
                     channelId: .init(type: .messaging, id: "channel1"),
@@ -832,6 +833,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
         // Assert the result is correct
         XCTAssertEqual(receivedUnreads?.totalUnreadMessagesCount, expectedUnreads.totalUnreadMessagesCount)
+        XCTAssertEqual(receivedUnreads?.totalUnreadCountByTeam?["Benfica"], 3)
     }
     
     func test_loadAllUnreads_propagatesError() {
