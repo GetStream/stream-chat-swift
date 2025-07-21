@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatUI
 import UserNotifications
 
 class NotificationService: UNNotificationServiceExtension {
@@ -96,24 +97,34 @@ class NotificationService: UNNotificationServiceExtension {
         let chatNotification = chatHandler.handleNotification { chatContent in
             switch chatContent {
             case let .message(messageNotification):
-                if messageNotification.type == .messageReminderDue || messageNotification.type == .reactionNew {
+                switch messageNotification.type {
+                case .messageNew:
+                    let authorName = messageNotification.message.author.name ?? "somebody"
+                    let channelName = messageNotification.channel?.name ?? "a conversation with you"
+                    content.title = "\(authorName) on \(channelName)"
+                    content.subtitle = ""
+                    content.body = messageNotification.message.text
+                    self.addMessageAttachments(message: messageNotification.message, content: content) {
+                        contentHandler($0)
+                    }
+                case .messageUpdated:
                     return contentHandler(content)
-                }
-
-                let authorName = messageNotification.message.author.name ?? "somebody"
-                let channelName = messageNotification.channel?.name ?? "a conversation with you"
-                content.title = "\(authorName) on \(channelName)"
-                content.subtitle = ""
-                content.body = messageNotification.message.text
-                self.addMessageAttachments(message: messageNotification.message, content: content) {
-                    contentHandler($0)
+                case .messageReminderDue:
+                    return contentHandler(content)
+                case .reactionNew:
+                    let reactionEmojis = Appearance.default.images.availableReactionPushEmojis
+                    var newBody = content.body
+                    if let reactionInfo = messageNotification.reaction {
+                        let reactionType = MessageReactionType(rawValue: reactionInfo.rawType)
+                        newBody = newBody.replacingOccurrences(of: ":\(reactionInfo.rawType):", with: reactionEmojis[reactionType] ?? "")
+                    }
+                    content.body = newBody
+                    return contentHandler(content)
+                default:
+                    content.title = "You received an update to one conversation"
+                    contentHandler(content)
                 }
             default:
-                let streamPayload = content.userInfo["stream"] as? [String: String]
-                if streamPayload?["type"] == EventType.messageReminderDue.rawValue {
-                    contentHandler(content)
-                    return
-                }
                 content.title = "You received an update to one conversation"
                 contentHandler(content)
             }
