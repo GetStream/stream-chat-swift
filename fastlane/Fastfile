@@ -276,7 +276,7 @@ end
 
 desc 'Builds the latest version of Demo app and uploads it to TestFlight'
 lane :uikit_testflight_build do |options|
-  is_manual_upload = is_localhost || !options[:configuration].to_s.empty?
+  is_manual_upload = is_localhost || ENV['GITHUB_EVENT_NAME'] == 'workflow_dispatch'
   configuration = options[:configuration].to_s.empty? ? 'Release' : options[:configuration]
 
   match_me

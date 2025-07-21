@@ -1,7 +1,21 @@
 pre-commit:
-  parallel: true
+  parallel: false
   jobs:
-    - run: bundle exec fastlane run_swift_format
+    - run: mint run swiftformat --config .swiftformat --exclude '**/Generated', 'Sources/StreamChatUI/StreamNuke', 'Sources/StreamChatUI/StreamSwiftyGif', 'Sources/StreamChatUI/StreamDifferenceKit' {staged_files}
+      glob: "*.{swift}"
+      stage_fixed: true
+      skip:
+        - merge
+        - rebase
+
+    - run: mint run swiftlint lint --config .swiftlint.yml --fix --progress --quiet --reporter json {staged_files}
+      glob: "*.{swift}"
+      stage_fixed: true
+      skip:
+        - merge
+        - rebase
+
+    - run: mint run swiftlint lint --config .swiftlint.yml --strict --progress --quiet --reporter json {staged_files}
       glob: "*.{swift}"
       stage_fixed: true
       skip:
