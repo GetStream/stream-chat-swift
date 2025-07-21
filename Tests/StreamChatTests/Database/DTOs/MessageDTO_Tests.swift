@@ -4723,8 +4723,7 @@ final class MessageDTO_Tests: XCTestCase {
                 shouldShowShadowedMessages: false
             ),
             itemCreator: { try $0.asModel() as ChatMessage },
-            itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
-            sorting: []
+            itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
         )
         try observer.startObserving(onContextDidChange: { _, changes in onChange(changes) })
         return observer
@@ -4744,8 +4743,7 @@ final class MessageDTO_Tests: XCTestCase {
                 shouldShowShadowedMessages: false
             ),
             itemCreator: { try $0.asModel() as ChatMessage },
-            itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
-            sorting: []
+            itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
         )
         try observer.startObserving(onContextDidChange: { _, changes in onChange(changes) })
         return observer

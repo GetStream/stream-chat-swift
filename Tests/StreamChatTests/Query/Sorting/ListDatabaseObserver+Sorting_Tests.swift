@@ -334,7 +334,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
             fetchRequest: request,
             itemCreator: { try $0.asModel() },
             itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid),
-            sorting: sorting.runtimeSorting
+            runtimeSorting: query.runtimeSortingValues
         )
 
         XCTAssertEqual(observer.items.count, 0)

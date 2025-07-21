@@ -12,6 +12,7 @@ class ThreadDTO: NSManagedObject {
     @NSManaged var title: String?
     @NSManaged var replyCount: Int64
     @NSManaged var participantCount: Int64
+    @NSManaged var activeParticipantCount: Int64
     @NSManaged var createdAt: DBDate
     @NSManaged var lastMessageAt: DBDate?
     @NSManaged var updatedAt: DBDate?
@@ -23,7 +24,7 @@ class ThreadDTO: NSManagedObject {
     @NSManaged var extraData: Data
 
     // Only update this value when fetching thread lists, to avoid live updates
-    @NSManaged private var currentUserUnreadCount: Int64
+    @NSManaged var currentUserUnreadCount: Int64
 
     static func loadOrCreate(
         parentMessageId: MessageId,
@@ -65,18 +66,31 @@ class ThreadDTO: NSManagedObject {
         return request
     }
 
-    static func threadListFetchRequest() -> NSFetchRequest<ThreadDTO> {
+    static func threadListFetchRequest(query: ThreadListQuery) -> NSFetchRequest<ThreadDTO> {
         let request = NSFetchRequest<ThreadDTO>(entityName: ThreadDTO.entityName)
         ThreadDTO.applyPrefetchingState(to: request)
 
-        // By default threads are sorted by unread + updatedAt and
-        // at the moment this is not customisable.
-        let sortDescriptors: [NSSortDescriptor] = [
+        let defaultSortDescriptors: [NSSortDescriptor] = [
             .init(keyPath: \ThreadDTO.currentUserUnreadCount, ascending: false),
-            .init(keyPath: \ThreadDTO.updatedAt, ascending: false)
+            .init(keyPath: \ThreadDTO.lastMessageAt, ascending: false),
+            .init(keyPath: \ThreadDTO.parentMessageId, ascending: false)
         ]
-
+        var sortDescriptors: [NSSortDescriptor] = defaultSortDescriptors
+        if !query.sort.isEmpty {
+            sortDescriptors = query.sort.compactMap {
+                $0.key.sortDescriptor(isAscending: $0.isAscending)
+            }
+        }
         request.sortDescriptors = sortDescriptors
+
+        // For now, we don't have a `ThreadListQueryDTO` like the `ChannelListQueryDTO`.
+        // The automatic predicate should be enough for threads. If needed, we can always create it later.
+        if let predicate = query.filter?.predicate {
+            request.predicate = predicate
+        }
+        request.fetchLimit = query.limit
+        request.fetchBatchSize = query.limit
+
         return request
     }
 
@@ -86,6 +100,7 @@ class ThreadDTO: NSManagedObject {
         title: String?,
         replyCount: Int64,
         participantCount: Int64,
+        activeParticipantCount: Int64?,
         createdAt: DBDate,
         lastMessageAt: DBDate?,
         updatedAt: DBDate?,
@@ -101,6 +116,9 @@ class ThreadDTO: NSManagedObject {
         self.title = title
         self.replyCount = replyCount
         self.participantCount = participantCount
+        if let activeParticipantCount {
+            self.activeParticipantCount = activeParticipantCount
+        }
         self.createdAt = createdAt
         self.lastMessageAt = lastMessageAt
         self.updatedAt = updatedAt
@@ -162,6 +180,7 @@ extension ThreadDTO {
             createdBy: createdBy.asModel(),
             replyCount: Int(replyCount),
             participantCount: Int(participantCount),
+            activeParticipantCount: Int(activeParticipantCount),
             threadParticipants: threadParticipants.map { try $0.asModel() },
             lastMessageAt: lastMessageAt?.bridgeDate,
             createdAt: createdAt.bridgeDate,
@@ -275,6 +294,7 @@ extension NSManagedObjectContext {
             title: payload.title,
             replyCount: Int64(payload.replyCount),
             participantCount: Int64(payload.participantCount),
+            activeParticipantCount: Int64(payload.activeParticipantCount),
             createdAt: payload.createdAt.bridgeDate,
             lastMessageAt: payload.lastMessageAt?.bridgeDate,
             updatedAt: payload.updatedAt?.bridgeDate,
@@ -323,6 +343,7 @@ extension NSManagedObjectContext {
             title: partialPayload.title,
             replyCount: Int64(partialPayload.replyCount),
             participantCount: Int64(partialPayload.participantCount),
+            activeParticipantCount: partialPayload.activeParticipantCount.map(Int64.init),
             createdAt: partialPayload.createdAt.bridgeDate,
             lastMessageAt: partialPayload.lastMessageAt?.bridgeDate,
             updatedAt: partialPayload.updatedAt?.bridgeDate,
@@ -347,7 +368,10 @@ extension NSManagedObjectContext {
         )
         
         threadDTO.replyCount = Int64(detailsPayload.replyCount)
-        threadDTO.participantCount = Int64(detailsPayload.replyCount)
+        threadDTO.participantCount = Int64(detailsPayload.participantCount)
+        if let activeParticipantCount = detailsPayload.activeParticipantCount {
+            threadDTO.activeParticipantCount = Int64(activeParticipantCount)
+        }
         threadDTO.lastMessageAt = detailsPayload.lastMessageAt?.bridgeDate
         threadDTO.updatedAt = detailsPayload.updatedAt.bridgeDate
         threadDTO.title = detailsPayload.title

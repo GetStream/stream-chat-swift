@@ -69,9 +69,13 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
                 break
             }
 
-            /// Add message to thread replies
+            /// If the thread does not exist, we do not create one on purpose,
+            /// so that the Thread List is not automatically updated in the UI.
+            /// It should be updated manually by the user.
+            /// In the future, we can make this configurable if needed.
             let thread = session.thread(parentMessageId: parentMessageId, cache: nil)
             thread?.latestReplies.insert(message)
+
             /// Trigger a thread update, but do not update the order of the thread list.
             /// This is why we don't change the `updatedAt` value.
             thread?.updatedAt = thread?.updatedAt

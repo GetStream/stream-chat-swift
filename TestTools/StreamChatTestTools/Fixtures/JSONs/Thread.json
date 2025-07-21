@@ -232,6 +232,7 @@
   },
   "reply_count": 60,
   "participant_count": 3,
+  "active_participant_count": 2,
   "thread_participants": [
     {
       "app_pk": 0,

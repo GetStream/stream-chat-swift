@@ -61,7 +61,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
     }
 
     private(set) lazy var threadListObserver: BackgroundListDatabaseObserver<ChatThread, ThreadDTO> = {
-        let request = ThreadDTO.threadListFetchRequest()
+        let request = ThreadDTO.threadListFetchRequest(query: query)
         let observer = self.environment.createThreadListDatabaseObserver(
             client.databaseContainer,
             request,

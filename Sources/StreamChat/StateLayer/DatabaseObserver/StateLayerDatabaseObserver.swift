@@ -142,17 +142,17 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
         itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)?,
-        sorting: [SortValue<Item>] = []
+        runtimeSorting: [SortValue<Item>] = []
     ) {
         self.init(
             context: database.stateLayerContext,
             fetchRequest: fetchRequest,
             itemCreator: itemCreator,
             itemReuseKeyPaths: itemReuseKeyPaths,
-            sorting: sorting
+            sorting: runtimeSorting
         )
     }
-    
+
     var items: StreamCollection<Item> {
         var collection: StreamCollection<Item>!
         context.performAndWait {
