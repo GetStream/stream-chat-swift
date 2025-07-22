@@ -1989,20 +1989,39 @@ final class MessageController_Tests: XCTestCase {
         let score = 5
         let enforceUnique = true
         let extraData: [String: RawJSON] = [:]
+        let skipPush = true
+        let pushEmojiCode = "👍"
 
-        // Simulate `addReaction` call.
-        controller.addReaction(type, score: score, enforceUnique: true, extraData: extraData)
+        controller.addReaction(
+            type,
+            score: score,
+            enforceUnique: true,
+            skipPush: skipPush,
+            pushEmojiCode: pushEmojiCode,
+            extraData: extraData
+        )
 
-        // Assert updater is called with correct `type`.
         XCTAssertEqual(env.messageUpdater.addReaction_type, type)
-        // Assert updater is called with correct `score`.
         XCTAssertEqual(env.messageUpdater.addReaction_score, score)
-        // Assert updater is called with correct `enforceUnique`.
         XCTAssertEqual(env.messageUpdater.addReaction_enforceUnique, enforceUnique)
-        // Assert updater is called with correct `extraData`.
         XCTAssertEqual(env.messageUpdater.addReaction_extraData, extraData)
-        // Assert updater is called with correct `messageId`.
+        XCTAssertEqual(env.messageUpdater.addReaction_skipPush, skipPush)
+        XCTAssertEqual(env.messageUpdater.addReaction_pushEmojiCode, pushEmojiCode)
         XCTAssertEqual(env.messageUpdater.addReaction_messageId, controller.messageId)
+    }
+
+    func test_addReaction_callsUpdater_withDefaultValue() {
+        let type: MessageReactionType = "like"
+
+        controller.addReaction(type)
+
+        XCTAssertEqual(env.messageUpdater.addReaction_type, type)
+        XCTAssertEqual(env.messageUpdater.addReaction_skipPush, false)
+        XCTAssertEqual(env.messageUpdater.addReaction_messageId, controller.messageId)
+        XCTAssertEqual(env.messageUpdater.addReaction_score, 1)
+        XCTAssertEqual(env.messageUpdater.addReaction_enforceUnique, true)
+        XCTAssertEqual(env.messageUpdater.addReaction_extraData, [:])
+        XCTAssertNil(env.messageUpdater.addReaction_pushEmojiCode)
     }
 
     func test_addReaction_keepsControllerAlive() {

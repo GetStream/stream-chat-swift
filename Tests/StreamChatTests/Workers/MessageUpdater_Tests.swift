@@ -1441,6 +1441,8 @@ final class MessageUpdater_Tests: XCTestCase {
             reactionType,
             score: reactionScore,
             enforceUnique: false,
+            skipPush: false,
+            pushEmojiCode: nil,
             extraData: reactionExtraData,
             messageId: messageId
         ) { error in
@@ -1463,6 +1465,8 @@ final class MessageUpdater_Tests: XCTestCase {
                 score: reactionScore,
                 enforceUnique: false,
                 extraData: reactionExtraData,
+                skipPush: false,
+                emojiCode: nil,
                 messageId: messageId
             ))
         )
@@ -1477,6 +1481,8 @@ final class MessageUpdater_Tests: XCTestCase {
             .init(rawValue: .unique),
             score: 1,
             enforceUnique: false,
+            skipPush: false,
+            pushEmojiCode: nil,
             extraData: [:],
             messageId: messageId
         ) { error in

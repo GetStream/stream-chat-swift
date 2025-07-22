@@ -78,6 +78,8 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var addReaction_type: MessageReactionType?
     @Atomic var addReaction_score: Int?
     @Atomic var addReaction_enforceUnique: Bool?
+    @Atomic var addReaction_skipPush: Bool?
+    @Atomic var addReaction_pushEmojiCode: String?
     @Atomic var addReaction_extraData: [String: RawJSON]?
     @Atomic var addReaction_messageId: MessageId?
     @Atomic var addReaction_completion: ((Error?) -> Void)?
@@ -205,6 +207,9 @@ final class MessageUpdater_Mock: MessageUpdater {
 
         addReaction_type = nil
         addReaction_score = nil
+        addReaction_enforceUnique = nil
+        addReaction_skipPush = nil
+        addReaction_pushEmojiCode = nil
         addReaction_extraData = nil
         addReaction_messageId = nil
         addReaction_completion = nil
@@ -443,16 +448,20 @@ final class MessageUpdater_Mock: MessageUpdater {
     override func addReaction(
         _ type: MessageReactionType,
         score: Int,
-        enforceUnique: Bool = false,
+        enforceUnique: Bool,
+        skipPush: Bool,
+        pushEmojiCode: String?,
         extraData: [String: RawJSON],
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
         addReaction_type = type
         addReaction_score = score
+        addReaction_enforceUnique = enforceUnique
+        addReaction_skipPush = skipPush
+        addReaction_pushEmojiCode = pushEmojiCode
         addReaction_extraData = extraData
         addReaction_messageId = messageId
-        addReaction_enforceUnique = enforceUnique
         addReaction_completion = completion
         addReaction_completion_result?.invoke(with: completion)
     }
