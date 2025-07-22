@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add support for Filtering and Sorting Threads [#3731](https://github.com/GetStream/stream-chat-swift/pull/3731)
 - Add `ChatThread.activeParticipantCount` [#3731](https://github.com/GetStream/stream-chat-swift/pull/3731)
 - Add `CurrentUserUnreads.totalUnreadCountByTeam` [#3733](https://github.com/GetStream/stream-chat-swift/pull/3733)
+- Enable subclassing `StreamAudioPlayer` and `StreamAudioSessionConfigurator` [#3737](https://github.com/GetStream/stream-chat-swift/pull/3737)
 - Add `skipPush` parameter to `MessageController.editMessage()`  [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
 - Add `skipPush` and `emojiCode` to `MessageController.addReaction()` [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
 - Add `Components.availableReactionsPushEmojis` for rendering emojis in reaction push notifications [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
