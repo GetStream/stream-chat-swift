@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-import StreamChatUI
 import UserNotifications
 
 class NotificationService: UNNotificationServiceExtension {
@@ -112,11 +111,11 @@ class NotificationService: UNNotificationServiceExtension {
                 case .messageReminderDue:
                     return contentHandler(content)
                 case .reactionNew:
-                    let reactionEmojis = Appearance.default.images.availableReactionPushEmojis
+                    let emojis = self.reactionEmojis
                     var newBody = content.body
                     if let reactionInfo = messageNotification.reaction {
                         let reactionType = MessageReactionType(rawValue: reactionInfo.rawType)
-                        newBody = newBody.replacingOccurrences(of: ":\(reactionInfo.rawType):", with: reactionEmojis[reactionType] ?? "")
+                        newBody = newBody.replacingOccurrences(of: ":\(reactionInfo.rawType):", with: emojis[reactionType] ?? "")
                     }
                     content.body = newBody
                     return contentHandler(content)
@@ -145,4 +144,12 @@ class NotificationService: UNNotificationServiceExtension {
             contentHandler(bestAttemptContent)
         }
     }
+
+    private var reactionEmojis: [MessageReactionType: String] = [
+        "love": "❤️",
+        "haha": "😂",
+        "like": "👍",
+        "sad": "👎",
+        "wow": "😮"
+    ]
 }
