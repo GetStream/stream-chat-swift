@@ -2019,7 +2019,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.addReaction_skipPush, false)
         XCTAssertEqual(env.messageUpdater.addReaction_messageId, controller.messageId)
         XCTAssertEqual(env.messageUpdater.addReaction_score, 1)
-        XCTAssertEqual(env.messageUpdater.addReaction_enforceUnique, true)
+        XCTAssertEqual(env.messageUpdater.addReaction_enforceUnique, false)
         XCTAssertEqual(env.messageUpdater.addReaction_extraData, [:])
         XCTAssertNil(env.messageUpdater.addReaction_pushEmojiCode)
     }
