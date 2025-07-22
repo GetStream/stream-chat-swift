@@ -81,13 +81,22 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate {
     public required convenience init() {
         self.init(
             assetPropertyLoader: StreamAssetPropertyLoader(),
-            playerObserver: StreamPlayerObserver(),
-            player: .init(),
-            audioSessionConfigurator: StreamAudioSessionConfigurator(),
-            appStateObserver: StreamAppStateObserver()
+            audioSessionConfigurator: StreamAudioSessionConfigurator()
         )
     }
 
+    public init(
+        assetPropertyLoader: AssetPropertyLoading,
+        audioSessionConfigurator: AudioSessionConfiguring
+    ) {
+        self.assetPropertyLoader = assetPropertyLoader
+        playerObserver = StreamPlayerObserver()
+        player = AVPlayer()
+        self.audioSessionConfigurator = audioSessionConfigurator
+        appStateObserver = StreamAppStateObserver()
+        setUp()
+    }
+    
     init(
         assetPropertyLoader: AssetPropertyLoading,
         playerObserver: AudioPlayerObserving,

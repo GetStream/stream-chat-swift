@@ -61,8 +61,8 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
     // MARK: - AudioSessionConfigurator
 
-    public required convenience init() {
-        self.init(AVAudioSession.sharedInstance())
+    public required init() {
+        audioSession = AVAudioSession.sharedInstance()
     }
 
     /// Calling this method should activate the provided `AVAudioSession` for recording and playback.
