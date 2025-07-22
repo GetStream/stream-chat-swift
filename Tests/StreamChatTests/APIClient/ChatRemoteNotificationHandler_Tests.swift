@@ -289,6 +289,117 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         XCTAssertEqual(assertions, Array(repeatElement(true, count: notificationTypes.count)))
     }
 
+    func test_pushReactionInfo_initializesCorrectly_withValidPayload() {
+        let payload: [String: String] = [
+            "reaction_type": "like",
+            "reaction_user_id": "user123",
+            "receiver_id": "receiver456",
+            "reaction_user_image": "https://example.com/image.jpg"
+        ]
+        
+        let reactionInfo = PushReactionInfo(payload: payload)
+        
+        XCTAssertNotNil(reactionInfo)
+        XCTAssertEqual(reactionInfo?.rawType, "like")
+        XCTAssertEqual(reactionInfo?.reactionUserId, "user123")
+        XCTAssertEqual(reactionInfo?.receiverUserId, "receiver456")
+        XCTAssertEqual(reactionInfo?.reactionUserImageUrl?.absoluteString, "https://example.com/image.jpg")
+    }
+    
+    func test_pushReactionInfo_initializesCorrectly_withoutImageURL() {
+        let payload: [String: String] = [
+            "reaction_type": "love",
+            "reaction_user_id": "user789",
+            "receiver_id": "receiver123"
+        ]
+        
+        let reactionInfo = PushReactionInfo(payload: payload)
+        
+        XCTAssertNotNil(reactionInfo)
+        XCTAssertEqual(reactionInfo?.rawType, "love")
+        XCTAssertEqual(reactionInfo?.reactionUserId, "user789")
+        XCTAssertEqual(reactionInfo?.receiverUserId, "receiver123")
+        XCTAssertNil(reactionInfo?.reactionUserImageUrl)
+    }
+    
+    func test_pushReactionInfo_returnsNil_withMissingReactionType() {
+        let payload: [String: String] = [
+            "reaction_user_id": "user123",
+            "receiver_id": "receiver456"
+        ]
+        
+        let reactionInfo = PushReactionInfo(payload: payload)
+        
+        XCTAssertNil(reactionInfo)
+    }
+    
+    func test_handleNotification_withReactionData_includesReactionInfo() {
+        let cid = ChannelId.unique
+        let expectation = XCTestExpectation()
+        let expectedChannel = ChatChannel.mock(cid: cid)
+        let expectedMessage = ChatMessage.mock()
+        channelRepository.getChannel_result = .success(expectedChannel)
+        messageRepository.getMessageResult = .success(expectedMessage)
+        
+        let content = createReactionNotificationContent(
+            cid: expectedChannel.cid,
+            messageId: expectedMessage.id,
+            reactionType: "like",
+            reactionUserId: "user123",
+            receiverId: "receiver456",
+            reactionUserImage: "https://example.com/image.jpg"
+        )
+        
+        let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
+        let canHandle = handler.handleNotification { pushNotificationContent in
+            switch pushNotificationContent {
+            case .message(let messageNotificationContent):
+                XCTAssertEqual(messageNotificationContent.type, .reactionNew)
+                XCTAssertNotNil(messageNotificationContent.reaction)
+                XCTAssertEqual(messageNotificationContent.reaction?.rawType, "like")
+                XCTAssertEqual(messageNotificationContent.reaction?.reactionUserId, "user123")
+                XCTAssertEqual(messageNotificationContent.reaction?.receiverUserId, "receiver456")
+                XCTAssertEqual(messageNotificationContent.reaction?.reactionUserImageUrl?.absoluteString, "https://example.com/image.jpg")
+            case .unknown(let unknownNotificationContent):
+                XCTFail(unknownNotificationContent.content.debugDescription)
+            }
+            expectation.fulfill()
+        }
+        
+        XCTAssertEqual(true, canHandle)
+        wait(for: [expectation], timeout: defaultTimeout)
+    }
+    
+    func test_handleNotification_withoutReactionData_hasNilReaction() {
+        let cid = ChannelId.unique
+        let expectation = XCTestExpectation()
+        let expectedChannel = ChatChannel.mock(cid: cid)
+        let expectedMessage = ChatMessage.mock()
+        channelRepository.getChannel_result = .success(expectedChannel)
+        messageRepository.getMessageResult = .success(expectedMessage)
+        
+        let content = createNotificationContent(
+            cid: expectedChannel.cid,
+            messageId: expectedMessage.id,
+            type: "message.new"
+        )
+        
+        let handler = ChatRemoteNotificationHandler(client: clientWithOffline, content: content)
+        let canHandle = handler.handleNotification { pushNotificationContent in
+            switch pushNotificationContent {
+            case .message(let messageNotificationContent):
+                XCTAssertEqual(messageNotificationContent.type, .messageNew)
+                XCTAssertNil(messageNotificationContent.reaction)
+            case .unknown(let unknownNotificationContent):
+                XCTFail(unknownNotificationContent.content.debugDescription)
+            }
+            expectation.fulfill()
+        }
+        
+        XCTAssertEqual(true, canHandle)
+        wait(for: [expectation], timeout: defaultTimeout)
+    }
+
     // MARK: -
     
     func createNotificationContent(cid: ChannelId, messageId: MessageId, type: String = "message.new") -> UNNotificationContent {
@@ -298,6 +409,51 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
             "cid": cid.rawValue,
             "id": messageId
         ]
+        content.userInfo["stream"] = payload
+        content.categoryIdentifier = "stream.chat"
+        return content
+    }
+    
+    func createReactionNotificationContent(
+        cid: ChannelId,
+        messageId: MessageId,
+        reactionType: String,
+        reactionUserId: String,
+        receiverId: String,
+        reactionUserImage: String? = nil
+    ) -> UNNotificationContent {
+        let content = UNMutableNotificationContent()
+        var payload: [String: String] = [
+            "type": "reaction.new",
+            "cid": cid.rawValue,
+            "message_id": messageId,
+            "reaction_type": reactionType,
+            "reaction_user_id": reactionUserId,
+            "receiver_id": receiverId
+        ]
+        
+        if let imageUrl = reactionUserImage {
+            payload["reaction_user_image"] = imageUrl
+        }
+        
+        content.userInfo["stream"] = payload
+        content.categoryIdentifier = "stream.chat"
+        return content
+    }
+    
+    func createIncompleteReactionNotificationContent(
+        cid: ChannelId,
+        messageId: MessageId
+    ) -> UNNotificationContent {
+        let content = UNMutableNotificationContent()
+        let payload: [String: String] = [
+            "type": "reaction.new",
+            "cid": cid.rawValue,
+            "message_id": messageId,
+            "reaction_type": "like"
+            // Missing required fields: reaction_user_id and receiver_id
+        ]
+        
         content.userInfo["stream"] = payload
         content.categoryIdentifier = "stream.chat"
         return content
