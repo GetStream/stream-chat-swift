@@ -62,7 +62,14 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_editMessage_propagates_CurrentUserDoesNotExist_Error() throws {
         // Simulate `editMessage(messageId:, text:)` call
         let completionResult = try waitFor {
-            messageUpdater.editMessage(messageId: .unique, text: .unique, skipEnrichUrl: false, restrictedVisibility: [], completion: $0)
+            messageUpdater.editMessage(
+                messageId: .unique,
+                text: .unique,
+                skipEnrichUrl: false,
+                skipPush: false,
+                restrictedVisibility: [],
+                completion: $0
+            )
         }
 
         // Assert `CurrentUserDoesNotExist` is received
@@ -75,7 +82,14 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `editMessage(messageId:, text:)` call
         let completionResult = try waitFor {
-            messageUpdater.editMessage(messageId: .unique, text: .unique, skipEnrichUrl: false, restrictedVisibility: [], completion: $0)
+            messageUpdater.editMessage(
+                messageId: .unique,
+                text: .unique,
+                skipEnrichUrl: false,
+                skipPush: false,
+                restrictedVisibility: [],
+                completion: $0
+            )
         }
 
         // Assert `MessageDoesNotExist` is received
@@ -128,7 +142,14 @@ final class MessageUpdater_Tests: XCTestCase {
 
             // Edit created message with new text
             let completionResult = try waitFor {
-                messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: true, restrictedVisibility: [], completion: $0)
+                messageUpdater.editMessage(
+                    messageId: messageId,
+                    text: updatedText,
+                    skipEnrichUrl: true,
+                    skipPush: false,
+                    restrictedVisibility: [],
+                    completion: $0
+                )
             }
 
             // Load the edited message
@@ -198,7 +219,14 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Edit created message with new text
         let completionResult = try waitFor {
-            messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: false, restrictedVisibility: [], completion: $0)
+            messageUpdater.editMessage(
+                messageId: messageId,
+                text: updatedText,
+                skipEnrichUrl: false,
+                skipPush: false,
+                restrictedVisibility: [],
+                completion: $0
+            )
         }
 
         // Load the edited message
@@ -243,7 +271,14 @@ final class MessageUpdater_Tests: XCTestCase {
 
             // Edit created message with new text
             let completionResult = try waitFor {
-                messageUpdater.editMessage(messageId: messageId, text: updatedText, skipEnrichUrl: false, restrictedVisibility: [], completion: $0)
+                messageUpdater.editMessage(
+                    messageId: messageId,
+                    text: updatedText,
+                    skipEnrichUrl: false,
+                    skipPush: false,
+                    restrictedVisibility: [],
+                    completion: $0
+                )
             }
 
             // Load the message
@@ -291,6 +326,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 messageId: messageId,
                 text: updatedText,
                 skipEnrichUrl: false,
+                skipPush: false,
                 restrictedVisibility: [],
                 extraData: updatedExtraData,
                 completion: $0
@@ -336,6 +372,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 messageId: messageId,
                 text: updatedText,
                 skipEnrichUrl: false,
+                skipPush: false,
                 restrictedVisibility: [],
                 extraData: nil,
                 completion: $0
@@ -382,6 +419,7 @@ final class MessageUpdater_Tests: XCTestCase {
                 messageId: messageId,
                 text: updatedText,
                 skipEnrichUrl: false,
+                skipPush: false,
                 attachments: updatedAttachmentsTypes.map { AnyAttachmentPayload.mock(type: $0) },
                 restrictedVisibility: [],
                 completion: $0
@@ -1510,6 +1548,8 @@ final class MessageUpdater_Tests: XCTestCase {
             reactionType,
             score: 1,
             enforceUnique: false,
+            skipPush: false,
+            pushEmojiCode: nil,
             extraData: [:],
             messageId: messageId
         ) { error in
@@ -1553,7 +1593,13 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `addReaction` call
         messageUpdater.addReaction(
-            reactionType, score: 1, enforceUnique: false, extraData: [:], messageId: messageId
+            reactionType,
+            score: 1,
+            enforceUnique: false,
+            skipPush: false,
+            pushEmojiCode: nil,
+            extraData: [:],
+            messageId: messageId
         ) { error in
             XCTAssertNil(error)
             dbCall.fulfill()
@@ -1594,7 +1640,13 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate `addReaction` call
         messageUpdater.addReaction(
-            reactionType, score: 1, enforceUnique: false, extraData: [:], messageId: messageId
+            reactionType,
+            score: 1,
+            enforceUnique: false,
+            skipPush: false,
+            pushEmojiCode: nil,
+            extraData: [:],
+            messageId: messageId
         ) { error in
             XCTAssertNil(error)
             dbCall.fulfill()
