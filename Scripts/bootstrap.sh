@@ -93,3 +93,11 @@ if [[ ${INSTALL_IPSW-default} == true ]]; then
   chmod +x ipsw
   sudo mv ipsw /usr/local/bin/
 fi
+
+if [[ ${INSTALL_INTERFACE_ANALYZER-default} == true ]]; then
+  puts "Install interface-analyser v${INTERFACE_ANALYZER_VERSION}"
+  FILE="interface-analyser"
+  wget "https://github.com/GetStream/stream-module-interface-analyser/releases/download/v${INTERFACE_ANALYZER_VERSION}/${FILE}"
+  chmod +x ${FILE}
+  sudo mv ${FILE} /usr/local/bin/
+fi
