@@ -25,12 +25,16 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     /// we update the messages data with the one originally reported by the data controller.
     internal var currentMessagesFromDataSource: LazyCachedMapCollection<ChatMessage> = []
 
+    /// The current messages from the data source, including skipped messages as an array.
+    /// Used mostly for the Livestream version of the message list.
     internal var currentMessagesFromDataSourceArray: [ChatMessage]?
 
     /// The new messages snapshot reported by the channel or message controller.
     /// If messages are being skipped, this snapshot doesn't include skipped messages.
     internal var newMessagesSnapshot: LazyCachedMapCollection<ChatMessage> = []
 
+    /// The new messages snapshot reported by the channel or message controller as an array.
+    /// Used mostly for the Livestream version of the message list.
     internal var newMessagesSnapshotArray: [ChatMessage]?
 
     /// When inserting messages at the bottom, if the user is scrolled up,
