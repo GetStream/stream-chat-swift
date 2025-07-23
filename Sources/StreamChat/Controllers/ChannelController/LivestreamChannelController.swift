@@ -6,7 +6,7 @@ import Foundation
 
 /// A controller for managing livestream channels that operates without local database persistence.
 /// Unlike `ChatChannelController`, this controller manages all data in memory and communicates directly with the API.
-public class LivestreamChannelController {
+public class LivestreamChannelController: EventsControllerDelegate {
     // MARK: - Public Properties
     
     /// The ChannelQuery this controller observes.
@@ -77,6 +77,9 @@ public class LivestreamChannelController {
     /// Pagination state handler for managing message pagination
     private let paginationStateHandler: MessagesPaginationStateHandling
     
+    /// Events controller for listening to real-time events
+    private let eventsController: EventsController
+    
     /// Flag indicating whether channel is created on backend
     private var isChannelAlreadyCreated: Bool
     
@@ -100,6 +103,10 @@ public class LivestreamChannelController {
         apiClient = client.apiClient
         self.isChannelAlreadyCreated = isChannelAlreadyCreated
         paginationStateHandler = MessagesPaginationStateHandler()
+        eventsController = client.eventsController()
+        
+        // Set up events delegate to listen for real-time events
+        eventsController.delegate = self
     }
     
     // MARK: - Public Methods
@@ -248,18 +255,20 @@ public class LivestreamChannelController {
             .updateChannel(query: channelQuery)
         
         let requestCompletion: (Result<ChannelPayload, Error>) -> Void = { [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let payload):
-                self.handleChannelPayload(payload, channelQuery: channelQuery)
-                completion?(nil)
-                
-            case .failure(let error):
-                if let pagination = channelQuery.pagination {
-                    self.paginationStateHandler.end(pagination: pagination, with: .failure(error))
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+
+                switch result {
+                case .success(let payload):
+                    self.handleChannelPayload(payload, channelQuery: channelQuery)
+                    completion?(nil)
+
+                case .failure(let error):
+                    if let pagination = channelQuery.pagination {
+                        self.paginationStateHandler.end(pagination: pagination, with: .failure(error))
+                    }
+                    completion?(error)
                 }
-                completion?(error)
             }
         }
         
@@ -294,7 +303,7 @@ public class LivestreamChannelController {
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
-            if let oldChannel = oldChannel {
+            if oldChannel != nil {
                 self.delegate?.livestreamChannelController(self, didUpdateChannel: .update(newChannel))
             } else {
                 self.delegate?.livestreamChannelController(self, didUpdateChannel: .create(newChannel))
@@ -305,6 +314,7 @@ public class LivestreamChannelController {
     }
     
     private func updateMessagesArray(with newMessages: [ChatMessage], pagination: MessagesPagination?) {
+        let newMessages = Array(newMessages.reversed())
         switch pagination?.parameter {
         case .lessThan, .lessThanOrEqual:
             // Loading older messages - append to end
@@ -397,7 +407,7 @@ public class LivestreamChannelController {
             type: payload.type,
             command: payload.command,
             createdAt: payload.createdAt,
-            locallyCreatedAt: nil, // Not applicable for API-only controller
+            locallyCreatedAt: nil,
             updatedAt: payload.updatedAt,
             deletedAt: payload.deletedAt,
             arguments: payload.args,
@@ -406,19 +416,19 @@ public class LivestreamChannelController {
             replyCount: payload.replyCount,
             extraData: payload.extraData,
             quotedMessage: quotedMessage,
-            isBounced: false, // Default value
+            isBounced: false, // TODO: handle bounce
             isSilent: payload.isSilent,
             isShadowed: payload.isShadowed,
             reactionScores: payload.reactionScores,
             reactionCounts: payload.reactionCounts,
-            reactionGroups: [:], // Default value for livestream
+            reactionGroups: [:],
             author: author,
             mentionedUsers: mentionedUsers,
             threadParticipants: threadParticipants,
             attachments: attachments,
-            latestReplies: [], // Default value for livestream
-            localState: nil, // Not applicable for API-only controller
-            isFlaggedByCurrentUser: false, // Default value
+            latestReplies: [],
+            localState: nil,
+            isFlaggedByCurrentUser: false,
             latestReactions: latestReactions,
             currentUserReactions: currentUserReactions,
             isSentByCurrentUser: payload.user.id == currentUserId,
@@ -428,14 +438,21 @@ public class LivestreamChannelController {
                 expiresAt: payload.pinExpires
             ) : nil,
             translations: payload.translations,
-            originalLanguage: payload.originalLanguage.flatMap { TranslationLanguage(languageCode: $0) },
-            moderationDetails: nil, // Default value for livestream
-            readBy: [], // Default value for livestream
-            poll: nil, // Default value for livestream
+            originalLanguage: payload.originalLanguage.flatMap { TranslationLanguage(languageCode: $0)
+            },
+            moderationDetails: nil, // TODO: handle moderation
+            readBy: [], // TODO: no reads?
+            poll: nil, // TODO: handle polls
             textUpdatedAt: payload.messageTextUpdatedAt,
-            draftReply: nil, // Default value for livestream
-            reminder: nil, // Default value for livestream
-            sharedLocation: nil // Default value for livestream
+            draftReply: nil, // TODO: handle
+            reminder: payload.reminder.map {
+                .init(
+                    remindAt: $0.remindAt,
+                    createdAt: $0.createdAt,
+                    updatedAt: $0.updatedAt
+                )
+            },
+            sharedLocation: nil
         )
     }
     
@@ -446,7 +463,7 @@ public class LivestreamChannelController {
             imageURL: payload.imageURL,
             isOnline: payload.isOnline,
             isBanned: payload.isBanned,
-            isFlaggedByCurrentUser: false, // Default value
+            isFlaggedByCurrentUser: false,
             userRole: UserRole(rawValue: payload.role.rawValue),
             teamsRole: payload.teamsRole?.mapValues { UserRole(rawValue: $0.rawValue) },
             createdAt: payload.createdAt,
@@ -490,7 +507,7 @@ public class LivestreamChannelController {
             isBannedFromChannel: payload.isBanned ?? false,
             banExpiresAt: payload.banExpiresAt,
             isShadowBannedFromChannel: payload.isShadowBanned ?? false,
-            notificationsMuted: false, // Default value
+            notificationsMuted: payload.notificationsMuted,
             memberExtraData: [:]
         )
     }
@@ -517,10 +534,143 @@ public class LivestreamChannelController {
     }
     
     private func lastLocalMessageId() -> MessageId? {
-        messages.last { _ in
-            // For livestream, all messages come from API so no local-only messages
-            true
-        }?.id
+        messages.last?.id
+    }
+    
+    // MARK: - EventsControllerDelegate
+    
+    public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        guard let channelEvent = event as? ChannelSpecificEvent, channelEvent.cid == cid else {
+            return
+        }
+
+        DispatchQueue.main.async { [weak self] in
+            self?.handleChannelEvent(event)
+        }
+    }
+    
+    // MARK: - Private Event Handling
+    
+    private func handleChannelEvent(_ event: Event) {
+        switch event {
+        case let messageNewEvent as MessageNewEvent:
+            handleNewMessage(messageNewEvent.message)
+
+        case let localMessageNewEvent as NewMessagePendingEvent:
+            handleNewMessage(localMessageNewEvent.message)
+
+        case let messageUpdatedEvent as MessageUpdatedEvent:
+            handleUpdatedMessage(messageUpdatedEvent.message)
+            
+        case let messageDeletedEvent as MessageDeletedEvent:
+            handleDeletedMessage(messageDeletedEvent.message)
+            
+        case let messageReadEvent as MessageReadEvent:
+            handleMessageRead(messageReadEvent)
+            
+        case let reactionNewEvent as ReactionNewEvent:
+            handleNewReaction(reactionNewEvent)
+            
+        case let reactionUpdatedEvent as ReactionUpdatedEvent:
+            handleUpdatedReaction(reactionUpdatedEvent)
+            
+        case let reactionDeletedEvent as ReactionDeletedEvent:
+            handleDeletedReaction(reactionDeletedEvent)
+            
+        default:
+            // Ignore other events for now
+            break
+        }
+    }
+    
+    private func handleNewMessage(_ message: ChatMessage) {
+        // Add new message to the beginning of the array (newest first)
+        var currentMessages = messages
+        
+        // Check if message already exists to avoid duplicates
+        if currentMessages.contains(where: { $0.id == message.id }) {
+            handleUpdatedMessage(message)
+            return
+        }
+
+        currentMessages.insert(message, at: 0)
+        messages = currentMessages
+
+        // Notify delegate
+        notifyDelegateOfChanges()
+    }
+    
+    private func handleUpdatedMessage(_ updatedMessage: ChatMessage) {
+        var currentMessages = messages
+        
+        // Find and update the message
+        if let index = currentMessages.firstIndex(where: { $0.id == updatedMessage.id }) {
+            currentMessages[index] = updatedMessage
+            messages = currentMessages
+            
+            // Notify delegate
+            notifyDelegateOfChanges()
+        }
+    }
+    
+    private func handleDeletedMessage(_ deletedMessage: ChatMessage) {
+        var currentMessages = messages
+        
+        // Remove the message from the array
+        currentMessages.removeAll { $0.id == deletedMessage.id }
+        messages = currentMessages
+        
+        // Notify delegate
+        notifyDelegateOfChanges()
+    }
+    
+    private func handleMessageRead(_ readEvent: MessageReadEvent) {
+        // For livestream channels, we might want to update read status
+        // This could be implemented based on specific requirements
+        // For now, we'll just update the channel to trigger a delegate notification
+        // Update the channel with current timestamp to indicate changes
+        let updatedChannel = readEvent.channel
+
+        channel = updatedChannel
+        notifyDelegateOfChanges()
+    }
+    
+    private func handleNewReaction(_ reactionEvent: ReactionNewEvent) {
+        updateMessage(reactionEvent.message)
+    }
+    
+    private func handleUpdatedReaction(_ reactionEvent: ReactionUpdatedEvent) {
+        updateMessage(reactionEvent.message)
+    }
+    
+    private func handleDeletedReaction(_ reactionEvent: ReactionDeletedEvent) {
+        updateMessage(reactionEvent.message)
+    }
+    
+    private func updateMessage(
+        _ updatedMessage: ChatMessage
+    ) {
+        let messageId = updatedMessage.id
+        var currentMessages = messages
+        
+        // Find the message to update
+        guard let messageIndex = currentMessages.firstIndex(where: { $0.id == messageId }) else {
+            return
+        }
+
+        // Update the message in the array
+        currentMessages[messageIndex] = updatedMessage
+        messages = currentMessages
+        
+        // Notify delegate of changes
+        notifyDelegateOfChanges()
+    }
+    
+    private func notifyDelegateOfChanges() {
+        guard let currentChannel = channel else { return }
+        
+        delegate?.livestreamChannelController(self, didUpdateChannel: .update(currentChannel))
+        delegate?.livestreamChannelController(self, didUpdateMessages: messages)
     }
 }
 
@@ -560,5 +710,3 @@ public extension LivestreamChannelControllerDelegate {
         didUpdateMessages messages: [ChatMessage]
     ) {}
 }
-
-// MARK: - Extensions
