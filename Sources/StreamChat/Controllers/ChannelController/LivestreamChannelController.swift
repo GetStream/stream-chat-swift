@@ -290,11 +290,11 @@ public class LivestreamChannelController: EventsControllerDelegate {
         
         // Convert payloads to models
         let newChannel = mapChannelPayload(payload)
-        let newMessages = payload.messages.compactMap { mapMessagePayload($0, cid: payload.channel.cid) }
-        
         // Update channel
         let oldChannel = channel
         channel = newChannel
+
+        let newMessages = payload.messages.compactMap { mapMessagePayload($0, cid: payload.channel.cid) }
         
         // Update messages based on pagination type
         updateMessagesArray(with: newMessages, pagination: channelQuery.pagination)
@@ -397,9 +397,30 @@ public class LivestreamChannelController: EventsControllerDelegate {
         let latestReactions = Set(payload.latestReactions.compactMap { mapReactionPayload($0) })
         let currentUserReactions = Set(payload.ownReactions.compactMap { mapReactionPayload($0) })
         
-        // Map attachments (simplified for livestream)
-        let attachments: [AnyChatMessageAttachment] = []
-        
+        // Map attachments
+        let attachments: [AnyChatMessageAttachment] = payload.attachments
+            .enumerated()
+            .compactMap { offset, attachmentPayload in
+                guard let payloadData = try? JSONEncoder.stream.encode(attachmentPayload.payload) else {
+                    return nil
+                }
+                return AnyChatMessageAttachment(
+                    id: .init(cid: cid, messageId: payload.id, index: offset),
+                    type: attachmentPayload.type,
+                    payload: payloadData,
+                    downloadingState: nil,
+                    uploadingState: nil
+                )
+            }
+
+        let reads = channel?.reads ?? []
+        let createdAtInterval = payload.createdAt.timeIntervalSince1970
+        let messageUserId = payload.user.id
+        let readBy = reads.filter { read in
+            read.user.id != messageUserId && read.lastReadAt.timeIntervalSince1970 >= createdAtInterval
+        }
+        debugPrint("reads", reads, "readBy", readBy)
+
         return ChatMessage(
             id: payload.id,
             cid: cid,
@@ -416,7 +437,8 @@ public class LivestreamChannelController: EventsControllerDelegate {
             replyCount: payload.replyCount,
             extraData: payload.extraData,
             quotedMessage: quotedMessage,
-            isBounced: false, // TODO: handle bounce
+            isBounced: false,
+            // TODO: handle bounce
             isSilent: payload.isSilent,
             isShadowed: payload.isShadowed,
             reactionScores: payload.reactionScores,
@@ -440,11 +462,14 @@ public class LivestreamChannelController: EventsControllerDelegate {
             translations: payload.translations,
             originalLanguage: payload.originalLanguage.flatMap { TranslationLanguage(languageCode: $0)
             },
-            moderationDetails: nil, // TODO: handle moderation
-            readBy: [], // TODO: no reads?
-            poll: nil, // TODO: handle polls
+            moderationDetails: nil,
+            // TODO: handle moderation
+            readBy: Set(readBy.map(\.user)),
+            poll: nil,
+            // TODO: handle polls
             textUpdatedAt: payload.messageTextUpdatedAt,
-            draftReply: nil, // TODO: handle
+            draftReply: nil,
+            // TODO: handle
             reminder: payload.reminder.map {
                 .init(
                     remindAt: $0.remindAt,
@@ -452,7 +477,19 @@ public class LivestreamChannelController: EventsControllerDelegate {
                     updatedAt: $0.updatedAt
                 )
             },
-            sharedLocation: nil
+            sharedLocation: payload.location.map {
+                .init(
+                    messageId: $0.messageId,
+                    channelId: cid,
+                    userId: $0.userId,
+                    createdByDeviceId: $0.createdByDeviceId,
+                    latitude: $0.latitude,
+                    longitude: $0.longitude,
+                    updatedAt: $0.updatedAt,
+                    createdAt: $0.createdAt,
+                    endAt: $0.endAt
+                )
+            }
         )
     }
     
@@ -625,14 +662,13 @@ public class LivestreamChannelController: EventsControllerDelegate {
     }
     
     private func handleMessageRead(_ readEvent: MessageReadEvent) {
-        // For livestream channels, we might want to update read status
-        // This could be implemented based on specific requirements
-        // For now, we'll just update the channel to trigger a delegate notification
-        // Update the channel with current timestamp to indicate changes
         let updatedChannel = readEvent.channel
-
         channel = updatedChannel
-        notifyDelegateOfChanges()
+
+        if var updatedMessage = messages.first {
+            updatedMessage.updateReadBy(with: updatedChannel.reads)
+            handleUpdatedMessage(updatedMessage)
+        }
     }
     
     private func handleNewReaction(_ reactionEvent: ReactionNewEvent) {
@@ -709,4 +745,18 @@ public extension LivestreamChannelControllerDelegate {
         _ controller: LivestreamChannelController,
         didUpdateMessages messages: [ChatMessage]
     ) {}
+}
+
+extension ChatMessage {
+    mutating func updateReadBy(
+        with reads: [ChatChannelRead]
+    ) {
+        let createdAtInterval = createdAt.timeIntervalSince1970
+        let messageUserId = author.id
+        let readBy = reads.filter { read in
+            read.user.id != messageUserId && read.lastReadAt.timeIntervalSince1970 >= createdAtInterval
+        }
+        let newMessage = changing(readBy: Set(readBy.map(\.user)))
+        self = newMessage
+    }
 }
