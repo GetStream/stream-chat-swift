@@ -28,6 +28,7 @@ class UserDTO: NSManagedObject {
     @NSManaged var teams: [TeamId]
     @NSManaged var language: String?
     @NSManaged var teamsRole: [String: String]?
+    @NSManaged var avgResponseTime: NSNumber?
 
     /// Returns a fetch request for the dto with the provided `userId`.
     static func user(withID userId: UserId) -> NSFetchRequest<UserDTO> {
@@ -156,6 +157,9 @@ extension NSManagedObjectContext: UserDatabaseSession {
         dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
         dto.language = payload.language
         dto.teamsRole = payload.teamsRole?.mapValues { $0.rawValue }
+        if let avgResponseTime = payload.avgResponseTime {
+            dto.avgResponseTime = NSNumber(integerLiteral: avgResponseTime)
+        }
 
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.extraData)
@@ -263,6 +267,7 @@ extension ChatUser {
             lastActiveAt: dto.lastActivityAt?.bridgeDate,
             teams: Set(dto.teams),
             language: language,
+            avgResponseTime: dto.avgResponseTime?.intValue,
             extraData: extraData
         )
     }

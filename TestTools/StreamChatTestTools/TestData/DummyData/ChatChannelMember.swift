@@ -35,6 +35,7 @@ extension ChatChannelMember {
             banExpiresAt: .unique,
             isShadowBannedFromChannel: true, 
             notificationsMuted: false,
+            avgResponseTime: nil,
             memberExtraData: [:]
         )
     }
