@@ -1420,6 +1420,8 @@
 		AD17E1212E00985B001AF308 /* SharedLocationPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17E1202E009853001AF308 /* SharedLocationPayload.swift */; };
 		AD17E1232E01CAAF001AF308 /* NewLocationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17E1222E01CAAF001AF308 /* NewLocationInfo.swift */; };
 		AD17E1242E01CAAF001AF308 /* NewLocationInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD17E1222E01CAAF001AF308 /* NewLocationInfo.swift */; };
+		AD1B9F422E30F7850091A37A /* LivestreamChannelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1B9F412E30F7850091A37A /* LivestreamChannelController.swift */; };
+		AD1B9F432E30F7860091A37A /* LivestreamChannelController.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1B9F412E30F7850091A37A /* LivestreamChannelController.swift */; };
 		AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */; };
 		AD25070D272C0C8D00BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */; };
 		AD2525212ACB3C0800F1433C /* ChatClientFactory_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */; };
@@ -4270,6 +4272,7 @@
 		AD17CDF827E4DB2700E0D092 /* PushProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushProvider.swift; sourceTree = "<group>"; };
 		AD17E1202E009853001AF308 /* SharedLocationPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedLocationPayload.swift; sourceTree = "<group>"; };
 		AD17E1222E01CAAF001AF308 /* NewLocationInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewLocationInfo.swift; sourceTree = "<group>"; };
+		AD1B9F412E30F7850091A37A /* LivestreamChannelController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivestreamChannelController.swift; sourceTree = "<group>"; };
 		AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelVC.swift; sourceTree = "<group>"; };
 		AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsVC_Tests.swift; sourceTree = "<group>"; };
 		AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientFactory_Tests.swift; sourceTree = "<group>"; };
@@ -9524,6 +9527,7 @@
 				AD78568B298B268F00C2FEAD /* ChannelControllerDelegate.swift */,
 				DAE566E624FFD22300E39431 /* ChannelController+SwiftUI.swift */,
 				DA4AA3B12502718600FAAF6E /* ChannelController+Combine.swift */,
+				AD1B9F412E30F7850091A37A /* LivestreamChannelController.swift */,
 			);
 			path = ChannelController;
 			sourceTree = "<group>";
@@ -11861,6 +11865,7 @@
 				7991D83D24F7E93900D21BA3 /* ChannelListController+SwiftUI.swift in Sources */,
 				225D7FE225D191400094E555 /* ChatMessageImageAttachment.swift in Sources */,
 				8A0D64A724E57A520017A3C0 /* GuestUserTokenRequestPayload.swift in Sources */,
+				AD1B9F432E30F7860091A37A /* LivestreamChannelController.swift in Sources */,
 				AD6E32A42BBC502D0073831B /* ThreadQuery.swift in Sources */,
 				888E8C39252B2ABB00195E03 /* UserController+Combine.swift in Sources */,
 				4F1BEE762BE384ED00B6685C /* ReactionList.swift in Sources */,
@@ -12729,6 +12734,7 @@
 				C121E8AE274544B000023E4C /* ChannelController+SwiftUI.swift in Sources */,
 				4FE56B8E2D5DFE4600589F9A /* MarkdownParser.swift in Sources */,
 				C121E8AF274544B000023E4C /* ChannelController+Combine.swift in Sources */,
+				AD1B9F422E30F7850091A37A /* LivestreamChannelController.swift in Sources */,
 				82C18FDD2C10C8E600C5283C /* BlockedUserPayload.swift in Sources */,
 				C121E8B0274544B000023E4C /* ChannelListController.swift in Sources */,
 				C121E8B1274544B000023E4C /* ChannelListController+SwiftUI.swift in Sources */,
