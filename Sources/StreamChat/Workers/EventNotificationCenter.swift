@@ -17,15 +17,23 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     // Contains the ids of the new messages that are going to be added during the ongoing process
     private(set) var newMessageIds: Set<MessageId> = Set()
 
-    private var optimizeLivestreamControllers: Bool
+    // The channels for which events will not be processed by the middlewares.
+    private var manualEventHandlingChannelIds: Set<ChannelId> = []
 
     init(
-        database: DatabaseContainer,
-        optimizeLivestreamControllers: Bool = false
+        database: DatabaseContainer
     ) {
         self.database = database
-        self.optimizeLivestreamControllers = optimizeLivestreamControllers
         super.init()
+    }
+
+    /// Registers a channel for manual event handling.
+    ///
+    /// The middleware's will not process events for this channel.
+    func registerManualEventHandling(for cid: ChannelId) {
+        eventPostingQueue.async { [weak self] in
+            self?.manualEventHandlingChannelIds.insert(cid)
+        }
     }
 
     func add(middlewares: [EventMiddleware]) {
@@ -49,27 +57,23 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
 
         var eventsToPost = [Event]()
         var middlewareEvents = [Event]()
-        var livestreamEvents = [Event]()
+        var manualHandlingEvents = [Event]()
 
         database.write({ session in
-            if self.optimizeLivestreamControllers {
-                events
-                    .forEach { event in
-                        guard let eventDTO = event as? EventDTO else {
-                            middlewareEvents.append(event)
-                            return
-                        }
-                        if eventDTO.payload.cid?.rawValue == "messaging:28F0F56D-F" {
-                            livestreamEvents.append(event)
-                        } else {
-                            middlewareEvents.append(event)
-                        }
-                    }
-            } else {
-                middlewareEvents = events
+            events.forEach { event in
+                guard let eventDTO = event as? EventDTO else {
+                    middlewareEvents.append(event)
+                    return
+                }
+                if let cid = eventDTO.payload.cid, self.manualEventHandlingChannelIds.contains(cid) {
+                    manualHandlingEvents.append(event)
+                } else {
+                    middlewareEvents.append(event)
+                }
             }
 
-            eventsToPost.append(contentsOf: self.forwardLivestreamEvents(livestreamEvents))
+            let manualEvents = self.convertManualEventsToDomain(manualHandlingEvents)
+            eventsToPost.append(contentsOf: manualEvents)
 
             self.newMessageIds = Set(messageIds.compactMap {
                 !session.messageExists(id: $0) ? $0 : nil
@@ -93,7 +97,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
         })
     }
 
-    private func forwardLivestreamEvents(_ events: [Event]) -> [Event] {
+    private func convertManualEventsToDomain(_ events: [Event]) -> [Event] {
         events.compactMap { event in
             guard let eventDTO = event as? EventDTO else {
                 return nil

@@ -4,7 +4,17 @@
 
 import Foundation
 
+public extension ChatClient {
+    /// Creates a new `LivestreamChannelController` for the given channel query.
+    /// - Parameter channelQuery: The query to observe the channel.
+    /// - Returns: A new `LivestreamChannelController` instance.
+    func livestreamChannelController(for channelQuery: ChannelQuery) -> LivestreamChannelController {
+        LivestreamChannelController(channelQuery: channelQuery, client: self)
+    }
+}
+
 /// A controller for managing livestream channels that operates without local database persistence.
+///
 /// Unlike `ChatChannelController`, this controller manages all data in memory and communicates directly with the API.
 public class LivestreamChannelController: EventsControllerDelegate {
     // MARK: - Public Properties
@@ -80,9 +90,6 @@ public class LivestreamChannelController: EventsControllerDelegate {
     /// Events controller for listening to real-time events
     private let eventsController: EventsController
     
-    /// Flag indicating whether channel is created on backend
-    private var isChannelAlreadyCreated: Bool
-    
     /// Current user ID for convenience
     private var currentUserId: UserId? { client.currentUserId }
     
@@ -92,21 +99,20 @@ public class LivestreamChannelController: EventsControllerDelegate {
     /// - Parameters:
     ///   - channelQuery: channel query for observing changes
     ///   - client: The `Client` this controller belongs to.
-    ///   - isChannelAlreadyCreated: Flag indicating whether channel is created on backend.
-    public init(
+    init(
         channelQuery: ChannelQuery,
-        client: ChatClient,
-        isChannelAlreadyCreated: Bool = true
+        client: ChatClient
     ) {
         self.channelQuery = channelQuery
         self.client = client
         apiClient = client.apiClient
-        self.isChannelAlreadyCreated = isChannelAlreadyCreated
         paginationStateHandler = MessagesPaginationStateHandler()
         eventsController = client.eventsController()
-        
-        // Set up events delegate to listen for real-time events
         eventsController.delegate = self
+
+        if let cid = channelQuery.cid {
+            client.eventNotificationCenter.registerManualEventHandling(for: cid)
+        }
     }
     
     // MARK: - Public Methods
@@ -130,7 +136,7 @@ public class LivestreamChannelController: EventsControllerDelegate {
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        guard cid != nil, isChannelAlreadyCreated else {
+        guard cid != nil else {
             completion?(ClientError.ChannelNotCreatedYet())
             return
         }
@@ -163,7 +169,7 @@ public class LivestreamChannelController: EventsControllerDelegate {
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        guard cid != nil, isChannelAlreadyCreated else {
+        guard cid != nil else {
             completion?(ClientError.ChannelNotCreatedYet())
             return
         }
@@ -196,11 +202,6 @@ public class LivestreamChannelController: EventsControllerDelegate {
         limit: Int? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        guard isChannelAlreadyCreated else {
-            completion?(ClientError.ChannelNotCreatedYet())
-            return
-        }
-        
         guard !isLoadingMiddleMessages else {
             completion?(nil)
             return
@@ -248,10 +249,8 @@ public class LivestreamChannelController: EventsControllerDelegate {
         if let pagination = channelQuery.pagination {
             paginationStateHandler.begin(pagination: pagination)
         }
-        
-        let isChannelCreate = !isChannelAlreadyCreated
-        let endpoint: Endpoint<ChannelPayload> = isChannelCreate ?
-            .createChannel(query: channelQuery) :
+
+        let endpoint: Endpoint<ChannelPayload> =
             .updateChannel(query: channelQuery)
         
         let requestCompletion: (Result<ChannelPayload, Error>) -> Void = { [weak self] result in
@@ -276,37 +275,25 @@ public class LivestreamChannelController: EventsControllerDelegate {
     }
     
     private func handleChannelPayload(_ payload: ChannelPayload, channelQuery: ChannelQuery) {
-        // Update pagination state
         if let pagination = channelQuery.pagination {
             paginationStateHandler.end(pagination: pagination, with: .success(payload.messages))
         }
-        
-        // Mark channel as created if it was a create operation
-        if !isChannelAlreadyCreated {
-            isChannelAlreadyCreated = true
-            // Update the channel query with the actual cid if it was generated
-            self.channelQuery = ChannelQuery(cid: payload.channel.cid, channelQuery: channelQuery)
-        }
-        
-        // Convert payloads to models using new model functions
+
         let newChannel = payload.asModel(
             currentUserId: currentUserId,
             currentlyTypingUsers: channel?.currentlyTypingUsers,
             unreadCount: channel?.unreadCount
         )
 
-        // Update channel
         let oldChannel = channel
         channel = newChannel
 
         let newMessages = payload.messages.compactMap {
             $0.asModel(cid: payload.channel.cid, currentUserId: currentUserId, channelReads: newChannel.reads)
         }
-        
-        // Update messages based on pagination type
+
         updateMessagesArray(with: newMessages, pagination: channelQuery.pagination)
-        
-        // Notify delegate
+
         DispatchQueue.main.async { [weak self] in
             guard let self = self else { return }
             
@@ -332,7 +319,6 @@ public class LivestreamChannelController: EventsControllerDelegate {
             messages.insert(contentsOf: newMessages, at: 0)
             
         case .around, .none:
-            // Loading around a message or first page - replace all
             messages = newMessages
         }
     }
@@ -382,7 +368,6 @@ public class LivestreamChannelController: EventsControllerDelegate {
             handleDeletedReaction(reactionDeletedEvent)
             
         default:
-            // Ignore other events for now
             break
         }
     }
@@ -390,8 +375,8 @@ public class LivestreamChannelController: EventsControllerDelegate {
     private func handleNewMessage(_ message: ChatMessage) {
         // Add new message to the beginning of the array (newest first)
         var currentMessages = messages
-        
-        // Check if message already exists to avoid duplicates
+
+        // If message already exists, update it instead
         if currentMessages.contains(where: { $0.id == message.id }) {
             handleUpdatedMessage(message)
             return
@@ -406,25 +391,21 @@ public class LivestreamChannelController: EventsControllerDelegate {
     
     private func handleUpdatedMessage(_ updatedMessage: ChatMessage) {
         var currentMessages = messages
-        
-        // Find and update the message
+
         if let index = currentMessages.firstIndex(where: { $0.id == updatedMessage.id }) {
             currentMessages[index] = updatedMessage
             messages = currentMessages
-            
-            // Notify delegate
+
             notifyDelegateOfChanges()
         }
     }
     
     private func handleDeletedMessage(_ deletedMessage: ChatMessage) {
         var currentMessages = messages
-        
-        // Remove the message from the array
+
         currentMessages.removeAll { $0.id == deletedMessage.id }
         messages = currentMessages
-        
-        // Notify delegate
+
         notifyDelegateOfChanges()
     }
     
@@ -455,17 +436,14 @@ public class LivestreamChannelController: EventsControllerDelegate {
     ) {
         let messageId = updatedMessage.id
         var currentMessages = messages
-        
-        // Find the message to update
+
         guard let messageIndex = currentMessages.firstIndex(where: { $0.id == messageId }) else {
             return
         }
 
-        // Update the message in the array
         currentMessages[messageIndex] = updatedMessage
         messages = currentMessages
-        
-        // Notify delegate of changes
+
         notifyDelegateOfChanges()
     }
     
@@ -514,7 +492,7 @@ public extension LivestreamChannelControllerDelegate {
     ) {}
 }
 
-extension ChatMessage {
+private extension ChatMessage {
     mutating func updateReadBy(
         with reads: [ChatChannelRead]
     ) {
