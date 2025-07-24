@@ -28,3 +28,21 @@ public struct ChatMessageReaction: Hashable {
     /// Custom data
     public let extraData: [String: RawJSON]
 }
+
+// MARK: - Payload -> Model Mapping
+
+extension MessageReactionPayload {
+    /// Converts the MessageReactionPayload to a ChatMessageReaction model
+    /// - Returns: A ChatMessageReaction instance
+    func asModel() -> ChatMessageReaction {
+        ChatMessageReaction(
+            id: "\(type.rawValue)_\(user.id)",
+            type: type,
+            score: score,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            author: user.asModel(),
+            extraData: extraData
+        )
+    }
+}

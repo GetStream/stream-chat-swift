@@ -288,13 +288,26 @@ public class LivestreamChannelController: EventsControllerDelegate {
             self.channelQuery = ChannelQuery(cid: payload.channel.cid, channelQuery: channelQuery)
         }
         
-        // Convert payloads to models
-        let newChannel = mapChannelPayload(payload)
+        // Convert payloads to models using new model functions
+        let newChannel = payload.asModel(
+            members: payload.members,
+            messages: payload.messages,
+            channelReads: payload.channelReads,
+            watchers: payload.watchers ?? [],
+            membership: payload.membership,
+            pinnedMessages: payload.pinnedMessages,
+            isHidden: payload.isHidden ?? false,
+            watcherCount: payload.watcherCount,
+            currentUserId: currentUserId
+        )
+        
         // Update channel
         let oldChannel = channel
         channel = newChannel
 
-        let newMessages = payload.messages.compactMap { mapMessagePayload($0, cid: payload.channel.cid) }
+        let newMessages = payload.messages.compactMap {
+            $0.asModel(cid: payload.channel.cid, currentUserId: currentUserId, channelReads: newChannel.reads)
+        }
         
         // Update messages based on pagination type
         updateMessagesArray(with: newMessages, pagination: channelQuery.pagination)
@@ -328,246 +341,6 @@ public class LivestreamChannelController: EventsControllerDelegate {
             // Loading around a message or first page - replace all
             messages = newMessages
         }
-    }
-    
-    private func mapChannelPayload(_ payload: ChannelPayload) -> ChatChannel {
-        let channelPayload = payload.channel
-        
-        // Map members
-        let members = payload.members.compactMap { mapMemberPayload($0, channelId: channelPayload.cid) }
-        
-        // Map latest messages
-        let latestMessages = payload.messages.prefix(5).compactMap { mapMessagePayload($0, cid: channelPayload.cid) }
-        
-        // Map reads
-        let reads = payload.channelReads.compactMap { mapChannelReadPayload($0) }
-        
-        // Map watchers
-        let watchers = payload.watchers?.compactMap { mapUserPayload($0) } ?? []
-        
-        // Map typing users (empty for livestream)
-        let typingUsers: Set<ChatUser> = []
-        
-        return ChatChannel(
-            cid: channelPayload.cid,
-            name: channelPayload.name,
-            imageURL: channelPayload.imageURL,
-            lastMessageAt: channelPayload.lastMessageAt,
-            createdAt: channelPayload.createdAt,
-            updatedAt: channelPayload.updatedAt,
-            deletedAt: channelPayload.deletedAt,
-            truncatedAt: channelPayload.truncatedAt,
-            isHidden: payload.isHidden ?? false,
-            createdBy: channelPayload.createdBy.flatMap { mapUserPayload($0) },
-            config: channelPayload.config,
-            ownCapabilities: Set(channelPayload.ownCapabilities?.compactMap { ChannelCapability(rawValue: $0) } ?? []),
-            isFrozen: channelPayload.isFrozen,
-            isDisabled: channelPayload.isDisabled,
-            isBlocked: channelPayload.isBlocked ?? false,
-            lastActiveMembers: Array(members.prefix(100)),
-            membership: payload.membership.flatMap { mapMemberPayload($0, channelId: channelPayload.cid) },
-            currentlyTypingUsers: typingUsers,
-            lastActiveWatchers: Array(watchers.prefix(100)),
-            team: channelPayload.team,
-            unreadCount: ChannelUnreadCount(messages: 0, mentions: 0), // Default values for livestream
-            watcherCount: payload.watcherCount ?? 0,
-            memberCount: channelPayload.memberCount,
-            reads: reads,
-            cooldownDuration: channelPayload.cooldownDuration,
-            extraData: channelPayload.extraData,
-            latestMessages: latestMessages,
-            lastMessageFromCurrentUser: latestMessages.first { $0.isSentByCurrentUser },
-            pinnedMessages: payload.pinnedMessages.compactMap { mapMessagePayload($0, cid: channelPayload.cid) },
-            muteDetails: nil, // Default value
-            previewMessage: latestMessages.first,
-            draftMessage: nil, // Default value for livestream
-            activeLiveLocations: [] // Default value
-        )
-    }
-    
-    private func mapMessagePayload(_ payload: MessagePayload, cid: ChannelId) -> ChatMessage? {
-        let author = mapUserPayload(payload.user)
-        let mentionedUsers = Set(payload.mentionedUsers.compactMap { mapUserPayload($0) })
-        let threadParticipants = payload.threadParticipants.compactMap { mapUserPayload($0) }
-        
-        // Map quoted message recursively
-        let quotedMessage = payload.quotedMessage.flatMap { mapMessagePayload($0, cid: cid) }
-        
-        // Map reactions
-        let latestReactions = Set(payload.latestReactions.compactMap { mapReactionPayload($0) })
-        let currentUserReactions = Set(payload.ownReactions.compactMap { mapReactionPayload($0) })
-        
-        // Map attachments
-        let attachments: [AnyChatMessageAttachment] = payload.attachments
-            .enumerated()
-            .compactMap { offset, attachmentPayload in
-                guard let payloadData = try? JSONEncoder.stream.encode(attachmentPayload.payload) else {
-                    return nil
-                }
-                return AnyChatMessageAttachment(
-                    id: .init(cid: cid, messageId: payload.id, index: offset),
-                    type: attachmentPayload.type,
-                    payload: payloadData,
-                    downloadingState: nil,
-                    uploadingState: nil
-                )
-            }
-
-        let reads = channel?.reads ?? []
-        let createdAtInterval = payload.createdAt.timeIntervalSince1970
-        let messageUserId = payload.user.id
-        let readBy = reads.filter { read in
-            read.user.id != messageUserId && read.lastReadAt.timeIntervalSince1970 >= createdAtInterval
-        }
-        debugPrint("reads", reads, "readBy", readBy)
-
-        return ChatMessage(
-            id: payload.id,
-            cid: cid,
-            text: payload.text,
-            type: payload.type,
-            command: payload.command,
-            createdAt: payload.createdAt,
-            locallyCreatedAt: nil,
-            updatedAt: payload.updatedAt,
-            deletedAt: payload.deletedAt,
-            arguments: payload.args,
-            parentMessageId: payload.parentId,
-            showReplyInChannel: payload.showReplyInChannel,
-            replyCount: payload.replyCount,
-            extraData: payload.extraData,
-            quotedMessage: quotedMessage,
-            isBounced: false,
-            // TODO: handle bounce
-            isSilent: payload.isSilent,
-            isShadowed: payload.isShadowed,
-            reactionScores: payload.reactionScores,
-            reactionCounts: payload.reactionCounts,
-            reactionGroups: [:],
-            author: author,
-            mentionedUsers: mentionedUsers,
-            threadParticipants: threadParticipants,
-            attachments: attachments,
-            latestReplies: [],
-            localState: nil,
-            isFlaggedByCurrentUser: false,
-            latestReactions: latestReactions,
-            currentUserReactions: currentUserReactions,
-            isSentByCurrentUser: payload.user.id == currentUserId,
-            pinDetails: payload.pinned ? MessagePinDetails(
-                pinnedAt: payload.pinnedAt ?? payload.createdAt,
-                pinnedBy: payload.pinnedBy.flatMap { mapUserPayload($0) } ?? author,
-                expiresAt: payload.pinExpires
-            ) : nil,
-            translations: payload.translations,
-            originalLanguage: payload.originalLanguage.flatMap { TranslationLanguage(languageCode: $0)
-            },
-            moderationDetails: nil,
-            // TODO: handle moderation
-            readBy: Set(readBy.map(\.user)),
-            poll: nil,
-            // TODO: handle polls
-            textUpdatedAt: payload.messageTextUpdatedAt,
-            draftReply: nil,
-            // TODO: handle
-            reminder: payload.reminder.map {
-                .init(
-                    remindAt: $0.remindAt,
-                    createdAt: $0.createdAt,
-                    updatedAt: $0.updatedAt
-                )
-            },
-            sharedLocation: payload.location.map {
-                .init(
-                    messageId: $0.messageId,
-                    channelId: cid,
-                    userId: $0.userId,
-                    createdByDeviceId: $0.createdByDeviceId,
-                    latitude: $0.latitude,
-                    longitude: $0.longitude,
-                    updatedAt: $0.updatedAt,
-                    createdAt: $0.createdAt,
-                    endAt: $0.endAt
-                )
-            }
-        )
-    }
-    
-    private func mapUserPayload(_ payload: UserPayload) -> ChatUser {
-        ChatUser(
-            id: payload.id,
-            name: payload.name,
-            imageURL: payload.imageURL,
-            isOnline: payload.isOnline,
-            isBanned: payload.isBanned,
-            isFlaggedByCurrentUser: false,
-            userRole: UserRole(rawValue: payload.role.rawValue),
-            teamsRole: payload.teamsRole?.mapValues { UserRole(rawValue: $0.rawValue) },
-            createdAt: payload.createdAt,
-            updatedAt: payload.updatedAt,
-            deactivatedAt: payload.deactivatedAt,
-            lastActiveAt: payload.lastActiveAt,
-            teams: Set(payload.teams),
-            language: payload.language.flatMap { TranslationLanguage(languageCode: $0) },
-            extraData: payload.extraData
-        )
-    }
-    
-    private func mapMemberPayload(_ payload: MemberPayload, channelId: ChannelId) -> ChatChannelMember? {
-        guard let userPayload = payload.user else { return nil }
-        let user = mapUserPayload(userPayload)
-        
-        return ChatChannelMember(
-            id: user.id,
-            name: user.name,
-            imageURL: user.imageURL,
-            isOnline: user.isOnline,
-            isBanned: user.isBanned,
-            isFlaggedByCurrentUser: user.isFlaggedByCurrentUser,
-            userRole: user.userRole,
-            teamsRole: user.teamsRole,
-            userCreatedAt: user.userCreatedAt,
-            userUpdatedAt: user.userUpdatedAt,
-            deactivatedAt: user.userDeactivatedAt,
-            lastActiveAt: user.lastActiveAt,
-            teams: user.teams,
-            language: user.language,
-            extraData: user.extraData,
-            memberRole: MemberRole(rawValue: payload.role?.rawValue ?? "member"),
-            memberCreatedAt: payload.createdAt,
-            memberUpdatedAt: payload.updatedAt,
-            isInvited: payload.isInvited ?? false,
-            inviteAcceptedAt: payload.inviteAcceptedAt,
-            inviteRejectedAt: payload.inviteRejectedAt,
-            archivedAt: payload.archivedAt,
-            pinnedAt: payload.pinnedAt,
-            isBannedFromChannel: payload.isBanned ?? false,
-            banExpiresAt: payload.banExpiresAt,
-            isShadowBannedFromChannel: payload.isShadowBanned ?? false,
-            notificationsMuted: payload.notificationsMuted,
-            memberExtraData: [:]
-        )
-    }
-    
-    private func mapChannelReadPayload(_ payload: ChannelReadPayload) -> ChatChannelRead {
-        ChatChannelRead(
-            lastReadAt: payload.lastReadAt,
-            lastReadMessageId: payload.lastReadMessageId,
-            unreadMessagesCount: payload.unreadMessagesCount,
-            user: mapUserPayload(payload.user)
-        )
-    }
-    
-    private func mapReactionPayload(_ payload: MessageReactionPayload) -> ChatMessageReaction? {
-        ChatMessageReaction(
-            id: "\(payload.type.rawValue)_\(payload.user.id)",
-            type: payload.type,
-            score: payload.score,
-            createdAt: payload.createdAt,
-            updatedAt: payload.updatedAt,
-            author: mapUserPayload(payload.user),
-            extraData: payload.extraData
-        )
     }
     
     private func lastLocalMessageId() -> MessageId? {

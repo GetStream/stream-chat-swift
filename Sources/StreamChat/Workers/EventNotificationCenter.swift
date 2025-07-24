@@ -51,23 +51,26 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
         var middlewareEvents = [Event]()
         var livestreamEvents = [Event]()
 
-        if optimizeLivestreamControllers {
-            events
-                .compactMap { $0 as? EventDTO }
-                .forEach { event in
-                    if event.payload.cid?.type == .livestream {
-                        livestreamEvents.append(event)
-                    } else {
-                        middlewareEvents.append(event)
-                    }
-                }
-        } else {
-            middlewareEvents = events
-        }
-
-        eventsToPost.append(contentsOf: forwardLivestreamEvents(livestreamEvents))
-
         database.write({ session in
+            if self.optimizeLivestreamControllers {
+                events
+                    .forEach { event in
+                        guard let eventDTO = event as? EventDTO else {
+                            middlewareEvents.append(event)
+                            return
+                        }
+                        if eventDTO.payload.cid?.rawValue == "messaging:28F0F56D-F" {
+                            livestreamEvents.append(event)
+                        } else {
+                            middlewareEvents.append(event)
+                        }
+                    }
+            } else {
+                middlewareEvents = events
+            }
+
+            eventsToPost.append(contentsOf: self.forwardLivestreamEvents(livestreamEvents))
+
             self.newMessageIds = Set(messageIds.compactMap {
                 !session.messageExists(id: $0) ? $0 : nil
             })
@@ -91,37 +94,222 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     }
 
     private func forwardLivestreamEvents(_ events: [Event]) -> [Event] {
-        events.compactMap {
-            guard let eventDTO = $0 as? EventDTO else {
+        events.compactMap { event in
+            guard let eventDTO = event as? EventDTO else {
                 return nil
             }
+
             let eventPayload = eventDTO.payload
+
+            guard let cid = eventPayload.cid else {
+                return nil
+            }
+
             switch eventPayload.eventType {
             case .messageNew:
-                return nil
-
+                return createMessageNewEvent(from: eventPayload, cid: cid)
+                
             case .messageUpdated:
-                return nil
-
+                return createMessageUpdatedEvent(from: eventPayload, cid: cid)
+                
             case .messageDeleted:
-                return nil
-
+                return createMessageDeletedEvent(from: eventPayload, cid: cid)
+                
             case .messageRead:
-                return nil
-
+                return createMessageReadEvent(from: eventPayload, cid: cid)
+                
             case .reactionNew:
-                return nil
-
-            case .reactionDeleted:
-                return nil
-
+                return createReactionNewEvent(from: eventPayload, cid: cid)
+                
             case .reactionUpdated:
-                return nil
-
+                return createReactionUpdatedEvent(from: eventPayload, cid: cid)
+                
+            case .reactionDeleted:
+                return createReactionDeletedEvent(from: eventPayload, cid: cid)
+                
             default:
                 return nil
             }
         }
+    }
+    
+    // MARK: - Event Creation Helpers
+    
+    private func createChannelFromPayload(_ channelPayload: ChannelDetailPayload, cid: ChannelId) -> ChatChannel {
+        ChatChannel(
+            cid: cid,
+            name: channelPayload.name,
+            imageURL: channelPayload.imageURL,
+            lastMessageAt: channelPayload.lastMessageAt,
+            createdAt: channelPayload.createdAt,
+            updatedAt: channelPayload.updatedAt,
+            deletedAt: channelPayload.deletedAt,
+            truncatedAt: channelPayload.truncatedAt,
+            isHidden: false,
+            createdBy: channelPayload.createdBy?.asModel(),
+            config: channelPayload.config,
+            ownCapabilities: Set(channelPayload.ownCapabilities?.compactMap { ChannelCapability(rawValue: $0) } ?? []),
+            isFrozen: channelPayload.isFrozen,
+            isDisabled: channelPayload.isDisabled,
+            isBlocked: channelPayload.isBlocked ?? false,
+            lastActiveMembers: [],
+            membership: nil,
+            currentlyTypingUsers: [],
+            lastActiveWatchers: [],
+            team: channelPayload.team,
+            unreadCount: ChannelUnreadCount(messages: 0, mentions: 0),
+            watcherCount: 0,
+            memberCount: channelPayload.memberCount,
+            reads: [],
+            cooldownDuration: channelPayload.cooldownDuration,
+            extraData: channelPayload.extraData,
+            latestMessages: [],
+            lastMessageFromCurrentUser: nil,
+            pinnedMessages: [],
+            muteDetails: nil,
+            previewMessage: nil,
+            draftMessage: nil,
+            activeLiveLocations: []
+        )
+    }
+    
+    private func createMessageNewEvent(from payload: EventPayload, cid: ChannelId) -> MessageNewEvent? {
+        guard
+            let userPayload = payload.user,
+            let messagePayload = payload.message,
+            let createdAt = payload.createdAt,
+            let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
+            let currentUserId = database.writableContext.currentUser?.user.id,
+            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId)
+        else {
+            return nil
+        }
+
+        return MessageNewEvent(
+            user: userPayload.asModel(),
+            message: message,
+            channel: channel,
+            createdAt: createdAt,
+            watcherCount: payload.watcherCount,
+            unreadCount: payload.unreadCount.map {
+                .init(
+                    channels: $0.channels ?? 0,
+                    messages: $0.messages ?? 0,
+                    threads: $0.threads ?? 0
+                )
+            }
+        )
+    }
+    
+    private func createMessageUpdatedEvent(from payload: EventPayload, cid: ChannelId) -> MessageUpdatedEvent? {
+        guard
+            let userPayload = try? payload.value(at: \.user) as UserPayload,
+            let messagePayload = try? payload.value(at: \.message) as MessagePayload,
+            let createdAt = try? payload.value(at: \.createdAt) as Date,
+            let message = messagePayload.asModel(cid: cid),
+            let channelPayload = payload.channel
+        else { return nil }
+        
+        let channel = createChannelFromPayload(channelPayload, cid: cid)
+        
+        return MessageUpdatedEvent(
+            user: userPayload.asModel(),
+            channel: channel,
+            message: message,
+            createdAt: createdAt
+        )
+    }
+    
+    private func createMessageDeletedEvent(from payload: EventPayload, cid: ChannelId) -> MessageDeletedEvent? {
+        guard
+            let messagePayload = try? payload.value(at: \.message) as MessagePayload,
+            let createdAt = try? payload.value(at: \.createdAt) as Date,
+            let message = messagePayload.asModel(cid: cid),
+            let channelPayload = payload.channel
+        else { return nil }
+        
+        let userPayload = try? payload.value(at: \.user) as UserPayload?
+        let channel = createChannelFromPayload(channelPayload, cid: cid)
+        
+        return MessageDeletedEvent(
+            user: userPayload?.asModel(),
+            channel: channel,
+            message: message,
+            createdAt: createdAt,
+            isHardDelete: payload.hardDelete
+        )
+    }
+    
+    private func createMessageReadEvent(from payload: EventPayload, cid: ChannelId) -> MessageReadEvent? {
+        guard
+            let userPayload = try? payload.value(at: \.user) as UserPayload,
+            let createdAt = try? payload.value(at: \.createdAt) as Date,
+            let channelPayload = payload.channel
+        else { return nil }
+        
+        let channel = createChannelFromPayload(channelPayload, cid: cid)
+        
+        return MessageReadEvent(
+            user: userPayload.asModel(),
+            channel: channel,
+            thread: nil, // Livestream channels don't support threads typically
+            createdAt: createdAt,
+            unreadCount: nil // Livestream channels don't track unread counts
+        )
+    }
+    
+    private func createReactionNewEvent(from payload: EventPayload, cid: ChannelId) -> ReactionNewEvent? {
+        guard
+            let userPayload = try? payload.value(at: \.user) as UserPayload,
+            let messagePayload = try? payload.value(at: \.message) as MessagePayload,
+            let reactionPayload = try? payload.value(at: \.reaction) as MessageReactionPayload,
+            let createdAt = try? payload.value(at: \.createdAt) as Date,
+            let message = messagePayload.asModel(cid: cid)
+        else { return nil }
+        
+        return ReactionNewEvent(
+            user: userPayload.asModel(),
+            cid: cid,
+            message: message,
+            reaction: reactionPayload.asModel(),
+            createdAt: createdAt
+        )
+    }
+    
+    private func createReactionUpdatedEvent(from payload: EventPayload, cid: ChannelId) -> ReactionUpdatedEvent? {
+        guard
+            let userPayload = try? payload.value(at: \.user) as UserPayload,
+            let messagePayload = try? payload.value(at: \.message) as MessagePayload,
+            let reactionPayload = try? payload.value(at: \.reaction) as MessageReactionPayload,
+            let createdAt = try? payload.value(at: \.createdAt) as Date,
+            let message = messagePayload.asModel(cid: cid)
+        else { return nil }
+        
+        return ReactionUpdatedEvent(
+            user: userPayload.asModel(),
+            cid: cid,
+            message: message,
+            reaction: reactionPayload.asModel(),
+            createdAt: createdAt
+        )
+    }
+    
+    private func createReactionDeletedEvent(from payload: EventPayload, cid: ChannelId) -> ReactionDeletedEvent? {
+        guard
+            let userPayload = try? payload.value(at: \.user) as UserPayload,
+            let messagePayload = try? payload.value(at: \.message) as MessagePayload,
+            let reactionPayload = try? payload.value(at: \.reaction) as MessageReactionPayload,
+            let createdAt = try? payload.value(at: \.createdAt) as Date,
+            let message = messagePayload.asModel(cid: cid)
+        else { return nil }
+        
+        return ReactionDeletedEvent(
+            user: userPayload.asModel(),
+            cid: cid,
+            message: message,
+            reaction: reactionPayload.asModel(),
+            createdAt: createdAt
+        )
     }
 }
 

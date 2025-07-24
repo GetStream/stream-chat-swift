@@ -602,3 +602,142 @@ public extension ChatChannel {
         ownCapabilities.contains(.shareLocation)
     }
 }
+
+// MARK: - Payload -> Model Mapping
+
+extension ChannelPayload {
+    /// Converts the ChannelPayload to a ChatChannel model
+    /// - Parameters:
+    ///   - members: Array of member payloads to convert
+    ///   - messages: Array of message payloads for latest messages
+    ///   - channelReads: Array of channel read payloads
+    ///   - watchers: Array of user payloads for watchers
+    ///   - membership: Member payload for current user's membership
+    ///   - pinnedMessages: Array of pinned message payloads
+    ///   - isHidden: Whether the channel is hidden
+    ///   - watcherCount: Number of watchers
+    /// - Returns: A ChatChannel instance
+    func asModel(
+        members: [MemberPayload] = [],
+        messages: [MessagePayload] = [],
+        channelReads: [ChannelReadPayload] = [],
+        watchers: [UserPayload] = [],
+        membership: MemberPayload? = nil,
+        pinnedMessages: [MessagePayload] = [],
+        isHidden: Bool = false,
+        watcherCount: Int? = nil,
+        currentUserId: UserId? = nil
+    ) -> ChatChannel {
+        let channelPayload = channel
+        
+        // Map members
+        let mappedMembers = members.compactMap { $0.asModel(channelId: channelPayload.cid) }
+        
+        // Map latest messages
+        let reads = channelReads.map { $0.asModel() }
+        let latestMessages = messages.prefix(5).compactMap {
+            $0.asModel(cid: channelPayload.cid, currentUserId: currentUserId, channelReads: reads)
+        }
+        
+        // Map reads
+        let mappedReads = channelReads.map { $0.asModel() }
+        
+        // Map watchers
+        let mappedWatchers = watchers.map { $0.asModel() }
+        
+        // Map typing users (empty for payload conversion)
+        let typingUsers: Set<ChatUser> = []
+        
+        return ChatChannel(
+            cid: channelPayload.cid,
+            name: channelPayload.name,
+            imageURL: channelPayload.imageURL,
+            lastMessageAt: channelPayload.lastMessageAt,
+            createdAt: channelPayload.createdAt,
+            updatedAt: channelPayload.updatedAt,
+            deletedAt: channelPayload.deletedAt,
+            truncatedAt: channelPayload.truncatedAt,
+            isHidden: isHidden,
+            createdBy: channelPayload.createdBy?.asModel(),
+            config: channelPayload.config,
+            ownCapabilities: Set(channelPayload.ownCapabilities?.compactMap { ChannelCapability(rawValue: $0) } ?? []),
+            isFrozen: channelPayload.isFrozen,
+            isDisabled: channelPayload.isDisabled,
+            isBlocked: channelPayload.isBlocked ?? false,
+            lastActiveMembers: Array(mappedMembers.prefix(100)),
+            membership: membership?.asModel(channelId: channelPayload.cid),
+            currentlyTypingUsers: typingUsers,
+            lastActiveWatchers: Array(mappedWatchers.prefix(100)),
+            team: channelPayload.team,
+            unreadCount: ChannelUnreadCount(messages: 0, mentions: 0), // Default values for livestream
+            watcherCount: watcherCount ?? 0,
+            memberCount: channelPayload.memberCount,
+            reads: mappedReads,
+            cooldownDuration: channelPayload.cooldownDuration,
+            extraData: channelPayload.extraData,
+            latestMessages: latestMessages,
+            lastMessageFromCurrentUser: latestMessages.first { $0.isSentByCurrentUser },
+            pinnedMessages: pinnedMessages.compactMap {
+                $0.asModel(cid: channelPayload.cid, currentUserId: currentUserId, channelReads: reads)
+            },
+            muteDetails: nil, // Default value
+            previewMessage: latestMessages.first,
+            draftMessage: nil, // Default value for livestream
+            activeLiveLocations: [] // Default value
+        )
+    }
+}
+
+extension MemberPayload {
+    /// Converts the MemberPayload to a ChatChannelMember model
+    /// - Parameter channelId: The channel ID the member belongs to
+    /// - Returns: A ChatChannelMember instance, or nil if user is missing
+    func asModel(channelId: ChannelId) -> ChatChannelMember? {
+        guard let userPayload = user else { return nil }
+        let user = userPayload.asModel()
+        
+        return ChatChannelMember(
+            id: user.id,
+            name: user.name,
+            imageURL: user.imageURL,
+            isOnline: user.isOnline,
+            isBanned: user.isBanned,
+            isFlaggedByCurrentUser: user.isFlaggedByCurrentUser,
+            userRole: user.userRole,
+            teamsRole: user.teamsRole,
+            userCreatedAt: user.userCreatedAt,
+            userUpdatedAt: user.userUpdatedAt,
+            deactivatedAt: user.userDeactivatedAt,
+            lastActiveAt: user.lastActiveAt,
+            teams: user.teams,
+            language: user.language,
+            extraData: user.extraData,
+            memberRole: MemberRole(rawValue: role?.rawValue ?? "member"),
+            memberCreatedAt: createdAt,
+            memberUpdatedAt: updatedAt,
+            isInvited: isInvited ?? false,
+            inviteAcceptedAt: inviteAcceptedAt,
+            inviteRejectedAt: inviteRejectedAt,
+            archivedAt: archivedAt,
+            pinnedAt: pinnedAt,
+            isBannedFromChannel: isBanned ?? false,
+            banExpiresAt: banExpiresAt,
+            isShadowBannedFromChannel: isShadowBanned ?? false,
+            notificationsMuted: notificationsMuted,
+            memberExtraData: [:]
+        )
+    }
+}
+
+extension ChannelReadPayload {
+    /// Converts the ChannelReadPayload to a ChatChannelRead model
+    /// - Returns: A ChatChannelRead instance
+    func asModel() -> ChatChannelRead {
+        ChatChannelRead(
+            lastReadAt: lastReadAt,
+            lastReadMessageId: lastReadMessageId,
+            unreadMessagesCount: unreadMessagesCount,
+            user: user.asModel()
+        )
+    }
+}

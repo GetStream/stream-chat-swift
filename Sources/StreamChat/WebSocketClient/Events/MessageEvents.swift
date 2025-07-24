@@ -301,25 +301,3 @@ private extension MessagePayload {
         )
     }
 }
-
-private extension UserPayload {
-    func asModel() -> ChatUser {
-        .init(
-            id: id,
-            name: name,
-            imageURL: imageURL,
-            isOnline: isOnline,
-            isBanned: isBanned,
-            isFlaggedByCurrentUser: false,
-            userRole: role,
-            teamsRole: teamsRole,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
-            teams: Set(teams),
-            language: language.map { TranslationLanguage(languageCode: $0) },
-            extraData: extraData
-        )
-    }
-}
