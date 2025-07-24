@@ -290,17 +290,11 @@ public class LivestreamChannelController: EventsControllerDelegate {
         
         // Convert payloads to models using new model functions
         let newChannel = payload.asModel(
-            members: payload.members,
-            messages: payload.messages,
-            channelReads: payload.channelReads,
-            watchers: payload.watchers ?? [],
-            membership: payload.membership,
-            pinnedMessages: payload.pinnedMessages,
-            isHidden: payload.isHidden ?? false,
-            watcherCount: payload.watcherCount,
-            currentUserId: currentUserId
+            currentUserId: currentUserId,
+            currentlyTypingUsers: channel?.currentlyTypingUsers,
+            unreadCount: channel?.unreadCount
         )
-        
+
         // Update channel
         let oldChannel = channel
         channel = newChannel

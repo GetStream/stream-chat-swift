@@ -705,8 +705,8 @@ extension MessagePayload {
     /// - Returns: A ChatMessage instance
     func asModel(
         cid: ChannelId,
-        currentUserId: UserId? = nil,
-        channelReads: [ChatChannelRead] = []
+        currentUserId: UserId?,
+        channelReads: [ChatChannelRead]
     ) -> ChatMessage? {
         let author = user.asModel()
         let mentionedUsers = Set(mentionedUsers.compactMap { $0.asModel() })

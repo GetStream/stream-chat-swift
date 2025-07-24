@@ -135,44 +135,6 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     
     // MARK: - Event Creation Helpers
     
-    private func createChannelFromPayload(_ channelPayload: ChannelDetailPayload, cid: ChannelId) -> ChatChannel {
-        ChatChannel(
-            cid: cid,
-            name: channelPayload.name,
-            imageURL: channelPayload.imageURL,
-            lastMessageAt: channelPayload.lastMessageAt,
-            createdAt: channelPayload.createdAt,
-            updatedAt: channelPayload.updatedAt,
-            deletedAt: channelPayload.deletedAt,
-            truncatedAt: channelPayload.truncatedAt,
-            isHidden: false,
-            createdBy: channelPayload.createdBy?.asModel(),
-            config: channelPayload.config,
-            ownCapabilities: Set(channelPayload.ownCapabilities?.compactMap { ChannelCapability(rawValue: $0) } ?? []),
-            isFrozen: channelPayload.isFrozen,
-            isDisabled: channelPayload.isDisabled,
-            isBlocked: channelPayload.isBlocked ?? false,
-            lastActiveMembers: [],
-            membership: nil,
-            currentlyTypingUsers: [],
-            lastActiveWatchers: [],
-            team: channelPayload.team,
-            unreadCount: ChannelUnreadCount(messages: 0, mentions: 0),
-            watcherCount: 0,
-            memberCount: channelPayload.memberCount,
-            reads: [],
-            cooldownDuration: channelPayload.cooldownDuration,
-            extraData: channelPayload.extraData,
-            latestMessages: [],
-            lastMessageFromCurrentUser: nil,
-            pinnedMessages: [],
-            muteDetails: nil,
-            previewMessage: nil,
-            draftMessage: nil,
-            activeLiveLocations: []
-        )
-    }
-    
     private func createMessageNewEvent(from payload: EventPayload, cid: ChannelId) -> MessageNewEvent? {
         guard
             let userPayload = payload.user,
@@ -180,7 +142,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             let createdAt = payload.createdAt,
             let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
             let currentUserId = database.writableContext.currentUser?.user.id,
-            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId)
+            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else {
             return nil
         }
@@ -203,14 +165,13 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     
     private func createMessageUpdatedEvent(from payload: EventPayload, cid: ChannelId) -> MessageUpdatedEvent? {
         guard
-            let userPayload = try? payload.value(at: \.user) as UserPayload,
-            let messagePayload = try? payload.value(at: \.message) as MessagePayload,
-            let createdAt = try? payload.value(at: \.createdAt) as Date,
-            let message = messagePayload.asModel(cid: cid),
-            let channelPayload = payload.channel
+            let userPayload = payload.user,
+            let messagePayload = payload.message,
+            let createdAt = payload.createdAt,
+            let currentUserId = database.writableContext.currentUser?.user.id,
+            let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
+            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
-        
-        let channel = createChannelFromPayload(channelPayload, cid: cid)
         
         return MessageUpdatedEvent(
             user: userPayload.asModel(),
@@ -222,14 +183,14 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     
     private func createMessageDeletedEvent(from payload: EventPayload, cid: ChannelId) -> MessageDeletedEvent? {
         guard
-            let messagePayload = try? payload.value(at: \.message) as MessagePayload,
-            let createdAt = try? payload.value(at: \.createdAt) as Date,
-            let message = messagePayload.asModel(cid: cid),
-            let channelPayload = payload.channel
+            let messagePayload = payload.message,
+            let createdAt = payload.createdAt,
+            let currentUserId = database.writableContext.currentUser?.user.id,
+            let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
+            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
         
-        let userPayload = try? payload.value(at: \.user) as UserPayload?
-        let channel = createChannelFromPayload(channelPayload, cid: cid)
+        let userPayload = payload.user
         
         return MessageDeletedEvent(
             user: userPayload?.asModel(),
@@ -242,29 +203,35 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     
     private func createMessageReadEvent(from payload: EventPayload, cid: ChannelId) -> MessageReadEvent? {
         guard
-            let userPayload = try? payload.value(at: \.user) as UserPayload,
-            let createdAt = try? payload.value(at: \.createdAt) as Date,
-            let channelPayload = payload.channel
+            let userPayload = payload.user,
+            let createdAt = payload.createdAt,
+            let channel = try? database.writableContext.channel(cid: cid)?.asModel()
         else { return nil }
-        
-        let channel = createChannelFromPayload(channelPayload, cid: cid)
         
         return MessageReadEvent(
             user: userPayload.asModel(),
             channel: channel,
             thread: nil, // Livestream channels don't support threads typically
             createdAt: createdAt,
-            unreadCount: nil // Livestream channels don't track unread counts
+            unreadCount: payload.unreadCount.map {
+                .init(
+                    channels: $0.channels ?? 0,
+                    messages: $0.messages ?? 0,
+                    threads: $0.threads ?? 0
+                )
+            }
         )
     }
     
     private func createReactionNewEvent(from payload: EventPayload, cid: ChannelId) -> ReactionNewEvent? {
         guard
-            let userPayload = try? payload.value(at: \.user) as UserPayload,
-            let messagePayload = try? payload.value(at: \.message) as MessagePayload,
-            let reactionPayload = try? payload.value(at: \.reaction) as MessageReactionPayload,
-            let createdAt = try? payload.value(at: \.createdAt) as Date,
-            let message = messagePayload.asModel(cid: cid)
+            let userPayload = payload.user,
+            let messagePayload = payload.message,
+            let reactionPayload = payload.reaction,
+            let createdAt = payload.createdAt,
+            let currentUserId = database.writableContext.currentUser?.user.id,
+            let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
+            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
         
         return ReactionNewEvent(
@@ -278,11 +245,13 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     
     private func createReactionUpdatedEvent(from payload: EventPayload, cid: ChannelId) -> ReactionUpdatedEvent? {
         guard
-            let userPayload = try? payload.value(at: \.user) as UserPayload,
-            let messagePayload = try? payload.value(at: \.message) as MessagePayload,
-            let reactionPayload = try? payload.value(at: \.reaction) as MessageReactionPayload,
-            let createdAt = try? payload.value(at: \.createdAt) as Date,
-            let message = messagePayload.asModel(cid: cid)
+            let userPayload = payload.user,
+            let messagePayload = payload.message,
+            let reactionPayload = payload.reaction,
+            let createdAt = payload.createdAt,
+            let currentUserId = database.writableContext.currentUser?.user.id,
+            let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
+            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
         
         return ReactionUpdatedEvent(
@@ -296,11 +265,13 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     
     private func createReactionDeletedEvent(from payload: EventPayload, cid: ChannelId) -> ReactionDeletedEvent? {
         guard
-            let userPayload = try? payload.value(at: \.user) as UserPayload,
-            let messagePayload = try? payload.value(at: \.message) as MessagePayload,
-            let reactionPayload = try? payload.value(at: \.reaction) as MessageReactionPayload,
-            let createdAt = try? payload.value(at: \.createdAt) as Date,
-            let message = messagePayload.asModel(cid: cid)
+            let userPayload = payload.user,
+            let messagePayload = payload.message,
+            let reactionPayload = payload.reaction,
+            let createdAt = payload.createdAt,
+            let currentUserId = database.writableContext.currentUser?.user.id,
+            let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
+            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
         
         return ReactionDeletedEvent(
