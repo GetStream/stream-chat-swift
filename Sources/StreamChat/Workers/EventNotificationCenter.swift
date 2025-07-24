@@ -17,8 +17,14 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     // Contains the ids of the new messages that are going to be added during the ongoing process
     private(set) var newMessageIds: Set<MessageId> = Set()
 
-    init(database: DatabaseContainer) {
+    private var optimizeLivestreamControllers: Bool
+
+    init(
+        database: DatabaseContainer,
+        optimizeLivestreamControllers: Bool = false
+    ) {
         self.database = database
+        self.optimizeLivestreamControllers = optimizeLivestreamControllers
         super.init()
     }
 
@@ -42,14 +48,33 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
         }
 
         var eventsToPost = [Event]()
+        var middlewareEvents = [Event]()
+        var livestreamEvents = [Event]()
+
+        if optimizeLivestreamControllers {
+            events
+                .compactMap { $0 as? EventDTO }
+                .forEach { event in
+                    if event.payload.cid?.type == .livestream {
+                        livestreamEvents.append(event)
+                    } else {
+                        middlewareEvents.append(event)
+                    }
+                }
+        } else {
+            middlewareEvents = events
+        }
+
+        eventsToPost.append(contentsOf: forwardLivestreamEvents(livestreamEvents))
+
         database.write({ session in
             self.newMessageIds = Set(messageIds.compactMap {
                 !session.messageExists(id: $0) ? $0 : nil
             })
 
-            eventsToPost = events.compactMap {
+            eventsToPost.append(contentsOf: middlewareEvents.compactMap {
                 self.middlewares.process(event: $0, session: session)
-            }
+            })
 
             self.newMessageIds = []
         }, completion: { _ in
@@ -63,6 +88,40 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
                 completion?()
             }
         })
+    }
+
+    private func forwardLivestreamEvents(_ events: [Event]) -> [Event] {
+        events.compactMap {
+            guard let eventDTO = $0 as? EventDTO else {
+                return nil
+            }
+            let eventPayload = eventDTO.payload
+            switch eventPayload.eventType {
+            case .messageNew:
+                return nil
+
+            case .messageUpdated:
+                return nil
+
+            case .messageDeleted:
+                return nil
+
+            case .messageRead:
+                return nil
+
+            case .reactionNew:
+                return nil
+
+            case .reactionDeleted:
+                return nil
+
+            case .reactionUpdated:
+                return nil
+
+            default:
+                return nil
+            }
+        }
     }
 }
 

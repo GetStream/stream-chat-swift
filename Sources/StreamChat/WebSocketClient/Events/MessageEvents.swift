@@ -237,8 +237,9 @@ class MessageReadEventDTO: EventDTO {
 }
 
 // Triggered when the current user creates a new message and is pending to be sent.
-public struct NewMessagePendingEvent: Event {
+public struct NewMessagePendingEvent: ChannelSpecificEvent {
     public var message: ChatMessage
+    public var cid: ChannelId { message.cid! }
 }
 
 // Triggered when a message failed being sent.
