@@ -45,5 +45,7 @@ open class ChatMessageVoiceRecordingAttachmentListView: _View, ComponentsProvide
             item.indexProvider = { index }
             containerStackView.addArrangedSubview(item)
         }
+        
+        containerStackView.layoutIfNeeded()
     }
 }
