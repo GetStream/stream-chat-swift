@@ -721,7 +721,13 @@ extension MessagePayload {
         
         // Map reactions
         let latestReactions = Set(latestReactions.compactMap { $0.asModel() })
-        let currentUserReactions = Set(ownReactions.compactMap { $0.asModel() })
+
+        let currentUserReactions: Set<ChatMessageReaction>
+        if ownReactions.isEmpty {
+            currentUserReactions = latestReactions.filter { $0.author.id == currentUserId }
+        } else {
+            currentUserReactions = Set(ownReactions.compactMap { $0.asModel() })
+        }
         
         // Map attachments
         let attachments: [AnyChatMessageAttachment] = attachments
