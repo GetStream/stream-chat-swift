@@ -74,16 +74,18 @@ open class ChatReactionsBubbleView: ChatReactionBubbleBaseView {
 
     /// The center of a big circle which is a part of the bubble's tail .
     open var bigTailCircleCenter: CGPoint {
-        bubbleBodyCenter.offsetBy(
-            dx: tailDirection == .toTrailing ? 10 : -10,
+        let layoutDirectionMultiplier: CGFloat = effectiveUserInterfaceLayoutDirection == .leftToRight ? 1 : -1
+        return bubbleBodyCenter.offsetBy(
+            dx: (tailDirection == .toTrailing ? 10 : -10) * layoutDirectionMultiplier,
             dy: 14
         )
     }
 
     /// The center of a small circle which is a part of the bubble's tail .
     open var smallTailCircleCenter: CGPoint {
-        bigTailCircleCenter.offsetBy(
-            dx: tailDirection == .toTrailing ? 4 : -4,
+        let layoutDirectionMultiplier: CGFloat = effectiveUserInterfaceLayoutDirection == .leftToRight ? 1 : -1
+        return bigTailCircleCenter.offsetBy(
+            dx: (tailDirection == .toTrailing ? 4 : -4) * layoutDirectionMultiplier,
             dy: 6
         )
     }
