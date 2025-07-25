@@ -315,8 +315,6 @@ final class MessageUpdater_Mock: MessageUpdater {
         case nil:
             break
         }
-        
-        // downloadAttachment_completion_result?  .invoke(with: completion)
     }
     
     override func editMessage(

@@ -3313,7 +3313,7 @@ final class MessageUpdater_Tests: XCTestCase {
             location: .dummy(
                 latitude: latitude,
                 longitude: longitude,
-                endAt: Date().addingTimeInterval(1000)
+                endAt: endAt
             )
         )
 

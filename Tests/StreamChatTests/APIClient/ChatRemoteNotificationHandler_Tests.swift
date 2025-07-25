@@ -300,7 +300,7 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         let reactionInfo = PushReactionInfo(payload: payload)
         
         XCTAssertNotNil(reactionInfo)
-        XCTAssertEqual(reactionInfo?.rawType, "like")
+        XCTAssertEqual(reactionInfo?.type, "like")
         XCTAssertEqual(reactionInfo?.reactionUserId, "user123")
         XCTAssertEqual(reactionInfo?.receiverUserId, "receiver456")
         XCTAssertEqual(reactionInfo?.reactionUserImageUrl?.absoluteString, "https://example.com/image.jpg")
@@ -316,7 +316,7 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
         let reactionInfo = PushReactionInfo(payload: payload)
         
         XCTAssertNotNil(reactionInfo)
-        XCTAssertEqual(reactionInfo?.rawType, "love")
+        XCTAssertEqual(reactionInfo?.type, "love")
         XCTAssertEqual(reactionInfo?.reactionUserId, "user789")
         XCTAssertEqual(reactionInfo?.receiverUserId, "receiver123")
         XCTAssertNil(reactionInfo?.reactionUserImageUrl)
@@ -356,7 +356,7 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
             case .message(let messageNotificationContent):
                 XCTAssertEqual(messageNotificationContent.type, .reactionNew)
                 XCTAssertNotNil(messageNotificationContent.reaction)
-                XCTAssertEqual(messageNotificationContent.reaction?.rawType, "like")
+                XCTAssertEqual(messageNotificationContent.reaction?.type, "like")
                 XCTAssertEqual(messageNotificationContent.reaction?.reactionUserId, "user123")
                 XCTAssertEqual(messageNotificationContent.reaction?.receiverUserId, "receiver456")
                 XCTAssertEqual(messageNotificationContent.reaction?.reactionUserImageUrl?.absoluteString, "https://example.com/image.jpg")

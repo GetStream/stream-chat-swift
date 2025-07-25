@@ -114,8 +114,8 @@ class NotificationService: UNNotificationServiceExtension {
                     let emojis = self.reactionEmojis
                     var newBody = content.body
                     if let reactionInfo = messageNotification.reaction {
-                        let reactionType = MessageReactionType(rawValue: reactionInfo.rawType)
-                        newBody = newBody.replacingOccurrences(of: ":\(reactionInfo.rawType):", with: emojis[reactionType] ?? "")
+                        let reactionType = reactionInfo.type
+                        newBody = newBody.replacingOccurrences(of: ":\(reactionType.rawValue):", with: emojis[reactionType] ?? "")
                     }
                     content.body = newBody
                     return contentHandler(content)

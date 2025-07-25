@@ -96,7 +96,7 @@ public class ChatPushNotificationInfo {
 /// The information about a reaction in a push notification.
 public struct PushReactionInfo {
     /// The type of the reaction.
-    public let rawType: String
+    public let type: MessageReactionType
     /// The id of the user who created the reaction.
     public let reactionUserId: UserId
     /// The image URL of the user who created the reaction.
@@ -110,7 +110,7 @@ public struct PushReactionInfo {
               let receiverUserId = payload["receiver_id"] else {
             return nil
         }
-        self.rawType = rawType
+        type = .init(rawValue: rawType)
         self.reactionUserId = UserId(reactionUserId)
         self.receiverUserId = UserId(receiverUserId)
 
