@@ -1,4 +1,5 @@
 default_platform :ios
+opt_out_usage
 skip_docs
 
 require 'json'
@@ -830,6 +831,7 @@ lane :sources_matrix do
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock'],
     size: ['Sources', xcode_project],
     xcmetrics: ['Sources'],
+    public_interface: ['Sources'],
     swiftformat_include: ['Sources', 'DemoApp', 'Tests', 'Integration'],
     swiftformat_exclude: ['**/Generated', 'Sources/StreamChatUI/StreamNuke', 'Sources/StreamChatUI/StreamSwiftyGif', 'Sources/StreamChatUI/StreamDifferenceKit']
   }
@@ -843,6 +845,45 @@ lane :copyright do
     title: '[CI] Update Copyright',
     head_branch: "ci/update-copyright-#{Time.now.to_i}"
   )
+end
+
+lane :validate_public_interface do
+  next unless is_check_required(sources: sources_matrix[:public_interface], force_check: @force_check)
+
+  # Run the analysis on the current branch
+  original_branch = current_branch
+  sh('interface-analyser analysis ../Sources/ public_interface_current.json')
+
+  # Checkout the target branch
+  target_branch = original_branch.include?('release/') ? 'main' : 'develop'
+  sh("git fetch origin #{target_branch}")
+  sh("git checkout #{target_branch}")
+
+  # Run the analysis on the target branch
+  sh('interface-analyser analysis ../Sources/ public_interface_previous.json')
+
+  # Run diff
+  report_path = 'interface-analyser-report.md'
+  sh("interface-analyser diff public_interface_current.json public_interface_previous.json #{report_path}")
+
+  # Check if report exists and is non-zero in size
+  diff =
+    if File.exist?(report_path) && File.size(report_path) > 0
+      File.read(report_path).strip
+    else
+      '🚀 No changes affecting the public interface.'
+    end
+
+  # Generate markdown table for the PR comment
+  header = '## Public Interface'
+  content = "#{header}\n#{diff}"
+
+  # Post PR comment if running in CI
+  pr_comment(text: content, edit_last_comment_with_text: header) if is_ci
+
+  # Checkout the original branch
+  sh("git fetch origin #{original_branch}")
+  sh("git checkout #{original_branch}")
 end
 
 lane :show_frameworks_sizes do |options|
