@@ -71,12 +71,30 @@ final class MessageEditor_Tests: XCTestCase {
 
         // Check only the message1 was synced
         AssertAsync {
-            Assert.willBeTrue(self.apiClient.request_allRecordedCalls.contains(where: {
-                $0.endpoint == AnyEndpoint(.editMessage(payload: message1Payload, skipEnrichUrl: false))
-            }))
-            Assert.staysFalse(self.apiClient.request_allRecordedCalls.contains(where: {
-                $0.endpoint == AnyEndpoint(.editMessage(payload: message2Payload, skipEnrichUrl: false))
-            }))
+            Assert.willBeTrue(
+                self.apiClient.request_allRecordedCalls.contains(
+                    where: {
+                        $0.endpoint == AnyEndpoint(
+                            .editMessage(
+                                payload: message1Payload,
+                                skipEnrichUrl: false,
+                                skipPush: false
+                            )
+                        )
+                    })
+            )
+            Assert.staysFalse(
+                self.apiClient.request_allRecordedCalls.contains(
+                    where: {
+                        $0.endpoint == AnyEndpoint(
+                            .editMessage(
+                                payload: message2Payload,
+                                skipEnrichUrl: false,
+                                skipPush: false
+                            )
+                        )
+                    })
+            )
         }
 
         XCTAssertCall("updateMessage(withID:localState:completion:)", on: messageRepository, times: 1)
@@ -112,9 +130,18 @@ final class MessageEditor_Tests: XCTestCase {
                 .asRequestBody()
         )
         AssertAsync {
-            Assert.willBeEqual(self.apiClient.request_allRecordedCalls.filter {
-                $0.endpoint == AnyEndpoint(.editMessage(payload: message1Payload, skipEnrichUrl: false))
-            }.count, 1)
+            Assert.willBeEqual(
+                self.apiClient.request_allRecordedCalls.filter {
+                    $0.endpoint == AnyEndpoint(
+                        .editMessage(
+                            payload: message1Payload,
+                            skipEnrichUrl: false,
+                            skipPush: false
+                        )
+                    )
+                }.count,
+                1
+            )
         }
         XCTAssertCall("updateMessage(withID:localState:completion:)", on: messageRepository, times: 1)
     }

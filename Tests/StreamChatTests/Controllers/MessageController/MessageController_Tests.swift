@@ -988,6 +988,30 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.editMessage_extraData, extraData)
     }
 
+    func test_editMessage_callsMessageUpdater_withSkipPushParameter() {
+        let updatedText: String = .unique
+
+        // Simulate `editMessage` call with skipPush set to true
+        controller.editMessage(text: updatedText, skipPush: true)
+
+        // Assert message updater is called with correct `skipPush` value
+        XCTAssertEqual(env.messageUpdater.editMessage_messageId, controller.messageId)
+        XCTAssertEqual(env.messageUpdater.editMessage_text, updatedText)
+        XCTAssertEqual(env.messageUpdater.editMessage_skipPush, true)
+    }
+
+    func test_editMessage_callsMessageUpdater_withSkipPushDefaultValue() {
+        let updatedText: String = .unique
+
+        // Simulate `editMessage` call without specifying skipPush (should use default false)
+        controller.editMessage(text: updatedText)
+
+        // Assert message updater is called with correct default `skipPush` value
+        XCTAssertEqual(env.messageUpdater.editMessage_messageId, controller.messageId)
+        XCTAssertEqual(env.messageUpdater.editMessage_text, updatedText)
+        XCTAssertEqual(env.messageUpdater.editMessage_skipPush, false)
+    }
+
     func test_editMessage_whenMessageTransformerIsProvided_callsUpdaterWithTransformedValues() throws {
         class MockTransformer: StreamModelsTransformer {
             var mockTransformedMessage = NewMessageTransformableInfo(
@@ -1965,20 +1989,39 @@ final class MessageController_Tests: XCTestCase {
         let score = 5
         let enforceUnique = true
         let extraData: [String: RawJSON] = [:]
+        let skipPush = true
+        let pushEmojiCode = "👍"
 
-        // Simulate `addReaction` call.
-        controller.addReaction(type, score: score, enforceUnique: true, extraData: extraData)
+        controller.addReaction(
+            type,
+            score: score,
+            enforceUnique: true,
+            skipPush: skipPush,
+            pushEmojiCode: pushEmojiCode,
+            extraData: extraData
+        )
 
-        // Assert updater is called with correct `type`.
         XCTAssertEqual(env.messageUpdater.addReaction_type, type)
-        // Assert updater is called with correct `score`.
         XCTAssertEqual(env.messageUpdater.addReaction_score, score)
-        // Assert updater is called with correct `enforceUnique`.
         XCTAssertEqual(env.messageUpdater.addReaction_enforceUnique, enforceUnique)
-        // Assert updater is called with correct `extraData`.
         XCTAssertEqual(env.messageUpdater.addReaction_extraData, extraData)
-        // Assert updater is called with correct `messageId`.
+        XCTAssertEqual(env.messageUpdater.addReaction_skipPush, skipPush)
+        XCTAssertEqual(env.messageUpdater.addReaction_pushEmojiCode, pushEmojiCode)
         XCTAssertEqual(env.messageUpdater.addReaction_messageId, controller.messageId)
+    }
+
+    func test_addReaction_callsUpdater_withDefaultValue() {
+        let type: MessageReactionType = "like"
+
+        controller.addReaction(type)
+
+        XCTAssertEqual(env.messageUpdater.addReaction_type, type)
+        XCTAssertEqual(env.messageUpdater.addReaction_skipPush, false)
+        XCTAssertEqual(env.messageUpdater.addReaction_messageId, controller.messageId)
+        XCTAssertEqual(env.messageUpdater.addReaction_score, 1)
+        XCTAssertEqual(env.messageUpdater.addReaction_enforceUnique, false)
+        XCTAssertEqual(env.messageUpdater.addReaction_extraData, [:])
+        XCTAssertNil(env.messageUpdater.addReaction_pushEmojiCode)
     }
 
     func test_addReaction_keepsControllerAlive() {
