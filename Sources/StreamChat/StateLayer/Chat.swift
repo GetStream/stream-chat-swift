@@ -577,6 +577,7 @@ public class Chat {
     ///   - extraData: Additional extra data of the message object.
     ///   - restrictedVisibility: The list of user ids that can see the message.
     ///   - skipEnrichURL: If true, the url preview won't be attached to the message.
+    ///   - skipPush: If set to `true`, skips sending push notification when updating the message.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An instance of `ChatMessage` which was updated.
@@ -586,13 +587,15 @@ public class Chat {
         attachments: [AnyAttachmentPayload] = [],
         extraData: [String: RawJSON]? = nil,
         restrictedVisibility: [UserId] = [],
-        skipEnrichURL: Bool = false
+        skipEnrichURL: Bool = false,
+        skipPush: Bool = false
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
         let localMessage = try await messageUpdater.editMessage(
             messageId: messageId,
             text: text,
             skipEnrichUrl: skipEnrichURL,
+            skipPush: skipPush,
             attachments: attachments,
             restrictedVisibility: restrictedVisibility,
             extraData: extraData
@@ -847,6 +850,8 @@ public class Chat {
     ///   - type: The type that describes a message reaction. Common examples are: “like”, “love”, “smile”, etc. An user can have only 1 reaction of each type per message.
     ///   - score: The score of the reaction for cumulative reactions (example: n number of claps).
     ///   - enforceUnique: If `true`, the added reaction will replace all reactions the user has (if any) on this message.
+    ///   - skipPush: If set to `true`, skips sending push notification when reacting a message.
+    ///   - pushEmojiCode: The emoji code for the reaction when a push notification is received.
     ///   - extraData: The reaction's extra data.
     ///
     /// - Throws: An error while communicating with the Stream API.
@@ -855,12 +860,16 @@ public class Chat {
         with type: MessageReactionType,
         score: Int = 1,
         enforceUnique: Bool = false,
+        skipPush: Bool = false,
+        pushEmojiCode: String? = nil,
         extraData: [String: RawJSON] = [:]
     ) async throws {
         try await messageUpdater.addReaction(
             type,
             score: score,
             enforceUnique: enforceUnique,
+            skipPush: skipPush,
+            pushEmojiCode: pushEmojiCode,
             extraData: extraData,
             messageId: messageId
         )

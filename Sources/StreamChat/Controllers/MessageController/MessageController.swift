@@ -270,6 +270,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - text: The updated message text.
     ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
+    ///   - skipPush: If true, skips sending push notification when message is edited.
     ///   - attachments: An array of the attachments for the message.
     ///   - restrictedVisibility: The list of user ids that can see the message.
     ///   - extraData: Custom extra data. When `nil` is passed the message custom fields stay the same. Equals `nil` by default.
@@ -277,6 +278,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     public func editMessage(
         text: String,
         skipEnrichUrl: Bool = false,
+        skipPush: Bool = false,
         attachments: [AnyAttachmentPayload] = [],
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil,
@@ -295,6 +297,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             messageId: messageId,
             text: transformableInfo.text,
             skipEnrichUrl: skipEnrichUrl,
+            skipPush: skipPush,
             attachments: transformableInfo.attachments,
             restrictedVisibility: restrictedVisibility,
             extraData: transformableInfo.extraData
@@ -685,12 +688,16 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - type: The reaction type.
     ///   - score: The reaction score.
     ///   - enforceUnique: If set to `true`, new reaction will replace all reactions the user has (if any) on this message.
+    ///   - skipPush: If set to `true`, skips sending push notification when reacting a message.
+    ///   - pushEmojiCode: The emoji code when receiving a reaction push notification.
     ///   - extraData: The reaction extra data.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     public func addReaction(
         _ type: MessageReactionType,
         score: Int = 1,
         enforceUnique: Bool = false,
+        skipPush: Bool = false,
+        pushEmojiCode: String? = nil,
         extraData: [String: RawJSON] = [:],
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -698,6 +705,8 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             type,
             score: score,
             enforceUnique: enforceUnique,
+            skipPush: skipPush,
+            pushEmojiCode: pushEmojiCode,
             extraData: extraData,
             messageId: messageId
         ) { error in

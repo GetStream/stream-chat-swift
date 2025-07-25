@@ -25,6 +25,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var editMessage_messageId: MessageId?
     @Atomic var editMessage_text: String?
     @Atomic var editMessage_skipEnrichUrl: Bool?
+    @Atomic var editMessage_skipPush: Bool?
     @Atomic var editMessage_restrictedVisibility: [UserId]?
     @Atomic var editMessage_attachments: [AnyAttachmentPayload]?
     @Atomic var editMessage_completion: ((Result<ChatMessage, Error>) -> Void)?
@@ -77,6 +78,8 @@ final class MessageUpdater_Mock: MessageUpdater {
     @Atomic var addReaction_type: MessageReactionType?
     @Atomic var addReaction_score: Int?
     @Atomic var addReaction_enforceUnique: Bool?
+    @Atomic var addReaction_skipPush: Bool?
+    @Atomic var addReaction_pushEmojiCode: String?
     @Atomic var addReaction_extraData: [String: RawJSON]?
     @Atomic var addReaction_messageId: MessageId?
     @Atomic var addReaction_completion: ((Error?) -> Void)?
@@ -132,12 +135,12 @@ final class MessageUpdater_Mock: MessageUpdater {
     var markThreadRead_threadId: MessageId?
     var markThreadRead_cid: ChannelId?
     var markThreadRead_callCount = 0
-    var markThreadRead_completion: ((Error?) -> Void)? = nil
+    var markThreadRead_completion: ((Error?) -> Void)?
 
     var markThreadUnread_threadId: MessageId?
     var markThreadUnread_cid: ChannelId?
     var markThreadUnread_callCount = 0
-    var markThreadUnread_completion: ((Error?) -> Void)? = nil
+    var markThreadUnread_completion: ((Error?) -> Void)?
 
     var updateThread_callCount = 0
     var updateThread_messageId: MessageId?
@@ -166,6 +169,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         
         editMessage_messageId = nil
         editMessage_text = nil
+        editMessage_skipPush = nil
         editMessage_completion = nil
 
         createNewReply_cid = nil
@@ -203,6 +207,9 @@ final class MessageUpdater_Mock: MessageUpdater {
 
         addReaction_type = nil
         addReaction_score = nil
+        addReaction_enforceUnique = nil
+        addReaction_skipPush = nil
+        addReaction_pushEmojiCode = nil
         addReaction_extraData = nil
         addReaction_messageId = nil
         addReaction_completion = nil
@@ -294,7 +301,7 @@ final class MessageUpdater_Mock: MessageUpdater {
     override func downloadAttachment<Payload>(
         _ attachment: ChatMessageAttachment<Payload>,
         completion: @escaping (Result<ChatMessageAttachment<Payload>, any Error>) -> Void
-    ) where Payload : DownloadableAttachmentPayload {
+    ) where Payload: DownloadableAttachmentPayload {
         downloadAttachment_attachmentId = attachment.id
         switch downloadAttachment_completion_result {
         case .success(let anyAttachment):
@@ -308,14 +315,13 @@ final class MessageUpdater_Mock: MessageUpdater {
         case nil:
             break
         }
-        
-        //downloadAttachment_completion_result?  .invoke(with: completion)
     }
     
     override func editMessage(
         messageId: MessageId,
         text: String,
         skipEnrichUrl: Bool,
+        skipPush: Bool,
         attachments: [AnyAttachmentPayload] = [],
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil,
@@ -324,6 +330,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         editMessage_messageId = messageId
         editMessage_text = text
         editMessage_skipEnrichUrl = skipEnrichUrl
+        editMessage_skipPush = skipPush
         editMessage_restrictedVisibility = restrictedVisibility
         editMessage_attachments = attachments
         editMessage_extraData = extraData
@@ -439,16 +446,20 @@ final class MessageUpdater_Mock: MessageUpdater {
     override func addReaction(
         _ type: MessageReactionType,
         score: Int,
-        enforceUnique: Bool = false,
+        enforceUnique: Bool,
+        skipPush: Bool,
+        pushEmojiCode: String?,
         extraData: [String: RawJSON],
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
         addReaction_type = type
         addReaction_score = score
+        addReaction_enforceUnique = enforceUnique
+        addReaction_skipPush = skipPush
+        addReaction_pushEmojiCode = pushEmojiCode
         addReaction_extraData = extraData
         addReaction_messageId = messageId
-        addReaction_enforceUnique = enforceUnique
         addReaction_completion = completion
         addReaction_completion_result?.invoke(with: completion)
     }
@@ -463,6 +474,7 @@ final class MessageUpdater_Mock: MessageUpdater {
         deleteReaction_completion = completion
         deleteReaction_completion_result?.invoke(with: completion)
     }
+
     override func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: ((Result<ChatMessage, any Error>) -> Void)? = nil) {
         pinMessage_messageId = messageId
         pinMessage_pinning = pinning
