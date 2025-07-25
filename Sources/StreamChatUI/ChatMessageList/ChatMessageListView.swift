@@ -259,7 +259,11 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
         skippedMessages = []
         newMessagesSnapshot = currentMessagesFromDataSource
         newMessagesSnapshotArray = currentMessagesFromDataSourceArray
-        onNewDataSource?(Array(newMessagesSnapshot))
+        if let newMessagesSnapshotArray {
+            onNewDataSource?(newMessagesSnapshotArray)
+        } else {
+            onNewDataSource?(Array(newMessagesSnapshot))
+        }
         reloadData()
         scrollToBottom()
     }
