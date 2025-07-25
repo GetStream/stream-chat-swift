@@ -70,11 +70,6 @@ public class LivestreamChannelController: EventsControllerDelegate {
         paginationStateHandler.state.isJumpingToMessage
     }
     
-    /// The id of the first unread message for the current user.
-    public var firstUnreadMessageId: MessageId? {
-        channel.flatMap { getFirstUnreadMessageId(for: $0) }
-    }
-    
     /// The id of the message which the current user last read.
     public var lastReadMessageId: MessageId? {
         client.currentUserId.flatMap { channel?.lastReadMessageId(userId: $0) }
@@ -121,7 +116,7 @@ public class LivestreamChannelController: EventsControllerDelegate {
     
     // MARK: - Public Methods
     
-    /// Synchronizes the controller with the backend data
+    /// Synchronizes the controller with the backend data.
     /// - Parameter completion: Called when the synchronization is finished
     public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         updateChannelData(
@@ -250,17 +245,6 @@ public class LivestreamChannelController: EventsControllerDelegate {
             }
         }
     }
-
-    // MARK: - Helper Methods
-    
-    public func getFirstUnreadMessageId(for channel: ChatChannel) -> MessageId? {
-        UnreadMessageLookup.firstUnreadMessageId(
-            in: channel,
-            messages: StreamCollection(messages),
-            hasLoadedAllPreviousMessages: hasLoadedAllPreviousMessages,
-            currentUserId: client.currentUserId
-        )
-    }
     
     // MARK: - Private Methods
     
@@ -316,17 +300,7 @@ public class LivestreamChannelController: EventsControllerDelegate {
 
         updateMessagesArray(with: newMessages, pagination: channelQuery.pagination)
 
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            
-            if oldChannel != nil {
-                self.delegate?.livestreamChannelController(self, didUpdateChannel: .update(newChannel))
-            } else {
-                self.delegate?.livestreamChannelController(self, didUpdateChannel: .create(newChannel))
-            }
-            
-            self.delegate?.livestreamChannelController(self, didUpdateMessages: self.messages)
-        }
+        notifyDelegateOfChanges()
     }
     
     private func updateMessagesArray(with newMessages: [ChatMessage], pagination: MessagesPagination?) {
@@ -459,9 +433,9 @@ public class LivestreamChannelController: EventsControllerDelegate {
     }
     
     private func notifyDelegateOfChanges() {
-        guard let currentChannel = channel else { return }
-        
-        delegate?.livestreamChannelController(self, didUpdateChannel: .update(currentChannel))
+        guard let channel = channel else { return }
+
+        delegate?.livestreamChannelController(self, didUpdateChannel: channel)
         delegate?.livestreamChannelController(self, didUpdateMessages: messages)
     }
 }
@@ -473,10 +447,10 @@ public protocol LivestreamChannelControllerDelegate: AnyObject {
     /// Called when the channel data is updated
     /// - Parameters:
     ///   - controller: The controller that updated
-    ///   - change: The change that occurred
+    ///   - channel: The updated channel the controller manages.
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
-        didUpdateChannel change: EntityChange<ChatChannel>
+        didUpdateChannel channel: ChatChannel
     )
     
     /// Called when the messages are updated
@@ -494,7 +468,7 @@ public protocol LivestreamChannelControllerDelegate: AnyObject {
 public extension LivestreamChannelControllerDelegate {
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
-        didUpdateChannel change: EntityChange<ChatChannel>
+        didUpdateChannel channel: ChatChannel
     ) {}
     
     func livestreamChannelController(
