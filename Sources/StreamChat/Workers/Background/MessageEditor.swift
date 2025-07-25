@@ -79,7 +79,13 @@ class MessageEditor: Worker {
 
             let requestBody = dto.asRequestBody() as MessageRequestBody
             messageRepository?.updateMessage(withID: messageId, localState: .syncing) { _ in
-                self?.apiClient.request(endpoint: .editMessage(payload: requestBody, skipEnrichUrl: dto.skipEnrichUrl)) { apiResult in
+                self?.apiClient.request(
+                    endpoint: .editMessage(
+                        payload: requestBody,
+                        skipEnrichUrl: dto.skipEnrichUrl,
+                        skipPush: dto.skipPush
+                    )
+                ) { apiResult in
                     let newMessageState: LocalMessageState? = apiResult.error == nil ? nil : .syncingFailed
 
                     messageRepository?.updateMessage(

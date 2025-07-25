@@ -9,15 +9,18 @@ import UserNotifications
 public class MessageNotificationContent {
     public let message: ChatMessage
     public let channel: ChatChannel?
+    public let reaction: PushReactionInfo?
     public let type: PushNotificationType
 
     init(
         message: ChatMessage,
         channel: ChatChannel?,
+        reaction: PushReactionInfo?,
         type: PushNotificationType
     ) {
         self.message = message
         self.channel = channel
+        self.reaction = reaction
         self.type = type
     }
 }
@@ -90,6 +93,35 @@ public class ChatPushNotificationInfo {
     }
 }
 
+/// The information about a reaction in a push notification.
+public struct PushReactionInfo {
+    /// The type of the reaction.
+    public let type: MessageReactionType
+    /// The id of the user who created the reaction.
+    public let reactionUserId: UserId
+    /// The image URL of the user who created the reaction.
+    public let reactionUserImageUrl: URL?
+    /// The id of the user who is the receiver of the reaction, usually the creator of the message.
+    public let receiverUserId: UserId
+
+    init?(payload: [String: String]) {
+        guard let rawType = payload["reaction_type"],
+              let reactionUserId = payload["reaction_user_id"],
+              let receiverUserId = payload["receiver_id"] else {
+            return nil
+        }
+        type = .init(rawValue: rawType)
+        self.reactionUserId = UserId(reactionUserId)
+        self.receiverUserId = UserId(receiverUserId)
+
+        if let imageUrlString = payload["reaction_user_image"] {
+            reactionUserImageUrl = URL(string: imageUrlString)
+        } else {
+            reactionUserImageUrl = nil
+        }
+    }
+}
+
 public class ChatRemoteNotificationHandler {
     var client: ChatClient
     var content: UNNotificationContent
@@ -118,7 +150,7 @@ public class ChatRemoteNotificationHandler {
             return completion(.unknown(UnknownNotificationContent(content: content)))
         }
 
-        guard let cid = dict["cid"], let id = dict["id"], let channelId = try? ChannelId(cid: cid) else {
+        guard let cid = dict["cid"], let id = dict["id"] ?? dict["message_id"], let channelId = try? ChannelId(cid: cid) else {
             completion(.unknown(UnknownNotificationContent(content: content)))
             return
         }
@@ -136,6 +168,7 @@ public class ChatRemoteNotificationHandler {
             let content = MessageNotificationContent(
                 message: message,
                 channel: channel,
+                reaction: PushReactionInfo(payload: dict),
                 type: pushType
             )
             completion(.message(content))
