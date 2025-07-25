@@ -119,9 +119,6 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             case .messageDeleted:
                 return createMessageDeletedEvent(from: eventPayload, cid: cid)
                 
-            case .messageRead, .notificationMarkRead:
-                return createMessageReadEvent(from: eventPayload, cid: cid)
-                
             case .reactionNew:
                 return createReactionNewEvent(from: eventPayload, cid: cid)
                 
@@ -202,30 +199,6 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             message: message,
             createdAt: createdAt,
             isHardDelete: payload.hardDelete
-        )
-    }
-    
-    private func createMessageReadEvent(from payload: EventPayload, cid: ChannelId) -> MessageReadEvent? {
-        guard
-            let user = payload.user?.asModel(),
-            let createdAt = payload.createdAt,
-            var channel = try? database.writableContext.channel(cid: cid)?.asModel(),
-            let lastReadMessageId = payload.lastReadMessageId
-        else { return nil }
-
-        return MessageReadEvent(
-            user: user,
-            channel: channel,
-            thread: nil, // Livestream channels don't support threads typically
-            createdAt: createdAt,
-            unreadCount: payload.unreadCount.map {
-                .init(
-                    channels: $0.channels ?? 0,
-                    messages: $0.messages ?? 0,
-                    threads: $0.threads ?? 0
-                )
-            },
-            lastReadMessageId: lastReadMessageId
         )
     }
     

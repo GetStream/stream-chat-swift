@@ -358,9 +358,6 @@ public class LivestreamChannelController: EventsControllerDelegate {
                 return
             }
             handleUpdatedMessage(messageDeletedEvent.message)
-
-        case let messageReadEvent as MessageReadEvent:
-            handleMessageRead(messageReadEvent)
             
         case let reactionNewEvent as ReactionNewEvent:
             handleNewReaction(reactionNewEvent)
@@ -410,33 +407,7 @@ public class LivestreamChannelController: EventsControllerDelegate {
 
         notifyDelegateOfChanges()
     }
-    
-    private func handleMessageRead(_ readEvent: MessageReadEvent) {
-        var updatedChannel = channel
 
-        // TODO: Update existing reads
-        if let lastReadMessageId = readEvent.lastReadMessageId {
-            var currentReads = updatedChannel?.reads ?? []
-            currentReads.append(
-                .init(
-                    lastReadAt: readEvent.createdAt,
-                    lastReadMessageId: lastReadMessageId,
-                    unreadMessagesCount: 0,
-                    user: readEvent.user
-                )
-            )
-            updatedChannel = updatedChannel?.changing(reads: currentReads)
-        }
-
-        channel = updatedChannel
-
-        messages = messages.map {
-            $0.updateReadBy(with: channel?.reads ?? [])
-        }
-
-        notifyDelegateOfChanges()
-    }
-    
     private func handleNewReaction(_ reactionEvent: ReactionNewEvent) {
         updateMessage(reactionEvent.message)
     }
