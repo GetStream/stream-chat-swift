@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `ChatThread.activeParticipantCount` [#3731](https://github.com/GetStream/stream-chat-swift/pull/3731)
 - Add `CurrentUserUnreads.totalUnreadCountByTeam` [#3733](https://github.com/GetStream/stream-chat-swift/pull/3733)
 - Enable subclassing `StreamAudioPlayer` and `StreamAudioSessionConfigurator` [#3737](https://github.com/GetStream/stream-chat-swift/pull/3737)
+## StreamChatUI
 ### 🐞 Fixed
 - Fix the direction of the bubble beak in RTL layouts [#3742](https://github.com/GetStream/stream-chat-swift/pull/3742)
 
