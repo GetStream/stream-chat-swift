@@ -16,6 +16,10 @@ public extension ChatClient {
 /// A controller for managing livestream channels that operates without local database persistence.
 ///
 /// Unlike `ChatChannelController`, this controller manages all data in memory and communicates directly with the API.
+/// It is more performant than `ChatChannelController` but is more simpler and it has less features, like for example:
+/// - Read updates
+/// - Typing indicators
+/// - etc..
 public class LivestreamChannelController: EventsControllerDelegate {
     // MARK: - Public Properties
     
@@ -228,7 +232,25 @@ public class LivestreamChannelController: EventsControllerDelegate {
         
         updateChannelData(channelQuery: query, completion: completion)
     }
-    
+
+    /// Marks the channel as read.
+    public func markRead(completion: ((Error?) -> Void)? = nil) {
+        guard let channel = channel else {
+            return
+        }
+
+        /// Read events are not enabled for this channel
+        guard channel.canReceiveReadEvents == true else {
+            return
+        }
+
+        apiClient.request(endpoint: .markRead(cid: channel.cid)) { result in
+            DispatchQueue.main.async {
+                completion?(result.error)
+            }
+        }
+    }
+
     // MARK: - Helper Methods
     
     public func getFirstUnreadMessageId(for channel: ChatChannel) -> MessageId? {
