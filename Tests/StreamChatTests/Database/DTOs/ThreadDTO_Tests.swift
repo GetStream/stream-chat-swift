@@ -390,7 +390,7 @@ final class ThreadDTO_Tests: XCTestCase {
 
         // Save the threads to DB. It doesn't matter which query we use because the filter for both of them is the same.
         try database.writeSynchronously { session in
-            let channelDTO = try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveThread(payload: payload1, cache: nil)
             try session.saveThread(payload: payload2, cache: nil)
             try session.saveThread(payload: payload3, cache: nil)
