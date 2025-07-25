@@ -16,4 +16,10 @@ extension ChatMessageListVC {
         listView.currentMessagesFromDataSource = messages
         listView.newMessagesSnapshot = messages
     }
+
+    /// Set the new message snapshot reported by the data controller as an Array.
+    internal func setNewMessagesSnapshotArray(_ messages: [ChatMessage]) {
+        listView.currentMessagesFromDataSourceArray = messages
+        listView.newMessagesSnapshotArray = messages
+    }
 }

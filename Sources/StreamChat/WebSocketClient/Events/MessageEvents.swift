@@ -197,6 +197,9 @@ public struct MessageReadEvent: ChannelSpecificEvent {
 
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
+
+    /// The last read message id.
+    public let lastReadMessageId: MessageId?
 }
 
 class MessageReadEventDTO: EventDTO {
@@ -231,19 +234,22 @@ class MessageReadEventDTO: EventDTO {
             channel: channelDTO.asModel(),
             thread: threadDTO?.asModel(),
             createdAt: createdAt,
-            unreadCount: UnreadCount(currentUserDTO: currentUser)
+            unreadCount: UnreadCount(currentUserDTO: currentUser),
+            lastReadMessageId: nil
         )
     }
 }
 
 // Triggered when the current user creates a new message and is pending to be sent.
-public struct NewMessagePendingEvent: Event {
+public struct NewMessagePendingEvent: ChannelSpecificEvent {
     public var message: ChatMessage
+    public var cid: ChannelId { message.cid! }
 }
 
 // Triggered when a message failed being sent.
-public struct NewMessageErrorEvent: Event {
+public struct NewMessageErrorEvent: ChannelSpecificEvent {
     public let messageId: MessageId
+    public let cid: ChannelId
     public let error: Error
 }
 
@@ -297,28 +303,6 @@ private extension MessagePayload {
             draftReply: nil,
             reminder: nil,
             sharedLocation: nil
-        )
-    }
-}
-
-private extension UserPayload {
-    func asModel() -> ChatUser {
-        .init(
-            id: id,
-            name: name,
-            imageURL: imageURL,
-            isOnline: isOnline,
-            isBanned: isBanned,
-            isFlaggedByCurrentUser: false,
-            userRole: role,
-            teamsRole: teamsRole,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
-            teams: Set(teams),
-            language: language.map { TranslationLanguage(languageCode: $0) },
-            extraData: extraData
         )
     }
 }

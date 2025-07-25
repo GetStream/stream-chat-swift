@@ -121,25 +121,3 @@ extension UserListQuery {
         return query
     }
 }
-
-private extension UserPayload {
-    func asModel() -> ChatUser {
-        ChatUser(
-            id: id,
-            name: name,
-            imageURL: imageURL,
-            isOnline: isOnline,
-            isBanned: isBanned,
-            isFlaggedByCurrentUser: false,
-            userRole: role,
-            teamsRole: teamsRole,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
-            teams: Set(teams),
-            language: language.map(TranslationLanguage.init),
-            extraData: extraData
-        )
-    }
-}
