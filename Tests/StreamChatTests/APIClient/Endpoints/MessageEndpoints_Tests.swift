@@ -84,12 +84,46 @@ final class MessageEndpoints_Tests: XCTestCase {
             requiresConnectionId: false,
             body: [
                 "message": AnyEncodable(payload),
-                "skip_enrich_url": AnyEncodable(true)
+                "skip_enrich_url": AnyEncodable(true),
+                "skip_push": AnyEncodable(false)
             ]
         )
 
         // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .editMessage(payload: payload, skipEnrichUrl: true)
+        let endpoint: Endpoint<EmptyResponse> = .editMessage(
+            payload: payload,
+            skipEnrichUrl: true,
+            skipPush: false
+        )
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(payload.id)", endpoint.path.value)
+    }
+
+    func test_editMessage_withSkipPush_buildsCorrectly() {
+        let payload = MessageRequestBody(
+            id: .unique,
+            user: .init(id: .unique, name: .unique, imageURL: .unique(), extraData: .init()),
+            text: .unique,
+            type: nil,
+            extraData: [:]
+        )
+
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: .message(payload.id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "message": AnyEncodable(payload),
+                "skip_enrich_url": AnyEncodable(true),
+                "skip_push": AnyEncodable(true)
+            ]
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<EmptyResponse> = .editMessage(payload: payload, skipEnrichUrl: true, skipPush: true)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
