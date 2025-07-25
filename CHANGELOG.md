@@ -15,6 +15,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `Components.isReactionPushEmojisEnabled` to control whether an emoji should be set when adding a reaction [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
 - Add `MessageNotificationContent.reaction` that can be used by Notification Service Extension [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
 
+## StreamChatUI
+### 🐞 Fixed
+- Slide to cancel gesture did not cancel the recording in RTL layout [#3744](https://github.com/GetStream/stream-chat-swift/pull/3744)
+
 # [4.82.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.82.0)
 _July 16, 2025_
 

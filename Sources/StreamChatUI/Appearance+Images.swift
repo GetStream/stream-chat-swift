@@ -62,6 +62,7 @@ public extension Appearance {
         public var mic: UIImage = loadSafely(systemName: "mic", assetsFallback: "mic")
         public var lock: UIImage = loadSafely(systemName: "lock", assetsFallback: "lock")
         public var chevronLeft: UIImage = loadSafely(systemName: "chevron.left", assetsFallback: "chevron.left")
+        public var chevronRight: UIImage = loadSafely(systemName: "chevron.right", assetsFallback: "chevron.right")
         public var chevronUp: UIImage = loadSafely(systemName: "chevron.up", assetsFallback: "chevron.up")
         public var trash: UIImage = loadSafely(systemName: "trash", assetsFallback: "trash")
         public var stop: UIImage = loadSafely(systemName: "stop.circle", assetsFallback: "")

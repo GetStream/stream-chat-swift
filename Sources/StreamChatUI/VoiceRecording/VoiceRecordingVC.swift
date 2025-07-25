@@ -530,7 +530,7 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
             return
         }
 
-        let diff = view.bounds.size.width - point
+        let diff = abs(view.bounds.size.width - point)
 
         guard diff > slideToCancelDistance else {
             slideToCancelView.content = .init(
