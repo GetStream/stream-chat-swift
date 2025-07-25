@@ -42,5 +42,7 @@ open class ChatMessageFileAttachmentListView: _View, ComponentsProvider {
             item.content = attachment
             containerStackView.addArrangedSubview(item)
         }
+        
+        containerStackView.layoutIfNeeded()
     }
 }
