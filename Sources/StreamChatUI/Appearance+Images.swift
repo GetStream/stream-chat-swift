@@ -108,7 +108,7 @@ public extension Appearance {
         public var reactionWutSmall: UIImage = loadImageSafely(with: "reaction_wut_small")
         public var reactionWutBig: UIImage = loadImageSafely(with: "reaction_wut_big")
 
-        private var _availableReactions: [MessageReactionType: ChatMessageReactionAppearanceType]?
+        /// The reactions appearance used to display reactions in the message list.
         public var availableReactions: [MessageReactionType: ChatMessageReactionAppearanceType] {
             get {
                 _availableReactions ??
@@ -137,6 +137,25 @@ public extension Appearance {
             }
             set { _availableReactions = newValue }
         }
+
+        private var _availableReactions: [MessageReactionType: ChatMessageReactionAppearanceType]?
+
+        /// The reactions emoji unicode rendered in the push notifications.
+        public var availableReactionPushEmojis: [MessageReactionType: String] {
+            get {
+                _availableReactionPushEmojis ??
+                    [
+                        "love": "❤️",
+                        "haha": "😂",
+                        "like": "👍",
+                        "sad": "👎",
+                        "wow": "😮"
+                    ]
+            }
+            set { _availableReactionPushEmojis = newValue }
+        }
+
+        private var _availableReactionPushEmojis: [MessageReactionType: String]?
 
         // MARK: - MessageList
 

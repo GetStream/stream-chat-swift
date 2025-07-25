@@ -9,6 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `ChatThread.activeParticipantCount` [#3731](https://github.com/GetStream/stream-chat-swift/pull/3731)
 - Add `CurrentUserUnreads.totalUnreadCountByTeam` [#3733](https://github.com/GetStream/stream-chat-swift/pull/3733)
 - Enable subclassing `StreamAudioPlayer` and `StreamAudioSessionConfigurator` [#3737](https://github.com/GetStream/stream-chat-swift/pull/3737)
+- Add `skipPush` parameter to `MessageController.editMessage()`  [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
+- Add `skipPush` and `emojiCode` to `MessageController.addReaction()` [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
+- Add `Components.availableReactionsPushEmojis` for rendering emojis in reaction push notifications [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
+- Add `Components.isReactionPushEmojisEnabled` to control whether an emoji should be set when adding a reaction [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
+- Add `MessageNotificationContent.reaction` that can be used by Notification Service Extension [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
 
 ### 🐞 Fixed
 - Slide to cancel gesture did not cancel the recording in RTL layout [#3744](https://github.com/GetStream/stream-chat-swift/pull/3744)

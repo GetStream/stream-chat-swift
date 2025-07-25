@@ -438,6 +438,17 @@ public struct Components {
     /// By default it is false, so each user can have multiple reaction types.
     public var isUniqueReactionsEnabled: Bool = false
 
+    /// A boolean value that determines whether an emoji will be defined when a reaction is sent.
+    /// The emoji will be used for the push notification message.
+    ///
+    /// By default reaction push notifications will render emojis based on the mapping in `Appearance.Images.availableReactionsPushEmojis`.
+    ///
+    /// There is also an option to customise the appearance of the reaction push notification
+    /// by implementing a Notification Service Extension, and updating the `UNNotificationContent` with custom emojis.
+    ///
+    /// **Note:** This is only available in Push v3.
+    public var isReactionPushEmojisEnabled: Bool = true
+
     // MARK: - Thread components
 
     /// The router responsible for navigation on thread list screen.
