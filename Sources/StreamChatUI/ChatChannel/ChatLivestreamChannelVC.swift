@@ -464,16 +464,6 @@ open class ChatLivestreamChannelVC: _ViewController,
             }
         }
 
-        if let newMessageErrorEvent = event as? NewMessageErrorEvent {
-            let messageId = newMessageErrorEvent.messageId
-            let error = newMessageErrorEvent.error
-            guard let message = channelController.messages.first(where: { $0.id == messageId }) else {
-                debugPrint("New Message Error: \(error) MessageId: \(messageId)")
-                return
-            }
-            debugPrint("New Message Error: \(error) Message: \(message)")
-        }
-
         if let draftUpdatedEvent = event as? DraftUpdatedEvent,
            let draft = channelController.channel?.draftMessage,
            draftUpdatedEvent.cid == channelController.cid, draftUpdatedEvent.draftMessage.threadId == nil {

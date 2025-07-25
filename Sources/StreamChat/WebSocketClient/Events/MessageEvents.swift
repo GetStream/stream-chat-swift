@@ -247,8 +247,9 @@ public struct NewMessagePendingEvent: ChannelSpecificEvent {
 }
 
 // Triggered when a message failed being sent.
-public struct NewMessageErrorEvent: Event {
+public struct NewMessageErrorEvent: ChannelSpecificEvent {
     public let messageId: MessageId
+    public let cid: ChannelId
     public let error: Error
 }
 

@@ -291,7 +291,6 @@ public class LivestreamChannelController: EventsControllerDelegate {
             unreadCount: channel?.unreadCount
         )
 
-        let oldChannel = channel
         channel = newChannel
 
         let newMessages = payload.messages.compactMap {
@@ -354,7 +353,13 @@ public class LivestreamChannelController: EventsControllerDelegate {
                 return
             }
             handleUpdatedMessage(messageDeletedEvent.message)
-            
+        case let newMessageErrorEvent as NewMessageErrorEvent:
+            guard let message = messages.first(where: { $0.id == newMessageErrorEvent.messageId }) else {
+                return
+            }
+            let errorMessage = message.changing(state: .sendingFailed)
+            handleUpdatedMessage(errorMessage)
+
         case let reactionNewEvent as ReactionNewEvent:
             handleNewReaction(reactionNewEvent)
             
