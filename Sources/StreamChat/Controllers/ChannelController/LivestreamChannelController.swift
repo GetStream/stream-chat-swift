@@ -113,7 +113,13 @@ public class LivestreamChannelController: EventsControllerDelegate {
             client.eventNotificationCenter.registerManualEventHandling(for: cid)
         }
     }
-    
+
+    deinit {
+        if let cid {
+            client.eventNotificationCenter.unregisterManualEventHandling(for: cid)
+        }
+    }
+
     // MARK: - Public Methods
     
     /// Synchronizes the controller with the backend data.

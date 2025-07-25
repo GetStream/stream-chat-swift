@@ -36,6 +36,13 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
         }
     }
 
+    /// Unregister a channel for manual event handling.
+    func unregisterManualEventHandling(for cid: ChannelId) {
+        eventPostingQueue.async { [weak self] in
+            self?.manualEventHandlingChannelIds.remove(cid)
+        }
+    }
+
     func add(middlewares: [EventMiddleware]) {
         self.middlewares.append(contentsOf: middlewares)
     }
