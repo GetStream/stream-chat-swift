@@ -3,10 +3,9 @@
 //
 
 import StreamChat
-import StreamChatUI
 import UIKit
 
-open class DemoLivestreamChannelVC: _ViewController,
+open class ChatLivestreamChannelVC: _ViewController,
     ThemeProvider,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
@@ -81,19 +80,11 @@ open class DemoLivestreamChannelVC: _ViewController,
 
     /// A boolean value indicating whether it should mark the channel read.
     open var shouldMarkChannelRead: Bool {
-        guard isViewVisible else {
-            return false
-        }
-
-        guard components.isJumpToUnreadEnabled else {
-            return isLastMessageFullyVisible && isFirstPageLoaded
-        }
-
-        return isLastMessageVisibleOrSeen && hasSeenFirstUnreadMessage && isFirstPageLoaded && !hasMarkedMessageAsUnread
+        isLastMessageVisibleOrSeen && isFirstPageLoaded
     }
 
     private var isLastMessageVisibleOrSeen: Bool {
-        hasSeenLastMessage || isLastMessageFullyVisible
+        isLastMessageFullyVisible
     }
 
     /// A component responsible to handle when to load new or old messages.
@@ -103,23 +94,6 @@ open class DemoLivestreamChannelVC: _ViewController,
 
     /// The throttler to make sure that the marking read is not spammed.
     var markReadThrottler: Throttler = Throttler(interval: 3, queue: .main)
-
-    /// Determines if a messaged had been marked as unread in the current session
-    private var hasMarkedMessageAsUnread: Bool {
-        false
-    }
-
-    /// Determines whether first unread message has been seen
-    private var hasSeenFirstUnreadMessage: Bool = false
-
-    /// Determines whether last cell has been seen since the last time it was marked as read
-    private var hasSeenLastMessage: Bool = false
-
-    /// The id of the first unread message
-    private var firstUnreadMessageId: MessageId?
-
-    /// In case the given around message id is from a thread, we need to jump to the parent message and then the reply.
-    internal var initialReplyId: MessageId?
 
     override open func setUp() {
         super.setUp()
@@ -237,29 +211,9 @@ open class DemoLivestreamChannelVC: _ViewController,
         if let error = error {
             log.error("Error when synchronizing ChannelController: \(error)")
         }
+
         setChannelControllerToComposerIfNeeded(cid: channelController.cid)
         messageComposerVC.updateContent()
-
-        updateAllUnreadMessagesRelatedComponents()
-
-        if let messageId = channelController.channelQuery.pagination?.parameter?.aroundMessageId {
-            // Jump to a message when opening the channel.
-            jumpToMessage(id: messageId, animated: components.shouldAnimateJumpToMessageWhenOpeningChannel)
-
-            if let replyId = initialReplyId {
-                // Jump to a parent message when opening the channel, and then to the reply.
-                // The delay is necessary so that the animation does not happen to quickly.
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                    self.jumpToMessage(
-                        id: replyId,
-                        animated: self.components.shouldAnimateJumpToMessageWhenOpeningChannel
-                    )
-                }
-            }
-        } else if components.shouldJumpToUnreadWhenOpeningChannel {
-            // Jump to the unread message.
-            messageListVC.jumpToUnreadMessage(animated: components.shouldAnimateJumpToMessageWhenOpeningChannel)
-        }
     }
 
     // MARK: - Actions
@@ -267,8 +221,6 @@ open class DemoLivestreamChannelVC: _ViewController,
     /// Marks the channel read and updates the UI optimistically.
     public func markRead() {
         channelController.markRead()
-        hasSeenLastMessage = false
-        updateJumpToUnreadRelatedComponents()
         updateScrollToBottomButtonCount()
     }
 
@@ -365,15 +317,7 @@ open class DemoLivestreamChannelVC: _ViewController,
         shouldLoadPageAroundMessageId messageId: MessageId,
         _ completion: @escaping ((Error?) -> Void)
     ) {
-        if let message = channelController.messages.first(where: { $0.id == messageId }),
-           let parentMessageId = getParentMessageId(forMessageInsideThread: message) {
-            let replyId = message.id
-            messageListVC.showThread(messageId: parentMessageId, at: replyId)
-            return
-        }
-
-        channelController.loadPageAroundMessageId(messageId) { [weak self] error in
-            self?.updateJumpToUnreadRelatedComponents()
+        channelController.loadPageAroundMessageId(messageId) { error in
             completion(error)
         }
     }
@@ -390,12 +334,7 @@ open class DemoLivestreamChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
-        guard !hasSeenFirstUnreadMessage else { return }
-
-        let message = chatMessageListVC(vc, messageAt: indexPath)
-        if message?.id == firstUnreadMessageId {
-            hasSeenFirstUnreadMessage = true
-        }
+        // no-op
     }
 
     open func chatMessageListVC(
@@ -418,33 +357,16 @@ open class DemoLivestreamChannelVC: _ViewController,
                 self?.messageListVC.showThread(messageId: message.id)
             }
         case is MarkUnreadActionItem:
-            dismiss(animated: true) { [weak self] in
-//                self?.channelController.markUnread(from: message.id) { result in
-//                    if case let .success(channel) = result {
-//                        self?.updateAllUnreadMessagesRelatedComponents(channel: channel)
-//                    }
-//                } TODOX
-            }
+            dismiss(animated: true)
         default:
             return
         }
-    }
-
-    public func chatMessageListShouldShowJumpToUnread(_ vc: ChatMessageListVC) -> Bool {
-        true
-    }
-
-    public func chatMessageListDidDiscardUnreadMessages(_ vc: ChatMessageListVC) {
-        markRead()
     }
 
     open func chatMessageListVC(
         _ vc: ChatMessageListVC,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
-        if !hasSeenLastMessage && isLastMessageFullyVisible {
-            hasSeenLastMessage = true
-        }
         if shouldMarkChannelRead {
             markReadThrottler.execute { [weak self] in
                 self?.markRead()
@@ -466,9 +388,7 @@ open class DemoLivestreamChannelVC: _ViewController,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
         let shouldShowDate = vc.shouldShowDateSeparator(forMessage: message, at: indexPath)
-        let shouldShowUnreadMessages = components.isUnreadMessagesSeparatorEnabled && message.id == firstUnreadMessageId
-
-        guard (shouldShowDate || shouldShowUnreadMessages), let channel = channelController.channel else {
+        guard shouldShowDate, let channel = channelController.channel else {
             return nil
         }
 
@@ -478,7 +398,7 @@ open class DemoLivestreamChannelVC: _ViewController,
             channel: channel,
             dateFormatter: vc.dateSeparatorFormatter,
             shouldShowDate: shouldShowDate,
-            shouldShowUnreadMessages: shouldShowUnreadMessages
+            shouldShowUnreadMessages: false
         )
         return header
     }
@@ -491,15 +411,12 @@ open class DemoLivestreamChannelVC: _ViewController,
         nil
     }
 
-    // MARK: - ChatChannelControllerDelegate
+    // MARK: - LivestreamChannelControllerDelegate
 
     public func livestreamChannelController(
         _ controller: LivestreamChannelController,
         didUpdateChannel change: EntityChange<ChatChannel>
     ) {
-        updateScrollToBottomButtonCount()
-        updateJumpToUnreadRelatedComponents()
-
         if headerView.channelController == nil, let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
         }
@@ -513,88 +430,28 @@ open class DemoLivestreamChannelVC: _ViewController,
     ) {
         messageListVC.setPreviousMessagesSnapshot(self.messages)
         messageListVC.setNewMessagesSnapshotArray(channelController.messages)
-        let changes = channelController.messages.difference(from: self.messages)
-            .map { change in
-                switch change {
-                case let .insert(offset, element, _):
-                    return ListChange<ChatMessage>.insert(element, index: IndexPath(row: offset, section: 0))
-                case let .remove(offset, element, _):
-                    return ListChange<ChatMessage>.remove(element, index: IndexPath(row: offset, section: 0))
-                }
+
+        let diff = channelController.messages.difference(from: self.messages)
+        let changes = diff.map { change in
+            switch change {
+            case let .insert(offset, element, _):
+                return ListChange<ChatMessage>.insert(element, index: IndexPath(row: offset, section: 0))
+            case let .remove(offset, element, _):
+                return ListChange<ChatMessage>.remove(element, index: IndexPath(row: offset, section: 0))
             }
+        }
+
         messageListVC.updateMessages(with: changes) { [weak self] in
             guard let self = self else { return }
 
-            if let unreadCount = channelController.channel?.unreadCount.messages, channelController.firstUnreadMessageId == nil && unreadCount == 0 {
-                self.hasSeenFirstUnreadMessage = true
-            }
-
-            self.updateJumpToUnreadRelatedComponents()
             if self.shouldMarkChannelRead {
                 self.markReadThrottler.execute {
                     self.markRead()
                 }
-            } else if !self.hasSeenFirstUnreadMessage {
-                self.updateUnreadMessagesBannerRelatedComponents()
             }
         }
+
         viewPaginationHandler.updateElementsCount(with: channelController.messages.count)
-    }
-
-    open func channelController(
-        _ channelController: ChatChannelController,
-        didUpdateMessages changes: [ListChange<ChatMessage>]
-    ) {
-        messageListVC.setPreviousMessagesSnapshot(messages)
-        messageListVC.setNewMessagesSnapshot(channelController.messages)
-        messageListVC.updateMessages(with: changes) { [weak self] in
-            guard let self = self else { return }
-
-            if let unreadCount = channelController.channel?.unreadCount.messages, channelController.firstUnreadMessageId == nil && unreadCount == 0 {
-                self.hasSeenFirstUnreadMessage = true
-            }
-
-            self.updateJumpToUnreadRelatedComponents()
-            if self.shouldMarkChannelRead {
-                self.markReadThrottler.execute {
-                    self.markRead()
-                }
-            } else if !self.hasSeenFirstUnreadMessage {
-                self.updateUnreadMessagesBannerRelatedComponents()
-            }
-        }
-        viewPaginationHandler.updateElementsCount(with: channelController.messages.count)
-    }
-
-    open func channelController(
-        _ channelController: ChatChannelController,
-        didUpdateChannel channel: EntityChange<ChatChannel>
-    ) {
-        updateScrollToBottomButtonCount()
-        updateJumpToUnreadRelatedComponents()
-
-        if headerView.channelController == nil, let cid = channelController.cid {
-            headerView.channelController = client.channelController(for: cid)
-        }
-
-        channelAvatarView.content = (channelController.channel, client.currentUserId)
-    }
-
-    open func channelController(
-        _ channelController: ChatChannelController,
-        didChangeTypingUsers typingUsers: Set<ChatUser>
-    ) {
-        guard channelController.channel?.canSendTypingEvents == true else { return }
-
-        let typingUsersWithoutCurrentUser = typingUsers
-            .sorted { $0.id < $1.id }
-            .filter { $0.id != self.client.currentUserId }
-
-        if typingUsersWithoutCurrentUser.isEmpty {
-            messageListVC.hideTypingIndicator()
-        } else {
-            messageListVC.showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
-        }
     }
 
     // MARK: - EventsControllerDelegate
@@ -641,61 +498,11 @@ open class DemoLivestreamChannelVC: _ViewController,
             lookUpScope: .subsequentMessagesFromUser
         )
     }
-}
 
-// MARK: - Helpers
+    // MARK: - Helpers
 
-private extension ChatChannelVC {
-    /// Returns a parent message id if the given message is a reply inside a thread only.
-    func getParentMessageId(forMessageInsideThread message: ChatMessage) -> MessageId? {
-        guard message.isPartOfThread && !message.showReplyInChannel else {
-            return nil
-        }
-
-        return message.parentMessageId
-    }
-
-    func makeChannelController(forParentMessageId parentMessageId: MessageId) -> ChatChannelController {
-        var newQuery = channelController.channelQuery
-        let pageSize = newQuery.pagination?.pageSize ?? .messagesPageSize
-        newQuery.pagination = MessagesPagination(pageSize: pageSize, parameter: .around(parentMessageId))
-        return client.channelController(
-            for: newQuery
-        )
-    }
-
-    func updateAllUnreadMessagesRelatedComponents(channel: ChatChannel? = nil) {
-        updateScrollToBottomButtonCount(channel: channel)
-        updateJumpToUnreadRelatedComponents(channel: channel)
-        updateUnreadMessagesBannerRelatedComponents(channel: channel)
-    }
-
-    func updateScrollToBottomButtonCount(channel: ChatChannel? = nil) {
+    private func updateScrollToBottomButtonCount(channel: ChatChannel? = nil) {
         let channelUnreadCount = (channel ?? channelController.channel)?.unreadCount ?? .noUnread
         messageListVC.scrollToBottomButton.content = channelUnreadCount
-    }
-
-    func updateJumpToUnreadRelatedComponents(channel: ChatChannel? = nil) {
-        let firstUnreadMessageId = channel.flatMap { channelController.getFirstUnreadMessageId(for: $0) } ?? channelController.firstUnreadMessageId
-        let lastReadMessageId = client.currentUserId.flatMap { channel?.lastReadMessageId(userId: $0) } ?? channelController.lastReadMessageId
-
-        messageListVC.updateJumpToUnreadMessageId(
-            firstUnreadMessageId,
-            lastReadMessageId: lastReadMessageId
-        )
-        messageListVC.updateJumpToUnreadButtonVisibility()
-    }
-
-    func updateUnreadMessagesBannerRelatedComponents(channel: ChatChannel? = nil) {
-        let firstUnreadMessageId = channel.flatMap { channelController.getFirstUnreadMessageId(for: $0) } ?? channelController.firstUnreadMessageId
-        self.firstUnreadMessageId = firstUnreadMessageId
-        messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
-    }
-}
-
-private extension UIView {
-    var withoutAutoresizingMaskConstraints: Self {
-        translatesAutoresizingMaskIntoConstraints = false
-        return self
     }
 }

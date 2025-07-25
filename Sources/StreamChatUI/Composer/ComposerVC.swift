@@ -1767,7 +1767,7 @@ open class ComposerVC: _ViewController,
         present(alert, animated: true)
     }
 
-    private func removeMentionUserIfNotIncluded(in currentText: String) {
+    func removeMentionUserIfNotIncluded(in currentText: String) {
         // If the user included some mentions via suggestions,
         // but then removed them from text, we should remove them from
         // the content we'll send
