@@ -353,8 +353,12 @@ public class LivestreamChannelController: EventsControllerDelegate {
             handleUpdatedMessage(messageUpdatedEvent.message)
             
         case let messageDeletedEvent as MessageDeletedEvent:
-            handleDeletedMessage(messageDeletedEvent.message)
-            
+            if messageDeletedEvent.isHardDelete {
+                handleDeletedMessage(messageDeletedEvent.message)
+                return
+            }
+            handleUpdatedMessage(messageDeletedEvent.message)
+
         case let messageReadEvent as MessageReadEvent:
             handleMessageRead(messageReadEvent)
             
@@ -373,7 +377,6 @@ public class LivestreamChannelController: EventsControllerDelegate {
     }
     
     private func handleNewMessage(_ message: ChatMessage) {
-        // Add new message to the beginning of the array (newest first)
         var currentMessages = messages
 
         // If message already exists, update it instead
@@ -385,7 +388,6 @@ public class LivestreamChannelController: EventsControllerDelegate {
         currentMessages.insert(message, at: 0)
         messages = currentMessages
 
-        // Notify delegate
         notifyDelegateOfChanges()
     }
     
@@ -410,13 +412,29 @@ public class LivestreamChannelController: EventsControllerDelegate {
     }
     
     private func handleMessageRead(_ readEvent: MessageReadEvent) {
-        let updatedChannel = readEvent.channel
+        var updatedChannel = channel
+
+        // TODO: Update existing reads
+        if let lastReadMessageId = readEvent.lastReadMessageId {
+            var currentReads = updatedChannel?.reads ?? []
+            currentReads.append(
+                .init(
+                    lastReadAt: readEvent.createdAt,
+                    lastReadMessageId: lastReadMessageId,
+                    unreadMessagesCount: 0,
+                    user: readEvent.user
+                )
+            )
+            updatedChannel = updatedChannel?.changing(reads: currentReads)
+        }
+
         channel = updatedChannel
 
-        if var updatedMessage = messages.first {
-            updatedMessage.updateReadBy(with: updatedChannel.reads)
-            handleUpdatedMessage(updatedMessage)
+        messages = messages.map {
+            $0.updateReadBy(with: channel?.reads ?? [])
         }
+
+        notifyDelegateOfChanges()
     }
     
     private func handleNewReaction(_ reactionEvent: ReactionNewEvent) {
@@ -493,15 +511,14 @@ public extension LivestreamChannelControllerDelegate {
 }
 
 private extension ChatMessage {
-    mutating func updateReadBy(
+    func updateReadBy(
         with reads: [ChatChannelRead]
-    ) {
+    ) -> ChatMessage {
         let createdAtInterval = createdAt.timeIntervalSince1970
         let messageUserId = author.id
         let readBy = reads.filter { read in
             read.user.id != messageUserId && read.lastReadAt.timeIntervalSince1970 >= createdAtInterval
         }
-        let newMessage = changing(readBy: Set(readBy.map(\.user)))
-        self = newMessage
+        return changing(readBy: Set(readBy.map(\.user)))
     }
 }

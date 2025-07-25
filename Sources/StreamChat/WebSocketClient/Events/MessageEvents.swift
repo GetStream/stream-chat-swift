@@ -197,6 +197,9 @@ public struct MessageReadEvent: ChannelSpecificEvent {
 
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
+
+    /// The last read message id.
+    public let lastReadMessageId: MessageId?
 }
 
 class MessageReadEventDTO: EventDTO {
@@ -231,7 +234,8 @@ class MessageReadEventDTO: EventDTO {
             channel: channelDTO.asModel(),
             thread: threadDTO?.asModel(),
             createdAt: createdAt,
-            unreadCount: UnreadCount(currentUserDTO: currentUser)
+            unreadCount: UnreadCount(currentUserDTO: currentUser),
+            lastReadMessageId: nil
         )
     }
 }

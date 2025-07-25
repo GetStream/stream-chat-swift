@@ -119,7 +119,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             case .messageDeleted:
                 return createMessageDeletedEvent(from: eventPayload, cid: cid)
                 
-            case .messageRead:
+            case .messageRead, .notificationMarkRead:
                 return createMessageReadEvent(from: eventPayload, cid: cid)
                 
             case .reactionNew:
@@ -207,13 +207,14 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     
     private func createMessageReadEvent(from payload: EventPayload, cid: ChannelId) -> MessageReadEvent? {
         guard
-            let userPayload = payload.user,
+            let user = payload.user?.asModel(),
             let createdAt = payload.createdAt,
-            let channel = try? database.writableContext.channel(cid: cid)?.asModel()
+            var channel = try? database.writableContext.channel(cid: cid)?.asModel(),
+            let lastReadMessageId = payload.lastReadMessageId
         else { return nil }
-        
+
         return MessageReadEvent(
-            user: userPayload.asModel(),
+            user: user,
             channel: channel,
             thread: nil, // Livestream channels don't support threads typically
             createdAt: createdAt,
@@ -223,7 +224,8 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
                     messages: $0.messages ?? 0,
                     threads: $0.threads ?? 0
                 )
-            }
+            },
+            lastReadMessageId: lastReadMessageId
         )
     }
     
