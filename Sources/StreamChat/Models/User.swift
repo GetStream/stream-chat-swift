@@ -66,7 +66,7 @@ public class ChatUser {
     /// The language code of the user.
     public let language: TranslationLanguage?
     
-    /// Returns the average response time of the user in seconds.
+    /// Returns the average time (in seconds) the user took to respond to the last message in the channel.
     public let avgResponseTime: Int?
 
     /// Any additional custom data associated with the user.
