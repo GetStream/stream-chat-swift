@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `Components.availableReactionsPushEmojis` for rendering emojis in reaction push notifications [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
 - Add `Components.isReactionPushEmojisEnabled` to control whether an emoji should be set when adding a reaction [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
 - Add `MessageNotificationContent.reaction` that can be used by Notification Service Extension [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
-- Add average response time for users [#3739](https://github.com/GetStream/stream-chat-swift/pull/3739)
+- Add average message response time for users [#3739](https://github.com/GetStream/stream-chat-swift/pull/3739)
 
 # [4.82.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.82.0)
 _July 16, 2025_
