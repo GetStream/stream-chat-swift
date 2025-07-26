@@ -158,7 +158,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
         dto.language = payload.language
         dto.teamsRole = payload.teamsRole?.mapValues { $0.rawValue }
         if let avgResponseTime = payload.avgResponseTime {
-            dto.avgResponseTime = NSNumber(integerLiteral: avgResponseTime)
+            dto.avgResponseTime = .init(integerLiteral: avgResponseTime)
         }
 
         do {
