@@ -20,6 +20,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix reaction picker position in RTL layout [#3748](https://github.com/GetStream/stream-chat-swift/pull/3748)
 - Fix swiping and dismissing `GalleryVC` when using RTL layout [#3745](https://github.com/GetStream/stream-chat-swift/pull/3745)
+- Slide to cancel gesture did not cancel the recording in RTL layout [#3744](https://github.com/GetStream/stream-chat-swift/pull/3744)
 
 # [4.82.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.82.0)
 _July 16, 2025_
