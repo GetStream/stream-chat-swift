@@ -224,7 +224,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             user: userPayload.asModel(),
             cid: cid,
             message: message,
-            reaction: reactionPayload.asModel(),
+            reaction: reactionPayload.asModel(messageId: messagePayload.id),
             createdAt: createdAt
         )
     }
@@ -244,7 +244,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             user: userPayload.asModel(),
             cid: cid,
             message: message,
-            reaction: reactionPayload.asModel(),
+            reaction: reactionPayload.asModel(messageId: messagePayload.id),
             createdAt: createdAt
         )
     }
@@ -264,7 +264,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             user: userPayload.asModel(),
             cid: cid,
             message: message,
-            reaction: reactionPayload.asModel(),
+            reaction: reactionPayload.asModel(messageId: messagePayload.id),
             createdAt: createdAt
         )
     }
