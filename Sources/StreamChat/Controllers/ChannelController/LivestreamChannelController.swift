@@ -22,78 +22,78 @@ public extension ChatClient {
 /// - etc..
 public class LivestreamChannelController: EventsControllerDelegate {
     // MARK: - Public Properties
-    
+
     /// The ChannelQuery this controller observes.
     @Atomic public private(set) var channelQuery: ChannelQuery
-    
+
     /// The identifier of a channel this controller observes.
     public var cid: ChannelId? { channelQuery.cid }
-    
+
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
-    
+
     /// The channel the controller represents.
     /// This is managed in memory and updated via API calls.
     @Atomic public private(set) var channel: ChatChannel?
-    
+
     /// The messages of the channel the controller represents.
     /// This is managed in memory and updated via API calls.
     @Atomic public private(set) var messages: [ChatMessage] = []
-    
+
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     public var hasLoadedAllPreviousMessages: Bool {
         paginationStateHandler.state.hasLoadedAllPreviousMessages
     }
-    
+
     /// A Boolean value that returns whether the newest messages have all been loaded or not.
     public var hasLoadedAllNextMessages: Bool {
         paginationStateHandler.state.hasLoadedAllNextMessages || messages.isEmpty
     }
-    
+
     /// A Boolean value that returns whether the channel is currently loading previous (old) messages.
     public var isLoadingPreviousMessages: Bool {
         paginationStateHandler.state.isLoadingPreviousMessages
     }
-    
+
     /// A Boolean value that returns whether the channel is currently loading next (new) messages.
     public var isLoadingNextMessages: Bool {
         paginationStateHandler.state.isLoadingNextMessages
     }
-    
+
     /// A Boolean value that returns whether the channel is currently loading a page around a message.
     public var isLoadingMiddleMessages: Bool {
         paginationStateHandler.state.isLoadingMiddleMessages
     }
-    
+
     /// A Boolean value that returns whether the channel is currently in a mid-page.
     public var isJumpingToMessage: Bool {
         paginationStateHandler.state.isJumpingToMessage
     }
-    
+
     /// The id of the message which the current user last read.
     public var lastReadMessageId: MessageId? {
         client.currentUserId.flatMap { channel?.lastReadMessageId(userId: $0) }
     }
-    
+
     /// Set the delegate to observe the changes in the system.
     public weak var delegate: LivestreamChannelControllerDelegate?
-    
+
     // MARK: - Private Properties
-    
+
     /// The API client for making direct API calls
     private let apiClient: APIClient
-    
+
     /// Pagination state handler for managing message pagination
     private let paginationStateHandler: MessagesPaginationStateHandling
-    
+
     /// Events controller for listening to real-time events
     private let eventsController: EventsController
-    
+
     /// Current user ID for convenience
     private var currentUserId: UserId? { client.currentUserId }
-    
+
     // MARK: - Initialization
-    
+
     /// Creates a new `LivestreamChannelController`
     /// - Parameters:
     ///   - channelQuery: channel query for observing changes
@@ -121,7 +121,7 @@ public class LivestreamChannelController: EventsControllerDelegate {
     }
 
     // MARK: - Public Methods
-    
+
     /// Synchronizes the controller with the backend data.
     /// - Parameter completion: Called when the synchronization is finished
     public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
@@ -130,7 +130,7 @@ public class LivestreamChannelController: EventsControllerDelegate {
             completion: completion
         )
     }
-    
+
     /// Loads previous messages from backend.
     /// - Parameters:
     ///   - messageId: ID of the last fetched message. You will get messages `older` than the provided ID.
@@ -145,25 +145,25 @@ public class LivestreamChannelController: EventsControllerDelegate {
             completion?(ClientError.ChannelNotCreatedYet())
             return
         }
-        
+
         let messageId = messageId ?? paginationStateHandler.state.oldestFetchedMessage?.id ?? lastLocalMessageId()
         guard let messageId = messageId else {
             completion?(ClientError.ChannelEmptyMessages())
             return
         }
-        
+
         guard !hasLoadedAllPreviousMessages && !isLoadingPreviousMessages else {
             completion?(nil)
             return
         }
-        
+
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         var query = channelQuery
         query.pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
-        
+
         updateChannelData(channelQuery: query, completion: completion)
     }
-    
+
     /// Loads next messages from backend.
     /// - Parameters:
     ///   - messageId: ID of the current first message. You will get messages `newer` than the provided ID.
@@ -178,25 +178,25 @@ public class LivestreamChannelController: EventsControllerDelegate {
             completion?(ClientError.ChannelNotCreatedYet())
             return
         }
-        
+
         let messageId = messageId ?? paginationStateHandler.state.newestFetchedMessage?.id ?? messages.first?.id
         guard let messageId = messageId else {
             completion?(ClientError.ChannelEmptyMessages())
             return
         }
-        
+
         guard !hasLoadedAllNextMessages && !isLoadingNextMessages else {
             completion?(nil)
             return
         }
-        
+
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         var query = channelQuery
         query.pagination = MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
-        
+
         updateChannelData(channelQuery: query, completion: completion)
     }
-    
+
     /// Load messages around the given message id.
     /// - Parameters:
     ///   - messageId: The message id of the message to jump to.
@@ -211,14 +211,14 @@ public class LivestreamChannelController: EventsControllerDelegate {
             completion?(nil)
             return
         }
-        
+
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize
         var query = channelQuery
         query.pagination = MessagesPagination(pageSize: limit, parameter: .around(messageId))
-        
+
         updateChannelData(channelQuery: query, completion: completion)
     }
-    
+
     /// Cleans the current state and loads the first page again.
     /// - Parameter completion: Callback when the API call is completed.
     public func loadFirstPage(_ completion: ((_ error: Error?) -> Void)? = nil) {
@@ -227,10 +227,10 @@ public class LivestreamChannelController: EventsControllerDelegate {
             pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
             parameter: nil
         )
-        
+
         // Clear current messages when loading first page
         messages = []
-        
+
         updateChannelData(channelQuery: query, completion: completion)
     }
 
@@ -251,9 +251,9 @@ public class LivestreamChannelController: EventsControllerDelegate {
             }
         }
     }
-    
+
     // MARK: - Private Methods
-    
+
     private func updateChannelData(
         channelQuery: ChannelQuery,
         completion: ((Error?) -> Void)? = nil
@@ -264,7 +264,7 @@ public class LivestreamChannelController: EventsControllerDelegate {
 
         let endpoint: Endpoint<ChannelPayload> =
             .updateChannel(query: channelQuery)
-        
+
         let requestCompletion: (Result<ChannelPayload, Error>) -> Void = { [weak self] result in
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
@@ -282,10 +282,10 @@ public class LivestreamChannelController: EventsControllerDelegate {
                 }
             }
         }
-        
+
         apiClient.request(endpoint: endpoint, completion: requestCompletion)
     }
-    
+
     private func handleChannelPayload(_ payload: ChannelPayload, channelQuery: ChannelQuery) {
         if let pagination = channelQuery.pagination {
             paginationStateHandler.end(pagination: pagination, with: .success(payload.messages))
@@ -307,29 +307,29 @@ public class LivestreamChannelController: EventsControllerDelegate {
 
         notifyDelegateOfChanges()
     }
-    
+
     private func updateMessagesArray(with newMessages: [ChatMessage], pagination: MessagesPagination?) {
         let newMessages = Array(newMessages.reversed())
         switch pagination?.parameter {
         case .lessThan, .lessThanOrEqual:
             // Loading older messages - append to end
             messages.append(contentsOf: newMessages)
-            
+
         case .greaterThan, .greaterThanOrEqual:
             // Loading newer messages - insert at beginning
             messages.insert(contentsOf: newMessages, at: 0)
-            
+
         case .around, .none:
             messages = newMessages
         }
     }
-    
+
     private func lastLocalMessageId() -> MessageId? {
         messages.last?.id
     }
-    
+
     // MARK: - EventsControllerDelegate
-    
+
     public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
         guard let channelEvent = event as? ChannelSpecificEvent, channelEvent.cid == cid else {
             return
@@ -339,9 +339,9 @@ public class LivestreamChannelController: EventsControllerDelegate {
             self?.handleChannelEvent(event)
         }
     }
-    
+
     // MARK: - Private Event Handling
-    
+
     private func handleChannelEvent(_ event: Event) {
         switch event {
         case let messageNewEvent as MessageNewEvent:
@@ -352,7 +352,7 @@ public class LivestreamChannelController: EventsControllerDelegate {
 
         case let messageUpdatedEvent as MessageUpdatedEvent:
             handleUpdatedMessage(messageUpdatedEvent.message)
-            
+
         case let messageDeletedEvent as MessageDeletedEvent:
             if messageDeletedEvent.isHardDelete {
                 handleDeletedMessage(messageDeletedEvent.message)
@@ -368,18 +368,18 @@ public class LivestreamChannelController: EventsControllerDelegate {
 
         case let reactionNewEvent as ReactionNewEvent:
             handleNewReaction(reactionNewEvent)
-            
+
         case let reactionUpdatedEvent as ReactionUpdatedEvent:
             handleUpdatedReaction(reactionUpdatedEvent)
-            
+
         case let reactionDeletedEvent as ReactionDeletedEvent:
             handleDeletedReaction(reactionDeletedEvent)
-            
+
         default:
             break
         }
     }
-    
+
     private func handleNewMessage(_ message: ChatMessage) {
         var currentMessages = messages
 
@@ -389,12 +389,18 @@ public class LivestreamChannelController: EventsControllerDelegate {
             return
         }
 
+        // If we don't have the first page loaded, do not insert new messages
+        // they will be inserted once we load the first page again.
+        if !hasLoadedAllNextMessages {
+            return
+        }
+
         currentMessages.insert(message, at: 0)
         messages = currentMessages
 
         notifyDelegateOfChanges()
     }
-    
+
     private func handleUpdatedMessage(_ updatedMessage: ChatMessage) {
         var currentMessages = messages
 
@@ -405,7 +411,7 @@ public class LivestreamChannelController: EventsControllerDelegate {
             notifyDelegateOfChanges()
         }
     }
-    
+
     private func handleDeletedMessage(_ deletedMessage: ChatMessage) {
         var currentMessages = messages
 
@@ -418,15 +424,15 @@ public class LivestreamChannelController: EventsControllerDelegate {
     private func handleNewReaction(_ reactionEvent: ReactionNewEvent) {
         updateMessage(reactionEvent.message)
     }
-    
+
     private func handleUpdatedReaction(_ reactionEvent: ReactionUpdatedEvent) {
         updateMessage(reactionEvent.message)
     }
-    
+
     private func handleDeletedReaction(_ reactionEvent: ReactionDeletedEvent) {
         updateMessage(reactionEvent.message)
     }
-    
+
     private func updateMessage(
         _ updatedMessage: ChatMessage
     ) {
@@ -442,7 +448,7 @@ public class LivestreamChannelController: EventsControllerDelegate {
 
         notifyDelegateOfChanges()
     }
-    
+
     private func notifyDelegateOfChanges() {
         guard let channel = channel else { return }
 
@@ -463,7 +469,7 @@ public protocol LivestreamChannelControllerDelegate: AnyObject {
         _ controller: LivestreamChannelController,
         didUpdateChannel channel: ChatChannel
     )
-    
+
     /// Called when the messages are updated
     /// - Parameters:
     ///   - controller: The controller that updated
@@ -481,7 +487,7 @@ public extension LivestreamChannelControllerDelegate {
         _ controller: LivestreamChannelController,
         didUpdateChannel channel: ChatChannel
     ) {}
-    
+
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
         didUpdateMessages messages: [ChatMessage]
