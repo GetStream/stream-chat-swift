@@ -82,6 +82,40 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
             XCTAssertTrue(layoutOptions.contains(.bubble))
         }
     }
+    
+    func test_layoutDirection() {
+        let sut = createOptionsResolver()
+
+        for isSentByCurrentUser in [true, false] {
+            // Create message
+            let message: ChatMessage = .mock(
+                id: .unique,
+                cid: .unique,
+                text: .unique,
+                author: .mock(id: .unique),
+                isSentByCurrentUser: isSentByCurrentUser
+            )
+
+            // Calculate layout options for the message
+            let layoutOptions = sut.optionsForMessage(
+                at: .init(item: 0, section: 0),
+                in: .mock(cid: .unique),
+                with: .init([message]),
+                appearance: appearance
+            )
+
+            // Assert `.continuousBubble` is not included
+            XCTAssertFalse(layoutOptions.contains(.continuousBubble))
+            
+            if layoutOptions.contains(.flipped) {
+                XCTAssertEqual(CACornerMask.all.subtracting(.layerMaxXMaxYCorner), layoutOptions.roundedCorners(for: .leftToRight))
+                XCTAssertEqual(CACornerMask.all.subtracting(.layerMinXMaxYCorner), layoutOptions.roundedCorners(for: .rightToLeft))
+            } else {
+                XCTAssertEqual(CACornerMask.all.subtracting(.layerMinXMaxYCorner), layoutOptions.roundedCorners(for: .leftToRight))
+                XCTAssertEqual(CACornerMask.all.subtracting(.layerMaxXMaxYCorner), layoutOptions.roundedCorners(for: .rightToLeft))
+            }
+        }
+    }
 
     // MARK: - Continuous bubble
 
