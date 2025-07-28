@@ -29,6 +29,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case privacySettings = "privacy_settings"
     case blockedUserIds = "blocked_user_ids"
     case teamsRole = "teams_role"
+    case avgResponseTime = "avg_response_time"
 }
 
 // MARK: - GET users
@@ -49,6 +50,7 @@ class UserPayload: Decodable {
     let isBanned: Bool
     let teams: [TeamId]
     let language: String?
+    let avgResponseTime: Int?
     let extraData: [String: RawJSON]
 
     init(
@@ -66,6 +68,7 @@ class UserPayload: Decodable {
         isBanned: Bool,
         teams: [TeamId] = [],
         language: String?,
+        avgResponseTime: Int? = nil,
         extraData: [String: RawJSON]
     ) {
         self.id = id
@@ -82,6 +85,7 @@ class UserPayload: Decodable {
         self.isBanned = isBanned
         self.teams = teams
         self.language = language
+        self.avgResponseTime = avgResponseTime
         self.extraData = extraData
     }
 
@@ -102,7 +106,8 @@ class UserPayload: Decodable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
         language = try container.decodeIfPresent(String.self, forKey: .language)
-
+        avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
+        
         do {
             var payload = try [String: RawJSON](from: decoder)
             payload.removeValues(forKeys: UserPayloadsCodingKeys.allCases.map(\.rawValue))

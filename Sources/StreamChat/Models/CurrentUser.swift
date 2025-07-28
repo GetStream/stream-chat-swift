@@ -85,7 +85,8 @@ public class CurrentChatUser: ChatUser {
         flaggedMessageIDs: Set<MessageId>,
         unreadCount: UnreadCount,
         mutedChannels: Set<ChatChannel>,
-        privacySettings: UserPrivacySettings
+        privacySettings: UserPrivacySettings,
+        avgResponseTime: Int?
     ) {
         self.devices = devices
         self.currentDevice = currentDevice
@@ -113,6 +114,7 @@ public class CurrentChatUser: ChatUser {
             lastActiveAt: lastActiveAt,
             teams: teams,
             language: language,
+            avgResponseTime: avgResponseTime,
             extraData: extraData
         )
     }

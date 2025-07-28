@@ -63,6 +63,7 @@ extension UIImage {
             ctx.fillEllipse(in: options.bigFrame)
             ctx.fillEllipse(in: options.smallFrame)
         }
+        .imageFlippedForRightToLeftLayoutDirection()
     }
 }
 
