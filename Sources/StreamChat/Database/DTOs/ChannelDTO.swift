@@ -64,6 +64,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var currentlyTypingUsers: Set<UserDTO>
     @NSManaged var messages: Set<MessageDTO>
     @NSManaged var pinnedMessages: Set<MessageDTO>
+    @NSManaged var pendingMessages: Set<MessageDTO>
     @NSManaged var reads: Set<ChannelReadDTO>
 
     /// Helper properties used for sorting channels with unread counts of the current user.
@@ -331,7 +332,19 @@ extension NSManagedObjectContext {
         dto.reads.formUnion(reads)
         
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
-        try payload.pendingMessages?.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
+        
+        var pendingMessages = Set<MessageDTO>()
+        try payload.pendingMessages?.forEach {
+            let pending = try saveMessage(
+                payload: $0,
+                channelDTO: dto,
+                syncOwnReactions: true,
+                cache: cache
+            )
+            pendingMessages.insert(pending)
+        }
+                
+        dto.pendingMessages = pendingMessages
         
         // Recalculate reads for existing messages (saveMessage updates it for messages in the payload)
         let channelReadDTOs = dto.reads
@@ -597,6 +610,7 @@ extension ChatChannel {
         }()
         let membership = try dto.membership.map { try $0.asModel() }
         let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
+        let pendingMessages = dto.pendingMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
         let previewMessage = try? dto.previewMessage?.relationshipAsModel(depth: depth)
         let draftMessage = try? dto.draftMessage?.relationshipAsModel(depth: depth)
         let typingUsers = Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() })
@@ -632,6 +646,7 @@ extension ChatChannel {
             latestMessages: latestMessages,
             lastMessageFromCurrentUser: latestMessageFromUser,
             pinnedMessages: pinnedMessages,
+            pendingMessages: pendingMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
             draftMessage: draftMessage.map(DraftMessage.init),

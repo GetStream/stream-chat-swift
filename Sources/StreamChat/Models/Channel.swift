@@ -129,6 +129,8 @@ public struct ChatChannel {
     /// This field contains only the pinned messages of the channel. You can get all existing messages in the channel by creating
     /// and using a `ChatChannelController` for this channel id.
     public let pinnedMessages: [ChatMessage]
+    
+    public let pendingMessages: [ChatMessage]
 
     /// Read states of the users for this channel.
     ///
@@ -199,6 +201,7 @@ public struct ChatChannel {
         latestMessages: [ChatMessage],
         lastMessageFromCurrentUser: ChatMessage?,
         pinnedMessages: [ChatMessage],
+        pendingMessages: [ChatMessage],
         muteDetails: MuteDetails?,
         previewMessage: ChatMessage?,
         draftMessage: DraftMessage?,
@@ -237,6 +240,7 @@ public struct ChatChannel {
         self.previewMessage = previewMessage
         self.draftMessage = draftMessage
         self.activeLiveLocations = activeLiveLocations
+        self.pendingMessages = pendingMessages
     }
 
     /// Returns a new `ChatChannel` with the provided data replaced.
@@ -275,6 +279,7 @@ public struct ChatChannel {
             latestMessages: latestMessages,
             lastMessageFromCurrentUser: lastMessageFromCurrentUser,
             pinnedMessages: pinnedMessages,
+            pendingMessages: pendingMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
             draftMessage: draftMessage,
