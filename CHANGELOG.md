@@ -23,6 +23,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Slide to cancel gesture did not cancel the recording in RTL layout [#3744](https://github.com/GetStream/stream-chat-swift/pull/3744)
 - Fix the direction of the bubble beak in RTL layouts [#3742](https://github.com/GetStream/stream-chat-swift/pull/3742)
 - Fix animating attachments when opening a sheet in the channel view [#3746](https://github.com/GetStream/stream-chat-swift/pull/3746)
+- Fix audio visualisation progress in RTL layout [#3749](https://github.com/GetStream/stream-chat-swift/pull/3749)
 
 # [4.82.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.82.0)
 _July 16, 2025_
