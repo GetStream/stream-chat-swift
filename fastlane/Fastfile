@@ -795,8 +795,8 @@ desc 'Run source code formatting/linting'
 lane :run_swift_format do |options|
   Dir.chdir('..') do
     strict = options[:strict] ? '--lint' : nil
-    sources_matrix[:swiftformat_include].each do |path|
-      sh("mint run swiftformat #{strict} --config .swiftformat --exclude #{sources_matrix[:swiftformat_exclude].join(',')} #{path}")
+    sources_matrix[:swiftformat].each do |path|
+      sh("mint run swiftformat #{strict} --config .swiftformat #{path}")
       next if path == 'Tests'
 
       sh("mint run swiftlint lint --config .swiftlint.yml --fix --progress --quiet --reporter json #{path}") unless strict
@@ -832,8 +832,7 @@ lane :sources_matrix do
     size: ['Sources', xcode_project],
     xcmetrics: ['Sources'],
     public_interface: ['Sources'],
-    swiftformat_include: ['Sources', 'DemoApp', 'Tests', 'Integration'],
-    swiftformat_exclude: ['**/Generated', 'Sources/StreamChatUI/StreamNuke', 'Sources/StreamChatUI/StreamSwiftyGif', 'Sources/StreamChatUI/StreamDifferenceKit']
+    swiftformat: ['Sources', 'DemoApp', 'Tests', 'Integration']
   }
 end
 

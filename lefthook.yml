@@ -1,9 +1,14 @@
 pre-commit:
   parallel: false
   jobs:
-    - run: mint run swiftformat --config .swiftformat --exclude '**/Generated', 'Sources/StreamChatUI/StreamNuke', 'Sources/StreamChatUI/StreamSwiftyGif', 'Sources/StreamChatUI/StreamDifferenceKit' {staged_files}
+    - run: mint run swiftformat --config .swiftformat {staged_files}
       glob: "*.{swift}"
       stage_fixed: true
+      exclude:
+        - "**/Generated/**"
+        - Sources/StreamChatSwiftUI/StreamNuke/**
+        - Sources/StreamChatSwiftUI/StreamSwiftyGif/**
+        - Sources/StreamChatSwiftUI/StreamDifferenceKit/**
       skip:
         - merge
         - rebase
@@ -11,13 +16,23 @@ pre-commit:
     - run: mint run swiftlint lint --config .swiftlint.yml --fix --progress --quiet --reporter json {staged_files}
       glob: "*.{swift}"
       stage_fixed: true
+      exclude:
+        - "**/Generated/**"
+        - Sources/StreamChatSwiftUI/StreamNuke/**
+        - Sources/StreamChatSwiftUI/StreamSwiftyGif/**
+        - Sources/StreamChatSwiftUI/StreamDifferenceKit/**
       skip:
         - merge
         - rebase
 
-    - run: mint run swiftlint lint --config .swiftlint.yml --strict --progress --quiet --reporter json {staged_files}
+pre-push:
+  jobs:
+    - run: mint run swiftlint lint --config .swiftlint.yml --strict --progress --quiet --reporter json {push_files}
       glob: "*.{swift}"
-      stage_fixed: true
+      exclude:
+        - "**/Generated/**"
+        - Sources/StreamChatSwiftUI/StreamNuke/**
+        - Sources/StreamChatSwiftUI/StreamSwiftyGif/**
+        - Sources/StreamChatSwiftUI/StreamDifferenceKit/**
       skip:
-        - merge
-        - rebase
+        - merge-commit
