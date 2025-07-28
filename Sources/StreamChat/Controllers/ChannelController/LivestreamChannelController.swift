@@ -70,11 +70,6 @@ public class LivestreamChannelController: EventsControllerDelegate {
         paginationStateHandler.state.isJumpingToMessage
     }
 
-    /// The id of the message which the current user last read.
-    public var lastReadMessageId: MessageId? {
-        client.currentUserId.flatMap { channel?.lastReadMessageId(userId: $0) }
-    }
-
     /// Set the delegate to observe the changes in the system.
     public weak var delegate: LivestreamChannelControllerDelegate?
 
@@ -459,24 +454,6 @@ public class LivestreamChannelController: EventsControllerDelegate {
             messageId: messageId,
             request: .init(set: .init(pinned: false))
         )) { result in
-            DispatchQueue.main.async {
-                completion?(result.error)
-            }
-        }
-    }
-
-    /// Marks the channel as read.
-    public func markRead(completion: ((Error?) -> Void)? = nil) {
-        guard let channel = channel else {
-            return
-        }
-
-        /// Read events are not enabled for this channel
-        guard channel.canReceiveReadEvents == true else {
-            return
-        }
-
-        apiClient.request(endpoint: .markRead(cid: channel.cid)) { result in
             DispatchQueue.main.async {
                 completion?(result.error)
             }

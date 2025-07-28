@@ -78,11 +78,6 @@ open class ChatLivestreamChannelVC: _ViewController,
         messageListVC.listView.isLastCellFullyVisible
     }
 
-    /// A boolean value indicating whether it should mark the channel read.
-    open var shouldMarkChannelRead: Bool {
-        isLastMessageVisibleOrSeen && isFirstPageLoaded
-    }
-
     private var isLastMessageVisibleOrSeen: Bool {
         isLastMessageFullyVisible
     }
@@ -91,9 +86,6 @@ open class ChatLivestreamChannelVC: _ViewController,
     private lazy var viewPaginationHandler: StatefulViewPaginationHandling = {
         InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
     }()
-
-    /// The throttler to make sure that the marking read is not spammed.
-    var markReadThrottler: Throttler = Throttler(interval: 3, queue: .main)
 
     override open func setUp() {
         super.setUp()
@@ -181,10 +173,6 @@ open class ChatLivestreamChannelVC: _ViewController,
         super.viewDidAppear(animated)
 
         keyboardHandler.start()
-
-        if shouldMarkChannelRead {
-            markRead()
-        }
     }
 
     override open func viewWillAppear(_ animated: Bool) {
@@ -197,8 +185,6 @@ open class ChatLivestreamChannelVC: _ViewController,
 
     override open func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
-        markReadThrottler.cancel()
 
         keyboardHandler.stop()
 
@@ -217,12 +203,6 @@ open class ChatLivestreamChannelVC: _ViewController,
     }
 
     // MARK: - Actions
-
-    /// Marks the channel read and updates the UI optimistically.
-    public func markRead() {
-        channelController.markRead()
-        updateScrollToBottomButtonCount()
-    }
 
     /// Jump to a given message.
     /// In case the message is already loaded, it directly goes to it.
@@ -367,11 +347,7 @@ open class ChatLivestreamChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
-        if shouldMarkChannelRead {
-            markReadThrottler.execute { [weak self] in
-                self?.markRead()
-            }
-        }
+        // no-op
     }
 
     open func chatMessageListVC(
@@ -441,16 +417,7 @@ open class ChatLivestreamChannelVC: _ViewController,
             }
         }
 
-        messageListVC.updateMessages(with: changes) { [weak self] in
-            guard let self = self else { return }
-
-            if self.shouldMarkChannelRead {
-                self.markReadThrottler.execute {
-                    self.markRead()
-                }
-            }
-        }
-
+        messageListVC.updateMessages(with: changes)
         viewPaginationHandler.updateElementsCount(with: channelController.messages.count)
     }
 
