@@ -82,7 +82,7 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
         onEnteringBackground: @escaping () -> Void,
         onEnteringForeground: @escaping () -> Void
     ) {
-        queue.async {
+        queue.sync {
             self.onEnteringForeground = onEnteringForeground
             self.onEnteringBackground = onEnteringBackground
         }
@@ -103,7 +103,7 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler {
     }
 
     func stopListeningForAppStateUpdates() {
-        queue.async {
+        queue.sync {
             self.onEnteringForeground = {}
             self.onEnteringBackground = {}
         }
