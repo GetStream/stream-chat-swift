@@ -24,7 +24,7 @@ public class LivestreamChannelController: EventsControllerDelegate {
     // MARK: - Public Properties
 
     /// The ChannelQuery this controller observes.
-    @Atomic public private(set) var channelQuery: ChannelQuery
+    public private(set) var channelQuery: ChannelQuery
 
     /// The identifier of a channel this controller observes.
     public var cid: ChannelId? { channelQuery.cid }
@@ -34,11 +34,11 @@ public class LivestreamChannelController: EventsControllerDelegate {
 
     /// The channel the controller represents.
     /// This is managed in memory and updated via API calls.
-    @Atomic public private(set) var channel: ChatChannel?
+    public private(set) var channel: ChatChannel?
 
     /// The messages of the channel the controller represents.
     /// This is managed in memory and updated via API calls.
-    @Atomic public private(set) var messages: [ChatMessage] = []
+    public private(set) var messages: [ChatMessage] = []
 
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     public var hasLoadedAllPreviousMessages: Bool {
