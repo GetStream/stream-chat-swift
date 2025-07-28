@@ -75,6 +75,17 @@ final class IOSBackgroundTaskScheduler_Tests: XCTestCase {
         XCTAssertEqual(3, endTaskCallCount)
     }
     
+    func test_callingAppStateUpdatesConcurretly() {
+        let scheduler = IOSBackgroundTaskScheduler()
+        DispatchQueue.concurrentPerform(iterations: 100) { index in
+            if index.quotientAndRemainder(dividingBy: 2).remainder == 0 {
+                scheduler.startListeningForAppStateUpdates(onEnteringBackground: {}, onEnteringForeground: {})
+            } else {
+                scheduler.stopListeningForAppStateUpdates()
+            }
+        }
+    }
+    
     // MARK: - Mocks
     
     class IOSBackgroundTaskSchedulerMock: IOSBackgroundTaskScheduler {
