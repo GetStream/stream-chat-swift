@@ -71,7 +71,14 @@ open class AudioVisualizationView: _View, ComponentsProvider, AppearanceProvider
         super.draw(rect)
 
         if let context = UIGraphicsGetCurrentContext() {
+            context.saveGState()
+            if effectiveUserInterfaceLayoutDirection == .rightToLeft {
+                context.translateBy(x: frame.size.width, y: 0)
+                context.scaleBy(x: -1, y: 1)
+            }
+            
             drawLevelBarsMaskAndGradient(inContext: context)
+            context.restoreGState()
         }
     }
 
