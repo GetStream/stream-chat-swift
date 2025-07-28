@@ -15,6 +15,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `Components.isReactionPushEmojisEnabled` to control whether an emoji should be set when adding a reaction [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
 - Add `MessageNotificationContent.reaction` that can be used by Notification Service Extension [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
 - Add average message response time for users [#3739](https://github.com/GetStream/stream-chat-swift/pull/3739)
+### 🐞 Fixed
+- Fix rare crashes in `IOSBackgroundTaskScheduler` with on entering callbacks [#3751](https://github.com/GetStream/stream-chat-swift/pull/3751)
 
 ## StreamChatUI
 ### 🐞 Fixed
