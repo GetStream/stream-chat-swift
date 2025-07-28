@@ -664,7 +664,7 @@ extension ChannelPayload {
 
         // Map latest messages
         let reads = channelReads.map { $0.asModel() }
-        let latestMessages = messages.prefix(5).compactMap {
+        let latestMessages = messages.compactMap {
             $0.asModel(cid: channel.cid, currentUserId: currentUserId, channelReads: reads)
         }
 
@@ -690,10 +690,10 @@ extension ChannelPayload {
             isFrozen: channelPayload.isFrozen,
             isDisabled: channelPayload.isDisabled,
             isBlocked: channelPayload.isBlocked ?? false,
-            lastActiveMembers: Array(mappedMembers.prefix(100)),
+            lastActiveMembers: Array(mappedMembers),
             membership: membership?.asModel(channelId: channelPayload.cid),
             currentlyTypingUsers: currentlyTypingUsers ?? [],
-            lastActiveWatchers: Array(mappedWatchers.prefix(100)),
+            lastActiveWatchers: Array(mappedWatchers),
             team: channelPayload.team,
             unreadCount: unreadCount ?? .noUnread,
             watcherCount: watcherCount ?? 0,

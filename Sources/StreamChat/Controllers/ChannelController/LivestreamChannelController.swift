@@ -487,16 +487,3 @@ public extension LivestreamChannelControllerDelegate {
         didUpdateMessages messages: [ChatMessage]
     ) {}
 }
-
-private extension ChatMessage {
-    func updateReadBy(
-        with reads: [ChatChannelRead]
-    ) -> ChatMessage {
-        let createdAtInterval = createdAt.timeIntervalSince1970
-        let messageUserId = author.id
-        let readBy = reads.filter { read in
-            read.user.id != messageUserId && read.lastReadAt.timeIntervalSince1970 >= createdAtInterval
-        }
-        return changing(readBy: Set(readBy.map(\.user)))
-    }
-}
