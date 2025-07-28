@@ -252,6 +252,169 @@ public class LivestreamChannelController: EventsControllerDelegate {
         }
     }
 
+    // MARK: - Message Actions
+
+    /// Deletes a message from the channel.
+    /// - Parameters:
+    ///   - messageId: The message identifier to delete.
+    ///   - hard: A Boolean value to determine if the message will be delete permanently on the backend. By default it is `false`.
+    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    public func deleteMessage(
+        messageId: MessageId,
+        hard: Bool = false,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .deleteMessage(messageId: messageId, hard: hard)) { result in
+            DispatchQueue.main.async {
+                completion?(result.error)
+            }
+        }
+    }
+
+    /// Loads reactions for a specific message.
+    /// - Parameters:
+    ///   - messageId: The message identifier to load reactions for.
+    ///   - limit: The number of reactions to load. Default is 25.
+    ///   - offset: The starting position from the desired range to be fetched. Default is 0.
+    ///   - completion: Called when the network request is finished. Returns reactions array or error.
+    public func loadReactions(
+        for messageId: MessageId,
+        limit: Int = 25,
+        offset: Int = 0,
+        completion: @escaping (Result<[ChatMessageReaction], Error>) -> Void
+    ) {
+        let pagination = Pagination(pageSize: limit, offset: offset)
+        apiClient.request(endpoint: .loadReactions(messageId: messageId, pagination: pagination)) { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let payload):
+                    let reactions = payload.reactions.compactMap { $0.asModel(messageId: messageId) }
+                    completion(.success(reactions))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
+    /// Flags a message.
+    /// - Parameters:
+    ///   - messageId: The message identifier to flag.
+    ///   - reason: The flag reason.
+    ///   - extraData: Additional data associated with the flag request.
+    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    public func flag(
+        messageId: MessageId,
+        reason: String? = nil,
+        extraData: [String: RawJSON]? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .flagMessage(true, with: messageId, reason: reason, extraData: extraData)) { result in
+            DispatchQueue.main.async {
+                completion?(result.error)
+            }
+        }
+    }
+
+    /// Unflags a message.
+    /// - Parameters:
+    ///   - messageId: The message identifier to unflag.
+    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    public func unflag(
+        messageId: MessageId,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .flagMessage(false, with: messageId, reason: nil, extraData: nil)) { result in
+            DispatchQueue.main.async {
+                completion?(result.error)
+            }
+        }
+    }
+
+    /// Adds a reaction to a message.
+    /// - Parameters:
+    ///   - type: The reaction type.
+    ///   - messageId: The message identifier to add the reaction to.
+    ///   - score: The reaction score. Default is 1.
+    ///   - enforceUnique: If set to `true`, new reaction will replace all reactions the user has (if any) on this message. Default is false.
+    ///   - extraData: The reaction extra data. Default is empty.
+    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    public func addReaction(
+        _ type: MessageReactionType,
+        to messageId: MessageId,
+        score: Int = 1,
+        enforceUnique: Bool = false,
+        extraData: [String: RawJSON] = [:],
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .addReaction(
+            type,
+            score: score,
+            enforceUnique: enforceUnique,
+            extraData: extraData,
+            messageId: messageId
+        )) { result in
+            DispatchQueue.main.async {
+                completion?(result.error)
+            }
+        }
+    }
+
+    /// Deletes a reaction from a message.
+    /// - Parameters:
+    ///   - type: The reaction type to delete.
+    ///   - messageId: The message identifier to delete the reaction from.
+    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    public func deleteReaction(
+        _ type: MessageReactionType,
+        from messageId: MessageId,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
+            DispatchQueue.main.async {
+                completion?(result.error)
+            }
+        }
+    }
+
+    /// Pins a message.
+    /// - Parameters:
+    ///   - messageId: The message identifier to pin.
+    ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
+    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    public func pin(
+        messageId: MessageId,
+        pinning: MessagePinning = .noExpiration,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .pinMessage(
+            messageId: messageId,
+            request: .init(set: .init(pinned: true))
+        )) { result in
+            DispatchQueue.main.async {
+                completion?(result.error)
+            }
+        }
+    }
+
+    /// Unpins a message.
+    /// - Parameters:
+    ///   - messageId: The message identifier to unpin.
+    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    public func unpin(
+        messageId: MessageId,
+        completion: ((Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .pinMessage(
+            messageId: messageId,
+            request: .init(set: .init(pinned: false))
+        )) { result in
+            DispatchQueue.main.async {
+                completion?(result.error)
+            }
+        }
+    }
+
     // MARK: - Private Methods
 
     private func updateChannelData(
