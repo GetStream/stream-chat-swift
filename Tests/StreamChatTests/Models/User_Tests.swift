@@ -23,6 +23,7 @@ final class User_Tests: XCTestCase {
             lastActiveAt: .unique,
             teams: [],
             language: nil,
+            avgResponseTime: nil,
             extraData: [:]
         )
 
@@ -45,6 +46,7 @@ final class User_Tests: XCTestCase {
             lastActiveAt: .unique,
             teams: [],
             language: nil,
+            avgResponseTime: nil,
             extraData: [:]
         )
 

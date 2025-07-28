@@ -245,16 +245,15 @@ open class GalleryVC: _ViewController,
         super.viewDidLoad()
 
         attachmentsCollectionView.reloadData()
-        DispatchQueue.main.async {
-            self.attachmentsCollectionView.performBatchUpdates(nil) { _ in
-                self.updateContent()
-                self.attachmentsCollectionView.scrollToItem(
-                    at: .init(item: self.content.currentPage, section: 0),
-                    at: .centeredHorizontally,
-                    animated: false
-                )
-            }
-        }
+    }
+    
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        attachmentsCollectionView.scrollToItem(
+            at: .init(item: content.currentPage, section: 0),
+            at: .centeredHorizontally,
+            animated: false
+        )
     }
 
     override open func viewWillDisappear(_ animated: Bool) {
@@ -328,8 +327,16 @@ open class GalleryVC: _ViewController,
 
     /// Updates `currentPage`.
     open func updateCurrentPage() {
-        content.currentPage = Int(attachmentsCollectionView.contentOffset.x + attachmentsCollectionView.bounds.width / 2) /
+        let page = Int(attachmentsCollectionView.contentOffset.x + attachmentsCollectionView.bounds.width / 2) /
             Int(attachmentsCollectionView.bounds.width)
+        switch attachmentsCollectionView.effectiveUserInterfaceLayoutDirection {
+        case .leftToRight:
+            content.currentPage = page
+        case .rightToLeft:
+            content.currentPage = items.count - 1 - page
+        @unknown default:
+            break
+        }
     }
 
     open func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
