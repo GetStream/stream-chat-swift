@@ -17,6 +17,7 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
         XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
+        XCTAssertEqual(payload.avgResponseTime, 20)
         XCTAssertNil(payload.deactivatedAt)
         XCTAssertEqual(payload.name, "Broken Waterfall")
         XCTAssertEqual(
@@ -54,6 +55,7 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.createdAt, "2020-06-09T18:33:04.070518Z".toDate())
         XCTAssertEqual(payload.lastActiveAt, "2020-06-09T18:33:04.075114Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-09T18:33:04.078929Z".toDate())
+        XCTAssertEqual(payload.avgResponseTime, 5)
         XCTAssertNil(payload.deactivatedAt)
         XCTAssertEqual(
             payload.imageURL,
