@@ -19,6 +19,7 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         case typingIndicatorsEnabled
         case readReceiptsEnabled
         case detailedUnreadCounts
+        case avgResponseTime
     }
 
     let currentUserController: CurrentChatUserController
@@ -112,6 +113,11 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
             cell.accessoryView = makeButton(title: "View Details", action: { [weak self] in
                 self?.showDetailedUnreads()
             })
+        case .avgResponseTime:
+            cell.textLabel?.text = "Average Response Time"
+            let responseTime = currentUserController.currentUser?.avgResponseTime ?? 0
+            let text = "\(responseTime) seconds"
+            cell.accessoryView = makeLabel(text)
         }
         return cell
     }
@@ -187,6 +193,14 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         button.addAction(UIAction(handler: { _ in action() }), for: .touchUpInside)
         button.sizeToFit()
         return button
+    }
+    
+    private func makeLabel(_ text: String) -> UILabel {
+        let label = UILabel()
+        label.text = text
+        label.numberOfLines = 1
+        label.sizeToFit()
+        return label
     }
 }
 
