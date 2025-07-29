@@ -218,8 +218,6 @@ open class ChatChannelVC: _ViewController,
 
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        print("============ \(channelController.channel?.pendingMessages)")
         
         keyboardHandler.start()
 
