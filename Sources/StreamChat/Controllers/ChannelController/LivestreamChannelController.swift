@@ -20,7 +20,9 @@ public extension ChatClient {
 /// - Read updates
 /// - Typing indicators
 /// - etc..
-public class LivestreamChannelController: DataStoreProvider, EventsControllerDelegate {
+public class LivestreamChannelController: DataStoreProvider, DelegateCallable, EventsControllerDelegate {
+    public typealias Delegate = LivestreamChannelControllerDelegate
+
     // MARK: - Public Properties
 
     /// The ChannelQuery this controller observes.
@@ -74,7 +76,13 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     public var loadInitialMessagesFromCache: Bool = true
 
     /// Set the delegate to observe the changes in the system.
-    public weak var delegate: LivestreamChannelControllerDelegate?
+    public var delegate: LivestreamChannelControllerDelegate? {
+        get { multicastDelegate.mainDelegate }
+        set { multicastDelegate.set(mainDelegate: newValue) }
+    }
+
+    /// A type-erased multicast delegate.
+    internal var multicastDelegate: MulticastDelegate<LivestreamChannelControllerDelegate> = .init()
 
     // MARK: - Private Properties
 
@@ -92,6 +100,18 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
 
     /// Current user ID for convenience
     private var currentUserId: UserId? { client.currentUserId }
+
+    var _basePublishers: Any?
+    /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
+    /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
+    /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
+    var basePublishers: BasePublishers {
+        if let value = _basePublishers as? BasePublishers {
+            return value
+        }
+        _basePublishers = BasePublishers(controller: self)
+        return _basePublishers as? BasePublishers ?? .init(controller: self)
+    }
 
     // MARK: - Initialization
 
@@ -484,7 +504,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             .updateChannel(query: channelQuery)
 
         let requestCompletion: (Result<ChannelPayload, Error>) -> Void = { [weak self] result in
-            DispatchQueue.main.async { [weak self] in
+            self?.callback { [weak self] in
                 guard let self = self else { return }
 
                 switch result {
@@ -553,8 +573,15 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             return
         }
 
-        DispatchQueue.main.async { [weak self] in
+        callback { [weak self] in
             self?.handleChannelEvent(event)
+        }
+    }
+
+    /// Helper method to execute a callbacks on the main thread.
+    func callback(_ action: @escaping () -> Void) {
+        DispatchQueue.main.async {
+            action()
         }
     }
 
@@ -670,8 +697,10 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     private func notifyDelegateOfChanges() {
         guard let channel = channel else { return }
 
-        delegate?.livestreamChannelController(self, didUpdateChannel: channel)
-        delegate?.livestreamChannelController(self, didUpdateMessages: messages)
+        delegateCallback {
+            $0.livestreamChannelController(self, didUpdateChannel: channel)
+            $0.livestreamChannelController(self, didUpdateMessages: self.messages)
+        }
     }
 
     private func createNewMessage(
@@ -719,7 +748,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             if let newMessage = try? result.get() {
                 self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
             }
-            DispatchQueue.main.async {
+            self.callback {
                 completion?(result.map(\.id))
             }
         }

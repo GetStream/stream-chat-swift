@@ -1485,6 +1485,8 @@
 		AD4E879B2E37947300223A1C /* ChannelPayload+asModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4E87932E37947300223A1C /* ChannelPayload+asModel.swift */; };
 		AD4E879C2E37947300223A1C /* UserPayload+asModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4E87962E37947300223A1C /* UserPayload+asModel.swift */; };
 		AD4E879D2E37947300223A1C /* MessagePayload+asModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4E87942E37947300223A1C /* MessagePayload+asModel.swift */; };
+		AD4E87A12E39167C00223A1C /* LivestreamChannelController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4E87A02E39167C00223A1C /* LivestreamChannelController+Combine.swift */; };
+		AD4E87A22E39167C00223A1C /* LivestreamChannelController+Combine.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4E87A02E39167C00223A1C /* LivestreamChannelController+Combine.swift */; };
 		AD4F89D02C666471006DF7E5 /* PollResultsSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CA2C666471006DF7E5 /* PollResultsSectionHeaderView.swift */; };
 		AD4F89D12C666471006DF7E5 /* PollResultsSectionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CA2C666471006DF7E5 /* PollResultsSectionHeaderView.swift */; };
 		AD4F89D42C666471006DF7E5 /* PollResultsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4F89CC2C666471006DF7E5 /* PollResultsVC.swift */; };
@@ -4324,6 +4326,7 @@
 		AD4E87932E37947300223A1C /* ChannelPayload+asModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChannelPayload+asModel.swift"; sourceTree = "<group>"; };
 		AD4E87942E37947300223A1C /* MessagePayload+asModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessagePayload+asModel.swift"; sourceTree = "<group>"; };
 		AD4E87962E37947300223A1C /* UserPayload+asModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserPayload+asModel.swift"; sourceTree = "<group>"; };
+		AD4E87A02E39167C00223A1C /* LivestreamChannelController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LivestreamChannelController+Combine.swift"; sourceTree = "<group>"; };
 		AD4F89CA2C666471006DF7E5 /* PollResultsSectionHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsSectionHeaderView.swift; sourceTree = "<group>"; };
 		AD4F89CC2C666471006DF7E5 /* PollResultsVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsVC.swift; sourceTree = "<group>"; };
 		AD4F89CD2C666471006DF7E5 /* PollResultsVoteItemCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PollResultsVoteItemCell.swift; sourceTree = "<group>"; };
@@ -9552,6 +9555,7 @@
 				DAE566E624FFD22300E39431 /* ChannelController+SwiftUI.swift */,
 				DA4AA3B12502718600FAAF6E /* ChannelController+Combine.swift */,
 				AD1B9F412E30F7850091A37A /* LivestreamChannelController.swift */,
+				AD4E87A02E39167C00223A1C /* LivestreamChannelController+Combine.swift */,
 			);
 			path = ChannelController;
 			sourceTree = "<group>";
@@ -11700,6 +11704,7 @@
 				DA4AA3B8250271BD00FAAF6E /* CurrentUserController+Combine.swift in Sources */,
 				79280F712487CD2B00CDEB89 /* Atomic.swift in Sources */,
 				AD7AC99B260A9572004AADA5 /* MessagePinning.swift in Sources */,
+				AD4E87A22E39167C00223A1C /* LivestreamChannelController+Combine.swift in Sources */,
 				ADA03A232D64EFE900DFE048 /* DraftMessage.swift in Sources */,
 				88DA57642631CF1F00FA8C53 /* MuteDetails.swift in Sources */,
 				7978FBBA26E15A58002CA2DF /* MessageSearchQuery.swift in Sources */,
@@ -12693,6 +12698,7 @@
 				AD4E87972E37947300223A1C /* ChannelPayload+asModel.swift in Sources */,
 				AD4E87982E37947300223A1C /* UserPayload+asModel.swift in Sources */,
 				AD4E87992E37947300223A1C /* MessagePayload+asModel.swift in Sources */,
+				AD4E87A12E39167C00223A1C /* LivestreamChannelController+Combine.swift in Sources */,
 				4F9494BC2C41086F00B5C9CE /* BackgroundEntityDatabaseObserver.swift in Sources */,
 				C121E886274544AF00023E4C /* ChatMessageImageAttachment.swift in Sources */,
 				43D3F0FD28410A0200B74921 /* CreateCallRequestBody.swift in Sources */,
