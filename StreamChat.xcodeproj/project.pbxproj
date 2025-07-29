@@ -14513,7 +14513,7 @@
 				GCC_OPTIMIZATION_LEVEL = s;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
-				INFOPLIST_KEY_NSPrincipalClass = StreamChatUITestsAppUITests.TestsEnvironmentSetup;
+				INFOPLIST_KEY_NSPrincipalClass = "$(PRINCIPAL_CLASS)";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRINCIPAL_CLASS = "$(PRODUCT_NAME).TestsEnvironmentSetup";
@@ -14544,7 +14544,7 @@
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
-				INFOPLIST_KEY_NSPrincipalClass = StreamChatUITestsAppUITests.TestsEnvironmentSetup;
+				INFOPLIST_KEY_NSPrincipalClass = "$(PRINCIPAL_CLASS)";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRINCIPAL_CLASS = "$(PRODUCT_NAME).TestsEnvironmentSetup";
@@ -14573,11 +14573,11 @@
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Tests/Info.plist;
-				INFOPLIST_KEY_NSPrincipalClass = StreamChatUITestsAppUITests.TestsEnvironmentSetup;
+				INFOPLIST_KEY_NSPrincipalClass = "$(PRINCIPAL_CLASS)";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				MARKETING_VERSION = 1.0;
 				PRINCIPAL_CLASS = "$(PRODUCT_NAME).TestsEnvironmentSetup";
-				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.StreamChatUITestsAppUITests.xctrunner;
+				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.StreamChatUITestsAppUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
