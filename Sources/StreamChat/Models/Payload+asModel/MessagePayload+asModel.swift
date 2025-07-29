@@ -76,12 +76,20 @@ extension MessagePayload {
             replyCount: replyCount,
             extraData: extraData,
             quotedMessage: quotedMessage,
-            isBounced: false,
+            isBounced: moderationDetails?.action == MessageModerationAction.bounce.rawValue,
             isSilent: isSilent,
             isShadowed: isShadowed,
             reactionScores: reactionScores,
             reactionCounts: reactionCounts,
-            reactionGroups: [:],
+            reactionGroups: reactionGroups.reduce(into: [:]) { acc, element in
+                acc[element.key] = ChatMessageReactionGroup(
+                    type: element.key,
+                    sumScores: element.value.sumScores,
+                    count: element.value.count,
+                    firstReactionAt: element.value.firstReactionAt,
+                    lastReactionAt: element.value.lastReactionAt
+                )
+            },
             author: author,
             mentionedUsers: mentionedUsers,
             threadParticipants: threadParticipants,
@@ -99,7 +107,15 @@ extension MessagePayload {
             ) : nil,
             translations: translations,
             originalLanguage: originalLanguage.flatMap { TranslationLanguage(languageCode: $0) },
-            moderationDetails: nil,
+            moderationDetails: moderationDetails.map { .init(
+                originalText: $0.originalText,
+                action: .init(rawValue: $0.action),
+                textHarms: $0.textHarms,
+                imageHarms: $0.imageHarms,
+                blocklistMatched: $0.blocklistMatched,
+                semanticFilterMatched: $0.semanticFilterMatched,
+                platformCircumvented: $0.platformCircumvented
+            ) },
             readBy: Set(readBy.map(\.user)),
             poll: nil,
             textUpdatedAt: messageTextUpdatedAt,
