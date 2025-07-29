@@ -130,6 +130,8 @@ public struct ChatChannel {
     /// and using a `ChatChannelController` for this channel id.
     public let pinnedMessages: [ChatMessage]
     
+    /// Messages that are pending for moderation on the server.
+    /// These messages are visible only for the user that sent them, until they are approved.
     public let pendingMessages: [ChatMessage]
 
     /// Read states of the users for this channel.
