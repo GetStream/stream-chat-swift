@@ -218,7 +218,7 @@ open class ChatChannelVC: _ViewController,
 
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        
+
         keyboardHandler.start()
 
         if shouldMarkChannelRead {
