@@ -20,7 +20,7 @@ public extension ChatClient {
 /// - Read updates
 /// - Typing indicators
 /// - etc..
-public class LivestreamChannelController: EventsControllerDelegate {
+public class LivestreamChannelController: DataStoreProvider, EventsControllerDelegate {
     // MARK: - Public Properties
 
     /// The ChannelQuery this controller observes.
@@ -69,6 +69,9 @@ public class LivestreamChannelController: EventsControllerDelegate {
     public var isJumpingToMessage: Bool {
         paginationStateHandler.state.isJumpingToMessage
     }
+
+    /// A Boolean value that indicates whether to load initial messages from the cache.
+    public var loadInitialMessagesFromCache: Bool = true
 
     /// Set the delegate to observe the changes in the system.
     public weak var delegate: LivestreamChannelControllerDelegate?
@@ -130,6 +133,13 @@ public class LivestreamChannelController: EventsControllerDelegate {
     /// Synchronizes the controller with the backend data.
     /// - Parameter completion: Called when the synchronization is finished
     public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+        // Populate the initial data with existing cache.
+        if loadInitialMessagesFromCache, let cid = self.cid, let channel = dataStore.channel(cid: cid) {
+            self.channel = channel
+            messages = channel.latestMessages
+            notifyDelegateOfChanges()
+        }
+
         updateChannelData(
             channelQuery: channelQuery,
             completion: completion
