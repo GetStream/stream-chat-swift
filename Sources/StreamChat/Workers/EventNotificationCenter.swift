@@ -72,20 +72,20 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
                     middlewareEvents.append(event)
                     return
                 }
-                if let cid = eventDTO.payload.cid, self.manualEventHandlingChannelIds.contains(cid) {
-                    manualHandlingEvents.append(event)
+                if let cid = eventDTO.payload.cid,
+                   self.manualEventHandlingChannelIds.contains(cid),
+                   let manualEvent = self.convertManualEventToDomain(event) {
+                    manualHandlingEvents.append(manualEvent)
                 } else {
                     middlewareEvents.append(event)
                 }
             }
 
-            let manualEvents = self.convertManualEventsToDomain(manualHandlingEvents)
-            eventsToPost.append(contentsOf: manualEvents)
-
             self.newMessageIds = Set(messageIds.compactMap {
                 !session.messageExists(id: $0) ? $0 : nil
             })
 
+            eventsToPost.append(contentsOf: manualHandlingEvents)
             eventsToPost.append(contentsOf: middlewareEvents.compactMap {
                 self.middlewares.process(event: $0, session: session)
             })
@@ -104,45 +104,43 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
         })
     }
 
-    private func convertManualEventsToDomain(_ events: [Event]) -> [Event] {
-        events.compactMap { event in
-            guard let eventDTO = event as? EventDTO else {
-                return nil
-            }
+    private func convertManualEventToDomain(_ event: Event) -> Event? {
+        guard let eventDTO = event as? EventDTO else {
+            return nil
+        }
 
-            let eventPayload = eventDTO.payload
+        let eventPayload = eventDTO.payload
 
-            guard let cid = eventPayload.cid else {
-                return nil
-            }
+        guard let cid = eventPayload.cid else {
+            return nil
+        }
 
-            switch eventPayload.eventType {
-            case .messageNew:
-                return createMessageNewEvent(from: eventPayload, cid: cid)
-                
-            case .messageUpdated:
-                return createMessageUpdatedEvent(from: eventPayload, cid: cid)
-                
-            case .messageDeleted:
-                return createMessageDeletedEvent(from: eventPayload, cid: cid)
-                
-            case .reactionNew:
-                return createReactionNewEvent(from: eventPayload, cid: cid)
-                
-            case .reactionUpdated:
-                return createReactionUpdatedEvent(from: eventPayload, cid: cid)
-                
-            case .reactionDeleted:
-                return createReactionDeletedEvent(from: eventPayload, cid: cid)
-                
-            default:
-                return nil
-            }
+        switch eventPayload.eventType {
+        case .messageNew:
+            return createMessageNewEvent(from: eventPayload, cid: cid)
+
+        case .messageUpdated:
+            return createMessageUpdatedEvent(from: eventPayload, cid: cid)
+
+        case .messageDeleted:
+            return createMessageDeletedEvent(from: eventPayload, cid: cid)
+
+        case .reactionNew:
+            return createReactionNewEvent(from: eventPayload, cid: cid)
+
+        case .reactionUpdated:
+            return createReactionUpdatedEvent(from: eventPayload, cid: cid)
+
+        case .reactionDeleted:
+            return createReactionDeletedEvent(from: eventPayload, cid: cid)
+
+        default:
+            return nil
         }
     }
-    
+
     // MARK: - Event Creation Helpers
-    
+
     private func createMessageNewEvent(from payload: EventPayload, cid: ChannelId) -> MessageNewEvent? {
         guard
             let userPayload = payload.user,
@@ -170,7 +168,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             }
         )
     }
-    
+
     private func createMessageUpdatedEvent(from payload: EventPayload, cid: ChannelId) -> MessageUpdatedEvent? {
         guard
             let userPayload = payload.user,
@@ -180,7 +178,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
             let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
-        
+
         return MessageUpdatedEvent(
             user: userPayload.asModel(),
             channel: channel,
@@ -188,7 +186,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             createdAt: createdAt
         )
     }
-    
+
     private func createMessageDeletedEvent(from payload: EventPayload, cid: ChannelId) -> MessageDeletedEvent? {
         guard
             let messagePayload = payload.message,
@@ -197,9 +195,9 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
             let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
-        
+
         let userPayload = payload.user
-        
+
         return MessageDeletedEvent(
             user: userPayload?.asModel(),
             channel: channel,
@@ -208,7 +206,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             isHardDelete: payload.hardDelete
         )
     }
-    
+
     private func createReactionNewEvent(from payload: EventPayload, cid: ChannelId) -> ReactionNewEvent? {
         guard
             let userPayload = payload.user,
@@ -219,7 +217,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
             let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
-        
+
         return ReactionNewEvent(
             user: userPayload.asModel(),
             cid: cid,
@@ -228,7 +226,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             createdAt: createdAt
         )
     }
-    
+
     private func createReactionUpdatedEvent(from payload: EventPayload, cid: ChannelId) -> ReactionUpdatedEvent? {
         guard
             let userPayload = payload.user,
@@ -239,7 +237,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
             let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
-        
+
         return ReactionUpdatedEvent(
             user: userPayload.asModel(),
             cid: cid,
@@ -248,7 +246,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             createdAt: createdAt
         )
     }
-    
+
     private func createReactionDeletedEvent(from payload: EventPayload, cid: ChannelId) -> ReactionDeletedEvent? {
         guard
             let userPayload = payload.user,
@@ -259,7 +257,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
             let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
-        
+
         return ReactionDeletedEvent(
             user: userPayload.asModel(),
             cid: cid,
@@ -288,7 +286,7 @@ extension EventNotificationCenter {
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: handler)
     }
-    
+
     func subscribe(
         filter: @escaping (Event) -> Bool = { _ in true },
         handler: @escaping (Event) -> Void
@@ -299,7 +297,7 @@ extension EventNotificationCenter {
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: handler)
     }
-    
+
     static func channelFilter(cid: ChannelId, event: Event) -> Bool {
         switch event {
         case let channelEvent as ChannelSpecificEvent:
