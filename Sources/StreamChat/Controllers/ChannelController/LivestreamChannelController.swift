@@ -36,11 +36,24 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 
     /// The channel the controller represents.
     /// This is managed in memory and updated via API calls.
-    public private(set) var channel: ChatChannel?
+    public private(set) var channel: ChatChannel? {
+        didSet {
+            guard let channel else { return }
+            delegateCallback {
+                $0.livestreamChannelController(self, didUpdateChannel: channel)
+            }
+        }
+    }
 
     /// The messages of the channel the controller represents.
     /// This is managed in memory and updated via API calls.
-    public private(set) var messages: [ChatMessage] = []
+    public private(set) var messages: [ChatMessage] = [] {
+        didSet {
+            delegateCallback {
+                $0.livestreamChannelController(self, didUpdateMessages: self.messages)
+            }
+        }
+    }
 
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     public var hasLoadedAllPreviousMessages: Bool {
@@ -157,7 +170,6 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         if loadInitialMessagesFromCache, let cid = self.cid, let channel = dataStore.channel(cid: cid) {
             self.channel = channel
             messages = channel.latestMessages
-            notifyDelegateOfChanges()
         }
 
         updateChannelData(
@@ -339,8 +351,8 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         hard: Bool = false,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .deleteMessage(messageId: messageId, hard: hard)) { result in
-            DispatchQueue.main.async {
+        apiClient.request(endpoint: .deleteMessage(messageId: messageId, hard: hard)) { [weak self] result in
+            self?.callback {
                 completion?(result.error)
             }
         }
@@ -359,8 +371,8 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         completion: @escaping (Result<[ChatMessageReaction], Error>) -> Void
     ) {
         let pagination = Pagination(pageSize: limit, offset: offset)
-        apiClient.request(endpoint: .loadReactions(messageId: messageId, pagination: pagination)) { result in
-            DispatchQueue.main.async {
+        apiClient.request(endpoint: .loadReactions(messageId: messageId, pagination: pagination)) { [weak self] result in
+            self?.callback {
                 switch result {
                 case .success(let payload):
                     let reactions = payload.reactions.compactMap { $0.asModel(messageId: messageId) }
@@ -384,8 +396,8 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         extraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .flagMessage(true, with: messageId, reason: reason, extraData: extraData)) { result in
-            DispatchQueue.main.async {
+        apiClient.request(endpoint: .flagMessage(true, with: messageId, reason: reason, extraData: extraData)) { [weak self] result in
+            self?.callback {
                 completion?(result.error)
             }
         }
@@ -399,8 +411,8 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .flagMessage(false, with: messageId, reason: nil, extraData: nil)) { result in
-            DispatchQueue.main.async {
+        apiClient.request(endpoint: .flagMessage(false, with: messageId, reason: nil, extraData: nil)) { [weak self] result in
+            self?.callback {
                 completion?(result.error)
             }
         }
@@ -428,8 +440,8 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
             enforceUnique: enforceUnique,
             extraData: extraData,
             messageId: messageId
-        )) { result in
-            DispatchQueue.main.async {
+        )) { [weak self] result in
+            self?.callback {
                 completion?(result.error)
             }
         }
@@ -445,8 +457,8 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         from messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
-            DispatchQueue.main.async {
+        apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { [weak self] result in
+            self?.callback {
                 completion?(result.error)
             }
         }
@@ -465,8 +477,8 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         apiClient.request(endpoint: .pinMessage(
             messageId: messageId,
             request: .init(set: .init(pinned: true))
-        )) { result in
-            DispatchQueue.main.async {
+        )) { [weak self] result in
+            self?.callback {
                 completion?(result.error)
             }
         }
@@ -483,8 +495,8 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         apiClient.request(endpoint: .pinMessage(
             messageId: messageId,
             request: .init(set: .init(pinned: false))
-        )) { result in
-            DispatchQueue.main.async {
+        )) { [weak self] result in
+            self?.callback {
                 completion?(result.error)
             }
         }
@@ -542,8 +554,6 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         }
 
         updateMessagesArray(with: newMessages, pagination: channelQuery.pagination)
-
-        notifyDelegateOfChanges()
     }
 
     private func updateMessagesArray(with newMessages: [ChatMessage], pagination: MessagesPagination?) {
@@ -578,7 +588,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         }
     }
 
-    /// Helper method to execute a callbacks on the main thread.
+    /// Helper method to execute the callbacks on the main thread.
     func callback(_ action: @escaping () -> Void) {
         DispatchQueue.main.async {
             action()
@@ -604,6 +614,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
                 return
             }
             handleUpdatedMessage(messageDeletedEvent.message)
+
         case let newMessageErrorEvent as NewMessageErrorEvent:
             guard let message = messages.first(where: { $0.id == newMessageErrorEvent.messageId }) else {
                 return
@@ -619,6 +630,9 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 
         case let reactionDeletedEvent as ReactionDeletedEvent:
             handleDeletedReaction(reactionDeletedEvent)
+
+        case let channelUpdatedEvent as ChannelUpdatedEvent:
+            handleChannelUpdated(channelUpdatedEvent)
 
         default:
             break
@@ -642,8 +656,6 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 
         currentMessages.insert(message, at: 0)
         messages = currentMessages
-
-        notifyDelegateOfChanges()
     }
 
     private func handleUpdatedMessage(_ updatedMessage: ChatMessage) {
@@ -652,8 +664,6 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         if let index = currentMessages.firstIndex(where: { $0.id == updatedMessage.id }) {
             currentMessages[index] = updatedMessage
             messages = currentMessages
-
-            notifyDelegateOfChanges()
         }
     }
 
@@ -662,8 +672,6 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 
         currentMessages.removeAll { $0.id == deletedMessage.id }
         messages = currentMessages
-
-        notifyDelegateOfChanges()
     }
 
     private func handleNewReaction(_ reactionEvent: ReactionNewEvent) {
@@ -690,17 +698,10 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 
         currentMessages[messageIndex] = updatedMessage
         messages = currentMessages
-
-        notifyDelegateOfChanges()
     }
 
-    private func notifyDelegateOfChanges() {
-        guard let channel = channel else { return }
-
-        delegateCallback {
-            $0.livestreamChannelController(self, didUpdateChannel: channel)
-            $0.livestreamChannelController(self, didUpdateMessages: self.messages)
-        }
+    private func handleChannelUpdated(_ event: ChannelUpdatedEvent) {
+        channel = event.channel
     }
 
     private func createNewMessage(

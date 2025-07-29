@@ -134,6 +134,9 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
         case .reactionDeleted:
             return createReactionDeletedEvent(from: eventPayload, cid: cid)
 
+        case .channelUpdated:
+            return createChannelUpdatedEvent(from: eventPayload, cid: cid)
+
         default:
             return nil
         }
@@ -263,6 +266,23 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             cid: cid,
             message: message,
             reaction: reactionPayload.asModel(messageId: messagePayload.id),
+            createdAt: createdAt
+        )
+    }
+
+    private func createChannelUpdatedEvent(from payload: EventPayload, cid: ChannelId) -> ChannelUpdatedEvent? {
+        guard
+            let createdAt = payload.createdAt,
+            let channel = payload.channel?.asModel()
+        else { return nil }
+
+        let currentUserId = database.writableContext.currentUser?.user.id
+        let channelReads = channel.reads
+
+        return ChannelUpdatedEvent(
+            channel: channel,
+            user: payload.user?.asModel(),
+            message: payload.message?.asModel(cid: cid, currentUserId: currentUserId, channelReads: channelReads),
             createdAt: createdAt
         )
     }
