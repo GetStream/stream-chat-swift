@@ -20,6 +20,10 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     // The channels for which events will not be processed by the middlewares.
     private var manualEventHandlingChannelIds: Set<ChannelId> = []
 
+    // Some events require the chat channel data, so we need to fetch it from local DB.
+    // We try to only do this once, to avoid unnecessary DB fetches.
+    private var manualEventHandlingCachedChannels: [ChannelId: ChatChannel] = [:]
+
     init(
         database: DatabaseContainer
     ) {
@@ -40,6 +44,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     func unregisterManualEventHandling(for cid: ChannelId) {
         eventPostingQueue.async { [weak self] in
             self?.manualEventHandlingChannelIds.remove(cid)
+            self?.manualEventHandlingCachedChannels.removeValue(forKey: cid)
         }
     }
 
@@ -149,7 +154,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             let userPayload = payload.user,
             let messagePayload = payload.message,
             let createdAt = payload.createdAt,
-            let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
+            let channel = getLocalChannel(id: cid),
             let currentUserId = database.writableContext.currentUser?.user.id,
             let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else {
@@ -178,7 +183,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             let messagePayload = payload.message,
             let createdAt = payload.createdAt,
             let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
+            let channel = getLocalChannel(id: cid),
             let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
 
@@ -195,7 +200,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             let messagePayload = payload.message,
             let createdAt = payload.createdAt,
             let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
+            let channel = getLocalChannel(id: cid),
             let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
 
@@ -217,7 +222,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             let reactionPayload = payload.reaction,
             let createdAt = payload.createdAt,
             let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
+            let channel = getLocalChannel(id: cid),
             let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
 
@@ -237,7 +242,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             let reactionPayload = payload.reaction,
             let createdAt = payload.createdAt,
             let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
+            let channel = getLocalChannel(id: cid),
             let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
 
@@ -257,7 +262,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             let reactionPayload = payload.reaction,
             let createdAt = payload.createdAt,
             let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = try? database.writableContext.channel(cid: cid)?.asModel(),
+            let channel = getLocalChannel(id: cid),
             let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         else { return nil }
 
@@ -285,6 +290,17 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             message: payload.message?.asModel(cid: cid, currentUserId: currentUserId, channelReads: channelReads),
             createdAt: createdAt
         )
+    }
+
+    // This is only needed because some events wrongly require the channel to create them.
+    private func getLocalChannel(id: ChannelId) -> ChatChannel? {
+        if let cachedChannel = manualEventHandlingCachedChannels[id] {
+            return cachedChannel
+        }
+
+        let channel = try? database.writableContext.channel(cid: id)?.asModel()
+        manualEventHandlingCachedChannels[id] = channel
+        return channel
     }
 }
 
