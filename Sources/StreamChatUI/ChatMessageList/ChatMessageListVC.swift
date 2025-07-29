@@ -1344,8 +1344,7 @@ private extension ChatMessageListVC {
         let isNewestChangeInsertion = newestChange?.isInsertion == true
         let isNewestChangeNotByCurrentUser = newestChange?.item.isSentByCurrentUser == false
         let isNewestChangeNotVisible = !listView.isLastCellFullyVisible && !listView.previousMessagesSnapshot.isEmpty
-        let isLiveStreamController = dataSource is ChatLivestreamChannelVC
-        let isLoadingNewPage = insertions.count > 1 && insertions.count == changes.count && !isLiveStreamController
+        let isLoadingNewPage = insertions.count > 1 && insertions.count == changes.count
         let shouldSkipMessages =
             isFirstPageLoaded
                 && isNewestChangeNotVisible
