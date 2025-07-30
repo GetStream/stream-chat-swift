@@ -3,15 +3,15 @@
 //
 
 import StreamChat
+import StreamChatUI
 import UIKit
 
-open class ChatLivestreamChannelVC: _ViewController,
+open class DemoLivestreamChatChannelVC: _ViewController,
     ThemeProvider,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
     LivestreamChannelControllerDelegate,
-    EventsControllerDelegate,
-    AudioQueuePlayerDatasource
+    EventsControllerDelegate
 {
     /// Controller for observing data changes within the channel.
     open var channelController: LivestreamChannelController!
@@ -49,22 +49,6 @@ open class ChatLivestreamChannelVC: _ViewController,
         .messageComposerVC
         .init()
 
-    /// The audioPlayer  that will be used for the playback of VoiceRecordings
-    open private(set) lazy var audioPlayer: AudioPlaying = components
-        .audioPlayer
-        .init()
-
-    /// The provider that will be asked to provide the next VoiceRecording to play automatically once the
-    /// currently playing one, finishes.
-    open private(set) lazy var audioQueuePlayerNextItemProvider: AudioQueuePlayerNextItemProvider = components
-        .audioQueuePlayerNextItemProvider
-        .init()
-
-    /// The navigation header view.
-    open private(set) lazy var headerView: ChatChannelHeaderView = components
-        .channelHeaderView.init()
-        .withoutAutoresizingMaskConstraints
-
     /// View for displaying the channel image in the navigation bar.
     open private(set) lazy var channelAvatarView = components
         .channelAvatarView.init()
@@ -83,9 +67,9 @@ open class ChatLivestreamChannelVC: _ViewController,
     }
 
     /// A component responsible to handle when to load new or old messages.
-    private lazy var viewPaginationHandler: StatefulViewPaginationHandling = {
-        InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
-    }()
+//    private lazy var viewPaginationHandler: StatefulViewPaginationHandling = {
+//        InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
+//    }()
 
     override open func setUp() {
         super.setUp()
@@ -105,33 +89,19 @@ open class ChatLivestreamChannelVC: _ViewController,
             self?.didFinishSynchronizing(with: error)
         }
 
-        if channelController.channelQuery.pagination?.parameter == nil {
-            // Load initial messages from cache if loading the first page
-            messages = Array(channelController.messages)
-        }
-
         // Handle pagination
-        viewPaginationHandler.onNewTopPage = { [weak self] notifyElementsCount, completion in
-            notifyElementsCount(self?.channelController.messages.count ?? 0)
-            self?.loadPreviousMessages(completion: completion)
-        }
-        viewPaginationHandler.onNewBottomPage = { [weak self] notifyElementsCount, completion in
-            notifyElementsCount(self?.channelController.messages.count ?? 0)
-            self?.loadNextMessages(completion: completion)
-        }
-
-        messageListVC.audioPlayer = audioPlayer
-        messageComposerVC.audioPlayer = audioPlayer
-
-        if let queueAudioPlayer = audioPlayer as? StreamAudioQueuePlayer {
-            queueAudioPlayer.dataSource = self
-        }
+//        viewPaginationHandler.onNewTopPage = { [weak self] notifyElementsCount, completion in
+//            notifyElementsCount(self?.channelController.messages.count ?? 0)
+//            self?.loadPreviousMessages(completion: completion)
+//        }
+//        viewPaginationHandler.onNewBottomPage = { [weak self] notifyElementsCount, completion in
+//            notifyElementsCount(self?.channelController.messages.count ?? 0)
+//            self?.loadNextMessages(completion: completion)
+//        }
 
         messageListVC.swipeToReplyGestureHandler.onReply = { [weak self] message in
             self?.messageComposerVC.content.quoteMessage(message)
         }
-
-        updateScrollToBottomButtonCount()
     }
 
     private func setChannelControllerToComposerIfNeeded(cid: ChannelId?) {
@@ -145,28 +115,29 @@ open class ChatLivestreamChannelVC: _ViewController,
         view.backgroundColor = appearance.colorPalette.background
 
         addChildViewController(messageListVC, targetView: view)
-        messageListVC.view.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)
+        NSLayoutConstraint.activate([
+            messageListVC.view.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            messageListVC.view.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor),
+            messageListVC.view.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor)
+        ])
 
         addChildViewController(messageComposerVC, targetView: view)
-        messageComposerVC.view.pin(anchors: [.leading, .trailing], to: view)
-        messageComposerVC.view.topAnchor.pin(equalTo: messageListVC.view.bottomAnchor).isActive = true
-        messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor.pin(equalTo: view.bottomAnchor)
+        NSLayoutConstraint.activate([
+            messageComposerVC.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            messageComposerVC.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            messageComposerVC.view.topAnchor.constraint(equalTo: messageListVC.view.bottomAnchor)
+        ])
+        messageComposerBottomConstraint = messageComposerVC.view.bottomAnchor
+            .constraint(equalTo: view.bottomAnchor)
         messageComposerBottomConstraint?.isActive = true
 
         NSLayoutConstraint.activate([
-            channelAvatarView.widthAnchor.pin(equalToConstant: channelAvatarSize.width),
-            channelAvatarView.heightAnchor.pin(equalToConstant: channelAvatarSize.height)
+            channelAvatarView.widthAnchor.constraint(equalToConstant: channelAvatarSize.width),
+            channelAvatarView.heightAnchor.constraint(equalToConstant: channelAvatarSize.height)
         ])
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)
         channelAvatarView.content = (channelController.channel, client.currentUserId)
-
-        if let cid = channelController.cid {
-            headerView.channelController = client.channelController(for: cid)
-        }
-
-        navigationItem.titleView = headerView
-        navigationItem.largeTitleDisplayMode = .never
     }
 
     override open func viewDidAppear(_ animated: Bool) {
@@ -275,7 +246,7 @@ open class ChatLivestreamChannelVC: _ViewController,
     }
 
     open func chatMessageListVC(_ vc: ChatMessageListVC, messageAt indexPath: IndexPath) -> ChatMessage? {
-        messages[safe: indexPath.item]
+        messages[indexPath.item]
     }
 
     open func chatMessageListVC(
@@ -324,18 +295,11 @@ open class ChatLivestreamChannelVC: _ViewController,
     ) {
         switch actionItem {
         case is EditActionItem:
-            dismiss(animated: true) { [weak self] in
-                self?.messageComposerVC.content.editMessage(message)
-                self?.messageComposerVC.composerView.inputMessageView.textView.becomeFirstResponder()
-            }
+            dismiss(animated: true)
         case is InlineReplyActionItem:
-            dismiss(animated: true) { [weak self] in
-                self?.messageComposerVC.content.quoteMessage(message)
-            }
+            dismiss(animated: true)
         case is ThreadReplyActionItem:
-            dismiss(animated: true) { [weak self] in
-                self?.messageListVC.showThread(messageId: message.id)
-            }
+            dismiss(animated: true)
         case is MarkUnreadActionItem:
             dismiss(animated: true)
         default:
@@ -363,20 +327,7 @@ open class ChatLivestreamChannelVC: _ViewController,
         headerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
     ) -> ChatMessageDecorationView? {
-        let shouldShowDate = vc.shouldShowDateSeparator(forMessage: message, at: indexPath)
-        guard shouldShowDate, let channel = channelController.channel else {
-            return nil
-        }
-
-        let header = components.messageHeaderDecorationView.init()
-        header.content = ChatChannelMessageHeaderDecoratorViewContent(
-            message: message,
-            channel: channel,
-            dateFormatter: vc.dateSeparatorFormatter,
-            shouldShowDate: shouldShowDate,
-            shouldShowUnreadMessages: false
-        )
-        return header
+        nil
     }
 
     open func chatMessageListVC(
@@ -391,13 +342,10 @@ open class ChatLivestreamChannelVC: _ViewController,
 
     public func livestreamChannelController(
         _ controller: LivestreamChannelController,
-        didUpdateChannel change: EntityChange<ChatChannel>
+        didUpdateChannel channel: ChatChannel
     ) {
-        if headerView.channelController == nil, let cid = channelController.cid {
-            headerView.channelController = client.channelController(for: cid)
-        }
-
         channelAvatarView.content = (channelController.channel, client.currentUserId)
+        navigationItem.title = channel.name
     }
 
     public func livestreamChannelController(
@@ -418,7 +366,6 @@ open class ChatLivestreamChannelVC: _ViewController,
         }
 
         messageListVC.updateMessages(with: changes)
-        viewPaginationHandler.updateElementsCount(with: channelController.messages.count)
     }
 
     // MARK: - EventsControllerDelegate
@@ -430,36 +377,21 @@ open class ChatLivestreamChannelVC: _ViewController,
                 channelController.loadFirstPage()
             }
         }
-
-        if let draftUpdatedEvent = event as? DraftUpdatedEvent,
-           let draft = channelController.channel?.draftMessage,
-           draftUpdatedEvent.cid == channelController.cid, draftUpdatedEvent.draftMessage.threadId == nil {
-            messageComposerVC.content.draftMessage(draft)
-        }
-
-        if let draftDeletedEvent = event as? DraftDeletedEvent,
-           draftDeletedEvent.cid == channelController.cid, draftDeletedEvent.threadId == nil {
-            messageComposerVC.content.clear()
-        }
     }
+}
 
-    // MARK: - AudioQueuePlayerDatasource
-
-    open func audioQueuePlayerNextAssetURL(
-        _ audioPlayer: AudioPlaying,
-        currentAssetURL: URL?
-    ) -> URL? {
-        audioQueuePlayerNextItemProvider.findNextItem(
-            in: messages,
-            currentVoiceRecordingURL: currentAssetURL,
-            lookUpScope: .subsequentMessagesFromUser
-        )
+private extension UIView {
+    var withoutAutoresizingMaskConstraints: Self {
+        translatesAutoresizingMaskIntoConstraints = false
+        return self
     }
+}
 
-    // MARK: - Helpers
-
-    private func updateScrollToBottomButtonCount(channel: ChatChannel? = nil) {
-        let channelUnreadCount = (channel ?? channelController.channel)?.unreadCount ?? .noUnread
-        messageListVC.scrollToBottomButton.content = channelUnreadCount
+private extension UIViewController {
+    func addChildViewController(_ child: UIViewController, targetView superview: UIView) {
+        addChild(child)
+        child.view.translatesAutoresizingMaskIntoConstraints = false
+        superview.addSubview(child.view)
+        child.didMove(toParent: self)
     }
 }
