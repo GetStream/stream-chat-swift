@@ -120,7 +120,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 let client = self.rootViewController.controller.client
                 let livestreamController = client.livestreamChannelController(for: .init(cid: cid))
                 let vc = DemoLivestreamChatChannelVC()
-                vc.channelController = livestreamController
+                vc.livestreamChannelController = livestreamController
                 vc.hidesBottomBarWhenPushed = true
                 self.rootViewController.navigationController?.pushViewController(vc, animated: true)
             }),

@@ -14,11 +14,11 @@ open class DemoLivestreamChatChannelVC: _ViewController,
     EventsControllerDelegate
 {
     /// Controller for observing data changes within the channel.
-    open var channelController: LivestreamChannelController!
+    open var livestreamChannelController: LivestreamChannelController!
 
     /// User search controller for suggestion users when typing in the composer.
     open lazy var userSuggestionSearchController: ChatUserSearchController =
-        channelController.client.userSearchController()
+        livestreamChannelController.client.userSearchController()
 
     /// A controller for observing web socket events.
     public lazy var eventsController: EventsController = client.eventsController()
@@ -29,7 +29,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
     }
 
     public var client: ChatClient {
-        channelController.client
+        livestreamChannelController.client
     }
 
     /// Component responsible for setting the correct offset when keyboard frame is changed.
@@ -45,9 +45,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         .init()
 
     /// Controller that handles the composer view
-    open private(set) lazy var messageComposerVC = components
-        .messageComposerVC
-        .init()
+    private(set) lazy var messageComposerVC = DemoLivestreamComposerVC()
 
     /// View for displaying the channel image in the navigation bar.
     open private(set) lazy var channelAvatarView = components
@@ -77,10 +75,10 @@ open class DemoLivestreamChatChannelVC: _ViewController,
 
         messageComposerVC.userSearchController = userSuggestionSearchController
 
-        setChannelControllerToComposerIfNeeded(cid: channelController.cid)
+        setChannelControllerToComposerIfNeeded()
 
-        channelController.delegate = self
-        channelController.synchronize { [weak self] error in
+        livestreamChannelController.delegate = self
+        livestreamChannelController.synchronize { [weak self] error in
             self?.didFinishSynchronizing(with: error)
         }
 
@@ -89,9 +87,9 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         }
     }
 
-    private func setChannelControllerToComposerIfNeeded(cid: ChannelId?) {
-        guard messageComposerVC.channelController == nil, let cid = cid else { return }
-        messageComposerVC.channelController = client.channelController(for: cid)
+    private func setChannelControllerToComposerIfNeeded() {
+        messageComposerVC.channelController = nil
+        messageComposerVC.livestreamChannelController = livestreamChannelController
     }
 
     override open func setUpLayout() {
@@ -122,7 +120,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         ])
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)
-        channelAvatarView.content = (channelController.channel, client.currentUserId)
+        channelAvatarView.content = (livestreamChannelController.channel, client.currentUserId)
     }
 
     override open func viewDidAppear(_ animated: Bool) {
@@ -134,7 +132,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        if let draftMessage = channelController.channel?.draftMessage {
+        if let draftMessage = livestreamChannelController.channel?.draftMessage {
             messageComposerVC.content.draftMessage(draftMessage)
         }
     }
@@ -154,7 +152,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
             log.error("Error when synchronizing ChannelController: \(error)")
         }
 
-        setChannelControllerToComposerIfNeeded(cid: channelController.cid)
+        setChannelControllerToComposerIfNeeded()
         messageComposerVC.updateContent()
     }
 
@@ -186,15 +184,15 @@ open class DemoLivestreamChatChannelVC: _ViewController,
     public var messages: [ChatMessage] = []
 
     public var isFirstPageLoaded: Bool {
-        channelController.hasLoadedAllNextMessages
+        livestreamChannelController.hasLoadedAllNextMessages
     }
 
     public var isLastPageLoaded: Bool {
-        channelController.hasLoadedAllPreviousMessages
+        livestreamChannelController.hasLoadedAllPreviousMessages
     }
 
     open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
-        channelController.channel
+        livestreamChannelController.channel
     }
 
     open func numberOfMessages(in vc: ChatMessageListVC) -> Int {
@@ -209,7 +207,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         messageLayoutOptionsAt indexPath: IndexPath
     ) -> ChatMessageLayoutOptions {
-        guard let channel = channelController.channel else { return [] }
+        guard let channel = livestreamChannelController.channel else { return [] }
 
         return components.messageLayoutOptionsResolver.optionsForMessage(
             at: indexPath,
@@ -224,7 +222,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         shouldLoadPageAroundMessageId messageId: MessageId,
         _ completion: @escaping ((Error?) -> Void)
     ) {
-        channelController.loadPageAroundMessageId(messageId) { error in
+        livestreamChannelController.loadPageAroundMessageId(messageId) { error in
             completion(error)
         }
     }
@@ -232,7 +230,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
     open func chatMessageListVCShouldLoadFirstPage(
         _ vc: ChatMessageListVC
     ) {
-        channelController.loadFirstPage()
+        livestreamChannelController.loadFirstPage()
     }
 
     // MARK: - ChatMessageListVCDelegate
@@ -253,12 +251,12 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         
         // Load newer messages when displaying messages near index 0
         if indexPath.item < 10 && !isFirstPageLoaded {
-            channelController.loadNextMessages()
+            livestreamChannelController.loadNextMessages()
         }
         
         // Load older messages when displaying messages near the end of the array
         if indexPath.item >= messageCount - 10 && !isLastPageLoaded {
-            channelController.loadPreviousMessages()
+            livestreamChannelController.loadPreviousMessages()
         }
     }
 
@@ -311,7 +309,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         _ controller: LivestreamChannelController,
         didUpdateChannel channel: ChatChannel
     ) {
-        channelAvatarView.content = (channelController.channel, client.currentUserId)
+        channelAvatarView.content = (livestreamChannelController.channel, client.currentUserId)
         navigationItem.title = channel.name
     }
 
@@ -320,9 +318,9 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         didUpdateMessages messages: [ChatMessage]
     ) {
         messageListVC.setPreviousMessagesSnapshot(self.messages)
-        messageListVC.setNewMessagesSnapshotArray(channelController.messages)
+        messageListVC.setNewMessagesSnapshotArray(livestreamChannelController.messages)
 
-        let diff = channelController.messages.difference(from: self.messages)
+        let diff = livestreamChannelController.messages.difference(from: self.messages)
         let changes = diff.map { change in
             switch change {
             case let .insert(offset, element, _):
@@ -341,9 +339,52 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         if let newMessagePendingEvent = event as? NewMessagePendingEvent {
             let newMessage = newMessagePendingEvent.message
             if !isFirstPageLoaded && newMessage.isSentByCurrentUser && !newMessage.isPartOfThread {
-                channelController.loadFirstPage()
+                livestreamChannelController.loadFirstPage()
             }
         }
+    }
+}
+
+/// A custom composer view controller for livestream channels that uses LivestreamChannelController
+/// and disables voice recording functionality.
+class DemoLivestreamComposerVC: ComposerVC {
+    /// Reference to the livestream channel controller
+    var livestreamChannelController: LivestreamChannelController?
+
+    /// Override message creation to use livestream controller
+    override func createNewMessage(text: String) {
+        guard let livestreamController = livestreamChannelController else {
+            // Fallback to the regular implementation if livestream controller is not available
+            super.createNewMessage(text: text)
+            return
+        }
+        
+        if let threadParentMessageId = content.threadMessage?.id {
+            // For thread replies, we still need to use the regular channel controller
+            // since LivestreamChannelController doesn't support thread operations
+            super.createNewMessage(text: text)
+            return
+        }
+        
+        livestreamController.createNewMessage(
+            text: text,
+            pinning: nil,
+            attachments: content.attachments,
+            mentionedUserIds: content.mentionedUsers.map(\.id),
+            quotedMessageId: content.quotingMessage?.id,
+            skipEnrichUrl: content.skipEnrichUrl,
+            extraData: content.extraData
+        )
+    }
+
+    /// Override to hide the record button for livestream
+    override func updateRecordButtonVisibility() {
+        composerView.recordButton.isHidden = true
+    }
+
+    /// Override to ensure voice recording is disabled
+    override func setupVoiceRecordingView() {
+        // Do not set up voice recording for livestream
     }
 }
 
