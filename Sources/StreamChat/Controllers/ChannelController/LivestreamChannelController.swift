@@ -418,29 +418,37 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         }
     }
 
-    /// Adds a reaction to a message.
+    /// Adds new reaction to the message this controller manages.
     /// - Parameters:
     ///   - type: The reaction type.
     ///   - messageId: The message identifier to add the reaction to.
-    ///   - score: The reaction score. Default is 1.
-    ///   - enforceUnique: If set to `true`, new reaction will replace all reactions the user has (if any) on this message. Default is false.
-    ///   - extraData: The reaction extra data. Default is empty.
-    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    ///   - score: The reaction score.
+    ///   - enforceUnique: If set to `true`, new reaction will replace all reactions the user has (if any) on this message.
+    ///   - skipPush: If set to `true`, skips sending push notification when reacting a message.
+    ///   - pushEmojiCode: The emoji code when receiving a reaction push notification.
+    ///   - extraData: The reaction extra data.
+    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     public func addReaction(
         _ type: MessageReactionType,
         to messageId: MessageId,
         score: Int = 1,
         enforceUnique: Bool = false,
+        skipPush: Bool = false,
+        pushEmojiCode: String? = nil,
         extraData: [String: RawJSON] = [:],
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .addReaction(
-            type,
-            score: score,
-            enforceUnique: enforceUnique,
-            extraData: extraData,
-            messageId: messageId
-        )) { [weak self] result in
+        apiClient.request(
+            endpoint: .addReaction(
+                type,
+                score: score,
+                enforceUnique: enforceUnique,
+                extraData: extraData,
+                skipPush: skipPush,
+                emojiCode: pushEmojiCode,
+                messageId: messageId
+            )
+        ) { [weak self] result in
             self?.callback {
                 completion?(result.error)
             }

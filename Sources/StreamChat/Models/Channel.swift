@@ -326,6 +326,7 @@ public struct ChatChannel {
             latestMessages: latestMessages,
             lastMessageFromCurrentUser: lastMessageFromCurrentUser,
             pinnedMessages: pinnedMessages,
+            pendingMessages: pendingMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
             draftMessage: draftMessage,

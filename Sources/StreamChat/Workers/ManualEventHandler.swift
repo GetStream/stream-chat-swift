@@ -99,11 +99,12 @@ class ManualEventHandler {
             let messagePayload = payload.message,
             let createdAt = payload.createdAt,
             let channel = getLocalChannel(id: cid),
-            let currentUserId = database.writableContext.currentUser?.user.id,
-            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
+            let currentUserId = database.writableContext.currentUser?.user.id
         else {
             return nil
         }
+
+        let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return MessageNewEvent(
             user: userPayload.asModel(),
@@ -127,9 +128,10 @@ class ManualEventHandler {
             let messagePayload = payload.message,
             let createdAt = payload.createdAt,
             let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = getLocalChannel(id: cid),
-            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
+            let channel = getLocalChannel(id: cid)
         else { return nil }
+
+        let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return MessageUpdatedEvent(
             user: userPayload.asModel(),
@@ -144,10 +146,10 @@ class ManualEventHandler {
             let messagePayload = payload.message,
             let createdAt = payload.createdAt,
             let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = getLocalChannel(id: cid),
-            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
+            let channel = getLocalChannel(id: cid)
         else { return nil }
 
+        let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
         let userPayload = payload.user
 
         return MessageDeletedEvent(
@@ -166,9 +168,10 @@ class ManualEventHandler {
             let reactionPayload = payload.reaction,
             let createdAt = payload.createdAt,
             let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = getLocalChannel(id: cid),
-            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
+            let channel = getLocalChannel(id: cid)
         else { return nil }
+
+        let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return ReactionNewEvent(
             user: userPayload.asModel(),
@@ -186,9 +189,10 @@ class ManualEventHandler {
             let reactionPayload = payload.reaction,
             let createdAt = payload.createdAt,
             let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = getLocalChannel(id: cid),
-            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
+            let channel = getLocalChannel(id: cid)
         else { return nil }
+
+        let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return ReactionUpdatedEvent(
             user: userPayload.asModel(),
@@ -206,9 +210,10 @@ class ManualEventHandler {
             let reactionPayload = payload.reaction,
             let createdAt = payload.createdAt,
             let currentUserId = database.writableContext.currentUser?.user.id,
-            let channel = getLocalChannel(id: cid),
-            let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
+            let channel = getLocalChannel(id: cid)
         else { return nil }
+
+        let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return ReactionDeletedEvent(
             user: userPayload.asModel(),

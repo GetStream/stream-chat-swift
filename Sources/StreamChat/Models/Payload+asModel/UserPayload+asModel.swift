@@ -23,6 +23,7 @@ extension UserPayload {
             lastActiveAt: lastActiveAt,
             teams: Set(teams),
             language: language.flatMap { TranslationLanguage(languageCode: $0) },
+            avgResponseTime: avgResponseTime,
             extraData: extraData
         )
     }

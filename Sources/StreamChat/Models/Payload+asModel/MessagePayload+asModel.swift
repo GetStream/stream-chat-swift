@@ -15,7 +15,7 @@ extension MessagePayload {
         cid: ChannelId,
         currentUserId: UserId?,
         channelReads: [ChatChannelRead]
-    ) -> ChatMessage? {
+    ) -> ChatMessage {
         let author = user.asModel()
         let mentionedUsers = Set(mentionedUsers.compactMap { $0.asModel() })
         let threadParticipants = threadParticipants.compactMap { $0.asModel() }

@@ -163,7 +163,12 @@ class MessageDeletedEventDTO: EventDTO {
 
         // If the message is hard deleted, it is not available as DTO.
         // So we map the Payload Directly to the Model.
-        let message = (try? messageDTO?.asModel()) ?? message.asModel(currentUser: session.currentUser)
+        let channelReads = (try? channelDTO.asModel().reads) ?? []
+        let message = message.asModel(
+            cid: cid,
+            currentUserId: session.currentUser?.user.id,
+            channelReads: channelReads
+        )
 
         return try? MessageDeletedEvent(
             user: userDTO?.asModel(),

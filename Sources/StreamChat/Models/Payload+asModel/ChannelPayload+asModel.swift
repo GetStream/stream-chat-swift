@@ -25,7 +25,7 @@ extension ChannelPayload {
 
         // Map reads
         let mappedReads = channelReads.map { $0.asModel() }
-        
+
         // Map watchers
         let mappedWatchers = watchers?.map { $0.asModel() } ?? []
 
@@ -59,6 +59,9 @@ extension ChannelPayload {
             latestMessages: latestMessages,
             lastMessageFromCurrentUser: latestMessages.first { $0.isSentByCurrentUser },
             pinnedMessages: pinnedMessages.compactMap {
+                $0.asModel(cid: channelPayload.cid, currentUserId: currentUserId, channelReads: reads)
+            },
+            pendingMessages: (pendingMessages ?? []).compactMap {
                 $0.asModel(cid: channelPayload.cid, currentUserId: currentUserId, channelReads: reads)
             },
             muteDetails: nil,
@@ -101,6 +104,7 @@ extension ChannelDetailPayload {
             latestMessages: [],
             lastMessageFromCurrentUser: nil,
             pinnedMessages: [],
+            pendingMessages: [],
             muteDetails: nil,
             previewMessage: nil,
             draftMessage: nil,
@@ -116,7 +120,7 @@ extension MemberPayload {
     func asModel(channelId: ChannelId) -> ChatChannelMember? {
         guard let userPayload = user else { return nil }
         let user = userPayload.asModel()
-        
+
         return ChatChannelMember(
             id: user.id,
             name: user.name,
@@ -145,6 +149,7 @@ extension MemberPayload {
             banExpiresAt: banExpiresAt,
             isShadowBannedFromChannel: isShadowBanned ?? false,
             notificationsMuted: notificationsMuted,
+            avgResponseTime: user.avgResponseTime,
             memberExtraData: [:]
         )
     }
