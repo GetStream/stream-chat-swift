@@ -66,11 +66,6 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         isLastMessageFullyVisible
     }
 
-    /// A component responsible to handle when to load new or old messages.
-//    private lazy var viewPaginationHandler: StatefulViewPaginationHandling = {
-//        InvertedScrollViewPaginationHandler.make(scrollView: messageListVC.listView)
-//    }()
-
     override open func setUp() {
         super.setUp()
 
@@ -88,16 +83,6 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         channelController.synchronize { [weak self] error in
             self?.didFinishSynchronizing(with: error)
         }
-
-        // Handle pagination
-//        viewPaginationHandler.onNewTopPage = { [weak self] notifyElementsCount, completion in
-//            notifyElementsCount(self?.channelController.messages.count ?? 0)
-//            self?.loadPreviousMessages(completion: completion)
-//        }
-//        viewPaginationHandler.onNewBottomPage = { [weak self] notifyElementsCount, completion in
-//            notifyElementsCount(self?.channelController.messages.count ?? 0)
-//            self?.loadNextMessages(completion: completion)
-//        }
 
         messageListVC.swipeToReplyGestureHandler.onReply = { [weak self] message in
             self?.messageComposerVC.content.quoteMessage(message)
@@ -196,35 +181,6 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         messageListVC.jumpToMessage(id: id, animated: animated)
     }
 
-    // MARK: - Loading previous and next messages state handling.
-
-    /// Called when the channel will load previous (older) messages.
-    open func loadPreviousMessages(completion: @escaping (Error?) -> Void) {
-        channelController.loadPreviousMessages { [weak self] error in
-            completion(error)
-            self?.didFinishLoadingPreviousMessages(with: error)
-        }
-    }
-
-    /// Called when the channel finished requesting previous (older) messages.
-    /// Can be used to handle state changes or UI updates.
-    open func didFinishLoadingPreviousMessages(with error: Error?) {
-        // no-op, override to handle the completion of loading previous messages.
-    }
-
-    /// Called when the channel will load next (newer) messages.
-    open func loadNextMessages(completion: @escaping (Error?) -> Void) {
-        channelController.loadNextMessages { [weak self] error in
-            completion(error)
-            self?.didFinishLoadingNextMessages(with: error)
-        }
-    }
-
-    /// Called when the channel finished requesting next (newer) messages.
-    open func didFinishLoadingNextMessages(with error: Error?) {
-        // no-op, override to handle the completion of loading next messages.
-    }
-
     // MARK: - ChatMessageListVCDataSource
 
     public var messages: [ChatMessage] = []
@@ -283,9 +239,27 @@ open class DemoLivestreamChatChannelVC: _ViewController,
 
     open func chatMessageListVC(
         _ vc: ChatMessageListVC,
-        willDisplayMessageAt indexPath: IndexPath
+        scrollViewDidScroll scrollView: UIScrollView
     ) {
         // no-op
+    }
+    
+    open func chatMessageListVC(
+        _ vc: ChatMessageListVC,
+        willDisplayMessageAt indexPath: IndexPath
+    ) {
+        let messageCount = messages.count
+        guard messageCount > 0 else { return }
+        
+        // Load newer messages when displaying messages near index 0
+        if indexPath.item < 10 && !isFirstPageLoaded {
+            channelController.loadNextMessages()
+        }
+        
+        // Load older messages when displaying messages near the end of the array
+        if indexPath.item >= messageCount - 10 && !isLastPageLoaded {
+            channelController.loadPreviousMessages()
+        }
     }
 
     open func chatMessageListVC(
@@ -305,13 +279,6 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         default:
             return
         }
-    }
-
-    open func chatMessageListVC(
-        _ vc: ChatMessageListVC,
-        scrollViewDidScroll scrollView: UIScrollView
-    ) {
-        // no-op
     }
 
     open func chatMessageListVC(
