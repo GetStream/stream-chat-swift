@@ -366,7 +366,7 @@ class DemoLivestreamComposerVC: ComposerVC {
             return
         }
         
-        if let threadParentMessageId = content.threadMessage?.id {
+        if content.threadMessage?.id != nil {
             // For thread replies, we still need to use the regular channel controller
             // since LivestreamChannelController doesn't support thread operations
             super.createNewMessage(text: text)
