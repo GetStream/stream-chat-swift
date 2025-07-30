@@ -150,7 +150,7 @@ extension MemberPayload {
             isShadowBannedFromChannel: isShadowBanned ?? false,
             notificationsMuted: notificationsMuted,
             avgResponseTime: user.avgResponseTime,
-            memberExtraData: [:]
+            memberExtraData: extraData ?? [:]
         )
     }
 }

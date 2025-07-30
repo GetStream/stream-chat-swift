@@ -86,6 +86,8 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     }
 
     /// A Boolean value that indicates whether to load initial messages from the cache.
+    ///
+    /// Only the initial page will be loaded from cache, to avoid an initial blank screen.
     public var loadInitialMessagesFromCache: Bool = true
 
     /// Set the delegate to observe the changes in the system.
@@ -815,7 +817,12 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
             extraData: extraData
         ) { result in
             if let newMessage = try? result.get() {
-                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+                self.client.eventNotificationCenter.process(
+                    NewMessagePendingEvent(
+                        message: newMessage,
+                        cid: cid
+                    )
+                )
             }
             self.callback {
                 completion?(result.map(\.id))

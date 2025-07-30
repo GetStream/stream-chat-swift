@@ -508,6 +508,7 @@ public class Chat {
         restrictedVisibility: [UserId] = []
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
+        let cid = try await self.cid
         let localMessage = try await channelUpdater.createNewMessage(
             in: cid,
             messageId: messageId,
@@ -527,7 +528,7 @@ public class Chat {
         )
         // Important to set up the waiter immediately
         async let sentMessage = try await waitForAPIRequest(localMessage: localMessage)
-        eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage))
+        eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage, cid: cid))
         return try await sentMessage
     }
 
@@ -545,6 +546,7 @@ public class Chat {
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON] = [:]
     ) async throws -> ChatMessage {
+        let cid = try await self.cid
         let localMessage = try await channelUpdater.createNewMessage(
             in: cid,
             messageId: messageId,
@@ -564,7 +566,7 @@ public class Chat {
         )
         // Important to set up the waiter immediately
         async let sentMessage = try await waitForAPIRequest(localMessage: localMessage)
-        eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage))
+        eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage, cid: cid))
         return try await sentMessage
     }
 
@@ -979,6 +981,7 @@ public class Chat {
         messageId: MessageId? = nil
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
+        let cid = try await self.cid
         let localMessage = try await messageUpdater.createNewReply(
             in: cid,
             messageId: messageId,
@@ -997,7 +1000,7 @@ public class Chat {
             extraData: extraData
         )
         async let sentMessage = try await waitForAPIRequest(localMessage: localMessage)
-        eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage))
+        eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage, cid: cid))
         return try await sentMessage
     }
     

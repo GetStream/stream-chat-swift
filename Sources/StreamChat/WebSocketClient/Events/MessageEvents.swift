@@ -159,7 +159,6 @@ class MessageDeletedEventDTO: EventDTO {
         }
 
         let userDTO = user.flatMap { session.user(id: $0.id) }
-        let messageDTO = session.message(id: message.id)
 
         // If the message is hard deleted, it is not available as DTO.
         // So we map the Payload Directly to the Model.
@@ -248,7 +247,7 @@ class MessageReadEventDTO: EventDTO {
 // Triggered when the current user creates a new message and is pending to be sent.
 public struct NewMessagePendingEvent: ChannelSpecificEvent {
     public var message: ChatMessage
-    public var cid: ChannelId { message.cid! }
+    public var cid: ChannelId
 }
 
 // Triggered when a message failed being sent.

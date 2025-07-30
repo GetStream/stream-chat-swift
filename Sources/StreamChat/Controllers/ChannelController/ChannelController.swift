@@ -836,7 +836,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         ) { result in
             if let newMessage = try? result.get() {
-                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+                self.client.eventNotificationCenter.process(
+                    NewMessagePendingEvent(
+                        message: newMessage,
+                        cid: cid
+                    )
+                )
             }
             self.callback {
                 completion?(result.map(\.id))
@@ -891,7 +896,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         ) { result in
             if let newMessage = try? result.get() {
-                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+                self.client.eventNotificationCenter.process(
+                    NewMessagePendingEvent(
+                        message: newMessage,
+                        cid: cid
+                    )
+                )
             }
             self.callback {
                 completion?(result.map(\.id))
@@ -962,7 +972,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         ) { result in
             if let newMessage = try? result.get() {
-                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+                self.client.eventNotificationCenter.process(
+                    NewMessagePendingEvent(
+                        message: newMessage,
+                        cid: cid
+                    )
+                )
             }
             self.callback {
                 completion?(result.map(\.id))
@@ -1734,7 +1749,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         ) { result in
             if let newMessage = try? result.get() {
-                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+                self.client.eventNotificationCenter.process(
+                    NewMessagePendingEvent(
+                        message: newMessage,
+                        cid: cid
+                    )
+                )
             }
             self.callback {
                 completion?(result.map(\.id))

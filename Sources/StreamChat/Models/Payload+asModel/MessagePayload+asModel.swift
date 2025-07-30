@@ -42,6 +42,7 @@ extension MessagePayload {
             .enumerated()
             .compactMap { offset, attachmentPayload in
                 guard let payloadData = try? JSONEncoder.stream.encode(attachmentPayload.payload) else {
+                    log.error("Failed to encode attachment payload at index \(offset) for message \(id)")
                     return nil
                 }
                 return AnyChatMessageAttachment(
