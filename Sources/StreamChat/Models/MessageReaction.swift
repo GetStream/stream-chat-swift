@@ -28,5 +28,3 @@ public struct ChatMessageReaction: Hashable {
     /// Custom data
     public let extraData: [String: RawJSON]
 }
-
-// MARK: - Payload -> Model Mapping

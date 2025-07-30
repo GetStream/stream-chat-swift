@@ -5,12 +5,12 @@
 import Foundation
 
 extension MessagePayload {
-    /// Converts the MessagePayload to a ChatMessage model
+    /// Converts the MessagePayload to a ChatMessage model.
     /// - Parameters:
-    ///   - cid: The channel ID the message belongs to
-    ///   - currentUserId: The current user's ID for determining sent status
-    ///   - channelReads: Channel reads for determining readBy status
-    /// - Returns: A ChatMessage instance
+    ///   - cid: The channel ID the message belongs to.
+    ///   - currentUserId: The current user's ID for determining sent status.
+    ///   - channelReads: Channel reads for determining readBy status.
+    /// - Returns: A ChatMessage instance.
     func asModel(
         cid: ChannelId,
         currentUserId: UserId?,
@@ -19,15 +19,13 @@ extension MessagePayload {
         let author = user.asModel()
         let mentionedUsers = Set(mentionedUsers.compactMap { $0.asModel() })
         let threadParticipants = threadParticipants.compactMap { $0.asModel() }
-        
-        // Map quoted message recursively
+
         let quotedMessage = quotedMessage?.asModel(
             cid: cid,
             currentUserId: currentUserId,
             channelReads: channelReads
         )
-        
-        // Map reactions
+
         let latestReactions = Set(latestReactions.compactMap { $0.asModel(messageId: id) })
 
         let currentUserReactions: Set<ChatMessageReaction>
@@ -36,8 +34,7 @@ extension MessagePayload {
         } else {
             currentUserReactions = Set(ownReactions.compactMap { $0.asModel(messageId: id) })
         }
-        
-        // Map attachments
+
         let attachments: [AnyChatMessageAttachment] = attachments
             .enumerated()
             .compactMap { offset, attachmentPayload in
@@ -54,7 +51,6 @@ extension MessagePayload {
                 )
             }
 
-        // Calculate readBy from channel reads
         let createdAtInterval = createdAt.timeIntervalSince1970
         let messageUserId = user.id
         let readBy = channelReads.filter { read in
@@ -146,8 +142,8 @@ extension MessagePayload {
 }
 
 extension MessageReactionPayload {
-    /// Converts the MessageReactionPayload to a ChatMessageReaction model
-    /// - Returns: A ChatMessageReaction instance
+    /// Converts the MessageReactionPayload to a ChatMessageReaction model.
+    /// - Returns: A ChatMessageReaction instance.
     func asModel(messageId: MessageId) -> ChatMessageReaction {
         ChatMessageReaction(
             id: [user.id, messageId, type.rawValue].joined(separator: "/"),

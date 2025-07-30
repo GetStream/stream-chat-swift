@@ -5,8 +5,8 @@
 import Foundation
 
 extension UserPayload {
-    /// Converts the UserPayload to a ChatUser model
-    /// - Returns: A ChatUser instance
+    /// Converts the UserPayload to a ChatUser model.
+    /// - Returns: A ChatUser instance.
     func asModel() -> ChatUser {
         ChatUser(
             id: id,

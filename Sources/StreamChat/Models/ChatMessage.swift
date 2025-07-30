@@ -693,5 +693,3 @@ public struct MessageDeliveryStatus: RawRepresentable, Hashable {
     /// The message delivery state for message failed to be sent/edited/deleted.
     public static let failed = Self(rawValue: "failed")
 }
-
-// MARK: - Payload -> Model Mapping

@@ -1106,8 +1106,6 @@ extension ChannelUpdater {
         }
     }
 
-    // MARK: -
-
     func loadMessages(with channelQuery: ChannelQuery, pagination: MessagesPagination) async throws -> [ChatMessage] {
         let payload = try await update(channelQuery: channelQuery.withPagination(pagination))
         guard let cid = channelQuery.cid else { return [] }

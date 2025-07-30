@@ -654,5 +654,3 @@ public extension ChatChannel {
         ownCapabilities.contains(.shareLocation)
     }
 }
-
-// MARK: - Payload -> Model Mapping

@@ -176,5 +176,3 @@ public extension UserRole {
         }
     }
 }
-
-// MARK: - Payload -> Model Mapping
