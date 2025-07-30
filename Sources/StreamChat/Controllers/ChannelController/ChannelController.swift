@@ -1376,12 +1376,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelModificationFailed(completion)
             return
         }
-        guard cooldownDuration >= 1, cooldownDuration <= 120 else {
-            callback {
-                completion?(ClientError.InvalidCooldownDuration())
-            }
-            return
-        }
         updater.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration) { error in
             self.callback {
                 completion?(error)
@@ -1401,7 +1395,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelModificationFailed(completion)
             return
         }
-        updater.enableSlowMode(cid: cid, cooldownDuration: 0) { error in
+        updater.disableSlowMode(cid: cid) { error in
             self.callback {
                 completion?(error)
             }

@@ -502,6 +502,66 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         }
     }
 
+    // Returns the current cooldown time for the channel. Returns 0 in case there is no cooldown active.
+    public func currentCooldownTime() -> Int {
+        guard let cooldownDuration = channel?.cooldownDuration, cooldownDuration > 0,
+              let currentUserLatestMessage = messages.first(where: { $0.author.id == currentUserId }),
+              channel?.ownCapabilities.contains(.skipSlowMode) == false else {
+            return 0
+        }
+
+        let currentTime = Date().timeIntervalSince(currentUserLatestMessage.createdAt)
+        return max(0, cooldownDuration - Int(currentTime))
+    }
+
+    /// Enables slow mode for the channel
+    ///
+    /// When slow mode is enabled, users can only send a message every `cooldownDuration` time interval.
+    /// `cooldownDuration` is specified in seconds, and should be between 1-120.
+    /// For more information, please check [documentation](https://getstream.io/chat/docs/javascript/slow_mode/?language=swift).
+    ///
+    /// - Parameters:
+    ///   - cooldownDuration: Duration of the time interval users have to wait between messages.
+    ///   Specified in seconds. Should be between 1-120.
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    public func enableSlowMode(cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
+        guard let cid else {
+            callback {
+                completion?(ClientError.ChannelNotCreatedYet())
+            }
+            return
+        }
+
+        apiClient.request(
+            endpoint: .enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)
+        ) { result in
+            self.callback {
+                completion?(result.error)
+            }
+        }
+    }
+
+    /// Disables slow mode for the channel
+    ///
+    /// For more information, please check [documentation](https://getstream.io/chat/docs/javascript/slow_mode/?language=swift).
+    ///
+    /// - Parameters:
+    ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    public func disableSlowMode(completion: ((Error?) -> Void)? = nil) {
+        guard let cid else {
+            callback {
+                completion?(ClientError.ChannelNotCreatedYet())
+            }
+            return
+        }
+
+        updater.disableSlowMode(cid: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
     // MARK: - Private Methods
 
     private func updateChannelData(
