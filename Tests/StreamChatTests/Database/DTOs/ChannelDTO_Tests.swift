@@ -342,10 +342,13 @@ final class ChannelDTO_Tests: XCTestCase {
 
         // Pinned message should be older than `message` to ensure it's not returned first in `latestMessages`
         let pinnedMessage = dummyPinnedMessagePayload(createdAt: .unique(before: messageCreatedAt))
+        
+        let pendingMessage = dummyMessagePayload(createdAt: messageCreatedAt)
 
         let payload = dummyPayload(
             with: channelId,
             messages: [message],
+            pendingMessages: [pendingMessage],
             pinnedMessages: [pinnedMessage],
             ownCapabilities: ["join-channel", "delete-channel"]
         )
@@ -452,7 +455,11 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.pinnedMessages[0].pinnedAt, loadedChannel.pinnedMessages[0].pinDetails?.pinnedAt)
             Assert.willBeEqual(payload.pinnedMessages[0].pinExpires, loadedChannel.pinnedMessages[0].pinDetails?.expiresAt)
             Assert.willBeEqual(payload.pinnedMessages[0].pinnedBy?.id, loadedChannel.pinnedMessages[0].pinDetails?.pinnedBy.id)
-
+            
+            // Pending Messages
+            Assert.willBeEqual(payload.pendingMessages?[0].id, loadedChannel.pendingMessages[0].id)
+            Assert.willBeEqual(payload.pendingMessages?[0].text, loadedChannel.pendingMessages[0].text)
+            
             // Message user
             Assert.willBeEqual(payload.messages[0].user.id, loadedChannel.latestMessages.first?.author.id)
             Assert.willBeEqual(payload.messages[0].user.createdAt, loadedChannel.latestMessages.first?.author.userCreatedAt)
