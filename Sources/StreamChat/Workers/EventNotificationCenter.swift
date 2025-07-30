@@ -70,8 +70,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
                     middlewareEvents.append(event)
                     return
                 }
-                if let cid = eventDTO.payload.cid,
-                   let manualEvent = self.manualEventHandler.handle(event) {
+                if let manualEvent = self.manualEventHandler.handle(event) {
                     manualHandlingEvents.append(manualEvent)
                 } else {
                     middlewareEvents.append(event)
