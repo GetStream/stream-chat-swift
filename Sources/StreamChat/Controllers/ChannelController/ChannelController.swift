@@ -2003,7 +2003,7 @@ private extension ChatChannelController {
     /// ie. VCs should use the `are{FEATURE_NAME}Enabled` props (ie. `areReadEventsEnabled`) before using any feature
     private func channelFeatureDisabled(feature: String, completion: ((Error?) -> Void)?) {
         let error = ClientError.ChannelFeatureDisabled("Channel feature: \(feature) is disabled for this channel.")
-        log.error(error.localizedDescription)
+        log.warning(error.localizedDescription)
         callback {
             completion?(error)
         }
