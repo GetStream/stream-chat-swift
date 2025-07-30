@@ -30,13 +30,17 @@ extension Endpoint {
         score: Int,
         enforceUnique: Bool,
         extraData: [String: RawJSON],
+        skipPush: Bool,
+        emojiCode: String?,
         messageId: MessageId
     ) -> Endpoint<EmptyResponse> {
         let body = MessageReactionRequestPayload(
             enforceUnique: enforceUnique,
+            skipPush: skipPush,
             reaction: ReactionRequestPayload(
                 type: type,
                 score: score,
+                emojiCode: emojiCode,
                 extraData: extraData
             )
         )

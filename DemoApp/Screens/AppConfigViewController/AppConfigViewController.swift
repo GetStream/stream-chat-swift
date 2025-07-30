@@ -180,6 +180,7 @@ class AppConfigViewController: UITableViewController {
 
     enum ComponentsConfigOption: String, CaseIterable {
         case isUniqueReactionsEnabled
+        case isReactionPushEmojisEnabled
         case shouldMessagesStartAtTheTop
         case shouldAnimateJumpToMessageWhenOpeningChannel
         case shouldJumpToUnreadWhenOpeningChannel
@@ -445,6 +446,10 @@ class AppConfigViewController: UITableViewController {
         case .isUniqueReactionsEnabled:
             cell.accessoryView = makeSwitchButton(Components.default.isUniqueReactionsEnabled) { newValue in
                 Components.default.isUniqueReactionsEnabled = newValue
+            }
+        case .isReactionPushEmojisEnabled:
+            cell.accessoryView = makeSwitchButton(Components.default.isReactionPushEmojisEnabled) { newValue in
+                Components.default.isReactionPushEmojisEnabled = newValue
             }
         case .shouldMessagesStartAtTheTop:
             cell.accessoryView = makeSwitchButton(Components.default.shouldMessagesStartAtTheTop) { newValue in

@@ -82,6 +82,7 @@ public class ChatChannelMember: ChatUser, @unchecked Sendable {
         banExpiresAt: Date?,
         isShadowBannedFromChannel: Bool,
         notificationsMuted: Bool,
+        avgResponseTime: Int?,
         memberExtraData: [String: RawJSON]
     ) {
         self.memberRole = memberRole
@@ -113,6 +114,7 @@ public class ChatChannelMember: ChatUser, @unchecked Sendable {
             lastActiveAt: lastActiveAt,
             teams: teams,
             language: language,
+            avgResponseTime: avgResponseTime,
             extraData: extraData
         )
     }
@@ -157,6 +159,7 @@ public class ChatChannelMember: ChatUser, @unchecked Sendable {
             banExpiresAt: banExpiresAt,
             isShadowBannedFromChannel: isShadowBannedFromChannel,
             notificationsMuted: notificationsMuted,
+            avgResponseTime: avgResponseTime,
             memberExtraData: memberExtraData ?? [:]
         )
     }

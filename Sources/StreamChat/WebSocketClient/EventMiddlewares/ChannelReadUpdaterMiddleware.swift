@@ -35,6 +35,9 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             )
 
         case let event as MessageReadEventDTO:
+            if isThreadReadEvent(eventPayload: event.payload) {
+                break
+            }
             resetChannelRead(
                 for: event.cid,
                 userId: event.user.id,
@@ -43,6 +46,9 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             )
 
         case let event as NotificationMarkReadEventDTO:
+            if isThreadReadEvent(eventPayload: event.payload) {
+                break
+            }
             resetChannelRead(
                 for: event.cid,
                 userId: event.user.id,
@@ -79,6 +85,10 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         }
 
         return event
+    }
+
+    private func isThreadReadEvent(eventPayload: EventPayload) -> Bool {
+        eventPayload.threadDetails != nil || eventPayload.threadPartial != nil
     }
 
     private func resetChannelRead(

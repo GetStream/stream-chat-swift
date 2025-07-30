@@ -187,17 +187,17 @@ final class ChatThreadListController_Tests: XCTestCase {
                 threads: [
                     .dummy(
                         parentMessageId: .unique,
-                        updatedAt: date.addingTimeInterval(3),
+                        lastMessageAt: date.addingTimeInterval(30),
                         title: "1"
                     ),
                     .dummy(
                         parentMessageId: .unique,
-                        updatedAt: date.addingTimeInterval(2),
+                        lastMessageAt: date.addingTimeInterval(20),
                         title: "2"
                     ),
                     .dummy(
                         parentMessageId: .unique,
-                        updatedAt: date.addingTimeInterval(1),
+                        lastMessageAt: date.addingTimeInterval(1),
                         title: "3"
                     )
                 ],

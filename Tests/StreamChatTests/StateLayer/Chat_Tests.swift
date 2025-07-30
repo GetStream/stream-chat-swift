@@ -1492,7 +1492,6 @@ final class Chat_Tests: XCTestCase {
             try await chat.mute(expiration: expiration)
             XCTAssertEqual(channelId, env.channelUpdaterMock.muteChannel_cid)
             XCTAssertEqual(expiration, env.channelUpdaterMock.muteChannel_expiration)
-            XCTAssertEqual(true, env.channelUpdaterMock.muteChannel_mute)
         }
     }
     
@@ -1502,7 +1501,6 @@ final class Chat_Tests: XCTestCase {
             await XCTAssertAsyncFailure(try await chat.mute(expiration: expiration), expectedTestError)
             XCTAssertEqual(channelId, env.channelUpdaterMock.muteChannel_cid)
             XCTAssertEqual(expiration, env.channelUpdaterMock.muteChannel_expiration)
-            XCTAssertEqual(true, env.channelUpdaterMock.muteChannel_mute)
         }
     }
     

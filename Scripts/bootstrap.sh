@@ -20,15 +20,11 @@ trap "echo ; echo ❌ The Bootstrap script failed to finish without error. See t
 
 source ./Githubfile
 
-puts "Create git/hooks folder if needed"
-mkdir -p .git/hooks
-
-# Symlink hooks folder to .git/hooks folder
-puts "Create symlink for pre-commit hooks"
-# Symlink needs to be ../../hooks and not ./hooks because git evaluates them in .git/hooks
-ln -sf ../../hooks/pre-commit.sh .git/hooks/pre-commit
-chmod +x .git/hooks/pre-commit
-chmod +x ./hooks/git-format-staged
+if [ "${GITHUB_ACTIONS:-}" != "true" ]; then
+  puts "Set up git hooks"
+  bundle install
+  bundle exec lefthook install
+fi
 
 if [ "${SKIP_MINT_BOOTSTRAP:-}" != true ]; then
   puts "Bootstrap Mint dependencies"
@@ -96,4 +92,12 @@ if [[ ${INSTALL_IPSW-default} == true ]]; then
   tar -xzf "$FILE"
   chmod +x ipsw
   sudo mv ipsw /usr/local/bin/
+fi
+
+if [[ ${INSTALL_INTERFACE_ANALYZER-default} == true ]]; then
+  puts "Install interface-analyser v${INTERFACE_ANALYZER_VERSION}"
+  FILE="interface-analyser"
+  wget "https://github.com/GetStream/stream-module-interface-analyser/releases/download/v${INTERFACE_ANALYZER_VERSION}/${FILE}"
+  chmod +x ${FILE}
+  sudo mv ${FILE} /usr/local/bin/
 fi

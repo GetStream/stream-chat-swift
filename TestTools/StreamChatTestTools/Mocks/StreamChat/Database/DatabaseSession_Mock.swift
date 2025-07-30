@@ -297,6 +297,10 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.delete(message: message)
     }
 
+    func delete(mute: ChannelMuteDTO) {
+        underlyingSession.delete(mute: mute)
+    }
+
     func saveDraftMessage(payload: DraftPayload, for cid: ChannelId, cache: PreWarmedCache?) throws -> MessageDTO {
         try underlyingSession.saveDraftMessage(payload: payload, for: cid, cache: cache)
     }

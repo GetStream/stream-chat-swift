@@ -15,14 +15,12 @@ class CreateChatViewController: UIViewController {
 
     // Composer subclass intended to be only used in this VC
     class DemoComposerVC: ComposerVC {
-        override func createNewMessage(text: String) {
+        override func publishMessage(sender: UIButton) {
             guard let navController = parent?.parent as? UINavigationController,
                   let controller = channelController else { return }
-
-            let createMessage: (String) -> Void = {
-                super.createNewMessage(text: $0)
+            let publish: () -> Void = {
+                super.publishMessage(sender: sender)
             }
-
             // Create the Channel on backend
             controller.synchronize { [weak self] error in
                 Task { @MainActor in
@@ -31,13 +29,12 @@ class CreateChatViewController: UIViewController {
                         return
                     }
                     
-                    // Send the message
-                    createMessage(text)
-                    
+                    publish()
+                
                     // Present the new chat and controller
                     let vc = ChatChannelVC()
                     vc.channelController = controller
-                    
+
                     navController.setViewControllers([navController.viewControllers.first!, vc], animated: true)
                 }
             }

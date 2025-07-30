@@ -22,6 +22,7 @@ public extension ChatUser {
         lastActiveAt: Date? = nil,
         teams: Set<TeamId> = [],
         language: TranslationLanguage? = nil,
+        avgResponseTime: Int? = nil,
         extraData: [String: RawJSON] = [:]
     ) -> ChatUser {
         .init(
@@ -39,6 +40,7 @@ public extension ChatUser {
             lastActiveAt: lastActiveAt,
             teams: teams,
             language: language,
+            avgResponseTime: avgResponseTime,
             extraData: extraData
         )
     }

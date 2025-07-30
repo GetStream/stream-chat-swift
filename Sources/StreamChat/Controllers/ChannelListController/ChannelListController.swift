@@ -78,7 +78,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             client.databaseContainer,
             request,
             { try $0.asModel() },
-            query.sort.runtimeSorting
+            query.runtimeSortingValues
         )
 
         observer.onDidChange = { [weak self] changes in
@@ -261,7 +261,7 @@ extension ChatChannelListController {
             _ database: DatabaseContainer,
             _ fetchRequest: NSFetchRequest<ChannelDTO>,
             _ itemCreator: @escaping (ChannelDTO) throws -> ChatChannel,
-            _ sorting: [SortValue<ChatChannel>]
+            _ sort: [SortValue<ChatChannel>]
         )
             -> BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
                 BackgroundListDatabaseObserver(
@@ -269,7 +269,7 @@ extension ChatChannelListController {
                     fetchRequest: $1,
                     itemCreator: $2,
                     itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid),
-                    sorting: $3
+                    runtimeSorting: $3
                 )
             }
     }

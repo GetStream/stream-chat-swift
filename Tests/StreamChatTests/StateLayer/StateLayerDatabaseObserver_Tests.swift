@@ -241,7 +241,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
                 return try $0.asModel()
             },
             itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid),
-            sorting: query.sort.runtimeSorting
+            runtimeSorting: query.runtimeSortingValues
         )
         _ = try channelListObserver.startObserving(onContextDidChange: { _, _ in
             expectation.fulfill()
@@ -348,7 +348,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         var itemCreatorCounter = 0
         let threadListObserver = StateLayerDatabaseObserver(
             database: client.mockDatabaseContainer,
-            fetchRequest: ThreadDTO.threadListFetchRequest(),
+            fetchRequest: ThreadDTO.threadListFetchRequest(query: ThreadListQuery(watch: false)),
             itemCreator: {
                 itemCreatorCounter += 1
                 return try $0.asModel()

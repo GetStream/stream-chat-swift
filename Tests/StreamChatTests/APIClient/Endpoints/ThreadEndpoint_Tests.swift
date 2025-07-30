@@ -23,7 +23,12 @@ final class ThreadEndpoints_Tests: XCTestCase {
             "next": "test",
             "participant_limit": 10,
             "reply_limit": 10,
-            "watch": 0
+            "watch": 0,
+            "sort": [
+                ["field": "has_unread", "direction": -1],
+                ["field": "last_message_at", "direction": -1],
+                ["field": "parent_message_id", "direction": -1]
+            ]
         ]
 
         XCTAssertEqual(endpoint.method, .post)
@@ -47,12 +52,46 @@ final class ThreadEndpoints_Tests: XCTestCase {
             "next": "test",
             "participant_limit": 10,
             "reply_limit": 10,
-            "watch": 1
+            "watch": 1,
+            "sort": [
+                ["field": "has_unread", "direction": -1],
+                ["field": "last_message_at", "direction": -1],
+                ["field": "parent_message_id", "direction": -1]
+            ]
         ]
 
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertEqual(endpoint.path.value, "threads")
         XCTAssertEqual(endpoint.requiresConnectionId, true)
+        XCTAssertNil(endpoint.queryItems)
+        AssertDictionary(body, expectedBody)
+    }
+
+    func test_threads_withFilter() throws {
+        var query = ThreadListQuery(watch: false, filter: .equal(.createdByUserId, to: "user123"))
+        query.limit = 10
+        query.next = "test"
+        query.participantLimit = 10
+        query.replyLimit = 10
+        let endpoint = Endpoint<ThreadListPayload>.threads(query: query)
+        let body = try AnyEndpoint(endpoint).bodyAsDictionary()
+        let expectedBody: [String: Any] = [
+            "filter": ["created_by_user_id": ["$eq": "user123"]],
+            "limit": 10,
+            "next": "test",
+            "participant_limit": 10,
+            "reply_limit": 10,
+            "watch": 0,
+            "sort": [
+                ["field": "has_unread", "direction": -1],
+                ["field": "last_message_at", "direction": -1],
+                ["field": "parent_message_id", "direction": -1]
+            ]
+        ]
+
+        XCTAssertEqual(endpoint.method, .post)
+        XCTAssertEqual(endpoint.path.value, "threads")
+        XCTAssertEqual(endpoint.requiresConnectionId, false)
         XCTAssertNil(endpoint.queryItems)
         AssertDictionary(body, expectedBody)
     }

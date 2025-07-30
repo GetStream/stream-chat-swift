@@ -5,6 +5,44 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+# [4.83.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.83.0)
+_July 28, 2025_
+
+## StreamChat
+### ✅ Added
+- Add support for Filtering and Sorting Threads [#3731](https://github.com/GetStream/stream-chat-swift/pull/3731)
+- Add `ChatThread.activeParticipantCount` [#3731](https://github.com/GetStream/stream-chat-swift/pull/3731)
+- Add `CurrentUserUnreads.totalUnreadCountByTeam` [#3733](https://github.com/GetStream/stream-chat-swift/pull/3733)
+- Enable subclassing `StreamAudioPlayer` and `StreamAudioSessionConfigurator` [#3737](https://github.com/GetStream/stream-chat-swift/pull/3737)
+- Add `skipPush` parameter to `MessageController.editMessage()`  [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
+- Add `skipPush` and `emojiCode` to `MessageController.addReaction()` [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
+- Add `Components.availableReactionsPushEmojis` for rendering emojis in reaction push notifications [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
+- Add `Components.isReactionPushEmojisEnabled` to control whether an emoji should be set when adding a reaction [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
+- Add `MessageNotificationContent.reaction` that can be used by Notification Service Extension [#3738](https://github.com/GetStream/stream-chat-swift/pull/3738)
+- Add average message response time for users [#3739](https://github.com/GetStream/stream-chat-swift/pull/3739)
+### 🐞 Fixed
+- Fix rare crashes in `IOSBackgroundTaskScheduler` with on entering callbacks [#3751](https://github.com/GetStream/stream-chat-swift/pull/3751)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix reaction picker position in RTL layout [#3748](https://github.com/GetStream/stream-chat-swift/pull/3748)
+- Fix swiping and dismissing `GalleryVC` when using RTL layout [#3745](https://github.com/GetStream/stream-chat-swift/pull/3745)
+- Slide to cancel gesture did not cancel the recording in RTL layout [#3744](https://github.com/GetStream/stream-chat-swift/pull/3744)
+- Fix the direction of the bubble beak in RTL layouts [#3742](https://github.com/GetStream/stream-chat-swift/pull/3742)
+- Fix animating attachments when opening a sheet in the channel view [#3746](https://github.com/GetStream/stream-chat-swift/pull/3746)
+- Fix audio visualisation progress in RTL layout [#3749](https://github.com/GetStream/stream-chat-swift/pull/3749)
+
+# [4.82.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.82.0)
+_July 16, 2025_
+
+## StreamChat
+### ✅ Added
+- Open `applicationDidMoveToBackground` and `applicationDidMoveToForeground` of the `StreamAudioPlayer` and `StreamAudioRecorder` [#3728](https://github.com/GetStream/stream-chat-swift/pull/3728)
+### 🐞 Fixed
+- Fix channel unread count cleared when a thread is marked as read [#3710](https://github.com/GetStream/stream-chat-swift/pull/3710)
+- Fix channel mute local state not updated after mute action callback [#3718](https://github.com/GetStream/stream-chat-swift/pull/3718)
+- Fix channel not marking read due to some unnecessary guards [#3727](https://github.com/GetStream/stream-chat-swift/pull/3727)
+
 # [4.81.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.81.0)
 _July 03, 2025_
 

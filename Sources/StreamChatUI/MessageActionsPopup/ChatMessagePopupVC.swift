@@ -234,14 +234,14 @@ open class ChatMessagePopupVC: _ViewController, ComponentsProvider {
                 ),
                 reactionPicker.reactionsBubble.tailTrailingAnchor.pin(
                     equalTo: messageContentContainerView.leadingAnchor,
-                    constant: messageBubbleViewInsets.left
+                    constant: view.effectiveUserInterfaceLayoutDirection == .leftToRight ? messageBubbleViewInsets.left : messageBubbleViewInsets.right
                 )
             ]
         } else {
             constraints += [
                 reactionPicker.reactionsBubble.tailLeadingAnchor.pin(
                     equalTo: messageContentContainerView.trailingAnchor,
-                    constant: -messageBubbleViewInsets.right
+                    constant: view.effectiveUserInterfaceLayoutDirection == .leftToRight ? -messageBubbleViewInsets.right : -messageBubbleViewInsets.left
                 )
             ]
         }

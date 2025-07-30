@@ -673,7 +673,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
             return .init(
                 backgroundColor: backgroundColor,
-                roundedCorners: layoutOptions?.roundedCorners ?? .all
+                roundedCorners: layoutOptions?.roundedCorners(for: effectiveUserInterfaceLayoutDirection) ?? .all
             )
         }
 
@@ -1091,13 +1091,15 @@ public extension ChatMessage {
 }
 
 extension ChatMessageLayoutOptions {
-    var roundedCorners: CACornerMask {
+    func roundedCorners(for layoutDirection: UIUserInterfaceLayoutDirection) -> CACornerMask {
         if contains(.continuousBubble) {
             return .all
         } else if contains(.flipped) {
-            return CACornerMask.all.subtracting(.layerMaxXMaxYCorner)
+            return CACornerMask.all
+                .subtracting(layoutDirection == .leftToRight ? .layerMaxXMaxYCorner : .layerMinXMaxYCorner)
         } else {
-            return CACornerMask.all.subtracting(.layerMinXMaxYCorner)
+            return CACornerMask.all
+                .subtracting(layoutDirection == .leftToRight ? .layerMinXMaxYCorner : .layerMaxXMaxYCorner)
         }
     }
 }

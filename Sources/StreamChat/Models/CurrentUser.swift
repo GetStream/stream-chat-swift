@@ -85,7 +85,8 @@ public class CurrentChatUser: ChatUser, @unchecked Sendable {
         flaggedMessageIDs: Set<MessageId>,
         unreadCount: UnreadCount,
         mutedChannels: Set<ChatChannel>,
-        privacySettings: UserPrivacySettings
+        privacySettings: UserPrivacySettings,
+        avgResponseTime: Int?
     ) {
         self.devices = devices
         self.currentDevice = currentDevice
@@ -113,6 +114,7 @@ public class CurrentChatUser: ChatUser, @unchecked Sendable {
             lastActiveAt: lastActiveAt,
             teams: teams,
             language: language,
+            avgResponseTime: avgResponseTime,
             extraData: extraData
         )
     }
@@ -126,6 +128,8 @@ public struct CurrentUserUnreads: Sendable {
     public let totalUnreadChannelsCount: Int
     /// The total number of unread threads.
     public let totalUnreadThreadsCount: Int
+    /// The total number of unread messages grouped by team.
+    public let totalUnreadCountByTeam: [TeamId: Int]?
     /// The unread information per channel.
     public let unreadChannels: [UnreadChannel]
     /// The unread information per thread.
@@ -177,6 +181,7 @@ extension CurrentUserUnreadsPayload {
             totalUnreadMessagesCount: totalUnreadCount,
             totalUnreadChannelsCount: unreadChannels.count,
             totalUnreadThreadsCount: totalUnreadThreadsCount,
+            totalUnreadCountByTeam: totalUnreadCountByTeam,
             unreadChannels: unreadChannels,
             unreadThreads: threads.map { .init(
                 parentMessageId: $0.parentMessageId,

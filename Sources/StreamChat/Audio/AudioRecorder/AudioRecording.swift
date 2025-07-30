@@ -342,13 +342,13 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 
     // MARK: - AppStateObserverDelegate
 
-    func applicationDidMoveToBackground() {
+    open func applicationDidMoveToBackground() {
         /// If an we move to the background then we want to stop the recording as we don't
         /// have the ability to pause and resume it afterwards.
         stopRecording()
     }
 
-    func applicationDidMoveToForeground() {
+    open func applicationDidMoveToForeground() {
         /// Once we return to the foreground and the execution return back to us, we have an opportunity
         /// to resume the interrupted recording.
         /// - Note: As we don't currently support pause/resume on recording this is a No-Op call

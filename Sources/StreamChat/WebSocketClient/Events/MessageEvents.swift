@@ -318,6 +318,7 @@ private extension UserPayload {
             lastActiveAt: lastActiveAt,
             teams: Set(teams),
             language: language.map { TranslationLanguage(languageCode: $0) },
+            avgResponseTime: avgResponseTime,
             extraData: extraData
         )
     }

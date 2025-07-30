@@ -84,8 +84,10 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler, @unchecked Sendable {
         onEnteringBackground: @escaping () -> Void,
         onEnteringForeground: @escaping () -> Void
     ) {
-        self.onEnteringForeground = onEnteringForeground
-        self.onEnteringBackground = onEnteringBackground
+        queue.sync {
+            self.onEnteringForeground = onEnteringForeground
+            self.onEnteringBackground = onEnteringBackground
+        }
 
         NotificationCenter.default.addObserver(
             self,
@@ -103,8 +105,10 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler, @unchecked Sendable {
     }
 
     func stopListeningForAppStateUpdates() {
-        onEnteringForeground = {}
-        onEnteringBackground = {}
+        queue.sync {
+            self.onEnteringForeground = {}
+            self.onEnteringBackground = {}
+        }
 
         NotificationCenter.default.removeObserver(
             self,
@@ -120,11 +124,13 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler, @unchecked Sendable {
     }
 
     @objc private func handleAppDidEnterBackground() {
-        onEnteringBackground()
+        let callback = queue.sync { onEnteringBackground }
+        callback()
     }
 
     @objc private func handleAppDidBecomeActive() {
-        onEnteringForeground()
+        let callback = queue.sync { onEnteringForeground }
+        callback()
     }
 
     deinit {
