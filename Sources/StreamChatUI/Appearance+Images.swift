@@ -62,6 +62,7 @@ public extension Appearance {
         public var mic: UIImage = loadSafely(systemName: "mic", assetsFallback: "mic")
         public var lock: UIImage = loadSafely(systemName: "lock", assetsFallback: "lock")
         public var chevronLeft: UIImage = loadSafely(systemName: "chevron.left", assetsFallback: "chevron.left")
+        public var chevronRight: UIImage = loadSafely(systemName: "chevron.right", assetsFallback: "chevron.right")
         public var chevronUp: UIImage = loadSafely(systemName: "chevron.up", assetsFallback: "chevron.up")
         public var trash: UIImage = loadSafely(systemName: "trash", assetsFallback: "trash")
         public var stop: UIImage = loadSafely(systemName: "stop.circle", assetsFallback: "")
@@ -107,7 +108,7 @@ public extension Appearance {
         public var reactionWutSmall: UIImage = loadImageSafely(with: "reaction_wut_small")
         public var reactionWutBig: UIImage = loadImageSafely(with: "reaction_wut_big")
 
-        private var _availableReactions: [MessageReactionType: ChatMessageReactionAppearanceType]?
+        /// The reactions appearance used to display reactions in the message list.
         public var availableReactions: [MessageReactionType: ChatMessageReactionAppearanceType] {
             get {
                 _availableReactions ??
@@ -136,6 +137,25 @@ public extension Appearance {
             }
             set { _availableReactions = newValue }
         }
+
+        private var _availableReactions: [MessageReactionType: ChatMessageReactionAppearanceType]?
+
+        /// The reactions emoji unicode rendered in the push notifications.
+        public var availableReactionPushEmojis: [MessageReactionType: String] {
+            get {
+                _availableReactionPushEmojis ??
+                    [
+                        "love": "❤️",
+                        "haha": "😂",
+                        "like": "👍",
+                        "sad": "👎",
+                        "wow": "😮"
+                    ]
+            }
+            set { _availableReactionPushEmojis = newValue }
+        }
+
+        private var _availableReactionPushEmojis: [MessageReactionType: String]?
 
         // MARK: - MessageList
 

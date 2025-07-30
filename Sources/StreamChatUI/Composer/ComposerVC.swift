@@ -1062,10 +1062,10 @@ open class ComposerVC: _ViewController,
             cid: cid,
             messageId: id
         )
-        // TODO: Adjust LLC to edit mentions
         messageController?.editMessage(
             text: newText,
             skipEnrichUrl: content.skipEnrichUrl,
+            skipPush: false,
             attachments: content.attachments,
             extraData: content.extraData
         )

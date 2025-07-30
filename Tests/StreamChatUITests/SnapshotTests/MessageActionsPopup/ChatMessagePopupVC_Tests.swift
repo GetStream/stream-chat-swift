@@ -101,7 +101,7 @@ extension ChatMessagePopupVC: AppearanceProvider {}
             withHorizontalFittingPriority: .streamRequire,
             verticalFittingPriority: .streamLow
         )
-        AssertSnapshot(vc, variants: [.defaultDark, .defaultLight])
+        AssertSnapshot(vc, variants: [.defaultDark, .defaultLight, .rightToLeftLayout])
     }
 
     func test_appearanceCustomization_usingAppearance() {
@@ -110,7 +110,7 @@ extension ChatMessagePopupVC: AppearanceProvider {}
 
         vc.appearance = config
 
-        AssertSnapshot(vc, variants: [.defaultDark, .defaultLight])
+        AssertSnapshot(vc, variants: [.defaultDark, .defaultLight, .rightToLeftLayout])
     }
 
     func test_appearanceCustomization_usingSubclassing() {

@@ -3,7 +3,7 @@ description: 'Run bootstrap.sh'
 runs:
   using: "composite"
   steps:
-    - run: echo "IMAGE=${ImageOS}-${ImageVersion}" >> $GITHUB_ENV
+    - run: echo "IMAGE=${ImageOS}" >> $GITHUB_ENV
       shell: bash
     - run: echo "$HOME/.mint/bin" >> $GITHUB_PATH
       shell: bash

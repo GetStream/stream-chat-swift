@@ -244,6 +244,7 @@ extension ChatChannelMember {
             banExpiresAt: dto.banExpiresAt?.bridgeDate,
             isShadowBannedFromChannel: dto.isShadowBanned,
             notificationsMuted: dto.notificationsMuted,
+            avgResponseTime: dto.user.avgResponseTime?.intValue,
             memberExtraData: memberExtraData
         )
 

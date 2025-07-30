@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23507" systemVersion="24F74" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="23605" systemVersion="24F74" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="AttachmentDTO" representedClassName="AttachmentDTO" syncable="YES">
         <attribute name="data" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
@@ -461,6 +461,7 @@
         </uniquenessConstraints>
     </entity>
     <entity name="ThreadDTO" representedClassName="ThreadDTO" syncable="YES">
+        <attribute name="activeParticipantCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="currentUserUnreadCount" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="extraData" optional="YES" attributeType="Binary"/>
@@ -499,6 +500,7 @@
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="threadReads" inverseEntity="UserDTO"/>
     </entity>
     <entity name="UserDTO" representedClassName="UserDTO" syncable="YES">
+        <attribute name="avgResponseTime" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="extraData" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="imageURL" optional="YES" attributeType="URI"/>

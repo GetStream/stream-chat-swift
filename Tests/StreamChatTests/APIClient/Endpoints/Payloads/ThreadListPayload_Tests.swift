@@ -27,6 +27,7 @@ final class ThreadListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.createdBy.id, "han_solo")
         XCTAssertEqual(payload.replyCount, 60)
         XCTAssertEqual(payload.participantCount, 3)
+        XCTAssertEqual(payload.activeParticipantCount, 2)
         XCTAssertEqual(payload.threadParticipants.count, 3)
         XCTAssertEqual(payload.lastMessageAt, "2024-03-26T12:25:07.25741Z".toDate())
         XCTAssertEqual(payload.createdAt, "2024-03-26T12:14:10.87779Z".toDate())

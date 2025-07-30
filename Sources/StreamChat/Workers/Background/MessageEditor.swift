@@ -78,9 +78,16 @@ class MessageEditor: Worker, @unchecked Sendable {
             }
 
             let requestBody = dto.asRequestBody() as MessageRequestBody
+            let skipPush = dto.skipPush
             let skipEnrichUrl = dto.skipEnrichUrl
             messageRepository?.updateMessage(withID: messageId, localState: .syncing) { [weak self, weak messageRepository] _ in
-                self?.apiClient.request(endpoint: .editMessage(payload: requestBody, skipEnrichUrl: skipEnrichUrl)) { [weak self, weak messageRepository] apiResult in
+                self?.apiClient.request(
+                    endpoint: .editMessage(
+                        payload: requestBody,
+                        skipEnrichUrl: skipEnrichUrl,
+                        skipPush: skipPush
+                    )
+                ) { [weak self, weak messageRepository] apiResult in
                     let newMessageState: LocalMessageState? = apiResult.error == nil ? nil : .syncingFailed
 
                     messageRepository?.updateMessage(

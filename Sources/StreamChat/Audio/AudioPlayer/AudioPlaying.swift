@@ -81,13 +81,22 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked
     public required convenience init() {
         self.init(
             assetPropertyLoader: StreamAssetPropertyLoader(),
-            playerObserver: StreamPlayerObserver(),
-            player: .init(),
-            audioSessionConfigurator: StreamAudioSessionConfigurator(),
-            appStateObserver: StreamAppStateObserver()
+            audioSessionConfigurator: StreamAudioSessionConfigurator()
         )
     }
 
+    public init(
+        assetPropertyLoader: AssetPropertyLoading,
+        audioSessionConfigurator: AudioSessionConfiguring
+    ) {
+        self.assetPropertyLoader = assetPropertyLoader
+        playerObserver = StreamPlayerObserver()
+        player = AVPlayer()
+        self.audioSessionConfigurator = audioSessionConfigurator
+        appStateObserver = StreamAppStateObserver()
+        setUp()
+    }
+    
     init(
         assetPropertyLoader: AssetPropertyLoading,
         playerObserver: AudioPlayerObserving,
@@ -187,13 +196,13 @@ open class StreamAudioPlayer: AudioPlaying, AppStateObserverDelegate, @unchecked
 
     // MARK: - AppStateObserverDelegate
 
-    func applicationDidMoveToBackground() {
+    open func applicationDidMoveToBackground() {
         guard context.state == .playing else { return }
         shouldPlayWhenComeToForeground = true
         pause()
     }
 
-    func applicationDidMoveToForeground() {
+    open func applicationDidMoveToForeground() {
         guard shouldPlayWhenComeToForeground else { return }
         shouldPlayWhenComeToForeground = false
         play()

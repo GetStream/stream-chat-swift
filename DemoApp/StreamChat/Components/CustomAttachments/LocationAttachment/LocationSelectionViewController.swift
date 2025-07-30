@@ -184,8 +184,6 @@ class LocationSelectionViewController: UIViewController, ThemeProvider {
     }
     
     @objc private func shareLiveLocationTapped() {
-        guard let location = currentLocation else { return }
-        
         let alertController = UIAlertController(
             title: "Share Live Location",
             message: "Select the duration for sharing your live location.",

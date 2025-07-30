@@ -11,7 +11,13 @@ final class MessageReactionRequestPayload_Tests: XCTestCase {
         // Build the payload.
         let payload = MessageReactionRequestPayload(
             enforceUnique: false,
-            reaction: ReactionRequestPayload(type: "like", score: 10, extraData: ["mood": .string("good one")])
+            skipPush: true,
+            reaction: ReactionRequestPayload(
+                type: "like",
+                score: 10,
+                emojiCode: "👍",
+                extraData: ["mood": .string("good one")]
+            )
         )
 
         // Encode the payload.
@@ -20,9 +26,11 @@ final class MessageReactionRequestPayload_Tests: XCTestCase {
         // Assert encoding is correct.
         AssertJSONEqual(json, [
             "enforce_unique": payload.enforceUnique,
+            "skip_push": payload.skipPush,
             "reaction": [
                 "type": payload.reaction.type.rawValue,
                 "score": payload.reaction.score,
+                "emoji_code": payload.reaction.emojiCode ?? "",
                 "mood": "good one"
             ] as [String: Any]
         ])

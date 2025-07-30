@@ -32,7 +32,8 @@ public extension CurrentChatUser {
         flaggedMessageIDs: Set<MessageId> = [],
         unreadCount: UnreadCount = .noUnread,
         mutedChannels: Set<ChatChannel> = [],
-        privacySettings: UserPrivacySettings = .init()
+        privacySettings: UserPrivacySettings = .init(),
+        avgResponseTime: Int? = nil
     ) -> CurrentChatUser {
         .init(
             id: id,
@@ -58,7 +59,8 @@ public extension CurrentChatUser {
             flaggedMessageIDs: flaggedMessageIDs,
             unreadCount: unreadCount,
             mutedChannels: mutedChannels,
-            privacySettings: privacySettings
+            privacySettings: privacySettings,
+            avgResponseTime: avgResponseTime
         )
     }
 }

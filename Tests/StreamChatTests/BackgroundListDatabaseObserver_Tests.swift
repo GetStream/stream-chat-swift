@@ -29,7 +29,6 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
             database: database,
             fetchRequest: fetchRequest,
             itemCreator: { $0.uniqueValue },
-            sorting: [],
             fetchedResultsControllerType: TestFetchedResultsController.self
         )
     }
@@ -113,8 +112,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
             database: database,
             fetchRequest: fetchRequest,
-            itemCreator: { $0.testId },
-            sorting: []
+            itemCreator: { $0.testId }
         )
 
         // We call startObserving
@@ -162,8 +160,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
             database: database,
             fetchRequest: fetchRequest,
-            itemCreator: { $0.testId },
-            sorting: []
+            itemCreator: { $0.testId }
         )
         try observer.startObserving()
         
@@ -186,8 +183,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
             database: database,
             fetchRequest: fetchRequest,
-            itemCreator: { $0.testId },
-            sorting: []
+            itemCreator: { $0.testId }
         )
         observer.onDidChange = { [initialFinishedExpectation] _ in
             initialFinishedExpectation.fulfill()
@@ -206,8 +202,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
             database: database,
             fetchRequest: fetchRequest,
-            itemCreator: { $0.testId },
-            sorting: []
+            itemCreator: { $0.testId }
         )
         observer.onDidChange = { _ in
             initialFinishedExpectation.fulfill()

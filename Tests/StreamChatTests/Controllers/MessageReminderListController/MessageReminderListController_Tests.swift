@@ -46,7 +46,7 @@ final class MessageReminderListController_Tests: XCTestCase {
 
     func test_synchronize_whenSuccess_whenMoreReminders() {
         let exp = expectation(description: "synchronize completion")
-        var query = MessageReminderListQuery(pageSize: 2)
+        let query = MessageReminderListQuery(pageSize: 2)
         controller = makeController(query: query)
         controller.synchronize { error in
             XCTAssertNil(error)

@@ -105,7 +105,8 @@ class MessageUpdater: Worker, @unchecked Sendable {
     ///  - Parameters:
     ///   - messageId: The message identifier.
     ///   - text: The updated message text.
-    ///   - skipEnrichUrl: If true, the url preview won't be attached to the message.
+    ///   - skipEnrichUrl: If true, the url preview won't be attached to the message
+    ///   - skipPush: If true, skips sending push notification when message is edited.
     ///   - attachments: An array of the attachments for the message.
     ///   - extraData: Extra Data for the message.
     ///   - completion: The completion handler with the local updated message.
@@ -113,6 +114,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         messageId: MessageId,
         text: String,
         skipEnrichUrl: Bool,
+        skipPush: Bool,
         attachments: [AnyAttachmentPayload] = [],
         restrictedVisibility: [UserId],
         extraData: [String: RawJSON]? = nil,
@@ -136,6 +138,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 messageDTO.localMessageState = localState
 
                 messageDTO.skipEnrichUrl = skipEnrichUrl
+                messageDTO.skipPush = skipPush
                 messageDTO.restrictedVisibility = Set(restrictedVisibility)
 
                 messageDTO.quotedBy.forEach { message in
@@ -407,8 +410,9 @@ class MessageUpdater: Worker, @unchecked Sendable {
                         // If the request fails, we revert the optimistic update.
                         guard let messageDTO = session.message(id: messageId) else { return }
                         messageDTO.location?.endAt = previousEndAt
+                    } completion: { _ in
+                        completion(.failure(error))
                     }
-                    completion(.failure(error))
                 }
             }
         }
@@ -549,6 +553,8 @@ class MessageUpdater: Worker, @unchecked Sendable {
     ///   - type: The reaction type.
     ///   - score: The reaction score.
     ///   - enforceUnique: If set to `true`, new reaction will replace all reactions the user has (if any) on this message.
+    ///   - skipPush: If set to `true`, skips sending push notification when reacting a message.
+    ///   - pushEmojiCode: The emoji code for the reaction when a push notification is received.
     ///   - extraData: The extra data attached to the reaction.
     ///   - messageId: The message identifier the reaction will be added to.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
@@ -556,6 +562,8 @@ class MessageUpdater: Worker, @unchecked Sendable {
         _ type: MessageReactionType,
         score: Int,
         enforceUnique: Bool,
+        skipPush: Bool,
+        pushEmojiCode: String?,
         extraData: [String: RawJSON],
         messageId: MessageId,
         completion: (@Sendable(Error?) -> Void)? = nil
@@ -567,6 +575,8 @@ class MessageUpdater: Worker, @unchecked Sendable {
             score: score,
             enforceUnique: enforceUnique,
             extraData: extraData,
+            skipPush: skipPush,
+            emojiCode: pushEmojiCode,
             messageId: messageId
         )
 
@@ -1114,6 +1124,8 @@ extension MessageUpdater {
         _ type: MessageReactionType,
         score: Int,
         enforceUnique: Bool,
+        skipPush: Bool,
+        pushEmojiCode: String?,
         extraData: [String: RawJSON],
         messageId: MessageId
     ) async throws {
@@ -1122,6 +1134,8 @@ extension MessageUpdater {
                 type,
                 score: score,
                 enforceUnique: enforceUnique,
+                skipPush: skipPush,
+                pushEmojiCode: pushEmojiCode,
                 extraData: extraData,
                 messageId: messageId
             ) { error in
@@ -1232,6 +1246,7 @@ extension MessageUpdater {
         messageId: MessageId,
         text: String,
         skipEnrichUrl: Bool,
+        skipPush: Bool,
         attachments: [AnyAttachmentPayload] = [],
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil
@@ -1241,6 +1256,7 @@ extension MessageUpdater {
                 messageId: messageId,
                 text: text,
                 skipEnrichUrl: skipEnrichUrl,
+                skipPush: skipPush,
                 attachments: attachments,
                 restrictedVisibility: restrictedVisibility,
                 extraData: extraData

@@ -42,15 +42,13 @@ extension ChatState {
                     shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages
                 ),
                 itemCreator: { try $0.asModel() },
-                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id),
-                sorting: []
+                itemReuseKeyPaths: (\ChatMessage.id, \MessageDTO.id)
             )
             watchersObserver = StateLayerDatabaseObserver(
                 database: database,
                 fetchRequest: UserDTO.watcherFetchRequest(cid: cid),
                 itemCreator: { try $0.asModel() },
-                itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id),
-                sorting: []
+                itemReuseKeyPaths: (\ChatUser.id, \UserDTO.id)
             )
             self.eventNotificationCenter = eventNotificationCenter
         }

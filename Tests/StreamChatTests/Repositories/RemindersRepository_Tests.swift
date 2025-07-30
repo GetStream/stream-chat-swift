@@ -264,8 +264,7 @@ final class RemindersRepository_Tests: XCTestCase {
         
         // Create a message with an existing reminder
         try database.createMessage(id: messageId, cid: cid, text: "Test message")
-        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
-        
+
         try database.writeSynchronously { session in
             try session.saveReminder(
                 payload: .init(

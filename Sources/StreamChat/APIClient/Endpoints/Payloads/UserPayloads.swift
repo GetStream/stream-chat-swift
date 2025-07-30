@@ -29,6 +29,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case privacySettings = "privacy_settings"
     case blockedUserIds = "blocked_user_ids"
     case teamsRole = "teams_role"
+    case avgResponseTime = "avg_response_time"
 }
 
 // MARK: - GET users
@@ -49,6 +50,7 @@ class UserPayload: Decodable, @unchecked Sendable {
     let isBanned: Bool
     let teams: [TeamId]
     let language: String?
+    let avgResponseTime: Int?
     let extraData: [String: RawJSON]
 
     init(
@@ -66,6 +68,7 @@ class UserPayload: Decodable, @unchecked Sendable {
         isBanned: Bool,
         teams: [TeamId] = [],
         language: String?,
+        avgResponseTime: Int? = nil,
         extraData: [String: RawJSON]
     ) {
         self.id = id
@@ -82,6 +85,7 @@ class UserPayload: Decodable, @unchecked Sendable {
         self.isBanned = isBanned
         self.teams = teams
         self.language = language
+        self.avgResponseTime = avgResponseTime
         self.extraData = extraData
     }
 
@@ -102,7 +106,8 @@ class UserPayload: Decodable, @unchecked Sendable {
         isBanned = try container.decodeIfPresent(Bool.self, forKey: .isBanned) ?? false
         teams = try container.decodeIfPresent([String].self, forKey: .teams) ?? []
         language = try container.decodeIfPresent(String.self, forKey: .language)
-
+        avgResponseTime = try container.decodeIfPresent(Int.self, forKey: .avgResponseTime)
+        
         do {
             var payload = try [String: RawJSON](from: decoder)
             payload.removeValues(forKeys: UserPayloadsCodingKeys.allCases.map(\.rawValue))
@@ -208,6 +213,7 @@ struct CurrentUserUnreadsPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case totalUnreadCount = "total_unread_count"
         case totalUnreadThreadsCount = "total_unread_threads_count"
+        case totalUnreadCountByTeam = "total_unread_count_by_team"
         case channels
         case channelType = "channel_type"
         case threads
@@ -215,6 +221,7 @@ struct CurrentUserUnreadsPayload: Decodable {
 
     let totalUnreadCount: Int
     let totalUnreadThreadsCount: Int
+    let totalUnreadCountByTeam: [TeamId: Int]?
     let channels: [CurrentUserChannelUnreadPayload]
     let channelType: [ChannelUnreadByTypePayload]
     let threads: [CurrentUserThreadUnreadPayload]

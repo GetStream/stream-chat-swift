@@ -271,7 +271,8 @@ extension CurrentChatUser {
             privacySettings: .init(
                 typingIndicators: .init(enabled: dto.isTypingIndicatorsEnabled),
                 readReceipts: .init(enabled: dto.isReadReceiptsEnabled)
-            )
+            ),
+            avgResponseTime: dto.user.avgResponseTime?.intValue
         )
     }
 }
