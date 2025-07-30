@@ -35,7 +35,6 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     public let client: ChatClient
 
     /// The channel the controller represents.
-    /// This is managed in memory and updated via API calls.
     public private(set) var channel: ChatChannel? {
         didSet {
             guard let channel else { return }
@@ -46,7 +45,6 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     }
 
     /// The messages of the channel the controller represents.
-    /// This is managed in memory and updated via API calls.
     public private(set) var messages: [ChatMessage] = [] {
         didSet {
             delegateCallback {
@@ -101,25 +99,22 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 
     // MARK: - Private Properties
 
-    /// The API client for making direct API calls
+    /// The API client for making direct API calls.
     private let apiClient: APIClient
 
-    /// Pagination state handler for managing message pagination
+    /// Pagination state handler for managing message pagination.
     private let paginationStateHandler: MessagesPaginationStateHandling
 
-    /// Events controller for listening to real-time events
+    /// Events controller for listening to real-time events.
     private let eventsController: EventsController
 
-    /// The worker used to fetch the remote data and communicate with servers.
+    /// The channel updater to reuse actions from channel controller which is safe to use without DB.
     private let updater: ChannelUpdater
 
-    /// Current user ID for convenience
+    /// The current user id.
     private var currentUserId: UserId? { client.currentUserId }
 
-    var _basePublishers: Any?
-    /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
-    /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
-    /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
+    /// An internal backing object for all publicly available Combine publishers.
     var basePublishers: BasePublishers {
         if let value = _basePublishers as? BasePublishers {
             return value
@@ -127,6 +122,8 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         _basePublishers = BasePublishers(controller: self)
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
+
+    var _basePublishers: Any?
 
     // MARK: - Initialization
 
@@ -166,7 +163,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     // MARK: - Public Methods
 
     /// Synchronizes the controller with the backend data.
-    /// - Parameter completion: Called when the synchronization is finished
+    /// - Parameter completion: Called when the synchronization is finished.
     public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
         // Populate the initial data with existing cache.
         if loadInitialMessagesFromCache, let cid = self.cid, let channel = dataStore.channel(cid: cid) {
@@ -180,7 +177,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         )
     }
 
-    /// Loads previous messages from backend.
+    /// Loads previous (older) messages from backend.
     /// - Parameters:
     ///   - messageId: ID of the last fetched message. You will get messages `older` than the provided ID.
     ///   - limit: Limit for page size. By default it is 25.
@@ -195,7 +192,10 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
             return
         }
 
-        let messageId = messageId ?? paginationStateHandler.state.oldestFetchedMessage?.id ?? lastLocalMessageId()
+        let messageId = messageId
+            ?? paginationStateHandler.state.oldestFetchedMessage?.id
+            ?? messages.last?.id
+
         guard let messageId = messageId else {
             completion?(ClientError.ChannelEmptyMessages())
             return
@@ -228,7 +228,10 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
             return
         }
 
-        let messageId = messageId ?? paginationStateHandler.state.newestFetchedMessage?.id ?? messages.first?.id
+        let messageId = messageId
+            ?? paginationStateHandler.state.newestFetchedMessage?.id
+            ?? messages.first?.id
+
         guard let messageId = messageId else {
             completion?(ClientError.ChannelEmptyMessages())
             return
@@ -283,7 +286,10 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         updateChannelData(channelQuery: query, completion: completion)
     }
 
-    /// Creates a new message locally and schedules it for send.
+    /// Creates a new message and schedules it for send.
+    ///
+    /// This is the only method that still uses the DB to create data.
+    /// This is mostly to reuse the complex logic of the Message Sender.
     ///
     /// - Parameters:
     ///   - messageId: The id for the sent message. By default, it is automatically generated by Stream.
@@ -300,7 +306,6 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     ///   - location: The new location information of the message.
     ///   - extraData: Additional extra data of the message object.
     ///   - completion: Called when saving the message to the local DB finishes.
-    ///
     public func createNewMessage(
         messageId: MessageId? = nil,
         text: String,
@@ -347,13 +352,19 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     /// - Parameters:
     ///   - messageId: The message identifier to delete.
     ///   - hard: A Boolean value to determine if the message will be delete permanently on the backend. By default it is `false`.
-    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    ///   - completion: Called when the network request is finished.
+    ///   If request fails, the completion will be called with an error.
     public func deleteMessage(
         messageId: MessageId,
         hard: Bool = false,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .deleteMessage(messageId: messageId, hard: hard)) { [weak self] result in
+        apiClient.request(
+            endpoint: .deleteMessage(
+                messageId: messageId,
+                hard: hard
+            )
+        ) { [weak self] result in
             self?.callback {
                 completion?(result.error)
             }
@@ -373,11 +384,15 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         completion: @escaping (Result<[ChatMessageReaction], Error>) -> Void
     ) {
         let pagination = Pagination(pageSize: limit, offset: offset)
-        apiClient.request(endpoint: .loadReactions(messageId: messageId, pagination: pagination)) { [weak self] result in
+        apiClient.request(
+            endpoint: .loadReactions(messageId: messageId, pagination: pagination)
+        ) { [weak self] result in
             self?.callback {
                 switch result {
                 case .success(let payload):
-                    let reactions = payload.reactions.compactMap { $0.asModel(messageId: messageId) }
+                    let reactions = payload.reactions.compactMap {
+                        $0.asModel(messageId: messageId)
+                    }
                     completion(.success(reactions))
                 case .failure(let error):
                     completion(.failure(error))
@@ -391,14 +406,22 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     ///   - messageId: The message identifier to flag.
     ///   - reason: The flag reason.
     ///   - extraData: Additional data associated with the flag request.
-    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    ///   - completion: Called when the network request is finished.
+    ///   If request fails, the completion will be called with an error.
     public func flag(
         messageId: MessageId,
         reason: String? = nil,
         extraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .flagMessage(true, with: messageId, reason: reason, extraData: extraData)) { [weak self] result in
+        apiClient.request(
+            endpoint: .flagMessage(
+                true,
+                with: messageId,
+                reason: reason,
+                extraData: extraData
+            )
+        ) { [weak self] result in
             self?.callback {
                 completion?(result.error)
             }
@@ -408,19 +431,27 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     /// Unflags a message.
     /// - Parameters:
     ///   - messageId: The message identifier to unflag.
-    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    ///   - completion: Called when the network request is finished.
+    ///   If request fails, the completion will be called with an error.
     public func unflag(
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .flagMessage(false, with: messageId, reason: nil, extraData: nil)) { [weak self] result in
+        apiClient.request(
+            endpoint: .flagMessage(
+                false,
+                with: messageId,
+                reason: nil,
+                extraData: nil
+            )
+        ) { [weak self] result in
             self?.callback {
                 completion?(result.error)
             }
         }
     }
 
-    /// Adds new reaction to the message this controller manages.
+    /// Adds a new reaction to a message.
     /// - Parameters:
     ///   - type: The reaction type.
     ///   - messageId: The message identifier to add the reaction to.
@@ -429,7 +460,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     ///   - skipPush: If set to `true`, skips sending push notification when reacting a message.
     ///   - pushEmojiCode: The emoji code when receiving a reaction push notification.
     ///   - extraData: The reaction extra data.
-    ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///   - completion: The completion. Will be called when the network request is finished.
     public func addReaction(
         _ type: MessageReactionType,
         to messageId: MessageId,
@@ -630,20 +661,14 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         let newMessages = Array(newMessages.reversed())
         switch pagination?.parameter {
         case .lessThan, .lessThanOrEqual:
-            // Loading older messages - append to end
             messages.append(contentsOf: newMessages)
 
         case .greaterThan, .greaterThanOrEqual:
-            // Loading newer messages - insert at beginning
             messages.insert(contentsOf: newMessages, at: 0)
 
         case .around, .none:
             messages = newMessages
         }
-    }
-
-    private func lastLocalMessageId() -> MessageId? {
-        messages.last?.id
     }
 
     // MARK: - EventsControllerDelegate
@@ -658,14 +683,14 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         }
     }
 
+    // MARK: - Helpers
+
     /// Helper method to execute the callbacks on the main thread.
     func callback(_ action: @escaping () -> Void) {
         DispatchQueue.main.async {
             action()
         }
     }
-
-    // MARK: - Private Event Handling
 
     private func handleChannelEvent(_ event: Event) {
         switch event {
