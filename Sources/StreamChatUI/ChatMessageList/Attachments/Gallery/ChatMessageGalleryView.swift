@@ -166,5 +166,7 @@ open class ChatMessageGalleryView: _View, ThemeProvider {
         let notShownPreviewsCount = content.count - itemSpots.count
         moreItemsOverlay.text = notShownPreviewsCount > 0 ? "+\(notShownPreviewsCount)" : nil
         moreItemsOverlay.isHidden = moreItemsOverlay.text == nil
+        
+        previewsContainerView.layoutIfNeeded()
     }
 }

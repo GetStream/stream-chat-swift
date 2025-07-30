@@ -25,7 +25,7 @@ extension Endpoint {
         )
     }
 
-    static func editMessage(payload: MessageRequestBody, skipEnrichUrl: Bool)
+    static func editMessage(payload: MessageRequestBody, skipEnrichUrl: Bool, skipPush: Bool)
         -> Endpoint<EmptyResponse> {
         .init(
             path: .editMessage(payload.id),
@@ -34,7 +34,8 @@ extension Endpoint {
             requiresConnectionId: false,
             body: [
                 "message": AnyEncodable(payload),
-                "skip_enrich_url": AnyEncodable(skipEnrichUrl)
+                "skip_enrich_url": AnyEncodable(skipEnrichUrl),
+                "skip_push": AnyEncodable(skipPush)
             ]
         )
     }

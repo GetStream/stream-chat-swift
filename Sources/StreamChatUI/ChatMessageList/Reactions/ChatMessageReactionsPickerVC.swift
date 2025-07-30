@@ -64,9 +64,18 @@ open class ChatMessageReactionsPickerVC: _ViewController, ThemeProvider, ChatMes
         }
 
         let shouldRemove = message.currentUserReactions.contains { $0.type == reaction }
-        shouldRemove
-            ? messageController.deleteReaction(reaction, completion: completion)
-            : messageController.addReaction(reaction, enforceUnique: components.isUniqueReactionsEnabled, completion: completion)
+        if shouldRemove {
+            messageController.deleteReaction(reaction, completion: completion)
+        } else {
+            let availableEmojis = appearance.images.availableReactionPushEmojis
+            messageController.addReaction(
+                reaction,
+                enforceUnique: components.isUniqueReactionsEnabled,
+                skipPush: false,
+                pushEmojiCode: components.isReactionPushEmojisEnabled ? availableEmojis[reaction] : nil,
+                completion: completion
+            )
+        }
     }
 
     // MARK: - MessageControllerDelegate

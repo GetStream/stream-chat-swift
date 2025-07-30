@@ -65,6 +65,9 @@ public class ChatUser {
 
     /// The language code of the user.
     public let language: TranslationLanguage?
+    
+    /// Returns the average time (in seconds) the user took to respond to the last message in the channel.
+    public let avgResponseTime: Int?
 
     /// Any additional custom data associated with the user.
     public let extraData: [String: RawJSON]
@@ -84,6 +87,7 @@ public class ChatUser {
         lastActiveAt: Date?,
         teams: Set<TeamId>,
         language: TranslationLanguage?,
+        avgResponseTime: Int?,
         extraData: [String: RawJSON]
     ) {
         self.id = id
@@ -101,6 +105,7 @@ public class ChatUser {
         self.language = language
         self.extraData = extraData
         self.teamsRole = teamsRole
+        self.avgResponseTime = avgResponseTime
     }
 }
 
@@ -124,6 +129,7 @@ extension ChatUser: Equatable {
             && lhs.userDeactivatedAt == rhs.userDeactivatedAt
             && lhs.lastActiveAt == rhs.lastActiveAt
             && lhs.teams == rhs.teams
+            && lhs.avgResponseTime == rhs.avgResponseTime
             && lhs.extraData == rhs.extraData
     }
 }
