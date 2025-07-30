@@ -267,11 +267,18 @@ open class DemoLivestreamChatChannelVC: _ViewController,
     ) {
         switch actionItem {
         case is EditActionItem:
-            dismiss(animated: true)
+            dismiss(animated: true) { [weak self] in
+                self?.messageComposerVC.content.editMessage(message)
+                self?.messageComposerVC.composerView.inputMessageView.textView.becomeFirstResponder()
+            }
         case is InlineReplyActionItem:
-            dismiss(animated: true)
+            dismiss(animated: true) { [weak self] in
+                self?.messageComposerVC.content.quoteMessage(message)
+            }
         case is ThreadReplyActionItem:
-            dismiss(animated: true)
+            dismiss(animated: true) { [weak self] in
+                self?.messageListVC.showThread(messageId: message.id)
+            }
         case is MarkUnreadActionItem:
             dismiss(animated: true)
         default:
