@@ -20,7 +20,7 @@ public extension ChatClient {
 /// - Read updates
 /// - Typing indicators
 /// - etc..
-public class LivestreamChannelController: DataStoreProvider, DelegateCallable, EventsControllerDelegate {
+public class LivestreamChannelController: DataStoreProvider, DelegateCallable, EventsControllerDelegate, AppStateObserverDelegate {
     public typealias Delegate = LivestreamChannelControllerDelegate
 
     // MARK: - Public Properties
@@ -146,6 +146,9 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     /// The channel updater to reuse actions from channel controller which is safe to use without DB.
     private let updater: ChannelUpdater
 
+    /// The app state observer for monitoring memory warnings and app state changes.
+    private let appStateObserver: AppStateObserving
+
     /// The current user id.
     private var currentUserId: UserId? { client.currentUserId }
 
@@ -175,6 +178,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         apiClient = client.apiClient
         paginationStateHandler = MessagesPaginationStateHandler()
         eventsController = client.eventsController()
+        appStateObserver = StreamAppStateObserver()
         updater = ChannelUpdater(
             channelRepository: client.channelRepository,
             messageRepository: client.messageRepository,
@@ -183,6 +187,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
             apiClient: client.apiClient
         )
         eventsController.delegate = self
+        appStateObserver.subscribe(self)
 
         if let cid = channelQuery.cid {
             client.eventNotificationCenter.registerManualEventHandling(for: cid)
@@ -193,6 +198,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         if let cid {
             client.eventNotificationCenter.unregisterManualEventHandling(for: cid)
         }
+        appStateObserver.unsubscribe(self)
     }
 
     // MARK: - Public Methods
@@ -667,6 +673,13 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         callback { [weak self] in
             self?.handleChannelEvent(event)
         }
+    }
+
+    // MARK: - AppStateObserverDelegate
+
+    public func applicationDidReceiveMemoryWarning() {
+        // Reset the channel to free up memory by loading the first page
+        loadFirstPage()
     }
 
     // MARK: - Private Methods
