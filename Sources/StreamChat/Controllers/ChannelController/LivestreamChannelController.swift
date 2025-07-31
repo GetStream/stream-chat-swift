@@ -111,8 +111,17 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 
     /// Configuration for message limiting behaviour.
     ///
-    /// Set to `nil` to disable message limiting. Default uses 200 max messages with 50 discard amount.
-    public var maxMessageLimitOptions: MaxMessageLimitOptions? = .default
+    /// Disabled by default. If enabled, older messages will be automatically discarded
+    /// once the limit is reached. The `MaxMessageLimitOptions.recommended` is the recommended
+    /// configuration which uses 200 max messages with 50 discard amount.
+    /// This can be used to further improve the memory usage of the controller.
+    ///
+    /// - Note: In order to use this, if you want to support loading previous messages,
+    /// you will need to use `pause()` method before loading older messages. Otherwise the
+    /// pagination will also be capped. Once the user scrolls back to the newest messages, you
+    /// can call `resume()`. Whenever the user creates a new message, the controller will
+    /// automatically resume the controller.
+    public var maxMessageLimitOptions: MaxMessageLimitOptions?
 
     /// Set the delegate to observe the changes in the system.
     public var delegate: LivestreamChannelControllerDelegate? {
@@ -1007,6 +1016,6 @@ public struct MaxMessageLimitOptions {
         self.discardAmount = discardAmount
     }
 
-    /// Default configuration with 200 max messages and 50 discard amount.
-    public static let `default` = MaxMessageLimitOptions()
+    /// The recommended configuration with 200 max messages and 50 discard amount.
+    public static let recommended = MaxMessageLimitOptions()
 }
