@@ -53,6 +53,18 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         }
     }
 
+    /// A Boolean value that indicates whether message processing is paused.
+    ///
+    /// When paused, new messages from other users will not be added to the messages array.
+    /// This is useful when loading previous messages to prevent the array from being modified.
+    public private(set) var isPaused: Bool = false {
+        didSet {
+            delegateCallback {
+                $0.livestreamChannelController(self, didChangePauseState: self.isPaused)
+            }
+        }
+    }
+
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     public var hasLoadedAllPreviousMessages: Bool {
         paginationStateHandler.state.hasLoadedAllPreviousMessages
@@ -87,6 +99,11 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     ///
     /// Only the initial page will be loaded from cache, to avoid an initial blank screen.
     public var loadInitialMessagesFromCache: Bool = true
+
+    /// Configuration for message limiting behaviour.
+    ///
+    /// Set to `nil` to disable message limiting. Default uses 200 max messages with 50 discard amount.
+    public var maxMessageLimitOptions: MaxMessageLimitOptions? = .default
 
     /// Set the delegate to observe the changes in the system.
     public var delegate: LivestreamChannelControllerDelegate? {
@@ -279,9 +296,6 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
             pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
             parameter: nil
         )
-
-        // Clear current messages when loading first page
-        messages = []
 
         updateChannelData(channelQuery: query, completion: completion)
     }
@@ -533,10 +547,12 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         messageId: MessageId,
         completion: ((Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .pinMessage(
-            messageId: messageId,
-            request: .init(set: .init(pinned: false))
-        )) { [weak self] result in
+        apiClient.request(
+            endpoint: .pinMessage(
+                messageId: messageId,
+                request: .init(set: .init(pinned: false))
+            )
+        ) { [weak self] result in
             self?.callback {
                 completion?(result.error)
             }
@@ -600,6 +616,37 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
             self.callback {
                 completion?(error)
             }
+        }
+    }
+
+    /// Pauses the collecting of new messages.
+    ///
+    /// When paused, new messages from other users will not be added to the messages array.
+    /// This is useful for the loading of previous message to not conflict with the max limit of the messages array.
+    public func pause() {
+        guard !isPaused else { return }
+        isPaused = true
+    }
+
+    /// Resumes the collecting of new messages.
+    ///
+    /// This will load the first page, reseting the current messages  and returning to the latest messages.
+    /// After resuming, new messages will be added to the messages array again.
+    public func resume() {
+        guard isPaused else { return }
+        isPaused = false
+        loadFirstPage()
+    }
+
+    // MARK: - EventsControllerDelegate
+
+    public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+        guard let channelEvent = event as? ChannelSpecificEvent, channelEvent.cid == cid else {
+            return
+        }
+
+        callback { [weak self] in
+            self?.handleChannelEvent(event)
         }
     }
 
@@ -671,19 +718,15 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         }
     }
 
-    // MARK: - EventsControllerDelegate
-
-    public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        guard let channelEvent = event as? ChannelSpecificEvent, channelEvent.cid == cid else {
+    private func applyMessageLimit() {
+        guard let options = maxMessageLimitOptions,
+              messages.count > options.maxLimit else {
             return
         }
 
-        callback { [weak self] in
-            self?.handleChannelEvent(event)
-        }
+        let newCount = options.maxLimit - options.discardAmount
+        messages = Array(messages.prefix(newCount))
     }
-
-    // MARK: - Helpers
 
     /// Helper method to execute the callbacks on the main thread.
     func callback(_ action: @escaping () -> Void) {
@@ -743,6 +786,11 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
             return
         }
 
+        // If paused and the message is not from the current user, skip processing
+        if isPaused && message.author.id != currentUserId {
+            return
+        }
+
         // If we don't have the first page loaded, do not insert new messages
         // they will be inserted once we load the first page again.
         if !hasLoadedAllNextMessages {
@@ -751,6 +799,17 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 
         currentMessages.insert(message, at: 0)
         messages = currentMessages
+
+        // Apply message limit only when not paused
+        if !isPaused {
+            applyMessageLimit()
+        }
+
+        // If paused and the message is from the current user, load the first page
+        // to go back to the latest messages
+        if isPaused && message.author.id == currentUserId {
+            loadFirstPage()
+        }
     }
 
     private func handleUpdatedMessage(_ updatedMessage: ChatMessage) {
@@ -860,22 +919,31 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 
 /// Delegate protocol for `LivestreamChannelController`
 public protocol LivestreamChannelControllerDelegate: AnyObject {
-    /// Called when the channel data is updated
+    /// Called when the channel data is updated.
     /// - Parameters:
-    ///   - controller: The controller that updated
+    ///   - controller: The controller that updated.
     ///   - channel: The updated channel the controller manages.
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
         didUpdateChannel channel: ChatChannel
     )
 
-    /// Called when the messages are updated
+    /// Called when the messages are updated.
     /// - Parameters:
-    ///   - controller: The controller that updated
-    ///   - messages: The current messages array
+    ///   - controller: The controller that updated.
+    ///   - messages: The current messages array.
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
         didUpdateMessages messages: [ChatMessage]
+    )
+
+    /// Called when the pause state changes.
+    /// - Parameters:
+    ///   - controller: The controller that updated.
+    ///   - isPaused: The new pause state.
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangePauseState isPaused: Bool
     )
 }
 
@@ -891,4 +959,32 @@ public extension LivestreamChannelControllerDelegate {
         _ controller: LivestreamChannelController,
         didUpdateMessages messages: [ChatMessage]
     ) {}
+
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangePauseState isPaused: Bool
+    ) {}
+}
+
+/// Configuration options for message limiting in LivestreamChannelController.
+public struct MaxMessageLimitOptions {
+    /// The maximum number of messages to keep in memory.
+    /// When this limit is reached, older messages will be discarded.
+    public let maxLimit: Int
+
+    /// The number of messages to discard when the maximum limit is reached.
+    /// This should be less than maxLimit to avoid discarding all messages.
+    public let discardAmount: Int
+
+    /// Creates a new MaxMessageLimitOptions configuration.
+    /// - Parameters:
+    ///   - maxLimit: The maximum number of messages to keep. Default is 200.
+    ///   - discardAmount: The number of messages to discard when limit is reached. Default is 50.
+    public init(maxLimit: Int = 200, discardAmount: Int = 50) {
+        self.maxLimit = maxLimit
+        self.discardAmount = discardAmount
+    }
+
+    /// Default configuration with 200 max messages and 50 discard amount.
+    public static let `default` = MaxMessageLimitOptions()
 }

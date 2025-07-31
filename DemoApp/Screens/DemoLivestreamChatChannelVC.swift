@@ -64,6 +64,35 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         isLastMessageFullyVisible
     }
 
+    /// Banner view to show when chat is paused due to scrolling
+    private lazy var pauseBannerView: UIView = {
+        let banner = UIView()
+        banner.backgroundColor = appearance.colorPalette.background2
+        banner.layer.cornerRadius = 12
+        banner.layer.shadowColor = UIColor.black.cgColor
+        banner.layer.shadowOffset = CGSize(width: 0, height: 2)
+        banner.layer.shadowOpacity = 0.1
+        banner.layer.shadowRadius = 4
+        banner.translatesAutoresizingMaskIntoConstraints = false
+
+        let label = UILabel()
+        label.text = "Chat paused due to scroll"
+        label.font = appearance.fonts.footnote
+        label.textColor = appearance.colorPalette.text
+        label.textAlignment = .center
+        label.translatesAutoresizingMaskIntoConstraints = false
+
+        banner.addSubview(label)
+        NSLayoutConstraint.activate([
+            label.leadingAnchor.constraint(equalTo: banner.leadingAnchor, constant: 16),
+            label.trailingAnchor.constraint(equalTo: banner.trailingAnchor, constant: -16),
+            label.topAnchor.constraint(equalTo: banner.topAnchor, constant: 8),
+            label.bottomAnchor.constraint(equalTo: banner.bottomAnchor, constant: -8)
+        ])
+
+        return banner
+    }()
+
     override open func setUp() {
         super.setUp()
 
@@ -85,6 +114,12 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         messageListVC.swipeToReplyGestureHandler.onReply = { [weak self] message in
             self?.messageComposerVC.content.quoteMessage(message)
         }
+
+        // Initialize messages from controller
+        messages = livestreamChannelController.messages
+
+        // Initialize pause banner state
+        pauseBannerView.alpha = 0.0
     }
 
     private func setChannelControllerToComposerIfNeeded() {
@@ -121,6 +156,22 @@ open class DemoLivestreamChatChannelVC: _ViewController,
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)
         channelAvatarView.content = (livestreamChannelController.channel, client.currentUserId)
+
+        // Add pause banner
+        view.addSubview(pauseBannerView)
+        NSLayoutConstraint.activate([
+            pauseBannerView.widthAnchor.constraint(equalToConstant: 200),
+            pauseBannerView.centerXAnchor.constraint(
+                equalTo: view.centerXAnchor
+            ),
+            pauseBannerView.bottomAnchor.constraint(
+                equalTo: messageComposerVC.view.topAnchor,
+                constant: -16
+            )
+        ])
+
+        // Initially hide the banner
+        pauseBannerView.isHidden = true
     }
 
     override open func viewDidAppear(_ animated: Bool) {
@@ -239,23 +290,28 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         _ vc: ChatMessageListVC,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
-        // no-op
+        if isLastMessageFullyVisible && livestreamChannelController.isPaused {
+            livestreamChannelController.resume()
+        }
     }
-    
+
     open func chatMessageListVC(
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
         let messageCount = messages.count
         guard messageCount > 0 else { return }
-        
+
         // Load newer messages when displaying messages near index 0
         if indexPath.item < 10 && !isFirstPageLoaded {
             livestreamChannelController.loadNextMessages()
         }
-        
+
         // Load older messages when displaying messages near the end of the array
-        if indexPath.item >= messageCount - 10 && !isLastPageLoaded {
+        if indexPath.item >= messageCount - 10 {
+            if messageListVC.listView.isDragging && !messageListVC.listView.isLastCellFullyVisible {
+                livestreamChannelController.pause()
+            }
             livestreamChannelController.loadPreviousMessages()
         }
     }
@@ -340,6 +396,13 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         messageListVC.updateMessages(with: changes)
     }
 
+    public func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangePauseState isPaused: Bool
+    ) {
+        showPauseBanner(isPaused)
+    }
+
     // MARK: - EventsControllerDelegate
 
     open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
@@ -349,6 +412,14 @@ open class DemoLivestreamChatChannelVC: _ViewController,
                 livestreamChannelController.loadFirstPage()
             }
         }
+    }
+
+    /// Shows or hides the pause banner with animation
+    private func showPauseBanner(_ show: Bool) {
+        UIView.animate(withDuration: 0.3, animations: {
+            self.pauseBannerView.isHidden = !show
+            self.pauseBannerView.alpha = show ? 1.0 : 0.0
+        })
     }
 }
 
@@ -365,14 +436,14 @@ class DemoLivestreamComposerVC: ComposerVC {
             super.createNewMessage(text: text)
             return
         }
-        
+
         if content.threadMessage?.id != nil {
             // For thread replies, we still need to use the regular channel controller
             // since LivestreamChannelController doesn't support thread operations
             super.createNewMessage(text: text)
             return
         }
-        
+
         livestreamController.createNewMessage(
             text: text,
             pinning: nil,
