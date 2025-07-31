@@ -16,6 +16,11 @@ extension LivestreamChannelController {
         basePublishers.messagesChanges.keepAlive(self)
     }
 
+    /// A publisher emitting a new value every time the skipped messages amount changes.
+    public var skippedMessagesAmountPublisher: AnyPublisher<Int, Never> {
+        basePublishers.skippedMessagesAmount.keepAlive(self)
+    }
+
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
@@ -29,10 +34,14 @@ extension LivestreamChannelController {
         /// A backing subject for `messagesChangesPublisher`.
         let messagesChanges: CurrentValueSubject<[ChatMessage], Never>
 
+        /// A backing subject for `skippedMessagesAmountPublisher`.
+        let skippedMessagesAmount: CurrentValueSubject<Int, Never>
+
         init(controller: LivestreamChannelController) {
             self.controller = controller
             channelChange = .init(controller.channel)
             messagesChanges = .init(controller.messages)
+            skippedMessagesAmount = .init(controller.skippedMessagesAmount)
 
             controller.multicastDelegate.add(additionalDelegate: self)
         }
@@ -52,5 +61,12 @@ extension LivestreamChannelController.BasePublishers: LivestreamChannelControlle
         didUpdateMessages messages: [ChatMessage]
     ) {
         messagesChanges.send(messages)
+    }
+
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangeSkippedMessagesAmount skippedMessagesAmount: Int
+    ) {
+        self.skippedMessagesAmount.send(skippedMessagesAmount)
     }
 }

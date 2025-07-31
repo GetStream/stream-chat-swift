@@ -65,6 +65,15 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         }
     }
 
+    /// The amount of messages that were skipped during the pause state.
+    public private(set) var skippedMessagesAmount: Int = 0 {
+        didSet {
+            delegateCallback {
+                $0.livestreamChannelController(self, didChangeSkippedMessagesAmount: self.skippedMessagesAmount)
+            }
+        }
+    }
+
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     public var hasLoadedAllPreviousMessages: Bool {
         paginationStateHandler.state.hasLoadedAllPreviousMessages
@@ -635,6 +644,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     public func resume() {
         guard isPaused else { return }
         isPaused = false
+        skippedMessagesAmount = 0
         loadFirstPage()
     }
 
@@ -788,6 +798,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 
         // If paused and the message is not from the current user, skip processing
         if isPaused && message.author.id != currentUserId {
+            skippedMessagesAmount += 1
             return
         }
 
@@ -945,6 +956,12 @@ public protocol LivestreamChannelControllerDelegate: AnyObject {
         _ controller: LivestreamChannelController,
         didChangePauseState isPaused: Bool
     )
+
+    /// Called when the skipped messages amount changes.
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangeSkippedMessagesAmount skippedMessagesAmount: Int
+    )
 }
 
 // MARK: - Default Implementations
@@ -963,6 +980,11 @@ public extension LivestreamChannelControllerDelegate {
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
         didChangePauseState isPaused: Bool
+    ) {}
+
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangeSkippedMessagesAmount skippedMessagesAmount: Int
     ) {}
 }
 

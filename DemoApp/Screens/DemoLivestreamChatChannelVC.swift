@@ -403,6 +403,13 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         showPauseBanner(isPaused)
     }
 
+    public func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangeSkippedMessagesAmount skippedMessagesAmount: Int
+    ) {
+        messageListVC.scrollToBottomButton.content = .init(messages: skippedMessagesAmount, mentions: 0)
+    }
+
     // MARK: - EventsControllerDelegate
 
     open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
