@@ -16,6 +16,11 @@ extension LivestreamChannelController {
         basePublishers.messagesChanges.keepAlive(self)
     }
 
+    /// A publisher emitting a new value every time the pause state changes.
+    public var isPausedPublisher: AnyPublisher<Bool, Never> {
+        basePublishers.isPaused.keepAlive(self)
+    }
+
     /// A publisher emitting a new value every time the skipped messages amount changes.
     public var skippedMessagesAmountPublisher: AnyPublisher<Int, Never> {
         basePublishers.skippedMessagesAmount.keepAlive(self)
@@ -34,7 +39,10 @@ extension LivestreamChannelController {
         /// A backing subject for `messagesChangesPublisher`.
         let messagesChanges: CurrentValueSubject<[ChatMessage], Never>
 
-        /// A backing subject for `skippedMessagesAmountPublisher`.
+        /// A backing subject for `isPausedPublisher`.
+        let isPaused: CurrentValueSubject<Bool, Never>
+
+        // A backing subject for `skippedMessagesAmountPublisher`.
         let skippedMessagesAmount: CurrentValueSubject<Int, Never>
 
         init(controller: LivestreamChannelController) {
@@ -42,7 +50,7 @@ extension LivestreamChannelController {
             channelChange = .init(controller.channel)
             messagesChanges = .init(controller.messages)
             skippedMessagesAmount = .init(controller.skippedMessagesAmount)
-
+            isPaused = .init(controller.isPaused)
             controller.multicastDelegate.add(additionalDelegate: self)
         }
     }
@@ -61,6 +69,13 @@ extension LivestreamChannelController.BasePublishers: LivestreamChannelControlle
         didUpdateMessages messages: [ChatMessage]
     ) {
         messagesChanges.send(messages)
+    }
+
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangePauseState isPaused: Bool
+    ) {
+        self.isPaused.send(isPaused)
     }
 
     func livestreamChannelController(
