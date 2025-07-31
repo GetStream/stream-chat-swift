@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-public protocol ChatMessageActionsVCDelegate: AnyObject {
+@MainActor public protocol ChatMessageActionsVCDelegate: AnyObject {
     func chatMessageActionsVC(
         _ vc: ChatMessageActionsVC,
         message: ChatMessage,

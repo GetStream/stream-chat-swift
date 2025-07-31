@@ -39,7 +39,7 @@ extension Timer {
 }
 
 /// Allows resuming and suspending of a timer.
-protocol RepeatingTimerControl {
+protocol RepeatingTimerControl: Sendable {
     /// Resumes the timer.
     func resume()
 
@@ -48,12 +48,13 @@ protocol RepeatingTimerControl {
 }
 
 /// Allows cancelling a timer.
-protocol TimerControl {
+protocol TimerControl: Sendable {
     /// Cancels the timer.
     func cancel()
 }
 
 extension DispatchWorkItem: TimerControl {}
+extension DispatchWorkItem: @retroactive @unchecked Sendable {}
 
 /// Default real-world implementations of timers.
 struct DefaultTimer: Timer {
@@ -77,14 +78,14 @@ struct DefaultTimer: Timer {
     }
 }
 
-private class RepeatingTimer: RepeatingTimerControl {
+private final class RepeatingTimer: RepeatingTimerControl {
     private enum State {
         case suspended
         case resumed
     }
 
     private let queue = DispatchQueue(label: "io.getstream.repeating-timer")
-    private var state: State = .suspended
+    private nonisolated(unsafe) var state: State = .suspended
     private let timer: DispatchSourceTimer
 
     init(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) {

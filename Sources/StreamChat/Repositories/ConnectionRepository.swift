@@ -4,9 +4,9 @@
 
 import Foundation
 
-class ConnectionRepository {
+class ConnectionRepository: @unchecked Sendable {
     private let connectionQueue: DispatchQueue = DispatchQueue(label: "io.getstream.connection-repository", attributes: .concurrent)
-    private var _connectionIdWaiters: [String: (Result<ConnectionId, Error>) -> Void] = [:]
+    private var _connectionIdWaiters: [String: @Sendable(Result<ConnectionId, Error>) -> Void] = [:]
     private var _connectionId: ConnectionId?
     private var _connectionStatus: ConnectionStatus = .initialized
 
@@ -53,7 +53,7 @@ class ConnectionRepository {
     /// - Parameters:
     ///   - completion: Called when the connection is established. If the connection fails, the completion is called with an error.
     ///
-    func connect(completion: ((Error?) -> Void)? = nil) {
+    func connect(completion: (@Sendable(Error?) -> Void)? = nil) {
         // Connecting is not possible in connectionless mode (duh)
         guard isClientInActiveMode else {
             completion?(ClientError.ClientIsNotInActiveMode())
@@ -87,7 +87,7 @@ class ConnectionRepository {
     /// are received.
     func disconnect(
         source: WebSocketConnectionState.DisconnectionSource,
-        completion: @escaping () -> Void
+        completion: @escaping @Sendable() -> Void
     ) {
         apiClient.flushRequestsQueue()
         syncRepository.cancelRecoveryFlow()
@@ -157,7 +157,7 @@ class ConnectionRepository {
         )
     }
 
-    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
+    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping @Sendable(Result<ConnectionId, Error>) -> Void) {
         if let connectionId = connectionId {
             completion(.success(connectionId))
             return
@@ -210,7 +210,7 @@ class ConnectionRepository {
         connectionId: String?,
         shouldNotifyWaiters: Bool
     ) {
-        let waiters: [String: (Result<ConnectionId, Error>) -> Void] = connectionQueue.sync(flags: .barrier) {
+        let waiters: [String: @Sendable(Result<ConnectionId, Error>) -> Void] = connectionQueue.sync(flags: .barrier) {
             _connectionId = connectionId
             guard shouldNotifyWaiters else { return [:] }
             let waiters = _connectionIdWaiters

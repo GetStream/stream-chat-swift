@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 /// Mock implementation of `WebSocketClient`.
-final class WebSocketClient_Mock: WebSocketClient {
+final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
     let init_sessionConfiguration: URLSessionConfiguration
     let init_requestEncoder: RequestEncoder
     let init_eventDecoder: AnyEventDecoder
@@ -21,11 +21,10 @@ final class WebSocketClient_Mock: WebSocketClient {
     var disconnect_called: Bool { disconnect_calledCounter > 0 }
     var disconnect_completion: (() -> Void)?
 
-
     var mockedConnectionState: WebSocketConnectionState?
 
     override var connectionState: WebSocketConnectionState {
-        return mockedConnectionState ?? super.connectionState
+        mockedConnectionState ?? super.connectionState
     }
 
     init(
@@ -56,11 +55,13 @@ final class WebSocketClient_Mock: WebSocketClient {
         init_eventNotificationCenter = eventNotificationCenter
         init_environment = environment
 
-        super.init(sessionConfiguration: sessionConfiguration,
-                  requestEncoder: requestEncoder,
-                  eventDecoder: eventDecoder,
-                  eventNotificationCenter: eventNotificationCenter,
-                  environment: environment)
+        super.init(
+            sessionConfiguration: sessionConfiguration,
+            requestEncoder: requestEncoder,
+            eventDecoder: eventDecoder,
+            eventNotificationCenter: eventNotificationCenter,
+            environment: environment
+        )
     }
 
     override func connect() {

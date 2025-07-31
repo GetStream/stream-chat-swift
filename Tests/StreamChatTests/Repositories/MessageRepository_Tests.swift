@@ -47,7 +47,7 @@ final class MessageRepositoryTests: XCTestCase {
 
     func test_sendMessage_noChannel() throws {
         let id = MessageId.unique
-        let message = try createMessage(id: id, localState: .pendingSend)
+        nonisolated(unsafe) let message = try createMessage(id: id, localState: .pendingSend)
         try database.writeSynchronously { _ in
             message.channel = nil
         }
@@ -63,7 +63,7 @@ final class MessageRepositoryTests: XCTestCase {
 
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
-        var currentMessageState: LocalMessageState?
+        nonisolated(unsafe) var currentMessageState: LocalMessageState?
         try database.writeSynchronously { session in
             currentMessageState = session.message(id: id)?.localMessageState
         }
@@ -75,7 +75,7 @@ final class MessageRepositoryTests: XCTestCase {
         let id = MessageId.unique
         try createMessage(id: id, localState: .pendingSend)
         let expectation = self.expectation(description: "Send Message completes")
-        var result: Result<ChatMessage, MessageRepositoryError>?
+        nonisolated(unsafe) var result: Result<ChatMessage, MessageRepositoryError>?
         repository.sendMessage(with: id) {
             result = $0
             expectation.fulfill()
@@ -88,7 +88,7 @@ final class MessageRepositoryTests: XCTestCase {
 
         wait(for: [expectation], timeout: defaultTimeout)
 
-        var currentMessageState: LocalMessageState?
+        nonisolated(unsafe) var currentMessageState: LocalMessageState?
         try database.writeSynchronously { session in
             currentMessageState = session.message(id: id)?.localMessageState
         }
@@ -106,7 +106,7 @@ final class MessageRepositoryTests: XCTestCase {
         let id = MessageId.unique
         try createMessage(id: id, localState: .pendingSend)
         let expectation = self.expectation(description: "Send Message completes")
-        var result: Result<ChatMessage, MessageRepositoryError>?
+        nonisolated(unsafe) var result: Result<ChatMessage, MessageRepositoryError>?
         repository.sendMessage(with: id) {
             result = $0
             expectation.fulfill()
@@ -119,7 +119,7 @@ final class MessageRepositoryTests: XCTestCase {
 
         wait(for: [expectation], timeout: defaultTimeout)
 
-        var currentMessageState: LocalMessageState?
+        nonisolated(unsafe) var currentMessageState: LocalMessageState?
         try database.writeSynchronously { session in
             currentMessageState = session.message(id: id)?.localMessageState
         }
@@ -137,7 +137,7 @@ final class MessageRepositoryTests: XCTestCase {
         let id = MessageId.unique
         try createMessage(id: id, localState: .pendingSend)
         let expectation = self.expectation(description: "Send Message completes")
-        var result: Result<ChatMessage, MessageRepositoryError>?
+        nonisolated(unsafe) var result: Result<ChatMessage, MessageRepositoryError>?
         repository.sendMessage(with: id) {
             result = $0
             expectation.fulfill()
@@ -150,7 +150,7 @@ final class MessageRepositoryTests: XCTestCase {
 
         wait(for: [expectation], timeout: defaultTimeout)
 
-        var currentMessageState: LocalMessageState?
+        nonisolated(unsafe) var currentMessageState: LocalMessageState?
         try database.writeSynchronously { session in
             currentMessageState = session.message(id: id)?.localMessageState
         }
@@ -266,7 +266,7 @@ final class MessageRepositoryTests: XCTestCase {
         let payload = MessagePayload.dummy(messageId: id, authorUserId: .anonymous, channel: .dummy(cid: cid))
         let message = runSaveSuccessfullySentMessageAndWait(payload: payload)
         let dbMessage = self.message(for: id)
-        var dbChannel: ChatChannel?
+        nonisolated(unsafe) var dbChannel: ChatChannel?
         try database.writeSynchronously { session in
             dbChannel = try session.channel(cid: self.cid)?.asModel()
         }
@@ -278,7 +278,7 @@ final class MessageRepositoryTests: XCTestCase {
 
     private func runSaveSuccessfullySentMessageAndWait(payload: MessagePayload) -> ChatMessage? {
         let expectation = self.expectation(description: "Save Message completes")
-        var result: ChatMessage?
+        nonisolated(unsafe) var result: ChatMessage?
         repository.saveSuccessfullySentMessage(cid: cid, message: payload) {
             result = $0.value
             expectation.fulfill()
@@ -320,7 +320,7 @@ final class MessageRepositoryTests: XCTestCase {
 
     func test_getMessage_propogatesRequestError() {
         // Simulate `getMessage(cid:, messageId:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         repository.getMessage(cid: .unique, messageId: .unique, store: true) {
             completionCalledError = $0.error
         }
@@ -347,7 +347,7 @@ final class MessageRepositoryTests: XCTestCase {
         database.write_errorResponse = testError
 
         // Simulate `getMessage(cid:, messageId:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         repository.getMessage(cid: channelId, messageId: messagePayload.message.id, store: true) {
             completionCalledError = $0.error
         }
@@ -371,7 +371,7 @@ final class MessageRepositoryTests: XCTestCase {
         try database.createChannel(cid: cid)
 
         // Simulate `getMessage(cid:, messageId:)` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         repository.getMessage(cid: cid, messageId: messageId, store: true) { _ in
             completionCalled = true
         }
@@ -401,7 +401,7 @@ final class MessageRepositoryTests: XCTestCase {
         try database.createChannel(cid: cid)
 
         // Simulate `getMessage(cid:, messageId:)` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         repository.getMessage(cid: cid, messageId: messageId, store: false) { _ in
             completionCalled = true
         }
@@ -584,7 +584,7 @@ final class MessageRepositoryTests: XCTestCase {
 
     private func runSaveSuccessfullyDeletedMessageAndWait(message: MessagePayload) -> Error? {
         let expectation = self.expectation(description: "Mark Message completes")
-        var error: Error?
+        nonisolated(unsafe) var error: Error?
         repository.saveSuccessfullyDeletedMessage(message: message) {
             error = $0
             expectation.fulfill()
@@ -594,7 +594,7 @@ final class MessageRepositoryTests: XCTestCase {
     }
 
     private func message(for id: MessageId) -> ChatMessage? {
-        var dbMessage: ChatMessage?
+        nonisolated(unsafe) var dbMessage: ChatMessage?
         try? database.writeSynchronously { session in
             dbMessage = try? session.message(id: id)?.asModel()
         }
@@ -640,7 +640,7 @@ final class MessageRepositoryTests: XCTestCase {
         }
         waitForExpectations(timeout: defaultTimeout, handler: nil)
 
-        var reactionState: LocalReactionState?
+        nonisolated(unsafe) var reactionState: LocalReactionState?
         try database.writeSynchronously { session in
             let reaction = session.reaction(messageId: messageId, userId: userId, type: reactionType)
             reactionState = reaction?.localState
@@ -688,8 +688,8 @@ final class MessageRepositoryTests: XCTestCase {
         }
         waitForExpectations(timeout: defaultTimeout, handler: nil)
 
-        var reactionState: LocalReactionState?
-        var reactionScore: Int64?
+        nonisolated(unsafe) var reactionState: LocalReactionState?
+        nonisolated(unsafe) var reactionScore: Int64?
         try database.writeSynchronously { session in
             let reaction = session.reaction(messageId: messageId, userId: userId, type: reactionType)
             reactionState = reaction?.localState
@@ -881,7 +881,7 @@ final class MessageRepositoryTests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
 
         // Then
-        var messageState: LocalMessageState?
+        nonisolated(unsafe) var messageState: LocalMessageState?
         try database.writeSynchronously { session in
             messageState = session.message(id: id)?.localMessageState
         }
@@ -904,7 +904,7 @@ final class MessageRepositoryTests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
 
         // Then
-        var messageState: LocalMessageState?
+        nonisolated(unsafe) var messageState: LocalMessageState?
         try database.writeSynchronously { session in
             messageState = session.message(id: id)?.localMessageState
         }
@@ -927,7 +927,7 @@ final class MessageRepositoryTests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
 
         // Then
-        var messageState: LocalMessageState?
+        nonisolated(unsafe) var messageState: LocalMessageState?
         try database.writeSynchronously { session in
             messageState = session.message(id: id)?.localMessageState
         }
@@ -945,7 +945,7 @@ extension MessageRepositoryTests {
     ) throws -> MessageDTO {
         try database.createCurrentUser()
         try database.createChannel(cid: cid)
-        var message: MessageDTO!
+        nonisolated(unsafe) var message: MessageDTO!
         try database.writeSynchronously { session in
             message = try session.createNewMessage(
                 in: self.cid,
@@ -967,7 +967,7 @@ extension MessageRepositoryTests {
 
     private func runSendMessageAndWait(id: MessageId) -> Result<ChatMessage, MessageRepositoryError>? {
         let expectation = self.expectation(description: "Send Message completes")
-        var result: Result<ChatMessage, MessageRepositoryError>?
+        nonisolated(unsafe) var result: Result<ChatMessage, MessageRepositoryError>?
         repository.sendMessage(with: id) {
             result = $0
             expectation.fulfill()

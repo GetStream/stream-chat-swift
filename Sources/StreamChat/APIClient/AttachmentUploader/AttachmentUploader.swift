@@ -5,7 +5,7 @@
 import Foundation
 
 /// The component responsible to upload files.
-public protocol AttachmentUploader {
+public protocol AttachmentUploader: Sendable {
     /// Uploads a type-erased attachment, and returns the attachment with the remote information.
     /// - Parameters:
     ///   - attachment: A type-erased attachment.
@@ -13,12 +13,12 @@ public protocol AttachmentUploader {
     ///   - completion: The callback with the uploaded attachment.
     func upload(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedAttachment, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedAttachment, Error>) -> Void
     )
 }
 
-public class StreamAttachmentUploader: AttachmentUploader {
+public class StreamAttachmentUploader: AttachmentUploader, @unchecked Sendable {
     let cdnClient: CDNClient
 
     init(cdnClient: CDNClient) {
@@ -27,8 +27,8 @@ public class StreamAttachmentUploader: AttachmentUploader {
 
     public func upload(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedAttachment, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedAttachment, Error>) -> Void
     ) {
         cdnClient.uploadAttachment(attachment, progress: progress) { (result: Result<UploadedFile, Error>) in
             completion(result.map { file in

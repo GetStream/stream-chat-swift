@@ -19,7 +19,7 @@ extension ChatClient {
 /// `ChatChannelMemberListController` is a controller class which allows observing
 /// a list of chat users based on the provided query.
 /// - Note: For an async-await alternative of the `ChatChannelMemberListControler`, please check ``MemberList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
-public class ChatChannelMemberListController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatChannelMemberListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query specifying sorting and filtering for the list of channel members.
     @Atomic public private(set) var query: ChannelMemberListQuery
 
@@ -75,7 +75,7 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
         if case let .localDataFetchFailed(error) = state {
@@ -139,11 +139,11 @@ public extension ChatChannelMemberListController {
     ///                 If request fails, the completion will be called with an error.
     func loadNextMembers(
         limit: Int = 25,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: members.count)
-        memberListUpdater.load(updatedQuery) { result in
+        memberListUpdater.load(updatedQuery) { [updatedQuery] result in
             self.query = updatedQuery
             self.callback {
                 completion?(result.error)

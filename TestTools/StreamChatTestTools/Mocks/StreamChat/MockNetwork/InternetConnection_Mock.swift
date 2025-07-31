@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 /// Mock implementation of `InternetConnection`
-final class InternetConnection_Mock: InternetConnection {
+final class InternetConnection_Mock: InternetConnection, @unchecked Sendable {
     private(set) var monitorMock: InternetConnectionMonitor_Mock!
     private(set) var init_notificationCenter: NotificationCenter!
 
@@ -21,7 +21,7 @@ final class InternetConnection_Mock: InternetConnection {
 }
 
 /// Mock implementation of `InternetConnectionMonitor`
-final class InternetConnectionMonitor_Mock: InternetConnectionMonitor {
+final class InternetConnectionMonitor_Mock: InternetConnectionMonitor, @unchecked Sendable {
     weak var delegate: InternetConnectionDelegate?
 
     var status: InternetConnection.Status = .unknown {

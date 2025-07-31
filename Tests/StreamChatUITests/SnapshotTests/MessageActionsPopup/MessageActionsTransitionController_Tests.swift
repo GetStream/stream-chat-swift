@@ -7,7 +7,7 @@
 @testable import StreamChatUI
 import XCTest
 
-final class MessageActionsTransitionController_Tests: XCTestCase {
+@MainActor final class MessageActionsTransitionController_Tests: XCTestCase {
     private lazy var subject: ChatMessageActionsTransitionController! = .init(messageListVC: nil)
 
     override func tearDown() {

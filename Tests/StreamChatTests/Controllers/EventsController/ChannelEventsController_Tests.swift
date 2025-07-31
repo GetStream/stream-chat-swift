@@ -11,8 +11,6 @@ final class ChannelEventsController_Tests: XCTestCase {
     var database: DatabaseContainer_Spy!
     var notificationCenter: EventNotificationCenter_Mock!
     var eventSender: EventSender_Mock!
-    var callbackQueueID: UUID!
-    var callbackQueue: DispatchQueue!
 
     // MARK: - Setup
 
@@ -23,13 +21,9 @@ final class ChannelEventsController_Tests: XCTestCase {
         database = DatabaseContainer_Spy()
         notificationCenter = EventNotificationCenter_Mock(database: database)
         eventSender = EventSender_Mock(database: database, apiClient: apiClient)
-        callbackQueueID = UUID()
-        callbackQueue = .testQueue(withId: callbackQueueID)
     }
 
     override func tearDown() {
-        callbackQueueID = nil
-
         apiClient.cleanUp()
         eventSender.cleanUp()
         AssertAsync {
@@ -37,7 +31,6 @@ final class ChannelEventsController_Tests: XCTestCase {
             Assert.canBeReleased(&notificationCenter)
             Assert.canBeReleased(&database)
             Assert.canBeReleased(&eventSender)
-            Assert.canBeReleased(&callbackQueue)
         }
 
         super.tearDown()
@@ -102,12 +95,10 @@ final class ChannelEventsController_Tests: XCTestCase {
             eventSender: eventSender,
             notificationCenter: notificationCenter
         )
-        controller.callbackQueue = callbackQueue
 
         // Simulate `sendEvent` and wait for completion.
-        let error: Error? = try waitFor { [callbackQueueID] completion in
+        let error: Error? = try waitFor { completion in
             controller.sendEvent(IdeaEventPayload.unique) { error in
-                AssertTestQueue(withId: callbackQueueID!)
                 completion(error)
             }
         }
@@ -145,12 +136,10 @@ final class ChannelEventsController_Tests: XCTestCase {
             eventSender: eventSender,
             notificationCenter: notificationCenter
         )
-        controller.callbackQueue = callbackQueue
 
         // Simulate `sendEvent`.
-        var completionError: Error?
-        controller.sendEvent(payload) { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID!)
+        nonisolated(unsafe) var completionError: Error?
+        controller.sendEvent(payload) {
             completionError = $0
         }
 
@@ -169,12 +158,10 @@ final class ChannelEventsController_Tests: XCTestCase {
             eventSender: eventSender,
             notificationCenter: notificationCenter
         )
-        controller.callbackQueue = callbackQueue
 
         // Simulate `sendEvent` and catch the completion.
-        var completionCalled = false
-        controller.sendEvent(IdeaEventPayload.unique) { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID!)
+        nonisolated(unsafe) var completionCalled = false
+        controller.sendEvent(IdeaEventPayload.unique) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -217,7 +204,7 @@ final class ChannelEventsController_Tests: XCTestCase {
 
     // MARK: - Event propagation
 
-    func test_onlyEventsRelatedToChannel_areForwardedToDelegate() throws {
+    @MainActor func test_onlyEventsRelatedToChannel_areForwardedToDelegate() throws {
         let cid: ChannelId = .unique
 
         // Create events controller and assign a test callback queue.
@@ -226,9 +213,8 @@ final class ChannelEventsController_Tests: XCTestCase {
             eventSender: eventSender,
             notificationCenter: notificationCenter
         )
-        let delegate = EventsController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = EventsController_Delegate()
         controller.delegate = delegate
-        controller.callbackQueue = callbackQueue
 
         // Simulate incoming events.
         let eventPayload = EventPayload(eventType: .channelUpdated, channel: .dummy(cid: cid), createdAt: .unique)

@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class SyncRepository_Mock: SyncRepository, Spy {
+final class SyncRepository_Mock: SyncRepository, Spy, @unchecked Sendable {
     enum Signature {
         static let cancelRecoveryFlow = "cancelRecoveryFlow()"
     }
@@ -16,12 +16,14 @@ final class SyncRepository_Mock: SyncRepository, Spy {
     convenience init() {
         let apiClient = APIClient_Spy()
         let database = DatabaseContainer_Spy()
-        self.init(config: .init(apiKeyString: ""),
-                  offlineRequestsRepository: OfflineRequestsRepository_Mock(),
-                  eventNotificationCenter: EventNotificationCenter_Mock(database: database),
-                  database: database,
-                  apiClient: apiClient,
-                  channelListUpdater: ChannelListUpdater_Spy(database: database, apiClient: apiClient))
+        self.init(
+            config: .init(apiKeyString: ""),
+            offlineRequestsRepository: OfflineRequestsRepository_Mock(),
+            eventNotificationCenter: EventNotificationCenter_Mock(database: database),
+            database: database,
+            apiClient: apiClient,
+            channelListUpdater: ChannelListUpdater_Spy(database: database, apiClient: apiClient)
+        )
     }
 
     override init(

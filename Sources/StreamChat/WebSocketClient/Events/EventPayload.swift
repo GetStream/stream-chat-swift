@@ -7,7 +7,7 @@ import Foundation
 // MARK: - Temporary
 
 /// The DTO object mirroring the JSON representation of an event.
-class EventPayload: Decodable {
+final class EventPayload: Decodable, Sendable {
     enum CodingKeys: String, CodingKey, CaseIterable {
         case eventType = "type"
         case connectionId = "connection_id"
@@ -67,8 +67,8 @@ class EventPayload: Decodable {
     let lastReadMessageId: MessageId?
     let lastReadAt: Date?
     let unreadMessagesCount: Int?
-    var poll: PollPayload?
-    var vote: PollVotePayload?
+    let poll: PollPayload?
+    let vote: PollVotePayload?
 
     /// Thread Data, it is stored in Result, to be easier to debug decoding errors
     let threadDetails: Result<ThreadDetailsPayload, Error>?

@@ -1949,7 +1949,7 @@ extension Chat_Tests {
         
         static func chatClientEnvironment() -> ChatClient.Environment {
             var environment = ChatClient.Environment.mock
-            environment.messageRepositoryBuilder = MessageRepository.init
+            environment.messageRepositoryBuilder = { MessageRepository(database: $0, apiClient: $1) }
             return environment
         }
     }

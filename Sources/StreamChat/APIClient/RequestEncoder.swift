@@ -5,7 +5,7 @@
 import Foundation
 
 /// On object responsible for creating a `URLRequest`, and encoding all required and `Endpoint` specific data to it.
-protocol RequestEncoder {
+protocol RequestEncoder: Sendable {
     /// A delegate the encoder uses for obtaining the current `connectionId`.
     ///
     /// Trying to encode an `Endpoint` with the `requiresConnectionId` set to `true` without setting the delegate
@@ -19,7 +19,7 @@ protocol RequestEncoder {
     ///   - completion: Called when the encoded `URLRequest` is ready. Called with en `Error` if the encoding fails.
     func encodeRequest<ResponsePayload: Decodable>(
         for endpoint: Endpoint<ResponsePayload>,
-        completion: @escaping (Result<URLRequest, Error>) -> Void
+        completion: @escaping @Sendable(Result<URLRequest, Error>) -> Void
     )
 
     /// Creates a new `RequestEncoder`.
@@ -45,7 +45,7 @@ extension RequestEncoder {
             subsystems: .httpRequests
         )
 
-        var result: Result<URLRequest, Error> = .failure(
+        nonisolated(unsafe) var result: Result<URLRequest, Error> = .failure(
             ClientError("Unexpected error. The result was not changed after encoding the request.")
         )
 
@@ -70,7 +70,7 @@ extension RequestEncoder {
 }
 
 /// The default implementation of `RequestEncoder`.
-class DefaultRequestEncoder: RequestEncoder {
+class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
     let baseURL: URL
     let apiKey: APIKey
 
@@ -87,7 +87,7 @@ class DefaultRequestEncoder: RequestEncoder {
 
     func encodeRequest<ResponsePayload: Decodable>(
         for endpoint: Endpoint<ResponsePayload>,
-        completion: @escaping (Result<URLRequest, Error>) -> Void
+        completion: @escaping @Sendable(Result<URLRequest, Error>) -> Void
     ) {
         var request: URLRequest
 
@@ -135,7 +135,7 @@ class DefaultRequestEncoder: RequestEncoder {
     private func addAuthorizationHeader<T: Decodable>(
         request: URLRequest,
         endpoint: Endpoint<T>,
-        completion: @escaping (Result<URLRequest, Error>) -> Void
+        completion: @escaping @Sendable(Result<URLRequest, Error>) -> Void
     ) {
         guard endpoint.requiresToken else {
             var updatedRequest = request
@@ -175,7 +175,7 @@ class DefaultRequestEncoder: RequestEncoder {
     private func addConnectionIdIfNeeded<T: Decodable>(
         request: URLRequest,
         endpoint: Endpoint<T>,
-        completion: @escaping (Result<URLRequest, Error>) -> Void
+        completion: @escaping @Sendable(Result<URLRequest, Error>) -> Void
     ) {
         guard endpoint.requiresConnectionId else {
             completion(.success(request))
@@ -242,7 +242,7 @@ class DefaultRequestEncoder: RequestEncoder {
         }
     }
 
-    private func encodeJSONToQueryItems(request: inout URLRequest, data: Encodable) throws {
+    private func encodeJSONToQueryItems(request: inout URLRequest, data: Encodable & Sendable) throws {
         let data = try (data as? Data) ?? JSONEncoder.stream.encode(AnyEncodable(data))
         guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw ClientError.InvalidJSON("Data is not a valid JSON: \(String(data: data, encoding: .utf8) ?? "nil")")
@@ -299,12 +299,12 @@ private extension URL {
 
 typealias WaiterToken = String
 protocol ConnectionDetailsProviderDelegate: AnyObject {
-    func provideConnectionId(timeout: TimeInterval, completion: @escaping (Result<ConnectionId, Error>) -> Void)
-    func provideToken(timeout: TimeInterval, completion: @escaping (Result<Token, Error>) -> Void)
+    func provideConnectionId(timeout: TimeInterval, completion: @escaping @Sendable(Result<ConnectionId, Error>) -> Void)
+    func provideToken(timeout: TimeInterval, completion: @escaping @Sendable(Result<Token, Error>) -> Void)
 }
 
 public extension ClientError {
-    final class InvalidURL: ClientError {}
-    final class InvalidJSON: ClientError {}
-    final class MissingConnectionId: ClientError {}
+    final class InvalidURL: ClientError, @unchecked Sendable {}
+    final class InvalidJSON: ClientError, @unchecked Sendable {}
+    final class MissingConnectionId: ClientError, @unchecked Sendable {}
 }

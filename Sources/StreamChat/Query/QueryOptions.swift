@@ -5,7 +5,7 @@
 import Foundation
 
 /// Query options.
-public struct QueryOptions: OptionSet, Encodable {
+public struct QueryOptions: OptionSet, Encodable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case state
         case watch

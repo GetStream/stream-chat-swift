@@ -5,7 +5,7 @@
 import Foundation
 
 /// Provides thread-safe access to the value's storage
-final class AudioPlaybackContextAccessor {
+final class AudioPlaybackContextAccessor: @unchecked Sendable {
     /// The queue that thread-safe access to the value's storage
     private var accessQueue: DispatchQueue
 

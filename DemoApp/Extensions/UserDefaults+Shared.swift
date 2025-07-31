@@ -5,7 +5,7 @@
 import Foundation
 
 extension UserDefaults {
-    static let shared = UserDefaults(suiteName: applicationGroupIdentifier)!
+    static var shared: UserDefaults { UserDefaults(suiteName: applicationGroupIdentifier)! }
 
     var currentUserId: String? {
         get { string(forKey: #function) }

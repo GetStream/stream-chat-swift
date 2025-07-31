@@ -55,7 +55,7 @@ final class MessageController_Reminders_Tests: XCTestCase {
 
         // Setup callback verification
         let expectation = expectation(description: "createReminder completion called")
-        var receivedResult: Result<MessageReminder, Error>?
+        nonisolated(unsafe) var receivedResult: Result<MessageReminder, Error>?
         
         // Call method being tested
         controller.createReminder(remindAt: remindAt) { result in
@@ -80,7 +80,7 @@ final class MessageController_Reminders_Tests: XCTestCase {
 
         // Setup callback verification
         let expectation = expectation(description: "createReminder completion called")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         
         // Call method being tested
         controller.createReminder(remindAt: nil) { result in
@@ -116,7 +116,7 @@ final class MessageController_Reminders_Tests: XCTestCase {
 
         // Setup callback verification
         let expectation = expectation(description: "updateReminder completion called")
-        var receivedResult: Result<MessageReminder, Error>?
+        nonisolated(unsafe) var receivedResult: Result<MessageReminder, Error>?
         
         // Call method being tested
         controller.updateReminder(remindAt: remindAt) { result in
@@ -141,7 +141,7 @@ final class MessageController_Reminders_Tests: XCTestCase {
 
         // Setup callback verification
         let expectation = expectation(description: "updateReminder completion called")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         
         // Call method being tested
         controller.updateReminder(remindAt: nil) { result in
@@ -166,7 +166,7 @@ final class MessageController_Reminders_Tests: XCTestCase {
         
         // Setup callback verification
         let expectation = expectation(description: "deleteReminder completion called")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         
         // Call method being tested
         controller.deleteReminder { error in
@@ -190,7 +190,7 @@ final class MessageController_Reminders_Tests: XCTestCase {
         
         // Setup callback verification
         let expectation = expectation(description: "deleteReminder completion called")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         
         // Call method being tested
         controller.deleteReminder { error in

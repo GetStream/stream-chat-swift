@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of ChannelUpdater
-final class ChannelUpdater_Mock: ChannelUpdater {
+final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var update_channelQuery: ChannelQuery?
     @Atomic var update_onChannelCreated: ((ChannelId) -> Void)?
     @Atomic var update_completion: ((Result<ChannelPayload, Error>) -> Void)?
@@ -293,6 +293,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     override var paginationState: MessagesPaginationState {
         mockPaginationState
     }
+
     override func update(
         channelQuery: ChannelQuery,
         isInRecoveryMode: Bool,
@@ -428,7 +429,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         hideHistory: Bool,
         completion: ((Error?) -> Void)? = nil
     ) {
-        self.addMembers(
+        addMembers(
             currentUserId: currentUserId,
             cid: cid,
             members: userIds.map { MemberInfo(userId: $0, extraData: nil) },

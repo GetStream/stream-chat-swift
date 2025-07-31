@@ -8,7 +8,7 @@ import Foundation
 @testable import StreamChatTestTools
 import XCTest
 
-final class StreamAudioPlayer_Tests: XCTestCase {
+@MainActor final class StreamAudioPlayer_Tests: XCTestCase {
     private var audioPlayerDelegate: MockAudioPlayerDelegate!
     private var assetPropertyLoader: MockAssetPropertyLoader!
     private var playerObserver: MockAudioPlayerObserver!

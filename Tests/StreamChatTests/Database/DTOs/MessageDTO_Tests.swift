@@ -792,8 +792,8 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try waitFor { completion in
-            var channelDTO: ChannelDTO!
-            var messageDTO: MessageDTO!
+            nonisolated(unsafe) var channelDTO: ChannelDTO!
+            nonisolated(unsafe) var messageDTO: MessageDTO!
 
             // Asynchronously save the payload to the db
             database.write { session in
@@ -825,8 +825,8 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try waitFor { completion in
-            var channelDTO: ChannelDTO!
-            var messageDTO: MessageDTO!
+            nonisolated(unsafe) var channelDTO: ChannelDTO!
+            nonisolated(unsafe) var messageDTO: MessageDTO!
 
             database.write { session in
                 // Create the channel first
@@ -893,8 +893,8 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         let (channelDTO, messageDTO): (ChannelDTO, MessageDTO) = try waitFor { completion in
-            var channelDTO: ChannelDTO!
-            var messageDTO: MessageDTO!
+            nonisolated(unsafe) var channelDTO: ChannelDTO!
+            nonisolated(unsafe) var messageDTO: MessageDTO!
 
             // Asynchronously save the payload to the db
             database.write { session in
@@ -926,8 +926,8 @@ final class MessageDTO_Tests: XCTestCase {
             reactionCounts: ["like": 2]
         )
         let (_, _): (ChannelDTO, MessageDTO) = try waitFor { completion in
-            var channelDTO: ChannelDTO!
-            var messageDTO: MessageDTO!
+            nonisolated(unsafe) var channelDTO: ChannelDTO!
+            nonisolated(unsafe) var messageDTO: MessageDTO!
 
             // Asynchronously save the payload to the db
             database.write { session in
@@ -1375,8 +1375,8 @@ final class MessageDTO_Tests: XCTestCase {
 
         // Create two messages in the DB
 
-        var message1Id: MessageId!
-        var message2Id: MessageId!
+        nonisolated(unsafe) var message1Id: MessageId!
+        nonisolated(unsafe) var message2Id: MessageId!
 
         _ = try waitFor { completion in
             database.write({ session in
@@ -1536,7 +1536,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         // Create a new message
-        var newMessageId: MessageId!
+        nonisolated(unsafe) var newMessageId: MessageId!
 
         let newMessageText: String = .unique
         let newMessageCommand: String = .unique
@@ -1621,7 +1621,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         // Create a new message
-        var newMessageId: MessageId!
+        nonisolated(unsafe) var newMessageId: MessageId!
         let newMessageText: String = .unique
         try database.writeSynchronously { session in
             let messageDTO = try session.createNewMessage(
@@ -1674,7 +1674,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         // WHEN
-        var messageId: MessageId!
+        nonisolated(unsafe) var messageId: MessageId!
         try database.writeSynchronously { session in
             let messageDTO = try session.createNewMessage(
                 in: cid,
@@ -1723,7 +1723,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         // WHEN
-        var threadReplyId: MessageId!
+        nonisolated(unsafe) var threadReplyId: MessageId!
         try database.writeSynchronously { session in
             let replyShownInChannelDTO = try session.createNewMessage(
                 in: cid,
@@ -1909,7 +1909,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         // Create a new message
-        var newMessageId: MessageId!
+        nonisolated(unsafe) var newMessageId: MessageId!
         let newMessageText: String = .unique
 
         try database.writeSynchronously { session in
@@ -1955,7 +1955,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         // Create a new message
-        var newMessageId: MessageId!
+        nonisolated(unsafe) var newMessageId: MessageId!
         let newMessageText: String = .unique
         try database.writeSynchronously { session in
             let messageDTO = try session.createNewMessage(
@@ -2010,7 +2010,7 @@ final class MessageDTO_Tests: XCTestCase {
         let originalReplyCount = database.viewContext.message(id: messageId)?.replyCount ?? 0
 
         // Reply messageId
-        var replyMessageId: MessageId?
+        nonisolated(unsafe) var replyMessageId: MessageId?
 
         // Create new reply message
         try database.writeSynchronously { session in
@@ -4475,7 +4475,7 @@ final class MessageDTO_Tests: XCTestCase {
     }
 
     func test_asModel_whenModelTransformerProvided_transformsValues() throws {
-        class CustomMessageTransformer: StreamModelsTransformer {
+        class CustomMessageTransformer: StreamModelsTransformer, @unchecked Sendable {
             var mockTransformedMessage: ChatMessage = .mock(
                 id: .unique,
                 text: "transformed message"
@@ -4514,7 +4514,7 @@ final class MessageDTO_Tests: XCTestCase {
     // MARK: - Helpers:
 
     private func message(with id: MessageId) -> ChatMessage? {
-        var message: ChatMessage?
+        nonisolated(unsafe) var message: ChatMessage?
         try? database.writeSynchronously { session in
             message = try session.message(id: id)?.asModel()
         }
@@ -4522,7 +4522,7 @@ final class MessageDTO_Tests: XCTestCase {
     }
 
     private func reactionState(with messageId: String, userId: UserId, type: MessageReactionType) -> LocalReactionState? {
-        var reactionState: LocalReactionState?
+        nonisolated(unsafe) var reactionState: LocalReactionState?
         try? database.writeSynchronously { session in
             reactionState = session.reaction(messageId: messageId, userId: userId, type: type)?.localState
         }
@@ -4598,7 +4598,7 @@ final class MessageDTO_Tests: XCTestCase {
         enforceUnique: Bool = false
     ) -> Result<String, ClientError> {
         do {
-            var reactionId: String!
+            nonisolated(unsafe) var reactionId: String!
             try database.writeSynchronously { database in
                 let reaction = try database.addReaction(
                     to: messageId,

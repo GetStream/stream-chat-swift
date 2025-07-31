@@ -187,7 +187,7 @@ final class ConnectedUser_Tests: XCTestCase {
     // MARK: - Test Data
     
     @MainActor private func setUpConnectedUser(usesMockedUpdaters: Bool, loadState: Bool = true, initialDeviceCount: Int = 0) async throws {
-        var user: CurrentChatUser!
+        nonisolated(unsafe) var user: CurrentChatUser!
         try await env.client.databaseContainer.write { session in
             user = try session.saveCurrentUser(payload: self.currentUserPayload(deviceCount: initialDeviceCount)).asModel()
         }

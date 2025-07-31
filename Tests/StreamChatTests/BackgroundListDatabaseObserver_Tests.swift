@@ -121,7 +121,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         let onDidChangeExpectation = expectation(description: "onDidChange")
         onDidChangeExpectation.expectedFulfillmentCount = 2
 
-        var receivedChanges: [ListChange<String>] = []
+        nonisolated(unsafe) var receivedChanges: [ListChange<String>] = []
         observer.onDidChange = {
             receivedChanges.append(contentsOf: $0)
             onDidChangeExpectation.fulfill()
@@ -129,7 +129,7 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
 
         // Insert the test object
         let testValue = String.unique
-        var item: TestManagedObject!
+        nonisolated(unsafe) var item: TestManagedObject!
         try database.writeSynchronously { _ in
             let context = self.database.writableContext
             item = NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject

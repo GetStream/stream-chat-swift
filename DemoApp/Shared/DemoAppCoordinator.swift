@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class DemoAppCoordinator: NSObject {
+@MainActor final class DemoAppCoordinator: NSObject {
     internal let window: UIWindow
     internal let pushNotifications: PushNotifications
 

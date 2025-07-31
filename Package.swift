@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:6.0
 
 import Foundation
 import PackageDescription
@@ -25,7 +25,7 @@ let package = Package(
         .library(
             name: "StreamChatTestMockServer",
             targets: ["StreamChatTestMockServer"]
-        ),
+        )
     ],
     targets: [
         .target(
@@ -52,7 +52,7 @@ let package = Package(
             path: "TestTools/StreamChatTestMockServer",
             exclude: ["Info.plist"],
             resources: [.process("Fixtures")]
-        ),
+        )
     ]
 )
 

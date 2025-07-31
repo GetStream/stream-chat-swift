@@ -206,7 +206,7 @@ final class ChannelDTO_Tests: XCTestCase {
             unreadMessagesCount: 0
         )
 
-        var channelPayload: ChannelPayload = .dummy(
+        nonisolated(unsafe) var channelPayload: ChannelPayload = .dummy(
             channel: .dummy(),
             messages: [message1],
             channelReads: [read1]
@@ -1773,7 +1773,7 @@ private extension ChannelDTO_Tests {
     }
 }
 
-private class CustomChannelTransformer: StreamModelsTransformer {
+private class CustomChannelTransformer: StreamModelsTransformer, @unchecked Sendable {
     var mockTransformedChannel: ChatChannel = .mock(cid: .init(type: .messaging, id: "transformed"))
     func transform(channel: ChatChannel) -> ChatChannel {
         mockTransformedChannel

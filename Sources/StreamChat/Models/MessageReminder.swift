@@ -5,7 +5,7 @@
 import Foundation
 
 /// A type representing a message reminder.
-public struct MessageReminder {
+public struct MessageReminder: Sendable {
     /// A unique identifier of the reminder, based on the message ID.
     public let id: String
     
@@ -56,7 +56,7 @@ extension MessageReminder: Hashable {
 ///
 /// Does not contain any reference to the message or channel so that
 /// it can be used in these models without creating a circular reference.
-public struct MessageReminderInfo: Equatable {
+public struct MessageReminderInfo: Equatable, Sendable {
     /// The date when the user should be reminded about this message.
     /// If nil, this is a bookmark type reminder without a notification.
     public let remindAt: Date?

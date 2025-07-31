@@ -172,7 +172,7 @@ final class CurrentUserController_Drafts_Tests: XCTestCase {
     
     // MARK: - Delegate Tests
     
-    func test_draftMessagesObserver_notifiesDelegate() throws {
+    @MainActor func test_draftMessagesObserver_notifiesDelegate() throws {
         class DelegateMock: CurrentChatUserControllerDelegate {
             var messages: [DraftMessage] = []
             let expectation = XCTestExpectation(description: "Did Change Draft Messages")

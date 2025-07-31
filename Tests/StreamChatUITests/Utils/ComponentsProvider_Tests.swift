@@ -7,7 +7,7 @@ import StreamChat
 @testable import StreamChatUI
 import XCTest
 
-final class ComponentsProvider_Tests: XCTestCase {
+@MainActor final class ComponentsProvider_Tests: XCTestCase {
     func test_components_passedDownToSubview() {
         let parentView = TestViewWithExtraData()
         let subView = TestViewWithExtraData()

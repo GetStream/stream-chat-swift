@@ -19,7 +19,7 @@ import Foundation
 /// - Upload attachments in order declared by `locallyCreatedAt`
 /// - Start uploading attachments when connection status changes (offline -> online)
 ///
-class AttachmentQueueUploader: Worker {
+class AttachmentQueueUploader: Worker, @unchecked Sendable {
     @Atomic private var pendingAttachmentIDs: Set<AttachmentId> = []
 
     private let observer: StateLayerDatabaseObserver<ListResult, AttachmentDTO, AttachmentDTO>
@@ -95,7 +95,7 @@ class AttachmentQueueUploader: Worker {
                         attachmentId: id,
                         uploadedAttachment: nil,
                         newState: .uploadingFailed,
-                        completion: {
+                        completion: { [weak self] in
                             self?.removePendingAttachment(with: id, result: .failure(error))
                         }
                     )
@@ -103,7 +103,7 @@ class AttachmentQueueUploader: Worker {
             case .success(let attachment):
                 self?.apiClient.uploadAttachment(
                     attachment,
-                    progress: {
+                    progress: { [weak self] in
                         self?.updateAttachmentIfNeeded(
                             attachmentId: id,
                             uploadedAttachment: nil,
@@ -111,12 +111,12 @@ class AttachmentQueueUploader: Worker {
                             completion: {}
                         )
                     },
-                    completion: { result in
+                    completion: { [weak self] result in
                         self?.updateAttachmentIfNeeded(
                             attachmentId: id,
                             uploadedAttachment: result.value,
                             newState: result.error == nil ? .uploaded : .uploadingFailed,
-                            completion: {
+                            completion: { [weak self] in
                                 self?.removePendingAttachment(with: id, result: result)
                             }
                         )
@@ -126,10 +126,10 @@ class AttachmentQueueUploader: Worker {
         }
     }
 
-    private func prepareAttachmentForUpload(with id: AttachmentId, completion: @escaping (Result<AnyChatMessageAttachment, Error>) -> Void) {
+    private func prepareAttachmentForUpload(with id: AttachmentId, completion: @escaping @Sendable(Result<AnyChatMessageAttachment, Error>) -> Void) {
         let attachmentStorage = self.attachmentStorage
-        var model: AnyChatMessageAttachment?
-        var attachmentLocalURL: URL?
+        nonisolated(unsafe) var model: AnyChatMessageAttachment?
+        nonisolated(unsafe) var attachmentLocalURL: URL?
         database.write { session in
             guard let attachment = session.attachment(id: id) else {
                 throw ClientError.AttachmentDoesNotExist(id: id)
@@ -191,7 +191,7 @@ class AttachmentQueueUploader: Worker {
         attachmentId: AttachmentId,
         uploadedAttachment: UploadedAttachment?,
         newState: LocalAttachmentState,
-        completion: @escaping () -> Void = {}
+        completion: @escaping @Sendable() -> Void = {}
     ) {
         database.write({ [minSignificantUploadingProgressChange, weak self] session in
             guard let attachmentDTO = session.attachment(id: attachmentId) else { return }
@@ -295,7 +295,7 @@ private extension Array where Element == ListChange<AttachmentDTO> {
     }
 }
 
-private class AttachmentStorage {
+private final class AttachmentStorage: @unchecked Sendable {
     enum Constants {
         static let path = "LocalAttachments"
     }

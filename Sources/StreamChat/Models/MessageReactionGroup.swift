@@ -5,7 +5,7 @@
 import Foundation
 
 /// All the reactions information about a specific type of reaction.
-public struct ChatMessageReactionGroup: Equatable {
+public struct ChatMessageReactionGroup: Equatable, Sendable {
     /// The type of reaction.
     public let type: MessageReactionType
     /// The sum of all reaction scores for this type of reaction.

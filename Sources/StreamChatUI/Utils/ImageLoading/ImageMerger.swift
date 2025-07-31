@@ -50,7 +50,7 @@ open class DefaultImageMerger: ImageMerging {
             dimensions.height += image.size.height
         }
 
-        UIGraphicsBeginImageContextWithOptions(dimensions, true, UIScreen.main.scale)
+        UIGraphicsBeginImageContextWithOptions(dimensions, true, Screen.scale)
 
         var lastY: CGFloat = 0
         for image in images {
@@ -75,7 +75,7 @@ open class DefaultImageMerger: ImageMerging {
             dimensions.height = max(dimensions.height, image.size.height)
         }
 
-        UIGraphicsBeginImageContextWithOptions(dimensions, true, UIScreen.main.scale)
+        UIGraphicsBeginImageContextWithOptions(dimensions, true, Screen.scale)
 
         var lastX: CGFloat = 0
         for image in images {

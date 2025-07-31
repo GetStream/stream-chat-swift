@@ -7,6 +7,6 @@ import Foundation
 public protocol StreamTimer {
     func start()
     func stop()
-    var onChange: (() -> Void)? { get set }
+    var onChange: (@Sendable() -> Void)? { get set }
     var isRunning: Bool { get }
 }

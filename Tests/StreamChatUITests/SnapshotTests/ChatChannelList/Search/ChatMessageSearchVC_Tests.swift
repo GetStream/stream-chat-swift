@@ -8,7 +8,7 @@
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatMessageSearchVC_Tests: XCTestCase {
+@MainActor final class ChatMessageSearchVC_Tests: XCTestCase {
     /// Static setUp() is only run once. Which is what we want in this case to preload the images.
     override class func setUp() {
         /// Dummy snapshot to preload the TestImages.yoda.url image

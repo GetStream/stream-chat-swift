@@ -262,7 +262,7 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
             "message.updated": .messageUpdated
         ]
 
-        var assertions: [Bool] = []
+        nonisolated(unsafe) var assertions: [Bool] = []
         expectation.expectedFulfillmentCount = notificationTypes.count
 
         for notificationType in notificationTypes {

@@ -5,7 +5,7 @@
 import Foundation
 
 /// Pagination options available when paginating pinned messages.
-public enum PinnedMessagesPagination: Hashable {
+public enum PinnedMessagesPagination: Hashable, Sendable {
     /// When used, the backend returns messages around the message with the given id.
     case aroundMessage(_ messageId: MessageId)
 

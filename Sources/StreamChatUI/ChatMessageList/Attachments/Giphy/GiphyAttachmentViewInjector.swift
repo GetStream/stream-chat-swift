@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The delegate used `GiphyAttachmentViewInjector` to communicate user interactions.
-public protocol GiphyActionContentViewDelegate: ChatMessageContentViewDelegate {
+@MainActor public protocol GiphyActionContentViewDelegate: ChatMessageContentViewDelegate {
     /// Called when the user taps on attachment action
     func didTapOnAttachmentAction(_ action: AttachmentAction, at indexPath: IndexPath)
 }

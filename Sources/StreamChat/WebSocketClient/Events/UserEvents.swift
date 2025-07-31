@@ -13,7 +13,7 @@ public struct UserPresenceChangedEvent: Event {
     public let createdAt: Date?
 }
 
-class UserPresenceChangedEventDTO: EventDTO {
+final class UserPresenceChangedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
@@ -43,7 +43,7 @@ public struct UserUpdatedEvent: Event {
     public let createdAt: Date?
 }
 
-class UserUpdatedEventDTO: EventDTO {
+final class UserUpdatedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
@@ -84,7 +84,7 @@ public struct UserWatchingEvent: ChannelSpecificEvent {
     public let isStarted: Bool
 }
 
-class UserWatchingEventDTO: EventDTO {
+final class UserWatchingEventDTO: EventDTO {
     let cid: ChannelId
     let user: UserPayload
     let createdAt: Date
@@ -170,7 +170,7 @@ public struct UserBannedEvent: ChannelSpecificEvent {
     public let isShadowBan: Bool?
 }
 
-class UserBannedEventDTO: EventDTO {
+final class UserBannedEventDTO: EventDTO {
     let cid: ChannelId
     let user: UserPayload
     let ownerId: UserId
@@ -248,7 +248,7 @@ public struct UserUnbannedEvent: ChannelSpecificEvent {
     public let createdAt: Date?
 }
 
-class UserUnbannedEventDTO: EventDTO {
+final class UserUnbannedEventDTO: EventDTO {
     let cid: ChannelId
     let user: UserPayload
     let createdAt: Date

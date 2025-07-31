@@ -9,7 +9,7 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-final class QuotedChatMessageView_SwiftUI_Tests: XCTestCase {
+@MainActor final class QuotedChatMessageView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
         struct CustomQuotedChatMessageView: QuotedChatMessageView.SwiftUIView {
             @ObservedObject var dataSource: QuotedChatMessageView.ObservedObject<Self>

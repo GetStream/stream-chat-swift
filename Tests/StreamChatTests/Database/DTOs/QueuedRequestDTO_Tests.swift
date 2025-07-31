@@ -95,7 +95,7 @@ final class QueuedRequestDTO_Tests: XCTestCase {
     }
 
     private func createRequests(count: Int) throws {
-        func createRequest(index: Int) throws {
+        @Sendable func createRequest(index: Int) throws {
             let id = "request\(index)"
             let date = Date()
             let endpoint = Endpoint<EmptyResponse>(

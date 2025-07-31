@@ -1,5 +1,5 @@
 //
-//  UIImage+SwiftyGif.swift
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 #if !os(macOS)
@@ -30,7 +30,7 @@ extension GifParseError: LocalizedError {
         switch self {
         case .invalidFilename:
             return "Invalid file name"
-        case .noImages,.noProperties, .noGifDictionary,.noTimingInfo:
+        case .noImages, .noProperties, .noGifDictionary, .noTimingInfo:
             return "Invalid gif file "
         }
     }
@@ -41,7 +41,7 @@ extension UIImage {
     ///
     /// - Parameter imageData: The actual image data, can be GIF or some other format
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    convenience init?(imageData:Data, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
+    @MainActor convenience init?(imageData: Data, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
         do {
             try self.init(gifData: imageData, levelOfIntegrity: levelOfIntegrity)
         } catch {
@@ -53,7 +53,7 @@ extension UIImage {
     ///
     /// - Parameter imageName: Filename
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    convenience init?(imageName: String, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
+    @MainActor convenience init?(imageName: String, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
         self.init()
 
         do {
@@ -67,12 +67,11 @@ extension UIImage {
 // MARK: - Inits
 
 extension UIImage {
-    
     /// Convenience initializer. Creates a gif with its backing data.
     ///
     /// - Parameter gifData: The actual gif data
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    convenience init(gifData:Data, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
+    @MainActor convenience init(gifData: Data, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
         self.init()
         try setGifFromData(gifData, levelOfIntegrity: levelOfIntegrity)
     }
@@ -81,7 +80,7 @@ extension UIImage {
     ///
     /// - Parameter gifName: Filename
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    convenience init(gifName: String, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
+    @MainActor convenience init(gifName: String, levelOfIntegrity: GifLevelOfIntegrity = .default) throws {
         self.init()
         try setGif(gifName, levelOfIntegrity: levelOfIntegrity)
     }
@@ -90,7 +89,7 @@ extension UIImage {
     ///
     /// - Parameter data: The actual gif data
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    func setGifFromData(_ data: Data, levelOfIntegrity: GifLevelOfIntegrity) throws {
+    @MainActor func setGifFromData(_ data: Data, levelOfIntegrity: GifLevelOfIntegrity) throws {
         guard let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else { return }
         self.imageSource = imageSource
         imageData = data
@@ -102,7 +101,7 @@ extension UIImage {
     /// Set backing data for this gif. Overwrites any existing data.
     ///
     /// - Parameter name: Filename
-    func setGif(_ name: String) throws {
+    @MainActor func setGif(_ name: String) throws {
         try setGif(name, levelOfIntegrity: .default)
     }
     
@@ -110,16 +109,18 @@ extension UIImage {
     ///
     /// - Return number of frames
     func framesCount() -> Int {
-        return displayOrder?.count ?? 0
+        displayOrder?.count ?? 0
     }
     
     /// Set backing data for this gif. Overwrites any existing data.
     ///
     /// - Parameter name: Filename
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    func setGif(_ name: String, levelOfIntegrity: GifLevelOfIntegrity) throws {
-        if let url = Bundle.main.url(forResource: name,
-                                     withExtension: name.pathExtension() == "gif" ? "" : "gif") {
+    @MainActor func setGif(_ name: String, levelOfIntegrity: GifLevelOfIntegrity) throws {
+        if let url = Bundle.main.url(
+            forResource: name,
+            withExtension: name.pathExtension() == "gif" ? "" : "gif"
+        ) {
             if let data = try? Data(contentsOf: url) {
                 try setGifFromData(data, levelOfIntegrity: levelOfIntegrity)
             }
@@ -139,19 +140,19 @@ extension UIImage {
     
     // MARK: Logic
     
-    private func convertToDelay(_ pointer:UnsafeRawPointer?) -> Float? {
+    private func convertToDelay(_ pointer: UnsafeRawPointer?) -> Float? {
         if pointer == nil {
             return nil
         }
         
-        return unsafeBitCast(pointer, to:AnyObject.self).floatValue
+        return unsafeBitCast(pointer, to: AnyObject.self).floatValue
     }
     
     /// Get delay times for each frames
     ///
     /// - Parameter imageSource: reference to the gif image source
     /// - Returns array of delays
-    private func delayTimes(_ imageSource:CGImageSource) throws -> [Float] {
+    private func delayTimes(_ imageSource: CGImageSource) throws -> [Float] {
         let imageCount = CGImageSourceGetCount(imageSource)
         
         guard imageCount > 0 else {
@@ -179,18 +180,18 @@ extension UIImage {
             return unsafeBitCast(value, to: CFDictionary.self)
         }
         
-        let EPS:Float = 1e-6
+        let EPS: Float = 1e-6
         
-        let frameDelays:[Float] = try frameProperties.map() {
+        let frameDelays: [Float] = try frameProperties.map() {
             let unclampedKey = Unmanaged.passUnretained(kCGImagePropertyGIFUnclampedDelayTime).toOpaque()
-            let unclampedPointer:UnsafeRawPointer? = CFDictionaryGetValue($0, unclampedKey)
+            let unclampedPointer: UnsafeRawPointer? = CFDictionaryGetValue($0, unclampedKey)
             
             if let value = convertToDelay(unclampedPointer), value >= EPS {
                 return value
             }
             
             let clampedKey = Unmanaged.passUnretained(kCGImagePropertyGIFDelayTime).toOpaque()
-            let clampedPointer:UnsafeRawPointer? = CFDictionaryGetValue($0, clampedKey)
+            let clampedPointer: UnsafeRawPointer? = CFDictionaryGetValue($0, clampedKey)
             
             if let value = convertToDelay(clampedPointer) {
                 return value
@@ -206,20 +207,20 @@ extension UIImage {
     ///
     /// - Parameter delaysArray: decoded delay times for this gif
     /// - Parameter levelOfIntegrity: 0 to 1, 1 meaning no frame skipping
-    private func calculateFrameDelay(_ delaysArray: [Float], levelOfIntegrity: GifLevelOfIntegrity) {
+    @MainActor private func calculateFrameDelay(_ delaysArray: [Float], levelOfIntegrity: GifLevelOfIntegrity) {
         let levelOfIntegrity = max(0, min(1, levelOfIntegrity))
         var delays = delaysArray
 
         var displayRefreshFactors = [Int]()
 
         if #available(iOS 10.3, *) {
-          // Will be 120 on devices with ProMotion display, 60 otherwise.
-          displayRefreshFactors.append(UIScreen.main.maximumFramesPerSecond)
+            // Will be 120 on devices with ProMotion display, 60 otherwise.
+            displayRefreshFactors.append(UIScreen.main.maximumFramesPerSecond)
         }
 
         if let first = displayRefreshFactors.first, first != 60 {
-          // Append 60 if needed.
-          displayRefreshFactors.append(60)
+            // Append 60 if needed.
+            displayRefreshFactors.append(60)
         }
 
         displayRefreshFactors.append(contentsOf: [30, 20, 15, 12, 10, 6, 5, 4, 3, 2, 1])
@@ -238,7 +239,7 @@ extension UIImage {
             delays[i] += delays[i - 1]
         }
         
-        //find the appropriate Factors then BREAK
+        // find the appropriate Factors then BREAK
         for (i, delayTime) in displayRefreshDelayTime.enumerated() {
             let displayPosition = delays.map { Int($0 / delayTime) }
             var frameLoseCount: Float = 0
@@ -274,11 +275,11 @@ extension UIImage {
     }
     
     /// Compute frame size for this gif
-    private func calculateFrameSize(){
+    private func calculateFrameSize() {
         guard let imageSource = imageSource,
-            let imageCount = imageCount,
-            let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else {
-                return
+              let imageCount = imageCount,
+              let cgImage = CGImageSourceCreateImageAtIndex(imageSource, 0, nil) else {
+            return
         }
         
         let image = UIImage(cgImage: cgImage)
@@ -288,15 +289,14 @@ extension UIImage {
 
 // MARK: - Properties
 
-private let _imageSourceKey = malloc(4)
-private let _displayRefreshFactorKey = malloc(4)
-private let _imageSizeKey = malloc(4)
-private let _imageCountKey = malloc(4)
-private let _displayOrderKey = malloc(4)
-private let _imageDataKey = malloc(4)
+nonisolated(unsafe) private let _imageSourceKey = malloc(4)
+nonisolated(unsafe) private let _displayRefreshFactorKey = malloc(4)
+nonisolated(unsafe) private let _imageSizeKey = malloc(4)
+nonisolated(unsafe) private let _imageCountKey = malloc(4)
+nonisolated(unsafe) private let _displayOrderKey = malloc(4)
+nonisolated(unsafe) private let _imageDataKey = malloc(4)
 
 extension UIImage {
-    
     var imageSource: CGImageSource? {
         get {
             let result = objc_getAssociatedObject(self, _imageSourceKey!)
@@ -307,27 +307,27 @@ extension UIImage {
         }
     }
     
-    var displayRefreshFactor: Int?{
-        get { return objc_getAssociatedObject(self, _displayRefreshFactorKey!) as? Int }
+    var displayRefreshFactor: Int? {
+        get { objc_getAssociatedObject(self, _displayRefreshFactorKey!) as? Int }
         set { objc_setAssociatedObject(self, _displayRefreshFactorKey!, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
     
-    var imageSize: Int?{
-        get { return objc_getAssociatedObject(self, _imageSizeKey!) as? Int }
+    var imageSize: Int? {
+        get { objc_getAssociatedObject(self, _imageSizeKey!) as? Int }
         set { objc_setAssociatedObject(self, _imageSizeKey!, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
     
-    var imageCount: Int?{
-        get { return objc_getAssociatedObject(self, _imageCountKey!) as? Int }
+    var imageCount: Int? {
+        get { objc_getAssociatedObject(self, _imageCountKey!) as? Int }
         set { objc_setAssociatedObject(self, _imageCountKey!, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
     
-    var displayOrder: [Int]?{
-        get { return objc_getAssociatedObject(self, _displayOrderKey!) as? [Int] }
+    var displayOrder: [Int]? {
+        get { objc_getAssociatedObject(self, _displayOrderKey!) as? [Int] }
         set { objc_setAssociatedObject(self, _displayOrderKey!, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC) }
     }
     
-    var imageData:Data? {
+    var imageData: Data? {
         get {
             let result = objc_getAssociatedObject(self, _imageDataKey!)
             return result == nil ? nil : (result as? Data)
@@ -340,7 +340,7 @@ extension UIImage {
 
 extension String {
     fileprivate func pathExtension() -> String {
-        return (self as NSString).pathExtension
+        (self as NSString).pathExtension
     }
 }
 

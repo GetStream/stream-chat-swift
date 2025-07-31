@@ -80,7 +80,7 @@ enum LayoutAnchorName {
     case trailing
     case width
 
-    func makeConstraint(fromView: UIView, toView: UIView, constant: CGFloat = 0) -> NSLayoutConstraint {
+    @MainActor func makeConstraint(fromView: UIView, toView: UIView, constant: CGFloat = 0) -> NSLayoutConstraint {
         switch self {
         case .bottom:
             return fromView.bottomAnchor.pin(equalTo: toView.bottomAnchor, constant: constant)
@@ -109,7 +109,7 @@ enum LayoutAnchorName {
         }
     }
 
-    func makeConstraint(fromView: UIView, toLayoutGuide: UILayoutGuide, constant: CGFloat = 0) -> NSLayoutConstraint? {
+    @MainActor func makeConstraint(fromView: UIView, toLayoutGuide: UILayoutGuide, constant: CGFloat = 0) -> NSLayoutConstraint? {
         switch self {
         case .bottom:
             return fromView.bottomAnchor.pin(equalTo: toLayoutGuide.bottomAnchor, constant: constant)
@@ -137,7 +137,7 @@ enum LayoutAnchorName {
         }
     }
 
-    func makeConstraint(fromView: UIView, constant: CGFloat) -> NSLayoutConstraint? {
+    @MainActor func makeConstraint(fromView: UIView, constant: CGFloat) -> NSLayoutConstraint? {
         switch self {
         case .height:
             return fromView.heightAnchor.pin(equalToConstant: constant)

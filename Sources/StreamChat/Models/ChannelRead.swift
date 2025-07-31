@@ -5,7 +5,7 @@
 import Foundation
 
 /// A type representing a user's last read action on a channel.
-public struct ChatChannelRead: Equatable {
+public struct ChatChannelRead: Equatable, Sendable {
     /// The last time the user has read the channel.
     public let lastReadAt: Date
 

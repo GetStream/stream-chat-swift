@@ -72,7 +72,7 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
 
     // MARK: - Loading previous and next messages state handling.
 
-    override func loadPreviousMessages(completion: @escaping (Error?) -> Void) {
+    override func loadPreviousMessages(completion: @escaping @MainActor @Sendable(Error?) -> Void) {
         messageListVC.headerView = loadingViewIndicator
         super.loadPreviousMessages(completion: completion)
     }
@@ -81,7 +81,7 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
         messageListVC.headerView = nil
     }
 
-    override func loadNextMessages(completion: @escaping (Error?) -> Void) {
+    override func loadNextMessages(completion: @escaping @MainActor @Sendable(Error?) -> Void) {
         messageListVC.footerView = loadingViewIndicator
         super.loadNextMessages(completion: completion)
     }

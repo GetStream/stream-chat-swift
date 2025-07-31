@@ -5,7 +5,7 @@
 import Foundation
 
 /// A structure representing a vote in a poll.
-public struct PollVote: Hashable, Equatable {
+public struct PollVote: Hashable, Equatable, Sendable {
     /// The unique identifier of the poll vote.
     public let id: String
     

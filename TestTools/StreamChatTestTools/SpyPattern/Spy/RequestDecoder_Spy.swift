@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-final class RequestDecoder_Spy: RequestDecoder, Spy {
+final class RequestDecoder_Spy: RequestDecoder, Spy, @unchecked Sendable {
     let spyState = SpyState()
     var decodeRequestResponse: Result<Any, Error>?
     var decodeRequestDelay: TimeInterval?

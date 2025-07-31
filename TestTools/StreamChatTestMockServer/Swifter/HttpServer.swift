@@ -1,16 +1,11 @@
 //
-//  HttpServer.swift
-//  Swifter
-//
-//  Copyright (c) 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
-open class HttpServer: HttpServerIO {
-
+open class HttpServer: HttpServerIO, @unchecked Sendable {
     public static let VERSION: String = {
-
         #if os(Linux)
         return "1.5.0"
         #else
@@ -22,34 +17,34 @@ open class HttpServer: HttpServerIO {
 
     private let router = HttpRouter()
 
-    public override init() {
-        self.DELETE = MethodRoute(method: "DELETE", router: router)
-        self.PATCH  = MethodRoute(method: "PATCH", router: router)
-        self.HEAD   = MethodRoute(method: "HEAD", router: router)
-        self.POST   = MethodRoute(method: "POST", router: router)
-        self.GET    = MethodRoute(method: "GET", router: router)
-        self.PUT    = MethodRoute(method: "PUT", router: router)
+    override public init() {
+        DELETE = MethodRoute(method: "DELETE", router: router)
+        PATCH = MethodRoute(method: "PATCH", router: router)
+        HEAD = MethodRoute(method: "HEAD", router: router)
+        POST = MethodRoute(method: "POST", router: router)
+        GET = MethodRoute(method: "GET", router: router)
+        PUT = MethodRoute(method: "PUT", router: router)
 
-        self.delete = MethodRoute(method: "DELETE", router: router)
-        self.patch  = MethodRoute(method: "PATCH", router: router)
-        self.head   = MethodRoute(method: "HEAD", router: router)
-        self.post   = MethodRoute(method: "POST", router: router)
-        self.get    = MethodRoute(method: "GET", router: router)
-        self.put    = MethodRoute(method: "PUT", router: router)
+        delete = MethodRoute(method: "DELETE", router: router)
+        patch = MethodRoute(method: "PATCH", router: router)
+        head = MethodRoute(method: "HEAD", router: router)
+        post = MethodRoute(method: "POST", router: router)
+        get = MethodRoute(method: "GET", router: router)
+        put = MethodRoute(method: "PUT", router: router)
     }
 
     public var DELETE, PATCH, HEAD, POST, GET, PUT: MethodRoute
     public var delete, patch, head, post, get, put: MethodRoute
 
     public subscript(path: String) -> ((HttpRequest) -> HttpResponse)? {
-        get { return nil }
+        get { nil }
         set {
             router.register(nil, path: path, handler: newValue)
         }
     }
 
     public var routes: [String] {
-        return router.routes()
+        router.routes()
     }
 
     public var notFoundHandler: ((HttpRequest) -> HttpResponse)?
@@ -75,7 +70,7 @@ open class HttpServer: HttpServerIO {
         public let method: String
         public let router: HttpRouter
         public subscript(path: String) -> ((HttpRequest) -> HttpResponse)? {
-            get { return nil }
+            get { nil }
             set {
                 router.register(method, path: path, handler: newValue)
             }

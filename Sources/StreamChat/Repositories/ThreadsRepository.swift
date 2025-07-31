@@ -4,12 +4,12 @@
 
 import CoreData
 
-struct ThreadListResponse {
+struct ThreadListResponse: Sendable {
     var threads: [ChatThread]
     var next: String?
 }
 
-class ThreadsRepository {
+class ThreadsRepository: @unchecked Sendable {
     let database: DatabaseContainer
     let apiClient: APIClient
 
@@ -20,12 +20,12 @@ class ThreadsRepository {
 
     func loadThreads(
         query: ThreadListQuery,
-        completion: @escaping (Result<ThreadListResponse, Error>) -> Void
+        completion: @escaping @Sendable(Result<ThreadListResponse, Error>) -> Void
     ) {
         apiClient.request(endpoint: .threads(query: query)) { [weak self] result in
             switch result {
             case .success(let threadListPayload):
-                var threads: [ChatThread] = []
+                nonisolated(unsafe) var threads: [ChatThread] = []
                 self?.database.write({ session in
                     if query.next == nil {
                         /// For now, there is no `ThreadListQuery.filter` support.

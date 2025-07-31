@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-final class RequestEncoder_Spy: RequestEncoder, Spy {
+final class RequestEncoder_Spy: RequestEncoder, Spy, @unchecked Sendable {
     let spyState = SpyState()
     let init_baseURL: URL
     let init_apiKey: APIKey

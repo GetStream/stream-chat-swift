@@ -72,7 +72,7 @@ struct MessageSearchResultsPayload: Decodable {
 }
 
 /// An object describing the incoming message JSON payload.
-class MessagePayload: Decodable {
+final class MessagePayload: Decodable, Sendable {
     let id: String
     /// Only messages from `translate` endpoint contain `cid`
     let cid: ChannelId?
@@ -106,17 +106,17 @@ class MessagePayload: Decodable {
     let translations: [TranslationLanguage: String]?
     let originalLanguage: String?
     let moderationDetails: MessageModerationDetailsPayload? // moderation v1 payload
-    var moderation: MessageModerationDetailsPayload? // moderation v2 payload
+    let moderation: MessageModerationDetailsPayload? // moderation v2 payload
 
-    var pinned: Bool
-    var pinnedBy: UserPayload?
-    var pinnedAt: Date?
-    var pinExpires: Date?
+    let pinned: Bool
+    let pinnedBy: UserPayload?
+    let pinnedAt: Date?
+    let pinExpires: Date?
     
-    var poll: PollPayload?
-    var draft: DraftPayload?
-    var location: SharedLocationPayload?
-    var reminder: ReminderPayload?
+    let poll: PollPayload?
+    let draft: DraftPayload?
+    let location: SharedLocationPayload?
+    let reminder: ReminderPayload?
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
@@ -276,7 +276,7 @@ class MessagePayload: Decodable {
 }
 
 /// An object describing the outgoing message JSON payload.
-struct MessageRequestBody: Encodable {
+struct MessageRequestBody: Encodable, Sendable {
     let id: String
     let user: UserRequestBody
     let text: String
@@ -383,7 +383,7 @@ struct MessageReactionsPayload: Decodable {
 }
 
 /// A command in a message, e.g. /giphy.
-public struct Command: Codable, Hashable {
+public struct Command: Codable, Hashable, Sendable {
     /// A command name.
     public let name: String
     /// A description.

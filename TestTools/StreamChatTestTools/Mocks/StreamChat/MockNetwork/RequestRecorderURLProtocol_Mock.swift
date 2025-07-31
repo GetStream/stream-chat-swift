@@ -8,12 +8,12 @@ import XCTest
 
 /// This URLProtocol subclass allows to intercept the network communication
 /// and provides the latest network request made.
-final class RequestRecorderURLProtocol_Mock: URLProtocol {
+final class RequestRecorderURLProtocol_Mock: URLProtocol, @unchecked Sendable {
     /// If set, records only requests with `testSessionHeaderKey` header value set to this value. If `nil`,
     /// no requests are recorded.
-    @Atomic static var currentSessionId: String?
-    @Atomic private static var latestRequestExpectation: XCTestExpectation?
-    @Atomic private static var latestRequest: URLRequest?
+    static let currentSessionId = AllocatedUnfairLock<String?>(nil)
+    private static let latestRequestExpectation = AllocatedUnfairLock<XCTestExpectation?>(nil)
+    private static let latestRequest = AllocatedUnfairLock<URLRequest?>(nil)
 
     static let testSessionHeaderKey = "RequestRecorderURLProtocolMock_test_session_id"
 
@@ -22,7 +22,7 @@ final class RequestRecorderURLProtocol_Mock: URLProtocol {
     static func startTestSession(with configuration: inout URLSessionConfiguration) {
         reset()
         let newSessionId = UUID().uuidString
-        currentSessionId = newSessionId
+        currentSessionId.value = newSessionId
 
         configuration.protocolClasses?.insert(Self.self, at: 0)
         var existingHeaders = configuration.httpAdditionalHeaders ?? [:]
@@ -38,23 +38,23 @@ final class RequestRecorderURLProtocol_Mock: URLProtocol {
     /// - Parameter timeout: Specifies the time the function waits for a new request to be made.
     static func waitForRequest(timeout: TimeInterval) -> URLRequest? {
         defer { reset() }
-        guard latestRequest == nil else { return latestRequest }
+        guard latestRequest.value == nil else { return latestRequest.value }
 
-        latestRequestExpectation = .init(description: "Wait for incoming request.")
-        _ = XCTWaiter.wait(for: [latestRequestExpectation!], timeout: timeout)
-        return latestRequest
+        latestRequestExpectation.value = .init(description: "Wait for incoming request.")
+        _ = XCTWaiter.wait(for: [latestRequestExpectation.value!], timeout: timeout)
+        return latestRequest.value
     }
 
     /// Cleans up existing waiters and recorded requests. We have to explictly reset the state because URLProtocols
     /// work with static variables.
     static func reset() {
-        currentSessionId = nil
-        latestRequest = nil
-        latestRequestExpectation = nil
+        currentSessionId.value = nil
+        latestRequest.value = nil
+        latestRequestExpectation.value = nil
     }
 
     override class func canInit(with request: URLRequest) -> Bool {
-        guard let sessionId = currentSessionId else { return false }
+        guard let sessionId = currentSessionId.value else { return false }
 
         if sessionId == request.value(forHTTPHeaderField: testSessionHeaderKey) {
             record(request: request)
@@ -68,12 +68,12 @@ final class RequestRecorderURLProtocol_Mock: URLProtocol {
     }
 
     private static func record(request: URLRequest) {
-        guard latestRequest == nil else {
+        guard latestRequest.value == nil else {
             log.info("Request for \(String(describing: currentSessionId)) already recoded. Skipping.")
             return
         }
-        latestRequest = request
-        latestRequestExpectation?.fulfill()
+        latestRequest.value = request
+        latestRequestExpectation.value?.fulfill()
     }
 
     // MARK: Instance methods

@@ -5,7 +5,7 @@
 import Foundation
 
 /// Helper component to update the payload of a type-erased attachment.
-public struct AnyAttachmentUpdater {
+public struct AnyAttachmentUpdater: Sendable {
     public init() {}
 
     /// Updates the underlying payload of a type-erased attachment.

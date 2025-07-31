@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class CooldownTracker_Mock: CooldownTracker {
+final class CooldownTracker_Mock: CooldownTracker, @unchecked Sendable {
     var startCallCount = 0
 
     override func start(with cooldown: Int) {

@@ -29,7 +29,7 @@ final class MemberEventObserver_Tests: XCTestCase {
         let memberEvent = TestMemberEvent.unique
         let otherEvent = OtherEvent()
 
-        var receivedEvents: [MemberEvent] = []
+        nonisolated(unsafe) var receivedEvents: [MemberEvent] = []
         observer = MemberEventObserver(
             notificationCenter: eventNotificationCenter,
             callback: { receivedEvents.append($0) }
@@ -49,7 +49,7 @@ final class MemberEventObserver_Tests: XCTestCase {
         let matchingMemberEvent = TestMemberEvent(cid: channelId, memberUserId: .unique)
         let otherMemberEvent = TestMemberEvent.unique
 
-        var receivedEvents: [MemberEvent] = []
+        nonisolated(unsafe) var receivedEvents: [MemberEvent] = []
         observer = MemberEventObserver(
             notificationCenter: eventNotificationCenter,
             cid: channelId,

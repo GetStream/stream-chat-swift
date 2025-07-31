@@ -7,7 +7,7 @@ import UIKit
 
 /// A mock implementation of the image loader which loads images synchronusly
 final class ImageLoader_Mock: ImageLoading {
-    func loadImage(into imageView: UIImageView, from url: URL?, with options: ImageLoaderOptions, completion: ((Result<UIImage, Error>) -> Void)?) -> Cancellable? {
+    func loadImage(into imageView: UIImageView, from url: URL?, with options: ImageLoaderOptions, completion: (@MainActor @Sendable(Result<UIImage, Error>) -> Void)?) -> Cancellable? {
         if let url = url {
             let image = UIImage(data: try! Data(contentsOf: url))!
             imageView.image = image
@@ -21,21 +21,23 @@ final class ImageLoader_Mock: ImageLoading {
 
     func downloadImage(
         with request: ImageDownloadRequest,
-        completion: @escaping ((Result<UIImage, Error>) -> Void)
+        completion: @escaping (@MainActor @Sendable(Result<UIImage, Error>) -> Void)
     ) -> Cancellable? {
-        var image = UIImage(data: try! Data(contentsOf: request.url))!
+        nonisolated(unsafe) var image = UIImage(data: try! Data(contentsOf: request.url))!
         
         if let resize = request.options.resize {
             let cgSize = CGSize(width: resize.width, height: resize.height)
             image = NukeImageProcessor().scale(image: image, to: cgSize)
         }
-        completion(.success(image))
+        StreamConcurrency.onMain {
+            completion(.success(image))
+        }
         return nil
     }
 
     func downloadMultipleImages(
         with requests: [ImageDownloadRequest],
-        completion: @escaping (([Result<UIImage, Error>]) -> Void)
+        completion: @escaping (@MainActor @Sendable([Result<UIImage, Error>]) -> Void)
     ) {
         let results = requests
             .map { request in
@@ -45,6 +47,8 @@ final class ImageLoader_Mock: ImageLoading {
                 return NukeImageProcessor().scale(image: image, to: cgSize)
             }
             .map { Result<UIImage, Error>.success($0) }
-        completion(results)
+        StreamConcurrency.onMain {
+            completion(results)
+        }
     }
 }

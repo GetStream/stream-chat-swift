@@ -5,7 +5,7 @@
 import Foundation
 
 /// The current state of the messages pagination.
-struct MessagesPaginationState {
+struct MessagesPaginationState: Sendable {
     // MARK: State
 
     /// The oldest fetched message while paginating.

@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-public class Chat_Mock: Chat, Spy {
+public class Chat_Mock: Chat, Spy, @unchecked Sendable {
     public let spyState = SpyState()
     
     static let cid = try! ChannelId(cid: "mock:channel")
@@ -49,13 +49,13 @@ public class Chat_Mock: Chat, Spy {
     }
 
     var createNewMessageCallCount = 0
-    public override func sendMessage(
+    override public func sendMessage(
         with text: String,
         attachments: [AnyAttachmentPayload] = [],
         quote quotedMessageId: MessageId? = nil,
         mentions: [UserId] = [],
         pinning: MessagePinning? = nil,
-        extraData: [String : RawJSON] = [:],
+        extraData: [String: RawJSON] = [:],
         silent: Bool = false,
         skipPushNotification: Bool = false,
         skipEnrichURL: Bool = false,
@@ -67,11 +67,11 @@ public class Chat_Mock: Chat, Spy {
     }
     
     public var loadPageAroundMessageIdCallCount = 0
-    public override func loadMessages(around messageId: MessageId, limit: Int? = nil) async throws {
+    override public func loadMessages(around messageId: MessageId, limit: Int? = nil) async throws {
         loadPageAroundMessageIdCallCount += 1
     }
     
-    public override func watch() async throws {
+    override public func watch() async throws {
         record()
     }
 }
@@ -79,8 +79,8 @@ public class Chat_Mock: Chat, Spy {
 public extension Chat_Mock {
     /// Simulates the initial conditions. Setting these values doesn't trigger any observer callback.
     @MainActor func simulateInitial(channel: ChatChannel, messages: [ChatMessage]) {
-        self.state.channel = channel
-        self.state.messages = StreamCollection(messages)
+        state.channel = channel
+        state.messages = StreamCollection(messages)
     }
 
     /// Simulates a change of the `channel` value. Observers are notified with the provided `change` value.
@@ -88,7 +88,7 @@ public extension Chat_Mock {
         channel: ChatChannel?,
         change: EntityChange<ChatChannel>
     ) {
-        self.state.channel = channel
+        state.channel = channel
     }
 
     /// Simulates changes in the `messages` array. Observers are notified with the provided `changes` value.
@@ -98,6 +98,6 @@ public extension Chat_Mock {
             newMessages.append(message)
         }
         
-        self.state.messages = StreamCollection(newMessages)
+        state.messages = StreamCollection(newMessages)
     }
 }

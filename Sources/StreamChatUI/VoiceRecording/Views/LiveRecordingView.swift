@@ -38,13 +38,15 @@ open class LiveRecordingView: _View, ThemeProvider {
             self.waveform = waveform
         }
 
-        static var initial = Content(
-            isRecording: false,
-            isPlaying: false,
-            duration: 0,
-            currentTime: 0,
-            waveform: []
-        )
+        static var initial: Content {
+            Content(
+                isRecording: false,
+                isPlaying: false,
+                duration: 0,
+                currentTime: 0,
+                waveform: []
+            )
+        }
     }
 
     public var content: Content = .initial {

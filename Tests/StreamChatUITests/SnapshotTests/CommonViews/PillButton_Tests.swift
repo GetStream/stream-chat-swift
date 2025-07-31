@@ -8,7 +8,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-final class PillButton_Tests: XCTestCase {
+@MainActor final class PillButton_Tests: XCTestCase {
     private var subject: PillButton! = .init().withoutAutoresizingMaskConstraints
 
     // MARK: - Lifecycle

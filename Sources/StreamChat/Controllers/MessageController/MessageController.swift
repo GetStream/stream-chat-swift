@@ -19,7 +19,7 @@ public extension ChatClient {
 /// `ChatMessageController` is a controller class which allows observing and mutating a chat message entity.
 ///
 /// - Note: For an async-await alternative of the `ChatMessageController`, please check ``Chat`` and ``MessageState`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
-public class ChatMessageController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatMessageController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
 
@@ -232,7 +232,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         setRepliesObserver()
     }
 
-    override public func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         startObserversIfNeeded()
 
         messageUpdater.getMessage(cid: cid, messageId: messageId) { result in
@@ -282,7 +282,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         attachments: [AnyAttachmentPayload] = [],
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         var transformableInfo = NewMessageTransformableInfo(
             text: text,
@@ -323,7 +323,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         attachments: [AnyAttachmentPayload]? = nil,
         extraData: [String: RawJSON]? = nil,
         unsetProperties: [String]? = nil,
-        completion: ((Result<ChatMessage, Error>) -> Void)? = nil
+        completion: (@MainActor @Sendable(Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         messageUpdater.updatePartialMessage(
             messageId: messageId,
@@ -347,7 +347,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     ///
-    public func deleteMessage(hard: Bool = false, completion: ((Error?) -> Void)? = nil) {
+    public func deleteMessage(hard: Bool = false, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         messageUpdater.deleteMessage(messageId: messageId, hard: hard) { error in
             self.callback {
                 completion?(error)
@@ -386,7 +386,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         skipPush: Bool = false,
         skipEnrichUrl: Bool = false,
         extraData: [String: RawJSON] = [:],
-        completion: ((Result<MessageId, Error>) -> Void)? = nil
+        completion: (@MainActor @Sendable(Result<MessageId, Error>) -> Void)? = nil
     ) {
         let parentMessageId = self.messageId
 
@@ -437,10 +437,12 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     public func loadPreviousReplies(
         before replyId: MessageId? = nil,
         limit: Int? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         if hasLoadedAllPreviousReplies || isLoadingPreviousReplies {
-            completion?(nil)
+            callback {
+                completion?(nil)
+            }
             return
         }
 
@@ -498,10 +500,12 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     public func loadPageAroundReplyId(
         _ replyId: MessageId,
         limit: Int? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         if isLoadingMiddleReplies {
-            completion?(nil)
+            callback {
+                completion?(nil)
+            }
             return
         }
 
@@ -534,10 +538,12 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     public func loadNextReplies(
         after replyId: MessageId? = nil,
         limit: Int? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         if isLoadingNextReplies || hasLoadedAllNextReplies {
-            completion?(nil)
+            callback {
+                completion?(nil)
+            }
             return
         }
 
@@ -567,7 +573,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// Cleans the current state and loads the first page again.
     /// - Parameter limit: Limit for page size
     /// - Parameter completion: Callback when the API call is completed.
-    public func loadFirstPage(limit: Int? = nil, _ completion: ((_ error: Error?) -> Void)? = nil) {
+    public func loadFirstPage(limit: Int? = nil, _ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
         let pageSize = limit ?? repliesPageSize
         messageUpdater.loadReplies(
             cid: cid,
@@ -588,7 +594,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   called without an error and the delegate is notified of reactions changes.
     public func loadNextReactions(
         limit: Int = 25,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         if hasLoadedAllReactions {
             callback { completion?(nil) }
@@ -636,7 +642,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     public func loadReactions(
         limit: Int,
         offset: Int = 0,
-        completion: @escaping (Result<[ChatMessageReaction], Error>) -> Void
+        completion: @escaping @MainActor @Sendable(Result<[ChatMessageReaction], Error>) -> Void
     ) {
         messageUpdater.loadReactions(
             cid: cid,
@@ -662,7 +668,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     public func flag(
         reason: String? = nil,
         extraData: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         messageUpdater.flagMessage(true, with: messageId, in: cid, reason: reason, extraData: extraData) { error in
             self.callback {
@@ -675,7 +681,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    public func unflag(completion: ((Error?) -> Void)? = nil) {
+    public func unflag(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         messageUpdater.flagMessage(false, with: messageId, in: cid, reason: nil, extraData: nil) { error in
             self.callback {
                 completion?(error)
@@ -699,7 +705,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         skipPush: Bool = false,
         pushEmojiCode: String? = nil,
         extraData: [String: RawJSON] = [:],
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         messageUpdater.addReaction(
             type,
@@ -722,7 +728,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     public func deleteReaction(
         _ type: MessageReactionType,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         messageUpdater.deleteReaction(type, messageId: messageId) { error in
             self.callback {
@@ -735,7 +741,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///  - Parameters:
     ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
     ///   - completion: A completion block with an error if the request was failed.
-    public func pin(_ pinning: MessagePinning, completion: ((Error?) -> Void)? = nil) {
+    public func pin(_ pinning: MessagePinning, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         messageUpdater.pinMessage(messageId: messageId, pinning: pinning) { result in
             self.callback {
                 completion?(result.error)
@@ -746,7 +752,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// Unpins the message this controller manages.
     ///  - Parameters:
     ///   - completion: A completion block with an error if the request was failed.
-    public func unpin(completion: ((Error?) -> Void)? = nil) {
+    public func unpin(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         messageUpdater.unpinMessage(messageId: messageId) { result in
             self.callback {
                 completion?(result.error)
@@ -763,7 +769,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// - Note: The local storage URL (`attachment.downloadingState?.localFileURL`) can change between app launches.
     public func downloadAttachment<Payload>(
         _ attachment: ChatMessageAttachment<Payload>,
-        completion: @escaping (Result<ChatMessageAttachment<Payload>, Error>) -> Void
+        completion: @escaping @MainActor @Sendable(Result<ChatMessageAttachment<Payload>, Error>) -> Void
     ) where Payload: DownloadableAttachmentPayload {
         messageUpdater.downloadAttachment(attachment) { result in
             self.callback {
@@ -779,7 +785,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - attachmentId: The id of the attachment.
     ///   - completion: A completion block with an error if the deletion failed.
-    public func deleteLocalAttachmentDownload(for attachmentId: AttachmentId, completion: ((Error?) -> Void)? = nil) {
+    public func deleteLocalAttachmentDownload(for attachmentId: AttachmentId, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         messageUpdater.deleteLocalAttachmentDownload(for: attachmentId) { error in
             self.callback {
                 completion?(error)
@@ -794,7 +800,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///                 If operation fails, the completion will be called with an error.
     public func restartFailedAttachmentUploading(
         with id: AttachmentId,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         messageUpdater.restartFailedAttachmentUploading(with: id) { error in
             self.callback {
@@ -806,7 +812,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// Changes local message from `.sendingFailed` to `.pendingSend` so it is enqueued by message sender worker.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the database operation is finished.
     ///                         If operation fails, the completion will be called with an error.
-    public func resendMessage(completion: ((Error?) -> Void)? = nil) {
+    public func resendMessage(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         messageUpdater.resendMessage(with: messageId) { error in
             self.callback {
                 completion?(error)
@@ -819,7 +825,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - action: The action to take.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the operation is finished.
     ///                 If operation fails, the completion is called with the error.
-    public func dispatchEphemeralMessageAction(_ action: AttachmentAction, completion: ((Error?) -> Void)? = nil) {
+    public func dispatchEphemeralMessageAction(_ action: AttachmentAction, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         messageUpdater.dispatchEphemeralMessageAction(cid: cid, messageId: messageId, action: action) { error in
             self.callback {
                 completion?(error)
@@ -834,7 +840,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - language: The language message text should be translated to.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the operation is finished.
     ///                 If operation fails, the completion is called with the error.
-    public func translate(to language: TranslationLanguage, completion: ((Error?) -> Void)? = nil) {
+    public func translate(to language: TranslationLanguage, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         messageUpdater.translate(messageId: messageId, to: language) { result in
             self.callback {
                 completion?(result.error)
@@ -843,7 +849,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     }
 
     /// Marks the thread read if this message is the root of a thread.
-    public func markThreadRead(completion: ((Error?) -> Void)? = nil) {
+    public func markThreadRead(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         messageUpdater.markThreadRead(cid: cid, threadId: messageId) { error in
             self.callback {
                 completion?(error)
@@ -852,7 +858,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     }
 
     /// Marks the thread unread if this message is the root of a thread.
-    public func markThreadUnread(completion: ((Error?) -> Void)? = nil) {
+    public func markThreadUnread(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         messageUpdater.markThreadUnread(
             cid: cid,
             threadId: messageId
@@ -872,7 +878,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     public func loadThread(
         replyLimit: Int? = nil,
         participantLimit: Int? = nil,
-        completion: @escaping ((Result<ChatThread, Error>) -> Void)
+        completion: @escaping @MainActor @Sendable(Result<ChatThread, Error>) -> Void
     ) {
         var query = ThreadQuery(
             messageId: messageId,
@@ -900,7 +906,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         title: String?,
         extraData: [String: RawJSON]? = nil,
         unsetProperties: [String]? = nil,
-        completion: @escaping ((Result<ChatThread, Error>) -> Void)
+        completion: @escaping @MainActor @Sendable(Result<ChatThread, Error>) -> Void
     ) {
         messageUpdater.updateThread(
             for: messageId,
@@ -922,7 +928,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - completion: Called when the server updates the message.
-    public func stopLiveLocationSharing(completion: ((Result<SharedLocation, Error>) -> Void)? = nil) {
+    public func stopLiveLocationSharing(completion: (@MainActor @Sendable(Result<SharedLocation, Error>) -> Void)? = nil) {
         guard let location = message?.sharedLocation else {
             callback {
                 completion?(.failure(ClientError.MessageDoesNotHaveLiveLocationAttachment()))
@@ -967,7 +973,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         showReplyInChannel: Bool = false,
         command: Command? = nil,
         extraData: [String: RawJSON] = [:],
-        completion: ((Result<DraftMessage, Error>) -> Void)? = nil
+        completion: (@MainActor @Sendable(Result<DraftMessage, Error>) -> Void)? = nil
     ) {
         draftsRepository.updateDraft(
             for: cid,
@@ -992,7 +998,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     /// It is not necessary to call this method if the thread was loaded before.
     public func loadDraftReply(
-        completion: ((Result<DraftMessage?, Error>) -> Void)? = nil
+        completion: (@MainActor @Sendable(Result<DraftMessage?, Error>) -> Void)? = nil
     ) {
         draftsRepository.getDraft(
             for: cid,
@@ -1005,7 +1011,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     }
 
     /// Deletes the draft message for this thread.
-    public func deleteDraftReply(completion: ((Error?) -> Void)? = nil) {
+    public func deleteDraftReply(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         draftsRepository.deleteDraft(
             for: cid,
             threadId: messageId
@@ -1025,7 +1031,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - completion: Called when the API call is finished with the result of the operation.
     public func createReminder(
         remindAt: Date? = nil,
-        completion: ((Result<MessageReminder, Error>) -> Void)? = nil
+        completion: (@MainActor @Sendable(Result<MessageReminder, Error>) -> Void)? = nil
     ) {
         remindersRepository.createReminder(
             messageId: messageId,
@@ -1045,7 +1051,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///   - completion: Called when the API call is finished with the result of the operation.
     public func updateReminder(
         remindAt: Date?,
-        completion: ((Result<MessageReminder, Error>) -> Void)? = nil
+        completion: (@MainActor @Sendable(Result<MessageReminder, Error>) -> Void)? = nil
     ) {
         remindersRepository.updateReminder(
             messageId: messageId,
@@ -1062,7 +1068,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// - Parameter completion: Called when the API call is finished.
     /// If request fails, the completion will be called with an error.
     public func deleteReminder(
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         remindersRepository.deleteReminder(
             messageId: messageId,
@@ -1203,19 +1209,19 @@ public extension ChatMessageController {
 }
 
 public extension ClientError {
-    final class MessageEmptyReplies: ClientError {
+    final class MessageEmptyReplies: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             "You can't load previous replies when there is no replies for the message."
         }
     }
 
-    final class MessageDoesNotHaveLiveLocationAttachment: ClientError {
+    final class MessageDoesNotHaveLiveLocationAttachment: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             "The message does not have a live location attachment."
         }
     }
 
-    final class MessageLiveLocationAlreadyStopped: ClientError {
+    final class MessageLiveLocationAlreadyStopped: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             "The live location sharing has already been stopped."
         }

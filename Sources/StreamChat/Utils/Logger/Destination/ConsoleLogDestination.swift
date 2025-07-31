@@ -5,7 +5,7 @@
 import Foundation
 
 /// Basic destination for outputting messages to console.
-public class ConsoleLogDestination: BaseLogDestination {
+public class ConsoleLogDestination: BaseLogDestination, @unchecked Sendable {
     override open func write(message: String) {
         print(message)
     }

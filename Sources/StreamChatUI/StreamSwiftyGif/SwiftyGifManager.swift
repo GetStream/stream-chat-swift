@@ -1,4 +1,8 @@
 //
+// Copyright © 2025 Stream.io Inc. All rights reserved.
+//
+
+//
 //  SwiftyGifManager.swift
 //
 //
@@ -17,10 +21,9 @@ typealias PlatformImageView = NSImageView
 typealias PlatformImageView = UIImageView
 #endif
 
-class SwiftyGifManager {
-    
+class SwiftyGifManager: @unchecked Sendable {
     // A convenient default manager if we only have one gif to display here and there
-    static var defaultManager = SwiftyGifManager(memoryLimit: 50)
+    nonisolated(unsafe) static var defaultManager = SwiftyGifManager(memoryLimit: 50)
     
     #if os(macOS)
     fileprivate var timer: CVDisplayLink?
@@ -32,7 +35,7 @@ class SwiftyGifManager {
     fileprivate var totalGifSize: Int
     fileprivate var memoryLimit: Int
     var haveCache: Bool
-    var remoteCache : [URL : Data] = [:]
+    var remoteCache: [URL: Data] = [:]
     
     /// Initialize a manager
     ///
@@ -54,12 +57,14 @@ class SwiftyGifManager {
         
         #if os(macOS)
         
-        func displayLinkOutputCallback(displayLink: CVDisplayLink,
-                                       _ inNow: UnsafePointer<CVTimeStamp>,
-                                       _ inOutputTime: UnsafePointer<CVTimeStamp>,
-                                       _ flagsIn: CVOptionFlags,
-                                       _ flagsOut: UnsafeMutablePointer<CVOptionFlags>,
-                                       _ displayLinkContext: UnsafeMutableRawPointer?) -> CVReturn {
+        func displayLinkOutputCallback(
+            displayLink: CVDisplayLink,
+            _ inNow: UnsafePointer<CVTimeStamp>,
+            _ inOutputTime: UnsafePointer<CVTimeStamp>,
+            _ flagsIn: CVOptionFlags,
+            _ flagsOut: UnsafeMutablePointer<CVOptionFlags>,
+            _ displayLinkContext: UnsafeMutableRawPointer?
+        ) -> CVReturn {
             unsafeBitCast(displayLinkContext!, to: SwiftyGifManager.self).updateImageView()
             return kCVReturnSuccess
         }
@@ -135,15 +140,15 @@ class SwiftyGifManager {
     /// Check if an imageView is already managed by this manager
     /// - Parameter imageView: The image view we're searching
     /// - Returns : a boolean for whether the imageView was found
-    func containsImageView(_ imageView: PlatformImageView) -> Bool{
-        return displayViews.contains(imageView)
+    func containsImageView(_ imageView: PlatformImageView) -> Bool {
+        displayViews.contains(imageView)
     }
     
     /// Check if this manager has cache for an imageView
     /// - Parameter imageView: The image view we're searching cache for
     /// - Returns : a boolean for whether we have cache for the imageView
     func hasCache(_ imageView: PlatformImageView) -> Bool {
-        return imageView.displaying && (imageView.loopCount == -1 || imageView.loopCount >= 5) ? haveCache : false
+        imageView.displaying && (imageView.loopCount == -1 || imageView.loopCount >= 5) ? haveCache : false
     }
     
     /// Update imageView current image. This method is called by the main loop.
@@ -161,7 +166,7 @@ class SwiftyGifManager {
         #endif
         
         for imageView in displayViews {
-            queue.sync {
+            StreamConcurrency.onMain {
                 imageView.image = imageView.currentImage
             }
             

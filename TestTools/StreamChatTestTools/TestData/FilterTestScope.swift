@@ -50,7 +50,7 @@ struct FilterCodingTestPair {
     var json: String
     var filter: Filter<FilterTestScope>
 
-    static var allCases: [FilterCodingTestPair] = [
+    static let allCases: [FilterCodingTestPair] = [
         .equalInt(),
         .notEqualDate(),
         .greaterDouble(),

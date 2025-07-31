@@ -15,11 +15,11 @@ public protocol ImageLoading: AnyObject {
     ///   - completion: The completion when the loading is finished.
     /// - Returns: A cancellable task.
     @discardableResult
-    func loadImage(
+    @MainActor func loadImage(
         into imageView: UIImageView,
         from url: URL?,
         with options: ImageLoaderOptions,
-        completion: ((_ result: Result<UIImage, Error>) -> Void)?
+        completion: (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable?
 
     /// Load an image into an imageView from a given `ImageAttachmentPayload`.
@@ -30,11 +30,11 @@ public protocol ImageLoading: AnyObject {
     ///   - completion: The completion when the loading is finished.
     /// - Returns: A cancellable task.
     @discardableResult
-    func loadImage(
+    @MainActor func loadImage(
         into imageView: UIImageView,
         from attachmentPayload: ImageAttachmentPayload?,
         maxResolutionInPixels: Double,
-        completion: ((_ result: Result<UIImage, Error>) -> Void)?
+        completion: (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable?
 
     /// Download an image from the given `URL`.
@@ -45,7 +45,7 @@ public protocol ImageLoading: AnyObject {
     @discardableResult
     func downloadImage(
         with request: ImageDownloadRequest,
-        completion: @escaping ((_ result: Result<UIImage, Error>) -> Void)
+        completion: @escaping (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)
     ) -> Cancellable?
 
     /// Load a batch of images and get notified when all of them complete loading.
@@ -55,7 +55,7 @@ public protocol ImageLoading: AnyObject {
     ///   It returns an array of image and errors in case the image failed to load.
     func downloadMultipleImages(
         with requests: [ImageDownloadRequest],
-        completion: @escaping (([Result<UIImage, Error>]) -> Void)
+        completion: @escaping (@MainActor @Sendable([Result<UIImage, Error>]) -> Void)
     )
 
     // MARK: - Deprecations
@@ -65,19 +65,19 @@ public protocol ImageLoading: AnyObject {
     func loadImage(
         using urlRequest: URLRequest,
         cachingKey: String?,
-        completion: @escaping ((_ result: Result<UIImage, Error>) -> Void)
+        completion: @escaping (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)
     ) -> Cancellable?
 
     @available(*, deprecated, message: "use loadImage(into:from:with:) instead.")
     @discardableResult
-    func loadImage(
+    @MainActor func loadImage(
         into imageView: UIImageView,
         url: URL?,
         imageCDN: ImageCDN,
         placeholder: UIImage?,
         resize: Bool,
         preferredSize: CGSize?,
-        completion: ((_ result: Result<UIImage, Error>) -> Void)?
+        completion: (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable?
 
     @available(*, deprecated, message: "use loadMultipleImages() instead.")
@@ -87,7 +87,7 @@ public protocol ImageLoading: AnyObject {
         loadThumbnails: Bool,
         thumbnailSize: CGSize,
         imageCDN: ImageCDN,
-        completion: @escaping (([UIImage]) -> Void)
+        completion: @escaping (@MainActor @Sendable([UIImage]) -> Void)
     )
 }
 
@@ -95,11 +95,11 @@ public protocol ImageLoading: AnyObject {
 
 public extension ImageLoading {
     @discardableResult
-    func loadImage(
+    @MainActor func loadImage(
         into imageView: UIImageView,
         from attachmentPayload: ImageAttachmentPayload?,
         maxResolutionInPixels: Double,
-        completion: ((_ result: Result<UIImage, Error>) -> Void)?
+        completion: (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable? {
         guard let originalWidth = attachmentPayload?.originalWidth,
               let originalHeight = attachmentPayload?.originalHeight else {
@@ -127,7 +127,7 @@ public extension ImageLoading {
     }
 
     @discardableResult
-    func loadImage(
+    @MainActor func loadImage(
         into imageView: UIImageView,
         from attachmentPayload: ImageAttachmentPayload?,
         maxResolutionInPixels: Double
@@ -145,7 +145,7 @@ public extension ImageLoading {
 
 public extension ImageLoading {
     @discardableResult
-    func loadImage(
+    @MainActor func loadImage(
         into imageView: UIImageView,
         from url: URL?
     ) -> Cancellable? {
@@ -153,7 +153,7 @@ public extension ImageLoading {
     }
 
     @discardableResult
-    func loadImage(
+    @MainActor func loadImage(
         into imageView: UIImageView,
         from url: URL?,
         with options: ImageLoaderOptions
@@ -168,10 +168,12 @@ public extension ImageLoading {
     @available(*, deprecated, message: "use downloadImage() instead.")
     func loadImage(
         using urlRequest: URLRequest,
-        cachingKey: String?, completion: @escaping ((Result<UIImage, Error>) -> Void)
+        cachingKey: String?, completion: @escaping @MainActor @Sendable(Result<UIImage, Error>) -> Void
     ) -> Cancellable? {
         guard let url = urlRequest.url else {
-            completion(.failure(NSError(domain: "io.getstream.imageDeprecation.invalidUrl", code: 1)))
+            StreamConcurrency.onMain {
+                completion(.failure(NSError(domain: "io.getstream.imageDeprecation.invalidUrl", code: 1)))
+            }
             return nil
         }
 
@@ -183,14 +185,14 @@ public extension ImageLoading {
 
     @available(*, deprecated, message: "use loadImage(into:from:with:) instead.")
     @discardableResult
-    func loadImage(
+    @MainActor func loadImage(
         into imageView: UIImageView,
         url: URL?,
         imageCDN: ImageCDN,
         placeholder: UIImage? = nil,
         resize: Bool = true,
         preferredSize: CGSize? = nil,
-        completion: ((_ result: Result<UIImage, Error>) -> Void)? = nil
+        completion: (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)? = nil
     ) -> Cancellable? {
         loadImage(
             into: imageView,
@@ -210,7 +212,7 @@ public extension ImageLoading {
         loadThumbnails: Bool = true,
         thumbnailSize: CGSize = Components.default.avatarThumbnailSize,
         imageCDN: ImageCDN,
-        completion: @escaping (([UIImage]) -> Void)
+        completion: @escaping @MainActor @Sendable([UIImage]) -> Void
     ) {
         let requests = urls.map { url in
             ImageDownloadRequest(url: url, options: .init(resize: .init(thumbnailSize)))

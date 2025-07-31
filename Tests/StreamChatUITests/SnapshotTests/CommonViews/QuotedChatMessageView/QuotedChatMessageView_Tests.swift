@@ -9,7 +9,7 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-final class QuotedChatMessageView_Tests: XCTestCase {
+@MainActor final class QuotedChatMessageView_Tests: XCTestCase {
     private var view: QuotedChatMessageView!
 
     // MARK: - Lifecycle

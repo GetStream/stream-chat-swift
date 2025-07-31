@@ -8,7 +8,7 @@
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatChannelVC_Tests: XCTestCase {
+@MainActor final class ChatChannelVC_Tests: XCTestCase {
     var vc: ChatChannelVC!
     fileprivate var mockComposer: ComposerVC_Mock!
     var channelControllerMock: ChatChannelController_Mock!
@@ -779,12 +779,12 @@ final class ChatChannelVC_Tests: XCTestCase {
             parentId: .unique,
             showReplyInChannel: false
         )
-
-        try channelControllerMock.client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: .dummy(channel: .dummy(cid: self.cid)))
+        let cid = self.cid!
+        try channelControllerMock.client.databaseContainer.writeSynchronously { [cid] session in
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveMessage(
                 payload: messageInsideThread,
-                for: self.cid,
+                for: cid,
                 syncOwnReactions: false,
                 cache: nil
             )

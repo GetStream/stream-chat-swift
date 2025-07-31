@@ -36,10 +36,10 @@ public enum ChannelMemberListSortingKey: String, SortingKey {
 }
 
 extension ChannelMemberListSortingKey {
-    static let defaultSortDescriptor: NSSortDescriptor = {
+    static var defaultSortDescriptor: NSSortDescriptor {
         let dateKeyPath: KeyPath<MemberDTO, DBDate> = \MemberDTO.memberCreatedAt
         return .init(keyPath: dateKeyPath, ascending: false)
-    }()
+    }
 
     func sortDescriptor(isAscending: Bool) -> NSSortDescriptor {
         .init(key: rawValue, ascending: isAscending)

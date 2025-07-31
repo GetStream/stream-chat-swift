@@ -5,7 +5,7 @@
 import Foundation
 import StreamChat
 
-var apiKeyString = ProcessInfo.processInfo.environment["CUSTOM_API_KEY"] ?? DemoApiKeys.frankfurtC1.rawValue
+nonisolated(unsafe) var apiKeyString = ProcessInfo.processInfo.environment["CUSTOM_API_KEY"] ?? DemoApiKeys.frankfurtC1.rawValue
 let applicationGroupIdentifier = "group.io.getstream.iOS.ChatDemoApp"
 
 enum DemoUserType {

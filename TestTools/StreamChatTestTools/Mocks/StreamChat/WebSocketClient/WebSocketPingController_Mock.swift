@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-final class WebSocketPingController_Mock: WebSocketPingController {
+final class WebSocketPingController_Mock: WebSocketPingController, @unchecked Sendable {
     var connectionStateDidChange_connectionStates: [WebSocketConnectionState] = []
     var pongReceivedCount = 0
 

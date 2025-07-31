@@ -59,7 +59,7 @@ public extension FilterKey where Scope: MemberListFilterScope {
 }
 
 /// A query type used for fetching channel members from the backend.
-public struct ChannelMemberListQuery: Encodable {
+public struct ChannelMemberListQuery: Encodable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
         case sort
@@ -118,6 +118,14 @@ extension ChannelMemberListQuery {
             filter?.filterHash,
             sort.map(\.description).joined()
         ].compactMap { $0 }.joined(separator: "-")
+    }
+}
+
+extension ChannelMemberListQuery {
+    func withPagination(_ pagination: Pagination) -> Self {
+        var query = self
+        query.pagination = pagination
+        return query
     }
 }
 

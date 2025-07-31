@@ -5,8 +5,8 @@
 import Foundation
 
 /// An object which represents a list of `ChatUser` for the specified search query.
-public class UserSearch {
-    private let stateBuilder: StateBuilder<UserSearchState>
+public class UserSearch: @unchecked Sendable {
+    @MainActor private var stateBuilder: StateBuilder<UserSearchState>
     private let userListUpdater: UserListUpdater
     
     init(client: ChatClient, environment: Environment = .init()) {
@@ -20,7 +20,7 @@ public class UserSearch {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the search.
-    @MainActor public lazy var state: UserSearchState = stateBuilder.build()
+    @MainActor public var state: UserSearchState { stateBuilder.state() }
     
     // MARK: - Search Results and Pagination
     

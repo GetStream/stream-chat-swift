@@ -15,9 +15,6 @@ final class UserListController_Tests: XCTestCase {
     var query: UserListQuery!
 
     var controller: ChatUserListController!
-    var controllerCallbackQueueID: UUID!
-    /// Workaround for uwrapping **controllerCallbackQueueID!** in each closure that captures it
-    private var callbackQueueID: UUID { controllerCallbackQueueID }
 
     override func setUp() {
         super.setUp()
@@ -26,13 +23,10 @@ final class UserListController_Tests: XCTestCase {
         client = ChatClient.mock
         query = .init(filter: .query(.id, text: .unique))
         controller = ChatUserListController(query: query, client: client, environment: env.environment)
-        controllerCallbackQueueID = UUID()
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
 
     override func tearDown() {
         query = nil
-        controllerCallbackQueueID = nil
 
         (client as? ChatClient_Mock)?.cleanUp()
         env.userListUpdater?.cleanUp()
@@ -105,7 +99,7 @@ final class UserListController_Tests: XCTestCase {
         AssertAsync.willBeFalse(controller.users.isEmpty)
     }
 
-    func test_usersAreFetched_beforeCallingSynchronize() throws {
+    @MainActor func test_usersAreFetched_beforeCallingSynchronize() throws {
         // Save two users to DB
         let idMatchingQuery = UserId.unique
         let idNotMatchingQuery = UserId.unique
@@ -126,7 +120,7 @@ final class UserListController_Tests: XCTestCase {
 
     /// This test simulates a bug where the `users` field was not updated if it wasn't
     /// touched before calling synchronize.
-    func test_usersAreFetched_afterCallingSynchronize() throws {
+    @MainActor func test_usersAreFetched_afterCallingSynchronize() throws {
         // Simulate `synchronize` call
         controller.synchronize()
 
@@ -147,15 +141,11 @@ final class UserListController_Tests: XCTestCase {
     }
 
     func test_synchronize_callsUserQueryUpdater() {
-        let queueId = UUID()
-        controller.callbackQueue = .testQueue(withId: queueId)
-
-        // Simulate `synchronize` calls and catch the completion
-        var completionCalled = false
+        // Simulate `synchronize` call and catch the completion
+        nonisolated(unsafe) var completionError: Error?
         controller.synchronize { error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: queueId)
-            completionCalled = true
+            completionError = error
         }
 
         // Keep a weak ref so we can check if it's actually deallocated
@@ -168,7 +158,7 @@ final class UserListController_Tests: XCTestCase {
         // Assert the updater is called with the query
         XCTAssertEqual(env.userListUpdater!.update_queries.first?.filter?.filterHash, query.filter?.filterHash)
         // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
+        XCTAssertTrue(completionError == nil)
 
         // Simulate successful update
         env.userListUpdater!.update_completion?(.success([]))
@@ -176,19 +166,16 @@ final class UserListController_Tests: XCTestCase {
         env.userListUpdater!.update_completion = nil
 
         // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
+        AssertAsync.willBeTrue(completionError == nil)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
 
     func test_synchronize_propagatesErrorFromUpdater() {
-        let queueId = UUID()
-        controller.callbackQueue = .testQueue(withId: queueId)
         // Simulate `synchronize` call and catch the completion
-        var completionCalledError: Error?
-        controller.synchronize {
-            completionCalledError = $0
-            AssertTestQueue(withId: queueId)
+        nonisolated(unsafe) var completionError: Error?
+        controller.synchronize { error in
+            completionError = error
         }
 
         // Simulate failed update
@@ -196,7 +183,7 @@ final class UserListController_Tests: XCTestCase {
         env.userListUpdater!.update_completion?(.failure(testError))
 
         // Completion should be called with the error
-        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+        AssertAsync.willBeEqual(completionError as? TestError, testError)
     }
 
     // MARK: - Change propagation tests
@@ -221,7 +208,7 @@ final class UserListController_Tests: XCTestCase {
     // MARK: - Delegate tests
 
     func test_settingDelegate_leadsToFetchingLocalData() {
-        let delegate = UserListController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = UserListController_Delegate()
 
         // Check initial state
         XCTAssertEqual(controller.state, .initialized)
@@ -232,9 +219,9 @@ final class UserListController_Tests: XCTestCase {
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
     }
 
-    func test_delegate_isNotifiedAboutStateChanges() throws {
+    @MainActor func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = UserListController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = UserListController_Delegate()
         controller.delegate = delegate
 
         // Assert delegate is notified about state changes
@@ -250,9 +237,9 @@ final class UserListController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
 
-    func test_delegateMethodsAreCalled() throws {
+    @MainActor func test_delegateMethodsAreCalled() throws {
         // Set the delegate
-        let delegate = UserListController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = UserListController_Delegate()
         controller.delegate = delegate
 
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
@@ -273,10 +260,9 @@ final class UserListController_Tests: XCTestCase {
     // MARK: - Users pagination
 
     func test_loadNextUsers_callsUserListUpdater() {
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         let limit = 42
-        controller.loadNextUsers(limit: limit) { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
+        controller.loadNextUsers(limit: limit) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -309,10 +295,10 @@ final class UserListController_Tests: XCTestCase {
 
     func test_loadNextUsers_callsUserUpdaterWithError() {
         // Simulate `loadNextUsers` call and catch the completion
-        var completionCalledError: Error?
-        controller.loadNextUsers { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
-            completionCalledError = $0
+        nonisolated(unsafe) var completionError: Error?
+        controller.loadNextUsers { error in
+            XCTAssertNil(error)
+            completionError = error
         }
 
         // Simulate failed udpate
@@ -320,12 +306,12 @@ final class UserListController_Tests: XCTestCase {
         env.userListUpdater!.update_completion?(.failure(testError))
 
         // Completion should be called with the error
-        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
+        AssertAsync.willBeEqual(completionError as? TestError, testError)
     }
     
     // MARK: -
     
-    func waitForUsersChange(expectedUserCount: Int) {
+    @MainActor func waitForUsersChange(expectedUserCount: Int) {
         guard expectedUserCount != controller.users.count else { return }
         
         let delegate = DelegateWaiter(expectedUserCount: expectedUserCount)

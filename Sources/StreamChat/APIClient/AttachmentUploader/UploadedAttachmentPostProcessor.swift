@@ -5,6 +5,6 @@
 import Foundation
 
 /// A component that can be used to change an attachment which was successfully uploaded.
-public protocol UploadedAttachmentPostProcessor {
+public protocol UploadedAttachmentPostProcessor: Sendable {
     func process(uploadedAttachment: UploadedAttachment) -> UploadedAttachment
 }

@@ -5,16 +5,6 @@
 import Foundation
 import XCTest
 
-/// Asserts that the queue the function is executed on, is the test queue with the given UUID.
-///
-/// - Parameters:
-///   - id: The `id` of the expected test queue.
-public func AssertTestQueue(withId id: UUID, file: StaticString = #filePath, line: UInt = #line) {
-    if !DispatchQueue.isTestQueue(withId: id) {
-        XCTFail("The current queue doesn't match the expected queue.", file: file, line: line)
-    }
-}
-
 public extension DispatchQueue {
     private static let queueIdKey = DispatchSpecificKey<String>()
     

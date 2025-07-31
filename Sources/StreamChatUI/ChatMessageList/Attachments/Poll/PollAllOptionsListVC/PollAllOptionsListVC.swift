@@ -35,7 +35,7 @@ open class PollAllOptionsListVC:
     /// You can disable the feedback generator by overriding to `nil`.
     open private(set) lazy var notificationFeedbackGenerator: UINotificationFeedbackGenerator? = UINotificationFeedbackGenerator()
 
-    public struct Section: RawRepresentable, Equatable {
+    public struct Section: RawRepresentable, Equatable, Sendable {
         public var rawValue: String
 
         public init(rawValue: String) {
@@ -43,10 +43,10 @@ open class PollAllOptionsListVC:
         }
 
         /// The section that displays the poll's name.
-        public static var name = Self(rawValue: "name")
+        public static let name = Self(rawValue: "name")
 
         /// The section that displays the options of the poll.
-        public static var options = Self(rawValue: "options")
+        public static let options = Self(rawValue: "options")
     }
 
     /// The sections of the view.

@@ -23,7 +23,7 @@ extension Endpoint {
 
 /// OfflineRequestsRepository handles both the enqueuing and the execution of offline requests when needed.
 /// When running the queued requests, it basically passes the requests on to the APIClient, and waits for its result.
-class OfflineRequestsRepository {
+class OfflineRequestsRepository: @unchecked Sendable {
     enum Constants {
         static let secondsInHour: Double = 3600
     }
@@ -51,7 +51,7 @@ class OfflineRequestsRepository {
     /// - If the requests succeeds -> The request is removed from the pending ones
     /// - If the request fails with a connection error -> The request is kept to be executed once the connection is back (we are not putting it back at the queue to make sure we respect the order)
     /// - If the request fails with any other error -> We are dismissing the request, and removing it from the queue
-    func runQueuedRequests(completion: @escaping () -> Void) {
+    func runQueuedRequests(completion: @escaping @Sendable() -> Void) {
         database.read { session in
             let dtos = session.allQueuedRequests()
             var requests = [Request]()
@@ -113,8 +113,8 @@ class OfflineRequestsRepository {
         } completion: { [weak self] result in
             switch result {
             case .success(let pair):
-                self?.deleteRequests(with: pair.deleteIds, completion: {
-                    self?.retryQueue.async {
+                self?.deleteRequests(with: pair.deleteIds, completion: { [weak self] in
+                    self?.retryQueue.async { [weak self] in
                         self?.executeRequests(pair.requests, completion: completion)
                     }
                 })
@@ -125,7 +125,7 @@ class OfflineRequestsRepository {
         }
     }
     
-    private func deleteRequests(with ids: Set<String>, completion: @escaping () -> Void) {
+    private func deleteRequests(with ids: Set<String>, completion: @escaping @Sendable() -> Void) {
         guard !ids.isEmpty else {
             completion()
             return
@@ -139,7 +139,7 @@ class OfflineRequestsRepository {
         }
     }
     
-    private func executeRequests(_ requests: [Request], completion: @escaping () -> Void) {
+    private func executeRequests(_ requests: [Request], completion: @escaping @Sendable() -> Void) {
         let database = self.database
         let group = DispatchGroup()
         for request in requests {
@@ -147,13 +147,10 @@ class OfflineRequestsRepository {
             let endpoint = request.endpoint
             
             group.enter()
-            let leave = {
-                group.leave()
-            }
-            let deleteQueuedRequestAndComplete = {
+            let deleteQueuedRequestAndComplete: @Sendable() -> Void = {
                 database.write({ session in
                     session.deleteQueuedRequest(id: id)
-                }, completion: { _ in leave() })
+                }, completion: { _ in group.leave() })
             }
 
             log.info("Executing queued offline request for /\(endpoint.path)", subsystems: .offlineSupport)
@@ -172,7 +169,7 @@ class OfflineRequestsRepository {
                         "Keeping offline request /\(endpoint.path) as there is no connection",
                         subsystems: .offlineSupport
                     )
-                    leave()
+                    group.leave()
                 case let .failure(error):
                     log.info(
                         "Request for /\(endpoint.path) failed: \(error)",
@@ -192,7 +189,7 @@ class OfflineRequestsRepository {
     private func performDatabaseRecoveryActionsUponSuccess(
         for endpoint: DataEndpoint,
         data: Data,
-        completion: @escaping () -> Void
+        completion: @escaping @Sendable() -> Void
     ) {
         func decodeTo<T: Decodable>(_ type: T.Type) -> T? {
             try? JSONDecoder.stream.decode(T.self, from: data)
@@ -222,7 +219,7 @@ class OfflineRequestsRepository {
         }
     }
 
-    func queueOfflineRequest(endpoint: DataEndpoint, completion: (() -> Void)? = nil) {
+    func queueOfflineRequest(endpoint: DataEndpoint, completion: (@Sendable() -> Void)? = nil) {
         guard endpoint.shouldBeQueuedOffline else {
             completion?()
             return

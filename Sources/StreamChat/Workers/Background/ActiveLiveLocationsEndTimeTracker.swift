@@ -8,7 +8,7 @@ import Foundation
 typealias ActiveLiveLocationsObserver = StateLayerDatabaseObserver<ListResult, MessageDTO, MessageDTO>
 
 /// A worker that is responsible for tracking when the end time of active locations is reached.
-class ActiveLiveLocationsEndTimeTracker: Worker {
+class ActiveLiveLocationsEndTimeTracker: Worker, @unchecked Sendable {
     private let activeLiveLocationsObserver: ActiveLiveLocationsObserver
     internal var workItems: [String: DispatchWorkItem] = [:]
     private let queue = DispatchQueue(label: "io.getstream.ActiveLiveLocationsEndTimeTracker")
@@ -44,8 +44,9 @@ class ActiveLiveLocationsEndTimeTracker: Worker {
             return
         }
 
+        nonisolated(unsafe) let unsafeChanges = changes
         database.write { _ in
-            for change in changes {
+            for change in unsafeChanges {
                 switch change {
                 case .insert(let message, _):
                     guard let endAt = message.location?.endAt?.bridgeDate else { continue }

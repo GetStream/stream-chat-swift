@@ -6,7 +6,7 @@
 @testable import StreamChatUI
 import XCTest
 
-final class ScrollViewPaginationHandler_Tests: XCTestCase {
+@MainActor final class ScrollViewPaginationHandler_Tests: XCTestCase {
     func test_whenScrollViewContentOffsetReachesContentSizeHeight_onNewBottomPageIsCalled() {
         let exp = expectation(description: "on new bottom page closure is called")
         let scrollView = MockScrollView()

@@ -5,7 +5,7 @@
 import Foundation
 
 /// The query used to paginate pinned messages.
-struct PinnedMessagesQuery: Hashable {
+struct PinnedMessagesQuery: Hashable, Sendable {
     /// The page size.
     let pageSize: Int
 

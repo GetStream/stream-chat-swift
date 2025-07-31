@@ -40,7 +40,7 @@ final class PollCommentListVC_Tests: XCTestCase {
         ]
     }
 
-    func test_appearance() {
+    @MainActor func test_appearance() {
         let poll = pollFactory.makePoll(
             isClosed: true,
             latestAnswers: comments
@@ -61,7 +61,7 @@ final class PollCommentListVC_Tests: XCTestCase {
         AssertSnapshot(voteListVC)
     }
 
-    func test_appearance_whenAlreadyCommented() {
+    @MainActor func test_appearance_whenAlreadyCommented() {
         let myComment = PollVote.mock(
             createdAt: "2024-05-23T12:25:07.25741Z".toDate(),
             answerText: "My Comment",

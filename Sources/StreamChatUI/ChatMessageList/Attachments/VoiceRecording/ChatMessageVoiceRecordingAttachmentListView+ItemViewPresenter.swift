@@ -8,7 +8,7 @@ import UIKit
 
 extension ChatMessageVoiceRecordingAttachmentListView {
     /// The Presenter that drives interactions and events for
-    internal class ItemViewPresenter: AudioPlayingDelegate {
+    @MainActor internal class ItemViewPresenter: AudioPlayingDelegate {
         /// The delegate to which the Presenter will forward all audioPlayback events.
         internal weak var delegate: VoiceRecordingAttachmentPresentationViewDelegate?
 

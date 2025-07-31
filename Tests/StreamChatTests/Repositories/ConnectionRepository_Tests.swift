@@ -51,7 +51,7 @@ final class ConnectionRepository_Tests: XCTestCase {
             timerType: DefaultTimer.self
         )
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "connect completes")
         repository.connect {
             receivedError = $0
@@ -67,7 +67,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         repository.completeConnectionIdWaiters(connectionId: "123")
         XCTAssertNotNil(repository.connectionId)
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "connect completes")
         repository.connect {
             receivedError = $0
@@ -83,7 +83,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     func test_connect_noConnectionId_failure() throws {
         XCTAssertNil(repository.connectionId)
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "connect completes")
         repository.connect {
             receivedError = $0
@@ -105,7 +105,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     func test_connect_noConnectionId_invalidTokenError() throws {
         XCTAssertNil(repository.connectionId)
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "connect completes")
         repository.connect {
             receivedError = $0
@@ -131,7 +131,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     func test_connect_noConnectionId_success() throws {
         XCTAssertNil(repository.connectionId)
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "connect completes")
         repository.connect {
             receivedError = $0
@@ -417,7 +417,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         let existingConnectionId = "existing-connection-id"
         repository.completeConnectionIdWaiters(connectionId: existingConnectionId)
 
-        var result: Result<ConnectionId, Error>?
+        nonisolated(unsafe) var result: Result<ConnectionId, Error>?
         let expectation = self.expectation(description: "Provide Connection Id Completion")
         repository.provideConnectionId(timeout: defaultTimeout) {
             result = $0
@@ -433,7 +433,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     }
 
     func test_connectionId_returnsErrorOnTimeout() {
-        var result: Result<ConnectionId, Error>?
+        nonisolated(unsafe) var result: Result<ConnectionId, Error>?
         let expectation = self.expectation(description: "Provide Token Completion")
         repository.provideConnectionId(timeout: 0.01) {
             result = $0
@@ -459,7 +459,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     }
 
     func test_connectionId_returnsErrorOnMissingValue() {
-        var result: Result<ConnectionId, Error>?
+        nonisolated(unsafe) var result: Result<ConnectionId, Error>?
         let expectation = self.expectation(description: "Provide Token Completion")
         repository.provideConnectionId(timeout: defaultTimeout) {
             result = $0
@@ -475,7 +475,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     }
 
     func test_connectionId_returnsValue_whenCompletingTokenWaiters() {
-        var result: Result<ConnectionId, Error>?
+        nonisolated(unsafe) var result: Result<ConnectionId, Error>?
         let expectation = self.expectation(description: "Provide Token Completion")
         repository.provideConnectionId(timeout: defaultTimeout) {
             result = $0
@@ -522,7 +522,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     }
 
     func test_completeConnectionIdWaiters_valid_connectionId_completesWaiters() {
-        var result: Result<ConnectionId, Error>?
+        nonisolated(unsafe) var result: Result<ConnectionId, Error>?
         let expectation = self.expectation(description: "Provide Connection Id Completion")
         repository.provideConnectionId(timeout: defaultTimeout) {
             result = $0

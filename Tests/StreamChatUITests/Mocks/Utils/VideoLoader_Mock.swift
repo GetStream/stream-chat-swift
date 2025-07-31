@@ -12,7 +12,7 @@ final class VideoLoader_Mock: VideoLoading {
     lazy var loadPreviewForVideoMockFunc = MockFunc.mock(for: loadPreviewForVideo)
     lazy var videoAssetMockFunc = MockFunc.mock(for: videoAsset)
 
-    func loadPreviewForVideo(at url: URL, completion: @escaping (Result<UIImage, Error>) -> Void) {
+    func loadPreviewForVideo(at url: URL, completion: @escaping @MainActor @Sendable(Result<UIImage, Error>) -> Void) {
         loadPreviewForVideoMockFunc.call(with: (url, completion))
     }
 

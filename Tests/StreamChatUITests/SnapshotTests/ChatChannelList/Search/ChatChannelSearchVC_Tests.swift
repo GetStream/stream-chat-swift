@@ -8,7 +8,7 @@
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatChannelSearchVC_Tests: XCTestCase {
+@MainActor final class ChatChannelSearchVC_Tests: XCTestCase {
     var mockedClient: ChatClient_Mock!
     var vc: ChatChannelSearchVC!
     var mockedChannelListController: ChatChannelListController_Mock!

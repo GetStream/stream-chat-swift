@@ -9,7 +9,7 @@ import AVFoundation
 import StreamSwiftTestHelpers
 import XCTest
 
-final class VoiceRecordingVC_Tests: XCTestCase {
+@MainActor final class VoiceRecordingVC_Tests: XCTestCase {
     private lazy var composerView: ComposerView! = .init()
     private lazy var assetPropertiesLoader: MockAssetPropertyLoader! = .init()
     private lazy var audioAnalyser: MockAudioAnalyser! = .init()

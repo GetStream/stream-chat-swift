@@ -8,7 +8,7 @@ import StreamChat
 /// An object responsible for providing the next VoiceRecording to play.
 open class AudioQueuePlayerNextItemProvider {
     /// Describes the lookUp scope in which the Provider will look into for the next available VoiceRecording.
-    public struct LookUpScope: RawRepresentable, Equatable {
+    public struct LookUpScope: RawRepresentable, Equatable, Sendable {
         public var rawValue: String
         public init(rawValue: String) { self.rawValue = rawValue }
 

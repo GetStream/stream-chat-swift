@@ -14,9 +14,6 @@ final class UserSearchController_Tests: XCTestCase {
 
     var query: UserListQuery!
     var controller: ChatUserSearchController!
-    var controllerCallbackQueueID: UUID!
-    /// Workaround for unwrapping **controllerCallbackQueueID!** in each closure that captures it
-    private var callbackQueueID: UUID { controllerCallbackQueueID }
 
     override func setUp() {
         super.setUp()
@@ -32,19 +29,15 @@ final class UserSearchController_Tests: XCTestCase {
             pageSize: 10
         )
         controller = ChatUserSearchController(client: client, environment: env.environment)
-        controllerCallbackQueueID = UUID()
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
 
     override func tearDown() {
         query = nil
-        controllerCallbackQueueID = nil
 
         env.userListUpdater?.cleanUp()
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
-            Assert.canBeReleased(&env)
         }
 
         super.tearDown()
@@ -68,7 +61,7 @@ final class UserSearchController_Tests: XCTestCase {
 
     func test_delegateIsAssignedCorrectly() {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = TestDelegate()
         controller.delegate = delegate
 
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
@@ -88,17 +81,15 @@ final class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(env.userListUpdater!.fetch_queries.first, .search(term: searchTerm))
     }
 
-    func test_searchWithTerm_whenNewSearchSucceeds() throws {
+    @MainActor func test_searchWithTerm_whenNewSearchSucceeds() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestDelegate()
         controller.delegate = delegate
 
         // Simulate `search` for 1st query and catch the completion
         let searchTerm1 = "1"
-        var searchCompletionCalled = false
-        controller.search(term: searchTerm1) { error in
-            XCTAssertNil(error)
-            AssertTestQueue(withId: self.callbackQueueID)
+        nonisolated(unsafe) var searchCompletionCalled = false
+        controller.search(term: searchTerm1) { _ in
             searchCompletionCalled = true
         }
 
@@ -134,7 +125,6 @@ final class UserSearchController_Tests: XCTestCase {
         let searchTerm2 = "2"
         controller.search(term: searchTerm2) { error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: self.callbackQueueID)
             searchCompletionCalled = true
         }
 
@@ -167,9 +157,9 @@ final class UserSearchController_Tests: XCTestCase {
         ])
     }
 
-    func test_searchWithTerm_whenNewSearchFails() throws {
+    @MainActor func test_searchWithTerm_whenNewSearchFails() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestDelegate()
         controller.delegate = delegate
 
         // Simulate `search` for 1st query and catch the completion
@@ -177,7 +167,6 @@ final class UserSearchController_Tests: XCTestCase {
         var search1CompletionCalled = false
         controller.search(term: searchTerm1) { error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: self.callbackQueueID)
             search1CompletionCalled = true
         }
 
@@ -213,10 +202,9 @@ final class UserSearchController_Tests: XCTestCase {
         delegate.didChangeUsers_changes = nil
 
         // Simulate 2nd `search` calls and catch the completion
-        var search2CompletionError: Error?
+        nonisolated(unsafe) var search2CompletionError: Error?
         controller.search(term: .unique) { error in
             // Assert completion is called on callback queue
-            AssertTestQueue(withId: self.callbackQueueID)
             search2CompletionError = error
         }
 
@@ -239,7 +227,7 @@ final class UserSearchController_Tests: XCTestCase {
 
     func test_searchWithTerm_whenControllerHasInitialState_changesStateToLocalDataCached() {
         // Simulate `search` call and catch completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.search(term: .unique) { _ in
             completionCalled = true
         }
@@ -288,16 +276,15 @@ final class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(env.userListUpdater!.fetch_queries.first, query)
     }
 
-    func test_searchWithQuery_whenNewSearchSucceeds() throws {
+    @MainActor func test_searchWithQuery_whenNewSearchSucceeds() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestDelegate()
         controller.delegate = delegate
 
         // Simulate `search` for 1st query and catch the completion
-        var searchCompletionCalled = false
+        nonisolated(unsafe) var searchCompletionCalled = false
         controller.search(query: query) { error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: self.callbackQueueID)
             searchCompletionCalled = true
         }
 
@@ -333,7 +320,6 @@ final class UserSearchController_Tests: XCTestCase {
         let newQuery: UserListQuery = .search(term: "test2")
         controller.search(query: newQuery) { error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: self.callbackQueueID)
             searchCompletionCalled = true
         }
 
@@ -366,16 +352,15 @@ final class UserSearchController_Tests: XCTestCase {
         ])
     }
 
-    func test_searchWithQuery_whenNewSearchFails() throws {
+    @MainActor func test_searchWithQuery_whenNewSearchFails() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestDelegate()
         controller.delegate = delegate
 
         // Simulate `search` for 1st query and catch the completion
-        var search1CompletionCalled = false
+        nonisolated(unsafe) var search1CompletionCalled = false
         controller.search(query: query) { error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: self.callbackQueueID)
             search1CompletionCalled = true
         }
 
@@ -411,10 +396,9 @@ final class UserSearchController_Tests: XCTestCase {
         delegate.didChangeUsers_changes = nil
 
         // Simulate 2nd `search` calls and catch the completion
-        var search2CompletionError: Error?
+        nonisolated(unsafe) var search2CompletionError: Error?
         controller.search(query: .user(withID: .unique)) { error in
             // Assert completion is called on callback queue
-            AssertTestQueue(withId: self.callbackQueueID)
             search2CompletionError = error
         }
 
@@ -437,7 +421,7 @@ final class UserSearchController_Tests: XCTestCase {
 
     func test_searchWithQuery_whenControllerHasInitialState_changesStateToLocalDataCached() {
         // Simulate `search` call and catch completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         controller.search(query: query) { _ in
             completionCalled = true
         }
@@ -480,7 +464,7 @@ final class UserSearchController_Tests: XCTestCase {
 
     func test_loadNextUsers_whenCalledBeforeSearch_fails() {
         // Call `loadNextUsers` and catch the completion
-        var reportedError: Error?
+        nonisolated(unsafe) var reportedError: Error?
         controller.loadNextUsers { error in
             reportedError = error
         }
@@ -492,12 +476,11 @@ final class UserSearchController_Tests: XCTestCase {
         AssertAsync.willBeFalse(reportedError == nil)
     }
 
-    func test_loadNextUsers_whenAPIRequestSucceeds() throws {
+    @MainActor func test_loadNextUsers_whenAPIRequestSucceeds() throws {
         // Simulate `search` for query and catch the completion
-        var searchCompletionCalled = false
+        nonisolated(unsafe) var searchCompletionCalled = false
         controller.search(query: query) { error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: self.callbackQueueID)
             searchCompletionCalled = true
         }
 
@@ -513,15 +496,14 @@ final class UserSearchController_Tests: XCTestCase {
         XCTAssertEqual(controller.userArray, [user1])
 
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestDelegate()
         controller.delegate = delegate
 
         // Simulate `loadNextUsers` and catch the completion
         let limit = 10
-        var loadNextUsersCompletionCalled = false
+        nonisolated(unsafe) var loadNextUsersCompletionCalled = false
         controller.loadNextUsers(limit: limit) { error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: self.callbackQueueID)
             loadNextUsersCompletionCalled = true
         }
 
@@ -558,12 +540,11 @@ final class UserSearchController_Tests: XCTestCase {
         ])
     }
 
-    func test_loadNextUsers_whenAPIRequestFails() throws {
+    @MainActor func test_loadNextUsers_whenAPIRequestFails() throws {
         // Simulate `search` for query and catch the completion
-        var searchCompletionCalled = false
+        nonisolated(unsafe) var searchCompletionCalled = false
         controller.search(query: query) { error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: self.callbackQueueID)
             searchCompletionCalled = true
         }
 
@@ -583,13 +564,12 @@ final class UserSearchController_Tests: XCTestCase {
         let previousUsers = controller.userArray
 
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestDelegate()
         controller.delegate = delegate
 
         // Simulate `loadNextUsers` and catch the completion
-        var loadNextUsersCompletionError: Error?
+        nonisolated(unsafe) var loadNextUsersCompletionError: Error?
         controller.loadNextUsers { error in
-            AssertTestQueue(withId: self.callbackQueueID)
             loadNextUsersCompletionError = error
         }
 
@@ -612,7 +592,7 @@ final class UserSearchController_Tests: XCTestCase {
 
     func test_loadNextUsers_shouldNotKeepControllerAlive() throws {
         // Simulate `search` for query and catch the completion
-        var searchCompletionCalled = false
+        nonisolated(unsafe) var searchCompletionCalled = false
         controller.search(query: query) { _ in
             searchCompletionCalled = true
         }

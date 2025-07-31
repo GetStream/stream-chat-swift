@@ -5,7 +5,7 @@
 import Foundation
 
 /// The configuration for the various poll features. It determines if the user can or can not enable certain poll features.
-public struct PollsConfig {
+public struct PollsConfig: Sendable {
     /// Configuration for allowing multiple votes in a poll.
     public var multipleVotes: PollsEntryConfig
     /// Configuration for enabling anonymous polls.
@@ -41,7 +41,7 @@ public struct PollsConfig {
 }
 
 /// Config for individual poll entry.
-public struct PollsEntryConfig {
+public struct PollsEntryConfig: Sendable {
     /// Indicates whether the poll entry is configurable.
     public var configurable: Bool
     /// Indicates the default value of the poll entry.

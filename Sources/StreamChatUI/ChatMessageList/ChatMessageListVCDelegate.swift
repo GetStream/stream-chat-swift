@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The object that acts as the delegate of the message list.
-public protocol ChatMessageListVCDelegate: AnyObject {
+@MainActor public protocol ChatMessageListVCDelegate: AnyObject {
     /// Tells the delegate the message list is about to draw a message for a particular row.
     /// - Parameters:
     ///   - vc: The message list informing the delegate of this event.
@@ -67,7 +67,7 @@ public protocol ChatMessageListVCDelegate: AnyObject {
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessageId messageId: MessageId,
-        _ completion: @escaping ((Error?) -> Void)
+        _ completion: @escaping @MainActor @Sendable(Error?) -> Void
     )
 
     /// Tells the delegate that it should load the page around the given message id.
@@ -81,7 +81,7 @@ public protocol ChatMessageListVCDelegate: AnyObject {
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessage message: ChatMessage,
-        _ completion: @escaping ((Error?) -> Void)
+        _ completion: @escaping @MainActor @Sendable(Error?) -> Void
     )
 
     /// Tells the delegate that it should load the first page.
@@ -145,7 +145,7 @@ public extension ChatMessageListVCDelegate {
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessageId messageId: MessageId,
-        _ completion: @escaping ((Error?) -> Void)
+        _ completion: @escaping @MainActor @Sendable(Error?) -> Void
     ) {
         completion(nil)
     }
@@ -154,7 +154,7 @@ public extension ChatMessageListVCDelegate {
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessage message: ChatMessage,
-        _ completion: @escaping ((Error?) -> Void)
+        _ completion: @escaping @MainActor @Sendable(Error?) -> Void
     ) {
         chatMessageListVC(vc, shouldLoadPageAroundMessageId: message.id, completion)
     }

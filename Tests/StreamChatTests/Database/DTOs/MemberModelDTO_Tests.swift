@@ -159,7 +159,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         XCTAssertEqual(previousMembers.count, 4)
 
         // Save new members
-        var newMembers: [ChatChannelMember] = []
+        nonisolated(unsafe) var newMembers: [ChatChannelMember] = []
         try database.writeSynchronously { session in
             newMembers = try session.saveMembers(payload: members, channelId: cid, query: query)
                 .map { try $0.asModel() }
@@ -173,7 +173,7 @@ final class MemberModelDTO_Tests: XCTestCase {
     func test_saveMembers_whenAnotherPage_doesNotClearPreviousMembersFromQuery() throws {
         let cid: ChannelId = .unique
         let members: ChannelMemberListPayload = .init(members: [.dummy(), .dummy()])
-        var query = ChannelMemberListQuery(cid: cid)
+        nonisolated(unsafe) var query = ChannelMemberListQuery(cid: cid)
         query.pagination = .init(pageSize: 20, offset: 25)
 
         // Save previous members
@@ -181,7 +181,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         XCTAssertEqual(previousMembers.count, 4)
 
         // Save new members
-        var newMembers: [ChatChannelMember] = []
+        nonisolated(unsafe) var newMembers: [ChatChannelMember] = []
         try database.writeSynchronously { session in
             newMembers = try session.saveMembers(payload: members, channelId: cid, query: query)
                 .map { try $0.asModel() }
@@ -194,7 +194,7 @@ final class MemberModelDTO_Tests: XCTestCase {
     }
 
     func test_asModel_whenModelTransformerProvided_transformsValues() throws {
-        class CustomMemberTransformer: StreamModelsTransformer {
+        class CustomMemberTransformer: StreamModelsTransformer, @unchecked Sendable {
             var mockTransformedMember: ChatChannelMember = .mock(
                 id: .unique,
                 name: "transformed member"

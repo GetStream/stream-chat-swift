@@ -1,8 +1,5 @@
 //
-//  HttpHandlers+Scopes.swift
-//  Swifter
-//
-//  Copyright © 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 // swiftlint:disable file_length
@@ -12,141 +9,141 @@ public func scopes(_ scope: @escaping Closure) -> ((HttpRequest) -> HttpResponse
     return { _ in
         scopesBuffer[Process.tid] = ""
         scope()
-        return .raw(200, "OK", ["Content-Type": "text/html"], {
-            try? $0.write([UInt8](("<!DOCTYPE html>"  + (scopesBuffer[Process.tid] ?? "")).utf8))
-        })
+        return .raw(200, "OK", ["Content-Type": "text/html"]) {
+            try? $0.write([UInt8](("<!DOCTYPE html>" + (scopesBuffer[Process.tid] ?? "")).utf8))
+        }
     }
 }
 
 public typealias Closure = () -> Void
 
-public var idd: String?
-public var dir: String?
-public var rel: String?
-public var rev: String?
-public var alt: String?
-public var forr: String?
-public var src: String?
-public var type: String?
-public var href: String?
-public var text: String?
-public var abbr: String?
-public var size: String?
-public var face: String?
-public var char: String?
-public var cite: String?
-public var span: String?
-public var data: String?
-public var axis: String?
-public var Name: String?
-public var name: String?
-public var code: String?
-public var link: String?
-public var lang: String?
-public var cols: String?
-public var rows: String?
-public var ismap: String?
-public var shape: String?
-public var style: String?
-public var alink: String?
-public var width: String?
-public var rules: String?
-public var align: String?
-public var frame: String?
-public var vlink: String?
-public var deferr: String?
-public var color: String?
-public var media: String?
-public var title: String?
-public var scope: String?
-public var classs: String?
-public var manifest: String?
-public var value: String?
-public var clear: String?
-public var start: String?
-public var label: String?
-public var action: String?
-public var height: String?
-public var method: String?
-public var acceptt: String?
-public var object: String?
-public var scheme: String?
-public var coords: String?
-public var usemap: String?
-public var onblur: String?
-public var nohref: String?
-public var nowrap: String?
-public var hspace: String?
-public var border: String?
-public var valign: String?
-public var vspace: String?
-public var onload: String?
-public var target: String?
-public var prompt: String?
-public var onfocus: String?
-public var enctype: String?
-public var onclick: String?
-public var ontouchstart: String?
-public var onkeyup: String?
-public var profile: String?
-public var version: String?
-public var onreset: String?
-public var charset: String?
-public var standby: String?
-public var colspan: String?
-public var charoff: String?
-public var classid: String?
-public var compact: String?
-public var declare: String?
-public var rowspan: String?
-public var checked: String?
-public var archive: String?
-public var bgcolor: String?
-public var content: String?
-public var noshade: String?
-public var summary: String?
-public var headers: String?
-public var onselect: String?
-public var readonly: String?
-public var tabindex: String?
-public var onchange: String?
-public var noresize: String?
-public var disabled: String?
-public var longdesc: String?
-public var codebase: String?
-public var language: String?
-public var datetime: String?
-public var selected: String?
-public var hreflang: String?
-public var onsubmit: String?
-public var multiple: String?
-public var onunload: String?
-public var codetype: String?
-public var scrolling: String?
-public var onkeydown: String?
-public var maxlength: String?
-public var valuetype: String?
-public var accesskey: String?
-public var onmouseup: String?
-public var autofocus: String?
-public var onkeypress: String?
-public var ondblclick: String?
-public var onmouseout: String?
-public var httpEquiv: String?
-public var dataText: String?
-public var background: String?
-public var onmousemove: String?
-public var onmouseover: String?
-public var cellpadding: String?
-public var onmousedown: String?
-public var frameborder: String?
-public var marginwidth: String?
-public var cellspacing: String?
-public var placeholder: String?
-public var marginheight: String?
-public var acceptCharset: String?
+nonisolated(unsafe) public var idd: String?
+nonisolated(unsafe) public var dir: String?
+nonisolated(unsafe) public var rel: String?
+nonisolated(unsafe) public var rev: String?
+nonisolated(unsafe) public var alt: String?
+nonisolated(unsafe) public var forr: String?
+nonisolated(unsafe) public var src: String?
+nonisolated(unsafe) public var type: String?
+nonisolated(unsafe) public var href: String?
+nonisolated(unsafe) public var text: String?
+nonisolated(unsafe) public var abbr: String?
+nonisolated(unsafe) public var size: String?
+nonisolated(unsafe) public var face: String?
+nonisolated(unsafe) public var char: String?
+nonisolated(unsafe) public var cite: String?
+nonisolated(unsafe) public var span: String?
+nonisolated(unsafe) public var data: String?
+nonisolated(unsafe) public var axis: String?
+nonisolated(unsafe) public var Name: String?
+nonisolated(unsafe) public var name: String?
+nonisolated(unsafe) public var code: String?
+nonisolated(unsafe) public var link: String?
+nonisolated(unsafe) public var lang: String?
+nonisolated(unsafe) public var cols: String?
+nonisolated(unsafe) public var rows: String?
+nonisolated(unsafe) public var ismap: String?
+nonisolated(unsafe) public var shape: String?
+nonisolated(unsafe) public var style: String?
+nonisolated(unsafe) public var alink: String?
+nonisolated(unsafe) public var width: String?
+nonisolated(unsafe) public var rules: String?
+nonisolated(unsafe) public var align: String?
+nonisolated(unsafe) public var frame: String?
+nonisolated(unsafe) public var vlink: String?
+nonisolated(unsafe) public var deferr: String?
+nonisolated(unsafe) public var color: String?
+nonisolated(unsafe) public var media: String?
+nonisolated(unsafe) public var title: String?
+nonisolated(unsafe) public var scope: String?
+nonisolated(unsafe) public var classs: String?
+nonisolated(unsafe) public var manifest: String?
+nonisolated(unsafe) public var value: String?
+nonisolated(unsafe) public var clear: String?
+nonisolated(unsafe) public var start: String?
+nonisolated(unsafe) public var label: String?
+nonisolated(unsafe) public var action: String?
+nonisolated(unsafe) public var height: String?
+nonisolated(unsafe) public var method: String?
+nonisolated(unsafe) public var acceptt: String?
+nonisolated(unsafe) public var object: String?
+nonisolated(unsafe) public var scheme: String?
+nonisolated(unsafe) public var coords: String?
+nonisolated(unsafe) public var usemap: String?
+nonisolated(unsafe) public var onblur: String?
+nonisolated(unsafe) public var nohref: String?
+nonisolated(unsafe) public var nowrap: String?
+nonisolated(unsafe) public var hspace: String?
+nonisolated(unsafe) public var border: String?
+nonisolated(unsafe) public var valign: String?
+nonisolated(unsafe) public var vspace: String?
+nonisolated(unsafe) public var onload: String?
+nonisolated(unsafe) public var target: String?
+nonisolated(unsafe) public var prompt: String?
+nonisolated(unsafe) public var onfocus: String?
+nonisolated(unsafe) public var enctype: String?
+nonisolated(unsafe) public var onclick: String?
+nonisolated(unsafe) public var ontouchstart: String?
+nonisolated(unsafe) public var onkeyup: String?
+nonisolated(unsafe) public var profile: String?
+nonisolated(unsafe) public var version: String?
+nonisolated(unsafe) public var onreset: String?
+nonisolated(unsafe) public var charset: String?
+nonisolated(unsafe) public var standby: String?
+nonisolated(unsafe) public var colspan: String?
+nonisolated(unsafe) public var charoff: String?
+nonisolated(unsafe) public var classid: String?
+nonisolated(unsafe) public var compact: String?
+nonisolated(unsafe) public var declare: String?
+nonisolated(unsafe) public var rowspan: String?
+nonisolated(unsafe) public var checked: String?
+nonisolated(unsafe) public var archive: String?
+nonisolated(unsafe) public var bgcolor: String?
+nonisolated(unsafe) public var content: String?
+nonisolated(unsafe) public var noshade: String?
+nonisolated(unsafe) public var summary: String?
+nonisolated(unsafe) public var headers: String?
+nonisolated(unsafe) public var onselect: String?
+nonisolated(unsafe) public var readonly: String?
+nonisolated(unsafe) public var tabindex: String?
+nonisolated(unsafe) public var onchange: String?
+nonisolated(unsafe) public var noresize: String?
+nonisolated(unsafe) public var disabled: String?
+nonisolated(unsafe) public var longdesc: String?
+nonisolated(unsafe) public var codebase: String?
+nonisolated(unsafe) public var language: String?
+nonisolated(unsafe) public var datetime: String?
+nonisolated(unsafe) public var selected: String?
+nonisolated(unsafe) public var hreflang: String?
+nonisolated(unsafe) public var onsubmit: String?
+nonisolated(unsafe) public var multiple: String?
+nonisolated(unsafe) public var onunload: String?
+nonisolated(unsafe) public var codetype: String?
+nonisolated(unsafe) public var scrolling: String?
+nonisolated(unsafe) public var onkeydown: String?
+nonisolated(unsafe) public var maxlength: String?
+nonisolated(unsafe) public var valuetype: String?
+nonisolated(unsafe) public var accesskey: String?
+nonisolated(unsafe) public var onmouseup: String?
+nonisolated(unsafe) public var autofocus: String?
+nonisolated(unsafe) public var onkeypress: String?
+nonisolated(unsafe) public var ondblclick: String?
+nonisolated(unsafe) public var onmouseout: String?
+nonisolated(unsafe) public var httpEquiv: String?
+nonisolated(unsafe) public var dataText: String?
+nonisolated(unsafe) public var background: String?
+nonisolated(unsafe) public var onmousemove: String?
+nonisolated(unsafe) public var onmouseover: String?
+nonisolated(unsafe) public var cellpadding: String?
+nonisolated(unsafe) public var onmousedown: String?
+nonisolated(unsafe) public var frameborder: String?
+nonisolated(unsafe) public var marginwidth: String?
+nonisolated(unsafe) public var cellspacing: String?
+nonisolated(unsafe) public var placeholder: String?
+nonisolated(unsafe) public var marginheight: String?
+nonisolated(unsafe) public var acceptCharset: String?
 
-public var inner: String?
+nonisolated(unsafe) public var inner: String?
 
 public func a(_ closure: Closure) { element("a", closure) }
 public func b(_ closure: Closure) { element("b", closure) }
@@ -173,11 +170,11 @@ public func tt(_ closure: Closure) { element("tt", closure) }
 public func ul(_ closure: Closure) { element("ul", closure) }
 
 public func ul<T: Sequence>(_ collection: T, _ closure: @escaping (T.Iterator.Element) -> Void) {
-    element("ul", {
+    element("ul") {
         for item in collection {
             closure(item)
         }
-    })
+    }
 }
 
 public func h1(_ closure: Closure) { element("h1", closure) }
@@ -246,21 +243,21 @@ public func style(_ closure: Closure) { element("style", closure) }
 public func table(_ closure: Closure) { element("table", closure) }
 
 public func table<T: Sequence>(_ collection: T, closure: @escaping (T.Iterator.Element) -> Void) {
-    element("table", {
+    element("table") {
         for item in collection {
             closure(item)
         }
-    })
+    }
 }
 
 public func tbody(_ closure: Closure) { element("tbody", closure) }
 
 public func tbody<T: Sequence>(_ collection: T, closure: @escaping (T.Iterator.Element) -> Void) {
-    element("tbody", {
+    element("tbody") {
         for item in collection {
             closure(item)
         }
-    })
+    }
 }
 
 public func tfoot(_ closure: Closure) { element("tfoot", closure) }
@@ -333,11 +330,10 @@ public func stylesheet(_ closure: Closure) { element("link", ["rel": "stylesheet
 public func element(_ node: String, _ closure: Closure) { evaluate(node, [:], closure) }
 public func element(_ node: String, _ attrs: [String: String?] = [:], _ closure: Closure) { evaluate(node, attrs, closure) }
 
-var scopesBuffer = [UInt64: String]()
+nonisolated(unsafe) var scopesBuffer = [UInt64: String]()
 
 // swiftlint:disable cyclomatic_complexity function_body_length
 private func evaluate(_ node: String, _ attrs: [String: String?] = [:], _ closure: Closure) {
-
     // Push the attributes.
 
     let stackid = idd
@@ -752,7 +748,7 @@ private func evaluate(_ node: String, _ attrs: [String: String?] = [:], _ closur
     if let inner = inner {
         scopesBuffer[Process.tid] = output + ">" + (inner) + "</" + node + ">"
     } else {
-        let current = scopesBuffer[Process.tid]  ?? ""
+        let current = scopesBuffer[Process.tid] ?? ""
         scopesBuffer[Process.tid] = output + ">" + current + "</" + node + ">"
     }
 
