@@ -6,9 +6,9 @@ pre-commit:
       stage_fixed: true
       exclude:
         - "**/Generated/**"
-        - Sources/StreamChatSwiftUI/StreamNuke/**
-        - Sources/StreamChatSwiftUI/StreamSwiftyGif/**
-        - Sources/StreamChatSwiftUI/StreamDifferenceKit/**
+        - Sources/StreamChatUI/StreamNuke/**
+        - Sources/StreamChatUI/StreamSwiftyGif/**
+        - Sources/StreamChatUI/StreamDifferenceKit/**
       skip:
         - merge
         - rebase
@@ -18,9 +18,9 @@ pre-commit:
       stage_fixed: true
       exclude:
         - "**/Generated/**"
-        - Sources/StreamChatSwiftUI/StreamNuke/**
-        - Sources/StreamChatSwiftUI/StreamSwiftyGif/**
-        - Sources/StreamChatSwiftUI/StreamDifferenceKit/**
+        - Sources/StreamChatUI/StreamNuke/**
+        - Sources/StreamChatUI/StreamSwiftyGif/**
+        - Sources/StreamChatUI/StreamDifferenceKit/**
       skip:
         - merge
         - rebase
@@ -31,8 +31,8 @@ pre-push:
       glob: "*.{swift}"
       exclude:
         - "**/Generated/**"
-        - Sources/StreamChatSwiftUI/StreamNuke/**
-        - Sources/StreamChatSwiftUI/StreamSwiftyGif/**
-        - Sources/StreamChatSwiftUI/StreamDifferenceKit/**
+        - Sources/StreamChatUI/StreamNuke/**
+        - Sources/StreamChatUI/StreamSwiftyGif/**
+        - Sources/StreamChatUI/StreamDifferenceKit/**
       skip:
         - merge-commit
