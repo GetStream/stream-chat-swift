@@ -436,6 +436,21 @@ class DemoLivestreamComposerVC: ComposerVC {
     /// Reference to the livestream channel controller
     var livestreamChannelController: LivestreamChannelController?
 
+    override func addAttachmentToContent(
+        from url: URL,
+        type: AttachmentType,
+        info: [LocalAttachmentInfoKey: Any],
+        extraData: (any Encodable)?
+    ) throws {
+        guard let cid = livestreamChannelController?.channel?.cid else {
+            return
+        }
+        // We need to set the channel controller temporarily just to access the client config.
+        channelController = livestreamChannelController?.client.channelController(for: cid)
+        try super.addAttachmentToContent(from: url, type: type, info: info, extraData: extraData)
+        channelController = nil
+    }
+
     /// Override message creation to use livestream controller
     override func createNewMessage(text: String) {
         guard let livestreamController = livestreamChannelController else {
