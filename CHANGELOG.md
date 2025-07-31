@@ -5,6 +5,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Add pending messages support [#3754](https://github.com/GetStream/stream-chat-swift/pull/3754)
+
+# [4.83.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.83.0)
+_July 28, 2025_
+
+## StreamChat
+### ✅ Added
 - Add support for Filtering and Sorting Threads [#3731](https://github.com/GetStream/stream-chat-swift/pull/3731)
 - Add `ChatThread.activeParticipantCount` [#3731](https://github.com/GetStream/stream-chat-swift/pull/3731)
 - Add `CurrentUserUnreads.totalUnreadCountByTeam` [#3733](https://github.com/GetStream/stream-chat-swift/pull/3733)
