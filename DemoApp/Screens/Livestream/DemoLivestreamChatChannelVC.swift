@@ -384,6 +384,8 @@ class DemoLivestreamChatChannelVC: _ViewController,
         _ controller: LivestreamChannelController,
         didUpdateMessages messages: [ChatMessage]
     ) {
+        debugPrint("[Livestream] didUpdateMessages.count: \(messages.count)")
+
         messageListVC.setPreviousMessagesSnapshot(self.messages)
         messageListVC.setNewMessagesSnapshotArray(livestreamChannelController.messages)
 
