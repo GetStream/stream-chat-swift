@@ -109,6 +109,9 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     /// Only the initial page will be loaded from cache, to avoid an initial blank screen.
     public var loadInitialMessagesFromCache: Bool = true
 
+    /// A boolean value indicating if the controller should count the number o skipped messages when in pause state.
+    public var countSkippedMessagesWhenPaused: Bool = false
+
     /// Configuration for message limiting behaviour.
     ///
     /// Disabled by default. If enabled, older messages will be automatically discarded
@@ -659,7 +662,9 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     public func resume() {
         guard isPaused else { return }
         isPaused = false
-        skippedMessagesAmount = 0
+        if countSkippedMessagesWhenPaused {
+            skippedMessagesAmount = 0
+        }
         loadFirstPage()
     }
 
@@ -817,7 +822,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         }
 
         // If paused and the message is not from the current user, skip processing
-        if isPaused && message.author.id != currentUserId {
+        if countSkippedMessagesWhenPaused, isPaused && message.author.id != currentUserId {
             skippedMessagesAmount += 1
             return
         }

@@ -120,6 +120,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 let client = self.rootViewController.controller.client
                 let livestreamController = client.livestreamChannelController(for: .init(cid: cid))
                 livestreamController.maxMessageLimitOptions = .recommended
+                livestreamController.countSkippedMessagesWhenPaused = true
                 let vc = DemoLivestreamChatChannelVC()
                 vc.livestreamChannelController = livestreamController
                 vc.hidesBottomBarWhenPushed = true
