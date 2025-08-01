@@ -20,7 +20,7 @@ public extension ChatClient {
 /// - Read updates
 /// - Typing indicators
 /// - etc..
-public class LivestreamChannelController: DataStoreProvider, DelegateCallable, EventsControllerDelegate, AppStateObserverDelegate {
+public class LivestreamChannelController: DataStoreProvider, EventsControllerDelegate, AppStateObserverDelegate {
     public typealias Delegate = LivestreamChannelControllerDelegate
 
     // MARK: - Public Properties
@@ -208,7 +208,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 
     /// Synchronizes the controller with the backend data.
     /// - Parameter completion: Called when the synchronization is finished.
-    public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    public func synchronize(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         // Populate the initial data with existing cache.
         if loadInitialMessagesFromCache, let cid = self.cid, let channel = dataStore.channel(cid: cid) {
             self.channel = channel
@@ -229,10 +229,12 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     public func loadPreviousMessages(
         before messageId: MessageId? = nil,
         limit: Int? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         guard cid != nil else {
-            completion?(ClientError.ChannelNotCreatedYet())
+            self.callback {
+                completion?(ClientError.ChannelNotCreatedYet())
+            }
             return
         }
 
@@ -241,12 +243,16 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
             ?? messages.last?.id
 
         guard let messageId = messageId else {
-            completion?(ClientError.ChannelEmptyMessages())
+            self.callback {
+                completion?(ClientError.ChannelEmptyMessages())
+            }
             return
         }
 
         guard !hasLoadedAllPreviousMessages && !isLoadingPreviousMessages else {
-            completion?(nil)
+            self.callback {
+                completion?(nil)
+            }
             return
         }
 
@@ -265,10 +271,12 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     public func loadNextMessages(
         after messageId: MessageId? = nil,
         limit: Int? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         guard cid != nil else {
-            completion?(ClientError.ChannelNotCreatedYet())
+            self.callback {
+                completion?(ClientError.ChannelNotCreatedYet())
+            }
             return
         }
 
@@ -277,12 +285,16 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
             ?? messages.first?.id
 
         guard let messageId = messageId else {
-            completion?(ClientError.ChannelEmptyMessages())
+            self.callback {
+                completion?(ClientError.ChannelEmptyMessages())
+            }
             return
         }
 
         guard !hasLoadedAllNextMessages && !isLoadingNextMessages else {
-            completion?(nil)
+            self.callback {
+                completion?(nil)
+            }
             return
         }
 
@@ -301,10 +313,12 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     public func loadPageAroundMessageId(
         _ messageId: MessageId,
         limit: Int? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         guard !isLoadingMiddleMessages else {
-            completion?(nil)
+            self.callback {
+                completion?(nil)
+            }
             return
         }
 
@@ -317,7 +331,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 
     /// Cleans the current state and loads the first page again.
     /// - Parameter completion: Callback when the API call is completed.
-    public func loadFirstPage(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    public func loadFirstPage(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         var query = channelQuery
         query.pagination = .init(
             pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
@@ -360,7 +374,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         restrictedVisibility: [UserId] = [],
         location: NewLocationInfo? = nil,
         extraData: [String: RawJSON] = [:],
-        completion: ((Result<MessageId, Error>) -> Void)? = nil
+        completion: (@MainActor (Result<MessageId, Error>) -> Void)? = nil
     ) {
         var transformableInfo = NewMessageTransformableInfo(
             text: text,
@@ -398,7 +412,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     public func deleteMessage(
         messageId: MessageId,
         hard: Bool = false,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .deleteMessage(
@@ -453,7 +467,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         messageId: MessageId,
         reason: String? = nil,
         extraData: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .flagMessage(
@@ -476,7 +490,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     ///   If request fails, the completion will be called with an error.
     public func unflag(
         messageId: MessageId,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .flagMessage(
@@ -510,7 +524,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         skipPush: Bool = false,
         pushEmojiCode: String? = nil,
         extraData: [String: RawJSON] = [:],
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .addReaction(
@@ -537,7 +551,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     public func deleteReaction(
         _ type: MessageReactionType,
         from messageId: MessageId,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { [weak self] result in
             self?.callback {
@@ -554,7 +568,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     public func pin(
         messageId: MessageId,
         pinning: MessagePinning = .noExpiration,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .pinMessage(
             messageId: messageId,
@@ -572,7 +586,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
     public func unpin(
         messageId: MessageId,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .pinMessage(
@@ -608,7 +622,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     ///   - cooldownDuration: Duration of the time interval users have to wait between messages.
     ///   Specified in seconds. Should be between 1-120.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    public func enableSlowMode(cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
+    public func enableSlowMode(cooldownDuration: Int, completion: (@MainActor (Error?) -> Void)? = nil) {
         guard let cid else {
             callback {
                 completion?(ClientError.ChannelNotCreatedYet())
@@ -631,7 +645,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     ///
     /// - Parameters:
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    public func disableSlowMode(completion: ((Error?) -> Void)? = nil) {
+    public func disableSlowMode(completion: (@MainActor (Error?) -> Void)? = nil) {
         guard let cid else {
             callback {
                 completion?(ClientError.ChannelNotCreatedYet())
@@ -691,7 +705,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 
     private func updateChannelData(
         channelQuery: ChannelQuery,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         if let pagination = channelQuery.pagination {
             paginationStateHandler.begin(pagination: pagination)
@@ -766,9 +780,15 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     }
 
     /// Helper method to execute the callbacks on the main thread.
-    func callback(_ action: @escaping () -> Void) {
+    private func callback(_ action: @MainActor @escaping () -> Void) {
         DispatchQueue.main.async {
             action()
+        }
+    }
+
+    private func delegateCallback(_ callback: @escaping @MainActor (Delegate) -> Void) {
+        self.callback {
+            self.multicastDelegate.invoke(callback)
         }
     }
 
@@ -895,12 +915,14 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
         location: NewLocationInfo? = nil,
         extraData: [String: RawJSON] = [:],
         poll: PollPayload?,
-        completion: ((Result<MessageId, Error>) -> Void)? = nil
+        completion: (@MainActor (Result<MessageId, Error>) -> Void)? = nil
     ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid else {
             let error = ClientError.ChannelNotCreatedYet()
-            completion?(.failure(error))
+            self.callback {
+                completion?(.failure(error))
+            }
             return
         }
 
@@ -941,6 +963,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
 // MARK: - Delegate Protocol
 
 /// Delegate protocol for `LivestreamChannelController`
+@MainActor
 public protocol LivestreamChannelControllerDelegate: AnyObject {
     /// Called when the channel data is updated.
     /// - Parameters:
