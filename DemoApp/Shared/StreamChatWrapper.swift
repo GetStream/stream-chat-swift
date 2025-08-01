@@ -138,7 +138,7 @@ extension StreamChatWrapper {
         }
     }
 
-    func logOut(completion: @escaping () -> Void) {
+    func logOut(completion: @escaping @MainActor @Sendable() -> Void) {
         guard let client = self.client else {
             logClientNotInstantiated()
             return

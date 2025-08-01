@@ -37,6 +37,7 @@ final class PollController_Mock: PollController, @unchecked Sendable {
     var synchronize_completion: (@MainActor @Sendable(Error?) -> Void)?
     override func synchronize(_ completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         synchronize_callCount += 1
+        synchronize_called = true
         synchronize_completion = completion
     }
     
@@ -61,6 +62,7 @@ final class PollController_Mock: PollController, @unchecked Sendable {
     var closePoll_completion: (@MainActor @Sendable(Error?) -> Void)?
     override func closePoll(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         closePoll_callCount += 1
+        closePoll_called = true
         closePoll_completion = completion
     }
     

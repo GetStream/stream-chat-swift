@@ -95,10 +95,8 @@ extension ChatMessageGalleryView {
                 from: attachment?.payload,
                 maxResolutionInPixels: components.imageAttachmentMaxPixels
             ) { [weak self] _ in
-                Task { @MainActor in
-                    self?.loadingIndicator.isVisible = false
-                    self?.imageTask = nil
-                }
+                self?.loadingIndicator.isVisible = false
+                self?.imageTask = nil
             }
 
             uploadingOverlay.content = content?.uploadingState

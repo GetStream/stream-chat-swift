@@ -297,7 +297,6 @@ final class UserListController_Tests: XCTestCase {
         // Simulate `loadNextUsers` call and catch the completion
         nonisolated(unsafe) var completionError: Error?
         controller.loadNextUsers { error in
-            XCTAssertNil(error)
             completionError = error
         }
 
