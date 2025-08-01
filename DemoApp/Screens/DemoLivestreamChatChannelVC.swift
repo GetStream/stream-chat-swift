@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-open class DemoLivestreamChatChannelVC: _ViewController,
+class DemoLivestreamChatChannelVC: _ViewController,
     ThemeProvider,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
@@ -14,49 +14,47 @@ open class DemoLivestreamChatChannelVC: _ViewController,
     EventsControllerDelegate
 {
     /// Controller for observing data changes within the channel.
-    open var livestreamChannelController: LivestreamChannelController!
+    var livestreamChannelController: LivestreamChannelController!
 
     /// User search controller for suggestion users when typing in the composer.
-    open lazy var userSuggestionSearchController: ChatUserSearchController =
+    lazy var userSuggestionSearchController: ChatUserSearchController =
         livestreamChannelController.client.userSearchController()
 
     /// A controller for observing web socket events.
-    public lazy var eventsController: EventsController = client.eventsController()
+    lazy var eventsController: EventsController = client.eventsController()
 
     /// The size of the channel avatar.
-    open var channelAvatarSize: CGSize {
+    var channelAvatarSize: CGSize {
         CGSize(width: 32, height: 32)
     }
 
-    public var client: ChatClient {
+    var client: ChatClient {
         livestreamChannelController.client
     }
 
     /// Component responsible for setting the correct offset when keyboard frame is changed.
-    open lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
+    lazy var keyboardHandler: KeyboardHandler = ComposerKeyboardHandler(
         composerParentVC: self,
         composerBottomConstraint: messageComposerBottomConstraint,
         messageListVC: messageListVC
     )
 
     /// The message list component responsible to render the messages.
-    open lazy var messageListVC: ChatMessageListVC = components
-        .messageListVC
-        .init()
+    lazy var messageListVC: DemoLivestreamChatMessageListVC = DemoLivestreamChatMessageListVC()
 
     /// Controller that handles the composer view
     private(set) lazy var messageComposerVC = DemoLivestreamComposerVC()
 
     /// View for displaying the channel image in the navigation bar.
-    open private(set) lazy var channelAvatarView = components
+    private(set) lazy var channelAvatarView = components
         .channelAvatarView.init()
         .withoutAutoresizingMaskConstraints
 
     /// The message composer bottom constraint used for keyboard animation handling.
-    public var messageComposerBottomConstraint: NSLayoutConstraint?
+    var messageComposerBottomConstraint: NSLayoutConstraint?
 
     /// A boolean value indicating whether the last message is fully visible or not.
-    open var isLastMessageFullyVisible: Bool {
+    var isLastMessageFullyVisible: Bool {
         messageListVC.listView.isLastCellFullyVisible
     }
 
@@ -93,7 +91,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         return banner
     }()
 
-    override open func setUp() {
+    override func setUp() {
         super.setUp()
 
         eventsController.delegate = self
@@ -105,6 +103,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         messageComposerVC.userSearchController = userSuggestionSearchController
 
         setChannelControllerToComposerIfNeeded()
+        setChannelControllerToMessageListIfNeeded()
 
         livestreamChannelController.delegate = self
         livestreamChannelController.synchronize { [weak self] error in
@@ -126,8 +125,12 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         messageComposerVC.channelController = nil
         messageComposerVC.livestreamChannelController = livestreamChannelController
     }
+    
+    private func setChannelControllerToMessageListIfNeeded() {
+        messageListVC.livestreamChannelController = livestreamChannelController
+    }
 
-    override open func setUpLayout() {
+    override func setUpLayout() {
         super.setUpLayout()
 
         view.backgroundColor = appearance.colorPalette.background
@@ -174,13 +177,13 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         pauseBannerView.isHidden = true
     }
 
-    override open func viewDidAppear(_ animated: Bool) {
+    override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         keyboardHandler.start()
     }
 
-    override open func viewWillAppear(_ animated: Bool) {
+    override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
         if let draftMessage = livestreamChannelController.channel?.draftMessage {
@@ -188,7 +191,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         }
     }
 
-    override open func viewWillDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
 
         keyboardHandler.stop()
@@ -198,12 +201,13 @@ open class DemoLivestreamChatChannelVC: _ViewController,
 
     /// Called when the syncing of the `channelController` is finished.
     /// - Parameter error: An `error` if the syncing failed; `nil` if it was successful.
-    open func didFinishSynchronizing(with error: Error?) {
+    func didFinishSynchronizing(with error: Error?) {
         if let error = error {
             log.error("Error when synchronizing ChannelController: \(error)")
         }
 
         setChannelControllerToComposerIfNeeded()
+        setChannelControllerToMessageListIfNeeded()
         messageComposerVC.updateContent()
     }
 
@@ -219,7 +223,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
     ///   - id: The id of message which the message list should go to.
     ///   - animated: `true` if you want to animate the change in position; `false` if it should be immediate.
     ///   - shouldHighlight: Whether the message should be highlighted when jumping to it. By default it is highlighted.
-    public func jumpToMessage(id: MessageId, animated: Bool = true, shouldHighlight: Bool = true) {
+    func jumpToMessage(id: MessageId, animated: Bool = true, shouldHighlight: Bool = true) {
         if shouldHighlight {
             messageListVC.jumpToMessage(id: id, animated: animated) { [weak self] indexPath in
                 self?.messageListVC.highlightCell(at: indexPath)
@@ -232,29 +236,29 @@ open class DemoLivestreamChatChannelVC: _ViewController,
 
     // MARK: - ChatMessageListVCDataSource
 
-    public var messages: [ChatMessage] = []
+    var messages: [ChatMessage] = []
 
-    public var isFirstPageLoaded: Bool {
+    var isFirstPageLoaded: Bool {
         livestreamChannelController.hasLoadedAllNextMessages
     }
 
-    public var isLastPageLoaded: Bool {
+    var isLastPageLoaded: Bool {
         livestreamChannelController.hasLoadedAllPreviousMessages
     }
 
-    open func channel(for vc: ChatMessageListVC) -> ChatChannel? {
+    func channel(for vc: ChatMessageListVC) -> ChatChannel? {
         livestreamChannelController.channel
     }
 
-    open func numberOfMessages(in vc: ChatMessageListVC) -> Int {
+    func numberOfMessages(in vc: ChatMessageListVC) -> Int {
         messages.count
     }
 
-    open func chatMessageListVC(_ vc: ChatMessageListVC, messageAt indexPath: IndexPath) -> ChatMessage? {
+    func chatMessageListVC(_ vc: ChatMessageListVC, messageAt indexPath: IndexPath) -> ChatMessage? {
         messages[indexPath.item]
     }
 
-    open func chatMessageListVC(
+    func chatMessageListVC(
         _ vc: ChatMessageListVC,
         messageLayoutOptionsAt indexPath: IndexPath
     ) -> ChatMessageLayoutOptions {
@@ -268,7 +272,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         )
     }
 
-    public func chatMessageListVC(
+    func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessageId messageId: MessageId,
         _ completion: @escaping ((Error?) -> Void)
@@ -278,7 +282,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         }
     }
 
-    open func chatMessageListVCShouldLoadFirstPage(
+    func chatMessageListVCShouldLoadFirstPage(
         _ vc: ChatMessageListVC
     ) {
         livestreamChannelController.loadFirstPage()
@@ -286,7 +290,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
 
     // MARK: - ChatMessageListVCDelegate
 
-    open func chatMessageListVC(
+    func chatMessageListVC(
         _ vc: ChatMessageListVC,
         scrollViewDidScroll scrollView: UIScrollView
     ) {
@@ -295,7 +299,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         }
     }
 
-    open func chatMessageListVC(
+    func chatMessageListVC(
         _ vc: ChatMessageListVC,
         willDisplayMessageAt indexPath: IndexPath
     ) {
@@ -316,7 +320,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         }
     }
 
-    open func chatMessageListVC(
+    func chatMessageListVC(
         _ vc: ChatMessageListVC,
         didTapOnAction actionItem: ChatMessageActionItem,
         for message: ChatMessage
@@ -342,7 +346,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         }
     }
 
-    open func chatMessageListVC(
+    func chatMessageListVC(
         _ vc: ChatMessageListVC,
         didTapOnMessageListView messageListView: ChatMessageListView,
         with gestureRecognizer: UITapGestureRecognizer
@@ -350,7 +354,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         messageComposerVC.dismissSuggestions()
     }
 
-    open func chatMessageListVC(
+    func chatMessageListVC(
         _ vc: ChatMessageListVC,
         headerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
@@ -358,7 +362,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         nil
     }
 
-    open func chatMessageListVC(
+    func chatMessageListVC(
         _ vc: ChatMessageListVC,
         footerViewForMessage message: ChatMessage,
         at indexPath: IndexPath
@@ -368,7 +372,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
 
     // MARK: - LivestreamChannelControllerDelegate
 
-    public func livestreamChannelController(
+    func livestreamChannelController(
         _ controller: LivestreamChannelController,
         didUpdateChannel channel: ChatChannel
     ) {
@@ -376,7 +380,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         navigationItem.title = channel.name
     }
 
-    public func livestreamChannelController(
+    func livestreamChannelController(
         _ controller: LivestreamChannelController,
         didUpdateMessages messages: [ChatMessage]
     ) {
@@ -396,14 +400,14 @@ open class DemoLivestreamChatChannelVC: _ViewController,
         messageListVC.updateMessages(with: changes)
     }
 
-    public func livestreamChannelController(
+    func livestreamChannelController(
         _ controller: LivestreamChannelController,
         didChangePauseState isPaused: Bool
     ) {
         showPauseBanner(isPaused)
     }
 
-    public func livestreamChannelController(
+    func livestreamChannelController(
         _ controller: LivestreamChannelController,
         didChangeSkippedMessagesAmount skippedMessagesAmount: Int
     ) {
@@ -412,7 +416,7 @@ open class DemoLivestreamChatChannelVC: _ViewController,
 
     // MARK: - EventsControllerDelegate
 
-    open func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+    func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
         if let newMessagePendingEvent = event as? NewMessagePendingEvent {
             let newMessage = newMessagePendingEvent.message
             if !isFirstPageLoaded && newMessage.isSentByCurrentUser && !newMessage.isPartOfThread {
