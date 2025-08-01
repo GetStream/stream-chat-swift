@@ -297,6 +297,10 @@ class DemoLivestreamChatChannelVC: _ViewController,
         if isLastMessageFullyVisible && livestreamChannelController.isPaused {
             livestreamChannelController.resume()
         }
+
+        if isLastMessageFullyVisible {
+            messageListVC.scrollToBottomButton.isHidden = true
+        }
     }
 
     func chatMessageListVC(

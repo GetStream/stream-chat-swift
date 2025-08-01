@@ -863,7 +863,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         // If paused and the message is from the current user, load the first page
         // to go back to the latest messages
         if isPaused && message.author.id == currentUserId {
-            loadFirstPage()
+            resume()
         }
     }
 
