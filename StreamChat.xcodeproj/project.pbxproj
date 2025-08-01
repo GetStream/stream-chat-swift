@@ -1615,6 +1615,7 @@
 		AD7BE1742C2347A3000A5756 /* ChatThreadListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BE1722C2347A3000A5756 /* ChatThreadListEmptyView.swift */; };
 		AD7C76712E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C766D2E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift */; };
 		AD7C76722E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C766F2E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift */; };
+		AD7C76752E3D0486009250FB /* DemoLivestreamReactionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76742E3D047E009250FB /* DemoLivestreamReactionsListView.swift */; };
 		AD7CF1712694ABCE00F3101D /* ComposerVC_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */; };
 		AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */; };
 		AD7EFDA72C7796D400625FC5 /* PollCommentListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDA52C77749300625FC5 /* PollCommentListVC.swift */; };
@@ -4413,6 +4414,7 @@
 		AD7BE1722C2347A3000A5756 /* ChatThreadListEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListEmptyView.swift; sourceTree = "<group>"; };
 		AD7C766D2E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamChatMessageListVC.swift; sourceTree = "<group>"; };
 		AD7C766F2E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamMessageActionsVC.swift; sourceTree = "<group>"; };
+		AD7C76742E3D047E009250FB /* DemoLivestreamReactionsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamReactionsListView.swift; sourceTree = "<group>"; };
 		AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC_Documentation_Tests.swift; sourceTree = "<group>"; };
 		AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "UserUpdateResponse+MissingUser.json"; sourceTree = "<group>"; };
 		AD7DFBEB25D2AE7400DD9DA3 /* TestDataModel2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestDataModel2.xcdatamodel; sourceTree = "<group>"; };
@@ -8825,6 +8827,7 @@
 				AD26CB762E3ACAA0002FC1A7 /* DemoLivestreamChatChannelVC.swift */,
 				AD7C766D2E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift */,
 				AD7C766F2E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift */,
+				AD7C76742E3D047E009250FB /* DemoLivestreamReactionsListView.swift */,
 			);
 			path = Livestream;
 			sourceTree = "<group>";
@@ -11234,6 +11237,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD7C76752E3D0486009250FB /* DemoLivestreamReactionsListView.swift in Sources */,
 				6428DD5526201DCC0065DA1D /* BannerShowingConnectionDelegate.swift in Sources */,
 				AD053BA52B335A63003612B6 /* DemoQuotedChatMessageView.swift in Sources */,
 				AD053BAB2B33638B003612B6 /* LocationAttachmentSnapshotView.swift in Sources */,

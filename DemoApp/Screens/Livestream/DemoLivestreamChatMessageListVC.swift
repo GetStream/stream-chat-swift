@@ -4,6 +4,7 @@
 
 import StreamChat
 import StreamChatUI
+import SwiftUI
 import UIKit
 
 /// A custom message list view controller for livestream channels that uses LivestreamChannelController
@@ -48,6 +49,36 @@ class DemoLivestreamChatMessageListVC: ChatMessageListVC {
         }
         
         present(actionsController, animated: true)
+    }
+    
+    override func messageContentViewDidTapOnReactionsView(_ indexPath: IndexPath?) {
+        guard 
+            let indexPath = indexPath,
+            let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell,
+            let messageContentView = cell.messageContentView,
+            let message = messageContentView.content,
+            let livestreamChannelController = livestreamChannelController
+        else { return }
+        
+        // Create SwiftUI reactions list view
+        let reactionsView = DemoLivestreamReactionsListView(
+            message: message,
+            controller: livestreamChannelController
+        )
+        
+        // Present as a SwiftUI sheet
+        let hostingController = UIHostingController(rootView: reactionsView)
+        hostingController.modalPresentationStyle = .pageSheet
+        
+        if #available(iOS 16.0, *) {
+            if let sheetController = hostingController.sheetPresentationController {
+                sheetController.detents = [.medium(), .large()]
+                sheetController.prefersGrabberVisible = true
+                sheetController.preferredCornerRadius = 16
+            }
+        }
+        
+        present(hostingController, animated: true)
     }
 }
 
