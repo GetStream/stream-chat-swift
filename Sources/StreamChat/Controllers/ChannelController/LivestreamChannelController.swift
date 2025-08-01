@@ -120,7 +120,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     /// you will need to use `pause()` method before loading older messages. Otherwise the
     /// pagination will also be capped. Once the user scrolls back to the newest messages, you
     /// can call `resume()`. Whenever the user creates a new message, the controller will
-    /// automatically resume the controller.
+    /// automatically resume.
     public var maxMessageLimitOptions: MaxMessageLimitOptions?
 
     /// Set the delegate to observe the changes in the system.
