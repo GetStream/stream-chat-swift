@@ -436,7 +436,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         for messageId: MessageId,
         limit: Int = 25,
         offset: Int = 0,
-        completion: @escaping (Result<[ChatMessageReaction], Error>) -> Void
+        completion: @escaping @MainActor (Result<[ChatMessageReaction], Error>) -> Void
     ) {
         let pagination = Pagination(pageSize: limit, offset: offset)
         apiClient.request(

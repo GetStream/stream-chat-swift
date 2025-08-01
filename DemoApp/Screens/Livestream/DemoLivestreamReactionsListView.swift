@@ -79,15 +79,13 @@ struct DemoLivestreamReactionsListView: View {
         errorMessage = nil
 
         controller.loadReactions(for: message.id, limit: pageSize, offset: 0) { result in
-            DispatchQueue.main.async {
-                isLoading = false
-                switch result {
-                case .success(let newReactions):
-                    reactions = newReactions
-                    hasLoadedAll = newReactions.count < pageSize
-                case .failure(let error):
-                    errorMessage = error.localizedDescription
-                }
+            isLoading = false
+            switch result {
+            case .success(let newReactions):
+                reactions = newReactions
+                hasLoadedAll = newReactions.count < pageSize
+            case .failure(let error):
+                errorMessage = error.localizedDescription
             }
         }
     }
@@ -97,15 +95,13 @@ struct DemoLivestreamReactionsListView: View {
         isLoading = true
 
         controller.loadReactions(for: message.id, limit: pageSize, offset: reactions.count) { result in
-            DispatchQueue.main.async {
-                isLoading = false
-                switch result {
-                case .success(let newReactions):
-                    reactions.append(contentsOf: newReactions)
-                    hasLoadedAll = newReactions.count < pageSize
-                case .failure(let error):
-                    errorMessage = error.localizedDescription
-                }
+            isLoading = false
+            switch result {
+            case .success(let newReactions):
+                reactions.append(contentsOf: newReactions)
+                hasLoadedAll = newReactions.count < pageSize
+            case .failure(let error):
+                errorMessage = error.localizedDescription
             }
         }
     }
