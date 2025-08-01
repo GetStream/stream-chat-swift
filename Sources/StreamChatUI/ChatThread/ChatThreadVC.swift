@@ -381,7 +381,7 @@ open class ChatThreadVC: _ViewController,
 
     public func chatMessageListVC(
         _ vc: ChatMessageListVC, shouldLoadPageAroundMessageId messageId: MessageId,
-        _ completion: @escaping @Sendable(Error?) -> Void
+        _ completion: @escaping @MainActor @Sendable(Error?) -> Void
     ) {
         messageController.loadPageAroundReplyId(messageId, completion: completion)
     }

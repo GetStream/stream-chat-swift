@@ -376,7 +376,7 @@ open class ChatChannelVC: _ViewController,
     public func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessageId messageId: MessageId,
-        _ completion: @escaping @Sendable(Error?) -> Void
+        _ completion: @escaping @MainActor @Sendable(Error?) -> Void
     ) {
         if let message = channelController.dataStore.message(id: messageId),
            let parentMessageId = getParentMessageId(forMessageInsideThread: message) {
