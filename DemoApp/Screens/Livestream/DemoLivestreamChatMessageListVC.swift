@@ -22,11 +22,6 @@ class DemoLivestreamChatMessageListVC: ChatMessageListVC {
             let livestreamChannelController = livestreamChannelController
         else { return }
 
-        if message.isBounced {
-            showActions(forDebouncedMessage: message)
-            return
-        }
-
         // Create the custom livestream actions view controller
         let actionsController = DemoLivestreamMessageActionsVC()
         actionsController.message = message
