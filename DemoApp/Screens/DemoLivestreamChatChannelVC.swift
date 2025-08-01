@@ -486,6 +486,10 @@ class DemoLivestreamComposerVC: ComposerVC {
     override func setupVoiceRecordingView() {
         // Do not set up voice recording for livestream
     }
+
+    override var isCommandsEnabled: Bool {
+        false
+    }
 }
 
 private extension UIView {
