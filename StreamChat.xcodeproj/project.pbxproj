@@ -1613,6 +1613,8 @@
 		AD7BE1712C234798000A5756 /* ChatThreadListLoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BE16F2C234798000A5756 /* ChatThreadListLoadingView.swift */; };
 		AD7BE1732C2347A3000A5756 /* ChatThreadListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BE1722C2347A3000A5756 /* ChatThreadListEmptyView.swift */; };
 		AD7BE1742C2347A3000A5756 /* ChatThreadListEmptyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7BE1722C2347A3000A5756 /* ChatThreadListEmptyView.swift */; };
+		AD7C76712E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C766D2E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift */; };
+		AD7C76722E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C766F2E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift */; };
 		AD7CF1712694ABCE00F3101D /* ComposerVC_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */; };
 		AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */; };
 		AD7EFDA72C7796D400625FC5 /* PollCommentListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDA52C77749300625FC5 /* PollCommentListVC.swift */; };
@@ -4409,6 +4411,8 @@
 		AD7BE16C2C20CC02000A5756 /* ThreadUpdaterMiddlware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadUpdaterMiddlware_Tests.swift; sourceTree = "<group>"; };
 		AD7BE16F2C234798000A5756 /* ChatThreadListLoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListLoadingView.swift; sourceTree = "<group>"; };
 		AD7BE1722C2347A3000A5756 /* ChatThreadListEmptyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatThreadListEmptyView.swift; sourceTree = "<group>"; };
+		AD7C766D2E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamChatMessageListVC.swift; sourceTree = "<group>"; };
+		AD7C766F2E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamMessageActionsVC.swift; sourceTree = "<group>"; };
 		AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC_Documentation_Tests.swift; sourceTree = "<group>"; };
 		AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "UserUpdateResponse+MissingUser.json"; sourceTree = "<group>"; };
 		AD7DFBEB25D2AE7400DD9DA3 /* TestDataModel2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestDataModel2.xcdatamodel; sourceTree = "<group>"; };
@@ -6918,13 +6922,13 @@
 		A3227ECA284A607D00EBE6CC /* Screens */ = {
 			isa = PBXGroup;
 			children = (
-				AD26CB762E3ACAA0002FC1A7 /* DemoLivestreamChatChannelVC.swift */,
 				ADB8B8F42D8ADC9400549C95 /* DemoReminderListVC.swift */,
 				AD545E682D5531B9008FD399 /* DemoDraftMessageListVC.swift */,
 				ADD328592C04DD8300BAD0E9 /* DemoAppTabBarController.swift */,
 				C10B5C712A1F794A006A5BCB /* MembersViewController.swift */,
 				C1CEF9062A1BC4E800414931 /* UserProfileViewController.swift */,
 				AD7BE1672C1CB183000A5756 /* DebugObjectViewController.swift */,
+				AD7C76732E3CF0CD009250FB /* Livestream */,
 				AD6BEFF42786474A00E184B4 /* AppConfigViewController */,
 				A3227E5D284A494000EBE6CC /* Create Chat */,
 				A3227E6A284A4B0D00EBE6CC /* LoginViewController */,
@@ -8813,6 +8817,16 @@
 				AD793F4A270B769E00B05456 /* ChatMessageReactionAuthorViewCell.swift */,
 			);
 			path = ChatMessageReactionAuthorsVC;
+			sourceTree = "<group>";
+		};
+		AD7C76732E3CF0CD009250FB /* Livestream */ = {
+			isa = PBXGroup;
+			children = (
+				AD26CB762E3ACAA0002FC1A7 /* DemoLivestreamChatChannelVC.swift */,
+				AD7C766D2E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift */,
+				AD7C766F2E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift */,
+			);
+			path = Livestream;
 			sourceTree = "<group>";
 		};
 		AD7EFDA42C776EB700625FC5 /* PollCommentListVC */ = {
@@ -11233,6 +11247,8 @@
 				8440860D28FBFE520027849C /* DemoAppCoordinator+DemoApp.swift in Sources */,
 				647F66D5261E22C200111B19 /* DemoConnectionBannerView.swift in Sources */,
 				A31783DD285B79EB005009B9 /* Bundle+PushProvider.swift in Sources */,
+				AD7C76712E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift in Sources */,
+				AD7C76722E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift in Sources */,
 				A3227E72284A4BF700EBE6CC /* HiddenChannelListVC.swift in Sources */,
 				AD75CB6B27886746005F5FF7 /* OptionsSelectorViewController.swift in Sources */,
 				AD053B9A2B335854003612B6 /* DemoComposerVC.swift in Sources */,
