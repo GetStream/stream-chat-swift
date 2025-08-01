@@ -243,12 +243,14 @@ class ManualEventHandler {
 
     // This is only needed because some events wrongly require the channel to create them.
     private func getLocalChannel(id: ChannelId) -> ChatChannel? {
-        if let cachedChannel = cachedChannels[id] {
-            return cachedChannel
-        }
+        queue.sync {
+            if let cachedChannel = cachedChannels[id] {
+                return cachedChannel
+            }
 
-        let channel = try? database.writableContext.channel(cid: id)?.asModel()
-        cachedChannels[id] = channel
-        return channel
+            let channel = try? database.writableContext.channel(cid: id)?.asModel()
+            cachedChannels[id] = channel
+            return channel
+        }
     }
 }
