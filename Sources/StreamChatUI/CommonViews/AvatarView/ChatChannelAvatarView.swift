@@ -103,10 +103,12 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
         urls = Array(urls.prefix(maxNumberOfImagesInCombinedAvatar))
 
         loadAvatarsFrom(urls: urls, channelId: channel.cid) { [weak self] avatars, channelId in
-            guard let self = self, channelId == self.content.channel?.cid else { return }
-
-            let combinedImage = self.createMergedAvatar(from: avatars) ?? self.appearance.images.userAvatarPlaceholder2
-            self.loadIntoAvatarImageView(from: nil, placeholder: combinedImage)
+            StreamConcurrency.onMain { [weak self] in
+                guard let self = self, channelId == self.content.channel?.cid else { return }
+                
+                let combinedImage = self.createMergedAvatar(from: avatars) ?? self.appearance.images.userAvatarPlaceholder2
+                self.loadIntoAvatarImageView(from: nil, placeholder: combinedImage)
+            }
         }
     }
 
@@ -118,10 +120,10 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     open func loadAvatarsFrom(
         urls: [URL?],
         channelId: ChannelId,
-        completion: @escaping ([UIImage], ChannelId)
+        completion: @escaping @Sendable([UIImage], ChannelId)
             -> Void
     ) {
-        var placeholderImages = [
+        nonisolated(unsafe) var placeholderImages = [
             appearance.images.userAvatarPlaceholder1,
             appearance.images.userAvatarPlaceholder2,
             appearance.images.userAvatarPlaceholder3,

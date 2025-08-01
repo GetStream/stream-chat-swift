@@ -5,7 +5,7 @@
 import Foundation
 
 /// A component responsible for handling the messages pagination state.
-protocol MessagesPaginationStateHandling {
+protocol MessagesPaginationStateHandling: Sendable {
     /// The current state of the messages pagination.
     var state: MessagesPaginationState { get }
 
@@ -17,7 +17,7 @@ protocol MessagesPaginationStateHandling {
 }
 
 /// A component responsible for handling the messages pagination state.
-class MessagesPaginationStateHandler: MessagesPaginationStateHandling {
+class MessagesPaginationStateHandler: MessagesPaginationStateHandling, @unchecked Sendable {
     private let queue = DispatchQueue(label: "io.getstream.messages-pagination-state-handler")
     private var _state: MessagesPaginationState = .initial
 

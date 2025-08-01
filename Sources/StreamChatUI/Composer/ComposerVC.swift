@@ -14,10 +14,10 @@ public enum AttachmentValidationError: Error {
     /// The number of attachments reached the limit.
     case maxAttachmentsCountPerMessageExceeded(limit: Int)
 
-    internal static var fileSizeMaxLimitFallback: Int64 = 100 * 1024 * 1024
+    internal static let fileSizeMaxLimitFallback: Int64 = 100 * 1024 * 1024
 }
 
-public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable {
+public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {
@@ -31,7 +31,7 @@ public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable {
 
 /// The possible composer states. An Enum is not used so it does not cause
 /// future breaking changes and is possible to extend with new cases.
-public struct ComposerState: RawRepresentable, Equatable {
+public struct ComposerState: RawRepresentable, Equatable, Sendable {
     public let rawValue: String
     public var description: String { rawValue.uppercased() }
 
@@ -39,11 +39,11 @@ public struct ComposerState: RawRepresentable, Equatable {
         self.rawValue = rawValue
     }
 
-    public static var new = ComposerState(rawValue: "new")
-    public static var edit = ComposerState(rawValue: "edit")
-    public static var quote = ComposerState(rawValue: "quote")
-    public static var recording = ComposerState(rawValue: "recording")
-    public static var recordingLocked = ComposerState(rawValue: "recordingLocked")
+    public static let new = ComposerState(rawValue: "new")
+    public static let edit = ComposerState(rawValue: "edit")
+    public static let quote = ComposerState(rawValue: "quote")
+    public static let recording = ComposerState(rawValue: "recording")
+    public static let recordingLocked = ComposerState(rawValue: "recordingLocked")
 }
 
 /// A view controller that manages the composer view.
@@ -1436,7 +1436,7 @@ open class ComposerVC: _ViewController,
         from url: URL,
         type: AttachmentType,
         info: [LocalAttachmentInfoKey: Any],
-        extraData: Encodable?
+        extraData: (Encodable & Sendable)?
     ) throws {
         guard let chatConfig = channelController?.client.config else {
             log.assertionFailure("Channel controller must be set at this point")

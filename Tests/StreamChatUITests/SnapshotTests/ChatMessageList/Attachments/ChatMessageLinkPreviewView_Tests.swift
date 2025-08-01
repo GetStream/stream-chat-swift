@@ -9,7 +9,7 @@ import StreamSwiftTestHelpers
 import UIKit
 import XCTest
 
-final class ChatMessageLinkPreviewView_Tests: XCTestCase {
+@MainActor final class ChatMessageLinkPreviewView_Tests: XCTestCase {
     private var linkPreviewView: ChatMessageLinkPreviewView!
 
     override func setUp() {

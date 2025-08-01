@@ -22,7 +22,7 @@ class ChatMessageListVCDelegate_Mock: ChatMessageListVCDelegate {
     var shouldLoadPageAroundMessageCallCount = 0
     var shouldLoadPageAroundMessageResult: Error?
 
-    func chatMessageListVC(_ vc: ChatMessageListVC, shouldLoadPageAroundMessageId messageId: MessageId, _ completion: @escaping ((Error?) -> Void)) {
+    func chatMessageListVC(_ vc: ChatMessageListVC, shouldLoadPageAroundMessageId messageId: MessageId, _ completion: @escaping @MainActor @Sendable(Error?) -> Void) {
         shouldLoadPageAroundMessageCallCount += 1
         if let result = shouldLoadPageAroundMessageResult {
             completion(result)

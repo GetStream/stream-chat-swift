@@ -5,8 +5,7 @@
 import Foundation
 import StreamChat
 
-public class MockAudioPlayer: AudioPlaying {
-
+public class MockAudioPlayer: AudioPlaying, @unchecked Sendable {
     public private(set) var subscribeWasCalledWithSubscriber: AudioPlayingDelegate?
 
     public private(set) var loadAssetWasCalledWithURL: URL?

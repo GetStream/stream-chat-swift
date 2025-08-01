@@ -4,12 +4,12 @@
 
 import CoreData
 
-struct DraftListResponse {
+struct DraftListResponse: Sendable {
     var drafts: [DraftMessage]
     var next: String?
 }
 
-class DraftMessagesRepository {
+class DraftMessagesRepository: @unchecked Sendable {
     private let database: DatabaseContainer
     private let apiClient: APIClient
     
@@ -20,12 +20,12 @@ class DraftMessagesRepository {
     
     func loadDrafts(
         query: DraftListQuery,
-        completion: @escaping (Result<DraftListResponse, Error>) -> Void
+        completion: @escaping @Sendable(Result<DraftListResponse, Error>) -> Void
     ) {
         apiClient.request(endpoint: .drafts(query: query)) { [weak self] result in
             switch result {
             case .success(let response):
-                var drafts: [DraftMessage] = []
+                nonisolated(unsafe) var drafts: [DraftMessage] = []
                 self?.database.write({ session in
                     drafts = try response.drafts.compactMap {
                         guard let channelId = $0.channelPayload?.cid else {
@@ -60,9 +60,9 @@ class DraftMessagesRepository {
         mentionedUserIds: [UserId],
         quotedMessageId: MessageId?,
         extraData: [String: RawJSON],
-        completion: ((Result<DraftMessage, Error>) -> Void)?
+        completion: (@Sendable(Result<DraftMessage, Error>) -> Void)?
     ) {
-        var draftRequestBody: DraftMessageRequestBody?
+        nonisolated(unsafe) var draftRequestBody: DraftMessageRequestBody?
         database.write({ (session) in
             let newMessageDTO = try session.createNewDraftMessage(
                 in: cid,
@@ -89,7 +89,7 @@ class DraftMessagesRepository {
             ) { [weak self] result in
                 switch result {
                 case .success(let response):
-                    var draft: ChatMessage?
+                    nonisolated(unsafe) var draft: ChatMessage?
                     self?.database.write({ session in
                         let draftPayload = response.draft
                         let messageDTO = try session.saveDraftMessage(
@@ -115,14 +115,14 @@ class DraftMessagesRepository {
     func getDraft(
         for cid: ChannelId,
         threadId: MessageId?,
-        completion: ((Result<DraftMessage?, Error>) -> Void)?
+        completion: (@Sendable(Result<DraftMessage?, Error>) -> Void)?
     ) {
         apiClient.request(
             endpoint: .getDraftMessage(channelId: cid, threadId: threadId)
         ) { [weak self] result in
             switch result {
             case .success(let response):
-                var draft: ChatMessage?
+                nonisolated(unsafe) var draft: ChatMessage?
                 self?.database.write({ session in
                     let messageDTO = try session.saveDraftMessage(
                         payload: response.draft,
@@ -146,7 +146,7 @@ class DraftMessagesRepository {
     func deleteDraft(
         for cid: ChannelId,
         threadId: MessageId?,
-        completion: @escaping (Error?) -> Void
+        completion: @escaping @Sendable(Error?) -> Void
     ) {
         database.write { session in
             session.deleteDraftMessage(in: cid, threadId: threadId)

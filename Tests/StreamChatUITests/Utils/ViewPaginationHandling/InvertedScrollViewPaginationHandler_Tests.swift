@@ -6,7 +6,7 @@
 @testable import StreamChatUI
 import XCTest
 
-final class InvertedScrollViewPaginationHandler_Tests: XCTestCase {
+@MainActor final class InvertedScrollViewPaginationHandler_Tests: XCTestCase {
     func test_topThreshold_shouldReturnBottomThresholdOfRegularPaginationHandler() {
         let scrollViewPaginationHandler = StatefulScrollViewPaginationHandler(scrollView: UIScrollView())
         scrollViewPaginationHandler.bottomThreshold = 150

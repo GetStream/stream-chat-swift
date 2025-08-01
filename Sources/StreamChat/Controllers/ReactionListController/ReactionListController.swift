@@ -21,7 +21,7 @@ public protocol ChatReactionListControllerDelegate: DataControllerStateDelegate 
 /// A controller which allows querying and filtering the reactions of a message.
 ///
 /// - Note: For an async-await alternative of the `ChatReactionListController`, please check ``ReactionList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
-public class ChatReactionListController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatReactionListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query specifying and filtering the list of reactions.
     public let query: ReactionListQuery
 
@@ -110,7 +110,7 @@ public class ChatReactionListController: DataController, DelegateCallable, DataS
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
         startReactionListObserverIfNeeded()
 
         worker.loadReactions(query: query) { result in
@@ -148,7 +148,7 @@ public extension ChatReactionListController {
     ///   - completion: The completion callback.
     func loadMoreReactions(
         limit: Int = 25,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: reactions.count)

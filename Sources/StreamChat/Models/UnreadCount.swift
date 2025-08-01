@@ -5,7 +5,7 @@
 import Foundation
 
 /// A struct containing information about unread counts of channels and messages.
-public struct UnreadCount: Decodable, Equatable {
+public struct UnreadCount: Decodable, Equatable, Sendable {
     /// The default value representing no unread channels, messages and threads.
     public static let noUnread = UnreadCount(channels: 0, messages: 0, threads: 0)
 

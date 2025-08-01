@@ -35,7 +35,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
 // MARK: - GET users
 
 /// An object describing the incoming user JSON payload.
-class UserPayload: Decodable {
+class UserPayload: Decodable, @unchecked Sendable {
     let id: String
     let name: String?
     let imageURL: URL?
@@ -123,7 +123,7 @@ class UserPayload: Decodable {
 }
 
 /// An object describing the outgoing user JSON payload.
-class UserRequestBody: Encodable {
+final class UserRequestBody: Encodable, Sendable {
     let id: String
     let name: String?
     let imageURL: URL?

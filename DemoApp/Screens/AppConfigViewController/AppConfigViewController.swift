@@ -37,11 +37,11 @@ struct DemoAppConfig {
     }
 }
 
-class AppConfig {
+class AppConfig: @unchecked Sendable {
     /// The Demo App Configuration.
     var demoAppConfig: DemoAppConfig
 
-    static var shared = AppConfig()
+    static let shared = AppConfig()
 
     private init() {
         // Default DemoAppConfig
@@ -69,13 +69,13 @@ class AppConfig {
     }
 }
 
-class UserConfig {
+class UserConfig: @unchecked Sendable {
     var isInvisible = false
     var language: TranslationLanguage?
     var typingIndicatorsEnabled: Bool?
     var readReceiptsEnabled: Bool?
 
-    static var shared = UserConfig()
+    static let shared = UserConfig()
 
     private init() {}
 }

@@ -8,7 +8,7 @@
 import StreamSwiftTestHelpers
 import XCTest
 
-final class GalleryVC_Tests: XCTestCase {
+@MainActor final class GalleryVC_Tests: XCTestCase {
     private var vc: GalleryVC!
     private var content: GalleryVC.Content!
 

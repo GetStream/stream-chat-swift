@@ -16,7 +16,7 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
     public var messageSearchController: ChatMessageSearchController!
 
     /// The closure that is triggered whenever a message is selected from the search result.
-    public var didSelectMessage: ((ChatChannel, ChatMessage) -> Void)?
+    public var didSelectMessage: (@MainActor(ChatChannel, ChatMessage) -> Void)?
 
     private var isPaginatingMessages: Bool = false
 

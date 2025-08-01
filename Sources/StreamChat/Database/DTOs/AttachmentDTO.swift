@@ -86,7 +86,7 @@ class AttachmentDTO: NSManagedObject {
     }
 
     static func load(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO? {
-        load(by: id.rawValue, context: context).first
+        load(by: id.rawValue, context: context).first as? Self
     }
 
     static func loadOrCreate(id: AttachmentId, context: NSManagedObjectContext) -> AttachmentDTO {
@@ -374,27 +374,27 @@ extension LocalAttachmentDownloadState {
 }
 
 extension ClientError {
-    final class AttachmentDoesNotExist: ClientError {
+    final class AttachmentDoesNotExist: ClientError, @unchecked Sendable {
         init(id: AttachmentId) {
             super.init("There is no `AttachmentDTO` instance in the DB matching id: \(id).")
         }
     }
     
-    final class AttachmentUploadBlocked: ClientError {
+    final class AttachmentUploadBlocked: ClientError, @unchecked Sendable {
         init(id: AttachmentId, attachmentType: AttachmentType, pathExtension: String) {
             super.init("`AttachmentDTO` with \(id) and type \(attachmentType) and path extension \(pathExtension) is blocked on the Stream dashboard.")
         }
     }
 
-    final class AttachmentEditing: ClientError {
+    final class AttachmentEditing: ClientError, @unchecked Sendable {
         init(id: AttachmentId, reason: String) {
             super.init("`AttachmentDTO` with id: \(id) can't be edited (\(reason))")
         }
     }
 
-    final class AttachmentDecoding: ClientError {}
+    final class AttachmentDecoding: ClientError, @unchecked Sendable {}
 
-    final class AttachmentDownloading: ClientError {
+    final class AttachmentDownloading: ClientError, @unchecked Sendable {
         init(id: AttachmentId, reason: String) {
             super.init(
                 "Failed to download attachment with id: \(id): \(reason)"
@@ -402,7 +402,7 @@ extension ClientError {
         }
     }
     
-    final class AttachmentUploading: ClientError {
+    final class AttachmentUploading: ClientError, @unchecked Sendable {
         init(id: AttachmentId) {
             super.init(
                 "Failed to upload attachment with id: \(id)"

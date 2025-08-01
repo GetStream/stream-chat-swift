@@ -63,7 +63,7 @@ final class UserListController_SwiftUI_Tests: iOS13TestCase {
     }
 }
 
-final class UserListControllerMock: ChatUserListController {
+final class UserListControllerMock: ChatUserListController, @unchecked Sendable {
     @Atomic var synchronize_called = false
 
     var users_simulated: [ChatUser]?
@@ -81,7 +81,7 @@ final class UserListControllerMock: ChatUserListController {
         super.init(query: .init(filter: .none), client: .mock)
     }
 
-    override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+    override func synchronize(_ completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         synchronize_called = true
     }
 }

@@ -7,20 +7,19 @@ import Foundation
 
 /// Mock implementation of `EventNotificationCenter`
 final class EventNotificationCenter_Mock: EventNotificationCenter, @unchecked Sendable {
-
     override var newMessageIds: Set<MessageId> {
         newMessageIdsMock ?? super.newMessageIds
     }
 
     var newMessageIdsMock: Set<MessageId>?
 
-    lazy var mock_process = MockFunc<([Event], Bool, (() -> Void)?), Void>.mock(for: process)
+    lazy var mock_process = MockFunc<([Event], Bool, (@Sendable() -> Void)?), Void>.mock(for: process)
     var mock_processCalledWithEvents: [Event] = []
 
     override func process(
         _ events: [Event],
         postNotifications: Bool = true,
-        completion: (() -> Void)? = nil
+        completion: (@Sendable() -> Void)? = nil
     ) {
         super.process(events, postNotifications: postNotifications, completion: completion)
         

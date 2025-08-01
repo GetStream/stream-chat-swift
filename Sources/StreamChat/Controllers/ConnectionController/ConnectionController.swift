@@ -17,9 +17,7 @@ public extension ChatClient {
 
 /// `ChatConnectionController` is a controller class which allows to explicitly
 /// connect/disconnect the `ChatClient` and observe connection events.
-public class ChatConnectionController: Controller, DelegateCallable, DataStoreProvider {
-    public var callbackQueue: DispatchQueue = .main
-
+public class ChatConnectionController: Controller, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
@@ -91,7 +89,7 @@ public extension ChatConnectionController {
     /// - Parameter completion: Called when the connection is established. If the connection fails, the completion is
     /// called with an error.
     ///
-    func connect(completion: ((Error?) -> Void)? = nil) {
+    func connect(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         connectionRepository.connect { [weak self] error in
             self?.callback {
                 completion?(error)
@@ -111,7 +109,7 @@ public extension ChatConnectionController {
 // MARK: - Delegates
 
 /// `ChatConnectionController` uses this protocol to communicate changes to its delegate.
-public protocol ChatConnectionControllerDelegate: AnyObject {
+@MainActor public protocol ChatConnectionControllerDelegate: AnyObject {
     /// The controller observed a change in connection status.
     func connectionController(_ controller: ChatConnectionController, didUpdateConnectionStatus status: ConnectionStatus)
 }
@@ -132,8 +130,8 @@ public extension ChatConnectionController {
 private class ConnectionEventObserver: EventObserver {
     init(
         notificationCenter: NotificationCenter,
-        filter: ((ConnectionStatusUpdated) -> Bool)? = nil,
-        callback: @escaping (ConnectionStatusUpdated) -> Void
+        filter: (@Sendable(ConnectionStatusUpdated) -> Bool)? = nil,
+        callback: @escaping @Sendable(ConnectionStatusUpdated) -> Void
     ) {
         super.init(notificationCenter: notificationCenter, transform: { $0 as? ConnectionStatusUpdated }) {
             guard filter == nil || filter?($0) == true else { return }

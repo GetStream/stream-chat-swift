@@ -8,7 +8,7 @@ import UIKit
 
 /// The quoted author's avatar position in relation with the text message.
 /// New custom alignments can be added with extensions and by overriding the `QuotedChatMessageView.setAvatarAlignment()`.
-public struct QuotedAvatarAlignment: RawRepresentable, Equatable {
+public struct QuotedAvatarAlignment: RawRepresentable, Equatable, Sendable {
     /// The avatar will be aligned to the leading, and the message content on the trailing.
     public static let leading = QuotedAvatarAlignment(rawValue: 0)
     /// The avatar will be aligned to the trailing, and the message content on the leading.

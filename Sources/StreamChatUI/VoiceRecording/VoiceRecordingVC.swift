@@ -15,41 +15,41 @@ import UIKit
 open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProvider, AudioRecordingDelegate, AudioPlayingDelegate, UIGestureRecognizerDelegate {
     // MARK: - Nested Types
 
-    public struct State: RawRepresentable, Equatable {
+    public struct State: RawRepresentable, Equatable, Sendable {
         public typealias RawValue = String
         public let rawValue: String
         public var description: String { rawValue.uppercased() }
         public init(rawValue: RawValue) { self.rawValue = rawValue }
 
-        public static var idle = State(rawValue: "idle")
-        public static var showingTip = State(rawValue: "showingTip")
-        public static var recording = State(rawValue: "recording")
-        public static var locked = State(rawValue: "locked")
-        public static var preview = State(rawValue: "preview")
+        public static let idle = State(rawValue: "idle")
+        public static let showingTip = State(rawValue: "showingTip")
+        public static let recording = State(rawValue: "recording")
+        public static let locked = State(rawValue: "locked")
+        public static let preview = State(rawValue: "preview")
     }
 
-    public struct Action: RawRepresentable, Equatable {
+    public struct Action: RawRepresentable, Equatable, Sendable {
         public typealias RawValue = String
         public let rawValue: String
         public var description: String { rawValue.uppercased() }
         public init(rawValue: RawValue) { self.rawValue = rawValue }
 
-        public static var tapRecord = Action(rawValue: "tapRecord")
-        public static var showTip = Action(rawValue: "showTip")
-        public static var beginRecording = Action(rawValue: "beginRecording")
-        public static var touchUp = Action(rawValue: "touchUp")
-        public static var cancel = Action(rawValue: "cancel")
-        public static var lock = Action(rawValue: "lock")
-        public static var stop = Action(rawValue: "stop")
-        public static var discard = Action(rawValue: "discard")
-        public static var send = Action(rawValue: "send")
-        public static var confirm = Action(rawValue: "confirm")
-        public static var publishMessage = Action(rawValue: "publishMessage")
-        public static var play = Action(rawValue: "play")
-        public static var pause = Action(rawValue: "pause")
+        public static let tapRecord = Action(rawValue: "tapRecord")
+        public static let showTip = Action(rawValue: "showTip")
+        public static let beginRecording = Action(rawValue: "beginRecording")
+        public static let touchUp = Action(rawValue: "touchUp")
+        public static let cancel = Action(rawValue: "cancel")
+        public static let lock = Action(rawValue: "lock")
+        public static let stop = Action(rawValue: "stop")
+        public static let discard = Action(rawValue: "discard")
+        public static let send = Action(rawValue: "send")
+        public static let confirm = Action(rawValue: "confirm")
+        public static let publishMessage = Action(rawValue: "publishMessage")
+        public static let play = Action(rawValue: "play")
+        public static let pause = Action(rawValue: "pause")
     }
 
-    public struct Content: Equatable {
+    public struct Content: Equatable, Sendable {
         /// The current state of the recording flow.
         public var state: State
 
@@ -463,7 +463,11 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
             audioSessionFeedbackGenerator.feedbackForBeginRecording()
             delegate?.voiceRecordingWillBeginRecording(self)
             audioPlayer?.stop()
-            audioRecorder.beginRecording { [weak self] in self?.content = .beginRecording }
+            audioRecorder.beginRecording { [weak self] in
+                StreamConcurrency.onMain { [weak self] in
+                    self?.content = .beginRecording
+                }
+            }
 
         case .touchUp where content.state == .recording:
             sendImmediately = true
@@ -710,7 +714,7 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
 // MARK: - Delegate
 
 /// A delegate that the VoiceRecordingVC will use to post information or ask for support.
-public protocol VoiceRecordingDelegate: AnyObject {
+@MainActor public protocol VoiceRecordingDelegate: AnyObject {
     /// Creates and attaches a VoiceRecording attachment on the message.
     /// - Parameters:
     ///   - voiceRecordingVC: The VoiceRecordingVC responsible for this action.

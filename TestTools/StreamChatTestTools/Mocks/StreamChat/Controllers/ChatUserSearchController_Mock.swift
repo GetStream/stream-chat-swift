@@ -5,8 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-class ChatUserSearchController_Mock: ChatUserSearchController {
-
+class ChatUserSearchController_Mock: ChatUserSearchController, @unchecked Sendable {
     var searchCallCount = 0
 
     static func mock(client: ChatClient? = nil) -> ChatUserSearchController_Mock {
@@ -18,16 +17,20 @@ class ChatUserSearchController_Mock: ChatUserSearchController {
         users_mock ?? super.userArray
     }
 
-    override func search(query: UserListQuery, completion: ((Error?) -> Void)? = nil) {
+    override func search(query: UserListQuery, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         searchCallCount += 1
-        completion?(nil)
+        callback {
+            completion?(nil)
+        }
     }
 
-    override func search(term: String?, completion: ((Error?) -> Void)? = nil) {
+    override func search(term: String?, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         searchCallCount += 1
         users_mock = users_mock?.filter { user in
             user.name?.contains(term ?? "") ?? true
         }
-        completion?(nil)
+        callback {
+            completion?(nil)
+        }
     }
 }

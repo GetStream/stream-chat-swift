@@ -23,7 +23,7 @@ final class ChannelMemberListQueryDTO: NSManagedObject {
             keyPath: #keyPath(ChannelMemberListQueryDTO.queryHash),
             equalTo: queryHash,
             context: context
-        ).first
+        ).first as? Self
     }
 
     static func loadOrCreate(queryHash: String, context: NSManagedObjectContext) -> ChannelMemberListQueryDTO {

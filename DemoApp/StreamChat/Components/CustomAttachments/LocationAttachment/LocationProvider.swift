@@ -10,7 +10,7 @@ enum LocationPermissionError: Error {
     case permissionRestricted
 }
 
-class LocationProvider: NSObject {
+class LocationProvider: NSObject, @unchecked Sendable {
     private let locationManager: CLLocationManager
     private var onCurrentLocationFetch: ((Result<CLLocation, Error>) -> Void)?
 

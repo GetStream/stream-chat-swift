@@ -13,8 +13,6 @@ final class MemberListController_Tests: XCTestCase {
     var query: ChannelMemberListQuery!
     var client: ChatClient!
     var controller: ChatChannelMemberListController!
-    var controllerCallbackQueueID: UUID!
-    var callbackQueueID: UUID { controllerCallbackQueueID }
 
     override func setUp() {
         super.setUp()
@@ -23,8 +21,6 @@ final class MemberListController_Tests: XCTestCase {
         client = ChatClient.mock
         query = .init(cid: .unique)
         controller = .init(query: query, client: client, environment: env.environment)
-        controllerCallbackQueueID = UUID()
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
 
     override func tearDown() {
@@ -32,7 +28,6 @@ final class MemberListController_Tests: XCTestCase {
         env.memberListUpdater?.cleanUp()
 
         query = nil
-        controllerCallbackQueueID = nil
 
         AssertAsync {
             Assert.canBeReleased(&controller)
@@ -77,11 +72,8 @@ final class MemberListController_Tests: XCTestCase {
 
     func test_synchronize_changesState_and_callsCompletionOnCallbackQueue() {
         // Simulate `synchronize` call.
-        var completionIsCalled = false
-        controller.synchronize { [callbackQueueID] error in
-            // Assert callback queue is correct.
-            AssertTestQueue(withId: callbackQueueID)
-            // Assert there is no error.
+        nonisolated(unsafe) var completionIsCalled = false
+        controller.synchronize { error in
             XCTAssertNil(error)
             completionIsCalled = true
         }
@@ -113,9 +105,8 @@ final class MemberListController_Tests: XCTestCase {
         env.memberListObserverSynchronizeError = observerError
 
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
-        controller.synchronize { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var synchronizeError: Error?
+        controller.synchronize { error in
             synchronizeError = error
         }
 
@@ -128,9 +119,8 @@ final class MemberListController_Tests: XCTestCase {
 
     func test_synchronize_changesState_and_propagatesListUpdaterErrorOnCallbackQueue() {
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
-        controller.synchronize { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var synchronizeError: Error?
+        controller.synchronize { error in
             synchronizeError = error
         }
 
@@ -196,7 +186,7 @@ final class MemberListController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .initialized)
 
         // Set the delegate
-        controller.delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = TestDelegate()
 
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
@@ -216,7 +206,7 @@ final class MemberListController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .initialized)
 
         // Set the delegate
-        controller.delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        controller.delegate = TestDelegate()
 
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
@@ -247,7 +237,7 @@ final class MemberListController_Tests: XCTestCase {
     // MARK: - Delegate
 
     func test_delegate_isAssignedCorrectly() {
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestDelegate()
 
         // Set the delegate
         controller.delegate = delegate
@@ -256,9 +246,9 @@ final class MemberListController_Tests: XCTestCase {
         XCTAssert(controller.delegate === delegate)
     }
 
-    func test_delegate_isNotifiedAboutStateChanges() throws {
+    @MainActor func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestDelegate()
         controller.delegate = delegate
 
         // Synchronize
@@ -274,23 +264,23 @@ final class MemberListController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
 
-    func test_delegate_isNotifiedAboutMembersUpdates() throws {
+    @MainActor func test_delegate_isNotifiedAboutMembersUpdates() throws {
         let member1ID: UserId = .unique
         let member2ID: UserId = .unique
 
         // Set the delegate
-        let delegate = TestDelegate(expectedQueueId: callbackQueueID)
+        let delegate = TestDelegate()
         controller.delegate = delegate
 
         // Create channel in the database.
         try client.databaseContainer.createChannel(cid: query.cid)
 
         // Create 2 members, the first created more recently
-        var member1: MemberPayload = .dummy(
+        nonisolated(unsafe) var member1: MemberPayload = .dummy(
             user: .dummy(userId: member1ID),
             createdAt: Date()
         )
-        var member2: MemberPayload = .dummy(
+        nonisolated(unsafe) var member2: MemberPayload = .dummy(
             user: .dummy(userId: member2ID),
             createdAt: Date().addingTimeInterval(-10)
         )
@@ -378,9 +368,8 @@ final class MemberListController_Tests: XCTestCase {
 
     func test_loadNextMembers_propagatesError() {
         // Simulate `loadNextMembers` call and catch the completion.
-        var completionError: Error?
-        controller.loadNextMembers { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var completionError: Error?
+        controller.loadNextMembers {
             completionError = $0
         }
 
@@ -394,21 +383,12 @@ final class MemberListController_Tests: XCTestCase {
 
     func test_loadNextMembers_propagatesNilError() {
         // Simulate `loadNextMembers` call and catch the completion.
-        var completionIsCalled = false
-        controller.loadNextMembers { [callbackQueueID] error in
+        nonisolated(unsafe) var completionIsCalled = false
+        controller.loadNextMembers { error in
             // Assert callback queue is correct.
-            AssertTestQueue(withId: callbackQueueID)
-            // Assert there is no error.
             XCTAssertNil(error)
             completionIsCalled = true
         }
-
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
 
         // Simulate successful network response.
         env.memberListUpdater!.load_completion!(.success([]))
@@ -417,6 +397,14 @@ final class MemberListController_Tests: XCTestCase {
 
         // Assert completion is called.
         AssertAsync.willBeTrue(completionIsCalled)
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+        
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }

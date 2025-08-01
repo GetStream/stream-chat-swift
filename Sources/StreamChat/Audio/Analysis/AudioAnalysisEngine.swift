@@ -5,7 +5,7 @@
 import AVFoundation
 
 /// An object responsible to coordinate the audio analysis pipeline
-public struct AudioAnalysisEngine {
+public struct AudioAnalysisEngine: Sendable {
     /// The loader that will be called to when loading asset properties is required
     private let assetPropertiesLoader: AssetPropertyLoading
 
@@ -53,7 +53,7 @@ public struct AudioAnalysisEngine {
     public func waveformVisualisation(
         fromAudioURL audioURL: URL,
         for targetSamples: Int,
-        completionHandler: @escaping (Result<[Float], Error>) -> Void
+        completionHandler: @escaping @Sendable(Result<[Float], Error>) -> Void
     ) {
         let asset = AVURLAsset(
             url: audioURL,
@@ -112,7 +112,7 @@ public struct AudioAnalysisEngine {
 
 // MARK: - Errors
 
-public final class AudioAnalysisEngineError: ClientError {
+public final class AudioAnalysisEngineError: ClientError, @unchecked Sendable {
     /// An error occurred when the Audio track cannot be loaded from the AudioFile provided.
     public static func failedToLoadAVAssetTrack(file: StaticString = #file, line: UInt = #line) -> AudioAnalysisEngineError {
         .init("Failed to load AVAssetTrack.", file, line)

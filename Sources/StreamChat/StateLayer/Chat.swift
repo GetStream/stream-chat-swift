@@ -6,7 +6,7 @@ import Combine
 import Foundation
 
 /// An object which represents a `ChatChannel`.
-public class Chat {
+public class Chat: @unchecked Sendable {
     private let channelUpdater: ChannelUpdater
     private let client: ChatClient
     private let databaseContainer: DatabaseContainer
@@ -14,7 +14,7 @@ public class Chat {
     private let eventSender: EventSender
     private let memberUpdater: ChannelMemberUpdater
     private let messageUpdater: MessageUpdater
-    private let stateBuilder: StateBuilder<ChatState>
+    @MainActor private var stateBuilder: StateBuilder<ChatState>
     private let typingEventsSender: TypingEventsSender
     
     init(
@@ -67,7 +67,7 @@ public class Chat {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the channel.
-    @MainActor public lazy var state: ChatState = stateBuilder.build()
+    @MainActor public var state: ChatState { stateBuilder.state() }
     
     /// Fetches the most recent state from the server and updates the local store.
     ///
@@ -1229,7 +1229,7 @@ public class Chat {
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
     public func subscribe<E>(
         toEvent event: E.Type,
-        handler: @escaping (E) -> Void
+        handler: @escaping @Sendable(E) -> Void
     ) -> AnyCancellable where E: Event {
         eventNotificationCenter.subscribe(
             to: event,
@@ -1246,7 +1246,7 @@ public class Chat {
     /// - Parameter handler: The handler closure which is called when the event happens.
     ///
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
-    public func subscribe(_ handler: @escaping (Event) -> Void) -> AnyCancellable {
+    public func subscribe(_ handler: @escaping @Sendable(Event) -> Void) -> AnyCancellable {
         eventNotificationCenter.subscribe(
             handler: { [weak self] event in
                 self?.dispatchSubscribeHandler(event, callback: handler)
@@ -1453,7 +1453,7 @@ public class Chat {
     public func uploadAttachment(
         with localFileURL: URL,
         type: AttachmentType,
-        progress: ((Double) -> Void)? = nil
+        progress: (@Sendable(Double) -> Void)? = nil
     ) async throws -> UploadedAttachment {
         try await channelUpdater.uploadFile(
             type: type,
@@ -1498,7 +1498,7 @@ extension Chat {
         }
     }
     
-    func dispatchSubscribeHandler<E>(_ event: E, callback: @escaping (E) -> Void) where E: Event {
+    func dispatchSubscribeHandler<E>(_ event: E, callback: @escaping @Sendable(E) -> Void) where E: Event {
         Task.mainActor {
             guard let cid = try? self.cid else { return }
             guard EventNotificationCenter.channelFilter(cid: cid, event: event) else { return }
@@ -1538,8 +1538,8 @@ extension Chat {
 // MARK: - Environment
 
 extension Chat {
-    struct Environment {
-        var chatStateBuilder: @MainActor(
+    struct Environment: Sendable {
+        var chatStateBuilder: @Sendable @MainActor(
             _ channelQuery: ChannelQuery,
             _ messageOrder: MessageOrdering,
             _ memberSorting: [Sorting<ChannelMemberListSortingKey>],
@@ -1557,40 +1557,61 @@ extension Chat {
             )
         }
         
-        var channelUpdaterBuilder: (
+        var channelUpdaterBuilder: @Sendable(
             _ channelRepository: ChannelRepository,
             _ messageRepository: MessageRepository,
             _ paginationStateHandler: MessagesPaginationStateHandling,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ChannelUpdater = ChannelUpdater.init
+        ) -> ChannelUpdater = {
+            ChannelUpdater(
+                channelRepository: $0,
+                messageRepository: $1,
+                paginationStateHandler: $2,
+                database: $3,
+                apiClient: $4
+            )
+        }
 
-        var eventSenderBuilder: (
+        var eventSenderBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> EventSender = EventSender.init
+        ) -> EventSender = { EventSender(database: $0, apiClient: $1) }
         
-        var memberUpdaterBuilder: (
+        var memberUpdaterBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ChannelMemberUpdater = ChannelMemberUpdater.init
+        ) -> ChannelMemberUpdater = { ChannelMemberUpdater(database: $0, apiClient: $1) }
 
-        var messageUpdaterBuilder: (
+        var messageUpdaterBuilder: @Sendable(
             _ isLocalStorageEnabled: Bool,
             _ messageRepository: MessageRepository,
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> MessageUpdater = MessageUpdater.init
+        ) -> MessageUpdater = {
+            MessageUpdater(
+                isLocalStorageEnabled: $0,
+                messageRepository: $1,
+                database: $2,
+                apiClient: $3
+            )
+        }
         
-        var readStateHandlerBuilder: (
+        var readStateHandlerBuilder: @Sendable(
             _ authenticationRepository: AuthenticationRepository,
             _ channelUpdater: ChannelUpdater,
             _ messageRepository: MessageRepository
-        ) -> ReadStateHandler = ReadStateHandler.init
+        ) -> ReadStateHandler = {
+            ReadStateHandler(
+                authenticationRepository: $0,
+                channelUpdater: $1,
+                messageRepository: $2
+            )
+        }
         
-        var typingEventsSenderBuilder: (
+        var typingEventsSenderBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> TypingEventsSender = TypingEventsSender.init
+        ) -> TypingEventsSender = { TypingEventsSender(database: $0, apiClient: $1) }
     }
 }

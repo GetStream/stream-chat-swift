@@ -5,7 +5,7 @@
 import UIKit
 
 /// A protocol responsible to configure the image CDN by intercepting the image url requests.
-public protocol ImageCDN {
+public protocol ImageCDN: Sendable {
     /// Intercept the image url request.
     ///
     /// This can be used to change the host of the CDN, adding HTTP Headers etc.

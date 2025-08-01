@@ -5,7 +5,7 @@
 import Foundation
 
 /// A type representing a blocked user.
-public struct BlockedUserDetails {
+public struct BlockedUserDetails: Sendable {
     /// The unique identifier of the blocked user.
     public let userId: UserId
 

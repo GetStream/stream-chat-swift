@@ -2,10 +2,10 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-import StreamChat
 import Foundation
+import StreamChat
 
-final class CDNClient_Spy: CDNClient, Spy {
+final class CDNClient_Spy: CDNClient, Spy, @unchecked Sendable {
     let spyState = SpyState()
 
     static var maxAttachmentSize: Int64 { .max }
@@ -14,8 +14,8 @@ final class CDNClient_Spy: CDNClient, Spy {
 
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<URL, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<URL, Error>) -> Void
     ) {
         record()
         if let uploadAttachmentProgress = uploadAttachmentProgress {

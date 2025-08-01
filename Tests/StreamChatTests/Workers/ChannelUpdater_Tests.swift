@@ -69,7 +69,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let expectedPaginationParameter = PaginationParameter.lessThan(.unique)
         let query = ChannelQuery(cid: .unique, paginationParameter: expectedPaginationParameter)
         let expectation = self.expectation(description: "Update completes")
-        var updateResult: Result<ChannelPayload, Error>!
+        nonisolated(unsafe) var updateResult: Result<ChannelPayload, Error>!
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
             updateResult = result
             expectation.fulfill()
@@ -100,7 +100,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)
         let expectation = self.expectation(description: "Update completes")
-        var updateResult: Result<ChannelPayload, Error>!
+        nonisolated(unsafe) var updateResult: Result<ChannelPayload, Error>!
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
             updateResult = result
             expectation.fulfill()
@@ -222,7 +222,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_updateChannelQuery_errorResponse_isPropagatedToCompletion() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { completionCalledError = $0.error })
 
         // Simulate API response with failure
@@ -236,7 +236,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_updateChannelQueryRecovery_errorResponse_isPropagatedToCompletion() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(cid: .unique)
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.update(channelQuery: query, isInRecoveryMode: true, completion: { completionCalledError = $0.error })
 
         // Simulate API response with failure
@@ -250,13 +250,13 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_updateChannelQuery_completionForCreatedChannelCalled() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(channelPayload: .unique)
-        var cid: ChannelId = .unique
+        nonisolated(unsafe) var cid: ChannelId = .unique
 
         var channel: ChatChannel? {
             try? database.viewContext.channel(cid: cid)?.asModel()
         }
 
-        let callback: (ChannelId) -> Void = {
+        let callback: @Sendable(ChannelId) -> Void = {
             cid = $0
             // Assert channel is not saved to DB before callback returns
             AssertAsync.staysTrue(channel == nil)
@@ -284,13 +284,13 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_updateChannelQueryRecovery_completionForCreatedChannelCalled() {
         // Simulate `update(channelQuery:)` call
         let query = ChannelQuery(channelPayload: .unique)
-        var cid: ChannelId = .unique
+        nonisolated(unsafe) var cid: ChannelId = .unique
 
         var channel: ChatChannel? {
             try? database.viewContext.channel(cid: cid)?.asModel()
         }
 
-        let callback: (ChannelId) -> Void = {
+        let callback: @Sendable(ChannelId) -> Void = {
             cid = $0
             // Assert channel is not saved to DB before callback returns
             AssertAsync.staysTrue(channel == nil)
@@ -688,7 +688,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_updateChannel_successfulResponse_isPropagatedToCompletion() {
         // Simulate `updateChannel(channelPayload:, completion:)` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.updateChannel(channelPayload: .unique) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -706,7 +706,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_updateChannel_errorResponse_isPropagatedToCompletion() {
         // Simulate `updateChannel(channelPayload:, completion:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.updateChannel(channelPayload: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
@@ -771,7 +771,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_partialChannelUpdate_successfulResponse_isPropagatedToCompletion() {
         // Simulate `partialChannelUpdate(updates:unsetProperties:completion:)` call
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "partialChannelUpdate completion")
         channelUpdater.partialChannelUpdate(updates: .unique, unsetProperties: []) { error in
             receivedError = error
@@ -787,7 +787,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_partialChannelUpdate_errorResponse_isPropagatedToCompletion() {
         // Simulate `partialChannelUpdate(updates:unsetProperties:completion:)` call
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "partialChannelUpdate completion")
         channelUpdater.partialChannelUpdate(updates: .unique, unsetProperties: []) { error in
             receivedError = error
@@ -864,7 +864,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let expiration = 1_000_000
         
         // Simulate `muteChannel(cid:, completion:, expiration:)` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.muteChannel(cid: .unique, expiration: expiration) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -893,7 +893,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_muteChannel_errorResponse_isPropagatedToCompletion() {
         // Simulate `muteChannel(cid:, completion:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.muteChannel(cid: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
@@ -908,7 +908,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let expiration = 1_000_000
         
         // Simulate `muteChannel(cid:, completion:, expiration:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.muteChannel(cid: .unique, expiration: expiration) { completionCalledError = $0 }
 
         // Simulate API response with failure
@@ -951,7 +951,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(try? database.viewContext.channel(cid: cid)?.asModel().isMuted, true)
 
         // Simulate `unmuteChannel(cid:, completion:)` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.unmuteChannel(cid: cid) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -974,7 +974,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_unmuteChannel_errorResponse_isPropagatedToCompletion() {
         // Simulate `unmuteChannel(cid:, completion:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.unmuteChannel(cid: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
@@ -1000,7 +1000,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_deleteChannel_successfulResponse_isPropagatedToCompletion() {
         // Simulate `deleteChannel(cid:, completion:)` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.deleteChannel(cid: .unique) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -1018,7 +1018,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_deleteChannel_errorResponse_isPropagatedToCompletion() {
         // Simulate `deleteChannel(cid:, completion:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.deleteChannel(cid: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
@@ -1131,7 +1131,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_truncateChannel_successfulResponse_isPropagatedToCompletion() {
         // Simulate `truncateChannel(cid:, completion:)` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.truncateChannel(cid: .unique) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -1149,7 +1149,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_truncateChannel_errorResponse_isPropagatedToCompletion() {
         // Simulate `truncateChannel(cid:, completion:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.truncateChannel(cid: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
@@ -1226,7 +1226,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(channel?.isHidden, false)
 
         // Simulate `hideChannel(cid:, clearHistory:, completion:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.hideChannel(cid: .unique, clearHistory: true) { completionCalledError = $0 }
 
         // Simulate API response with failure
@@ -1255,7 +1255,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_showChannel_successfulResponse_isPropagatedToCompletion() {
         // Simulate `showChannel(cid:)` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.showChannel(cid: .unique) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -1273,7 +1273,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_showChannel_errorResponse_isPropagatedToCompletion() {
         // Simulate `showChannel(cid:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.showChannel(cid: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
@@ -1378,7 +1378,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         // Simulate `addMembers(cid:, mute:, userIds:)` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.addMembers(
             cid: channelID,
             members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
@@ -1402,7 +1402,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let channelID = ChannelId.unique
         let userIds: Set<UserId> = Set([UserId.unique])
 
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.addMembers(
             cid: channelID,
             members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
@@ -1438,7 +1438,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         // Simulate `inviteMembers(cid:, mute:, userIds:)` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.inviteMembers(cid: channelID, userIds: userIds) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -1459,7 +1459,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         // Simulate `inviteMembers(cid:, channelID:, userIds:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.inviteMembers(cid: channelID, userIds: userIds) { completionCalledError = $0 }
 
         // Simulate API response with failure
@@ -1488,7 +1488,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let message = "Hooray"
 
         // Simulate `acceptInvite(cid:, mute:, userIds:)` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.acceptInvite(cid: channelID, message: message) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -1507,7 +1507,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_acceptInvite_errorResponse_isPropagatedToCompletion() {
         let channelID = ChannelId.unique
 
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.acceptInvite(cid: channelID, message: "Hooray") { completionCalledError = $0 }
 
         // Simulate API response with failure
@@ -1534,7 +1534,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let channelID = ChannelId.unique
 
         // Simulate `rejectInvite(cid:, mute:, userIds:)` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.rejectInvite(cid: channelID) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -1553,7 +1553,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_rejectInvite_errorResponse_isPropagatedToCompletion() {
         let channelID = ChannelId.unique
 
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.rejectInvite(cid: channelID) { completionCalledError = $0 }
 
         // Simulate API response with failure
@@ -1616,7 +1616,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         // Simulate `removeMembers(cid:, mute:, userIds:)` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.removeMembers(cid: channelID, userIds: userIds) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -1637,7 +1637,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let userIds: Set<UserId> = Set([UserId.unique])
 
         // Simulate `removeMembers(cid:, mute:, completion:)` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.removeMembers(cid: channelID, userIds: userIds) { completionCalledError = $0 }
 
         // Simulate API response with failure
@@ -1662,7 +1662,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_markRead_successfulResponse_isPropagatedToCompletion() {
         let expectation = self.expectation(description: "markRead completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
 
         channelRepository.markReadResult = .success(())
         channelUpdater.markRead(cid: .unique, userId: .unique) { error in
@@ -1677,7 +1677,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_markRead_errorResponse_isPropagatedToCompletion() {
         let expectation = self.expectation(description: "markRead completes")
         let mockedError = TestError()
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
 
         channelRepository.markReadResult = .failure(mockedError)
         channelUpdater.markRead(cid: .unique, userId: .unique) { error in
@@ -1707,7 +1707,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_markUnread_successfulResponse_isPropagatedToCompletion() {
         let expectation = self.expectation(description: "markUnread completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
 
         channelRepository.markUnreadResult = .success(.mock(cid: .unique))
         channelUpdater.markUnread(cid: .unique, userId: .unique, from: .unique, lastReadMessageId: .unique) { result in
@@ -1722,7 +1722,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_markUnread_errorResponse_isPropagatedToCompletion() {
         let expectation = self.expectation(description: "markUnread completes")
         let mockedError = TestError()
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
 
         channelRepository.markUnreadResult = .failure(mockedError)
         channelUpdater.markUnread(cid: .unique, userId: .unique, from: .unique, lastReadMessageId: .unique) { result in
@@ -1747,7 +1747,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_enableSlowMode_successfulResponse_isPropagatedToCompletion() {
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.enableSlowMode(cid: .unique, cooldownDuration: .random(in: 0...120)) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -1761,7 +1761,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_enableSlowMode_errorResponse_isPropagatedToCompletion() {
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.enableSlowMode(cid: .unique, cooldownDuration: .random(in: 0...120)) { completionCalledError = $0 }
 
         let error = TestError()
@@ -1795,7 +1795,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_startWatching_successfulResponse_isPropagatedToCompletion() {
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         let cid = ChannelId.unique
         channelUpdater.startWatching(cid: cid, isInRecoveryMode: false) { error in
             XCTAssertNil(error)
@@ -1812,7 +1812,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_startWatchingRecovery_successfulResponse_isPropagatedToCompletion() {
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         let cid = ChannelId.unique
         channelUpdater.startWatching(cid: cid, isInRecoveryMode: true) { error in
             XCTAssertNil(error)
@@ -1829,7 +1829,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_startWatching_errorResponse_isPropagatedToCompletion() {
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.startWatching(cid: .unique, isInRecoveryMode: false) { completionCalledError = $0 }
 
         let error = TestError()
@@ -1839,7 +1839,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_startWatchingRecovery_errorResponse_isPropagatedToCompletion() {
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.startWatching(cid: .unique, isInRecoveryMode: true) { completionCalledError = $0 }
 
         let error = TestError()
@@ -1861,7 +1861,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_stopWatching_successfulResponse_isPropagatedToCompletion() {
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         let cid = ChannelId.unique
         channelUpdater.stopWatching(cid: cid) { error in
             XCTAssertNil(error)
@@ -1876,7 +1876,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_stopWatching_errorResponse_isPropagatedToCompletion() {
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.stopWatching(cid: .unique) { completionCalledError = $0 }
 
         let error = TestError()
@@ -1899,7 +1899,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_channelWatchers_successfulResponse_isPropagatedToCompletion() {
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         let cid = ChannelId.unique
         let query = ChannelWatcherListQuery(cid: cid)
         channelUpdater.channelWatchers(query: query) { result in
@@ -1917,7 +1917,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_channelWatchers_errorResponse_isPropagatedToCompletion() {
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         let query = ChannelWatcherListQuery(cid: .unique)
         channelUpdater.channelWatchers(query: query) { completionCalledError = $0.error }
 
@@ -1975,7 +1975,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_freezeChannel_successfulResponse_isPropagatedToCompletion() {
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         let cid = ChannelId.unique
         let freeze = Bool.random()
         channelUpdater.freezeChannel(freeze, cid: cid) { error in
@@ -1991,7 +1991,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_freezeChannel_errorResponse_isPropagatedToCompletion() {
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.freezeChannel(.random(), cid: .unique) { completionCalledError = $0 }
 
         let error = TestError()
@@ -2017,7 +2017,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let cid = ChannelId.unique
         let type = AttachmentType.image
 
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.uploadFile(type: type, localFileURL: .localYodaImage, cid: cid) { result in
             do {
                 let uploadedAttachment = try result.get()
@@ -2042,7 +2042,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let cid = ChannelId.unique
         let type = AttachmentType.image
 
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.uploadFile(type: type, localFileURL: .localYodaImage, cid: cid) { result in
             do {
                 _ = try result.get()
@@ -2089,7 +2089,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let query = PinnedMessagesQuery(pageSize: 10, pagination: .aroundMessage(.unique))
 
         // Simulate `loadPinnedMessages` call
-        var completionPayload: [ChatMessage]?
+        nonisolated(unsafe) var completionPayload: [ChatMessage]?
         channelUpdater.loadPinnedMessages(in: cid, query: query) {
             completionPayload = try? $0.get()
         }
@@ -2112,7 +2112,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_loadPinnedMessages_propagatesErrorToCompletion() {
         // Simulate `loadPinnedMessages` call
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         channelUpdater.loadPinnedMessages(in: .unique, query: .init(pageSize: 10, pagination: nil)) {
             completionError = $0.error
         }
@@ -2138,7 +2138,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_enrichUrl_whenSuccess() {
         let exp = expectation(description: "enrichUrl completes")
         let url = URL(string: "www.google.com")!
-        var linkPayload: LinkAttachmentPayload?
+        nonisolated(unsafe) var linkPayload: LinkAttachmentPayload?
         channelUpdater.enrichUrl(url) { result in
             XCTAssertNil(result.error)
             linkPayload = result.value
@@ -2159,7 +2159,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_enrichUrl_whenFailure() {
         let exp = expectation(description: "enrichUrl completes")
         let url = URL(string: "www.google.com")!
-        var linkPayload: LinkAttachmentPayload?
+        nonisolated(unsafe) var linkPayload: LinkAttachmentPayload?
         channelUpdater.enrichUrl(url) { result in
             XCTAssertNotNil(result.error)
             linkPayload = result.value

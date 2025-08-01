@@ -150,9 +150,7 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         let unreadDetailsView = UnreadDetailsView(
             onLoadData: { [weak self](completion: @escaping (Result<CurrentUserUnreads, Error>) -> Void) in
                 self?.currentUserController.loadAllUnreads { result in
-                    DispatchQueue.main.async {
-                        completion(result)
-                    }
+                    completion(result)
                 }
             },
             onDismiss: { [weak self] in

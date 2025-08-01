@@ -7,7 +7,7 @@
 @testable import StreamChatUI
 import XCTest
 
-class ChannelListSearchStrategy_Tests: XCTestCase {
+@MainActor class ChannelListSearchStrategy_Tests: XCTestCase {
     var channelListVC: ChatChannelListVC {
         .make(with: ChatChannelListController_Mock.mock())
     }

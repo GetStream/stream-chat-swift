@@ -9,7 +9,7 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-final class SendButton_Tests: XCTestCase {
+@MainActor final class SendButton_Tests: XCTestCase {
     private lazy var container = UIView().withoutAutoresizingMaskConstraints
 
     override func setUp() {

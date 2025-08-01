@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-class CurrentChatUserController_Mock: CurrentChatUserController {
+class CurrentChatUserController_Mock: CurrentChatUserController, @unchecked Sendable {
     static func mock(client: ChatClient? = nil) -> CurrentChatUserController_Mock {
         .init(client: client ?? .mock())
     }

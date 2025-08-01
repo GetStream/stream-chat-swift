@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 /// Mock implementation of `RetryStrategy`.
-final class RetryStrategy_Spy: RetryStrategy, Spy {
+final class RetryStrategy_Spy: RetryStrategy, Spy, @unchecked Sendable {
     enum Signature {
         static let nextRetryDelay = "nextRetryDelay()"
         static let resetConsecutiveFailures = "resetConsecutiveFailures()"
