@@ -810,10 +810,8 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     }
 
     private func handleNewMessage(_ message: ChatMessage) {
-        var currentMessages = messages
-
         // If message already exists, update it instead
-        if currentMessages.contains(where: { $0.id == message.id }) {
+        if messages.contains(where: { $0.id == message.id }) {
             handleUpdatedMessage(message)
             return
         }
@@ -830,8 +828,7 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
             return
         }
 
-        currentMessages.insert(message, at: 0)
-        messages = currentMessages
+        messages.insert(message, at: 0)
 
         // Apply message limit only when not paused
         if !isPaused {
@@ -846,19 +843,13 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     }
 
     private func handleUpdatedMessage(_ updatedMessage: ChatMessage) {
-        var currentMessages = messages
-
-        if let index = currentMessages.firstIndex(where: { $0.id == updatedMessage.id }) {
-            currentMessages[index] = updatedMessage
-            messages = currentMessages
+        if let index = messages.firstIndex(where: { $0.id == updatedMessage.id }) {
+            messages[index] = updatedMessage
         }
     }
 
     private func handleDeletedMessage(_ deletedMessage: ChatMessage) {
-        var currentMessages = messages
-
-        currentMessages.removeAll { $0.id == deletedMessage.id }
-        messages = currentMessages
+        messages.removeAll { $0.id == deletedMessage.id }
     }
 
     private func handleNewReaction(_ reactionEvent: ReactionNewEvent) {
@@ -876,15 +867,9 @@ public class LivestreamChannelController: DataStoreProvider, DelegateCallable, E
     private func updateMessage(
         _ updatedMessage: ChatMessage
     ) {
-        let messageId = updatedMessage.id
-        var currentMessages = messages
-
-        guard let messageIndex = currentMessages.firstIndex(where: { $0.id == messageId }) else {
-            return
+        if let messageIndex = messages.firstIndex(where: { $0.id == updatedMessage.id }) {
+            messages[messageIndex] = updatedMessage
         }
-
-        currentMessages[messageIndex] = updatedMessage
-        messages = currentMessages
     }
 
     private func handleChannelUpdated(_ event: ChannelUpdatedEvent) {
