@@ -600,6 +600,52 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         }
     }
 
+    /// Loads the pinned messages of the current channel.
+    ///
+    /// - Parameters:
+    ///   - pageSize: The number of pinned messages to load. Equals to `25` by default.
+    ///   - sorting: The sorting options. By default, results are sorted descending by `pinned_at` field.
+    ///   - pagination: The pagination parameter. If `nil` is provided, most recently pinned messages are fetched.
+    public func loadPinnedMessages(
+        pageSize: Int = .messagesPageSize,
+        sorting: [Sorting<PinnedMessagesSortingKey>] = [],
+        pagination: PinnedMessagesPagination? = nil,
+        completion: @escaping @MainActor (Result<[ChatMessage], Error>) -> Void
+    ) {
+        guard let cid else {
+            callback {
+                completion(.failure(ClientError.ChannelNotCreatedYet()))
+            }
+            return
+        }
+
+        let query = PinnedMessagesQuery(
+            pageSize: pageSize,
+            sorting: sorting,
+            pagination: pagination
+        )
+
+        apiClient.request(endpoint: .pinnedMessages(cid: cid, query: query)) { [weak self] result in
+            self?.callback {
+                switch result {
+                case .success(let payload):
+                    let reads = self?.channel?.reads ?? []
+                    let currentUserId = self?.client.currentUserId
+                    let messages = payload.messages.map {
+                        $0.asModel(
+                            cid: cid,
+                            currentUserId: currentUserId,
+                            channelReads: reads
+                        )
+                    }
+                    completion(.success(messages))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
+
     // Returns the current cooldown time for the channel. Returns 0 in case there is no cooldown active.
     public func currentCooldownTime() -> Int {
         guard let cooldownDuration = channel?.cooldownDuration, cooldownDuration > 0,
