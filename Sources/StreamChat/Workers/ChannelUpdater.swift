@@ -595,11 +595,6 @@ class ChannelUpdater: Worker {
     ///   - cooldownDuration: Duration of the time interval users have to wait between messages.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func enableSlowMode(cid: ChannelId, cooldownDuration: Int, completion: ((Error?) -> Void)? = nil) {
-        guard cooldownDuration >= 1, cooldownDuration <= 120 else {
-            completion?(ClientError.InvalidCooldownDuration())
-            return
-        }
-
         apiClient.request(endpoint: .enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)) {
             completion?($0.error)
         }

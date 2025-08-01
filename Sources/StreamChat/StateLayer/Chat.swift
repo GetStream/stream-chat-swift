@@ -1283,9 +1283,6 @@ public class Chat {
     ///
     /// - Throws: An error while communicating with the Stream API or when setting an invalid duration.
     public func enableSlowMode(cooldownDuration: Int) async throws {
-        guard cooldownDuration >= 1, cooldownDuration <= 120 else {
-            throw ClientError.InvalidCooldownDuration()
-        }
         try await channelUpdater.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)
     }
     
