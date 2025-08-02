@@ -159,11 +159,15 @@ class MessageDeletedEventDTO: EventDTO {
         }
 
         let userDTO = user.flatMap { session.user(id: $0.id) }
-        let messageDTO = session.message(id: message.id)
 
         // If the message is hard deleted, it is not available as DTO.
         // So we map the Payload Directly to the Model.
-        let message = (try? messageDTO?.asModel()) ?? message.asModel(currentUser: session.currentUser)
+        let channelReads = (try? channelDTO.asModel().reads) ?? []
+        let message = message.asModel(
+            cid: cid,
+            currentUserId: session.currentUser?.user.id,
+            channelReads: channelReads
+        )
 
         return try? MessageDeletedEvent(
             user: userDTO?.asModel(),
@@ -237,89 +241,14 @@ class MessageReadEventDTO: EventDTO {
 }
 
 // Triggered when the current user creates a new message and is pending to be sent.
-public struct NewMessagePendingEvent: Event {
+public struct NewMessagePendingEvent: ChannelSpecificEvent {
     public var message: ChatMessage
+    public var cid: ChannelId
 }
 
 // Triggered when a message failed being sent.
-public struct NewMessageErrorEvent: Event {
+public struct NewMessageErrorEvent: ChannelSpecificEvent {
     public let messageId: MessageId
+    public let cid: ChannelId
     public let error: Error
-}
-
-// MARK: - Workaround to map a deleted message to Model.
-
-// At the moment our SDK does not support mapping Payload -> Model
-// So this is just a workaround for `MessageDeletedEvent` to have the `message` non-optional.
-// So some of the data will be incorrect, but for this is use case is more than enough.
-
-private extension MessagePayload {
-    func asModel(currentUser: CurrentUserDTO?) -> ChatMessage {
-        .init(
-            id: id,
-            cid: cid,
-            text: text,
-            type: type,
-            command: command,
-            createdAt: createdAt,
-            locallyCreatedAt: nil,
-            updatedAt: updatedAt,
-            deletedAt: deletedAt,
-            arguments: args,
-            parentMessageId: parentId,
-            showReplyInChannel: showReplyInChannel,
-            replyCount: replyCount,
-            extraData: extraData,
-            quotedMessage: quotedMessage?.asModel(currentUser: currentUser),
-            isBounced: false,
-            isSilent: isSilent,
-            isShadowed: isShadowed,
-            reactionScores: reactionScores,
-            reactionCounts: reactionCounts,
-            reactionGroups: [:],
-            author: user.asModel(),
-            mentionedUsers: Set(mentionedUsers.map { $0.asModel() }),
-            threadParticipants: threadParticipants.map { $0.asModel() },
-            attachments: [],
-            latestReplies: [],
-            localState: nil,
-            isFlaggedByCurrentUser: false,
-            latestReactions: [],
-            currentUserReactions: [],
-            isSentByCurrentUser: user.id == currentUser?.user.id,
-            pinDetails: nil,
-            translations: nil,
-            originalLanguage: originalLanguage.map { TranslationLanguage(languageCode: $0) },
-            moderationDetails: nil,
-            readBy: [],
-            poll: nil,
-            textUpdatedAt: messageTextUpdatedAt,
-            draftReply: nil,
-            reminder: nil,
-            sharedLocation: nil
-        )
-    }
-}
-
-private extension UserPayload {
-    func asModel() -> ChatUser {
-        .init(
-            id: id,
-            name: name,
-            imageURL: imageURL,
-            isOnline: isOnline,
-            isBanned: isBanned,
-            isFlaggedByCurrentUser: false,
-            userRole: role,
-            teamsRole: teamsRole,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
-            teams: Set(teams),
-            language: language.map { TranslationLanguage(languageCode: $0) },
-            avgResponseTime: avgResponseTime,
-            extraData: extraData
-        )
-    }
 }

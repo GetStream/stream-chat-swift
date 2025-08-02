@@ -15,6 +15,20 @@ protocol AppStateObserverDelegate: AnyObject {
 
     /// Will be triggered when the app moves to the foreground
     func applicationDidMoveToForeground()
+
+    /// Will be triggered when the app receives a memory warning
+    func applicationDidReceiveMemoryWarning()
+}
+
+extension AppStateObserverDelegate {
+    /// Default implementation of `applicationDidMoveToBackground` that does nothing.
+    public func applicationDidMoveToBackground() {}
+
+    /// Default implementation of `applicationDidMoveToForeground` that does nothing.
+    public func applicationDidMoveToForeground() {}
+
+    /// Default implementation of `applicationDidReceiveMemoryWarning` that does nothing.
+    public func applicationDidReceiveMemoryWarning() {}
 }
 
 /// This protocol describes an object that observes the state of an App and provides related information
@@ -37,6 +51,7 @@ final class StreamAppStateObserver: AppStateObserving {
     /// The observation tokens that are used to retain the notification subscription on the NotificationCenter
     private var didMoveToBackgroundObservationToken: Any?
     private var didMoveToForegroundObservationToken: Any?
+    private var didReceiveMemoryWarningObservationToken: Any?
 
     /// A multicastDelegate instance that is being used as subscribers handler. Manages the following operations:
     /// - Subscribe
@@ -88,6 +103,13 @@ final class StreamAppStateObserver: AppStateObserving {
             object: nil
         )
 
+        notificationCenter.addObserver(
+            self,
+            selector: #selector(handleAppDidReceiveMemoryWarning),
+            name: UIApplication.didReceiveMemoryWarningNotification,
+            object: nil
+        )
+
         #endif
     }
 
@@ -99,5 +121,10 @@ final class StreamAppStateObserver: AppStateObserving {
     /// Handles the app moving to foreground notification by invoking the delegate method.
     @objc private func handleAppDidMoveToForeground() {
         delegate.invoke { $0.applicationDidMoveToForeground() }
+    }
+
+    /// Handles the app receiving memory warning notification by invoking the delegate method.
+    @objc private func handleAppDidReceiveMemoryWarning() {
+        delegate.invoke { $0.applicationDidReceiveMemoryWarning() }
     }
 }

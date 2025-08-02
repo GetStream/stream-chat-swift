@@ -836,7 +836,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         ) { result in
             if let newMessage = try? result.get() {
-                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+                self.client.eventNotificationCenter.process(
+                    NewMessagePendingEvent(
+                        message: newMessage,
+                        cid: cid
+                    )
+                )
             }
             self.callback {
                 completion?(result.map(\.id))
@@ -891,7 +896,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         ) { result in
             if let newMessage = try? result.get() {
-                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+                self.client.eventNotificationCenter.process(
+                    NewMessagePendingEvent(
+                        message: newMessage,
+                        cid: cid
+                    )
+                )
             }
             self.callback {
                 completion?(result.map(\.id))
@@ -962,7 +972,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         ) { result in
             if let newMessage = try? result.get() {
-                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+                self.client.eventNotificationCenter.process(
+                    NewMessagePendingEvent(
+                        message: newMessage,
+                        cid: cid
+                    )
+                )
             }
             self.callback {
                 completion?(result.map(\.id))
@@ -1376,12 +1391,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelModificationFailed(completion)
             return
         }
-        guard cooldownDuration >= 1, cooldownDuration <= 120 else {
-            callback {
-                completion?(ClientError.InvalidCooldownDuration())
-            }
-            return
-        }
         updater.enableSlowMode(cid: cid, cooldownDuration: cooldownDuration) { error in
             self.callback {
                 completion?(error)
@@ -1401,7 +1410,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             channelModificationFailed(completion)
             return
         }
-        updater.enableSlowMode(cid: cid, cooldownDuration: 0) { error in
+        updater.disableSlowMode(cid: cid) { error in
             self.callback {
                 completion?(error)
             }
@@ -1740,7 +1749,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         ) { result in
             if let newMessage = try? result.get() {
-                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+                self.client.eventNotificationCenter.process(
+                    NewMessagePendingEvent(
+                        message: newMessage,
+                        cid: cid
+                    )
+                )
             }
             self.callback {
                 completion?(result.map(\.id))
@@ -1989,7 +2003,7 @@ private extension ChatChannelController {
     /// ie. VCs should use the `are{FEATURE_NAME}Enabled` props (ie. `areReadEventsEnabled`) before using any feature
     private func channelFeatureDisabled(feature: String, completion: ((Error?) -> Void)?) {
         let error = ClientError.ChannelFeatureDisabled("Channel feature: \(feature) is disabled for this channel.")
-        log.error(error.localizedDescription)
+        log.warning(error.localizedDescription)
         callback {
             completion?(error)
         }

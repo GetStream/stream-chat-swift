@@ -288,6 +288,51 @@ public struct ChatChannel {
             activeLiveLocations: activeLiveLocations
         )
     }
+
+    /// Returns a new `ChatChannel` with the provided data changed.
+    public func changing(
+        name: String? = nil,
+        imageURL: URL? = nil,
+        reads: [ChatChannelRead]? = nil,
+        extraData: [String: RawJSON]? = nil
+    ) -> ChatChannel {
+        .init(
+            cid: cid,
+            name: name ?? self.name,
+            imageURL: imageURL ?? self.imageURL,
+            lastMessageAt: lastMessageAt,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            deletedAt: deletedAt,
+            truncatedAt: truncatedAt,
+            isHidden: isHidden,
+            createdBy: createdBy,
+            config: config,
+            ownCapabilities: ownCapabilities,
+            isFrozen: isFrozen,
+            isDisabled: isDisabled,
+            isBlocked: isBlocked,
+            lastActiveMembers: lastActiveMembers,
+            membership: membership,
+            currentlyTypingUsers: currentlyTypingUsers,
+            lastActiveWatchers: lastActiveWatchers,
+            team: team,
+            unreadCount: unreadCount,
+            watcherCount: watcherCount,
+            memberCount: memberCount,
+            reads: reads ?? self.reads,
+            cooldownDuration: cooldownDuration,
+            extraData: extraData ?? [:],
+            latestMessages: latestMessages,
+            lastMessageFromCurrentUser: lastMessageFromCurrentUser,
+            pinnedMessages: pinnedMessages,
+            pendingMessages: pendingMessages,
+            muteDetails: muteDetails,
+            previewMessage: previewMessage,
+            draftMessage: draftMessage,
+            activeLiveLocations: activeLiveLocations
+        )
+    }
 }
 
 extension ChatChannel {
