@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add pending messages support [#3754](https://github.com/GetStream/stream-chat-swift/pull/3754)
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix the height of the attachment view in the composer when using larger dynamic type [3762](https://github.com/GetStream/stream-chat-swift/pull/3762)
+
 # [4.83.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.83.0)
 _July 28, 2025_
 
