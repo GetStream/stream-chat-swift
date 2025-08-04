@@ -1762,7 +1762,7 @@ open class ComposerVC: _ViewController,
     ) {
         let alert = UIAlertController(title: title, message: message, preferredStyle: preferredStyle)
         alert.popoverPresentationController?.sourceView = sourceView
-        actions.forEach(alert.addAction)
+        actions.forEach { alert.addAction($0) }
 
         present(alert, animated: true)
     }
