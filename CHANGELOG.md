@@ -7,6 +7,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add pending messages support [#3754](https://github.com/GetStream/stream-chat-swift/pull/3754)
 
+## StreamChatUI
+### 🐞 Fixed
+- Remove animation in message reactions when opening a sheet in the channel view [#3763](https://github.com/GetStream/stream-chat-swift/pull/3763)
+
 # [4.83.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.83.0)
 _July 28, 2025_
 

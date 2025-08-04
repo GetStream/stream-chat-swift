@@ -56,6 +56,7 @@ open class ChatMessageReactionsView: _View, ThemeProvider {
             )
             stackView.addArrangedSubview(itemView)
         }
+        stackView.layoutIfNeeded()
     }
 
     private func logWarning(unavailableReaction reaction: ChatMessageReactionData) {
