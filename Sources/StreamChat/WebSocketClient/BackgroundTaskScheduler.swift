@@ -59,7 +59,9 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler, @unchecked Sendable {
         guard let app else { return false }
         let identifier = app.beginBackgroundTask { [weak self] in
             self?.endTask()
-            expirationHandler?()
+            StreamConcurrency.onMain {
+                expirationHandler?()
+            }
         }
         queue.sync {
             self.activeBackgroundTask = identifier
