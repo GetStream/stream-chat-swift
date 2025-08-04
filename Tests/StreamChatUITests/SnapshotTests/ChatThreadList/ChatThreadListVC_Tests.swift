@@ -8,7 +8,7 @@
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatThreadListVC_Tests: XCTestCase {
+@MainActor final class ChatThreadListVC_Tests: XCTestCase {
     var vc: ChatThreadListVC!
     var mockedThreadListController: ChatThreadListController_Mock!
 

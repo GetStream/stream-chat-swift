@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-public final class MockAudioAnalyser: AudioAnalysing {
+public final class MockAudioAnalyser: AudioAnalysing, @unchecked Sendable {
     public private(set) var analyseWasCalledWithAudioAnalysisContext: AudioAnalysisContext?
     public private(set) var analyseWasCalledWithTargetSamples: Int?
     public var analyseResult: Result<[Float], Error> = .success([])

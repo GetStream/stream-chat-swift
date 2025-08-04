@@ -5,7 +5,7 @@
 import Foundation
 
 /// Data model for the new location info used in `createNewMessage`.
-public struct NewLocationInfo {
+public struct NewLocationInfo: Sendable {
     /// The initial latitude of the location.
     public let latitude: Double
     /// The initial longitude of the location.

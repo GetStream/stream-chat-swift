@@ -217,7 +217,7 @@ struct ChannelReadPayload: Decodable {
 }
 
 /// A channel config.
-public class ChannelConfig: Codable {
+public final class ChannelConfig: Codable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case reactionsEnabled = "reactions"
         case typingEventsEnabled = "typing_events"

@@ -4,7 +4,7 @@
 
 import Foundation
 
-public class CooldownTracker {
+public class CooldownTracker: @unchecked Sendable {
     private var timer: StreamTimer
 
     public var onChange: ((Int) -> Void)?
@@ -16,7 +16,7 @@ public class CooldownTracker {
     public func start(with cooldown: Int) {
         guard cooldown > 0 else { return }
 
-        var duration = cooldown
+        nonisolated(unsafe) var duration = cooldown
 
         timer.onChange = { [weak self] in
             self?.onChange?(duration)

@@ -34,7 +34,7 @@ final class EventObserver_Tests: XCTestCase {
     // MARK: - Calling back tests
 
     func test_callbackIsNotCalled_ifObserverIsDeallocated() {
-        var callbackExecutionCount = 0
+        nonisolated(unsafe) var callbackExecutionCount = 0
 
         // Create observer and count callback executions
         observer = .init(
@@ -58,7 +58,7 @@ final class EventObserver_Tests: XCTestCase {
     }
 
     func test_callbackIsCalled_ifEventCastSucceeds() {
-        var receivedEvent: HealthCheckEvent?
+        nonisolated(unsafe) var receivedEvent: HealthCheckEvent?
 
         // Create observer and catch event coming to callback
         observer = EventObserver(
@@ -75,7 +75,7 @@ final class EventObserver_Tests: XCTestCase {
     }
 
     func test_callbackIsNotCalled_ifEventCastFails() {
-        var receivedEvent: Event?
+        nonisolated(unsafe) var receivedEvent: Event?
 
         // Create observer and catch event coming to callback
         observer = EventObserver(

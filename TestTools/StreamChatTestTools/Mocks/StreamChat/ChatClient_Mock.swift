@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-final class ChatClient_Mock: ChatClient {
+final class ChatClient_Mock: ChatClient, @unchecked Sendable {
     @Atomic var init_config: ChatClientConfig
     @Atomic var init_environment: Environment
     @Atomic var init_completion: ((Error?) -> Void)?
@@ -27,7 +27,7 @@ final class ChatClient_Mock: ChatClient {
         mockedAppSettings
     }
 
-    var mockedEventNotificationCenter: EventNotificationCenter_Mock? = nil
+    var mockedEventNotificationCenter: EventNotificationCenter_Mock?
 
     override var eventNotificationCenter: EventNotificationCenter {
         mockedEventNotificationCenter ?? super.eventNotificationCenter
@@ -64,7 +64,7 @@ final class ChatClient_Mock: ChatClient {
     }
     
     override var currentUserId: UserId? {
-        return currentUserId_mock
+        currentUserId_mock
     }
 
     public var currentUserId_mock: UserId? {
@@ -129,7 +129,15 @@ extension ChatClient {
         .init(
             config: config ?? defaultMockedConfig,
             environment: .init(
-                apiClientBuilder: APIClient_Spy.init,
+                apiClientBuilder: {
+                    APIClient_Spy(
+                        sessionConfiguration: $0,
+                        requestEncoder: $1,
+                        requestDecoder: $2,
+                        attachmentDownloader: $3,
+                        attachmentUploader: $4
+                    )
+                },
                 webSocketClientBuilder: {
                     WebSocketClient_Mock(
                         sessionConfiguration: $0,
@@ -148,14 +156,57 @@ extension ChatClient {
                 internetConnection: { center, _ in
                     InternetConnection_Mock(notificationCenter: center)
                 },
-                authenticationRepositoryBuilder: AuthenticationRepository_Mock.init,
-                syncRepositoryBuilder: SyncRepository_Mock.init,
-                pollsRepositoryBuilder: PollsRepository_Mock.init,
-                draftMessagesRepositoryBuilder: DraftMessagesRepository_Mock.init,
-                remindersRepositoryBuilder: RemindersRepository_Mock.init,
-                channelListUpdaterBuilder: ChannelListUpdater_Spy.init,
-                messageRepositoryBuilder: MessageRepository_Mock.init,
-                offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Mock.init
+                authenticationRepositoryBuilder: {
+                    AuthenticationRepository_Mock(
+                        apiClient: $0,
+                        databaseContainer: $1,
+                        connectionRepository: $2,
+                        tokenExpirationRetryStrategy: $3,
+                        timerType: $4
+                    )
+                },
+                syncRepositoryBuilder: {
+                    SyncRepository_Mock(
+                        config: $0,
+                        offlineRequestsRepository: $1,
+                        eventNotificationCenter: $2,
+                        database: $3,
+                        apiClient: $4,
+                        channelListUpdater: $5
+                    )
+                },
+                pollsRepositoryBuilder: {
+                    PollsRepository_Mock(
+                        database: $0,
+                        apiClient: $1
+                    )
+                },
+                draftMessagesRepositoryBuilder: {
+                    DraftMessagesRepository_Mock(
+                        database: $0,
+                        apiClient: $1
+                    )
+                },
+                channelListUpdaterBuilder: {
+                    ChannelListUpdater_Spy(
+                        database: $0,
+                        apiClient: $1
+                    )
+                },
+                messageRepositoryBuilder: {
+                    MessageRepository_Mock(
+                        database: $0,
+                        apiClient: $1
+                    )
+                },
+                offlineRequestsRepositoryBuilder: {
+                    OfflineRequestsRepository_Mock(
+                        messageRepository: $0,
+                        database: $1,
+                        apiClient: $2,
+                        maxHoursThreshold: $3
+                    )
+                }
             )
         )
     }
@@ -229,7 +280,15 @@ extension ChatClient {
 extension ChatClient.Environment {
     static var mock: ChatClient.Environment {
         .init(
-            apiClientBuilder: APIClient_Spy.init,
+            apiClientBuilder: {
+                APIClient_Spy(
+                    sessionConfiguration: $0,
+                    requestEncoder: $1,
+                    requestDecoder: $2,
+                    attachmentDownloader: $3,
+                    attachmentUploader: $4
+                )
+            },
             webSocketClientBuilder: {
                 WebSocketClient_Mock(
                     sessionConfiguration: $0,
@@ -244,18 +303,70 @@ extension ChatClient.Environment {
                     chatClientConfig: $1
                 )
             },
-            requestEncoderBuilder: DefaultRequestEncoder.init,
-            requestDecoderBuilder: DefaultRequestDecoder.init,
-            eventDecoderBuilder: EventDecoder.init,
-            notificationCenterBuilder: EventNotificationCenter.init,
-            authenticationRepositoryBuilder: AuthenticationRepository_Mock.init,
-            syncRepositoryBuilder: SyncRepository_Mock.init,
-            pollsRepositoryBuilder: PollsRepository_Mock.init,
-            draftMessagesRepositoryBuilder: DraftMessagesRepository_Mock.init,
+            requestEncoderBuilder: {
+                DefaultRequestEncoder(baseURL: $0, apiKey: $1)
+            },
+            requestDecoderBuilder: {
+                DefaultRequestDecoder()
+            },
+            eventDecoderBuilder: {
+                EventDecoder()
+            },
+            notificationCenterBuilder: {
+                EventNotificationCenter(database: $0)
+            },
+            authenticationRepositoryBuilder: {
+                AuthenticationRepository_Mock(
+                    apiClient: $0,
+                    databaseContainer: $1,
+                    connectionRepository: $2,
+                    tokenExpirationRetryStrategy: $3,
+                    timerType: $4
+                )
+            },
+            syncRepositoryBuilder: {
+                SyncRepository_Mock(
+                    config: $0,
+                    offlineRequestsRepository: $1,
+                    eventNotificationCenter: $2,
+                    database: $3,
+                    apiClient: $4,
+                    channelListUpdater: $5
+                )
+            },
+            pollsRepositoryBuilder: {
+                PollsRepository_Mock(
+                    database: $0,
+                    apiClient: $1
+                )
+            },
+            draftMessagesRepositoryBuilder: {
+                DraftMessagesRepository_Mock(
+                    database: $0,
+                    apiClient: $1
+                )
+            },
             remindersRepositoryBuilder: RemindersRepository_Mock.init,
-            channelListUpdaterBuilder: ChannelListUpdater_Spy.init,
-            messageRepositoryBuilder: MessageRepository_Mock.init,
-            offlineRequestsRepositoryBuilder: OfflineRequestsRepository_Mock.init
+            channelListUpdaterBuilder: {
+                ChannelListUpdater_Spy(
+                    database: $0,
+                    apiClient: $1
+                )
+            },
+            messageRepositoryBuilder: {
+                MessageRepository_Mock(
+                    database: $0,
+                    apiClient: $1
+                )
+            },
+            offlineRequestsRepositoryBuilder: {
+                OfflineRequestsRepository_Mock(
+                    messageRepository: $0,
+                    database: $1,
+                    apiClient: $2,
+                    maxHoursThreshold: $3
+                )
+            }
         )
     }
 

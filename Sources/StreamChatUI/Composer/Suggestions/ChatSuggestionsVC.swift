@@ -80,16 +80,18 @@ open class ChatSuggestionsVC: _ViewController,
             \.contentSize,
             options: [.new],
             changeHandler: { [weak self] collectionView, change in
-                guard let self = self, let newSize = change.newValue else { return }
-                guard !collectionView.isTrackingOrDecelerating else { return }
-
-                // NOTE: The defaultRowHeight height value will be used only once to set visibleCells
-                // once again, not looping it to 0 value so this controller can resize again.
-                let cellHeight = collectionView.visibleCells.first?.bounds.height ?? self.defaultRowHeight
-
-                let newHeight = min(newSize.height, cellHeight * self.numberOfVisibleRows)
-                guard self.heightConstraints.constant != newHeight else { return }
-                self.heightConstraints.constant = newHeight
+                StreamConcurrency.onMain { [weak self] in
+                    guard let self = self, let newSize = change.newValue else { return }
+                    guard !collectionView.isTrackingOrDecelerating else { return }
+                    
+                    // NOTE: The defaultRowHeight height value will be used only once to set visibleCells
+                    // once again, not looping it to 0 value so this controller can resize again.
+                    let cellHeight = collectionView.visibleCells.first?.bounds.height ?? self.defaultRowHeight
+                    
+                    let newHeight = min(newSize.height, cellHeight * self.numberOfVisibleRows)
+                    guard self.heightConstraints.constant != newHeight else { return }
+                    self.heightConstraints.constant = newHeight
+                }
             }
         )
     }

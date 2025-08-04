@@ -6,7 +6,7 @@ import Combine
 import SwiftUI
 
 /// Protocol with necessary properties to make `SwiftUIRepresentable` instance
-public protocol SwiftUIRepresentable: AnyObject {
+@MainActor public protocol SwiftUIRepresentable: AnyObject {
     /// Type used for `content` property
     associatedtype ViewContent
     /// Content of a given view

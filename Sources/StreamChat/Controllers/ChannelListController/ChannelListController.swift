@@ -24,7 +24,7 @@ extension ChatClient {
     /// - Returns: A new instance of `ChatChannelListController`
     public func channelListController(
         query: ChannelListQuery,
-        filter: ((ChatChannel) -> Bool)? = nil
+        filter: (@Sendable(ChatChannel) -> Bool)? = nil
     ) -> ChatChannelListController {
         .init(query: query, client: self, filter: filter)
     }
@@ -33,7 +33,7 @@ extension ChatClient {
 /// `ChatChannelListController` is a controller class which allows observing a list of chat channels based on the provided query.
 ///
 /// - Note: For an async-await alternative of the `ChatChannelListController`, please check ``ChannelList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
-public class ChatChannelListController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatChannelListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query specifying and filtering the list of channels.
     public let query: ChannelListQuery
 
@@ -51,11 +51,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     /// The worker used to fetch the remote data and communicate with servers.
-    private lazy var worker: ChannelListUpdater = self.environment
-        .channelQueryUpdaterBuilder(
-            client.databaseContainer,
-            client.apiClient
-        )
+    private let worker: ChannelListUpdater
 
     /// A Boolean value that returns whether pagination is finished
     public private(set) var hasLoadedAllPreviousChannels: Bool = false
@@ -119,10 +115,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     private let filter: ((ChatChannel) -> Bool)?
     private let environment: Environment
-    private lazy var channelListLinker: ChannelListLinker = self.environment
-        .channelListLinkerBuilder(
-            query, filter, client.config, client.databaseContainer, worker
-        )
+    private let channelListLinker: ChannelListLinker
 
     /// Creates a new `ChannelListController`.
     ///
@@ -133,21 +126,33 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     init(
         query: ChannelListQuery,
         client: ChatClient,
-        filter: ((ChatChannel) -> Bool)? = nil,
+        filter: (@Sendable(ChatChannel) -> Bool)? = nil,
         environment: Environment = .init()
     ) {
         self.client = client
         self.query = query
         self.filter = filter
         self.environment = environment
+        worker = environment.channelQueryUpdaterBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
+        channelListLinker = environment.channelListLinkerBuilder(
+            query, filter, client.config, client.databaseContainer, worker
+        )
         super.init()
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
         channelListLinker.start(with: client.eventNotificationCenter)
         client.syncRepository.startTrackingChannelListController(self)
-        updateChannelList(completion)
+        updateChannelList { [weak self] error in
+            guard let completion else { return }
+            self?.callback {
+                completion(error)
+            }
+        }
     }
 
     // MARK: - Actions
@@ -161,10 +166,12 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     ///
     public func loadNextChannels(
         limit: Int? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         if hasLoadedAllPreviousChannels {
-            completion?(nil)
+            callback {
+                completion?(nil)
+            }
             return
         }
 
@@ -183,7 +190,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     @available(*, deprecated, message: "Please use `markAllRead` available in `CurrentChatUserController`")
-    public func markAllRead(completion: ((Error?) -> Void)? = nil) {
+    public func markAllRead(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         worker.markAllRead { error in
             self.callback {
                 completion?(error)
@@ -193,7 +200,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     // MARK: - Internal
 
-    func refreshLoadedChannels(completion: @escaping (Result<Set<ChannelId>, Error>) -> Void) {
+    func refreshLoadedChannels(completion: @escaping @Sendable(Result<Set<ChannelId>, Error>) -> Void) {
         let channelCount = channelListObserver.items.count
         worker.refreshLoadedChannels(for: query, channelCount: channelCount, completion: completion)
     }
@@ -201,7 +208,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     // MARK: - Helpers
 
     private func updateChannelList(
-        _ completion: ((_ error: Error?) -> Void)? = nil
+        _ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil
     ) {
         let limit = query.pagination.pageSize
         worker.update(
@@ -246,7 +253,7 @@ extension ChatChannelListController {
 
         var channelListLinkerBuilder: (
             _ query: ChannelListQuery,
-            _ filter: ((ChatChannel) -> Bool)?,
+            _ filter: (@Sendable(ChatChannel) -> Bool)?,
             _ clientConfig: ChatClientConfig,
             _ databaseContainer: DatabaseContainer,
             _ worker: ChannelListUpdater

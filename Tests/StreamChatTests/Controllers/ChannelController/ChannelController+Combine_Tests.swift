@@ -40,7 +40,7 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
         weak var controller: ChannelControllerSpy? = channelController
         channelController = nil
 
-        controller?.delegateCallback { $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller?.delegateCallback { [weak controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
 
         XCTAssertEqual(recording.output, [.localDataFetched, .remoteDataFetched])
     }
@@ -61,7 +61,7 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
 
         let newChannel: ChatChannel = .mock(cid: .unique, name: .unique, imageURL: .unique(), extraData: [:])
         controller?.channel_simulated = newChannel
-        controller?.delegateCallback {
+        controller?.delegateCallback { [controller] in
             $0.channelController(controller!, didUpdateChannel: .create(newChannel))
         }
 
@@ -84,7 +84,7 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
 
         let newMessage: ChatMessage = .unique
         controller?.messages_simulated = [newMessage]
-        controller?.delegateCallback {
+        controller?.delegateCallback { [controller] in
             $0.channelController(controller!, didUpdateMessages: [.insert(newMessage, index: .init())])
         }
 
@@ -106,7 +106,7 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
         channelController = nil
 
         let memberEvent: TestMemberEvent = .unique
-        controller?.delegateCallback {
+        controller?.delegateCallback { [controller] in
             $0.channelController(controller!, didReceiveMemberEvent: memberEvent)
         }
 
@@ -146,7 +146,7 @@ final class ChannelController_Combine_Tests: iOS13TestCase {
             extraData: [:]
         )
 
-        controller?.delegateCallback {
+        controller?.delegateCallback { [controller] in
             $0.channelController(controller!, didChangeTypingUsers: [typingUser])
         }
 

@@ -74,11 +74,13 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
 
     private func showPreview(using thumbnailURL: URL) {
         components.imageLoader.downloadImage(with: .init(url: thumbnailURL, options: ImageDownloadOptions())) { [weak self] result in
-            switch result {
-            case let .success(preview):
-                self?.showPreview(using: preview)
-            case .failure:
-                self?.showPreview(using: nil)
+            StreamConcurrency.onMain { [weak self] in
+                switch result {
+                case let .success(preview):
+                    self?.showPreview(using: preview)
+                case .failure:
+                    self?.showPreview(using: nil)
+                }
             }
         }
     }

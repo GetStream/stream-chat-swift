@@ -30,7 +30,7 @@ public extension ChatMessageLayoutOptions {
 
 /// Each message layout option is used to define which views will be part of the message cell.
 /// A different combination of layout options will produce a different cell reuse identifier.
-public struct ChatMessageLayoutOption: RawRepresentable, Hashable, ExpressibleByStringLiteral {
+public struct ChatMessageLayoutOption: RawRepresentable, Hashable, ExpressibleByStringLiteral, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {

@@ -8,7 +8,7 @@ import UIKit
 ///
 /// The default `UITableViewStye.insetGrouped` is not enough because
 /// it does not group sections or footers.
-protocol GroupedSectionListStyling {
+@MainActor protocol GroupedSectionListStyling {
     /// Whether the grouped section styling is enabled.
     /// It is useful to easily disable the grouped section styling.
     var isGroupedSectionStylingEnabled: Bool { get }

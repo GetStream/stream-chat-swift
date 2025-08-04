@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of ChannelListUpdater
-final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
+final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable {
     let spyState = SpyState()
 
     @Atomic var update_queries: [ChannelListQuery] = []

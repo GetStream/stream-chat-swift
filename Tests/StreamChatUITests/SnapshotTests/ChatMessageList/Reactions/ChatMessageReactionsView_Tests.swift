@@ -8,7 +8,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatMessageReactionsView_Tests: XCTestCase {
+@MainActor final class ChatMessageReactionsView_Tests: XCTestCase {
     var sut: ChatMessageReactionsView!
 
     var mockedReactionsData: [ChatMessageReactionData] {

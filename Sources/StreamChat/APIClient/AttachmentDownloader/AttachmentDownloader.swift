@@ -16,12 +16,12 @@ protocol AttachmentDownloader {
     func download(
         from remoteURL: URL,
         to localURL: URL,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Error?) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Error?) -> Void
     )
 }
 
-final class StreamAttachmentDownloader: AttachmentDownloader {
+final class StreamAttachmentDownloader: AttachmentDownloader, @unchecked Sendable {
     private let session: URLSession
     @Atomic private var taskProgressObservers: [Int: NSKeyValueObservation] = [:]
     
@@ -32,8 +32,8 @@ final class StreamAttachmentDownloader: AttachmentDownloader {
     func download(
         from remoteURL: URL,
         to localURL: URL,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Error?) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Error?) -> Void
     ) {
         let request = URLRequest(url: remoteURL)
         let task = session.downloadTask(with: request) { temporaryURL, _, downloadError in

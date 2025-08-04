@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// A component responsible to manage the swipe to quote reply logic.
-open class SwipeToReplyGestureHandler {
+@MainActor open class SwipeToReplyGestureHandler {
     /// A reference to the message list view.
     public private(set) weak var listView: ChatMessageListView?
     /// The current message cell which the gesture is being applied.
@@ -60,10 +60,10 @@ open class SwipeToReplyGestureHandler {
 
     public init(
         listView: ChatMessageListView,
-        impactFeedbackGenerator: UIImpactFeedbackGenerator = .init(style: .medium)
+        impactFeedbackGenerator: UIImpactFeedbackGenerator? = nil
     ) {
         self.listView = listView
-        self.impactFeedbackGenerator = impactFeedbackGenerator
+        self.impactFeedbackGenerator = impactFeedbackGenerator ?? UIImpactFeedbackGenerator(style: .medium)
     }
 
     /// Handles the gesture state to determine if the reply should be triggered.

@@ -2,6 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import CoreData
 import Foundation
 
@@ -29,7 +30,7 @@ public protocol PollVoteListControllerDelegate: DataControllerStateDelegate {
 }
 
 /// A controller which allows querying and filtering the votes of a poll.
-public class PollVoteListController: DataController, DelegateCallable, DataStoreProvider {
+public class PollVoteListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query specifying and filtering the list of users.
     public let query: PollVoteListQuery
 
@@ -101,7 +102,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
     
-    private let eventsController: EventsController
+    private var eventsObserver: AnyCancellable?
     private let pollsRepository: PollsRepository
     private let environment: Environment
     private var nextCursor: String?
@@ -115,13 +116,24 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         self.client = client
         self.query = query
         self.environment = environment
-        eventsController = client.eventsController()
         pollsRepository = client.pollsRepository
         super.init()
-        eventsController.delegate = self
+        eventsObserver = client.subscribe { [weak self] event in
+            guard let self else { return }
+            var vote: PollVote?
+            if let event = event as? PollVoteCastedEvent {
+                vote = event.vote
+            } else if let event = event as? PollVoteChangedEvent {
+                vote = event.vote
+            }
+            guard let vote else { return }
+            if vote.isAnswer == true && self.query.pollId == vote.pollId && self.query.optionId == nil {
+                self.pollsRepository.link(pollVote: vote, to: query)
+            }
+        }
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
         startPollVotesListObserverIfNeeded()
 
         pollsRepository.queryPollVotes(query: query) { [weak self] result in
@@ -162,7 +174,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     ///   - completion: The completion callback.
     public func loadMoreVotes(
         limit: Int? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
     ) {
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
@@ -198,20 +210,5 @@ extension PollVoteListController {
                     itemReuseKeyPaths: (\PollVote.id, \PollVoteDTO.id)
                 )
             }
-    }
-}
-
-extension PollVoteListController: EventsControllerDelegate {
-    public func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
-        var vote: PollVote?
-        if let event = event as? PollVoteCastedEvent {
-            vote = event.vote
-        } else if let event = event as? PollVoteChangedEvent {
-            vote = event.vote
-        }
-        guard let vote else { return }
-        if vote.isAnswer == true && query.pollId == vote.pollId && query.optionId == nil {
-            pollsRepository.link(pollVote: vote, to: query)
-        }
     }
 }

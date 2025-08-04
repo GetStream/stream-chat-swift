@@ -9,9 +9,9 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-final class ChatChannelListItemView_SwiftUI_Tests: XCTestCase {
+@MainActor final class ChatChannelListItemView_SwiftUI_Tests: XCTestCase {
     func test_injectedSwiftUIView() {
-        struct CustomChannelListItemView: ChatChannelListItemView.SwiftUIView {
+        @MainActor struct CustomChannelListItemView: ChatChannelListItemView.SwiftUIView {
             @ObservedObject var dataSource: ChatChannelListItemView.ObservedObject<Self>
 
             public init(dataSource: ChatChannelListItemView.ObservedObject<Self>) {

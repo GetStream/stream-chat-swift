@@ -150,7 +150,7 @@ struct GzipError: Swift.Error {
 
     init(code: Int32, msg: UnsafePointer<CChar>?) {
         message = {
-            guard let msg = msg, let message = String(validatingUTF8: msg) else {
+            guard let msg = msg, let message = String(validatingCString: msg) else {
                 return "Unknown gzip error"
             }
             return message

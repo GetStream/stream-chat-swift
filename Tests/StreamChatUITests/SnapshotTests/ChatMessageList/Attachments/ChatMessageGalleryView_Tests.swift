@@ -9,7 +9,7 @@ import StreamSwiftTestHelpers
 import UIKit
 import XCTest
 
-final class ChatMessageGalleryView_Tests: XCTestCase {
+@MainActor final class ChatMessageGalleryView_Tests: XCTestCase {
     private var galleryView: ChatMessageGalleryView!
 
     override func setUp() {

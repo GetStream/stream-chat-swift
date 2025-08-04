@@ -78,7 +78,7 @@ final class UserListUpdater_Tests: XCTestCase {
     func test_update_errorResponse_isPropagatedToCompletion() {
         // Simulate `update` call
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         listUpdater.update(userListQuery: query, completion: { completionCalledError = $0.error })
 
         // Simualte API response with failure
@@ -114,7 +114,7 @@ final class UserListUpdater_Tests: XCTestCase {
     func test_mergePolicy_takesAffect() throws {
         // Simulate `update` call
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
-        var completionCalled = expectation(description: "completion called")
+        let completionCalled = expectation(description: "completion called")
         listUpdater.update(userListQuery: query) { _ in completionCalled.fulfill() }
 
         // Simulate API response with user data
@@ -130,15 +130,15 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simulate consequent `update` call with new users and `.merge` policy
         // We don't pass the `policy` argument since we expect it's `merge` by default
-        completionCalled = expectation(description: "completion called")
-        listUpdater.update(userListQuery: query) { _ in completionCalled.fulfill() }
+        let completionCalled2 = expectation(description: "completion called")
+        listUpdater.update(userListQuery: query) { _ in completionCalled2.fulfill() }
 
         // Simulate API response with user data
         let newUserId = UserId.unique
         let newPayload = UserListPayload(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
 
-        wait(for: [completionCalled], timeout: defaultTimeout)
+        wait(for: [completionCalled2], timeout: defaultTimeout)
 
         // Assert new user is inserted into DB
         var newUser: ChatUser? { try? self.user(with: newUserId) }
@@ -167,7 +167,7 @@ final class UserListUpdater_Tests: XCTestCase {
         // Simulate `update` call
         // This call doesn't need `policy` argument specified since
         // it's the first call for this query, hence there's no data to `replace` or `merge` to
-        var completionCalled = expectation(description: "completion called")
+        let completionCalled = expectation(description: "completion called")
         listUpdater.update(userListQuery: query) { _ in completionCalled.fulfill() }
 
         // Simulate API response with user data
@@ -185,15 +185,15 @@ final class UserListUpdater_Tests: XCTestCase {
         AssertAsync.willBeTrue(user != nil)
 
         // Simulate consequent `update` call with new users and `.replace` policy
-        completionCalled = expectation(description: "completion called")
-        listUpdater.update(userListQuery: query, policy: .replace) { _ in completionCalled.fulfill() }
+        let completionCalled2 = expectation(description: "completion called")
+        listUpdater.update(userListQuery: query, policy: .replace) { _ in completionCalled2.fulfill() }
 
         // Simulate API response with user data
         let newUserId = UserId.unique
         let newPayload = UserListPayload(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
 
-        wait(for: [completionCalled], timeout: defaultTimeout)
+        wait(for: [completionCalled2], timeout: defaultTimeout)
 
         // Assert new user is inserted into DB
         AssertAsync.willBeTrue((try? self.user(with: newUserId)) != nil)
@@ -215,14 +215,15 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simulate `update` call
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         listUpdater.update(userListQuery: query, completion: { _ in
             // At this point, DB write should have completed
 
             // Assert the data is stored in the DB
             // We call this block in `main` queue since we need to access `viewContext`
+            nonisolated(unsafe) let unsafeSelf = self
             DispatchQueue.main.sync {
-                let user: ChatUser? = try? self.user(with: dummyUserId)
+                let user: ChatUser? = try? unsafeSelf.user(with: dummyUserId)
 
                 XCTAssert(user != nil)
 
@@ -252,7 +253,7 @@ final class UserListUpdater_Tests: XCTestCase {
     func test_fetch_whenSuccess_payloadIsPropagatedToCompletion() {
         // Simulate `fetch` call
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
-        var userListPayload: UserListPayload?
+        nonisolated(unsafe) var userListPayload: UserListPayload?
         listUpdater.fetch(userListQuery: query, completion: { result in
             XCTAssertNil(result.error)
             userListPayload = try? result.get()
@@ -271,7 +272,7 @@ final class UserListUpdater_Tests: XCTestCase {
     func test_fetch_whenFailure_errorIsPropagatedToCompletion() {
         // Simulate `fetch` call
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         listUpdater.fetch(userListQuery: query, completion: { completionCalledError = $0.error })
 
         // Simualte API response with failure

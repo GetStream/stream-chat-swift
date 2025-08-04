@@ -51,7 +51,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     func test_update_successfulResponseData_areSavedToDB() {
         // Simulate `update` call
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         listUpdater.update(channelListQuery: query, completion: { result in
             XCTAssertNil(result.error)
             completionCalled = true
@@ -76,7 +76,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     func test_update_errorResponse_isPropagatedToCompletion() {
         // Simulate `update` call
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         listUpdater.update(channelListQuery: query, completion: { completionCalledError = $0.error })
 
         // Simulate API response with failure
@@ -98,7 +98,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     func test_update_savesQuery_onEmptyResponse() {
         // Simulate `update` call
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         listUpdater.update(channelListQuery: query, completion: { result in
             XCTAssertNil(result.error)
             completionCalled = true
@@ -120,7 +120,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     }
 
     func test_update_whenSuccess_whenFirstFetch_shouldRemoveAllPreviousChannelsFromQuery() throws {
-        var query = ChannelListQuery(
+        nonisolated(unsafe) var query = ChannelListQuery(
             filter: .in(.members, values: [.unique])
         )
         query.pagination = .init(pageSize: 25, offset: 0)
@@ -156,7 +156,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     }
 
     func test_update_whenSuccess_whenNotFirstFetch_shouldContinueChannelsFromQuery() throws {
-        var query = ChannelListQuery(
+        nonisolated(unsafe) var query = ChannelListQuery(
             filter: .in(.members, values: [.unique])
         )
         query.pagination = .init(pageSize: 25, offset: 25)
@@ -192,7 +192,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     }
 
     func test_update_whenError_shouldContinueChannelsFromQuery() throws {
-        var query = ChannelListQuery(
+        nonisolated(unsafe) var query = ChannelListQuery(
             filter: .in(.members, values: [.unique])
         )
         query.pagination = .init(pageSize: 25, offset: 25)
@@ -240,7 +240,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     func test_fetch_successfulResponse_isPropagatedToCompletion() {
         // Simulate `fetch` call
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
-        var channelListPayload: ChannelListPayload?
+        nonisolated(unsafe) var channelListPayload: ChannelListPayload?
         listUpdater.fetch(channelListQuery: query, completion: { result in
             channelListPayload = try? result.get()
         })
@@ -259,7 +259,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     func test_fetch_errorResponse_isPropagatedToCompletion() {
         // Simulate `fetch` call
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         listUpdater.update(channelListQuery: query, completion: { completionCalledError = $0.error })
 
         // Simulate API response with failure
@@ -291,7 +291,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     
     func test_refreshLoadedChannels_whenMultiplePagesAreLoaded_thenAllPagesAreReloaded() async throws {
         let pageSize = Int.channelsPageSize
-        var query = ChannelListQuery(filter: .in(.members, values: [.unique]))
+        nonisolated(unsafe) var query = ChannelListQuery(filter: .in(.members, values: [.unique]))
         query.pagination = Pagination(pageSize: pageSize)
         
         let initialChannels = (0..<pageSize * 2 + 5)
@@ -321,7 +321,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     }
 
     func test_markAllRead_successfulResponse_isPropagatedToCompletion() {
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         listUpdater.markAllRead { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -335,7 +335,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     }
 
     func test_markAllRead_errorResponse_isPropagatedToCompletion() {
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         listUpdater.markAllRead { completionCalledError = $0 }
 
         let error = TestError()
@@ -348,7 +348,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
     func test_startWatchingChannels_whenFetchCallSuccess_thenSavePayload_thenCallCompletionWithoutError() {
         // When
-        var actualError: Error?
+        nonisolated(unsafe) var actualError: Error?
         let exp = expectation(description: "fetch call completes with success")
         let cids: [ChannelId] = [.unique, .unique, .unique]
         listUpdater.startWatchingChannels(withIds: cids) { error in
@@ -372,7 +372,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
     func test_startWatchingChannels_whenFetchCallFail_thenCallCompletionWithError() {
         // When
-        var actualError: Error?
+        nonisolated(unsafe) var actualError: Error?
         let exp = expectation(description: "fetch call completes with success")
         let cids: [ChannelId] = [.unique, .unique, .unique]
         listUpdater.startWatchingChannels(withIds: cids) { error in

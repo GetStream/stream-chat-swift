@@ -7,7 +7,7 @@ import AVFoundation
 @testable import StreamChatTestTools
 import XCTest
 
-final class StreamAudioQueuePlayer_Tests: XCTestCase {
+@MainActor final class StreamAudioQueuePlayer_Tests: XCTestCase {
     private var dataSource: MockAudioQueuePlayerDatasource!
     private var assetPropertyLoader: MockAssetPropertyLoader!
     private var playerObserver: MockAudioPlayerObserver!

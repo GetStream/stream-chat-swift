@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class ChatChannelController_Spy: ChatChannelController, Spy {
+final class ChatChannelController_Spy: ChatChannelController, Spy, @unchecked Sendable {
     var watchActiveChannelError: Error?
     let spyState = SpyState()
 
@@ -13,13 +13,15 @@ final class ChatChannelController_Spy: ChatChannelController, Spy {
         super.init(channelQuery: .init(cid: .unique), channelListQuery: nil, client: client)
     }
 
-    override func recoverWatchedChannel(recovery: Bool, completion: @escaping (Error?) -> Void) {
+    override func recoverWatchedChannel(recovery: Bool, completion: @escaping @MainActor @Sendable(Error?) -> Void) {
         record()
-        completion(watchActiveChannelError)
+        callback {
+            completion(self.watchActiveChannelError)
+        }
     }
 }
 
-final class ChannelControllerSpy: ChatChannelController {
+final class ChannelControllerSpy: ChatChannelController, @unchecked Sendable {
     @Atomic var synchronize_called = false
 
     var channel_simulated: ChatChannel?
@@ -46,7 +48,7 @@ final class ChannelControllerSpy: ChatChannelController {
         )
     }
 
-    override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+    override func synchronize(_ completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
         synchronize_called = true
     }
 }

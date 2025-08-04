@@ -37,6 +37,13 @@ struct MulticastDelegate<T> {
         mainDelegate.map { action($0) }
         additionalDelegates.forEach { action($0) }
     }
+    
+    func invokeOnMain(_ action: @MainActor(T) -> Void) {
+        nonisolated(unsafe) let delegates = (additionalDelegates + [mainDelegate]).compactMap { $0 }
+        StreamConcurrency.onMain {
+            delegates.forEach { action($0) }
+        }
+    }
 
     /// Sets the main delegate. If is nil, removes the main delegate.
     /// - Parameter mainDelegate: The main delegate.

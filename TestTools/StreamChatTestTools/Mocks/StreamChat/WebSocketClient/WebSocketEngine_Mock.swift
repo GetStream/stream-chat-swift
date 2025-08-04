@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class WebSocketEngine_Mock: WebSocketEngine {
+final class WebSocketEngine_Mock: WebSocketEngine, @unchecked Sendable {
     var request: URLRequest
     var sessionConfiguration: URLSessionConfiguration
     var isConnected: Bool = false
@@ -92,7 +92,7 @@ extension Dictionary {
                 "online": true,
                 "name": "Steep Moon",
                 "test": 1
-            ] as [String : Any],
+            ] as [String: Any],
             "type": "health.check",
             "connection_id": connectionId
         ]

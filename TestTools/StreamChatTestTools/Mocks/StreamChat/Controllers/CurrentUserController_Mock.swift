@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class CurrentUserController_Mock: CurrentChatUserController {
+final class CurrentUserController_Mock: CurrentChatUserController, @unchecked Sendable {
     var currentUser_simulated: CurrentChatUser?
     override var currentUser: CurrentChatUser? {
         currentUser_simulated ?? super.currentUser
