@@ -508,17 +508,17 @@ public class ChatClient {
         completion: @escaping () -> Void
     ) {
         let currentUserController = currentUserController()
+
+        // We need to call logout after creating the current user controller.
+        // Otherwise we would not be able to create the controller without currentUserId.
+        authenticationRepository.logOutUser()
+
         if removeDevice, let currentUserDevice = currentUserController.currentUser?.currentDevice {
-            currentUserController.removeDevice(id: currentUserDevice.id) { [weak self] error in
+            currentUserController.removeDevice(id: currentUserDevice.id) { error in
                 if let error {
                     log.error(error)
                 }
-                self?.authenticationRepository.logOutUser()
             }
-        }
-
-        if !removeDevice {
-            authenticationRepository.logOutUser()
         }
 
         // Stop tracking active components
