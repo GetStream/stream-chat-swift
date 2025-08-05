@@ -21,9 +21,11 @@ class ManualEventHandler {
 
     init(
         database: DatabaseContainer,
+        cachedChannels: [ChannelId: ChatChannel] = [:],
         queue: DispatchQueue = DispatchQueue(label: "io.getstream.chat.manualEventHandler", qos: .utility)
     ) {
         self.database = database
+        self.cachedChannels = cachedChannels
         self.queue = queue
     }
 

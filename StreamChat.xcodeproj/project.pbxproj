@@ -1616,6 +1616,7 @@
 		AD7C76712E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C766D2E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift */; };
 		AD7C76722E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C766F2E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift */; };
 		AD7C76752E3D0486009250FB /* DemoLivestreamReactionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76742E3D047E009250FB /* DemoLivestreamReactionsListView.swift */; };
+		AD7C767F2E426B34009250FB /* ManualEventHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C767E2E426B34009250FB /* ManualEventHandler_Tests.swift */; };
 		AD7C76812E4275B3009250FB /* LivestreamChannelController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76802E4275B3009250FB /* LivestreamChannelController_Tests.swift */; };
 		AD7C76832E42C0B5009250FB /* LivestreamChannelController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76822E42C0B5009250FB /* LivestreamChannelController+Combine_Tests.swift */; };
 		AD7C76852E42CDF6009250FB /* ManualEventHandler_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76842E42CDF6009250FB /* ManualEventHandler_Mock.swift */; };
@@ -4418,6 +4419,7 @@
 		AD7C766D2E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamChatMessageListVC.swift; sourceTree = "<group>"; };
 		AD7C766F2E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamMessageActionsVC.swift; sourceTree = "<group>"; };
 		AD7C76742E3D047E009250FB /* DemoLivestreamReactionsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamReactionsListView.swift; sourceTree = "<group>"; };
+		AD7C767E2E426B34009250FB /* ManualEventHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualEventHandler_Tests.swift; sourceTree = "<group>"; };
 		AD7C76802E4275B3009250FB /* LivestreamChannelController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivestreamChannelController_Tests.swift; sourceTree = "<group>"; };
 		AD7C76822E42C0B5009250FB /* LivestreamChannelController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LivestreamChannelController+Combine_Tests.swift"; sourceTree = "<group>"; };
 		AD7C76842E42CDF6009250FB /* ManualEventHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualEventHandler_Mock.swift; sourceTree = "<group>"; };
@@ -7300,6 +7302,7 @@
 		A364D09627D0C56C0029857A /* Workers */ = {
 			isa = PBXGroup;
 			children = (
+				AD7C767E2E426B34009250FB /* ManualEventHandler_Tests.swift */,
 				AD9490582BF5701D00E69224 /* ThreadsRepository_Tests.swift */,
 				792921C424C0479700116BBB /* ChannelListUpdater_Tests.swift */,
 				882C5765252C7F7000E60C44 /* ChannelMemberListUpdater_Tests.swift */,
@@ -12037,6 +12040,7 @@
 				A30C3F22276B4F8800DA5968 /* UnknownUserEvent_Tests.swift in Sources */,
 				DA84074025260CA3005A0F62 /* UserListController_Tests.swift in Sources */,
 				AD545E852D5D7591008FD399 /* DraftListQuery_Tests.swift in Sources */,
+				AD7C767F2E426B34009250FB /* ManualEventHandler_Tests.swift in Sources */,
 				C1EE53A727BA53F300B1A6CA /* Endpoint_Tests.swift in Sources */,
 				84A1D2F426AB221E00014712 /* ChannelEventsController_Tests.swift in Sources */,
 				88381E6E258259310047A6A3 /* FileUploadPayload_Tests.swift in Sources */,
