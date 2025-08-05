@@ -80,7 +80,7 @@ open class FileAttachmentView: _View, AppearanceProvider {
         addSubview(fileNameAndSizeStack)
 
         NSLayoutConstraint.activate([
-            heightAnchor.pin(equalToConstant: height),
+            heightAnchor.pin(greaterThanOrEqualToConstant: height),
             fileIconImageView.leadingAnchor.pin(equalTo: layoutMarginsGuide.leadingAnchor),
             fileIconImageView.topAnchor.pin(equalTo: layoutMarginsGuide.topAnchor),
             fileIconImageView.bottomAnchor.pin(equalTo: layoutMarginsGuide.bottomAnchor),

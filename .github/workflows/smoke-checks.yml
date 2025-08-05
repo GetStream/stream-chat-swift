@@ -55,10 +55,10 @@ jobs:
       - uses: ./.github/actions/bootstrap
         env:
           INSTALL_INTERFACE_ANALYZER: true
-      - run: bundle exec fastlane validate_public_interface
       - run: bundle exec fastlane lint_pr
       - run: bundle exec fastlane rubocop
       - run: bundle exec fastlane run_swift_format strict:true
+      - run: bundle exec fastlane validate_public_interface
       - run: bundle exec fastlane pod_lint
         if: startsWith(github.event.pull_request.head.ref, 'release/')
 
