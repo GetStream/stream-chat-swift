@@ -342,8 +342,9 @@ final class ChannelDTO_Tests: XCTestCase {
 
         // Pinned message should be older than `message` to ensure it's not returned first in `latestMessages`
         let pinnedMessage = dummyPinnedMessagePayload(createdAt: .unique(before: messageCreatedAt))
-        
-        let pendingMessage = dummyMessagePayload(createdAt: messageCreatedAt)
+
+        // Same of pending messages
+        let pendingMessage = dummyMessagePayload(createdAt: .unique(before: messageCreatedAt))
 
         let payload = dummyPayload(
             with: channelId,
