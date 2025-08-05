@@ -1129,7 +1129,7 @@ private class TestEnvironment {
                 return self.eventDecoder!
             },
             notificationCenterBuilder: {
-                self.notificationCenter = EventNotificationCenter_Mock(database: $0)
+                self.notificationCenter = EventNotificationCenter_Mock(database: $0, manualEventHandler: $1)
                 return self.notificationCenter!
             },
             internetConnection: {
