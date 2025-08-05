@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add pending messages support [#3754](https://github.com/GetStream/stream-chat-swift/pull/3754)
+### 🐞 Fixed
+- Fix `ChatClient.currentUserId` not removed instantly after calling `logout()` [#3766](https://github.com/GetStream/stream-chat-swift/pull/3766)
 
 ## StreamChatUI
 ### 🐞 Fixed
