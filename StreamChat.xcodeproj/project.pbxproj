@@ -1616,6 +1616,7 @@
 		AD7C76712E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C766D2E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift */; };
 		AD7C76722E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C766F2E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift */; };
 		AD7C76752E3D0486009250FB /* DemoLivestreamReactionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76742E3D047E009250FB /* DemoLivestreamReactionsListView.swift */; };
+		AD7C76812E4275B3009250FB /* LivestreamChannelController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76802E4275B3009250FB /* LivestreamChannelController_Tests.swift */; };
 		AD7CF1712694ABCE00F3101D /* ComposerVC_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */; };
 		AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */; };
 		AD7EFDA72C7796D400625FC5 /* PollCommentListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDA52C77749300625FC5 /* PollCommentListVC.swift */; };
@@ -4415,6 +4416,7 @@
 		AD7C766D2E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamChatMessageListVC.swift; sourceTree = "<group>"; };
 		AD7C766F2E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamMessageActionsVC.swift; sourceTree = "<group>"; };
 		AD7C76742E3D047E009250FB /* DemoLivestreamReactionsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamReactionsListView.swift; sourceTree = "<group>"; };
+		AD7C76802E4275B3009250FB /* LivestreamChannelController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivestreamChannelController_Tests.swift; sourceTree = "<group>"; };
 		AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC_Documentation_Tests.swift; sourceTree = "<group>"; };
 		AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "UserUpdateResponse+MissingUser.json"; sourceTree = "<group>"; };
 		AD7DFBEB25D2AE7400DD9DA3 /* TestDataModel2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestDataModel2.xcdatamodel; sourceTree = "<group>"; };
@@ -7522,6 +7524,7 @@
 		A364D0A827D128650029857A /* ChannelController */ = {
 			isa = PBXGroup;
 			children = (
+				AD7C76802E4275B3009250FB /* LivestreamChannelController_Tests.swift */,
 				AD545E7C2D5CFC15008FD399 /* ChannelController+Drafts_Tests.swift */,
 				7952B3B224D314B100AC53D4 /* ChannelController_Tests.swift */,
 				DA4AA3B32502719700FAAF6E /* ChannelController+Combine_Tests.swift */,
@@ -12283,6 +12286,7 @@
 				88DA577E2631D73800FA8C53 /* ChannelMuteDTO_Tests.swift in Sources */,
 				8459C9F42BFB929600F0D235 /* PollsRepository_Tests.swift in Sources */,
 				4F5151982BC407ED001B7152 /* UserList_Tests.swift in Sources */,
+				AD7C76812E4275B3009250FB /* LivestreamChannelController_Tests.swift in Sources */,
 				84CC56EC267B3F6B00DF2784 /* AnyAttachmentPayload_Tests.swift in Sources */,
 				AD545E812D5D0006008FD399 /* MessageController+Drafts_Tests.swift in Sources */,
 				88F7692B25837EE600BD36B0 /* AttachmentQueueUploader_Tests.swift in Sources */,
