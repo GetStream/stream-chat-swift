@@ -1618,6 +1618,7 @@
 		AD7C76752E3D0486009250FB /* DemoLivestreamReactionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76742E3D047E009250FB /* DemoLivestreamReactionsListView.swift */; };
 		AD7C76812E4275B3009250FB /* LivestreamChannelController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76802E4275B3009250FB /* LivestreamChannelController_Tests.swift */; };
 		AD7C76832E42C0B5009250FB /* LivestreamChannelController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76822E42C0B5009250FB /* LivestreamChannelController+Combine_Tests.swift */; };
+		AD7C76852E42CDF6009250FB /* ManualEventHandler_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76842E42CDF6009250FB /* ManualEventHandler_Mock.swift */; };
 		AD7CF1712694ABCE00F3101D /* ComposerVC_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */; };
 		AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */; };
 		AD7EFDA72C7796D400625FC5 /* PollCommentListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDA52C77749300625FC5 /* PollCommentListVC.swift */; };
@@ -4419,6 +4420,7 @@
 		AD7C76742E3D047E009250FB /* DemoLivestreamReactionsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamReactionsListView.swift; sourceTree = "<group>"; };
 		AD7C76802E4275B3009250FB /* LivestreamChannelController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivestreamChannelController_Tests.swift; sourceTree = "<group>"; };
 		AD7C76822E42C0B5009250FB /* LivestreamChannelController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LivestreamChannelController+Combine_Tests.swift"; sourceTree = "<group>"; };
+		AD7C76842E42CDF6009250FB /* ManualEventHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualEventHandler_Mock.swift; sourceTree = "<group>"; };
 		AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC_Documentation_Tests.swift; sourceTree = "<group>"; };
 		AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "UserUpdateResponse+MissingUser.json"; sourceTree = "<group>"; };
 		AD7DFBEB25D2AE7400DD9DA3 /* TestDataModel2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestDataModel2.xcdatamodel; sourceTree = "<group>"; };
@@ -7320,6 +7322,7 @@
 		A364D09727D0C5940029857A /* Workers */ = {
 			isa = PBXGroup;
 			children = (
+				AD7C76842E42CDF6009250FB /* ManualEventHandler_Mock.swift */,
 				882C5762252C7F6500E60C44 /* ChannelMemberListUpdater_Mock.swift */,
 				88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */,
 				F62D143D24DD70190081D241 /* ChannelUpdater_Mock.swift */,
@@ -11432,6 +11435,7 @@
 				A3C3BC3F27E87F5C00224761 /* ChannelListUpdater_Spy.swift in Sources */,
 				A3C3BC6427E8AA0A00224761 /* ChannelId+Unique.swift in Sources */,
 				82F714A12B077F3300442A74 /* XCTestCase+iOS13.swift in Sources */,
+				AD7C76852E42CDF6009250FB /* ManualEventHandler_Mock.swift in Sources */,
 				A3C3BC7127E8AA4300224761 /* TestFetchedResultsController.swift in Sources */,
 				82E655392B06775D00D64906 /* MockFunc.swift in Sources */,
 				A344078927D753530044F150 /* UserPayload.swift in Sources */,

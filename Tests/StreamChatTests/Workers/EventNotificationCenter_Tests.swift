@@ -275,4 +275,79 @@ final class EventNotificationCenter_Tests: XCTestCase {
             center.process(events)
         }
     }
+
+    // MARK: - Manual Event Handling Tests
+
+    func test_registerManualEventHandling_callsManualEventHandler() {
+        let mockHandler = ManualEventHandler_Mock()
+        let center = EventNotificationCenter(database: database, manualEventHandler: mockHandler)
+        let cid: ChannelId = .unique
+
+        center.registerManualEventHandling(for: cid)
+
+        XCTAssertEqual(mockHandler.registerCallCount, 1)
+        XCTAssertEqual(mockHandler.registerCalledWith, [cid])
+    }
+
+    func test_unregisterManualEventHandling_callsManualEventHandler() {
+        let mockHandler = ManualEventHandler_Mock()
+        let center = EventNotificationCenter(database: database, manualEventHandler: mockHandler)
+        let cid: ChannelId = .unique
+
+        center.unregisterManualEventHandling(for: cid)
+
+        XCTAssertEqual(mockHandler.unregisterCallCount, 1)
+        XCTAssertEqual(mockHandler.unregisterCalledWith, [cid])
+    }
+
+    func test_process_whenManualEventHandlerReturnsEvent_eventIsAddedToEventsToPost() {
+        let mockHandler = ManualEventHandler_Mock()
+        let center = EventNotificationCenter(database: database, manualEventHandler: mockHandler)
+        
+        // Create event logger to check published events
+        let eventLogger = EventLogger(center)
+        
+        // Create test event and mock return value
+        let originalEvent = TestEvent()
+        let manualEvent = TestEvent()
+        mockHandler.handleReturnValue = manualEvent
+        
+        // Process event
+        center.process(originalEvent)
+        
+        // Verify manual handler was called with original event
+        AssertAsync {
+            Assert.willBeEqual(mockHandler.handleCallCount, 1)
+            Assert.willBeEqual(mockHandler.handleCalledWith as? [TestEvent], [originalEvent])
+            // Verify manual event was posted
+            Assert.willBeEqual(eventLogger.events as? [TestEvent], [manualEvent])
+        }
+    }
+
+    func test_process_whenManualEventHandlerReturnsNil_eventIsProcessedByMiddlewares() {
+        let mockHandler = ManualEventHandler_Mock()
+        let center = EventNotificationCenter(database: database, manualEventHandler: mockHandler)
+        
+        // Create event logger to check published events
+        let eventLogger = EventLogger(center)
+        
+        // Create test event
+        let originalEvent = TestEvent()
+        mockHandler.handleReturnValue = nil // Manual handler doesn't handle this event
+        
+        // Add a middleware that will process the event
+        let middleware = EventMiddleware_Mock { event, _ in event }
+        center.add(middleware: middleware)
+        
+        // Process event
+        center.process(originalEvent)
+        
+        // Verify manual handler was called with original event
+        AssertAsync {
+            Assert.willBeEqual(mockHandler.handleCallCount, 1)
+            Assert.willBeEqual(mockHandler.handleCalledWith as? [TestEvent], [originalEvent])
+            // Verify original event was posted (processed by middleware)
+            Assert.willBeEqual(eventLogger.events as? [TestEvent], [originalEvent])
+        }
+    }
 }

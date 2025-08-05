@@ -66,10 +66,6 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
 
         database.write({ session in
             events.forEach { event in
-                guard let eventDTO = event as? EventDTO else {
-                    middlewareEvents.append(event)
-                    return
-                }
                 if let manualEvent = self.manualEventHandler.handle(event) {
                     manualHandlingEvents.append(manualEvent)
                 } else {
