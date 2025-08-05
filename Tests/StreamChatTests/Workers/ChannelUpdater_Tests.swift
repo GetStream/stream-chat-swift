@@ -1770,6 +1770,42 @@ final class ChannelUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
+    // MARK: - Disable slow mode
+
+    func test_disableSlowMode_makesCorrectAPICall() {
+        let cid = ChannelId.unique
+
+        channelUpdater.disableSlowMode(cid: cid) { _ in }
+
+        // Assert that disableSlowMode calls enableSlowMode endpoint with cooldownDuration: 0
+        let referenceEndpoint = Endpoint<EmptyResponse>.enableSlowMode(cid: cid, cooldownDuration: 0)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_disableSlowMode_successfulResponse_isPropagatedToCompletion() {
+        var completionCalled = false
+        channelUpdater.disableSlowMode(cid: .unique) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        XCTAssertFalse(completionCalled)
+
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_disableSlowMode_errorResponse_isPropagatedToCompletion() {
+        var completionCalledError: Error?
+        channelUpdater.disableSlowMode(cid: .unique) { completionCalledError = $0 }
+
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
+
     // MARK: - Start watching
 
     func test_startWatching_makesCorrectAPICall() {
