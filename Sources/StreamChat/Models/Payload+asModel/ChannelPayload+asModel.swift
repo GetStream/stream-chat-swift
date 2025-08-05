@@ -72,47 +72,6 @@ extension ChannelPayload {
     }
 }
 
-extension ChannelDetailPayload {
-    func asModel() -> ChatChannel {
-        ChatChannel(
-            cid: cid,
-            name: name,
-            imageURL: imageURL,
-            lastMessageAt: lastMessageAt,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deletedAt: deletedAt,
-            truncatedAt: truncatedAt,
-            isHidden: false,
-            createdBy: createdBy?.asModel(),
-            config: config,
-            ownCapabilities: Set(ownCapabilities?.compactMap { ChannelCapability(rawValue: $0) } ?? []),
-            isFrozen: isFrozen,
-            isDisabled: isDisabled,
-            isBlocked: isBlocked ?? false,
-            lastActiveMembers: members?.compactMap { $0.asModel(channelId: cid) } ?? [],
-            membership: nil,
-            currentlyTypingUsers: [],
-            lastActiveWatchers: [],
-            team: team,
-            unreadCount: ChannelUnreadCount(messages: 0, mentions: 0),
-            watcherCount: 0,
-            memberCount: memberCount,
-            reads: [],
-            cooldownDuration: cooldownDuration,
-            extraData: extraData,
-            latestMessages: [],
-            lastMessageFromCurrentUser: nil,
-            pinnedMessages: [],
-            pendingMessages: [],
-            muteDetails: nil,
-            previewMessage: nil,
-            draftMessage: nil,
-            activeLiveLocations: []
-        )
-    }
-}
-
 extension MemberPayload {
     /// Converts the MemberPayload to a ChatChannelMember model
     /// - Parameter channelId: The channel ID the member belongs to
