@@ -211,6 +211,10 @@ class AuthenticationRepository {
         currentUserId = nil
     }
 
+    func clearCurrentUserId() {
+        currentUserId = nil
+    }
+
     func refreshToken(completion: @escaping (Error?) -> Void) {
         guard let tokenProvider = tokenProvider else {
             let error = ClientError.MissingTokenProvider()
