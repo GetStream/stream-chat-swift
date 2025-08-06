@@ -13,6 +13,7 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
         static let refreshToken = "refreshToken(completion:)"
         static let clearTokenProvider = "clearTokenProvider()"
         static let logOut = "logOutUser()"
+        static let clearCurrentUserId = "clearCurrentUserId()"
         static let completeTokenWaiters = "completeTokenWaiters(token:)"
         static let completeTokenCompletions = "completeTokenCompletions(error:)"
         static let setToken = "setToken(token:completeTokenWaiters:)"
@@ -92,6 +93,10 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
     }
 
     override func logOutUser() {
+        record()
+    }
+
+    override func clearCurrentUserId() {
         record()
     }
 
