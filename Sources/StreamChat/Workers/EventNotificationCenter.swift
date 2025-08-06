@@ -17,9 +17,28 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     // Contains the ids of the new messages that are going to be added during the ongoing process
     private(set) var newMessageIds: Set<MessageId> = Set()
 
-    init(database: DatabaseContainer) {
+    /// Handles manual event processing for channels that opt out of middleware processing.
+    private let manualEventHandler: ManualEventHandler
+
+    init(
+        database: DatabaseContainer,
+        manualEventHandler: ManualEventHandler? = nil
+    ) {
         self.database = database
+        self.manualEventHandler = manualEventHandler ?? ManualEventHandler(database: database)
         super.init()
+    }
+
+    /// Registers a channel for manual event handling.
+    ///
+    /// The middleware's will not process events for this channel.
+    func registerManualEventHandling(for cid: ChannelId) {
+        manualEventHandler.register(channelId: cid)
+    }
+
+    /// Unregister a channel for manual event handling.
+    func unregisterManualEventHandling(for cid: ChannelId) {
+        manualEventHandler.unregister(channelId: cid)
     }
 
     func add(middlewares: [EventMiddleware]) {
@@ -42,14 +61,26 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
         }
 
         var eventsToPost = [Event]()
+        var middlewareEvents = [Event]()
+        var manualHandlingEvents = [Event]()
+
         database.write({ session in
+            events.forEach { event in
+                if let manualEvent = self.manualEventHandler.handle(event) {
+                    manualHandlingEvents.append(manualEvent)
+                } else {
+                    middlewareEvents.append(event)
+                }
+            }
+
             self.newMessageIds = Set(messageIds.compactMap {
                 !session.messageExists(id: $0) ? $0 : nil
             })
 
-            eventsToPost = events.compactMap {
+            eventsToPost.append(contentsOf: manualHandlingEvents)
+            eventsToPost.append(contentsOf: middlewareEvents.compactMap {
                 self.middlewares.process(event: $0, session: session)
-            }
+            })
 
             self.newMessageIds = []
         }, completion: { _ in
@@ -84,7 +115,7 @@ extension EventNotificationCenter {
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: handler)
     }
-    
+
     func subscribe(
         filter: @escaping (Event) -> Bool = { _ in true },
         handler: @escaping (Event) -> Void
@@ -95,7 +126,7 @@ extension EventNotificationCenter {
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: handler)
     }
-    
+
     static func channelFilter(cid: ChannelId, event: Event) -> Bool {
         switch event {
         case let channelEvent as ChannelSpecificEvent:

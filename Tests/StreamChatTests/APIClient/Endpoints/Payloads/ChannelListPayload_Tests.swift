@@ -397,4 +397,201 @@ final class ChannelPayload_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(payload.newestMessage?.id, laterMessage.id)
     }
+    
+    // MARK: - ChannelPayload.asModel() Tests
+    
+    func test_channelPayload_asModel_convertsAllPropertiesCorrectly() {
+        let currentUserId = "current-user-id"
+        let cid = ChannelId(type: .messaging, id: "test-channel")
+        
+        let createdByPayload = UserPayload.dummy(userId: "creator-user-id", name: "Channel Creator")
+        let memberPayload = MemberPayload.dummy(user: UserPayload.dummy(userId: "member-user-id"), role: .member)
+        let watcherPayload = UserPayload.dummy(userId: "watcher-user-id", name: "Channel Watcher")
+        let messagePayload = MessagePayload.dummy(messageId: "message-id", authorUserId: "author-id")
+        let pinnedMessagePayload = MessagePayload.dummy(messageId: "pinned-message-id", authorUserId: "pinned-author-id")
+        let pendingMessagePayload = MessagePayload.dummy(messageId: "pending-message-id", authorUserId: "pending-author-id")
+        
+        let channelReadPayload = ChannelReadPayload(
+            user: UserPayload.dummy(userId: "reader-user-id", name: "Reader User"),
+            lastReadAt: Date(timeIntervalSince1970: 1_609_459_400),
+            lastReadMessageId: "last-read-message-id",
+            unreadMessagesCount: 5
+        )
+        
+        let membershipPayload = MemberPayload.dummy(user: .dummy(userId: currentUserId), role: .admin)
+
+        let channel = ChannelDetailPayload(
+            cid: cid,
+            name: "Test Channel",
+            imageURL: URL(string: "https://example.com/channel.png"),
+            extraData: ["custom_field": .string("custom_value")],
+            typeRawValue: "messaging",
+            lastMessageAt: Date(timeIntervalSince1970: 1_609_459_500),
+            createdAt: Date(timeIntervalSince1970: 1_609_459_200),
+            deletedAt: Date(timeIntervalSince1970: 1_609_459_600),
+            updatedAt: Date(timeIntervalSince1970: 1_609_459_300),
+            truncatedAt: Date(timeIntervalSince1970: 1_609_459_250),
+            createdBy: createdByPayload,
+            config: ChannelConfig(),
+            ownCapabilities: ["send-message", "upload-file"],
+            isDisabled: true,
+            isFrozen: true,
+            isBlocked: true,
+            isHidden: true,
+            members: [memberPayload],
+            memberCount: 10,
+            team: "team-id",
+            cooldownDuration: 30
+        )
+        
+        let typingUsers = Set([ChatUser.mock(id: "typing-user-id", name: "Typing User")])
+        let unreadCount = ChannelUnreadCount(messages: 3, mentions: 1)
+        
+        let payload = ChannelPayload(
+            channel: channel,
+            watcherCount: 5,
+            watchers: [watcherPayload],
+            members: [memberPayload],
+            membership: membershipPayload,
+            messages: [messagePayload],
+            pendingMessages: [pendingMessagePayload],
+            pinnedMessages: [pinnedMessagePayload],
+            channelReads: [channelReadPayload],
+            isHidden: true,
+            draft: nil,
+            activeLiveLocations: []
+        )
+        
+        let chatChannel = payload.asModel(
+            currentUserId: currentUserId,
+            currentlyTypingUsers: typingUsers,
+            unreadCount: unreadCount
+        )
+        
+        XCTAssertEqual(chatChannel.cid, cid)
+        XCTAssertEqual(chatChannel.name, "Test Channel")
+        XCTAssertEqual(chatChannel.imageURL, URL(string: "https://example.com/channel.png"))
+        XCTAssertEqual(chatChannel.lastMessageAt, Date(timeIntervalSince1970: 1_609_459_500))
+        XCTAssertEqual(chatChannel.createdAt, Date(timeIntervalSince1970: 1_609_459_200))
+        XCTAssertEqual(chatChannel.updatedAt, Date(timeIntervalSince1970: 1_609_459_300))
+        XCTAssertEqual(chatChannel.deletedAt, Date(timeIntervalSince1970: 1_609_459_600))
+        XCTAssertEqual(chatChannel.truncatedAt, Date(timeIntervalSince1970: 1_609_459_250))
+        XCTAssertEqual(chatChannel.isHidden, true)
+        XCTAssertEqual(chatChannel.createdBy?.id, "creator-user-id")
+        XCTAssertNotNil(chatChannel.config)
+        XCTAssertTrue(chatChannel.ownCapabilities.contains(.sendMessage))
+        XCTAssertTrue(chatChannel.ownCapabilities.contains(.uploadFile))
+        XCTAssertEqual(chatChannel.isFrozen, true)
+        XCTAssertEqual(chatChannel.isDisabled, true)
+        XCTAssertEqual(chatChannel.isBlocked, true)
+        XCTAssertEqual(chatChannel.lastActiveMembers.count, 1)
+        XCTAssertEqual(chatChannel.lastActiveMembers.first?.id, "member-user-id")
+        XCTAssertEqual(chatChannel.membership?.id, currentUserId)
+        XCTAssertEqual(chatChannel.currentlyTypingUsers, typingUsers)
+        XCTAssertEqual(chatChannel.lastActiveWatchers.count, 1)
+        XCTAssertEqual(chatChannel.lastActiveWatchers.first?.id, "watcher-user-id")
+        XCTAssertEqual(chatChannel.team, "team-id")
+        XCTAssertEqual(chatChannel.unreadCount, unreadCount)
+        XCTAssertEqual(chatChannel.watcherCount, 5)
+        XCTAssertEqual(chatChannel.memberCount, 10)
+        XCTAssertEqual(chatChannel.reads.count, 1)
+        XCTAssertEqual(chatChannel.reads.first?.user.id, "reader-user-id")
+        XCTAssertEqual(chatChannel.cooldownDuration, 30)
+        XCTAssertEqual(chatChannel.extraData, ["custom_field": .string("custom_value")])
+        XCTAssertEqual(chatChannel.latestMessages.count, 1)
+        XCTAssertEqual(chatChannel.latestMessages.first?.id, "message-id")
+        XCTAssertEqual(chatChannel.pinnedMessages.count, 1)
+        XCTAssertEqual(chatChannel.pinnedMessages.first?.id, "pinned-message-id")
+        XCTAssertEqual(chatChannel.pendingMessages.count, 1)
+        XCTAssertEqual(chatChannel.pendingMessages.first?.id, "pending-message-id")
+        XCTAssertNil(chatChannel.muteDetails)
+        XCTAssertNotNil(chatChannel.previewMessage)
+        XCTAssertEqual(chatChannel.previewMessage?.id, "message-id")
+        XCTAssertTrue(chatChannel.activeLiveLocations.isEmpty)
+    }
+    
+    func test_channelPayload_asModel_withMinimalData_handlesCorrectly() {
+        let currentUserId = "current-user-id"
+        let cid = ChannelId(type: .messaging, id: "minimal-channel")
+        
+        let channel = ChannelDetailPayload(
+            cid: cid,
+            name: "Minimal Channel",
+            imageURL: nil,
+            extraData: [:],
+            typeRawValue: "messaging",
+            lastMessageAt: Date(timeIntervalSince1970: 1_609_459_200),
+            createdAt: Date(timeIntervalSince1970: 1_609_459_200),
+            deletedAt: nil,
+            updatedAt: Date(timeIntervalSince1970: 1_609_459_200),
+            truncatedAt: nil,
+            createdBy: nil,
+            config: ChannelConfig(),
+            ownCapabilities: nil,
+            isDisabled: false,
+            isFrozen: false,
+            isBlocked: nil,
+            isHidden: nil,
+            members: nil,
+            memberCount: 0,
+            team: nil,
+            cooldownDuration: 0
+        )
+        
+        let payload = ChannelPayload(
+            channel: channel,
+            watcherCount: nil,
+            watchers: nil,
+            members: [],
+            membership: nil,
+            messages: [],
+            pendingMessages: nil,
+            pinnedMessages: [],
+            channelReads: [],
+            isHidden: nil,
+            draft: nil,
+            activeLiveLocations: []
+        )
+        
+        let chatChannel = payload.asModel(
+            currentUserId: currentUserId,
+            currentlyTypingUsers: nil,
+            unreadCount: nil
+        )
+        
+        XCTAssertEqual(chatChannel.cid, cid)
+        XCTAssertEqual(chatChannel.name, "Minimal Channel")
+        XCTAssertNil(chatChannel.imageURL)
+        XCTAssertEqual(chatChannel.lastMessageAt, Date(timeIntervalSince1970: 1_609_459_200))
+        XCTAssertEqual(chatChannel.createdAt, Date(timeIntervalSince1970: 1_609_459_200))
+        XCTAssertEqual(chatChannel.updatedAt, Date(timeIntervalSince1970: 1_609_459_200))
+        XCTAssertNil(chatChannel.deletedAt)
+        XCTAssertNil(chatChannel.truncatedAt)
+        XCTAssertEqual(chatChannel.isHidden, false)
+        XCTAssertNil(chatChannel.createdBy)
+        XCTAssertNotNil(chatChannel.config)
+        XCTAssertTrue(chatChannel.ownCapabilities.isEmpty)
+        XCTAssertEqual(chatChannel.isFrozen, false)
+        XCTAssertEqual(chatChannel.isDisabled, false)
+        XCTAssertEqual(chatChannel.isBlocked, false)
+        XCTAssertTrue(chatChannel.lastActiveMembers.isEmpty)
+        XCTAssertNil(chatChannel.membership)
+        XCTAssertTrue(chatChannel.currentlyTypingUsers.isEmpty)
+        XCTAssertTrue(chatChannel.lastActiveWatchers.isEmpty)
+        XCTAssertNil(chatChannel.team)
+        XCTAssertEqual(chatChannel.unreadCount, .noUnread)
+        XCTAssertEqual(chatChannel.watcherCount, 0)
+        XCTAssertEqual(chatChannel.memberCount, 0)
+        XCTAssertTrue(chatChannel.reads.isEmpty)
+        XCTAssertEqual(chatChannel.cooldownDuration, 0)
+        XCTAssertEqual(chatChannel.extraData, [:])
+        XCTAssertTrue(chatChannel.latestMessages.isEmpty)
+        XCTAssertTrue(chatChannel.pinnedMessages.isEmpty)
+        XCTAssertTrue(chatChannel.pendingMessages.isEmpty)
+        XCTAssertNil(chatChannel.muteDetails)
+        XCTAssertNil(chatChannel.previewMessage)
+        XCTAssertNil(chatChannel.lastMessageFromCurrentUser)
+        XCTAssertNil(chatChannel.draftMessage)
+        XCTAssertTrue(chatChannel.activeLiveLocations.isEmpty)
+    }
 }
