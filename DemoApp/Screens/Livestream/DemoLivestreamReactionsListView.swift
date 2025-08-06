@@ -107,7 +107,7 @@ struct DemoLivestreamReactionsListView: View {
     }
 }
 
-fileprivate struct ReactionRowView: View {
+private struct ReactionRowView: View {
     let reaction: ChatMessageReaction
 
     var body: some View {

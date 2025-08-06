@@ -35,7 +35,7 @@ class DemoLivestreamChatMessageListVC: ChatMessageListVC {
             if let sheetController = actionsController.sheetPresentationController {
                 sheetController.detents = [
                     .custom { _ in
-                        return 180
+                        180
                     }
                 ]
                 sheetController.prefersGrabberVisible = true
@@ -47,7 +47,7 @@ class DemoLivestreamChatMessageListVC: ChatMessageListVC {
     }
     
     override func messageContentViewDidTapOnReactionsView(_ indexPath: IndexPath?) {
-        guard 
+        guard
             let indexPath = indexPath,
             let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell,
             let messageContentView = cell.messageContentView,
