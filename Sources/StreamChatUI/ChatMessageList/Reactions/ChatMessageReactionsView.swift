@@ -8,7 +8,12 @@ import UIKit
 /// The view that shows the list of reactions attached to the message.
 open class ChatMessageReactionsView: _View, ThemeProvider {
     public var content: Content? {
-        didSet { updateContentIfNeeded() }
+        didSet {
+            if oldValue?.reactions == content?.reactions {
+                return
+            }
+            updateContentIfNeeded()
+        }
     }
 
     open var reactionItemView: ChatMessageReactionItemView.Type {
@@ -56,7 +61,6 @@ open class ChatMessageReactionsView: _View, ThemeProvider {
             )
             stackView.addArrangedSubview(itemView)
         }
-        stackView.layoutIfNeeded()
     }
 
     private func logWarning(unavailableReaction reaction: ChatMessageReactionData) {
