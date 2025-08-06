@@ -250,9 +250,9 @@ open class GalleryVC: _ViewController,
     override open func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        self.updateContent()
-        self.attachmentsCollectionView.scrollToItem(
-            at: .init(item: self.content.currentPage, section: 0),
+        updateContent()
+        attachmentsCollectionView.scrollToItem(
+            at: .init(item: content.currentPage, section: 0),
             at: .centeredHorizontally,
             animated: false
         )
