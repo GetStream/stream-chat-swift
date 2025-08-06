@@ -331,7 +331,7 @@ final class ChatClient_Tests: XCTestCase {
             expectation.fulfill()
         }
         /// Erasing current user id should be called right after calling logout.
-        XCTAssertCall(AuthenticationRepository_Mock.Signature.logOut, on: testEnv.authenticationRepository!)
+        XCTAssertCall(AuthenticationRepository_Mock.Signature.clearCurrentUserId, on: testEnv.authenticationRepository!)
 
         // THEN
         waitForExpectations(timeout: defaultTimeout)
