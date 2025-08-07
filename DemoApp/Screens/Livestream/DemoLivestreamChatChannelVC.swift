@@ -16,6 +16,7 @@ class DemoLivestreamChatChannelVC: _ViewController,
     /// Controller for observing data changes within the channel.
     var livestreamChannelController: LivestreamChannelController!
 
+    /// Controller to observe web socket events.
     lazy var eventsController = livestreamChannelController.client.eventsController()
 
     /// User search controller for suggestion users when typing in the composer.
@@ -57,10 +58,6 @@ class DemoLivestreamChatChannelVC: _ViewController,
         messageListVC.listView.isLastCellFullyVisible
     }
 
-    private var isLastMessageVisibleOrSeen: Bool {
-        isLastMessageFullyVisible
-    }
-
     /// Banner view to show when chat is paused due to scrolling
     private lazy var pauseBannerView = LivestreamPauseBannerView()
 
@@ -86,8 +83,6 @@ class DemoLivestreamChatChannelVC: _ViewController,
         messageListVC.swipeToReplyGestureHandler.onReply = { [weak self] message in
             self?.messageComposerVC.content.quoteMessage(message)
         }
-
-        // Initialize pause banner state - no need to set alpha as it's handled in the banner view
     }
 
     private func setChannelControllerToComposerIfNeeded() {
@@ -141,8 +136,6 @@ class DemoLivestreamChatChannelVC: _ViewController,
                 constant: -16
             )
         ])
-
-        // Banner is already hidden by default in its implementation
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -169,29 +162,6 @@ class DemoLivestreamChatChannelVC: _ViewController,
         setChannelControllerToComposerIfNeeded()
         setChannelControllerToMessageListIfNeeded()
         messageComposerVC.updateContent()
-    }
-
-    // MARK: - Actions
-
-    /// Jump to a given message.
-    /// In case the message is already loaded, it directly goes to it.
-    /// If not, it will load the messages around it and go to that page.
-    ///
-    /// This function is an high-level abstraction of `messageListVC.jumpToMessage(id:onHighlight:)`.
-    ///
-    /// - Parameters:
-    ///   - id: The id of message which the message list should go to.
-    ///   - animated: `true` if you want to animate the change in position; `false` if it should be immediate.
-    ///   - shouldHighlight: Whether the message should be highlighted when jumping to it. By default it is highlighted.
-    func jumpToMessage(id: MessageId, animated: Bool = true, shouldHighlight: Bool = true) {
-        if shouldHighlight {
-            messageListVC.jumpToMessage(id: id, animated: animated) { [weak self] indexPath in
-                self?.messageListVC.highlightCell(at: indexPath)
-            }
-            return
-        }
-
-        messageListVC.jumpToMessage(id: id, animated: animated)
     }
 
     // MARK: - ChatMessageListVCDataSource
@@ -397,10 +367,9 @@ class DemoLivestreamChatChannelVC: _ViewController,
         }
     }
 
-    /// Shows or hides the pause banner with animation
+    /// Shows or hides the pause banner.
     private func showPauseBanner(_ show: Bool) {
         if show {
-            // Reset to paused state when showing the banner
             pauseBannerView.setState(.paused)
         }
         pauseBannerView.setVisible(show, animated: true)
@@ -410,7 +379,6 @@ class DemoLivestreamChatChannelVC: _ViewController,
 /// A custom composer view controller for livestream channels that uses LivestreamChannelController
 /// and disables voice recording functionality.
 class DemoLivestreamComposerVC: ComposerVC {
-    /// Reference to the livestream channel controller
     var livestreamChannelController: LivestreamChannelController?
 
     override func addAttachmentToContent(
