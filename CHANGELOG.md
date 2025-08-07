@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add a completion block to `LivestreamChannelController.resume()` to observe possible errors [#3774](https://github.com/GetStream/stream-chat-swift/pull/3774)
 ### 🐞 Fixed
 - Fix pending message being added to `LivestreamChannelController.messages` when in paused state [#3774](https://github.com/GetStream/stream-chat-swift/pull/3774)
 ### 🔄 Changed
