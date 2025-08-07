@@ -7,7 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix pending message being added to `LivestreamChannelController.messages` when in paused state [#3774](https://github.com/GetStream/stream-chat-swift/pull/3774)
 ### 🔄 Changed
-- The `LivestreamChannelController` should now be manually resumed, it's not automatic on a new message #[3774](https://github.com/GetStream/stream-chat-swift/pull/3774)
+- The `LivestreamChannelController` should now be manually resumed, it's not automatic on a new message [#3774](https://github.com/GetStream/stream-chat-swift/pull/3774)
 
 # [4.84.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.84.0)
 _August 06, 2025_
