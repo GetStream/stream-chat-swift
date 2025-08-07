@@ -16,7 +16,7 @@ protocol LivestreamMessageActionsVCDelegate: AnyObject {
     func livestreamMessageActionsVCDidFinish(_ vc: DemoLivestreamMessageActionsVC)
 }
 
-/// Custom bottom sheet view controller for livestream message actions
+/// Custom bottom sheet view controller for livestream message actions.
 class DemoLivestreamMessageActionsVC: UIViewController {
     // MARK: - Properties
     
@@ -51,7 +51,7 @@ class DemoLivestreamMessageActionsVC: UIViewController {
     // MARK: - Setup
     
     private func setupUI() {
-        view.backgroundColor = UIColor.systemBackground
+        view.backgroundColor = Appearance.default.colorPalette.background
         
         view.addSubview(mainStackView)
         NSLayoutConstraint.activate([
@@ -70,8 +70,7 @@ class DemoLivestreamMessageActionsVC: UIViewController {
     private func setupReactions() {
         guard let channel = livestreamChannelController?.channel,
               channel.canSendReaction else { return }
-        
-        // Use available reactions from the appearance system, ordered by raw value
+
         let availableReactions = Appearance.default.images.availableReactions
         
         let reactionButtons = availableReactions
@@ -142,29 +141,20 @@ class DemoLivestreamMessageActionsVC: UIViewController {
         button.setImage(image, for: .normal)
         button.contentMode = .scaleAspectFit
         button.imageView?.contentMode = .scaleAspectFit
-        
-        // Add some padding around the image for better visual balance
         button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        
-        // Check if current user has reacted with this type
+
         let isSelected = message?.currentUserReactions.contains { $0.type == reactionType } ?? false
-        
-        // Configure appearance based on selection state
         let colorPalette = Appearance.default.colorPalette
         button.backgroundColor = isSelected ? colorPalette.accentPrimary.withAlphaComponent(0.5) : .systemGray6
         button.layer.borderWidth = isSelected ? 2 : 0.5
         button.layer.borderColor = isSelected ? colorPalette.accentPrimary.cgColor : UIColor.separator.cgColor
-
-        // Apply styling and constraints
         button.layer.cornerRadius = 20
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 0, height: 1)
         button.layer.shadowOpacity = 0.1
         button.layer.shadowRadius = 2
-        
         button.width(40).height(40)
-        
-        // Add press animation
+
         button.addTarget(self, action: #selector(reactionButtonPressed(_:)), for: .touchDown)
         button.addTarget(self, action: #selector(reactionButtonReleased(_:)), for: [.touchUpInside, .touchUpOutside, .touchCancel])
         

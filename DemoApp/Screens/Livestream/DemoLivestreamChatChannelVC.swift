@@ -16,12 +16,12 @@ class DemoLivestreamChatChannelVC: _ViewController,
     /// Controller for observing data changes within the channel.
     var livestreamChannelController: LivestreamChannelController!
 
+    /// Controller to observe web socket events.
+    lazy var eventsController = livestreamChannelController.client.eventsController()
+
     /// User search controller for suggestion users when typing in the composer.
     lazy var userSuggestionSearchController: ChatUserSearchController =
         livestreamChannelController.client.userSearchController()
-
-    /// A controller for observing web socket events.
-    lazy var eventsController: EventsController = client.eventsController()
 
     /// The size of the channel avatar.
     var channelAvatarSize: CGSize {
@@ -58,38 +58,8 @@ class DemoLivestreamChatChannelVC: _ViewController,
         messageListVC.listView.isLastCellFullyVisible
     }
 
-    private var isLastMessageVisibleOrSeen: Bool {
-        isLastMessageFullyVisible
-    }
-
     /// Banner view to show when chat is paused due to scrolling
-    private lazy var pauseBannerView: UIView = {
-        let banner = UIView()
-        banner.backgroundColor = appearance.colorPalette.background2
-        banner.layer.cornerRadius = 12
-        banner.layer.shadowColor = UIColor.black.cgColor
-        banner.layer.shadowOffset = CGSize(width: 0, height: 2)
-        banner.layer.shadowOpacity = 0.1
-        banner.layer.shadowRadius = 4
-        banner.translatesAutoresizingMaskIntoConstraints = false
-
-        let label = UILabel()
-        label.text = "Chat paused due to scroll"
-        label.font = appearance.fonts.footnote
-        label.textColor = appearance.colorPalette.text
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-
-        banner.addSubview(label)
-        NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: banner.leadingAnchor, constant: 16),
-            label.trailingAnchor.constraint(equalTo: banner.trailingAnchor, constant: -16),
-            label.topAnchor.constraint(equalTo: banner.topAnchor, constant: 8),
-            label.bottomAnchor.constraint(equalTo: banner.bottomAnchor, constant: -8)
-        ])
-
-        return banner
-    }()
+    private lazy var pauseBannerView = LivestreamPauseBannerView()
 
     override func setUp() {
         super.setUp()
@@ -113,12 +83,6 @@ class DemoLivestreamChatChannelVC: _ViewController,
         messageListVC.swipeToReplyGestureHandler.onReply = { [weak self] message in
             self?.messageComposerVC.content.quoteMessage(message)
         }
-
-        // Initialize messages from controller
-        messages = livestreamChannelController.messages
-
-        // Initialize pause banner state
-        pauseBannerView.alpha = 0.0
     }
 
     private func setChannelControllerToComposerIfNeeded() {
@@ -172,23 +136,12 @@ class DemoLivestreamChatChannelVC: _ViewController,
                 constant: -16
             )
         ])
-
-        // Initially hide the banner
-        pauseBannerView.isHidden = true
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         keyboardHandler.start()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        if let draftMessage = livestreamChannelController.channel?.draftMessage {
-            messageComposerVC.content.draftMessage(draftMessage)
-        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -209,29 +162,6 @@ class DemoLivestreamChatChannelVC: _ViewController,
         setChannelControllerToComposerIfNeeded()
         setChannelControllerToMessageListIfNeeded()
         messageComposerVC.updateContent()
-    }
-
-    // MARK: - Actions
-
-    /// Jump to a given message.
-    /// In case the message is already loaded, it directly goes to it.
-    /// If not, it will load the messages around it and go to that page.
-    ///
-    /// This function is an high-level abstraction of `messageListVC.jumpToMessage(id:onHighlight:)`.
-    ///
-    /// - Parameters:
-    ///   - id: The id of message which the message list should go to.
-    ///   - animated: `true` if you want to animate the change in position; `false` if it should be immediate.
-    ///   - shouldHighlight: Whether the message should be highlighted when jumping to it. By default it is highlighted.
-    func jumpToMessage(id: MessageId, animated: Bool = true, shouldHighlight: Bool = true) {
-        if shouldHighlight {
-            messageListVC.jumpToMessage(id: id, animated: animated) { [weak self] indexPath in
-                self?.messageListVC.highlightCell(at: indexPath)
-            }
-            return
-        }
-
-        messageListVC.jumpToMessage(id: id, animated: animated)
     }
 
     // MARK: - ChatMessageListVCDataSource
@@ -298,8 +228,8 @@ class DemoLivestreamChatChannelVC: _ViewController,
             livestreamChannelController.resume()
         }
 
-        if isLastMessageFullyVisible {
-            messageListVC.scrollToBottomButton.isHidden = true
+        if !isLastMessageFullyVisible && !livestreamChannelController.isPaused && scrollView.isDragging {
+            livestreamChannelController.pause()
         }
     }
 
@@ -317,9 +247,6 @@ class DemoLivestreamChatChannelVC: _ViewController,
 
         // Load older messages when displaying messages near the end of the array
         if indexPath.item >= messageCount - 10 {
-            if messageListVC.listView.isDragging && !messageListVC.listView.isLastCellFullyVisible {
-                livestreamChannelController.pause()
-            }
             livestreamChannelController.loadPreviousMessages()
         }
     }
@@ -345,6 +272,11 @@ class DemoLivestreamChatChannelVC: _ViewController,
             }
         case is MarkUnreadActionItem:
             dismiss(animated: true)
+        case is CopyActionItem:
+            UIPasteboard.general.string = message.text
+            dismiss(animated: true) { [weak self] in
+                self?.presentAlert(title: "Message copied to clipboard")
+            }
         default:
             return
         }
@@ -420,30 +352,33 @@ class DemoLivestreamChatChannelVC: _ViewController,
         messageListVC.scrollToBottomButton.content = .init(messages: skippedMessagesAmount, mentions: 0)
     }
 
-    // MARK: - EventsControllerDelegate
+    func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
+        if event is NewMessagePendingEvent {
+            if livestreamChannelController.isPaused {
+                pauseBannerView.setState(.resuming)
+            }
+        }
 
-    func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        if let newMessagePendingEvent = event as? NewMessagePendingEvent {
-            let newMessage = newMessagePendingEvent.message
-            if !isFirstPageLoaded && newMessage.isSentByCurrentUser && !newMessage.isPartOfThread {
-                livestreamChannelController.loadFirstPage()
+        if let newMessageEvent = event as? MessageNewEvent, newMessageEvent.message.isSentByCurrentUser {
+            if livestreamChannelController.isPaused {
+                pauseBannerView.setState(.resuming)
+                livestreamChannelController.resume()
             }
         }
     }
 
-    /// Shows or hides the pause banner with animation
+    /// Shows or hides the pause banner.
     private func showPauseBanner(_ show: Bool) {
-        UIView.animate(withDuration: 0.3, animations: {
-            self.pauseBannerView.isHidden = !show
-            self.pauseBannerView.alpha = show ? 1.0 : 0.0
-        })
+        if show {
+            pauseBannerView.setState(.paused)
+        }
+        pauseBannerView.setVisible(show, animated: true)
     }
 }
 
 /// A custom composer view controller for livestream channels that uses LivestreamChannelController
 /// and disables voice recording functionality.
 class DemoLivestreamComposerVC: ComposerVC {
-    /// Reference to the livestream channel controller
     var livestreamChannelController: LivestreamChannelController?
 
     override func addAttachmentToContent(

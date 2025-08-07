@@ -10,7 +10,6 @@ import UIKit
 /// A custom message list view controller for livestream channels that uses LivestreamChannelController
 /// instead of MessageController and shows a custom bottom sheet for message actions.
 class DemoLivestreamChatMessageListVC: ChatMessageListVC {
-    /// The livestream channel controller for managing channel operations
     public weak var livestreamChannelController: LivestreamChannelController?
 
     override func didSelectMessageCell(at indexPath: IndexPath) {
@@ -22,13 +21,11 @@ class DemoLivestreamChatMessageListVC: ChatMessageListVC {
             let livestreamChannelController = livestreamChannelController
         else { return }
 
-        // Create the custom livestream actions view controller
         let actionsController = DemoLivestreamMessageActionsVC()
         actionsController.message = message
         actionsController.livestreamChannelController = livestreamChannelController
         actionsController.delegate = self
-        
-        // Present as bottom sheet
+
         actionsController.modalPresentationStyle = .pageSheet
         
         if #available(iOS 16.0, *) {
@@ -54,14 +51,12 @@ class DemoLivestreamChatMessageListVC: ChatMessageListVC {
             let message = messageContentView.content,
             let livestreamChannelController = livestreamChannelController
         else { return }
-        
-        // Create SwiftUI reactions list view
+
         let reactionsView = DemoLivestreamReactionsListView(
             message: message,
             controller: livestreamChannelController
         )
-        
-        // Present as a SwiftUI sheet
+
         let hostingController = UIHostingController(rootView: reactionsView)
         hostingController.modalPresentationStyle = .pageSheet
         
@@ -89,7 +84,6 @@ extension DemoLivestreamChatMessageListVC: LivestreamMessageActionsVCDelegate {
         message: ChatMessage,
         didTapOnActionItem actionItem: ChatMessageActionItem
     ) {
-        // Handle action items that need to be delegated to the parent
         delegate?.chatMessageListVC(self, didTapOnAction: actionItem, for: message)
     }
 }
