@@ -304,8 +304,9 @@ class DemoLivestreamChatChannelVC: _ViewController,
             dismiss(animated: true)
         case is CopyActionItem:
             UIPasteboard.general.string = message.text
-            presentAlert(title: "Message copied to clipboard")
-            dismiss(animated: true)
+            dismiss(animated: true) { [weak self] in
+                self?.presentAlert(title: "Message copied to clipboard")
+            }
         default:
             return
         }
