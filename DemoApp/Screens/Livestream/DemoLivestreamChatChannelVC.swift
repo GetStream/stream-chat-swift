@@ -16,12 +16,11 @@ class DemoLivestreamChatChannelVC: _ViewController,
     /// Controller for observing data changes within the channel.
     var livestreamChannelController: LivestreamChannelController!
 
+    lazy var eventsController = livestreamChannelController.client.eventsController()
+
     /// User search controller for suggestion users when typing in the composer.
     lazy var userSuggestionSearchController: ChatUserSearchController =
         livestreamChannelController.client.userSearchController()
-
-    /// A controller for observing web socket events.
-    lazy var eventsController: EventsController = client.eventsController()
 
     /// The size of the channel avatar.
     var channelAvatarSize: CGSize {
@@ -63,33 +62,7 @@ class DemoLivestreamChatChannelVC: _ViewController,
     }
 
     /// Banner view to show when chat is paused due to scrolling
-    private lazy var pauseBannerView: UIView = {
-        let banner = UIView()
-        banner.backgroundColor = appearance.colorPalette.background2
-        banner.layer.cornerRadius = 12
-        banner.layer.shadowColor = UIColor.black.cgColor
-        banner.layer.shadowOffset = CGSize(width: 0, height: 2)
-        banner.layer.shadowOpacity = 0.1
-        banner.layer.shadowRadius = 4
-        banner.translatesAutoresizingMaskIntoConstraints = false
-
-        let label = UILabel()
-        label.text = "Chat paused due to scroll"
-        label.font = appearance.fonts.footnote
-        label.textColor = appearance.colorPalette.text
-        label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
-
-        banner.addSubview(label)
-        NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: banner.leadingAnchor, constant: 16),
-            label.trailingAnchor.constraint(equalTo: banner.trailingAnchor, constant: -16),
-            label.topAnchor.constraint(equalTo: banner.topAnchor, constant: 8),
-            label.bottomAnchor.constraint(equalTo: banner.bottomAnchor, constant: -8)
-        ])
-
-        return banner
-    }()
+    private lazy var pauseBannerView = LivestreamPauseBannerView()
 
     override func setUp() {
         super.setUp()
@@ -114,11 +87,7 @@ class DemoLivestreamChatChannelVC: _ViewController,
             self?.messageComposerVC.content.quoteMessage(message)
         }
 
-        // Initialize messages from controller
-        messages = livestreamChannelController.messages
-
-        // Initialize pause banner state
-        pauseBannerView.alpha = 0.0
+        // Initialize pause banner state - no need to set alpha as it's handled in the banner view
     }
 
     private func setChannelControllerToComposerIfNeeded() {
@@ -173,22 +142,13 @@ class DemoLivestreamChatChannelVC: _ViewController,
             )
         ])
 
-        // Initially hide the banner
-        pauseBannerView.isHidden = true
+        // Banner is already hidden by default in its implementation
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         keyboardHandler.start()
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
-        if let draftMessage = livestreamChannelController.channel?.draftMessage {
-            messageComposerVC.content.draftMessage(draftMessage)
-        }
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -298,8 +258,8 @@ class DemoLivestreamChatChannelVC: _ViewController,
             livestreamChannelController.resume()
         }
 
-        if isLastMessageFullyVisible {
-            messageListVC.scrollToBottomButton.isHidden = true
+        if !isLastMessageFullyVisible && !livestreamChannelController.isPaused && scrollView.isDragging {
+            livestreamChannelController.pause()
         }
     }
 
@@ -317,9 +277,6 @@ class DemoLivestreamChatChannelVC: _ViewController,
 
         // Load older messages when displaying messages near the end of the array
         if indexPath.item >= messageCount - 10 {
-            if messageListVC.listView.isDragging && !messageListVC.listView.isLastCellFullyVisible {
-                livestreamChannelController.pause()
-            }
             livestreamChannelController.loadPreviousMessages()
         }
     }
@@ -424,23 +381,28 @@ class DemoLivestreamChatChannelVC: _ViewController,
         messageListVC.scrollToBottomButton.content = .init(messages: skippedMessagesAmount, mentions: 0)
     }
 
-    // MARK: - EventsControllerDelegate
+    func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
+        if event is NewMessagePendingEvent {
+            if livestreamChannelController.isPaused {
+                pauseBannerView.setState(.resuming)
+            }
+        }
 
-    func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        if let newMessagePendingEvent = event as? NewMessagePendingEvent {
-            let newMessage = newMessagePendingEvent.message
-            if !isFirstPageLoaded && newMessage.isSentByCurrentUser && !newMessage.isPartOfThread {
-                livestreamChannelController.loadFirstPage()
+        if let newMessageEvent = event as? MessageNewEvent, newMessageEvent.message.isSentByCurrentUser {
+            if livestreamChannelController.isPaused {
+                pauseBannerView.setState(.resuming)
+                livestreamChannelController.resume()
             }
         }
     }
 
     /// Shows or hides the pause banner with animation
     private func showPauseBanner(_ show: Bool) {
-        UIView.animate(withDuration: 0.3, animations: {
-            self.pauseBannerView.isHidden = !show
-            self.pauseBannerView.alpha = show ? 1.0 : 0.0
-        })
+        if show {
+            // Reset to paused state when showing the banner
+            pauseBannerView.setState(.paused)
+        }
+        pauseBannerView.setVisible(show, animated: true)
     }
 }
 

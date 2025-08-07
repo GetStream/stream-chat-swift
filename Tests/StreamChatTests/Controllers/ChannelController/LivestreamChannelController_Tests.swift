@@ -508,9 +508,19 @@ extension LivestreamChannelController_Tests {
         XCTAssertTrue(controller.isPaused)
         
         // When
-        controller.resume()
-        
+        let exp = expectation(description: "resume completes")
+        controller.resume { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: .unique)
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+
         // Then
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertFalse(controller.isPaused)
     }
     
@@ -569,6 +579,25 @@ extension LivestreamChannelController_Tests {
         
         // Then
         XCTAssertNil(apiClient.request_endpoint)
+    }
+    
+    func test_resume_whenAlreadyResuming_doesNothing() {
+        // Given
+        controller.pause()
+        XCTAssertTrue(controller.isPaused)
+        
+        // Trigger first resume
+        controller.resume()
+        
+        let apiClient = client.mockAPIClient
+        let firstCallCount = apiClient.request_allRecordedCalls.count
+        
+        // When - call resume again while already resuming
+        controller.resume()
+        
+        // Then - no additional API call should be made
+        let secondCallCount = apiClient.request_allRecordedCalls.count
+        XCTAssertEqual(firstCallCount, secondCallCount, "No additional loadFirstPage call should be made when already resuming")
     }
 }
 
@@ -901,7 +930,45 @@ extension LivestreamChannelController_Tests {
         XCTAssertEqual(controller.messages.count, 1)
         XCTAssertEqual(controller.messages.first?.id, "new")
     }
-    
+
+    func test_didReceiveEvent_messageNewEvent_whenLimited_shouldCapMessagesArray() {
+        controller.maxMessageLimitOptions = .init(
+            maxLimit: 100,
+            discardAmount: 50
+        )
+
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+
+        let channelPayload = dummyPayload(with: controller.cid!, numberOfMessages: 100)
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // When
+        let newMessage = ChatMessage.mock(id: "new", cid: controller.cid!, text: "New message")
+        let event = MessageNewEvent(
+            user: .mock(id: .unique),
+            message: newMessage,
+            channel: .mock(cid: controller.cid!),
+            createdAt: .unique,
+            watcherCount: nil,
+            unreadCount: nil
+        )
+        controller.eventsController(
+            EventsController(
+                notificationCenter: client.eventNotificationCenter
+            ),
+            didReceiveEvent: event
+        )
+
+        // Then
+        XCTAssertEqual(controller.messages.count, 50)
+        XCTAssertEqual(controller.messages.first?.id, "new")
+    }
+
     func test_didReceiveEvent_newMessagePendingEvent_addsMessageToArray() {
         let pendingMessage = ChatMessage.mock(id: "pending", cid: controller.cid!, text: "Pending message")
         let event = NewMessagePendingEvent(
@@ -920,6 +987,27 @@ extension LivestreamChannelController_Tests {
         // Then
         XCTAssertEqual(controller.messages.count, 1)
         XCTAssertEqual(controller.messages.first?.id, "pending")
+    }
+    
+    func test_didReceiveEvent_newMessagePendingEvent_whenPaused_isIgnored() {
+        // Given
+        controller.pause()
+        let pendingMessage = ChatMessage.mock(id: "pending", cid: controller.cid!, text: "Pending message")
+        let event = NewMessagePendingEvent(
+            message: pendingMessage,
+            cid: controller.cid!
+        )
+        
+        // When
+        controller.eventsController(
+            EventsController(
+                notificationCenter: client.eventNotificationCenter
+            ),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.messages.count, 0) // Message not added when paused
     }
     
     func test_didReceiveEvent_messageUpdatedEvent_updatesExistingMessage() {
@@ -1195,6 +1283,86 @@ extension LivestreamChannelController_Tests {
         // Then
         XCTAssertEqual(controller.skippedMessagesAmount, 1)
         XCTAssertTrue(controller.messages.isEmpty) // Message not added when paused
+    }
+    
+    func test_didReceiveEvent_whenPaused_newMessagePendingEvent_doesNotResumeController() {
+        // Given
+        let currentUserId = UserId.unique
+        client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        controller.pause()
+        XCTAssertTrue(controller.isPaused)
+        
+        let pendingMessage = ChatMessage.mock(
+            id: "pending-message",
+            cid: controller.cid!,
+            text: "Pending message",
+            author: .mock(id: currentUserId)
+        )
+        let event = NewMessagePendingEvent(
+            message: pendingMessage,
+            cid: controller.cid!
+        )
+        
+        // When
+        controller.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        
+        // Then
+        XCTAssertTrue(controller.isPaused) // Controller should remain paused
+        XCTAssertEqual(controller.messages.count, 0) // Message should not be added when paused
+    }
+    
+    func test_didReceiveEvent_whenAlreadyResuming_messageNewEventFromCurrentUser_doesNotTriggerAnotherResume() {
+        // Given
+        let currentUserId = UserId.unique
+        client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        controller.pause()
+        XCTAssertTrue(controller.isPaused)
+        
+        // Start the first resume process
+        let firstMessage = ChatMessage.mock(
+            id: "first-message",
+            cid: controller.cid!,
+            text: "First message",
+            author: .mock(id: currentUserId)
+        )
+        let firstEvent = MessageNewEvent(
+            user: .mock(id: currentUserId),
+            message: firstMessage,
+            channel: .mock(cid: controller.cid!),
+            createdAt: .unique,
+            watcherCount: nil,
+            unreadCount: nil
+        )
+        
+        // Trigger first resume
+        controller.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: firstEvent)
+        
+        // At this point, controller should be in isResuming state (isPaused=true, isResuming=true)
+        let apiClient = client.mockAPIClient
+        let firstCallCount = apiClient.request_allRecordedCalls.count
+        
+        // Create a second message event from current user while still resuming
+        let secondMessage = ChatMessage.mock(
+            id: "second-message",
+            cid: controller.cid!,
+            text: "Second message",
+            author: .mock(id: currentUserId)
+        )
+        let secondEvent = MessageNewEvent(
+            user: .mock(id: currentUserId),
+            message: secondMessage,
+            channel: .mock(cid: controller.cid!),
+            createdAt: .unique,
+            watcherCount: nil,
+            unreadCount: nil
+        )
+        
+        // When - trigger second event while still resuming
+        controller.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: secondEvent)
+        
+        // Then - no additional API call should be made for loadFirstPage
+        let secondCallCount = apiClient.request_allRecordedCalls.count
+        XCTAssertEqual(firstCallCount, secondCallCount, "No additional loadFirstPage call should be made when already resuming")
     }
 }
 
