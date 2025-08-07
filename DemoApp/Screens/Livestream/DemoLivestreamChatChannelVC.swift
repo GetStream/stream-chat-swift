@@ -345,6 +345,10 @@ class DemoLivestreamChatChannelVC: _ViewController,
             }
         case is MarkUnreadActionItem:
             dismiss(animated: true)
+        case is CopyActionItem:
+            UIPasteboard.general.string = message.text
+            presentAlert(title: "Message copied to clipboard")
+            dismiss(animated: true)
         default:
             return
         }
