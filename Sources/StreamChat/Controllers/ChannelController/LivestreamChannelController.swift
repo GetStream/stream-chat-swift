@@ -725,6 +725,9 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     /// After resuming, new messages will be added to the messages array again.
     public func resume(completion: (@MainActor(Error?) -> Void)? = nil) {
         guard isPaused, !isResuming else {
+            callback {
+                completion?(nil)
+            }
             return
         }
 
