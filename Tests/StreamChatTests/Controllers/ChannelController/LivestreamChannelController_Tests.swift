@@ -1268,7 +1268,102 @@ extension LivestreamChannelController_Tests {
             )
         }
     }
-
+    
+    func test_didReceiveEvent_channelTruncatedEvent_updatesChannelAndMessages() {
+        // Given - Set up initial channel with messages
+        let cid = controller.cid!
+        let initialMessage1 = ChatMessage.mock(id: "message1", cid: cid, text: "Message 1")
+        let initialMessage2 = ChatMessage.mock(id: "message2", cid: cid, text: "Message 2")
+        
+        // Load initial messages
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: MessageNewEvent(
+                user: .mock(id: .unique),
+                message: initialMessage1,
+                channel: .mock(cid: cid),
+                createdAt: .unique,
+                watcherCount: nil,
+                unreadCount: nil
+            )
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: MessageNewEvent(
+                user: .mock(id: .unique),
+                message: initialMessage2,
+                channel: .mock(cid: cid),
+                createdAt: .unique,
+                watcherCount: nil,
+                unreadCount: nil
+            )
+        )
+        XCTAssertEqual(controller.messages.count, 2)
+        
+        // Create truncated channel and truncation message
+        let truncatedChannel = ChatChannel.mock(cid: cid, name: "Truncated Channel")
+        let truncationMessage = ChatMessage.mock(id: "truncation", cid: cid, text: "Channel was truncated")
+        
+        let event = ChannelTruncatedEvent(
+            channel: truncatedChannel,
+            user: .mock(id: .unique),
+            message: truncationMessage,
+            createdAt: .unique
+        )
+        
+        // When
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.name, "Truncated Channel")
+        XCTAssertEqual(controller.messages.count, 1)
+        XCTAssertEqual(controller.messages.first?.id, "truncation")
+        XCTAssertEqual(controller.messages.first?.text, "Channel was truncated")
+    }
+    
+    func test_didReceiveEvent_channelTruncatedEventWithoutMessage_clearsMessages() {
+        // Given - Set up initial channel with messages
+        let cid = controller.cid!
+        let initialMessage = ChatMessage.mock(id: "message1", cid: cid, text: "Message 1")
+        
+        // Load initial message
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: MessageNewEvent(
+                user: .mock(id: .unique),
+                message: initialMessage,
+                channel: .mock(cid: cid),
+                createdAt: .unique,
+                watcherCount: nil,
+                unreadCount: nil
+            )
+        )
+        XCTAssertEqual(controller.messages.count, 1)
+        
+        // Create truncated channel without truncation message
+        let truncatedChannel = ChatChannel.mock(cid: cid, name: "Truncated Channel")
+        
+        let event = ChannelTruncatedEvent(
+            channel: truncatedChannel,
+            user: .mock(id: .unique),
+            message: nil, // No truncation message
+            createdAt: .unique
+        )
+        
+        // When
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.name, "Truncated Channel")
+        XCTAssertTrue(controller.messages.isEmpty)
+    }
+    
     func test_didReceiveEvent_differentChannelEvent_isIgnored() {
         let otherChannelId = ChannelId.unique
         let messageFromOtherChannel = ChatMessage.mock(id: "other", cid: otherChannelId, text: "Other message")
