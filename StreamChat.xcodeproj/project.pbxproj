@@ -1620,6 +1620,7 @@
 		AD7C76812E4275B3009250FB /* LivestreamChannelController_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76802E4275B3009250FB /* LivestreamChannelController_Tests.swift */; };
 		AD7C76832E42C0B5009250FB /* LivestreamChannelController+Combine_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76822E42C0B5009250FB /* LivestreamChannelController+Combine_Tests.swift */; };
 		AD7C76852E42CDF6009250FB /* ManualEventHandler_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76842E42CDF6009250FB /* ManualEventHandler_Mock.swift */; };
+		AD7C76872E42E69C009250FB /* LivestreamPauseBannerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7C76862E42E69C009250FB /* LivestreamPauseBannerView.swift */; };
 		AD7CF1712694ABCE00F3101D /* ComposerVC_Documentation_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */; };
 		AD7DFC3625D2FA8100DD9DA3 /* CurrentUserUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7DFC3525D2FA8100DD9DA3 /* CurrentUserUpdater.swift */; };
 		AD7EFDA72C7796D400625FC5 /* PollCommentListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7EFDA52C77749300625FC5 /* PollCommentListVC.swift */; };
@@ -4423,6 +4424,7 @@
 		AD7C76802E4275B3009250FB /* LivestreamChannelController_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivestreamChannelController_Tests.swift; sourceTree = "<group>"; };
 		AD7C76822E42C0B5009250FB /* LivestreamChannelController+Combine_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "LivestreamChannelController+Combine_Tests.swift"; sourceTree = "<group>"; };
 		AD7C76842E42CDF6009250FB /* ManualEventHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManualEventHandler_Mock.swift; sourceTree = "<group>"; };
+		AD7C76862E42E69C009250FB /* LivestreamPauseBannerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivestreamPauseBannerView.swift; sourceTree = "<group>"; };
 		AD7CF16F2694ABC500F3101D /* ComposerVC_Documentation_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ComposerVC_Documentation_Tests.swift; sourceTree = "<group>"; };
 		AD7D633225AF577E0051219B /* UserUpdateResponse+MissingUser.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "UserUpdateResponse+MissingUser.json"; sourceTree = "<group>"; };
 		AD7DFBEB25D2AE7400DD9DA3 /* TestDataModel2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = TestDataModel2.xcdatamodel; sourceTree = "<group>"; };
@@ -8836,6 +8838,7 @@
 		AD7C76732E3CF0CD009250FB /* Livestream */ = {
 			isa = PBXGroup;
 			children = (
+				AD7C76862E42E69C009250FB /* LivestreamPauseBannerView.swift */,
 				AD26CB762E3ACAA0002FC1A7 /* DemoLivestreamChatChannelVC.swift */,
 				AD7C766D2E3CE1E0009250FB /* DemoLivestreamChatMessageListVC.swift */,
 				AD7C766F2E3CE1E0009250FB /* DemoLivestreamMessageActionsVC.swift */,
@@ -11283,6 +11286,7 @@
 				AD7110C42B3434F700AFFE28 /* StreamRuntimeCheck+StreamInternal.swift in Sources */,
 				AD6BEFF227862F9300E184B4 /* AppConfigViewController.swift in Sources */,
 				792DDA5C256FB69E001DB91B /* SceneDelegate.swift in Sources */,
+				AD7C76872E42E69C009250FB /* LivestreamPauseBannerView.swift in Sources */,
 				C1CEF9072A1BC4E800414931 /* UserProfileViewController.swift in Sources */,
 				A3227E62284A499500EBE6CC /* SearchUserCell.swift in Sources */,
 				A3227E76284A4C6400EBE6CC /* MessageReactionType+Position.swift in Sources */,

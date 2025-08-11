@@ -65,6 +65,8 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         }
     }
 
+    private var isResuming: Bool = false
+
     /// The amount of messages that were skipped during the pause state.
     public private(set) var skippedMessagesAmount: Int = 0 {
         didSet {
@@ -721,13 +723,24 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     ///
     /// This will load the first page, reseting the current messages  and returning to the latest messages.
     /// After resuming, new messages will be added to the messages array again.
-    public func resume() {
-        guard isPaused else { return }
-        isPaused = false
+    public func resume(completion: (@MainActor(Error?) -> Void)? = nil) {
+        guard isPaused, !isResuming else {
+            callback {
+                completion?(nil)
+            }
+            return
+        }
+
         if countSkippedMessagesWhenPaused {
             skippedMessagesAmount = 0
         }
-        loadFirstPage()
+        
+        isResuming = true
+        loadFirstPage { [weak self] error in
+            self?.isPaused = false
+            self?.isResuming = false
+            completion?(error)
+        }
     }
 
     // MARK: - EventsControllerDelegate
@@ -850,7 +863,16 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         case let messageNewEvent as MessageNewEvent:
             handleNewMessage(messageNewEvent.message)
 
+            // Apply message limit only when not paused
+            if !isPaused {
+                applyMessageLimit()
+            }
+
         case let localMessageNewEvent as NewMessagePendingEvent:
+            if isPaused {
+                break
+            }
+            
             handleNewMessage(localMessageNewEvent.message)
 
         case let messageUpdatedEvent as MessageUpdatedEvent:
@@ -925,17 +947,6 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         }
 
         messages.insert(message, at: 0)
-
-        // Apply message limit only when not paused
-        if !isPaused {
-            applyMessageLimit()
-        }
-
-        // If paused and the message is from the current user, load the first page
-        // to go back to the latest messages
-        if isPaused && message.author.id == currentUserId {
-            resume()
-        }
     }
 
     private func handleUpdatedMessage(_ updatedMessage: ChatMessage) {
