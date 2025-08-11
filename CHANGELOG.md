@@ -3,7 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Handle member-related events in `LivestreamChannelController` [#3775](https://github.com/GetStream/stream-chat-swift/pull/3775)
+- Handle channel truncation events in `LivestreamChannelController` [#3775](https://github.com/GetStream/stream-chat-swift/pull/3775)
 
 # [4.84.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.84.0)
 _August 06, 2025_
