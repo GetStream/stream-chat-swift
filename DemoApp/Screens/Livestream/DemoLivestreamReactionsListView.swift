@@ -112,7 +112,6 @@ private struct ReactionRowView: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            // User avatar
             if #available(iOS 15.0, *) {
                 AsyncImage(url: reaction.author.imageURL) { image in
                     image
@@ -143,7 +142,6 @@ private struct ReactionRowView: View {
 
             Spacer()
 
-            // Reaction emoji/image
             if let reactionAppearance = Appearance.default.images.availableReactions[reaction.type] {
                 if #available(iOS 15.0, *) {
                     Image(uiImage: reactionAppearance.largeIcon)
