@@ -26,6 +26,7 @@ extension ChannelDetailPayload {
         isDisabled: Bool = false,
         isHidden: Bool? = nil,
         members: [MemberPayload] = [],
+        memberCount: Int? = nil,
         team: String? = nil,
         cooldownDuration: Int = 0
     ) -> Self {
@@ -48,7 +49,7 @@ extension ChannelDetailPayload {
             isBlocked: isBlocked,
             isHidden: isHidden,
             members: members,
-            memberCount: members.count,
+            memberCount: memberCount ?? members.count,
             team: team,
             cooldownDuration: cooldownDuration
         )

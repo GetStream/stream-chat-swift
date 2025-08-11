@@ -50,6 +50,35 @@ class DemoLivestreamChatChannelVC: _ViewController,
         .channelAvatarView.init()
         .withoutAutoresizingMaskConstraints
 
+    /// Title label shown in the navigation bar.
+    private lazy var titleLabel: UILabel = {
+        let label = UILabel()
+        label.font = appearance.fonts.subheadlineBold
+        label.textColor = appearance.colorPalette.text
+        label.textAlignment = .center
+        label.setContentHuggingPriority(.required, for: .vertical)
+        return label
+    }()
+
+    /// Subtitle label showing members and online watchers in the navigation bar.
+    private lazy var subtitleLabel: UILabel = {
+        let label = UILabel()
+        label.font = appearance.fonts.footnote
+        label.textColor = appearance.colorPalette.subtitleText
+        label.textAlignment = .center
+        label.setContentCompressionResistancePriority(.required, for: .vertical)
+        return label
+    }()
+
+    /// Stack view containing title and subtitle for the navigation bar.
+    private lazy var titleStackView: UIStackView = {
+        let stack = UIStackView(arrangedSubviews: [titleLabel, subtitleLabel])
+        stack.axis = .vertical
+        stack.alignment = .center
+        stack.spacing = 0
+        return stack
+    }()
+
     /// The message composer bottom constraint used for keyboard animation handling.
     var messageComposerBottomConstraint: NSLayoutConstraint?
 
@@ -123,6 +152,10 @@ class DemoLivestreamChatChannelVC: _ViewController,
 
         navigationItem.rightBarButtonItem = UIBarButtonItem(customView: channelAvatarView)
         channelAvatarView.content = (livestreamChannelController.channel, client.currentUserId)
+
+        // Set up custom title view with channel name and member/online counts
+        navigationItem.titleView = titleStackView
+        updateNavigationTitle()
 
         // Add pause banner
         view.addSubview(pauseBannerView)
@@ -313,7 +346,7 @@ class DemoLivestreamChatChannelVC: _ViewController,
         didUpdateChannel channel: ChatChannel
     ) {
         channelAvatarView.content = (livestreamChannelController.channel, client.currentUserId)
-        navigationItem.title = channel.name
+        updateNavigationTitle()
     }
 
     func livestreamChannelController(
@@ -373,6 +406,19 @@ class DemoLivestreamChatChannelVC: _ViewController,
             pauseBannerView.setState(.paused)
         }
         pauseBannerView.setVisible(show, animated: true)
+    }
+
+    /// Updates the navigation title and subtitle with channel name, member count and online watcher count.
+    private func updateNavigationTitle() {
+        let channel = livestreamChannelController.channel
+        titleLabel.text = channel?.name ?? ""
+
+        let memberCount = channel?.memberCount ?? 0
+        let watcherCount = channel?.watcherCount ?? 0
+
+        let membersText = memberCount == 1 ? "1 member" : "\(memberCount) members"
+        let onlineText = watcherCount == 1 ? "1 online" : "\(watcherCount) online"
+        subtitleLabel.text = "\(membersText), \(onlineText)"
     }
 }
 

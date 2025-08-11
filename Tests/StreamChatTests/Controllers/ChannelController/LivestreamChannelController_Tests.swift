@@ -1226,9 +1226,230 @@ extension LivestreamChannelController_Tests {
             ),
             didReceiveEvent: event
         )
-        
+
         // Then
         XCTAssertEqual(controller.channel?.name, "Updated Name")
+    }
+
+    // MARK: - Member Update Events Tests
+
+    func test_didReceiveEvent_memberRelatedEvents_updateChannelFromDataStore() {
+        let cid = controller.cid!
+
+        // Test data for all member-related events
+        let memberEvents: [(event: Event, description: String)] = [
+            (
+                MemberAddedEvent(
+                    user: .mock(id: .unique),
+                    cid: cid,
+                    member: .mock(id: .unique),
+                    createdAt: .unique
+                ),
+                "MemberAddedEvent"
+            ),
+            (
+                MemberRemovedEvent(
+                    user: .mock(id: .unique),
+                    cid: cid,
+                    createdAt: .unique
+                ),
+                "MemberRemovedEvent"
+            ),
+            (
+                MemberUpdatedEvent(
+                    user: .mock(id: .unique),
+                    cid: cid,
+                    member: .mock(id: .unique),
+                    createdAt: .unique
+                ),
+                "MemberUpdatedEvent"
+            ),
+            (
+                NotificationAddedToChannelEvent(
+                    channel: .mock(cid: cid),
+                    unreadCount: nil,
+                    member: .mock(id: .unique),
+                    createdAt: .unique
+                ),
+                "NotificationAddedToChannelEvent"
+            ),
+            (
+                NotificationRemovedFromChannelEvent(
+                    user: .mock(id: .unique),
+                    cid: cid,
+                    member: .mock(id: .unique),
+                    createdAt: .unique
+                ),
+                "NotificationRemovedFromChannelEvent"
+            ),
+            (
+                NotificationInvitedEvent(
+                    user: .mock(id: .unique),
+                    cid: cid,
+                    member: .mock(id: .unique),
+                    createdAt: .unique
+                ),
+                "NotificationInvitedEvent"
+            ),
+            (
+                NotificationInviteAcceptedEvent(
+                    user: .mock(id: .unique),
+                    channel: .mock(cid: cid),
+                    member: .mock(id: .unique),
+                    createdAt: .unique
+                ),
+                "NotificationInviteAcceptedEvent"
+            ),
+            (
+                NotificationInviteRejectedEvent(
+                    user: .mock(id: .unique),
+                    channel: .mock(cid: cid),
+                    member: .mock(id: .unique),
+                    createdAt: .unique
+                ),
+                "NotificationInviteRejectedEvent"
+            )
+        ]
+
+        // Test each member-related event
+        for (index, (event, description)) in memberEvents.enumerated() {
+            let initialMemberCount = 10 + index
+            let updatedMemberCount = 20 + index
+
+            // Given - Set up initial channel in database
+            let initialChannelPayload = ChannelPayload.dummy(
+                channel: .dummy(cid: cid, memberCount: initialMemberCount)
+            )
+            try! client.databaseContainer.writeSynchronously { session in
+                try session.saveChannel(payload: initialChannelPayload)
+            }
+
+            // Load initial data
+            let exp = expectation(description: "sync completes")
+            controller.synchronize { _ in
+                exp.fulfill()
+            }
+            client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload))
+
+            waitForExpectations(timeout: defaultTimeout)
+            XCTAssertEqual(controller.channel?.memberCount, initialMemberCount, "Initial setup failed for \(description)")
+
+            // Update channel in database with new member count
+            let updatedChannelPayload = ChannelPayload.dummy(
+                channel: .dummy(cid: cid, memberCount: updatedMemberCount)
+            )
+            try! client.databaseContainer.writeSynchronously { session in
+                try session.saveChannel(payload: updatedChannelPayload)
+            }
+
+            // When
+            controller.eventsController(
+                EventsController(notificationCenter: client.eventNotificationCenter),
+                didReceiveEvent: event
+            )
+
+            // Then
+            XCTAssertEqual(
+                controller.channel?.memberCount,
+                updatedMemberCount,
+                "\(description) should update channel from data store"
+            )
+        }
+    }
+    
+    func test_didReceiveEvent_channelTruncatedEvent_updatesChannelAndMessages() {
+        // Given - Set up initial channel with messages
+        let cid = controller.cid!
+        let initialMessage1 = ChatMessage.mock(id: "message1", cid: cid, text: "Message 1")
+        let initialMessage2 = ChatMessage.mock(id: "message2", cid: cid, text: "Message 2")
+        
+        // Load initial messages
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: MessageNewEvent(
+                user: .mock(id: .unique),
+                message: initialMessage1,
+                channel: .mock(cid: cid),
+                createdAt: .unique,
+                watcherCount: nil,
+                unreadCount: nil
+            )
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: MessageNewEvent(
+                user: .mock(id: .unique),
+                message: initialMessage2,
+                channel: .mock(cid: cid),
+                createdAt: .unique,
+                watcherCount: nil,
+                unreadCount: nil
+            )
+        )
+        XCTAssertEqual(controller.messages.count, 2)
+        
+        // Create truncated channel and truncation message
+        let truncatedChannel = ChatChannel.mock(cid: cid, name: "Truncated Channel")
+        let truncationMessage = ChatMessage.mock(id: "truncation", cid: cid, text: "Channel was truncated")
+        
+        let event = ChannelTruncatedEvent(
+            channel: truncatedChannel,
+            user: .mock(id: .unique),
+            message: truncationMessage,
+            createdAt: .unique
+        )
+        
+        // When
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.name, "Truncated Channel")
+        XCTAssertEqual(controller.messages.count, 1)
+        XCTAssertEqual(controller.messages.first?.id, "truncation")
+        XCTAssertEqual(controller.messages.first?.text, "Channel was truncated")
+    }
+    
+    func test_didReceiveEvent_channelTruncatedEventWithoutMessage_clearsMessages() {
+        // Given - Set up initial channel with messages
+        let cid = controller.cid!
+        let initialMessage = ChatMessage.mock(id: "message1", cid: cid, text: "Message 1")
+        
+        // Load initial message
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: MessageNewEvent(
+                user: .mock(id: .unique),
+                message: initialMessage,
+                channel: .mock(cid: cid),
+                createdAt: .unique,
+                watcherCount: nil,
+                unreadCount: nil
+            )
+        )
+        XCTAssertEqual(controller.messages.count, 1)
+        
+        // Create truncated channel without truncation message
+        let truncatedChannel = ChatChannel.mock(cid: cid, name: "Truncated Channel")
+        
+        let event = ChannelTruncatedEvent(
+            channel: truncatedChannel,
+            user: .mock(id: .unique),
+            message: nil, // No truncation message
+            createdAt: .unique
+        )
+        
+        // When
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.name, "Truncated Channel")
+        XCTAssertTrue(controller.messages.isEmpty)
     }
     
     func test_didReceiveEvent_differentChannelEvent_isIgnored() {

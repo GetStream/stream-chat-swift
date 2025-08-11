@@ -904,6 +904,24 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         case let channelUpdatedEvent as ChannelUpdatedEvent:
             handleChannelUpdated(channelUpdatedEvent)
 
+        case is MemberAddedEvent,
+             is MemberRemovedEvent,
+             is MemberUpdatedEvent,
+             is NotificationAddedToChannelEvent,
+             is NotificationRemovedFromChannelEvent,
+             is NotificationInvitedEvent,
+             is NotificationInviteAcceptedEvent,
+             is NotificationInviteRejectedEvent:
+            updateChannelFromDataStore()
+
+        case let channelTruncatedEvent as ChannelTruncatedEvent:
+            channel = channelTruncatedEvent.channel
+            if let message = channelTruncatedEvent.message {
+                messages = [message]
+            } else {
+                messages = []
+            }
+
         default:
             break
         }
@@ -963,6 +981,15 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
 
     private func handleChannelUpdated(_ event: ChannelUpdatedEvent) {
         channel = event.channel
+    }
+
+    // For events that do not have the channel data, and still
+    // go through the middleware, lets fetch it from DB and update it.
+    private func updateChannelFromDataStore() {
+        guard let cid = cid, let updatedChannel = dataStore.channel(cid: cid) else {
+            return
+        }
+        channel = updatedChannel
     }
 
     private func createNewMessage(
