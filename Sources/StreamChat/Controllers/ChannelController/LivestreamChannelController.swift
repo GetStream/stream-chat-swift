@@ -892,6 +892,14 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
              is NotificationInviteRejectedEvent:
             updateChannelFromDataStore()
 
+        case let channelTruncatedEvent as ChannelTruncatedEvent:
+            channel = channelTruncatedEvent.channel
+            if let message = channelTruncatedEvent.message {
+                messages = [message]
+            } else {
+                messages = []
+            }
+
         default:
             break
         }
