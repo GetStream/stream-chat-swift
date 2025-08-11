@@ -169,6 +169,14 @@ class DemoLivestreamChatChannelVC: _ViewController,
                 constant: -16
             )
         ])
+
+        let debugButton = UIBarButtonItem(
+            image: UIImage(systemName: "ladybug.fill")!,
+            style: .plain,
+            target: self,
+            action: #selector(debugTap)
+        )
+        navigationItem.rightBarButtonItems?.append(debugButton)
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -419,6 +427,22 @@ class DemoLivestreamChatChannelVC: _ViewController,
         let membersText = memberCount == 1 ? "1 member" : "\(memberCount) members"
         let onlineText = watcherCount == 1 ? "1 online" : "\(watcherCount) online"
         subtitleLabel.text = "\(membersText), \(onlineText)"
+    }
+
+    @objc private func debugTap() {
+        guard let cid = livestreamChannelController.cid else { return }
+
+        let channelListVC: DemoChatChannelListVC
+        if let mainVC = splitViewController?.viewControllers.first as? UINavigationController,
+           let _channelListVC = mainVC.viewControllers.first as? DemoChatChannelListVC {
+            channelListVC = _channelListVC
+        } else if let _channelListVC = navigationController?.viewControllers.first as? DemoChatChannelListVC {
+            channelListVC = _channelListVC
+        } else {
+            return
+        }
+
+        channelListVC.demoRouter?.didTapMoreButton(for: cid)
     }
 }
 
