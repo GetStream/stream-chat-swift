@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add a completion block to `LivestreamChannelController.resume()` to observe possible errors [#3774](https://github.com/GetStream/stream-chat-swift/pull/3774)
 ### 🐞 Fixed
 - Fix pending message being added to `LivestreamChannelController.messages` when in paused state [#3774](https://github.com/GetStream/stream-chat-swift/pull/3774)
+- Fix `LivestreamChannelController` not connecting chat after coming from background [#3778](https://github.com/GetStream/stream-chat-swift/pull/3778)
 ### 🔄 Changed
 - The `LivestreamChannelController.resume()` should be manually called, previously, it was automatically called on a new message [#3774](https://github.com/GetStream/stream-chat-swift/pull/3774)
 
