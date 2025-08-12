@@ -920,6 +920,10 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
              is NotificationInviteRejectedEvent:
             updateChannelFromDataStore()
 
+        case is UserBannedEvent,
+             is UserUnbannedEvent:
+            updateChannelFromDataStore()
+
         case let channelTruncatedEvent as ChannelTruncatedEvent:
             channel = channelTruncatedEvent.channel
             if let message = channelTruncatedEvent.message {
