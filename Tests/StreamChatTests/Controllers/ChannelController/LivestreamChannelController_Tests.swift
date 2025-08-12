@@ -906,7 +906,35 @@ extension LivestreamChannelController_Tests {
         let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
-    
+
+    func test_applicationDidMoveToForeground_whenNotConnected_callsLoadFirstPage() {
+        // Given
+        let apiClient = client.mockAPIClient
+        client.connectionStatus_mock = .disconnected(error: ClientError())
+
+        // When
+        controller.applicationDidMoveToForeground()
+
+        // Then
+        let expectedPagination = MessagesPagination(pageSize: 25, parameter: nil)
+        var expectedQuery = channelQuery!
+        expectedQuery.pagination = expectedPagination
+        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_applicationDidMoveToForeground_whenConnected_doesNotCallLoadFirstPage() {
+        // Given
+        let apiClient = client.mockAPIClient
+        client.connectionStatus_mock = .connected
+
+        // When
+        controller.applicationDidMoveToForeground()
+
+        // Then
+        XCTAssertNil(apiClient.request_endpoint)
+    }
+
     func test_didReceiveEvent_messageNewEvent_addsMessageToArray() {
         let newMessage = ChatMessage.mock(id: "new", cid: controller.cid!, text: "New message")
         let event = MessageNewEvent(

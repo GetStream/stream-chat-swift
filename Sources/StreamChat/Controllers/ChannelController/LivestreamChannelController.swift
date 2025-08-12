@@ -760,6 +760,15 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         loadFirstPage()
     }
 
+    public func applicationDidMoveToForeground() {
+        // The livestream controller is not impacted by the syncing of missing events.
+        // Since it won't get notified about messages updated from the DB.
+        // So we need to manually reset the channel once the user is connected again.
+        if client.connectionStatus != .connected {
+            loadFirstPage()
+        }
+    }
+
     // MARK: - Private Methods
 
     private func updateChannelData(
