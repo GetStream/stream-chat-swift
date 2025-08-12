@@ -760,6 +760,12 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         loadFirstPage()
     }
 
+    public func applicationDidMoveToForeground() {
+        if client.connectionStatus != .connected {
+            loadFirstPage()
+        }
+    }
+
     // MARK: - Private Methods
 
     private func updateChannelData(
