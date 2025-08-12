@@ -1357,6 +1357,106 @@ extension LivestreamChannelController_Tests {
         }
     }
     
+    func test_didReceiveEvent_userBannedEvent_updatesChannelFromDataStore() {
+        // Given - Set up initial channel in database
+        let cid = controller.cid!
+
+        let userId = UserId.unique
+        let membership = MemberPayload.dummy(user: .dummy(userId: userId))
+
+        // Save initial channel to database
+        let initialChannelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid), membership: membership
+        )
+        try! client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: initialChannelPayload)
+        }
+        
+        // Load initial data
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload))
+        
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertEqual(controller.channel?.membership?.isBannedFromChannel, false)
+
+        // Ban member
+        try! client.databaseContainer.writeSynchronously { session in
+            try session.saveMember(payload: .dummy(user: .dummy(userId: userId), isMemberBanned: true), channelId: cid)
+        }
+        
+        let event = UserBannedEvent(
+            cid: cid,
+            user: .mock(id: userId),
+            ownerId: .unique,
+            createdAt: .unique,
+            reason: nil,
+            expiredAt: nil,
+            isShadowBan: nil
+        )
+
+        // When
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.membership?.isBannedFromChannel, true)
+    }
+
+    func test_didReceiveEvent_userUnbannedEvent_updatesChannelFromDataStore() {
+        // Given - Set up initial channel in database
+        let cid = controller.cid!
+
+        let userId = UserId.unique
+        let membership = MemberPayload.dummy(user: .dummy(userId: userId), isMemberBanned: true)
+
+        // Save initial channel to database
+        let initialChannelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid), membership: membership
+        )
+        try! client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: initialChannelPayload)
+        }
+
+        // Load initial data
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload))
+
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertEqual(controller.channel?.membership?.isBannedFromChannel, true)
+
+        // Ban member
+        try! client.databaseContainer.writeSynchronously { session in
+            try session.saveMember(payload: .dummy(user: .dummy(userId: userId), isMemberBanned: false), channelId: cid)
+        }
+
+        let event = UserBannedEvent(
+            cid: cid,
+            user: .mock(id: userId),
+            ownerId: .unique,
+            createdAt: .unique,
+            reason: nil,
+            expiredAt: nil,
+            isShadowBan: nil
+        )
+
+        // When
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+
+        // Then
+        XCTAssertEqual(controller.channel?.membership?.isBannedFromChannel, false)
+    }
+
     func test_didReceiveEvent_channelTruncatedEvent_updatesChannelAndMessages() {
         // Given - Set up initial channel with messages
         let cid = controller.cid!
