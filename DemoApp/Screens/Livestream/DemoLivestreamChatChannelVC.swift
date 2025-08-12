@@ -355,6 +355,7 @@ class DemoLivestreamChatChannelVC: _ViewController,
     ) {
         channelAvatarView.content = (livestreamChannelController.channel, client.currentUserId)
         updateNavigationTitle()
+        messageComposerVC.updateContent()
     }
 
     func livestreamChannelController(
@@ -504,6 +505,13 @@ class DemoLivestreamComposerVC: ComposerVC {
 
     override var isCommandsEnabled: Bool {
         false
+    }
+
+    override var isSendMessageEnabled: Bool {
+        if livestreamChannelController?.channel?.membership?.isBannedFromChannel == true {
+            return false
+        }
+        return super.isSendMessageEnabled
     }
 }
 
