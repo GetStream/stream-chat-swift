@@ -1432,19 +1432,15 @@ extension LivestreamChannelController_Tests {
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(controller.channel?.membership?.isBannedFromChannel, true)
 
-        // Ban member
+        // Unban member
         try! client.databaseContainer.writeSynchronously { session in
             try session.saveMember(payload: .dummy(user: .dummy(userId: userId), isMemberBanned: false), channelId: cid)
         }
 
-        let event = UserBannedEvent(
+        let event = UserUnbannedEvent(
             cid: cid,
             user: .mock(id: userId),
-            ownerId: .unique,
-            createdAt: .unique,
-            reason: nil,
-            expiredAt: nil,
-            isShadowBan: nil
+            createdAt: .unique
         )
 
         // When
