@@ -145,25 +145,34 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         self.init(configuration: .default)
     }
 
-    /// Initialises a new instance of StreamAudioRecorder
+    /// Initializes a new `StreamAudioRecorder`.
+    ///
     /// - Parameters:
-    ///   - audioSessionConfigurator: The configurator to use to interact with `AVAudioSession`
-    ///   - audioRecorderSettings: The settings that will be used any time a new `AVAudioRecorder` is instantiated
-    ///   - audioFileName: The name of the file that will be used by every `AVAudioRecorder` instance to store in progress recordings.
-    ///   - audioRecorderBaseStorageURL: The path in where we would like to store temporary and finalised recording files.
-    ///   - audioRecorderMeterNormaliser: The normaliser that will be used to transform `AVAudioRecorder's` updated meter values.
-    public convenience init(
-        configuration: Configuration
+    ///   - configuration: Configuration for the recorder.
+    ///   - audioSessionConfigurator: The object used to interact with `AVAudioSession`. Defaults to `StreamAudioSessionConfigurator()`.
+    public init(
+        configuration: Configuration,
+        audioSessionConfigurator: AudioSessionConfiguring = StreamAudioSessionConfigurator()
     ) {
-        self.init(
-            configuration: configuration,
-            audioSessionConfigurator: StreamAudioSessionConfigurator(),
-            audioRecorderMeterNormaliser: AudioValuePercentageNormaliser(),
-            appStateObserver: StreamAppStateObserver(),
-            audioRecorderAVProvider: AVAudioRecorder.init
-        )
+        self.audioSessionConfigurator = audioSessionConfigurator
+        self.configuration = configuration
+        self.audioRecorderMeterNormaliser = AudioValuePercentageNormaliser()
+        self.appStateObserver = StreamAppStateObserver()
+        self.audioRecorderAVProvider = AVAudioRecorder.init
+        multicastDelegate = .init()
+
+        super.init()
+
+        setUp()
     }
 
+    /// Initialises a new instance of StreamAudioRecorder
+    /// - Parameters:
+    ///   - configuration: Configuration for the recorder.
+    ///   - audioSessionConfigurator: The object used to interact with `AVAudioSession`.
+    ///   - audioRecorderMeterNormaliser: Transforms meter values emitted by `AVAudioRecorder` into a normalised range for UI/logic.
+    ///   - appStateObserver: Observes application lifecycle events that the recorder reacts to.
+    ///   - audioRecorderAVProvider: Factory closure used to construct `AVAudioRecorder` instances for a given file URL and settings dictionary.
     internal init(
         configuration: Configuration,
         audioSessionConfigurator: AudioSessionConfiguring,
