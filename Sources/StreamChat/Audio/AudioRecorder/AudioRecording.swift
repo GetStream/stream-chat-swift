@@ -146,12 +146,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
     }
 
     /// Initialises a new instance of StreamAudioRecorder
-    /// - Parameters:
-    ///   - audioSessionConfigurator: The configurator to use to interact with `AVAudioSession`
-    ///   - audioRecorderSettings: The settings that will be used any time a new `AVAudioRecorder` is instantiated
-    ///   - audioFileName: The name of the file that will be used by every `AVAudioRecorder` instance to store in progress recordings.
-    ///   - audioRecorderBaseStorageURL: The path in where we would like to store temporary and finalised recording files.
-    ///   - audioRecorderMeterNormaliser: The normaliser that will be used to transform `AVAudioRecorder's` updated meter values.
+    /// - Parameter configuration: The configuration for the stream audio recorder.
     public convenience init(
         configuration: Configuration
     ) {
@@ -164,12 +159,20 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         )
     }
 
-    internal init(
+    /// Initialises a new instance of StreamAudioRecorder
+    /// - Parameters:
+    ///   - configuration: The configuration for the stream audio recorder.
+    ///   - audioSessionConfigurator: The configurator to use to interact with `AVAudioSession`
+    ///   - audioRecorderSettings: The settings that will be used any time a new `AVAudioRecorder` is instantiated
+    ///   - audioFileName: The name of the file that will be used by every `AVAudioRecorder` instance to store in progress recordings.
+    ///   - audioRecorderBaseStorageURL: The path in where we would like to store temporary and finalised recording files.
+    ///   - audioRecorderMeterNormaliser: The normaliser that will be used to transform `AVAudioRecorder's` updated meter values.
+    public init(
         configuration: Configuration,
-        audioSessionConfigurator: AudioSessionConfiguring,
-        audioRecorderMeterNormaliser: AudioValuePercentageNormaliser,
-        appStateObserver: AppStateObserving,
-        audioRecorderAVProvider: @escaping (URL, [String: Any]) throws -> AVAudioRecorder
+        audioSessionConfigurator: AudioSessionConfiguring = StreamAudioSessionConfigurator(),
+        audioRecorderMeterNormaliser: AudioValuePercentageNormaliser = AudioValuePercentageNormaliser(),
+        appStateObserver: AppStateObserving = StreamAppStateObserver(),
+        audioRecorderAVProvider: @escaping (URL, [String: Any]) throws -> AVAudioRecorder = AVAudioRecorder.init
     ) {
         self.audioSessionConfigurator = audioSessionConfigurator
         self.configuration = configuration

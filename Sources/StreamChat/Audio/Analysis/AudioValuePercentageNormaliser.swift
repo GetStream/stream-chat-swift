@@ -5,13 +5,13 @@
 import Foundation
 
 /// The normaliser computes the percentage values or value of the provided array or value.
-internal class AudioValuePercentageNormaliser {
+public class AudioValuePercentageNormaliser {
     internal let valueRange: ClosedRange<Float> = -50...0
 
     /// Compute the range between the min and max values
     internal lazy var delta: Float = valueRange.upperBound - valueRange.lowerBound
 
-    internal init() {}
+    public init() {}
 
     /// Computes the percentage value of each sample with respect to the maximum
     /// and minimum values in the provided range. The result is will be in the range `0...1`.
