@@ -117,6 +117,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var disableSlowMode_completion_result: Result<Void, Error>?
 
     @Atomic var startWatching_cid: ChannelId?
+    @Atomic var startWatching_isInRecoveryMode: Bool?
     @Atomic var startWatching_completion: ((Error?) -> Void)?
     @Atomic var startWatching_completion_result: Result<Void, Error>?
 
@@ -258,6 +259,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         disableSlowMode_completion_result = nil
 
         startWatching_cid = nil
+        startWatching_isInRecoveryMode = nil
         startWatching_completion = nil
         startWatching_completion_result = nil
 
@@ -524,6 +526,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
 
     override func startWatching(cid: ChannelId, isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
         startWatching_cid = cid
+        startWatching_isInRecoveryMode = isInRecoveryMode
         startWatching_completion = completion
         startWatching_completion_result?.invoke(with: completion)
     }
