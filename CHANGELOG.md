@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### 🐞 Fixed
-- Fix audio recorder init method [#3783](https://github.com/GetStream/stream-chat-swift/pull/3783)
+- Fix `StreamAudioRecorder` not overridable because of init method [#3783](https://github.com/GetStream/stream-chat-swift/pull/3783)
 
 # [4.85.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.85.0)
 _August 13, 2025_

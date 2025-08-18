@@ -156,9 +156,9 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
     ) {
         self.audioSessionConfigurator = audioSessionConfigurator
         self.configuration = configuration
-        self.audioRecorderMeterNormaliser = AudioValuePercentageNormaliser()
-        self.appStateObserver = StreamAppStateObserver()
-        self.audioRecorderAVProvider = AVAudioRecorder.init
+        audioRecorderMeterNormaliser = AudioValuePercentageNormaliser()
+        appStateObserver = StreamAppStateObserver()
+        audioRecorderAVProvider = AVAudioRecorder.init
         multicastDelegate = .init()
 
         super.init()
