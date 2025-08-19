@@ -1373,6 +1373,80 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
+    func test_filterPredicate_whenBlockedTrueOrFalse_containsExpectedItems() throws {
+        let cid1 = ChannelId(type: .messaging, id: "1")
+        let cid2 = ChannelId(type: .messaging, id: "2")
+        let cid3 = ChannelId(type: .messaging, id: "3")
+
+        try assertFilterPredicate(
+            .or([
+                .equal(.blocked, to: true),
+                .equal(.blocked, to: false)
+            ]),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", isBlocked: true)),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", isBlocked: true)),
+                .dummy(channel: .dummy(cid: cid3, name: "team", isBlocked: false))
+            ],
+            expectedResult: [cid1, cid2, cid3]
+        )
+    }
+
+    func test_filterPredicate_whenBlockedTrue_containsExpectedItems() throws {
+        let cid1 = ChannelId(type: .messaging, id: "1")
+        let cid2 = ChannelId(type: .messaging, id: "2")
+        let cid3 = ChannelId(type: .messaging, id: "3")
+
+        try assertFilterPredicate(
+            .equal(.blocked, to: true),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", isBlocked: true)),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", isBlocked: true)),
+                .dummy(channel: .dummy(cid: cid3, name: "team", isBlocked: false))
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+
+    func test_filterPredicate_whenBlockedFalse_containsExpectedItems() throws {
+        let cid1 = ChannelId(type: .messaging, id: "1")
+        let cid2 = ChannelId(type: .messaging, id: "2")
+        let cid3 = ChannelId(type: .messaging, id: "3")
+
+        try assertFilterPredicate(
+            .equal(.blocked, to: false),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, name: "streamOriginal", isBlocked: true)),
+                .dummy(channel: .dummy(cid: cid2, name: "teamDream", isBlocked: true)),
+                .dummy(channel: .dummy(cid: cid3, name: "team", isBlocked: false))
+            ],
+            expectedResult: [cid3]
+        )
+    }
+
+    func test_filterPredicate_whenQueryingBothBlockedAndNonBlocked_containsExpectedItems() throws {
+        let currentUserId = UserId.unique
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+        let cid3 = ChannelId.unique
+
+        try assertFilterPredicate(
+            .and([
+                .containMembers(userIds: [currentUserId]),
+                .or([
+                    .equal(.blocked, to: false),
+                    .equal(.blocked, to: true)
+                ])
+            ]),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, isBlocked: true), members: [.dummy(user: .dummy(userId: currentUserId))]),
+                .dummy(channel: .dummy(cid: cid2, isBlocked: false), members: [.dummy(user: .dummy(userId: currentUserId))]),
+                .dummy(channel: .dummy(cid: cid3, isBlocked: false), members: [.dummy(user: .dummy(userId: .unique))])
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
+
     func test_filterPredicate_nor_containsExpectedItems() throws {
         let memberId1 = UserId.unique
         let memberId2 = UserId.unique
