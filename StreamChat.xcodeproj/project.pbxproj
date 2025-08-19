@@ -1439,6 +1439,7 @@
 		AD2F2D992D271B07006ED24B /* UserAnnotation.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2F2D982D271B07006ED24B /* UserAnnotation.swift */; };
 		AD2F2D9B2D271B36006ED24B /* UserAnnotationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2F2D9A2D271B36006ED24B /* UserAnnotationView.swift */; };
 		AD3331702A30DB2E00ABF38F /* SwipeToReplyGestureHandler_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD33316F2A30DB2E00ABF38F /* SwipeToReplyGestureHandler_Mock.swift */; };
+		AD35D5392E538712003142CD /* LivestreamChannelController_Spy.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD35D5382E538712003142CD /* LivestreamChannelController_Spy.swift */; };
 		AD37D7C42BC979B000800D8C /* ThreadDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD37D7C32BC979B000800D8C /* ThreadDTO.swift */; };
 		AD37D7C52BC979B000800D8C /* ThreadDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD37D7C32BC979B000800D8C /* ThreadDTO.swift */; };
 		AD37D7C72BC98A4400800D8C /* ThreadParticipantDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD37D7C62BC98A4400800D8C /* ThreadParticipantDTO.swift */; };
@@ -4305,6 +4306,7 @@
 		AD2F2D982D271B07006ED24B /* UserAnnotation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAnnotation.swift; sourceTree = "<group>"; };
 		AD2F2D9A2D271B36006ED24B /* UserAnnotationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserAnnotationView.swift; sourceTree = "<group>"; };
 		AD33316F2A30DB2E00ABF38F /* SwipeToReplyGestureHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeToReplyGestureHandler_Mock.swift; sourceTree = "<group>"; };
+		AD35D5382E538712003142CD /* LivestreamChannelController_Spy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LivestreamChannelController_Spy.swift; sourceTree = "<group>"; };
 		AD37D7C32BC979B000800D8C /* ThreadDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadDTO.swift; sourceTree = "<group>"; };
 		AD37D7C62BC98A4400800D8C /* ThreadParticipantDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadParticipantDTO.swift; sourceTree = "<group>"; };
 		AD37D7C92BC98A5300800D8C /* ThreadReadDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadReadDTO.swift; sourceTree = "<group>"; };
@@ -8470,6 +8472,7 @@
 		A3F65E3127EB6E71003F6256 /* Spy */ = {
 			isa = PBXGroup;
 			children = (
+				AD35D5382E538712003142CD /* LivestreamChannelController_Spy.swift */,
 				792921C624C047DD00116BBB /* APIClient_Spy.swift */,
 				649968D8264E6A71000515AB /* CDNClient_Spy.swift */,
 				4FBD840A2C774E5C00B1E680 /* AttachmentDownloader_Spy.swift */,
@@ -11484,6 +11487,7 @@
 				40D4840B2A1264F1009E4134 /* MockAudioPlayerDelegate.swift in Sources */,
 				A3C3BC4727E87F5C00224761 /* TypingEventsSender_Mock.swift in Sources */,
 				8459C9F22BFB6D3200F0D235 /* PollVoteListController_Mock.swift in Sources */,
+				AD35D5392E538712003142CD /* LivestreamChannelController_Spy.swift in Sources */,
 				A3C3BC3727E87F3200224761 /* Logger_Spy.swift in Sources */,
 				82F714A52B07831700442A74 /* AssertDate.swift in Sources */,
 				A3C3BC6B27E8AA4300224761 /* TestUser.swift in Sources */,

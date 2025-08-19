@@ -2082,6 +2082,240 @@ extension LivestreamChannelController_Tests {
     }
 }
 
+// MARK: - Start/Stop Watching Tests
+
+extension LivestreamChannelController_Tests {
+    func test_startWatching_makesCorrectAPICall() {
+        // Given
+        let expectation = self.expectation(description: "Start watching completes")
+        var watchError: Error?
+        let mockUpdater = ChannelUpdater_Mock(
+            channelRepository: client.channelRepository,
+            messageRepository: client.messageRepository,
+            paginationStateHandler: client.makeMessagesPaginationStateHandler(),
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
+        
+        controller = LivestreamChannelController(
+            channelQuery: channelQuery,
+            client: client,
+            updater: mockUpdater
+        )
+        
+        // When
+        controller.startWatching(isInRecoveryMode: false) { error in
+            watchError = error
+            expectation.fulfill()
+        }
+        
+        // Simulate successful updater response
+        mockUpdater.startWatching_completion?(nil)
+        
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // Then
+        XCTAssertEqual(mockUpdater.startWatching_cid, controller.cid)
+        XCTAssertEqual(mockUpdater.startWatching_isInRecoveryMode, false)
+        XCTAssertNil(watchError)
+
+        mockUpdater.cleanUp()
+    }
+    
+    func test_startWatching_withRecoveryMode_makesCorrectAPICall() {
+        // Given
+        let expectation = self.expectation(description: "Start watching completes")
+        var watchError: Error?
+        let mockUpdater = ChannelUpdater_Mock(
+            channelRepository: client.channelRepository,
+            messageRepository: client.messageRepository,
+            paginationStateHandler: client.makeMessagesPaginationStateHandler(),
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
+        
+        controller = LivestreamChannelController(
+            channelQuery: channelQuery,
+            client: client,
+            updater: mockUpdater
+        )
+        
+        // When
+        controller.startWatching(isInRecoveryMode: true) { error in
+            watchError = error
+            expectation.fulfill()
+        }
+        
+        // Simulate successful updater response
+        mockUpdater.startWatching_completion?(nil)
+        
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // Then
+        XCTAssertEqual(mockUpdater.startWatching_cid, controller.cid)
+        XCTAssertEqual(mockUpdater.startWatching_isInRecoveryMode, true)
+        XCTAssertNil(watchError)
+
+        mockUpdater.cleanUp()
+    }
+    
+    func test_startWatching_updaterFailure_callsCompletionWithError() {
+        // Given
+        let expectation = self.expectation(description: "Start watching completes")
+        var watchError: Error?
+        let testError = TestError()
+        let mockUpdater = ChannelUpdater_Mock(
+            channelRepository: client.channelRepository,
+            messageRepository: client.messageRepository,
+            paginationStateHandler: client.makeMessagesPaginationStateHandler(),
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
+        
+        controller = LivestreamChannelController(
+            channelQuery: channelQuery,
+            client: client,
+            updater: mockUpdater
+        )
+        
+        // When
+        controller.startWatching(isInRecoveryMode: false) { error in
+            watchError = error
+            expectation.fulfill()
+        }
+        
+        // Simulate updater failure
+        mockUpdater.startWatching_completion?(testError)
+        
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // Then
+        XCTAssert(watchError is TestError)
+
+        mockUpdater.cleanUp()
+    }
+    
+    func test_stopWatching_makesCorrectAPICall() {
+        // Given
+        let expectation = self.expectation(description: "Stop watching completes")
+        var watchError: Error?
+        let mockUpdater = ChannelUpdater_Mock(
+            channelRepository: client.channelRepository,
+            messageRepository: client.messageRepository,
+            paginationStateHandler: client.makeMessagesPaginationStateHandler(),
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
+        
+        controller = LivestreamChannelController(
+            channelQuery: channelQuery,
+            client: client,
+            updater: mockUpdater
+        )
+        
+        // When
+        controller.stopWatching { error in
+            watchError = error
+            expectation.fulfill()
+        }
+        
+        // Simulate successful updater response
+        mockUpdater.stopWatching_completion?(nil)
+        
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // Then
+        XCTAssertEqual(mockUpdater.stopWatching_cid, controller.cid)
+        XCTAssertNil(watchError)
+
+        mockUpdater.cleanUp()
+    }
+    
+    func test_stopWatching_updaterFailure_callsCompletionWithError() {
+        // Given
+        let expectation = self.expectation(description: "Stop watching completes")
+        var watchError: Error?
+        let testError = TestError()
+        let mockUpdater = ChannelUpdater_Mock(
+            channelRepository: client.channelRepository,
+            messageRepository: client.messageRepository,
+            paginationStateHandler: client.makeMessagesPaginationStateHandler(),
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
+        
+        controller = LivestreamChannelController(
+            channelQuery: channelQuery,
+            client: client,
+            updater: mockUpdater
+        )
+        
+        // When
+        controller.stopWatching { error in
+            watchError = error
+            expectation.fulfill()
+        }
+        
+        // Simulate updater failure
+        mockUpdater.stopWatching_completion?(testError)
+        
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // Then
+        XCTAssert(watchError is TestError)
+
+        mockUpdater.cleanUp()
+    }
+}
+
+// MARK: - Sync Repository Integration Tests
+
+extension LivestreamChannelController_Tests {
+    func test_synchronize_tracksActiveLivestreamController() {
+        let client = ChatClient.mock
+        let channelQuery = ChannelQuery(cid: .unique)
+        let controller = LivestreamChannelController(
+            channelQuery: channelQuery,
+            client: client
+        )
+        XCTAssert(client.syncRepository.activeLivestreamControllers.allObjects.isEmpty)
+
+        controller.synchronize()
+        XCTAssert(controller.client === client)
+        XCTAssert(client.syncRepository.activeLivestreamControllers.count == 1)
+        XCTAssert(client.syncRepository.activeLivestreamControllers.allObjects.first === controller)
+    }
+    
+    func test_startWatching_tracksActiveLivestreamController() {
+        let client = ChatClient.mock
+        let channelQuery = ChannelQuery(cid: .unique)
+        let controller = LivestreamChannelController(
+            channelQuery: channelQuery,
+            client: client
+        )
+        XCTAssert(client.syncRepository.activeLivestreamControllers.allObjects.isEmpty)
+
+        controller.startWatching(isInRecoveryMode: false) { _ in }
+        XCTAssert(controller.client === client)
+        XCTAssert(client.syncRepository.activeLivestreamControllers.count == 1)
+        XCTAssert(client.syncRepository.activeLivestreamControllers.allObjects.first === controller)
+    }
+    
+    func test_stopWatching_removesActiveLivestreamController() {
+        let client = ChatClient.mock
+        let channelQuery = ChannelQuery(cid: .unique)
+        let controller = LivestreamChannelController(
+            channelQuery: channelQuery,
+            client: client
+        )
+        controller.synchronize()
+        XCTAssert(client.syncRepository.activeLivestreamControllers.count == 1)
+
+        controller.stopWatching()
+        XCTAssert(client.syncRepository.activeLivestreamControllers.allObjects.isEmpty == true)
+    }
+}
+
 // MARK: - Slow Mode Tests
 
 extension LivestreamChannelController_Tests {

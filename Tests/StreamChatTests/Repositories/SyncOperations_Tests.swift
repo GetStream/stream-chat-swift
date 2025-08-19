@@ -140,6 +140,54 @@ final class SyncOperations_Tests: XCTestCase {
         XCTAssertCall("recoverWatchedChannel(recovery:completion:)", on: controller, times: 1)
     }
 
+    // MARK: - WatchChannelOperation with LivestreamChannelController
+
+    func test_WatchChannelOperation_livestreamController_nilController() {
+        let context = SyncContext(lastSyncAt: .init())
+        weak var weakController: LivestreamChannelController_Spy?
+        var operation: WatchChannelOperation!
+        
+        do {
+            let controller = LivestreamChannelController_Spy(client: client)
+            weakController = controller
+            operation = WatchChannelOperation(livestreamController: controller, context: context, recovery: true)
+            // Let controller be released
+        }
+        
+        XCTAssertNil(weakController)
+        
+        operation.startAndWaitForCompletion()
+        
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 0)
+    }
+    
+    func test_WatchChannelOperation_livestreamController_startWatchingSuccess() {
+        let context = SyncContext(lastSyncAt: .init())
+        let controller = LivestreamChannelController_Spy(client: client)
+        controller.startWatchingError = nil
+        
+        let operation = WatchChannelOperation(livestreamController: controller, context: context, recovery: true)
+        
+        operation.startAndWaitForCompletion()
+        
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 1)
+        XCTAssertTrue(context.watchedAndSynchedChannelIds.contains(controller.cid!))
+        XCTAssertCall("startWatching(isInRecoveryMode:completion:)", on: controller)
+    }
+    
+    func test_WatchChannelOperation_livestreamController_startWatchingFailure_shouldRetry() {
+        let context = SyncContext(lastSyncAt: .init())
+        let controller = LivestreamChannelController_Spy(client: client)
+        controller.startWatchingError = ClientError("Watch failed")
+        
+        let operation = WatchChannelOperation(livestreamController: controller, context: context, recovery: false)
+        
+        operation.startAndWaitForCompletion()
+        
+        XCTAssertEqual(context.watchedAndSynchedChannelIds.count, 0)
+        XCTAssertCall("startWatching(isInRecoveryMode:completion:)", on: controller, times: 3)
+    }
+
     private func allChannels() throws -> [ChannelDTO] {
         try database.viewContext.fetch(ChannelDTO.allChannelsFetchRequest)
     }
