@@ -1082,7 +1082,31 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     }
 
     private func handleChannelUpdated(_ event: ChannelUpdatedEvent) {
-        channel = event.channel
+        channel = channel?.changing(
+            name: event.channel.name,
+            imageURL: event.channel.imageURL,
+            lastMessageAt: event.channel.lastMessageAt,
+            createdAt: event.channel.createdAt,
+            deletedAt: event.channel.deletedAt,
+            updatedAt: event.channel.updatedAt,
+            truncatedAt: event.channel.truncatedAt,
+            isHidden: event.channel.isHidden,
+            createdBy: event.channel.createdBy,
+            config: event.channel.config,
+            ownCapabilities: event.channel.ownCapabilities,
+            isFrozen: event.channel.isFrozen,
+            isDisabled: event.channel.isDisabled,
+            isBlocked: event.channel.isBlocked,
+            reads: event.channel.reads,
+            members: event.channel.lastActiveMembers,
+            membership: event.channel.membership,
+            memberCount: event.channel.memberCount,
+            watchers: event.channel.lastActiveWatchers,
+            watcherCount: event.channel.watcherCount,
+            team: event.channel.team,
+            cooldownDuration: event.channel.cooldownDuration,
+            extraData: event.channel.extraData
+        )
     }
 
     // For events that do not have the channel data, and still
