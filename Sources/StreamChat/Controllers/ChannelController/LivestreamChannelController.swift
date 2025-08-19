@@ -957,15 +957,60 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         case let channelUpdatedEvent as ChannelUpdatedEvent:
             handleChannelUpdated(channelUpdatedEvent)
 
-        case is MemberAddedEvent,
-             is MemberRemovedEvent,
-             is MemberUpdatedEvent,
-             is NotificationAddedToChannelEvent,
-             is NotificationRemovedFromChannelEvent,
-             is NotificationInvitedEvent,
-             is NotificationInviteAcceptedEvent,
-             is NotificationInviteRejectedEvent:
-            updateChannelFromDataStore()
+        case let notificationAddedToChannelEvent as NotificationAddedToChannelEvent:
+            var members = Set(channel?.lastActiveMembers ?? [])
+            members.insert(notificationAddedToChannelEvent.member)
+            let memberCount = channel?.memberCount ?? 0
+            channel = channel?.changing(
+                members: Array(members),
+                membership: notificationAddedToChannelEvent.member,
+                memberCount: memberCount + 1
+            )
+            startWatching(isInRecoveryMode: false)
+
+        case let notificationRemovedFromChannelEvent as NotificationRemovedFromChannelEvent:
+            var members = channel?.lastActiveMembers ?? []
+            members.removeAll(where: { $0.id == notificationRemovedFromChannelEvent.user.id })
+            let memberCount = channel?.memberCount ?? 0
+
+            channel = channel?.changing(members: members, memberCount: memberCount - 1)
+            channel?.membership = nil
+
+        case let memberAddedEvent as MemberAddedEvent:
+            var members = Set(channel?.lastActiveMembers ?? [])
+            members.insert(memberAddedEvent.member)
+            let memberCount = channel?.memberCount ?? 0
+
+            var membership: ChatChannelMember?
+            if memberAddedEvent.member.id == currentUserId {
+                membership = memberAddedEvent.member
+            }
+            channel = channel?.changing(
+                members: Array(members),
+                membership: membership,
+                memberCount: memberCount + 1
+            )
+
+        case let memberRemovedEvent as MemberRemovedEvent:
+            var members = channel?.lastActiveMembers ?? []
+            members.removeAll(where: { $0.id == memberRemovedEvent.user.id })
+            let memberCount = channel?.memberCount ?? 0
+
+            var membership: ChatChannelMember? = channel?.membership
+            if memberRemovedEvent.user.id == currentUserId {
+                membership = nil
+            }
+            channel = channel?.changing(members: members, memberCount: memberCount - 1)
+            channel?.membership = membership
+
+        case let userWatchingEvent as UserWatchingEvent:
+            var watchers = channel?.lastActiveWatchers ?? []
+            if userWatchingEvent.isStarted {
+                watchers.append(userWatchingEvent.user)
+            } else {
+                watchers.removeAll(where: { $0.id == userWatchingEvent.user.id })
+            }
+            channel = channel?.changing(watchers: watchers, watcherCount: userWatchingEvent.watcherCount)
 
         case is UserBannedEvent,
              is UserUnbannedEvent:
