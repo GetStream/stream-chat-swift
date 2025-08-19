@@ -219,10 +219,54 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             messages = channel.latestMessages
         }
 
+        client.syncRepository.startTrackingLivestreamController(self)
+
         updateChannelData(
             channelQuery: channelQuery,
             completion: completion
         )
+    }
+
+    /// Start watching a channel
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    public func startWatching(isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
+        guard let cid = cid else {
+            let error = ClientError.ChannelNotCreatedYet()
+            callback {
+                completion?(error)
+            }
+            return
+        }
+
+        client.syncRepository.startTrackingLivestreamController(self)
+
+        updater.startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Stop watching a channel
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    public func stopWatching(completion: ((Error?) -> Void)? = nil) {
+        guard let cid = cid else {
+            let error = ClientError.ChannelNotCreatedYet()
+            callback {
+                completion?(error)
+            }
+            return
+        }
+
+        client.syncRepository.stopTrackingLivestreamController(self)
+
+        updater.stopWatching(cid: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
     }
 
     /// Loads previous (older) messages from backend.
