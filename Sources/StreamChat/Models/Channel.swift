@@ -77,7 +77,7 @@ public struct ChatChannel {
     public let currentlyTypingUsers: Set<ChatUser>
 
     /// If the current user is a member of the channel, this variable contains the details about the membership.
-    public let membership: ChatChannelMember?
+    public var membership: ChatChannelMember?
     
     /// Returns `true`, if the channel is archived.
     public var isArchived: Bool {
@@ -294,6 +294,11 @@ public struct ChatChannel {
         name: String? = nil,
         imageURL: URL? = nil,
         reads: [ChatChannelRead]? = nil,
+        members: [ChatChannelMember]? = nil,
+        membership: ChatChannelMember? = nil,
+        memberCount: Int? = nil,
+        watchers: [ChatUser]? = nil,
+        watcherCount: Int? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatChannel {
         .init(
@@ -312,14 +317,14 @@ public struct ChatChannel {
             isFrozen: isFrozen,
             isDisabled: isDisabled,
             isBlocked: isBlocked,
-            lastActiveMembers: lastActiveMembers,
-            membership: membership,
+            lastActiveMembers: members ?? lastActiveMembers,
+            membership: membership ?? self.membership,
             currentlyTypingUsers: currentlyTypingUsers,
-            lastActiveWatchers: lastActiveWatchers,
+            lastActiveWatchers: watchers ?? lastActiveWatchers,
             team: team,
             unreadCount: unreadCount,
-            watcherCount: watcherCount,
-            memberCount: memberCount,
+            watcherCount: watcherCount ?? self.watcherCount,
+            memberCount: memberCount ?? self.memberCount,
             reads: reads ?? self.reads,
             cooldownDuration: cooldownDuration,
             extraData: extraData ?? [:],

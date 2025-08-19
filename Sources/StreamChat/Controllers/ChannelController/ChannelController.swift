@@ -1866,6 +1866,7 @@ private extension ChatChannelController {
         // and only following updates are reported, hence initial values are ignored.
         guard let channel = channel else { return nil }
         delegateCallback {
+            print("membership.old", self.channel?.membership?.name ?? "nil")
             $0.channelController(self, didUpdateChannel: .create(channel))
             $0.channelController(
                 self,
@@ -1945,6 +1946,7 @@ private extension ChatChannelController {
                         log.warning("Callback called while self is nil")
                         return
                     }
+                    print("membership.old", self.channel?.membership ?? "nil")
                     $0.channelController(self, didUpdateChannel: change)
                 }
             }

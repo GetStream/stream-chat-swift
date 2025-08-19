@@ -72,6 +72,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
     override func didTapMoreButton(for cid: ChannelId) {
         let client = rootViewController.controller.client
         let channelController = client.channelController(for: cid)
+        let livestreamChannelController = client.livestreamChannelController(for: .init(cid: cid))
         let canUpdateChannel = channelController.channel?.canUpdateChannel == true
         let canUpdateChannelMembers = channelController.channel?.canUpdateChannelMembers == true
         let canBanChannelMembers = channelController.channel?.canBanChannelMembers == true
@@ -295,8 +296,6 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                                     title: "Couldn't remove user \(member.id) from channel \(cid)",
                                     message: "\(error)"
                                 )
-                            } else {
-                                self.rootNavigationController?.popViewController(animated: true)
                             }
                         }
                     }
