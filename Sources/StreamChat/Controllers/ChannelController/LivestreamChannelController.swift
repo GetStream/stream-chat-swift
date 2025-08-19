@@ -936,7 +936,10 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
                 handleDeletedMessage(messageDeletedEvent.message)
                 return
             }
-            handleUpdatedMessage(messageDeletedEvent.message)
+            let deletedMessage = messageDeletedEvent.message.changing(
+                deletedAt: messageDeletedEvent.createdAt
+            )
+            handleUpdatedMessage(deletedMessage)
 
         case let newMessageErrorEvent as NewMessageErrorEvent:
             guard let message = messages.first(where: { $0.id == newMessageErrorEvent.messageId }) else {
