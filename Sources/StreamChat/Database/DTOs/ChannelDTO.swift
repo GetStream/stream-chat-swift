@@ -458,7 +458,9 @@ extension ChannelDTO {
 
         // If a hidden filter is not provided, we add a default hidden filter == 0.
         // The backend appends a `hidden: false` filter when it's not specified, so we need to do the same.
-        if query.filter.hiddenFilterValue == nil {
+        // Additionally we also check for blocked filter. Only if blocked or hidden filters are not provider,
+        // we add default hidden filter.
+        if query.filter.hiddenFilterValue == nil && query.filter.blockedFilterValue == nil {
             subpredicates.append(NSPredicate(format: "\(#keyPath(ChannelDTO.isHidden)) == 0"))
         }
 
