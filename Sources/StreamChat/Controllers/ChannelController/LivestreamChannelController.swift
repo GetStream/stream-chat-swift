@@ -1053,7 +1053,18 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
 
     private func handleUpdatedMessage(_ updatedMessage: ChatMessage) {
         if let index = messages.firstIndex(where: { $0.id == updatedMessage.id }) {
+            let existingMessage = messages[index]
             messages[index] = updatedMessage
+
+            if existingMessage.isPinned != updatedMessage.isPinned {
+                var pinnedMessages = channel?.pinnedMessages ?? []
+                if updatedMessage.isPinned {
+                    pinnedMessages.append(updatedMessage)
+                } else {
+                    pinnedMessages.remove(at: index)
+                }
+                channel = channel?.changing(pinnedMessages: pinnedMessages)
+            }
         }
     }
 
