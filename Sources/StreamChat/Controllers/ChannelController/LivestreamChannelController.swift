@@ -834,13 +834,6 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
 
                 switch result {
                 case .success(let payload):
-                    // If it is the first page, save channel to the DB to make sure manual event handling
-                    // can fetch the channel from the DB.
-                    if channelQuery.pagination == nil {
-                        client.databaseContainer.write { session in
-                            try session.saveChannel(payload: payload)
-                        }
-                    }
                     self.handleChannelPayload(payload, channelQuery: channelQuery)
                     completion?(nil)
 
@@ -853,7 +846,11 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             }
         }
 
-        apiClient.request(endpoint: endpoint, completion: requestCompletion)
+        updater.update(
+            channelQuery: channelQuery,
+            isInRecoveryMode: false,
+            completion: requestCompletion
+        )
     }
 
     private func handleChannelPayload(_ payload: ChannelPayload, channelQuery: ChannelQuery) {
