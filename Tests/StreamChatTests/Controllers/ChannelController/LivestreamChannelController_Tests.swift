@@ -1239,6 +1239,18 @@ extension LivestreamChannelController_Tests {
     }
     
     func test_didReceiveEvent_channelUpdatedEvent_updatesChannel() {
+        // Load initial channel data
+        let cid = ChannelId.unique
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, name: "Old Name")
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+
         let updatedChannel = ChatChannel.mock(cid: controller.cid!, name: "Updated Name")
         let event = ChannelUpdatedEvent(
             channel: updatedChannel,
@@ -1261,128 +1273,432 @@ extension LivestreamChannelController_Tests {
 
     // MARK: - Member Update Events Tests
 
-    func test_didReceiveEvent_memberRelatedEvents_updateChannelFromDataStore() {
+    func test_didReceiveEvent_notificationAddedToChannelEvent_updatesChannelInMemory() {
+        // Given - Set up initial channel with members
         let cid = controller.cid!
-
-        // Test data for all member-related events
-        let memberEvents: [(event: Event, description: String)] = [
-            (
-                MemberAddedEvent(
-                    user: .mock(id: .unique),
-                    cid: cid,
-                    member: .mock(id: .unique),
-                    createdAt: .unique
-                ),
-                "MemberAddedEvent"
-            ),
-            (
-                MemberRemovedEvent(
-                    user: .mock(id: .unique),
-                    cid: cid,
-                    createdAt: .unique
-                ),
-                "MemberRemovedEvent"
-            ),
-            (
-                MemberUpdatedEvent(
-                    user: .mock(id: .unique),
-                    cid: cid,
-                    member: .mock(id: .unique),
-                    createdAt: .unique
-                ),
-                "MemberUpdatedEvent"
-            ),
-            (
-                NotificationAddedToChannelEvent(
-                    channel: .mock(cid: cid),
-                    unreadCount: nil,
-                    member: .mock(id: .unique),
-                    createdAt: .unique
-                ),
-                "NotificationAddedToChannelEvent"
-            ),
-            (
-                NotificationRemovedFromChannelEvent(
-                    user: .mock(id: .unique),
-                    cid: cid,
-                    member: .mock(id: .unique),
-                    createdAt: .unique
-                ),
-                "NotificationRemovedFromChannelEvent"
-            ),
-            (
-                NotificationInvitedEvent(
-                    user: .mock(id: .unique),
-                    cid: cid,
-                    member: .mock(id: .unique),
-                    createdAt: .unique
-                ),
-                "NotificationInvitedEvent"
-            ),
-            (
-                NotificationInviteAcceptedEvent(
-                    user: .mock(id: .unique),
-                    channel: .mock(cid: cid),
-                    member: .mock(id: .unique),
-                    createdAt: .unique
-                ),
-                "NotificationInviteAcceptedEvent"
-            ),
-            (
-                NotificationInviteRejectedEvent(
-                    user: .mock(id: .unique),
-                    channel: .mock(cid: cid),
-                    member: .mock(id: .unique),
-                    createdAt: .unique
-                ),
-                "NotificationInviteRejectedEvent"
-            )
-        ]
-
-        // Test each member-related event
-        for (index, (event, description)) in memberEvents.enumerated() {
-            let initialMemberCount = 10 + index
-            let updatedMemberCount = 20 + index
-
-            // Given - Set up initial channel in database
-            let initialChannelPayload = ChannelPayload.dummy(
-                channel: .dummy(cid: cid, memberCount: initialMemberCount)
-            )
-            try! client.databaseContainer.writeSynchronously { session in
-                try session.saveChannel(payload: initialChannelPayload)
-            }
-
-            // Load initial data
-            let exp = expectation(description: "sync completes")
-            controller.synchronize { _ in
-                exp.fulfill()
-            }
-            client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload))
-
-            waitForExpectations(timeout: defaultTimeout)
-            XCTAssertEqual(controller.channel?.memberCount, initialMemberCount, "Initial setup failed for \(description)")
-
-            // Update channel in database with new member count
-            let updatedChannelPayload = ChannelPayload.dummy(
-                channel: .dummy(cid: cid, memberCount: updatedMemberCount)
-            )
-            try! client.databaseContainer.writeSynchronously { session in
-                try session.saveChannel(payload: updatedChannelPayload)
-            }
-
-            // When
-            controller.eventsController(
-                EventsController(notificationCenter: client.eventNotificationCenter),
-                didReceiveEvent: event
-            )
-
-            // Then
-            XCTAssertEqual(
-                controller.channel?.memberCount,
-                updatedMemberCount,
-                "\(description) should update channel from data store"
-            )
+        let initialMemberCount = 5
+        let existingMember = ChatChannelMember.dummy
+        let newMember = ChatChannelMember.dummy
+        
+        // Create mock updater to track startWatching calls
+        let mockUpdater = ChannelUpdater_Mock(
+            channelRepository: client.channelRepository,
+            messageRepository: client.messageRepository,
+            paginationStateHandler: client.makeMessagesPaginationStateHandler(),
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
+        
+        // Create controller with mock updater
+        controller = LivestreamChannelController(
+            channelQuery: channelQuery,
+            client: client,
+            updater: mockUpdater
+        )
+        
+        // Load initial channel data
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
         }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, memberCount: initialMemberCount),
+            members: [.dummy(user: .dummy(userId: existingMember.id))]
+        )
+        mockUpdater.update_completion?(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // When
+        let event = NotificationAddedToChannelEvent(
+            channel: .mock(cid: cid),
+            unreadCount: nil,
+            member: newMember,
+            createdAt: .unique
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.memberCount, initialMemberCount + 1)
+        XCTAssertEqual(controller.channel?.lastActiveMembers.count, 2)
+        XCTAssertTrue(controller.channel?.lastActiveMembers.contains(where: { $0.id == newMember.id }) ?? false)
+        XCTAssertEqual(controller.channel?.membership?.id, newMember.id)
+        
+        // Assert that startWatching was called
+        XCTAssertEqual(mockUpdater.startWatching_cid, cid)
+        XCTAssertEqual(mockUpdater.startWatching_isInRecoveryMode, false)
+        
+        mockUpdater.cleanUp()
+    }
+    
+    func test_didReceiveEvent_notificationRemovedFromChannelEvent_updatesChannelInMemory() {
+        // Given - Set up initial channel with members
+        let cid = controller.cid!
+        let removedUserId = UserId.unique
+        let existingMember = ChatChannelMember.dummy(id: removedUserId)
+        let otherMember = ChatChannelMember.mock(id: .unique)
+        let initialMemberCount = 5
+        
+        // Load initial channel data
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, memberCount: initialMemberCount),
+            members: [
+                .dummy(user: .dummy(userId: existingMember.id)),
+                .dummy(user: .dummy(userId: otherMember.id))
+            ]
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // When
+        let event = NotificationRemovedFromChannelEvent(
+            user: .mock(id: removedUserId),
+            cid: cid,
+            member: existingMember,
+            createdAt: .unique
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.memberCount, initialMemberCount - 1)
+        XCTAssertFalse(controller.channel?.lastActiveMembers.contains(where: { $0.id == removedUserId }) ?? true)
+        XCTAssertNil(controller.channel?.membership)
+    }
+    
+    func test_didReceiveEvent_memberAddedEvent_updatesChannelInMemory() {
+        // Given - Set up initial channel with members
+        let cid = controller.cid!
+        let newMember = ChatChannelMember.dummy(id: .unique)
+        let existingMember = ChatChannelMember.mock(id: .unique)
+        let initialMemberCount = 3
+        
+        // Load initial channel data
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, memberCount: initialMemberCount),
+            members: [.dummy(user: .dummy(userId: existingMember.id))]
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // When
+        let event = MemberAddedEvent(
+            user: .mock(id: .unique),
+            cid: cid,
+            member: newMember,
+            createdAt: .unique
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.memberCount, initialMemberCount + 1)
+        XCTAssertEqual(controller.channel?.lastActiveMembers.count, 2)
+        XCTAssertTrue(controller.channel?.lastActiveMembers.contains(where: { $0.id == newMember.id }) ?? false)
+    }
+    
+    func test_didReceiveEvent_memberAddedEvent_currentUser_updatesMembership() {
+        // Given - Set up initial channel
+        let cid = controller.cid!
+        let currentUserId = UserId.unique
+        let newMember = ChatChannelMember.dummy(id: currentUserId)
+        client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        
+        // Load initial channel data
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, memberCount: 1)
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // When
+        let event = MemberAddedEvent(
+            user: .mock(id: .unique),
+            cid: cid,
+            member: newMember,
+            createdAt: .unique
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.membership?.id, currentUserId)
+    }
+    
+    func test_didReceiveEvent_memberRemovedEvent_updatesChannelInMemory() {
+        // Given - Set up initial channel with members
+        let cid = controller.cid!
+        let removedUserId = UserId.unique
+        let removedMember = ChatChannelMember.mock(id: removedUserId)
+        let remainingMember = ChatChannelMember.mock(id: .unique)
+        let initialMemberCount = 3
+        
+        // Load initial channel data with members
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, memberCount: initialMemberCount),
+            members: [
+                .dummy(user: .dummy(userId: removedMember.id)),
+                .dummy(user: .dummy(userId: remainingMember.id))
+            ]
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // When
+        let event = MemberRemovedEvent(
+            user: .mock(id: removedUserId),
+            cid: cid,
+            createdAt: .unique
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.memberCount, initialMemberCount - 1)
+        XCTAssertFalse(controller.channel?.lastActiveMembers.contains(where: { $0.id == removedUserId }) ?? true)
+        XCTAssertTrue(controller.channel?.lastActiveMembers.contains(where: { $0.id == remainingMember.id }) ?? false)
+    }
+    
+    func test_didReceiveEvent_memberRemovedEvent_currentUser_clearsMembership() {
+        // Given - Set up initial channel with current user as member
+        let cid = controller.cid!
+        let currentUserId = UserId.unique
+        client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        
+        // Load initial channel data with current user as member
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, memberCount: 2),
+            membership: .dummy(user: .dummy(userId: currentUserId))
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // Verify initial membership is set
+        XCTAssertNotNil(controller.channel?.membership)
+        
+        // When
+        let event = MemberRemovedEvent(
+            user: .mock(id: currentUserId),
+            cid: cid,
+            createdAt: .unique
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertNil(controller.channel?.membership)
+    }
+    
+    func test_didReceiveEvent_memberUpdatedEvent_updatesChannelInMemory() {
+        // Given - Set up initial channel with members
+        let cid = controller.cid!
+        let memberId = UserId.unique
+        let updatedMember = ChatChannelMember.mock(
+            id: memberId,
+            name: "Updated Name",
+            memberRole: .moderator
+        )
+        let otherMember = ChatChannelMember.dummy(id: .unique)
+        let initialMemberCount = 3
+        
+        // Load initial channel data with members
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, memberCount: initialMemberCount),
+            members: [
+                .dummy(user: .dummy(userId: memberId)),
+                .dummy(user: .dummy(userId: otherMember.id))
+            ]
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // Verify initial state
+        XCTAssertEqual(controller.channel?.lastActiveMembers.count, 2)
+        XCTAssertTrue(controller.channel?.lastActiveMembers.contains(where: { $0.id == memberId }) ?? false)
+        
+        // When
+        let event = MemberUpdatedEvent(
+            user: .mock(id: .unique),
+            cid: cid,
+            member: updatedMember,
+            createdAt: .unique
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.memberCount, initialMemberCount) // Member count should remain the same
+        XCTAssertEqual(controller.channel?.lastActiveMembers.count, 2)
+        
+        // Find the updated member and verify it was updated
+        let member = controller.channel?.lastActiveMembers.first(where: { $0.id == memberId })
+        XCTAssertNotNil(member)
+        XCTAssertEqual(member?.name, "Updated Name")
+        XCTAssertEqual(member?.memberRole, .moderator)
+    }
+    
+    func test_didReceiveEvent_memberUpdatedEvent_currentUser_updatesMembership() {
+        // Given - Set up initial channel with current user as member
+        let cid = controller.cid!
+        let currentUserId = UserId.unique
+        let updatedMember = ChatChannelMember.mock(
+            id: currentUserId,
+            name: "Updated Name",
+            memberRole: .moderator
+        )
+        client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        
+        // Load initial channel data with current user as member
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, memberCount: 2),
+            membership: .dummy(user: .dummy(userId: currentUserId))
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // Verify initial membership is set
+        XCTAssertNotNil(controller.channel?.membership)
+        XCTAssertEqual(controller.channel?.membership?.id, currentUserId)
+        
+        // When
+        let event = MemberUpdatedEvent(
+            user: .mock(id: .unique),
+            cid: cid,
+            member: updatedMember,
+            createdAt: .unique
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.membership?.id, currentUserId)
+        XCTAssertEqual(controller.channel?.membership?.name, "Updated Name")
+        XCTAssertEqual(controller.channel?.membership?.memberRole, .moderator)
+    }
+    
+    func test_didReceiveEvent_userWatchingEvent_started_updatesWatchers() {
+        // Given - Set up initial channel with watchers
+        let cid = controller.cid!
+        let newWatcher = ChatUser.mock(id: .unique)
+        let existingWatcher = ChatUser.mock(id: .unique)
+        let initialWatcherCount = 5
+        
+        // Load initial channel data
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid),
+            watcherCount: initialWatcherCount,
+            watchers: [.dummy(userId: existingWatcher.id)]
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // When
+        let event = UserWatchingEvent(
+            cid: cid,
+            createdAt: .unique,
+            user: newWatcher,
+            watcherCount: initialWatcherCount + 1,
+            isStarted: true
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.watcherCount, initialWatcherCount + 1)
+        XCTAssertEqual(controller.channel?.lastActiveWatchers.count, 2)
+        XCTAssertTrue(controller.channel?.lastActiveWatchers.contains(where: { $0.id == newWatcher.id }) ?? false)
+    }
+    
+    func test_didReceiveEvent_userWatchingEvent_stopped_removesWatcher() {
+        // Given - Set up initial channel with watchers
+        let cid = controller.cid!
+        let stoppedWatcher = ChatUser.mock(id: .unique)
+        let remainingWatcher = ChatUser.mock(id: .unique)
+        let initialWatcherCount = 5
+        
+        // Load initial channel data
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid),
+            watcherCount: initialWatcherCount,
+            watchers: [
+                .dummy(userId: stoppedWatcher.id),
+                .dummy(userId: remainingWatcher.id)
+            ]
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // When
+        let event = UserWatchingEvent(
+            cid: cid,
+            createdAt: .unique,
+            user: stoppedWatcher,
+            watcherCount: initialWatcherCount - 1,
+            isStarted: false
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.channel?.watcherCount, initialWatcherCount - 1)
+        XCTAssertFalse(controller.channel?.lastActiveWatchers.contains(where: { $0.id == stoppedWatcher.id }) ?? true)
+        XCTAssertTrue(controller.channel?.lastActiveWatchers.contains(where: { $0.id == remainingWatcher.id }) ?? false)
     }
     
     func test_didReceiveEvent_userBannedEvent_updatesChannelFromDataStore() {

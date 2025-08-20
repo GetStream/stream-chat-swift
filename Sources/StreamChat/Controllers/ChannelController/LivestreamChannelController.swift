@@ -1012,6 +1012,19 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             }
             channel = channel?.changing(watchers: watchers, watcherCount: userWatchingEvent.watcherCount)
 
+        case let memberUpdatedEvent as MemberUpdatedEvent:
+            var members = channel?.lastActiveMembers ?? []
+            if let index = members.firstIndex(where: { $0.id == memberUpdatedEvent.member.id }) {
+                members[index] = memberUpdatedEvent.member
+            }
+            
+            var membership: ChatChannelMember? = channel?.membership
+            if memberUpdatedEvent.member.id == currentUserId {
+                membership = memberUpdatedEvent.member
+            }
+            
+            channel = channel?.changing(members: members, membership: membership)
+
         case is UserBannedEvent,
              is UserUnbannedEvent:
             updateChannelFromDataStore()
