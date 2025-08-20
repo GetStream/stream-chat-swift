@@ -1061,7 +1061,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
                 if updatedMessage.isPinned {
                     pinnedMessages.append(updatedMessage)
                 } else {
-                    pinnedMessages.remove(at: index)
+                    pinnedMessages.removeAll(where: { $0.id == existingMessage.id })
                 }
                 channel = channel?.changing(pinnedMessages: pinnedMessages)
             }
