@@ -77,8 +77,8 @@ public struct ChatChannel {
     public let currentlyTypingUsers: Set<ChatUser>
 
     /// If the current user is a member of the channel, this variable contains the details about the membership.
-    public var membership: ChatChannelMember?
-    
+    public internal(set) var membership: ChatChannelMember?
+
     /// Returns `true`, if the channel is archived.
     public var isArchived: Bool {
         membership?.archivedAt != nil
