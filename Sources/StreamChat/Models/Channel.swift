@@ -313,6 +313,7 @@ public struct ChatChannel {
         watcherCount: Int? = nil,
         team: TeamId? = nil,
         cooldownDuration: Int? = nil,
+        pinnedMessages: [ChatMessage]? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatChannel {
         .init(
@@ -344,7 +345,7 @@ public struct ChatChannel {
             extraData: extraData ?? self.extraData,
             latestMessages: latestMessages,
             lastMessageFromCurrentUser: lastMessageFromCurrentUser,
-            pinnedMessages: pinnedMessages,
+            pinnedMessages: pinnedMessages ?? self.pinnedMessages,
             pendingMessages: pendingMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,
