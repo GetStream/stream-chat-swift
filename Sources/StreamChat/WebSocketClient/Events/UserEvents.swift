@@ -281,7 +281,7 @@ public struct UserMessagesDeletedEvent: Event {
     public let softDelete: Bool
 
     /// The event timestamp
-    public let createdAt: Date?
+    public let createdAt: Date
 }
 
 class UserMessagesDeletedEventDTO: EventDTO {

@@ -790,11 +790,18 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     // MARK: - EventsControllerDelegate
 
     public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        guard let channelEvent = event as? ChannelSpecificEvent, channelEvent.cid == cid else {
-            return
+        if let channelEvent = event as? ChannelSpecificEvent, channelEvent.cid == cid {
+            handleChannelEvent(event)
         }
 
-        handleChannelEvent(event)
+        // User deleted messages event is a global event, not tied to a channel.
+        if let userMessagesDeletedEvent = event as? UserMessagesDeletedEvent {
+            if userMessagesDeletedEvent.softDelete {
+                let userId = userMessagesDeletedEvent.user.id
+                let deletedAt = userMessagesDeletedEvent.createdAt
+                softDeleteMessages(from: userId, deletedAt: deletedAt)
+            }
+        }
     }
 
     // MARK: - AppStateObserverDelegate
@@ -1080,6 +1087,18 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
 
     private func handleDeletedMessage(_ deletedMessage: ChatMessage) {
         messages.removeAll { $0.id == deletedMessage.id }
+    }
+
+    private func softDeleteMessages(from userId: UserId, deletedAt: Date) {
+        let messagesWithDeletedMessages = messages.map { message in
+            if message.author.id == userId {
+                return message.changing(
+                    deletedAt: deletedAt
+                )
+            }
+            return message
+        }
+        messages = messagesWithDeletedMessages
     }
 
     private func handleNewReaction(_ reactionEvent: ReactionNewEvent) {
