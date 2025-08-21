@@ -11,11 +11,11 @@ extension EndpointPath {
             return true
         case .createChannel, .connect, .sync, .users, .guest, .members, .partialMemberUpdate, .search, .devices, .channels, .updateChannel,
              .deleteChannel, .channelUpdate, .muteChannel, .showChannel, .truncateChannel, .markChannelRead, .markChannelUnread,
-             .markAllChannelsRead, .channelEvent, .stopWatchingChannel, .pinnedMessages, .uploadAttachment, .message,
+             .markAllChannelsRead, .channelEvent, .stopWatchingChannel, .pinnedMessages, .uploadChannelAttachment, .message,
              .replies, .reactions, .messageAction, .banMember, .flagUser, .flagMessage, .muteUser, .translateMessage,
              .callToken, .createCall, .deleteFile, .deleteImage, .og, .appSettings, .threads, .thread, .markThreadRead, .markThreadUnread,
              .polls, .pollsQuery, .poll, .pollOption, .pollOptions, .pollVotes, .pollVoteInMessage, .pollVote,
-             .unread, .blockUser, .unblockUser, .drafts, .reminders, .reminder, .liveLocations:
+             .unread, .blockUser, .unblockUser, .drafts, .reminders, .reminder, .liveLocations, .uploadAttachment:
             return false
         }
     }
