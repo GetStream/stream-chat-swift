@@ -823,9 +823,6 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             paginationStateHandler.begin(pagination: pagination)
         }
 
-        let endpoint: Endpoint<ChannelPayload> =
-            .updateChannel(query: channelQuery)
-
         let requestCompletion: (Result<ChannelPayload, Error>) -> Void = { [weak self] result in
             self?.callback { [weak self] in
                 guard let self = self else { return }
