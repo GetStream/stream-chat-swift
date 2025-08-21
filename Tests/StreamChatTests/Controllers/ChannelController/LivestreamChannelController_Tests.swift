@@ -530,13 +530,13 @@ extension LivestreamChannelController_Tests {
         controller.pause()
 
         controller.didReceiveEvent(MessageNewEvent(
-                user: .unique,
-                message: .unique,
-                channel: .mock(cid: controller.cid!),
-                createdAt: .unique,
-                watcherCount: nil,
-                unreadCount: nil
-            )
+            user: .unique,
+            message: .unique,
+            channel: .mock(cid: controller.cid!),
+            createdAt: .unique,
+            watcherCount: nil,
+            unreadCount: nil
+        )
         )
         XCTAssertEqual(controller.skippedMessagesAmount, 1)
 
