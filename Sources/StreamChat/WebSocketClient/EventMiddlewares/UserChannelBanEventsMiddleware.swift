@@ -32,11 +32,10 @@ struct UserChannelBanEventsMiddleware: EventMiddleware {
 
             case let userMessagesDeletedEvent as UserMessagesDeletedEventDTO:
                 let userId = userMessagesDeletedEvent.user.id
-                guard let userDTO = session.user(id: userId) else {
-                    throw ClientError.UserDoesNotExist(userId: userId)
-                }
-                userDTO.messages?.forEach {
-                    $0.deletedAt = userMessagesDeletedEvent.createdAt.bridgeDate
+                if let userDTO = session.user(id: userId) {
+                    userDTO.messages?.forEach {
+                        $0.deletedAt = userMessagesDeletedEvent.createdAt.bridgeDate
+                    }
                 }
 
             default:

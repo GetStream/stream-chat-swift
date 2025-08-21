@@ -296,10 +296,17 @@ class UserMessagesDeletedEventDTO: EventDTO {
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
+        if let userDTO = session.user(id: user.id),
+           let userModel = try? userDTO.asModel() {
+            return UserMessagesDeletedEvent(
+                user: userModel,
+                softDelete: payload.softDelete ?? false,
+                createdAt: createdAt
+            )
+        }
 
-        return try? UserMessagesDeletedEvent(
-            user: userDTO.asModel(),
+        return UserMessagesDeletedEvent(
+            user: user.asModel(),
             softDelete: payload.softDelete ?? false,
             createdAt: createdAt
         )
