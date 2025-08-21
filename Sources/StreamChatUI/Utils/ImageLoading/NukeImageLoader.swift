@@ -28,7 +28,7 @@ open class NukeImageLoader: ImageLoading {
         into imageView: UIImageView,
         from url: URL?,
         with options: ImageLoaderOptions,
-        completion: (@MainActor @Sendable(Result<UIImage, Error>) -> Void)?
+        completion: (@MainActor(Result<UIImage, Error>) -> Void)?
     ) -> Cancellable? {
         imageView.currentImageLoadingTask?.cancel()
 
@@ -72,7 +72,7 @@ open class NukeImageLoader: ImageLoading {
     @discardableResult
     open func downloadImage(
         with request: ImageDownloadRequest,
-        completion: @escaping @MainActor @Sendable(Result<UIImage, Error>) -> Void
+        completion: @escaping @MainActor(Result<UIImage, Error>) -> Void
     ) -> Cancellable? {
         let url = request.url
         let options = request.options
@@ -98,7 +98,7 @@ open class NukeImageLoader: ImageLoading {
 
     open func downloadMultipleImages(
         with requests: [ImageDownloadRequest],
-        completion: @escaping @MainActor @Sendable([Result<UIImage, Error>]) -> Void
+        completion: @escaping @MainActor([Result<UIImage, Error>]) -> Void
     ) {
         let group = DispatchGroup()
         

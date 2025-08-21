@@ -314,7 +314,7 @@ public class ChatClient: @unchecked Sendable {
     public func connectUser(
         userInfo: UserInfo,
         tokenProvider: @escaping TokenProvider,
-        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         reconnectionTimeoutHandler?.start()
         connectionRecoveryHandler?.start()
@@ -365,7 +365,7 @@ public class ChatClient: @unchecked Sendable {
     public func connectUser(
         userInfo: UserInfo,
         token: Token,
-        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         guard token.expiration == nil else {
             let error = ClientError.MissingTokenProvider()
@@ -413,7 +413,7 @@ public class ChatClient: @unchecked Sendable {
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectGuestUser(
         userInfo: UserInfo,
-        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         connectionRepository.initialize()
         connectionRecoveryHandler?.start()
@@ -444,7 +444,7 @@ public class ChatClient: @unchecked Sendable {
 
     /// Connects an anonymous user
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
-    public func connectAnonymousUser(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    public func connectAnonymousUser(completion: (@MainActor(Error?) -> Void)? = nil) {
         connectionRepository.initialize()
         reconnectionTimeoutHandler?.start()
         connectionRecoveryHandler?.start()
@@ -486,7 +486,7 @@ public class ChatClient: @unchecked Sendable {
 
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
-    public func disconnect(completion: @escaping @MainActor @Sendable() -> Void) {
+    public func disconnect(completion: @escaping @MainActor() -> Void) {
         connectionRepository.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
             StreamConcurrency.onMain {
@@ -519,7 +519,7 @@ public class ChatClient: @unchecked Sendable {
     ///  By default it is enabled.
     public func logout(
         removeDevice: Bool = true,
-        completion: @escaping @MainActor @Sendable() -> Void
+        completion: @escaping @MainActor() -> Void
     ) {
         let currentUserController = currentUserController()
         if removeDevice, let currentUserDevice = currentUserController.currentUser?.currentDevice {
@@ -695,7 +695,7 @@ public class ChatClient: @unchecked Sendable {
 }
 
 extension ChatClient: AuthenticationRepositoryDelegate {
-    func logOutUser(completion: @escaping @MainActor @Sendable() -> Void) {
+    func logOutUser(completion: @escaping @MainActor() -> Void) {
         logout(removeDevice: false, completion: completion)
     }
 

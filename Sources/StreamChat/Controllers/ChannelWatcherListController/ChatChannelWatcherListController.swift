@@ -82,7 +82,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     /// Synchronizes the channel's watchers with the backend.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
-    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
         if case let .localDataFetchFailed(error) = state {
@@ -174,7 +174,7 @@ public extension ChatChannelWatcherListController {
     ///   - limit: Limit for page size. Offset is defined automatically by the controller.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
-    func loadNextWatchers(limit: Int = .channelWatchersPageSize, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    func loadNextWatchers(limit: Int = .channelWatchersPageSize, completion: (@MainActor(Error?) -> Void)? = nil) {
         var updatedQuery = query
         updatedQuery.pagination = .init(pageSize: limit, offset: watchers.count)
         updater.channelWatchers(query: updatedQuery) { [updatedQuery] result in

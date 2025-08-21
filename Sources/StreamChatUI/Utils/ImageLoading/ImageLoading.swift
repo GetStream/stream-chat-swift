@@ -19,7 +19,7 @@ public protocol ImageLoading: AnyObject {
         into imageView: UIImageView,
         from url: URL?,
         with options: ImageLoaderOptions,
-        completion: (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)?
+        completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable?
 
     /// Load an image into an imageView from a given `ImageAttachmentPayload`.
@@ -34,7 +34,7 @@ public protocol ImageLoading: AnyObject {
         into imageView: UIImageView,
         from attachmentPayload: ImageAttachmentPayload?,
         maxResolutionInPixels: Double,
-        completion: (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)?
+        completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable?
 
     /// Download an image from the given `URL`.
@@ -45,7 +45,7 @@ public protocol ImageLoading: AnyObject {
     @discardableResult
     func downloadImage(
         with request: ImageDownloadRequest,
-        completion: @escaping (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)
+        completion: @escaping (@MainActor(_ result: Result<UIImage, Error>) -> Void)
     ) -> Cancellable?
 
     /// Load a batch of images and get notified when all of them complete loading.
@@ -55,7 +55,7 @@ public protocol ImageLoading: AnyObject {
     ///   It returns an array of image and errors in case the image failed to load.
     func downloadMultipleImages(
         with requests: [ImageDownloadRequest],
-        completion: @escaping (@MainActor @Sendable([Result<UIImage, Error>]) -> Void)
+        completion: @escaping (@MainActor([Result<UIImage, Error>]) -> Void)
     )
 
     // MARK: - Deprecations
@@ -65,7 +65,7 @@ public protocol ImageLoading: AnyObject {
     func loadImage(
         using urlRequest: URLRequest,
         cachingKey: String?,
-        completion: @escaping (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)
+        completion: @escaping (@MainActor(_ result: Result<UIImage, Error>) -> Void)
     ) -> Cancellable?
 
     @available(*, deprecated, message: "use loadImage(into:from:with:) instead.")
@@ -77,7 +77,7 @@ public protocol ImageLoading: AnyObject {
         placeholder: UIImage?,
         resize: Bool,
         preferredSize: CGSize?,
-        completion: (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)?
+        completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable?
 
     @available(*, deprecated, message: "use loadMultipleImages() instead.")
@@ -87,7 +87,7 @@ public protocol ImageLoading: AnyObject {
         loadThumbnails: Bool,
         thumbnailSize: CGSize,
         imageCDN: ImageCDN,
-        completion: @escaping (@MainActor @Sendable([UIImage]) -> Void)
+        completion: @escaping (@MainActor([UIImage]) -> Void)
     )
 }
 
@@ -99,7 +99,7 @@ public extension ImageLoading {
         into imageView: UIImageView,
         from attachmentPayload: ImageAttachmentPayload?,
         maxResolutionInPixels: Double,
-        completion: (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)?
+        completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable? {
         guard let originalWidth = attachmentPayload?.originalWidth,
               let originalHeight = attachmentPayload?.originalHeight else {
@@ -168,7 +168,7 @@ public extension ImageLoading {
     @available(*, deprecated, message: "use downloadImage() instead.")
     func loadImage(
         using urlRequest: URLRequest,
-        cachingKey: String?, completion: @escaping @MainActor @Sendable(Result<UIImage, Error>) -> Void
+        cachingKey: String?, completion: @escaping @MainActor(Result<UIImage, Error>) -> Void
     ) -> Cancellable? {
         guard let url = urlRequest.url else {
             StreamConcurrency.onMain {
@@ -192,7 +192,7 @@ public extension ImageLoading {
         placeholder: UIImage? = nil,
         resize: Bool = true,
         preferredSize: CGSize? = nil,
-        completion: (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)? = nil
+        completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)? = nil
     ) -> Cancellable? {
         loadImage(
             into: imageView,
@@ -212,7 +212,7 @@ public extension ImageLoading {
         loadThumbnails: Bool = true,
         thumbnailSize: CGSize = Components.default.avatarThumbnailSize,
         imageCDN: ImageCDN,
-        completion: @escaping @MainActor @Sendable([UIImage]) -> Void
+        completion: @escaping @MainActor([UIImage]) -> Void
     ) {
         let requests = urls.map { url in
             ImageDownloadRequest(url: url, options: .init(resize: .init(thumbnailSize)))

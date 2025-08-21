@@ -67,7 +67,7 @@ import UIKit
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessageId messageId: MessageId,
-        _ completion: @escaping @MainActor @Sendable(Error?) -> Void
+        _ completion: @escaping @MainActor(Error?) -> Void
     )
 
     /// Tells the delegate that it should load the page around the given message id.
@@ -81,7 +81,7 @@ import UIKit
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessage message: ChatMessage,
-        _ completion: @escaping @MainActor @Sendable(Error?) -> Void
+        _ completion: @escaping @MainActor(Error?) -> Void
     )
 
     /// Tells the delegate that it should load the first page.
@@ -145,7 +145,7 @@ public extension ChatMessageListVCDelegate {
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessageId messageId: MessageId,
-        _ completion: @escaping @MainActor @Sendable(Error?) -> Void
+        _ completion: @escaping @MainActor(Error?) -> Void
     ) {
         completion(nil)
     }
@@ -154,7 +154,7 @@ public extension ChatMessageListVCDelegate {
     func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessage message: ChatMessage,
-        _ completion: @escaping @MainActor @Sendable(Error?) -> Void
+        _ completion: @escaping @MainActor(Error?) -> Void
     ) {
         chatMessageListVC(vc, shouldLoadPageAroundMessageId: message.id, completion)
     }

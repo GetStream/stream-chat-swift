@@ -13,7 +13,7 @@ enum StreamConcurrency {
     ///
     /// - Important: It is safe to call from any thread. It does not deadlock if we are already on the main thread.
     /// - Important: Prefer Task { @MainActor if possible.
-    static func onMain<T>(_ action: @MainActor @Sendable() throws -> T) rethrows -> T where T: Sendable {
+    static func onMain<T>(_ action: @MainActor() throws -> T) rethrows -> T where T: Sendable {
         if Thread.current.isMainThread {
             return try MainActor.assumeIsolated {
                 try action()

@@ -13,7 +13,7 @@ final class ChatChannelController_Spy: ChatChannelController, Spy, @unchecked Se
         super.init(channelQuery: .init(cid: .unique), channelListQuery: nil, client: client)
     }
 
-    override func recoverWatchedChannel(recovery: Bool, completion: @escaping @MainActor @Sendable(Error?) -> Void) {
+    override func recoverWatchedChannel(recovery: Bool, completion: @escaping @MainActor(Error?) -> Void) {
         record()
         callback {
             completion(self.watchActiveChannelError)
@@ -48,7 +48,7 @@ final class ChannelControllerSpy: ChatChannelController, @unchecked Sendable {
         )
     }
 
-    override func synchronize(_ completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
         synchronize_called = true
     }
 }

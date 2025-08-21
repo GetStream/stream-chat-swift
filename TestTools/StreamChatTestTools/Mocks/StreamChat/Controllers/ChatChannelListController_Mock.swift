@@ -27,7 +27,7 @@ class ChatChannelListController_Mock: ChatChannelListController, Spy, @unchecked
         set { super.state = newValue }
     }
 
-    override func loadNextChannels(limit: Int?, completion: (@MainActor @Sendable(Error?) -> Void)?) {
+    override func loadNextChannels(limit: Int?, completion: (@MainActor(Error?) -> Void)?) {
         loadNextChannelsCallCount += 1
         loadNextChannelsIsCalled = true
     }

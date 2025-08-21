@@ -81,7 +81,7 @@ final class UserListControllerMock: ChatUserListController, @unchecked Sendable 
         super.init(query: .init(filter: .none), client: .mock)
     }
 
-    override func synchronize(_ completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
         synchronize_called = true
     }
 }

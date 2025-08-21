@@ -24,7 +24,7 @@ enum EnvironmentState {
 
 protocol AuthenticationRepositoryDelegate: AnyObject {
     func didFinishSettingUpAuthenticationEnvironment(for state: EnvironmentState)
-    func logOutUser(completion: @escaping @MainActor @Sendable() -> Void)
+    func logOutUser(completion: @escaping @MainActor() -> Void)
 }
 
 class AuthenticationRepository: @unchecked Sendable {

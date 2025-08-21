@@ -26,7 +26,7 @@ class ChatMessageSearchController_Mock: ChatMessageSearchController, @unchecked 
     }
 
     var loadNextMessagesCallCount = 0
-    override func loadNextMessages(limit: Int = 25, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    override func loadNextMessages(limit: Int = 25, completion: (@MainActor(Error?) -> Void)? = nil) {
         loadNextMessagesCallCount += 1
         callback {
             completion?(nil)
@@ -34,14 +34,14 @@ class ChatMessageSearchController_Mock: ChatMessageSearchController, @unchecked 
     }
 
     var searchCallCount = 0
-    override func search(query: MessageSearchQuery, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    override func search(query: MessageSearchQuery, completion: (@MainActor(Error?) -> Void)? = nil) {
         searchCallCount += 1
         callback {
             completion?(nil)
         }
     }
 
-    override func search(text: String, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    override func search(text: String, completion: (@MainActor(Error?) -> Void)? = nil) {
         searchCallCount += 1
     }
 }

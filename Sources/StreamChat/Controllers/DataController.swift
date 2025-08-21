@@ -50,7 +50,7 @@ public class DataController: Controller, @unchecked Sendable {
     /// the `error` variable contains more details about the problem.
     ///
     // swiftlint:disable unavailable_function
-    public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
+    public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
         fatalError("`synchronize` method must be overriden by the subclass.")
     }
 
@@ -79,7 +79,7 @@ public extension DataControllerStateDelegate {
 /// A helper protocol allowing calling delegate using existing `callback` method.
 protocol DelegateCallable: Sendable {
     associatedtype Delegate
-    func callback(_ action: @escaping @MainActor @Sendable() -> Void)
+    func callback(_ action: @escaping @MainActor() -> Void)
 
     /// The multicast delegate wrapper for all delegates of the controller
     var multicastDelegate: MulticastDelegate<Delegate> { get }
@@ -87,7 +87,7 @@ protocol DelegateCallable: Sendable {
 
 extension DelegateCallable {
     /// A helper function to ensure the delegate callback is performed using the `callback` method.
-    func delegateCallback(_ callback: @escaping @MainActor @Sendable(Delegate) -> Void) {
+    func delegateCallback(_ callback: @escaping @MainActor(Delegate) -> Void) {
         self.callback {
             self.multicastDelegate.invoke(callback)
         }

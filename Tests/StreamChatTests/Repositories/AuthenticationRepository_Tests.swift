@@ -1169,7 +1169,7 @@ private class AuthenticationRepositoryDelegateMock: AuthenticationRepositoryDele
         newState = state
     }
 
-    func logOutUser(completion: @escaping @MainActor @Sendable() -> Void) {
+    func logOutUser(completion: @escaping @MainActor() -> Void) {
         if isCapturingStatistics {
             logoutCallCount += 1
         }

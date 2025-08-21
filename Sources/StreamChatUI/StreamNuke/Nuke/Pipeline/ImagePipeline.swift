@@ -224,7 +224,7 @@ final class ImagePipeline: @unchecked Sendable {
         }
     }
 
-    // nuke-13: requires callbacks to be @MainActor @Sendable or deprecate this entire API
+    // nuke-13: requires callbacks to be @MainActor or deprecate this entire API
     private func dispatchCallback(to callbackQueue: DispatchQueue?, _ closure: @escaping () -> Void) {
         let box = UncheckedSendableBox(value: closure)
         if callbackQueue === queue {

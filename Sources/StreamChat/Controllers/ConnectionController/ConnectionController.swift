@@ -89,7 +89,7 @@ public extension ChatConnectionController {
     /// - Parameter completion: Called when the connection is established. If the connection fails, the completion is
     /// called with an error.
     ///
-    func connect(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    func connect(completion: (@MainActor(Error?) -> Void)? = nil) {
         connectionRepository.connect { [weak self] error in
             self?.callback {
                 completion?(error)

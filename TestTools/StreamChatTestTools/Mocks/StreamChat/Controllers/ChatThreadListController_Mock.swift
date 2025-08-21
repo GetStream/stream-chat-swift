@@ -21,9 +21,9 @@ class ChatThreadListController_Mock: ChatThreadListController, @unchecked Sendab
         set { super.state = newValue }
     }
 
-    var synchronize_completion: (@MainActor @Sendable(Error?) -> Void)?
+    var synchronize_completion: (@MainActor(Error?) -> Void)?
     var synchronize_callCount = 0
-    override func synchronize(_ completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
         synchronize_callCount += 1
         synchronize_completion = completion
     }

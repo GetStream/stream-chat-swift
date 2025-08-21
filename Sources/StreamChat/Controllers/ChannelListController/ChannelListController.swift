@@ -143,7 +143,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         super.init()
     }
 
-    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
         channelListLinker.start(with: client.eventNotificationCenter)
         client.syncRepository.startTrackingChannelListController(self)
@@ -166,7 +166,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     ///
     public func loadNextChannels(
         limit: Int? = nil,
-        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         if hasLoadedAllPreviousChannels {
             callback {
@@ -190,7 +190,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     @available(*, deprecated, message: "Please use `markAllRead` available in `CurrentChatUserController`")
-    public func markAllRead(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    public func markAllRead(completion: (@MainActor(Error?) -> Void)? = nil) {
         worker.markAllRead { error in
             self.callback {
                 completion?(error)
@@ -208,7 +208,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     // MARK: - Helpers
 
     private func updateChannelList(
-        _ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil
+        _ completion: (@MainActor(_ error: Error?) -> Void)? = nil
     ) {
         let limit = query.pagination.pageSize
         worker.update(

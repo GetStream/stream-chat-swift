@@ -181,7 +181,7 @@ public class CurrentChatUserController: DataController, DelegateCallable, DataSt
     ///
     /// - Parameter completion: Called when the controller has finished fetching the local data
     ///   and the client connection is established.
-    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
         if case let .localDataFetchFailed(error) = state {
@@ -227,7 +227,7 @@ public extension CurrentChatUserController {
     /// database will be flushed.
     ///
     /// - Parameter completion: The completion to be called when the operation is completed.
-    func reloadUserIfNeeded(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    func reloadUserIfNeeded(completion: (@MainActor(Error?) -> Void)? = nil) {
         client.authenticationRepository.refreshToken { error in
             self.callback {
                 completion?(error)
@@ -258,7 +258,7 @@ public extension CurrentChatUserController {
         teamsRole: [TeamId: UserRole]? = nil,
         userExtraData: [String: RawJSON] = [:],
         unsetProperties: Set<String> = [],
-        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         guard let currentUserId = client.currentUserId else {
             callback {
@@ -296,7 +296,7 @@ public extension CurrentChatUserController {
         _ extraData: [String: RawJSON],
         unsetProperties: [String]? = nil,
         in channelId: ChannelId,
-        completion: (@MainActor @Sendable(Result<ChatChannelMember, Error>) -> Void)? = nil
+        completion: (@MainActor(Result<ChatChannelMember, Error>) -> Void)? = nil
     ) {
         guard let currentUserId = client.currentUserId else {
             callback {
@@ -319,7 +319,7 @@ public extension CurrentChatUserController {
 
     /// Loads all active live location messages for the current user.
     /// This method is only needed to be called once to make sure all live location messages are tracked.
-    func loadActiveLiveLocationMessages(completion: (@MainActor @Sendable(Result<[SharedLocation], Error>) -> Void)? = nil) {
+    func loadActiveLiveLocationMessages(completion: (@MainActor(Result<[SharedLocation], Error>) -> Void)? = nil) {
         currentUserUpdater.loadActiveLiveLocations { result in
             self.callback {
                 completion?(result)
@@ -361,7 +361,7 @@ public extension CurrentChatUserController {
 
     /// Fetches the most updated devices and syncs with the local database.
     /// - Parameter completion: Called when the devices are synced successfully, or with error.
-    func synchronizeDevices(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    func synchronizeDevices(completion: (@MainActor(Error?) -> Void)? = nil) {
         guard let currentUserId = client.currentUserId else {
             callback {
                 completion?(ClientError.CurrentUserDoesNotExist())
@@ -378,7 +378,7 @@ public extension CurrentChatUserController {
     /// - Parameters:
     ///   - pushDevice: The device information required for the desired push provider.
     ///   - completion: Callback when device is successfully registered, or failed with error.
-    func addDevice(_ pushDevice: PushDevice, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    func addDevice(_ pushDevice: PushDevice, completion: (@MainActor(Error?) -> Void)? = nil) {
         guard let currentUserId = client.currentUserId else {
             callback {
                 completion?(ClientError.CurrentUserDoesNotExist())
@@ -404,7 +404,7 @@ public extension CurrentChatUserController {
     ///   - id: Device id to be removed. You can obtain registered devices via `currentUser.devices`.
     ///   If `currentUser.devices` is not up-to-date, please make an `synchronize` call.
     ///   - completion: Called when device is successfully deregistered, or with error.
-    func removeDevice(id: DeviceId, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    func removeDevice(id: DeviceId, completion: (@MainActor(Error?) -> Void)? = nil) {
         guard let currentUserId = client.currentUserId else {
             callback {
                 completion?(ClientError.CurrentUserDoesNotExist())
@@ -423,7 +423,7 @@ public extension CurrentChatUserController {
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func markAllRead(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    func markAllRead(completion: (@MainActor(Error?) -> Void)? = nil) {
         currentUserUpdater.markAllRead { error in
             self.callback {
                 completion?(error)
@@ -434,7 +434,7 @@ public extension CurrentChatUserController {
     /// Deletes all the local downloads of file attachments.
     ///
     /// - Parameter completion: Called when files have been deleted or when an error occured.
-    func deleteAllLocalAttachmentDownloads(completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    func deleteAllLocalAttachmentDownloads(completion: (@MainActor(Error?) -> Void)? = nil) {
         currentUserUpdater.deleteAllLocalAttachmentDownloads { error in
             guard let completion else { return }
             self.callback {
@@ -449,7 +449,7 @@ public extension CurrentChatUserController {
     ///  Returns the current user unreads or an error if the API call fails.
     ///
     /// Note: This is a one-time request, it is not observable.
-    func loadAllUnreads(completion: @escaping (@MainActor @Sendable(Result<CurrentUserUnreads, Error>) -> Void)) {
+    func loadAllUnreads(completion: @escaping (@MainActor(Result<CurrentUserUnreads, Error>) -> Void)) {
         currentUserUpdater.loadAllUnreads { result in
             self.callback {
                 completion(result)
@@ -461,7 +461,7 @@ public extension CurrentChatUserController {
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func loadBlockedUsers(completion: @escaping @MainActor @Sendable(Result<[BlockedUserDetails], Error>) -> Void) {
+    func loadBlockedUsers(completion: @escaping @MainActor(Result<[BlockedUserDetails], Error>) -> Void) {
         currentUserUpdater.loadBlockedUsers { result in
             self.callback {
                 completion(result)
@@ -480,7 +480,7 @@ public extension CurrentChatUserController {
     ///  It is optional since it can be observed from the delegate events.
     func loadDraftMessages(
         query: DraftListQuery = DraftListQuery(),
-        completion: (@MainActor @Sendable(Result<[DraftMessage], Error>) -> Void)? = nil
+        completion: (@MainActor(Result<[DraftMessage], Error>) -> Void)? = nil
     ) {
         draftListQuery = query
         createDraftMessagesObserver(query: query)
@@ -506,7 +506,7 @@ public extension CurrentChatUserController {
     ///  It is optional since it can be observed from the delegate events.
     func loadMoreDraftMessages(
         limit: Int? = nil,
-        completion: (@MainActor @Sendable(Result<[DraftMessage], Error>) -> Void)? = nil
+        completion: (@MainActor(Result<[DraftMessage], Error>) -> Void)? = nil
     ) {
         guard let nextCursor = draftMessagesNextCursor else {
             callback {
@@ -537,7 +537,7 @@ public extension CurrentChatUserController {
     func deleteDraftMessage(
         for cid: ChannelId,
         threadId: MessageId? = nil,
-        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         draftMessagesRepository.deleteDraft(for: cid, threadId: threadId) { error in
             self.callback {

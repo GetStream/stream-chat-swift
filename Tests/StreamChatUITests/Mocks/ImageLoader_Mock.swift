@@ -7,7 +7,7 @@ import UIKit
 
 /// A mock implementation of the image loader which loads images synchronusly
 final class ImageLoader_Mock: ImageLoading {
-    func loadImage(into imageView: UIImageView, from url: URL?, with options: ImageLoaderOptions, completion: (@MainActor @Sendable(Result<UIImage, Error>) -> Void)?) -> Cancellable? {
+    func loadImage(into imageView: UIImageView, from url: URL?, with options: ImageLoaderOptions, completion: (@MainActor(Result<UIImage, Error>) -> Void)?) -> Cancellable? {
         if let url = url {
             let image = UIImage(data: try! Data(contentsOf: url))!
             imageView.image = image
@@ -21,7 +21,7 @@ final class ImageLoader_Mock: ImageLoading {
 
     func downloadImage(
         with request: ImageDownloadRequest,
-        completion: @escaping (@MainActor @Sendable(Result<UIImage, Error>) -> Void)
+        completion: @escaping (@MainActor(Result<UIImage, Error>) -> Void)
     ) -> Cancellable? {
         nonisolated(unsafe) var image = UIImage(data: try! Data(contentsOf: request.url))!
         
@@ -37,7 +37,7 @@ final class ImageLoader_Mock: ImageLoading {
 
     func downloadMultipleImages(
         with requests: [ImageDownloadRequest],
-        completion: @escaping (@MainActor @Sendable([Result<UIImage, Error>]) -> Void)
+        completion: @escaping (@MainActor([Result<UIImage, Error>]) -> Void)
     ) {
         let results = requests
             .map { request in

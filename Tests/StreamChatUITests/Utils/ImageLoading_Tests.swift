@@ -58,7 +58,7 @@ import XCTest
             into imageView: UIImageView,
             from url: URL?,
             with options: ImageLoaderOptions,
-            completion: (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)?
+            completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)?
         ) -> Cancellable? {
             loadImageIntoWithOptionsCallCount += 1
             return nil
@@ -69,7 +69,7 @@ import XCTest
             into imageView: UIImageView,
             from attachmentPayload: ImageAttachmentPayload?,
             maxResolutionInPixels: Double,
-            completion: (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)?
+            completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)?
         ) -> Cancellable? {
             loadImageIntoWithAttachmentPayloadCallCount += 1
             return nil
@@ -78,7 +78,7 @@ import XCTest
         @discardableResult
         func downloadImage(
             with request: ImageDownloadRequest,
-            completion: @escaping (@MainActor @Sendable(_ result: Result<UIImage, Error>) -> Void)
+            completion: @escaping (@MainActor(_ result: Result<UIImage, Error>) -> Void)
         ) -> Cancellable? {
             downloadImageCallCount += 1
             return nil
@@ -86,7 +86,7 @@ import XCTest
 
         func downloadMultipleImages(
             with requests: [ImageDownloadRequest],
-            completion: @escaping (@MainActor @Sendable([Result<UIImage, Error>]) -> Void)
+            completion: @escaping (@MainActor([Result<UIImage, Error>]) -> Void)
         ) {
             downloadMultipleImagesCallCount += 1
         }

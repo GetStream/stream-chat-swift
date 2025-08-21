@@ -59,7 +59,7 @@ open class ChatMessageReactionsPickerVC: _ViewController, ThemeProvider, ChatMes
     open func toggleReaction(_ reaction: MessageReactionType) {
         guard let message = messageController.message else { return }
 
-        let completion: @MainActor @Sendable(Error?) -> Void = { [weak self] _ in
+        let completion: @MainActor(Error?) -> Void = { [weak self] _ in
             self?.dismiss(animated: true)
         }
 

@@ -12,7 +12,7 @@ public protocol Controller {}
 
 extension Controller {
     /// A helper function to ensure the callback is performed on the callback queue.
-    func callback(_ action: @escaping @MainActor @Sendable() -> Void) {
+    func callback(_ action: @escaping @MainActor() -> Void) {
         if Thread.current.isMainThread {
             MainActor.assumeIsolated {
                 action()

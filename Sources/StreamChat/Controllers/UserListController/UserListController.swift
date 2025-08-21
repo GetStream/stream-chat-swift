@@ -104,7 +104,7 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: (@MainActor @Sendable(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
         startUserListObserverIfNeeded()
 
         worker.update(userListQuery: query) { result in
@@ -143,7 +143,7 @@ public extension ChatUserListController {
     ///
     func loadNextUsers(
         limit: Int = 25,
-        completion: (@MainActor @Sendable(Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: users.count)

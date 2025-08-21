@@ -22,12 +22,12 @@ final class PollVoteListController_Mock: PollVoteListController, @unchecked Send
         set { super.state = newValue }
     }
 
-    override func synchronize(_ completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
         synchronize_called = true
         synchronize_completion_result?.invoke(with: completion)
     }
     
-    override func loadMoreVotes(limit: Int? = nil, completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    override func loadMoreVotes(limit: Int? = nil, completion: (@MainActor(Error?) -> Void)? = nil) {
         loadMoreVotes_limit = limit
         loadMoreVotes_completion_result?.invoke(with: completion)
     }

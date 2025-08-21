@@ -9,7 +9,7 @@ import XCTest
 final class ChannelListController_Mock: ChatChannelListController, @unchecked Sendable {
     @Atomic var synchronize_called = false
     @Atomic var synchronize_callCount = 0
-    @Atomic var synchronize_completion: (@MainActor @Sendable(Error?) -> Void)?
+    @Atomic var synchronize_completion: (@MainActor(Error?) -> Void)?
 
     var channels_simulated: [ChatChannel]?
     override var channels: LazyCachedMapCollection<ChatChannel> {
@@ -26,7 +26,7 @@ final class ChannelListController_Mock: ChatChannelListController, @unchecked Se
         super.init(query: .init(filter: .notEqual("cid", to: "")), client: .mock)
     }
 
-    override func synchronize(_ completion: (@MainActor @Sendable(Error?) -> Void)? = nil) {
+    override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
         synchronize_callCount += 1
         synchronize_completion = completion
     }
