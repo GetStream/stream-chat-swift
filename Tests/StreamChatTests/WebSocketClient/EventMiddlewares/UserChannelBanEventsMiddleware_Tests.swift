@@ -195,4 +195,46 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
         XCTAssert(forwardedEvent is UserUnbannedEventDTO)
     }
+
+    func test_middleware_handlesUserMessagesDeletedEventCorrectly() throws {
+        // Create event payload
+        let eventPayload: EventPayload = .init(
+            eventType: .userMessagesDeleted,
+            cid: .unique,
+            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
+            createdAt: .unique,
+            softDelete: true
+        )
+
+        // Create event with payload.
+        let event = try UserMessagesDeletedEventDTO(from: eventPayload)
+
+        // Create required objects in the DB
+        let userId = eventPayload.user!.id
+        let messageId1: MessageId = .unique
+        let messageId2: MessageId = .unique
+        
+        try database.createCurrentUser(id: userId)
+        try database.createChannel(cid: eventPayload.cid!)
+        try database.createMessage(id: messageId1, authorId: userId, cid: eventPayload.cid!)
+        try database.createMessage(id: messageId2, authorId: userId, cid: eventPayload.cid!)
+
+        // Verify user and messages exist
+        let userDTO = try XCTUnwrap(database.viewContext.user(id: userId))
+        let message1 = try XCTUnwrap(database.viewContext.message(id: messageId1))
+        let message2 = try XCTUnwrap(database.viewContext.message(id: messageId2))
+        
+        // Verify messages are not deleted initially
+        XCTAssertNil(message1.deletedAt)
+        XCTAssertNil(message2.deletedAt)
+
+        // Simulate `UserMessagesDeletedEvent` event.
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        // Assert the user's messages are marked as deleted
+        XCTAssertEqual(message1.deletedAt?.bridgeDate, eventPayload.createdAt!)
+        XCTAssertEqual(message2.deletedAt?.bridgeDate, eventPayload.createdAt!)
+
+        XCTAssert(forwardedEvent is UserMessagesDeletedEventDTO)
+    }
 }

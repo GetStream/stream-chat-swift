@@ -271,3 +271,37 @@ class UserUnbannedEventDTO: EventDTO {
         )
     }
 }
+
+/// Triggered when the messages of a banned user should be deleted.
+public struct UserMessagesDeletedEvent: Event {
+    /// The unbanned user.
+    public let user: ChatUser
+
+    /// If the messages should be soft deleted or not.
+    public let softDelete: Bool
+
+    /// The event timestamp
+    public let createdAt: Date?
+}
+
+class UserMessagesDeletedEventDTO: EventDTO {
+    let user: UserPayload
+    let createdAt: Date
+    let payload: EventPayload
+
+    init(from response: EventPayload) throws {
+        user = try response.value(at: \.user)
+        createdAt = try response.value(at: \.createdAt)
+        payload = response
+    }
+
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+
+        return try? UserMessagesDeletedEvent(
+            user: userDTO.asModel(),
+            softDelete: payload.softDelete ?? false,
+            createdAt: createdAt
+        )
+    }
+}
