@@ -526,10 +526,10 @@ final class ChatChannel_Tests: XCTestCase {
             isBlocked: false,
             lastActiveMembers: [member],
             membership: member,
-            memberCount: 10,
             lastActiveWatchers: [watcher],
-            watcherCount: 5,
             team: "original-team",
+            watcherCount: 5,
+            memberCount: 10,
             cooldownDuration: 30,
             extraData: ["originalKey": .string("originalValue")]
         )

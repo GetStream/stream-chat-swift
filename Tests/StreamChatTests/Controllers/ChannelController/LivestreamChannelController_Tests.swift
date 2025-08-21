@@ -1551,7 +1551,7 @@ extension LivestreamChannelController_Tests {
             lastReadAt: Date().addingTimeInterval(-450),
             lastReadMessageId: .unique,
             unreadMessagesCount: 3,
-            user: .unique
+            user: .mock(id: .unique)
         )
         
         let comprehensivelyUpdatedChannel = ChatChannel.mock(
@@ -1562,21 +1562,17 @@ extension LivestreamChannelController_Tests {
             createdAt: newCreatedAt,
             updatedAt: newUpdatedAt,
             deletedAt: newDeletedAt,
-            truncatedAt: newTruncatedAt,
             isHidden: true,
             createdBy: newCreatedBy,
             config: .mock(),
             ownCapabilities: [.sendMessage, .readEvents],
             isFrozen: true,
-            isDisabled: true,
-            isBlocked: true,
             lastActiveMembers: [newMember1, newMember2],
             membership: newMember1,
-            memberCount: 25,
             lastActiveWatchers: [newWatcher],
             watcherCount: 12,
+            memberCount: 25,
             reads: [newRead],
-            team: "updated-team",
             cooldownDuration: 60,
             extraData: ["newKey": .string("newValue"), "anotherKey": .number(42)]
         )
