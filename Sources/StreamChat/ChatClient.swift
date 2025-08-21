@@ -531,7 +531,9 @@ public class ChatClient: @unchecked Sendable {
             }
         }
 
-        if !removeDevice {
+        authenticationRepository.clearCurrentUserId()
+
+        if removeDevice == false {
             authenticationRepository.logOutUser()
         }
 

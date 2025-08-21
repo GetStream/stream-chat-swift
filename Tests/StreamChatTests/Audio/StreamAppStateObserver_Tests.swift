@@ -77,6 +77,52 @@ final class StreamAppStateObserver_Tests: XCTestCase {
         ])
     }
 
+    // MARK: - Memory Warning
+
+    func test_memoryWarning_allSubscribersWillBeNotifiedWhenMemoryWarningOccurs() {
+        let subscriberA = SpyAppStateObserverDelegate()
+        let subscriberB = SpyAppStateObserverDelegate()
+
+        appStateObserver.subscribe(subscriberA)
+        appStateObserver.subscribe(subscriberB)
+
+        simulateAppDidReceiveMemoryWarning()
+
+        [subscriberA, subscriberB].forEach { subscriber in
+            XCTAssertEqual(subscriber.recordedFunctions, [
+                "applicationDidReceiveMemoryWarning()"
+            ])
+        }
+    }
+
+    func test_memoryWarning_onlyRemainingSubscribersWillBeNotifiedAfterUnsubscribe() {
+        let subscriberA = SpyAppStateObserverDelegate()
+        let subscriberB = SpyAppStateObserverDelegate()
+
+        appStateObserver.subscribe(subscriberA)
+        appStateObserver.subscribe(subscriberB)
+
+        simulateAppDidReceiveMemoryWarning()
+
+        [subscriberA, subscriberB].forEach { subscriber in
+            XCTAssertEqual(subscriber.recordedFunctions, [
+                "applicationDidReceiveMemoryWarning()"
+            ])
+        }
+
+        appStateObserver.unsubscribe(subscriberA)
+
+        simulateAppDidReceiveMemoryWarning()
+
+        XCTAssertEqual(subscriberA.recordedFunctions, [
+            "applicationDidReceiveMemoryWarning()"
+        ])
+        XCTAssertEqual(subscriberB.recordedFunctions, [
+            "applicationDidReceiveMemoryWarning()",
+            "applicationDidReceiveMemoryWarning()"
+        ])
+    }
+
     // MARK: - Private Helpers
 
     private func simulateAppDidMoveToBackground() {
@@ -86,6 +132,11 @@ final class StreamAppStateObserver_Tests: XCTestCase {
 
     private func simulateAppDidMoveToForeground() {
         notificationCenter.observersMap[UIApplication.didBecomeActiveNotification]?
+            .forEach { $0.execute() }
+    }
+
+    private func simulateAppDidReceiveMemoryWarning() {
+        notificationCenter.observersMap[UIApplication.didReceiveMemoryWarningNotification]?
             .forEach { $0.execute() }
     }
 }
@@ -127,6 +178,10 @@ private final class SpyAppStateObserverDelegate: AppStateObserverDelegate, Spy {
     }
 
     func applicationDidMoveToForeground() {
+        record()
+    }
+
+    func applicationDidReceiveMemoryWarning() {
         record()
     }
 }

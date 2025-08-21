@@ -104,6 +104,116 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.threads[0].lastReadMessageId, "6e75266e-c8e9-49f9-be87-f8e745e94821")
         XCTAssertEqual(payload.threads[0].parentMessageId, "6e75266e-c8e9-49f9-be87-f8e745e94821")
     }
+    
+    // MARK: - UserPayload.asModel() Tests
+    
+    func test_userPayload_asModel_convertsAllPropertiesCorrectly() {
+        // Given: UserPayload with all properties set
+        let userId = "test-user-id"
+        let name = "Test User"
+        let imageURL = URL(string: "https://example.com/avatar.png")!
+        let role = UserRole.admin
+        let teamsRole = ["ios": UserRole.guest, "android": UserRole.admin]
+        let createdAt = Date(timeIntervalSince1970: 1_609_459_200) // 2021-01-01
+        let updatedAt = Date(timeIntervalSince1970: 1_609_545_600) // 2021-01-02
+        let deactivatedAt = Date(timeIntervalSince1970: 1_609_632_000) // 2021-01-03
+        let lastActiveAt = Date(timeIntervalSince1970: 1_609_718_400) // 2021-01-04
+        let isOnline = true
+        let isBanned = false
+        let teams = ["team1", "team2", "team3"]
+        let language = "en"
+        let avgResponseTime = 30
+        let extraData: [String: RawJSON] = ["custom_field": .string("custom_value")]
+        
+        let payload = UserPayload(
+            id: userId,
+            name: name,
+            imageURL: imageURL,
+            role: role,
+            teamsRole: teamsRole,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            deactivatedAt: deactivatedAt,
+            lastActiveAt: lastActiveAt,
+            isOnline: isOnline,
+            isInvisible: false,
+            isBanned: isBanned,
+            teams: teams,
+            language: language,
+            avgResponseTime: avgResponseTime,
+            extraData: extraData
+        )
+        
+        // When: Converting to ChatUser model
+        let chatUser = payload.asModel()
+        
+        // Then: All properties are correctly mapped
+        XCTAssertEqual(chatUser.id, userId)
+        XCTAssertEqual(chatUser.name, name)
+        XCTAssertEqual(chatUser.imageURL, imageURL)
+        XCTAssertEqual(chatUser.isOnline, isOnline)
+        XCTAssertEqual(chatUser.isBanned, isBanned)
+        XCTAssertEqual(chatUser.isFlaggedByCurrentUser, false) // Always false in conversion
+        XCTAssertEqual(chatUser.userRole, role)
+        XCTAssertEqual(chatUser.teamsRole, teamsRole)
+        XCTAssertEqual(chatUser.userCreatedAt, createdAt)
+        XCTAssertEqual(chatUser.userUpdatedAt, updatedAt)
+        XCTAssertEqual(chatUser.userDeactivatedAt, deactivatedAt)
+        XCTAssertEqual(chatUser.lastActiveAt, lastActiveAt)
+        XCTAssertEqual(chatUser.teams, Set(teams))
+        XCTAssertEqual(chatUser.language?.languageCode, language)
+        XCTAssertEqual(chatUser.avgResponseTime, avgResponseTime)
+        XCTAssertEqual(chatUser.extraData, extraData)
+    }
+    
+    func test_userPayload_asModel_withNilValues_handlesCorrectly() {
+        // Given: UserPayload with nil optional values
+        let userId = "test-user-id-nil"
+        let role = UserRole.user
+        let createdAt = Date()
+        let updatedAt = Date()
+        let extraData: [String: RawJSON] = [:]
+        
+        let payload = UserPayload(
+            id: userId,
+            name: nil,
+            imageURL: nil,
+            role: role,
+            teamsRole: nil,
+            createdAt: createdAt,
+            updatedAt: updatedAt,
+            deactivatedAt: nil,
+            lastActiveAt: nil,
+            isOnline: false,
+            isInvisible: true,
+            isBanned: true,
+            teams: [],
+            language: nil,
+            avgResponseTime: nil,
+            extraData: extraData
+        )
+        
+        // When: Converting to ChatUser model
+        let chatUser = payload.asModel()
+        
+        // Then: Nil values are correctly handled
+        XCTAssertEqual(chatUser.id, userId)
+        XCTAssertNil(chatUser.name)
+        XCTAssertNil(chatUser.imageURL)
+        XCTAssertEqual(chatUser.isOnline, false)
+        XCTAssertEqual(chatUser.isBanned, true)
+        XCTAssertEqual(chatUser.isFlaggedByCurrentUser, false)
+        XCTAssertEqual(chatUser.userRole, role)
+        XCTAssertNil(chatUser.teamsRole)
+        XCTAssertEqual(chatUser.userCreatedAt, createdAt)
+        XCTAssertEqual(chatUser.userUpdatedAt, updatedAt)
+        XCTAssertNil(chatUser.userDeactivatedAt)
+        XCTAssertNil(chatUser.lastActiveAt)
+        XCTAssertEqual(chatUser.teams, Set<String>())
+        XCTAssertNil(chatUser.language)
+        XCTAssertNil(chatUser.avgResponseTime)
+        XCTAssertEqual(chatUser.extraData, extraData)
+    }
 }
 
 final class UserRequestBody_Tests: XCTestCase {

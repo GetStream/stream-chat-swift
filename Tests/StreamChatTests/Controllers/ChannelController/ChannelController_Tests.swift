@@ -4389,33 +4389,6 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertNil(error)
     }
 
-    func test_enableSlowMode_failsForInvalidCooldown() throws {
-        //  Create `ChannelController` for new channel
-        let query = ChannelQuery(channelPayload: .unique)
-        setupControllerForNewChannel(query: query)
-
-        // Simulate successful backend channel creation
-        env.channelUpdater!.update_onChannelCreated?(query.cid!)
-
-        // Simulate `enableSlowMode` call with invalid cooldown and assert error is returned
-        var error: Error? = try waitFor { completion in
-            controller.enableSlowMode(cooldownDuration: .random(in: 130...250)) { error in
-                
-                completion(error)
-            }
-        }
-        XCTAssert(error is ClientError.InvalidCooldownDuration)
-
-        // Simulate `enableSlowMode` call with another invalid cooldown and assert error is returned
-        error = try waitFor { completion in
-            controller.enableSlowMode(cooldownDuration: .random(in: -100...0)) { error in
-                
-                completion(error)
-            }
-        }
-        XCTAssert(error is ClientError.InvalidCooldownDuration)
-    }
-
     func test_enableSlowMode_callsChannelUpdater() {
         // Simulate `enableSlowMode` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
@@ -4487,7 +4460,7 @@ final class ChannelController_Tests: XCTestCase {
                 
                 completion(error)
             }
-            env.channelUpdater!.enableSlowMode_completion?(nil)
+            env.channelUpdater!.disableSlowMode_completion?(nil)
         }
 
         XCTAssertNil(error)
@@ -4510,15 +4483,13 @@ final class ChannelController_Tests: XCTestCase {
         controller = nil
 
         // Assert cid is passed to `channelUpdater`, completion is not called yet
-        XCTAssertEqual(env.channelUpdater!.enableSlowMode_cid, channelId)
-        // Assert that passed cooldown duration is 0
-        XCTAssertEqual(env.channelUpdater!.enableSlowMode_cooldownDuration, 0)
+        XCTAssertEqual(env.channelUpdater!.disableSlowMode_cid, channelId)
         XCTAssertFalse(completionCalled)
 
         // Simulate successful update
-        env.channelUpdater!.enableSlowMode_completion?(nil)
+        env.channelUpdater!.disableSlowMode_completion?(nil)
         // Release reference of completion so we can deallocate stuff
-        env.channelUpdater!.enableSlowMode_completion = nil
+        env.channelUpdater!.disableSlowMode_completion = nil
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -4535,7 +4506,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Simulate failed update
         let testError = TestError()
-        env.channelUpdater!.enableSlowMode_completion?(testError)
+        env.channelUpdater!.disableSlowMode_completion?(testError)
 
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)

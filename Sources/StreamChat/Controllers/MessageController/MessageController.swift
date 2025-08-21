@@ -417,7 +417,12 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
             extraData: transformableInfo.extraData
         ) { result in
             if let newMessage = try? result.get() {
-                self.client.eventNotificationCenter.process(NewMessagePendingEvent(message: newMessage))
+                self.client.eventNotificationCenter.process(
+                    NewMessagePendingEvent(
+                        message: newMessage,
+                        cid: self.cid
+                    )
+                )
             }
             self.callback {
                 completion?(result.map(\.id))

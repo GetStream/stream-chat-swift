@@ -115,7 +115,7 @@ class ChatClientFactory {
         databaseContainer: DatabaseContainer,
         currentUserId: @escaping () -> UserId?
     ) -> EventNotificationCenter {
-        let center = environment.notificationCenterBuilder(databaseContainer)
+        let center = environment.notificationCenterBuilder(databaseContainer, nil)
         let middlewares: [EventMiddleware] = [
             EventDataProcessorMiddleware(),
             TypingStartCleanupMiddleware(

@@ -116,6 +116,16 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                 )
                 self.channelPresentingStyle = .embeddedInTabBar
             }),
+            .init(title: "Show as Livestream Controller", handler: { [unowned self] _ in
+                let client = self.rootViewController.controller.client
+                let livestreamController = client.livestreamChannelController(for: .init(cid: cid))
+                livestreamController.maxMessageLimitOptions = .recommended
+                livestreamController.countSkippedMessagesWhenPaused = true
+                let vc = DemoLivestreamChatChannelVC()
+                vc.livestreamChannelController = livestreamController
+                vc.hidesBottomBarWhenPushed = true
+                self.rootViewController.navigationController?.pushViewController(vc, animated: true)
+            }),
             .init(title: "Update channel name", isEnabled: canUpdateChannel, handler: { [unowned self] _ in
                 self.rootViewController.presentAlert(title: "Enter channel name", textFieldPlaceholder: "Channel name") { name in
                     guard let name = name, !name.isEmpty else {

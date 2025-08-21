@@ -76,6 +76,16 @@ final class ChatClient_Mock: ChatClient, @unchecked Sendable {
         }
     }
 
+    public var connectionStatus_mock: ConnectionStatus?
+    override var connectionStatus: ConnectionStatus {
+        get {
+            connectionStatus_mock ?? super.connectionStatus
+        }
+        set {
+            connectionStatus_mock = newValue
+        }
+    }
+
     override func createBackgroundWorkers() {
         createBackgroundWorkers_called = true
 
@@ -313,7 +323,7 @@ extension ChatClient.Environment {
                 EventDecoder()
             },
             notificationCenterBuilder: {
-                EventNotificationCenter(database: $0)
+                EventNotificationCenter(database: $0, manualEventHandler: $1)
             },
             authenticationRepositoryBuilder: {
                 AuthenticationRepository_Mock(

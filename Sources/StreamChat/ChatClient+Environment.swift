@@ -57,7 +57,7 @@ extension ChatClient {
 
         var eventDecoderBuilder: @Sendable() -> EventDecoder = { EventDecoder() }
 
-        var notificationCenterBuilder: @Sendable(_ database: DatabaseContainer) -> EventNotificationCenter = { EventNotificationCenter(database: $0) }
+        var notificationCenterBuilder: @Sendable(_ database: DatabaseContainer, _ manualEventHandler: ManualEventHandler?) -> EventNotificationCenter = { EventNotificationCenter(database: $0, manualEventHandler: $1) }
 
         var internetConnection: @Sendable(_ center: NotificationCenter, _ monitor: InternetConnectionMonitor) -> InternetConnection = {
             InternetConnection(notificationCenter: $0, monitor: $1)

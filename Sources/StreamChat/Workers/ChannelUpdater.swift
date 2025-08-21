@@ -50,7 +50,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         if let pagination = channelQuery.pagination {
             paginationStateHandler.begin(pagination: pagination)
         }
-        
+
         let didLoadFirstPage = channelQuery.pagination?.parameter == nil
         let didJumpToMessage: Bool = channelQuery.pagination?.parameter?.isJumpingToMessage == true
         let resetMembersAndReads = didLoadFirstPage
@@ -73,7 +73,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                     // Fetching channel data should prepopulate it. Then we can save an API call
                     // for providing member data.
                     let memberListQuery = ChannelMemberListQuery(cid: payload.channel.cid, sort: actions?.updateMemberList ?? [])
-                    
+
                     if let channelDTO = session.channel(cid: payload.channel.cid) {
                         if resetMessages {
                             channelDTO.cleanAllMessagesExcludingLocalOnly()
@@ -89,11 +89,11 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                             channelDTO.watchers.removeAll()
                         }
                     }
-                    
+
                     let updatedChannel = try session.saveChannel(payload: payload)
                     updatedChannel.oldestMessageAt = self.paginationState.oldestMessageAt?.bridgeDate
                     updatedChannel.newestMessageAt = self.paginationState.newestMessageAt?.bridgeDate
-                    
+
                     // Share member data with member list query without any filters (requres ChannelDTO to be saved first)
                     let memberListQueryDTO: ChannelMemberListQueryDTO = try {
                         if let dto = session.channelMemberListQuery(queryHash: memberListQuery.queryHash) {
@@ -148,7 +148,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             completion?($0.error)
         }
     }
-    
+
     /// Loads channel members and reads for these members using channel query endpoint.
     ///
     /// - Note: Use it only if we would like to paginate channel reads (reads pagination can only be done through paginating members using the channel query endpoint).
@@ -180,7 +180,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                     // In addition to this, we want to save channel data because reads are
                     // stored and returned through channel data.
                     let memberListQuery = ChannelMemberListQuery(cid: cid, sort: memberListSorting)
-                    
+
                     // Keep the default logic where loading the first page, resets the pagination state.
                     if membersPagination.offset == 0 {
                         let channelDTO = session.channel(cid: cid)
@@ -191,7 +191,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                     let updatedChannel = try session.saveChannel(payload: payload)
                     let memberListQueryDTO = try session.saveQuery(memberListQuery)
                     memberListQueryDTO.members.formUnion(updatedChannel.members)
-                    
+
                     paginatedMembers = payload.members.compactMapLoggingError { try session.member(userId: $0.userId, cid: cid)?.asModel() }
                 } completion: { error in
                     if let paginatedMembers {
@@ -593,11 +593,17 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// - Parameters:
     ///   - cid: Channel id of the channel to be marked as read
     ///   - cooldownDuration: Duration of the time interval users have to wait between messages.
-    ///   Specified in seconds. Should be between 0-120. Pass 0 to disable slow mode.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func enableSlowMode(cid: ChannelId, cooldownDuration: Int, completion: (@Sendable(Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)) {
             completion?($0.error)
+        }
+    }
+
+    /// Disables slow mode for the channel.
+    func disableSlowMode(cid: ChannelId, completion: @escaping @Sendable(Error?) -> Void) {
+        apiClient.request(endpoint: .enableSlowMode(cid: cid, cooldownDuration: 0)) {
+            completion($0.error)
         }
     }
 
@@ -768,9 +774,9 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             completion?($0.error)
         })
     }
-    
+
     // MARK: - private
-    
+
     private func messagePayload(text: String?, currentUserId: UserId?) -> MessageRequestBody? {
         var messagePayload: MessageRequestBody?
         if let text = text, let currentUserId = currentUserId {
@@ -803,7 +809,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func addMembers(
         currentUserId: UserId? = nil,
         cid: ChannelId,
@@ -823,7 +829,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func channelWatchers(for query: ChannelWatcherListQuery) async throws -> [ChatUser] {
         let payload = try await withCheckedThrowingContinuation { continuation in
             channelWatchers(query: query) { result in
@@ -835,7 +841,7 @@ extension ChannelUpdater {
             try ids.compactMap { try session.user(id: $0)?.asModel() }
         }
     }
-    
+
     func createNewMessage(
         in cid: ChannelId,
         messageId: MessageId?,
@@ -875,7 +881,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func deleteChannel(cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { continuation in
             deleteChannel(cid: cid) { error in
@@ -883,7 +889,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func deleteFile(in cid: ChannelId, url: String) async throws {
         try await withCheckedThrowingContinuation { continuation in
             deleteFile(in: cid, url: url) { error in
@@ -891,7 +897,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func deleteImage(in cid: ChannelId, url: String) async throws {
         try await withCheckedThrowingContinuation { continuation in
             deleteImage(in: cid, url: url) { error in
@@ -899,7 +905,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func enableSlowMode(cid: ChannelId, cooldownDuration: Int) async throws {
         try await withCheckedThrowingContinuation { continuation in
             enableSlowMode(cid: cid, cooldownDuration: cooldownDuration) { error in
@@ -907,7 +913,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func enrichUrl(_ url: URL) async throws -> LinkAttachmentPayload {
         try await withCheckedThrowingContinuation { continuation in
             enrichUrl(url) { result in
@@ -915,7 +921,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func freezeChannel(_ freeze: Bool, cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { continuation in
             freezeChannel(freeze, cid: cid) { error in
@@ -923,7 +929,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func hideChannel(cid: ChannelId, clearHistory: Bool) async throws {
         try await withCheckedThrowingContinuation { continuation in
             hideChannel(cid: cid, clearHistory: clearHistory) { error in
@@ -931,7 +937,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func inviteMembers(cid: ChannelId, userIds: Set<UserId>) async throws {
         try await withCheckedThrowingContinuation { continuation in
             inviteMembers(cid: cid, userIds: userIds) { error in
@@ -939,7 +945,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func loadMembersWithReads(
         in cid: ChannelId,
         membersPagination: Pagination,
@@ -951,7 +957,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func loadPinnedMessages(in cid: ChannelId, query: PinnedMessagesQuery) async throws -> [ChatMessage] {
         try await withCheckedThrowingContinuation { continuation in
             loadPinnedMessages(in: cid, query: query) { result in
@@ -959,7 +965,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func muteChannel(cid: ChannelId, expiration: Int? = nil) async throws {
         try await withCheckedThrowingContinuation { continuation in
             muteChannel(cid: cid, expiration: expiration) { error in
@@ -983,7 +989,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func removeMembers(
         currentUserId: UserId? = nil,
         cid: ChannelId,
@@ -1001,7 +1007,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func showChannel(cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { continuation in
             showChannel(cid: cid) { error in
@@ -1009,7 +1015,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func startWatching(cid: ChannelId, isInRecoveryMode: Bool) async throws {
         try await withCheckedThrowingContinuation { continuation in
             startWatching(cid: cid, isInRecoveryMode: isInRecoveryMode) { error in
@@ -1017,7 +1023,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func stopWatching(cid: ChannelId) async throws {
         try await withCheckedThrowingContinuation { continuation in
             stopWatching(cid: cid) { error in
@@ -1025,7 +1031,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func truncateChannel(
         cid: ChannelId,
         skipPush: Bool,
@@ -1063,7 +1069,7 @@ extension ChannelUpdater {
             )
         }
     }
-    
+
     func update(channelPayload: ChannelEditDetailPayload) async throws {
         try await withCheckedThrowingContinuation { continuation in
             updateChannel(channelPayload: channelPayload) { error in
@@ -1071,7 +1077,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func updatePartial(channelPayload: ChannelEditDetailPayload, unsetProperties: [String]) async throws {
         try await withCheckedThrowingContinuation { continuation in
             partialChannelUpdate(updates: channelPayload, unsetProperties: unsetProperties) { error in
@@ -1079,7 +1085,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
+
     func uploadFile(
         type: AttachmentType,
         localFileURL: URL,
@@ -1097,9 +1103,7 @@ extension ChannelUpdater {
             }
         }
     }
-    
-    // MARK: -
-    
+
     func loadMessages(with channelQuery: ChannelQuery, pagination: MessagesPagination) async throws -> [ChatMessage] {
         let payload = try await update(channelQuery: channelQuery.withPagination(pagination))
         guard let cid = channelQuery.cid else { return [] }
@@ -1107,7 +1111,7 @@ extension ChannelUpdater {
         guard let toDate = payload.messages.last?.createdAt else { return [] }
         return try await messageRepository.messages(from: fromDate, to: toDate, in: cid)
     }
-    
+
     func loadMessages(
         before messageId: MessageId?,
         limit: Int?,
@@ -1140,7 +1144,7 @@ extension ChannelUpdater {
         let pagination = MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
         try await update(channelQuery: channelQuery.withPagination(pagination))
     }
-        
+
     func loadMessages(
         around messageId: MessageId,
         limit: Int?,
@@ -1182,7 +1186,7 @@ extension ChannelQuery {
         result.pagination = pagination
         return result
     }
-    
+
     func withOptions(forWatching watch: Bool) -> Self {
         var result = self
         result.options = watch ? .all : .state

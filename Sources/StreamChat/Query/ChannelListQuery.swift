@@ -113,6 +113,17 @@ extension Filter where Scope == ChannelListFilterScope {
             return nil
         }
     }
+
+    var blockedFilterValue: Bool? {
+        if `operator`.isGroupOperator {
+            let filters = value as? [Filter] ?? []
+            return filters.compactMap(\.blockedFilterValue).first
+        } else if `operator` == FilterOperator.equal.rawValue {
+            return key == FilterKey<Scope, Bool>.blocked.rawValue ? (value as? Bool) : nil
+        } else {
+            return nil
+        }
+    }
 }
 
 /// Filter values to be used with `.invite` FilterKey.

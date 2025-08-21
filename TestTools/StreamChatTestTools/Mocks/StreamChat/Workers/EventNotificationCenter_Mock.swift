@@ -16,6 +16,22 @@ final class EventNotificationCenter_Mock: EventNotificationCenter, @unchecked Se
     lazy var mock_process = MockFunc<([Event], Bool, (@Sendable() -> Void)?), Void>.mock(for: process)
     var mock_processCalledWithEvents: [Event] = []
 
+    var registerManualEventHandling_calledWith: ChannelId?
+    var registerManualEventHandling_callCount = 0
+
+    var unregisterManualEventHandling_calledWith: ChannelId?
+    var unregisterManualEventHandling_callCount = 0
+
+    override func registerManualEventHandling(for cid: ChannelId) {
+        registerManualEventHandling_callCount += 1
+        registerManualEventHandling_calledWith = cid
+    }
+
+    override func unregisterManualEventHandling(for cid: ChannelId) {
+        unregisterManualEventHandling_callCount += 1
+        unregisterManualEventHandling_calledWith = cid
+    }
+
     override func process(
         _ events: [Event],
         postNotifications: Bool = true,
