@@ -430,15 +430,13 @@ final class ChatChannel_Tests: XCTestCase {
         let newIsFrozen = !originalChannel.isFrozen
         let newIsDisabled = !originalChannel.isDisabled
         let newIsBlocked = !originalChannel.isBlocked
-        let newMember = ChatChannelMember.mock(id: .unique, name: "All New Member")
+        let newMember = ChatChannelMember.dummy(id: .unique)
         let newMembers = [newMember]
         let newMembership = newMember
         let newMemberCount = 99
         let newWatcher = ChatUser.mock(id: .unique, name: "All New Watcher")
         let newWatchers = [newWatcher]
         let newWatcherCount = 33
-        let newRead = ChatChannelRead.mock(user: .mock(id: .unique), lastReadAt: Date(), unreadMessagesCount: 12)
-        let newReads = [newRead]
         let newTeam = "all-new-team"
         let newCooldownDuration = 180
         let newExtraData: [String: RawJSON] = ["completelyNew": .string("allNewValue")]
@@ -459,7 +457,6 @@ final class ChatChannel_Tests: XCTestCase {
             isFrozen: newIsFrozen,
             isDisabled: newIsDisabled,
             isBlocked: newIsBlocked,
-            reads: newReads,
             members: newMembers,
             membership: newMembership,
             memberCount: newMemberCount,
@@ -491,8 +488,6 @@ final class ChatChannel_Tests: XCTestCase {
         XCTAssertEqual(completelyUpdatedChannel.lastActiveWatchers.count, 1)
         XCTAssertEqual(completelyUpdatedChannel.lastActiveWatchers.first?.id, newWatcher.id)
         XCTAssertEqual(completelyUpdatedChannel.watcherCount, newWatcherCount)
-        XCTAssertEqual(completelyUpdatedChannel.reads.count, 1)
-        XCTAssertEqual(completelyUpdatedChannel.reads.first?.user.id, newRead.user.id)
         XCTAssertEqual(completelyUpdatedChannel.team, newTeam)
         XCTAssertEqual(completelyUpdatedChannel.cooldownDuration, newCooldownDuration)
         XCTAssertEqual(completelyUpdatedChannel.extraData, newExtraData)
@@ -505,12 +500,13 @@ final class ChatChannel_Tests: XCTestCase {
     
     private func createComprehensiveChannel() -> ChatChannel {
         let createdBy = ChatUser.mock(id: .unique, name: "Original Creator")
-        let member = ChatChannelMember.mock(id: .unique, name: "Original Member")
+        let member = ChatChannelMember.dummy(id: .unique)
         let watcher = ChatUser.mock(id: .unique, name: "Original Watcher")
         let read = ChatChannelRead.mock(
-            user: .mock(id: .unique),
             lastReadAt: Date().addingTimeInterval(-1800),
-            unreadMessagesCount: 5
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 5,
+            user: .mock(id: .unique)
         )
         
         return ChatChannel.mock(
@@ -521,7 +517,6 @@ final class ChatChannel_Tests: XCTestCase {
             createdAt: Date().addingTimeInterval(-86400), // 1 day ago
             updatedAt: Date().addingTimeInterval(-1800), // 30 minutes ago
             deletedAt: nil,
-            truncatedAt: nil,
             isHidden: false,
             createdBy: createdBy,
             config: .mock(),
@@ -534,7 +529,6 @@ final class ChatChannel_Tests: XCTestCase {
             memberCount: 10,
             lastActiveWatchers: [watcher],
             watcherCount: 5,
-            reads: [read],
             team: "original-team",
             cooldownDuration: 30,
             extraData: ["originalKey": .string("originalValue")]

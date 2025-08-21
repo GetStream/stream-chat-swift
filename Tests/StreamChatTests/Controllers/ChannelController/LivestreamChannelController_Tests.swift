@@ -146,16 +146,29 @@ extension LivestreamChannelController_Tests {
 // MARK: - Synchronize Tests
 
 extension LivestreamChannelController_Tests {
-    func test_synchronize_makesCorrectAPICall() {
+    func test_synchronize_callsUpdaterWithCorrectParameters() {
         // Given
-        let apiClient = client.mockAPIClient
+        let mockUpdater = ChannelUpdater_Mock(
+            channelRepository: client.channelRepository,
+            messageRepository: client.messageRepository,
+            paginationStateHandler: client.makeMessagesPaginationStateHandler(),
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
+        
+        controller = LivestreamChannelController(
+            channelQuery: channelQuery,
+            client: client,
+            updater: mockUpdater
+        )
         
         // When
         controller.synchronize()
         
         // Then
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: channelQuery)
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(mockUpdater.update_callCount, 1)
+
+        mockUpdater.cleanUp()
     }
     
     func test_synchronize_withCache_loadsInitialDataFromCache() {
@@ -218,13 +231,27 @@ extension LivestreamChannelController_Tests {
         let expectation = self.expectation(description: "Synchronize completes")
         var synchronizeError: Error?
         
+        let mockUpdater = ChannelUpdater_Mock(
+            channelRepository: client.channelRepository,
+            messageRepository: client.messageRepository,
+            paginationStateHandler: client.makeMessagesPaginationStateHandler(),
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
+        
+        controller = LivestreamChannelController(
+            channelQuery: channelQuery,
+            client: client,
+            updater: mockUpdater
+        )
+        
         // When
         controller.synchronize { error in
             synchronizeError = error
             expectation.fulfill()
         }
         
-        // Simulate successful API response
+        // Simulate successful updater response
         let cid = ChannelId.unique
         let channelPayload = ChannelPayload.dummy(
             channel: .dummy(cid: cid),
@@ -233,7 +260,7 @@ extension LivestreamChannelController_Tests {
                 .dummy(messageId: "2", text: "Message 2")
             ]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        mockUpdater.update_completion?(.success(channelPayload))
         
         waitForExpectations(timeout: defaultTimeout)
         
@@ -243,6 +270,8 @@ extension LivestreamChannelController_Tests {
         XCTAssertEqual(controller.channel?.cid, cid)
         XCTAssertEqual(controller.messages.count, 2)
         XCTAssertEqual(controller.messages.map(\.id), ["2", "1"]) // Reversed order
+
+        mockUpdater.cleanUp()
     }
     
     func test_synchronize_failedResponse_callsCompletionWithError() {
@@ -251,14 +280,28 @@ extension LivestreamChannelController_Tests {
         var synchronizeError: Error?
         let testError = TestError()
         
+        let mockUpdater = ChannelUpdater_Mock(
+            channelRepository: client.channelRepository,
+            messageRepository: client.messageRepository,
+            paginationStateHandler: client.makeMessagesPaginationStateHandler(),
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
+        
+        controller = LivestreamChannelController(
+            channelQuery: channelQuery,
+            client: client,
+            updater: mockUpdater
+        )
+        
         // When
         controller.synchronize { error in
             synchronizeError = error
             expectation.fulfill()
         }
         
-        // Simulate failed API response
-        client.mockAPIClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(testError))
+        // Simulate failed updater response
+        mockUpdater.update_completion?(.failure(testError))
 
         waitForExpectations(timeout: defaultTimeout)
         
@@ -266,6 +309,8 @@ extension LivestreamChannelController_Tests {
         XCTAssertEqual(synchronizeError as? TestError, testError)
         XCTAssertNil(controller.channel)
         XCTAssertTrue(controller.messages.isEmpty)
+
+        mockUpdater.cleanUp()
     }
 }
 
