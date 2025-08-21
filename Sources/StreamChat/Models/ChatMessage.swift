@@ -284,6 +284,7 @@ public struct ChatMessage {
         translations: [TranslationLanguage: String]? = nil,
         originalLanguage: TranslationLanguage? = nil,
         moderationDetails: MessageModerationDetails? = nil,
+        readBy: Set<ChatUser>? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatMessage {
         .init(
@@ -322,7 +323,7 @@ public struct ChatMessage {
             translations: translations ?? self.translations,
             originalLanguage: originalLanguage ?? self.originalLanguage,
             moderationDetails: moderationDetails ?? self.moderationDetails,
-            readBy: readBy,
+            readBy: readBy ?? self.readBy,
             poll: poll,
             textUpdatedAt: textUpdatedAt,
             draftReply: draftReply,

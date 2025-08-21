@@ -27,7 +27,7 @@ final class ChatClient_Mock: ChatClient {
         mockedAppSettings
     }
 
-    var mockedEventNotificationCenter: EventNotificationCenter_Mock? = nil
+    var mockedEventNotificationCenter: EventNotificationCenter_Mock?
 
     override var eventNotificationCenter: EventNotificationCenter {
         mockedEventNotificationCenter ?? super.eventNotificationCenter
@@ -64,7 +64,7 @@ final class ChatClient_Mock: ChatClient {
     }
     
     override var currentUserId: UserId? {
-        return currentUserId_mock
+        currentUserId_mock
     }
 
     public var currentUserId_mock: UserId? {
@@ -73,6 +73,16 @@ final class ChatClient_Mock: ChatClient {
         }
         set {
             (authenticationRepository as? AuthenticationRepository_Mock)?.mockedCurrentUserId = newValue
+        }
+    }
+
+    public var connectionStatus_mock: ConnectionStatus?
+    override var connectionStatus: ConnectionStatus {
+        get {
+            connectionStatus_mock ?? super.connectionStatus
+        }
+        set {
+            connectionStatus_mock = newValue
         }
     }
 

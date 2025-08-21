@@ -718,7 +718,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             isSentByCurrentUser: true
         )
         
-        let pendingEvent = NewMessagePendingEvent(message: message)
+        let pendingEvent = NewMessagePendingEvent(message: message, cid: cid)
         vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
 
         XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 1)
@@ -731,7 +731,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             isSentByCurrentUser: true
         )
 
-        let pendingEvent = NewMessagePendingEvent(message: message)
+        let pendingEvent = NewMessagePendingEvent(message: message, cid: cid)
         vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
 
         XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)
@@ -744,7 +744,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             isSentByCurrentUser: false
         )
 
-        let pendingEvent = NewMessagePendingEvent(message: message)
+        let pendingEvent = NewMessagePendingEvent(message: message, cid: cid)
         vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
 
         XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)
@@ -757,7 +757,7 @@ final class ChatChannelVC_Tests: XCTestCase {
             isSentByCurrentUser: true
         )
 
-        let pendingEvent = NewMessagePendingEvent(message: message)
+        let pendingEvent = NewMessagePendingEvent(message: message, cid: cid)
         vc.eventsController(vc.eventsController, didReceiveEvent: pendingEvent)
 
         XCTAssertEqual(channelControllerMock.loadFirstPageCallCount, 0)

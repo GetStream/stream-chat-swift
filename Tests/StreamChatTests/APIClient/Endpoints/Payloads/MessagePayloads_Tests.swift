@@ -137,6 +137,204 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.quotedMessageId, "4C0CC2DA-8AB5-421F-808E-50DC7E40653D")
         XCTAssertEqual(payload.translations, [.italian: "si sono qui", .dutch: "ja ik ben hier"])
     }
+    
+    // MARK: - MessagePayload.asModel() Tests
+    
+    func test_messagePayload_asModel_convertsAllPropertiesCorrectly() {
+        let messageId = "test-message-id"
+        let cid = ChannelId(type: .messaging, id: "test-channel")
+        let currentUserId = "current-user-id"
+        let userPayload = UserPayload.dummy(userId: "author-user-id", name: "Test Author")
+        let mentionedUserPayload = UserPayload.dummy(userId: "mentioned-user-id", name: "Mentioned User")
+        let threadParticipantPayload = UserPayload.dummy(userId: "participant-user-id", name: "Thread Participant")
+        let pinnedByPayload = UserPayload.dummy(userId: "pinned-by-user-id", name: "Pinned By User")
+        let quotedMessagePayload = MessagePayload.dummy(messageId: "quoted-message-id", text: "Quoted message text")
+        let reactionPayload = MessageReactionPayload(
+            type: MessageReactionType(rawValue: "love"),
+            score: 1,
+            messageId: "123",
+            createdAt: Date(timeIntervalSince1970: 1_609_459_300),
+            updatedAt: Date(timeIntervalSince1970: 1_609_459_300),
+            user: userPayload,
+            extraData: [:]
+        )
+        
+        let payload = MessagePayload(
+            id: messageId,
+            type: .regular,
+            user: userPayload,
+            createdAt: Date(timeIntervalSince1970: 1_609_459_200),
+            updatedAt: Date(timeIntervalSince1970: 1_609_459_250),
+            deletedAt: Date(timeIntervalSince1970: 1_609_459_300),
+            text: "Test message text",
+            command: "test-command",
+            args: "test-args",
+            parentId: "parent-message-id",
+            showReplyInChannel: true,
+            quotedMessageId: "quoted-message-id",
+            quotedMessage: quotedMessagePayload,
+            mentionedUsers: [mentionedUserPayload],
+            threadParticipants: [threadParticipantPayload],
+            replyCount: 5,
+            extraData: ["custom_field": .string("custom_value")],
+            latestReactions: [reactionPayload],
+            ownReactions: [reactionPayload],
+            reactionScores: ["love": 1],
+            reactionCounts: ["love": 1],
+            reactionGroups: [:],
+            isSilent: true,
+            isShadowed: true,
+            attachments: [],
+            channel: nil,
+            pinned: true,
+            pinnedBy: pinnedByPayload,
+            pinnedAt: Date(timeIntervalSince1970: 1_609_459_400),
+            pinExpires: Date(timeIntervalSince1970: 1_609_459_500),
+            translations: [.spanish: "Texto del mensaje de prueba"],
+            originalLanguage: "en",
+            moderation: nil,
+            moderationDetails: nil,
+            messageTextUpdatedAt: Date(timeIntervalSince1970: 1_609_459_350), poll: nil,
+            reminder: nil,
+            location: nil
+        )
+        
+        let channelReads = [
+            ChatChannelRead(
+                lastReadAt: Date(timeIntervalSince1970: 1_609_459_600),
+                lastReadMessageId: "read-message-id",
+                unreadMessagesCount: 0,
+                user: ChatUser.mock(
+                    id: "reader-user-id",
+                    name: "Reader User"
+                )
+            )
+        ]
+
+        let chatMessage = payload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channelReads)
+
+        XCTAssertEqual(chatMessage.id, messageId)
+        XCTAssertEqual(chatMessage.cid, cid)
+        XCTAssertEqual(chatMessage.text, "Test message text")
+        XCTAssertEqual(chatMessage.type, .regular)
+        XCTAssertEqual(chatMessage.command, "test-command")
+        XCTAssertEqual(chatMessage.createdAt, Date(timeIntervalSince1970: 1_609_459_200))
+        XCTAssertEqual(chatMessage.updatedAt, Date(timeIntervalSince1970: 1_609_459_250))
+        XCTAssertEqual(chatMessage.deletedAt, Date(timeIntervalSince1970: 1_609_459_300))
+        XCTAssertEqual(chatMessage.arguments, "test-args")
+        XCTAssertEqual(chatMessage.parentMessageId, "parent-message-id")
+        XCTAssertEqual(chatMessage.showReplyInChannel, true)
+        XCTAssertEqual(chatMessage.replyCount, 5)
+        XCTAssertEqual(chatMessage.extraData, ["custom_field": .string("custom_value")])
+        XCTAssertEqual(chatMessage.isSilent, true)
+        XCTAssertEqual(chatMessage.isShadowed, true)
+        XCTAssertEqual(chatMessage.reactionScores, ["love": 1])
+        XCTAssertEqual(chatMessage.reactionCounts, ["love": 1])
+        XCTAssertEqual(chatMessage.author.id, "author-user-id")
+        XCTAssertEqual(chatMessage.mentionedUsers.first?.id, "mentioned-user-id")
+        XCTAssertEqual(chatMessage.threadParticipants.first?.id, "participant-user-id")
+        XCTAssertEqual(chatMessage.isSentByCurrentUser, false)
+        XCTAssertNotNil(chatMessage.pinDetails)
+        XCTAssertEqual(chatMessage.pinDetails?.pinnedAt, Date(timeIntervalSince1970: 1_609_459_400))
+        XCTAssertEqual(chatMessage.pinDetails?.expiresAt, Date(timeIntervalSince1970: 1_609_459_500))
+        XCTAssertEqual(chatMessage.pinDetails?.pinnedBy.id, "pinned-by-user-id")
+        XCTAssertEqual(chatMessage.quotedMessage?.id, "quoted-message-id")
+        XCTAssertEqual(chatMessage.translations, [.spanish: "Texto del mensaje de prueba"])
+        XCTAssertEqual(chatMessage.originalLanguage?.languageCode, "en")
+        XCTAssertEqual(chatMessage.textUpdatedAt, Date(timeIntervalSince1970: 1_609_459_350))
+        XCTAssertEqual(chatMessage.latestReactions.count, 1)
+        XCTAssertEqual(chatMessage.currentUserReactions.count, 1)
+        XCTAssertFalse(chatMessage.isFlaggedByCurrentUser)
+    }
+    
+    func test_messagePayload_asModel_withMinimalData_handlesCorrectly() {
+        let messageId = "minimal-message-id"
+        let cid = ChannelId(type: .messaging, id: "minimal-channel")
+        let currentUserId = "current-user-id"
+        let userPayload = UserPayload.dummy(userId: currentUserId, name: "Current User")
+        let payload = MessagePayload(
+            id: messageId,
+            type: .regular,
+            user: userPayload,
+            createdAt: Date(timeIntervalSince1970: 1_609_459_200),
+            updatedAt: Date(timeIntervalSince1970: 1_609_459_200),
+            deletedAt: nil,
+            text: "Minimal message",
+            command: nil,
+            args: nil,
+            parentId: nil,
+            showReplyInChannel: false,
+            quotedMessageId: nil,
+            quotedMessage: nil,
+            mentionedUsers: [],
+            threadParticipants: [],
+            replyCount: 0,
+            extraData: [:],
+            latestReactions: [],
+            ownReactions: [],
+            reactionScores: [:],
+            reactionCounts: [:],
+            reactionGroups: [:],
+            isSilent: false,
+            isShadowed: false,
+            attachments: [],
+            channel: nil,
+            pinned: false,
+            pinnedBy: nil,
+            pinnedAt: nil,
+            pinExpires: nil,
+            translations: nil,
+            originalLanguage: nil,
+            moderation: nil,
+            moderationDetails: nil,
+            messageTextUpdatedAt: nil,
+            poll: nil,
+            reminder: nil,
+            location: nil
+        )
+
+        let chatMessage = payload.asModel(cid: cid, currentUserId: currentUserId, channelReads: [])
+
+        XCTAssertEqual(chatMessage.id, messageId)
+        XCTAssertEqual(chatMessage.cid, cid)
+        XCTAssertEqual(chatMessage.text, "Minimal message")
+        XCTAssertEqual(chatMessage.type, .regular)
+        XCTAssertNil(chatMessage.command)
+        XCTAssertEqual(chatMessage.createdAt, Date(timeIntervalSince1970: 1_609_459_200))
+        XCTAssertEqual(chatMessage.updatedAt, Date(timeIntervalSince1970: 1_609_459_200))
+        XCTAssertNil(chatMessage.deletedAt)
+        XCTAssertNil(chatMessage.arguments)
+        XCTAssertNil(chatMessage.parentMessageId)
+        XCTAssertEqual(chatMessage.showReplyInChannel, false)
+        XCTAssertEqual(chatMessage.replyCount, 0)
+        XCTAssertEqual(chatMessage.extraData, [:])
+        XCTAssertEqual(chatMessage.isSilent, false)
+        XCTAssertEqual(chatMessage.isShadowed, false)
+        XCTAssertEqual(chatMessage.reactionScores, [:])
+        XCTAssertEqual(chatMessage.reactionCounts, [:])
+        XCTAssertEqual(chatMessage.author.id, currentUserId)
+        XCTAssertTrue(chatMessage.mentionedUsers.isEmpty)
+        XCTAssertTrue(chatMessage.threadParticipants.isEmpty)
+        XCTAssertTrue(chatMessage.isSentByCurrentUser)
+        XCTAssertNil(chatMessage.pinDetails)
+        XCTAssertNil(chatMessage.quotedMessage)
+        XCTAssertNil(chatMessage.translations)
+        XCTAssertNil(chatMessage.originalLanguage)
+        XCTAssertNil(chatMessage.textUpdatedAt)
+        XCTAssertTrue(chatMessage.latestReactions.isEmpty)
+        XCTAssertTrue(chatMessage.currentUserReactions.isEmpty)
+        XCTAssertFalse(chatMessage.isFlaggedByCurrentUser)
+        XCTAssertTrue(chatMessage.readBy.isEmpty)
+        XCTAssertTrue(chatMessage.allAttachments.isEmpty)
+        XCTAssertTrue(chatMessage.latestReplies.isEmpty)
+        XCTAssertNil(chatMessage.localState)
+        XCTAssertNil(chatMessage.locallyCreatedAt)
+        XCTAssertFalse(chatMessage.isBounced)
+        XCTAssertNil(chatMessage.moderationDetails)
+        XCTAssertNil(chatMessage.poll)
+        XCTAssertNil(chatMessage.reminder)
+        XCTAssertNil(chatMessage.sharedLocation)
+    }
 }
 
 final class MessageRequestBody_Tests: XCTestCase {

@@ -161,7 +161,30 @@ final class WatchChannelOperation: AsyncOperation, @unchecked Sendable {
             }
         }
     }
-    
+
+    init(livestreamController: LivestreamChannelController, context: SyncContext, recovery: Bool) {
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak livestreamController] _, done in
+            guard let controller = livestreamController else {
+                done(.continue)
+                return
+            }
+
+            let cidString = (controller.cid?.rawValue ?? "unknown")
+            log.info("Watching active channel \(cidString)", subsystems: .offlineSupport)
+            controller.startWatching(isInRecoveryMode: recovery) { error in
+                if let cid = controller.cid, error == nil {
+                    log.info("Successfully watched active channel \(cidString)", subsystems: .offlineSupport)
+                    context.watchedAndSynchedChannelIds.insert(cid)
+                    done(.continue)
+                } else {
+                    let errorMessage = error?.localizedDescription ?? "missing cid"
+                    log.error("Failed watching active channel \(cidString): \(errorMessage)", subsystems: .offlineSupport)
+                    done(.retry)
+                }
+            }
+        }
+    }
+
     init(chat: Chat, context: SyncContext) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak chat] _, done in
             guard let chat else {

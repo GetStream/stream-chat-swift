@@ -98,6 +98,7 @@ buildcache
 App Thinning Size Report.txt
 app-thinning.plist
 *.dmg
+*.pkg*
 
 # gcloud
 google-cloud-sdk

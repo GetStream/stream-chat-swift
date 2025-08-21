@@ -165,6 +165,7 @@ open class AttachmentsPreviewVC: _ViewController, ComponentsProvider {
         // constraint is not yet created, append to the vertical constraint and activate it.
         if verticalAttachmentPreviews.count > maxNumberOfVerticalItems, let firstAttachmentView = verticalAttachmentPreviews.first {
             if verticalScrollViewHeightConstraint == nil {
+                verticalStackView.layoutIfNeeded()
                 let attachmentHeight = firstAttachmentView
                     .systemLayoutSizeFitting(.init(width: CGFloat.infinity, height: CGFloat.infinity))
                     .height

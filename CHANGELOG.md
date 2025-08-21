@@ -4,8 +4,41 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### 🐞 Fixed
+- Fix LivestreamChannelController not reconnecting when connection is dropped [#3782](https://github.com/GetStream/stream-chat-swift/pull/3782)
+- Fix `StreamAudioRecorder` not overridable because of init method [#3783](https://github.com/GetStream/stream-chat-swift/pull/3783)
+- Fix channel list query filtering by both blocked and non-blocked channels [#3785](https://github.com/GetStream/stream-chat-swift/pull/3785)
+
+# [4.85.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.85.0)
+_August 13, 2025_
+
+## StreamChat
+### ✅ Added
+- Handle member-related events in `LivestreamChannelController` [#3775](https://github.com/GetStream/stream-chat-swift/pull/3775)
+- Handle channel truncation events in `LivestreamChannelController` [#3775](https://github.com/GetStream/stream-chat-swift/pull/3775)
+- Handle user banned events in `LivestreamChannelController` [#3777](https://github.com/GetStream/stream-chat-swift/pull/3777)
+- Add a completion block to `LivestreamChannelController.resume()` to observe possible errors [#3774](https://github.com/GetStream/stream-chat-swift/pull/3774)
+### 🐞 Fixed
+- Fix pending message being added to `LivestreamChannelController.messages` when in paused state [#3774](https://github.com/GetStream/stream-chat-swift/pull/3774)
+- Fix `LivestreamChannelController` not connecting chat after coming from background [#3778](https://github.com/GetStream/stream-chat-swift/pull/3778)
+### 🔄 Changed
+- The `LivestreamChannelController.resume()` should be manually called, previously, it was automatically called on a new message [#3774](https://github.com/GetStream/stream-chat-swift/pull/3774)
+
+# [4.84.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.84.0)
+_August 06, 2025_
+
+## StreamChat
 ### ✅ Added
 - Add pending messages support [#3754](https://github.com/GetStream/stream-chat-swift/pull/3754)
+- Add new lightweight `LivestreamChannelController` that improves performance for live chats [#3750](https://github.com/GetStream/stream-chat-swift/pull/3750)
+### 🐞 Fixed
+- Fix `ChatClient.currentUserId` not removed instantly after calling `logout()` [#3766](https://github.com/GetStream/stream-chat-swift/pull/3766)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix the height of the attachment view in the composer when using larger dynamic type [3762](https://github.com/GetStream/stream-chat-swift/pull/3762)
+- Remove animation in message reactions when opening a sheet in the channel view [#3763](https://github.com/GetStream/stream-chat-swift/pull/3763)
+- Fix video player not playable when GalleryVC is opened [#3773](https://github.com/GetStream/stream-chat-swift/pull/3773)
 
 # [4.83.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.83.0)
 _July 28, 2025_

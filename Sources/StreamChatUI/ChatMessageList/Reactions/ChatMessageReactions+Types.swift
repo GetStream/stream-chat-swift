@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The information of a reaction ready to be displayed in a view.
-public struct ChatMessageReactionData {
+public struct ChatMessageReactionData: Equatable {
     /// The type of the reaction.
     public let type: MessageReactionType
     /// The score value of the reaction. By default it is the same value as `count`.

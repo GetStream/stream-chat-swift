@@ -5,15 +5,21 @@
 import Foundation
 import StreamChat
 
-extension ChatMessageListVC {
+public extension ChatMessageListVC {
     /// Set the previous message snapshot before the data controller reports new messages.
-    internal func setPreviousMessagesSnapshot(_ messages: [ChatMessage]) {
+    func setPreviousMessagesSnapshot(_ messages: [ChatMessage]) {
         listView.previousMessagesSnapshot = messages
     }
 
     /// Set the new message snapshot reported by the data controller.
-    internal func setNewMessagesSnapshot(_ messages: LazyCachedMapCollection<ChatMessage>) {
+    func setNewMessagesSnapshot(_ messages: LazyCachedMapCollection<ChatMessage>) {
         listView.currentMessagesFromDataSource = messages
         listView.newMessagesSnapshot = messages
+    }
+
+    /// Set the new message snapshot reported by the data controller as an Array.
+    func setNewMessagesSnapshotArray(_ messages: [ChatMessage]) {
+        listView.currentMessagesFromDataSourceArray = messages
+        listView.newMessagesSnapshotArray = messages
     }
 }

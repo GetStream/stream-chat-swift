@@ -87,6 +87,7 @@ class MessageSender: Worker {
                     newRequests[cid] = newRequests[cid] ?? []
                     newRequests[cid]!.append(.init(
                         messageId: dto.id,
+                        cid: cid,
                         createdLocallyAt: (dto.locallyCreatedAt ?? dto.createdAt).bridgeDate
                     ))
                 }
@@ -229,10 +230,18 @@ private class MessageSendingQueue {
         if let repositoryError = result.error {
             switch repositoryError {
             case .messageDoesNotExist, .messageNotPendingSend, .messageDoesNotHaveValidChannel:
-                let event = NewMessageErrorEvent(messageId: request.messageId, error: repositoryError)
+                let event = NewMessageErrorEvent(
+                    messageId: request.messageId,
+                    cid: request.cid,
+                    error: repositoryError
+                )
                 eventsNotificationCenter.process(event)
             case .failedToSendMessage(let clientError):
-                let event = NewMessageErrorEvent(messageId: request.messageId, error: clientError)
+                let event = NewMessageErrorEvent(
+                    messageId: request.messageId,
+                    cid: request.cid,
+                    error: clientError
+                )
                 eventsNotificationCenter.process(event)
                 
                 if ClientError.isEphemeral(error: clientError) {
@@ -250,6 +259,7 @@ private class MessageSendingQueue {
 extension MessageSendingQueue {
     struct SendRequest: Hashable {
         let messageId: MessageId
+        let cid: ChannelId
         let createdLocallyAt: Date
 
         static func == (lhs: Self, rhs: Self) -> Bool {

@@ -517,7 +517,9 @@ public class ChatClient {
             }
         }
 
-        if !removeDevice {
+        authenticationRepository.clearCurrentUserId()
+
+        if removeDevice == false {
             authenticationRepository.logOutUser()
         }
 

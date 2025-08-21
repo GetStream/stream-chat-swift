@@ -325,13 +325,16 @@ final class ChatClient_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .admin))
             try $0.saveCurrentDevice(.unique)
         }
+
         let expectation = self.expectation(description: "logout completes")
         client.logout {
             expectation.fulfill()
         }
-        waitForExpectations(timeout: defaultTimeout)
+        /// Erasing current user id should be called right after calling logout.
+        XCTAssertCall(AuthenticationRepository_Mock.Signature.clearCurrentUserId, on: testEnv.authenticationRepository!)
 
         // THEN
+        waitForExpectations(timeout: defaultTimeout)
         XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: testEnv.connectionRepository!)
         XCTAssertEqual(testEnv.apiClient?.request_endpoint?.path, .devices)
         XCTAssertEqual(testEnv.apiClient?.request_endpoint?.method, .delete)
@@ -1126,7 +1129,7 @@ private class TestEnvironment {
                 return self.eventDecoder!
             },
             notificationCenterBuilder: {
-                self.notificationCenter = EventNotificationCenter_Mock(database: $0)
+                self.notificationCenter = EventNotificationCenter_Mock(database: $0, manualEventHandler: $1)
                 return self.notificationCenter!
             },
             internetConnection: {
