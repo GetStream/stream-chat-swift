@@ -15,20 +15,17 @@ import XCTest
 /// }
 /// ```
 open class QueueAwareDelegate {
-    // Checks the delegate was called on the correct queue
-    public let expectedQueueId: UUID
     public let file: StaticString
     public let line: UInt
     
-    public init(expectedQueueId: UUID, file: StaticString = #filePath, line: UInt = #line) {
-        self.expectedQueueId = expectedQueueId
+    public init(file: StaticString = #filePath, line: UInt = #line) {
         self.file = file
         self.line = line
     }
     
     public func validateQueue(function: StaticString = #function) {
         XCTAssertTrue(
-            DispatchQueue.isTestQueue(withId: expectedQueueId),
+            Thread.isMainThread,
             "Delegate method \(function) called on an incorrect queue",
             file: file,
             line: line

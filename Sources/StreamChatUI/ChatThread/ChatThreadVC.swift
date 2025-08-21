@@ -259,7 +259,7 @@ open class ChatThreadVC: _ViewController,
     // MARK: - Loading previous and next replies state handling
 
     /// Called when the thread will load previous (older) replies.
-    open func loadPreviousReplies(completion: @escaping (Error?) -> Void) {
+    open func loadPreviousReplies(completion: @escaping @MainActor(Error?) -> Void) {
         messageController.loadPreviousReplies { [weak self] error in
             completion(error)
             self?.didFinishLoadingPreviousReplies(with: error)
@@ -273,7 +273,7 @@ open class ChatThreadVC: _ViewController,
     }
 
     /// Called when the thread will load next (newer) replies.
-    open func loadNextReplies(completion: @escaping (Error?) -> Void) {
+    open func loadNextReplies(completion: @escaping @MainActor(Error?) -> Void) {
         messageController.loadNextReplies { [weak self] error in
             completion(error)
             self?.didFinishLoadingNextReplies(with: error)
@@ -381,7 +381,7 @@ open class ChatThreadVC: _ViewController,
 
     public func chatMessageListVC(
         _ vc: ChatMessageListVC, shouldLoadPageAroundMessageId messageId: MessageId,
-        _ completion: @escaping ((Error?) -> Void)
+        _ completion: @escaping @MainActor(Error?) -> Void
     ) {
         messageController.loadPageAroundReplyId(messageId, completion: completion)
     }

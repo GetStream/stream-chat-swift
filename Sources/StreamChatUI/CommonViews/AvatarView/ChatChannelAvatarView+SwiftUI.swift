@@ -7,7 +7,7 @@ import StreamChat
 import SwiftUI
 
 /// Protocol of `ChatChannelAvatarView` wrapper for use in SwiftUI.
-public protocol ChatChannelAvatarViewSwiftUIView: View {
+@MainActor public protocol ChatChannelAvatarViewSwiftUIView: View {
     init(dataSource: ChatChannelAvatarView.ObservedObject<Self>)
 }
 

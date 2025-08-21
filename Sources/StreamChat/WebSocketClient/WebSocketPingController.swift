@@ -15,7 +15,7 @@ protocol WebSocketPingControllerDelegate: AnyObject {
 
 /// The controller manages ping and pong timers. It sends ping periodically to keep a web socket connection alive.
 /// After ping is sent, a pong waiting timer is started, and if pong does not come, a forced disconnect is called.
-class WebSocketPingController {
+class WebSocketPingController: @unchecked Sendable {
     /// The time interval to ping connection to keep it alive.
     static let pingTimeInterval: TimeInterval = 25
     /// The time interval for pong timeout.

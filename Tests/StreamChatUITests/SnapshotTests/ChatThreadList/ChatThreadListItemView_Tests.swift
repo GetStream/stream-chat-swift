@@ -8,7 +8,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatThreadListItemView_Tests: XCTestCase {
+@MainActor final class ChatThreadListItemView_Tests: XCTestCase {
     var mockThread: ChatThread!
 
     var mockYoda = ChatUser.mock(id: .unique, name: "Yoda", imageURL: .localYodaImage)

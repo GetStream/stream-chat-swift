@@ -45,7 +45,7 @@ final class UserController_Combine_Tests: iOS13TestCase {
         userController = nil
 
         // Simulate delegate invocation.
-        controller?.delegateCallback { $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
 
         // Assert all state changes are delivered.
         XCTAssertEqual(recording.output, [.localDataFetched, .remoteDataFetched])
@@ -67,7 +67,7 @@ final class UserController_Combine_Tests: iOS13TestCase {
 
         // Simulate delegate invocation with the new user.
         let newUser: ChatUser = .unique
-        controller?.delegateCallback {
+        controller?.delegateCallback { [controller] in
             $0.userController(controller!, didUpdateUser: .create(newUser))
         }
 

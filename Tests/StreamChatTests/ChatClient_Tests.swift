@@ -61,7 +61,7 @@ final class ChatClient_Tests: XCTestCase {
     func test_multipleInstance_whenLocalStorageURLIsTheSame() {
         let client1 = ChatClient(config: ChatClientConfig(apiKeyString: "123"))
         let client2 = ChatClient(config: ChatClientConfig(apiKeyString: "123"))
-        XCTAssertEqual(1, ChatClient.activeLocalStorageURLs.count)
+        XCTAssertEqual(1, ChatClient.activeLocalStorageURLs.value.count)
         // We only log an error when misuse happens
         XCTAssertEqual(
             client1.databaseContainer.persistentStoreDescriptions.compactMap(\.url),
@@ -83,42 +83,29 @@ final class ChatClient_Tests: XCTestCase {
         config.deletedMessagesVisibility = .alwaysVisible
         config.shouldShowShadowedMessages = .random()
 
-        var usedDatabaseKind: DatabaseContainer.Kind?
-        var shouldFlushDBOnStart: Bool?
-        var shouldResetEphemeralValues: Bool?
-        var localCachingSettings: ChatClientConfig.LocalCaching?
-        var deleteMessagesVisibility: ChatClientConfig.DeletedMessageVisibility?
-        var shouldShowShadowedMessages: Bool?
-
         // Create env object with custom database builder
         var env = ChatClient.Environment()
-        env.connectionRepositoryBuilder = ConnectionRepository_Mock.init
-        env
-            .databaseContainerBuilder = { kind, clientConfig in
-                usedDatabaseKind = kind
-                shouldFlushDBOnStart = clientConfig.shouldFlushLocalStorageOnStart
-                shouldResetEphemeralValues = clientConfig.isClientInActiveMode
-                localCachingSettings = clientConfig.localCaching
-                deleteMessagesVisibility = clientConfig.deletedMessagesVisibility
-                shouldShowShadowedMessages = clientConfig.shouldShowShadowedMessages
-                return DatabaseContainer_Spy()
-            }
+        env.connectionRepositoryBuilder = {
+            ConnectionRepository_Mock(isClientInActiveMode: $0, syncRepository: $1, webSocketClient: $2, apiClient: $3, timerType: $4)
+        }
+        env.databaseContainerBuilder = { [config] kind, clientConfig in
+            XCTAssertEqual(
+                kind,
+                .onDisk(databaseFileURL: storeFolderURL.appendingPathComponent(config.apiKey.apiKeyString))
+            )
+            XCTAssertEqual(clientConfig.shouldFlushLocalStorageOnStart, config.shouldFlushLocalStorageOnStart)
+            XCTAssertEqual(clientConfig.isClientInActiveMode, config.isClientInActiveMode)
+            XCTAssertEqual(clientConfig.localCaching, config.localCaching)
+            XCTAssertEqual(clientConfig.deletedMessagesVisibility, config.deletedMessagesVisibility)
+            XCTAssertEqual(clientConfig.shouldShowShadowedMessages, config.shouldShowShadowedMessages)
+            return DatabaseContainer_Spy()
+        }
 
         // Create a `Client` and assert that a DB file is created on the provided URL + APIKey path
         _ = ChatClient(
             config: config,
             environment: env
         )
-
-        XCTAssertEqual(
-            usedDatabaseKind,
-            .onDisk(databaseFileURL: storeFolderURL.appendingPathComponent(config.apiKey.apiKeyString))
-        )
-        XCTAssertEqual(shouldFlushDBOnStart, config.shouldFlushLocalStorageOnStart)
-        XCTAssertEqual(shouldResetEphemeralValues, config.isClientInActiveMode)
-        XCTAssertEqual(localCachingSettings, config.localCaching)
-        XCTAssertEqual(deleteMessagesVisibility, config.deletedMessagesVisibility)
-        XCTAssertEqual(shouldShowShadowedMessages, config.shouldShowShadowedMessages)
     }
 
     func test_clientDatabaseStackInitialization_whenLocalStorageDisabled() {
@@ -126,13 +113,13 @@ final class ChatClient_Tests: XCTestCase {
         var config = ChatClientConfig()
         config.isLocalStorageEnabled = false
 
-        var usedDatabaseKind: DatabaseContainer.Kind?
-
         // Create env object with custom database builder
         var env = ChatClient.Environment()
-        env.connectionRepositoryBuilder = ConnectionRepository_Mock.init
+        env.connectionRepositoryBuilder = {
+            ConnectionRepository_Mock(isClientInActiveMode: $0, syncRepository: $1, webSocketClient: $2, apiClient: $3, timerType: $4)
+        }
         env.databaseContainerBuilder = { kind, _ in
-            usedDatabaseKind = kind
+            XCTAssertEqual(kind, .inMemory)
             return DatabaseContainer_Spy()
         }
 
@@ -141,8 +128,6 @@ final class ChatClient_Tests: XCTestCase {
             config: config,
             environment: env
         )
-
-        XCTAssertEqual(usedDatabaseKind, .inMemory)
     }
 
     /// When the initialization of a local DB fails for some reason (i.e. incorrect URL),
@@ -153,13 +138,13 @@ final class ChatClient_Tests: XCTestCase {
         config.isLocalStorageEnabled = true
         config.localStorageFolderURL = nil
 
-        var usedDatabaseKinds: [DatabaseContainer.Kind] = []
-
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
-        env.connectionRepositoryBuilder = ConnectionRepository_Mock.init
+        env.connectionRepositoryBuilder = {
+            ConnectionRepository_Mock(isClientInActiveMode: $0, syncRepository: $1, webSocketClient: $2, apiClient: $3, timerType: $4)
+        }
         env.databaseContainerBuilder = { kind, _ in
-            usedDatabaseKinds.append(kind)
+            XCTAssertEqual(.inMemory, kind)
             return DatabaseContainer_Spy()
         }
 
@@ -168,11 +153,6 @@ final class ChatClient_Tests: XCTestCase {
         _ = ChatClient(
             config: config,
             environment: env
-        )
-
-        XCTAssertEqual(
-            usedDatabaseKinds,
-            [.inMemory]
         )
     }
 
@@ -529,15 +509,11 @@ final class ChatClient_Tests: XCTestCase {
         let testError = TestError()
         let userInfo = UserInfo(id: "id")
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
-        let expectation = self.expectation(description: "Connect completes")
 
         authenticationRepository.connectUserResult = .failure(testError)
-        var receivedError: Error?
-        client.connectUser(userInfo: userInfo, tokenProvider: { _ in }) {
-            receivedError = $0
-            expectation.fulfill()
+        let receivedError = try waitFor { done in
+            client.connectUser(userInfo: userInfo, tokenProvider: { _ in }, completion: done)
         }
-        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertEqual(receivedError, testError)
@@ -550,15 +526,11 @@ final class ChatClient_Tests: XCTestCase {
         let reconnectionTimeoutHandler = try XCTUnwrap(client.reconnectionTimeoutHandler as? ScheduledStreamTimer_Mock)
         let connectionRecoveryHandler = try XCTUnwrap(client.connectionRecoveryHandler as? ConnectionRecoveryHandler_Mock)
         let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
-        let expectation = self.expectation(description: "Connect completes")
 
         authenticationRepository.connectUserResult = .success(())
-        var receivedError: Error?
-        client.connectUser(userInfo: userInfo, tokenProvider: { _ in }) {
-            receivedError = $0
-            expectation.fulfill()
+        let receivedError = try waitFor { done in
+            client.connectUser(userInfo: userInfo, tokenProvider: { _ in }, completion: done)
         }
-        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
@@ -574,15 +546,11 @@ final class ChatClient_Tests: XCTestCase {
         let testError = TestError()
         let userInfo = UserInfo(id: "id")
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
-        let expectation = self.expectation(description: "Connect completes")
 
         authenticationRepository.connectUserResult = .failure(testError)
-        var receivedError: Error?
-        client.connectUser(userInfo: userInfo, token: .unique()) {
-            receivedError = $0
-            expectation.fulfill()
+        let receivedError = try waitFor { done in
+            client.connectUser(userInfo: userInfo, token: .unique(), completion: done)
         }
-        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertEqual(receivedError, testError)
@@ -592,15 +560,11 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
         let userInfo = UserInfo(id: "id")
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
-        let expectation = self.expectation(description: "Connect completes")
 
         authenticationRepository.connectUserResult = .success(())
-        var receivedError: Error?
-        client.connectUser(userInfo: userInfo, token: .unique()) {
-            receivedError = $0
-            expectation.fulfill()
+        let receivedError = try waitFor { done in
+            client.connectUser(userInfo: userInfo, token: .unique(), completion: done)
         }
-        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertNil(receivedError)
@@ -610,16 +574,12 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
         let userInfo = UserInfo(id: "id")
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
-        let expectation = self.expectation(description: "Connect completes")
 
         authenticationRepository.connectUserResult = .success(())
-        var receivedError: Error?
         let expiringToken = Token(rawValue: "", userId: "123", expiration: Date())
-        client.connectUser(userInfo: userInfo, token: expiringToken) {
-            receivedError = $0
-            expectation.fulfill()
+        let receivedError = try waitFor { done in
+            client.connectUser(userInfo: userInfo, token: expiringToken, completion: done)
         }
-        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNotCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertTrue(receivedError is ClientError.MissingTokenProvider)
@@ -629,16 +589,12 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
         let userInfo = UserInfo(id: "id")
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
-        let expectation = self.expectation(description: "Connect completes")
 
         authenticationRepository.connectUserResult = .success(())
-        var receivedError: Error?
         let token = Token.development(userId: .unique)
-        client.connectUser(userInfo: userInfo, token: token) {
-            receivedError = $0
-            expectation.fulfill()
+        let receivedError = try waitFor { done in
+            client.connectUser(userInfo: userInfo, token: token, completion: done)
         }
-        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertNil(receivedError)
@@ -648,17 +604,13 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
         let userInfo = UserInfo(id: "id")
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
-        let expectation = self.expectation(description: "Connect completes")
 
         let mockedError = TestError()
         authenticationRepository.connectUserResult = .failure(mockedError)
-        var receivedError: Error?
         let token = Token.development(userId: .unique)
-        client.connectUser(userInfo: userInfo, token: token) {
-            receivedError = $0
-            expectation.fulfill()
+        let receivedError = try waitFor { done in
+            client.connectUser(userInfo: userInfo, token: token, completion: done)
         }
-        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectTokenProvider, on: authenticationRepository)
         XCTAssertEqual(receivedError, mockedError)
@@ -687,15 +639,11 @@ final class ChatClient_Tests: XCTestCase {
         let testError = TestError()
         let userInfo = UserInfo(id: "id")
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
-        let expectation = self.expectation(description: "Connect completes")
 
         authenticationRepository.connectGuestResult = .failure(testError)
-        var receivedError: Error?
-        client.connectGuestUser(userInfo: userInfo) {
-            receivedError = $0
-            expectation.fulfill()
+        let receivedError = try waitFor { done in
+            client.connectGuestUser(userInfo: userInfo, completion: done)
         }
-        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectGuest, on: authenticationRepository)
         XCTAssertEqual(receivedError, testError)
@@ -708,15 +656,11 @@ final class ChatClient_Tests: XCTestCase {
         let reconnectionTimeoutHandler = try XCTUnwrap(client.reconnectionTimeoutHandler as? ScheduledStreamTimer_Mock)
         let connectionRecoveryHandler = try XCTUnwrap(client.connectionRecoveryHandler as? ConnectionRecoveryHandler_Mock)
         let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
-        let expectation = self.expectation(description: "Connect completes")
 
         authenticationRepository.connectGuestResult = .success(())
-        var receivedError: Error?
-        client.connectGuestUser(userInfo: userInfo) {
-            receivedError = $0
-            expectation.fulfill()
+        let receivedError = try waitFor { done in
+            client.connectGuestUser(userInfo: userInfo, completion: done)
         }
-        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectGuest, on: authenticationRepository)
@@ -731,15 +675,11 @@ final class ChatClient_Tests: XCTestCase {
         let client = ChatClient(config: inMemoryStorageConfig, environment: testEnv.environment)
         let testError = TestError()
         let authenticationRepository = try XCTUnwrap(client.authenticationRepository as? AuthenticationRepository_Mock)
-        let expectation = self.expectation(description: "Connect completes")
 
         authenticationRepository.connectAnonResult = .failure(testError)
-        var receivedError: Error?
-        client.connectAnonymousUser {
-            receivedError = $0
-            expectation.fulfill()
+        let receivedError = try waitFor { done in
+            client.connectAnonymousUser(completion: done)
         }
-        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectAnon, on: authenticationRepository)
         XCTAssertEqual(receivedError, testError)
@@ -751,15 +691,11 @@ final class ChatClient_Tests: XCTestCase {
         let reconnectionTimeoutHandler = try XCTUnwrap(client.reconnectionTimeoutHandler as? ScheduledStreamTimer_Mock)
         let connectionRecoveryHandler = try XCTUnwrap(client.connectionRecoveryHandler as? ConnectionRecoveryHandler_Mock)
         let connectionRepository = try XCTUnwrap(client.connectionRepository as? ConnectionRepository_Mock)
-        let expectation = self.expectation(description: "Connect completes")
 
         authenticationRepository.connectAnonResult = .success(())
-        var receivedError: Error?
-        client.connectAnonymousUser {
-            receivedError = $0
-            expectation.fulfill()
+        let receivedError = try waitFor { done in
+            client.connectAnonymousUser(completion: done)
         }
-        waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
         XCTAssertCall(AuthenticationRepository_Mock.Signature.connectAnon, on: authenticationRepository)
@@ -919,21 +855,17 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertNil(client.webSocketClient)
     }
 
-    func test_passiveClient_provideConnectionId_returnsImmediately() {
+    func test_passiveClient_provideConnectionId_returnsImmediately() throws {
         // Create Client with inactive flag set
         let client = ChatClient(config: inactiveInMemoryStorageConfig)
 
         // Set a connection Id waiter
-        var providedConnectionId: ConnectionId? = .unique
-        var connectionIdCallbackCalled = false
-        client.provideConnectionId {
-            providedConnectionId = $0.value
-            connectionIdCallbackCalled = true
+        let result = try waitFor { done in
+            client.provideConnectionId(completion: done)
         }
 
-        AssertAsync.willBeTrue(connectionIdCallbackCalled)
         // Assert that `nil` id is provided by waiter
-        XCTAssertNil(providedConnectionId)
+        XCTAssertNil(result.value)
     }
 
     func test_sessionHeaders_xStreamClient_correctValue() {
@@ -1044,20 +976,6 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertCall(AuthenticationRepository_Mock.Signature.completeTokenCompletions, on: authenticationRepository)
         XCTAssertEqual(connectionRepository.disconnectSource, .timeout(from: .initialized))
         XCTAssertEqual(authenticationRepository.resetCallCount, 1)
-    }
-}
-
-final class TestWorker: Worker {
-    let id = UUID()
-
-    var init_database: DatabaseContainer?
-    var init_apiClient: APIClient?
-
-    override init(database: DatabaseContainer, apiClient: APIClient) {
-        init_database = database
-        init_apiClient = apiClient
-
-        super.init(database: database, apiClient: apiClient)
     }
 }
 

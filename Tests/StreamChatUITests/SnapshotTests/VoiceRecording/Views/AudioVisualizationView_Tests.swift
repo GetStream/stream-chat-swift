@@ -7,7 +7,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-final class AudioVisualizationView_Tests: XCTestCase {
+@MainActor final class AudioVisualizationView_Tests: XCTestCase {
     private var subject: AudioVisualizationView! = .init().withoutAutoresizingMaskConstraints
 
     override func tearDown() {

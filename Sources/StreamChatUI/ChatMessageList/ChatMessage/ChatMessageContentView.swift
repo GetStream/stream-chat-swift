@@ -9,7 +9,7 @@ import UIKit
 ///
 /// When custom message content view is created, the protocol that inherits from this one
 /// should be created if an action can be taken on the new content view.
-public protocol ChatMessageContentViewDelegate: AnyObject {
+@MainActor public protocol ChatMessageContentViewDelegate: AnyObject {
     /// Gets called when error indicator is tapped.
     /// - Parameter indexPath: The index path of the cell displaying the content view. Equals to `nil` when
     /// the content view is displayed outside the collection/table view.
@@ -659,7 +659,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
         // Bubble view
         bubbleView?.content = content.map { message in
-            var backgroundColor: UIColor {
+            let backgroundColor: UIColor = {
                 if message.isSentByCurrentUser {
                     if message.type == .ephemeral {
                         return appearance.colorPalette.background8
@@ -669,7 +669,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 } else {
                     return appearance.colorPalette.background8
                 }
-            }
+            }()
 
             return .init(
                 backgroundColor: backgroundColor,

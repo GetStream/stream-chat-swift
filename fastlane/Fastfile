@@ -4,6 +4,7 @@ skip_docs
 
 require 'json'
 require 'net/http'
+require 'xcodeproj'
 import 'Sonarfile'
 import 'Allurefile'
 

@@ -16,7 +16,7 @@ import Foundation
 ///     state of is changed to `sendingFailed`.
 ///     5. When connection errors happen, all the queued messages are sent to offline retry which retries them one by one.
 ///
-class MessageSender: Worker {
+class MessageSender: Worker, @unchecked Sendable {
     /// Because we need to be sure messages for every channel are sent in the correct order, we create a sending queue for
     /// every cid. These queues can send messages in parallel.
     @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue] = [:]
@@ -159,7 +159,7 @@ private protocol MessageSendingQueueDelegate: AnyObject {
 }
 
 /// This objects takes care of sending messages to the server in the order they have been enqueued.
-private class MessageSendingQueue {
+private class MessageSendingQueue: @unchecked Sendable {
     let messageRepository: MessageRepository
     let eventsNotificationCenter: EventNotificationCenter
     let dispatchQueue: DispatchQueue

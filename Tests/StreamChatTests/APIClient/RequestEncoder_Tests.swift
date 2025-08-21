@@ -107,7 +107,7 @@ final class RequestEncoder_Tests: XCTestCase {
         connectionDetailsProvider.provideTokenResult = nil
 
         // Encode the request and capture the result
-        var encodingResult: Result<URLRequest, Error>?
+        nonisolated(unsafe) var encodingResult: Result<URLRequest, Error>?
         encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
 
         // Cancel all token waiting requests.
@@ -130,7 +130,7 @@ final class RequestEncoder_Tests: XCTestCase {
         connectionDetailsProvider.provideTokenResult = .failure(ClientError.WaiterTimeout())
 
         // Encode the request and capture the result
-        var encodingResult: Result<URLRequest, Error>?
+        nonisolated(unsafe) var encodingResult: Result<URLRequest, Error>?
         encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
 
         // Assert request encoding has failed with the correct error.
@@ -150,7 +150,7 @@ final class RequestEncoder_Tests: XCTestCase {
         connectionDetailsProvider.provideTokenResult = .failure(TestError())
 
         // Encode the request and capture the result
-        var encodingResult: Result<URLRequest, Error>?
+        nonisolated(unsafe) var encodingResult: Result<URLRequest, Error>?
         encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
 
         // Assert request encoding has failed with the correct error.
@@ -195,7 +195,7 @@ final class RequestEncoder_Tests: XCTestCase {
         connectionDetailsProvider.provideConnectionIdResult = nil
 
         // Encode the request and capture the result
-        var encodingResult: Result<URLRequest, Error>?
+        nonisolated(unsafe) var encodingResult: Result<URLRequest, Error>?
         encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
 
         // Cancel all connection id waiting requests.
@@ -220,7 +220,7 @@ final class RequestEncoder_Tests: XCTestCase {
         connectionDetailsProvider.provideConnectionIdResult = .failure(ClientError.WaiterTimeout())
 
         // Encode the request and capture the result
-        var encodingResult: Result<URLRequest, Error>?
+        nonisolated(unsafe) var encodingResult: Result<URLRequest, Error>?
         encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
 
         // Assert request encoding has failed with the correct error.
@@ -242,7 +242,7 @@ final class RequestEncoder_Tests: XCTestCase {
         connectionDetailsProvider.provideConnectionIdResult = .failure(TestError())
 
         // Encode the request and capture the result
-        var encodingResult: Result<URLRequest, Error>?
+        nonisolated(unsafe) var encodingResult: Result<URLRequest, Error>?
         encoder.encodeRequest(for: endpoint) { encodingResult = $0 }
 
         // Assert request encoding has failed with the correct error.

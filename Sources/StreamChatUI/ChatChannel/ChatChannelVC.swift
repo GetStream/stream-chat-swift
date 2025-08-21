@@ -309,7 +309,7 @@ open class ChatChannelVC: _ViewController,
     // MARK: - Loading previous and next messages state handling.
 
     /// Called when the channel will load previous (older) messages.
-    open func loadPreviousMessages(completion: @escaping (Error?) -> Void) {
+    open func loadPreviousMessages(completion: @escaping @MainActor(Error?) -> Void) {
         channelController.loadPreviousMessages { [weak self] error in
             completion(error)
             self?.didFinishLoadingPreviousMessages(with: error)
@@ -323,7 +323,7 @@ open class ChatChannelVC: _ViewController,
     }
 
     /// Called when the channel will load next (newer) messages.
-    open func loadNextMessages(completion: @escaping (Error?) -> Void) {
+    open func loadNextMessages(completion: @escaping @MainActor(Error?) -> Void) {
         channelController.loadNextMessages { [weak self] error in
             completion(error)
             self?.didFinishLoadingNextMessages(with: error)
@@ -376,7 +376,7 @@ open class ChatChannelVC: _ViewController,
     public func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessageId messageId: MessageId,
-        _ completion: @escaping ((Error?) -> Void)
+        _ completion: @escaping @MainActor(Error?) -> Void
     ) {
         if let message = channelController.dataStore.message(id: messageId),
            let parentMessageId = getParentMessageId(forMessageInsideThread: message) {

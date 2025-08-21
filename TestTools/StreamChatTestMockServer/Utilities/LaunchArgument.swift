@@ -6,13 +6,12 @@ import Foundation
 import XCTest
 
 public enum MockServerConfiguration {
-    public static var port: UInt16 = UInt16(Int.random(in: 61000..<62000))
-    public static var websocketHost = "ws://localhost"
-    public static var httpHost = "http://localhost"
+    public static nonisolated(unsafe) var port: UInt16 = UInt16(Int.random(in: 61000..<62000))
+    public static nonisolated(unsafe) var websocketHost = "ws://localhost"
+    public static nonisolated(unsafe) var httpHost = "http://localhost"
 }
 
 public enum EnvironmentVariable: String {
-
     // This changes the base url to localhost with assigned port.
     // Two conditions need to be met in order to leverage the web socket server in LLC.
     //   1. App runs in Debug build configuration
@@ -41,7 +40,7 @@ public extension ProcessInfo {
 
 public extension XCUIApplication {
     func setLaunchArguments(_ args: LaunchArgument...) {
-        launchArguments.append(contentsOf: args.map { $0.rawValue })
+        launchArguments.append(contentsOf: args.map(\.rawValue))
     }
 
     func setEnvironmentVariables(_ envVars: [EnvironmentVariable: String]) {

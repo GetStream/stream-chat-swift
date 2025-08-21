@@ -8,7 +8,7 @@ import AVFoundation
 /// of samples to process based on the provided downsamplingRate.
 ///
 /// - Note: Audio samples are expected to be stored in Int16 format.
-internal class AudioSamplesExtractor {
+internal class AudioSamplesExtractor: @unchecked Sendable {
     /// A struct to represent the result of the extractSamples method
     struct Result: Equatable { var samplesToProcess, downSampledLength: Int }
 

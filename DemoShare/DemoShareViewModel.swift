@@ -4,13 +4,12 @@
 
 import Combine
 import CoreServices
-import UIKit
-import StreamChat
 import Social
+import StreamChat
+import UIKit
 
 @MainActor
 class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
-    
     private let chatClient: ChatClient
     private let userCredentials: UserCredentials
     private var channelListController: ChatChannelListController?
@@ -50,11 +49,11 @@ class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
         let client = ChatClient(config: config)
         client.setToken(token: Token(stringLiteral: userCredentials.token.rawValue))
 
-        self.chatClient = client
+        chatClient = client
         self.userCredentials = userCredentials
         self.extensionContext = extensionContext
-        self.loadChannels()
-        self.loadImages()
+        loadChannels()
+        loadImages()
     }
     
     func sendMessage() async throws {
@@ -110,22 +109,18 @@ class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
     
     func dismissShareSheet() {
         loading = false
-        self.extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
+        extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
     }
     
-    nonisolated func channelController(
+    func channelController(
         _ channelController: ChatChannelController,
         didUpdateMessages changes: [ListChange<ChatMessage>]
     ) {
-        Task {
-            await MainActor.run {
-                for change in changes {
-                    if case .update(let item, _) = change {
-                        if messageId == item.id, item.localState == nil {
-                            dismissShareSheet()
-                            return
-                        }
-                    }
+        for change in changes {
+            if case .update(let item, _) = change {
+                if messageId == item.id, item.localState == nil {
+                    dismissShareSheet()
+                    return
                 }
             }
         }
@@ -134,7 +129,7 @@ class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
     // MARK: - private
     
     private func loadItem(from itemProvider: NSItemProvider, type: String) async throws -> NSSecureCoding {
-        return try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { continuation in
             itemProvider.loadItem(forTypeIdentifier: type) { item, error in
                 if let error = error {
                     continuation.resume(throwing: error)

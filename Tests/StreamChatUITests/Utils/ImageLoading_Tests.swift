@@ -6,7 +6,7 @@
 @testable import StreamChatUI
 import XCTest
 
-final class ImageLoading_Tests: XCTestCase {
+@MainActor final class ImageLoading_Tests: XCTestCase {
     var sut: ImageLoading!
     var spy: ImageLoaderSpy!
 
@@ -58,7 +58,7 @@ final class ImageLoading_Tests: XCTestCase {
             into imageView: UIImageView,
             from url: URL?,
             with options: ImageLoaderOptions,
-            completion: ((_ result: Result<UIImage, Error>) -> Void)?
+            completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)?
         ) -> Cancellable? {
             loadImageIntoWithOptionsCallCount += 1
             return nil
@@ -69,7 +69,7 @@ final class ImageLoading_Tests: XCTestCase {
             into imageView: UIImageView,
             from attachmentPayload: ImageAttachmentPayload?,
             maxResolutionInPixels: Double,
-            completion: ((_ result: Result<UIImage, Error>) -> Void)?
+            completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)?
         ) -> Cancellable? {
             loadImageIntoWithAttachmentPayloadCallCount += 1
             return nil
@@ -78,7 +78,7 @@ final class ImageLoading_Tests: XCTestCase {
         @discardableResult
         func downloadImage(
             with request: ImageDownloadRequest,
-            completion: @escaping ((_ result: Result<UIImage, Error>) -> Void)
+            completion: @escaping (@MainActor(_ result: Result<UIImage, Error>) -> Void)
         ) -> Cancellable? {
             downloadImageCallCount += 1
             return nil
@@ -86,7 +86,7 @@ final class ImageLoading_Tests: XCTestCase {
 
         func downloadMultipleImages(
             with requests: [ImageDownloadRequest],
-            completion: @escaping (([Result<UIImage, Error>]) -> Void)
+            completion: @escaping (@MainActor([Result<UIImage, Error>]) -> Void)
         ) {
             downloadMultipleImagesCallCount += 1
         }

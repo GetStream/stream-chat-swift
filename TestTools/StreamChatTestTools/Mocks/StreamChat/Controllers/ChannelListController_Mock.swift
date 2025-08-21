@@ -6,9 +6,10 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-final class ChannelListController_Mock: ChatChannelListController {
+final class ChannelListController_Mock: ChatChannelListController, @unchecked Sendable {
     @Atomic var synchronize_called = false
-    var synchronizeCallCount = 0
+    @Atomic var synchronize_callCount = 0
+    @Atomic var synchronize_completion: (@MainActor(Error?) -> Void)?
 
     var channels_simulated: [ChatChannel]?
     override var channels: LazyCachedMapCollection<ChatChannel> {
@@ -25,8 +26,8 @@ final class ChannelListController_Mock: ChatChannelListController {
         super.init(query: .init(filter: .notEqual("cid", to: "")), client: .mock)
     }
 
-    override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
-        synchronize_called = true
-        synchronizeCallCount += 1 
+    override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
+        synchronize_callCount += 1
+        synchronize_completion = completion
     }
 }

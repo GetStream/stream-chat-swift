@@ -78,10 +78,10 @@ extension ChannelListSortingKey {
 }
 
 extension ChannelListSortingKey {
-    static let defaultSortDescriptor: NSSortDescriptor = {
+    static var defaultSortDescriptor: NSSortDescriptor {
         let dateKeyPath: KeyPath<ChannelDTO, DBDate> = \ChannelDTO.defaultSortingAt
         return .init(keyPath: dateKeyPath, ascending: false)
-    }()
+    }
 }
 
 extension ChatChannel {
@@ -89,3 +89,7 @@ extension ChatChannel {
         lastMessageAt ?? createdAt
     }
 }
+
+// Remove when InferSendableFromCaptures is enabled
+// https://github.com/swiftlang/swift-evolution/blob/main/proposals/0418-inferring-sendable-for-methods.md
+extension PartialKeyPath: @retroactive @unchecked Sendable where Root == ChatChannel {}

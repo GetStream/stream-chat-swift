@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-class ChatChannelListController_Mock: ChatChannelListController, Spy {
+class ChatChannelListController_Mock: ChatChannelListController, Spy, @unchecked Sendable {
     let spyState = SpyState()
     var loadNextChannelsIsCalled = false
     var loadNextChannelsCallCount = 0
@@ -27,7 +27,7 @@ class ChatChannelListController_Mock: ChatChannelListController, Spy {
         set { super.state = newValue }
     }
 
-    override func loadNextChannels(limit: Int?, completion: ((Error?) -> Void)?) {
+    override func loadNextChannels(limit: Int?, completion: (@MainActor(Error?) -> Void)?) {
         loadNextChannelsCallCount += 1
         loadNextChannelsIsCalled = true
     }

@@ -8,7 +8,7 @@ import Foundation
 @testable import StreamChatTestTools
 import XCTest
 
-final class StreamAudioRecorder_Tests: XCTestCase {
+@MainActor final class StreamAudioRecorder_Tests: XCTestCase {
     private var avAudioRecorderFactoryWasCalledWithURL: URL?
     private var avAudioRecorderFactoryWasCalledWithSettings: [String: Any]?
 
@@ -449,7 +449,7 @@ final class StreamAudioRecorder_Tests: XCTestCase {
     }
 }
 
-private final class MockΑudioRecorderMeterNormaliser: AudioValuePercentageNormaliser {
+private final class MockΑudioRecorderMeterNormaliser: AudioValuePercentageNormaliser, @unchecked Sendable {
     private(set) var normaliseWasCalledWithValue: Float?
     var normaliseResult: Float = 0
 

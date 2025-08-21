@@ -5,7 +5,7 @@
 import Foundation
 
 /// A query used for querying specific votes from a poll.
-public struct PollVoteListQuery: Encodable {
+public struct PollVoteListQuery: Encodable, Sendable {
     /// The pollId which the votes belong to.
     public var pollId: String
     /// The optionId which the votes belong to in case the query relates to only one poll option.

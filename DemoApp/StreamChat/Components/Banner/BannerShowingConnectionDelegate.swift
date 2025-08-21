@@ -5,7 +5,7 @@
 import StreamChat
 import UIKit
 
-final class BannerShowingConnectionDelegate {
+@MainActor final class BannerShowingConnectionDelegate {
     // MARK: - Private Properties
 
     private let view: UIView

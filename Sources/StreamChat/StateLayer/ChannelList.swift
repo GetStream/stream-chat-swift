@@ -5,15 +5,15 @@
 import Foundation
 
 /// An object which represents a list of `ChatChannel`s for the specified  channel query.
-public class ChannelList {
+public class ChannelList: @unchecked Sendable {
     private let channelListUpdater: ChannelListUpdater
     private let client: ChatClient
-    private let stateBuilder: StateBuilder<ChannelListState>
+    @MainActor private var stateBuilder: StateBuilder<ChannelListState>
     let query: ChannelListQuery
     
     init(
         query: ChannelListQuery,
-        dynamicFilter: ((ChatChannel) -> Bool)?,
+        dynamicFilter: (@Sendable(ChatChannel) -> Bool)?,
         client: ChatClient,
         environment: Environment = .init()
     ) {
@@ -39,7 +39,7 @@ public class ChannelList {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the channel list.
-    @MainActor public lazy var state: ChannelListState = stateBuilder.build()
+    @MainActor public var state: ChannelListState { stateBuilder.state() }
     
     /// Fetches the most recent state from the server and updates the local store.
     ///
@@ -91,15 +91,15 @@ public class ChannelList {
 }
 
 extension ChannelList {
-    struct Environment {
-        var channelListUpdater: (
+    struct Environment: Sendable {
+        var channelListUpdater: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> ChannelListUpdater = ChannelListUpdater.init
+        ) -> ChannelListUpdater = { ChannelListUpdater(database: $0, apiClient: $1) }
         
-        var stateBuilder: @MainActor(
+        var stateBuilder: @Sendable @MainActor(
             _ query: ChannelListQuery,
-            _ dynamicFilter: ((ChatChannel) -> Bool)?,
+            _ dynamicFilter: (@Sendable(ChatChannel) -> Bool)?,
             _ clientConfig: ChatClientConfig,
             _ channelListUpdater: ChannelListUpdater,
             _ database: DatabaseContainer,

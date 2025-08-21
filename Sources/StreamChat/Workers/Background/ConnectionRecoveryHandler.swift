@@ -23,7 +23,7 @@ protocol ConnectionRecoveryHandler: ConnectionStateDelegate {
 /// We remember `lastReceivedEventDate` when state becomes `connecting` to catch the last event date
 /// before the `HealthCheck` override the `lastReceivedEventDate` with the recent date.
 ///
-final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler {
+final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler, @unchecked Sendable {
     // MARK: - Properties
 
     private let webSocketClient: WebSocketClient

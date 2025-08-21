@@ -5,9 +5,9 @@
 import Foundation
 
 /// An object which represents a list of `ChatUser`.
-public final class UserList {
+public final class UserList: Sendable {
     private let query: UserListQuery
-    private let stateBuilder: StateBuilder<UserListState>
+    @MainActor private var stateBuilder: StateBuilder<UserListState>
     private let userListUpdater: UserListUpdater
     
     init(query: UserListQuery, client: ChatClient, environment: Environment = .init()) {
@@ -27,7 +27,7 @@ public final class UserList {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the users list.
-    @MainActor public lazy var state: UserListState = stateBuilder.build()
+    @MainActor public var state: UserListState { stateBuilder.state() }
     
     /// Fetches the most recent state from the server and updates the local store.
     ///
@@ -72,13 +72,15 @@ public final class UserList {
 }
 
 extension UserList {
-    struct Environment {
-        var userListUpdater: (
+    struct Environment: Sendable {
+        var userListUpdater: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> UserListUpdater = UserListUpdater.init
+        ) -> UserListUpdater = {
+            UserListUpdater(database: $0, apiClient: $1)
+        }
         
-        var stateBuilder: @MainActor(
+        var stateBuilder: @Sendable @MainActor(
             _ query: UserListQuery,
             _ database: DatabaseContainer
         ) -> UserListState = { @MainActor in

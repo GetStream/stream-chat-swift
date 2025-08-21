@@ -43,9 +43,9 @@ public enum MessageSearchSortingKey: String, SortingKey {
     }
 
     /// Default sort descriptor for Message search. Corresponds to `created_at`
-    static let defaultSortDescriptor: NSSortDescriptor = {
+    static var defaultSortDescriptor: NSSortDescriptor {
         NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)
-    }()
+    }
 
     func sortDescriptor(isAscending: Bool) -> NSSortDescriptor? {
         canUseAsSortDescriptor ? .init(key: rawValue, ascending: isAscending) : nil
@@ -83,7 +83,7 @@ public extension Filter where Scope == MessageSearchFilterScope {
     }
 }
 
-public struct MessageSearchQuery: Encodable {
+public struct MessageSearchQuery: Encodable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case query
         case channelFilter = "filter_conditions"

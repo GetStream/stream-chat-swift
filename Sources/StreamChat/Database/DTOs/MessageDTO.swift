@@ -495,7 +495,7 @@ class MessageDTO: NSManagedObject {
     }
 
     static func load(id: String, context: NSManagedObjectContext) -> MessageDTO? {
-        load(by: id, context: context).first
+        load(by: id, context: context).first as? Self
     }
 
     static func loadOrCreate(id: String, context: NSManagedObjectContext, cache: PreWarmedCache?) -> MessageDTO {
@@ -1921,23 +1921,23 @@ private extension ChatMessage {
 }
 
 extension ClientError {
-    final class CurrentUserDoesNotExist: ClientError {
+    final class CurrentUserDoesNotExist: ClientError, @unchecked Sendable {
         override var localizedDescription: String {
             "There is no `CurrentUserDTO` instance in the DB."
                 + "Make sure to call `client.currentUserController.reloadUserIfNeeded()`"
         }
     }
 
-    final class CurrentUserDoesNotHaveDeviceRegistered: ClientError {
+    final class CurrentUserDoesNotHaveDeviceRegistered: ClientError, @unchecked Sendable {
         override var localizedDescription: String {
             "There is no `DeviceDTO` instance in the DB."
                 + "Make sure to call `client.currentUserController.addDevice()`"
         }
     }
 
-    final class MessagePayloadSavingFailure: ClientError {}
+    final class MessagePayloadSavingFailure: ClientError, @unchecked Sendable {}
 
-    final class ChannelDoesNotExist: ClientError {
+    final class ChannelDoesNotExist: ClientError, @unchecked Sendable {
         init(cid: ChannelId) {
             super.init("There is no `ChannelDTO` instance in the DB matching cid: \(cid).")
         }

@@ -229,42 +229,48 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
 
         let interval = CMTime(seconds: 0.05, preferredTimescale: CMTimeScale(NSEC_PER_SEC))
         playerTimeChangesObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
-            guard let currentItem = self?.player?.currentItem else { return }
-
-            if time.isNumeric && currentItem.duration.isNumeric {
-                self?.content.playingProgress = time.seconds / currentItem.duration.seconds
-            } else {
-                self?.content.playingProgress = 0
+            StreamConcurrency.onMain {
+                guard let currentItem = self?.player?.currentItem else { return }
+                
+                if time.isNumeric && currentItem.duration.isNumeric {
+                    self?.content.playingProgress = time.seconds / currentItem.duration.seconds
+                } else {
+                    self?.content.playingProgress = 0
+                }
             }
         }
 
         playerStatusObserver = player.observe(\.timeControlStatus, options: [.new, .initial]) { [weak self] player, _ in
             guard let self = self else { return }
-
-            switch player.timeControlStatus {
-            case .playing:
-                self.content.videoState = .playing
-            case .paused:
-                self.content.videoState = .paused
-            default:
-                self.content.videoState = .loading
+            StreamConcurrency.onMain {
+                switch player.timeControlStatus {
+                case .playing:
+                    self.content.videoState = .playing
+                case .paused:
+                    self.content.videoState = .paused
+                default:
+                    self.content.videoState = .loading
+                }
             }
         }
 
         playerItemObserver = player.observe(\.currentItem, options: [.new, .initial]) { [weak self] player, _ in
             guard let self = self else { return }
-
-            self.content.videoDuration = 0
-            self.itemDurationObserver = player.currentItem?.observe(\.duration, options: [.new, .initial]) { [weak self] item, _ in
-                self?.content.videoDuration = item.duration.isNumeric ? item.duration.seconds : 0
+            StreamConcurrency.onMain {
+                self.content.videoDuration = 0
+                self.itemDurationObserver = player.currentItem?.observe(\.duration, options: [.new, .initial]) { [weak self] item, _ in
+                    StreamConcurrency.onMain { [weak self] in
+                        self?.content.videoDuration = item.duration.isNumeric ? item.duration.seconds : 0
+                    }
+                }
+                
+                NotificationCenter.default.addObserver(
+                    self,
+                    selector: #selector(self.handleItemDidPlayToEndTime),
+                    name: .AVPlayerItemDidPlayToEndTime,
+                    object: player.currentItem
+                )
             }
-
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(self.handleItemDidPlayToEndTime),
-                name: .AVPlayerItemDidPlayToEndTime,
-                object: player.currentItem
-            )
         }
     }
 
@@ -273,6 +279,8 @@ open class VideoPlaybackControlView: _View, ThemeProvider {
 
     deinit {
         NotificationCenter.default.removeObserver(self)
-        unsubscribeFromPlayerNotifications(_currentPlayer)
+        StreamConcurrency.onMain {
+            unsubscribeFromPlayerNotifications(_currentPlayer)
+        }
     }
 }

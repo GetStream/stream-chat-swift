@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// The delegate used `FileAttachmentViewInjector` to communicate user interactions.
-public protocol FileActionContentViewDelegate: ChatMessageContentViewDelegate {
+@MainActor public protocol FileActionContentViewDelegate: ChatMessageContentViewDelegate {
     /// Called when the user taps on the attachment.
     func didTapOnAttachment(_ attachment: ChatMessageFileAttachment, at indexPath: IndexPath?)
     

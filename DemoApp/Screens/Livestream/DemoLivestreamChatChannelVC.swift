@@ -456,7 +456,7 @@ class DemoLivestreamComposerVC: ComposerVC {
         from url: URL,
         type: AttachmentType,
         info: [LocalAttachmentInfoKey: Any],
-        extraData: (any Encodable)?
+        extraData: (Encodable & Sendable)?
     ) throws {
         guard let cid = livestreamChannelController?.channel?.cid else {
             return

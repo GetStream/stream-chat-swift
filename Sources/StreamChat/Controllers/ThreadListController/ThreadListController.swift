@@ -20,7 +20,7 @@ public protocol ChatThreadListControllerDelegate: DataControllerStateDelegate {
 
 /// `ChatThreadListController` is a controller class which allows querying and
 /// observing the threads that the current user is participating.
-public class ChatThreadListController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatThreadListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query of the thread list.
     public let query: ThreadListQuery
 
@@ -105,14 +105,14 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
         startThreadListObserverIfNeeded()
         threadsRepository.loadThreads(
             query: query
         ) { [weak self] result in
             switch result {
             case let .success(threadListResponse):
-                self?.callback {
+                self?.callback { [weak self] in
                     self?.state = .remoteDataFetched
                     self?.nextCursor = threadListResponse.next
                     self?.hasLoadedAllThreads = threadListResponse.next == nil
@@ -134,7 +134,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
     ///   - completion: The completion.
     public func loadMoreThreads(
         limit: Int? = nil,
-        completion: ((Result<[ChatThread], Error>) -> Void)? = nil
+        completion: (@MainActor(Result<[ChatThread], Error>) -> Void)? = nil
     ) {
         let limit = limit ?? query.limit
         var updatedQuery = query
@@ -143,7 +143,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         threadsRepository.loadThreads(query: updatedQuery) { [weak self] result in
             switch result {
             case let .success(threadListResponse):
-                self?.callback {
+                self?.callback { [weak self] in
                     let threads = threadListResponse.threads
                     self?.nextCursor = threadListResponse.next
                     self?.hasLoadedAllThreads = threadListResponse.next == nil

@@ -10,7 +10,7 @@ typealias WorkerBuilder = (
     _ apiClient: APIClient
 ) -> Worker
 
-class Worker {
+class Worker: @unchecked Sendable {
     let database: DatabaseContainer
     let apiClient: APIClient
 

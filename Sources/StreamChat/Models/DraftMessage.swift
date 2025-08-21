@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct DraftMessage {
+public struct DraftMessage: Sendable {
     /// A unique identifier of the message.
     public let id: MessageId
 
@@ -41,8 +41,8 @@ public struct DraftMessage {
     /// Quoted message.
     ///
     /// If message is inline reply this property will contain the message quoted by this reply.
-    public var quotedMessage: ChatMessage? { _quotedMessage() }
-    let _quotedMessage: () -> ChatMessage?
+    public var quotedMessage: ChatMessage? { _quotedMessage?.value as? ChatMessage }
+    let _quotedMessage: BoxedAny?
 
     /// A list of users that are mentioned in this message.
     public let mentionedUsers: Set<ChatUser>
@@ -65,7 +65,7 @@ public struct DraftMessage {
         showReplyInChannel: Bool,
         extraData: [String: RawJSON],
         currentUser: ChatUser,
-        quotedMessage: @escaping () -> ChatMessage?,
+        quotedMessage: ChatMessage?,
         mentionedUsers: Set<ChatUser>,
         attachments: [AnyChatMessageAttachment]
     ) {
@@ -79,7 +79,7 @@ public struct DraftMessage {
         self.arguments = arguments
         self.showReplyInChannel = showReplyInChannel
         self.extraData = extraData
-        _quotedMessage = quotedMessage
+        _quotedMessage = BoxedAny(quotedMessage)
         self.mentionedUsers = mentionedUsers
         self.attachments = attachments
         self.currentUser = currentUser
@@ -96,7 +96,7 @@ public struct DraftMessage {
         threadId = message.parentMessageId
         showReplyInChannel = message.showReplyInChannel
         extraData = message.extraData
-        _quotedMessage = { message.quotedMessage }
+        _quotedMessage = BoxedAny(message.quotedMessage)
         mentionedUsers = message.mentionedUsers
         attachments = message.allAttachments
         currentUser = message.author
@@ -137,7 +137,7 @@ extension ChatMessage {
         showReplyInChannel = draft.showReplyInChannel
         replyCount = 0
         extraData = draft.extraData
-        _quotedMessage = { draft.quotedMessage }
+        _quotedMessage = BoxedAny(draft.quotedMessage)
         isBounced = false
         isSilent = false
         isShadowed = false

@@ -8,7 +8,7 @@ import StreamChatUI
 import UIKit
 import UserNotifications
 
-final class StreamChatWrapper {
+@MainActor final class StreamChatWrapper {
     static var shared = StreamChatWrapper(apiKeyString: apiKeyString)
 
     static func replaceSharedInstance(apiKeyString: String) {
@@ -61,7 +61,7 @@ extension StreamChatWrapper {
 // MARK: User Authentication
 
 extension StreamChatWrapper {
-    func connect(user: DemoUserType, completion: @escaping (Error?) -> Void) {
+    func connect(user: DemoUserType, completion: @escaping @MainActor(Error?) -> Void) {
         switch user {
         case let .credentials(userCredentials):
             connectUser(credentials: userCredentials, completion: completion)
@@ -74,7 +74,7 @@ extension StreamChatWrapper {
         }
     }
 
-    func connectUser(credentials: UserCredentials?, completion: @escaping (Error?) -> Void) {
+    func connectUser(credentials: UserCredentials?, completion: @escaping @MainActor(Error?) -> Void) {
         guard let userCredentials = credentials else {
             log.error("User credentials are missing")
             return
@@ -121,7 +121,7 @@ extension StreamChatWrapper {
         )
     }
 
-    func logIn(as user: DemoUserType, completion: @escaping (Error?) -> Void) {
+    func logIn(as user: DemoUserType, completion: @escaping @MainActor(Error?) -> Void) {
         // Setup Stream Chat
         setUpChat()
 
@@ -134,14 +134,11 @@ extension StreamChatWrapper {
             } else {
                 StreamChatWrapper.onRemotePushRegistration?()
             }
-
-            DispatchQueue.main.async {
-                completion(error)
-            }
+            completion(error)
         }
     }
 
-    func logOut(completion: @escaping () -> Void) {
+    func logOut(completion: @escaping @MainActor() -> Void) {
         guard let client = self.client else {
             logClientNotInstantiated()
             return
@@ -192,7 +189,7 @@ extension StreamChatWrapper {
 // An object to test the Stream Models transformer.
 // By default it is not used. To use it, set it to the `modelsTransformer` property of the `ChatClientConfig`.
 
-class CustomStreamModelsTransformer: StreamModelsTransformer {
+final class CustomStreamModelsTransformer: StreamModelsTransformer {
     func transform(channel: ChatChannel) -> ChatChannel {
         channel.replacing(
             name: "Custom Name",

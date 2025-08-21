@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
+class AuthenticationRepository_Mock: AuthenticationRepository, Spy, @unchecked Sendable {
     enum Signature {
         static let connectTokenProvider = "connectUser(userInfo:tokenProvider:completion:)"
         static let connectGuest = "connectGuestUser(userInfo:completion:)"
@@ -31,23 +31,27 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
     var completeWaitersToken: Token?
 
     override var currentUserId: UserId? {
-        return mockedCurrentUserId
+        mockedCurrentUserId
     }
 
     override var currentToken: Token? {
-        return mockedToken
+        mockedToken
     }
 
-    override init(apiClient: APIClient,
-                  databaseContainer: DatabaseContainer,
-                  connectionRepository: ConnectionRepository,
-                  tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy(),
-                  timerType: StreamChat.Timer.Type = DefaultTimer.self) {
-        super.init(apiClient: apiClient,
-                   databaseContainer: databaseContainer,
-                   connectionRepository: connectionRepository,
-                   tokenExpirationRetryStrategy: tokenExpirationRetryStrategy,
-                   timerType: timerType)
+    override init(
+        apiClient: APIClient,
+        databaseContainer: DatabaseContainer,
+        connectionRepository: ConnectionRepository,
+        tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy(),
+        timerType: StreamChat.Timer.Type = DefaultTimer.self
+    ) {
+        super.init(
+            apiClient: apiClient,
+            databaseContainer: databaseContainer,
+            connectionRepository: connectionRepository,
+            tokenExpirationRetryStrategy: tokenExpirationRetryStrategy,
+            timerType: timerType
+        )
     }
 
     override func fetchCurrentUser() {

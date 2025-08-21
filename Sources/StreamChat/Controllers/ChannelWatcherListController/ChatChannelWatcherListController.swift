@@ -17,7 +17,7 @@ extension ChatClient {
 /// `ChatChannelWatcherListController` is a controller class which allows observing
 /// a list of chat watchers based on the provided query.
 ///
-public class ChatChannelWatcherListController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatChannelWatcherListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query specifying sorting and filtering for the list of channel watchers.
     @Atomic public private(set) var query: ChannelWatcherListQuery
 
@@ -82,7 +82,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     /// Synchronizes the channel's watchers with the backend.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
         if case let .localDataFetchFailed(error) = state {
@@ -174,10 +174,10 @@ public extension ChatChannelWatcherListController {
     ///   - limit: Limit for page size. Offset is defined automatically by the controller.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
-    func loadNextWatchers(limit: Int = .channelWatchersPageSize, completion: ((Error?) -> Void)? = nil) {
+    func loadNextWatchers(limit: Int = .channelWatchersPageSize, completion: (@MainActor(Error?) -> Void)? = nil) {
         var updatedQuery = query
         updatedQuery.pagination = .init(pageSize: limit, offset: watchers.count)
-        updater.channelWatchers(query: updatedQuery) { result in
+        updater.channelWatchers(query: updatedQuery) { [updatedQuery] result in
             self.query = updatedQuery
             self.callback { completion?(result.error) }
         }

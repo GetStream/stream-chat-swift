@@ -10,7 +10,7 @@ import Foundation
 /// will be displayed in the application.
 ///
 /// Common examples are: "like", "love", "smile", etc.
-public struct MessageReactionType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
+public struct MessageReactionType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral, Sendable {
     // MARK: - RawRepresentable
 
     public let rawValue: String

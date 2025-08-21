@@ -1,15 +1,11 @@
 //
-//  ChannelRepository_Mock.swift
-//  StreamChatTestTools
-//
-//  Created by Pol Quintana on 1/3/23.
-//  Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChat
 import Foundation
+@testable import StreamChat
 
-class ChannelRepository_Mock: ChannelRepository, Spy {
+class ChannelRepository_Mock: ChannelRepository, Spy, @unchecked Sendable {
     let spyState = SpyState()
     var getChannel_store: Bool?
     var getChannel_result: Result<ChatChannel, Error>?

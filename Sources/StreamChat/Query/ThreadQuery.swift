@@ -6,7 +6,7 @@ import Foundation
 
 /// A query to fetch information about a thread.
 /// To fetch all the replies from a thread and paginate the replies, the `ChatMessageController` should be used instead.
-public struct ThreadQuery: Encodable {
+public struct ThreadQuery: Encodable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case messageId = "message_id"
         case watch

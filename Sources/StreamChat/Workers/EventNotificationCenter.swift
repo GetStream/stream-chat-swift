@@ -49,7 +49,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
         middlewares.append(middleware)
     }
 
-    func process(_ events: [Event], postNotifications: Bool = true, completion: (() -> Void)? = nil) {
+    func process(_ events: [Event], postNotifications: Bool = true, completion: (@Sendable() -> Void)? = nil) {
         let processingEventsDebugMessage: () -> String = {
             let eventNames = events.map(\.name)
             return "Processing Events: \(eventNames)"
@@ -60,9 +60,9 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
             ($0 as? MessageNewEventDTO)?.message.id ?? ($0 as? NotificationMessageNewEventDTO)?.message.id
         }
 
-        var eventsToPost = [Event]()
-        var middlewareEvents = [Event]()
-        var manualHandlingEvents = [Event]()
+        nonisolated(unsafe) var eventsToPost = [Event]()
+        nonisolated(unsafe) var middlewareEvents = [Event]()
+        nonisolated(unsafe) var manualHandlingEvents = [Event]()
 
         database.write({ session in
             events.forEach { event in
@@ -98,7 +98,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
 }
 
 extension EventNotificationCenter {
-    func process(_ event: Event, postNotification: Bool = true, completion: (() -> Void)? = nil) {
+    func process(_ event: Event, postNotification: Bool = true, completion: (@Sendable() -> Void)? = nil) {
         process([event], postNotifications: postNotification, completion: completion)
     }
 }

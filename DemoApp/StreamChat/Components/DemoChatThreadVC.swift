@@ -83,7 +83,7 @@ class DemoChatThreadVC: ChatThreadVC, CurrentChatUserControllerDelegate {
 
     // MARK: - Loading previous and next messages state handling.
 
-    override func loadPreviousReplies(completion: @escaping (Error?) -> Void) {
+    override func loadPreviousReplies(completion: @escaping @MainActor(Error?) -> Void) {
         messageListVC.headerView = loadingViewIndicator
         super.loadPreviousReplies(completion: completion)
     }
@@ -92,7 +92,7 @@ class DemoChatThreadVC: ChatThreadVC, CurrentChatUserControllerDelegate {
         messageListVC.headerView = nil
     }
 
-    override func loadNextReplies(completion: @escaping (Error?) -> Void) {
+    override func loadNextReplies(completion: @escaping @MainActor(Error?) -> Void) {
         messageListVC.footerView = loadingViewIndicator
         super.loadNextReplies(completion: completion)
     }

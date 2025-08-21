@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class PollVoteListController_Mock: PollVoteListController {
+final class PollVoteListController_Mock: PollVoteListController, @unchecked Sendable {
     @Atomic var synchronize_called = false
     @Atomic var synchronize_completion_result: Result<Void, Error>?
     @Atomic var loadMoreVotes_limit: Int?
@@ -22,12 +22,12 @@ final class PollVoteListController_Mock: PollVoteListController {
         set { super.state = newValue }
     }
 
-    override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+    override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
         synchronize_called = true
         synchronize_completion_result?.invoke(with: completion)
     }
     
-    override func loadMoreVotes(limit: Int? = nil, completion: (((any Error)?) -> Void)? = nil) {
+    override func loadMoreVotes(limit: Int? = nil, completion: (@MainActor(Error?) -> Void)? = nil) {
         loadMoreVotes_limit = limit
         loadMoreVotes_completion_result?.invoke(with: completion)
     }

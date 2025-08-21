@@ -5,8 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-class ChatChannelController_Mock: ChatChannelController {
-
+class ChatChannelController_Mock: ChatChannelController, @unchecked Sendable {
     var mockCid: ChannelId?
     override var cid: ChannelId? {
         mockCid ?? super.cid
@@ -67,8 +66,8 @@ class ChatChannelController_Mock: ChatChannelController {
         skipEnrichUrl: Bool = false,
         restrictedVisibility: [UserId] = [],
         location: NewLocationInfo? = nil,
-        extraData: [String : RawJSON] = [:],
-        completion: ((Result<MessageId, Error>) -> Void)? = nil
+        extraData: [String: RawJSON] = [:],
+        completion: (@MainActor(Result<MessageId, Error>) -> Void)? = nil
     ) {
         createNewMessageCallCount += 1
     }
@@ -104,8 +103,10 @@ class ChatChannelController_Mock: ChatChannelController {
     }
 
     var markReadCallCount = 0
-    override func markRead(completion: ((Error?) -> Void)?) {
+    var markRead_completion: (@MainActor(Error?) -> Void)?
+    override func markRead(completion: (@MainActor(Error?) -> Void)?) {
         markReadCallCount += 1
+        markRead_completion = completion
     }
 
     var state_mock: State?
@@ -114,29 +115,33 @@ class ChatChannelController_Mock: ChatChannelController {
         set { super.state = newValue }
     }
 
-    private(set) var synchronize_completion: ((Error?) -> Void)?
-    override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+    var synchronize_callCount = 0
+    var synchronize_completion: (@MainActor(Error?) -> Void)?
+    override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
+        synchronize_callCount += 1
         synchronize_completion = completion
     }
 
     var loadFirstPageCallCount = 0
     var loadFirstPage_result: Error?
-    override func loadFirstPage(_ completion: ((Error?) -> Void)? = nil) {
+    override func loadFirstPage(_ completion: (@MainActor(Error?) -> Void)? = nil) {
         loadFirstPageCallCount += 1
-        completion?(loadFirstPage_result)
+        callback {
+            completion?(self.loadFirstPage_result)
+        }
     }
 
     var loadPageAroundMessageIdCallCount = 0
     override func loadPageAroundMessageId(
         _ messageId: MessageId,
         limit: Int? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         loadPageAroundMessageIdCallCount += 1
     }
 
     var updateDraftMessage_callCount = 0
-    var updateDraftMessage_completion: ((Result<DraftMessage, any Error>) -> Void)?
+    var updateDraftMessage_completion: (@MainActor(Result<DraftMessage, Error>) -> Void)?
     var updateDraftMessage_text = ""
 
     override func updateDraftMessage(
@@ -146,8 +151,8 @@ class ChatChannelController_Mock: ChatChannelController {
         mentionedUserIds: [UserId] = [],
         quotedMessageId: MessageId? = nil,
         command: Command? = nil,
-        extraData: [String : RawJSON] = [:],
-        completion: ((Result<DraftMessage, any Error>) -> Void)? = nil
+        extraData: [String: RawJSON] = [:],
+        completion: (@MainActor(Result<DraftMessage, Error>) -> Void)? = nil
     ) {
         updateDraftMessage_text = text
         updateDraftMessage_callCount += 1
@@ -155,17 +160,17 @@ class ChatChannelController_Mock: ChatChannelController {
     }
 
     var deleteDraftMessage_callCount = 0
-    var deleteDraftMessage_completion: ((Error?) -> Void)?
+    var deleteDraftMessage_completion: (@MainActor(Error?) -> Void)?
 
-    override func deleteDraftMessage(completion: ((Error?) -> Void)? = nil) {
+    override func deleteDraftMessage(completion: (@MainActor(Error?) -> Void)? = nil) {
         deleteDraftMessage_callCount += 1
         deleteDraftMessage_completion = completion
     }
 
     var loadDraftMessage_callCount = 0
-    var loadDraftMessage_completion: ((Result<DraftMessage?, Error>) -> Void)?
+    var loadDraftMessage_completion: (@MainActor(Result<DraftMessage?, Error>) -> Void)?
 
-    override func loadDraftMessage(completion: ((Result<DraftMessage?, Error>) -> Void)? = nil) {
+    override func loadDraftMessage(completion: (@MainActor(Result<DraftMessage?, Error>) -> Void)? = nil) {
         loadDraftMessage_callCount += 1
         loadDraftMessage_completion = completion
     }
