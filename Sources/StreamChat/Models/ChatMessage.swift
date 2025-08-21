@@ -285,6 +285,7 @@ public struct ChatMessage {
         originalLanguage: TranslationLanguage? = nil,
         moderationDetails: MessageModerationDetails? = nil,
         readBy: Set<ChatUser>? = nil,
+        deletedAt: Date? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatMessage {
         .init(
@@ -296,7 +297,7 @@ public struct ChatMessage {
             createdAt: createdAt,
             locallyCreatedAt: locallyCreatedAt,
             updatedAt: updatedAt,
-            deletedAt: deletedAt,
+            deletedAt: deletedAt ?? self.deletedAt,
             arguments: arguments ?? self.arguments,
             parentMessageId: parentMessageId,
             showReplyInChannel: showReplyInChannel,

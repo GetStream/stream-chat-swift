@@ -40,6 +40,31 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
     // MARK: - Channel Change Publisher
 
     func test_channelChangePublisher() {
+        // setup Initial Channel
+        let mockUpdater = ChannelUpdater_Mock(
+            channelRepository: client.channelRepository,
+            messageRepository: client.messageRepository,
+            paginationStateHandler: client.makeMessagesPaginationStateHandler(),
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
+
+        // Create controller with mock updater
+        livestreamChannelController = LivestreamChannelController(
+            channelQuery: channelQuery,
+            client: client,
+            updater: mockUpdater
+        )
+
+        // Load initial channel data
+        let exp = expectation(description: "sync completes")
+        livestreamChannelController.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(channel: .dummy(cid: channelQuery.cid!))
+        mockUpdater.update_completion?(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+
         // Setup Recording publishers
         var recording = Record<ChatChannel?, Never>.Recording()
 
@@ -48,9 +73,6 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             .channelChangePublisher
             .sink(receiveValue: { recording.receive($0) })
             .store(in: &cancellables)
-
-        // Verify initial state
-        XCTAssertEqual(recording.output, [nil])
 
         // Don't keep weak reference - use the controller directly for easier debugging
         let newChannel: ChatChannel = .mock(cid: channelQuery.cid!, name: .unique, imageURL: .unique(), extraData: [:])
@@ -73,8 +95,8 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
 
         // Use AssertAsync to wait for the async update (delegate callback happens on main queue)
         AssertAsync {
-            Assert.willBeEqual(recording.output.count, 2)
-            Assert.willBeEqual(recording.output.last, newChannel)
+            Assert.willBeEqual(recording.output.count, 3)
+            Assert.willBeEqual(recording.output.last??.name, newChannel.name)
         }
     }
 

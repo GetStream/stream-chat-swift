@@ -10,6 +10,7 @@ extension ChannelPayload {
     /// Returns dummy channel payload with the given values.
     static func dummy(
         channel: ChannelDetailPayload = .dummy(),
+        watcherCount: Int? = nil,
         watchers: [UserPayload] = [],
         members: [MemberPayload] = [],
         membership: MemberPayload? = nil,
@@ -23,7 +24,7 @@ extension ChannelPayload {
     ) -> Self {
         .init(
             channel: channel,
-            watcherCount: watchers.count,
+            watcherCount: watcherCount ?? watchers.count,
             watchers: watchers,
             members: members,
             membership: membership,
