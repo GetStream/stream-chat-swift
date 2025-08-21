@@ -375,6 +375,171 @@ final class ChatChannel_Tests: XCTestCase {
         XCTAssertEqual(partialReplacement.imageURL, nil)
         XCTAssertEqual(partialReplacement.extraData, [:])
     }
+    
+    // MARK: - Changing Method Tests
+    
+    func test_changing_withNoParameters_returnsUnchangedChannel() {
+        // Given
+        let originalChannel = createComprehensiveChannel()
+        
+        // When
+        let unchangedChannel = originalChannel.changing()
+        
+        // Then - All properties should remain the same
+        XCTAssertEqual(unchangedChannel.cid, originalChannel.cid)
+        XCTAssertEqual(unchangedChannel.name, originalChannel.name)
+        XCTAssertEqual(unchangedChannel.imageURL, originalChannel.imageURL)
+        XCTAssertEqual(unchangedChannel.lastMessageAt, originalChannel.lastMessageAt)
+        XCTAssertEqual(unchangedChannel.createdAt, originalChannel.createdAt)
+        XCTAssertEqual(unchangedChannel.updatedAt, originalChannel.updatedAt)
+        XCTAssertEqual(unchangedChannel.deletedAt, originalChannel.deletedAt)
+        XCTAssertEqual(unchangedChannel.truncatedAt, originalChannel.truncatedAt)
+        XCTAssertEqual(unchangedChannel.isHidden, originalChannel.isHidden)
+        XCTAssertEqual(unchangedChannel.createdBy?.id, originalChannel.createdBy?.id)
+        XCTAssertEqual(unchangedChannel.ownCapabilities, originalChannel.ownCapabilities)
+        XCTAssertEqual(unchangedChannel.isFrozen, originalChannel.isFrozen)
+        XCTAssertEqual(unchangedChannel.isDisabled, originalChannel.isDisabled)
+        XCTAssertEqual(unchangedChannel.isBlocked, originalChannel.isBlocked)
+        XCTAssertEqual(unchangedChannel.lastActiveMembers.count, originalChannel.lastActiveMembers.count)
+        XCTAssertEqual(unchangedChannel.membership?.id, originalChannel.membership?.id)
+        XCTAssertEqual(unchangedChannel.memberCount, originalChannel.memberCount)
+        XCTAssertEqual(unchangedChannel.lastActiveWatchers.count, originalChannel.lastActiveWatchers.count)
+        XCTAssertEqual(unchangedChannel.watcherCount, originalChannel.watcherCount)
+        XCTAssertEqual(unchangedChannel.reads.count, originalChannel.reads.count)
+        XCTAssertEqual(unchangedChannel.team, originalChannel.team)
+        XCTAssertEqual(unchangedChannel.cooldownDuration, originalChannel.cooldownDuration)
+        XCTAssertEqual(unchangedChannel.extraData, originalChannel.extraData)
+    }
+
+    func test_changing_withAllParameters_updatesAllSpecifiedProperties() {
+        // Given
+        let originalChannel = createComprehensiveChannel()
+        
+        // Create new values for all parameters
+        let newName = "Completely Updated Name"
+        let newImageURL = URL(string: "https://example.com/completely-new.jpg")
+        let newLastMessageAt = Date().addingTimeInterval(-500)
+        let newCreatedAt = Date().addingTimeInterval(-345_600) // 4 days ago
+        let newDeletedAt = Date().addingTimeInterval(-100)
+        let newUpdatedAt = Date().addingTimeInterval(-200)
+        let newTruncatedAt = Date().addingTimeInterval(-300)
+        let newIsHidden = !originalChannel.isHidden
+        let newCreatedBy = ChatUser.mock(id: .unique, name: "Completely New Creator")
+        let newConfig = ChannelConfig.mock()
+        let newOwnCapabilities: Set<ChannelCapability> = [.sendMessage, .deleteAnyMessage, .updateChannel]
+        let newIsFrozen = !originalChannel.isFrozen
+        let newIsDisabled = !originalChannel.isDisabled
+        let newIsBlocked = !originalChannel.isBlocked
+        let newMember = ChatChannelMember.mock(id: .unique, name: "All New Member")
+        let newMembers = [newMember]
+        let newMembership = newMember
+        let newMemberCount = 99
+        let newWatcher = ChatUser.mock(id: .unique, name: "All New Watcher")
+        let newWatchers = [newWatcher]
+        let newWatcherCount = 33
+        let newRead = ChatChannelRead.mock(user: .mock(id: .unique), lastReadAt: Date(), unreadMessagesCount: 12)
+        let newReads = [newRead]
+        let newTeam = "all-new-team"
+        let newCooldownDuration = 180
+        let newExtraData: [String: RawJSON] = ["completelyNew": .string("allNewValue")]
+        
+        // When
+        let completelyUpdatedChannel = originalChannel.changing(
+            name: newName,
+            imageURL: newImageURL,
+            lastMessageAt: newLastMessageAt,
+            createdAt: newCreatedAt,
+            deletedAt: newDeletedAt,
+            updatedAt: newUpdatedAt,
+            truncatedAt: newTruncatedAt,
+            isHidden: newIsHidden,
+            createdBy: newCreatedBy,
+            config: newConfig,
+            ownCapabilities: newOwnCapabilities,
+            isFrozen: newIsFrozen,
+            isDisabled: newIsDisabled,
+            isBlocked: newIsBlocked,
+            reads: newReads,
+            members: newMembers,
+            membership: newMembership,
+            memberCount: newMemberCount,
+            watchers: newWatchers,
+            watcherCount: newWatcherCount,
+            team: newTeam,
+            cooldownDuration: newCooldownDuration,
+            extraData: newExtraData
+        )
+        
+        // Then - All properties should be updated
+        XCTAssertEqual(completelyUpdatedChannel.name, newName)
+        XCTAssertEqual(completelyUpdatedChannel.imageURL, newImageURL)
+        XCTAssertEqual(completelyUpdatedChannel.lastMessageAt, newLastMessageAt)
+        XCTAssertEqual(completelyUpdatedChannel.createdAt, newCreatedAt)
+        XCTAssertEqual(completelyUpdatedChannel.deletedAt, newDeletedAt)
+        XCTAssertEqual(completelyUpdatedChannel.updatedAt, newUpdatedAt)
+        XCTAssertEqual(completelyUpdatedChannel.truncatedAt, newTruncatedAt)
+        XCTAssertEqual(completelyUpdatedChannel.isHidden, newIsHidden)
+        XCTAssertEqual(completelyUpdatedChannel.createdBy?.id, newCreatedBy.id)
+        XCTAssertEqual(completelyUpdatedChannel.ownCapabilities, newOwnCapabilities)
+        XCTAssertEqual(completelyUpdatedChannel.isFrozen, newIsFrozen)
+        XCTAssertEqual(completelyUpdatedChannel.isDisabled, newIsDisabled)
+        XCTAssertEqual(completelyUpdatedChannel.isBlocked, newIsBlocked)
+        XCTAssertEqual(completelyUpdatedChannel.lastActiveMembers.count, 1)
+        XCTAssertEqual(completelyUpdatedChannel.lastActiveMembers.first?.id, newMember.id)
+        XCTAssertEqual(completelyUpdatedChannel.membership?.id, newMembership.id)
+        XCTAssertEqual(completelyUpdatedChannel.memberCount, newMemberCount)
+        XCTAssertEqual(completelyUpdatedChannel.lastActiveWatchers.count, 1)
+        XCTAssertEqual(completelyUpdatedChannel.lastActiveWatchers.first?.id, newWatcher.id)
+        XCTAssertEqual(completelyUpdatedChannel.watcherCount, newWatcherCount)
+        XCTAssertEqual(completelyUpdatedChannel.reads.count, 1)
+        XCTAssertEqual(completelyUpdatedChannel.reads.first?.user.id, newRead.user.id)
+        XCTAssertEqual(completelyUpdatedChannel.team, newTeam)
+        XCTAssertEqual(completelyUpdatedChannel.cooldownDuration, newCooldownDuration)
+        XCTAssertEqual(completelyUpdatedChannel.extraData, newExtraData)
+        
+        // Verify immutable properties remain the same
+        XCTAssertEqual(completelyUpdatedChannel.cid, originalChannel.cid)
+    }
+    
+    // MARK: - Helper Methods
+    
+    private func createComprehensiveChannel() -> ChatChannel {
+        let createdBy = ChatUser.mock(id: .unique, name: "Original Creator")
+        let member = ChatChannelMember.mock(id: .unique, name: "Original Member")
+        let watcher = ChatUser.mock(id: .unique, name: "Original Watcher")
+        let read = ChatChannelRead.mock(
+            user: .mock(id: .unique),
+            lastReadAt: Date().addingTimeInterval(-1800),
+            unreadMessagesCount: 5
+        )
+        
+        return ChatChannel.mock(
+            cid: .unique,
+            name: "Original Channel",
+            imageURL: URL(string: "https://example.com/original.jpg"),
+            lastMessageAt: Date().addingTimeInterval(-3600), // 1 hour ago
+            createdAt: Date().addingTimeInterval(-86400), // 1 day ago
+            updatedAt: Date().addingTimeInterval(-1800), // 30 minutes ago
+            deletedAt: nil,
+            truncatedAt: nil,
+            isHidden: false,
+            createdBy: createdBy,
+            config: .mock(),
+            ownCapabilities: [.sendMessage, .readEvents],
+            isFrozen: false,
+            isDisabled: false,
+            isBlocked: false,
+            lastActiveMembers: [member],
+            membership: member,
+            memberCount: 10,
+            lastActiveWatchers: [watcher],
+            watcherCount: 5,
+            reads: [read],
+            team: "original-team",
+            cooldownDuration: 30,
+            extraData: ["originalKey": .string("originalValue")]
+        )
+    }
 
     private func setupChannel(withCapabilities capabilities: Set<ChannelCapability>) -> ChatChannel {
         .mock(

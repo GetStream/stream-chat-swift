@@ -1271,6 +1271,119 @@ extension LivestreamChannelController_Tests {
         XCTAssertEqual(controller.channel?.name, "Updated Name")
     }
 
+    func test_didReceiveEvent_channelUpdatedEvent_comprehensiveUpdate_updatesAllProperties() {
+        // Given - Set up initial channel with basic data
+        let cid = controller.cid!
+        
+        // Load initial channel data
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        
+        let initialChannelPayload = ChannelPayload.dummy(
+            channel: .dummy(
+                cid: cid,
+                name: "Original Name",
+                imageURL: URL(string: "https://example.com/original.jpg"),
+                extraData: ["key": .string("original")],
+                isFrozen: false,
+                memberCount: 5
+            )
+        )
+        client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // When - Send ChannelUpdatedEvent with comprehensive updates
+        let newCreatedAt = Date().addingTimeInterval(-172_800) // 2 days ago
+        let newUpdatedAt = Date().addingTimeInterval(-7200) // 2 hours ago
+        let newLastMessageAt = Date().addingTimeInterval(-900) // 15 minutes ago
+        let newDeletedAt = Date().addingTimeInterval(-300) // 5 minutes ago
+        let newTruncatedAt = Date().addingTimeInterval(-600) // 10 minutes ago
+        let newCreatedBy = ChatUser.mock(id: .unique, name: "New Creator")
+        let newMember1 = ChatChannelMember.dummy(id: .unique)
+        let newMember2 = ChatChannelMember.dummy(id: .unique)
+        let newWatcher = ChatUser.mock(id: .unique, name: "New Watcher")
+        let newRead = ChatChannelRead.mock(
+            lastReadAt: Date().addingTimeInterval(-450),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 3,
+            user: .unique
+        )
+        
+        let comprehensivelyUpdatedChannel = ChatChannel.mock(
+            cid: cid,
+            name: "Completely Updated Name",
+            imageURL: URL(string: "https://example.com/updated.jpg"),
+            lastMessageAt: newLastMessageAt,
+            createdAt: newCreatedAt,
+            updatedAt: newUpdatedAt,
+            deletedAt: newDeletedAt,
+            truncatedAt: newTruncatedAt,
+            isHidden: true,
+            createdBy: newCreatedBy,
+            config: .mock(),
+            ownCapabilities: [.sendMessage, .readEvents],
+            isFrozen: true,
+            isDisabled: true,
+            isBlocked: true,
+            lastActiveMembers: [newMember1, newMember2],
+            membership: newMember1,
+            memberCount: 25,
+            lastActiveWatchers: [newWatcher],
+            watcherCount: 12,
+            reads: [newRead],
+            team: "updated-team",
+            cooldownDuration: 60,
+            extraData: ["newKey": .string("newValue"), "anotherKey": .number(42)]
+        )
+        
+        let event = ChannelUpdatedEvent(
+            channel: comprehensivelyUpdatedChannel,
+            user: .mock(id: .unique),
+            message: nil,
+            createdAt: .unique
+        )
+        
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then - Verify all properties were updated correctly
+        XCTAssertEqual(controller.channel?.name, "Completely Updated Name")
+        XCTAssertEqual(controller.channel?.imageURL?.absoluteString, "https://example.com/updated.jpg")
+        XCTAssertEqual(controller.channel?.lastMessageAt, newLastMessageAt)
+        XCTAssertEqual(controller.channel?.createdAt, newCreatedAt)
+        XCTAssertEqual(controller.channel?.updatedAt, newUpdatedAt)
+        XCTAssertEqual(controller.channel?.deletedAt, newDeletedAt)
+        XCTAssertEqual(controller.channel?.truncatedAt, newTruncatedAt)
+        XCTAssertEqual(controller.channel?.isHidden, true)
+        XCTAssertEqual(controller.channel?.createdBy?.id, newCreatedBy.id)
+        XCTAssertEqual(controller.channel?.createdBy?.name, newCreatedBy.name)
+        XCTAssertTrue(controller.channel?.ownCapabilities.contains(.sendMessage) ?? false)
+        XCTAssertTrue(controller.channel?.ownCapabilities.contains(.readEvents) ?? false)
+        XCTAssertEqual(controller.channel?.isFrozen, true)
+        XCTAssertEqual(controller.channel?.isDisabled, true)
+        XCTAssertEqual(controller.channel?.isBlocked, true)
+        XCTAssertEqual(controller.channel?.lastActiveMembers.count, 2)
+        XCTAssertEqual(controller.channel?.lastActiveMembers.first?.name, newMember1.name)
+        XCTAssertEqual(controller.channel?.lastActiveMembers.last?.name, newMember2.name)
+        XCTAssertEqual(controller.channel?.membership?.id, newMember1.id)
+        XCTAssertEqual(controller.channel?.memberCount, 25)
+        XCTAssertEqual(controller.channel?.lastActiveWatchers.count, 1)
+        XCTAssertEqual(controller.channel?.lastActiveWatchers.first?.name, newWatcher.name)
+        XCTAssertEqual(controller.channel?.watcherCount, 12)
+        XCTAssertEqual(controller.channel?.reads.count, 1)
+        XCTAssertEqual(controller.channel?.reads.first?.user.id, newRead.user.id)
+        XCTAssertEqual(controller.channel?.reads.first?.unreadMessagesCount, 3)
+        XCTAssertEqual(controller.channel?.team, "updated-team")
+        XCTAssertEqual(controller.channel?.cooldownDuration, 60)
+        XCTAssertEqual(controller.channel?.extraData["newKey"], .string("newValue"))
+        XCTAssertEqual(controller.channel?.extraData["anotherKey"], .number(42))
+        XCTAssertNil(controller.channel?.extraData["key"]) // Original key should be replaced
+    }
+
     // MARK: - Member Update Events Tests
 
     func test_didReceiveEvent_notificationAddedToChannelEvent_updatesChannelInMemory() {
