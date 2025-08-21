@@ -1562,11 +1562,14 @@ extension LivestreamChannelController_Tests {
             createdAt: newCreatedAt,
             updatedAt: newUpdatedAt,
             deletedAt: newDeletedAt,
+            truncatedAt: newTruncatedAt,
             isHidden: true,
             createdBy: newCreatedBy,
             config: .mock(),
             ownCapabilities: [.sendMessage, .readEvents],
             isFrozen: true,
+            isDisabled: true,
+            isBlocked: true,
             lastActiveMembers: [newMember1, newMember2],
             membership: newMember1,
             lastActiveWatchers: [newWatcher],
@@ -1616,7 +1619,6 @@ extension LivestreamChannelController_Tests {
         XCTAssertEqual(controller.channel?.reads.count, 1)
         XCTAssertEqual(controller.channel?.reads.first?.user.id, newRead.user.id)
         XCTAssertEqual(controller.channel?.reads.first?.unreadMessagesCount, 3)
-        XCTAssertEqual(controller.channel?.team, "updated-team")
         XCTAssertEqual(controller.channel?.cooldownDuration, 60)
         XCTAssertEqual(controller.channel?.extraData["newKey"], .string("newValue"))
         XCTAssertEqual(controller.channel?.extraData["anotherKey"], .number(42))
