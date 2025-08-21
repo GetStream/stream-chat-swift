@@ -1076,6 +1076,204 @@ extension LivestreamChannelController_Tests {
         XCTAssertEqual(controller.messages.first?.text, "Updated text")
     }
     
+    func test_didReceiveEvent_messageUpdatedEvent_messageBecomesPin_addsToPinnedMessages() {
+        // Given - Set up initial channel with no pinned messages
+        let cid = controller.cid!
+        let messageId = "pin-me"
+        
+        // Load initial channel data
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid),
+            pinnedMessages: [] // No pinned messages initially
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // Add an unpinned message
+        let unpinnedMessage = ChatMessage.mock(
+            id: messageId,
+            cid: cid,
+            text: "Original text",
+            pinDetails: nil
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: MessageNewEvent(
+                user: .mock(id: .unique),
+                message: unpinnedMessage,
+                channel: .mock(cid: cid),
+                createdAt: .unique,
+                watcherCount: nil,
+                unreadCount: nil
+            )
+        )
+        
+        // Verify initial state
+        XCTAssertEqual(controller.messages.count, 1)
+        XCTAssertEqual(controller.messages.first?.isPinned, false)
+        XCTAssertEqual(controller.channel?.pinnedMessages.count, 0)
+        
+        // When - Update message to be pinned
+        let pinnedMessage = ChatMessage.mock(
+            id: messageId,
+            cid: cid,
+            text: "Original text",
+            pinDetails: .init(pinnedAt: .unique, pinnedBy: .unique, expiresAt: nil)
+        )
+        let event = MessageUpdatedEvent(
+            user: .mock(id: .unique),
+            channel: .mock(cid: cid),
+            message: pinnedMessage,
+            createdAt: .unique
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.messages.count, 1)
+        XCTAssertEqual(controller.messages.first?.isPinned, true)
+        XCTAssertEqual(controller.channel?.pinnedMessages.count, 1)
+        XCTAssertEqual(controller.channel?.pinnedMessages.first?.id, messageId)
+    }
+    
+    func test_didReceiveEvent_messageUpdatedEvent_messageBecomesUnpinned_removesFromPinnedMessages() {
+        // Given - Set up initial channel with a pinned message
+        let cid = controller.cid!
+        let messageId = "unpin-me"
+        let pinnedMessage = ChatMessage.mock(
+            id: messageId,
+            cid: cid,
+            text: "Pinned text",
+            pinDetails: .init(pinnedAt: .unique, pinnedBy: .unique, expiresAt: nil)
+        )
+        
+        // Load initial channel data with pinned message
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid),
+            pinnedMessages: [.dummy(messageId: messageId)]
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // Add the pinned message to the messages array
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: MessageNewEvent(
+                user: .mock(id: .unique),
+                message: pinnedMessage,
+                channel: .mock(cid: cid),
+                createdAt: .unique,
+                watcherCount: nil,
+                unreadCount: nil
+            )
+        )
+        
+        // Verify initial state
+        XCTAssertEqual(controller.messages.count, 1)
+        XCTAssertEqual(controller.messages.first?.isPinned, true)
+        XCTAssertEqual(controller.channel?.pinnedMessages.count, 1)
+        
+        // When - Update message to be unpinned
+        let unpinnedMessage = ChatMessage.mock(
+            id: messageId,
+            cid: cid,
+            text: "Pinned text",
+            pinDetails: nil
+        )
+        let event = MessageUpdatedEvent(
+            user: .mock(id: .unique),
+            channel: .mock(cid: cid),
+            message: unpinnedMessage,
+            createdAt: .unique
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then
+        XCTAssertEqual(controller.messages.count, 1)
+        XCTAssertEqual(controller.messages.first?.isPinned, false)
+        XCTAssertEqual(controller.channel?.pinnedMessages.count, 0)
+    }
+    
+    func test_didReceiveEvent_messageUpdatedEvent_pinnedStatusUnchanged_doesNotModifyPinnedMessages() {
+        // Given - Set up initial channel with a pinned message
+        let cid = controller.cid!
+        let messageId = "keep-pinned"
+        let initialPinnedMessage = ChatMessage.mock(
+            id: messageId,
+            cid: cid,
+            text: "Original pinned text",
+            pinDetails: .init(pinnedAt: .unique, pinnedBy: .unique, expiresAt: nil)
+        )
+        
+        // Load initial channel data with pinned message
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in
+            exp.fulfill()
+        }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid),
+            pinnedMessages: [.dummy(messageId: messageId)]
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+        
+        // Add the pinned message
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: MessageNewEvent(
+                user: .mock(id: .unique),
+                message: initialPinnedMessage,
+                channel: .mock(cid: cid),
+                createdAt: .unique,
+                watcherCount: nil,
+                unreadCount: nil
+            )
+        )
+        
+        // Verify initial state
+        XCTAssertEqual(controller.messages.count, 1)
+        XCTAssertEqual(controller.messages.first?.isPinned, true)
+        XCTAssertEqual(controller.channel?.pinnedMessages.count, 1)
+        
+        // When - Update message content but keep pinned status the same
+        let updatedPinnedMessage = ChatMessage.mock(
+            id: messageId,
+            cid: cid,
+            text: "Updated pinned text", // Text changed
+            pinDetails: .init(pinnedAt: .unique, pinnedBy: .unique, expiresAt: nil)
+        )
+        let event = MessageUpdatedEvent(
+            user: .mock(id: .unique),
+            channel: .mock(cid: cid),
+            message: updatedPinnedMessage,
+            createdAt: .unique
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: event
+        )
+        
+        // Then - Message updated but pinned messages array unchanged
+        XCTAssertEqual(controller.messages.count, 1)
+        XCTAssertEqual(controller.messages.first?.isPinned, true)
+        XCTAssertEqual(controller.messages.first?.text, "Updated pinned text")
+        XCTAssertEqual(controller.channel?.pinnedMessages.count, 1)
+        XCTAssertEqual(controller.channel?.pinnedMessages.first?.id, messageId)
+    }
+    
     func test_didReceiveEvent_messageDeletedEvent_hardDelete_removesMessage() {
         // Add a message
         controller.eventsController(
