@@ -5,9 +5,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### 🐞 Fixed
-- Fix LivestreamChannelController not reconnecting when connection is dropped [#3782](https://github.com/GetStream/stream-chat-swift/pull/3782)
+- Fix `LivestreamChannelController` not reconnecting when connection is dropped [#3782](https://github.com/GetStream/stream-chat-swift/pull/3782)
 - Fix `StreamAudioRecorder` not overridable because of init method [#3783](https://github.com/GetStream/stream-chat-swift/pull/3783)
 - Fix channel list query filtering by both blocked and non-blocked channels [#3785](https://github.com/GetStream/stream-chat-swift/pull/3785)
+- Fix `LivestreamChannelController.synchronize()` not working if client not connected [#3787](https://github.com/GetStream/stream-chat-swift/pull/3787)
+- Fix membership updates in `LivestreamChannelController` [#3787](https://github.com/GetStream/stream-chat-swift/pull/3787)
+- Fix deleted messages updates in `LivestreamChannelController` [#3787](https://github.com/GetStream/stream-chat-swift/pull/3787)
+- Fix `channel.pinnedMessages` not updated when pinning a message in `LivestreamChannelController` [#3787](https://github.com/GetStream/stream-chat-swift/pull/3787)
+- Fix `LivestreamChannelController` not watching the channel automatically when the current user joins the channel [#3787](https://github.com/GetStream/stream-chat-swift/pull/3787)
 
 # [4.85.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.85.0)
 _August 13, 2025_
