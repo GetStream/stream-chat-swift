@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add support for `user.deleted.messages` event [#3792](https://github.com/GetStream/stream-chat-swift/pull/3792)
 
+### 🔄 Changed
+
+# [4.86.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.86.0)
+_August 21, 2025_
+
 ## StreamChat
 ### 🐞 Fixed
 - Fix `LivestreamChannelController` not reconnecting when connection is dropped [#3782](https://github.com/GetStream/stream-chat-swift/pull/3782)
