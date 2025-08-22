@@ -16,6 +16,17 @@ public protocol AttachmentUploader {
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<UploadedAttachment, Error>) -> Void
     )
+    
+    /// Uploads a standalone attachment (not tied to message or channel), and returns the attachment with the remote information.
+    /// - Parameters:
+    ///   - attachment: A standalone attachment.
+    ///   - progress: The progress of the upload.
+    ///   - completion: The callback with the uploaded attachment.
+    func upload<Payload>(
+        _ attachment: StreamAttachment<Payload>,
+        progress: ((Double) -> Void)?,
+        completion: @escaping (Result<UploadedFile, Error>) -> Void
+    )
 }
 
 public class StreamAttachmentUploader: AttachmentUploader {
@@ -40,5 +51,13 @@ public class StreamAttachmentUploader: AttachmentUploader {
                 return uploadedAttachment
             })
         }
+    }
+    
+    public func upload<Payload>(
+        _ attachment: StreamAttachment<Payload>,
+        progress: ((Double) -> Void)?,
+        completion: @escaping (Result<UploadedFile, Error>) -> Void
+    ) {
+        cdnClient.uploadAttachment(attachment, progress: progress, completion: completion)
     }
 }
