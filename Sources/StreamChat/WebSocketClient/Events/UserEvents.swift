@@ -274,7 +274,7 @@ class UserUnbannedEventDTO: EventDTO {
 
 /// Triggered when the messages of a banned user should be deleted.
 public struct UserMessagesDeletedEvent: Event {
-    /// The unbanned user.
+    /// The banned user.
     public let user: ChatUser
 
     /// If the messages should be hard deleted or not.
