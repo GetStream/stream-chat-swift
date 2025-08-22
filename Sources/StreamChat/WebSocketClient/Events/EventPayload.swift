@@ -28,7 +28,6 @@ class EventPayload: Decodable {
         case banExpiredAt = "expiration"
         case parentId = "parent_id"
         case hardDelete = "hard_delete"
-        case softDelete = "soft_delete"
         case firstUnreadMessageId = "first_unread_message_id"
         case lastReadAt = "last_read_at"
         case lastReadMessageId = "last_read_message_id"
@@ -61,7 +60,6 @@ class EventPayload: Decodable {
     let banReason: String?
     let banExpiredAt: Date?
     let parentId: MessageId?
-    let softDelete: Bool?
     let hardDelete: Bool
     let shadow: Bool?
     // Mark as unread properties
@@ -101,7 +99,6 @@ class EventPayload: Decodable {
         banExpiredAt: Date? = nil,
         parentId: MessageId? = nil,
         hardDelete: Bool = false,
-        softDelete: Bool? = nil,
         shadow: Bool? = nil,
         firstUnreadMessageId: MessageId? = nil,
         lastReadAt: Date? = nil,
@@ -135,7 +132,6 @@ class EventPayload: Decodable {
         self.banExpiredAt = banExpiredAt
         self.parentId = parentId
         self.hardDelete = hardDelete
-        self.softDelete = softDelete
         self.shadow = shadow
         self.firstUnreadMessageId = firstUnreadMessageId
         self.lastReadAt = lastReadAt
@@ -174,7 +170,6 @@ class EventPayload: Decodable {
         banExpiredAt = try container.decodeIfPresent(Date.self, forKey: .banExpiredAt)
         parentId = try container.decodeIfPresent(MessageId.self, forKey: .parentId)
         hardDelete = try container.decodeIfPresent(Bool.self, forKey: .hardDelete) ?? false
-        softDelete = try container.decodeIfPresent(Bool.self, forKey: .softDelete)
         shadow = try container.decodeIfPresent(Bool.self, forKey: .shadow)
         firstUnreadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .firstUnreadMessageId)
         lastReadAt = try container.decodeIfPresent(Date.self, forKey: .lastReadAt)

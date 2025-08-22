@@ -796,11 +796,12 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
 
         // User deleted messages event is a global event, not tied to a channel.
         if let userMessagesDeletedEvent = event as? UserMessagesDeletedEvent {
-            if userMessagesDeletedEvent.softDelete {
-                let userId = userMessagesDeletedEvent.user.id
-                let deletedAt = userMessagesDeletedEvent.createdAt
-                softDeleteMessages(from: userId, deletedAt: deletedAt)
+            if userMessagesDeletedEvent.hardDelete {
+                return
             }
+            let userId = userMessagesDeletedEvent.user.id
+            let deletedAt = userMessagesDeletedEvent.createdAt
+            softDeleteMessages(from: userId, deletedAt: deletedAt)
         }
     }
 

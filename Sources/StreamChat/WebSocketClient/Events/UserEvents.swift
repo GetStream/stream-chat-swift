@@ -277,8 +277,8 @@ public struct UserMessagesDeletedEvent: Event {
     /// The unbanned user.
     public let user: ChatUser
 
-    /// If the messages should be soft deleted or not.
-    public let softDelete: Bool
+    /// If the messages should be hard deleted or not.
+    public let hardDelete: Bool
 
     /// The event timestamp
     public let createdAt: Date
@@ -300,14 +300,14 @@ class UserMessagesDeletedEventDTO: EventDTO {
            let userModel = try? userDTO.asModel() {
             return UserMessagesDeletedEvent(
                 user: userModel,
-                softDelete: payload.softDelete ?? false,
+                hardDelete: payload.hardDelete,
                 createdAt: createdAt
             )
         }
 
         return UserMessagesDeletedEvent(
             user: user.asModel(),
-            softDelete: payload.softDelete ?? false,
+            hardDelete: payload.hardDelete,
             createdAt: createdAt
         )
     }

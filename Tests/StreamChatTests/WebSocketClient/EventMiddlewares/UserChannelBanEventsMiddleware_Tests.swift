@@ -203,7 +203,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             cid: .unique,
             user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
             createdAt: .unique,
-            softDelete: true
+            hardDelete: false
         )
 
         // Create event with payload.
@@ -245,7 +245,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             cid: .unique,
             user: .dummy(userId: .unique, name: "ExistingUser", imageUrl: nil, extraData: [:]),
             createdAt: .unique,
-            softDelete: true
+            hardDelete: false
         )
 
         // Create event with payload.
@@ -263,7 +263,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         XCTAssert(domainEvent is UserMessagesDeletedEvent)
         if let userMessagesDeletedEvent = domainEvent as? UserMessagesDeletedEvent {
             XCTAssertEqual(userMessagesDeletedEvent.user.id, userId)
-            XCTAssertEqual(userMessagesDeletedEvent.softDelete, true)
+            XCTAssertEqual(userMessagesDeletedEvent.hardDelete, false)
             XCTAssertEqual(userMessagesDeletedEvent.createdAt, eventPayload.createdAt)
         }
     }
@@ -275,7 +275,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             cid: .unique,
             user: .dummy(userId: .unique, name: "NonExistentUser", imageUrl: nil, extraData: [:]),
             createdAt: .unique,
-            softDelete: false
+            hardDelete: true
         )
 
         // Create event with payload.
@@ -292,7 +292,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         if let userMessagesDeletedEvent = domainEvent as? UserMessagesDeletedEvent {
             XCTAssertEqual(userMessagesDeletedEvent.user.id, eventPayload.user!.id)
             XCTAssertEqual(userMessagesDeletedEvent.user.name, "NonExistentUser")
-            XCTAssertEqual(userMessagesDeletedEvent.softDelete, false)
+            XCTAssertEqual(userMessagesDeletedEvent.hardDelete, true)
             XCTAssertEqual(userMessagesDeletedEvent.createdAt, eventPayload.createdAt)
         }
     }

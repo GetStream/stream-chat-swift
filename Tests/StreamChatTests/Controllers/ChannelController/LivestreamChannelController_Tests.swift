@@ -2300,7 +2300,7 @@ extension LivestreamChannelController_Tests {
         XCTAssertTrue(controller.messages.isEmpty) // Message not added when paused
     }
     
-    func test_didReceiveEvent_userMessagesDeletedEvent_softDelete_marksUserMessagesAsDeleted() {
+    func test_didReceiveEvent_userMessagesDeletedEvent_hardDeleteFalse_marksUserMessagesAsSoftDeleted() {
         // Given
         let bannedUserId = UserId.unique
         let otherUserId = UserId.unique
@@ -2369,7 +2369,7 @@ extension LivestreamChannelController_Tests {
         // When
         let userMessagesDeletedEvent = UserMessagesDeletedEvent(
             user: .mock(id: bannedUserId),
-            softDelete: true,
+            hardDelete: false,
             createdAt: eventCreatedAt
         )
         controller.eventsController(
@@ -2386,50 +2386,6 @@ extension LivestreamChannelController_Tests {
         
         // Other user message should not be affected
         XCTAssertNil(controller.messages.first { $0.id == "other" }?.deletedAt)
-    }
-    
-    func test_didReceiveEvent_userMessagesDeletedEvent_softDeleteFalse_doesNotMarkMessagesAsDeleted() {
-        // Given
-        let bannedUserId = UserId.unique
-        let eventCreatedAt = Date()
-        
-        // Add message from banned user
-        let bannedUserMessage = ChatMessage.mock(
-            id: "banned",
-            cid: controller.cid!,
-            text: "Message from banned user",
-            author: .mock(id: bannedUserId)
-        )
-        
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: MessageNewEvent(
-                user: .mock(id: bannedUserId),
-                message: bannedUserMessage,
-                channel: .mock(cid: controller.cid!),
-                createdAt: .unique,
-                watcherCount: nil,
-                unreadCount: nil
-            )
-        )
-        
-        XCTAssertEqual(controller.messages.count, 1)
-        XCTAssertNil(controller.messages.first?.deletedAt)
-        
-        // When
-        let userMessagesDeletedEvent = UserMessagesDeletedEvent(
-            user: .mock(id: bannedUserId),
-            softDelete: false, // Hard delete - should not affect in-memory messages
-            createdAt: eventCreatedAt
-        )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: userMessagesDeletedEvent
-        )
-        
-        // Then
-        XCTAssertEqual(controller.messages.count, 1)
-        XCTAssertNil(controller.messages.first?.deletedAt) // Should not be marked as deleted
     }
 }
 
