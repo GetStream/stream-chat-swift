@@ -796,12 +796,13 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
 
         // User deleted messages event is a global event, not tied to a channel.
         if let userMessagesDeletedEvent = event as? UserMessagesDeletedEvent {
-            if userMessagesDeletedEvent.hardDelete {
-                return
-            }
             let userId = userMessagesDeletedEvent.user.id
-            let deletedAt = userMessagesDeletedEvent.createdAt
-            softDeleteMessages(from: userId, deletedAt: deletedAt)
+            if userMessagesDeletedEvent.hardDelete {
+                hardDeleteMessages(from: userId)
+            } else {
+                let deletedAt = userMessagesDeletedEvent.createdAt
+                softDeleteMessages(from: userId, deletedAt: deletedAt)
+            }
         }
     }
 
@@ -1100,6 +1101,12 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             return message
         }
         messages = messagesWithDeletedMessages
+    }
+
+    private func hardDeleteMessages(from userId: UserId) {
+        messages.removeAll { message in
+            message.author.id == userId
+        }
     }
 
     private func handleNewReaction(_ reactionEvent: ReactionNewEvent) {

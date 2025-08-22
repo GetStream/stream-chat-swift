@@ -33,8 +33,12 @@ struct UserChannelBanEventsMiddleware: EventMiddleware {
             case let userMessagesDeletedEvent as UserMessagesDeletedEventDTO:
                 let userId = userMessagesDeletedEvent.user.id
                 if let userDTO = session.user(id: userId) {
-                    userDTO.messages?.forEach {
-                        $0.deletedAt = userMessagesDeletedEvent.createdAt.bridgeDate
+                    userDTO.messages?.forEach { message in
+                        if userMessagesDeletedEvent.payload.hardDelete {
+                            message.isHardDeleted = true
+                        } else {
+                            message.deletedAt = userMessagesDeletedEvent.createdAt.bridgeDate
+                        }
                     }
                 }
 

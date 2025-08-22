@@ -2387,6 +2387,95 @@ extension LivestreamChannelController_Tests {
         // Other user message should not be affected
         XCTAssertNil(controller.messages.first { $0.id == "other" }?.deletedAt)
     }
+
+    func test_didReceiveEvent_userMessagesDeletedEvent_hardDeleteTrue_removesUserMessages() {
+        // Given
+        let bannedUserId = UserId.unique
+        let otherUserId = UserId.unique
+        let eventCreatedAt = Date()
+
+        // Add messages from both users
+        let bannedUserMessage1 = ChatMessage.mock(
+            id: "banned1",
+            cid: controller.cid!,
+            text: "Message from banned user 1",
+            author: .mock(id: bannedUserId)
+        )
+        let bannedUserMessage2 = ChatMessage.mock(
+            id: "banned2",
+            cid: controller.cid!,
+            text: "Message from banned user 2",
+            author: .mock(id: bannedUserId)
+        )
+        let otherUserMessage = ChatMessage.mock(
+            id: "other",
+            cid: controller.cid!,
+            text: "Message from other user",
+            author: .mock(id: otherUserId)
+        )
+
+        // Add messages to controller
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: MessageNewEvent(
+                user: .mock(id: bannedUserId),
+                message: bannedUserMessage1,
+                channel: .mock(cid: controller.cid!),
+                createdAt: .unique,
+                watcherCount: nil,
+                unreadCount: nil
+            )
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: MessageNewEvent(
+                user: .mock(id: bannedUserId),
+                message: bannedUserMessage2,
+                channel: .mock(cid: controller.cid!),
+                createdAt: .unique,
+                watcherCount: nil,
+                unreadCount: nil
+            )
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: MessageNewEvent(
+                user: .mock(id: otherUserId),
+                message: otherUserMessage,
+                channel: .mock(cid: controller.cid!),
+                createdAt: .unique,
+                watcherCount: nil,
+                unreadCount: nil
+            )
+        )
+
+        XCTAssertEqual(controller.messages.count, 3)
+        XCTAssertNotNil(controller.messages.first { $0.id == "banned1" })
+        XCTAssertNotNil(controller.messages.first { $0.id == "banned2" })
+        XCTAssertNotNil(controller.messages.first { $0.id == "other" })
+
+        // When
+        let userMessagesDeletedEvent = UserMessagesDeletedEvent(
+            user: .mock(id: bannedUserId),
+            hardDelete: true,
+            createdAt: eventCreatedAt
+        )
+        controller.eventsController(
+            EventsController(notificationCenter: client.eventNotificationCenter),
+            didReceiveEvent: userMessagesDeletedEvent
+        )
+
+        // Then
+        XCTAssertEqual(controller.messages.count, 1) // Only other user's message remains
+
+        // Banned user messages should be completely removed
+        XCTAssertNil(controller.messages.first { $0.id == "banned1" })
+        XCTAssertNil(controller.messages.first { $0.id == "banned2" })
+
+        // Other user message should remain unaffected
+        XCTAssertNotNil(controller.messages.first { $0.id == "other" })
+        XCTAssertNil(controller.messages.first { $0.id == "other" }?.deletedAt)
+    }
 }
 
 // MARK: - Message CRUD Tests
