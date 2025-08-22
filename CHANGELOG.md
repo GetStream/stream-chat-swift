@@ -2,6 +2,9 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
+## StreamChat
+### ✅ Added
+- Add support for `user.deleted.messages` event [#3792](https://github.com/GetStream/stream-chat-swift/pull/3792)
 
 ## StreamChat
 ### 🐞 Fixed
