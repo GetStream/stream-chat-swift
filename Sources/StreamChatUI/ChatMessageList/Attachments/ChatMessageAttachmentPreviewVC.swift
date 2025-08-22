@@ -28,14 +28,14 @@ open class ChatMessageAttachmentPreviewVC: _ViewController, WKNavigationDelegate
     )
 
     private lazy var goBackButton = UIBarButtonItem(
-        title: "←",
+        image: appearance.images.chevronLeft,
         style: .plain,
         target: self,
         action: #selector(goBack)
     )
 
     private lazy var goForwardButton = UIBarButtonItem(
-        title: "→",
+        image: appearance.images.chevronRight,
         style: .plain,
         target: self,
         action: #selector(goForward)
