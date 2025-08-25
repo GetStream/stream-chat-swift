@@ -554,6 +554,7 @@ extension ChatMessage: Hashable {
         guard lhs.id == rhs.id else { return false }
         guard lhs.localState == rhs.localState else { return false }
         guard lhs.updatedAt == rhs.updatedAt else { return false }
+        guard lhs.deletedAt == rhs.deletedAt else { return false }
         guard lhs.allAttachments == rhs.allAttachments else { return false }
         guard lhs.poll == rhs.poll else { return false }
         guard lhs.author == rhs.author else { return false }

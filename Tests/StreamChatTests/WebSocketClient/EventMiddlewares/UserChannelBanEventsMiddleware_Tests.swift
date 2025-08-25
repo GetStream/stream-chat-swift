@@ -195,4 +195,157 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
 
         XCTAssert(forwardedEvent is UserUnbannedEventDTO)
     }
+
+    func test_middleware_handlesUserMessagesDeletedEventCorrectly() throws {
+        // Create event payload
+        let eventPayload: EventPayload = .init(
+            eventType: .userMessagesDeleted,
+            cid: .unique,
+            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
+            createdAt: .unique,
+            hardDelete: false
+        )
+
+        // Create event with payload.
+        let event = try UserMessagesDeletedEventDTO(from: eventPayload)
+
+        // Create required objects in the DB
+        let userId = eventPayload.user!.id
+        let messageId1: MessageId = .unique
+        let messageId2: MessageId = .unique
+        
+        try database.createCurrentUser(id: userId)
+        try database.createChannel(cid: eventPayload.cid!)
+        try database.createMessage(id: messageId1, authorId: userId, cid: eventPayload.cid!)
+        try database.createMessage(id: messageId2, authorId: userId, cid: eventPayload.cid!)
+
+        // Verify user and messages exist
+        let userDTO = try XCTUnwrap(database.viewContext.user(id: userId))
+        let message1 = try XCTUnwrap(database.viewContext.message(id: messageId1))
+        let message2 = try XCTUnwrap(database.viewContext.message(id: messageId2))
+        
+        // Verify messages are not deleted initially
+        XCTAssertNil(message1.deletedAt)
+        XCTAssertNil(message2.deletedAt)
+        XCTAssertFalse(message1.isHardDeleted)
+        XCTAssertFalse(message2.isHardDeleted)
+
+        // Simulate `UserMessagesDeletedEvent` event.
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        // Assert the user's messages are marked as deleted
+        XCTAssertEqual(message1.deletedAt?.bridgeDate, eventPayload.createdAt!)
+        XCTAssertEqual(message2.deletedAt?.bridgeDate, eventPayload.createdAt!)
+        // Soft delete should not set isHardDeleted flag
+        XCTAssertFalse(message1.isHardDeleted)
+        XCTAssertFalse(message2.isHardDeleted)
+
+        XCTAssert(forwardedEvent is UserMessagesDeletedEventDTO)
+    }
+
+    func test_middleware_handlesUserMessagesDeletedEvent_hardDelete_marksMessagesAsHardDeleted() throws {
+        // Create event payload with hard delete
+        let eventPayload: EventPayload = .init(
+            eventType: .userMessagesDeleted,
+            cid: .unique,
+            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
+            createdAt: .unique,
+            hardDelete: true
+        )
+
+        // Create event with payload.
+        let event = try UserMessagesDeletedEventDTO(from: eventPayload)
+
+        // Create required objects in the DB
+        let userId = eventPayload.user!.id
+        let messageId1: MessageId = .unique
+        let messageId2: MessageId = .unique
+        
+        try database.createCurrentUser(id: userId)
+        try database.createChannel(cid: eventPayload.cid!)
+        try database.createMessage(id: messageId1, authorId: userId, cid: eventPayload.cid!)
+        try database.createMessage(id: messageId2, authorId: userId, cid: eventPayload.cid!)
+
+        // Verify user and messages exist
+        let userDTO = try XCTUnwrap(database.viewContext.user(id: userId))
+        let message1 = try XCTUnwrap(database.viewContext.message(id: messageId1))
+        let message2 = try XCTUnwrap(database.viewContext.message(id: messageId2))
+        
+        // Verify messages are not hard deleted initially
+        XCTAssertFalse(message1.isHardDeleted)
+        XCTAssertFalse(message2.isHardDeleted)
+        XCTAssertNil(message1.deletedAt)
+        XCTAssertNil(message2.deletedAt)
+
+        // Simulate `UserMessagesDeletedEvent` event with hard delete.
+        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+
+        // Assert the user's messages are marked as hard deleted
+        XCTAssertTrue(message1.isHardDeleted)
+        XCTAssertTrue(message2.isHardDeleted)
+        // deletedAt should not be set for hard deletes
+        XCTAssertNil(message1.deletedAt)
+        XCTAssertNil(message2.deletedAt)
+
+        XCTAssert(forwardedEvent is UserMessagesDeletedEventDTO)
+    }
+
+    func test_userMessagesDeletedEventDTO_toDomainEvent_whenUserExistsInDB_returnsEventWithDBUser() throws {
+        // Create event payload
+        let eventPayload: EventPayload = .init(
+            eventType: .userMessagesDeleted,
+            cid: .unique,
+            user: .dummy(userId: .unique, name: "ExistingUser", imageUrl: nil, extraData: [:]),
+            createdAt: .unique,
+            hardDelete: false
+        )
+
+        // Create event with payload.
+        let eventDTO = try UserMessagesDeletedEventDTO(from: eventPayload)
+
+        // Create user in DB
+        let userId = eventPayload.user!.id
+        try database.createCurrentUser(id: userId)
+
+        // Convert to domain event
+        let domainEvent = eventDTO.toDomainEvent(session: database.viewContext)
+
+        // Assert event is created and uses user from DB
+        XCTAssertNotNil(domainEvent)
+        XCTAssert(domainEvent is UserMessagesDeletedEvent)
+        if let userMessagesDeletedEvent = domainEvent as? UserMessagesDeletedEvent {
+            XCTAssertEqual(userMessagesDeletedEvent.user.id, userId)
+            XCTAssertEqual(userMessagesDeletedEvent.hardDelete, false)
+            XCTAssertEqual(userMessagesDeletedEvent.createdAt, eventPayload.createdAt)
+        }
+    }
+
+    func test_userMessagesDeletedEventDTO_toDomainEvent_whenUserDoesNotExistInDB_returnsEventWithPayloadUser() throws {
+        // Create event payload for user not in DB
+        let eventPayload: EventPayload = .init(
+            eventType: .userMessagesDeleted,
+            cid: .unique,
+            user: .dummy(userId: .unique, name: "NonExistentUser", imageUrl: nil, extraData: [:]),
+            createdAt: .unique,
+            hardDelete: true
+        )
+
+        // Create event with payload.
+        let eventDTO = try UserMessagesDeletedEventDTO(from: eventPayload)
+
+        // Do not create user in DB
+
+        // Convert to domain event
+        let domainEvent = eventDTO.toDomainEvent(session: database.viewContext)
+
+        // Assert event is created using payload user data as fallback
+        XCTAssertNotNil(domainEvent)
+        XCTAssert(domainEvent is UserMessagesDeletedEvent)
+        if let userMessagesDeletedEvent = domainEvent as? UserMessagesDeletedEvent {
+            XCTAssertEqual(userMessagesDeletedEvent.user.id, eventPayload.user!.id)
+            XCTAssertEqual(userMessagesDeletedEvent.user.name, "NonExistentUser")
+            XCTAssertEqual(userMessagesDeletedEvent.hardDelete, true)
+            XCTAssertEqual(userMessagesDeletedEvent.createdAt, eventPayload.createdAt)
+        }
+    }
 }

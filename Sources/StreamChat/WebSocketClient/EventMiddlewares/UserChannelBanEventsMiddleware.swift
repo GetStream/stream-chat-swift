@@ -30,6 +30,18 @@ struct UserChannelBanEventsMiddleware: EventMiddleware {
                 memberDTO.isShadowBanned = false
                 memberDTO.banExpiresAt = nil
 
+            case let userMessagesDeletedEvent as UserMessagesDeletedEventDTO:
+                let userId = userMessagesDeletedEvent.user.id
+                if let userDTO = session.user(id: userId) {
+                    userDTO.messages?.forEach { message in
+                        if userMessagesDeletedEvent.payload.hardDelete {
+                            message.isHardDeleted = true
+                        } else {
+                            message.deletedAt = userMessagesDeletedEvent.createdAt.bridgeDate
+                        }
+                    }
+                }
+
             default:
                 break
             }

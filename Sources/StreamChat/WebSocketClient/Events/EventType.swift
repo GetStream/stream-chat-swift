@@ -38,6 +38,8 @@ public extension EventType {
     static let userBanned: Self = "user.banned"
     /// When a user was unbanned.
     static let userUnbanned: Self = "user.unbanned"
+    /// When the messages of a banned user should be deleted.
+    static let userMessagesDeleted: Self = "user.messages.deleted"
 
     // MARK: Channel Events
 
@@ -191,6 +193,8 @@ extension EventType {
             return try (try? UserBannedEventDTO(from: response)) ?? UserGloballyBannedEventDTO(from: response)
         case .userUnbanned:
             return try (try? UserUnbannedEventDTO(from: response)) ?? UserGloballyUnbannedEventDTO(from: response)
+        case .userMessagesDeleted:
+            return try UserMessagesDeletedEventDTO(from: response)
 
         case .channelCreated: throw ClientError.IgnoredEventType()
         case .channelUpdated: return try ChannelUpdatedEventDTO(from: response)
