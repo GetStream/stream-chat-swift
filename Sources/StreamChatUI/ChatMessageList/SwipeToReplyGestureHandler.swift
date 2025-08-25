@@ -95,7 +95,11 @@ open class SwipeToReplyGestureHandler {
             let translation = gesture.translation(in: messageCell)
             animateViews(with: translation)
 
-            shouldReply = translation.x > swipeThreshold
+            if messageCell?.effectiveUserInterfaceLayoutDirection == .rightToLeft {
+                shouldReply = -translation.x > swipeThreshold
+            } else {
+                shouldReply = translation.x > swipeThreshold
+            }
 
             if shouldReply && shouldTriggerFeedback {
                 impactFeedbackGenerator.impactOccurred()
@@ -121,21 +125,23 @@ open class SwipeToReplyGestureHandler {
 
     /// Animates the views when a swiping is happening.
     open func animateViews(with translation: CGPoint) {
+        let isRTL = messageCell?.effectiveUserInterfaceLayoutDirection == .rightToLeft
         swipeableViews.forEach {
             guard let originalCenter = swipeableViewsOriginalPositions[$0] else { return }
+            let x = isRTL ? min(originalCenter.x, originalCenter.x + translation.x) : max(originalCenter.x, originalCenter.x + translation.x)
             $0.center = CGPoint(
-                x: max(originalCenter.x, originalCenter.x + translation.x),
+                x: x,
                 y: originalCenter.y
             )
         }
 
-        let replyIconTranslation = max(0, min(translation.x, swipeThreshold))
+        let replyIconTranslation = isRTL ? min(0, max(translation.x, -swipeThreshold)) : max(0, min(translation.x, swipeThreshold))
         replyIconImageView?.center = CGPoint(
             x: replyIconOriginalPosition.x + replyIconTranslation,
             y: replyIconOriginalPosition.y
         )
         replyIconImageView?.isHidden = false
-        replyIconImageView?.alpha = replyIconTranslation / swipeThreshold
+        replyIconImageView?.alpha = abs(replyIconTranslation) / swipeThreshold
     }
 
     /// Animates the views to their original positions.

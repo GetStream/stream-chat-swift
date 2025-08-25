@@ -60,27 +60,14 @@ open class SlideToCancelView: _View, ThemeProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        configureChevron()
+        chevronImageView.image = appearance.images.chevronLeft.tinted(with: appearance.colorPalette.textLowEmphasis)
         titleLabel.textColor = appearance.colorPalette.textLowEmphasis
         titleLabel.font = appearance.fonts.body
         titleLabel.text = L10n.Recording.slideToCancel
-    }
-    
-    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        
-        if traitCollection.layoutDirection != previousTraitCollection?.layoutDirection {
-            configureChevron()
-        }
     }
 
     override open func updateContent() {
         super.updateContent()
         alpha = content.alpha
-    }
-    
-    private func configureChevron() {
-        let chevron = traitCollection.layoutDirection == .leftToRight ? appearance.images.chevronLeft : appearance.images.chevronRight
-        chevronImageView.image = chevron.tinted(with: appearance.colorPalette.textLowEmphasis)
     }
 }
