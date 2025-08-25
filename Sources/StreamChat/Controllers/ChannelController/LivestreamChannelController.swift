@@ -790,11 +790,20 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     // MARK: - EventsControllerDelegate
 
     public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        guard let channelEvent = event as? ChannelSpecificEvent, channelEvent.cid == cid else {
-            return
+        if let channelEvent = event as? ChannelSpecificEvent, channelEvent.cid == cid {
+            handleChannelEvent(event)
         }
 
-        handleChannelEvent(event)
+        // User deleted messages event is a global event, not tied to a channel.
+        if let userMessagesDeletedEvent = event as? UserMessagesDeletedEvent {
+            let userId = userMessagesDeletedEvent.user.id
+            if userMessagesDeletedEvent.hardDelete {
+                hardDeleteMessages(from: userId)
+            } else {
+                let deletedAt = userMessagesDeletedEvent.createdAt
+                softDeleteMessages(from: userId, deletedAt: deletedAt)
+            }
+        }
     }
 
     // MARK: - AppStateObserverDelegate
@@ -822,9 +831,6 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         if let pagination = channelQuery.pagination {
             paginationStateHandler.begin(pagination: pagination)
         }
-
-        let endpoint: Endpoint<ChannelPayload> =
-            .updateChannel(query: channelQuery)
 
         let requestCompletion: (Result<ChannelPayload, Error>) -> Void = { [weak self] result in
             self?.callback { [weak self] in
@@ -1083,6 +1089,24 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
 
     private func handleDeletedMessage(_ deletedMessage: ChatMessage) {
         messages.removeAll { $0.id == deletedMessage.id }
+    }
+
+    private func softDeleteMessages(from userId: UserId, deletedAt: Date) {
+        let messagesWithDeletedMessages = messages.map { message in
+            if message.author.id == userId {
+                return message.changing(
+                    deletedAt: deletedAt
+                )
+            }
+            return message
+        }
+        messages = messagesWithDeletedMessages
+    }
+
+    private func hardDeleteMessages(from userId: UserId) {
+        messages.removeAll { message in
+            message.author.id == userId
+        }
     }
 
     private func handleNewReaction(_ reactionEvent: ReactionNewEvent) {
