@@ -4,6 +4,39 @@
 
 import Foundation
 
+public struct StreamAttachment<Payload> {
+    /// The attachment type.
+    public let type: AttachmentType
+
+    /// The attachment payload.
+    public var payload: Payload
+
+    /// The downloading state of the attachment.
+    ///
+    /// Reflects the downloading progress for attachments.
+    public let downloadingState: AttachmentDownloadingState?
+    
+    /// The uploading state of the attachment.
+    ///
+    /// Reflects uploading progress for local attachments that require file uploading.
+    /// Is `nil` for local attachments that don't need to be uploaded.
+    ///
+    /// Becomes `nil` when the message with the current attachment is sent.
+    public let uploadingState: AttachmentUploadingState?
+
+    public init(
+        type: AttachmentType,
+        payload: Payload,
+        downloadingState: AttachmentDownloadingState?,
+        uploadingState: AttachmentUploadingState?
+    ) {
+        self.type = type
+        self.payload = payload
+        self.downloadingState = downloadingState
+        self.uploadingState = uploadingState
+    }
+}
+
 /// A type representing a chat message attachment.
 /// `ChatMessageAttachment<Payload>` is an immutable snapshot of message attachment at the given time.
 @dynamicMemberLookup
@@ -81,6 +114,13 @@ public struct AttachmentUploadingState: Hashable {
 
     /// The information about file size/mimeType.
     public let file: AttachmentFile
+    
+    /// Public init.
+    public init(localFileURL: URL, state: LocalAttachmentState, file: AttachmentFile) {
+        self.localFileURL = localFileURL
+        self.state = state
+        self.file = file
+    }
 }
 
 // MARK: - Type erasure/recovery

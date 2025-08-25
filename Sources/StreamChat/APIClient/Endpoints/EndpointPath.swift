@@ -36,7 +36,8 @@ enum EndpointPath: Codable {
     case channelEvent(String)
     case stopWatchingChannel(String)
     case pinnedMessages(String)
-    case uploadAttachment(channelId: String, type: String)
+    case uploadChannelAttachment(channelId: String, type: String)
+    case uploadAttachment(String)
 
     case sendMessage(ChannelId)
     case message(MessageId)
@@ -125,7 +126,8 @@ enum EndpointPath: Codable {
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .stopWatchingChannel(channelId): return "channels/\(channelId)/stop-watching"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"
-        case let .uploadAttachment(channelId, type): return "channels/\(channelId)/\(type)"
+        case let .uploadChannelAttachment(channelId, type): return "channels/\(channelId)/\(type)"
+        case let .uploadAttachment(type): return "uploads/\(type)"
 
         case let .sendMessage(channelId): return "channels/\(channelId.apiPath)/message"
         case let .message(messageId): return "messages/\(messageId)"
