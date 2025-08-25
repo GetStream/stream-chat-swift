@@ -29,7 +29,7 @@ final class AttachmentUploader_Spy: AttachmentUploader, Spy {
         }
     }
     
-    func upload<Payload>(
+    func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamAttachment<Payload>,
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<UploadedFile, any Error>) -> Void

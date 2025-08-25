@@ -14,7 +14,7 @@ public final class CustomCDNClient: CDNClient {
         completion: @escaping (Result<URL, Error>) -> Void
     ) {}
     
-    public func uploadAttachment<Payload>(
+    public func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamChat.StreamAttachment<Payload>,
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<StreamChat.UploadedFile, any Error>) -> Void

@@ -29,7 +29,7 @@ final class CDNClient_Spy: CDNClient, Spy {
         }
     }
     
-    func uploadAttachment<Payload>(
+    func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamAttachment<Payload>,
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<UploadedFile, any Error>) -> Void

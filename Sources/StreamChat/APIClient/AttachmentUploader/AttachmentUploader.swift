@@ -22,7 +22,7 @@ public protocol AttachmentUploader {
     ///   - attachment: A standalone attachment.
     ///   - progress: The progress of the upload.
     ///   - completion: The callback with the uploaded attachment.
-    func upload<Payload>(
+    func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamAttachment<Payload>,
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<UploadedFile, Error>) -> Void
@@ -53,11 +53,15 @@ public class StreamAttachmentUploader: AttachmentUploader {
         }
     }
     
-    public func upload<Payload>(
+    public func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamAttachment<Payload>,
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<UploadedFile, Error>) -> Void
     ) {
-        cdnClient.uploadAttachment(attachment, progress: progress, completion: completion)
+        cdnClient.uploadStandaloneAttachment(
+            attachment,
+            progress: progress,
+            completion: completion
+        )
     }
 }

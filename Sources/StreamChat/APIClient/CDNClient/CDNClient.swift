@@ -41,7 +41,12 @@ public protocol CDNClient {
         completion: @escaping (Result<UploadedFile, Error>) -> Void
     )
     
-    func uploadAttachment<Payload>(
+    /// Uploads standalone attachment as a multipart/form-data and returns the uploaded remote file and its thumbnail.
+    /// - Parameters:
+    ///   - attachment: An attachment to upload.
+    ///   - progress: A closure that broadcasts upload progress.
+    ///   - completion: Returns the uploaded file's information.
+    func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamAttachment<Payload>,
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<UploadedFile, Error>) -> Void
@@ -121,7 +126,7 @@ class StreamCDNClient: CDNClient {
         )
     }
     
-    func uploadAttachment<Payload>(
+    func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamAttachment<Payload>,
         progress: ((Double) -> Void)? = nil,
         completion: @escaping (Result<UploadedFile, Error>) -> Void

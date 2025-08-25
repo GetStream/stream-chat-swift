@@ -637,7 +637,7 @@ public class ChatClient {
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<UploadedFile, Error>) -> Void
     ) {
-        apiClient.attachmentUploader.upload(
+        apiClient.attachmentUploader.uploadStandaloneAttachment(
             attachment,
             progress: progress,
             completion: completion
