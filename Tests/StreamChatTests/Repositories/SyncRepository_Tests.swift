@@ -443,6 +443,64 @@ class SyncRepository_Tests: XCTestCase {
 
         XCTAssertTrue(repository.activeChannelListControllers.allObjects.isEmpty)
     }
+
+    func test_startTrackingLivestreamController() {
+        let controller = LivestreamChannelController(
+            channelQuery: ChannelQuery(cid: .unique),
+            client: client
+        )
+        repository.startTrackingLivestreamController(controller)
+
+        XCTAssertTrue(repository.activeLivestreamControllers.allObjects.first === controller)
+    }
+
+    func test_startTrackingLivestreamController_whenAlreadyExists_thenDoNotDuplicate() {
+        let controller = LivestreamChannelController(
+            channelQuery: ChannelQuery(cid: .unique),
+            client: client
+        )
+        repository.startTrackingLivestreamController(controller)
+        repository.startTrackingLivestreamController(controller)
+
+        XCTAssertTrue(repository.activeLivestreamControllers.allObjects.first === controller)
+        XCTAssertEqual(repository.activeLivestreamControllers.allObjects.count, 1)
+    }
+
+    func test_stopTrackingLivestreamController() {
+        let controller = LivestreamChannelController(
+            channelQuery: ChannelQuery(cid: .unique),
+            client: client
+        )
+        repository.startTrackingLivestreamController(controller)
+        XCTAssertEqual(repository.activeLivestreamControllers.allObjects.count, 1)
+
+        repository.stopTrackingLivestreamController(controller)
+
+        XCTAssertTrue(repository.activeLivestreamControllers.allObjects.isEmpty)
+    }
+
+    func test_removeAllTracked_includesLivestreamControllers() {
+        let channelController = ChatChannelController_Mock.mock()
+        let channelListController = ChatChannelListController_Mock.mock()
+        let livestreamController = LivestreamChannelController(
+            channelQuery: ChannelQuery(cid: .unique),
+            client: client
+        )
+
+        repository.startTrackingChannelController(channelController)
+        repository.startTrackingChannelListController(channelListController)
+        repository.startTrackingLivestreamController(livestreamController)
+
+        XCTAssertEqual(repository.activeChannelControllers.allObjects.count, 1)
+        XCTAssertEqual(repository.activeChannelListControllers.allObjects.count, 1)
+        XCTAssertEqual(repository.activeLivestreamControllers.allObjects.count, 1)
+
+        repository.removeAllTracked()
+
+        XCTAssertTrue(repository.activeChannelControllers.allObjects.isEmpty)
+        XCTAssertTrue(repository.activeChannelListControllers.allObjects.isEmpty)
+        XCTAssertTrue(repository.activeLivestreamControllers.allObjects.isEmpty)
+    }
 }
 
 extension SyncRepository_Tests {

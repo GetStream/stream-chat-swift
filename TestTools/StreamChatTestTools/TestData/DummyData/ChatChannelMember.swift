@@ -6,6 +6,40 @@ import Foundation
 @testable import StreamChat
 
 extension ChatChannelMember {
+    static func dummy(id: UserId) -> ChatChannelMember {
+        .init(
+            id: id,
+            name: .unique,
+            imageURL: .unique(),
+            isOnline: true,
+            isBanned: false,
+            isFlaggedByCurrentUser: false,
+            userRole: .user,
+            teamsRole: nil,
+            userCreatedAt: .unique,
+            userUpdatedAt: .unique,
+            deactivatedAt: nil,
+            lastActiveAt: .unique,
+            teams: [],
+            language: nil,
+            extraData: [:],
+            memberRole: .member,
+            memberCreatedAt: .unique,
+            memberUpdatedAt: .unique,
+            isInvited: true,
+            inviteAcceptedAt: .unique,
+            inviteRejectedAt: nil,
+            archivedAt: nil,
+            pinnedAt: nil,
+            isBannedFromChannel: true,
+            banExpiresAt: .unique,
+            isShadowBannedFromChannel: true,
+            notificationsMuted: false,
+            avgResponseTime: nil,
+            memberExtraData: [:]
+        )
+    }
+
     static var dummy: ChatChannelMember {
         .init(
             id: .unique,
@@ -33,7 +67,7 @@ extension ChatChannelMember {
             pinnedAt: nil,
             isBannedFromChannel: true,
             banExpiresAt: .unique,
-            isShadowBannedFromChannel: true, 
+            isShadowBannedFromChannel: true,
             notificationsMuted: false,
             avgResponseTime: nil,
             memberExtraData: [:]

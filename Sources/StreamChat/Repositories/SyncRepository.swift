@@ -36,12 +36,13 @@ class SyncRepository {
     private let channelListUpdater: ChannelListUpdater
     let offlineRequestsRepository: OfflineRequestsRepository
     let eventNotificationCenter: EventNotificationCenter
-    
+
     let activeChannelControllers = ThreadSafeWeakCollection<ChatChannelController>()
     let activeChannelListControllers = ThreadSafeWeakCollection<ChatChannelListController>()
     let activeChats = ThreadSafeWeakCollection<Chat>()
+    let activeLivestreamControllers = ThreadSafeWeakCollection<LivestreamChannelController>()
     let activeChannelLists = ThreadSafeWeakCollection<ChannelList>()
-    
+
     private lazy var operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()
         operationQueue.maxConcurrentOperationCount = 1
@@ -69,54 +70,64 @@ class SyncRepository {
     deinit {
         cancelRecoveryFlow()
     }
-    
+
     // MARK: - Tracking Active
-    
+
     func startTrackingChat(_ chat: Chat) {
         guard !activeChats.contains(chat) else { return }
         activeChats.add(chat)
     }
-    
+
     func stopTrackingChat(_ chat: Chat) {
         activeChats.remove(chat)
     }
-    
+
     func startTrackingChannelController(_ controller: ChatChannelController) {
         guard !activeChannelControllers.contains(controller) else { return }
         activeChannelControllers.add(controller)
     }
-    
+
     func stopTrackingChannelController(_ controller: ChatChannelController) {
         activeChannelControllers.remove(controller)
     }
-    
+
+    func startTrackingLivestreamController(_ controller: LivestreamChannelController) {
+        guard !activeLivestreamControllers.contains(controller) else { return }
+        activeLivestreamControllers.add(controller)
+    }
+
+    func stopTrackingLivestreamController(_ controller: LivestreamChannelController) {
+        activeLivestreamControllers.remove(controller)
+    }
+
     func startTrackingChannelList(_ channelList: ChannelList) {
         guard !activeChannelLists.contains(channelList) else { return }
         activeChannelLists.add(channelList)
     }
-    
+
     func stopTrackingChannelList(_ channelList: ChannelList) {
         activeChannelLists.remove(channelList)
     }
-    
+
     func startTrackingChannelListController(_ controller: ChatChannelListController) {
         guard !activeChannelListControllers.contains(controller) else { return }
         activeChannelListControllers.add(controller)
     }
-    
+
     func stopTrackingChannelListController(_ controller: ChatChannelListController) {
         activeChannelListControllers.remove(controller)
     }
-    
+
     func removeAllTracked() {
         activeChats.removeAllObjects()
         activeChannelControllers.removeAllObjects()
         activeChannelLists.removeAllObjects()
         activeChannelListControllers.removeAllObjects()
+        activeLivestreamControllers.removeAllObjects()
     }
-    
+
     // MARK: - Syncing
-    
+
     func syncLocalState(completion: @escaping () -> Void) {
         cancelRecoveryFlow()
 
@@ -137,9 +148,9 @@ class SyncRepository {
             self?.syncLocalState(lastSyncAt: lastSyncAt, completion: completion)
         }
     }
-    
+
     // MARK: -
-    
+
     /// Runs offline tasks and updates the local state for channels
     ///
     /// Recovery mode (pauses regular API requests while it is running)
@@ -159,7 +170,7 @@ class SyncRepository {
         var operations: [Operation] = []
         let start = CFAbsoluteTimeGetCurrent()
         log.info("Starting to refresh offline state", subsystems: .offlineSupport)
-        
+
         //
         // Recovery mode operations (other API requests are paused)
         //
@@ -170,26 +181,33 @@ class SyncRepository {
                 apiClient.exitRecoveryMode()
             }))
         }
-        
+
         //
         // Background mode operations
         //
-        
+
         /// 1. Collect all the **active** channel ids
         operations.append(ActiveChannelIdsOperation(syncRepository: self, context: context))
-        
+
         // 2. Refresh channel lists
         operations.append(contentsOf: activeChannelLists.allObjects.map { RefreshChannelListOperation(channelList: $0, context: context) })
         operations.append(contentsOf: activeChannelListControllers.allObjects.map { RefreshChannelListOperation(controller: $0, context: context) })
 
         // 3. /sync (for channels what not part of active channel lists)
         operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
-        
+
         // 4. Re-watch channels what we were watching before disconnect
         // Needs to be done explicitly after reconnection, otherwise SDK users need to handle connection changes
-        operations.append(contentsOf: activeChannelControllers.allObjects.map { WatchChannelOperation(controller: $0, context: context, recovery: false) })
-        operations.append(contentsOf: activeChats.allObjects.map { WatchChannelOperation(chat: $0, context: context) })
-        
+        operations.append(contentsOf: activeChannelControllers.allObjects.map {
+            WatchChannelOperation(controller: $0, context: context, recovery: false)
+        })
+        operations.append(contentsOf: activeChats.allObjects.map {
+            WatchChannelOperation(chat: $0, context: context)
+        })
+        operations.append(contentsOf: activeLivestreamControllers.allObjects.map {
+            WatchChannelOperation(livestreamController: $0, context: context, recovery: false)
+        })
+
         operations.append(BlockOperation(block: {
             let duration = CFAbsoluteTimeGetCurrent() - start
             log.info("Finished refreshing offline state (\(context.synchedChannelIds.count) channels in \(String(format: "%.1f", duration)) seconds)", subsystems: .offlineSupport)
@@ -197,7 +215,7 @@ class SyncRepository {
                 completion()
             }
         }))
-        
+
         var previousOperation: Operation?
         operations.reversed().forEach { operation in
             defer { previousOperation = operation }
