@@ -285,7 +285,7 @@ extension NSManagedObjectContext {
         // for blocked 1:1 channels on channel list query
         if let isBlocked = payload.isBlocked {
             dto.isBlocked = isBlocked
-        } else {
+        } else if query != nil {
             dto.isBlocked = false
         }
 
