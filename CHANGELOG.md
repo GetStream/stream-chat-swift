@@ -9,6 +9,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix channel getting removed from channel list which includes blocked channels [#3794](https://github.com/GetStream/stream-chat-swift/pull/3794)
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix input text view's placeholder alignment in RTL [#3790](https://github.com/GetStream/stream-chat-swift/pull/3790)
+- Flip directional icons in RTL [#3790](https://github.com/GetStream/stream-chat-swift/pull/3790)
+- Fix swipe to reply gesture in RTL [#3790](https://github.com/GetStream/stream-chat-swift/pull/3790)
+### 🔄 Changed
+- Use chevron icons in `ChatMessageAttachmentPreviewVC` [#3790](https://github.com/GetStream/stream-chat-swift/pull/3790)
+
 # [4.86.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.86.0)
 _August 21, 2025_
 
