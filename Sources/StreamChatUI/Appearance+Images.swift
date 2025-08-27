@@ -46,7 +46,7 @@ public extension Appearance {
         public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
         public var openAttachments: UIImage = loadImageSafely(with: "clip")
         public var shrinkInputArrow: UIImage = loadImageSafely(with: "arrow_shrink_input")
-        public var sendArrow: UIImage = loadImageSafely(with: "arrow_send")
+        public var sendArrow: UIImage = loadImageSafely(with: "arrow_send").imageFlippedForRightToLeftLayoutDirection()
         public var scrollDownArrow: UIImage = loadImageSafely(with: "arrow_down")
         public var whiteCheckmark: UIImage = loadImageSafely(with: "checkmark_white")
         public var confirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm")
@@ -61,14 +61,14 @@ public extension Appearance {
 
         public var mic: UIImage = loadSafely(systemName: "mic", assetsFallback: "mic")
         public var lock: UIImage = loadSafely(systemName: "lock", assetsFallback: "lock")
-        public var chevronLeft: UIImage = loadSafely(systemName: "chevron.left", assetsFallback: "chevron.left")
-        public var chevronRight: UIImage = loadSafely(systemName: "chevron.right", assetsFallback: "chevron.right")
+        public var chevronLeft: UIImage = loadSafely(systemName: "chevron.left", assetsFallback: "chevron.left").imageFlippedForRightToLeftLayoutDirection()
+        public var chevronRight: UIImage = loadSafely(systemName: "chevron.right", assetsFallback: "chevron.right").imageFlippedForRightToLeftLayoutDirection()
         public var chevronUp: UIImage = loadSafely(systemName: "chevron.up", assetsFallback: "chevron.up")
         public var trash: UIImage = loadSafely(systemName: "trash", assetsFallback: "trash")
         public var stop: UIImage = loadSafely(systemName: "stop.circle", assetsFallback: "")
-        public var playFill: UIImage = loadSafely(systemName: "play.fill", assetsFallback: "play.fill")
+        public var playFill: UIImage = loadSafely(systemName: "play.fill", assetsFallback: "play.fill").imageFlippedForRightToLeftLayoutDirection()
         public var pauseFill: UIImage = loadSafely(systemName: "pause.fill", assetsFallback: "pause.fill")
-        public var recordingPlay: UIImage = loadSafely(systemName: "play", assetsFallback: "play_big")
+        public var recordingPlay: UIImage = loadSafely(systemName: "play", assetsFallback: "play_big").imageFlippedForRightToLeftLayoutDirection()
         public var recordingPause: UIImage = loadSafely(systemName: "pause", assetsFallback: "pause.fill")
         public var rateButtonPillBackground: UIImage = loadImageSafely(with: "pill")
         public var sliderThumb: UIImage = loadImageSafely(with: "sliderThumb")
@@ -228,8 +228,8 @@ public extension Appearance {
 
         // MARK: - Message Actions
 
-        public var messageActionSwipeReply: UIImage = loadImageSafely(with: "icn_inline_reply")
-        public var messageActionInlineReply: UIImage = loadImageSafely(with: "icn_inline_reply")
+        public var messageActionSwipeReply: UIImage = loadImageSafely(with: "icn_inline_reply").imageFlippedForRightToLeftLayoutDirection()
+        public var messageActionInlineReply: UIImage = loadImageSafely(with: "icn_inline_reply").imageFlippedForRightToLeftLayoutDirection()
         public var messageActionThreadReply: UIImage = loadImageSafely(with: "icn_thread_reply")
         public var messageActionMarkUnread: UIImage = loadSafely(systemName: "message.badge", assetsFallback: "mark_unread")
 
@@ -285,9 +285,9 @@ public extension Appearance {
         }
 
         public var camera: UIImage = loadImageSafely(with: "camera")
-        public var bigPlay: UIImage = loadImageSafely(with: "play_big")
+        public var bigPlay: UIImage = loadImageSafely(with: "play_big").imageFlippedForRightToLeftLayoutDirection()
 
-        public var play: UIImage = loadImageSafely(with: "play")
+        public var play: UIImage = loadImageSafely(with: "play").imageFlippedForRightToLeftLayoutDirection()
         public var pause: UIImage = loadImageSafely(with: "pause")
 
         // MARK: - CommandIcons
