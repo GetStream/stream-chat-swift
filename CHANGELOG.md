@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add support for `user.messages.deleted` event [#3792](https://github.com/GetStream/stream-chat-swift/pull/3792)
+### 🐞 Fixed
+- Fix channel getting removed from channel list which includes blocked channels [#3794](https://github.com/GetStream/stream-chat-swift/pull/3794)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix input text view's placeholder alignment in RTL [#3790](https://github.com/GetStream/stream-chat-swift/pull/3790)

@@ -285,8 +285,6 @@ extension NSManagedObjectContext {
         // for blocked 1:1 channels on channel list query
         if let isBlocked = payload.isBlocked {
             dto.isBlocked = isBlocked
-        } else {
-            dto.isBlocked = false
         }
 
         // Backend only returns a boolean for hidden state
