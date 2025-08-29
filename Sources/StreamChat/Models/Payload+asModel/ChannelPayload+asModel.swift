@@ -53,6 +53,7 @@ extension ChannelPayload {
             unreadCount: unreadCount ?? .noUnread,
             watcherCount: watcherCount ?? 0,
             memberCount: channelPayload.memberCount,
+            messageCount: channelPayload.messageCount,
             reads: mappedReads,
             cooldownDuration: channelPayload.cooldownDuration,
             extraData: channelPayload.extraData,

@@ -163,6 +163,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                     )
                 },
                 memberCount: 100,
+                messageCount: 100,
                 team: .unique,
                 cooldownDuration: .random(in: 0...120)
             )
@@ -304,6 +305,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(channel.isDisabled, true)
         XCTAssertEqual(channel.isFrozen, true)
         XCTAssertEqual(channel.memberCount, 4)
+        XCTAssertEqual(channel.messageCount, 5)
         XCTAssertEqual(channel.updatedAt, "2019-05-10T14:03:49.505006Z".toDate())
         XCTAssertEqual(channel.cooldownDuration, 10)
         XCTAssertEqual(channel.team, "GREEN")
@@ -440,6 +442,7 @@ final class ChannelPayload_Tests: XCTestCase {
             isHidden: true,
             members: [memberPayload],
             memberCount: 10,
+            messageCount: 10,
             team: "team-id",
             cooldownDuration: 30
         )
@@ -494,6 +497,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(chatChannel.unreadCount, unreadCount)
         XCTAssertEqual(chatChannel.watcherCount, 5)
         XCTAssertEqual(chatChannel.memberCount, 10)
+        XCTAssertEqual(chatChannel.messageCount, 10)
         XCTAssertEqual(chatChannel.reads.count, 1)
         XCTAssertEqual(chatChannel.reads.first?.user.id, "reader-user-id")
         XCTAssertEqual(chatChannel.cooldownDuration, 30)
@@ -534,6 +538,7 @@ final class ChannelPayload_Tests: XCTestCase {
             isHidden: nil,
             members: nil,
             memberCount: 0,
+            messageCount: nil,
             team: nil,
             cooldownDuration: 0
         )
@@ -582,6 +587,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(chatChannel.unreadCount, .noUnread)
         XCTAssertEqual(chatChannel.watcherCount, 0)
         XCTAssertEqual(chatChannel.memberCount, 0)
+        XCTAssertEqual(chatChannel.messageCount, nil)
         XCTAssertTrue(chatChannel.reads.isEmpty)
         XCTAssertEqual(chatChannel.cooldownDuration, 0)
         XCTAssertEqual(chatChannel.extraData, [:])
