@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.87.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.87.0)
+_August 29, 2025_
+
 ## StreamChat
 ### ✅ Added
 - Add support for `user.messages.deleted` event [#3792](https://github.com/GetStream/stream-chat-swift/pull/3792)
