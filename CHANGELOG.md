@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add support for `user.messages.deleted` event [#3792](https://github.com/GetStream/stream-chat-swift/pull/3792)
+- Add upload endpoint for standalone attachments [#3788](https://github.com/GetStream/stream-chat-swift/pull/3788)
+- Add option to access the total message count of a channel [#3796](https://github.com/GetStream/stream-chat-swift/pull/3796)
 
 # [4.86.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.86.0)
 _August 21, 2025_
