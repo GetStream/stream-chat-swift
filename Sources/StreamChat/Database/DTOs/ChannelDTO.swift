@@ -265,8 +265,6 @@ extension NSManagedObjectContext {
         
         if let messageCount = payload.messageCount {
             dto.messageCount = NSNumber(value: messageCount)
-        } else {
-            dto.messageCount = nil
         }
 
         // Because `truncatedAt` is used, client side, for both truncation and channel hiding cases, we need to avoid using the
