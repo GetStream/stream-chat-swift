@@ -278,7 +278,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
     }
 
-    func test_messageDeletedEvent_whenMessageIsSystem_doesNotDecrementUnreadCount() throws {
+    func test_messageDeletedEvent_whenMessageIsSystem_decrementsUnreadCount() throws {
         // WHEN
         let systemMessage: MessagePayload = .dummy(
             type: .system,
@@ -305,7 +305,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount - 1)
     }
 
     func test_messageDeletedEvent_whenMessageIsRead_doesNotDecrementUnreadCount() throws {
@@ -564,7 +564,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
     }
 
-    func test_messageNewEvent_whenMessageIsSystem_doesNotIncrementUnreadCount() throws {
+    func test_messageNewEvent_whenMessageIsSystem_incrementsUnreadCount() throws {
         // WHEN
         let systemMessage: MessagePayload = .dummy(
             type: .system,
@@ -572,6 +572,9 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             authorUserId: anotherUserPayload.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1)
         )
+        
+        // Mark id as new message
+        center.newMessageIdsMock = [systemMessage.id]
 
         let messageNewEvent = try MessageNewEventDTO(
             from: .init(
@@ -589,7 +592,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount + 1)
     }
 
     func test_messageNewEvent_whenMessageIsShadowed_doesNotIncrementUnreadCount() throws {

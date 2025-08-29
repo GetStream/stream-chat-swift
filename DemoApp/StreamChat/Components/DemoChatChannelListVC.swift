@@ -48,6 +48,16 @@ final class DemoChatChannelListVC: ChatChannelListVC {
             .equal(.blocked, to: true)
         ])
     ]))
+    
+    lazy var blockedUnblockedWithHiddenChannelsQuery: ChannelListQuery = .init(
+        filter: .and([
+            .containMembers(userIds: [currentUserId]),
+            .or([
+                .and([.equal(.blocked, to: false), .equal(.hidden, to: false)]),
+                .and([.equal(.blocked, to: true), .equal(.hidden, to: true)])
+            ])
+        ])
+    )
 
     lazy var unreadCountChannelsQuery: ChannelListQuery = .init(
         filter: .and([
@@ -161,6 +171,15 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 self?.setAllBlockedChannelsQuery()
             }
         )
+        
+        let blockedUnBlockedExcludingDeletedChannelsAction = UIAlertAction(
+            title: "Blocked Unblocked with Matching Hidden Channels",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Blocked Unblocked with Matching Hidden Channels"
+                self?.setBlockedUnblockedWithHiddenChannelsQuery()
+            }
+        )
 
         let unreadCountChannelsAction = UIAlertAction(
             title: "Unread Count Channels",
@@ -230,6 +249,7 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 hasUnreadChannelsAction,
                 hiddenChannelsAction,
                 allBlockedChannelsAction,
+                blockedUnBlockedExcludingDeletedChannelsAction,
                 mutedChannelsAction,
                 coolChannelsAction,
                 pinnedChannelsAction,
@@ -247,6 +267,10 @@ final class DemoChatChannelListVC: ChatChannelListVC {
 
     func setAllBlockedChannelsQuery() {
         replaceQuery(allBlockedChannelsQuery)
+    }
+    
+    func setBlockedUnblockedWithHiddenChannelsQuery() {
+        replaceQuery(blockedUnblockedWithHiddenChannelsQuery)
     }
 
     func setUnreadCountChannelsQuery() {

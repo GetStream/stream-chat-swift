@@ -22,7 +22,7 @@ extension ChannelDetailPayload {
         config: ChannelConfig = .mock(),
         ownCapabilities: [String] = [],
         isFrozen: Bool = false,
-        isBlocked: Bool = false,
+        isBlocked: Bool? = false,
         isDisabled: Bool = false,
         isHidden: Bool? = nil,
         members: [MemberPayload] = [],

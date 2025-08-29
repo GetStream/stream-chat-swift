@@ -228,10 +228,6 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             return .messageIsThreadReply
         }
 
-        if message.type == .system {
-            return .messageIsSystem
-        }
-
         if message.isShadowed {
             return .messageIsShadowed
         }
@@ -250,7 +246,6 @@ private enum UnreadSkippingReason: CustomStringConvertible {
     case messageIsOwn
     case messageIsSilent
     case messageIsThreadReply
-    case messageIsSystem
     case messageIsShadowed
     case messageIsSeen
     case messageIsSoftDeleted
@@ -267,8 +262,6 @@ private enum UnreadSkippingReason: CustomStringConvertible {
             return "Silent messages do not affect unread counts"
         case .messageIsThreadReply:
             return "Thread replies do not affect unread counts"
-        case .messageIsSystem:
-            return "System messages do not affect unread counts"
         case .messageIsShadowed:
             return "Shadowed messages do not affect unread counts"
         case .messageIsSeen:
