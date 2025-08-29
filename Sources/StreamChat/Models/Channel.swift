@@ -61,6 +61,10 @@ public struct ChatChannel {
 
     /// The total number of members in the channel.
     public let memberCount: Int
+    
+    /// The total number of messages in the channel.
+    /// Only returns value if `count_messages` is configured for your app.
+    public let messageCount: Int?
 
     /// A list of members of this channel.
     ///
@@ -197,6 +201,7 @@ public struct ChatChannel {
         unreadCount: ChannelUnreadCount,
         watcherCount: Int = 0,
         memberCount: Int = 0,
+        messageCount: Int? = nil,
         reads: [ChatChannelRead] = [],
         cooldownDuration: Int = 0,
         extraData: [String: RawJSON],
@@ -227,6 +232,7 @@ public struct ChatChannel {
         self.team = team
         self.watcherCount = watcherCount
         self.memberCount = memberCount
+        self.messageCount = messageCount
         self.reads = reads
         self.cooldownDuration = cooldownDuration
         self.extraData = extraData

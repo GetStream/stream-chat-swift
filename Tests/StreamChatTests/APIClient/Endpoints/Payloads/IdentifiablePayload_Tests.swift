@@ -311,6 +311,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 isHidden: false,
                 members: users.map { MemberPayload.dummy(user: $0) },
                 memberCount: users.count,
+                messageCount: messageCount,
                 team: .unique,
                 cooldownDuration: 20
             )

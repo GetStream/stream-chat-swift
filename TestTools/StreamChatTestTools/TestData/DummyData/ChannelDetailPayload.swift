@@ -27,6 +27,7 @@ extension ChannelDetailPayload {
         isHidden: Bool? = nil,
         members: [MemberPayload] = [],
         memberCount: Int? = nil,
+        messageCount: Int? = nil,
         team: String? = nil,
         cooldownDuration: Int = 0
     ) -> Self {
@@ -50,6 +51,7 @@ extension ChannelDetailPayload {
             isHidden: isHidden,
             members: members,
             memberCount: memberCount ?? members.count,
+            messageCount: messageCount,
             team: team,
             cooldownDuration: cooldownDuration
         )

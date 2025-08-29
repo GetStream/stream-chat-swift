@@ -55,6 +55,7 @@
         <attribute name="isHidden" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="lastMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="memberCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="messageCount" optional="YES" attributeType="Integer 64" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
         <attribute name="newestMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="oldestMessageAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>

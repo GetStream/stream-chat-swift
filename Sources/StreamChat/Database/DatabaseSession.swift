@@ -852,6 +852,10 @@ extension DatabaseSession {
         if isNewMessage && savedMessage.localMessageState != nil {
             savedMessage.markMessageAsSent()
         }
+        
+        if let messageCount = payload.channelMessageCount {
+            channelDTO.messageCount = NSNumber(value: messageCount)
+        }
     }
 
     func updateChannelPreview(from payload: EventPayload) {

@@ -1309,6 +1309,7 @@
     "disabled" : true,
     "cooldown" : 10,
     "member_count" : 4,
+    "message_count" : 5,
     "updated_at" : "2019-05-10T14:03:49.505006Z",
     "config" : {
       "automod_behavior" : "flag",

@@ -41,6 +41,7 @@ class EventPayload: Decodable {
         case aiMessage = "ai_message"
         case draft
         case reminder
+        case channelMessageCount = "channel_message_count"
     }
 
     let eventType: EventType
@@ -79,6 +80,7 @@ class EventPayload: Decodable {
     let aiMessage: String?
     let draft: DraftPayload?
     let reminder: ReminderPayload?
+    let channelMessageCount: Int?
 
     init(
         eventType: EventType,
@@ -112,7 +114,8 @@ class EventPayload: Decodable {
         messageId: String? = nil,
         aiMessage: String? = nil,
         draft: DraftPayload? = nil,
-        reminder: ReminderPayload? = nil
+        reminder: ReminderPayload? = nil,
+        channelMessageCount: Int? = nil
     ) {
         self.eventType = eventType
         self.connectionId = connectionId
@@ -146,6 +149,7 @@ class EventPayload: Decodable {
         self.aiMessage = aiMessage
         self.draft = draft
         self.reminder = reminder
+        self.channelMessageCount = channelMessageCount
     }
 
     required init(from decoder: Decoder) throws {
@@ -184,6 +188,7 @@ class EventPayload: Decodable {
         aiMessage = try container.decodeIfPresent(String.self, forKey: .aiMessage)
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
+        channelMessageCount = try container.decodeIfPresent(Int.self, forKey: .channelMessageCount)
     }
 
     func event() throws -> Event {

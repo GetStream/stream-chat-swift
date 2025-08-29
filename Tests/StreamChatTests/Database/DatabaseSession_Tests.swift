@@ -121,7 +121,8 @@ final class DatabaseSession_Tests: XCTestCase {
             createdAt: nil,
             isChannelHistoryCleared: false,
             banReason: nil,
-            banExpiredAt: nil
+            banExpiredAt: nil,
+            channelMessageCount: 5
         )
 
         // Save the event payload to DB
@@ -139,6 +140,7 @@ final class DatabaseSession_Tests: XCTestCase {
         let loadedChannel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: channelId)?.asModel())
         let message = try XCTUnwrap(loadedMessage)
         XCTAssert(loadedChannel.latestMessages.contains(message))
+        XCTAssertEqual(loadedChannel.messageCount, 5)
     }
 
     func test_deleteMessage() throws {
