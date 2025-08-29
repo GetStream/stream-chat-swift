@@ -45,6 +45,7 @@ public enum ChannelCodingKeys: String, CodingKey, CaseIterable {
     /// The team the channel belongs to.
     case team
     case memberCount = "member_count"
+    case messageCount = "message_count"
     /// Cooldown duration for the channel, if it's in slow mode.
     /// This value will be 0 if the channel is not in slow mode.
     case cooldownDuration = "cooldown"

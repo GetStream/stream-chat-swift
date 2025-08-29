@@ -1019,6 +1019,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             isHidden: nil,
             members: nil,
             memberCount: 0,
+            messageCount: 0,
             team: "",
             cooldownDuration: .random(in: 0...120)
         )

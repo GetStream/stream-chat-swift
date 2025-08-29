@@ -193,6 +193,7 @@ extension XCTestCase {
                     isHidden: nil,
                     members: members,
                     memberCount: 100,
+                    messageCount: 100,
                     team: .unique,
                     cooldownDuration: cooldownDuration ?? .random(in: 0...120)
                 ),
@@ -311,6 +312,7 @@ extension XCTestCase {
                     isHidden: nil,
                     members: nil,
                     memberCount: 100,
+                    messageCount: 100,
                     team: .unique,
                     cooldownDuration: .random(in: 0...120)
                 ),
