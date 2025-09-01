@@ -1,6 +1,6 @@
 {
   "message": {
-    "id": "b9841bf2-9a49-4adf-ae93-5e07d37d7c22",
+    "id": "c02dd1b3-8173-4d0b-8fb5-63e577124f32",
     "text": "Test",
     "html": "<p>Test</p>\n",
     "type": "regular",
@@ -12,15 +12,19 @@
       "role": "admin",
       "teams": [],
       "created_at": "2024-04-04T09:26:11.805899Z",
-      "updated_at": "2025-06-06T08:22:36.844279Z",
+      "updated_at": "2025-08-20T09:40:53.079684Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-06-15T00:25:32.362084978Z",
+      "last_active": "2025-09-01T00:20:18.750463636Z",
       "blocked_user_ids": [],
-      "birthland": "Tatooine",
-      "team": "test",
+      "avg_response_time": 256050,
       "type": "team",
-      "pando": "{\"speciality\":\"ios engineer\"}"
+      "team": "test",
+      "custom_extra_data_key": true,
+      "pando": "{\"speciality\":\"ios engineer\"}",
+      "birthland": "Tatooine",
+      "canBeAddedToGroups": true,
+      "canReceiveMessages": false
     },
     "attachments": [],
     "latest_reactions": [],
@@ -29,16 +33,11 @@
     "reaction_scores": {},
     "reply_count": 0,
     "deleted_reply_count": 0,
-    "cid": "messaging:ec2807ff-5c60-41bc-a816-49578260471a",
-    "created_at": "2025-06-15T00:25:36.86243Z",
-    "updated_at": "2025-06-15T00:25:36.86243Z",
+    "cid": "messaging:cee47871-bb00-49bb-9acd-cd3092bb5aca",
+    "created_at": "2025-09-01T00:20:22.692049Z",
+    "updated_at": "2025-09-01T00:20:22.692049Z",
     "shadowed": false,
     "mentioned_users": [],
-    "i18n": {
-      "language": "en",
-      "en_text": "Test",
-      "fr_text": "Testez"
-    },
     "silent": false,
     "pinned": false,
     "pinned_at": null,
@@ -46,5 +45,5 @@
     "pin_expires": null,
     "restricted_visibility": []
   },
-  "duration": "1352.04ms"
+  "duration": "615.22ms"
 }
