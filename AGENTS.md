@@ -10,11 +10,11 @@ Agents should prioritize backwards compatibility, API stability, and high test c
 
 ### Tech & toolchain
   • Language: Swift (iOS; Mac Catalyst supported)
-  • Package managers: Swift Package Manager (primary), CocoaPods (also supported)
+  • Package managers: Swift Package Manager (primary), CocoaPods and XCFrameworks (also supported)
   • Minimum Xcode: 15.x or newer (Apple Silicon supported)
   • iOS targets: Follow existing deployment targets in package/podspec files; don’t lower without approval
   • CI: GitHub Actions (assume PR validation on build + tests + lint)
-  • Linters & docs: SwiftLint (via Mint), Vale for prose (run phase exists), Jazzy/DocC where applicable
+  • Linters & docs: SwiftLint (via Mint)
 
 ### Project layout (high level)
 
@@ -104,9 +104,9 @@ Commit / PR conventions
 Testing policy
   • Add/extend tests in the matching module’s Tests/ folder.
   • Cover:
-  • Core models & API surface (StreamChat)
-  • View Controllers and UI behaviors (StreamChatUI)
-  • Use fakes/mocks from the test helpers provided by the repo when possible.
+    • Core models & API surface (StreamChat)
+    • View Controllers and UI behaviors (StreamChatUI)
+    • Use fakes/mocks from the test helpers provided by the repo when possible.
 
 Docs & samples
   • When altering public API, update inline docs and any affected guide pages in the docs site where this repo is the source of truth.
@@ -118,7 +118,7 @@ Security & credentials
   • If you add scripts, ensure they fail closed on missing env vars.
 
 Compatibility & distribution
-  • Maintain compatibility with supported iOS versions listed in Package.swift/podspec.
+  • Maintain compatibility with supported iOS versions listed in Package.swift/podspecs.
   • Don’t introduce third-party deps without discussion.
   • Validate SPM and CocoaPods integration when changing module boundaries.
 
@@ -132,7 +132,7 @@ When in doubt
 Quick agent checklist (per commit)
   • Build all modified modules for iOS Simulator
   • Run tests for affected modules and ensure green
-  • Run swiftlint --strict (and vale . if docs changed)
+  • Run swiftlint --strict
   • Update CHANGELOG and docs if public API changed
   • Add/adjust tests
   • No new warnings
