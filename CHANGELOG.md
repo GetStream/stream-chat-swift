@@ -3,7 +3,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+### ✅ Added
+- Added channelRole to ChatMessage model (#3803)[https://github.com/GetStream/stream-chat-swift/pull/3803]
 
 # [4.87.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.87.0)
 _August 29, 2025_
