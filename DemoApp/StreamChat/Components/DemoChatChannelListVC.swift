@@ -58,6 +58,13 @@ final class DemoChatChannelListVC: ChatChannelListVC {
             ])
         ])
     )
+    
+    lazy var channelModeratorChannelsQuery: ChannelListQuery = .init(
+        filter: .and([
+            .containMembers(userIds: [currentUserId]),
+            .equal(.channelRole, to: "channel_moderator")
+        ])
+    )
 
     lazy var unreadCountChannelsQuery: ChannelListQuery = .init(
         filter: .and([
@@ -180,6 +187,15 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 self?.setBlockedUnblockedWithHiddenChannelsQuery()
             }
         )
+        
+        let channelRoleChannelsAction = UIAlertAction(
+            title: "Moderator Channels",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Moderator Channels"
+                self?.setChannelModeratorChannelsQuery()
+            }
+        )
 
         let unreadCountChannelsAction = UIAlertAction(
             title: "Unread Count Channels",
@@ -254,7 +270,8 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 coolChannelsAction,
                 pinnedChannelsAction,
                 archivedChannelsAction,
-                equalMembersAction
+                equalMembersAction,
+                channelRoleChannelsAction
             ].sorted(by: { $0.title ?? "" < $1.title ?? "" }),
             preferredStyle: .actionSheet,
             sourceView: filterChannelsButton
@@ -271,6 +288,10 @@ final class DemoChatChannelListVC: ChatChannelListVC {
     
     func setBlockedUnblockedWithHiddenChannelsQuery() {
         replaceQuery(blockedUnblockedWithHiddenChannelsQuery)
+    }
+    
+    func setChannelModeratorChannelsQuery() {
+        replaceQuery(channelModeratorChannelsQuery)
     }
 
     func setUnreadCountChannelsQuery() {
