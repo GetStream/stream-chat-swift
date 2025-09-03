@@ -532,7 +532,8 @@ final class ChatMessage_Tests: XCTestCase {
             moderationsDetails: nil,
             attachments: [
                 .dummy(id: .init(cid: .unique, messageId: .unique, index: 0))
-            ]
+            ],
+            channelRole: .moderator
         )
 
         // Test changing only some fields
@@ -553,6 +554,7 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertEqual(partiallyChangedMessage.allAttachments, originalMessage.allAttachments)
         XCTAssertEqual(partiallyChangedMessage.translations, originalMessage.translations)
         XCTAssertEqual(partiallyChangedMessage.originalLanguage, originalMessage.originalLanguage)
+        XCTAssertEqual(partiallyChangedMessage.channelRole, .moderator)
         XCTAssertNil(partiallyChangedMessage.moderationDetails)
 
         // Test changing all available fields

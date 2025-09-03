@@ -63,6 +63,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.moderation?.blocklistMatched, "profanity_2021_01")
         XCTAssertEqual(payload.moderation?.semanticFilterMatched, "bad_phrases")
         XCTAssertEqual(payload.moderation?.platformCircumvented, false)
+        XCTAssertEqual(payload.member?.channelRole, .moderator)
     }
 
     func test_messagePayload_isSerialized_withDefaultExtraData_withBrokenAttachmentPayload() throws {

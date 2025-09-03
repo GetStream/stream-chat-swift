@@ -183,6 +183,9 @@ public struct ChatMessage {
 
     /// The location information of the message.
     public let sharedLocation: SharedLocation?
+    
+    /// The role of the member in the channel.
+    public let channelRole: MemberRole?
 
     init(
         id: MessageId,
@@ -225,7 +228,8 @@ public struct ChatMessage {
         textUpdatedAt: Date?,
         draftReply: DraftMessage?,
         reminder: MessageReminderInfo?,
-        sharedLocation: SharedLocation?
+        sharedLocation: SharedLocation?,
+        channelRole: MemberRole?
     ) {
         self.id = id
         self.cid = cid
@@ -269,6 +273,7 @@ public struct ChatMessage {
         self.draftReply = draftReply
         self.sharedLocation = sharedLocation
         self.reminder = reminder
+        self.channelRole = channelRole
     }
 
     /// Returns a new `ChatMessage` with the provided data changed.
@@ -329,7 +334,8 @@ public struct ChatMessage {
             textUpdatedAt: textUpdatedAt,
             draftReply: draftReply,
             reminder: reminder,
-            sharedLocation: sharedLocation
+            sharedLocation: sharedLocation,
+            channelRole: channelRole
         )
     }
 
@@ -443,7 +449,8 @@ public struct ChatMessage {
             textUpdatedAt: textUpdatedAt,
             draftReply: draftReply,
             reminder: reminder,
-            sharedLocation: sharedLocation
+            sharedLocation: sharedLocation,
+            channelRole: channelRole
         )
     }
 }
