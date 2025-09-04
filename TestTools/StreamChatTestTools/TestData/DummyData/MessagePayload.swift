@@ -52,7 +52,8 @@ extension MessagePayload {
         messageTextUpdatedAt: Date? = nil,
         poll: PollPayload? = nil,
         draft: DraftPayload? = nil,
-        sharedLocation: SharedLocationPayload? = nil
+        sharedLocation: SharedLocationPayload? = nil,
+        member: MemberInfoPayload? = nil
     ) -> MessagePayload {
         .init(
             id: messageId,
@@ -95,7 +96,8 @@ extension MessagePayload {
             messageTextUpdatedAt: messageTextUpdatedAt,
             poll: poll,
             draft: draft,
-            location: sharedLocation
+            location: sharedLocation,
+            member: member
         )
     }
 
