@@ -56,6 +56,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case draft
     case location = "shared_location"
     case reminder
+    case member
 }
 
 extension MessagePayload {
@@ -117,6 +118,7 @@ class MessagePayload: Decodable {
     var draft: DraftPayload?
     var location: SharedLocationPayload?
     var reminder: ReminderPayload?
+    var member: MemberInfoPayload?
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
@@ -186,6 +188,7 @@ class MessagePayload: Decodable {
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         location = try container.decodeIfPresent(SharedLocationPayload.self, forKey: .location)
         reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
+        member = try container.decodeIfPresent(MemberInfoPayload.self, forKey: .member)
     }
 
     init(
@@ -229,7 +232,8 @@ class MessagePayload: Decodable {
         poll: PollPayload? = nil,
         draft: DraftPayload? = nil,
         reminder: ReminderPayload? = nil,
-        location: SharedLocationPayload? = nil
+        location: SharedLocationPayload? = nil,
+        member: MemberInfoPayload? = nil
     ) {
         self.id = id
         self.cid = cid
@@ -272,6 +276,7 @@ class MessagePayload: Decodable {
         self.draft = draft
         self.location = location
         self.reminder = reminder
+        self.member = member
     }
 }
 
@@ -397,5 +402,13 @@ public struct Command: Codable, Hashable {
         self.description = description
         self.set = set
         self.args = args
+    }
+}
+
+struct MemberInfoPayload: Codable, Hashable {
+    let channelRole: MemberRole?
+    
+    enum CodingKeys: String, CodingKey {
+        case channelRole = "channel_role"
     }
 }

@@ -52,7 +52,8 @@ public extension ChatMessage {
         poll: Poll? = nil,
         draftReply: DraftMessage? = nil,
         reminder: MessageReminderInfo? = nil,
-        sharedLocation: SharedLocation? = nil
+        sharedLocation: SharedLocation? = nil,
+        channelRole: MemberRole? = nil
     ) -> Self {
         .init(
             id: id,
@@ -95,7 +96,8 @@ public extension ChatMessage {
             textUpdatedAt: textUpdatedAt,
             draftReply: draftReply,
             reminder: reminder,
-            sharedLocation: sharedLocation
+            sharedLocation: sharedLocation,
+            channelRole: channelRole
         )
     }
 }

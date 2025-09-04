@@ -136,7 +136,8 @@ extension MessagePayload {
                     createdAt: $0.createdAt,
                     endAt: $0.endAt
                 )
-            }
+            },
+            channelRole: member?.channelRole
         )
     }
 }
