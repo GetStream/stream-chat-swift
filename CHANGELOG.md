@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- Add `FilterKey.channelRole` for `ChannelListQuery` [3802](https://github.com/GetStream/stream-chat-swift/pull/3802)
+- Add `FilterKey.channelRole` for `ChannelListQuery` [#3802](https://github.com/GetStream/stream-chat-swift/pull/3802)
 - Add `channelRole` to `ChatMessage` model [#3803](https://github.com/GetStream/stream-chat-swift/pull/3803)
 
 # [4.87.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.87.0)
