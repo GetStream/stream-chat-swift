@@ -974,7 +974,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.parentMessageId = payload.parentId
         dto.showReplyInChannel = payload.showReplyInChannel
         dto.replyCount = Int32(payload.replyCount)
-        dto.channelRole = payload.member?.channelRole?.rawValue
+        if let role = payload.member?.channelRole?.rawValue {
+            dto.channelRole = role
+        }
 
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.extraData)

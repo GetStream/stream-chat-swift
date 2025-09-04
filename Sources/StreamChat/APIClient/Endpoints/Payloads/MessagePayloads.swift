@@ -405,8 +405,8 @@ public struct Command: Codable, Hashable {
     }
 }
 
-public struct MemberInfoPayload: Codable, Hashable {
-    public let channelRole: MemberRole?
+struct MemberInfoPayload: Codable, Hashable {
+    let channelRole: MemberRole?
     
     enum CodingKeys: String, CodingKey {
         case channelRole = "channel_role"
