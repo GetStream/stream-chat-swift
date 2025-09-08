@@ -4,7 +4,7 @@
 
 import Foundation
 
-public typealias TokenProvider = (@escaping (Result<Token, Error>) -> Void) -> Void
+public typealias TokenProvider = (@Sendable(@escaping (Result<Token, Error>) -> Void) -> Void)
 
 enum EnvironmentState {
     case firstConnection
