@@ -46,14 +46,25 @@ open class GalleryAttachmentViewInjector: AttachmentViewInjector {
         // We need to apply corners to the left and right containers because the previewsContainerView
         // is applying extra layout margins and the rounded corners wouldn't match the margins.
         let leftCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
-        galleryView.leftPreviewsContainerView.layer.maskedCorners = options.roundedCorners(for: galleryView.effectiveUserInterfaceLayoutDirection).intersection(leftCorners)
+        let leftMaskedCorners = options.roundedCorners(for: galleryView.effectiveUserInterfaceLayoutDirection)
+            .intersection(leftCorners)
+        galleryView.leftPreviewsContainerView.layer.maskedCorners = leftMaskedCorners
         galleryView.leftPreviewsContainerView.layer.cornerRadius = 16
         galleryView.leftPreviewsContainerView.layer.masksToBounds = true
 
         let rightCorners: CACornerMask = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
-        galleryView.rightPreviewsContainerView.layer.maskedCorners = options.roundedCorners(for: galleryView.effectiveUserInterfaceLayoutDirection).intersection(rightCorners)
-        galleryView.rightPreviewsContainerView.layer.cornerRadius = 16
-        galleryView.rightPreviewsContainerView.layer.masksToBounds = true
+        let rightMaskedCorners = options.roundedCorners(for: galleryView.effectiveUserInterfaceLayoutDirection)
+            .intersection(rightCorners)
+
+        // If there is only one attachment, only the left container is used, so we need to apply
+        // the right corners to it as well.
+        if contentView.content?.allAttachments.count == 1 {
+            galleryView.leftPreviewsContainerView.layer.maskedCorners = rightMaskedCorners.union(leftMaskedCorners)
+        } else {
+            galleryView.rightPreviewsContainerView.layer.maskedCorners = rightMaskedCorners
+            galleryView.rightPreviewsContainerView.layer.cornerRadius = 16
+            galleryView.rightPreviewsContainerView.layer.masksToBounds = true
+        }
 
         if let ratio = galleryViewAspectRatio {
             galleryView
