@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.88.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.88.0)
+_September 08, 2025_
+
 ## StreamChat
 ### ✅ Added
 - Add `FilterKey.channelRole` for `ChannelListQuery` [#3802](https://github.com/GetStream/stream-chat-swift/pull/3802)
