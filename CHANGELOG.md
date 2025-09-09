@@ -12,6 +12,7 @@ _September 08, 2025_
 ### ✅ Added
 - Add `FilterKey.channelRole` for `ChannelListQuery` [#3802](https://github.com/GetStream/stream-chat-swift/pull/3802)
 - Add `channelRole` to `ChatMessage` model [#3803](https://github.com/GetStream/stream-chat-swift/pull/3803)
+## StreamChatUI
 ### 🐞 Fixed
 - Fix gallery view with one image only not masking the right top corner [#3806](https://github.com/GetStream/stream-chat-swift/pull/3806)
 
