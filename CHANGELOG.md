@@ -3,18 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
-
-# [4.88.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.88.0)
-_September 08, 2025_
-
 ## StreamChat
 ### ✅ Added
 - Add `FilterKey.channelRole` for `ChannelListQuery` [#3802](https://github.com/GetStream/stream-chat-swift/pull/3802)
 - Add `channelRole` to `ChatMessage` model [#3803](https://github.com/GetStream/stream-chat-swift/pull/3803)
-## StreamChatUI
-### 🐞 Fixed
-- Fix gallery view with one image only not masking the right top corner [#3806](https://github.com/GetStream/stream-chat-swift/pull/3806)
 
 # [4.87.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.87.0)
 _August 29, 2025_
