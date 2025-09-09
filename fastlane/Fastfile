@@ -134,8 +134,6 @@ lane :publish_release do |options|
   )
 
   update_spm(version: release_version)
-
-  sh('gh workflow run merge-main-to-develop.yml --ref main')
 end
 
 lane :get_sdk_version_from_environment do
