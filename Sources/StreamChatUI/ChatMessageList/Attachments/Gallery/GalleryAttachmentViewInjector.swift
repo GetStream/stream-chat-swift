@@ -43,6 +43,11 @@ open class GalleryAttachmentViewInjector: AttachmentViewInjector {
         contentView.bubbleView?.clipsToBounds = true
         contentView.bubbleContentContainer.insertArrangedSubview(galleryView, at: 0, respectsLayoutMargins: false)
 
+        galleryView.leftPreviewsContainerView.layer.cornerRadius = 16
+        galleryView.leftPreviewsContainerView.layer.masksToBounds = true
+        galleryView.rightPreviewsContainerView.layer.cornerRadius = 16
+        galleryView.rightPreviewsContainerView.layer.masksToBounds = true
+
         if let ratio = galleryViewAspectRatio {
             galleryView
                 .widthAnchor
@@ -64,19 +69,22 @@ open class GalleryAttachmentViewInjector: AttachmentViewInjector {
             let rightMaskedCorners = options.roundedCorners(for: galleryView.effectiveUserInterfaceLayoutDirection)
                 .intersection(rightCorners)
 
-            galleryView.leftPreviewsContainerView.layer.cornerRadius = 16
-            galleryView.leftPreviewsContainerView.layer.masksToBounds = true
+            let newLeftPreviewsMaskedCorners: CACornerMask
             if contentView.content?.allAttachments.count == 1 {
                 // If there is only one attachment, only the left container is used, so we need to apply
                 // the right corners to it as well.
-                galleryView.leftPreviewsContainerView.layer.maskedCorners = rightMaskedCorners.union(leftMaskedCorners)
+                newLeftPreviewsMaskedCorners = rightMaskedCorners.union(leftMaskedCorners)
             } else {
-                galleryView.leftPreviewsContainerView.layer.maskedCorners = leftMaskedCorners
+                newLeftPreviewsMaskedCorners = leftMaskedCorners
             }
 
-            galleryView.rightPreviewsContainerView.layer.maskedCorners = rightMaskedCorners
-            galleryView.rightPreviewsContainerView.layer.cornerRadius = 16
-            galleryView.rightPreviewsContainerView.layer.masksToBounds = true
+            if galleryView.leftPreviewsContainerView.layer.maskedCorners != newLeftPreviewsMaskedCorners {
+                galleryView.leftPreviewsContainerView.layer.maskedCorners = newLeftPreviewsMaskedCorners
+            }
+
+            if galleryView.rightPreviewsContainerView.layer.maskedCorners != rightMaskedCorners {
+                galleryView.rightPreviewsContainerView.layer.maskedCorners = rightMaskedCorners
+            }
         }
 
         let videos = attachments(payloadType: VideoAttachmentPayload.self)
