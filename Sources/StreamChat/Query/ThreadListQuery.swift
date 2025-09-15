@@ -120,7 +120,7 @@ public extension FilterKey where Scope == ThreadListFilterScope {
     static var channelDisabled: FilterKey<Scope, Bool> {
         .init(
             rawValue: "channel.disabled",
-            keyPathString: #keyPath(ChannelDTO.isDisabled)
+            keyPathString: #keyPath(ThreadDTO.channel.isDisabled)
         )
     }
 }
