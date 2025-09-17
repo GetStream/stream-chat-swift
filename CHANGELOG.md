@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Expose `NewLocationInfo.init` [#3815](https://github.com/GetStream/stream-chat-swift/pull/3815)
 ### 🐞 Fixed
 - Fix querying threads by disabled channels crashing [#3813](https://github.com/GetStream/stream-chat-swift/pull/3813)
 
