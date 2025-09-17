@@ -5,8 +5,6 @@ runs:
   steps:
     - run: echo "IMAGE=${ImageOS}-${ImageVersion}" >> $GITHUB_ENV
       shell: bash
-    - run: echo "$HOME/.mint/bin" >> $GITHUB_PATH
-      shell: bash
     - name: Cache SPM
       uses: actions/cache@v4
       id: spm-cache
