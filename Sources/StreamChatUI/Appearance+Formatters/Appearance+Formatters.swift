@@ -45,6 +45,9 @@ public extension Appearance {
         /// A formatter that provides a name for a recording based on its position in a list of recordings.
         public var audioRecordingNameFormatter: AudioRecordingNameFormatter = DefaultAudioRecordingNameFormatter()
 
+        /// A formatter that converts the message timestamp to textual representation for the gallery header view.
+        public var galleryHeaderViewDateFormatter: GalleryHeaderViewDateFormatter = DefaultGalleryHeaderViewDateFormatter()
+
         /// A boolean value that determines whether Markdown is active for messages to be formatted.
         public var isMarkdownEnabled = true
     }
