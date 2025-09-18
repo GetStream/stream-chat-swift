@@ -14,7 +14,7 @@ Agents should prioritize backwards compatibility, API stability, and high test c
   • Minimum Xcode: 15.x or newer (Apple Silicon supported)
   • iOS targets: Follow existing deployment targets in package/podspec files; don’t lower without approval
   • CI: GitHub Actions (assume PR validation on build + tests + lint)
-  • Linters & docs: SwiftLint (via Mint)
+  • Linters & docs: SwiftLint and SwiftFormat
 
 ### Project layout (high level)
 
