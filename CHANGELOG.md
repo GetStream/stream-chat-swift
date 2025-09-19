@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix querying threads by disabled channels crashing [#3813](https://github.com/GetStream/stream-chat-swift/pull/3813)
 
+## StreamChatUI
+### 🔄 Changed
+- Change gallery header view to show message timestamp instead of online status [#3818](https://github.com/GetStream/stream-chat-swift/pull/3818)
+
 # [4.88.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.88.0)
 _September 09, 2025_
 

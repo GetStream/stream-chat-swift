@@ -48,6 +48,12 @@ open class GalleryVC: _ViewController,
     /// Returns the date formatter function used to represent when the user was last seen online.
     open var lastSeenDateFormatter: (Date) -> String? { appearance.formatters.userLastActivity.format }
 
+    /// A formatter that converts the message timestamp to textual representation for the gallery header view.
+    open var messageTimestampFormatter: (Date) -> String? { appearance.formatters.galleryHeaderViewDateFormatter.format }
+
+    /// A boolean value indicating if the subtitle of the header should show the message timestamp.
+    public var showMessageTimestamp: Bool = true
+
     /// Controller for handling the transition for dismissal
     open var transitionController: ZoomTransitionController!
 
@@ -267,15 +273,18 @@ open class GalleryVC: _ViewController,
     override open func updateContent() {
         super.updateContent()
 
-        if content.message.author.isOnline {
-            dateLabel.text = L10n.Message.Title.online
+        if showMessageTimestamp {
+            dateLabel.text = messageTimestampFormatter(content.message.createdAt)
         } else {
-            if
-                let lastActive = content.message.author.lastActiveAt,
-                let timeAgo = lastSeenDateFormatter(lastActive) {
-                dateLabel.text = timeAgo
+            if content.message.author.isOnline {
+                dateLabel.text = L10n.Message.Title.online
             } else {
-                dateLabel.text = L10n.Message.Title.offline
+                if let lastActive = content.message.author.lastActiveAt,
+                   let timeAgo = lastSeenDateFormatter(lastActive) {
+                    dateLabel.text = timeAgo
+                } else {
+                    dateLabel.text = L10n.Message.Title.offline
+                }
             }
         }
 

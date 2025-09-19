@@ -30,6 +30,7 @@ final class GalleryVC_Tests: XCTestCase {
         )
 
         vc = makeGalleryVC(content: content)
+        vc.showMessageTimestamp = false
     }
 
     override func tearDown() {
@@ -125,8 +126,41 @@ final class GalleryVC_Tests: XCTestCase {
         let vc = TestView()
         vc.components = .mock
         vc.content = content
+        vc.showMessageTimestamp = false
 
         AssertSnapshot(vc)
+    }
+
+    func test_snapshotWithMessageTimestampToday() {
+        let today = Date()
+        let message = makeMessage(with: [
+            ChatMessageImageAttachment.mock(
+                id: .unique,
+                imageURL: TestImages.yoda.url
+            ).asAnyAttachment
+        ], createdAt: today)
+        
+        let content = GalleryVC.Content(message: message, currentPage: 0)
+        let vc = makeGalleryVC(content: content)
+        vc.showMessageTimestamp = true
+        
+        AssertSnapshot(vc, variants: [.defaultLight])
+    }
+
+    func test_snapshotWithMessageTimestampOlderDate() {
+        let olderDate = Date(timeIntervalSince1970: 1_577_836_800)
+        let message = makeMessage(with: [
+            ChatMessageImageAttachment.mock(
+                id: .unique,
+                imageURL: TestImages.yoda.url
+            ).asAnyAttachment
+        ], createdAt: olderDate)
+        
+        let content = GalleryVC.Content(message: message, currentPage: 0)
+        let vc = makeGalleryVC(content: content)
+        vc.showMessageTimestamp = true
+        
+        AssertSnapshot(vc, variants: [.defaultLight])
     }
 
     private func makeGalleryVC(content: GalleryVC.Content, components: Components = .mock) -> GalleryVC {
@@ -137,7 +171,7 @@ final class GalleryVC_Tests: XCTestCase {
         return vc
     }
 
-    private func makeMessage(with attachments: [AnyChatMessageAttachment]) -> ChatMessage {
+    private func makeMessage(with attachments: [AnyChatMessageAttachment], createdAt: Date = Date(timeIntervalSinceReferenceDate: 0)) -> ChatMessage {
         .mock(
             id: .unique,
             cid: .unique,
@@ -146,7 +180,7 @@ final class GalleryVC_Tests: XCTestCase {
                 id: .unique,
                 name: "Author"
             ),
-            createdAt: Date(timeIntervalSinceReferenceDate: 0),
+            createdAt: createdAt,
             attachments: attachments
         )
     }
