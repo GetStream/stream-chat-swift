@@ -71,6 +71,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
+    - uses: ./.github/actions/xcode-cache
     - name: List Xcode versions
       run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
     - name: Build LLC

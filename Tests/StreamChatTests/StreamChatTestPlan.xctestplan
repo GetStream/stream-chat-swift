@@ -28,6 +28,7 @@
   },
   "testTargets" : [
     {
+      "parallelizable" : true,
       "skippedTests" : [
         "APIClient_Tests\/test_runningARequestAndSwitchingToRecoveryMode()",
         "APIClient_Tests\/test_startingMultipleRequestsAtTheSameTimeShouldResultInParallelRequests()",
