@@ -4,7 +4,7 @@
 
 import UIKit
 
-public protocol ImageProcessor {
+public protocol ImageProcessor: Sendable {
     /// Crop the image to a given size. The image is center-cropped
     /// - Parameters:
     ///   - image: The image to crop
@@ -21,7 +21,7 @@ public protocol ImageProcessor {
 }
 
 /// This class provides resizing operations for `UIImage`. It internally uses `Nuke` porcessors to implement operations on images.
-open class NukeImageProcessor: ImageProcessor {
+open class NukeImageProcessor: ImageProcessor, @unchecked Sendable {
     open func crop(image: UIImage, to size: CGSize) -> UIImage? {
         let imageProccessor = ImageProcessors.Resize(size: size, crop: true)
         return imageProccessor.process(image)
@@ -64,12 +64,12 @@ extension ImageProcessors {
         }
 
         private let id: String
-        private let sizeProvider: () -> CGSize
+        private let sizeProvider: @Sendable() -> CGSize
 
         /// Initializes the processor with size providing closure.
         /// - Parameter sizeProvider: Closure to obtain size after the image is loaded.
         @available(*, deprecated, message: "Use init(id:sizeProvider:) instead")
-        public init(sizeProvider: @escaping () -> CGSize) {
+        public init(sizeProvider: @escaping @Sendable() -> CGSize) {
             // Backwards compatible init
             self.init(id: "", sizeProvider: sizeProvider)
         }
@@ -78,7 +78,7 @@ extension ImageProcessors {
         /// - Parameters:
         ///   - id: Image identifier.
         ///   - sizeProvider: Closure to obtain size after the image is loaded.
-        public init(id: String, sizeProvider: @escaping () -> CGSize) {
+        public init(id: String, sizeProvider: @escaping @Sendable() -> CGSize) {
             self.id = id
             self.sizeProvider = sizeProvider
         }

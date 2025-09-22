@@ -16,7 +16,7 @@ public struct AIIndicatorUpdateEvent: Event {
     public let aiMessage: String?
 }
 
-class AIIndicatorUpdateEventDTO: EventDTO {
+final class AIIndicatorUpdateEventDTO: EventDTO {
     let payload: EventPayload
     
     init(from response: EventPayload) throws {
@@ -44,7 +44,7 @@ public struct AIIndicatorClearEvent: Event {
     public let cid: ChannelId?
 }
 
-class AIIndicatorClearEventDTO: EventDTO {
+final class AIIndicatorClearEventDTO: EventDTO {
     let payload: EventPayload
         
     init(from response: EventPayload) throws {
@@ -58,7 +58,7 @@ class AIIndicatorClearEventDTO: EventDTO {
 
 /// An event that indicates the AI has stopped generating the message.
 public struct AIIndicatorStopEvent: CustomEventPayload, Event {
-    public static var eventType: EventType = .aiTypingIndicatorStop
+    public static let eventType: EventType = .aiTypingIndicatorStop
     
     /// The channel ID this event is related to.
     public let cid: ChannelId?
@@ -68,7 +68,7 @@ public struct AIIndicatorStopEvent: CustomEventPayload, Event {
     }
 }
 
-class AIIndicatorStopEventDTO: EventDTO {
+final class AIIndicatorStopEventDTO: EventDTO {
     let payload: EventPayload
         
     init(from response: EventPayload) throws {
@@ -81,7 +81,7 @@ class AIIndicatorStopEventDTO: EventDTO {
 }
 
 /// The state of the AI typing indicator.
-public struct AITypingState: ExpressibleByStringLiteral, Hashable {
+public struct AITypingState: ExpressibleByStringLiteral, Hashable, Sendable {
     public var rawValue: String
     
     public init?(rawValue: String) {

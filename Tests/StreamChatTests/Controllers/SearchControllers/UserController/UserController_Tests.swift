@@ -13,9 +13,6 @@ final class UserController_Tests: XCTestCase {
     var userId: UserId!
     var client: ChatClient!
     var controller: ChatUserController!
-    var controllerCallbackQueueID: UUID!
-    /// Workaround for uwrapping **controllerCallbackQueueID!** in each closure that captures it
-    private var callbackQueueID: UUID { controllerCallbackQueueID }
 
     override func setUp() {
         super.setUp()
@@ -24,14 +21,11 @@ final class UserController_Tests: XCTestCase {
         client = ChatClient.mock
         userId = .unique
         controller = ChatUserController(userId: userId, client: client, environment: env.environment)
-        controllerCallbackQueueID = UUID()
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
 
     override func tearDown() {
         env.userUpdater?.cleanUp()
         userId = nil
-        controllerCallbackQueueID = nil
 
         AssertAsync {
             Assert.canBeReleased(&controller)
@@ -72,11 +66,8 @@ final class UserController_Tests: XCTestCase {
 
     func test_synchronize_changesState_and_callsCompletionOnCallbackQueue() {
         // Simulate `synchronize` call.
-        var completionIsCalled = false
-        controller.synchronize { [callbackQueueID] error in
-            // Assert callback queue is correct.
-            AssertTestQueue(withId: callbackQueueID)
-            // Assert there is no error.
+        nonisolated(unsafe) var completionIsCalled = false
+        controller.synchronize { error in
             XCTAssertNil(error)
             completionIsCalled = true
         }
@@ -109,9 +100,8 @@ final class UserController_Tests: XCTestCase {
         env.userObserverSynchronizeError = observerError
 
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
-        controller.synchronize { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var synchronizeError: Error?
+        controller.synchronize { error in
             synchronizeError = error
         }
 
@@ -124,9 +114,8 @@ final class UserController_Tests: XCTestCase {
 
     func test_synchronize_changesState_and_propagatesUpdaterErrorOnCallbackQueue() {
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
-        controller.synchronize { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var synchronizeError: Error?
+        controller.synchronize { error in
             synchronizeError = error
         }
 
@@ -164,7 +153,7 @@ final class UserController_Tests: XCTestCase {
 
     /// This test simulates a bug where the `user` field was not updated if it wasn't
     /// touched before calling synchronize.
-    func test_userIsFetched_evenAfterCallingSynchronize() throws {
+    @MainActor func test_userIsFetched_evenAfterCallingSynchronize() throws {
         // Simulate `synchronize` call.
         controller.synchronize()
 
@@ -185,10 +174,9 @@ final class UserController_Tests: XCTestCase {
 
     func test_muteUser_propagatesError() {
         // Simulate `mute` call and catch the completion.
-        var completionError: Error?
-        controller.mute { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
-            completionError = $0
+        nonisolated(unsafe) var completionError: Error?
+        controller.mute { error in
+            completionError = error
         }
 
         // Simulate network response with the error.
@@ -201,11 +189,8 @@ final class UserController_Tests: XCTestCase {
 
     func test_muteUser_propagatesNilError() {
         // Simulate `mute` call and catch the completion.
-        var completionIsCalled = false
-        controller.mute { [callbackQueueID] error in
-            // Assert callback queue is correct.
-            AssertTestQueue(withId: callbackQueueID)
-            // Assert there is no error.
+        nonisolated(unsafe) var completionIsCalled = false
+        controller.mute { error in
             XCTAssertNil(error)
             completionIsCalled = true
         }
@@ -243,7 +228,7 @@ final class UserController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .initialized)
 
         // Set the delegate
-        controller.delegate = ChatUserController_Delegate(expectedQueueId: callbackQueueID)
+        controller.delegate = ChatUserController_Delegate()
 
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
@@ -263,7 +248,7 @@ final class UserController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .initialized)
 
         // Set the delegate
-        controller.delegate = ChatUserController_Delegate(expectedQueueId: callbackQueueID)
+        controller.delegate = ChatUserController_Delegate()
 
         // Assert state changed
         AssertAsync.willBeEqual(controller.state, .localDataFetched)
@@ -294,7 +279,7 @@ final class UserController_Tests: XCTestCase {
     // MARK: - Delegate
 
     func test_delegate_isAssignedCorrectly() {
-        let delegate = ChatUserController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = ChatUserController_Delegate()
 
         // Set the delegate
         controller.delegate = delegate
@@ -303,9 +288,9 @@ final class UserController_Tests: XCTestCase {
         XCTAssert(controller.delegate === delegate)
     }
 
-    func test_delegate_isNotifiedAboutStateChanges() throws {
+    @MainActor func test_delegate_isNotifiedAboutStateChanges() throws {
         // Set the delegate
-        let delegate = ChatUserController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = ChatUserController_Delegate()
         controller.delegate = delegate
 
         // Synchronize
@@ -321,9 +306,9 @@ final class UserController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
     }
 
-    func test_delegate_isNotifiedAboutCreatedUser() throws {
+    @MainActor func test_delegate_isNotifiedAboutCreatedUser() throws {
         // Set the delegate
-        let delegate = ChatUserController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = ChatUserController_Delegate()
         controller.delegate = delegate
 
         // Create user in the database.
@@ -333,9 +318,9 @@ final class UserController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.didUpdateUser_change?.fieldChange(\.id), .create(userId))
     }
 
-    func test_delegate_isNotifiedAboutUpdatedUser() throws {
+    @MainActor func test_delegate_isNotifiedAboutUpdatedUser() throws {
         // Set the delegate
-        let delegate = ChatUserController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = ChatUserController_Delegate()
         controller.delegate = delegate
 
         // Create user in the database.
@@ -374,10 +359,9 @@ final class UserController_Tests: XCTestCase {
 
     func test_unmuteUser_propagatesError() {
         // Simulate `unmute` call and catch the completion.
-        var completionError: Error?
-        controller.unmute { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
-            completionError = $0
+        nonisolated(unsafe) var completionError: Error?
+        controller.unmute { error in
+            completionError = error
         }
 
         // Simulate network response with the error.
@@ -390,11 +374,8 @@ final class UserController_Tests: XCTestCase {
 
     func test_unmuteUser_propagatesNilError() {
         // Simulate `unmute` call and catch the completion.
-        var completionIsCalled = false
-        controller.unmute { [callbackQueueID] error in
-            // Assert callback queue is correct.
-            AssertTestQueue(withId: callbackQueueID)
-            // Assert there is no error.
+        nonisolated(unsafe) var completionIsCalled = false
+        controller.unmute { error in
             XCTAssertNil(error)
             completionIsCalled = true
         }
@@ -429,10 +410,9 @@ final class UserController_Tests: XCTestCase {
 
     func test_flagUser_propagatesError() {
         // Simulate `flag` call and catch the completion.
-        var completionError: Error?
-        controller.flag { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
-            completionError = $0
+        nonisolated(unsafe) var completionError: Error?
+        controller.flag { error in
+            completionError = error
         }
 
         // Simulate network response with the error.
@@ -445,11 +425,8 @@ final class UserController_Tests: XCTestCase {
 
     func test_flagUser_propagatesNilError() {
         // Simulate `flag` call and catch the completion.
-        var completionIsCalled = false
-        controller.flag { [callbackQueueID] error in
-            // Assert callback queue is correct.
-            AssertTestQueue(withId: callbackQueueID)
-            // Assert there is no error.
+        nonisolated(unsafe) var completionIsCalled = false
+        controller.flag { error in
             XCTAssertNil(error)
             completionIsCalled = true
         }
@@ -498,10 +475,9 @@ final class UserController_Tests: XCTestCase {
 
     func test_unflagUser_propagatesError() {
         // Simulate `unflag` call and catch the completion.
-        var completionError: Error?
-        controller.unflag { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
-            completionError = $0
+        nonisolated(unsafe) var completionError: Error?
+        controller.unflag { error in
+            completionError = error
         }
 
         // Simulate network response with the error.
@@ -514,11 +490,8 @@ final class UserController_Tests: XCTestCase {
 
     func test_unflagUser_propagatesNilError() {
         // Simulate `unflag` call and catch the completion.
-        var completionIsCalled = false
-        controller.unflag { [callbackQueueID] error in
-            // Assert callback queue is correct.
-            AssertTestQueue(withId: callbackQueueID)
-            // Assert there is no error.
+        nonisolated(unsafe) var completionIsCalled = false
+        controller.unflag { error in
             XCTAssertNil(error)
             completionIsCalled = true
         }
@@ -567,10 +540,9 @@ final class UserController_Tests: XCTestCase {
 
     func test_blockUser_propagatesError() {
         // Simulate `block` call and catch the completion.
-        var completionError: Error?
-        controller.block { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
-            completionError = $0
+        nonisolated(unsafe) var completionError: Error?
+        controller.block { error in
+            completionError = error
         }
 
         // Simulate network response with the error.
@@ -583,11 +555,8 @@ final class UserController_Tests: XCTestCase {
 
     func test_blockUser_propagatesNilError() {
         // Simulate `block` call and catch the completion.
-        var completionIsCalled = false
-        controller.block { [callbackQueueID] error in
-            // Assert callback queue is correct.
-            AssertTestQueue(withId: callbackQueueID)
-            // Assert there is no error.
+        nonisolated(unsafe) var completionIsCalled = false
+        controller.block { error in
             XCTAssertNil(error)
             completionIsCalled = true
         }
@@ -634,10 +603,9 @@ final class UserController_Tests: XCTestCase {
 
     func test_unblockUser_propagatesError() {
         // Simulate `unblock` call and catch the completion.
-        var completionError: Error?
-        controller.unblock { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
-            completionError = $0
+        nonisolated(unsafe) var completionError: Error?
+        controller.unblock { error in
+            completionError = error
         }
 
         // Simulate network response with the error.
@@ -650,11 +618,8 @@ final class UserController_Tests: XCTestCase {
 
     func test_unblockUser_propagatesNilError() {
         // Simulate `unblock` call and catch the completion.
-        var completionIsCalled = false
-        controller.unblock { [callbackQueueID] error in
-            // Assert callback queue is correct.
-            AssertTestQueue(withId: callbackQueueID)
-            // Assert there is no error.
+        nonisolated(unsafe) var completionIsCalled = false
+        controller.unblock { error in
             XCTAssertNil(error)
             completionIsCalled = true
         }
@@ -699,7 +664,7 @@ final class UserController_Tests: XCTestCase {
     
     // MARK: -
     
-    func waitForUser() {
+    @MainActor func waitForUser() {
         guard controller.user == nil else { return }
         let delegate = DelegateWaiter()
         controller.delegate = delegate

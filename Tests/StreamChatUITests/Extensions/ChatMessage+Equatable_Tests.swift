@@ -96,7 +96,7 @@ final class ChatMessage_Equatable_Tests: XCTestCase {
         let numberOfThreadParticipants = 4
         let numberOfMentionedUsers = 2
 
-        var messages: [ChatMessage] = []
+        nonisolated(unsafe) var messages: [ChatMessage] = []
 
         try database.writeSynchronously { session in
             var previousMessages: [MessageDTO] = []

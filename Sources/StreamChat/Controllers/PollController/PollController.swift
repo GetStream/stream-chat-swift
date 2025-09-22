@@ -2,6 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import CoreData
 import Foundation
 
@@ -17,7 +18,7 @@ public extension ChatClient {
     }
 }
 
-public class PollController: DataController, DelegateCallable, DataStoreProvider {
+public class PollController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
 
@@ -55,8 +56,6 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     }
     
     let ownVotesQuery: PollVoteListQuery
-    
-    private let eventsController: EventsController
     
     private lazy var pollObserver: BackgroundEntityDatabaseObserver<Poll, PollDTO>? = { [weak self] in
         guard let self = self else {
@@ -119,13 +118,13 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     }
     
     private let environment: Environment
+    private var eventsObserver: AnyCancellable?
         
     init(client: ChatClient, messageId: MessageId, pollId: String, environment: Environment = .init()) {
         self.client = client
         self.messageId = messageId
         self.pollId = pollId
         self.environment = environment
-        eventsController = client.eventsController()
         ownVotesQuery = PollVoteListQuery(
             pollId: pollId,
             filter: .and(
@@ -135,10 +134,16 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         )
         pollsRepository = client.pollsRepository
         super.init()
-        eventsController.delegate = self
+        eventsObserver = client.subscribe(toEvent: PollVoteChangedEvent.self, handler: { [weak self] event in
+            guard let self else { return }
+            let vote = event.vote
+            if vote.user?.id == self.client.currentUserId {
+                self.pollsRepository.link(pollVote: vote, to: ownVotesQuery)
+            }
+        })
     }
     
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
         startObserversIfNeeded()
 
         pollsRepository.queryPollVotes(query: ownVotesQuery) { [weak self] result in
@@ -161,10 +166,12 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     public func castPollVote(
         answerText: String?,
         optionId: String?,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         if answerText == nil && optionId == nil {
-            completion?(ClientError.InvalidInput())
+            callback {
+                completion?(ClientError.InvalidInput())
+            }
             return
         }
         
@@ -200,7 +207,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     ///   - completion: A closure to be called upon completion, with an optional `Error` if something went wrong.
     public func removePollVote(
         voteId: String,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         pollsRepository.removePollVote(
             messageId: messageId,
@@ -218,7 +225,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     ///
     /// - Parameters:
     ///   - completion: A closure to be called upon completion, with an optional `Error` if something went wrong.
-    public func closePoll(completion: ((Error?) -> Void)? = nil) {
+    public func closePoll(completion: (@MainActor(Error?) -> Void)? = nil) {
         pollsRepository.closePoll(pollId: pollId, completion: { [weak self] result in
             self?.callback {
                 completion?(result)
@@ -237,7 +244,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
         text: String,
         position: Int? = nil,
         extraData: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         pollsRepository.suggestPollOption(
             pollId: pollId,
@@ -268,7 +275,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
 }
 
 /// Represents the visibility of votes in a poll.
-public struct VotingVisibility: RawRepresentable, Equatable {
+public struct VotingVisibility: RawRepresentable, Equatable, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {
@@ -308,17 +315,6 @@ extension PollController {
                 itemCreator: $2,
                 itemReuseKeyPaths: (\PollVote.id, \PollVoteDTO.id)
             )
-        }
-    }
-}
-
-extension PollController: EventsControllerDelegate {
-    public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        if let event = event as? PollVoteChangedEvent {
-            let vote = event.vote
-            if vote.user?.id == client.currentUserId {
-                pollsRepository.link(pollVote: vote, to: ownVotesQuery)
-            }
         }
     }
 }

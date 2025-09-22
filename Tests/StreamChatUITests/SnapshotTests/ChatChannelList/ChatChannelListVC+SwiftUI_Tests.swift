@@ -9,7 +9,7 @@ import StreamSwiftTestHelpers
 import SwiftUI
 import XCTest
 
-final class ChatChannelListView_Tests: iOS13TestCase {
+@MainActor final class ChatChannelListView_Tests: iOS13TestCase {
     var chatChannelList: SwiftUIViewControllerRepresentable<ChatChannelListVC>!
     var mockedChannelListController: ChatChannelListController_Mock!
 

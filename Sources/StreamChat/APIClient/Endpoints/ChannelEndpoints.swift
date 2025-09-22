@@ -314,7 +314,7 @@ extension Endpoint {
 
     static func startTypingEvent(cid: ChannelId, parentMessageId: MessageId?) -> Endpoint<EmptyResponse> {
         let eventType = EventType.userStartTyping
-        let body: Encodable
+        let body: Encodable & Sendable
         if let parentMessageId = parentMessageId {
             body = ["event": ["type": eventType.rawValue, "parent_id": parentMessageId]]
         } else {
@@ -331,7 +331,7 @@ extension Endpoint {
 
     static func stopTypingEvent(cid: ChannelId, parentMessageId: MessageId?) -> Endpoint<EmptyResponse> {
         let eventType = EventType.userStopTyping
-        let body: Encodable
+        let body: Encodable & Sendable
         if let parentMessageId = parentMessageId {
             body = ["event": ["type": eventType.rawValue, "parent_id": parentMessageId]]
         } else {

@@ -5,7 +5,7 @@
 import Foundation
 
 /// The normaliser computes the percentage values or value of the provided array or value.
-internal class AudioValuePercentageNormaliser {
+class AudioValuePercentageNormaliser: @unchecked Sendable {
     internal let valueRange: ClosedRange<Float> = -50...0
 
     /// Compute the range between the min and max values

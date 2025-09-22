@@ -21,7 +21,7 @@ class PollVoteListQueryDTO: NSManagedObject {
             keyPath: #keyPath(PollVoteListQueryDTO.filterHash),
             equalTo: filterHash,
             context: context
-        ).first
+        ).first as? Self
     }
 
     static func loadOrCreate(filterHash: String, context: NSManagedObjectContext) -> PollVoteListQueryDTO {

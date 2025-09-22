@@ -14,9 +14,6 @@ final class MessageSearchController_Tests: XCTestCase {
 
     var query: MessageSearchQuery!
     var controller: ChatMessageSearchController!
-    var controllerCallbackQueueID: UUID!
-    /// Workaround for unwrapping **controllerCallbackQueueID!** in each closure that captures it
-    private var callbackQueueID: UUID { controllerCallbackQueueID }
 
     override func setUpWithError() throws {
         super.setUp()
@@ -28,25 +25,18 @@ final class MessageSearchController_Tests: XCTestCase {
             messageFilter: .queryText("")
         )
         controller = ChatMessageSearchController(client: client, environment: env.environment)
-        controllerCallbackQueueID = UUID()
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
         // Message search requires a current user
         client.authenticationRepository.setMockToken()
     }
 
     override func tearDown() {
-        controllerCallbackQueueID = nil
-
         env.messageUpdater?.cleanUp()
         (client as? ChatClient_Mock)?.cleanUp()
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
-            Assert.canBeReleased(&env)
         }
-        controller = nil
-        client = nil
-        env = nil
+
         super.tearDown()
     }
 
@@ -105,15 +95,11 @@ final class MessageSearchController_Tests: XCTestCase {
     // MARK: - search(text:)
 
     func test_searchWithText_callsMessageUpdater() {
-        let queueId = UUID()
-        controller.callbackQueue = .testQueue(withId: queueId)
-
         // Simulate `search` calls and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionError: Error?
         controller.search(text: "test") { error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: queueId)
-            completionCalled = true
+            completionError = error
         }
 
         // Assert the updater is called with the query
@@ -122,7 +108,7 @@ final class MessageSearchController_Tests: XCTestCase {
             controller.query.filterHash
         )
         // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
+        XCTAssertTrue(completionError == nil)
 
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
@@ -137,14 +123,14 @@ final class MessageSearchController_Tests: XCTestCase {
         env.messageUpdater?.search_completion = nil
 
         // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
+        AssertAsync.willBeTrue(completionError == nil)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
 
-    func test_searchWithText_resultIsReported() throws {
+    @MainActor func test_searchWithText_resultIsReported() throws {
         // Set the delegate
-        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate()
         controller.delegate = delegate
 
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
@@ -181,7 +167,7 @@ final class MessageSearchController_Tests: XCTestCase {
     /// This test simulates a bug where the `message` field was not updated if it wasn't
     /// touched before calling synchronize.
     func test_searchWithText_resultIsReported_evenAfterCallingSynchronize() throws {
-        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate()
         controller.delegate = delegate
         
         // Make a search
@@ -200,13 +186,13 @@ final class MessageSearchController_Tests: XCTestCase {
         XCTAssertEqual(controller.messages, [message])
     }
 
-    func test_searchWithText_newlyMatchedMessage_isReportedAsInserted() throws {
+    @MainActor func test_searchWithText_newlyMatchedMessage_isReportedAsInserted() throws {
         // Add message to DB before searching
         let messageId = MessageId.unique
         try client.databaseContainer.createMessage(id: messageId)
 
         // Set the delegate
-        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate()
         controller.delegate = delegate
 
         // Make a search
@@ -225,12 +211,12 @@ final class MessageSearchController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.didChangeMessages_changes, [.insert(message, index: [0, 0])])
     }
 
-    func test_searchWithText_whenNewSearchIsMade_oldMessagesAreNotLinked() throws {
+    @MainActor func test_searchWithText_whenNewSearchIsMade_oldMessagesAreNotLinked() throws {
         // For this test, we need to check if `.replace` update policy is correctly passed to
         // the updater instance
 
         // Set the delegate
-        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate()
         controller.delegate = delegate
 
         // Make a search
@@ -278,7 +264,7 @@ final class MessageSearchController_Tests: XCTestCase {
         let testError = TestError()
 
         // Make a search
-        var reportedError: Error?
+        nonisolated(unsafe) var reportedError: Error?
         controller.search(text: "test") { error in
             reportedError = error
         }
@@ -291,7 +277,7 @@ final class MessageSearchController_Tests: XCTestCase {
 
     func test_searchWithTerm_emptySearch_clearsSearch() throws {
         // Set the delegate
-        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate()
         controller.delegate = delegate
 
         // Make a search
@@ -316,15 +302,11 @@ final class MessageSearchController_Tests: XCTestCase {
     // MARK: - search(query:)
 
     func test_searchWithQuery_callsMessageUpdater() {
-        let queueId = UUID()
-        controller.callbackQueue = .testQueue(withId: queueId)
-
         // Simulate `search` calls and catch the completion
-        var completionCalled = false
+        nonisolated(unsafe) var completionError: Error?
         controller.search(query: query) { error in
             XCTAssertNil(error)
-            AssertTestQueue(withId: queueId)
-            completionCalled = true
+            completionError = error
         }
 
         // Assert the updater is called with the query
@@ -333,7 +315,7 @@ final class MessageSearchController_Tests: XCTestCase {
             controller.query.filterHash
         )
         // Completion shouldn't be called yet
-        XCTAssertFalse(completionCalled)
+        XCTAssertTrue(completionError == nil)
 
         // Keep a weak ref so we can check if it's actually deallocated
         weak var weakController = controller
@@ -348,14 +330,14 @@ final class MessageSearchController_Tests: XCTestCase {
         env.messageUpdater!.search_completion = nil
 
         // Completion should be called
-        AssertAsync.willBeTrue(completionCalled)
+        AssertAsync.willBeTrue(completionError == nil)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
     }
 
-    func test_searchWithQuery_resultIsReported() throws {
+    @MainActor func test_searchWithQuery_resultIsReported() throws {
         // Set the delegate
-        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate()
         controller.delegate = delegate
 
         // Assert the delegate is assigned correctly. We should test this because of the type-erasing we
@@ -390,7 +372,7 @@ final class MessageSearchController_Tests: XCTestCase {
     /// This test simulates a bug where the `messages` field was not updated if it wasn't
     /// touched before calling synchronize.
     func test_searchWithQuery_resultIsReported_evenAfterCallingSynchronize() throws {
-        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate()
         controller.delegate = delegate
         
         // Make a search
@@ -409,13 +391,13 @@ final class MessageSearchController_Tests: XCTestCase {
         XCTAssertEqual(controller.messages, [message])
     }
 
-    func test_searchWithQuery_newlyMatchedMessage_isReportedAsInserted() throws {
+    @MainActor func test_searchWithQuery_newlyMatchedMessage_isReportedAsInserted() throws {
         // Add message to DB before searching
         let messageId = MessageId.unique
         try client.databaseContainer.createMessage(id: messageId)
 
         // Set the delegate
-        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate()
         controller.delegate = delegate
 
         // Make a search
@@ -434,12 +416,12 @@ final class MessageSearchController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.didChangeMessages_changes, [.insert(message, index: [0, 0])])
     }
 
-    func test_searchWithQuery_whenNewSearchIsMade_oldMessagesAreNotLinked() throws {
+    @MainActor func test_searchWithQuery_whenNewSearchIsMade_oldMessagesAreNotLinked() throws {
         // For this test, we need to check if `.replace` update policy is correctly passed to
         // the updater instance
 
         // Set the delegate
-        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate()
         controller.delegate = delegate
 
         // Make a search
@@ -483,9 +465,9 @@ final class MessageSearchController_Tests: XCTestCase {
         )
     }
 
-    func test_searchWithQuery_sortingIsRespected() throws {
+    @MainActor func test_searchWithQuery_sortingIsRespected() throws {
         // Set the delegate
-        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate()
         controller.delegate = delegate
 
         // Make a search
@@ -529,7 +511,7 @@ final class MessageSearchController_Tests: XCTestCase {
         let testError = TestError()
 
         // Make a search
-        var reportedError: Error?
+        nonisolated(unsafe) var reportedError: Error?
         controller.search(query: query) { error in
             reportedError = error
         }
@@ -544,7 +526,7 @@ final class MessageSearchController_Tests: XCTestCase {
 
     func test_loadNextMessages_propagatesError() {
         let testError = TestError()
-        var reportedError: Error?
+        nonisolated(unsafe) var reportedError: Error?
 
         // Make a search so we can call `loadNextMessages`
         controller.search(text: "test")
@@ -617,9 +599,9 @@ final class MessageSearchController_Tests: XCTestCase {
         XCTAssertNil(pagination?.cursor)
     }
 
-    func test_loadNextMessages_nextResultPage_isLoaded() throws {
+    @MainActor func test_loadNextMessages_nextResultPage_isLoaded() throws {
         // Set the delegate
-        let delegate = MessageSearchController_Delegate(expectedQueueId: controllerCallbackQueueID)
+        let delegate = MessageSearchController_Delegate()
         controller.delegate = delegate
 
         let message = try simulateInitialSearch(query: .init(
@@ -649,7 +631,7 @@ final class MessageSearchController_Tests: XCTestCase {
     }
 
     func test_loadNextMessages_nextResultsPage_cantBeCalledBeforeSearch() {
-        var reportedError: Error?
+        nonisolated(unsafe) var reportedError: Error?
         controller.loadNextMessages { error in
             reportedError = error
         }
@@ -689,8 +671,10 @@ final class MessageSearchController_Tests: XCTestCase {
         let delegate = try XCTUnwrap(controller.delegate as? MessageSearchController_Delegate)
         guard controller.messages.count != count else { return }
         let expectation = XCTestExpectation(description: "Messages change")
-        delegate.didChangeMessagesExpectedCount = count
-        delegate.didChangeMessagesExpectation = expectation
+        StreamConcurrency.onMain {
+            delegate.didChangeMessagesExpectedCount = count
+            delegate.didChangeMessagesExpectation = expectation
+        }
         wait(for: [expectation], timeout: defaultTimeout)
     }
 }

@@ -20,7 +20,7 @@ final class PollResultsVoteListVC_Tests: XCTestCase {
 
     lazy var pollFactory = PollMockFactory(currentUser: currentUser)
 
-    func test_appearance() {
+    @MainActor func test_appearance() {
         let poll = pollFactory.makePoll(isClosed: true)
         let pollOption = poll.options[1]
         let votes = pollOption.latestVotes
@@ -37,7 +37,7 @@ final class PollResultsVoteListVC_Tests: XCTestCase {
     }
 }
 
-class PollVoteListController_Mock: PollVoteListController {
+class PollVoteListController_Mock: PollVoteListController, @unchecked Sendable {
     init() {
         super.init(query: .init(pollId: .unique), client: .mock)
     }

@@ -4,7 +4,7 @@
 
 import UIKit
 
-protocol SkeletonLoadable {
+@MainActor protocol SkeletonLoadable {
     func makeAnimationGroup(previousGroup: CAAnimationGroup?) -> CAAnimationGroup
 }
 

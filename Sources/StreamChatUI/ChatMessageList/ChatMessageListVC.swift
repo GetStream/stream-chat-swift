@@ -647,12 +647,12 @@ open class ChatMessageListVC: _ViewController,
     /// Jump to the current unread message if there is one.
     /// - Parameter animated: `true` if you want to animate the change in position; `false` if it should be immediate.
     /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
-    open func jumpToUnreadMessage(animated: Bool = true, onHighlight: ((IndexPath) -> Void)? = nil) {
+    open func jumpToUnreadMessage(animated: Bool = true, onHighlight: (@Sendable(IndexPath) -> Void)? = nil) {
         getCurrentUnreadMessageId { [weak self] messageId in
             guard let jumpToUnreadMessageId = messageId else { return }
 
             // The delay helps having a smoother scrolling animation.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
                 self?.jumpToMessage(id: jumpToUnreadMessageId, animated: animated, onHighlight: onHighlight)
             }
         }
@@ -750,7 +750,7 @@ open class ChatMessageListVC: _ViewController,
     ///
     /// Note: This is a current backend limitation. Ideally, in the future,
     /// we will get the `unreadMessageId` directly from the backend.
-    private func getCurrentUnreadMessageId(completion: @escaping (MessageId?) -> Void) {
+    private func getCurrentUnreadMessageId(completion: @escaping @Sendable(MessageId?) -> Void) {
         if let jumpToUnreadMessageId = self.jumpToUnreadMessageId {
             return completion(jumpToUnreadMessageId)
         }

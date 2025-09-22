@@ -15,3 +15,5 @@ struct CustomEventRequestBody<Payload: CustomEventPayload>: Encodable {
         try json.encode(to: encoder)
     }
 }
+
+extension CustomEventRequestBody: Sendable where Payload: Sendable {}

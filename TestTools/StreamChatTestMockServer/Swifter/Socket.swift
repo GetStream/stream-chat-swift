@@ -1,8 +1,5 @@
 //
-//  Socket.swift
-//  Swifter
-//
-//  Copyright (c) 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -22,8 +19,7 @@ public enum SocketError: Error {
 }
 
 // swiftlint: disable identifier_name
-open class Socket: Hashable, Equatable {
-
+open class Socket: Hashable, Equatable, @unchecked Sendable {
     let socketFileDescriptor: Int32
     private var shutdown = false
 
@@ -36,7 +32,7 @@ open class Socket: Hashable, Equatable {
     }
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(self.socketFileDescriptor)
+        hasher.combine(socketFileDescriptor)
     }
 
     public func close() {
@@ -44,7 +40,7 @@ open class Socket: Hashable, Equatable {
             return
         }
         shutdown = true
-        Socket.close(self.socketFileDescriptor)
+        Socket.close(socketFileDescriptor)
     }
 
     public func port() throws -> in_port_t {
@@ -56,9 +52,9 @@ open class Socket: Hashable, Equatable {
             }
             let sin_port = pointer.pointee.sin_port
             #if os(Linux)
-                return ntohs(sin_port)
+            return ntohs(sin_port)
             #else
-                return Int(OSHostByteOrder()) != OSLittleEndian ? sin_port.littleEndian : sin_port.bigEndian
+            return Int(OSHostByteOrder()) != OSLittleEndian ? sin_port.littleEndian : sin_port.bigEndian
             #endif
         }
     }
@@ -95,7 +91,7 @@ open class Socket: Hashable, Equatable {
     public func writeData(_ data: Data) throws {
         #if compiler(>=5.0)
         try data.withUnsafeBytes { (body: UnsafeRawBufferPointer) -> Void in
-            if let baseAddress = body.baseAddress, body.count > 0 {
+            if let baseAddress = body.baseAddress, !body.isEmpty {
                 let pointer = baseAddress.assumingMemoryBound(to: UInt8.self)
                 try self.writeBuffer(pointer, length: data.count)
             }
@@ -111,9 +107,9 @@ open class Socket: Hashable, Equatable {
         var sent = 0
         while sent < length {
             #if os(Linux)
-                let result = send(self.socketFileDescriptor, pointer + sent, Int(length - sent), Int32(MSG_NOSIGNAL))
+            let result = send(socketFileDescriptor, pointer + sent, Int(length - sent), Int32(MSG_NOSIGNAL))
             #else
-                let result = write(self.socketFileDescriptor, pointer + sent, Int(length - sent))
+            let result = write(socketFileDescriptor, pointer + sent, Int(length - sent))
             #endif
             if result <= 0 {
                 throw SocketError.writeFailed(Errno.description())
@@ -132,10 +128,10 @@ open class Socket: Hashable, Equatable {
         var byte: UInt8 = 0
 
         #if os(Linux)
-	    let count = Glibc.read(self.socketFileDescriptor as Int32, &byte, 1)
-	    #else
-	    let count = Darwin.read(self.socketFileDescriptor as Int32, &byte, 1)
-	    #endif
+        let count = Glibc.read(socketFileDescriptor as Int32, &byte, 1)
+        #else
+        let count = Darwin.read(socketFileDescriptor as Int32, &byte, 1)
+        #endif
 
         guard count > 0 else {
             throw SocketError.recvFailed(Errno.description())
@@ -149,7 +145,7 @@ open class Socket: Hashable, Equatable {
     /// - Returns: A buffer containing the bytes read
     /// - Throws: SocketError.recvFailed if unable to read bytes from the socket
     open func read(length: Int) throws -> [UInt8] {
-        return try [UInt8](unsafeUninitializedCapacity: length) { buffer, bytesRead in
+        try [UInt8](unsafeUninitializedCapacity: length) { buffer, bytesRead in
             bytesRead = try read(into: &buffer, length: length)
         }
     }
@@ -171,10 +167,10 @@ open class Socket: Hashable, Equatable {
             let readLength = offset + Socket.kBufferLength < length ? Socket.kBufferLength : length - offset
 
             #if os(Linux)
-            let bytesRead = Glibc.read(self.socketFileDescriptor as Int32, baseAddress + offset, readLength)
-	        #else
-	        let bytesRead = Darwin.read(self.socketFileDescriptor as Int32, baseAddress + offset, readLength)
-	        #endif
+            let bytesRead = Glibc.read(socketFileDescriptor as Int32, baseAddress + offset, readLength)
+            #else
+            let bytesRead = Darwin.read(socketFileDescriptor as Int32, baseAddress + offset, readLength)
+            #endif
 
             guard bytesRead > 0 else {
                 throw SocketError.recvFailed(Errno.description())
@@ -193,7 +189,7 @@ open class Socket: Hashable, Equatable {
         var characters: String = ""
         var index: UInt8 = 0
         repeat {
-            index = try self.read()
+            index = try read()
             if index > Socket.CR { characters.append(Character(UnicodeScalar(index))) }
         } while index != Socket.NL
         return characters
@@ -201,7 +197,7 @@ open class Socket: Hashable, Equatable {
 
     public func peername() throws -> String {
         var addr = sockaddr(), len: socklen_t = socklen_t(MemoryLayout<sockaddr>.size)
-        if getpeername(self.socketFileDescriptor, &addr, &len) != 0 {
+        if getpeername(socketFileDescriptor, &addr, &len) != 0 {
             throw SocketError.getPeerNameFailed(Errno.description())
         }
         var hostBuffer = [CChar](repeating: 0, count: Int(NI_MAXHOST))
@@ -213,24 +209,24 @@ open class Socket: Hashable, Equatable {
 
     public class func setNoSigPipe(_ socket: Int32) {
         #if os(Linux)
-            // There is no SO_NOSIGPIPE in Linux (nor some other systems). You can instead use the MSG_NOSIGNAL flag when calling send(),
-            // or use signal(SIGPIPE, SIG_IGN) to make your entire application ignore SIGPIPE.
+        // There is no SO_NOSIGPIPE in Linux (nor some other systems). You can instead use the MSG_NOSIGNAL flag when calling send(),
+        // or use signal(SIGPIPE, SIG_IGN) to make your entire application ignore SIGPIPE.
         #else
-            // Prevents crashes when blocking calls are pending and the app is paused ( via Home button ).
-            var no_sig_pipe: Int32 = 1
-            setsockopt(socket, SOL_SOCKET, SO_NOSIGPIPE, &no_sig_pipe, socklen_t(MemoryLayout<Int32>.size))
+        // Prevents crashes when blocking calls are pending and the app is paused ( via Home button ).
+        var no_sig_pipe: Int32 = 1
+        setsockopt(socket, SOL_SOCKET, SO_NOSIGPIPE, &no_sig_pipe, socklen_t(MemoryLayout<Int32>.size))
         #endif
     }
 
     public class func close(_ socket: Int32) {
         #if os(Linux)
-            _ = Glibc.close(socket)
+        _ = Glibc.close(socket)
         #else
-            _ = Darwin.close(socket)
+        _ = Darwin.close(socket)
         #endif
     }
 }
 
 public func == (socket1: Socket, socket2: Socket) -> Bool {
-    return socket1.socketFileDescriptor == socket2.socketFileDescriptor
+    socket1.socketFileDescriptor == socket2.socketFileDescriptor
 }

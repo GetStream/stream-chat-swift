@@ -157,7 +157,7 @@ final class ChatThreadListController_Tests: XCTestCase {
         XCTAssertEqual(repositoryMock.loadThreadsCalledWith?.next, nextCursor2)
     }
 
-    func test_observer_triggerDidChangeThreads_threadsHaveCorrectOrder() throws {
+    @MainActor func test_observer_triggerDidChangeThreads_threadsHaveCorrectOrder() throws {
         class DelegateMock: ChatThreadListControllerDelegate {
             var threads: [ChatThread] = []
             let expectation = XCTestExpectation(description: "Did Change Threads")
@@ -343,8 +343,10 @@ extension ChatThreadListController_Tests {
 
     private func waitForThreadsUpdate(file: StaticString = #file, line: UInt = #line, block: () -> Void) {
         let threadsExpectation = expectation(description: "Threads update")
-        let delegate = ThreadsUpdateWaiter(threadsExpectation: threadsExpectation)
-        controller.delegate = delegate
+        StreamConcurrency.onMain {
+            let delegate = ThreadsUpdateWaiter(threadsExpectation: threadsExpectation)
+            controller.delegate = delegate
+        }
         block()
         wait(for: [threadsExpectation], timeout: defaultTimeout)
     }

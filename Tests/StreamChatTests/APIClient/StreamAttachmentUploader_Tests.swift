@@ -16,7 +16,7 @@ final class StreamAttachmentUploader_Tests: XCTestCase {
         let mockedAttachment = ChatMessageFileAttachment.mock(
             id: .init(cid: .unique, messageId: .unique, index: .unique)
         )
-        let mockProgress: ((Double) -> Void) = {
+        let mockProgress: (@Sendable(Double) -> Void) = {
             XCTAssertEqual($0, expectedProgress)
             expProgressCalled.fulfill()
         }

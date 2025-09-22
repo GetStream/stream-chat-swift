@@ -88,10 +88,7 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
         livestreamChannelController = nil
 
         // Simulate channel update event
-        controller?.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller?.didReceiveEvent(event)
 
         // Use AssertAsync to wait for the async update (delegate callback happens on main queue)
         AssertAsync {
@@ -154,15 +151,9 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
         )
         
         // Send the events
-        controller?.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event1
-        )
+        controller?.didReceiveEvent(event1)
         
-        controller?.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event2
-        )
+        controller?.didReceiveEvent(event2)
 
         // Use AssertAsync to wait for the async updates
         AssertAsync {
@@ -267,10 +258,7 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
             unreadCount: nil
         )
         
-        controller?.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller?.didReceiveEvent(event)
 
         // Use AssertAsync to wait for the async update
         AssertAsync {

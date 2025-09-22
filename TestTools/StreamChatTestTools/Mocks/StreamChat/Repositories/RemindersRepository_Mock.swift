@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 /// Mock implementation of RemindersRepository
-final class RemindersRepository_Mock: RemindersRepository {
+final class RemindersRepository_Mock: RemindersRepository, @unchecked Sendable {
     var loadReminders_callCount: Int = 0
     var loadReminders_query: MessageReminderListQuery?
     var loadReminders_completion: ((Result<ReminderListResponse, Error>) -> Void)?
@@ -110,8 +110,8 @@ final class RemindersRepository_Mock: RemindersRepository {
     }
     
     override func deleteReminder(
-        messageId: MessageId, 
-        cid: ChannelId, 
+        messageId: MessageId,
+        cid: ChannelId,
         completion: @escaping ((Error?) -> Void)
     ) {
         deleteReminder_messageId = messageId
@@ -120,4 +120,4 @@ final class RemindersRepository_Mock: RemindersRepository {
         
         completion(deleteReminder_error)
     }
-} 
+}

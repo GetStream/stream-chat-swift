@@ -7,7 +7,7 @@ import StreamChat
 import SwiftUI
 
 /// Protocol of `QuotedChatMessageView` wrapper for use in SwiftUI.
-public protocol QuotedChatMessageViewSwiftUIView: View {
+@MainActor public protocol QuotedChatMessageViewSwiftUIView: View {
     init(dataSource: QuotedChatMessageView.ObservedObject<Self>)
 }
 

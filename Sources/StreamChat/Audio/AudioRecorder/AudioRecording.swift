@@ -22,7 +22,7 @@ public protocol AudioRecording {
     /// - Note: If the recording permission has been answered before
     /// the completionHandler will be called immediately, otherwise it will be called once the user has
     /// replied on the request permission prompt.
-    func beginRecording(_ completionHandler: @escaping (() -> Void))
+    func beginRecording(_ completionHandler: @escaping @Sendable() -> Void)
 
     /// Pause the currently active recording process
     func pauseRecording()
@@ -37,7 +37,7 @@ public protocol AudioRecording {
 // MARK: - Implementation
 
 /// Definition of a class to handle audio recording
-open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegate, AppStateObserverDelegate {
+open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegate, AppStateObserverDelegate, @unchecked Sendable {
     /// Contains the configuration properties required by the AudioRecorder
     public struct Configuration {
         /// The settings that will be used to create **internally** the AVAudioRecorder instances
@@ -78,8 +78,8 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
             self.durationObserverInterval = durationObserverInterval
         }
 
-        /// The default Configuration that is being bused by `StreamAudioRecorder`
-        public static let `default` = Configuration(
+        /// The default Configuration that is being used by `StreamAudioRecorder`
+        nonisolated(unsafe) public static let `default` = Configuration(
             audioRecorderSettings: [
                 AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
                 AVSampleRateKey: 12000,
@@ -116,7 +116,9 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         get { contextValueAccessor.value }
         set {
             contextValueAccessor.value = newValue
-            multicastDelegate.invoke { $0.audioRecorder(self, didUpdateContext: newValue) }
+            StreamConcurrency.onMain {
+                multicastDelegate.invoke { $0.audioRecorder(self, didUpdateContext: newValue) }
+            }
         }
     }
 
@@ -207,7 +209,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         multicastDelegate.add(additionalDelegate: subscriber)
     }
 
-    open func beginRecording(_ completionHandler: @escaping (() -> Void)) {
+    open func beginRecording(_ completionHandler: @escaping @Sendable() -> Void) {
         do {
             /// Enable recording on `AudioSession`
             try audioSessionConfigurator.activateRecordingSession()
@@ -219,7 +221,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
             }
         } catch {
             /// In case we failed to activate the `AudioSession` for recording, inform the delegates
-            multicastDelegate.invoke {
+            multicastDelegate.invokeOnMain {
                 $0.audioRecorder(self, didFailWithError: error)
             }
         }
@@ -256,7 +258,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
                 )
             }
         } catch {
-            multicastDelegate.invoke {
+            multicastDelegate.invokeOnMain {
                 $0.audioRecorder(self, didFailWithError: error)
             }
         }
@@ -275,7 +277,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
             /// We will try to deactivate recording from the `AudioSession`
             try audioSessionConfigurator.deactivateRecordingSession()
         } catch {
-            multicastDelegate.invoke {
+            multicastDelegate.invokeOnMain {
                 $0.audioRecorder(self, didFailWithError: error)
             }
         }
@@ -289,7 +291,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
     ) {
         guard flag else {
             /// If the recording operation hasn't completed successfully, inform the delegates
-            multicastDelegate.invoke {
+            multicastDelegate.invokeOnMain {
                 $0.audioRecorder(
                     self,
                     didFailWithError: AudioRecorderError.failedToSave()
@@ -308,10 +310,10 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
             try data.write(to: newLocation)
 
             /// If we managed to move the recording its new location, inform the delegates
-            multicastDelegate.invoke { $0.audioRecorder(self, didFinishRecordingAtURL: newLocation) }
+            multicastDelegate.invokeOnMain { $0.audioRecorder(self, didFinishRecordingAtURL: newLocation) }
         } catch {
             /// If we failed to move the recording its new location, inform the delegates
-            multicastDelegate.invoke { $0.audioRecorder(self, didFailWithError: error) }
+            multicastDelegate.invokeOnMain { $0.audioRecorder(self, didFailWithError: error) }
         }
     }
 
@@ -338,7 +340,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         error: Error?
     ) {
         /// In case of an error we want to update the delegates with an error
-        multicastDelegate.invoke {
+        multicastDelegate.invokeOnMain {
             $0.audioRecorder(
                 self,
                 didFailWithError: error ?? AudioRecorderError.unknown()
@@ -419,7 +421,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
                 throw AudioRecorderError.failedToBegin()
             }
         } catch {
-            multicastDelegate.invoke { $0.audioRecorder(self, didFailWithError: error) }
+            multicastDelegate.invokeOnMain { $0.audioRecorder(self, didFailWithError: error) }
         }
     }
 
@@ -492,7 +494,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
 // MARK: - Error
 
 /// An enum that acts as a namespace for various audio recording errors that might occur
-public final class AudioRecorderError: ClientError {
+public final class AudioRecorderError: ClientError, @unchecked Sendable {
     /// An unknown error occurred
     public static func unknown(file: StaticString = #file, line: UInt = #line) -> AudioRecorderError { .init("An unknown error occurred.", file, line) }
 

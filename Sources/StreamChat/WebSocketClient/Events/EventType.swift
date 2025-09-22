@@ -5,7 +5,7 @@
 import Foundation
 
 /// An event type.
-public struct EventType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
+public struct EventType: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {
@@ -265,13 +265,13 @@ extension EventType {
 }
 
 extension ClientError {
-    final class UnknownChannelEvent: ClientError {
+    final class UnknownChannelEvent: ClientError, @unchecked Sendable {
         init(_ type: EventType) {
             super.init("Event with \(type) cannot be decoded as system event.")
         }
     }
 
-    final class UnknownUserEvent: ClientError {
+    final class UnknownUserEvent: ClientError, @unchecked Sendable {
         init(_ type: EventType) {
             super.init("Event with \(type) cannot be decoded as system event.")
         }

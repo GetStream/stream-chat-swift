@@ -90,7 +90,7 @@ final class RemindersRepository_Tests: XCTestCase {
         try database.createMessage(id: messageId, cid: cid, text: "Test message")
 
         // Simulate `loadReminders` call
-        var result: Result<ReminderListResponse, Error>?
+        nonisolated(unsafe) var result: Result<ReminderListResponse, Error>?
         let exp = expectation(description: "completion is called")
         repository.loadReminders(query: query) { receivedResult in
             result = receivedResult
@@ -112,7 +112,7 @@ final class RemindersRepository_Tests: XCTestCase {
         XCTAssertNearlySameDate(reminderResponse.reminders.first?.remindAt, remindAt)
         
         // Assert reminder is saved to database
-        var savedReminder: MessageReminder?
+        nonisolated(unsafe) var savedReminder: MessageReminder?
         try database.writeSynchronously { session in
             savedReminder = try session.message(id: messageId)?.reminder?.asModel()
         }
@@ -129,7 +129,7 @@ final class RemindersRepository_Tests: XCTestCase {
         )
         
         // Simulate `loadReminders` call
-        var result: Result<ReminderListResponse, Error>?
+        nonisolated(unsafe) var result: Result<ReminderListResponse, Error>?
         let exp = expectation(description: "completion is called")
         repository.loadReminders(query: query) { receivedResult in
             result = receivedResult
@@ -206,7 +206,7 @@ final class RemindersRepository_Tests: XCTestCase {
         ) { _ in }
         
         // Assert reminder was created locally
-        var expectedRemindAt: Date?
+        nonisolated(unsafe) var expectedRemindAt: Date?
         try database.writeSynchronously { session in
             let message = session.message(id: messageId)
             expectedRemindAt = message?.reminder?.remindAt?.bridgeDate
@@ -234,7 +234,7 @@ final class RemindersRepository_Tests: XCTestCase {
         }
         
         // Assert reminder was created locally
-        var expectedRemindAt: Date?
+        nonisolated(unsafe) var expectedRemindAt: Date?
         try database.writeSynchronously { session in
             let message = session.message(id: messageId)
             expectedRemindAt = message?.reminder?.remindAt?.bridgeDate
@@ -246,7 +246,7 @@ final class RemindersRepository_Tests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
         
         // Assert reminder was rolled back
-        var actualRemindAt: Date?
+        nonisolated(unsafe) var actualRemindAt: Date?
         try database.writeSynchronously { session in
             let message = session.message(id: messageId)
             actualRemindAt = message?.reminder?.remindAt?.bridgeDate
@@ -338,7 +338,7 @@ final class RemindersRepository_Tests: XCTestCase {
         ) { _ in }
         
         // Assert reminder was updated locally (optimistically)
-        var updatedRemindAt: Date?
+        nonisolated(unsafe) var updatedRemindAt: Date?
         try database.writeSynchronously { session in
             let message = session.message(id: messageId)
             updatedRemindAt = message?.reminder?.remindAt?.bridgeDate
@@ -380,7 +380,7 @@ final class RemindersRepository_Tests: XCTestCase {
         }
         
         // Assert reminder was updated locally (optimistically)
-        var updatedRemindAt: Date?
+        nonisolated(unsafe) var updatedRemindAt: Date?
         try database.writeSynchronously { session in
             let message = session.message(id: messageId)
             updatedRemindAt = message?.reminder?.remindAt?.bridgeDate
@@ -393,7 +393,7 @@ final class RemindersRepository_Tests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
         
         // Assert reminder was rolled back to original state
-        var rolledBackRemindAt: Date?
+        nonisolated(unsafe) var rolledBackRemindAt: Date?
         try database.writeSynchronously { session in
             let message = session.message(id: messageId)
             rolledBackRemindAt = message?.reminder?.remindAt?.bridgeDate
@@ -464,7 +464,7 @@ final class RemindersRepository_Tests: XCTestCase {
         }
         
         // Verify reminder exists before deletion
-        var hasReminderBefore = false
+        nonisolated(unsafe) var hasReminderBefore = false
         try database.writeSynchronously { session in
             hasReminderBefore = session.message(id: messageId)?.reminder != nil
         }
@@ -477,7 +477,7 @@ final class RemindersRepository_Tests: XCTestCase {
         ) { _ in }
         
         // Assert reminder was deleted locally (optimistically)
-        var hasReminderAfter = true
+        nonisolated(unsafe) var hasReminderAfter = true
         try database.writeSynchronously { session in
             hasReminderAfter = session.message(id: messageId)?.reminder != nil
         }
@@ -506,9 +506,9 @@ final class RemindersRepository_Tests: XCTestCase {
         }
         
         // Store original reminder values for later comparison
-        var originalRemindAt: Date?
-        var originalCreatedAt: Date?
-        var originalUpdatedAt: Date?
+        nonisolated(unsafe) var originalRemindAt: Date?
+        nonisolated(unsafe) var originalCreatedAt: Date?
+        nonisolated(unsafe) var originalUpdatedAt: Date?
         
         try database.writeSynchronously { session in
             guard let reminder = session.message(id: messageId)?.reminder else { return }
@@ -527,7 +527,7 @@ final class RemindersRepository_Tests: XCTestCase {
         }
         
         // Verify reminder was optimistically deleted
-        var hasReminderAfterDelete = true
+        nonisolated(unsafe) var hasReminderAfterDelete = true
         try database.writeSynchronously { session in
             hasReminderAfterDelete = session.message(id: messageId)?.reminder != nil
         }
@@ -539,9 +539,9 @@ final class RemindersRepository_Tests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
         
         // Assert reminder was restored with original values
-        var restoredRemindAt: Date?
-        var restoredCreatedAt: Date?
-        var restoredUpdatedAt: Date?
+        nonisolated(unsafe) var restoredRemindAt: Date?
+        nonisolated(unsafe) var restoredCreatedAt: Date?
+        nonisolated(unsafe) var restoredUpdatedAt: Date?
         
         try database.writeSynchronously { session in
             guard let reminder = session.message(id: messageId)?.reminder else {

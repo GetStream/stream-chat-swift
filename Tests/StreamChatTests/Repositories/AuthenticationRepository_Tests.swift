@@ -144,7 +144,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     func test_setToken_tokenIsUpdated_doesNotCallTokenWaiters_whenNotRequired() {
-        var completionExecuted = false
+        nonisolated(unsafe) var completionExecuted = false
         repository.provideToken { _ in
             completionExecuted = true
         }
@@ -165,14 +165,14 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // Token Provider Failure
         let testError = TestError()
-        var tokenCalls = 0
+        nonisolated(unsafe) var tokenCalls = 0
         let provider: TokenProvider = {
             tokenCalls += 1
             $0(.failure(testError))
         }
 
         let completionExpectation = expectation(description: "Connect completion")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         XCTAssertNil(repository.tokenProvider)
 
         repository.connectUser(userInfo: userInfo, tokenProvider: provider, completion: { error in
@@ -195,7 +195,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         // Token Provider Failure
         let testError = TestError()
         let providedToken = Token.unique()
-        var tokenCalls = 0
+        nonisolated(unsafe) var tokenCalls = 0
         let provider: TokenProvider = {
             tokenCalls += 1
             if tokenCalls > 8 {
@@ -209,7 +209,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         connectionRepository.connectResult = .success(())
 
         let completionExpectation = expectation(description: "Connect completion")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         XCTAssertNil(repository.tokenProvider)
 
         repository.connectUser(userInfo: userInfo, tokenProvider: provider, completion: { error in
@@ -240,7 +240,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         connectionRepository.connectResult = .failure(testError)
 
         let completionExpectation = expectation(description: "Connect completion")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         XCTAssertNil(repository.tokenProvider)
 
         repository.connectUser(userInfo: userInfo, tokenProvider: provider, completion: { error in
@@ -267,7 +267,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         connectionRepository.connectResult = .success(())
 
         let completionExpectation = expectation(description: "Connect completion")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         XCTAssertNil(repository.tokenProvider)
 
         repository.connectUser(userInfo: userInfo, tokenProvider: provider, completion: { error in
@@ -358,7 +358,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         connectionRepository.disconnectResult = .success(())
 
         // First user
-        var initialCompletionCalls = 0
+        nonisolated(unsafe) var initialCompletionCalls = 0
         let userInfo = UserInfo(id: "123")
         let originalTokenProvider: TokenProvider = { $0(.success(.unique())) }
         let expectation1 = expectation(description: "Completion call 1")
@@ -377,7 +377,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         // New token/user
         let newUserId = "user-id"
         let newUserInfo = UserInfo(id: newUserId)
-        var newTokenCompletionCalls = 0
+        nonisolated(unsafe) var newTokenCompletionCalls = 0
         let expectation2 = expectation(description: "Completion call 2")
         let newTokenProvider: TokenProvider = { $0(.success(.unique(userId: newUserId))) }
         repository.connectUser(userInfo: userInfo, tokenProvider: newTokenProvider, completion: { _ in
@@ -394,7 +394,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertEqual(delegate.logoutCallCount, 1)
 
         // Refresh token
-        var refreshTokenCompletionCalls = 0
+        nonisolated(unsafe) var refreshTokenCompletionCalls = 0
         let expectation3 = expectation(description: "Completion call 2")
         let refreshTokenProvider: TokenProvider = { $0(.success(.unique(userId: newUserId))) }
         repository.connectUser(userInfo: newUserInfo, tokenProvider: refreshTokenProvider, completion: { _ in
@@ -648,7 +648,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         apiClient.test_mockUnmanagedResponseResult(Result<GuestUserTokenPayload, Error>.failure(apiError))
 
         let completionExpectation = expectation(description: "Connect completion")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         XCTAssertNil(repository.tokenProvider)
 
         repository.connectGuestUser(userInfo: userInfo, completion: { error in
@@ -690,7 +690,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         )
 
         let completionExpectation = expectation(description: "Connect completion")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         XCTAssertNil(repository.tokenProvider)
 
         repository.connectGuestUser(userInfo: userInfo, completion: { error in
@@ -733,7 +733,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         )
 
         let completionExpectation = expectation(description: "Connect completion")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         XCTAssertNil(repository.tokenProvider)
 
         repository.connectGuestUser(userInfo: userInfo, completion: { error in
@@ -763,7 +763,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         connectionRepository.connectResult = .success(())
 
         let completionExpectation = expectation(description: "Connect completion")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         XCTAssertNil(repository.tokenProvider)
 
         repository.connectAnonymousUser(completion: { error in
@@ -831,7 +831,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
     func test_refreshToken_returnsError_ifThereIsNoTokenProvider() {
         let expectation = self.expectation(description: "Refresh token")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         repository.refreshToken { error in
             receivedError = error
             expectation.fulfill()
@@ -949,7 +949,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         let existingToken = Token.unique()
         repository.setToken(token: existingToken, completeTokenWaiters: false)
 
-        var result: Result<Token, Error>?
+        nonisolated(unsafe) var result: Result<Token, Error>?
         let expectation = self.expectation(description: "Provide Connection Id Completion")
         repository.provideToken(timeout: defaultTimeout) {
             result = $0
@@ -965,7 +965,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     func test_provideToken_returnsErrorOnTimeout() {
-        var result: Result<Token, Error>?
+        nonisolated(unsafe) var result: Result<Token, Error>?
         let expectation = self.expectation(description: "Provide Token Completion")
         repository.provideToken(timeout: 0.01) {
             result = $0
@@ -979,7 +979,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     func test_provideToken_returnsErrorOnMissingValue() {
-        var result: Result<Token, Error>?
+        nonisolated(unsafe) var result: Result<Token, Error>?
         let expectation = self.expectation(description: "Provide Token Completion")
         repository.provideToken(timeout: defaultTimeout) {
             result = $0
@@ -995,7 +995,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
     }
 
     func test_provideToken_returnsValue_whenCompletingTokenWaiters() {
-        var result: Result<Token, Error>?
+        nonisolated(unsafe) var result: Result<Token, Error>?
         let expectation = self.expectation(description: "Provide Token Completion")
         repository.provideToken(timeout: defaultTimeout) {
             result = $0
@@ -1043,7 +1043,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
     func test_reset() {
         let mockTimer = MockTimer()
-        FakeTimer.mockTimer = mockTimer
+        FakeTimer.mockTimer.value = mockTimer
         retryStrategy.consecutiveFailuresCount = 5
         let repository = AuthenticationRepository(
             apiClient: apiClient,
@@ -1084,7 +1084,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         let provider: TokenProvider = { $0(.success(newToken)) }
 
         let completionExpectation = expectation(description: "Connect completion")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         repository.connectUser(userInfo: newUserInfo, tokenProvider: provider, completion: { error in
             receivedError = error
             completionExpectation.fulfill()
@@ -1104,7 +1104,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         connectionRepository.connectResult = mockedError.map { .failure($0) } ?? .success(())
 
         let expectation = self.expectation(description: "Refresh token")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         repository.refreshToken { error in
             receivedError = error
             expectation.fulfill()
@@ -1127,7 +1127,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
             }
         }
         connectionRepository.connectResult = .success(())
-        var isFirstTime = true
+        nonisolated(unsafe) var isFirstTime = true
         let expectation = self.expectation(description: "connect completes")
         repository.connectUser(userInfo: userInfo, tokenProvider: tokenProvider, completion: { _ in
             if isFirstTime {
@@ -1169,11 +1169,13 @@ private class AuthenticationRepositoryDelegateMock: AuthenticationRepositoryDele
         newState = state
     }
 
-    func logOutUser(completion: @escaping () -> Void) {
+    func logOutUser(completion: @escaping @MainActor() -> Void) {
         if isCapturingStatistics {
             logoutCallCount += 1
         }
-        completion()
+        StreamConcurrency.onMain {
+            completion()
+        }
     }
 }
 

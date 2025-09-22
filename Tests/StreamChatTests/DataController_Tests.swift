@@ -7,14 +7,12 @@
 import XCTest
 
 final class DataController_Tests: XCTestCase {
-    func test_delegateMethodIsCalled() {
+    @MainActor func test_delegateMethodIsCalled() {
         // GIVEN
         let controller = DataController()
-        let delegateQueueId = UUID()
-        let delegate = DataController_Delegate(expectedQueueId: delegateQueueId)
+        let delegate = DataController_Delegate()
 
         controller.stateMulticastDelegate.add(additionalDelegate: delegate)
-        controller.callbackQueue = DispatchQueue.testQueue(withId: delegateQueueId)
 
         // Check if state is `initialized` initially.
         XCTAssertEqual(delegate.state, .initialized)

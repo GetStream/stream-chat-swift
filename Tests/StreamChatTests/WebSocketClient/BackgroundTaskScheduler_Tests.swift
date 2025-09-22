@@ -88,7 +88,7 @@ final class IOSBackgroundTaskScheduler_Tests: XCTestCase {
     
     // MARK: - Mocks
     
-    class IOSBackgroundTaskSchedulerMock: IOSBackgroundTaskScheduler {
+    class IOSBackgroundTaskSchedulerMock: IOSBackgroundTaskScheduler, @unchecked Sendable {
         let endTaskClosure: () -> Void
 
         init(endTaskClosure: @escaping () -> Void) {

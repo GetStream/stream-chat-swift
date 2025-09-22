@@ -2,6 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import Foundation
 
 public extension ChatClient {
@@ -20,7 +21,7 @@ public extension ChatClient {
 /// - Read updates
 /// - Typing indicators
 /// - etc..
-public class LivestreamChannelController: DataStoreProvider, EventsControllerDelegate, AppStateObserverDelegate {
+public class LivestreamChannelController: DataStoreProvider, AppStateObserverDelegate, @unchecked Sendable {
     public typealias Delegate = LivestreamChannelControllerDelegate
 
     // MARK: - Public Properties
@@ -145,9 +146,6 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     /// Pagination state handler for managing message pagination.
     private let paginationStateHandler: MessagesPaginationStateHandling
 
-    /// Events controller for listening to real-time events.
-    private let eventsController: EventsController
-
     /// The channel updater to reuse actions from channel controller which is safe to use without DB.
     private let updater: ChannelUpdater
 
@@ -167,6 +165,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     }
 
     var _basePublishers: Any?
+    private var eventObserver: AnyCancellable?
 
     // MARK: - Initialization
 
@@ -184,7 +183,6 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         self.client = client
         apiClient = client.apiClient
         self.paginationStateHandler = paginationStateHandler
-        eventsController = client.eventsController()
         appStateObserver = StreamAppStateObserver()
         self.updater = updater ?? ChannelUpdater(
             channelRepository: client.channelRepository,
@@ -193,7 +191,9 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             database: client.databaseContainer,
             apiClient: client.apiClient
         )
-        eventsController.delegate = self
+        eventObserver = client.subscribe { [weak self] event in
+            self?.didReceiveEvent(event)
+        }
         appStateObserver.subscribe(self)
 
         if let cid = channelQuery.cid {
@@ -230,7 +230,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     /// Start watching a channel
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    public func startWatching(isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
+    public func startWatching(isInRecoveryMode: Bool, completion: (@MainActor(Error?) -> Void)? = nil) {
         guard let cid = cid else {
             let error = ClientError.ChannelNotCreatedYet()
             callback {
@@ -251,7 +251,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     /// Stop watching a channel
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    public func stopWatching(completion: ((Error?) -> Void)? = nil) {
+    public func stopWatching(completion: (@MainActor(Error?) -> Void)? = nil) {
         guard let cid = cid else {
             let error = ClientError.ChannelNotCreatedYet()
             callback {
@@ -787,9 +787,9 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         }
     }
 
-    // MARK: - EventsControllerDelegate
+    // MARK: - Events
 
-    public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
+    func didReceiveEvent(_ event: Event) {
         if let channelEvent = event as? ChannelSpecificEvent, channelEvent.cid == cid {
             handleChannelEvent(event)
         }
@@ -832,7 +832,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             paginationStateHandler.begin(pagination: pagination)
         }
 
-        let requestCompletion: (Result<ChannelPayload, Error>) -> Void = { [weak self] result in
+        let requestCompletion: @Sendable(Result<ChannelPayload, Error>) -> Void = { [weak self] result in
             self?.callback { [weak self] in
                 guard let self = self else { return }
 
@@ -1289,7 +1289,7 @@ public extension LivestreamChannelControllerDelegate {
 }
 
 /// Configuration options for message limiting in LivestreamChannelController.
-public struct MaxMessageLimitOptions {
+public struct MaxMessageLimitOptions: Sendable {
     /// The maximum number of messages to keep in memory.
     /// When this limit is reached, older messages will be discarded.
     public let maxLimit: Int

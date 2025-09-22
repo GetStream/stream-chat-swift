@@ -2,14 +2,13 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
 import StreamChat
 import StreamChatUI
+import UIKit
 
 var settings = Settings()
 
 final class ViewController: UIViewController {
-
     var streamChat = StreamChatWrapper.shared
 
     var channelController: ChatChannelController?
@@ -54,7 +53,7 @@ final class ViewController: UIViewController {
         router = channelList.router as? CustomChannelListRouter
 
         // create connection switch if needed
-        let switchControl = self.createIsConnectedSwitchIfNeeded()
+        let switchControl = createIsConnectedSwitchIfNeeded()
 
         router?.onChannelListViewWillAppear = { channelListVC in
             // show connection switch if needed
@@ -95,7 +94,7 @@ final class ViewController: UIViewController {
             return
         }
 
-        self.messageListRouter = router
+        messageListRouter = router
         messageListRouter?.onThreadViewWillAppear = { [weak self] threadVC in
             guard let self = self else { return }
             threadVC.navigationItem.rightBarButtonItem = self.createDebugButton()
@@ -123,19 +122,17 @@ final class ViewController: UIViewController {
             DebugMenu.shared.showMenu(in: self, channelController: controller)
         }
     }
-
 }
 
 // MARK: UI Components
 
 extension ViewController {
-
     func createIsConnectedSwitchIfNeeded() -> UISwitch? {
         guard settings.showsConnectivity.isOn else { return nil }
         let sw = UISwitch()
         sw.isOn = settings.isConnected.isOn
         sw.accessibilityIdentifier = settings.isConnected.setting.rawValue
-        sw.addTarget(self, action: #selector(self.valueChanged(_:)), for: .valueChanged)
+        sw.addTarget(self, action: #selector(valueChanged(_:)), for: .valueChanged)
 
         return sw
     }
@@ -185,16 +182,15 @@ extension ViewController {
             image: UIImage(named: "pencil")!,
             style: .plain,
             target: self,
-            action: #selector(self.showDebugMenu)
+            action: #selector(showDebugMenu)
         )
         item.accessibilityIdentifier = "debug"
         return item
     }
-
 }
 
 extension StreamChatWrapper {
-    func connectUser(completion: @escaping (Error?) -> Void) {
+    func connectUser(completion: @escaping @Sendable(Error?) -> Void) {
         let userCredentials = UserCredentials.default
         let tokenProvider = mockTokenProvider(for: userCredentials)
         client?.connectUser(
@@ -204,7 +200,7 @@ extension StreamChatWrapper {
         )
     }
 
-    func connectGuestUser(completion: @escaping (Error?) -> Void) {
+    func connectGuestUser(completion: @escaping @Sendable(Error?) -> Void) {
         client?.connectGuestUser(
             userInfo: .init(id: "123"),
             completion: completion
@@ -212,7 +208,7 @@ extension StreamChatWrapper {
     }
 
     func mockTokenProvider(for userCredentials: UserCredentials) -> TokenProvider {
-        return { completion in
+        { completion in
             if ProcessInfo.processInfo.arguments.contains("MOCK_JWT") {
                 let udid = ProcessInfo.processInfo.environment["SIMULATOR_UDID"] ?? ""
                 let urlString = "http://localhost:4567/jwt/\(udid)?api_key=\(apiKeyString)&user_name=\(userCredentials.id)"
@@ -240,7 +236,6 @@ extension StreamChatWrapper {
 }
 
 extension URLSession {
-
     enum HTTPError: Error {
         case transportError(Error)
         case serverSideError(Int)
@@ -249,7 +244,7 @@ extension URLSession {
     typealias DataTaskResult = Result<(HTTPURLResponse, Data), Error>
 
     func dataTask(with request: URLRequest, completionHandler: @escaping (DataTaskResult) -> Void) -> URLSessionDataTask {
-        return self.dataTask(with: request) { (data, response, error) in
+        dataTask(with: request) { (data, response, error) in
             if let error = error {
                 completionHandler(Result.failure(HTTPError.transportError(error)))
                 return

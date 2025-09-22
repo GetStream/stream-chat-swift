@@ -5,7 +5,7 @@
 import Foundation
 
 /// A type representing a chat channel member. `ChatChannelMember` is an immutable snapshot of a channel entity at the given time.
-public class ChatChannelMember: ChatUser {
+public class ChatChannelMember: ChatUser, @unchecked Sendable {
     /// The role of the user within the channel.
     public let memberRole: MemberRole
 
@@ -167,7 +167,7 @@ public class ChatChannelMember: ChatUser {
 
 /// A  `struct` describing roles of a member in a channel.
 /// There are some predefined types but any type can be introduced and sent by the backend.
-public struct MemberRole: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral {
+public struct MemberRole: RawRepresentable, Codable, Hashable, ExpressibleByStringLiteral, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {

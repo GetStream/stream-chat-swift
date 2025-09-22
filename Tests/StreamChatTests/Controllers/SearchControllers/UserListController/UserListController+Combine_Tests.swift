@@ -40,7 +40,7 @@ final class UserListController_Combine_Tests: iOS13TestCase {
         weak var controller: UserListControllerMock? = userListController
         userListController = nil
 
-        controller?.delegateCallback { $0.controller(controller!, didChangeState: .remoteDataFetched) }
+        controller?.delegateCallback { [controller] in $0.controller(controller!, didChangeState: .remoteDataFetched) }
 
         XCTAssertEqual(recording.output, [.localDataFetched, .remoteDataFetched])
     }
@@ -61,7 +61,7 @@ final class UserListController_Combine_Tests: iOS13TestCase {
 
         let newUser: ChatUser = .unique
         controller?.users_simulated = [newUser]
-        controller?.delegateCallback {
+        controller?.delegateCallback { [weak controller] in
             $0.controller(controller!, didChangeUsers: [.insert(newUser, index: [0, 1])])
         }
 

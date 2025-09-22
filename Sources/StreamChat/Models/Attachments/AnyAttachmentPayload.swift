@@ -6,7 +6,7 @@ import Foundation
 
 /// A protocol an attachment payload type has to conform in order it can be
 /// attached to/exposed on the message.
-public protocol AttachmentPayload: Codable {
+public protocol AttachmentPayload: Codable, Sendable {
     /// A type of resulting attachment.
     static var type: AttachmentType { get }
 }
@@ -14,12 +14,12 @@ public protocol AttachmentPayload: Codable {
 /// A type-erased type that wraps either a local file URL that has to be uploaded
 /// and attached to the message OR a custom payload which the message attachment
 /// should contain.
-public struct AnyAttachmentPayload {
+public struct AnyAttachmentPayload: Sendable {
     /// A type of attachment that will be created when the message is sent.
     public let type: AttachmentType
 
     /// A payload that will exposed on attachment when the message is sent.
-    public let payload: Encodable
+    public let payload: (Encodable & Sendable)
 
     /// A URL referencing to the local file that should be uploaded.
     public let localFileURL: URL?
@@ -104,7 +104,7 @@ public extension AnyAttachmentPayload {
         localFileURL: URL,
         attachmentType: AttachmentType,
         localMetadata: AnyAttachmentLocalMetadata? = nil,
-        extraData: Encodable? = nil
+        extraData: (Encodable & Sendable)? = nil
     ) throws {
         let file = try AttachmentFile(url: localFileURL)
         let extraData = try extraData
@@ -166,7 +166,7 @@ public extension AnyAttachmentPayload {
 }
 
 extension ClientError {
-    public final class UnsupportedUploadableAttachmentType: ClientError {
+    public final class UnsupportedUploadableAttachmentType: ClientError, @unchecked Sendable {
         init(_ type: AttachmentType) {
             super.init(
                 "For uploadable attachments only image/video/audio/file/voiceRecording types are supported."

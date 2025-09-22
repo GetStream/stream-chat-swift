@@ -16,7 +16,7 @@ final class URLProtocol_Mock: URLProtocol {
     static func startTestSession(with configuration: inout URLSessionConfiguration) {
         reset()
         let newSessionId = UUID().uuidString
-        currentSessionId = newSessionId
+        currentSessionId.value = newSessionId
 
         // URLProtocol_Mock always has to be first, but not if the RequestRecorderURLProtocol_Mock is presented
         if let recorderProtocolIdx = configuration.protocolClasses?
@@ -31,27 +31,27 @@ final class URLProtocol_Mock: URLProtocol {
         configuration.httpAdditionalHeaders = existingHeaders
     }
 
-    @Atomic private static var responses: [PathAndMethod: MockResponse] = [:]
+    private static let responses = AllocatedUnfairLock<[PathAndMethod: MockResponse]>([:])
 
     /// If set, the mock protocol responds to requests with `testSessionHeaderKey` header value set to this value. If `nil`,
     /// all requests are ignored.
-    @Atomic static var currentSessionId: String?
+    static let currentSessionId = AllocatedUnfairLock<String?>(nil)
 
     /// Cleans up all existing mock responses and current test session id.
     static func reset() {
-        Self.currentSessionId = nil
-        Self.responses.removeAll()
+        Self.currentSessionId.value = nil
+        Self.responses.withLock { $0.removeAll() }
     }
 
     override class func canInit(with request: URLRequest) -> Bool {
         guard
-            request.value(forHTTPHeaderField: testSessionHeaderKey) == currentSessionId,
+            request.value(forHTTPHeaderField: testSessionHeaderKey) == currentSessionId.value,
             let url = request.url,
             let method = request.httpMethod
         else { return false }
 
         let key = PathAndMethod(url: url, method: method)
-        return responses.keys.contains(key)
+        return responses.value.keys.contains(key)
     }
 
     override class func canonicalRequest(for request: URLRequest) -> URLRequest {
@@ -65,7 +65,7 @@ final class URLProtocol_Mock: URLProtocol {
         guard
             let url = request.url,
             let method = request.httpMethod,
-            let mockResponse = Self.responses[.init(url: url, method: method)]
+            let mockResponse = Self.responses.value[.init(url: url, method: method)]
         else {
             fatalError("This should never happen. Check if the implementation of the `canInit` method is correct.")
         }
@@ -90,7 +90,7 @@ final class URLProtocol_Mock: URLProtocol {
         client?.urlProtocolDidFinishLoading(self)
 
         // Clean up
-        Self._responses.mutate {
+        Self.responses.withLock {
             $0.removeValue(forKey: .init(url: url, method: method))
         }
     }
@@ -109,7 +109,7 @@ extension URLProtocol_Mock {
     ///   - response: The JSON body of the response.
     static func mockResponse(request: URLRequest, statusCode: Int = 200, responseBody: Data = Data([])) {
         let key = PathAndMethod(url: request.url!, method: request.httpMethod!)
-        Self._responses.mutate {
+        Self.responses.withLock {
             $0[key] = MockResponse(result: .success(responseBody), responseCode: statusCode)
         }
     }
@@ -122,7 +122,7 @@ extension URLProtocol_Mock {
     ///   - error: The error object used for the response.
     static func mockResponse(request: URLRequest, statusCode: Int = 400, error: Error) {
         let key = PathAndMethod(url: request.url!, method: request.httpMethod!)
-        Self._responses.mutate {
+        Self.responses.withLock {
             $0[key] = MockResponse(result: .failure(error), responseCode: statusCode)
         }
     }

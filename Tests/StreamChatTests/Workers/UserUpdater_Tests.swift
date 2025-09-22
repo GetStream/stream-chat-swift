@@ -52,7 +52,7 @@ final class UserUpdater_Tests: XCTestCase {
 
     func test_muteUser_propagatesSuccessfulResponse() {
         // Simulate `muteUser` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         userUpdater.muteUser(.unique) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -70,7 +70,7 @@ final class UserUpdater_Tests: XCTestCase {
 
     func test_muteUser_propagatesError() {
         // Simulate `muteUser` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         userUpdater.muteUser(.unique) {
             completionCalledError = $0
         }
@@ -97,7 +97,7 @@ final class UserUpdater_Tests: XCTestCase {
 
     func test_unmuteUser_propagatesSuccessfulResponse() {
         // Simulate `muteUser` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         userUpdater.unmuteUser(.unique) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -115,7 +115,7 @@ final class UserUpdater_Tests: XCTestCase {
 
     func test_unmuteUser_propagatesError() {
         // Simulate `muteUser` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         userUpdater.unmuteUser(.unique) {
             completionCalledError = $0
         }
@@ -143,7 +143,7 @@ final class UserUpdater_Tests: XCTestCase {
 
     func test_loadUser_propogatesNetworkError() {
         // Simulate `loadUser(_ userId:)` call.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         userUpdater.loadUser(.unique) {
             completionError = $0
         }
@@ -158,7 +158,7 @@ final class UserUpdater_Tests: XCTestCase {
 
     func test_loadUser_propogatesUserDoesNotExistError() {
         // Simulate `loadUser(_ userId:)` call.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         userUpdater.loadUser(.unique) {
             completionError = $0
         }
@@ -175,7 +175,7 @@ final class UserUpdater_Tests: XCTestCase {
         let userId: UserId = .unique
 
         // Simulate `loadUser(_ userId:)` call.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         userUpdater.loadUser(userId) {
             completionError = $0
         }
@@ -206,7 +206,7 @@ final class UserUpdater_Tests: XCTestCase {
         database.write_errorResponse = databaseError
 
         // Simulate `loadUser(_ userId:)` call.
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         userUpdater.loadUser(.unique) {
             completionError = $0
         }
@@ -222,7 +222,7 @@ final class UserUpdater_Tests: XCTestCase {
 
     func test_loadUser_savesReceivedUserToDatabase() {
         // Simulate `loadUser(_ userId:)` call.
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         userUpdater.loadUser(.unique) { _ in
             completionIsCalled = true
         }
@@ -271,7 +271,7 @@ final class UserUpdater_Tests: XCTestCase {
         try database.createCurrentUser(id: currentUserId)
 
         // Simulate `flagUser` call.
-        var flagCompletionCalled = false
+        nonisolated(unsafe) var flagCompletionCalled = false
         userUpdater.flagUser(true, with: flaggedUserId, reason: nil, extraData: nil) { error in
             XCTAssertNil(error)
             flagCompletionCalled = true
@@ -300,7 +300,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate `unflagUser` call.
-        var unflagCompletionCalled = false
+        nonisolated(unsafe) var unflagCompletionCalled = false
         userUpdater.flagUser(false, with: flaggedUserId, reason: nil, extraData: nil) { error in
             XCTAssertNil(error)
             unflagCompletionCalled = true
@@ -318,7 +318,7 @@ final class UserUpdater_Tests: XCTestCase {
 
     func test_flagUser_propagatesNetworkError() {
         // Simulate `flagUser` call.
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         userUpdater.flagUser(true, with: .unique, reason: nil, extraData: nil) {
             completionCalledError = $0
         }
@@ -337,7 +337,7 @@ final class UserUpdater_Tests: XCTestCase {
         database.write_errorResponse = databaseError
 
         // Simulate `flagUser` call.
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         userUpdater.flagUser(true, with: .unique, reason: nil, extraData: nil) {
             completionCalledError = $0
         }
@@ -367,7 +367,7 @@ final class UserUpdater_Tests: XCTestCase {
 
     func test_blockUser_propagatesSuccessfulResponse() {
         // Simulate `blockUser` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         userUpdater.blockUser(.unique) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -386,7 +386,7 @@ final class UserUpdater_Tests: XCTestCase {
 
     func test_blockUser_propagatesError() {
         // Simulate `blockUser` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         userUpdater.blockUser(.unique) {
             completionCalledError = $0
         }
@@ -413,7 +413,7 @@ final class UserUpdater_Tests: XCTestCase {
 
     func test_unblockUser_propagatesSuccessfulResponse() {
         // Simulate `blockUser` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         userUpdater.unblockUser(.unique) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -431,7 +431,7 @@ final class UserUpdater_Tests: XCTestCase {
 
     func test_unblockUser_propagatesError() {
         // Simulate `blockUser` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         userUpdater.unblockUser(.unique) {
             completionCalledError = $0
         }

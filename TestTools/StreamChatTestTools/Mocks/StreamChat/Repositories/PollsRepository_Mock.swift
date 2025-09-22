@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class PollsRepository_Mock: PollsRepository, Spy {
+final class PollsRepository_Mock: PollsRepository, Spy, @unchecked Sendable {
     @Atomic var getQueryPollVotes_completion: ((Result<VotePaginationResponse, Error>) -> Void)?
     @Atomic var castPollVote_completion: ((Error?) -> Void)?
     @Atomic var removePollVote_completion: ((Error?) -> Void)?
@@ -13,8 +13,7 @@ final class PollsRepository_Mock: PollsRepository, Spy {
     @Atomic var suggestPollOption_completion: ((Error?) -> Void)?
     @Atomic var deletePoll_completion: ((Error?) -> Void)?
     
-    var recordedFunctions: [String] = []
-    var spyState: SpyState = .init()
+    let spyState: SpyState = .init()
 
     override func queryPollVotes(
         query: PollVoteListQuery,
@@ -53,7 +52,7 @@ final class PollsRepository_Mock: PollsRepository, Spy {
         pollId: String,
         text: String,
         position: Int? = nil,
-        custom: [String : RawJSON]? = nil,
+        custom: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         suggestPollOption_completion = completion

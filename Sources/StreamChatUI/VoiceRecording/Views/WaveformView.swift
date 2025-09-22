@@ -7,7 +7,7 @@ import UIKit
 
 /// Displays an interactive waveform visualisation of an audio file.
 open class WaveformView: _View, ThemeProvider {
-    public struct Content: Equatable {
+    public struct Content: Equatable, Sendable {
         /// When set to `true` the waveform will be updating with the data live (scrolling to the trailing side
         /// as new data arrive).
         public var isRecording: Bool

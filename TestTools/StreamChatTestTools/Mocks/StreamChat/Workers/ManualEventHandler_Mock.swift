@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ManualEventHandler_Mock: ManualEventHandler {
+final class ManualEventHandler_Mock: ManualEventHandler, @unchecked Sendable {
     init() {
         super.init(
             database: DatabaseContainer_Spy()

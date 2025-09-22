@@ -4,7 +4,7 @@
 
 import Foundation
 
-enum SyncError: Error {
+enum SyncError: Error, Sendable {
     case noNeedToSync
     case tooManyEvents(Error)
     case syncEndpointFailed(Error)
@@ -23,7 +23,7 @@ enum SyncError: Error {
 
 /// This class is in charge of the synchronization of our local storage with the remote.
 /// When executing a sync, it will remove outdated elements, and will refresh the content to always show the latest data.
-class SyncRepository {
+class SyncRepository: @unchecked Sendable {
     private enum Constants {
         static let maximumDaysSinceLastSync = 30
     }
@@ -127,8 +127,8 @@ class SyncRepository {
     }
 
     // MARK: - Syncing
-
-    func syncLocalState(completion: @escaping () -> Void) {
+    
+    func syncLocalState(completion: @escaping @Sendable() -> Void) {
         cancelRecoveryFlow()
 
         getUser { [weak self] in
@@ -140,9 +140,9 @@ class SyncRepository {
 
             guard let lastSyncAt = currentUser.lastSynchedEventDate?.bridgeDate else {
                 log.info("It's the first session of the current user, skipping recovery flow", subsystems: .offlineSupport)
-                self?.updateUserValue({ $0?.lastSynchedEventDate = DBDate() }) { _ in
+                self?.updateLastSyncAt(with: Date(), completion: { _ in
                     completion()
-                }
+                })
                 return
             }
             self?.syncLocalState(lastSyncAt: lastSyncAt, completion: completion)
@@ -165,7 +165,7 @@ class SyncRepository {
     ///      * channel controllers targeting other channels
     ///      * no channel lists active, but channel controllers are
     /// 4. Re-watch channels what we were watching before disconnect
-    private func syncLocalState(lastSyncAt: Date, completion: @escaping () -> Void) {
+    private func syncLocalState(lastSyncAt: Date, completion: @escaping @Sendable() -> Void) {
         let context = SyncContext(lastSyncAt: lastSyncAt)
         var operations: [Operation] = []
         let start = CFAbsoluteTimeGetCurrent()
@@ -234,7 +234,7 @@ class SyncRepository {
         channelIds: [ChannelId],
         lastSyncAt: Date,
         isRecovery: Bool,
-        completion: @escaping (Result<[ChannelId], SyncError>) -> Void
+        completion: @escaping @Sendable(Result<[ChannelId], SyncError>) -> Void
     ) {
         guard lastSyncAt.numberOfDaysUntilNow < Constants.maximumDaysSinceLastSync else {
             updateLastSyncAt(with: Date()) { error in
@@ -267,7 +267,7 @@ class SyncRepository {
         using date: Date,
         channelIds: [ChannelId],
         isRecoveryRequest: Bool,
-        completion: @escaping (Result<[ChannelId], SyncError>) -> Void
+        completion: @escaping @Sendable(Result<[ChannelId], SyncError>) -> Void
     ) {
         log.info("Synching events for existing channels since \(date)", subsystems: .offlineSupport)
 
@@ -277,11 +277,11 @@ class SyncRepository {
         }
 
         let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: date, cids: channelIds)
-        let requestCompletion: (Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
+        let requestCompletion: @Sendable(Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
             switch result {
             case let .success(payload):
                 log.info("Processing pending events. Count \(payload.eventPayloads.count)", subsystems: .offlineSupport)
-                self?.processMissingEventsPayload(payload) {
+                self?.processMissingEventsPayload(payload) { [weak self] in
                     self?.updateLastSyncAt(with: payload.eventPayloads.last?.createdAt ?? date, completion: { error in
                         if let error = error {
                             completion(.failure(error))
@@ -317,37 +317,27 @@ class SyncRepository {
         }
     }
 
-    private func updateLastSyncAt(with date: Date, completion: @escaping (SyncError?) -> Void) {
-        updateUserValue({
-            $0?.lastSynchedEventDate = date.bridgeDate
-        }, completion: completion)
+    private func updateLastSyncAt(with date: Date, completion: @escaping @Sendable(SyncError?) -> Void) {
+        database.write { session in
+            session.currentUser?.lastSynchedEventDate = date.bridgeDate
+        } completion: { error in
+            if let error = error {
+                log.error("Failed updating value: \(error)", subsystems: .offlineSupport)
+                completion(.couldNotUpdateUserValue(error))
+            } else {
+                log.info("Updated user value", subsystems: .offlineSupport)
+                completion(nil)
+            }
+        }
     }
 
-    private func processMissingEventsPayload(_ payload: MissingEventsPayload, completion: @escaping () -> Void) {
+    private func processMissingEventsPayload(_ payload: MissingEventsPayload, completion: @escaping @Sendable() -> Void) {
         eventNotificationCenter.process(payload.eventPayloads.asEvents(), postNotifications: false) {
             log.info(
                 "Successfully processed pending events. Count \(payload.eventPayloads.count)",
                 subsystems: .offlineSupport
             )
             completion()
-        }
-    }
-
-    private func updateUserValue(
-        _ block: @escaping (inout CurrentUserDTO?) -> Void,
-        completion: ((SyncError?) -> Void)? = nil
-    ) {
-        database.write { session in
-            var currentUser = session.currentUser
-            block(&currentUser)
-        } completion: { error in
-            if let error = error {
-                log.error("Failed updating value: \(error)", subsystems: .offlineSupport)
-                completion?(.couldNotUpdateUserValue(error))
-            } else {
-                log.info("Updated user value", subsystems: .offlineSupport)
-                completion?(nil)
-            }
         }
     }
 

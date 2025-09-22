@@ -19,7 +19,7 @@ public extension ChatClient {
 ///
 /// `ChatUserController` objects are lightweight, and they can be used for both, continuous data change observations,
 /// and for quick user actions (like mute/unmute).
-public class ChatUserController: DataController, DelegateCallable, DataStoreProvider {
+public class ChatUserController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The identifier of tge user this controller observes.
     public let userId: UserId
 
@@ -89,7 +89,7 @@ public class ChatUserController: DataController, DelegateCallable, DataStoreProv
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
         startObservingIfNeeded()
 
         if case let .localDataFetchFailed(error) = state {
@@ -140,7 +140,7 @@ public extension ChatUserController {
     /// Mutes the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
-    func mute(completion: ((Error?) -> Void)? = nil) {
+    func mute(completion: (@MainActor(Error?) -> Void)? = nil) {
         userUpdater.muteUser(userId) { error in
             self.callback {
                 completion?(error)
@@ -151,7 +151,7 @@ public extension ChatUserController {
     /// Unmutes the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    func unmute(completion: ((Error?) -> Void)? = nil) {
+    func unmute(completion: (@MainActor(Error?) -> Void)? = nil) {
         userUpdater.unmuteUser(userId) { error in
             self.callback {
                 completion?(error)
@@ -162,7 +162,7 @@ public extension ChatUserController {
     /// Blocks the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
-    func block(completion: ((Error?) -> Void)? = nil) {
+    func block(completion: (@MainActor(Error?) -> Void)? = nil) {
         userUpdater.blockUser(userId) { error in
             self.callback {
                 completion?(error)
@@ -173,7 +173,7 @@ public extension ChatUserController {
     /// Unblocks the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    func unblock(completion: ((Error?) -> Void)? = nil) {
+    func unblock(completion: (@MainActor(Error?) -> Void)? = nil) {
         userUpdater.unblockUser(userId) { error in
             self.callback {
                 completion?(error)
@@ -191,7 +191,7 @@ public extension ChatUserController {
     func flag(
         reason: String? = nil,
         extraData: [String: RawJSON]? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         userUpdater.flagUser(true, with: userId, reason: reason, extraData: extraData) { error in
             self.callback {
@@ -203,7 +203,7 @@ public extension ChatUserController {
     /// Unflags the user this controller manages.
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///
-    func unflag(completion: ((Error?) -> Void)? = nil) {
+    func unflag(completion: (@MainActor(Error?) -> Void)? = nil) {
         userUpdater.flagUser(false, with: userId, reason: nil, extraData: nil) { error in
             self.callback {
                 completion?(error)

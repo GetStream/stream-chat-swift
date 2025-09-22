@@ -347,7 +347,7 @@ final class PollsRepository_Tests: XCTestCase {
         let pollOptionId = "345"
         let pollId = "123"
         let messageId: String = .unique
-        var voteId: String!
+        nonisolated(unsafe) var voteId: String!
         let currentUserId = String.unique
         
         let payload = XCTestCase().dummyPollVotePayload(optionId: pollOptionId, pollId: pollId)
@@ -389,7 +389,7 @@ final class PollsRepository_Tests: XCTestCase {
         let pollOptionId = "345"
         let pollId = "123"
         let messageId: String = .unique
-        var voteId: String!
+        nonisolated(unsafe) var voteId: String!
         let currentUserId = String.unique
         
         let payload = XCTestCase().dummyPollVotePayload(optionId: pollOptionId, pollId: pollId)

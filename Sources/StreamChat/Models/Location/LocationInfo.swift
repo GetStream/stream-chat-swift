@@ -5,7 +5,7 @@
 import Foundation
 
 /// The location information.
-public struct LocationInfo {
+public struct LocationInfo: Sendable {
     /// The location latitude.
     public var latitude: Double
     /// The location longitude.

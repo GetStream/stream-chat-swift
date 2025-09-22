@@ -2,11 +2,11 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChat
 import Foundation
+@testable import StreamChat
 
 /// Mock implementation of `ChatClientUpdater`
-final class ConnectionRepository_Mock: ConnectionRepository, Spy {
+final class ConnectionRepository_Mock: ConnectionRepository, Spy, @unchecked Sendable {
     enum Signature {
         static let initialize = "initialize()"
         static let connect = "connect(completion:)"
@@ -34,19 +34,23 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy {
     var provideConnectionIdResult: Result<ConnectionId, Error>?
 
     convenience init() {
-        self.init(isClientInActiveMode: true,
-                  syncRepository: SyncRepository_Mock(),
-                  webSocketClient: WebSocketClient_Mock(),
-                  apiClient: APIClient_Spy(),
-                  timerType: DefaultTimer.self)
+        self.init(
+            isClientInActiveMode: true,
+            syncRepository: SyncRepository_Mock(),
+            webSocketClient: WebSocketClient_Mock(),
+            apiClient: APIClient_Spy(),
+            timerType: DefaultTimer.self
+        )
     }
 
     convenience init(client: ChatClient) {
-        self.init(isClientInActiveMode: client.config.isClientInActiveMode,
-                  syncRepository: client.syncRepository,
-                  webSocketClient: client.webSocketClient,
-                  apiClient: client.apiClient,
-                  timerType: DefaultTimer.self)
+        self.init(
+            isClientInActiveMode: client.config.isClientInActiveMode,
+            syncRepository: client.syncRepository,
+            webSocketClient: client.webSocketClient,
+            apiClient: client.apiClient,
+            timerType: DefaultTimer.self
+        )
     }
 
     override init(isClientInActiveMode: Bool, syncRepository: SyncRepository, webSocketClient: WebSocketClient?, apiClient: APIClient, timerType: StreamChat.Timer.Type) {

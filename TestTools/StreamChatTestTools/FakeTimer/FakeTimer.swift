@@ -6,26 +6,26 @@ import Foundation
 @testable import StreamChat
 
 class FakeTimer: StreamChat.Timer {
-    static var mockTimer: TimerControl?
-    static var mockRepeatingTimer: RepeatingTimerControl?
+    static let mockTimer = AllocatedUnfairLock<TimerControl?>(nil)
+    static let mockRepeatingTimer = AllocatedUnfairLock<RepeatingTimerControl?>(nil)
 
     static func schedule(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) -> StreamChat.TimerControl {
-        return mockTimer!
+        mockTimer.value!
     }
 
     static func scheduleRepeating(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) -> StreamChat.RepeatingTimerControl {
-        mockRepeatingTimer!
+        mockRepeatingTimer.value!
     }
 }
 
-class MockTimer: TimerControl {
+class MockTimer: TimerControl, @unchecked Sendable {
     var cancelCallCount = 0
     func cancel() {
         cancelCallCount += 1
     }
 }
 
-class MockRepeatingTimer: RepeatingTimerControl {
+class MockRepeatingTimer: RepeatingTimerControl, @unchecked Sendable {
     var resumeCallCount = 0
     var suspendCallCount = 0
 

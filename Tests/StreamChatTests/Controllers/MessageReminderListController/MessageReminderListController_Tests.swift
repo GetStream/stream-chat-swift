@@ -161,7 +161,7 @@ final class MessageReminderListController_Tests: XCTestCase {
         XCTAssertEqual(repositoryMock.loadReminders_query?.pagination.cursor, nextCursor2)
     }
 
-    func test_observer_triggerDidChangeReminders_remindersHaveCorrectOrder() throws {
+    @MainActor func test_observer_triggerDidChangeReminders_remindersHaveCorrectOrder() throws {
         class DelegateMock: MessageReminderListControllerDelegate {
             var reminders: [MessageReminder] = []
             let expectation = XCTestExpectation(description: "Did Change Reminders")

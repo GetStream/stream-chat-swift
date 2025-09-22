@@ -5,7 +5,7 @@
 @testable import StreamChat
 import XCTest
 
-final class DraftMessagesRepository_Mock: DraftMessagesRepository {
+final class DraftMessagesRepository_Mock: DraftMessagesRepository, @unchecked Sendable {
     // MARK: - Load Drafts
 
     var loadDrafts_callCount = 0
@@ -101,4 +101,4 @@ final class DraftMessagesRepository_Mock: DraftMessagesRepository {
         deleteDraft_calledWith = (cid: cid, threadId: threadId)
         deleteDraft_completion = completion
     }
-} 
+}

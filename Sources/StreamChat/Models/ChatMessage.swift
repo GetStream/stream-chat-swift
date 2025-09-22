@@ -9,7 +9,7 @@ import Foundation
 public typealias MessageId = String
 
 /// A type representing a chat message. `ChatMessage` is an immutable snapshot of a chat message entity at the given time.
-public struct ChatMessage {
+public struct ChatMessage: Sendable {
     /// A unique identifier of the message.
     public let id: MessageId
 
@@ -61,8 +61,8 @@ public struct ChatMessage {
     ///
     /// If message is inline reply this property will contain the message quoted by this reply.
     ///
-    public var quotedMessage: ChatMessage? { _quotedMessage() }
-    let _quotedMessage: () -> ChatMessage?
+    public var quotedMessage: ChatMessage? { _quotedMessage?.value as? ChatMessage }
+    let _quotedMessage: BoxedAny?
 
     /// The draft reply to this message. Applies only for the messages of the current user.
     public let draftReply: DraftMessage?
@@ -269,7 +269,7 @@ public struct ChatMessage {
         self.currentUserReactions = currentUserReactions
         self.readBy = readBy
         _attachments = attachments
-        _quotedMessage = { quotedMessage }
+        _quotedMessage = BoxedAny(quotedMessage)
         self.draftReply = draftReply
         self.sharedLocation = sharedLocation
         self.reminder = reminder
@@ -597,7 +597,7 @@ extension ChatMessage: Hashable {
 }
 
 /// A type of the message.
-public enum MessageType: String, Codable {
+public enum MessageType: String, Codable, Sendable {
     /// A regular message created in the channel.
     case regular
 
@@ -621,7 +621,7 @@ public enum MessageType: String, Codable {
 }
 
 // The pinning information of a message.
-public struct MessagePinDetails {
+public struct MessagePinDetails: Sendable {
     /// Date when the message got pinned
     public let pinnedAt: Date
 
@@ -633,7 +633,7 @@ public struct MessagePinDetails {
 }
 
 /// A possible additional local state of the message. Applies only for the messages of the current user.
-public enum LocalMessageState: String {
+public enum LocalMessageState: String, Sendable {
     /// The message is waiting to be synced.
     case pendingSync
     /// The message is currently being synced
@@ -659,7 +659,7 @@ public enum LocalMessageState: String {
     }
 }
 
-public enum LocalReactionState: String {
+public enum LocalReactionState: String, Sendable {
     ///  The reaction state is unknown
     case unknown = ""
 
@@ -683,7 +683,7 @@ public enum LocalReactionState: String {
 }
 
 /// The type describing message delivery status.
-public struct MessageDeliveryStatus: RawRepresentable, Hashable {
+public struct MessageDeliveryStatus: RawRepresentable, Hashable, Sendable {
     public let rawValue: String
 
     public init(rawValue: String) {

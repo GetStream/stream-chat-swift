@@ -29,7 +29,7 @@ public protocol MessageReminderListControllerDelegate: DataControllerStateDelega
 }
 
 /// A controller which allows querying and filtering message reminders.
-public class MessageReminderListController: DataController, DelegateCallable, DataStoreProvider {
+public class MessageReminderListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query specifying and filtering the list of reminders.
     public let query: MessageReminderListQuery
 
@@ -118,7 +118,7 @@ public class MessageReminderListController: DataController, DelegateCallable, Da
         super.init()
     }
 
-    override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
         startMessageRemindersObserverIfNeeded()
 
         remindersRepository.loadReminders(query: query) { [weak self] result in
@@ -159,7 +159,7 @@ public class MessageReminderListController: DataController, DelegateCallable, Da
     ///   - completion: The completion callback.
     public func loadMoreReminders(
         limit: Int? = nil,
-        completion: ((Result<[MessageReminder], Error>) -> Void)? = nil
+        completion: (@MainActor(Result<[MessageReminder], Error>) -> Void)? = nil
     ) {
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
@@ -167,7 +167,7 @@ public class MessageReminderListController: DataController, DelegateCallable, Da
         remindersRepository.loadReminders(query: updatedQuery) { [weak self] result in
             switch result {
             case let .success(value):
-                self?.callback {
+                self?.callback { [weak self] in
                     self?.nextCursor = value.next
                     self?.hasLoadedAllReminders = value.next == nil
                     completion?(.success(value.reminders))

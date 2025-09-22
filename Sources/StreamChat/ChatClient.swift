@@ -12,7 +12,7 @@ import Foundation
 /// case requires it (i.e. more than one window with different workspaces in a Slack-like app).
 ///
 /// - Important: When using multiple instances of `ChatClient` at the same time, it is required to use a different ``ChatClientConfig/localStorageFolderURL`` for each instance. For example, adding an additional path component to the default URL.
-public class ChatClient {
+public class ChatClient: @unchecked Sendable {
     /// The `UserId` of the currently logged in user.
     public var currentUserId: UserId? {
         authenticationRepository.currentUserId
@@ -56,7 +56,7 @@ public class ChatClient {
 
     /// The registry that contains all the attachment payloads associated with their attachment types.
     /// For the meantime this is a static property to avoid breaking changes. On v5, this can be changed.
-    private(set) static var attachmentTypesRegistry: [AttachmentType: AttachmentPayload.Type] = [
+    private(set) nonisolated(unsafe) static var attachmentTypesRegistry: [AttachmentType: AttachmentPayload.Type] = [
         .image: ImageAttachmentPayload.self,
         .video: VideoAttachmentPayload.self,
         .audio: AudioAttachmentPayload.self,
@@ -109,7 +109,7 @@ public class ChatClient {
     /// The environment object containing all dependencies of this `Client` instance.
     private let environment: Environment
     
-    @Atomic static var activeLocalStorageURLs = Set<URL>()
+    static let activeLocalStorageURLs = AllocatedUnfairLock(Set<URL>())
 
     /// The default configuration of URLSession to be used for both the `APIClient` and `WebSocketClient`. It contains all
     /// required header auth parameters to make a successful request.
@@ -239,7 +239,7 @@ public class ChatClient {
     }
 
     deinit {
-        Self._activeLocalStorageURLs.mutate { $0.subtract(databaseContainer.persistentStoreDescriptions.compactMap(\.url)) }
+        Self.activeLocalStorageURLs.withLock { $0.subtract(databaseContainer.persistentStoreDescriptions.compactMap(\.url)) }
         completeConnectionIdWaiters(connectionId: nil)
         completeTokenWaiters(token: nil)
         reconnectionTimeoutHandler?.stop()
@@ -276,7 +276,7 @@ public class ChatClient {
     }
     
     private func validateIntegrity() {
-        Self._activeLocalStorageURLs.mutate { urls in
+        Self.activeLocalStorageURLs.withLock { urls in
             let existingCount = urls.count
             urls.formUnion(databaseContainer.persistentStoreDescriptions.compactMap(\.url).filter { $0.path != "/dev/null" })
             guard existingCount == urls.count, !urls.isEmpty else { return }
@@ -314,7 +314,7 @@ public class ChatClient {
     public func connectUser(
         userInfo: UserInfo,
         tokenProvider: @escaping TokenProvider,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         reconnectionTimeoutHandler?.start()
         connectionRecoveryHandler?.start()
@@ -323,7 +323,9 @@ public class ChatClient {
         authenticationRepository.connectUser(
             userInfo: userInfo,
             tokenProvider: tokenProvider,
-            completion: { completion?($0) }
+            completion: { error in
+                StreamConcurrency.onMain { completion?(error) }
+            }
         )
 
         // Whenever the user is connected, we trigger an app settings configuration refetch.
@@ -363,12 +365,14 @@ public class ChatClient {
     public func connectUser(
         userInfo: UserInfo,
         token: Token,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         guard token.expiration == nil else {
             let error = ClientError.MissingTokenProvider()
             log.error(error.localizedDescription, subsystems: .authentication)
-            completion?(error)
+            StreamConcurrency.onMain {
+                completion?(error)
+            }
             return
         }
 
@@ -409,12 +413,16 @@ public class ChatClient {
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectGuestUser(
         userInfo: UserInfo,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         connectionRepository.initialize()
         connectionRecoveryHandler?.start()
         reconnectionTimeoutHandler?.start()
-        authenticationRepository.connectGuestUser(userInfo: userInfo, completion: { completion?($0) })
+        authenticationRepository.connectGuestUser(userInfo: userInfo, completion: { error in
+            StreamConcurrency.onMain {
+                completion?(error)
+            }
+        })
     }
     
     /// Connects a guest user.
@@ -436,12 +444,16 @@ public class ChatClient {
 
     /// Connects an anonymous user
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
-    public func connectAnonymousUser(completion: ((Error?) -> Void)? = nil) {
+    public func connectAnonymousUser(completion: (@MainActor(Error?) -> Void)? = nil) {
         connectionRepository.initialize()
         reconnectionTimeoutHandler?.start()
         connectionRecoveryHandler?.start()
         authenticationRepository.connectAnonymousUser(
-            completion: { completion?($0) }
+            completion: { error in
+                StreamConcurrency.onMain {
+                    completion?(error)
+                }
+            }
         )
     }
     
@@ -474,10 +486,12 @@ public class ChatClient {
 
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
-    public func disconnect(completion: @escaping () -> Void) {
+    public func disconnect(completion: @escaping @MainActor() -> Void) {
         connectionRepository.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
-            completion()
+            StreamConcurrency.onMain {
+                completion()
+            }
         }
         authenticationRepository.clearTokenProvider()
         authenticationRepository.reset()
@@ -505,7 +519,7 @@ public class ChatClient {
     ///  By default it is enabled.
     public func logout(
         removeDevice: Bool = true,
-        completion: @escaping () -> Void
+        completion: @escaping @MainActor() -> Void
     ) {
         let currentUserController = currentUserController()
         if removeDevice, let currentUserDevice = currentUserController.currentUser?.currentDevice {
@@ -543,7 +557,9 @@ public class ChatClient {
         }
 
         group.notify(queue: .main) {
-            completion()
+            StreamConcurrency.onMain {
+                completion()
+            }
         }
     }
     
@@ -599,7 +615,7 @@ public class ChatClient {
     /// Fetches the app settings and updates the ``ChatClient/appSettings``.
     /// - Parameter completion: The completion block once the app settings has finished fetching.
     public func loadAppSettings(
-        completion: ((Result<AppSettings, Error>) -> Void)? = nil
+        completion: (@Sendable(Result<AppSettings, Error>) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .appSettings()) { [weak self] result in
             switch result {
@@ -634,8 +650,8 @@ public class ChatClient {
     ///  - completion: called when the attachment is uploaded.
     public func upload<Payload>(
         _ attachment: StreamAttachment<Payload>,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
     ) {
         apiClient.attachmentUploader.uploadStandaloneAttachment(
             attachment,
@@ -682,7 +698,7 @@ public class ChatClient {
 
     /// Starts the process to  refresh the token
     /// - Parameter completion: A block to be executed when the process is completed. Contains an error if something went wrong
-    private func refreshToken(completion: ((Error?) -> Void)?) {
+    private func refreshToken(completion: (@Sendable(Error?) -> Void)?) {
         authenticationRepository.refreshToken {
             completion?($0)
         }
@@ -699,7 +715,7 @@ public class ChatClient {
 }
 
 extension ChatClient: AuthenticationRepositoryDelegate {
-    func logOutUser(completion: @escaping () -> Void) {
+    func logOutUser(completion: @escaping @MainActor() -> Void) {
         logout(removeDevice: false, completion: completion)
     }
 
@@ -741,11 +757,11 @@ extension ChatClient: ConnectionStateDelegate {
 
 /// `Client` provides connection details for the `RequestEncoder`s it creates.
 extension ChatClient: ConnectionDetailsProviderDelegate {
-    func provideToken(timeout: TimeInterval = 10, completion: @escaping (Result<Token, Error>) -> Void) {
+    func provideToken(timeout: TimeInterval = 10, completion: @escaping @Sendable(Result<Token, Error>) -> Void) {
         authenticationRepository.provideToken(timeout: timeout, completion: completion)
     }
 
-    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping (Result<ConnectionId, Error>) -> Void) {
+    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping @Sendable(Result<ConnectionId, Error>) -> Void) {
         connectionRepository.provideConnectionId(timeout: timeout, completion: completion)
     }
 
@@ -775,11 +791,11 @@ extension ChatClient {
 }
 
 extension ClientError {
-    public final class MissingLocalStorageURL: ClientError {
+    public final class MissingLocalStorageURL: ClientError, @unchecked Sendable {
         override public var localizedDescription: String { "The URL provided in ChatClientConfig is `nil`." }
     }
 
-    public final class ConnectionNotSuccessful: ClientError {
+    public final class ConnectionNotSuccessful: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             """
             Connection to the API has failed.
@@ -791,7 +807,7 @@ extension ClientError {
         }
     }
 
-    public final class ReconnectionTimeout: ClientError {
+    public final class ReconnectionTimeout: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             """
             The reconnection process has timed out after surpassing the value from `ChatClientConfig.reconnectionTimeout`.
@@ -799,10 +815,10 @@ extension ClientError {
         }
     }
 
-    public final class MissingToken: ClientError {}
-    final class WaiterTimeout: ClientError {}
+    public final class MissingToken: ClientError, @unchecked Sendable {}
+    final class WaiterTimeout: ClientError, @unchecked Sendable {}
 
-    public final class ClientIsNotInActiveMode: ClientError {
+    public final class ClientIsNotInActiveMode: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             """
                 ChatClient is in connectionless mode, it cannot connect to websocket.
@@ -811,7 +827,7 @@ extension ClientError {
         }
     }
 
-    public final class ConnectionWasNotInitiated: ClientError {
+    public final class ConnectionWasNotInitiated: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             """
                 Before performing any other actions on chat client it's required to connect by using \
@@ -820,13 +836,13 @@ extension ClientError {
         }
     }
 
-    public final class ClientHasBeenDeallocated: ClientError {
+    public final class ClientHasBeenDeallocated: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             "ChatClient has been deallocated, make sure to keep at least one strong reference to it."
         }
     }
 
-    public final class MissingTokenProvider: ClientError {
+    public final class MissingTokenProvider: ClientError, @unchecked Sendable {
         override public var localizedDescription: String {
             """
                 Missing token refresh provider to get a new token

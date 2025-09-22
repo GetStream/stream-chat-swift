@@ -5,7 +5,7 @@
 import Foundation
 
 /// A query used for querying specific reactions from a message.
-public struct ReactionListQuery: Encodable {
+public struct ReactionListQuery: Encodable, Sendable {
     /// The message id that the reactions belong to.
     public var messageId: MessageId
     /// The pagination information to query the reactions.

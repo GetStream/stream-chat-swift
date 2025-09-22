@@ -7,7 +7,7 @@ import Foundation
 #if TESTS
 @testable import StreamChat
 
-final class InternetConnectionMonitor_Mock: InternetConnectionMonitor {
+final class InternetConnectionMonitor_Mock: InternetConnectionMonitor, @unchecked Sendable {
     var delegate: InternetConnectionDelegate?
 
     var status: InternetConnection.Status = .available(.great)
@@ -19,6 +19,5 @@ final class InternetConnectionMonitor_Mock: InternetConnectionMonitor {
         self.status = status
         delegate?.internetConnectionStatusDidChange(status: status)
     }
-
 }
 #endif

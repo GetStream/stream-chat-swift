@@ -9,7 +9,6 @@ import XCTest
 final class EventsController_Tests: XCTestCase {
     var client: ChatClient!
     var controller: EventsController!
-    var callbackQueueID: UUID!
 
     // MARK: - Setup
 
@@ -17,13 +16,10 @@ final class EventsController_Tests: XCTestCase {
         super.setUp()
 
         client = ChatClient.mock
-        callbackQueueID = UUID()
         controller = EventsController(notificationCenter: client.eventNotificationCenter)
-        controller.callbackQueue = .testQueue(withId: callbackQueueID)
     }
 
     override func tearDown() {
-        callbackQueueID = nil
         AssertAsync {
             Assert.canBeReleased(&controller)
             Assert.canBeReleased(&client)
@@ -34,7 +30,7 @@ final class EventsController_Tests: XCTestCase {
 
     // MARK: - Lifecycle
 
-    func test_whenDelegateHasStrongReferenceToController_thereIsNoRetainCycle() {
+    @MainActor func test_whenDelegateHasStrongReferenceToController_thereIsNoRetainCycle() {
         class Delegate_Mock: EventsControllerDelegate {
             var controller: EventsController?
 
@@ -60,8 +56,8 @@ final class EventsController_Tests: XCTestCase {
 
     // MARK: - Event propagation
 
-    func test_whenEventsNotificationIsObserved_onlyEventsThatShouldBeProcessed_areForwardedToDelegate() {
-        class EventsControllerMock: EventsController {
+    @MainActor func test_whenEventsNotificationIsObserved_onlyEventsThatShouldBeProcessed_areForwardedToDelegate() {
+        class EventsControllerMock: EventsController, @unchecked Sendable {
             lazy var shouldProcessEventMockFunc = MockFunc.mock(for: shouldProcessEvent)
 
             override func shouldProcessEvent(_ event: Event) -> Bool {
@@ -71,10 +67,9 @@ final class EventsController_Tests: XCTestCase {
 
         // Create mock controller.
         let controller = EventsControllerMock(notificationCenter: client.eventNotificationCenter)
-        controller.callbackQueue = .testQueue(withId: callbackQueueID)
 
         // Create and set the delegate.
-        let delegate = EventsController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = EventsController_Delegate()
         controller.delegate = delegate
 
         // Create `event -> should be processed` mapping.
@@ -106,9 +101,9 @@ final class EventsController_Tests: XCTestCase {
         }
     }
 
-    func test_whenEventsNotificationIsObserved_theUnknownUserEvent_isForwardedToDelegate() {
+    @MainActor func test_whenEventsNotificationIsObserved_theUnknownUserEvent_isForwardedToDelegate() {
         // Create and set the delegate.
-        let delegate = EventsController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = EventsController_Delegate()
         controller.delegate = delegate
 
         // Create `event -> should be processed` mapping.
@@ -123,9 +118,9 @@ final class EventsController_Tests: XCTestCase {
         )
     }
 
-    func test_whenEventsNotificationIsObserved_theUnknownChannelEvent_isForwardedToDelegate() throws {
+    @MainActor func test_whenEventsNotificationIsObserved_theUnknownChannelEvent_isForwardedToDelegate() throws {
         // Create and set the delegate.
-        let delegate = EventsController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = EventsController_Delegate()
         controller.delegate = delegate
 
         // Create `event -> should be processed` mapping.

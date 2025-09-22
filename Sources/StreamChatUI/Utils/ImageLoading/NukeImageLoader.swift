@@ -24,11 +24,11 @@ open class NukeImageLoader: ImageLoading {
     }
 
     @discardableResult
-    open func loadImage(
+    @MainActor open func loadImage(
         into imageView: UIImageView,
         from url: URL?,
         with options: ImageLoaderOptions,
-        completion: ((Result<UIImage, Error>) -> Void)?
+        completion: (@MainActor(Result<UIImage, Error>) -> Void)?
     ) -> Cancellable? {
         imageView.currentImageLoadingTask?.cancel()
 
@@ -72,7 +72,7 @@ open class NukeImageLoader: ImageLoading {
     @discardableResult
     open func downloadImage(
         with request: ImageDownloadRequest,
-        completion: @escaping ((Result<UIImage, Error>) -> Void)
+        completion: @escaping @MainActor(Result<UIImage, Error>) -> Void
     ) -> Cancellable? {
         let url = request.url
         let options = request.options
@@ -91,15 +91,22 @@ open class NukeImageLoader: ImageLoading {
             userInfo: [.imageIdKey: cachingKey]
         )
 
-        return imagePipeline.loadImage(with: request, completion: completion)
+        return imagePipeline.loadImage(with: request, completion: { result in
+            StreamConcurrency.onMain { completion(result) }
+        })
     }
 
     open func downloadMultipleImages(
         with requests: [ImageDownloadRequest],
-        completion: @escaping (([Result<UIImage, Error>]) -> Void)
+        completion: @escaping @MainActor([Result<UIImage, Error>]) -> Void
     ) {
         let group = DispatchGroup()
-        var results = [Result<UIImage, Error>](repeating: .failure(NSError.unknown), count: requests.count)
+        
+        final class BatchLoadingResult: @unchecked Sendable {
+            var results = [Result<UIImage, Error>]()
+        }
+        let batchLoadingResult = BatchLoadingResult()
+        batchLoadingResult.results = [Result<UIImage, Error>](repeating: .failure(NSError.unknown), count: requests.count)
         
         for (index, request) in requests.enumerated() {
             let url = request.url
@@ -109,14 +116,15 @@ open class NukeImageLoader: ImageLoading {
 
             let request = ImageDownloadRequest(url: url, options: downloadOptions)
             downloadImage(with: request) { result in
-                results[index] = result
-
+                batchLoadingResult.results[index] = result
                 group.leave()
             }
         }
 
         group.notify(queue: .main) {
-            completion(results)
+            StreamConcurrency.onMain {
+                completion(batchLoadingResult.results)
+            }
         }
     }
 }

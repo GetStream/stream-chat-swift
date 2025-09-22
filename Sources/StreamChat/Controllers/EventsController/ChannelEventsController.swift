@@ -38,7 +38,7 @@ public extension ChatChannelController {
 
 /// `ChannelEventsController` is a controller class which allows to observe channel
 /// events and send custom events.
-public class ChannelEventsController: EventsController {
+public class ChannelEventsController: EventsController, @unchecked Sendable {
     // A channel identifier provider.
     private let cidProvider: () -> ChannelId?
 
@@ -69,7 +69,7 @@ public class ChannelEventsController: EventsController {
     /// - Parameters:
     ///   - payload: A custom event payload to be sent.
     ///   - completion: A completion.
-    public func sendEvent<T: CustomEventPayload>(_ payload: T, completion: ((Error?) -> Void)? = nil) {
+    public func sendEvent<T: CustomEventPayload>(_ payload: T, completion: (@Sendable(Error?) -> Void)? = nil) {
         guard let cid = cid else {
             callback { completion?(ClientError.ChannelNotCreatedYet()) }
             return

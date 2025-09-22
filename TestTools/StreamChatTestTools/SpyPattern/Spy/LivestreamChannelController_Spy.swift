@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-final class LivestreamChannelController_Spy: LivestreamChannelController, Spy {
+final class LivestreamChannelController_Spy: LivestreamChannelController, Spy, @unchecked Sendable {
     var startWatchingError: Error?
     let spyState = SpyState()
 
@@ -13,8 +13,10 @@ final class LivestreamChannelController_Spy: LivestreamChannelController, Spy {
         super.init(channelQuery: .init(cid: .unique), client: client)
     }
 
-    override func startWatching(isInRecoveryMode: Bool, completion: ((Error?) -> Void)? = nil) {
+    override func startWatching(isInRecoveryMode: Bool, completion: (@MainActor(Error?) -> Void)? = nil) {
         record()
-        completion?(startWatchingError)
+        StreamConcurrency.onMain {
+            completion?(startWatchingError)
+        }
     }
 }

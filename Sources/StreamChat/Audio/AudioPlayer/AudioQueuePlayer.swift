@@ -6,7 +6,7 @@ import AVFoundation
 
 /// Describes an object that will be asked to provided the URL of the next AudioTrack to play whenever
 /// the current one's playback has been completed.
-public protocol AudioQueuePlayerDatasource: AnyObject {
+@MainActor public protocol AudioQueuePlayerDatasource: AnyObject {
     /// If there is one, provide the URL location of the next AudioTrack to play once the current's playback
     /// has been completed.
     /// - Parameters:
@@ -19,14 +19,16 @@ public protocol AudioQueuePlayerDatasource: AnyObject {
     ) -> URL?
 }
 
-open class StreamAudioQueuePlayer: StreamAudioPlayer {
+open class StreamAudioQueuePlayer: StreamAudioPlayer, @unchecked Sendable {
     open weak var dataSource: AudioQueuePlayerDatasource?
 
     override open func playbackWillStop(_ playerItem: AVPlayerItem) {
-        if let nextAssetURL = dataSource?.audioQueuePlayerNextAssetURL(self, currentAssetURL: context.assetLocation) {
-            loadAsset(from: nextAssetURL)
-        } else {
-            stop()
+        StreamConcurrency.onMain {
+            if let nextAssetURL = dataSource?.audioQueuePlayerNextAssetURL(self, currentAssetURL: context.assetLocation) {
+                loadAsset(from: nextAssetURL)
+            } else {
+                stop()
+            }
         }
     }
 }

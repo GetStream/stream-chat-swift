@@ -4,7 +4,7 @@
 
 import Foundation
 
-protocol ViewPaginationHandling {
+@MainActor protocol ViewPaginationHandling {
     var topThreshold: Int { get set }
     var bottomThreshold: Int { get set }
 
@@ -12,8 +12,8 @@ protocol ViewPaginationHandling {
     var onNewBottomPage: (() -> Void)? { get set }
 }
 
-typealias StatefulViewPaginationHandlingBlock = ((_ notifyItemCount: (Int) -> Void, _ completion: @escaping (Error?) -> Void) -> Void)
-protocol StatefulViewPaginationHandling {
+typealias StatefulViewPaginationHandlingBlock = ((_ notifyItemCount: (Int) -> Void, _ completion: @escaping @Sendable(Error?) -> Void) -> Void)
+@MainActor protocol StatefulViewPaginationHandling {
     var topThreshold: Int { get set }
     var bottomThreshold: Int { get set }
 

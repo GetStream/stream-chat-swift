@@ -5,7 +5,7 @@
 import Foundation
 
 /// Handles manual event processing for channels that opt out of middleware processing.
-class ManualEventHandler {
+class ManualEventHandler: @unchecked Sendable {
     /// The database used when evaluating events.
     private let database: DatabaseContainer
 

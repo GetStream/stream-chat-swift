@@ -12,8 +12,6 @@ final class ChatConnectionController_Tests: XCTestCase {
     private var connectionRepository: ConnectionRepository_Mock!
     private var client: ChatClient!
     private var controller: ChatConnectionController!
-    private var controllerCallbackQueueID: UUID!
-    private var callbackQueueID: UUID { controllerCallbackQueueID }
 
     // MARK: - Setup
 
@@ -28,12 +26,9 @@ final class ChatConnectionController_Tests: XCTestCase {
             webSocketClient: webSocketClient,
             client: client
         )
-        controllerCallbackQueueID = UUID()
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
 
     override func tearDown() {
-        controllerCallbackQueueID = nil
         client.mockAPIClient.cleanUp()
 
         AssertAsync {
@@ -58,7 +53,7 @@ final class ChatConnectionController_Tests: XCTestCase {
 
     func test_delegate_isAssignedCorrectly() {
         // Set the delegate
-        let delegate = ConnectionController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = ConnectionController_Delegate()
         controller.delegate = delegate
 
         // Assert the delegate is assigned correctly
@@ -67,7 +62,7 @@ final class ChatConnectionController_Tests: XCTestCase {
 
     func test_delegate_isReferencedWeakly() {
         // Create the delegate
-        var delegate: ConnectionController_Delegate? = .init(expectedQueueId: callbackQueueID)
+        var delegate: ConnectionController_Delegate? = .init()
 
         // Set the delegate
         controller.delegate = delegate
@@ -79,9 +74,9 @@ final class ChatConnectionController_Tests: XCTestCase {
         XCTAssertNil(controller.delegate)
     }
 
-    func test_delegate_isNotifiedAboutConnectionStatusChanges() {
+    @MainActor func test_delegate_isNotifiedAboutConnectionStatusChanges() {
         // Set the delegate
-        let delegate = ConnectionController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = ConnectionController_Delegate()
         controller.delegate = delegate
 
         // Assert no connection status changes received so far
@@ -103,10 +98,9 @@ final class ChatConnectionController_Tests: XCTestCase {
 
             connectionRepository.connectResult = error.map { .failure($0) } ?? .success(())
 
-            var connectCompletionError: Error?
+            nonisolated(unsafe) var connectCompletionError: Error?
             let expectation = self.expectation(description: "Connect completes")
-            controller.connect { [callbackQueueID] error in
-                AssertTestQueue(withId: callbackQueueID)
+            controller.connect { error in
                 connectCompletionError = error
                 expectation.fulfill()
             }

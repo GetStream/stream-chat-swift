@@ -23,7 +23,7 @@ import Foundation
 /// itself from multiple threads can cause a crash.
 
 @propertyWrapper
-public class Atomic<T> {
+public class Atomic<T>: @unchecked Sendable {
     public var wrappedValue: T {
         get {
             var currentValue: T!

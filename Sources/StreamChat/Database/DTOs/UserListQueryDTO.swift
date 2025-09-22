@@ -25,7 +25,7 @@ class UserListQueryDTO: NSManagedObject {
             keyPath: #keyPath(UserListQueryDTO.filterHash),
             equalTo: filterHash,
             context: context
-        ).first
+        ).first as? Self
     }
 }
 

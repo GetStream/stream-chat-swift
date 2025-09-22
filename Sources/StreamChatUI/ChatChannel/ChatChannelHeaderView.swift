@@ -104,7 +104,9 @@ open class ChatChannelHeaderView: _View,
             withTimeInterval: statusUpdateInterval,
             repeats: true
         ) { [weak self] _ in
-            self?.updateContentIfNeeded()
+            StreamConcurrency.onMain { [weak self] in
+                self?.updateContentIfNeeded()
+            }
         }
     }
 
@@ -147,6 +149,8 @@ open class ChatChannelHeaderView: _View,
     }
 
     deinit {
-        timer?.invalidate()
+        StreamConcurrency.onMain {
+            timer?.invalidate()
+        }
     }
 }

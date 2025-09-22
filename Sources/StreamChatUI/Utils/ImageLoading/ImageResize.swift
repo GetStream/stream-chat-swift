@@ -5,7 +5,7 @@
 import UIKit
 
 /// The resize information when loading an image.
-public struct ImageResize {
+public struct ImageResize: Sendable {
     /// The new width of the image in points (not pixels).
     public var width: CGFloat
     /// The new height of the image in points (not pixels).
@@ -33,7 +33,7 @@ extension ImageResize {
     /// - `crop`
     /// - `fill`
     /// - `scale`
-    public struct Mode {
+    public struct Mode: Sendable {
         public var value: String
         public var cropValue: String?
 
@@ -44,7 +44,7 @@ extension ImageResize {
 
         /// Make the image as large as possible, while maintaining aspect ratio and keeping the
         /// height and width less than or equal to the given height and width.
-        public static var clip = Mode(value: "clip")
+        public static let clip = Mode(value: "clip")
 
         /// Crop to the given dimensions, keeping focus on the portion of the image in the crop mode.
         public static func crop(_ value: Crop = .center) -> Self {
@@ -53,10 +53,10 @@ extension ImageResize {
 
         /// Make the image as large as possible, while maintaining aspect ratio and keeping the height and width
         /// less than or equal to the given height and width. Fill any leftover space with a black background.
-        public static var fill = Mode(value: "fill")
+        public static let fill = Mode(value: "fill")
 
         /// Ignore aspect ratio, and resize the image to the given height and width.
-        public static var scale = Mode(value: "scale")
+        public static let scale = Mode(value: "scale")
 
         /// The crop position of the image.
         public enum Crop: String {

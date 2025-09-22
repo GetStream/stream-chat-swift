@@ -27,7 +27,7 @@ public protocol AudioSessionConfiguring {
     /// with a result, call the completionHandler to continue the flow.
     /// - Parameter completionHandler: The completion handler that will be called to continue the flow.
     func requestRecordPermission(
-        _ completionHandler: @escaping (Bool) -> Void
+        _ completionHandler: @escaping @Sendable(Bool) -> Void
     )
 }
 
@@ -46,10 +46,10 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
     public func deactivatePlaybackSession() throws { /* No-op */ }
 
-    public func requestRecordPermission(_ completionHandler: @escaping (Bool) -> Void) { completionHandler(true) }
+    public func requestRecordPermission(_ completionHandler: @escaping @Sendable(Bool) -> Void) { completionHandler(true) }
 }
 #else
-open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
+open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked Sendable {
     /// The audioSession with which the configurator will interact.
     private let audioSession: AudioSessionProtocol
 
@@ -120,7 +120,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     ///     with a response.
     ///     - Note: The closure's invocation will be dispatched on the MainThread.
     open func requestRecordPermission(
-        _ completionHandler: @escaping (Bool) -> Void
+        _ completionHandler: @escaping @Sendable(Bool) -> Void
     ) {
         audioSession.requestRecordPermission { [weak self] in
             self?.handleRecordPermissionResponse($0, completionHandler: completionHandler)
@@ -141,7 +141,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
     private func handleRecordPermissionResponse(
         _ permissionGranted: Bool,
-        completionHandler: @escaping (Bool) -> Void
+        completionHandler: @escaping @Sendable(Bool) -> Void
     ) {
         guard Thread.isMainThread else {
             DispatchQueue.main.async { [weak self] in
@@ -178,7 +178,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
 // MARK: - Errors
 
-final class AudioSessionConfiguratorError: ClientError {
+final class AudioSessionConfiguratorError: ClientError, @unchecked Sendable {
     /// An unknown error occurred
     static func noAvailableInputsFound(
         file: StaticString = #file,

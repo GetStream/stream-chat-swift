@@ -5,15 +5,17 @@
 import Foundation
 @testable import StreamChat
 
-final class OfflineRequestsRepository_Mock: OfflineRequestsRepository, Spy {
+final class OfflineRequestsRepository_Mock: OfflineRequestsRepository, Spy, @unchecked Sendable {
     let spyState = SpyState()
 
     convenience init() {
         let apiClient = APIClient_Spy()
         let database = DatabaseContainer_Spy()
-        self.init(messageRepository: MessageRepository_Mock(database: database, apiClient: apiClient),
-                  database: database,
-                  apiClient: apiClient)
+        self.init(
+            messageRepository: MessageRepository_Mock(database: database, apiClient: apiClient),
+            database: database,
+            apiClient: apiClient
+        )
     }
 
     override init(

@@ -159,7 +159,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let expectedRole = UserRole.anonymous
 
         // Call update user
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         currentUserUpdater.updateUserData(
             currentUserId: expectedId,
             name: expectedName,
@@ -215,7 +215,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         // Call update user
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         currentUserUpdater.updateUserData(
             currentUserId: userPayload.id,
             name: .unique,
@@ -280,7 +280,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         database.write_errorResponse = testError
 
         // Call update user
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         currentUserUpdater.updateUserData(
             currentUserId: .unique,
             name: .unique,
@@ -356,7 +356,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(error))
 
         // Call addDevice
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         currentUserUpdater.addDevice(
             deviceId: "test",
             pushProvider: .apn,
@@ -476,7 +476,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let expectation = XCTestExpectation()
 
         // Call removeDevice
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         currentUserUpdater.removeDevice(id: "", currentUserId: .unique) {
             completionCalledError = $0
             expectation.fulfill()
@@ -556,7 +556,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         // Call updateDevices
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         currentUserUpdater.fetchDevices(currentUserId: .unique) {
             completionCalledError = $0.error
         }
@@ -592,7 +592,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         database.write_errorResponse = testError
 
         // Call updateDevices
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         currentUserUpdater.fetchDevices(currentUserId: .unique) {
             completionCalledError = $0.error
         }
@@ -630,7 +630,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let apiDevices = dummyDevices.devices.map { Device(id: $0.id, createdAt: $0.createdAt) }
 
         // Call updateDevices
-        var callbackCalled = false
+        nonisolated(unsafe) var callbackCalled = false
         currentUserUpdater.fetchDevices(currentUserId: .unique) { result in
             XCTAssertEqual(result, success: apiDevices)
             callbackCalled = true
@@ -665,7 +665,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_markAllRead_successfulResponse_isPropagatedToCompletion() {
         // GIVEN
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
 
         // WHEN
         currentUserUpdater.markAllRead { error in
@@ -681,7 +681,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_markAllRead_errorResponse_isPropagatedToCompletion() {
         // GIVEN
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         let error = TestError()
 
         // WHEN
@@ -726,7 +726,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     
     func test_loadAllUnreads_makesCorrectAPICall() {
         // Call loadAllUnreads
-        var receivedUnreads: CurrentUserUnreads?
+        nonisolated(unsafe) var receivedUnreads: CurrentUserUnreads?
         currentUserUpdater.loadAllUnreads { result in
             receivedUnreads = try? result.get()
         }
@@ -786,7 +786,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     
     func test_loadAllUnreads_propagatesNetworkError() {
         // Call loadAllUnreads
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         currentUserUpdater.loadAllUnreads { result in
             if case let .failure(error) = result {
                 receivedError = error
@@ -820,7 +820,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             SharedLocationPayload.dummy(latitude: 30, longitude: 40, endAt: Date().addingTimeInterval(200))
         ]
         let response = ActiveLiveLocationsResponsePayload(locations: payloads)
-        var result: Result<[SharedLocation], Error>?
+        nonisolated(unsafe) var result: Result<[SharedLocation], Error>?
         
         // WHEN
         let expectation = self.expectation(description: "loadActiveLiveLocations")
@@ -848,7 +848,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     func test_loadActiveLiveLocations_propagatesNetworkError() {
         // GIVEN
         let expectedError = TestError()
-        var result: Result<[SharedLocation], Error>?
+        nonisolated(unsafe) var result: Result<[SharedLocation], Error>?
         
         // WHEN
         currentUserUpdater.loadActiveLiveLocations {

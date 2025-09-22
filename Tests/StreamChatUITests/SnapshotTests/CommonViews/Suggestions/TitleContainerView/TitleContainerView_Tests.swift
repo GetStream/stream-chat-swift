@@ -8,7 +8,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-final class TitleContainerView_Tests: XCTestCase {
+@MainActor final class TitleContainerView_Tests: XCTestCase {
     func test_defaultAppearance() {
         let view = TitleContainerView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
@@ -66,7 +66,7 @@ final class TitleContainerView_Tests: XCTestCase {
     }
 }
 
-final class TitleContainerView_Swift_Tests: iOS13TestCase {
+@MainActor final class TitleContainerView_Swift_Tests: iOS13TestCase {
     func test_swiftUIWrapper() {
         let view = TitleContainerView.asView((title: "Luke Skywalker", subtitle: "Last seen a long time ago..."))
         AssertSnapshot(view.frame(width: 320, height: 44))

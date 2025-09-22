@@ -83,7 +83,7 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
     /// - Parameter didChange: The callback which is triggered when the observed item changes. Runs on the ``MainActor``.
     ///
     /// - Returns: Returns the current state of the item in the local database.
-    func startObserving(didChange: @escaping @MainActor(Item?) async -> Void) throws -> Item? {
+    func startObserving(didChange: @escaping @Sendable @MainActor(Item?) async -> Void) throws -> Item? where Item: Sendable {
         try startObserving(onContextDidChange: { item, _ in Task.mainActor { await didChange(item) } })
     }
     
@@ -168,7 +168,7 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
     /// - Parameter didChange: The callback which is triggered when the observed item changes. Runs on the ``MainActor``.
     ///
     /// - Returns: Returns the current state of items in the local database.
-    func startObserving(didChange: @escaping @MainActor(StreamCollection<Item>) async -> Void) throws -> StreamCollection<Item> {
+    func startObserving(didChange: @escaping @Sendable @MainActor(StreamCollection<Item>) async -> Void) throws -> StreamCollection<Item> where Item: Sendable {
         try startObserving(onContextDidChange: { items, _ in
             Task.mainActor { await didChange(items) }
         })

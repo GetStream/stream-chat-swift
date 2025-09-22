@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-class ChatMessageController_Mock: ChatMessageController {
+class ChatMessageController_Mock: ChatMessageController, @unchecked Sendable {
     /// Creates a new mock instance of `ChatMessageController`.
     static func mock(
         currentUserId: UserId = "ID",
@@ -50,19 +50,18 @@ class ChatMessageController_Mock: ChatMessageController {
     }
 
     var synchronize_callCount = 0
-    var synchronize_completion: ((Error?) -> Void)?
-    override func synchronize(_ completion: ((Error?) -> Void)? = nil) {
+    var synchronize_completion: (@MainActor(Error?) -> Void)?
+    override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
         synchronize_callCount += 1
         synchronize_completion = completion
     }
 
-
     var loadPageAroundReplyId_callCount = 0
-    var loadPageAroundReplyId_completion: ((Error?) -> Void)?
+    var loadPageAroundReplyId_completion: (@MainActor(Error?) -> Void)?
     override func loadPageAroundReplyId(
         _ replyId: MessageId,
         limit: Int? = nil,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@MainActor(Error?) -> Void)? = nil
     ) {
         loadPageAroundReplyId_callCount += 1
         loadPageAroundReplyId_completion = completion

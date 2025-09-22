@@ -10,7 +10,7 @@ import XCTest
 
 extension ChatMessagePopupVC: AppearanceProvider {}
 
-final class ChatMessagePopupVC_Tests: XCTestCase {
+@MainActor final class ChatMessagePopupVC_Tests: XCTestCase {
     private var vc: ChatMessagePopupVC!
     private var message: ChatMessage!
     private var reactionsController: ChatMessageReactionsPickerVC!

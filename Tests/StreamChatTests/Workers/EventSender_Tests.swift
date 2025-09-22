@@ -45,7 +45,7 @@ final class EventSender_Tests: XCTestCase {
 
     func test_sendEvent_propagatesSuccessfulResponse() {
         // Simulate `sendEvent` call
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         sender.sendEvent(IdeaEventPayload.unique, to: .unique) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -63,7 +63,7 @@ final class EventSender_Tests: XCTestCase {
 
     func test_sendEvent_propagatesError() {
         // Simulate `sendEvent` call
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         sender.sendEvent(IdeaEventPayload.unique, to: .unique) { error in
             completionCalledError = error
         }

@@ -9,7 +9,7 @@ import StreamSwiftTestHelpers
 import UIKit
 import XCTest
 
-final class PollResultsVC_Tests: XCTestCase {
+@MainActor final class PollResultsVC_Tests: XCTestCase {
     // Note: Table cells won't have the correct corner radius,
     // due to this issue: https://github.com/pointfreeco/swift-snapshot-testing/issues/358
 
@@ -62,7 +62,7 @@ class MockPollResultsVC: PollResultsVC {
     }
 }
 
-class PollController_Mock: PollController {
+class PollController_Mock: PollController, @unchecked Sendable {
     init() {
         super.init(client: .mock, messageId: .unique, pollId: .unique)
     }
@@ -71,7 +71,7 @@ class PollController_Mock: PollController {
         super.init(client: client, messageId: .unique, pollId: .unique)
     }
 
-    var mockedPoll: Poll?
+    @Atomic var mockedPoll: Poll?
     override var poll: Poll? {
         mockedPoll
     }

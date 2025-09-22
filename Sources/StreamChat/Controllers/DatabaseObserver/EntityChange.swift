@@ -58,6 +58,7 @@ extension EntityChange {
 }
 
 extension EntityChange: Equatable where Item: Equatable {}
+extension EntityChange: Sendable where Item: Sendable {}
 
 extension EntityChange {
     /// Create a `EntityChange` value from the provided `ListChange`. It simply transforms `ListChange` to `EntityChange`

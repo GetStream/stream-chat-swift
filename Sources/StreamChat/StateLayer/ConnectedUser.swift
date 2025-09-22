@@ -5,10 +5,10 @@
 import Foundation
 
 /// An object which represents the currently logged in user.
-public final class ConnectedUser {
+public final class ConnectedUser: Sendable {
     private let authenticationRepository: AuthenticationRepository
     private let currentUserUpdater: CurrentUserUpdater
-    private let stateBuilder: StateBuilder<ConnectedUserState>
+    @MainActor private var stateBuilder: StateBuilder<ConnectedUserState>
     private let userUpdater: UserUpdater
     
     init(user: CurrentChatUser, client: ChatClient, environment: Environment = .init()) {
@@ -32,7 +32,7 @@ public final class ConnectedUser {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the user.
-    @MainActor public lazy var state: ConnectedUserState = stateBuilder.build()
+    @MainActor public var state: ConnectedUserState { stateBuilder.state() }
     
     // MARK: - Connected User Data
     
@@ -209,19 +209,26 @@ public final class ConnectedUser {
 }
 
 extension ConnectedUser {
-    struct Environment {
-        var stateBuilder: @MainActor(
+    struct Environment: Sendable {
+        var stateBuilder: @Sendable @MainActor(
             _ user: CurrentChatUser,
             _ database: DatabaseContainer
         ) -> ConnectedUserState = { @MainActor in
             ConnectedUserState(user: $0, database: $1)
         }
         
-        var currentUserUpdaterBuilder = CurrentUserUpdater.init
-        
-        var userUpdaterBuilder: (
+        var currentUserUpdaterBuilder: @Sendable(
             _ database: DatabaseContainer,
             _ apiClient: APIClient
-        ) -> UserUpdater = UserUpdater.init
+        ) -> CurrentUserUpdater = {
+            CurrentUserUpdater(database: $0, apiClient: $1)
+        }
+        
+        var userUpdaterBuilder: @Sendable(
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> UserUpdater = {
+            UserUpdater(database: $0, apiClient: $1)
+        }
     }
 }

@@ -96,7 +96,7 @@ extension NukeImageLoader_Tests {
         func loadImage(with request: ImageRequest, completion: @escaping (Result<UIImage, Swift.Error>) -> Void) -> ImageTask {
             counter += 1
             scheduledRequests.append((counter, request, completion))
-            return ImageTask(taskId: Int64(counter), request: request, isDataTask: false)
+            return ImageTask(taskId: Int64(counter), request: request, isDataTask: false, pipeline: .shared, onEvent: nil)
         }
     }
     

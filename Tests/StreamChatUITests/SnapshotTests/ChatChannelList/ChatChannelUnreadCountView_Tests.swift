@@ -8,7 +8,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatChannelUnreadCountView_Tests: XCTestCase {
+@MainActor final class ChatChannelUnreadCountView_Tests: XCTestCase {
     func test_emptyAppearance() {
         let view = ChatChannelUnreadCountView().withoutAutoresizingMaskConstraints
         AssertSnapshot(view)

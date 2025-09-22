@@ -16,7 +16,7 @@ public struct UploadedFile: Decodable {
 }
 
 /// The CDN client is responsible to upload files to a CDN.
-public protocol CDNClient {
+public protocol CDNClient: Sendable {
     static var maxAttachmentSize: Int64 { get }
 
     /// Uploads attachment as a multipart/form-data and returns only the uploaded remote file.
@@ -26,8 +26,8 @@ public protocol CDNClient {
     ///   - completion: Returns the uploaded file's information.
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<URL, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<URL, Error>) -> Void
     )
 
     /// Uploads attachment as a multipart/form-data and returns the uploaded remote file and its thumbnail.
@@ -37,8 +37,8 @@ public protocol CDNClient {
     ///   - completion: Returns the uploaded file's information.
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
     )
     
     /// Uploads standalone attachment as a multipart/form-data and returns the uploaded remote file and its thumbnail.
@@ -48,16 +48,16 @@ public protocol CDNClient {
     ///   - completion: Returns the uploaded file's information.
     func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamAttachment<Payload>,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
     )
 }
 
 public extension CDNClient {
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
     ) {
         uploadAttachment(attachment, progress: progress, completion: { (result: Result<URL, Error>) in
             switch result {
@@ -71,7 +71,7 @@ public extension CDNClient {
 }
 
 /// Default implementation of CDNClient that uses Stream CDN
-class StreamCDNClient: CDNClient {
+final class StreamCDNClient: CDNClient, @unchecked Sendable {
     static var maxAttachmentSize: Int64 { 100 * 1024 * 1024 }
 
     private let decoder: RequestDecoder
@@ -92,8 +92,8 @@ class StreamCDNClient: CDNClient {
 
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)? = nil,
-        completion: @escaping (Result<URL, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)? = nil,
+        completion: @escaping @Sendable(Result<URL, Error>) -> Void
     ) {
         uploadAttachment(attachment, progress: progress, completion: { (result: Result<UploadedFile, Error>) in
             switch result {
@@ -107,8 +107,8 @@ class StreamCDNClient: CDNClient {
 
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)? = nil,
-        completion: @escaping (Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)? = nil,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
     ) {
         guard
             let uploadingState = attachment.uploadingState,
@@ -128,8 +128,8 @@ class StreamCDNClient: CDNClient {
     
     func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamAttachment<Payload>,
-        progress: ((Double) -> Void)? = nil,
-        completion: @escaping (Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)? = nil,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
     ) {
         guard
             let uploadingState = attachment.uploadingState,
@@ -152,8 +152,8 @@ class StreamCDNClient: CDNClient {
         endpoint: Endpoint<ResponsePayload>,
         fileData: Data,
         uploadingState: AttachmentUploadingState,
-        progress: ((Double) -> Void)? = nil,
-        completion: @escaping (Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)? = nil,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
     ) {
         // Encode locally stored attachment into multipart form data
         let multipartFormData = MultipartFormData(

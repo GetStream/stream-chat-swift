@@ -7,7 +7,7 @@ import StreamChatUI
 import UIKit
 
 /// Delegate protocol for `LivestreamMessageActionsVC`
-protocol LivestreamMessageActionsVCDelegate: AnyObject {
+@MainActor protocol LivestreamMessageActionsVCDelegate: AnyObject {
     func livestreamMessageActionsVC(
         _ vc: DemoLivestreamMessageActionsVC,
         message: ChatMessage,

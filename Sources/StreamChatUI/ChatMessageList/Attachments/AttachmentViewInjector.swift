@@ -10,7 +10,7 @@ import StreamChat
 ///
 /// - Important: This is an abstract superclass meant to be subclassed.
 ///
-open class AttachmentViewInjector {
+@MainActor open class AttachmentViewInjector {
     /// Says whether a message content should start filling all available width.
     /// Is `true` by default.
     open var fillAllAvailableWidth: Bool = true

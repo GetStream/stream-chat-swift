@@ -229,7 +229,7 @@ extension LivestreamChannelController_Tests {
     func test_synchronize_successfulResponse_updatesChannelAndMessages() {
         // Given
         let expectation = self.expectation(description: "Synchronize completes")
-        var synchronizeError: Error?
+        nonisolated(unsafe) var synchronizeError: Error?
         
         let mockUpdater = ChannelUpdater_Mock(
             channelRepository: client.channelRepository,
@@ -277,7 +277,7 @@ extension LivestreamChannelController_Tests {
     func test_synchronize_failedResponse_callsCompletionWithError() {
         // Given
         let expectation = self.expectation(description: "Synchronize completes")
-        var synchronizeError: Error?
+        nonisolated(unsafe) var synchronizeError: Error?
         let testError = TestError()
         
         let mockUpdater = ChannelUpdater_Mock(
@@ -320,7 +320,7 @@ extension LivestreamChannelController_Tests {
     func test_loadPreviousMessages_withNoMessages_callsCompletionWithError() {
         // Given
         let expectation = self.expectation(description: "Load previous messages completes")
-        var loadError: Error?
+        nonisolated(unsafe) var loadError: Error?
         
         // When
         controller.loadPreviousMessages { error in
@@ -405,7 +405,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize()
 
         let expectation = self.expectation(description: "Load next messages completes")
-        var loadError: Error?
+        nonisolated(unsafe) var loadError: Error?
 
         // When
         controller.loadNextMessages(after: "old1") { error in
@@ -471,7 +471,7 @@ extension LivestreamChannelController_Tests {
         client.mockAPIClient.test_simulateResponse(.success(initialPayload))
         
         let expectation = self.expectation(description: "Load previous messages completes")
-        var loadError: Error?
+        nonisolated(unsafe) var loadError: Error?
         
         // When
         controller.loadPreviousMessages(before: "new2") { error in
@@ -507,7 +507,7 @@ extension LivestreamChannelController_Tests {
         client.mockAPIClient.test_simulateResponse(.success(initialPayload))
         
         let expectation = self.expectation(description: "Load page around message completes")
-        var loadError: Error?
+        nonisolated(unsafe) var loadError: Error?
         
         // When
         controller.loadPageAroundMessageId("target-message-id") { error in
@@ -574,20 +574,14 @@ extension LivestreamChannelController_Tests {
 
         controller.pause()
 
-        controller.eventsController(
-            EventsController(
-                notificationCenter: EventNotificationCenter_Mock(
-                    database: DatabaseContainer_Spy()
-                )
-            ),
-            didReceiveEvent: MessageNewEvent(
-                user: .unique,
-                message: .unique,
-                channel: .mock(cid: controller.cid!),
-                createdAt: .unique,
-                watcherCount: nil,
-                unreadCount: nil
-            )
+        controller.didReceiveEvent(MessageNewEvent(
+            user: .unique,
+            message: .unique,
+            channel: .mock(cid: controller.cid!),
+            createdAt: .unique,
+            watcherCount: nil,
+            unreadCount: nil
+        )
         )
         XCTAssertEqual(controller.skippedMessagesAmount, 1)
 
@@ -706,13 +700,8 @@ extension LivestreamChannelController_Tests {
 
         controller.pause()
 
-        controller.eventsController(
-            EventsController(
-                notificationCenter: EventNotificationCenter_Mock(
-                    database: DatabaseContainer_Spy()
-                )
-            ),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .unique,
                 message: .unique,
                 channel: .mock(cid: controller.cid!),
@@ -833,7 +822,7 @@ extension LivestreamChannelController_Tests {
         )
         
         let expectation = self.expectation(description: "Create message completes")
-        var createResult: Result<MessageId, Error>?
+        nonisolated(unsafe) var createResult: Result<MessageId, Error>?
         
         // When
         controller.createNewMessage(
@@ -901,7 +890,7 @@ extension LivestreamChannelController_Tests {
         )
         
         let expectation = self.expectation(description: "Create message completes")
-        var createResult: Result<MessageId, Error>?
+        nonisolated(unsafe) var createResult: Result<MessageId, Error>?
         let testError = TestError()
         
         // When
@@ -992,12 +981,7 @@ extension LivestreamChannelController_Tests {
         )
         
         // When
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.messages.count, 1)
@@ -1030,12 +1014,7 @@ extension LivestreamChannelController_Tests {
             watcherCount: nil,
             unreadCount: nil
         )
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
 
         // Then
         XCTAssertEqual(controller.messages.count, 50)
@@ -1050,12 +1029,7 @@ extension LivestreamChannelController_Tests {
         )
         
         // When
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.messages.count, 1)
@@ -1072,12 +1046,7 @@ extension LivestreamChannelController_Tests {
         )
         
         // When
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.messages.count, 0) // Message not added when paused
@@ -1085,11 +1054,8 @@ extension LivestreamChannelController_Tests {
     
     func test_didReceiveEvent_messageUpdatedEvent_updatesExistingMessage() {
         // Add a message
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: .unique),
                 message: .mock(id: "update-me"),
                 channel: .mock(cid: controller.cid!),
@@ -1108,12 +1074,7 @@ extension LivestreamChannelController_Tests {
         )
         
         // When
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.messages.count, 1)
@@ -1145,9 +1106,8 @@ extension LivestreamChannelController_Tests {
             text: "Original text",
             pinDetails: nil
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: .unique),
                 message: unpinnedMessage,
                 channel: .mock(cid: cid),
@@ -1175,10 +1135,7 @@ extension LivestreamChannelController_Tests {
             message: pinnedMessage,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.messages.count, 1)
@@ -1211,9 +1168,8 @@ extension LivestreamChannelController_Tests {
         waitForExpectations(timeout: defaultTimeout)
         
         // Add the pinned message to the messages array
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: .unique),
                 message: pinnedMessage,
                 channel: .mock(cid: cid),
@@ -1241,10 +1197,7 @@ extension LivestreamChannelController_Tests {
             message: unpinnedMessage,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.messages.count, 1)
@@ -1276,9 +1229,8 @@ extension LivestreamChannelController_Tests {
         waitForExpectations(timeout: defaultTimeout)
         
         // Add the pinned message
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: .unique),
                 message: initialPinnedMessage,
                 channel: .mock(cid: cid),
@@ -1306,10 +1258,7 @@ extension LivestreamChannelController_Tests {
             message: updatedPinnedMessage,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then - Message updated but pinned messages array unchanged
         XCTAssertEqual(controller.messages.count, 1)
@@ -1321,11 +1270,8 @@ extension LivestreamChannelController_Tests {
     
     func test_didReceiveEvent_messageDeletedEvent_hardDelete_removesMessage() {
         // Add a message
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: .unique),
                 message: .mock(id: "delete-me"),
                 channel: .mock(cid: controller.cid!),
@@ -1346,7 +1292,7 @@ extension LivestreamChannelController_Tests {
         )
         
         // When
-        controller.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.messages.count, 0)
@@ -1354,11 +1300,8 @@ extension LivestreamChannelController_Tests {
     
     func test_didReceiveEvent_messageDeletedEvent_softDelete_updatesMessage() {
         // Add a message
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: .unique),
                 message: .mock(id: "delete-me"),
                 channel: .mock(cid: controller.cid!),
@@ -1384,7 +1327,7 @@ extension LivestreamChannelController_Tests {
         )
         
         // When
-        controller.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.messages.count, 1)
@@ -1394,11 +1337,8 @@ extension LivestreamChannelController_Tests {
     
     func test_didReceiveEvent_newMessageErrorEvent_updatesMessageState() {
         // Add a message
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: .unique),
                 message: .mock(id: "failed-message"),
                 channel: .mock(cid: controller.cid!),
@@ -1414,12 +1354,7 @@ extension LivestreamChannelController_Tests {
             cid: controller.cid!,
             error: ClientError.Unknown()
         )
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.messages.count, 1)
@@ -1451,11 +1386,8 @@ extension LivestreamChannelController_Tests {
             createdAt: .unique
         )
 
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: .unique),
                 message: message,
                 channel: .mock(cid: controller.cid!),
@@ -1468,12 +1400,7 @@ extension LivestreamChannelController_Tests {
         XCTAssertEqual(controller.messages.first?.reactionScores["like"], nil)
 
         // When
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.messages.count, 1)
@@ -1503,12 +1430,7 @@ extension LivestreamChannelController_Tests {
         )
         
         // When
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
 
         // Then
         XCTAssertEqual(controller.channel?.name, "Updated Name")
@@ -1587,10 +1509,7 @@ extension LivestreamChannelController_Tests {
             createdAt: .unique
         )
         
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then - Verify all properties were updated correctly
         XCTAssertEqual(controller.channel?.name, "Completely Updated Name")
@@ -1669,10 +1588,7 @@ extension LivestreamChannelController_Tests {
             member: newMember,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.channel?.memberCount, initialMemberCount + 1)
@@ -1717,10 +1633,7 @@ extension LivestreamChannelController_Tests {
             member: existingMember,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.channel?.memberCount, initialMemberCount - 1)
@@ -1754,10 +1667,7 @@ extension LivestreamChannelController_Tests {
             member: newMember,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.channel?.memberCount, initialMemberCount + 1)
@@ -1790,10 +1700,7 @@ extension LivestreamChannelController_Tests {
             member: newMember,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.channel?.membership?.id, currentUserId)
@@ -1828,10 +1735,7 @@ extension LivestreamChannelController_Tests {
             cid: cid,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.channel?.memberCount, initialMemberCount - 1)
@@ -1866,10 +1770,7 @@ extension LivestreamChannelController_Tests {
             cid: cid,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertNil(controller.channel?.membership)
@@ -1913,10 +1814,7 @@ extension LivestreamChannelController_Tests {
             member: updatedMember,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.channel?.memberCount, initialMemberCount) // Member count should remain the same
@@ -1963,10 +1861,7 @@ extension LivestreamChannelController_Tests {
             member: updatedMember,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.channel?.membership?.id, currentUserId)
@@ -2002,10 +1897,7 @@ extension LivestreamChannelController_Tests {
             watcherCount: initialWatcherCount + 1,
             isStarted: true
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.channel?.watcherCount, initialWatcherCount + 1)
@@ -2044,10 +1936,7 @@ extension LivestreamChannelController_Tests {
             watcherCount: initialWatcherCount - 1,
             isStarted: false
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.channel?.watcherCount, initialWatcherCount - 1)
@@ -2096,10 +1985,7 @@ extension LivestreamChannelController_Tests {
         )
 
         // When
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.channel?.membership?.isBannedFromChannel, true)
@@ -2142,10 +2028,7 @@ extension LivestreamChannelController_Tests {
         )
 
         // When
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
 
         // Then
         XCTAssertEqual(controller.channel?.membership?.isBannedFromChannel, false)
@@ -2158,9 +2041,8 @@ extension LivestreamChannelController_Tests {
         let initialMessage2 = ChatMessage.mock(id: "message2", cid: cid, text: "Message 2")
         
         // Load initial messages
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: .unique),
                 message: initialMessage1,
                 channel: .mock(cid: cid),
@@ -2169,9 +2051,8 @@ extension LivestreamChannelController_Tests {
                 unreadCount: nil
             )
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: .unique),
                 message: initialMessage2,
                 channel: .mock(cid: cid),
@@ -2194,10 +2075,7 @@ extension LivestreamChannelController_Tests {
         )
         
         // When
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.channel?.name, "Truncated Channel")
@@ -2212,9 +2090,8 @@ extension LivestreamChannelController_Tests {
         let initialMessage = ChatMessage.mock(id: "message1", cid: cid, text: "Message 1")
         
         // Load initial message
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: .unique),
                 message: initialMessage,
                 channel: .mock(cid: cid),
@@ -2236,10 +2113,7 @@ extension LivestreamChannelController_Tests {
         )
         
         // When
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.channel?.name, "Truncated Channel")
@@ -2259,12 +2133,7 @@ extension LivestreamChannelController_Tests {
         )
         
         // When
-        controller.eventsController(
-            EventsController(
-                notificationCenter: client.eventNotificationCenter
-            ),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
         
         // Then - Message array should not change
         XCTAssertEqual(controller.messages.count, 0)
@@ -2293,7 +2162,7 @@ extension LivestreamChannelController_Tests {
         )
         
         // When
-        controller.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        controller.didReceiveEvent(event)
         
         // Then
         XCTAssertEqual(controller.skippedMessagesAmount, 1)
@@ -2327,9 +2196,8 @@ extension LivestreamChannelController_Tests {
         )
         
         // Add messages to controller
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: bannedUserId),
                 message: bannedUserMessage1,
                 channel: .mock(cid: controller.cid!),
@@ -2338,9 +2206,8 @@ extension LivestreamChannelController_Tests {
                 unreadCount: nil
             )
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: bannedUserId),
                 message: bannedUserMessage2,
                 channel: .mock(cid: controller.cid!),
@@ -2349,9 +2216,8 @@ extension LivestreamChannelController_Tests {
                 unreadCount: nil
             )
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: otherUserId),
                 message: otherUserMessage,
                 channel: .mock(cid: controller.cid!),
@@ -2372,10 +2238,7 @@ extension LivestreamChannelController_Tests {
             hardDelete: false,
             createdAt: eventCreatedAt
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: userMessagesDeletedEvent
-        )
+        controller.didReceiveEvent(userMessagesDeletedEvent)
         
         // Then
         XCTAssertEqual(controller.messages.count, 3) // Messages still present
@@ -2415,9 +2278,8 @@ extension LivestreamChannelController_Tests {
         )
 
         // Add messages to controller
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: bannedUserId),
                 message: bannedUserMessage1,
                 channel: .mock(cid: controller.cid!),
@@ -2426,9 +2288,8 @@ extension LivestreamChannelController_Tests {
                 unreadCount: nil
             )
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: bannedUserId),
                 message: bannedUserMessage2,
                 channel: .mock(cid: controller.cid!),
@@ -2437,9 +2298,8 @@ extension LivestreamChannelController_Tests {
                 unreadCount: nil
             )
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: MessageNewEvent(
+        controller.didReceiveEvent(
+            MessageNewEvent(
                 user: .mock(id: otherUserId),
                 message: otherUserMessage,
                 channel: .mock(cid: controller.cid!),
@@ -2460,10 +2320,7 @@ extension LivestreamChannelController_Tests {
             hardDelete: true,
             createdAt: eventCreatedAt
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: userMessagesDeletedEvent
-        )
+        controller.didReceiveEvent(userMessagesDeletedEvent)
 
         // Then
         XCTAssertEqual(controller.messages.count, 1) // Only other user's message remains
@@ -2486,7 +2343,7 @@ extension LivestreamChannelController_Tests {
         let messageId = MessageId.unique
         let apiClient = client.mockAPIClient
         let expectation = self.expectation(description: "Delete message completes")
-        var deleteError: Error?
+        nonisolated(unsafe) var deleteError: Error?
         
         // When
         controller.deleteMessage(messageId: messageId, hard: false) { error in
@@ -2525,7 +2382,7 @@ extension LivestreamChannelController_Tests {
         let messageId = MessageId.unique
         let testError = TestError()
         let expectation = self.expectation(description: "Delete message completes")
-        var deleteError: Error?
+        nonisolated(unsafe) var deleteError: Error?
         
         // When
         controller.deleteMessage(messageId: messageId) { error in
@@ -2552,7 +2409,7 @@ extension LivestreamChannelController_Tests {
         let reactionType = MessageReactionType(rawValue: "like")
         let apiClient = client.mockAPIClient
         let expectation = self.expectation(description: "Add reaction completes")
-        var reactionError: Error?
+        nonisolated(unsafe) var reactionError: Error?
         
         // When
         controller.addReaction(
@@ -2615,7 +2472,7 @@ extension LivestreamChannelController_Tests {
         let reactionType = MessageReactionType(rawValue: "like")
         let apiClient = client.mockAPIClient
         let expectation = self.expectation(description: "Delete reaction completes")
-        var reactionError: Error?
+        nonisolated(unsafe) var reactionError: Error?
         
         // When
         controller.deleteReaction(reactionType, from: messageId) { error in
@@ -2639,7 +2496,7 @@ extension LivestreamChannelController_Tests {
         let messageId = MessageId.unique
         let apiClient = client.mockAPIClient
         let expectation = self.expectation(description: "Load reactions completes")
-        var loadResult: Result<[ChatMessageReaction], Error>?
+        nonisolated(unsafe) var loadResult: Result<[ChatMessageReaction], Error>?
         
         // When
         controller.loadReactions(for: messageId, limit: 50, offset: 10) { result in
@@ -2688,7 +2545,7 @@ extension LivestreamChannelController_Tests {
         let messageId = MessageId.unique
         let testError = TestError()
         let expectation = self.expectation(description: "Load reactions completes")
-        var loadResult: Result<[ChatMessageReaction], Error>?
+        nonisolated(unsafe) var loadResult: Result<[ChatMessageReaction], Error>?
         
         // When
         controller.loadReactions(for: messageId) { result in
@@ -2721,7 +2578,7 @@ extension LivestreamChannelController_Tests {
         let extraData: [String: RawJSON] = ["key": .string("value")]
         let apiClient = client.mockAPIClient
         let expectation = self.expectation(description: "Flag message completes")
-        var flagError: Error?
+        nonisolated(unsafe) var flagError: Error?
         
         // When
         controller.flag(messageId: messageId, reason: reason, extraData: extraData) { error in
@@ -2772,7 +2629,7 @@ extension LivestreamChannelController_Tests {
         let messageId = MessageId.unique
         let apiClient = client.mockAPIClient
         let expectation = self.expectation(description: "Unflag message completes")
-        var unflagError: Error?
+        nonisolated(unsafe) var unflagError: Error?
         
         // When
         controller.unflag(messageId: messageId) { error in
@@ -2806,7 +2663,7 @@ extension LivestreamChannelController_Tests {
         let pinning = MessagePinning.expirationTime(20)
         let apiClient = client.mockAPIClient
         let expectation = self.expectation(description: "Pin message completes")
-        var pinError: Error?
+        nonisolated(unsafe) var pinError: Error?
         
         // When
         controller.pin(messageId: messageId, pinning: pinning) { error in
@@ -2849,7 +2706,7 @@ extension LivestreamChannelController_Tests {
         let messageId = MessageId.unique
         let apiClient = client.mockAPIClient
         let expectation = self.expectation(description: "Unpin message completes")
-        var unpinError: Error?
+        nonisolated(unsafe) var unpinError: Error?
         
         // When
         controller.unpin(messageId: messageId) { error in
@@ -2875,7 +2732,7 @@ extension LivestreamChannelController_Tests {
         // Given
         let apiClient = client.mockAPIClient
         let expectation = self.expectation(description: "Load pinned messages completes")
-        var loadResult: Result<[ChatMessage], Error>?
+        nonisolated(unsafe) var loadResult: Result<[ChatMessage], Error>?
         let sorting: [Sorting<PinnedMessagesSortingKey>] = [.init(key: .pinnedAt, isAscending: false)]
         let pagination = PinnedMessagesPagination.after(.unique, inclusive: false)
         
@@ -2935,7 +2792,7 @@ extension LivestreamChannelController_Tests {
     func test_startWatching_makesCorrectAPICall() {
         // Given
         let expectation = self.expectation(description: "Start watching completes")
-        var watchError: Error?
+        nonisolated(unsafe) var watchError: Error?
         let mockUpdater = ChannelUpdater_Mock(
             channelRepository: client.channelRepository,
             messageRepository: client.messageRepository,
@@ -2972,7 +2829,7 @@ extension LivestreamChannelController_Tests {
     func test_startWatching_withRecoveryMode_makesCorrectAPICall() {
         // Given
         let expectation = self.expectation(description: "Start watching completes")
-        var watchError: Error?
+        nonisolated(unsafe) var watchError: Error?
         let mockUpdater = ChannelUpdater_Mock(
             channelRepository: client.channelRepository,
             messageRepository: client.messageRepository,
@@ -3009,7 +2866,7 @@ extension LivestreamChannelController_Tests {
     func test_startWatching_updaterFailure_callsCompletionWithError() {
         // Given
         let expectation = self.expectation(description: "Start watching completes")
-        var watchError: Error?
+        nonisolated(unsafe) var watchError: Error?
         let testError = TestError()
         let mockUpdater = ChannelUpdater_Mock(
             channelRepository: client.channelRepository,
@@ -3045,7 +2902,7 @@ extension LivestreamChannelController_Tests {
     func test_stopWatching_makesCorrectAPICall() {
         // Given
         let expectation = self.expectation(description: "Stop watching completes")
-        var watchError: Error?
+        nonisolated(unsafe) var watchError: Error?
         let mockUpdater = ChannelUpdater_Mock(
             channelRepository: client.channelRepository,
             messageRepository: client.messageRepository,
@@ -3081,7 +2938,7 @@ extension LivestreamChannelController_Tests {
     func test_stopWatching_updaterFailure_callsCompletionWithError() {
         // Given
         let expectation = self.expectation(description: "Stop watching completes")
-        var watchError: Error?
+        nonisolated(unsafe) var watchError: Error?
         let testError = TestError()
         let mockUpdater = ChannelUpdater_Mock(
             channelRepository: client.channelRepository,
@@ -3171,7 +3028,7 @@ extension LivestreamChannelController_Tests {
         let cooldownDuration = 30
         let apiClient = client.mockAPIClient
         let expectation = self.expectation(description: "Enable slow mode completes")
-        var slowModeError: Error?
+        nonisolated(unsafe) var slowModeError: Error?
         
         // When
         controller.enableSlowMode(cooldownDuration: cooldownDuration) { error in
@@ -3193,7 +3050,7 @@ extension LivestreamChannelController_Tests {
     func test_disableSlowMode_makesCorrectCall() {
         // Given
         let expectation = self.expectation(description: "Disable slow mode completes")
-        var slowModeError: Error?
+        nonisolated(unsafe) var slowModeError: Error?
         
         // When
         controller.disableSlowMode { error in
@@ -3317,7 +3174,7 @@ extension LivestreamChannelController_Tests {
     }
 }
 
-class MockPaginationStateHandler: MessagesPaginationStateHandling {
+class MockPaginationStateHandler: MessagesPaginationStateHandling, @unchecked Sendable {
     init() {
         state = .initial
     }

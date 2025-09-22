@@ -5,7 +5,7 @@
 import Foundation
 import StreamChat
 
-final class AttachmentUploader_Spy: AttachmentUploader, Spy {
+final class AttachmentUploader_Spy: AttachmentUploader, Spy, @unchecked Sendable {
     let spyState = SpyState()
 
     var uploadAttachmentProgress: Double?
@@ -13,8 +13,8 @@ final class AttachmentUploader_Spy: AttachmentUploader, Spy {
 
     func upload(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedAttachment, Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedAttachment, Error>) -> Void
     ) {
         record()
 
@@ -31,8 +31,8 @@ final class AttachmentUploader_Spy: AttachmentUploader, Spy {
     
     func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamAttachment<Payload>,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedFile, any Error>) -> Void
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedFile, any Error>) -> Void
     ) {
         record()
 

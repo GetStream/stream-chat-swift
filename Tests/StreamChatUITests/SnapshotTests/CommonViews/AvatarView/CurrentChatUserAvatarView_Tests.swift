@@ -8,7 +8,7 @@ import StreamChat
 import StreamSwiftTestHelpers
 import XCTest
 
-final class CurrentChatUserAvatarView_Tests: XCTestCase {
+@MainActor final class CurrentChatUserAvatarView_Tests: XCTestCase {
     var currentUserController: CurrentChatUserController_Mock!
 
     override func setUp() {

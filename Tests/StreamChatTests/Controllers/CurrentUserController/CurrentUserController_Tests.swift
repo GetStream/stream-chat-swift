@@ -11,8 +11,6 @@ final class CurrentUserController_Tests: XCTestCase {
     private var env: TestEnvironment!
     private var client: ChatClient!
     private var controller: CurrentChatUserController!
-    private var controllerCallbackQueueID: UUID!
-    private var callbackQueueID: UUID { controllerCallbackQueueID }
 
     // MARK: - Setup
 
@@ -22,15 +20,12 @@ final class CurrentUserController_Tests: XCTestCase {
         env = TestEnvironment()
         client = ChatClient.mock
         controller = CurrentChatUserController(client: client, environment: env.currentUserControllerEnvironment)
-        controllerCallbackQueueID = UUID()
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
     }
 
     override func tearDown() {
         client.completeConnectionIdWaiters(connectionId: nil)
         client.completeTokenWaiters(token: nil)
 
-        controllerCallbackQueueID = nil
         client.mockAPIClient.cleanUp()
         env.currentUserUpdater?.cleanUp()
 
@@ -93,9 +88,8 @@ final class CurrentUserController_Tests: XCTestCase {
         env.currentUserObserverStartUpdatingError = observerError
 
         // Simulate `synchronize` call.
-        var synchronizeError: Error?
-        controller.synchronize { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var synchronizeError: Error?
+        controller.synchronize { error in
             synchronizeError = error
         }
 
@@ -113,9 +107,8 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate current user
         env.currentUserObserverItem = .mock(id: .unique)
 
-        var synchronizeCalled = false
-        controller.synchronize { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var synchronizeCalled = false
+        controller.synchronize { error in
             XCTAssertNil(error)
             synchronizeCalled = true
         }
@@ -136,9 +129,8 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate current user
         env.currentUserObserverItem = .mock(id: .unique)
 
-        var synchronizeError: Error?
-        controller.synchronize { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var synchronizeError: Error?
+        controller.synchronize { error in
             synchronizeError = error
         }
 
@@ -169,7 +161,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_delegate_isAssignedCorrectly() {
         // Set the delegate
-        let delegate = UserController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = UserController_Delegate()
         controller.delegate = delegate
 
         // Assert the delegate is assigned correctly
@@ -178,7 +170,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_delegate_isReferencedWeakly() {
         // Create the delegate
-        var delegate: UserController_Delegate? = .init(expectedQueueId: callbackQueueID)
+        var delegate: UserController_Delegate? = .init()
 
         // Set the delegate
         controller.delegate = delegate
@@ -190,7 +182,7 @@ final class CurrentUserController_Tests: XCTestCase {
         XCTAssertNil(controller.delegate)
     }
 
-    func test_delegate_isNotifiedAboutCreatedUser() throws {
+    @MainActor func test_delegate_isNotifiedAboutCreatedUser() throws {
         // Call synchronize to get updates from DB
         controller.synchronize()
 
@@ -202,7 +194,7 @@ final class CurrentUserController_Tests: XCTestCase {
         )
 
         // Set the delegate
-        let delegate = UserController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = UserController_Delegate()
         controller.delegate = delegate
 
         // Simulate saving current user to a database
@@ -217,19 +209,19 @@ final class CurrentUserController_Tests: XCTestCase {
         }
     }
 
-    func test_delegate_isNotifiedAboutUpdatedUser() throws {
+    @MainActor func test_delegate_isNotifiedAboutUpdatedUser() throws {
         // Call synchronize to get updates from DB
         controller.synchronize()
 
         var extraData: [String: RawJSON] = [:]
-        var currentUserPayload: CurrentUserPayload = .dummy(
+        nonisolated(unsafe) var currentUserPayload: CurrentUserPayload = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
         )
 
         // Set the delegate
-        let delegate = UserController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = UserController_Delegate()
         controller.delegate = delegate
 
         // Simulate saving current user to a database
@@ -257,14 +249,14 @@ final class CurrentUserController_Tests: XCTestCase {
         }
     }
 
-    func test_delegate_isNotifiedAboutUnreadCount_whenUserIsCreated() throws {
+    @MainActor func test_delegate_isNotifiedAboutUnreadCount_whenUserIsCreated() throws {
         // Call synchronize to get updates from DB
         controller.synchronize()
 
         let unreadCount = UnreadCountPayload(channels: 10, messages: 15, threads: 10)
 
         // Set the delegate
-        let delegate = UserController_Delegate(expectedQueueId: callbackQueueID)
+        let delegate = UserController_Delegate()
         controller.delegate = delegate
 
         // Simulate saving current user to a database
@@ -318,9 +310,8 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate `connectUser`
         client.authenticationRepository.setMockToken()
 
-        var completionError: Error?
-        controller.updateUserData(name: .unique, imageURL: .unique(), userExtraData: [:]) { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var completionError: Error?
+        controller.updateUserData(name: .unique, imageURL: .unique(), userExtraData: [:]) {
             completionError = $0
         }
 
@@ -336,11 +327,9 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate `connectUser`
         client.authenticationRepository.setMockToken()
 
-        var completionIsCalled = false
+        nonisolated(unsafe) var completionIsCalled = false
         controller
-            .updateUserData(name: .unique, imageURL: .unique(), userExtraData: [:]) { [callbackQueueID] error in
-                // Assert callback queue is correct.
-                AssertTestQueue(withId: callbackQueueID)
+            .updateUserData(name: .unique, imageURL: .unique(), userExtraData: [:]) { error in
                 // Assert there is no error.
                 XCTAssertNil(error)
                 completionIsCalled = true
@@ -405,9 +394,8 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate `connectUser`
         client.authenticationRepository.setMockToken()
 
-        var completionError: Error?
-        controller.synchronizeDevices { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var completionError: Error?
+        controller.synchronizeDevices {
             completionError = $0
         }
 
@@ -421,9 +409,8 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate `connectUser`
         client.authenticationRepository.setMockToken()
 
-        var completionError: Error?
-        controller.synchronizeDevices { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var completionError: Error?
+        controller.synchronizeDevices {
             completionError = $0
         }
 
@@ -497,9 +484,8 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate `connectUser`
         client.authenticationRepository.setMockToken()
 
-        var completionError: Error?
-        controller.addDevice(.firebase(token: "test")) { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var completionError: Error?
+        controller.addDevice(.firebase(token: "test")) {
             completionError = $0
         }
 
@@ -515,10 +501,8 @@ final class CurrentUserController_Tests: XCTestCase {
         // Simulate `connectUser`
         client.authenticationRepository.setMockToken()
 
-        var completionIsCalled = false
-        controller.addDevice(.firebase(token: "test")) { [callbackQueueID] error in
-            // Assert callback queue is correct.
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var completionIsCalled = false
+        controller.addDevice(.firebase(token: "test")) { error in
             // Assert there is no error.
             XCTAssertNil(error)
             completionIsCalled = true
@@ -593,9 +577,8 @@ final class CurrentUserController_Tests: XCTestCase {
 
         let expectedId = String.unique
 
-        var completionError: Error?
-        controller.removeDevice(id: expectedId) { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var completionError: Error?
+        controller.removeDevice(id: expectedId) {
             completionError = $0
         }
 
@@ -613,10 +596,8 @@ final class CurrentUserController_Tests: XCTestCase {
 
         let expectedId = String.unique
 
-        var completionIsCalled = false
-        controller.removeDevice(id: expectedId) { [callbackQueueID] error in
-            // Assert callback queue is correct.
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var completionIsCalled = false
+        controller.removeDevice(id: expectedId) { error in
             // Assert there is no error.
             XCTAssertNil(error)
             completionIsCalled = true
@@ -679,9 +660,8 @@ final class CurrentUserController_Tests: XCTestCase {
             authenticationRepository.refreshTokenResult = error.map { .failure($0) } ?? .success(())
 
             let expectation = self.expectation(description: "reloadCompletes")
-            var reloadUserIfNeededCompletionError: Error?
-            controller.reloadUserIfNeeded { [callbackQueueID] error in
-                AssertTestQueue(withId: callbackQueueID)
+            nonisolated(unsafe) var reloadUserIfNeededCompletionError: Error?
+            controller.reloadUserIfNeeded { error in
                 reloadUserIfNeededCompletionError = error
                 expectation.fulfill()
             }
@@ -697,11 +677,10 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_markAllRead_callsChannelListUpdater() {
         // GIVEN
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
 
         // WHEN
-        controller.markAllRead { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
+        controller.markAllRead { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -727,12 +706,11 @@ final class CurrentUserController_Tests: XCTestCase {
 
     func test_markAllRead_propagatesErrorFromUpdater() {
         // GIVEN
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         let testError = TestError()
 
         // WHEN
-        controller.markAllRead { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
+        controller.markAllRead {
             completionCalledError = $0
         }
 
@@ -745,7 +723,7 @@ final class CurrentUserController_Tests: XCTestCase {
     // Delay execution for a bit to make sure background thread acquires lock
     // (from Atomic, in EntityDatabaseObserver.item) if we don't sleep, main thread acquires lock first
     // & no deadlock occurs
-    private func delayExecution(of function: @escaping (((Error?) -> Void)?) -> Void, onCompletion: (() -> Void)?) {
+    private func delayExecution(of function: @escaping @Sendable((@Sendable(Error?) -> Void)?) -> Void, onCompletion: (@Sendable() -> Void)?) {
         let exp = expectation(description: "completion called")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             function() { _ in
@@ -762,8 +740,7 @@ final class CurrentUserController_Tests: XCTestCase {
     func test_deleteAllLocalAttachmentDownloads_propagatesErrorFromUpdater() {
         let testError = TestError()
         let expectation = XCTestExpectation()
-        controller.deleteAllLocalAttachmentDownloads { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
+        controller.deleteAllLocalAttachmentDownloads { error in
             XCTAssertEqual(testError, error as? TestError)
             expectation.fulfill()
         }
@@ -773,8 +750,7 @@ final class CurrentUserController_Tests: XCTestCase {
     
     func test_deleteAllLocalAttachmentDownloads_success() {
         let expectation = XCTestExpectation()
-        controller.deleteAllLocalAttachmentDownloads { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
+        controller.deleteAllLocalAttachmentDownloads { error in
             XCTAssertNil(error)
             expectation.fulfill()
         }
@@ -789,7 +765,7 @@ final class CurrentUserController_Tests: XCTestCase {
         client.authenticationRepository.setMockToken()
         
         // Call loadAllUnreads
-        var receivedUnreads: CurrentUserUnreads?
+        nonisolated(unsafe) var receivedUnreads: CurrentUserUnreads?
         let exp = expectation(description: "loadAllUnreads called")
         controller.loadAllUnreads { result in
             receivedUnreads = try? result.get()
@@ -841,10 +817,9 @@ final class CurrentUserController_Tests: XCTestCase {
         client.authenticationRepository.setMockToken()
         
         // Call loadAllUnreads
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let exp = expectation(description: "loadAllUnreads called")
-        controller.loadAllUnreads { [callbackQueueID] result in
-            AssertTestQueue(withId: callbackQueueID)
+        controller.loadAllUnreads { result in
             receivedError = result.error
             exp.fulfill()
         }

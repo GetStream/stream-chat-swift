@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// An object containing types of UI Components that are used through the UI SDK.
-public struct Components {
+public struct Components: @unchecked Sendable {
     /// A view that displays a title label and subtitle in a container stack view.
     public var titleContainerView: TitleContainerView.Type = TitleContainerView.self
 
@@ -681,7 +681,7 @@ public struct Components {
 
     public init() {}
     
-    public static var `default` = Self()
+    public nonisolated(unsafe) static var `default` = Self()
 
     // MARK: Deprecations
 
@@ -699,7 +699,7 @@ public extension Components {
         deprecated,
         message: "Please use `Appearance.default.formatters.channelName` instead"
     )
-    var channelNamer: ChatChannelNamer {
+    @MainActor var channelNamer: ChatChannelNamer {
         get {
             DefaultChannelNameFormatter.channelNamer
         }
