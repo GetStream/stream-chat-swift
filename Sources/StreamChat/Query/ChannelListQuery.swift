@@ -287,6 +287,10 @@ public extension FilterKey where Scope == ChannelListFilterScope {
     /// Filter for the time of the last message in the channel. If the channel has no messages, then the time the channel was created.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
     static var lastUpdatedAt: FilterKey<Scope, Date> { .init(rawValue: "last_updated", keyPathString: #keyPath(ChannelDTO.defaultSortingAt)) }
+    
+    /// Filter for checking if the current user has a specific channel role set.
+    /// Supported operatios: `equal`, `in`
+    static var channelRole: FilterKey<Scope, String> { .init(rawValue: "channel_role", keyPathString: #keyPath(ChannelDTO.membership.channelRoleRaw)) }
 }
 
 /// Internal filter queries for the channel list.

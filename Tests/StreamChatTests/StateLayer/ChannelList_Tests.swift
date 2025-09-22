@@ -343,6 +343,65 @@ final class ChannelList_Tests: XCTestCase {
         cancellable.cancel()
     }
     
+    func test_updatingChannels_whenBlockedAndUnblockedWithHiddenQuery() async throws {
+        await setUpChannelList(
+            usesMockedChannelUpdater: false,
+            filter: .and([
+                .containMembers(userIds: [memberId]),
+                .or([
+                    .and([.equal(.blocked, to: false), .equal(.hidden, to: false)]),
+                    .and([.equal(.blocked, to: true), .equal(.hidden, to: true)])
+                ])
+            ])
+        )
+        
+        // Get initial batch of channels where 2 are blocked, 3 are not
+        let blockedOffsets = Set([1, 3])
+        let hiddenOffsets = Set([1, 3])
+        let firstChannelListPayload = makeMatchingChannelListPayload(
+            channelCount: 5,
+            createdAtOffset: 0,
+            blocked: { _, offset in blockedOffsets.contains(offset) },
+            hidden: { _, offset in hiddenOffsets.contains(offset) }
+        )
+        env.client.mockAPIClient.test_mockResponseResult(.success(firstChannelListPayload))
+        try await channelList.get()
+        await XCTAssertEqual(5, channelList.state.channels.count)
+        await XCTAssertEqual(2, channelList.state.channels.filter(\.isBlocked).count)
+        await XCTAssertEqual(2, channelList.state.channels.filter(\.isHidden).count)
+        
+        // Send an event which does not include blocked and hidden states, but contains channel info
+        // Channel gets saved to DB and should not change blocked and hidden states.
+        let secondChannel = firstChannelListPayload.channels[1].channel
+        let channelPayloadWithoutBlockedAndHidden = ChannelDetailPayload.dummy(
+            cid: secondChannel.cid,
+            isBlocked: nil,
+            isHidden: nil,
+            members: secondChannel.members ?? []
+        )
+        let eventPayload = EventPayload(
+            eventType: .notificationMarkRead,
+            cid: channelPayloadWithoutBlockedAndHidden.cid,
+            user: .dummy(userId: memberId),
+            channel: channelPayloadWithoutBlockedAndHidden,
+            unreadCount: .init(channels: 0, messages: 0, threads: 0),
+            createdAt: Date()
+        )
+        let notificationMarkReadEvent = try NotificationMarkReadEventDTO(from: eventPayload)
+        let expectation = XCTestExpectation()
+        env.client.eventNotificationCenter.process(notificationMarkReadEvent, postNotification: true) {
+            expectation.fulfill()
+        }
+        await fulfillment(of: [expectation])
+        
+        let secondChannelDataAfterEvent = try env.client.databaseContainer.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: secondChannel.cid)).asModel()
+        }
+        XCTAssertEqual(true, secondChannelDataAfterEvent.isBlocked, "State did not change")
+        XCTAssertEqual(true, secondChannelDataAfterEvent.isHidden, "State did not change")
+        await XCTAssertEqual(5, channelList.state.channels.count)
+    }
+    
     // MARK: - Linking and Unlinking Channels
     
     func test_observingEvents_whenAddedToChannelEventReceived_thenChannelIsLinkedAndStateUpdates() async throws {
@@ -487,7 +546,9 @@ final class ChannelList_Tests: XCTestCase {
         createdAtOffset: Int,
         namePrefix: String = "Name",
         membersCreator: ((ChannelId, Int) -> [MemberPayload])? = nil,
-        messagesCreator: ((ChannelId, Int) -> [MessagePayload])? = nil
+        messagesCreator: ((ChannelId, Int) -> [MessagePayload])? = nil,
+        blocked: ((ChannelId, Int) -> Bool) = { _, _ in false },
+        hidden: ((ChannelId, Int) -> Bool) = { _, _ in false }
     ) -> ChannelListPayload {
         let channelPayloads = (0..<channelCount)
             .map {
@@ -498,7 +559,9 @@ final class ChannelList_Tests: XCTestCase {
                     name: "\(namePrefix) \($0 + createdAtOffset)",
                     members: members,
                     messages: messagesCreator?(channelId, $0 + createdAtOffset),
-                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset))
+                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset)),
+                    blocked: blocked(channelId, $0 + createdAtOffset),
+                    hidden: hidden(channelId, $0 + createdAtOffset)
                 )
             }
         return ChannelListPayload(channels: channelPayloads)

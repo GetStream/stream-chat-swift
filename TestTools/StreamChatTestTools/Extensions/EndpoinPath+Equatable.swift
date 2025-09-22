@@ -28,7 +28,7 @@ extension EndpointPath: Equatable {
         case let (.channelEvent(string1), .channelEvent(string2)): return string1 == string2
         case let (.stopWatchingChannel(string1), .stopWatchingChannel(string2)): return string1 == string2
         case let (.pinnedMessages(string1), .pinnedMessages(string2)): return string1 == string2
-        case let (.uploadAttachment(channelId1, type1), .uploadAttachment(channelId2, type2)): return channelId1 == channelId2 &&
+        case let (.uploadChannelAttachment(channelId1, type1), .uploadChannelAttachment(channelId2, type2)): return channelId1 == channelId2 &&
             type1 ==
             type2
         case let (.sendMessage(channelId1), .sendMessage(channelId2)): return channelId1 == channelId2

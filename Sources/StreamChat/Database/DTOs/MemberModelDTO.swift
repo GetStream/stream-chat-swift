@@ -122,7 +122,7 @@ extension NSManagedObjectContext {
 
         // Save member specific data
         if let role = payload.role {
-            dto.channelRoleRaw = role.rawValue
+            dto.channelRoleRaw = role.rawChannelValue
         }
 
         dto.memberCreatedAt = payload.createdAt.bridgeDate
@@ -213,7 +213,7 @@ extension ChatChannelMember {
             memberExtraData = [:]
         }
 
-        let role = dto.channelRoleRaw.flatMap { MemberRole(rawValue: $0) } ?? .member
+        let role = dto.channelRoleRaw.flatMap { MemberRole(rawChannelValue: $0) } ?? .member
         let language: TranslationLanguage? = dto.user.language.map(TranslationLanguage.init)
 
         var member = ChatChannelMember(

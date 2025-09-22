@@ -12,4 +12,10 @@ public struct NewLocationInfo: Sendable {
     public let longitude: Double
     /// The end date of the location sharing if it is a live location.
     public let endAt: Date?
+
+    public init(latitude: Double, longitude: Double, endAt: Date?) {
+        self.latitude = latitude
+        self.longitude = longitude
+        self.endAt = endAt
+    }
 }

@@ -639,6 +639,26 @@ public class ChatClient: @unchecked Sendable {
             loadAppSettings { continuation.resume(with: $0) }
         }
     }
+    
+    // MARK: - Upload attachments
+    
+    /// Uploads an attachment to the specified CDN.
+    ///
+    /// - Parameters:
+    ///  - attachment: the attachment to be uploaded.
+    ///  - progress: the progress of the upload.
+    ///  - completion: called when the attachment is uploaded.
+    public func upload<Payload>(
+        _ attachment: StreamAttachment<Payload>,
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
+    ) {
+        apiClient.attachmentUploader.uploadStandaloneAttachment(
+            attachment,
+            progress: progress,
+            completion: completion
+        )
+    }
 
     // MARK: - Internal
 

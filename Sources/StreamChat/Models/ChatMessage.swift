@@ -183,6 +183,9 @@ public struct ChatMessage: Sendable {
 
     /// The location information of the message.
     public let sharedLocation: SharedLocation?
+    
+    /// The role of the member in the channel.
+    public let channelRole: MemberRole?
 
     init(
         id: MessageId,
@@ -225,7 +228,8 @@ public struct ChatMessage: Sendable {
         textUpdatedAt: Date?,
         draftReply: DraftMessage?,
         reminder: MessageReminderInfo?,
-        sharedLocation: SharedLocation?
+        sharedLocation: SharedLocation?,
+        channelRole: MemberRole?
     ) {
         self.id = id
         self.cid = cid
@@ -269,6 +273,7 @@ public struct ChatMessage: Sendable {
         self.draftReply = draftReply
         self.sharedLocation = sharedLocation
         self.reminder = reminder
+        self.channelRole = channelRole
     }
 
     /// Returns a new `ChatMessage` with the provided data changed.
@@ -285,6 +290,7 @@ public struct ChatMessage: Sendable {
         originalLanguage: TranslationLanguage? = nil,
         moderationDetails: MessageModerationDetails? = nil,
         readBy: Set<ChatUser>? = nil,
+        deletedAt: Date? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatMessage {
         .init(
@@ -296,7 +302,7 @@ public struct ChatMessage: Sendable {
             createdAt: createdAt,
             locallyCreatedAt: locallyCreatedAt,
             updatedAt: updatedAt,
-            deletedAt: deletedAt,
+            deletedAt: deletedAt ?? self.deletedAt,
             arguments: arguments ?? self.arguments,
             parentMessageId: parentMessageId,
             showReplyInChannel: showReplyInChannel,
@@ -328,7 +334,8 @@ public struct ChatMessage: Sendable {
             textUpdatedAt: textUpdatedAt,
             draftReply: draftReply,
             reminder: reminder,
-            sharedLocation: sharedLocation
+            sharedLocation: sharedLocation,
+            channelRole: channelRole
         )
     }
 
@@ -442,7 +449,8 @@ public struct ChatMessage: Sendable {
             textUpdatedAt: textUpdatedAt,
             draftReply: draftReply,
             reminder: reminder,
-            sharedLocation: sharedLocation
+            sharedLocation: sharedLocation,
+            channelRole: channelRole
         )
     }
 }
@@ -553,6 +561,7 @@ extension ChatMessage: Hashable {
         guard lhs.id == rhs.id else { return false }
         guard lhs.localState == rhs.localState else { return false }
         guard lhs.updatedAt == rhs.updatedAt else { return false }
+        guard lhs.deletedAt == rhs.deletedAt else { return false }
         guard lhs.allAttachments == rhs.allAttachments else { return false }
         guard lhs.poll == rhs.poll else { return false }
         guard lhs.author == rhs.author else { return false }

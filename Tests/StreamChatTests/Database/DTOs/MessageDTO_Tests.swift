@@ -712,7 +712,8 @@ final class MessageDTO_Tests: XCTestCase {
             pinned: true,
             pinnedByUserId: .unique,
             pinnedAt: .unique,
-            pinExpires: .unique
+            pinExpires: .unique,
+            member: MemberInfoPayload(channelRole: .moderator)
         )
 
         // Asynchronously save the payload to the db
@@ -778,6 +779,7 @@ final class MessageDTO_Tests: XCTestCase {
                 Set(messagePayload.attachmentIDs(cid: channelId)),
                 loadedMessage.flatMap { Set($0.attachments.compactMap(\.attachmentID)) }
             )
+            Assert.willBeEqual(messagePayload.member?.channelRole?.rawValue, loadedMessage?.channelRole)
         }
     }
 

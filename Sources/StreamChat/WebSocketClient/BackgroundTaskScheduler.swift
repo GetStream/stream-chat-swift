@@ -35,21 +35,9 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler, @unchecked Sendable {
     private let queue = DispatchQueue(label: "io.getstream.IOSBackgroundTaskScheduler", target: .global())
 
     var isAppActive: Bool {
-        if Thread.isMainThread {
-            return MainActor.assumeIsolated {
-                app?.applicationState == .active
-            }
+        StreamConcurrency.onMain {
+            self.app?.applicationState == .active
         }
-
-        nonisolated(unsafe) var isActive = false
-        let group = DispatchGroup()
-        group.enter()
-        DispatchQueue.main.async {
-            isActive = self.app?.applicationState == .active
-            group.leave()
-        }
-        group.wait()
-        return isActive
     }
 
     func beginTask(expirationHandler: (@Sendable @MainActor() -> Void)?) -> Bool {

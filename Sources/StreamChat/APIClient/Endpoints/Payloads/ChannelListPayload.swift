@@ -142,6 +142,8 @@ struct ChannelDetailPayload {
     let members: [MemberPayload]?
 
     let memberCount: Int
+    
+    let messageCount: Int?
 
     /// A list of users to invite in the channel.
     let invitedMembers: [MemberPayload] = [] // TODO?
@@ -192,6 +194,7 @@ extension ChannelDetailPayload: Decodable {
             isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden),
             members: try container.decodeArrayIfPresentIgnoringFailures([MemberPayload].self, forKey: .members),
             memberCount: try container.decodeIfPresent(Int.self, forKey: .memberCount) ?? 0,
+            messageCount: try container.decodeIfPresent(Int.self, forKey: .messageCount),
             team: try container.decodeIfPresent(String.self, forKey: .team),
             cooldownDuration: try container.decodeIfPresent(Int.self, forKey: .cooldownDuration) ?? 0
         )

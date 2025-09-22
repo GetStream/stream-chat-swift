@@ -16,6 +16,17 @@ public protocol AttachmentUploader: Sendable {
         progress: (@Sendable(Double) -> Void)?,
         completion: @escaping @Sendable(Result<UploadedAttachment, Error>) -> Void
     )
+    
+    /// Uploads a standalone attachment (not tied to message or channel), and returns the attachment with the remote information.
+    /// - Parameters:
+    ///   - attachment: A standalone attachment.
+    ///   - progress: The progress of the upload.
+    ///   - completion: The callback with the uploaded attachment.
+    func uploadStandaloneAttachment<Payload>(
+        _ attachment: StreamAttachment<Payload>,
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
+    )
 }
 
 public class StreamAttachmentUploader: AttachmentUploader, @unchecked Sendable {
@@ -40,5 +51,17 @@ public class StreamAttachmentUploader: AttachmentUploader, @unchecked Sendable {
                 return uploadedAttachment
             })
         }
+    }
+    
+    public func uploadStandaloneAttachment<Payload>(
+        _ attachment: StreamAttachment<Payload>,
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
+    ) {
+        cdnClient.uploadStandaloneAttachment(
+            attachment,
+            progress: progress,
+            completion: completion
+        )
     }
 }

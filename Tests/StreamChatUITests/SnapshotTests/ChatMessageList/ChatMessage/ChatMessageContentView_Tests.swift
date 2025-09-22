@@ -607,6 +607,45 @@ import XCTest
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
+    func test_appearance_whenMessageHasOnlyOneImage_masksAllTopCorners() throws {
+        class CustomBubbleView: ChatMessageBubbleView {
+            override func updateContent() {
+                super.updateContent()
+                backgroundColor = .red
+            }
+        }
+
+        var components = Components.default
+        components.messageBubbleView = CustomBubbleView.self
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "Hello",
+            author: .unique,
+            createdAt: createdAt,
+            attachments: [.dummy(
+                id: .unique,
+                type: .image,
+                payload: try JSONEncoder.stream.encode(ImageAttachmentPayload(
+                    title: nil, imageRemoteURL: TestImages.r2.url
+                )),
+                uploadingState: nil
+            )],
+            localState: nil,
+            isSentByCurrentUser: false
+        )
+
+        let view = contentView(
+            message: message,
+            channel: .mock(cid: .unique, membership: .mock(id: .unique)),
+            components: components,
+            attachmentInjector: GalleryAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: [.defaultLight])
+    }
+
     func test_appearance_whenMessageHasTranslation_whenIsSentByCurrentUser() throws {
         let message: ChatMessage = .mock(
             id: .unique,

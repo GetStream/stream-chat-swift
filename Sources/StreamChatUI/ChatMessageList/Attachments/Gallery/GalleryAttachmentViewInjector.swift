@@ -43,15 +43,8 @@ open class GalleryAttachmentViewInjector: AttachmentViewInjector {
         contentView.bubbleView?.clipsToBounds = true
         contentView.bubbleContentContainer.insertArrangedSubview(galleryView, at: 0, respectsLayoutMargins: false)
 
-        // We need to apply corners to the left and right containers because the previewsContainerView
-        // is applying extra layout margins and the rounded corners wouldn't match the margins.
-        let leftCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
-        galleryView.leftPreviewsContainerView.layer.maskedCorners = options.roundedCorners(for: galleryView.effectiveUserInterfaceLayoutDirection).intersection(leftCorners)
         galleryView.leftPreviewsContainerView.layer.cornerRadius = 16
         galleryView.leftPreviewsContainerView.layer.masksToBounds = true
-
-        let rightCorners: CACornerMask = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
-        galleryView.rightPreviewsContainerView.layer.maskedCorners = options.roundedCorners(for: galleryView.effectiveUserInterfaceLayoutDirection).intersection(rightCorners)
         galleryView.rightPreviewsContainerView.layer.cornerRadius = 16
         galleryView.rightPreviewsContainerView.layer.masksToBounds = true
 
@@ -65,6 +58,34 @@ open class GalleryAttachmentViewInjector: AttachmentViewInjector {
 
     override open func contentViewDidUpdateContent() {
         super.contentViewDidUpdateContent()
+
+        if let options = contentView.layoutOptions {
+            // We need to apply corners to the left and right containers because the previewsContainerView
+            // is applying extra layout margins and the rounded corners wouldn't match the margins.
+            let leftCorners: CACornerMask = [.layerMinXMaxYCorner, .layerMinXMinYCorner]
+            let leftMaskedCorners = options.roundedCorners(for: galleryView.effectiveUserInterfaceLayoutDirection)
+                .intersection(leftCorners)
+            let rightCorners: CACornerMask = [.layerMaxXMaxYCorner, .layerMaxXMinYCorner]
+            let rightMaskedCorners = options.roundedCorners(for: galleryView.effectiveUserInterfaceLayoutDirection)
+                .intersection(rightCorners)
+
+            let newLeftPreviewsMaskedCorners: CACornerMask
+            if contentView.content?.allAttachments.count == 1 {
+                // If there is only one attachment, only the left container is used, so we need to apply
+                // the right corners to it as well.
+                newLeftPreviewsMaskedCorners = rightMaskedCorners.union(leftMaskedCorners)
+            } else {
+                newLeftPreviewsMaskedCorners = leftMaskedCorners
+            }
+
+            if galleryView.leftPreviewsContainerView.layer.maskedCorners != newLeftPreviewsMaskedCorners {
+                galleryView.leftPreviewsContainerView.layer.maskedCorners = newLeftPreviewsMaskedCorners
+            }
+
+            if galleryView.rightPreviewsContainerView.layer.maskedCorners != rightMaskedCorners {
+                galleryView.rightPreviewsContainerView.layer.maskedCorners = rightMaskedCorners
+            }
+        }
 
         let videos = attachments(payloadType: VideoAttachmentPayload.self)
         let images = attachments(payloadType: ImageAttachmentPayload.self)

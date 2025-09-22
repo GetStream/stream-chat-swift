@@ -917,6 +917,7 @@
 		84B7383E2BE8C13A00EC66EC /* PollController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B7383C2BE8C13A00EC66EC /* PollController+SwiftUI.swift */; };
 		84B8779E2AC30F0E009EF76A /* DemoShareViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B8779D2AC30F0E009EF76A /* DemoShareViewModel.swift */; };
 		84B877A02AC31AB8009EF76A /* StreamChat+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84B8779F2AC31AB8009EF76A /* StreamChat+Extensions.swift */; };
+		84BC99282E5C56590000FB87 /* StreamAttachment_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BC99272E5C56590000FB87 /* StreamAttachment_Mock.swift */; };
 		84BE85DA2AC30E88007DD47C /* DemoShareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84BE85D92AC30E88007DD47C /* DemoShareView.swift */; };
 		84C11BDF27FB2B4600000A9E /* ChannelPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C11BDE27FB2B4600000A9E /* ChannelPayload.swift */; };
 		84C11BE127FB2C2B00000A9E /* ChannelReadDTO_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84C11BE027FB2C2B00000A9E /* ChannelReadDTO_Tests.swift */; };
@@ -1575,6 +1576,8 @@
 		AD3D0CC026A8727800A6D813 /* SlackChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CBF26A8727800A6D813 /* SlackChatChannelHeaderView.swift */; };
 		AD3D0CC226A88E5100A6D813 /* MessengerChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CC126A88E5100A6D813 /* MessengerChatChannelHeaderView.swift */; };
 		AD3D0CC426A89E6300A6D813 /* iMessageChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */; };
+		AD3DB8312E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3DB8302E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift */; };
+		AD3DB8322E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3DB8302E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift */; };
 		AD3EE5442832921400ACEFD9 /* VirtualTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D15D8527E9D4B5006B34D7 /* VirtualTime.swift */; };
 		AD4118832D5E1368000EF88E /* UILabel+highlightText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4118822D5E135D000EF88E /* UILabel+highlightText.swift */; };
 		AD4118842D5E1368000EF88E /* UILabel+highlightText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4118822D5E135D000EF88E /* UILabel+highlightText.swift */; };
@@ -3903,6 +3906,7 @@
 		84B7383C2BE8C13A00EC66EC /* PollController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PollController+SwiftUI.swift"; sourceTree = "<group>"; };
 		84B8779D2AC30F0E009EF76A /* DemoShareViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoShareViewModel.swift; sourceTree = "<group>"; };
 		84B8779F2AC31AB8009EF76A /* StreamChat+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StreamChat+Extensions.swift"; sourceTree = "<group>"; };
+		84BC99272E5C56590000FB87 /* StreamAttachment_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamAttachment_Mock.swift; sourceTree = "<group>"; };
 		84BE85D92AC30E88007DD47C /* DemoShareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoShareView.swift; sourceTree = "<group>"; };
 		84C11BDE27FB2B4600000A9E /* ChannelPayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelPayload.swift; sourceTree = "<group>"; };
 		84C11BE027FB2C2B00000A9E /* ChannelReadDTO_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChannelReadDTO_Tests.swift; sourceTree = "<group>"; };
@@ -4426,6 +4430,7 @@
 		AD3D0CBF26A8727800A6D813 /* SlackChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3D0CC126A88E5100A6D813 /* MessengerChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatChannelHeaderView.swift; sourceTree = "<group>"; };
+		AD3DB8302E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryHeaderViewDateFormatter.swift; sourceTree = "<group>"; };
 		AD4118822D5E135D000EF88E /* UILabel+highlightText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+highlightText.swift"; sourceTree = "<group>"; };
 		AD43DE6C2A712B0F0040C0FD /* ChatChannelListSearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListSearchVC.swift; sourceTree = "<group>"; };
 		AD43F90826153BAD00F2D4BB /* QuotedChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotedChatMessageView.swift; sourceTree = "<group>"; };
@@ -7223,6 +7228,7 @@
 				A344075B27D753530044F150 /* ChatMessageLinkAttachment_Mock.swift */,
 				4F1FB7D72C7DEC6600C47C2A /* ChatMessageVideoAttachment_Mock.swift */,
 				40A2961929F8244500E0C186 /* ChatMessageVoiceRecordingAttachment_Mock.swift */,
+				84BC99272E5C56590000FB87 /* StreamAttachment_Mock.swift */,
 			);
 			path = Attachments;
 			sourceTree = "<group>";
@@ -9167,6 +9173,7 @@
 		AD99C901279B06E9009DD9C5 /* Appearance+Formatters */ = {
 			isa = PBXGroup;
 			children = (
+				AD3DB8302E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift */,
 				ADC4AAAF2788C8850004BB35 /* Appearance+Formatters.swift */,
 				40D396232A0905560020DDC9 /* AudioPlaybackRateFormatter.swift */,
 				40D396242A0905560020DDC9 /* AudioRecordingNameFormatter.swift */,
@@ -10877,7 +10884,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which mint >/dev/null && mint which swiftgen; then\n  xcrun --sdk macosx mint run swiftgen config run --config ./Sources/StreamChatUI/.swiftgen.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
+			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which swiftgen; then\n  xcrun --sdk macosx swiftgen config run --config ./Sources/StreamChatUI/.swiftgen.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -11120,6 +11127,7 @@
 				AD81AF0525ED141800F17F8F /* CellSeparatorView.swift in Sources */,
 				790882FD25486BFD00896F03 /* ChatChannelListCollectionViewCell.swift in Sources */,
 				88CABC4525933EE70061BB67 /* ChatMessageReactionsView.swift in Sources */,
+				AD3DB8312E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift in Sources */,
 				ADD2A99028FF0CD300A83305 /* ImageSizeCalculator.swift in Sources */,
 				AD7EFDAA2C78C0AF00625FC5 /* PollCommentListItemCell.swift in Sources */,
 				E7166CE225BEE20600B03B07 /* Appearance+Images.swift in Sources */,
@@ -11564,6 +11572,7 @@
 				A311B42D27E8BB7400CFCF6D /* StreamChatTestTools.swift in Sources */,
 				40D484022A1264F1009E4134 /* MockAudioRecorder.swift in Sources */,
 				82F714A72B0784D900442A74 /* UnwrapAsync.swift in Sources */,
+				84BC99282E5C56590000FB87 /* StreamAttachment_Mock.swift in Sources */,
 				A344077627D753530044F150 /* ChatMessageReaction_Mock.swift in Sources */,
 				A311B43B27E8BC8400CFCF6D /* ChannelWatcherListController_Delegate.swift in Sources */,
 				82E655332B06748400D64906 /* Spy.swift in Sources */,
@@ -13248,6 +13257,7 @@
 				C121EBA82746A1E800023E4C /* ChatChannelAvatarView.swift in Sources */,
 				C121EBA92746A1E800023E4C /* ChatChannelAvatarView+SwiftUI.swift in Sources */,
 				C121EBAA2746A1E800023E4C /* ChatUserAvatarView.swift in Sources */,
+				AD3DB8322E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift in Sources */,
 				40824D0F2A1270CB003B61FD /* ChatMessageVoiceRecordingAttachmentListView.swift in Sources */,
 				C121EBAB2746A1E800023E4C /* CurrentChatUserAvatarView.swift in Sources */,
 				C121EBAC2746A1E800023E4C /* InputChatMessageView.swift in Sources */,

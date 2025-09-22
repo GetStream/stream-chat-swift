@@ -41,6 +41,7 @@ class ChannelDTO: NSManagedObject {
 
     @NSManaged var watcherCount: Int64
     @NSManaged var memberCount: Int64
+    @NSManaged var messageCount: NSNumber?
 
     @NSManaged var isFrozen: Bool
     @NSManaged var cooldownDuration: Int
@@ -261,6 +262,10 @@ extension NSManagedObjectContext {
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
         dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
         dto.memberCount = Int64(clamping: payload.memberCount)
+        
+        if let messageCount = payload.messageCount {
+            dto.messageCount = NSNumber(value: messageCount)
+        }
 
         // Because `truncatedAt` is used, client side, for both truncation and channel hiding cases, we need to avoid using the
         // value returned by the Backend in some cases.
@@ -285,8 +290,6 @@ extension NSManagedObjectContext {
         // for blocked 1:1 channels on channel list query
         if let isBlocked = payload.isBlocked {
             dto.isBlocked = isBlocked
-        } else {
-            dto.isBlocked = false
         }
 
         // Backend only returns a boolean for hidden state
@@ -642,6 +645,7 @@ extension ChatChannel {
             unreadCount: unreadCount,
             watcherCount: Int(dto.watcherCount),
             memberCount: Int(dto.memberCount),
+            messageCount: dto.messageCount?.intValue,
             reads: reads,
             cooldownDuration: Int(dto.cooldownDuration),
             extraData: extraData,

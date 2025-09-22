@@ -22,7 +22,7 @@ final class AttachmentEndpoints_Tests: XCTestCase {
 
         for (type, pathComponent) in testCases {
             let expectedEndpoint: Endpoint<FileUploadPayload> = .init(
-                path: .uploadAttachment(channelId: id.cid.apiPath, type: pathComponent),
+                path: .uploadChannelAttachment(channelId: id.cid.apiPath, type: pathComponent),
                 method: .post,
                 queryItems: nil,
                 requiresConnectionId: false,

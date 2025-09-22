@@ -135,8 +135,6 @@ lane :publish_release do |options|
   )
 
   update_spm(version: release_version)
-
-  sh('gh workflow run merge-main-to-develop.yml --ref main')
 end
 
 lane :get_sdk_version_from_environment do
@@ -797,11 +795,11 @@ lane :run_swift_format do |options|
   Dir.chdir('..') do
     strict = options[:strict] ? '--lint' : nil
     sources_matrix[:swiftformat].each do |path|
-      sh("mint run swiftformat #{strict} --config .swiftformat #{path}")
+      sh("swiftformat #{strict} --config .swiftformat #{path}")
       next if path == 'Tests'
 
-      sh("mint run swiftlint lint --config .swiftlint.yml --fix --progress --quiet --reporter json #{path}") unless strict
-      sh("mint run swiftlint lint --config .swiftlint.yml --strict --progress --quiet --reporter json #{path}")
+      sh("swiftlint lint --config .swiftlint.yml --fix --progress --reporter json #{path}") unless strict
+      sh("swiftlint lint --config .swiftlint.yml --strict --progress --reporter json #{path}")
     end
   end
 end

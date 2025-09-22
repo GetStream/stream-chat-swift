@@ -61,6 +61,10 @@ public struct ChatChannel: Sendable {
 
     /// The total number of members in the channel.
     public let memberCount: Int
+    
+    /// The total number of messages in the channel.
+    /// Only returns value if `count_messages` is configured for your app.
+    public let messageCount: Int?
 
     /// A list of members of this channel.
     ///
@@ -77,8 +81,8 @@ public struct ChatChannel: Sendable {
     public let currentlyTypingUsers: Set<ChatUser>
 
     /// If the current user is a member of the channel, this variable contains the details about the membership.
-    public let membership: ChatChannelMember?
-    
+    public internal(set) var membership: ChatChannelMember?
+
     /// Returns `true`, if the channel is archived.
     public var isArchived: Bool {
         membership?.archivedAt != nil
@@ -197,6 +201,7 @@ public struct ChatChannel: Sendable {
         unreadCount: ChannelUnreadCount,
         watcherCount: Int = 0,
         memberCount: Int = 0,
+        messageCount: Int? = nil,
         reads: [ChatChannelRead] = [],
         cooldownDuration: Int = 0,
         extraData: [String: RawJSON],
@@ -227,6 +232,7 @@ public struct ChatChannel: Sendable {
         self.team = team
         self.watcherCount = watcherCount
         self.memberCount = memberCount
+        self.messageCount = messageCount
         self.reads = reads
         self.cooldownDuration = cooldownDuration
         self.extraData = extraData
@@ -293,39 +299,59 @@ public struct ChatChannel: Sendable {
     public func changing(
         name: String? = nil,
         imageURL: URL? = nil,
+        lastMessageAt: Date? = nil,
+        createdAt: Date? = nil,
+        deletedAt: Date? = nil,
+        updatedAt: Date? = nil,
+        truncatedAt: Date? = nil,
+        isHidden: Bool? = nil,
+        createdBy: ChatUser? = nil,
+        config: ChannelConfig? = nil,
+        ownCapabilities: Set<ChannelCapability>? = nil,
+        isFrozen: Bool? = nil,
+        isDisabled: Bool? = nil,
+        isBlocked: Bool? = nil,
         reads: [ChatChannelRead]? = nil,
+        members: [ChatChannelMember]? = nil,
+        membership: ChatChannelMember? = nil,
+        memberCount: Int? = nil,
+        watchers: [ChatUser]? = nil,
+        watcherCount: Int? = nil,
+        team: TeamId? = nil,
+        cooldownDuration: Int? = nil,
+        pinnedMessages: [ChatMessage]? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatChannel {
         .init(
             cid: cid,
             name: name ?? self.name,
             imageURL: imageURL ?? self.imageURL,
-            lastMessageAt: lastMessageAt,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deletedAt: deletedAt,
-            truncatedAt: truncatedAt,
-            isHidden: isHidden,
-            createdBy: createdBy,
-            config: config,
-            ownCapabilities: ownCapabilities,
-            isFrozen: isFrozen,
-            isDisabled: isDisabled,
-            isBlocked: isBlocked,
-            lastActiveMembers: lastActiveMembers,
-            membership: membership,
+            lastMessageAt: lastMessageAt ?? self.lastMessageAt,
+            createdAt: createdAt ?? self.createdAt,
+            updatedAt: updatedAt ?? self.updatedAt,
+            deletedAt: deletedAt ?? self.deletedAt,
+            truncatedAt: truncatedAt ?? self.truncatedAt,
+            isHidden: isHidden ?? self.isHidden,
+            createdBy: createdBy ?? self.createdBy,
+            config: config ?? self.config,
+            ownCapabilities: ownCapabilities ?? self.ownCapabilities,
+            isFrozen: isFrozen ?? self.isFrozen,
+            isDisabled: isDisabled ?? self.isDisabled,
+            isBlocked: isBlocked ?? self.isBlocked,
+            lastActiveMembers: members ?? lastActiveMembers,
+            membership: membership ?? self.membership,
             currentlyTypingUsers: currentlyTypingUsers,
-            lastActiveWatchers: lastActiveWatchers,
-            team: team,
+            lastActiveWatchers: watchers ?? lastActiveWatchers,
+            team: team ?? self.team,
             unreadCount: unreadCount,
-            watcherCount: watcherCount,
-            memberCount: memberCount,
+            watcherCount: watcherCount ?? self.watcherCount,
+            memberCount: memberCount ?? self.memberCount,
             reads: reads ?? self.reads,
-            cooldownDuration: cooldownDuration,
-            extraData: extraData ?? [:],
+            cooldownDuration: cooldownDuration ?? self.cooldownDuration,
+            extraData: extraData ?? self.extraData,
             latestMessages: latestMessages,
             lastMessageFromCurrentUser: lastMessageFromCurrentUser,
-            pinnedMessages: pinnedMessages,
+            pinnedMessages: pinnedMessages ?? self.pinnedMessages,
             pendingMessages: pendingMessages,
             muteDetails: muteDetails,
             previewMessage: previewMessage,

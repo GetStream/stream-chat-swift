@@ -21,7 +21,7 @@ jobs:
     - uses: ./.github/actions/bootstrap
       env:
         INSTALL_SONAR: true
-        SKIP_MINT_BOOTSTRAP: true
+        SKIP_SWIFT_BOOTSTRAP: true
 
     - uses: actions/github-script@v6
       id: get_pr_number

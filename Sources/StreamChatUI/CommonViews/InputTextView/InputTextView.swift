@@ -157,9 +157,11 @@ open class InputTextView: UITextView, ThemeProvider {
 
     open func setUpLayout() {
         addSubview(placeholderLabel)
+        placeholderLabel.setContentCompressionResistancePriority(.streamLow, for: .horizontal)
         NSLayoutConstraint.activate([
             placeholderLabel.leadingAnchor.pin(equalTo: leadingAnchor, constant: directionalLayoutMargins.leading),
-            placeholderLabel.trailingAnchor.pin(lessThanOrEqualTo: trailingAnchor),
+            placeholderLabel.trailingAnchor.pin(equalTo: trailingAnchor, constant: -directionalLayoutMargins.trailing),
+            placeholderLabel.widthAnchor.pin(equalTo: layoutMarginsGuide.widthAnchor),
             placeholderLabel.topAnchor.pin(equalTo: topAnchor),
             placeholderLabel.bottomAnchor.pin(lessThanOrEqualTo: bottomAnchor),
             placeholderLabel.centerYAnchor.pin(equalTo: centerYAnchor)

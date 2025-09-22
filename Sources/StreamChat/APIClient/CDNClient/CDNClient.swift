@@ -40,6 +40,17 @@ public protocol CDNClient: Sendable {
         progress: (@Sendable(Double) -> Void)?,
         completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
     )
+    
+    /// Uploads standalone attachment as a multipart/form-data and returns the uploaded remote file and its thumbnail.
+    /// - Parameters:
+    ///   - attachment: An attachment to upload.
+    ///   - progress: A closure that broadcasts upload progress.
+    ///   - completion: Returns the uploaded file's information.
+    func uploadStandaloneAttachment<Payload>(
+        _ attachment: StreamAttachment<Payload>,
+        progress: (@Sendable(Double) -> Void)?,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
+    )
 }
 
 public extension CDNClient {
@@ -104,13 +115,52 @@ final class StreamCDNClient: CDNClient, @unchecked Sendable {
             let fileData = try? Data(contentsOf: uploadingState.localFileURL) else {
             return completion(.failure(ClientError.AttachmentUploading(id: attachment.id)))
         }
+        let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(with: attachment.id.cid, type: attachment.type)
+        
+        uploadAttachment(
+            endpoint: endpoint,
+            fileData: fileData,
+            uploadingState: uploadingState,
+            progress: progress,
+            completion: completion
+        )
+    }
+    
+    func uploadStandaloneAttachment<Payload>(
+        _ attachment: StreamAttachment<Payload>,
+        progress: (@Sendable(Double) -> Void)? = nil,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
+    ) {
+        guard
+            let uploadingState = attachment.uploadingState,
+            let fileData = try? Data(contentsOf: uploadingState.localFileURL) else {
+            return completion(.failure(ClientError.Unknown()))
+        }
+
+        let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(type: attachment.type)
+        
+        uploadAttachment(
+            endpoint: endpoint,
+            fileData: fileData,
+            uploadingState: uploadingState,
+            progress: progress,
+            completion: completion
+        )
+    }
+    
+    private func uploadAttachment<ResponsePayload>(
+        endpoint: Endpoint<ResponsePayload>,
+        fileData: Data,
+        uploadingState: AttachmentUploadingState,
+        progress: (@Sendable(Double) -> Void)? = nil,
+        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
+    ) {
         // Encode locally stored attachment into multipart form data
         let multipartFormData = MultipartFormData(
             fileData,
             fileName: uploadingState.localFileURL.lastPathComponent,
             mimeType: uploadingState.file.type.mimeType
         )
-        let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(with: attachment.id.cid, type: attachment.type)
 
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             var urlRequest: URLRequest

@@ -172,11 +172,26 @@ public struct MemberRole: RawRepresentable, Codable, Hashable, ExpressibleByStri
 
     public init(rawValue: String) {
         self.rawValue = rawValue
+        rawChannelValue = rawValue
     }
 
     public init(stringLiteral value: String) {
         self.init(rawValue: value)
     }
+    
+    init(rawChannelValue: String) {
+        // Historically these have been mapped when decoding JSON
+        switch rawChannelValue {
+        case "channel_member":
+            self.init(rawValue: Self.member.rawValue)
+        case "channel_moderator":
+            self.init(rawValue: Self.moderator.rawValue)
+        default:
+            self.init(rawValue: rawChannelValue)
+        }
+    }
+    
+    var rawChannelValue: String
 }
 
 public extension MemberRole {
@@ -207,6 +222,8 @@ public extension MemberRole {
         default:
             self = MemberRole(rawValue: value)
         }
+        // Store the original raw value from the backend for local filtering
+        rawChannelValue = value
     }
     
     func encode(to encoder: any Encoder) throws {
