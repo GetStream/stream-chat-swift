@@ -44,6 +44,7 @@ class UserUpdater: Worker {
                         participantId: userId,
                         context: self.database.writableContext
                     )
+                    channel?.isBlocked = true
                     channel?.isHidden = true
                 }, completion: {
                     if let error = $0 {
@@ -75,6 +76,7 @@ class UserUpdater: Worker {
                         participantId: userId,
                         context: self.database.writableContext
                     )
+                    channel?.isBlocked = false
                     channel?.isHidden = false
                 }, completion: {
                     if let error = $0 {

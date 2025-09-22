@@ -116,6 +116,8 @@ class MessageDTO: NSManagedObject {
     // We use `Date!` to replicate a required value. The value must be marked as optional in the CoreData model, because we change
     // it in the `willSave` phase, which happens after the validation.
     @NSManaged var defaultSortingKey: DBDate!
+    
+    @NSManaged var channelRole: String?
 
     override func willSave() {
         super.willSave()
@@ -972,6 +974,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.parentMessageId = payload.parentId
         dto.showReplyInChannel = payload.showReplyInChannel
         dto.replyCount = Int32(payload.replyCount)
+        if let role = payload.member?.channelRole?.rawValue {
+            dto.channelRole = role
+        }
 
         do {
             dto.extraData = try JSONEncoder.default.encode(payload.extraData)
@@ -1860,6 +1865,11 @@ private extension ChatMessage {
         let draftReply = try? dto.draftReply?.relationshipAsModel(depth: depth)
 
         let readBy = Set(dto.reads.compactMap { try? $0.user.asModel() })
+        
+        var channelRole: MemberRole?
+        if let role = dto.channelRole {
+            channelRole = MemberRole(rawValue: role)
+        }
 
         let message = ChatMessage(
             id: id,
@@ -1906,7 +1916,8 @@ private extension ChatMessage {
                 createdAt: $0.createdAt.bridgeDate,
                 updatedAt: $0.updatedAt.bridgeDate
             ) },
-            sharedLocation: location
+            sharedLocation: location,
+            channelRole: channelRole
         )
 
         if let transformer = chatClientConfig?.modelsTransformer {

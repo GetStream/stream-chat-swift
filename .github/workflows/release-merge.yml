@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  merge-comment:
+  merge-release-to-main:
     name: Merge release to main
     runs-on: macos-15
     if: github.event_name == 'workflow_dispatch' || (github.event.issue.pull_request && github.event.issue.state == 'open' && github.event.comment.body == '/merge release')

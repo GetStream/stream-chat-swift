@@ -790,11 +790,20 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     // MARK: - EventsControllerDelegate
 
     public func eventsController(_ controller: EventsController, didReceiveEvent event: Event) {
-        guard let channelEvent = event as? ChannelSpecificEvent, channelEvent.cid == cid else {
-            return
+        if let channelEvent = event as? ChannelSpecificEvent, channelEvent.cid == cid {
+            handleChannelEvent(event)
         }
 
-        handleChannelEvent(event)
+        // User deleted messages event is a global event, not tied to a channel.
+        if let userMessagesDeletedEvent = event as? UserMessagesDeletedEvent {
+            let userId = userMessagesDeletedEvent.user.id
+            if userMessagesDeletedEvent.hardDelete {
+                hardDeleteMessages(from: userId)
+            } else {
+                let deletedAt = userMessagesDeletedEvent.createdAt
+                softDeleteMessages(from: userId, deletedAt: deletedAt)
+            }
+        }
     }
 
     // MARK: - AppStateObserverDelegate
@@ -823,22 +832,12 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             paginationStateHandler.begin(pagination: pagination)
         }
 
-        let endpoint: Endpoint<ChannelPayload> =
-            .updateChannel(query: channelQuery)
-
         let requestCompletion: (Result<ChannelPayload, Error>) -> Void = { [weak self] result in
             self?.callback { [weak self] in
                 guard let self = self else { return }
 
                 switch result {
                 case .success(let payload):
-                    // If it is the first page, save channel to the DB to make sure manual event handling
-                    // can fetch the channel from the DB.
-                    if channelQuery.pagination == nil {
-                        client.databaseContainer.write { session in
-                            try session.saveChannel(payload: payload)
-                        }
-                    }
                     self.handleChannelPayload(payload, channelQuery: channelQuery)
                     completion?(nil)
 
@@ -851,7 +850,11 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             }
         }
 
-        apiClient.request(endpoint: endpoint, completion: requestCompletion)
+        updater.update(
+            channelQuery: channelQuery,
+            isInRecoveryMode: false,
+            completion: requestCompletion
+        )
     }
 
     private func handleChannelPayload(_ payload: ChannelPayload, channelQuery: ChannelQuery) {
@@ -936,7 +939,10 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
                 handleDeletedMessage(messageDeletedEvent.message)
                 return
             }
-            handleUpdatedMessage(messageDeletedEvent.message)
+            let deletedMessage = messageDeletedEvent.message.changing(
+                deletedAt: messageDeletedEvent.createdAt
+            )
+            handleUpdatedMessage(deletedMessage)
 
         case let newMessageErrorEvent as NewMessageErrorEvent:
             guard let message = messages.first(where: { $0.id == newMessageErrorEvent.messageId }) else {
@@ -957,15 +963,73 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         case let channelUpdatedEvent as ChannelUpdatedEvent:
             handleChannelUpdated(channelUpdatedEvent)
 
-        case is MemberAddedEvent,
-             is MemberRemovedEvent,
-             is MemberUpdatedEvent,
-             is NotificationAddedToChannelEvent,
-             is NotificationRemovedFromChannelEvent,
-             is NotificationInvitedEvent,
-             is NotificationInviteAcceptedEvent,
-             is NotificationInviteRejectedEvent:
-            updateChannelFromDataStore()
+        case let notificationAddedToChannelEvent as NotificationAddedToChannelEvent:
+            var members = Set(channel?.lastActiveMembers ?? [])
+            members.insert(notificationAddedToChannelEvent.member)
+            let memberCount = channel?.memberCount ?? 0
+            channel = channel?.changing(
+                members: Array(members),
+                membership: notificationAddedToChannelEvent.member,
+                memberCount: memberCount + 1
+            )
+            startWatching(isInRecoveryMode: false)
+
+        case let notificationRemovedFromChannelEvent as NotificationRemovedFromChannelEvent:
+            var members = channel?.lastActiveMembers ?? []
+            members.removeAll(where: { $0.id == notificationRemovedFromChannelEvent.user.id })
+            let memberCount = channel?.memberCount ?? 0
+
+            channel = channel?.changing(members: members, memberCount: memberCount - 1)
+            channel?.membership = nil
+
+        case let memberAddedEvent as MemberAddedEvent:
+            var members = Set(channel?.lastActiveMembers ?? [])
+            members.insert(memberAddedEvent.member)
+            let memberCount = channel?.memberCount ?? 0
+
+            var membership: ChatChannelMember?
+            if memberAddedEvent.member.id == currentUserId {
+                membership = memberAddedEvent.member
+            }
+            channel = channel?.changing(
+                members: Array(members),
+                membership: membership,
+                memberCount: memberCount + 1
+            )
+
+        case let memberRemovedEvent as MemberRemovedEvent:
+            var members = channel?.lastActiveMembers ?? []
+            members.removeAll(where: { $0.id == memberRemovedEvent.user.id })
+            let memberCount = channel?.memberCount ?? 0
+
+            var membership: ChatChannelMember? = channel?.membership
+            if memberRemovedEvent.user.id == currentUserId {
+                membership = nil
+            }
+            channel = channel?.changing(members: members, memberCount: memberCount - 1)
+            channel?.membership = membership
+
+        case let userWatchingEvent as UserWatchingEvent:
+            var watchers = channel?.lastActiveWatchers ?? []
+            if userWatchingEvent.isStarted {
+                watchers.append(userWatchingEvent.user)
+            } else {
+                watchers.removeAll(where: { $0.id == userWatchingEvent.user.id })
+            }
+            channel = channel?.changing(watchers: watchers, watcherCount: userWatchingEvent.watcherCount)
+
+        case let memberUpdatedEvent as MemberUpdatedEvent:
+            var members = channel?.lastActiveMembers ?? []
+            if let index = members.firstIndex(where: { $0.id == memberUpdatedEvent.member.id }) {
+                members[index] = memberUpdatedEvent.member
+            }
+            
+            var membership: ChatChannelMember? = channel?.membership
+            if memberUpdatedEvent.member.id == currentUserId {
+                membership = memberUpdatedEvent.member
+            }
+            
+            channel = channel?.changing(members: members, membership: membership)
 
         case is UserBannedEvent,
              is UserUnbannedEvent:
@@ -1008,12 +1072,41 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
 
     private func handleUpdatedMessage(_ updatedMessage: ChatMessage) {
         if let index = messages.firstIndex(where: { $0.id == updatedMessage.id }) {
+            let existingMessage = messages[index]
             messages[index] = updatedMessage
+
+            if existingMessage.isPinned != updatedMessage.isPinned {
+                var pinnedMessages = channel?.pinnedMessages ?? []
+                if updatedMessage.isPinned {
+                    pinnedMessages.append(updatedMessage)
+                } else {
+                    pinnedMessages.removeAll(where: { $0.id == existingMessage.id })
+                }
+                channel = channel?.changing(pinnedMessages: pinnedMessages)
+            }
         }
     }
 
     private func handleDeletedMessage(_ deletedMessage: ChatMessage) {
         messages.removeAll { $0.id == deletedMessage.id }
+    }
+
+    private func softDeleteMessages(from userId: UserId, deletedAt: Date) {
+        let messagesWithDeletedMessages = messages.map { message in
+            if message.author.id == userId {
+                return message.changing(
+                    deletedAt: deletedAt
+                )
+            }
+            return message
+        }
+        messages = messagesWithDeletedMessages
+    }
+
+    private func hardDeleteMessages(from userId: UserId) {
+        messages.removeAll { message in
+            message.author.id == userId
+        }
     }
 
     private func handleNewReaction(_ reactionEvent: ReactionNewEvent) {
@@ -1037,7 +1130,31 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     }
 
     private func handleChannelUpdated(_ event: ChannelUpdatedEvent) {
-        channel = event.channel
+        channel = channel?.changing(
+            name: event.channel.name,
+            imageURL: event.channel.imageURL,
+            lastMessageAt: event.channel.lastMessageAt,
+            createdAt: event.channel.createdAt,
+            deletedAt: event.channel.deletedAt,
+            updatedAt: event.channel.updatedAt,
+            truncatedAt: event.channel.truncatedAt,
+            isHidden: event.channel.isHidden,
+            createdBy: event.channel.createdBy,
+            config: event.channel.config,
+            ownCapabilities: event.channel.ownCapabilities,
+            isFrozen: event.channel.isFrozen,
+            isDisabled: event.channel.isDisabled,
+            isBlocked: event.channel.isBlocked,
+            reads: event.channel.reads,
+            members: event.channel.lastActiveMembers,
+            membership: event.channel.membership,
+            memberCount: event.channel.memberCount,
+            watchers: event.channel.lastActiveWatchers,
+            watcherCount: event.channel.watcherCount,
+            team: event.channel.team,
+            cooldownDuration: event.channel.cooldownDuration,
+            extraData: event.channel.extraData
+        )
     }
 
     // For events that do not have the channel data, and still
