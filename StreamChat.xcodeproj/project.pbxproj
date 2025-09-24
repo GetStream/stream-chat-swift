@@ -1428,6 +1428,8 @@
 		AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */; };
 		AD25070D272C0C8D00BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */; };
 		AD2525212ACB3C0800F1433C /* ChatClientFactory_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */; };
+		AD25F7432E84668D00F16B14 /* PushPreferencePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7422E84667900F16B14 /* PushPreferencePayloads.swift */; };
+		AD25F7442E84668D00F16B14 /* PushPreferencePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7422E84667900F16B14 /* PushPreferencePayloads.swift */; };
 		AD26CB772E3ACAB9002FC1A7 /* DemoLivestreamChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD26CB762E3ACAA0002FC1A7 /* DemoLivestreamChatChannelVC.swift */; };
 		AD29395D2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */; };
 		AD29395E2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */; };
@@ -5913,6 +5915,7 @@
 		79682C4724BF37550071578E /* Payloads */ = {
 			isa = PBXGroup;
 			children = (
+				AD25F7422E84667900F16B14 /* PushPreferencePayloads.swift */,
 				ADF047392DE4DADC001C23D2 /* LocationPayloads.swift */,
 				ADA83B4F2D978050003B3928 /* ReminderPayloads.swift */,
 				ADF2BBEA2B9B622B0069D467 /* AppSettingsPayload.swift */,
@@ -11767,6 +11770,7 @@
 				79CDE1DD24B321FE0003BD1D /* CurrentUserDTO.swift in Sources */,
 				ADF34F9E25CDD8E600AD637C /* ConnectionController+SwiftUI.swift in Sources */,
 				4042968029FAC9F80089126D /* AudioAnalysing.swift in Sources */,
+				AD25F7442E84668D00F16B14 /* PushPreferencePayloads.swift in Sources */,
 				8413D2E92BDC6300005ADA4E /* PollVoteListQueryDTO.swift in Sources */,
 				DAD539DB250B8A9C00CFC649 /* Controller.swift in Sources */,
 				F6ED5F76250278D7005D7327 /* SyncEndpoint.swift in Sources */,
@@ -12615,6 +12619,7 @@
 				C121E83E274544AE00023E4C /* FlagUserPayload.swift in Sources */,
 				C121E83F274544AE00023E4C /* MessageReactionPayload.swift in Sources */,
 				C121E840274544AE00023E4C /* MessageAttachmentPayload.swift in Sources */,
+				AD25F7432E84668D00F16B14 /* PushPreferencePayloads.swift in Sources */,
 				C121E841274544AE00023E4C /* FileUploadPayload.swift in Sources */,
 				C121E842274544AE00023E4C /* MutedChannelPayload.swift in Sources */,
 				AD545E742D5A79DA008FD399 /* DraftUpdaterMiddleware.swift in Sources */,
