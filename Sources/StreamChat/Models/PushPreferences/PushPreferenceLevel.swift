@@ -5,7 +5,7 @@
 import Foundation
 
 /// The scope level of the push notifications.
-public struct PushPreferenceLevel: RawRepresentable, ExpressibleByStringLiteral {
+public struct PushPreferenceLevel: RawRepresentable, Equatable, ExpressibleByStringLiteral {
     public let rawValue: String
 
     public init(rawValue: String) {
