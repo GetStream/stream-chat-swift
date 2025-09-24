@@ -204,6 +204,31 @@ class CurrentUserUpdater: Worker {
         }
     }
 
+    func setPushPreferences(
+        currentUserId: UserId,
+        channelId: ChannelId?,
+        level: PushPreferenceLevel,
+        disableUntil: Date?,
+        removeDisabled: Bool?,
+        completion: @escaping (Result<PushPreferences, Error>) -> Void
+    ) {
+        let payload = PushPreferenceRequestPayload(
+            chatLevel: level.rawValue,
+            channelId: channelId?.rawValue,
+            userId: currentUserId,
+            disabledUntil: disableUntil,
+            removeDisable: removeDisabled
+        )
+        apiClient.request(endpoint: .pushPreferences([payload])) { result in
+            switch result {
+            case let .success(response):
+                completion(.success(response.asModel()))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
     /// Get all blocked users.
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.

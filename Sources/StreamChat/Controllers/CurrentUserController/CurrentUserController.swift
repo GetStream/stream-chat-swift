@@ -457,6 +457,32 @@ public extension CurrentChatUserController {
         }
     }
 
+    func setUserPushPreferences(
+        level: PushPreferenceLevel,
+        disableUntil: Date? = nil,
+        removeDisabled: Bool? = nil,
+        completion: ((Result<PushPreferences, Error>) -> Void)? = nil
+    ) {
+        guard let currentUserId = client.currentUserId else {
+            callback {
+                completion?(.failure(ClientError.CurrentUserDoesNotExist()))
+            }
+            return
+        }
+
+        currentUserUpdater.setPushPreferences(
+            currentUserId: currentUserId,
+            channelId: nil,
+            level: level,
+            disableUntil: disableUntil,
+            removeDisabled: removeDisabled
+        ) { result in
+            self.callback {
+                completion?(result)
+            }
+        }
+    }
+
     /// Loads the draft messages for the current user.
     ///
     /// It will load the first page of drafts of the current user.
