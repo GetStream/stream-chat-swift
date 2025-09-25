@@ -21,12 +21,10 @@ struct PushPreferenceRequestPayload: Encodable {
 }
 
 struct UserPushPreferencePayloadResponse: Decodable {
-    let userId: String
     let chatLevel: String
     let disabledUntil: Date?
 
     enum CodingKeys: String, CodingKey {
-        case userId = "user_id"
         case chatLevel = "chat_level"
         case disabledUntil = "disabled_until"
     }
@@ -65,7 +63,15 @@ struct PushPreferencePayloadResponse: Decodable {
 
     enum CodingKeys: String, CodingKey {
         case userPreferences = "user_preferences"
-        case channelPreferences = "channel_preferences"
+        case channelPreferences = "user_channel_preferences"
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let userPreferencesDict = try container.decode([String: UserPushPreferencePayloadResponse].self, forKey: .userPreferences)
+        userPreferences = Array(userPreferencesDict.values)
+        let channelPreferencesDict = try container.decode([String: ChannelPushPreferencePayloadResponse].self, forKey: .channelPreferences)
+        channelPreferences = Array(channelPreferencesDict.values)
     }
 
     func asModel() -> PushPreferences {
