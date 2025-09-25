@@ -719,14 +719,19 @@ class ChannelUpdater: Worker {
         }
     }
 
-    func setPushPreferences(
-        _ preferences: [PushPreferenceRequestPayload],
-        completion: @escaping (Result<PushPreferences, Error>) -> Void
+    func setPushPreference(
+        _ preference: PushPreferenceRequestPayload,
+        cid: ChannelId,
+        completion: @escaping (Result<PushPreference, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .pushPreferences(preferences)) { result in
+        apiClient.request(endpoint: .pushPreferences([preference])) { result in
             switch result {
             case let .success(response):
-                completion(.success(response.asModel()))
+                guard let channelPref = response.channelPreferences.asModel()[cid] else {
+                    completion(.failure(ClientError.ChannelDoesNotExist(cid: cid)))
+                    return
+                }
+                completion(.success(channelPref))
             case let .failure(error):
                 completion(.failure(error))
             }

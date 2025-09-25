@@ -48,7 +48,7 @@ extension Endpoint {
 
     static func pushPreferences(
         _ preferences: [PushPreferenceRequestPayload]
-    ) -> Endpoint<PushPreferencePayloadResponse> {
+    ) -> Endpoint<PushPreferencesPayloadResponse> {
         .init(
             path: .pushPreferences,
             method: .post,

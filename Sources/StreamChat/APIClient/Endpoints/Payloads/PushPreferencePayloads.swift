@@ -29,25 +29,17 @@ struct PushPreferencePayload: Decodable {
         case disabledUntil = "disabled_until"
     }
 
-    func asModel() -> UserPushPreference {
+    func asModel() -> PushPreference {
         .init(
-            level: PushPreferenceLevel(rawValue: chatLevel),
-            disabledUntil: disabledUntil
-        )
-    }
-
-    func asModel(channelId: ChannelId) -> ChannelPushPreference {
-        .init(
-            channelId: channelId,
             level: PushPreferenceLevel(rawValue: chatLevel),
             disabledUntil: disabledUntil
         )
     }
 }
 
-struct PushPreferencePayloadResponse: Decodable {
-    let userPreferences: [String: PushPreferencePayload?]
-    let channelPreferences: [String: [String: PushPreferencePayload]]
+struct PushPreferencesPayloadResponse: Decodable {
+    let userPreferences: UserPushPreferencesPayload
+    let channelPreferences: ChannelPushPreferencesPayload
 
     enum CodingKeys: String, CodingKey {
         case userPreferences = "user_preferences"
@@ -56,21 +48,28 @@ struct PushPreferencePayloadResponse: Decodable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        userPreferences = try container.decodeIfPresent([String: PushPreferencePayload?].self, forKey: .userPreferences) ?? [:]
-        channelPreferences = try container.decodeIfPresent([String: [String: PushPreferencePayload]].self, forKey: .channelPreferences) ?? [:]
+        userPreferences = try container.decodeIfPresent(UserPushPreferencesPayload.self, forKey: .userPreferences) ?? [:]
+        channelPreferences = try container.decodeIfPresent(ChannelPushPreferencesPayload.self, forKey: .channelPreferences) ?? [:]
     }
+}
 
-    func asModel() -> PushPreferences {
-        .init(
-            userPreferences: userPreferences.values.compactMap { $0?.asModel() },
-            channelPreferences: Dictionary(
-                uniqueKeysWithValues: channelPreferences.values
-                    .flatMap { $0 }
-                    .compactMap { key, value in
-                        guard let channelId = try? ChannelId(cid: key) else { return nil }
-                        return (channelId, value.asModel(channelId: channelId))
-                    }
-            )
-        )
+typealias UserPushPreferencesPayload = [String: PushPreferencePayload?]
+typealias ChannelPushPreferencesPayload = [String: [String: PushPreferencePayload]]
+
+extension UserPushPreferencesPayload {
+    func asModel() -> [PushPreference] {
+        values.compactMap { $0?.asModel() }
+    }
+}
+
+extension ChannelPushPreferencesPayload {
+    func asModel() -> [ChannelId: PushPreference] { [ChannelId: PushPreference](
+        uniqueKeysWithValues: values
+            .flatMap { $0 }
+            .compactMap { key, value in
+                guard let channelId = try? ChannelId(cid: key) else { return nil }
+                return (channelId, value.asModel())
+            }
+    )
     }
 }

@@ -1697,7 +1697,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - completion: The completion call once the request is finished.
     public func setPushPreference(
         level: PushPreferenceLevel,
-        completion: ((Result<ChannelPushPreference, Error>) -> Void)? = nil
+        completion: ((Result<PushPreference, Error>) -> Void)? = nil
     ) {
         guard let channelId = cid else {
             callback {
@@ -1721,8 +1721,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             removeDisable: true
         )
 
-        updater.setPushPreferences([channelPreference]) { [weak self] result in
-            self?.handleChannelPushPreference(result, channelId: channelId, completion: completion)
+        updater.setPushPreference(channelPreference, cid: channelId) { [weak self] result in
+            self?.callback {
+                completion?(result)
+            }
         }
     }
 
@@ -1732,7 +1734,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - completion: The completion call once the request is finished.
     public func disablePushNotifications(
         until date: Date,
-        completion: ((Result<ChannelPushPreference, Error>) -> Void)? = nil
+        completion: ((Result<PushPreference, Error>) -> Void)? = nil
     ) {
         guard let channelId = cid else {
             callback {
@@ -1756,8 +1758,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             removeDisable: nil
         )
 
-        updater.setPushPreferences([channelPreference]) { [weak self] result in
-            self?.handleChannelPushPreference(result, channelId: channelId, completion: completion)
+        updater.setPushPreference(channelPreference, cid: channelId) { [weak self] result in
+            self?.callback {
+                completion?(result)
+            }
         }
     }
 
@@ -1905,25 +1909,6 @@ private extension ChatChannelController {
         if let cid = cid {
             setupEventObservers(for: cid)
             setLocalStateBasedOnError(startDatabaseObservers())
-        }
-    }
-
-    func handleChannelPushPreference(
-        _ result: Result<PushPreferences, Error>,
-        channelId: ChannelId,
-        completion: ((Result<ChannelPushPreference, Error>) -> Void)?
-    ) {
-        callback {
-            switch result {
-            case .success(let response):
-                guard let channelPushPref = response.channelPreferences[channelId] else {
-                    completion?(.failure(ClientError.ChannelDoesNotExist(cid: channelId)))
-                    return
-                }
-                completion?(.success(channelPushPref))
-            case .failure(let error):
-                completion?(.failure(error))
-            }
         }
     }
 

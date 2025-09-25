@@ -1430,14 +1430,10 @@
 		AD2525212ACB3C0800F1433C /* ChatClientFactory_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */; };
 		AD25F7342E845D2400F16B14 /* PushPreferenceLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7332E845D1B00F16B14 /* PushPreferenceLevel.swift */; };
 		AD25F7352E845D2400F16B14 /* PushPreferenceLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7332E845D1B00F16B14 /* PushPreferenceLevel.swift */; };
-		AD25F7372E845D3000F16B14 /* UserPushPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7362E845D2B00F16B14 /* UserPushPreference.swift */; };
-		AD25F7382E845D3000F16B14 /* UserPushPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7362E845D2B00F16B14 /* UserPushPreference.swift */; };
-		AD25F73A2E845D4000F16B14 /* ChannelPushPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7392E845D3500F16B14 /* ChannelPushPreference.swift */; };
-		AD25F73B2E845D4000F16B14 /* ChannelPushPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7392E845D3500F16B14 /* ChannelPushPreference.swift */; };
+		AD25F7372E845D3000F16B14 /* PushPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7362E845D2B00F16B14 /* PushPreference.swift */; };
+		AD25F7382E845D3000F16B14 /* PushPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7362E845D2B00F16B14 /* PushPreference.swift */; };
 		AD25F7432E84668D00F16B14 /* PushPreferencePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7422E84667900F16B14 /* PushPreferencePayloads.swift */; };
 		AD25F7442E84668D00F16B14 /* PushPreferencePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7422E84667900F16B14 /* PushPreferencePayloads.swift */; };
-		AD25F7462E84694000F16B14 /* PushPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7452E84693A00F16B14 /* PushPreferences.swift */; };
-		AD25F7472E84694000F16B14 /* PushPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7452E84693A00F16B14 /* PushPreferences.swift */; };
 		AD25F74A2E84A1B800F16B14 /* UnreadDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7492E84A1B100F16B14 /* UnreadDetailsView.swift */; };
 		AD25F74C2E84A1F000F16B14 /* PushPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F74B2E84A1EB00F16B14 /* PushPreferencesView.swift */; };
 		AD26CB772E3ACAB9002FC1A7 /* DemoLivestreamChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD26CB762E3ACAA0002FC1A7 /* DemoLivestreamChatChannelVC.swift */; };
@@ -4314,10 +4310,8 @@
 		AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsVC_Tests.swift; sourceTree = "<group>"; };
 		AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientFactory_Tests.swift; sourceTree = "<group>"; };
 		AD25F7332E845D1B00F16B14 /* PushPreferenceLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferenceLevel.swift; sourceTree = "<group>"; };
-		AD25F7362E845D2B00F16B14 /* UserPushPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserPushPreference.swift; sourceTree = "<group>"; };
-		AD25F7392E845D3500F16B14 /* ChannelPushPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelPushPreference.swift; sourceTree = "<group>"; };
+		AD25F7362E845D2B00F16B14 /* PushPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreference.swift; sourceTree = "<group>"; };
 		AD25F7422E84667900F16B14 /* PushPreferencePayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferencePayloads.swift; sourceTree = "<group>"; };
-		AD25F7452E84693A00F16B14 /* PushPreferences.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferences.swift; sourceTree = "<group>"; };
 		AD25F7492E84A1B100F16B14 /* UnreadDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadDetailsView.swift; sourceTree = "<group>"; };
 		AD25F74B2E84A1EB00F16B14 /* PushPreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferencesView.swift; sourceTree = "<group>"; };
 		AD26CB762E3ACAA0002FC1A7 /* DemoLivestreamChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamChatChannelVC.swift; sourceTree = "<group>"; };
@@ -8690,9 +8684,7 @@
 		AD25F7322E845D0400F16B14 /* PushPreferences */ = {
 			isa = PBXGroup;
 			children = (
-				AD25F7452E84693A00F16B14 /* PushPreferences.swift */,
-				AD25F7392E845D3500F16B14 /* ChannelPushPreference.swift */,
-				AD25F7362E845D2B00F16B14 /* UserPushPreference.swift */,
+				AD25F7362E845D2B00F16B14 /* PushPreference.swift */,
 				AD25F7332E845D1B00F16B14 /* PushPreferenceLevel.swift */,
 			);
 			path = PushPreferences;
@@ -11601,7 +11593,7 @@
 				ADA83B502D978050003B3928 /* ReminderPayloads.swift in Sources */,
 				4F97F2672BA83146001C4D66 /* UserList.swift in Sources */,
 				82BE0ACD2C009A17008DA9DC /* BlockedUserDetails.swift in Sources */,
-				AD25F7382E845D3000F16B14 /* UserPushPreference.swift in Sources */,
+				AD25F7382E845D3000F16B14 /* PushPreference.swift in Sources */,
 				DA8407032524F7E6005A0F62 /* UserListUpdater.swift in Sources */,
 				8413D2F52BDDAAFF005ADA4E /* PollVoteListController+SwiftUI.swift in Sources */,
 				4F8E53062B7CD01D008C0F9F /* Chat.swift in Sources */,
@@ -11868,7 +11860,6 @@
 				4F427F692BA2F52100D92238 /* ConnectedUserState.swift in Sources */,
 				F63CC37324E592D30052844D /* MemberEventObserver.swift in Sources */,
 				AD7A11912DEE00A000B8F963 /* SendMessageInterceptor.swift in Sources */,
-				AD25F7462E84694000F16B14 /* PushPreferences.swift in Sources */,
 				4FF2A80D2B8E011000941A64 /* ChatState+Observer.swift in Sources */,
 				88EA9AD825470F6A007EE76B /* Dictionary+Extensions.swift in Sources */,
 				8AE335A824FCF999002B6677 /* Reachability_Vendor.swift in Sources */,
@@ -12000,7 +11991,6 @@
 				225D7FE225D191400094E555 /* ChatMessageImageAttachment.swift in Sources */,
 				8A0D64A724E57A520017A3C0 /* GuestUserTokenRequestPayload.swift in Sources */,
 				AD1B9F432E30F7860091A37A /* LivestreamChannelController.swift in Sources */,
-				AD25F73B2E845D4000F16B14 /* ChannelPushPreference.swift in Sources */,
 				AD6E32A42BBC502D0073831B /* ThreadQuery.swift in Sources */,
 				888E8C39252B2ABB00195E03 /* UserController+Combine.swift in Sources */,
 				4F1BEE762BE384ED00B6685C /* ReactionList.swift in Sources */,
@@ -12633,7 +12623,6 @@
 				C14D27B72869EEE40063F6F2 /* Sequence+CompactMapLoggingError.swift in Sources */,
 				C121E82C274544AD00023E4C /* APIClient.swift in Sources */,
 				AD0CC0322BDC1964005E2C66 /* ReactionListQueryDTO.swift in Sources */,
-				AD25F73A2E845D4000F16B14 /* ChannelPushPreference.swift in Sources */,
 				C121E82D274544AD00023E4C /* CDNClient.swift in Sources */,
 				AD84377F2BB48603000F3826 /* ThreadListPayload.swift in Sources */,
 				C121E82E274544AD00023E4C /* RequestEncoder.swift in Sources */,
@@ -12668,7 +12657,7 @@
 				C121E840274544AE00023E4C /* MessageAttachmentPayload.swift in Sources */,
 				AD25F7432E84668D00F16B14 /* PushPreferencePayloads.swift in Sources */,
 				C121E841274544AE00023E4C /* FileUploadPayload.swift in Sources */,
-				AD25F7372E845D3000F16B14 /* UserPushPreference.swift in Sources */,
+				AD25F7372E845D3000F16B14 /* PushPreference.swift in Sources */,
 				C121E842274544AE00023E4C /* MutedChannelPayload.swift in Sources */,
 				AD545E742D5A79DA008FD399 /* DraftUpdaterMiddleware.swift in Sources */,
 				C121E843274544AE00023E4C /* RawJSON.swift in Sources */,
@@ -12887,7 +12876,6 @@
 				C121E8B1274544B000023E4C /* ChannelListController+SwiftUI.swift in Sources */,
 				C121E8B2274544B000023E4C /* ChannelListController+Combine.swift in Sources */,
 				C121E8B3274544B000023E4C /* CurrentUserController.swift in Sources */,
-				AD25F7472E84694000F16B14 /* PushPreferences.swift in Sources */,
 				4F6AD5E42CABEAB6007E769C /* KeyPath+Extensions.swift in Sources */,
 				C174E0F7284DFA5A0040B936 /* IdentifiablePayload.swift in Sources */,
 				AD770B692D09E2D5003AC602 /* SharedLocation.swift in Sources */,

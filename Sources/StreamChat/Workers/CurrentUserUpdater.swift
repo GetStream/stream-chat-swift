@@ -204,14 +204,18 @@ class CurrentUserUpdater: Worker {
         }
     }
 
-    func setPushPreferences(
-        _ preferences: [PushPreferenceRequestPayload],
-        completion: @escaping (Result<PushPreferences, Error>) -> Void
+    func setPushPreference(
+        _ preference: PushPreferenceRequestPayload,
+        completion: @escaping (Result<PushPreference, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .pushPreferences(preferences)) { result in
+        apiClient.request(endpoint: .pushPreferences([preference])) { result in
             switch result {
             case let .success(response):
-                completion(.success(response.asModel()))
+                guard let currentUserPushPref = response.userPreferences.asModel().first else {
+                    completion(.failure(ClientError.CurrentUserDoesNotExist()))
+                    return
+                }
+                completion(.success(currentUserPushPref))
             case let .failure(error):
                 completion(.failure(error))
             }

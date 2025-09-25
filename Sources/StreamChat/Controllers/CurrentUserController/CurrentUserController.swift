@@ -463,7 +463,7 @@ public extension CurrentChatUserController {
     ///   - completion: The completion call once the request is finished.
     func setPushPreference(
         level: PushPreferenceLevel,
-        completion: ((Result<UserPushPreference, Error>) -> Void)? = nil
+        completion: ((Result<PushPreference, Error>) -> Void)? = nil
     ) {
         guard let currentUserId = client.currentUserId else {
             callback {
@@ -480,8 +480,10 @@ public extension CurrentChatUserController {
             removeDisable: true
         )
 
-        currentUserUpdater.setPushPreferences([userPreference]) { [weak self] result in
-            self?.handleUserPushPreferences(result, completion: completion)
+        currentUserUpdater.setPushPreference(userPreference) { [weak self] result in
+            self?.callback {
+                completion?(result)
+            }
         }
     }
 
@@ -491,7 +493,7 @@ public extension CurrentChatUserController {
     ///   - completion: The completion call once the request is finished.
     func disablePushNotifications(
         until date: Date,
-        completion: ((Result<UserPushPreference, Error>) -> Void)? = nil
+        completion: ((Result<PushPreference, Error>) -> Void)? = nil
     ) {
         guard let currentUserId = client.currentUserId else {
             callback {
@@ -508,8 +510,10 @@ public extension CurrentChatUserController {
             removeDisable: nil
         )
 
-        currentUserUpdater.setPushPreferences([userPreference]) { [weak self] result in
-            self?.handleUserPushPreferences(result, completion: completion)
+        currentUserUpdater.setPushPreference(userPreference) { [weak self] result in
+            self?.callback {
+                completion?(result)
+            }
         }
     }
 
@@ -643,24 +647,6 @@ private extension EntityChange where Item == UnreadCount {
 }
 
 private extension CurrentChatUserController {
-    func handleUserPushPreferences(
-        _ result: Result<PushPreferences, Error>,
-        completion: ((Result<UserPushPreference, Error>) -> Void)?
-    ) {
-        callback {
-            switch result {
-            case .success(let pushPref):
-                guard let currentUserPushPref = pushPref.userPreferences.first else {
-                    completion?(.failure(ClientError.NoPushPreferenceFound()))
-                    return
-                }
-                completion?(.success(currentUserPushPref))
-            case .failure(let error):
-                completion?(.failure(error))
-            }
-        }
-    }
-
     func createUserObserver() -> BackgroundEntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> {
         environment.currentUserObserverBuilder(
             client.databaseContainer,
@@ -825,13 +811,5 @@ public extension CurrentChatUserController {
     )
     func addDevice(token: Data, pushProvider: PushProvider = .apn, completion: ((Error?) -> Void)? = nil) {
         addDevice(.apn(token: token), completion: completion)
-    }
-}
-
-extension ClientError {
-    final class NoPushPreferenceFound: ClientError {
-        override var localizedDescription: String {
-            "There is no push preferences for the current user."
-        }
     }
 }
