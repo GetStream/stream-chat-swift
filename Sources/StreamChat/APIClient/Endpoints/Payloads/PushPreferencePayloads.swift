@@ -58,7 +58,7 @@ struct ChannelPushPreferencePayloadResponse: Decodable {
 }
 
 struct PushPreferencePayloadResponse: Decodable {
-    let userPreferences: [UserPushPreferencePayloadResponse]
+    let userPreferences: [UserId: UserPushPreferencePayloadResponse]
     let channelPreferences: [ChannelId: ChannelPushPreferencePayloadResponse]
 
     enum CodingKeys: String, CodingKey {
@@ -68,14 +68,13 @@ struct PushPreferencePayloadResponse: Decodable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        let userPreferencesDict = try container.decodeIfPresent([String: UserPushPreferencePayloadResponse].self, forKey: .userPreferences) ?? [:]
-        userPreferences = Array(userPreferencesDict.values)
-        channelPreferences = try container.decodeIfPresent([ChannelId: ChannelPushPreferencePayloadResponse].self, forKey: .channelPreferences) ?? [:]
+        userPreferences = try container.decodeIfPresent([UserId: UserPushPreferencePayloadResponse].self, forKey: .userPreferences) ?? [:]
+        channelPreferences = (try? container.decode([ChannelId: ChannelPushPreferencePayloadResponse].self, forKey: .channelPreferences)) ?? [:]
     }
 
     func asModel() -> PushPreferences {
         .init(
-            userPreferences: userPreferences.map { $0.asModel() },
+            userPreferences: userPreferences.values.map { $0.asModel() },
             channelPreferences: channelPreferences.mapValues { $0.asModel() }
         )
     }
