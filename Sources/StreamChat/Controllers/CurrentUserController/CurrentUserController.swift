@@ -477,22 +477,39 @@ public extension CurrentChatUserController {
             channelId: nil,
             userId: currentUserId,
             disabledUntil: nil,
+            removeDisable: true
+        )
+
+        currentUserUpdater.setPushPreferences([userPreference]) { [weak self] result in
+            self?.handleSetPushPreferencesResult(result, completion: completion)
+        }
+    }
+
+    /// Disables the push notifications globally for the current user.
+    /// - Parameters:
+    ///   - date: The date until when the push notifications will be enabled back.
+    ///   - completion: The completion call once the request is finished.
+    func disablePushNotifications(
+        until date: Date,
+        completion: ((Result<UserPushPreference, Error>) -> Void)? = nil
+    ) {
+        guard let currentUserId = client.currentUserId else {
+            callback {
+                completion?(.failure(ClientError.CurrentUserDoesNotExist()))
+            }
+            return
+        }
+
+        let userPreference = PushPreferenceRequestPayload(
+            chatLevel: PushPreferenceLevel.all.rawValue,
+            channelId: nil,
+            userId: currentUserId,
+            disabledUntil: date,
             removeDisable: nil
         )
 
-        currentUserUpdater.setPushPreferences([userPreference]) { result in
-            self.callback {
-                switch result {
-                case .success(let pushPref):
-                    guard let currentUserPushPref = pushPref.userPreferences.first else {
-                        completion?(.failure(ClientError.NoPushPreferenceFound()))
-                        return
-                    }
-                    completion?(.success(currentUserPushPref))
-                case .failure(let error):
-                    completion?(.failure(error))
-                }
-            }
+        currentUserUpdater.setPushPreferences([userPreference]) { [weak self] result in
+            self?.handleSetPushPreferencesResult(result, completion: completion)
         }
     }
 
@@ -626,6 +643,24 @@ private extension EntityChange where Item == UnreadCount {
 }
 
 private extension CurrentChatUserController {
+    func handleSetPushPreferencesResult(
+        _ result: Result<PushPreferences, Error>,
+        completion: ((Result<UserPushPreference, Error>) -> Void)?
+    ) {
+        callback {
+            switch result {
+            case .success(let pushPref):
+                guard let currentUserPushPref = pushPref.userPreferences.first else {
+                    completion?(.failure(ClientError.NoPushPreferenceFound()))
+                    return
+                }
+                completion?(.success(currentUserPushPref))
+            case .failure(let error):
+                completion?(.failure(error))
+            }
+        }
+    }
+
     func createUserObserver() -> BackgroundEntityDatabaseObserver<CurrentChatUser, CurrentUserDTO> {
         environment.currentUserObserverBuilder(
             client.databaseContainer,
