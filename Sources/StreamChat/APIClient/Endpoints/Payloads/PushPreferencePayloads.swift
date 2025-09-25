@@ -63,16 +63,14 @@ struct PushPreferencePayloadResponse: Decodable {
     func asModel() -> PushPreferences {
         .init(
             userPreferences: userPreferences.values.compactMap { $0?.asModel() },
-            channelPreferences: channelPreferences.flatMap { key, innerDict in
-                innerDict.compactMap { key, value in
-                    guard let channelId = try? ChannelId(cid: key) else {
-                        return nil
+            channelPreferences: Dictionary(
+                uniqueKeysWithValues: channelPreferences.values
+                    .flatMap { $0 }
+                    .compactMap { key, value in
+                        guard let channelId = try? ChannelId(cid: key) else { return nil }
+                        return (channelId, value.asModel(channelId: channelId))
                     }
-                    return value.asModel(channelId: channelId)
-                }
-            }.reduce(into: [:]) { partialResult, preference in
-                partialResult[preference.channelId] = preference
-            }
+            )
         )
     }
 }
