@@ -1695,7 +1695,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - level: The scope level of the push notifications.
     ///   - completion: The completion call once the request is finished.
-    func setPushPreference(
+    public func setPushPreference(
         level: PushPreferenceLevel,
         completion: ((Result<ChannelPushPreference, Error>) -> Void)? = nil
     ) {
@@ -1730,7 +1730,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - date: The date until when the push notifications will be enabled back.
     ///   - completion: The completion call once the request is finished.
-    func disablePushNotifications(
+    public func disablePushNotifications(
         until date: Date,
         completion: ((Result<ChannelPushPreference, Error>) -> Void)? = nil
     ) {

@@ -20,7 +20,7 @@ struct PushPreferenceRequestPayload: Encodable {
     }
 }
 
-struct UserPushPreferencePayloadResponse: Decodable {
+struct PushPreferencePayload: Decodable {
     let chatLevel: String
     let disabledUntil: Date?
 
@@ -35,20 +35,8 @@ struct UserPushPreferencePayloadResponse: Decodable {
             disabledUntil: disabledUntil
         )
     }
-}
 
-struct ChannelPushPreferencePayloadResponse: Decodable {
-    let channelId: ChannelId
-    let chatLevel: String
-    let disabledUntil: Date?
-
-    enum CodingKeys: String, CodingKey {
-        case channelId = "channel_cid"
-        case chatLevel = "chat_level"
-        case disabledUntil = "disabled_until"
-    }
-
-    func asModel() -> ChannelPushPreference {
+    func asModel(channelId: ChannelId) -> ChannelPushPreference {
         .init(
             channelId: channelId,
             level: PushPreferenceLevel(rawValue: chatLevel),
@@ -58,8 +46,8 @@ struct ChannelPushPreferencePayloadResponse: Decodable {
 }
 
 struct PushPreferencePayloadResponse: Decodable {
-    let userPreferences: [UserId: UserPushPreferencePayloadResponse]
-    let channelPreferences: [ChannelId: ChannelPushPreferencePayloadResponse]
+    let userPreferences: [String: PushPreferencePayload?]
+    let channelPreferences: [String: [String: PushPreferencePayload]]
 
     enum CodingKeys: String, CodingKey {
         case userPreferences = "user_preferences"
@@ -68,14 +56,23 @@ struct PushPreferencePayloadResponse: Decodable {
     
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        userPreferences = try container.decodeIfPresent([UserId: UserPushPreferencePayloadResponse].self, forKey: .userPreferences) ?? [:]
-        channelPreferences = (try? container.decode([ChannelId: ChannelPushPreferencePayloadResponse].self, forKey: .channelPreferences)) ?? [:]
+        userPreferences = try container.decodeIfPresent([String: PushPreferencePayload?].self, forKey: .userPreferences) ?? [:]
+        channelPreferences = try container.decodeIfPresent([String: [String: PushPreferencePayload]].self, forKey: .channelPreferences) ?? [:]
     }
 
     func asModel() -> PushPreferences {
         .init(
-            userPreferences: userPreferences.values.map { $0.asModel() },
-            channelPreferences: channelPreferences.mapValues { $0.asModel() }
+            userPreferences: userPreferences.values.compactMap { $0?.asModel() },
+            channelPreferences: channelPreferences.flatMap { key, innerDict in
+                innerDict.compactMap { key, value in
+                    guard let channelId = try? ChannelId(cid: key) else {
+                        return nil
+                    }
+                    return value.asModel(channelId: channelId)
+                }
+            }.reduce(into: [:]) { partialResult, preference in
+                partialResult[preference.channelId] = preference
+            }
         )
     }
 }
