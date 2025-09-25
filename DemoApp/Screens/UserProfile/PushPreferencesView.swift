@@ -48,8 +48,12 @@ struct PushPreferencesView: View {
                         }
                         .contentShape(Rectangle())
                         .onTapGesture {
-                            selectedLevel = level
+                            if disableUntil == nil {
+                                selectedLevel = level
+                            }
                         }
+                        .disabled(disableUntil != nil)
+                        .opacity(disableUntil != nil ? 0.5 : 1.0)
                     }
                 }
 
@@ -79,25 +83,7 @@ struct PushPreferencesView: View {
                 }
 
                 Section {
-                    Button(action: savePreferences) {
-                        HStack {
-                            if isLoading {
-                                ProgressView()
-                                    .scaleEffect(0.8)
-                            } else {
-                                Image(systemName: "checkmark.circle")
-                            }
-                            Text("Save Preferences")
-                        }
-                        .frame(maxWidth: .infinity)
-                    }
-                    .disabled(isLoading)
-                    .foregroundColor(.white)
-                    .listRowBackground(Color.blue)
-                }
-                
-                if disableUntil != nil {
-                    Section {
+                    if disableUntil != nil {
                         Button(action: disableNotifications) {
                             HStack {
                                 if isLoading {
@@ -113,6 +99,22 @@ struct PushPreferencesView: View {
                         .disabled(isLoading)
                         .foregroundColor(.white)
                         .listRowBackground(Color.orange)
+                    } else {
+                        Button(action: savePreferences) {
+                            HStack {
+                                if isLoading {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                } else {
+                                    Image(systemName: "checkmark.circle")
+                                }
+                                Text("Save Preferences")
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .disabled(isLoading)
+                        .foregroundColor(.white)
+                        .listRowBackground(Color.blue)
                     }
                 }
 
