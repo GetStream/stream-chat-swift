@@ -176,10 +176,14 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         if #available(iOS 15, *) {
             let pushPreferencesView = PushPreferencesView(
                 onSetPreferences: { [weak self] level, completion in
-                    self?.currentUserController.setPushPreference(
-                        level: level,
-                        completion: completion
-                    )
+                    self?.currentUserController.setPushPreference(level: level) {
+                        completion($0.map(\.level))
+                    }
+                },
+                onDisableNotifications: { [weak self] date, completion in
+                    self?.currentUserController.disablePushNotifications(until: date) {
+                        completion($0.map(\.level))
+                    }
                 },
                 onDismiss: { [weak self] in
                     self?.dismiss(animated: true)

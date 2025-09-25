@@ -7,7 +7,8 @@ import SwiftUI
 
 @available(iOS 15, *)
 struct PushPreferencesView: View {
-    let onSetPreferences: (PushPreferenceLevel, @escaping (Result<UserPushPreference, Error>) -> Void) -> Void
+    let onSetPreferences: (PushPreferenceLevel, @escaping (Result<PushPreferenceLevel, Error>) -> Void) -> Void
+    let onDisableNotifications: (Date, @escaping (Result<PushPreferenceLevel, Error>) -> Void) -> Void
     let onDismiss: () -> Void
 
     @State private var selectedLevel: PushPreferenceLevel = .all
@@ -93,6 +94,26 @@ struct PushPreferencesView: View {
                     .disabled(isLoading)
                     .foregroundColor(.white)
                     .listRowBackground(Color.blue)
+                }
+                
+                if disableUntil != nil {
+                    Section {
+                        Button(action: disableNotifications) {
+                            HStack {
+                                if isLoading {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                } else {
+                                    Image(systemName: "bell.slash")
+                                }
+                                Text("Disable Notifications")
+                            }
+                            .frame(maxWidth: .infinity)
+                        }
+                        .disabled(isLoading)
+                        .foregroundColor(.white)
+                        .listRowBackground(Color.orange)
+                    }
                 }
 
                 if let errorMessage = errorMessage {
@@ -182,13 +203,36 @@ struct PushPreferencesView: View {
         errorMessage = nil
 
         onSetPreferences(selectedLevel) { result in
-            isLoading = false
+            DispatchQueue.main.async {
+                isLoading = false
 
-            switch result {
-            case .success:
-                showSuccessMessage = true
-            case .failure(let error):
-                errorMessage = error.localizedDescription
+                switch result {
+                case .success:
+                    showSuccessMessage = true
+                case .failure(let error):
+                    errorMessage = error.localizedDescription
+                }
+            }
+        }
+    }
+    
+    private func disableNotifications() {
+        guard let disableUntil = disableUntil else { return }
+        
+        isLoading = true
+        errorMessage = nil
+
+        onDisableNotifications(disableUntil) { result in
+            DispatchQueue.main.async {
+                isLoading = false
+
+                switch result {
+                case .success:
+                    // Dismiss the screen immediately when disabling notifications
+                    onDismiss()
+                case .failure(let error):
+                    errorMessage = error.localizedDescription
+                }
             }
         }
     }
