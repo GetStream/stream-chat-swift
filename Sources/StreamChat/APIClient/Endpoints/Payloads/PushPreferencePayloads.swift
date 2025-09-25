@@ -13,7 +13,7 @@ struct PushPreferenceRequestPayload: Encodable {
 
     enum CodingKeys: String, CodingKey {
         case chatLevel = "chat_level"
-        case channelId = "channel_id"
+        case channelId = "channel_cid"
         case userId = "user_id"
         case disabledUntil = "disabled_until"
         case removeDisable = "remove_disable"
@@ -43,7 +43,7 @@ struct ChannelPushPreferencePayloadResponse: Decodable {
     let disabledUntil: Date?
 
     enum CodingKeys: String, CodingKey {
-        case channelId = "channel_id"
+        case channelId = "channel_cid"
         case chatLevel = "chat_level"
         case disabledUntil = "disabled_until"
     }
