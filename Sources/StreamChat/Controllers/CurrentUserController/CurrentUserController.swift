@@ -481,7 +481,7 @@ public extension CurrentChatUserController {
         )
 
         currentUserUpdater.setPushPreferences([userPreference]) { [weak self] result in
-            self?.handleSetPushPreferencesResult(result, completion: completion)
+            self?.handleUserPushPreferences(result, completion: completion)
         }
     }
 
@@ -509,7 +509,7 @@ public extension CurrentChatUserController {
         )
 
         currentUserUpdater.setPushPreferences([userPreference]) { [weak self] result in
-            self?.handleSetPushPreferencesResult(result, completion: completion)
+            self?.handleUserPushPreferences(result, completion: completion)
         }
     }
 
@@ -643,7 +643,7 @@ private extension EntityChange where Item == UnreadCount {
 }
 
 private extension CurrentChatUserController {
-    func handleSetPushPreferencesResult(
+    func handleUserPushPreferences(
         _ result: Result<PushPreferences, Error>,
         completion: ((Result<UserPushPreference, Error>) -> Void)?
     ) {

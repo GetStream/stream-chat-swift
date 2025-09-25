@@ -719,6 +719,20 @@ class ChannelUpdater: Worker {
         }
     }
 
+    func setPushPreferences(
+        _ preferences: [PushPreferenceRequestPayload],
+        completion: @escaping (Result<PushPreferences, Error>) -> Void
+    ) {
+        apiClient.request(endpoint: .pushPreferences(preferences)) { result in
+            switch result {
+            case let .success(response):
+                completion(.success(response.asModel()))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
     /// Get the link attachment preview data from the provided url.
     ///
     /// This will return the data present in the OG Metadata.

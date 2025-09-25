@@ -1149,7 +1149,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         message: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
-        /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid, isChannelAlreadyCreated else {
             channelModificationFailed(completion)
             return
@@ -1692,6 +1691,76 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         )
     }
 
+    /// Set the push preferences for this channel.
+    /// - Parameters:
+    ///   - level: The scope level of the push notifications.
+    ///   - completion: The completion call once the request is finished.
+    func setPushPreference(
+        level: PushPreferenceLevel,
+        completion: ((Result<ChannelPushPreference, Error>) -> Void)? = nil
+    ) {
+        guard let channelId = cid else {
+            callback {
+                completion?(.failure(ClientError.ChannelNotCreatedYet()))
+            }
+            return
+        }
+
+        guard let currentUserId = client.currentUserId else {
+            callback {
+                completion?(.failure(ClientError.CurrentUserDoesNotExist()))
+            }
+            return
+        }
+
+        let channelPreference = PushPreferenceRequestPayload(
+            chatLevel: level.rawValue,
+            channelId: channelId.rawValue,
+            userId: currentUserId,
+            disabledUntil: nil,
+            removeDisable: true
+        )
+
+        updater.setPushPreferences([channelPreference]) { [weak self] result in
+            self?.handleChannelPushPreference(result, channelId: channelId, completion: completion)
+        }
+    }
+
+    /// Disables the push notifications for this channel.
+    /// - Parameters:
+    ///   - date: The date until when the push notifications will be enabled back.
+    ///   - completion: The completion call once the request is finished.
+    func disablePushNotifications(
+        until date: Date,
+        completion: ((Result<ChannelPushPreference, Error>) -> Void)? = nil
+    ) {
+        guard let channelId = cid else {
+            callback {
+                completion?(.failure(ClientError.ChannelNotCreatedYet()))
+            }
+            return
+        }
+
+        guard let currentUserId = client.currentUserId else {
+            callback {
+                completion?(.failure(ClientError.CurrentUserDoesNotExist()))
+            }
+            return
+        }
+
+        let channelPreference = PushPreferenceRequestPayload(
+            chatLevel: PushPreferenceLevel.all.rawValue,
+            channelId: channelId.rawValue,
+            userId: currentUserId,
+            disabledUntil: date,
+            removeDisable: nil
+        )
+
+        updater.setPushPreferences([channelPreference]) { [weak self] result in
+            self?.handleChannelPushPreference(result, channelId: channelId, completion: completion)
+        }
+    }
+
     // MARK: - Internal
 
     func recoverWatchedChannel(recovery: Bool, completion: @escaping (Error?) -> Void) {
@@ -1836,6 +1905,25 @@ private extension ChatChannelController {
         if let cid = cid {
             setupEventObservers(for: cid)
             setLocalStateBasedOnError(startDatabaseObservers())
+        }
+    }
+
+    func handleChannelPushPreference(
+        _ result: Result<PushPreferences, Error>,
+        channelId: ChannelId,
+        completion: ((Result<ChannelPushPreference, Error>) -> Void)?
+    ) {
+        callback {
+            switch result {
+            case .success(let response):
+                guard let channelPushPref = response.channelPreferences[channelId] else {
+                    completion?(.failure(ClientError.ChannelDoesNotExist(cid: channelId)))
+                    return
+                }
+                completion?(.success(channelPushPref))
+            case .failure(let error):
+                completion?(.failure(error))
+            }
         }
     }
 

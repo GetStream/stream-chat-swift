@@ -9,5 +9,5 @@ public struct PushPreferences {
     /// The global user push preferences.
     public var userPreferences: [UserPushPreference]
     /// The push preference per channel.
-    public var channelPreferences: [ChannelPushPreference]
+    public var channelPreferences: [ChannelId: ChannelPushPreference]
 }
