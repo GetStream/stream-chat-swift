@@ -7,7 +7,7 @@ import SwiftUI
 
 @available(iOS 15, *)
 struct PushPreferencesView: View {
-    let onSetPreferences: (PushPreferenceLevel, Date?, @escaping (Result<PushPreferences, Error>) -> Void) -> Void
+    let onSetPreferences: (PushPreferenceLevel, @escaping (Result<UserPushPreference, Error>) -> Void) -> Void
     let onDismiss: () -> Void
 
     @State private var selectedLevel: PushPreferenceLevel = .all
@@ -181,7 +181,7 @@ struct PushPreferencesView: View {
         isLoading = true
         errorMessage = nil
 
-        onSetPreferences(selectedLevel, disableUntil) { result in
+        onSetPreferences(selectedLevel) { result in
             isLoading = false
 
             switch result {

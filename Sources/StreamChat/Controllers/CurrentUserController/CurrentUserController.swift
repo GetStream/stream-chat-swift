@@ -457,11 +457,13 @@ public extension CurrentChatUserController {
         }
     }
 
-    func setUserPushPreferences(
+    /// Set global push preferences that apply to all channels for the current user.
+    /// - Parameters:
+    ///   - level: The scope level of the push notifications.
+    ///   - completion: The completion call once the request is finished.
+    func setPushPreference(
         level: PushPreferenceLevel,
-        disableUntil: Date? = nil,
-        removeDisabled: Bool? = nil,
-        completion: ((Result<PushPreferences, Error>) -> Void)? = nil
+        completion: ((Result<UserPushPreference, Error>) -> Void)? = nil
     ) {
         guard let currentUserId = client.currentUserId else {
             callback {
@@ -470,15 +472,26 @@ public extension CurrentChatUserController {
             return
         }
 
-        currentUserUpdater.setPushPreferences(
-            currentUserId: currentUserId,
+        let userPreference = PushPreferenceRequestPayload(
+            chatLevel: level.rawValue,
             channelId: nil,
-            level: level,
-            disableUntil: disableUntil,
-            removeDisabled: removeDisabled
-        ) { result in
+            userId: currentUserId,
+            disabledUntil: nil,
+            removeDisable: nil
+        )
+
+        currentUserUpdater.setPushPreferences([userPreference]) { result in
             self.callback {
-                completion?(result)
+                switch result {
+                case .success(let pushPref):
+                    guard let currentUserPushPref = pushPref.userPreferences.first else {
+                        completion?(.failure(ClientError.NoPushPreferenceFound()))
+                        return
+                    }
+                    completion?(.success(currentUserPushPref))
+                case .failure(let error):
+                    completion?(.failure(error))
+                }
             }
         }
     }
@@ -777,5 +790,13 @@ public extension CurrentChatUserController {
     )
     func addDevice(token: Data, pushProvider: PushProvider = .apn, completion: ((Error?) -> Void)? = nil) {
         addDevice(.apn(token: token), completion: completion)
+    }
+}
+
+extension ClientError {
+    final class NoPushPreferenceFound: ClientError {
+        override var localizedDescription: String {
+            "There is no push preferences for the current user."
+        }
     }
 }

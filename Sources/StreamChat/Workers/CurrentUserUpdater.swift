@@ -205,21 +205,10 @@ class CurrentUserUpdater: Worker {
     }
 
     func setPushPreferences(
-        currentUserId: UserId,
-        channelId: ChannelId?,
-        level: PushPreferenceLevel,
-        disableUntil: Date?,
-        removeDisabled: Bool?,
+        _ preferences: [PushPreferenceRequestPayload],
         completion: @escaping (Result<PushPreferences, Error>) -> Void
     ) {
-        let payload = PushPreferenceRequestPayload(
-            chatLevel: level.rawValue,
-            channelId: channelId?.rawValue,
-            userId: currentUserId,
-            disabledUntil: disableUntil,
-            removeDisable: removeDisabled
-        )
-        apiClient.request(endpoint: .pushPreferences([payload])) { result in
+        apiClient.request(endpoint: .pushPreferences(preferences)) { result in
             switch result {
             case let .success(response):
                 completion(.success(response.asModel()))

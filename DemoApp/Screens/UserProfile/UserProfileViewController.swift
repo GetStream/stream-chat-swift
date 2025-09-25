@@ -175,10 +175,9 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
     private func showPushPreferences() {
         if #available(iOS 15, *) {
             let pushPreferencesView = PushPreferencesView(
-                onSetPreferences: { [weak self] level, disableUntil, completion in
-                    self?.currentUserController.setUserPushPreferences(
+                onSetPreferences: { [weak self] level, completion in
+                    self?.currentUserController.setPushPreference(
                         level: level,
-                        disableUntil: disableUntil,
                         completion: completion
                     )
                 },
