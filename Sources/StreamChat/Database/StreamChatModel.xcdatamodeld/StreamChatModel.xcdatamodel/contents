@@ -83,6 +83,7 @@
         <relationship name="reminders" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="MessageReminderDTO" inverseName="channel" inverseEntity="MessageReminderDTO"/>
         <relationship name="threads" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ThreadDTO" inverseName="channel" inverseEntity="ThreadDTO"/>
         <relationship name="watchers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="watchedChannels" inverseEntity="UserDTO"/>
+        <relationship name="pushPreference" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PushPreferenceDTO"/>
         <fetchIndex name="defaultSortingIndex">
             <fetchIndexElement property="defaultSortingAt" type="Binary" order="ascending"/>
         </fetchIndex>
@@ -164,6 +165,7 @@
         <relationship name="flaggedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="flaggedBy" inverseEntity="UserDTO"/>
         <relationship name="mutedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="mutedBy" inverseEntity="UserDTO"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserDTO" inverseName="currentUser" inverseEntity="UserDTO"/>
+        <relationship name="pushPreference" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PushPreferenceDTO"/>
         <uniquenessConstraints>
             <uniquenessConstraint>
                 <constraint value="uniquenessKey"/>
@@ -421,6 +423,10 @@
                 <constraint value="filterHash"/>
             </uniquenessConstraint>
         </uniquenessConstraints>
+    </entity>
+    <entity name="PushPreferenceDTO" representedClassName="PushPreferenceDTO" syncable="YES">
+        <attribute name="chatLevel" attributeType="String"/>
+        <attribute name="disabledUntil" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
     </entity>
     <entity name="QueuedRequestDTO" representedClassName="QueuedRequestDTO" syncable="YES">
         <attribute name="date" attributeType="Date" usesScalarValueType="NO"/>

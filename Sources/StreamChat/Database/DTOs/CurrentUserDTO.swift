@@ -29,6 +29,8 @@ class CurrentUserDTO: NSManagedObject {
     // But if new properties are added, we might need to create new DTOs specific to each setting.
     @NSManaged var isTypingIndicatorsEnabled: Bool
     @NSManaged var isReadReceiptsEnabled: Bool
+    
+    @NSManaged var pushPreference: PushPreferenceDTO?
 
     /// Returns a default fetch request for the current user.
     static var defaultFetchRequest: NSFetchRequest<CurrentUserDTO> {
@@ -92,6 +94,13 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         dto.isInvisible = payload.isInvisible
         dto.isReadReceiptsEnabled = payload.privacySettings?.readReceipts?.enabled ?? true
         dto.isTypingIndicatorsEnabled = payload.privacySettings?.typingIndicators?.enabled ?? true
+        
+        // Save push preference
+        if let pushPreference = payload.pushPreference {
+            dto.pushPreference = try savePushPreference(payload: pushPreference)
+        } else {
+            dto.pushPreference = nil
+        }
 
         let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }
         dto.mutedUsers = Set(mutedUsers)
@@ -239,6 +248,8 @@ extension CurrentChatUser {
         let mutedChannels = Set(dto.channelMutes.compactMap { try? $0.channel.asModel() })
 
         let language: TranslationLanguage? = dto.user.language.map(TranslationLanguage.init)
+        
+        let pushPreference = try dto.pushPreference?.asModel()
 
         return try CurrentChatUser(
             id: user.id,
@@ -272,7 +283,8 @@ extension CurrentChatUser {
                 typingIndicators: .init(enabled: dto.isTypingIndicatorsEnabled),
                 readReceipts: .init(enabled: dto.isReadReceiptsEnabled)
             ),
-            avgResponseTime: dto.user.avgResponseTime?.intValue
+            avgResponseTime: dto.user.avgResponseTime?.intValue,
+            pushPreference: pushPreference
         )
     }
 }

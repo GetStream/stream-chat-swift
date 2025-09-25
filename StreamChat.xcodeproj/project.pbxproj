@@ -1436,6 +1436,8 @@
 		AD25F7442E84668D00F16B14 /* PushPreferencePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7422E84667900F16B14 /* PushPreferencePayloads.swift */; };
 		AD25F74A2E84A1B800F16B14 /* UnreadDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7492E84A1B100F16B14 /* UnreadDetailsView.swift */; };
 		AD25F74C2E84A1F000F16B14 /* PushPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F74B2E84A1EB00F16B14 /* PushPreferencesView.swift */; };
+		AD25F74E2E8606A300F16B14 /* PushPreferenceDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F74D2E8606A300F16B14 /* PushPreferenceDTO.swift */; };
+		AD25F74F2E8606A300F16B14 /* PushPreferenceDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F74D2E8606A300F16B14 /* PushPreferenceDTO.swift */; };
 		AD26CB772E3ACAB9002FC1A7 /* DemoLivestreamChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD26CB762E3ACAA0002FC1A7 /* DemoLivestreamChatChannelVC.swift */; };
 		AD29395D2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */; };
 		AD29395E2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */; };
@@ -4314,6 +4316,7 @@
 		AD25F7422E84667900F16B14 /* PushPreferencePayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferencePayloads.swift; sourceTree = "<group>"; };
 		AD25F7492E84A1B100F16B14 /* UnreadDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadDetailsView.swift; sourceTree = "<group>"; };
 		AD25F74B2E84A1EB00F16B14 /* PushPreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferencesView.swift; sourceTree = "<group>"; };
+		AD25F74D2E8606A300F16B14 /* PushPreferenceDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferenceDTO.swift; sourceTree = "<group>"; };
 		AD26CB762E3ACAA0002FC1A7 /* DemoLivestreamChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamChatChannelVC.swift; sourceTree = "<group>"; };
 		AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeToReplyGestureHandler.swift; sourceTree = "<group>"; };
 		AD2C94DB29CB8CC40096DCA1 /* PartiallyFailingChannelListPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PartiallyFailingChannelListPayload.json; sourceTree = "<group>"; };
@@ -5737,6 +5740,7 @@
 		792A4F18247EA97000EAF71D /* DTOs */ = {
 			isa = PBXGroup;
 			children = (
+				AD25F74D2E8606A300F16B14 /* PushPreferenceDTO.swift */,
 				ADB8B8E92D8890B900549C95 /* MessageReminderDTO.swift */,
 				DABC6AC7254707CB00A8FC78 /* AttachmentDTO.swift */,
 				AD52A2182804850700D0157E /* ChannelConfigDTO.swift */,
@@ -11942,6 +11946,7 @@
 				841BAA042BCE94F8000C73E4 /* QueryPollsRequestBody.swift in Sources */,
 				C1EFF3F3285E459C0057B91B /* IdentifiableModel.swift in Sources */,
 				4F97F26A2BA83150001C4D66 /* UserListState.swift in Sources */,
+				AD25F74E2E8606A300F16B14 /* PushPreferenceDTO.swift in Sources */,
 				DAFAD6A124DC476A0043ED06 /* Result+Extensions.swift in Sources */,
 				AD17CDF927E4DB2700E0D092 /* PushProvider.swift in Sources */,
 				AD37D7D02BC9937F00800D8C /* ThreadParticipant.swift in Sources */,
@@ -12761,6 +12766,7 @@
 				40C20EB329F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift in Sources */,
 				C189D7792AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift in Sources */,
 				40789D1A29F6AC500018C2BB /* AudioPlayerObserving.swift in Sources */,
+				AD25F74F2E8606A300F16B14 /* PushPreferenceDTO.swift in Sources */,
 				4042969329FBF84B0089126D /* AudioSamplesProcessor_Tests.swift in Sources */,
 				AD545E632D52827B008FD399 /* DraftListQuery.swift in Sources */,
 				C173538F27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */,

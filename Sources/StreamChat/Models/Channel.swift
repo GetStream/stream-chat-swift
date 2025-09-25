@@ -170,6 +170,9 @@ public struct ChatChannel {
 
     /// A list of active live locations in the channel.
     public let activeLiveLocations: [SharedLocation]
+    
+    /// Push preference for the channel.
+    public let pushPreference: PushPreference?
 
     // MARK: - Internal
 
@@ -212,7 +215,8 @@ public struct ChatChannel {
         muteDetails: MuteDetails?,
         previewMessage: ChatMessage?,
         draftMessage: DraftMessage?,
-        activeLiveLocations: [SharedLocation]
+        activeLiveLocations: [SharedLocation],
+        pushPreference: PushPreference? = nil
     ) {
         self.cid = cid
         self.name = name
@@ -249,6 +253,7 @@ public struct ChatChannel {
         self.draftMessage = draftMessage
         self.activeLiveLocations = activeLiveLocations
         self.pendingMessages = pendingMessages
+        self.pushPreference = pushPreference
     }
 
     /// Returns a new `ChatChannel` with the provided data replaced.
