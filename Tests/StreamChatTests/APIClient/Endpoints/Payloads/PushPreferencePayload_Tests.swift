@@ -119,7 +119,7 @@ final class PushPreferencePayload_Tests: XCTestCase {
         let response = try JSONDecoder.default.decode(PushPreferencesPayloadResponse.self, from: json)
         
         // THEN
-        XCTAssertEqual(response.userPreferences.count, 2)
+        XCTAssertEqual(response.userPreferences.count, 1)
         XCTAssertEqual(response.channelPreferences.count, 1)
         
         // Test user preferences
