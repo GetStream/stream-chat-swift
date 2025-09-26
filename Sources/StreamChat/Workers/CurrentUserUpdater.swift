@@ -216,8 +216,10 @@ class CurrentUserUpdater: Worker {
                     return
                 }
                 self?.database.write {
+                    // No need to use the actual current user id.
+                    // There is only one push preference related to a user, which is the current user.
                     try $0.savePushPreference(
-                        id: preference.userId,
+                        id: "currentUserId",
                         payload: .init(
                             chatLevel: currentUserPushPref.level.rawValue,
                             disabledUntil: currentUserPushPref.disabledUntil

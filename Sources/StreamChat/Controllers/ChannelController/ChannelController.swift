@@ -1706,17 +1706,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        guard let currentUserId = client.currentUserId else {
-            callback {
-                completion?(.failure(ClientError.CurrentUserDoesNotExist()))
-            }
-            return
-        }
-
         let channelPreference = PushPreferenceRequestPayload(
             chatLevel: level.rawValue,
             channelId: channelId.rawValue,
-            userId: currentUserId,
             disabledUntil: nil,
             removeDisable: true
         )
@@ -1743,17 +1735,9 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        guard let currentUserId = client.currentUserId else {
-            callback {
-                completion?(.failure(ClientError.CurrentUserDoesNotExist()))
-            }
-            return
-        }
-
         let channelPreference = PushPreferenceRequestPayload(
             chatLevel: PushPreferenceLevel.all.rawValue,
             channelId: channelId.rawValue,
-            userId: currentUserId,
             disabledUntil: date,
             removeDisable: nil
         )

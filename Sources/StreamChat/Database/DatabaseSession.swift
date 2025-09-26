@@ -67,6 +67,9 @@ protocol CurrentUserDatabaseSession {
     func saveCurrentDevice(_ deviceId: String) throws
 
     /// Saves the push preference for the given id.
+    /// - Parameters:
+    ///   - id: The channel ID or the currentUser ID.
+    ///   - payload: The push preference payload.
     @discardableResult
     func savePushPreference(id: String, payload: PushPreferencePayload) throws -> PushPreferenceDTO
 

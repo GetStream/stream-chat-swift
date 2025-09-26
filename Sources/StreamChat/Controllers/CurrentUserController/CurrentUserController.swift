@@ -465,17 +465,9 @@ public extension CurrentChatUserController {
         level: PushPreferenceLevel,
         completion: ((Result<PushPreference, Error>) -> Void)? = nil
     ) {
-        guard let currentUserId = client.currentUserId else {
-            callback {
-                completion?(.failure(ClientError.CurrentUserDoesNotExist()))
-            }
-            return
-        }
-
         let userPreference = PushPreferenceRequestPayload(
             chatLevel: level.rawValue,
             channelId: nil,
-            userId: currentUserId,
             disabledUntil: nil,
             removeDisable: true
         )
@@ -495,17 +487,9 @@ public extension CurrentChatUserController {
         until date: Date,
         completion: ((Result<PushPreference, Error>) -> Void)? = nil
     ) {
-        guard let currentUserId = client.currentUserId else {
-            callback {
-                completion?(.failure(ClientError.CurrentUserDoesNotExist()))
-            }
-            return
-        }
-
         let userPreference = PushPreferenceRequestPayload(
             chatLevel: PushPreferenceLevel.all.rawValue,
             channelId: nil,
-            userId: currentUserId,
             disabledUntil: date,
             removeDisable: nil
         )

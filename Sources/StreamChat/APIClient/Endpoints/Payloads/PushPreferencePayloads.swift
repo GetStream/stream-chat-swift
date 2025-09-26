@@ -7,14 +7,12 @@ import Foundation
 struct PushPreferenceRequestPayload: Encodable {
     let chatLevel: String?
     let channelId: String?
-    let userId: String
     let disabledUntil: Date?
     let removeDisable: Bool?
 
     enum CodingKeys: String, CodingKey {
         case chatLevel = "chat_level"
         case channelId = "channel_cid"
-        case userId = "user_id"
         case disabledUntil = "disabled_until"
         case removeDisable = "remove_disable"
     }
