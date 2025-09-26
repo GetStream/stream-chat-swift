@@ -346,6 +346,9 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.membership?.user?.id, "broken-waterfall-5")
         XCTAssertEqual(payload.channel.ownCapabilities?.count, 27)
         XCTAssertEqual(payload.activeLiveLocations.count, 1)
+        XCTAssertNotNil(payload.pushPreference)
+        XCTAssertEqual(payload.pushPreference?.chatLevel, "all")
+        XCTAssertNil(payload.pushPreference?.disabledUntil)
     }
 
     func test_newestMessage_whenMessagesAreSortedDesc() throws {

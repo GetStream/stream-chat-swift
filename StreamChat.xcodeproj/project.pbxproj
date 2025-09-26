@@ -1438,6 +1438,7 @@
 		AD25F74C2E84A1F000F16B14 /* PushPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F74B2E84A1EB00F16B14 /* PushPreferencesView.swift */; };
 		AD25F74E2E8606A300F16B14 /* PushPreferenceDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F74D2E8606A300F16B14 /* PushPreferenceDTO.swift */; };
 		AD25F74F2E8606A300F16B14 /* PushPreferenceDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F74D2E8606A300F16B14 /* PushPreferenceDTO.swift */; };
+		AD25F7512E86EB5700F16B14 /* PushPreferencePayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7502E86EB5700F16B14 /* PushPreferencePayload_Tests.swift */; };
 		AD26CB772E3ACAB9002FC1A7 /* DemoLivestreamChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD26CB762E3ACAA0002FC1A7 /* DemoLivestreamChatChannelVC.swift */; };
 		AD29395D2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */; };
 		AD29395E2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */; };
@@ -4317,6 +4318,7 @@
 		AD25F7492E84A1B100F16B14 /* UnreadDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadDetailsView.swift; sourceTree = "<group>"; };
 		AD25F74B2E84A1EB00F16B14 /* PushPreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferencesView.swift; sourceTree = "<group>"; };
 		AD25F74D2E8606A300F16B14 /* PushPreferenceDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferenceDTO.swift; sourceTree = "<group>"; };
+		AD25F7502E86EB5700F16B14 /* PushPreferencePayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferencePayload_Tests.swift; sourceTree = "<group>"; };
 		AD26CB762E3ACAA0002FC1A7 /* DemoLivestreamChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamChatChannelVC.swift; sourceTree = "<group>"; };
 		AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeToReplyGestureHandler.swift; sourceTree = "<group>"; };
 		AD2C94DB29CB8CC40096DCA1 /* PartiallyFailingChannelListPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PartiallyFailingChannelListPayload.json; sourceTree = "<group>"; };
@@ -7279,6 +7281,7 @@
 		A364D09427D0BF3A0029857A /* Payloads */ = {
 			isa = PBXGroup;
 			children = (
+				AD25F7502E86EB5700F16B14 /* PushPreferencePayload_Tests.swift */,
 				ADA83B522D97805A003B3928 /* ReminderPayloads_Tests.swift */,
 				AD545E6A2D5650B5008FD399 /* DraftPayloads_Tests.swift */,
 				AD8C7C622BA464E600260715 /* AppSettingsPayload_Tests.swift */,
@@ -12198,6 +12201,7 @@
 				79877A2B2498E51500015F8B /* UserDTO_Tests.swift in Sources */,
 				ADB208822D8494F0003F1059 /* MessageReminderListQuery_Tests.swift in Sources */,
 				799F611B2530B62C007F218C /* ChannelListQuery_Tests.swift in Sources */,
+				AD25F7512E86EB5700F16B14 /* PushPreferencePayload_Tests.swift in Sources */,
 				792921C524C0479700116BBB /* ChannelListUpdater_Tests.swift in Sources */,
 				A3F65E3727EB7161003F6256 /* WebSocketClient_Tests.swift in Sources */,
 				F61D7C3524FFA6FD00188A0E /* MessageUpdater_Tests.swift in Sources */,

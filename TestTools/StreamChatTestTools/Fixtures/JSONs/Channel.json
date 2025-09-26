@@ -1605,5 +1605,9 @@
           "updated_at": "2025-06-06T17:08:57.37039Z",
           "user_id": "leia_organa"
       }
-  ]
+  ],
+  "push_preference": {
+    "chat_level": "all",
+    "disabled_until": null
+  }
   }
