@@ -83,4 +83,40 @@ final class UserEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual(endpoint.path.value, "unread")
     }
+
+    func test_pushPreferences_buildsCorrectly() {
+        let preferences: [PushPreferenceRequestPayload] = [
+            .init(
+                chatLevel: "mentions",
+                channelId: nil,
+                disabledUntil: nil,
+                removeDisable: true
+            ),
+            .init(
+                chatLevel: "all",
+                channelId: "messaging:test-channel",
+                disabledUntil: Date(timeIntervalSince1970: 1_609_459_200),
+                removeDisable: nil
+            )
+        ]
+
+        let expectedEndpoint = Endpoint<PushPreferencesPayloadResponse>(
+            path: .pushPreferences,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "preferences": AnyEncodable(preferences)
+            ]
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<PushPreferencesPayloadResponse> = .pushPreferences(preferences)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual(endpoint.path.value, "push_preferences")
+        XCTAssertEqual(endpoint.method, .post)
+        XCTAssertFalse(endpoint.requiresConnectionId)
+    }
 }
