@@ -53,7 +53,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             channelReads: [currentUserReadPayload],
             isHidden: false,
             draft: nil,
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
 
         try! database.writeSynchronously { session in

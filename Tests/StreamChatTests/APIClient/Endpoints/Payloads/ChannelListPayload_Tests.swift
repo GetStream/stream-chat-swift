@@ -250,7 +250,8 @@ final class ChannelListPayload_Tests: XCTestCase {
                 },
                 isHidden: false,
                 draft: nil,
-                activeLiveLocations: []
+                activeLiveLocations: [],
+                pushPreference: nil
             )
         }
 
@@ -465,7 +466,8 @@ final class ChannelPayload_Tests: XCTestCase {
             channelReads: [channelReadPayload],
             isHidden: true,
             draft: nil,
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
         
         let chatChannel = payload.asModel(
@@ -558,7 +560,8 @@ final class ChannelPayload_Tests: XCTestCase {
             channelReads: [],
             isHidden: nil,
             draft: nil,
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
         
         let chatChannel = payload.asModel(

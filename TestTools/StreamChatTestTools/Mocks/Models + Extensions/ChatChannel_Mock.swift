@@ -102,7 +102,8 @@ public extension ChatChannel {
         muteDetails: MuteDetails? = nil,
         previewMessage: ChatMessage? = nil,
         draftMessage: DraftMessage? = nil,
-        activeLiveLocations: [SharedLocation] = []
+        activeLiveLocations: [SharedLocation] = [],
+        pushPreference: PushPreference? = nil
     ) -> Self {
         self.init(
             cid: cid,
@@ -138,7 +139,8 @@ public extension ChatChannel {
             muteDetails: muteDetails,
             previewMessage: previewMessage,
             draftMessage: draftMessage,
-            activeLiveLocations: activeLiveLocations
+            activeLiveLocations: activeLiveLocations,
+            pushPreference: pushPreference
         )
     }
 
@@ -209,7 +211,8 @@ public extension ChatChannel {
             muteDetails: muteDetails,
             previewMessage: previewMessage,
             draftMessage: draftMessage,
-            activeLiveLocations: activeLiveLocations
+            activeLiveLocations: activeLiveLocations,
+            pushPreference: nil
         )
     }
 
@@ -280,7 +283,8 @@ public extension ChatChannel {
             muteDetails: muteDetails,
             previewMessage: previewMessage,
             draftMessage: draftMessage,
-            activeLiveLocations: activeLiveLocations
+            activeLiveLocations: activeLiveLocations,
+            pushPreference: nil
         )
     }
 }

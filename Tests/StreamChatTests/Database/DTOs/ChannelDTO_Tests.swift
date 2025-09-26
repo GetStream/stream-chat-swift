@@ -1122,7 +1122,8 @@ final class ChannelDTO_Tests: XCTestCase {
             channelReads: [currentUserChannelReadPayload],
             isHidden: false,
             draft: nil,
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
 
         let unreadMessages = 5
@@ -1180,7 +1181,8 @@ final class ChannelDTO_Tests: XCTestCase {
             channelReads: [],
             isHidden: nil,
             draft: nil,
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
@@ -1549,7 +1551,8 @@ final class ChannelDTO_Tests: XCTestCase {
                 parentId: nil,
                 parentMessage: nil
             ),
-            activeLiveLocations: [.dummy(latitude: 10, longitude: 10)]
+            activeLiveLocations: [.dummy(latitude: 10, longitude: 10)],
+            pushPreference: nil
         )
 
         // WHEN
@@ -1603,7 +1606,8 @@ final class ChannelDTO_Tests: XCTestCase {
                 parentId: nil,
                 parentMessage: nil
             ),
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
 
         try database.writeSynchronously { session in
@@ -1629,7 +1633,8 @@ final class ChannelDTO_Tests: XCTestCase {
             channelReads: [],
             isHidden: nil,
             draft: nil,
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
 
         try database.writeSynchronously { session in
@@ -1681,7 +1686,8 @@ final class ChannelDTO_Tests: XCTestCase {
                 parentId: nil,
                 parentMessage: nil
             ),
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
 
         // WHEN
@@ -1738,7 +1744,8 @@ final class ChannelDTO_Tests: XCTestCase {
                 parentId: parentMessagePayload.id,
                 parentMessage: parentMessagePayload
             ),
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
 
         // WHEN

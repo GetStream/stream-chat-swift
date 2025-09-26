@@ -209,7 +209,8 @@ extension XCTestCase {
                 channelReads: channelReads ?? [dummyChannelRead],
                 isHidden: false,
                 draft: nil,
-                activeLiveLocations: []
+                activeLiveLocations: [],
+                pushPreference: nil
             )
 
         return payload
@@ -328,7 +329,8 @@ extension XCTestCase {
                 channelReads: [dummyChannelReadWithNoExtraData],
                 isHidden: nil,
                 draft: nil,
-                activeLiveLocations: []
+                activeLiveLocations: [],
+                pushPreference: nil
             )
 
         return payload

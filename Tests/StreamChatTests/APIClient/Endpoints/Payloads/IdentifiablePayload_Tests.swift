@@ -406,7 +406,8 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 },
                 isHidden: false,
                 draft: nil,
-                activeLiveLocations: []
+                activeLiveLocations: [],
+                pushPreference: nil
             )
         }
 
