@@ -10,13 +10,6 @@ class PushPreferenceDTO: NSManagedObject {
     @NSManaged var id: String
     @NSManaged var chatLevel: String
     @NSManaged var disabledUntil: DBDate?
-    
-    /// Returns a default fetch request for push preferences.
-    static var defaultFetchRequest: NSFetchRequest<PushPreferenceDTO> {
-        let request = NSFetchRequest<PushPreferenceDTO>(entityName: PushPreferenceDTO.entityName)
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \PushPreferenceDTO.chatLevel, ascending: true)]
-        return request
-    }
 }
 
 extension PushPreferenceDTO {
@@ -42,7 +35,7 @@ extension PushPreference {
 
 extension NSManagedObjectContext {
     func savePushPreference(id: String, payload: PushPreferencePayload) throws -> PushPreferenceDTO {
-        let dto = PushPreferenceDTO.loadOrCreate(context: self)
+        let dto = PushPreferenceDTO.loadOrCreate(id: id, context: self)
         dto.id = id
         dto.chatLevel = payload.chatLevel
         dto.disabledUntil = payload.disabledUntil?.bridgeDate
@@ -51,18 +44,18 @@ extension NSManagedObjectContext {
 }
 
 extension PushPreferenceDTO {
-    /// If the `PushPreferenceDTO` entity exists in the context, fetches and returns it. Otherwise create a new `PushPreferenceDTO`.
-    ///
-    /// - Parameter context: The context used to fetch/create `PushPreferenceDTO`
-    fileprivate static func loadOrCreate(context: NSManagedObjectContext) -> PushPreferenceDTO {
-        let request = NSFetchRequest<PushPreferenceDTO>(entityName: PushPreferenceDTO.entityName)
-        let result = load(by: request, context: context)
-        
-        if let existing = result.first {
+    static func loadOrCreate(id: String, context: NSManagedObjectContext) -> PushPreferenceDTO {
+        if let existing = load(id: id, context: context) {
             return existing
         }
-        
+
+        let request = fetchRequest(id: id)
         let new = NSEntityDescription.insertNewObject(into: context, for: request)
+        new.id = id
         return new
+    }
+
+    static func load(id: String, context: NSManagedObjectContext) -> PushPreferenceDTO? {
+        load(by: id, context: context).first
     }
 }
