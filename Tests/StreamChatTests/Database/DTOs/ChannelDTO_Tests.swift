@@ -351,7 +351,8 @@ final class ChannelDTO_Tests: XCTestCase {
             messages: [message],
             pendingMessages: [pendingMessage],
             pinnedMessages: [pinnedMessage],
-            ownCapabilities: ["join-channel", "delete-channel"]
+            ownCapabilities: ["join-channel", "delete-channel"],
+            pushPreference: .init(chatLevel: "mentions", disabledUntil: .unique)
         )
 
         // Asynchronously save the payload to the db
@@ -478,6 +479,14 @@ final class ChannelDTO_Tests: XCTestCase {
 
             // Truncated
             Assert.willBeEqual(payload.channel.truncatedAt, loadedChannel.truncatedAt)
+            
+            // Push Preference
+            Assert.willNotBeNil(payload.pushPreference)
+            Assert.willBeEqual(payload.pushPreference?.chatLevel, loadedChannel.pushPreference?.level.rawValue)
+            Assert.willBeEqual(
+                payload.pushPreference?.disabledUntil?.timeIntervalSince1970,
+                loadedChannel.pushPreference?.disabledUntil?.timeIntervalSince1970
+            )
         }
     }
 

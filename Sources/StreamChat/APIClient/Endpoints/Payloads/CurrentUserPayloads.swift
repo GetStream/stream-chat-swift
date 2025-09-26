@@ -43,7 +43,7 @@ class CurrentUserPayload: UserPayload {
         unreadCount: UnreadCountPayload? = nil,
         privacySettings: UserPrivacySettingsPayload? = nil,
         blockedUserIds: Set<UserId> = [],
-        pushPreference: PushPreferencePayload? = nil
+        pushPreference: PushPreferencePayload?
     ) {
         self.devices = devices
         self.mutedUsers = mutedUsers
