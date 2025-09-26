@@ -721,7 +721,8 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     },
                     onDismiss: { [weak self] in
                         self?.rootViewController.dismiss(animated: true)
-                    }
+                    },
+                    initialPreference: channelController.channel?.pushPreference
                 )
                 let hostingController = UIHostingController(rootView: pushPreferencesView)
                 hostingController.title = "Channel Push Preferences - \(cid.id)"

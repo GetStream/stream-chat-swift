@@ -66,6 +66,9 @@ protocol CurrentUserDatabaseSession {
     /// Saves the `currentDevice` for current user.
     func saveCurrentDevice(_ deviceId: String) throws
 
+    /// Saves the push preference for the given id.
+    func savePushPreference(id: String, payload: PushPreferencePayload) throws -> PushPreferenceDTO
+
     /// Removes the device with the given id from DB.
     func deleteDevice(id: DeviceId)
 

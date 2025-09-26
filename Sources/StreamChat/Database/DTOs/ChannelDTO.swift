@@ -387,7 +387,10 @@ extension NSManagedObjectContext {
         
         // Save push preference
         if let pushPreference = payload.pushPreference {
-            dto.pushPreference = try savePushPreference(payload: pushPreference)
+            dto.pushPreference = try savePushPreference(
+                id: payload.channel.cid.rawValue,
+                payload: pushPreference
+            )
         } else {
             dto.pushPreference = nil
         }

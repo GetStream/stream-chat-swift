@@ -7,6 +7,7 @@ import Foundation
 
 @objc(PushPreferenceDTO)
 class PushPreferenceDTO: NSManagedObject {
+    @NSManaged var id: String
     @NSManaged var chatLevel: String
     @NSManaged var disabledUntil: DBDate?
     
@@ -40,12 +41,11 @@ extension PushPreference {
 // MARK: Saving and loading the data
 
 extension NSManagedObjectContext {
-    func savePushPreference(payload: PushPreferencePayload) throws -> PushPreferenceDTO {
+    func savePushPreference(id: String, payload: PushPreferencePayload) throws -> PushPreferenceDTO {
         let dto = PushPreferenceDTO.loadOrCreate(context: self)
-        
+        dto.id = id
         dto.chatLevel = payload.chatLevel
         dto.disabledUntil = payload.disabledUntil?.bridgeDate
-        
         return dto
     }
 }

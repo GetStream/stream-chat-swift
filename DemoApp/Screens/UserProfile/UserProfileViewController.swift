@@ -173,27 +173,25 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
     }
     
     private func showPushPreferences() {
-        if #available(iOS 15, *) {
-            let pushPreferencesView = PushPreferencesView(
-                onSetPreferences: { [weak self] level, completion in
-                    self?.currentUserController.setPushPreference(level: level) {
-                        completion($0.map(\.level))
-                    }
-                },
-                onDisableNotifications: { [weak self] date, completion in
-                    self?.currentUserController.disablePushNotifications(until: date) {
-                        completion($0.map(\.level))
-                    }
-                },
-                onDismiss: { [weak self] in
-                    self?.dismiss(animated: true)
+        let pushPreferencesView = PushPreferencesView(
+            onSetPreferences: { [weak self] level, completion in
+                self?.currentUserController.setPushPreference(level: level) {
+                    completion($0.map(\.level))
                 }
-            )
-            let hostingController = UIHostingController(rootView: pushPreferencesView)
-            hostingController.title = "Push Preferences"
-
-            present(hostingController, animated: true)
-        }
+            },
+            onDisableNotifications: { [weak self] date, completion in
+                self?.currentUserController.disablePushNotifications(until: date) {
+                    completion($0.map(\.level))
+                }
+            },
+            onDismiss: { [weak self] in
+                self?.dismiss(animated: true)
+            },
+            initialPreference: currentUserController.currentUser?.pushPreference
+        )
+        let hostingController = UIHostingController(rootView: pushPreferencesView)
+        hostingController.title = "Push Preferences"
+        present(hostingController, animated: true)
     }
 
     @objc private func didTapUpdateButton() {

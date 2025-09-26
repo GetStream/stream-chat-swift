@@ -10,8 +10,9 @@ struct PushPreferencesView: View {
     let onSetPreferences: (PushPreferenceLevel, @escaping (Result<PushPreferenceLevel, Error>) -> Void) -> Void
     let onDisableNotifications: (Date, @escaping (Result<PushPreferenceLevel, Error>) -> Void) -> Void
     let onDismiss: () -> Void
+    let initialPreference: PushPreference?
 
-    @State private var selectedLevel: PushPreferenceLevel = .all
+    @State private var selectedLevel: PushPreferenceLevel
     @State private var disableUntil: Date?
     @State private var isLoading = false
     @State private var showSuccessMessage = false
@@ -24,6 +25,29 @@ struct PushPreferencesView: View {
         formatter.timeStyle = .short
         return formatter
     }()
+    
+    init(
+        onSetPreferences: @escaping (PushPreferenceLevel, @escaping (Result<PushPreferenceLevel, Error>) -> Void) -> Void,
+        onDisableNotifications: @escaping (Date, @escaping (Result<PushPreferenceLevel, Error>) -> Void) -> Void,
+        onDismiss: @escaping () -> Void,
+        initialPreference: PushPreference? = nil
+    ) {
+        self.onSetPreferences = onSetPreferences
+        self.onDisableNotifications = onDisableNotifications
+        self.onDismiss = onDismiss
+        self.initialPreference = initialPreference
+        
+        // Initialize state based on the initial preference
+        _selectedLevel = State(initialValue: initialPreference?.level ?? .all)
+        
+        // Only set disableUntil if the date is in the future
+        let disableUntilDate = initialPreference?.disabledUntil
+        if let date = disableUntilDate, date > Date() {
+            _disableUntil = State(initialValue: date)
+        } else {
+            _disableUntil = State(initialValue: nil)
+        }
+    }
 
     var body: some View {
         NavigationView {
