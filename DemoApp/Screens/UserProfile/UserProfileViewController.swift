@@ -180,7 +180,7 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
                 }
             },
             onDisableNotifications: { [weak self] date, completion in
-                self?.currentUserController.disablePushNotifications(until: date) {
+                self?.currentUserController.snoozePushNotifications(until: date) {
                     completion($0.map(\.level))
                 }
             },

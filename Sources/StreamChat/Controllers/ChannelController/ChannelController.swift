@@ -1720,11 +1720,11 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
     }
 
-    /// Disables the push notifications for this channel.
+    /// Temporarily disables the push notifications for this channel.
     /// - Parameters:
     ///   - date: The date until when the push notifications will be enabled back.
     ///   - completion: The completion call once the request is finished.
-    public func disablePushNotifications(
+    public func snoozePushNotifications(
         until date: Date,
         completion: ((Result<PushPreference, Error>) -> Void)? = nil
     ) {

@@ -479,11 +479,11 @@ public extension CurrentChatUserController {
         }
     }
 
-    /// Disables the push notifications globally for the current user.
+    /// Temporarily disables the push notifications globally for the current user.
     /// - Parameters:
     ///   - date: The date until when the push notifications will be enabled back.
     ///   - completion: The completion call once the request is finished.
-    func disablePushNotifications(
+    func snoozePushNotifications(
         until date: Date,
         completion: ((Result<PushPreference, Error>) -> Void)? = nil
     ) {

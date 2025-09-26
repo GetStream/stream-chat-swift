@@ -715,7 +715,7 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         }
                     },
                     onDisableNotifications: { date, completion in
-                        channelController.disablePushNotifications(until: date) {
+                        channelController.snoozePushNotifications(until: date) {
                             completion($0.map(\.level))
                         }
                     },
