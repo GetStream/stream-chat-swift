@@ -37,6 +37,10 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
 
     @Atomic var loadAllUnreads_completion: ((Result<CurrentUserUnreads, Error>) -> Void)?
 
+    @Atomic var setPushPreference_preference: PushPreferenceRequestPayload?
+    @Atomic var setPushPreference_completion: ((Result<PushPreference, Error>) -> Void)?
+    @Atomic var setPushPreference_completion_result: Result<PushPreference, Error>?
+
     override func updateUserData(
         currentUserId: UserId,
         name: String?,
@@ -96,6 +100,15 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         loadAllUnreads_completion = completion
     }
 
+    override func setPushPreference(
+        _ preference: PushPreferenceRequestPayload,
+        completion: @escaping (Result<PushPreference, Error>) -> Void
+    ) {
+        setPushPreference_preference = preference
+        setPushPreference_completion = completion
+        setPushPreference_completion_result?.invoke(with: completion)
+    }
+
     // Cleans up all recorded values
     func cleanUp() {
         updateUserData_currentUserId = nil
@@ -124,6 +137,10 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         deleteAllLocalAttachmentDownloads_completion_result = nil
 
         loadAllUnreads_completion = nil
+
+        setPushPreference_preference = nil
+        setPushPreference_completion = nil
+        setPushPreference_completion_result = nil
     }
 
     override func markAllRead(completion: ((Error?) -> Void)? = nil) {

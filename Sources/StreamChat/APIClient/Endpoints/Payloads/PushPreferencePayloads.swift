@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct PushPreferenceRequestPayload: Encodable {
+struct PushPreferenceRequestPayload: Equatable, Encodable {
     let chatLevel: String?
     let channelId: String?
     let disabledUntil: Date?
@@ -38,6 +38,14 @@ struct PushPreferencePayload: Decodable {
 struct PushPreferencesPayloadResponse: Decodable {
     let userPreferences: UserPushPreferencesPayload
     let channelPreferences: ChannelPushPreferencesPayload
+
+    init(
+        userPreferences: UserPushPreferencesPayload,
+        channelPreferences: ChannelPushPreferencesPayload
+    ) {
+        self.userPreferences = userPreferences
+        self.channelPreferences = channelPreferences
+    }
 
     enum CodingKeys: String, CodingKey {
         case userPreferences = "user_preferences"
