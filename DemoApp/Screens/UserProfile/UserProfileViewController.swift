@@ -83,10 +83,10 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         case .name:
             cell.textLabel?.text = "Name"
             cell.detailTextLabel?.text = name ?? currentUserController.currentUser?.name
-            let button = UIButton(type: .detailDisclosure, primaryAction: UIAction(handler: { _ in
-                self.presentAlert(title: "Name", textFieldPlaceholder: self.currentUserController.currentUser?.name) { newValue in
-                    self.name = newValue
-                    self.updateUserData()
+            let button = UIButton(type: .detailDisclosure, primaryAction: UIAction(handler: { [weak self] _ in
+                self?.presentAlert(title: "Name", textFieldPlaceholder: self?.currentUserController.currentUser?.name) { newValue in
+                    self?.name = newValue
+                    self?.updateUserData()
                 }
             }))
             button.setImage(.init(systemName: "pencil"), for: .normal)

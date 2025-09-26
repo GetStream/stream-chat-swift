@@ -4,8 +4,8 @@
 
 import Foundation
 
-/// The push global preference details.
-public struct PushPreference {
+/// The push preference details.
+public struct PushPreference: Equatable {
     /// The scope level of the push notifications.
     public let level: PushPreferenceLevel
     /// If provided the notifications will be disabled until the set date.

@@ -98,8 +98,6 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         // Save push preference
         if let pushPreference = payload.pushPreference {
             dto.pushPreference = try savePushPreference(id: payload.id, payload: pushPreference)
-        } else {
-            dto.pushPreference = nil
         }
 
         let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }

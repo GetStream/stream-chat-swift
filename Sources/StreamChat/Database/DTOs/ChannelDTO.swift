@@ -391,8 +391,6 @@ extension NSManagedObjectContext {
                 id: payload.channel.cid.rawValue,
                 payload: pushPreference
             )
-        } else {
-            dto.pushPreference = nil
         }
 
         // Note: membership payload should be saved before all the members

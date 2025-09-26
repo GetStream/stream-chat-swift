@@ -216,7 +216,7 @@ public struct ChatChannel {
         previewMessage: ChatMessage?,
         draftMessage: DraftMessage?,
         activeLiveLocations: [SharedLocation],
-        pushPreference: PushPreference? = nil
+        pushPreference: PushPreference?
     ) {
         self.cid = cid
         self.name = name
@@ -296,7 +296,8 @@ public struct ChatChannel {
             muteDetails: muteDetails,
             previewMessage: previewMessage,
             draftMessage: draftMessage,
-            activeLiveLocations: activeLiveLocations
+            activeLiveLocations: activeLiveLocations,
+            pushPreference: pushPreference
         )
     }
 
@@ -325,6 +326,7 @@ public struct ChatChannel {
         team: TeamId? = nil,
         cooldownDuration: Int? = nil,
         pinnedMessages: [ChatMessage]? = nil,
+        pushPreference: PushPreference? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatChannel {
         .init(
@@ -361,7 +363,8 @@ public struct ChatChannel {
             muteDetails: muteDetails,
             previewMessage: previewMessage,
             draftMessage: draftMessage,
-            activeLiveLocations: activeLiveLocations
+            activeLiveLocations: activeLiveLocations,
+            pushPreference: pushPreference
         )
     }
 }
@@ -412,6 +415,7 @@ extension ChatChannel: Hashable {
         guard lhs.ownCapabilities == rhs.ownCapabilities else { return false }
         guard lhs.draftMessage == rhs.draftMessage else { return false }
         guard lhs.activeLiveLocations.count == rhs.activeLiveLocations.count else { return false }
+        guard lhs.pushPreference == rhs.pushPreference else { return false }
         return true
     }
 
