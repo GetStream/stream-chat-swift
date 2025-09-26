@@ -3,7 +3,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add support for push preferences [#3820](https://github.com/GetStream/stream-chat-swift/pull/3820)
+    - Add `CurrentChatUserController.setPushPreference(level:)`
+    - Add `CurrentChatUserController.snoozePushNotifications(until:)`
+    - Add `ChatChannelController.setPushPreference(level:)`
+    - Add `ChatChannelController.snoozePushNotifications(until:)`
 
 # [4.89.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.89.0)
 _September 22, 2025_
