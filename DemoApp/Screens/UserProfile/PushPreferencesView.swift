@@ -116,7 +116,7 @@ struct PushPreferencesView: View {
                                 } else {
                                     Image(systemName: "bell.slash")
                                 }
-                                Text("Disable Notifications")
+                                Text("Snooze Notifications")
                             }
                             .frame(maxWidth: .infinity)
                         }
