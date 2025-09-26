@@ -724,12 +724,21 @@ class ChannelUpdater: Worker {
         cid: ChannelId,
         completion: @escaping (Result<PushPreference, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .pushPreferences([preference])) { result in
+        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] result in
             switch result {
             case let .success(response):
                 guard let channelPref = response.channelPreferences.asModel()[cid] else {
                     completion(.failure(ClientError.ChannelDoesNotExist(cid: cid)))
                     return
+                }
+                self?.database.write {
+                    try $0.savePushPreference(
+                        id: cid.rawValue,
+                        payload: .init(
+                            chatLevel: channelPref.level.rawValue,
+                            disabledUntil: channelPref.disabledUntil
+                        )
+                    )
                 }
                 completion(.success(channelPref))
             case let .failure(error):

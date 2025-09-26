@@ -63,13 +63,13 @@ extension UserPushPreferencesPayload {
 }
 
 extension ChannelPushPreferencesPayload {
-    func asModel() -> [ChannelId: PushPreference] { [ChannelId: PushPreference](
-        uniqueKeysWithValues: values
+    func asModel() -> [ChannelId: PushPreference] {
+        .init(uniqueKeysWithValues: values
             .flatMap { $0 }
             .compactMap { key, value in
                 guard let channelId = try? ChannelId(cid: key) else { return nil }
                 return (channelId, value.asModel())
             }
-    )
+        )
     }
 }

@@ -10,6 +10,22 @@ class PushPreferenceDTO: NSManagedObject {
     @NSManaged var id: String
     @NSManaged var chatLevel: String
     @NSManaged var disabledUntil: DBDate?
+    @NSManaged var currentUser: CurrentUserDTO?
+    @NSManaged var channel: ChannelDTO?
+
+    override func willSave() {
+        super.willSave()
+
+        // Trigger currentUser update whenever push preference is updated.
+        if let currentUser = self.currentUser, hasPersistentChangedValues, !currentUser.hasChanges {
+            currentUser.unreadMessagesCount = currentUser.unreadMessagesCount
+        }
+
+        // Trigger currentUser update whenever push preference is updated.
+        if let channel = self.channel, hasPersistentChangedValues, !channel.hasChanges {
+            channel.id = channel.id
+        }
+    }
 }
 
 extension PushPreferenceDTO {

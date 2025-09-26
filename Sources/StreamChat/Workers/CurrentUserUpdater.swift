@@ -208,12 +208,21 @@ class CurrentUserUpdater: Worker {
         _ preference: PushPreferenceRequestPayload,
         completion: @escaping (Result<PushPreference, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .pushPreferences([preference])) { result in
+        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] result in
             switch result {
             case let .success(response):
                 guard let currentUserPushPref = response.userPreferences.asModel().first else {
                     completion(.failure(ClientError.CurrentUserDoesNotExist()))
                     return
+                }
+                self?.database.write {
+                    try $0.savePushPreference(
+                        id: preference.userId,
+                        payload: .init(
+                            chatLevel: currentUserPushPref.level.rawValue,
+                            disabledUntil: currentUserPushPref.disabledUntil
+                        )
+                    )
                 }
                 completion(.success(currentUserPushPref))
             case let .failure(error):
