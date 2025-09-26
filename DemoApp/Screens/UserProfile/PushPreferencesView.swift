@@ -158,9 +158,6 @@ struct PushPreferencesView: View {
             .navigationBarItems(
                 leading: Button("Cancel") {
                     onDismiss()
-                },
-                trailing: Button("Save") {
-                    savePreferences()
                 }
                 .disabled(isLoading)
             )
