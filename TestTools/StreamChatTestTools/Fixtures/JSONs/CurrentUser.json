@@ -68,7 +68,7 @@
           "created_at" : "2020-08-07T03:36:37.271234Z"
       },
   ],
-  "push_preference": {
+  "push_preferences": {
     "chat_level": "mentions",
     "disabled_until": "2024-12-31T23:59:59.999Z"
   },

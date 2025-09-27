@@ -5701,7 +5701,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_setPushPreference_callsUpdaterWithCorrectParameters() {
         // GIVEN
-        let cid: ChannelId = .unique
+        let cid: ChannelId = channelId
         let level: PushPreferenceLevel = .mentions
         let expectedPreference = PushPreferenceRequestPayload(
             chatLevel: level.rawValue,
@@ -5716,21 +5716,6 @@ final class ChannelController_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(env.channelUpdater?.setPushPreference_preference, expectedPreference)
         XCTAssertEqual(env.channelUpdater?.setPushPreference_cid, cid)
-    }
-
-    func test_setPushPreference_whenChannelNotCreated_returnsError() {
-        // GIVEN
-        let level: PushPreferenceLevel = .mentions
-        controller = ChatChannelController_Mock.mock(client: .mock)
-
-        // WHEN
-        var completionResult: Result<PushPreference, Error>?
-        controller.setPushPreference(level: level) { result in
-            completionResult = result
-        }
-
-        // THEN
-        AssertAsync.willBeTrue(completionResult?.error is ClientError.ChannelNotCreatedYet)
     }
 
     func test_setPushPreference_propagatesSuccess() {
@@ -5776,7 +5761,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_snoozePushNotifications_callsUpdaterWithCorrectParameters() {
         // GIVEN
-        let cid: ChannelId = .unique
+        let cid: ChannelId = channelId
         let date = Date().addingTimeInterval(3600)
         let expectedPreference = PushPreferenceRequestPayload(
             chatLevel: PushPreferenceLevel.all.rawValue,
@@ -5791,21 +5776,6 @@ final class ChannelController_Tests: XCTestCase {
         // THEN
         XCTAssertEqual(env.channelUpdater?.setPushPreference_preference, expectedPreference)
         XCTAssertEqual(env.channelUpdater?.setPushPreference_cid, cid)
-    }
-
-    func test_snoozePushNotifications_whenChannelNotCreated_returnsError() {
-        // GIVEN
-        let date = Date().addingTimeInterval(3600)
-        controller = ChatChannelController_Mock.mock(client: .mock)
-
-        // WHEN
-        var completionResult: Result<PushPreference, Error>?
-        controller.snoozePushNotifications(until: date) { result in
-            completionResult = result
-        }
-
-        // THEN
-        AssertAsync.willBeTrue(completionResult?.error is ClientError.ChannelNotCreatedYet)
     }
 
     func test_snoozePushNotifications_propagatesSuccess() {

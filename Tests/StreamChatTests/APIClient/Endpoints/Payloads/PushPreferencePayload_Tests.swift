@@ -171,11 +171,11 @@ final class PushPreferencePayload_Tests: XCTestCase {
     func test_channelPushPreferencesPayload_asModel() throws {
         // GIVEN
         let channelPreferences: ChannelPushPreferencesPayload = [
-            "messaging:channel1": [
-                "user1": PushPreferencePayload(chatLevel: "all", disabledUntil: nil)
+            "user1": [
+                "messaging:channel1": PushPreferencePayload(chatLevel: "all", disabledUntil: nil)
             ],
-            "messaging:channel2": [
-                "user1": PushPreferencePayload(chatLevel: "mentions", disabledUntil: "2024-12-31T23:59:59.999Z".toDate())
+            "user2": [
+                "messaging:channel2": PushPreferencePayload(chatLevel: "mentions", disabledUntil: "2024-12-31T23:59:59.999Z".toDate())
             ]
         ]
         

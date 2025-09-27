@@ -1606,8 +1606,8 @@
           "user_id": "leia_organa"
       }
   ],
-  "push_preference": {
+  "push_preferences": {
     "chat_level": "all",
     "disabled_until": null
   }
-  }
+}
