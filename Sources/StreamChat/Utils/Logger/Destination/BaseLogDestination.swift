@@ -65,11 +65,6 @@ open class BaseLogDestination: LogDestination, @unchecked Sendable {
         self.showFunctionName = showFunctionName
     }
 
-    open func isEnabled(level: LogLevel) -> Bool {
-        assertionFailure("`isEnabled(level:)` is deprecated, please use `isEnabled(level:subsystem:)`")
-        return true
-    }
-
     /// Checks if this destination is enabled for the given level and subsystems.
     /// - Parameter level: Log level to be checked
     /// - Parameter subsystems: Log subsystems to be checked

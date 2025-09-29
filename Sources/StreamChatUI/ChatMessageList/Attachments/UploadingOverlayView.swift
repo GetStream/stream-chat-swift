@@ -5,11 +5,6 @@
 import StreamChat
 import UIKit
 
-extension ChatMessageGalleryView {
-    @available(*, deprecated, message: "use UploadingOverlayView instead.")
-    public typealias UploadingOverlay = UploadingOverlayView
-}
-
 open class UploadingOverlayView: _View, ThemeProvider {
     public var content: AttachmentUploadingState? {
         didSet { updateContentIfNeeded() }

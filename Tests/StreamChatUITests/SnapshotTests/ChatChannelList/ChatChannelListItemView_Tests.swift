@@ -732,7 +732,8 @@ import XCTest
                     type: .image,
                     payload: try JSONEncoder().encode(ImageAttachmentPayload(
                         title: nil,
-                        imageRemoteURL: .localYodaImage
+                        imageRemoteURL: .localYodaImage,
+                        file: try .init(url: .localYodaImage)
                     )
                     )
                 )
@@ -1777,7 +1778,8 @@ import XCTest
                     type: .image,
                     payload: try JSONEncoder().encode(ImageAttachmentPayload(
                         title: "Test",
-                        imageRemoteURL: URL(string: "Url")!
+                        imageRemoteURL: URL(string: "Url")!,
+                        file: try .init(url: .localYodaImage)
                     ))
                 )
             ],

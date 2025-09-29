@@ -17,6 +17,11 @@ public struct MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+    
+    /// The member's user id.
+    public var memberUserId: UserId {
+        member.id
+    }
 }
 
 final class MemberAddedEventDTO: EventDTO {
@@ -62,6 +67,11 @@ public struct MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+    
+    /// The member's user id.
+    public var memberUserId: UserId {
+        member.id
+    }
 }
 
 final class MemberUpdatedEventDTO: EventDTO {
@@ -104,6 +114,11 @@ public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+    
+    /// The member's user id.
+    public var memberUserId: UserId {
+        user.id
+    }
 }
 
 final class MemberRemovedEventDTO: EventDTO {

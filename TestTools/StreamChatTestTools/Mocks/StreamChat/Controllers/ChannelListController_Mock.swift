@@ -23,7 +23,7 @@ final class ChannelListController_Mock: ChatChannelListController, @unchecked Se
     }
 
     init() {
-        super.init(query: .init(filter: .notEqual("cid", to: "")), client: .mock)
+        super.init(query: .init(filter: .nonEmpty), client: .mock)
     }
 
     override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {

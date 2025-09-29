@@ -311,18 +311,6 @@ public extension Filter {
         )
     }
 
-    /// Matches all values that are not equal to a specified value.
-    @available(*, deprecated, message: "The notEqual filter will be removed in the future")
-    static func notEqual<Value: Encodable>(_ key: FilterKey<Scope, Value>, to value: Value) -> Filter {
-        .init(
-            operator: .notEqual,
-            key: key,
-            value: value,
-            valueMapper: key.valueMapper,
-            keyPathString: key.keyPathString
-        )
-    }
-
     /// Matches values that are greater than a specified value.
     static func greater<Value: Encodable>(_ key: FilterKey<Scope, Value>, than value: Value) -> Filter {
         .init(
@@ -371,18 +359,6 @@ public extension Filter {
     static func `in`<Value: Encodable>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
         .init(
             operator: .in,
-            key: key,
-            value: values,
-            valueMapper: key.valueMapper,
-            keyPathString: key.keyPathString
-        )
-    }
-
-    /// Matches none of the values specified in an array.
-    @available(*, deprecated, message: "The notIn filter will be removed in the future")
-    static func notIn<Value: Encodable>(_ key: FilterKey<Scope, Value>, values: [Value]) -> Filter {
-        .init(
-            operator: .notIn,
             key: key,
             value: values,
             valueMapper: key.valueMapper,

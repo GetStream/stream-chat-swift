@@ -92,19 +92,3 @@ public extension ChatMessage {
         localState == .sendingFailed && isBounced == true
     }
 }
-
-public extension ChatMessage {
-    /// A boolean value that checks if the message is visible for current user only.
-    @available(
-        *,
-        deprecated,
-        message: "This property is deprecated because it does not take `deletedMessagesVisability` setting into account."
-    )
-    var isOnlyVisibleForCurrentUser: Bool {
-        guard isSentByCurrentUser else {
-            return false
-        }
-
-        return isDeleted || type == .ephemeral
-    }
-}

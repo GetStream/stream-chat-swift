@@ -337,14 +337,3 @@ extension RawJSON {
         }
     }
 }
-
-// MARK: Deprecations
-
-public extension RawJSON {
-    @available(*, deprecated, message: "dictionaryValue property should be used instead.")
-    func dictionary(with value: RawJSON?, forKey key: String) -> RawJSON? {
-        guard case var .dictionary(content) = self else { return nil }
-        content[key] = value
-        return .dictionary(content)
-    }
-}

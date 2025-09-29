@@ -81,20 +81,6 @@ public struct ChatClientConfig: Sendable {
     /// **Warning**: There should be at max 1 active client at the same time, else it can lead to undefined behavior.
     public var isClientInActiveMode: Bool
 
-    /// If set to `true` the `ChatClient` will automatically establish a web-socket
-    /// connection to listen to the updates when `refreshToken` is called.
-    ///
-    /// If set to `false` the connection won't be established automatically
-    /// but has to be initiated manually by calling `connect`.
-    ///
-    /// Is `true` by default.
-    @available(
-        *,
-        deprecated,
-        message: "This flag has no effect anymore. The flow for setting and for connecting the user has been unified to the `connectUser` set of methods."
-    )
-    public var shouldConnectAutomatically = true
-
     /// If set to `true`, the `ChatClient` will try to stay connected while app is backgrounded.
     /// If set to `false`, websocket disconnects immediately when app is backgrounded.
     ///

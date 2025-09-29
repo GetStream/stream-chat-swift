@@ -52,21 +52,18 @@ struct FilterCodingTestPair {
 
     static let allCases: [FilterCodingTestPair] = [
         .equalInt(),
-        .notEqualDate(),
         .greaterDouble(),
         .greaterOrEqualBool(),
         .lessInt(),
         .lessOrEqualDouble(),
         .inArrayInt(),
         .inArrayDouble(),
-        .notInArrayString(),
         .query(),
         .autocomplete(),
         .existsTrue(),
         .notExists(),
         .containsAndEqual(),
-        .greaterOrLess(),
-        .nonEqualNorEqual()
+        .greaterOrLess()
     ]
 }
 
@@ -78,23 +75,6 @@ extension FilterCodingTestPair {
     static func equalInt() -> FilterCodingTestPair {
         let json = #"{"test_key_Int":{"$eq":1}}"#
         let filter: Filter<FilterTestScope> = .equal(.testKeyInt, to: 1)
-        return FilterCodingTestPair(json: json, filter: filter)
-    }
-
-    static func notEqualDate() -> FilterCodingTestPair {
-        let dateComponents = DateComponents(
-            timeZone: TimeZone(secondsFromGMT: 0),
-            year: 2020,
-            month: 8,
-            day: 12,
-            hour: 13,
-            minute: 14,
-            second: 59
-        )
-        let date: Date = Calendar.gmtCalendar.date(from: dateComponents)!
-        let dateString = "2020-08-12T13:14:59Z"
-        let json = "{\"test_key_Date\":{\"$ne\":\"\(dateString)\"}}"
-        let filter: Filter<FilterTestScope> = .notEqual(.testKeyDate, to: date)
         return FilterCodingTestPair(json: json, filter: filter)
     }
 
@@ -145,15 +125,7 @@ extension FilterCodingTestPair {
         let filter: Filter<FilterTestScope> = .in(.testKeyArrayDouble, values: array)
         return FilterCodingTestPair(json: json, filter: filter)
     }
-
-    static func notInArrayString() -> FilterCodingTestPair {
-        let array = ["1", "2", "3", "4"]
-        let arrayJSON = #"["1","2","3","4"]"#
-        let json = "{\"test_key_ArrayString\":{\"$nin\":\(arrayJSON)}}"
-        let filter: Filter<FilterTestScope> = .notIn(.testKeyArrayString, values: array)
-        return FilterCodingTestPair(json: json, filter: filter)
-    }
-
+    
     static func query() -> FilterCodingTestPair {
         let json = #"{"test_key":{"$q":"Quick brown fox jump over lazy dog"}}"#
         let filter: Filter<FilterTestScope> = .query(.testKey, text: "Quick brown fox jump over lazy dog")
@@ -188,15 +160,6 @@ extension FilterCodingTestPair {
         let filter: Filter<FilterTestScope> = .or([
             .greater(.testKeyInt, than: 98765),
             .less(.testKeyDouble, than: 23.45)
-        ])
-        return FilterCodingTestPair(json: json, filter: filter)
-    }
-
-    static func nonEqualNorEqual() -> FilterCodingTestPair {
-        let json = #"{"$nor":[{"test_key_Bool":{"$ne":true}},{"test_key_Double":{"$eq":678.89999999999998}}]}"#
-        let filter: Filter<FilterTestScope> = .nor([
-            .notEqual(.testKeyBool, to: true),
-            .equal(.testKeyDouble, to: 678.9)
         ])
         return FilterCodingTestPair(json: json, filter: filter)
     }

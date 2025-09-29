@@ -34,11 +34,6 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
         return _users
     }
 
-    @available(*, deprecated, message: "Please, switch to `userArray: [ChatUser]`")
-    public var users: LazyCachedMapCollection<ChatUser> {
-        .init(source: userArray, map: { $0 }, context: nil)
-    }
-
     lazy var userQueryUpdater = self.environment
         .userQueryUpdaterBuilder(
             client.databaseContainer,

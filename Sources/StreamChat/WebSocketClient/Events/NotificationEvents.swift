@@ -375,6 +375,11 @@ public struct NotificationInvitedEvent: MemberEvent, ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+    
+    /// The member's user id.
+    public var memberUserId: UserId {
+        member.id
+    }
 }
 
 final class NotificationInvitedEventDTO: EventDTO {
@@ -424,6 +429,11 @@ public struct NotificationInviteAcceptedEvent: MemberEvent, ChannelSpecificEvent
 
     /// The event timestamp.
     public let createdAt: Date
+    
+    /// The member's user id.
+    public var memberUserId: UserId {
+        member.id
+    }
 }
 
 final class NotificationInviteAcceptedEventDTO: EventDTO {
@@ -474,6 +484,11 @@ public struct NotificationInviteRejectedEvent: MemberEvent, ChannelSpecificEvent
 
     /// The event timestamp.
     public let createdAt: Date
+    
+    /// The member's user id.
+    public var memberUserId: UserId {
+        member.id
+    }
 }
 
 final class NotificationInviteRejectedEventDTO: EventDTO {

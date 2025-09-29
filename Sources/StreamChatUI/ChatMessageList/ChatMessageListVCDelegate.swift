@@ -70,20 +70,6 @@ import UIKit
         _ completion: @escaping @MainActor(Error?) -> Void
     )
 
-    /// Tells the delegate that it should load the page around the given message id.
-    ///
-    /// Ex: The user tapped on a quoted message which is not locally available.
-    /// - Parameters:
-    ///   - vc: The message list informing the delegate of this event.
-    ///   - message: The the message to load the page around it.
-    ///   - onSuccess: Call this closure when the page is successfully loaded.
-    @available(*, deprecated, renamed: "chatMessageListVC(vc:shouldLoadPageAroundMessageId:completion:)")
-    func chatMessageListVC(
-        _ vc: ChatMessageListVC,
-        shouldLoadPageAroundMessage message: ChatMessage,
-        _ completion: @escaping @MainActor(Error?) -> Void
-    )
-
     /// Tells the delegate that it should load the first page.
     ///
     /// Ex: The user tapped on scroll to the bottom or sent a new message when the first page is not currently in the UI.
@@ -148,15 +134,6 @@ public extension ChatMessageListVCDelegate {
         _ completion: @escaping @MainActor(Error?) -> Void
     ) {
         completion(nil)
-    }
-
-    @available(*, deprecated, renamed: "chatMessageListVC(vc:shouldLoadPageAroundMessageId:completion:)")
-    func chatMessageListVC(
-        _ vc: ChatMessageListVC,
-        shouldLoadPageAroundMessage message: ChatMessage,
-        _ completion: @escaping @MainActor(Error?) -> Void
-    ) {
-        chatMessageListVC(vc, shouldLoadPageAroundMessageId: message.id, completion)
     }
 
     func chatMessageListVCShouldLoadFirstPage(_ vc: ChatMessageListVC) {

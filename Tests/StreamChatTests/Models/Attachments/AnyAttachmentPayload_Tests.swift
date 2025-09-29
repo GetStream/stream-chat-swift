@@ -137,7 +137,11 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         let remoteAttachment = ChatMessageImageAttachment(
             id: .unique,
             type: .image,
-            payload: .init(title: nil, imageRemoteURL: .localYodaImage),
+            payload: .init(
+                title: nil,
+                imageRemoteURL: .localYodaImage,
+                file: try .init(url: .localYodaImage)
+            ),
             downloadingState: nil,
             uploadingState: nil
         ).asAnyAttachment
@@ -150,7 +154,11 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         let localAttachment = ChatMessageImageAttachment(
             id: .unique,
             type: .image,
-            payload: .init(title: nil, imageRemoteURL: .localYodaImage),
+            payload: .init(
+                title: nil,
+                imageRemoteURL: .localYodaImage,
+                file: try .init(url: .localYodaImage)
+            ),
             downloadingState: nil,
             uploadingState: try .mock(localFileURL: .localYodaImage, state: .uploaded)
         ).asAnyAttachment
@@ -163,7 +171,11 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         let localAttachment = ChatMessageImageAttachment(
             id: .unique,
             type: .image,
-            payload: .init(title: nil, imageRemoteURL: .localYodaImage),
+            payload: .init(
+                title: nil,
+                imageRemoteURL: .localYodaImage,
+                file: try .init(url: .localYodaImage)
+            ),
             downloadingState: nil,
             uploadingState: try .mock(localFileURL: .localYodaImage, state: .uploadingFailed)
         ).asAnyAttachment

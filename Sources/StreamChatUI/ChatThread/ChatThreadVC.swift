@@ -23,10 +23,6 @@ open class ChatThreadVC: _ViewController,
     /// An optional message id to where the thread should jump to when opening the thread.
     public var initialReplyId: MessageId?
 
-    /// Controller for observing typing events for this thread.
-    @available(*, deprecated, message: "Events are now handled by the `eventsController`.")
-    open lazy var channelEventsController: ChannelEventsController = client.channelEventsController(for: messageController.cid)
-
     /// A controller for observing web socket events.
     open lazy var eventsController: EventsController = client.eventsController()
 
@@ -535,15 +531,5 @@ open class ChatThreadVC: _ViewController,
             currentVoiceRecordingURL: currentAssetURL,
             lookUpScope: .subsequentMessagesFromUser
         )
-    }
-
-    // MARK: - Deprecations
-
-    @available(*, deprecated, message: "use messageController.isLoadingPreviousReplies instead.")
-    public var isLoadingPreviousMessages: Bool = false
-
-    @available(*, deprecated, message: "use messageController.loadPreviousReplies() instead.")
-    open func loadPreviousMessages() {
-        messageController.loadPreviousReplies()
     }
 }

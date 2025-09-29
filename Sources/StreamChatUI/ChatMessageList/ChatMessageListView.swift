@@ -295,14 +295,6 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
             // no-op
         }
     }
-
-    // MARK: - Deprecations
-
-    /// Scrolls to most recent message. (Scrolls to the bottom of the message list).
-    @available(*, deprecated, renamed: "scrollToBottom(animated:)")
-    open func scrollToMostRecentMessage(animated: Bool = true) {
-        scrollToBottom(animated: animated)
-    }
 }
 
 // MARK: Helpers

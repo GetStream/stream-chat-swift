@@ -61,7 +61,6 @@ public protocol LogDestination: Sendable {
         showLineNumber: Bool,
         showFunctionName: Bool
     )
-    func isEnabled(level: LogLevel) -> Bool
     func isEnabled(level: LogLevel, subsystems: LogSubsystem) -> Bool
     func process(logDetails: LogDetails)
     func applyFormatters(logDetails: LogDetails, message: String) -> String
@@ -72,6 +71,6 @@ public extension LogDestination {
     var subsystems: LogSubsystem { .all }
 
     func isEnabled(level: LogLevel, subsystems: LogSubsystem) -> Bool {
-        isEnabled(level: level) && self.subsystems.contains(subsystems)
+        isEnabled(level: level, subsystems: subsystems) && self.subsystems.contains(subsystems)
     }
 }

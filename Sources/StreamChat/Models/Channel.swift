@@ -432,11 +432,6 @@ public struct ChannelUnreadCount: Decodable, Equatable, Sendable {
     }
 }
 
-public extension ChannelUnreadCount {
-    @available(*, deprecated, renamed: "mentions")
-    var mentionedMessages: Int { mentions }
-}
-
 /// An action that can be performed in a channel.
 public struct ChannelCapability: RawRepresentable, ExpressibleByStringLiteral, Hashable, Sendable {
     public var rawValue: String

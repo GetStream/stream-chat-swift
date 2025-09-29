@@ -67,14 +67,6 @@ extension ImageProcessors {
         private let sizeProvider: @Sendable() -> CGSize
 
         /// Initializes the processor with size providing closure.
-        /// - Parameter sizeProvider: Closure to obtain size after the image is loaded.
-        @available(*, deprecated, message: "Use init(id:sizeProvider:) instead")
-        public init(sizeProvider: @escaping @Sendable() -> CGSize) {
-            // Backwards compatible init
-            self.init(id: "", sizeProvider: sizeProvider)
-        }
-
-        /// Initializes the processor with size providing closure.
         /// - Parameters:
         ///   - id: Image identifier.
         ///   - sizeProvider: Closure to obtain size after the image is loaded.

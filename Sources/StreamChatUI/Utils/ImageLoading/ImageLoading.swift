@@ -57,38 +57,6 @@ public protocol ImageLoading: AnyObject {
         with requests: [ImageDownloadRequest],
         completion: @escaping (@MainActor([Result<UIImage, Error>]) -> Void)
     )
-
-    // MARK: - Deprecations
-
-    @available(*, deprecated, message: "use downloadImage() instead.")
-    @discardableResult
-    func loadImage(
-        using urlRequest: URLRequest,
-        cachingKey: String?,
-        completion: @escaping (@MainActor(_ result: Result<UIImage, Error>) -> Void)
-    ) -> Cancellable?
-
-    @available(*, deprecated, message: "use loadImage(into:from:with:) instead.")
-    @discardableResult
-    @MainActor func loadImage(
-        into imageView: UIImageView,
-        url: URL?,
-        imageCDN: ImageCDN,
-        placeholder: UIImage?,
-        resize: Bool,
-        preferredSize: CGSize?,
-        completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)?
-    ) -> Cancellable?
-
-    @available(*, deprecated, message: "use loadMultipleImages() instead.")
-    func loadImages(
-        from urls: [URL],
-        placeholders: [UIImage],
-        loadThumbnails: Bool,
-        thumbnailSize: CGSize,
-        imageCDN: ImageCDN,
-        completion: @escaping (@MainActor([UIImage]) -> Void)
-    )
 }
 
 // MARK: - Image Attachment Helper API
@@ -159,69 +127,5 @@ public extension ImageLoading {
         with options: ImageLoaderOptions
     ) -> Cancellable? {
         loadImage(into: imageView, from: url, with: options, completion: nil)
-    }
-}
-
-// MARK: Deprecation fallbacks
-
-public extension ImageLoading {
-    @available(*, deprecated, message: "use downloadImage() instead.")
-    func loadImage(
-        using urlRequest: URLRequest,
-        cachingKey: String?, completion: @escaping @MainActor(Result<UIImage, Error>) -> Void
-    ) -> Cancellable? {
-        guard let url = urlRequest.url else {
-            StreamConcurrency.onMain {
-                completion(.failure(NSError(domain: "io.getstream.imageDeprecation.invalidUrl", code: 1)))
-            }
-            return nil
-        }
-
-        return downloadImage(
-            with: ImageDownloadRequest(url: url, options: ImageDownloadOptions()),
-            completion: completion
-        )
-    }
-
-    @available(*, deprecated, message: "use loadImage(into:from:with:) instead.")
-    @discardableResult
-    @MainActor func loadImage(
-        into imageView: UIImageView,
-        url: URL?,
-        imageCDN: ImageCDN,
-        placeholder: UIImage? = nil,
-        resize: Bool = true,
-        preferredSize: CGSize? = nil,
-        completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)? = nil
-    ) -> Cancellable? {
-        loadImage(
-            into: imageView,
-            from: url,
-            with: ImageLoaderOptions(
-                resize: preferredSize.map { ImageResize($0) },
-                placeholder: placeholder
-            ),
-            completion: completion
-        )
-    }
-
-    @available(*, deprecated, message: "use loadMultipleImages() instead.")
-    func loadImages(
-        from urls: [URL],
-        placeholders: [UIImage],
-        loadThumbnails: Bool = true,
-        thumbnailSize: CGSize = Components.default.avatarThumbnailSize,
-        imageCDN: ImageCDN,
-        completion: @escaping @MainActor([UIImage]) -> Void
-    ) {
-        let requests = urls.map { url in
-            ImageDownloadRequest(url: url, options: .init(resize: .init(thumbnailSize)))
-        }
-
-        downloadMultipleImages(with: requests) { results in
-            let imagesMapper = ImageResultsMapper(results: results)
-            let images = imagesMapper.mapErrors(with: placeholders)
-            completion(images)
-        }
     }
 }
