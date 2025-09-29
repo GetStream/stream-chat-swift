@@ -10,9 +10,9 @@ Agents should prioritize backwards compatibility, API stability, and high test c
 
 ### Tech & toolchain
   • Language: Swift (iOS; Mac Catalyst supported)
-  • Package managers: Swift Package Manager (primary), CocoaPods and XCFrameworks (also supported)
+  • Package managers: Swift Package Manager (primary) and XCFrameworks (also supported)
   • Minimum Xcode: 15.x or newer (Apple Silicon supported)
-  • iOS targets: Follow existing deployment targets in package/podspec files; don’t lower without approval
+  • iOS targets: Follow existing deployment targets in package file; don’t lower without approval
   • CI: GitHub Actions (assume PR validation on build + tests + lint)
   • Linters & docs: SwiftLint and SwiftFormat
 
@@ -30,20 +30,6 @@ Use the closest folder’s patterns and conventions when editing.
 ### Local setup (SPM)
   1.  Open the repository root in Xcode (Package.swift is present), resolve packages.
   2.  Select the intended scheme (see Schemes below), pick an iOS Simulator (e.g., iPhone 15), then Build.
-
-### Alternative: CocoaPods consumer check
-
-If you need to validate as a Pod consumer:
-  1.  Create a throwaway sample app.
-  2.  Add to Podfile:
-
-```
-use_frameworks!
-pod 'StreamChatUI', '~> 4.0'
-# core only: pod 'StreamChat', '~> 4.0'
-```
-
-  3.  pod install then build the sample.
 
 ### Schemes
 
@@ -118,9 +104,9 @@ Security & credentials
   • If you add scripts, ensure they fail closed on missing env vars.
 
 Compatibility & distribution
-  • Maintain compatibility with supported iOS versions listed in Package.swift/podspecs.
+  • Maintain compatibility with supported iOS versions listed in Package.swift.
   • Don’t introduce third-party deps without discussion.
-  • Validate SPM and CocoaPods integration when changing module boundaries.
+  • Validate SPM integration when changing module boundaries.
 
 When in doubt
   • Mirror existing patterns in the nearest module.

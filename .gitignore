@@ -53,13 +53,6 @@ playground.xcworkspace
 # Package.pins
 .build/
 
-# CocoaPods
-#
-# We recommend against adding the Pods directory to your .gitignore. However
-# you should judge for yourself, the pros and cons are mentioned at:
-# https://guides.cocoapods.org/using/using-cocoapods.html#should-i-check-the-pods-directory-into-source-control
-Pods/
-
 # fastlane
 #
 # It is recommended to not store the screenshots in the git repo. Instead, use fastlane to re-generate the
@@ -85,7 +78,6 @@ StreamChatCoreTests.xctest.coverage.txt
 vendor/bundle/
 .bundle/
 .swiftpm
-Sample/Cocoapods/Podfile.lock
 docusaurus/.env
 reports/
 .scannerwork/

@@ -15,7 +15,6 @@ gem 'slather'
 eval_gemfile('fastlane/Pluginfile')
 
 group :fastlane_dependencies do
-  gem 'cocoapods'
   gem 'fastlane-plugin-lizard'
   gem 'plist'
   gem 'xctest_list'
