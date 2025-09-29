@@ -157,6 +157,11 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var enrichUrl_completion: ((Result<LinkAttachmentPayload, Error>) -> Void)?
     @Atomic var enrichUrl_completion_result: Result<LinkAttachmentPayload, Error>?
 
+    @Atomic var setPushPreference_preference: PushPreferenceRequestPayload?
+    @Atomic var setPushPreference_cid: ChannelId?
+    @Atomic var setPushPreference_completion: ((Result<PushPreference, Error>) -> Void)?
+    @Atomic var setPushPreference_completion_result: Result<PushPreference, Error>?
+
     // Cleans up all recorded values
     func cleanUp() {
         update_channelQuery = nil
@@ -297,6 +302,11 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         enrichUrl_url = nil
         enrichUrl_completion = nil
         enrichUrl_completion_result = nil
+
+        setPushPreference_preference = nil
+        setPushPreference_cid = nil
+        setPushPreference_completion = nil
+        setPushPreference_completion_result = nil
     }
 
     var mockPaginationState: MessagesPaginationState = .initial
@@ -587,5 +597,16 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         enrichUrl_url = url
         enrichUrl_completion = completion
         enrichUrl_completion_result?.invoke(with: completion)
+    }
+
+    override func setPushPreference(
+        _ preference: PushPreferenceRequestPayload,
+        cid: ChannelId,
+        completion: @escaping (Result<PushPreference, Error>) -> Void
+    ) {
+        setPushPreference_preference = preference
+        setPushPreference_cid = cid
+        setPushPreference_completion = completion
+        setPushPreference_completion_result?.invoke(with: completion)
     }
 }

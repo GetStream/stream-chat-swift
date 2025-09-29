@@ -457,6 +457,50 @@ public extension CurrentChatUserController {
         }
     }
 
+    /// Set global push preferences that apply to all channels for the current user.
+    /// - Parameters:
+    ///   - level: The scope level of the push notifications.
+    ///   - completion: The completion call once the request is finished.
+    func setPushPreference(
+        level: PushPreferenceLevel,
+        completion: ((Result<PushPreference, Error>) -> Void)? = nil
+    ) {
+        let userPreference = PushPreferenceRequestPayload(
+            chatLevel: level.rawValue,
+            channelId: nil,
+            disabledUntil: nil,
+            removeDisable: true
+        )
+
+        currentUserUpdater.setPushPreference(userPreference) { [weak self] result in
+            self?.callback {
+                completion?(result)
+            }
+        }
+    }
+
+    /// Temporarily disables the push notifications globally for the current user.
+    /// - Parameters:
+    ///   - date: The date until when the push notifications will be enabled back.
+    ///   - completion: The completion call once the request is finished.
+    func snoozePushNotifications(
+        until date: Date,
+        completion: ((Result<PushPreference, Error>) -> Void)? = nil
+    ) {
+        let userPreference = PushPreferenceRequestPayload(
+            chatLevel: PushPreferenceLevel.all.rawValue,
+            channelId: nil,
+            disabledUntil: date,
+            removeDisable: nil
+        )
+
+        currentUserUpdater.setPushPreference(userPreference) { [weak self] result in
+            self?.callback {
+                completion?(result)
+            }
+        }
+    }
+
     /// Loads the draft messages for the current user.
     ///
     /// It will load the first page of drafts of the current user.

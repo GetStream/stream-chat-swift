@@ -30,6 +30,7 @@ enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case blockedUserIds = "blocked_user_ids"
     case teamsRole = "teams_role"
     case avgResponseTime = "avg_response_time"
+    case pushPreference = "push_preferences"
 }
 
 // MARK: - GET users

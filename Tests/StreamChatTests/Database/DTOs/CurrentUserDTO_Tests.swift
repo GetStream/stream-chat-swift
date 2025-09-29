@@ -69,7 +69,11 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             privacySettings: .init(settings: .init(
                 typingIndicators: .init(enabled: false),
                 readReceipts: .init(enabled: false)
-            ))
+            )),
+            pushPreference: .init(
+                chatLevel: "mentions",
+                disabledUntil: Date().addingTimeInterval(3600)
+            )
         )
 
         let mutedUserIDs = Set(payload.mutedUsers.map(\.mutedUser.id))
@@ -103,6 +107,8 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(payload.language, loadedCurrentUser.language?.languageCode)
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.readReceipts?.enabled)
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.typingIndicators?.enabled)
+        XCTAssertEqual(payload.pushPreference?.chatLevel, loadedCurrentUser.pushPreference?.level.rawValue)
+        XCTAssertNearlySameDate(payload.pushPreference?.disabledUntil, loadedCurrentUser.pushPreference?.disabledUntil)
     }
 
     func test_savingCurrentUser_removesCurrentDevice() throws {

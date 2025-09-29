@@ -60,6 +60,9 @@ public class CurrentChatUser: ChatUser {
 
     /// The current privacy settings of the user.
     public let privacySettings: UserPrivacySettings
+    
+    /// Push preference for the user.
+    public let pushPreference: PushPreference?
 
     init(
         id: String,
@@ -86,7 +89,8 @@ public class CurrentChatUser: ChatUser {
         unreadCount: UnreadCount,
         mutedChannels: Set<ChatChannel>,
         privacySettings: UserPrivacySettings,
-        avgResponseTime: Int?
+        avgResponseTime: Int?,
+        pushPreference: PushPreference? = nil
     ) {
         self.devices = devices
         self.currentDevice = currentDevice
@@ -98,6 +102,7 @@ public class CurrentChatUser: ChatUser {
         self.isInvisible = isInvisible
         self.privacySettings = privacySettings
         self.mutedChannels = mutedChannels
+        self.pushPreference = pushPreference
         
         super.init(
             id: id,

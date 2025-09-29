@@ -1428,6 +1428,17 @@
 		AD1D7A8526A2131D00494CA5 /* ChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */; };
 		AD25070D272C0C8D00BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */; };
 		AD2525212ACB3C0800F1433C /* ChatClientFactory_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */; };
+		AD25F7342E845D2400F16B14 /* PushPreferenceLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7332E845D1B00F16B14 /* PushPreferenceLevel.swift */; };
+		AD25F7352E845D2400F16B14 /* PushPreferenceLevel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7332E845D1B00F16B14 /* PushPreferenceLevel.swift */; };
+		AD25F7372E845D3000F16B14 /* PushPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7362E845D2B00F16B14 /* PushPreference.swift */; };
+		AD25F7382E845D3000F16B14 /* PushPreference.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7362E845D2B00F16B14 /* PushPreference.swift */; };
+		AD25F7432E84668D00F16B14 /* PushPreferencePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7422E84667900F16B14 /* PushPreferencePayloads.swift */; };
+		AD25F7442E84668D00F16B14 /* PushPreferencePayloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7422E84667900F16B14 /* PushPreferencePayloads.swift */; };
+		AD25F74A2E84A1B800F16B14 /* UnreadDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7492E84A1B100F16B14 /* UnreadDetailsView.swift */; };
+		AD25F74C2E84A1F000F16B14 /* PushPreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F74B2E84A1EB00F16B14 /* PushPreferencesView.swift */; };
+		AD25F74E2E8606A300F16B14 /* PushPreferenceDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F74D2E8606A300F16B14 /* PushPreferenceDTO.swift */; };
+		AD25F74F2E8606A300F16B14 /* PushPreferenceDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F74D2E8606A300F16B14 /* PushPreferenceDTO.swift */; };
+		AD25F7512E86EB5700F16B14 /* PushPreferencePayload_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD25F7502E86EB5700F16B14 /* PushPreferencePayload_Tests.swift */; };
 		AD26CB772E3ACAB9002FC1A7 /* DemoLivestreamChatChannelVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD26CB762E3ACAA0002FC1A7 /* DemoLivestreamChatChannelVC.swift */; };
 		AD29395D2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */; };
 		AD29395E2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */; };
@@ -4301,6 +4312,13 @@
 		AD1D7A8326A212D000494CA5 /* ChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelVC.swift; sourceTree = "<group>"; };
 		AD25070B272C0C8800BC14C4 /* ChatMessageReactionAuthorsVC_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageReactionAuthorsVC_Tests.swift; sourceTree = "<group>"; };
 		AD2525202ACB3C0800F1433C /* ChatClientFactory_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientFactory_Tests.swift; sourceTree = "<group>"; };
+		AD25F7332E845D1B00F16B14 /* PushPreferenceLevel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferenceLevel.swift; sourceTree = "<group>"; };
+		AD25F7362E845D2B00F16B14 /* PushPreference.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreference.swift; sourceTree = "<group>"; };
+		AD25F7422E84667900F16B14 /* PushPreferencePayloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferencePayloads.swift; sourceTree = "<group>"; };
+		AD25F7492E84A1B100F16B14 /* UnreadDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnreadDetailsView.swift; sourceTree = "<group>"; };
+		AD25F74B2E84A1EB00F16B14 /* PushPreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferencesView.swift; sourceTree = "<group>"; };
+		AD25F74D2E8606A300F16B14 /* PushPreferenceDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferenceDTO.swift; sourceTree = "<group>"; };
+		AD25F7502E86EB5700F16B14 /* PushPreferencePayload_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushPreferencePayload_Tests.swift; sourceTree = "<group>"; };
 		AD26CB762E3ACAA0002FC1A7 /* DemoLivestreamChatChannelVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoLivestreamChatChannelVC.swift; sourceTree = "<group>"; };
 		AD29395C2A2E36FE00533CA7 /* SwipeToReplyGestureHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeToReplyGestureHandler.swift; sourceTree = "<group>"; };
 		AD2C94DB29CB8CC40096DCA1 /* PartiallyFailingChannelListPayload.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = PartiallyFailingChannelListPayload.json; sourceTree = "<group>"; };
@@ -5724,6 +5742,7 @@
 		792A4F18247EA97000EAF71D /* DTOs */ = {
 			isa = PBXGroup;
 			children = (
+				AD25F74D2E8606A300F16B14 /* PushPreferenceDTO.swift */,
 				ADB8B8E92D8890B900549C95 /* MessageReminderDTO.swift */,
 				DABC6AC7254707CB00A8FC78 /* AttachmentDTO.swift */,
 				AD52A2182804850700D0157E /* ChannelConfigDTO.swift */,
@@ -5913,6 +5932,7 @@
 		79682C4724BF37550071578E /* Payloads */ = {
 			isa = PBXGroup;
 			children = (
+				AD25F7422E84667900F16B14 /* PushPreferencePayloads.swift */,
 				ADF047392DE4DADC001C23D2 /* LocationPayloads.swift */,
 				ADA83B4F2D978050003B3928 /* ReminderPayloads.swift */,
 				ADF2BBEA2B9B622B0069D467 /* AppSettingsPayload.swift */,
@@ -6071,6 +6091,7 @@
 		799C9430247D2FB9001F1104 /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				AD25F7322E845D0400F16B14 /* PushPreferences */,
 				225D807625D316B10094E555 /* Attachments */,
 				ADFCA5B52D121EE9000F515F /* Location */,
 				AD4E879F2E37967200223A1C /* Payload+asModel */,
@@ -6945,8 +6966,8 @@
 				AD545E682D5531B9008FD399 /* DemoDraftMessageListVC.swift */,
 				ADD328592C04DD8300BAD0E9 /* DemoAppTabBarController.swift */,
 				C10B5C712A1F794A006A5BCB /* MembersViewController.swift */,
-				C1CEF9062A1BC4E800414931 /* UserProfileViewController.swift */,
 				AD7BE1672C1CB183000A5756 /* DebugObjectViewController.swift */,
+				AD25F7482E84A18200F16B14 /* UserProfile */,
 				AD7C76732E3CF0CD009250FB /* Livestream */,
 				AD6BEFF42786474A00E184B4 /* AppConfigViewController */,
 				A3227E5D284A494000EBE6CC /* Create Chat */,
@@ -7260,6 +7281,7 @@
 		A364D09427D0BF3A0029857A /* Payloads */ = {
 			isa = PBXGroup;
 			children = (
+				AD25F7502E86EB5700F16B14 /* PushPreferencePayload_Tests.swift */,
 				ADA83B522D97805A003B3928 /* ReminderPayloads_Tests.swift */,
 				AD545E6A2D5650B5008FD399 /* DraftPayloads_Tests.swift */,
 				AD8C7C622BA464E600260715 /* AppSettingsPayload_Tests.swift */,
@@ -8664,6 +8686,25 @@
 				A35757C62613081B00DC914C /* ComposerKeyboardHandler.swift */,
 			);
 			path = KeyboardHandler;
+			sourceTree = "<group>";
+		};
+		AD25F7322E845D0400F16B14 /* PushPreferences */ = {
+			isa = PBXGroup;
+			children = (
+				AD25F7362E845D2B00F16B14 /* PushPreference.swift */,
+				AD25F7332E845D1B00F16B14 /* PushPreferenceLevel.swift */,
+			);
+			path = PushPreferences;
+			sourceTree = "<group>";
+		};
+		AD25F7482E84A18200F16B14 /* UserProfile */ = {
+			isa = PBXGroup;
+			children = (
+				C1CEF9062A1BC4E800414931 /* UserProfileViewController.swift */,
+				AD25F7492E84A1B100F16B14 /* UnreadDetailsView.swift */,
+				AD25F74B2E84A1EB00F16B14 /* PushPreferencesView.swift */,
+			);
+			path = UserProfile;
 			sourceTree = "<group>";
 		};
 		AD4473DD263AC2B80030E583 /* ChatCommandSuggestionView */ = {
@@ -11304,6 +11345,7 @@
 				ADCC17A72E0C70BC00510415 /* LocationSelectionViewController.swift in Sources */,
 				A3227E74284A4C3300EBE6CC /* DemoChatMessageActionsVC.swift in Sources */,
 				AD053BA72B33624C003612B6 /* LocationAttachmentViewDelegate.swift in Sources */,
+				AD25F74C2E84A1F000F16B14 /* PushPreferencesView.swift in Sources */,
 				43016E1626B734410054E805 /* ChatUser+CustomFields.swift in Sources */,
 				794E20F52577DF4D00790DAB /* NameGroupViewController.swift in Sources */,
 				A3227EC9284A52EE00EBE6CC /* PushNotifications.swift in Sources */,
@@ -11327,6 +11369,7 @@
 				ADB8B8F52D8ADC9400549C95 /* DemoReminderListVC.swift in Sources */,
 				AD053BA12B3359DD003612B6 /* DemoAttachmentViewCatalog.swift in Sources */,
 				AD053B9F2B335929003612B6 /* LocationAttachmentViewInjector.swift in Sources */,
+				AD25F74A2E84A1B800F16B14 /* UnreadDetailsView.swift in Sources */,
 				AD545E692D5531BA008FD399 /* DemoDraftMessageListVC.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -11557,6 +11600,7 @@
 				ADA83B502D978050003B3928 /* ReminderPayloads.swift in Sources */,
 				4F97F2672BA83146001C4D66 /* UserList.swift in Sources */,
 				82BE0ACD2C009A17008DA9DC /* BlockedUserDetails.swift in Sources */,
+				AD25F7382E845D3000F16B14 /* PushPreference.swift in Sources */,
 				DA8407032524F7E6005A0F62 /* UserListUpdater.swift in Sources */,
 				8413D2F52BDDAAFF005ADA4E /* PollVoteListController+SwiftUI.swift in Sources */,
 				4F8E53062B7CD01D008C0F9F /* Chat.swift in Sources */,
@@ -11580,6 +11624,7 @@
 				AD57979E2978C4F7006CC435 /* UploadedAttachmentPostProcessor.swift in Sources */,
 				841BAA0A2BCE9B57000C73E4 /* CreatePollOptionRequestBody.swift in Sources */,
 				40789D2B29F6AC500018C2BB /* AudioRecordingContext.swift in Sources */,
+				AD25F7342E845D2400F16B14 /* PushPreferenceLevel.swift in Sources */,
 				84DCB853269F569A006CDF32 /* EventsController+SwiftUI.swift in Sources */,
 				4FF9B2692C6F697300A3B711 /* AttachmentDownloader.swift in Sources */,
 				40789D3129F6AC500018C2BB /* AudioRecording.swift in Sources */,
@@ -11767,6 +11812,7 @@
 				79CDE1DD24B321FE0003BD1D /* CurrentUserDTO.swift in Sources */,
 				ADF34F9E25CDD8E600AD637C /* ConnectionController+SwiftUI.swift in Sources */,
 				4042968029FAC9F80089126D /* AudioAnalysing.swift in Sources */,
+				AD25F7442E84668D00F16B14 /* PushPreferencePayloads.swift in Sources */,
 				8413D2E92BDC6300005ADA4E /* PollVoteListQueryDTO.swift in Sources */,
 				DAD539DB250B8A9C00CFC649 /* Controller.swift in Sources */,
 				F6ED5F76250278D7005D7327 /* SyncEndpoint.swift in Sources */,
@@ -11903,6 +11949,7 @@
 				841BAA042BCE94F8000C73E4 /* QueryPollsRequestBody.swift in Sources */,
 				C1EFF3F3285E459C0057B91B /* IdentifiableModel.swift in Sources */,
 				4F97F26A2BA83150001C4D66 /* UserListState.swift in Sources */,
+				AD25F74E2E8606A300F16B14 /* PushPreferenceDTO.swift in Sources */,
 				DAFAD6A124DC476A0043ED06 /* Result+Extensions.swift in Sources */,
 				AD17CDF927E4DB2700E0D092 /* PushProvider.swift in Sources */,
 				AD37D7D02BC9937F00800D8C /* ThreadParticipant.swift in Sources */,
@@ -12154,6 +12201,7 @@
 				79877A2B2498E51500015F8B /* UserDTO_Tests.swift in Sources */,
 				ADB208822D8494F0003F1059 /* MessageReminderListQuery_Tests.swift in Sources */,
 				799F611B2530B62C007F218C /* ChannelListQuery_Tests.swift in Sources */,
+				AD25F7512E86EB5700F16B14 /* PushPreferencePayload_Tests.swift in Sources */,
 				792921C524C0479700116BBB /* ChannelListUpdater_Tests.swift in Sources */,
 				A3F65E3727EB7161003F6256 /* WebSocketClient_Tests.swift in Sources */,
 				F61D7C3524FFA6FD00188A0E /* MessageUpdater_Tests.swift in Sources */,
@@ -12533,6 +12581,7 @@
 				C121E80F274544AC00023E4C /* ChannelTruncatedEventMiddleware.swift in Sources */,
 				C121E811274544AC00023E4C /* UserChannelBanEventsMiddleware.swift in Sources */,
 				8413D2F02BDD9429005ADA4E /* PollVoteListController.swift in Sources */,
+				AD25F7352E845D2400F16B14 /* PushPreferenceLevel.swift in Sources */,
 				C121E812274544AC00023E4C /* MemberEventMiddleware.swift in Sources */,
 				C121E813274544AD00023E4C /* UserWatchingEventMiddleware.swift in Sources */,
 				C121E814274544AD00023E4C /* ChannelVisibilityEventMiddleware.swift in Sources */,
@@ -12615,7 +12664,9 @@
 				C121E83E274544AE00023E4C /* FlagUserPayload.swift in Sources */,
 				C121E83F274544AE00023E4C /* MessageReactionPayload.swift in Sources */,
 				C121E840274544AE00023E4C /* MessageAttachmentPayload.swift in Sources */,
+				AD25F7432E84668D00F16B14 /* PushPreferencePayloads.swift in Sources */,
 				C121E841274544AE00023E4C /* FileUploadPayload.swift in Sources */,
+				AD25F7372E845D3000F16B14 /* PushPreference.swift in Sources */,
 				C121E842274544AE00023E4C /* MutedChannelPayload.swift in Sources */,
 				AD545E742D5A79DA008FD399 /* DraftUpdaterMiddleware.swift in Sources */,
 				C121E843274544AE00023E4C /* RawJSON.swift in Sources */,
@@ -12719,6 +12770,7 @@
 				40C20EB329F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift in Sources */,
 				C189D7792AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift in Sources */,
 				40789D1A29F6AC500018C2BB /* AudioPlayerObserving.swift in Sources */,
+				AD25F74F2E8606A300F16B14 /* PushPreferenceDTO.swift in Sources */,
 				4042969329FBF84B0089126D /* AudioSamplesProcessor_Tests.swift in Sources */,
 				AD545E632D52827B008FD399 /* DraftListQuery.swift in Sources */,
 				C173538F27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */,
@@ -13918,7 +13970,7 @@
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES;
 				INFOPLIST_FILE = DemoApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp;
@@ -13943,7 +13995,7 @@
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES;
 				INFOPLIST_FILE = DemoApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp;
@@ -13969,7 +14021,7 @@
 				DEVELOPMENT_TEAM = EHV7XZLAHA;
 				DISABLE_DIAMOND_PROBLEM_DIAGNOSTIC = YES;
 				INFOPLIST_FILE = DemoApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.iOS.ChatDemoApp;

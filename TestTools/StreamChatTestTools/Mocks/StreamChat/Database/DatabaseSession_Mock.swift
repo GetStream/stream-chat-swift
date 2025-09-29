@@ -7,7 +7,6 @@ import Foundation
 
 /// This class allows you to wrap an existing `DatabaseSession` and adjust the behavior of its methods.
 class DatabaseSession_Mock: DatabaseSession {
-
     /// The wrapped session
     let underlyingSession: DatabaseSession
 
@@ -56,15 +55,15 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveChannelList(payload: ChannelListPayload, query: ChannelListQuery?) -> [ChannelDTO] {
-        return underlyingSession.saveChannelList(payload: payload, query: query)
+        underlyingSession.saveChannelList(payload: payload, query: query)
     }
 
     func saveQuery(query: ReactionListQuery) throws -> ReactionListQueryDTO? {
-        return try underlyingSession.saveQuery(query: query)
+        try underlyingSession.saveQuery(query: query)
     }
 
     func saveReminder(payload: ReminderPayload, cache: PreWarmedCache?) throws -> MessageReminderDTO {
-        return try underlyingSession.saveReminder(payload: payload, cache: cache)
+        try underlyingSession.saveReminder(payload: payload, cache: cache)
     }
 
     func deleteReminder(messageId: MessageId) {
@@ -86,7 +85,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
-        return underlyingSession.saveUsers(payload: payload, query: query)
+        underlyingSession.saveUsers(payload: payload, query: query)
     }
 
     func saveQuery(query: UserListQuery) throws -> UserListQueryDTO? {
@@ -129,7 +128,11 @@ class DatabaseSession_Mock: DatabaseSession {
     func deleteCurrentUser() {
         underlyingSession.deleteCurrentUser()
     }
-    
+
+    func savePushPreference(id: String, payload: PushPreferencePayload) throws -> PushPreferenceDTO {
+        try underlyingSession.savePushPreference(id: id, payload: payload)
+    }
+
     func createNewMessage(
         in cid: ChannelId,
         messageId: MessageId?,
@@ -170,7 +173,7 @@ class DatabaseSession_Mock: DatabaseSession {
             quotedMessageId: quotedMessageId,
             createdAt: createdAt,
             skipPush: skipPush,
-            skipEnrichUrl: skipEnrichUrl, 
+            skipEnrichUrl: skipEnrichUrl,
             poll: poll,
             location: location,
             restrictedVisibility: restrictedVisibility,
@@ -189,7 +192,7 @@ class DatabaseSession_Mock: DatabaseSession {
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
-        extraData: [String : RawJSON]
+        extraData: [String: RawJSON]
     ) throws -> MessageDTO {
         try underlyingSession.createNewDraftMessage(
             in: cid,
@@ -265,11 +268,11 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO] {
-        return underlyingSession.saveMessages(messagesPayload: messagesPayload, for: cid, syncOwnReactions: syncOwnReactions)
+        underlyingSession.saveMessages(messagesPayload: messagesPayload, for: cid, syncOwnReactions: syncOwnReactions)
     }
 
     func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {
-        return underlyingSession.saveMessageSearch(payload: payload, for: query)
+        underlyingSession.saveMessageSearch(payload: payload, for: query)
     }
 
     func saveLocation(payload: SharedLocationPayload, cache: PreWarmedCache?) throws -> SharedLocationDTO {
@@ -335,7 +338,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveReactions(payload: MessageReactionsPayload, query: ReactionListQuery?) -> [MessageReactionDTO] {
-        return underlyingSession.saveReactions(payload: payload, query: query)
+        underlyingSession.saveReactions(payload: payload, query: query)
     }
 
     func delete(reaction: MessageReactionDTO) {
@@ -412,7 +415,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
-        return underlyingSession.saveMembers(payload: payload, channelId: channelId, query: query)
+        underlyingSession.saveMembers(payload: payload, channelId: channelId, query: query)
     }
 
     func member(userId: UserId, cid: ChannelId) -> MemberDTO? {
@@ -641,7 +644,7 @@ extension DatabaseSession {
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
-        try self.saveMessage(
+        try saveMessage(
             payload: payload,
             for: cid,
             syncOwnReactions: syncOwnReactions,
@@ -657,7 +660,7 @@ extension DatabaseSession {
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
-        try self.saveMessage(
+        try saveMessage(
             payload: payload,
             channelDTO: channelDTO,
             syncOwnReactions: syncOwnReactions,

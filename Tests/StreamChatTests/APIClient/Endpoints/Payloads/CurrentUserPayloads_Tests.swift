@@ -43,5 +43,8 @@ final class CurrentUserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.mutedChannels[0].createdAt, "2021-03-22T10:23:52.516225Z".toDate())
         XCTAssertEqual(payload.mutedChannels[0].updatedAt, "2021-03-22T10:23:52.516225Z".toDate())
         XCTAssertEqual(payload.isInvisible, true)
+        XCTAssertNotNil(payload.pushPreference)
+        XCTAssertEqual(payload.pushPreference?.chatLevel, "mentions")
+        XCTAssertEqual(payload.pushPreference?.disabledUntil, "2024-12-31T23:59:59.999Z".toDate())
     }
 }
