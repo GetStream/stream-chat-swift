@@ -18,7 +18,7 @@ extension ChatClient {
         components.messageListVC = YTLiveChatMessageListViewController.self
         components.messageComposerVC = YTChatComposerViewController.self
         components.messageComposerView = YTChatMessageComposerView.self
-        components.scrollToLatestMessageButton = YTScrollToLatestMessageButton.self
+        components.scrollToBottomButton = YTScrollToLatestMessageButton.self
         components.sendButton = YTSendButton.self
         components.inputMessageView = YTInputChatMessageView.self
 

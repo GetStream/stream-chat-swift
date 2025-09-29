@@ -24,9 +24,9 @@ final class YTLiveChatMessageListViewController: ChatMessageListVC {
     override func setUpLayout() {
         super.setUpLayout()
         NSLayoutConstraint.activate([
-            scrollToLatestMessageButton.centerXAnchor.constraint(equalTo: view.layoutMarginsGuide.centerXAnchor),
-            scrollToLatestMessageButton.widthAnchor.constraint(equalToConstant: 30),
-            scrollToLatestMessageButton.heightAnchor.constraint(equalToConstant: 30)
+            scrollToBottomButton.centerXAnchor.constraint(equalTo: view.layoutMarginsGuide.centerXAnchor),
+            scrollToBottomButton.widthAnchor.constraint(equalToConstant: 30),
+            scrollToBottomButton.heightAnchor.constraint(equalToConstant: 30)
         ])
 
         dateOverlayView.removeFromSuperview()
