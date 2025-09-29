@@ -189,15 +189,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    @available(*, deprecated, message: "Please use `markAllRead` available in `CurrentChatUserController`")
-    public func markAllRead(completion: (@MainActor(Error?) -> Void)? = nil) {
-        worker.markAllRead { error in
-            self.callback {
-                completion?(error)
-            }
-        }
-    }
-
     // MARK: - Internal
 
     func refreshLoadedChannels(completion: @escaping @Sendable(Result<Set<ChannelId>, Error>) -> Void) {

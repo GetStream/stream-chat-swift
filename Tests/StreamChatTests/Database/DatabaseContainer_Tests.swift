@@ -454,7 +454,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             )
             try session.savePollVote(
                 payload: self.dummyPollVotePayload(pollId: "pollId"),
-                query: .init(pollId: "pollId", optionId: "test", filter: .contains(.pollId, value: "pollId")),
+                query: .init(pollId: "pollId", filter: .contains(.pollId, value: "pollId")),
                 cache: nil
             )
             

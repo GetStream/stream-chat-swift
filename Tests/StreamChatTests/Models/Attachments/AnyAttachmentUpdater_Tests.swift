@@ -13,7 +13,12 @@ final class AnyAttachmentUpdater_Tests: XCTestCase {
         var attachment = ChatMessageImageAttachment(
             id: .init(cid: .unique, messageId: .unique, index: .unique),
             type: .image,
-            payload: .init(title: "old", imageRemoteURL: .localYodaImage, extraData: [:]),
+            payload: .init(
+                title: "old",
+                imageRemoteURL: .localYodaImage,
+                file: try .init(url: .localYodaImage),
+                extraData: [:]
+            ),
             downloadingState: nil,
             uploadingState: nil
         ).asAnyAttachment

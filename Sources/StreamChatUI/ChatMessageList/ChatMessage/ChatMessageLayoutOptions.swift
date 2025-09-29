@@ -95,8 +95,3 @@ public extension ChatMessageLayoutOption {
     /// If both are specified in the options, `centered` is prioritized
     static let centered: Self = "centered"
 }
-
-public extension ChatMessageLayoutOption {
-    @available(*, deprecated, renamed: "onlyVisibleToYouIndicator")
-    static let onlyVisibleForYouIndicator: Self = onlyVisibleToYouIndicator
-}

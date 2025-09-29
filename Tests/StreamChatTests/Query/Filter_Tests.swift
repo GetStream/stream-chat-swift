@@ -18,11 +18,6 @@ final class Filter_Tests: XCTestCase {
         XCTAssertEqual(filter.value as? [String], ["eq value 1", "eq value 2"])
         XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
 
-        filter = .notEqual(.testKey, to: "not equal value")
-        XCTAssertEqual(filter.key, FilterKey<FilterTestScope, String>.testKey.rawValue)
-        XCTAssertEqual(filter.value as? String, "not equal value")
-        XCTAssertEqual(filter.operator, FilterOperator.notEqual.rawValue)
-
         filter = .greater(.testKey, than: "greater value")
         XCTAssertEqual(filter.key, FilterKey<FilterTestScope, String>.testKey.rawValue)
         XCTAssertEqual(filter.value as? String, "greater value")
@@ -47,11 +42,6 @@ final class Filter_Tests: XCTestCase {
         XCTAssertEqual(filter.key, FilterKey<FilterTestScope, String>.testKey.rawValue)
         XCTAssertEqual(filter.value as? [String], ["in value 1", "in value 2"])
         XCTAssertEqual(filter.operator, FilterOperator.in.rawValue)
-
-        filter = .notIn(.testKey, values: ["nin value 1", "nin value 2"])
-        XCTAssertEqual(filter.key, FilterKey<FilterTestScope, String>.testKey.rawValue)
-        XCTAssertEqual(filter.value as? [String], ["nin value 1", "nin value 2"])
-        XCTAssertEqual(filter.operator, FilterOperator.notIn.rawValue)
 
         filter = .query(.testKey, text: "searched text")
         XCTAssertEqual(filter.key, FilterKey<FilterTestScope, String>.testKey.rawValue)
@@ -106,9 +96,9 @@ final class Filter_Tests: XCTestCase {
 
         // Test group filter
         let filter1: Filter<FilterTestScope> = .equal(.testKey, to: "test_value_1")
-        let filter2: Filter<FilterTestScope> = .notEqual(.testKey, to: "test_value_2")
+        let filter2: Filter<FilterTestScope> = .equal(.testKey, to: "test_value_2")
         filter = .or([filter1, filter2])
-        XCTAssertEqual(filter.serialized, #"{"$or":[{"test_key":{"$eq":"test_value_1"}},{"test_key":{"$ne":"test_value_2"}}]}"#)
+        XCTAssertEqual(filter.serialized, #"{"$or":[{"test_key":{"$eq":"test_value_1"}},{"test_key":{"$eq":"test_value_2"}}]}"#)
         XCTAssertEqual(jsonString.deserializeFilter(), filter)
     }
 

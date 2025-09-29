@@ -479,13 +479,6 @@ public class ChatClient: @unchecked Sendable {
 
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
-    @available(*, deprecated, message: "Use the asynchronous version of `disconnect` for increased safety")
-    public func disconnect() {
-        disconnect {}
-    }
-
-    /// Disconnects the chat client from the chat servers. No further updates from the servers
-    /// are received.
     public func disconnect(completion: @escaping @MainActor() -> Void) {
         connectionRepository.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
@@ -505,12 +498,6 @@ public class ChatClient: @unchecked Sendable {
                 continuation.resume()
             }
         }
-    }
-    
-    /// Disconnects the chat client from the chat servers and removes all the local data related.
-    @available(*, deprecated, message: "Use the asynchronous version of `logout` for increased safety")
-    public func logout() {
-        logout {}
     }
 
     /// Disconnects the chat client from the chat servers and removes all the local data related.

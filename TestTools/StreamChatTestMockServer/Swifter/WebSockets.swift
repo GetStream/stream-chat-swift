@@ -7,13 +7,6 @@
 
 import Foundation
 
-@available(*, deprecated, message: "Use websocket(text:binary:pong:connected:disconnected:) instead.")
-public func websocket(_ text: @escaping (WebSocketSession, String) -> Void,
-                      _ binary: @escaping (WebSocketSession, [UInt8]) -> Void,
-                      _ pong: @escaping (WebSocketSession, [UInt8]) -> Void) -> ((HttpRequest) -> HttpResponse) {
-    return websocket(text: text, binary: binary, pong: pong)
-}
-
 // swiftlint:disable function_body_length
 public func websocket(
     text: ((WebSocketSession, String) -> Void)? = nil,

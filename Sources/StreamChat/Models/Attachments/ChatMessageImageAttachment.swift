@@ -64,56 +64,6 @@ public struct ImageAttachmentPayload: AttachmentPayload {
         self.originalHeight = originalHeight
         self.extraData = extraData
     }
-
-    /// Creates `ImageAttachmentPayload` instance.
-    ///
-    /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
-    @available(*, deprecated, renamed: "init(title:imageRemoteURL:file:originalWidth:originalHeight:extraData:)")
-    public init(
-        title: String?,
-        imageRemoteURL: URL,
-        originalWidth: Double? = nil,
-        originalHeight: Double? = nil,
-        extraData: [String: RawJSON]? = nil
-    ) {
-        self.title = title
-        imageURL = imageRemoteURL
-        let fileType = AttachmentFileType(ext: imageRemoteURL.pathExtension)
-        file = AttachmentFile(type: fileType, size: 0, mimeType: nil)
-        self.originalWidth = originalWidth
-        self.originalHeight = originalHeight
-        self.extraData = extraData
-    }
-
-    @available(*, deprecated, renamed: "imageURL")
-    /// By default, Stream does not provide a thumbnail url.
-    /// Since it uses the original image with query parameters to resize it.
-    /// This property was actually misleading, since it was just using the `imageURL` internally.
-    public var imagePreviewURL: URL {
-        get { imageURL }
-        set { imageURL = newValue }
-    }
-
-    /// Creates `ImageAttachmentPayload` instance.
-    ///
-    /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
-    @available(*, deprecated, renamed: "init(title:imageRemoteURL:originalWidth:originalHeight:extraData:)")
-    public init(
-        title: String?,
-        imageRemoteURL: URL,
-        imagePreviewRemoteURL: URL? = nil,
-        originalWidth: Double? = nil,
-        originalHeight: Double? = nil,
-        extraData: [String: RawJSON]? = nil
-    ) {
-        self.title = title
-        imageURL = imageRemoteURL
-        self.originalWidth = originalWidth
-        self.originalHeight = originalHeight
-        let fileType = AttachmentFileType(ext: imageRemoteURL.pathExtension)
-        file = AttachmentFile(type: fileType, size: 0, mimeType: nil)
-        self.extraData = extraData
-    }
 }
 
 extension ImageAttachmentPayload: Hashable {}

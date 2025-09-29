@@ -628,7 +628,9 @@ import XCTest
                 id: .unique,
                 type: .image,
                 payload: try JSONEncoder.stream.encode(ImageAttachmentPayload(
-                    title: nil, imageRemoteURL: TestImages.r2.url
+                    title: nil,
+                    imageRemoteURL: TestImages.r2.url,
+                    file: try .init(url: TestImages.r2.url)
                 )),
                 uploadingState: nil
             )],
@@ -701,7 +703,8 @@ import XCTest
                 type: .image,
                 payload: try JSONEncoder.stream.encode(ImageAttachmentPayload(
                     title: nil,
-                    imageRemoteURL: TestImages.r2.url
+                    imageRemoteURL: TestImages.r2.url,
+                    file: try .init(url: TestImages.r2.url)
                 )),
                 uploadingState: nil
             )],

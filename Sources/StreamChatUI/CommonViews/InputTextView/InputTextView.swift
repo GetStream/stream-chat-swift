@@ -220,28 +220,6 @@ open class InputTextView: UITextView, ThemeProvider {
         }
     }
 
-    @available(*, deprecated, message: "The calculations made by this method are now happening in a more consistent way inside layoutSubviews. This method is not being used now.")
-    open func setTextViewHeight() {
-        var heightToSet = minimumHeight
-
-        if contentSize.height <= minimumHeight {
-            heightToSet = minimumHeight
-        } else if contentSize.height >= maximumHeight {
-            heightToSet = maximumHeight
-        } else {
-            heightToSet = contentSize.height
-        }
-
-        // This is due to bug in UITextView where the scroll sometimes disables
-        // when a very long text is pasted in it.
-        // Doing this ensures that it doesn't happen
-        // Reference: https://stackoverflow.com/a/62386088/5493299
-        isScrollEnabled = false
-        heightConstraint?.constant = heightToSet
-        layoutIfNeeded()
-        isScrollEnabled = true
-    }
-
     // MARK: - Link Detection
 
     /// Highlights the links in the input text view.

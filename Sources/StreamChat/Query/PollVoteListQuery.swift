@@ -17,28 +17,6 @@ public struct PollVoteListQuery: Encodable, Sendable {
     /// The filter details to query the votes.
     public var filter: Filter<VoteListFilterScope>?
 
-    @available(
-        *,
-        deprecated,
-        message: """
-        There are now two new initializers.
-        This one was not using the optionId argument correctly.
-        """
-    )
-    public init(
-        pollId: String,
-        optionId: String?,
-        pagination: Pagination = .init(pageSize: 10, offset: 0),
-        sorting: [Sorting<PollVoteListSortingKey>] = [.init(key: .createdAt, isAscending: false)],
-        filter: Filter<VoteListFilterScope>? = nil
-    ) {
-        self.pollId = pollId
-        self.optionId = optionId
-        self.pagination = pagination
-        self.sorting = sorting
-        self.filter = filter
-    }
-
     /// Creates a vote list query for the given pollId and the provided filter.
     public init(
         pollId: String,

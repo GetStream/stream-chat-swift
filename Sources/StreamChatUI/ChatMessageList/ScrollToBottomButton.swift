@@ -5,9 +5,6 @@
 import StreamChat
 import UIKit
 
-@available(*, deprecated, renamed: "ScrollToBottomButton")
-public typealias ScrollToLatestMessageButton = ScrollToBottomButton
-
 /// A Button that is used to indicate unread messages in the Message list.
 open class ScrollToBottomButton: _Button, ThemeProvider {
     /// The unread count that will be shown on the button as a badge icon.

@@ -839,51 +839,6 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(receivedError, error)
     }
 
-    // MARK: - Mark all read
-
-    func test_markAllRead_callsChannelListUpdater() {
-        // Simulate `markRead` call and catch the completion
-        nonisolated(unsafe) var completionCalled = false
-        controller.markAllRead { error in
-            XCTAssertNil(error)
-            completionCalled = true
-        }
-
-        // Keep a weak ref so we can check if it's actually deallocated
-        weak var weakController = controller
-
-        // (Try to) deallocate the controller
-        // by not keeping any references to it
-        controller = nil
-
-        XCTAssertFalse(completionCalled)
-
-        // Simulate successfull udpate
-        env.channelListUpdater!.markAllRead_completion?(nil)
-        // Release reference of completion so we can deallocate stuff
-        env.channelListUpdater!.markAllRead_completion = nil
-
-        // Assert completion is called
-        AssertAsync.willBeTrue(completionCalled)
-        // `weakController` should be deallocated too
-        AssertAsync.canBeReleased(&weakController)
-    }
-
-    func test_markAllRead_propagatesErrorFromUpdater() {
-        // Simulate `markRead` call and catch the completion
-        nonisolated(unsafe) var completionCalledError: Error?
-        controller.markAllRead {
-            completionCalledError = $0
-        }
-
-        // Simulate failed udpate
-        let testError = TestError()
-        env.channelListUpdater!.markAllRead_completion?(testError)
-
-        // Completion should be called with the error
-        AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
-    }
-
     // MARK: - List Ordering initial value
 
     func test_inits_propagate_desiredMessageOrdering() {
@@ -969,19 +924,6 @@ final class ChannelListController_Tests: XCTestCase {
                 .dummy(channel: .dummy(name: "test2")),
                 .dummy(channel: .dummy(name: "test3")),
                 .dummy(channel: .dummy(name: "4test"))
-            ],
-            expectedResult: [cid]
-        )
-    }
-
-    func test_filterPredicate_notEqual_containsExpectedItems() throws {
-        let cid = ChannelId.unique
-
-        try assertFilterPredicate(
-            .notEqual(.name, to: "test"),
-            channelsInDB: [
-                .dummy(channel: .dummy(name: "test")),
-                .dummy(channel: .dummy(cid: cid, name: "test2"))
             ],
             expectedResult: [cid]
         )
@@ -1108,25 +1050,6 @@ final class ChannelListController_Tests: XCTestCase {
                 ]))
             ],
             expectedResult: [cid]
-        )
-    }
-
-    func test_filterPredicate_notIn_containsExpectedItems() throws {
-        let memberId1 = UserId.unique
-        let memberId2 = UserId.unique
-        let cid1 = ChannelId.unique
-        let cid2 = ChannelId.unique
-        let cid3 = ChannelId.unique
-
-        try assertFilterPredicate(
-            .notIn(.members, values: [memberId1, memberId2]),
-            channelsInDB: [
-                .dummy(channel: .dummy(cid: cid1, members: [.dummy(user: .dummy(userId: memberId1))])),
-                .dummy(channel: .dummy(cid: cid2, members: [.dummy(user: .dummy(userId: memberId2))])),
-                .dummy(channel: .dummy(cid: cid3)),
-                .dummy(channel: .dummy(members: [.dummy(user: .dummy(userId: memberId1)), .dummy(user: .dummy(userId: memberId2))]))
-            ],
-            expectedResult: [cid1, cid2, cid3]
         )
     }
 

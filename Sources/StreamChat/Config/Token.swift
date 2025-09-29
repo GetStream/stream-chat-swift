@@ -10,16 +10,6 @@ public struct Token: Decodable, Equatable, ExpressibleByStringLiteral, Sendable 
     public let userId: UserId
     public let expiration: Date?
 
-    @available(
-        *,
-        deprecated,
-        
-        message: "It is not a good practice to check expiration client side since the user can change the device's time."
-    )
-    public var isExpired: Bool {
-        expiration.map { $0 < Date() } ?? false
-    }
-
     /// Created a new `Token` instance.
     /// - Parameter value: The JWT string value. It must be in valid format and contain `user_id` in payload.
     public init(stringLiteral value: StringLiteralType) {

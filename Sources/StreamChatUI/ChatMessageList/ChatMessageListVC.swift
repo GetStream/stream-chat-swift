@@ -325,12 +325,6 @@ open class ChatMessageListVC: _ViewController,
         )
     }
 
-    /// Set the visibility of `scrollToLatestMessageButton`.
-    @available(*, deprecated, message: "use updateScrollToBottomButtonVisibility(animated:) instead.")
-    open func setScrollToLatestMessageButton(visible: Bool, animated: Bool = true) {
-        updateScrollToBottomButtonVisibility()
-    }
-
     func updateScrollDependentButtonsVisibility(animated: Bool = true) {
         updateScrollToBottomButtonVisibility(animated: animated)
         updateJumpToUnreadButtonVisibility(animated: animated)
@@ -1270,34 +1264,6 @@ open class ChatMessageListVC: _ViewController,
         }
         self.pollController = pollController
         return pollController
-    }
-
-    // MARK: - Deprecations
-
-    /// Jump to a given message.
-    /// In case the message is already loaded, it directly goes to it.
-    /// If not, it will load the messages around it and go to that page.
-    ///
-    /// - Parameter message: The message which the message list should go to.
-    /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
-    @available(*, deprecated, renamed: "jumpToMessage(id:onHighlight:)")
-    public func jumpToMessage(_ message: ChatMessage, onHighlight: ((IndexPath) -> Void)? = nil) {
-        jumpToMessage(id: message.id, onHighlight: onHighlight)
-    }
-
-    @available(*, deprecated, renamed: "scrollToBottom(animated:)")
-    open func scrollToMostRecentMessage(animated: Bool = true) {
-        listView.scrollToBottom(animated: animated)
-    }
-
-    @available(*, deprecated, renamed: "scrollToBottomButton")
-    open var scrollToLatestMessageButton: ScrollToBottomButton {
-        scrollToBottomButton
-    }
-
-    @available(*, deprecated, renamed: "didTapScrollToBottomButton")
-    @objc open func scrollToLatestMessage() {
-        didTapScrollToBottomButton()
     }
 }
 

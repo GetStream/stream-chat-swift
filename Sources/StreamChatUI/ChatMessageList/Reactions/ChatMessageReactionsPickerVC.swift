@@ -5,9 +5,6 @@
 import StreamChat
 import UIKit
 
-@available(*, deprecated, renamed: "ChatMessageReactionsPickerVC")
-public typealias ChatMessageReactionsVC = ChatMessageReactionsPickerVC
-
 /// Controller for the message reactions picker as a list of toggles.
 open class ChatMessageReactionsPickerVC: _ViewController, ThemeProvider, ChatMessageControllerDelegate {
     public var messageController: ChatMessageController!
