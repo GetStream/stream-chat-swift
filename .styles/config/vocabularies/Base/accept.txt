@@ -1,7 +1,6 @@
 100ms
 boolean
 Boolean
-CocoaPods
 cooldown
 Cooldown
 encodable
@@ -12,7 +11,6 @@ previewable
 formatters
 APIs
 Livestream
-Podfile
 Cartfile
 XCFramework
 uploader

@@ -59,8 +59,6 @@ jobs:
       - run: bundle exec fastlane rubocop
       - run: bundle exec fastlane run_swift_format strict:true
       - run: bundle exec fastlane validate_public_interface
-      - run: bundle exec fastlane pod_lint
-        if: startsWith(github.event.pull_request.head.ref, 'release/')
 
   build-old-xcode:
     name: Build LLC + UI (Xcode 15)
@@ -270,8 +268,4 @@ jobs:
     - uses: ./.github/actions/xcode-cache
     - name: Test SPM Integration
       run: bundle exec fastlane spm_integration
-      timeout-minutes: 25
-    - name: Test CocoaPods Integration
-      if: always()
-      run: bundle exec fastlane cocoapods_integration
       timeout-minutes: 25

@@ -1,4 +1,0 @@
-target 'CocoaPods' do
-    pod 'StreamChatUI', :path => '../..'
-    pod 'StreamChat', :path => '../..'
-end
