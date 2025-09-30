@@ -4,6 +4,7 @@
 
 import StreamChat
 import StreamChatUI
+import SwiftUI
 import UIKit
 
 final class DemoChatChannelListRouter: ChatChannelListRouter {
@@ -705,6 +706,28 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         }
                     }
                 }
+            }),
+            .init(title: "Set Channel Push Preferences", isEnabled: true, handler: { [unowned self] _ in
+                let pushPreferencesView = PushPreferencesView(
+                    onSetPreferences: { level, completion in
+                        channelController.setPushPreference(level: level) {
+                            completion($0.map(\.level))
+                        }
+                    },
+                    onDisableNotifications: { date, completion in
+                        channelController.snoozePushNotifications(until: date) {
+                            completion($0.map(\.level))
+                        }
+                    },
+                    onDismiss: { [weak self] in
+                        self?.rootViewController.dismiss(animated: true)
+                    },
+                    initialPreference: channelController.channel?.pushPreference
+                )
+                let hostingController = UIHostingController(rootView: pushPreferencesView)
+                hostingController.title = "Channel Push Preferences - \(cid.id)"
+
+                rootViewController.present(hostingController, animated: true)
             })
         ]
 

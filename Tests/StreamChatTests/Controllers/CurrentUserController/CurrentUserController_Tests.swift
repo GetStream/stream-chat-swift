@@ -850,6 +850,122 @@ final class CurrentUserController_Tests: XCTestCase {
         // Verify controller is still alive due to the async operation
         AssertAsync.staysTrue(weakController != nil)
     }
+
+    // MARK: - setPushPreference
+
+    func test_setPushPreference_callsUpdaterWithCorrectParameters() {
+        // GIVEN
+        let level: PushPreferenceLevel = .mentions
+        let expectedPreference = PushPreferenceRequestPayload(
+            chatLevel: level.rawValue,
+            channelId: nil,
+            disabledUntil: nil,
+            removeDisable: true
+        )
+
+        // WHEN
+        controller.setPushPreference(level: level)
+
+        // THEN
+        XCTAssertEqual(env.currentUserUpdater?.setPushPreference_preference, expectedPreference)
+    }
+
+    func test_setPushPreference_propagatesSuccess() {
+        // GIVEN
+        let level: PushPreferenceLevel = .all
+        let expectedPreference = PushPreference(
+            level: .all,
+            disabledUntil: nil
+        )
+
+        // WHEN
+        var completionResult: Result<PushPreference, Error>?
+        controller.setPushPreference(level: level) { result in
+            completionResult = result
+        }
+
+        env.currentUserUpdater?.setPushPreference_completion_result = .success(expectedPreference)
+        env.currentUserUpdater?.setPushPreference_completion_result?.invoke(with: env.currentUserUpdater?.setPushPreference_completion)
+
+        // THEN
+        AssertAsync.willBeEqual(completionResult?.value, expectedPreference)
+    }
+
+    func test_setPushPreference_propagatesError() {
+        // GIVEN
+        let level: PushPreferenceLevel = .mentions
+        let expectedError = TestError()
+
+        // WHEN
+        var completionResult: Result<PushPreference, Error>?
+        controller.setPushPreference(level: level) { result in
+            completionResult = result
+        }
+
+        env.currentUserUpdater?.setPushPreference_completion_result = .failure(expectedError)
+        env.currentUserUpdater?.setPushPreference_completion_result?.invoke(with: env.currentUserUpdater?.setPushPreference_completion)
+
+        // THEN
+        AssertAsync.willBeEqual(completionResult?.error as? TestError, expectedError)
+    }
+
+    // MARK: - snoozePushNotifications
+
+    func test_snoozePushNotifications_callsUpdaterWithCorrectParameters() {
+        // GIVEN
+        let date = Date().addingTimeInterval(3600)
+        let expectedPreference = PushPreferenceRequestPayload(
+            chatLevel: PushPreferenceLevel.all.rawValue,
+            channelId: nil,
+            disabledUntil: date,
+            removeDisable: nil
+        )
+
+        // WHEN
+        controller.snoozePushNotifications(until: date)
+
+        // THEN
+        XCTAssertEqual(env.currentUserUpdater?.setPushPreference_preference, expectedPreference)
+    }
+
+    func test_snoozePushNotifications_propagatesSuccess() {
+        // GIVEN
+        let date = Date().addingTimeInterval(3600)
+        let expectedPreference = PushPreference(
+            level: .all,
+            disabledUntil: date
+        )
+
+        // WHEN
+        var completionResult: Result<PushPreference, Error>?
+        controller.snoozePushNotifications(until: date) { result in
+            completionResult = result
+        }
+
+        env.currentUserUpdater?.setPushPreference_completion_result = .success(expectedPreference)
+        env.currentUserUpdater?.setPushPreference_completion_result?.invoke(with: env.currentUserUpdater?.setPushPreference_completion)
+
+        // THEN
+        AssertAsync.willBeEqual(completionResult?.value, expectedPreference)
+    }
+
+    func test_snoozePushNotifications_propagatesError() {
+        // GIVEN
+        let date = Date().addingTimeInterval(3600)
+        let expectedError = TestError()
+
+        // WHEN
+        var completionResult: Result<PushPreference, Error>?
+        controller.snoozePushNotifications(until: date) { result in
+            completionResult = result
+        }
+
+        env.currentUserUpdater?.setPushPreference_completion_result = .failure(expectedError)
+        env.currentUserUpdater?.setPushPreference_completion_result?.invoke(with: env.currentUserUpdater?.setPushPreference_completion)
+
+        // THEN
+        AssertAsync.willBeEqual(completionResult?.error as? TestError, expectedError)
+    }
 }
 
 private class TestEnvironment {

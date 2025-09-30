@@ -72,7 +72,8 @@ extension CurrentUserPayload {
             teams: teams,
             language: language,
             extraData: extraData,
-            privacySettings: privacySettings
+            privacySettings: privacySettings,
+            pushPreference: nil
         )
     }
 }

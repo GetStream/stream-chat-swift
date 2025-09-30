@@ -351,7 +351,8 @@ final class ChannelDTO_Tests: XCTestCase {
             messages: [message],
             pendingMessages: [pendingMessage],
             pinnedMessages: [pinnedMessage],
-            ownCapabilities: ["join-channel", "delete-channel"]
+            ownCapabilities: ["join-channel", "delete-channel"],
+            pushPreference: .init(chatLevel: "mentions", disabledUntil: .unique)
         )
 
         // Asynchronously save the payload to the db
@@ -478,6 +479,14 @@ final class ChannelDTO_Tests: XCTestCase {
 
             // Truncated
             Assert.willBeEqual(payload.channel.truncatedAt, loadedChannel.truncatedAt)
+            
+            // Push Preference
+            Assert.willNotBeNil(payload.pushPreference)
+            Assert.willBeEqual(payload.pushPreference?.chatLevel, loadedChannel.pushPreference?.level.rawValue)
+            Assert.willBeEqual(
+                payload.pushPreference?.disabledUntil?.timeIntervalSince1970,
+                loadedChannel.pushPreference?.disabledUntil?.timeIntervalSince1970
+            )
         }
     }
 
@@ -1122,7 +1131,8 @@ final class ChannelDTO_Tests: XCTestCase {
             channelReads: [currentUserChannelReadPayload],
             isHidden: false,
             draft: nil,
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
 
         let unreadMessages = 5
@@ -1180,7 +1190,8 @@ final class ChannelDTO_Tests: XCTestCase {
             channelReads: [],
             isHidden: nil,
             draft: nil,
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
@@ -1549,7 +1560,8 @@ final class ChannelDTO_Tests: XCTestCase {
                 parentId: nil,
                 parentMessage: nil
             ),
-            activeLiveLocations: [.dummy(latitude: 10, longitude: 10)]
+            activeLiveLocations: [.dummy(latitude: 10, longitude: 10)],
+            pushPreference: nil
         )
 
         // WHEN
@@ -1603,7 +1615,8 @@ final class ChannelDTO_Tests: XCTestCase {
                 parentId: nil,
                 parentMessage: nil
             ),
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
 
         try database.writeSynchronously { session in
@@ -1629,7 +1642,8 @@ final class ChannelDTO_Tests: XCTestCase {
             channelReads: [],
             isHidden: nil,
             draft: nil,
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
 
         try database.writeSynchronously { session in
@@ -1681,7 +1695,8 @@ final class ChannelDTO_Tests: XCTestCase {
                 parentId: nil,
                 parentMessage: nil
             ),
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
 
         // WHEN
@@ -1738,7 +1753,8 @@ final class ChannelDTO_Tests: XCTestCase {
                 parentId: parentMessagePayload.id,
                 parentMessage: parentMessagePayload
             ),
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: nil
         )
 
         // WHEN

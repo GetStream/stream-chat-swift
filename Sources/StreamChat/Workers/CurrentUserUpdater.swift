@@ -204,6 +204,35 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
         }
     }
 
+    func setPushPreference(
+        _ preference: PushPreferenceRequestPayload,
+        completion: @escaping @Sendable(Result<PushPreference, Error>) -> Void
+    ) {
+        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] result in
+            switch result {
+            case let .success(response):
+                guard let currentUserPushPref = response.userPreferences.asModel().first else {
+                    completion(.failure(ClientError.CurrentUserDoesNotExist()))
+                    return
+                }
+                self?.database.write {
+                    // No need to use the actual current user id.
+                    // There is only one push preference related to a user, which is the current user.
+                    try $0.savePushPreference(
+                        id: "currentUserId",
+                        payload: .init(
+                            chatLevel: currentUserPushPref.level.rawValue,
+                            disabledUntil: currentUserPushPref.disabledUntil
+                        )
+                    )
+                }
+                completion(.success(currentUserPushPref))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
     /// Get all blocked users.
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.

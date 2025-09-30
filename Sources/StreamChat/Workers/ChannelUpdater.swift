@@ -719,6 +719,34 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         }
     }
 
+    func setPushPreference(
+        _ preference: PushPreferenceRequestPayload,
+        cid: ChannelId,
+        completion: @escaping @Sendable(Result<PushPreference, Error>) -> Void
+    ) {
+        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] result in
+            switch result {
+            case let .success(response):
+                guard let channelPref = response.channelPreferences.asModel()[cid] else {
+                    completion(.failure(ClientError.ChannelDoesNotExist(cid: cid)))
+                    return
+                }
+                self?.database.write {
+                    try $0.savePushPreference(
+                        id: cid.rawValue,
+                        payload: .init(
+                            chatLevel: channelPref.level.rawValue,
+                            disabledUntil: channelPref.disabledUntil
+                        )
+                    )
+                }
+                completion(.success(channelPref))
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
     /// Get the link attachment preview data from the provided url.
     ///
     /// This will return the data present in the OG Metadata.

@@ -49,6 +49,8 @@ struct ChannelPayload {
     let draft: DraftPayload?
 
     let activeLiveLocations: [SharedLocationPayload]
+    
+    let pushPreference: PushPreferencePayload?
 }
 
 extension ChannelPayload {
@@ -74,6 +76,7 @@ extension ChannelPayload: Decodable {
         case hidden
         case draft
         case activeLiveLocations = "active_live_locations"
+        case pushPreference = "push_preferences"
     }
 
     init(from decoder: Decoder) throws {
@@ -91,7 +94,8 @@ extension ChannelPayload: Decodable {
             channelReads: try container.decodeArrayIfPresentIgnoringFailures([ChannelReadPayload].self, forKey: .channelReads) ?? [],
             isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden),
             draft: try container.decodeIfPresent(DraftPayload.self, forKey: .draft),
-            activeLiveLocations: try container.decodeArrayIfPresentIgnoringFailures([SharedLocationPayload].self, forKey: .activeLiveLocations) ?? []
+            activeLiveLocations: try container.decodeArrayIfPresentIgnoringFailures([SharedLocationPayload].self, forKey: .activeLiveLocations) ?? [],
+            pushPreference: try container.decodeIfPresent(PushPreferencePayload.self, forKey: .pushPreference)
         )
     }
 }

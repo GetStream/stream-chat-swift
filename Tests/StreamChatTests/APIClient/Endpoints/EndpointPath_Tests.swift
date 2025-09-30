@@ -75,6 +75,15 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.unread.shouldBeQueuedOffline)
     }
 
+    func test_pushPreferences_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.pushPreferences.shouldBeQueuedOffline)
+    }
+
+    func test_pushPreferences_value() {
+        let path = EndpointPath.pushPreferences.value
+        XCTAssertEqual(path, "push_preferences")
+    }
+
     func test_partialMemberUpdate_shouldNOTBeQueuedOffline() {
         XCTAssertFalse(EndpointPath.partialMemberUpdate(userId: "1", cid: .unique).shouldBeQueuedOffline)
     }
@@ -107,6 +116,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.threads)
         assertResultEncodingAndDecoding(.thread(messageId: "1"))
         assertResultEncodingAndDecoding(.appSettings)
+        assertResultEncodingAndDecoding(.pushPreferences)
 
         assertResultEncodingAndDecoding(.channels)
         assertResultEncodingAndDecoding(.createChannel("channel_idc"))

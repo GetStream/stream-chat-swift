@@ -26,7 +26,8 @@ extension XCTestCase {
             isInvisible: false,
             isBanned: false,
             language: nil,
-            extraData: [:]
+            extraData: [:],
+            pushPreference: nil
         )
     }
 
@@ -160,7 +161,8 @@ extension XCTestCase {
         hidden: Bool? = nil,
         truncatedAt: Date? = nil,
         cooldownDuration: Int? = nil,
-        channelReads: [ChannelReadPayload]? = nil
+        channelReads: [ChannelReadPayload]? = nil,
+        pushPreference: PushPreferencePayload? = nil
     ) -> ChannelPayload {
         var payloadMessages: [MessagePayload] = []
         if let messages = messages {
@@ -209,7 +211,8 @@ extension XCTestCase {
                 channelReads: channelReads ?? [dummyChannelRead],
                 isHidden: false,
                 draft: nil,
-                activeLiveLocations: []
+                activeLiveLocations: [],
+                pushPreference: pushPreference
             )
 
         return payload
@@ -328,7 +331,8 @@ extension XCTestCase {
                 channelReads: [dummyChannelReadWithNoExtraData],
                 isHidden: nil,
                 draft: nil,
-                activeLiveLocations: []
+                activeLiveLocations: [],
+                pushPreference: nil
             )
 
         return payload

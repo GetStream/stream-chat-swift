@@ -13,6 +13,7 @@ enum EndpointPath: Codable {
     case devices
     case og
     case unread
+    case pushPreferences
 
     case members
     case partialMemberUpdate(userId: UserId, cid: ChannelId)
@@ -96,6 +97,7 @@ enum EndpointPath: Codable {
         case .devices: return "devices"
         case .og: return "og"
         case .unread: return "unread"
+        case .pushPreferences: return "push_preferences"
 
         case .members: return "members"
         case let .partialMemberUpdate(userId, cid):

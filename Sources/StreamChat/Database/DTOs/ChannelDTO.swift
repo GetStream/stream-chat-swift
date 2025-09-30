@@ -48,6 +48,8 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var team: String?
     
     @NSManaged var isBlocked: Bool
+    
+    @NSManaged var pushPreference: PushPreferenceDTO?
 
     // MARK: - Queries
 
@@ -382,6 +384,14 @@ extension NSManagedObjectContext {
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
         }
+        
+        // Save push preference
+        if let pushPreference = payload.pushPreference {
+            dto.pushPreference = try savePushPreference(
+                id: payload.channel.cid.rawValue,
+                payload: pushPreference
+            )
+        }
 
         // Note: membership payload should be saved before all the members
         if let membership = payload.membership {
@@ -620,6 +630,8 @@ extension ChatChannel {
         let draftMessage = try? dto.draftMessage?.relationshipAsModel(depth: depth)
         let typingUsers = Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() })
         let activeLiveLocations = try dto.activeLiveLocations.map { try $0.asModel() }
+        
+        let pushPreference = try dto.pushPreference?.asModel()
 
         let channel = try ChatChannel(
             cid: cid,
@@ -656,7 +668,8 @@ extension ChatChannel {
             muteDetails: muteDetails,
             previewMessage: previewMessage,
             draftMessage: draftMessage.map(DraftMessage.init),
-            activeLiveLocations: activeLiveLocations
+            activeLiveLocations: activeLiveLocations,
+            pushPreference: pushPreference
         )
 
         if let transformer = clientConfig.modelsTransformer {

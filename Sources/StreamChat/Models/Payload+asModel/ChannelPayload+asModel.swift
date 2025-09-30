@@ -68,7 +68,8 @@ extension ChannelPayload {
             muteDetails: nil,
             previewMessage: latestMessages.first,
             draftMessage: nil,
-            activeLiveLocations: []
+            activeLiveLocations: [],
+            pushPreference: pushPreference?.asModel()
         )
     }
 }

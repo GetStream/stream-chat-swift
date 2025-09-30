@@ -5655,6 +5655,126 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(messageLocation?.latitude, location.latitude)
         XCTAssertEqual(messageLocation?.longitude, location.longitude)
     }
+
+    // MARK: - setPushPreference
+
+    func test_setPushPreference_callsUpdaterWithCorrectParameters() {
+        // GIVEN
+        let cid: ChannelId = channelId
+        let level: PushPreferenceLevel = .mentions
+        let expectedPreference = PushPreferenceRequestPayload(
+            chatLevel: level.rawValue,
+            channelId: cid.rawValue,
+            disabledUntil: nil,
+            removeDisable: true
+        )
+
+        // WHEN
+        controller.setPushPreference(level: level)
+
+        // THEN
+        XCTAssertEqual(env.channelUpdater?.setPushPreference_preference, expectedPreference)
+        XCTAssertEqual(env.channelUpdater?.setPushPreference_cid, cid)
+    }
+
+    func test_setPushPreference_propagatesSuccess() {
+        // GIVEN
+        let level: PushPreferenceLevel = .all
+        let expectedPreference = PushPreference(
+            level: .all,
+            disabledUntil: nil
+        )
+
+        // WHEN
+        var completionResult: Result<PushPreference, Error>?
+        controller.setPushPreference(level: level) { result in
+            completionResult = result
+        }
+
+        env.channelUpdater?.setPushPreference_completion_result = .success(expectedPreference)
+        env.channelUpdater?.setPushPreference_completion_result?.invoke(with: env.channelUpdater?.setPushPreference_completion)
+
+        // THEN
+        AssertAsync.willBeEqual(completionResult?.value, expectedPreference)
+    }
+
+    func test_setPushPreference_propagatesError() {
+        // GIVEN
+        let level: PushPreferenceLevel = .mentions
+        let expectedError = TestError()
+
+        // WHEN
+        var completionResult: Result<PushPreference, Error>?
+        controller.setPushPreference(level: level) { result in
+            completionResult = result
+        }
+
+        env.channelUpdater?.setPushPreference_completion_result = .failure(expectedError)
+        env.channelUpdater?.setPushPreference_completion_result?.invoke(with: env.channelUpdater?.setPushPreference_completion)
+
+        // THEN
+        AssertAsync.willBeEqual(completionResult?.error as? TestError, expectedError)
+    }
+
+    // MARK: - snoozePushNotifications
+
+    func test_snoozePushNotifications_callsUpdaterWithCorrectParameters() {
+        // GIVEN
+        let cid: ChannelId = channelId
+        let date = Date().addingTimeInterval(3600)
+        let expectedPreference = PushPreferenceRequestPayload(
+            chatLevel: PushPreferenceLevel.all.rawValue,
+            channelId: cid.rawValue,
+            disabledUntil: date,
+            removeDisable: nil
+        )
+
+        // WHEN
+        controller.snoozePushNotifications(until: date)
+
+        // THEN
+        XCTAssertEqual(env.channelUpdater?.setPushPreference_preference, expectedPreference)
+        XCTAssertEqual(env.channelUpdater?.setPushPreference_cid, cid)
+    }
+
+    func test_snoozePushNotifications_propagatesSuccess() {
+        // GIVEN
+        let date = Date().addingTimeInterval(3600)
+        let expectedPreference = PushPreference(
+            level: .all,
+            disabledUntil: date
+        )
+
+        // WHEN
+        var completionResult: Result<PushPreference, Error>?
+        controller.snoozePushNotifications(until: date) { result in
+            completionResult = result
+        }
+
+        env.channelUpdater?.setPushPreference_completion_result = .success(expectedPreference)
+        env.channelUpdater?.setPushPreference_completion_result?.invoke(with: env.channelUpdater?.setPushPreference_completion)
+
+        // THEN
+        AssertAsync.willBeEqual(completionResult?.value, expectedPreference)
+    }
+
+    func test_snoozePushNotifications_propagatesError() {
+        // GIVEN
+        let date = Date().addingTimeInterval(3600)
+        let expectedError = TestError()
+
+        // WHEN
+        var completionResult: Result<PushPreference, Error>?
+        controller.snoozePushNotifications(until: date) { result in
+            completionResult = result
+        }
+
+        env.channelUpdater?.setPushPreference_completion_result = .failure(expectedError)
+        env.channelUpdater?.setPushPreference_completion_result?.invoke(with: env.channelUpdater?.setPushPreference_completion)
+
+        // THEN
+        AssertAsync.willBeEqual(completionResult?.error as? TestError, expectedError)
+    }
 }
 
 // MARK: Test Helpers

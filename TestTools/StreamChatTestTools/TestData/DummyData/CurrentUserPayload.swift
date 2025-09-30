@@ -26,7 +26,8 @@ extension CurrentUserPayload {
         mutedUsers: [MutedUserPayload] = [],
         teams: [TeamId] = [],
         language: String? = nil,
-        mutedChannels: [MutedChannelPayload] = []
+        mutedChannels: [MutedChannelPayload] = [],
+        pushPreference: PushPreferencePayload? = nil
     ) -> CurrentUserPayload {
         .init(
             id: userId,
@@ -47,7 +48,8 @@ extension CurrentUserPayload {
             devices: devices,
             mutedUsers: mutedUsers,
             mutedChannels: mutedChannels,
-            unreadCount: unreadCount
+            unreadCount: unreadCount,
+            pushPreference: pushPreference
         )
     }
 
@@ -58,7 +60,8 @@ extension CurrentUserPayload {
         devices: [DevicePayload] = [],
         mutedUsers: [MutedUserPayload] = [],
         mutedChannels: [MutedChannelPayload] = [],
-        privacySettings: UserPrivacySettingsPayload? = nil
+        privacySettings: UserPrivacySettingsPayload? = nil,
+        pushPreference: PushPreferencePayload? = nil
     ) -> CurrentUserPayload {
         .init(
             id: userPayload.id,
@@ -80,7 +83,8 @@ extension CurrentUserPayload {
             mutedUsers: mutedUsers,
             mutedChannels: mutedChannels,
             unreadCount: unreadCount,
-            privacySettings: privacySettings
+            privacySettings: privacySettings,
+            pushPreference: pushPreference
         )
     }
 }

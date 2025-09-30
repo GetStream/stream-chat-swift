@@ -341,7 +341,7 @@ class MessageRepository: @unchecked Sendable {
     func getMessage(
         before messageId: MessageId,
         in cid: ChannelId,
-        completion: @escaping (Result<MessageId?, Error>) -> Void
+        completion: @escaping @Sendable(Result<MessageId?, Error>) -> Void
     ) {
         let context = database.backgroundReadOnlyContext
         context.perform {
@@ -365,7 +365,7 @@ class MessageRepository: @unchecked Sendable {
 
     func getCurrentUserActiveLiveLocationMessages(
         for channelId: ChannelId,
-        completion: @escaping (Result<[ChatMessage], Error>) -> Void
+        completion: @escaping @Sendable(Result<[ChatMessage], Error>) -> Void
     ) {
         let context = database.backgroundReadOnlyContext
         context.perform {

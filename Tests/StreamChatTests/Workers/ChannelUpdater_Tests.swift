@@ -2209,4 +2209,113 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         XCTAssertNil(linkPayload)
     }
+
+    // MARK: - setPushPreference
+
+    func test_setPushPreference_makesCorrectAPICall() {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let preference = PushPreferenceRequestPayload(
+            chatLevel: "mentions",
+            channelId: cid.rawValue,
+            disabledUntil: nil,
+            removeDisable: true
+        )
+
+        // WHEN
+        channelUpdater.setPushPreference(preference, cid: cid) { _ in }
+
+        // THEN
+        let expectedEndpoint: Endpoint<PushPreferencesPayloadResponse> = .pushPreferences([preference])
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_setPushPreference_successfulResponse_savesToDatabase() {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let preference = PushPreferenceRequestPayload(
+            chatLevel: "all",
+            channelId: cid.rawValue,
+            disabledUntil: nil,
+            removeDisable: true
+        )
+
+        let response = PushPreferencesPayloadResponse(
+            userPreferences: [:],
+            channelPreferences: [
+                "userId": [
+                    cid.rawValue: PushPreferencePayload(
+                        chatLevel: "all",
+                        disabledUntil: nil
+                    )
+                ]
+            ]
+        )
+
+        // WHEN
+        var completionCalled = false
+        channelUpdater.setPushPreference(preference, cid: cid) { result in
+            XCTAssertNil(result.error)
+            completionCalled = true
+        }
+
+        apiClient.test_simulateResponse(.success(response))
+
+        // THEN
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_setPushPreference_propagatesNetworkError() {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let preference = PushPreferenceRequestPayload(
+            chatLevel: "mentions",
+            channelId: cid.rawValue,
+            disabledUntil: nil,
+            removeDisable: true
+        )
+
+        // WHEN
+        var completionError: Error?
+        channelUpdater.setPushPreference(preference, cid: cid) { result in
+            if case let .failure(error) = result {
+                completionError = error
+            }
+        }
+
+        let error = TestError()
+        apiClient.test_simulateResponse(Result<PushPreferencesPayloadResponse, Error>.failure(error))
+
+        // THEN
+        AssertAsync.willBeEqual(completionError as? TestError, error)
+    }
+
+    func test_setPushPreference_whenNoChannelPreferences_returnsError() {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let preference = PushPreferenceRequestPayload(
+            chatLevel: "mentions",
+            channelId: cid.rawValue,
+            disabledUntil: nil,
+            removeDisable: true
+        )
+
+        let response = PushPreferencesPayloadResponse(
+            userPreferences: [:],
+            channelPreferences: [:]
+        )
+
+        // WHEN
+        var completionError: Error?
+        channelUpdater.setPushPreference(preference, cid: cid) { result in
+            if case let .failure(error) = result {
+                completionError = error
+            }
+        }
+
+        apiClient.test_simulateResponse(.success(response))
+
+        // THEN
+        AssertAsync.willBeTrue(completionError is ClientError.ChannelDoesNotExist)
+    }
 }
