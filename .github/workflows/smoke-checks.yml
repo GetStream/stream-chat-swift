@@ -75,10 +75,10 @@ jobs:
     - name: List Xcode versions
       run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
     - name: Build LLC
-      run: bundle exec fastlane test device:"iPhone 16" build_for_testing:true
+      run: bundle exec fastlane test device:"iPhone 16 Pro (18.0)" build_for_testing:true
       timeout-minutes: 25
     - name: Build UI
-      run: bundle exec fastlane test_ui device:"iPhone 16" build_for_testing:true
+      run: bundle exec fastlane test_ui device:"iPhone 16 Pro (18.0)" build_for_testing:true
       timeout-minutes: 25
 
   test-llc-debug:
