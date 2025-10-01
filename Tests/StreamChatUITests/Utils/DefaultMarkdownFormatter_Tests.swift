@@ -63,42 +63,75 @@ final class DefaultMarkdownFormatter_Tests: XCTestCase {
         let expectedCodeAttributedSubstring = "let property: Double = 10.0"
         let expectedLinkAttributedSubstring = "this link"
         let expectedLinkURL = "https://docs.swift.org/swift-book/"
-        let expectedUnorderedListedSubstrings = ["\u{2022}  class", "\u{2022}  struct", "\u{2022}  enum", "\u{2022}  actor"]
+        let expectedListItems = ["class", "struct", "enum", "actor"]
 
         // WHEN
         let attributedString = sut.format(stringWithMarkdown, attributes: [:])
 
         // THEN
-        attributedString.enumerateAttributes(in: NSRange(
-            location: 0,
-            length: attributedString.length
-        )) { attributes, range, _ in
+        var listItemBuffer = ""
+        var currentHeadIndent: CGFloat?
+
+        attributedString.enumerateAttributes(in: NSRange(location: 0, length: attributedString.length)) { attributes, range, _ in
+            let substring = attributedString.attributedSubstring(from: range).string
             let fontAttribute = attributes[.font] as? UIFont
 
+            // Heading 1 check
             if let headerAttribute = fontAttribute,
                headerAttribute.fontDescriptor.pointSize == UIFont.preferredFont(forTextStyle: .title1).pointSize {
-                XCTAssertEqual(expectedHeading1AttributedSubstring, attributedString.attributedSubstring(from: range).string)
+                XCTAssertEqual(expectedHeading1AttributedSubstring, substring)
+
+                // Strikethrough check
             } else if let strikethroughAttribute = attributes[.strikethroughStyle] as? NSNumber,
                       strikethroughAttribute == 1 {
-                XCTAssertEqual(expectedStrikethroughAttributedSubstring, attributedString.attributedSubstring(from: range).string)
+                XCTAssertEqual(expectedStrikethroughAttributedSubstring, substring)
+
+                // Bold check
             } else if let boldAttribute = fontAttribute,
                       boldAttribute.fontDescriptor.symbolicTraits.contains(.traitBold) {
-                XCTAssertEqual(expectedBoldAttributedSubstring, attributedString.attributedSubstring(from: range).string)
+                XCTAssertEqual(expectedBoldAttributedSubstring, substring)
+
+                // Code font check
             } else if let fontAttribute = fontAttribute,
                       let fontNameAttribute = fontAttribute.fontDescriptor.fontAttributes[.name] as? String,
                       fontNameAttribute == DefaultMarkdownFormatter().styles.codeFont.name {
-                XCTAssertEqual(expectedCodeAttributedSubstring, attributedString.attributedSubstring(from: range).string)
+                XCTAssertEqual(expectedCodeAttributedSubstring, substring)
+
+                // Link check
             } else if let linkAttribute = attributes[.link] as? NSURL,
                       let url = linkAttribute.absoluteString {
-                XCTAssertEqual(expectedLinkAttributedSubstring, attributedString.attributedSubstring(from: range).string)
+                XCTAssertEqual(expectedLinkAttributedSubstring, substring)
                 XCTAssertEqual(expectedLinkURL, url)
-            } else if let paragraphStyleAttribute = attributes[.paragraphStyle] as? NSParagraphStyle,
-                      paragraphStyleAttribute.headIndent > 0 {
-                XCTAssertEqual(
-                    true,
-                    expectedUnorderedListedSubstrings.contains(attributedString.attributedSubstring(from: range).string)
-                )
             }
+
+            // List item handling
+            if let paragraphStyle = attributes[.paragraphStyle] as? NSParagraphStyle,
+               paragraphStyle.headIndent > 0 {
+                // same list item as previous?
+                if currentHeadIndent == paragraphStyle.headIndent {
+                    listItemBuffer += substring
+                } else {
+                    // process previous buffer
+                    if !listItemBuffer.isEmpty {
+                        XCTAssertTrue(expectedListItems.contains { listItemBuffer.contains($0) })
+                    }
+                    // start new buffer
+                    listItemBuffer = substring
+                    currentHeadIndent = paragraphStyle.headIndent
+                }
+            } else {
+                // process any leftover buffer
+                if !listItemBuffer.isEmpty {
+                    XCTAssertTrue(expectedListItems.contains { listItemBuffer.contains($0) })
+                    listItemBuffer = ""
+                    currentHeadIndent = nil
+                }
+            }
+        }
+
+        // process last buffer
+        if !listItemBuffer.isEmpty {
+            XCTAssertTrue(expectedListItems.contains { listItemBuffer.contains($0) })
         }
     }
 

@@ -1,4 +1,4 @@
-// swift-tools-version:5.7
+// swift-tools-version:5.10
 
 import Foundation
 import PackageDescription
@@ -31,7 +31,10 @@ let package = Package(
         .target(
             name: "StreamChat",
             exclude: ["Info.plist"],
-            resources: [.copy("Database/StreamChatModel.xcdatamodeld")]
+            resources: [.copy("Database/StreamChatModel.xcdatamodeld")],
+            swiftSettings: [
+                .unsafeFlags(["-Osize"], .when(configuration: .release))
+            ]
         ),
         .target(
             name: "StreamChatUI",
