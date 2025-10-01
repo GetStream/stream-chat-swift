@@ -212,7 +212,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
 
     /// Synchronizes the controller with the backend data.
     /// - Parameter completion: Called when the synchronization is finished.
-    public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
+    public func synchronize(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         // Populate the initial data with existing cache.
         if loadInitialMessagesFromCache, let cid = self.cid, let channel = dataStore.channel(cid: cid) {
             self.channel = channel
@@ -277,7 +277,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     public func loadPreviousMessages(
         before messageId: MessageId? = nil,
         limit: Int? = nil,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         guard cid != nil else {
             callback {
@@ -319,7 +319,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     public func loadNextMessages(
         after messageId: MessageId? = nil,
         limit: Int? = nil,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         guard cid != nil else {
             callback {
@@ -361,7 +361,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     public func loadPageAroundMessageId(
         _ messageId: MessageId,
         limit: Int? = nil,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         guard !isLoadingMiddleMessages else {
             callback {
@@ -379,7 +379,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
 
     /// Cleans the current state and loads the first page again.
     /// - Parameter completion: Callback when the API call is completed.
-    public func loadFirstPage(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
+    public func loadFirstPage(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         var query = channelQuery
         query.pagination = .init(
             pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
@@ -422,7 +422,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         restrictedVisibility: [UserId] = [],
         location: NewLocationInfo? = nil,
         extraData: [String: RawJSON] = [:],
-        completion: (@MainActor(Result<MessageId, Error>) -> Void)? = nil
+        completion: (@MainActor (Result<MessageId, Error>) -> Void)? = nil
     ) {
         var transformableInfo = NewMessageTransformableInfo(
             text: text,
@@ -460,7 +460,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     public func deleteMessage(
         messageId: MessageId,
         hard: Bool = false,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .deleteMessage(
@@ -484,7 +484,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         for messageId: MessageId,
         limit: Int = 25,
         offset: Int = 0,
-        completion: @escaping @MainActor(Result<[ChatMessageReaction], Error>) -> Void
+        completion: @escaping @MainActor (Result<[ChatMessageReaction], Error>) -> Void
     ) {
         let pagination = Pagination(pageSize: limit, offset: offset)
         apiClient.request(
@@ -515,7 +515,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         messageId: MessageId,
         reason: String? = nil,
         extraData: [String: RawJSON]? = nil,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .flagMessage(
@@ -538,7 +538,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     ///   If request fails, the completion will be called with an error.
     public func unflag(
         messageId: MessageId,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .flagMessage(
@@ -572,7 +572,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         skipPush: Bool = false,
         pushEmojiCode: String? = nil,
         extraData: [String: RawJSON] = [:],
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .addReaction(
@@ -599,7 +599,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     public func deleteReaction(
         _ type: MessageReactionType,
         from messageId: MessageId,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { [weak self] result in
             self?.callback {
@@ -616,7 +616,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     public func pin(
         messageId: MessageId,
         pinning: MessagePinning = .noExpiration,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .pinMessage(
             messageId: messageId,
@@ -634,7 +634,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
     public func unpin(
         messageId: MessageId,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .pinMessage(
@@ -658,7 +658,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         pageSize: Int = .messagesPageSize,
         sorting: [Sorting<PinnedMessagesSortingKey>] = [],
         pagination: PinnedMessagesPagination? = nil,
-        completion: @escaping @MainActor(Result<[ChatMessage], Error>) -> Void
+        completion: @escaping @MainActor (Result<[ChatMessage], Error>) -> Void
     ) {
         guard let cid else {
             callback {
@@ -716,7 +716,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     ///   - cooldownDuration: Duration of the time interval users have to wait between messages.
     ///   Specified in seconds. Should be between 1-120.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    public func enableSlowMode(cooldownDuration: Int, completion: (@MainActor(Error?) -> Void)? = nil) {
+    public func enableSlowMode(cooldownDuration: Int, completion: (@MainActor (Error?) -> Void)? = nil) {
         guard let cid else {
             callback {
                 completion?(ClientError.ChannelNotCreatedYet())
@@ -739,7 +739,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     ///
     /// - Parameters:
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    public func disableSlowMode(completion: (@MainActor(Error?) -> Void)? = nil) {
+    public func disableSlowMode(completion: (@MainActor (Error?) -> Void)? = nil) {
         guard let cid else {
             callback {
                 completion?(ClientError.ChannelNotCreatedYet())
@@ -767,7 +767,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     ///
     /// This will load the first page, reseting the current messages  and returning to the latest messages.
     /// After resuming, new messages will be added to the messages array again.
-    public func resume(completion: (@MainActor(Error?) -> Void)? = nil) {
+    public func resume(completion: (@MainActor (Error?) -> Void)? = nil) {
         guard isPaused, !isResuming else {
             callback {
                 completion?(nil)
@@ -826,7 +826,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
 
     private func updateChannelData(
         channelQuery: ChannelQuery,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         if let pagination = channelQuery.pagination {
             paginationStateHandler.begin(pagination: pagination)
@@ -908,7 +908,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         }
     }
 
-    private func delegateCallback(_ callback: @escaping @MainActor(Delegate) -> Void) {
+    private func delegateCallback(_ callback: @escaping @MainActor (Delegate) -> Void) {
         self.callback {
             self.multicastDelegate.invoke(callback)
         }
@@ -1180,7 +1180,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         location: NewLocationInfo? = nil,
         extraData: [String: RawJSON] = [:],
         poll: PollPayload?,
-        completion: (@MainActor(Result<MessageId, Error>) -> Void)? = nil
+        completion: (@MainActor (Result<MessageId, Error>) -> Void)? = nil
     ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let cid = cid else {

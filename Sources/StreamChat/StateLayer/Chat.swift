@@ -1539,7 +1539,7 @@ extension Chat {
 
 extension Chat {
     struct Environment {
-        var chatStateBuilder: @MainActor(
+        var chatStateBuilder: @MainActor (
             _ channelQuery: ChannelQuery,
             _ messageOrder: MessageOrdering,
             _ memberSorting: [Sorting<ChannelMemberListSortingKey>],

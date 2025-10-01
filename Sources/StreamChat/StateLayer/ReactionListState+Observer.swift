@@ -18,7 +18,7 @@ extension ReactionListState {
         }
         
         struct Handlers {
-            let reactionsDidChange: @MainActor(StreamCollection<ChatMessageReaction>) async -> Void
+            let reactionsDidChange: @MainActor (StreamCollection<ChatMessageReaction>) async -> Void
         }
         
         func start(with handlers: Handlers) -> StreamCollection<ChatMessageReaction> {

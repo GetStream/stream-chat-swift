@@ -6,9 +6,9 @@ import Foundation
 
 /// A builder for objects requiring @MainActor.
 struct StateBuilder<State> {
-    private let builder: (@MainActor() -> State)
+    private let builder: (@MainActor () -> State)
     
-    init(builder: (@escaping @MainActor() -> State)) {
+    init(builder: (@escaping @MainActor () -> State)) {
         self.builder = builder
     }
     

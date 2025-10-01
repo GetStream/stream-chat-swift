@@ -745,7 +745,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             (user: dummyUser(id: .unique), expectedCount: 11)
 
         ].forEach { (user, expectedCount) in
-
             // Create a MessageNewEvent with a `createdAt` date before `oldReadDate`
             let eldEventPayload = EventPayload(
                 eventType: .notificationMessageNew,

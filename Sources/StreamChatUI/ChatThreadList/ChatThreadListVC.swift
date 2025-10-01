@@ -13,8 +13,7 @@ open class ChatThreadListVC:
     ChatThreadListControllerDelegate,
     EventsControllerDelegate,
     UITableViewDelegate,
-    UITableViewDataSource
-{
+    UITableViewDataSource {
     /// The `ChatThreadListController` instance that provides the threads data.
     public var threadListController: ChatThreadListController
 

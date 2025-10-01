@@ -97,7 +97,7 @@ extension ChannelList {
             _ apiClient: APIClient
         ) -> ChannelListUpdater = ChannelListUpdater.init
         
-        var stateBuilder: @MainActor(
+        var stateBuilder: @MainActor (
             _ query: ChannelListQuery,
             _ dynamicFilter: ((ChatChannel) -> Bool)?,
             _ clientConfig: ChatClientConfig,

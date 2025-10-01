@@ -210,7 +210,7 @@ public final class ConnectedUser {
 
 extension ConnectedUser {
     struct Environment {
-        var stateBuilder: @MainActor(
+        var stateBuilder: @MainActor (
             _ user: CurrentChatUser,
             _ database: DatabaseContainer
         ) -> ConnectedUserState = { @MainActor in

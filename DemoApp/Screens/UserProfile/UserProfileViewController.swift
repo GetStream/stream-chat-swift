@@ -155,7 +155,7 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
 
     private func showDetailedUnreads() {
         let unreadDetailsView = UnreadDetailsView(
-            onLoadData: { [weak self](completion: @escaping (Result<CurrentUserUnreads, Error>) -> Void) in
+            onLoadData: { [weak self] (completion: @escaping (Result<CurrentUserUnreads, Error>) -> Void) in
                 self?.currentUserController.loadAllUnreads { result in
                     DispatchQueue.main.async {
                         completion(result)

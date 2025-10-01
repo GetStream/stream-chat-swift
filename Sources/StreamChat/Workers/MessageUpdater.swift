@@ -1079,16 +1079,16 @@ class MessageUpdater: Worker {
                 messageId: messageId,
                 request: request
             )) { result in
-            switch result {
-            case .success(let response):
-                self.database.write { session in
-                    let thread = try session.saveThread(partialPayload: response.thread).asModel()
-                    completion(.success(thread))
+                switch result {
+                case .success(let response):
+                    self.database.write { session in
+                        let thread = try session.saveThread(partialPayload: response.thread).asModel()
+                        completion(.success(thread))
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
                 }
-            case .failure(let error):
-                completion(.failure(error))
             }
-        }
     }
 }
 
