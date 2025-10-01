@@ -7,7 +7,7 @@ require 'net/http'
 import 'Sonarfile'
 import 'Allurefile'
 
-xcode_version = ENV['XCODE_VERSION'] || '16.4'
+xcode_version = ENV['XCODE_VERSION'] || '26.0'
 xcode_project = 'StreamChat.xcodeproj'
 sdk_names = ['StreamChat', 'StreamChatUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'

@@ -21,33 +21,28 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: 18.5
-            xcode: 16.4
-            os: macos-15
+          - ios: "26.0"
+            device: "iPhone 17 Pro"
+            setup_runtime: false
+          - ios: "18.5"
             device: "iPhone 16 Pro"
             setup_runtime: false
-          - ios: 17.5
-            xcode: 15.4
-            os: macos-14
+          - ios: "17.5"
             device: "iPhone 15 Pro"
-            setup_runtime: false
-          - ios: 16.4
-            xcode: 15.3 # fails on 15.4
-            os: macos-14
+            setup_runtime: true
+          - ios: "16.4"
             device: "iPhone 14 Pro"
             setup_runtime: true
-          - ios: 15.5
-            xcode: 15.3 # fails on 15.4
-            os: macos-14
+          - ios: "15.5"
             device: "iPhone 13 Pro"
             setup_runtime: true
       fail-fast: false
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-15
     env:
       GITHUB_EVENT: ${{ toJson(github.event) }}
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
       STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
-      XCODE_VERSION: ${{ matrix.xcode }}
+      XCODE_VERSION: "26.0"
       IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})" # For the Allure report
     steps:
     - uses: actions/checkout@v4.1.1
@@ -94,30 +89,25 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: 18.5
-            xcode: 16.4
-            os: macos-15
+          - ios: "26.0"
+            device: "iPhone 17 Pro"
+            setup_runtime: false
+          - ios: "18.5"
             device: "iPhone 16 Pro"
             setup_runtime: false
-          - ios: 17.5
-            xcode: 15.4
-            os: macos-14
+          - ios: "17.5"
             device: "iPhone 15 Pro"
-            setup_runtime: false
-          - ios: 16.4
-            xcode: 15.3 # fails on 15.4
-            os: macos-14
+            setup_runtime: true
+          - ios: "16.4"
             device: "iPhone 14 Pro"
             setup_runtime: true
-          - ios: 15.5
-            xcode: 15.3 # fails on 15.4
-            os: macos-14
+          - ios: "15.5"
             device: "iPhone 13 Pro"
             setup_runtime: true
       fail-fast: false
-    runs-on: ${{ matrix.os }}
+    runs-on: macos-15
     env:
-      XCODE_VERSION: ${{ matrix.xcode }}
+      XCODE_VERSION: "26.0"
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
@@ -147,10 +137,10 @@ jobs:
           fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
 
   build-old-xcode:
-    name: Build LLC + UI (Xcode 15)
-    runs-on: macos-14
+    name: Build LLC + UI (Old Xcode)
+    runs-on: macos-15
     env:
-      XCODE_VERSION: "15.4"
+      XCODE_VERSION: "16.0"
     steps:
     - name: Connect Bot
       uses: webfactory/ssh-agent@v0.7.0
@@ -175,9 +165,9 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-14
+    runs-on: macos-15
     env:
-      XCODE_VERSION: "15.4"
+      XCODE_VERSION: "16.0"
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
