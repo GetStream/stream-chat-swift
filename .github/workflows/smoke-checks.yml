@@ -20,7 +20,7 @@ concurrency:
 
 env:
   HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
-  IOS_SIMULATOR_DEVICE: "iPhone 16 Pro (18.5)"
+  IOS_SIMULATOR_DEVICE: "iPhone 17 Pro (26.0)"
   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
 
@@ -48,7 +48,7 @@ jobs:
     name: Automated Code Review
     runs-on: macos-14
     env:
-      XCODE_VERSION: "15.4"
+      XCODE_VERSION: "16.1"
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     steps:
       - uses: actions/checkout@v4.1.1
@@ -63,21 +63,22 @@ jobs:
         if: startsWith(github.event.pull_request.head.ref, 'release/')
 
   build-old-xcode:
-    name: Build LLC + UI (Xcode 15)
+    name: Build SDKs (Old Xcode)
     runs-on: macos-14
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     env:
-      XCODE_VERSION: "15.4"
+      XCODE_VERSION: "16.1"
     steps:
     - uses: actions/checkout@v4.1.1
+    - uses: ./.github/actions/xcode-cache
     - uses: ./.github/actions/ruby-cache
     - name: List Xcode versions
       run: mdfind "kMDItemCFBundleIdentifier = 'com.apple.dt.Xcode'"
     - name: Build LLC
-      run: bundle exec fastlane test device:"iPhone 13" build_for_testing:true
+      run: bundle exec fastlane test device:"iPhone 16" build_for_testing:true
       timeout-minutes: 25
     - name: Build UI
-      run: bundle exec fastlane test_ui device:"iPhone 13" build_for_testing:true
+      run: bundle exec fastlane test_ui device:"iPhone 16" build_for_testing:true
       timeout-minutes: 25
 
   test-llc-debug:
@@ -179,6 +180,8 @@ jobs:
       - build-test-app-and-frameworks
     env:
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
+      IOS_SIMULATOR_DEVICE: "iPhone 16 Pro (18.5)" # TODO: IOS-1181
+      XCODE_VERSION: "16.4" # TODO: IOS-1181
     strategy:
       matrix:
         batch: [0, 1]
