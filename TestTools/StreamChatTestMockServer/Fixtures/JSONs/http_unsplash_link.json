@@ -1,6 +1,6 @@
 {
   "message": {
-    "id": "b3021d20-53c7-4a2d-a572-8aba1c69ab72",
+    "id": "120682d1-61d3-4e37-a960-6d4eb1288916",
     "text": "https://unsplash.com/photos/1_2d3MRbI9c",
     "html": "<p><a href=\"https://unsplash.com/photos/1_2d3MRbI9c\" rel=\"nofollow\">https://unsplash.com/photos/1_2d3MRbI9c</a></p>\n",
     "type": "regular",
@@ -12,15 +12,22 @@
       "role": "admin",
       "teams": [],
       "created_at": "2024-04-04T09:26:11.805899Z",
-      "updated_at": "2025-06-06T08:22:36.844279Z",
+      "updated_at": "2025-09-15T05:51:41.748915Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-06-15T00:25:32.362084978Z",
+      "last_active": "2025-10-01T00:18:38.697669704Z",
       "blocked_user_ids": [],
-      "team": "test",
-      "type": "team",
+      "avg_response_time": 206619,
       "pando": "{\"speciality\":\"ios engineer\"}",
-      "birthland": "Tatooine"
+      "birthland": "Tatooine",
+      "canBeAddedToGroups": true,
+      "canReceiveMessages": false,
+      "type": "team",
+      "custom_extra_data_key": true,
+      "team": "test"
+    },
+    "member": {
+      "channel_role": "channel_member"
     },
     "attachments": [
       {
@@ -29,8 +36,8 @@
         "title": "Photo by Joao Branco on Unsplash",
         "title_link": "https://unsplash.com/photos/green-pine-tree-mountain-slope-scenery-1_2d3MRbI9c",
         "text": "Download this photo by Joao Branco on Unsplash",
-        "image_url": "https://images.unsplash.com/photo-1568574728383-06fca083883d?mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-w=64&mark-align=top%2Cleft&mark-pad=50&h=630&w=1200&crop=faces%2Cedges&blend-w=1&blend=000000&blend-mode=normal&blend-alpha=10&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzQ5OTQ3MTQ0fA&ixlib=rb-4.1.0",
-        "thumb_url": "https://images.unsplash.com/photo-1568574728383-06fca083883d?mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-w=64&mark-align=top%2Cleft&mark-pad=50&h=630&w=1200&crop=faces%2Cedges&blend-w=1&blend=000000&blend-mode=normal&blend-alpha=10&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzQ5OTQ3MTQ0fA&ixlib=rb-4.1.0",
+        "image_url": "https://images.unsplash.com/photo-1568574728383-06fca083883d?mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-w=64&mark-align=top%2Cleft&mark-pad=50&h=630&w=1200&crop=faces%2Cedges&blend-w=1&blend=000000&blend-mode=normal&blend-alpha=10&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzU5Mjc3MTg4fA&ixlib=rb-4.1.0",
+        "thumb_url": "https://images.unsplash.com/photo-1568574728383-06fca083883d?mark=https%3A%2F%2Fimages.unsplash.com%2Fopengraph%2Flogo.png&mark-w=64&mark-align=top%2Cleft&mark-pad=50&h=630&w=1200&crop=faces%2Cedges&blend-w=1&blend=000000&blend-mode=normal&blend-alpha=10&auto=format&fit=crop&q=60&ixid=M3wxMjA3fDB8MXxhbGx8fHx8fHx8fHwxNzU5Mjc3MTg4fA&ixlib=rb-4.1.0",
         "og_scrape_url": "https://unsplash.com/photos/1_2d3MRbI9c"
       }
     ],
@@ -40,16 +47,11 @@
     "reaction_scores": {},
     "reply_count": 0,
     "deleted_reply_count": 0,
-    "cid": "messaging:ec2807ff-5c60-41bc-a816-49578260471a",
-    "created_at": "2025-06-15T00:25:45.47899Z",
-    "updated_at": "2025-06-15T00:25:45.47899Z",
+    "cid": "messaging:4f00a44f-8bad-4915-a212-87c65c7d685d",
+    "created_at": "2025-10-01T00:18:48.049963Z",
+    "updated_at": "2025-10-01T00:18:48.049963Z",
     "shadowed": false,
     "mentioned_users": [],
-    "i18n": {
-      "en_text": "https://unsplash.com/photos/1_2d3MRbI9c",
-      "fr_text": "https://unsplash.com/photos/1_2d3MRbI9c",
-      "language": "en"
-    },
     "silent": false,
     "pinned": false,
     "pinned_at": null,
@@ -57,5 +59,5 @@
     "pin_expires": null,
     "restricted_visibility": []
   },
-  "duration": "4355.84ms"
+  "duration": "348.25ms"
 }
