@@ -46,9 +46,9 @@ jobs:
 
   automated-code-review:
     name: Automated Code Review
-    runs-on: macos-14
+    runs-on: macos-15
     env:
-      XCODE_VERSION: "15.4"
+      XCODE_VERSION: "16.0"
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     steps:
       - uses: actions/checkout@v4.1.1
@@ -63,11 +63,11 @@ jobs:
         if: startsWith(github.event.pull_request.head.ref, 'release/')
 
   build-old-xcode:
-    name: Build LLC + UI (Xcode 15)
-    runs-on: macos-14
+    name: Build SDKs (Old Xcode)
+    runs-on: macos-15
     if: ${{ github.event.inputs.record_snapshots != 'true' }}
     env:
-      XCODE_VERSION: "15.4"
+      XCODE_VERSION: "16.0"
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/ruby-cache
