@@ -6,10 +6,6 @@ import CoreData
 import Foundation
 
 class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @unchecked Sendable {
-    /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerWillChangeContent`
-    /// on its delegate.
-    var onWillChange: (@Sendable () -> Void)?
-
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerDidChangeContent`
     /// on its delegate.
     var onDidChange: (@Sendable ([ListChange<Item>]) -> Void)?
@@ -30,24 +26,10 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
 
     private let queue = DispatchQueue(label: "io.getstream.list-database-observer", qos: .userInitiated)
     private var _items: [Item]?
-    
-    // State handling for supporting will change, because in the callback we should return the previous state.
-    private var _willChangeItems: [Item]?
-    private var _notifyingWillChange = false
 
     /// The items that have been fetched and mapped
     var rawItems: [Item] {
-        // During the onWillChange we swap the results back to the previous state because onWillChange
-        // is dispatched to the main thread and when the main thread handles it, observer has already processed
-        // the database change.
-        if onWillChange != nil {
-            let willChangeState: (active: Bool, cachedItems: [Item]?) = queue.sync { (_notifyingWillChange, _willChangeItems) }
-            if willChangeState.active {
-                return willChangeState.cachedItems ?? []
-            }
-        }
-        
-        var rawItems: [Item]!
+        nonisolated(unsafe) var rawItems: [Item]!
         frc.managedObjectContext.performAndWait {
             // When we already have loaded items, reuse them, otherwise refetch all
             rawItems = _items ?? updateItems(nil)
@@ -98,9 +80,6 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
             sectionNameKeyPath: nil,
             cacheName: nil
         )
-        changeAggregator.onWillChange = { [weak self] in
-            self?.notifyWillChange()
-        }
         changeAggregator.onDidChange = { [weak self] changes in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
@@ -130,33 +109,6 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
             let items = self.updateItems(nil)
             let changes: [ListChange<Item>] = items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
             self.notifyDidChange(changes: changes)
-        }
-    }
-
-    private func notifyWillChange() {
-        guard let onWillChange = onWillChange else {
-            return
-        }
-        // Will change callback happens on the main thread but by that time the observer
-        // has already updated its local cached state. For allowing to access the previous
-        // state from the will change callback, there is no other way than caching previous state.
-        // This is used by the channel list delegate.
-        
-        // `_items` is mutated by the NSManagedObjectContext's queue, here we are on that queue
-        // so it is safe to read the `_items` state from `self.queue`.
-        queue.sync {
-            _willChangeItems = _items
-        }
-        DispatchQueue.main.async { [weak self] in
-            guard let self else { return }
-            self.queue.async {
-                self._notifyingWillChange = true
-            }
-            onWillChange()
-            self.queue.async {
-                self._willChangeItems = nil
-                self._notifyingWillChange = false
-            }
         }
     }
 

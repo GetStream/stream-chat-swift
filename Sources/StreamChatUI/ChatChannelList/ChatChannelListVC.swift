@@ -403,10 +403,6 @@ open class ChatChannelListVC: _ViewController,
 
     // MARK: - ChatChannelListControllerDelegate
 
-    open func controllerWillChangeChannels(_ controller: ChatChannelListController) {
-        collectionView.layoutIfNeeded()
-    }
-
     open func controller(
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]
