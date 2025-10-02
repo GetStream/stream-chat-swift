@@ -78,7 +78,7 @@ extension UserList {
             _ apiClient: APIClient
         ) -> UserListUpdater = UserListUpdater.init
         
-        var stateBuilder: @MainActor(
+        var stateBuilder: @MainActor (
             _ query: UserListQuery,
             _ database: DatabaseContainer
         ) -> UserListState = { @MainActor in

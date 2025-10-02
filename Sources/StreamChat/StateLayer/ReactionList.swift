@@ -74,7 +74,7 @@ extension ReactionList {
             _ apiClient: APIClient
         ) -> ReactionListUpdater = ReactionListUpdater.init
         
-        var stateBuilder: @MainActor(
+        var stateBuilder: @MainActor (
             _ query: ReactionListQuery,
             _ database: DatabaseContainer
         ) -> ReactionListState = { @MainActor in

@@ -147,7 +147,7 @@ extension Reachability {
                 _ = unmanagedWeakifiedReachability.retain()
                 return UnsafeRawPointer(unmanagedWeakifiedReachability.toOpaque())
             },
-            release: { (info: UnsafeRawPointer) -> Void in
+            release: { (info: UnsafeRawPointer) in
                 let unmanagedWeakifiedReachability = Unmanaged<ReachabilityWeakifier>
                     .fromOpaque(info)
                 unmanagedWeakifiedReachability.release()

@@ -18,7 +18,7 @@ extension MemberListState {
         }
         
         struct Handlers {
-            let membersDidChange: @MainActor(StreamCollection<ChatChannelMember>) async -> Void
+            let membersDidChange: @MainActor (StreamCollection<ChatChannelMember>) async -> Void
         }
         
         func start(with handlers: Handlers) -> StreamCollection<ChatChannelMember> {

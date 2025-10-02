@@ -656,7 +656,7 @@ class ChannelUpdater: Worker {
                 let payload = try result.get()
                 self.database.write { (session) in
                     if let channel = session.channel(cid: query.cid) {
-                        if query.pagination.offset == 0, (payload.watchers?.isEmpty ?? false) {
+                        if query.pagination.offset == 0, payload.watchers?.isEmpty ?? false {
                             // This is the first page of the watchers, and backend reported empty array
                             // We can clear the existing watchers safely
                             channel.watchers.removeAll()

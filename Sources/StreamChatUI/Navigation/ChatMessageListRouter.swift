@@ -11,8 +11,7 @@ open class ChatMessageListRouter:
     // the channel and thread message lists.
     NavigationRouter<UIViewController>,
     UIViewControllerTransitioningDelegate,
-    ComponentsProvider
-{
+    ComponentsProvider {
     /// The transition controller used to animate `ChatMessagePopupVC` transition.
     open private(set) lazy var messagePopUpTransitionController: ChatMessageActionsTransitionController = components
         .messageActionsTransitionController

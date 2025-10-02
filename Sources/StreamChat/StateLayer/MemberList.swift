@@ -70,7 +70,7 @@ extension MemberList {
             _ apiClient: APIClient
         ) -> ChannelMemberListUpdater = ChannelMemberListUpdater.init
         
-        var stateBuilder: @MainActor(
+        var stateBuilder: @MainActor (
             _ query: ChannelMemberListQuery,
             _ database: DatabaseContainer
         ) -> MemberListState = { @MainActor in

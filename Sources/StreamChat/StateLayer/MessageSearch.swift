@@ -108,7 +108,7 @@ extension MessageSearch {
             _ apiClient: APIClient
         ) -> MessageUpdater = MessageUpdater.init
         
-        var stateBuilder: @MainActor(
+        var stateBuilder: @MainActor (
             _ database: DatabaseContainer
         ) -> MessageSearchState = { @MainActor in
             MessageSearchState(database: $0)

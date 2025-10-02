@@ -20,8 +20,7 @@ open class ChatMessageListVC: _ViewController,
     UITableViewDataSource,
     UITableViewDelegate,
     UIGestureRecognizerDelegate,
-    VoiceRecordingAttachmentPresentationViewDelegate
-{
+    VoiceRecordingAttachmentPresentationViewDelegate {
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource? {
         didSet {

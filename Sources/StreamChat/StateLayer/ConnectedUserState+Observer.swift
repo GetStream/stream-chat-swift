@@ -17,7 +17,7 @@ extension ConnectedUserState {
         }
         
         struct Handlers {
-            let userDidChange: @MainActor(CurrentChatUser) async -> Void
+            let userDidChange: @MainActor (CurrentChatUser) async -> Void
         }
         
         func start(with handlers: Handlers) -> CurrentChatUser? {

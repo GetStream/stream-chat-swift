@@ -5,7 +5,7 @@
 import Foundation
 
 extension Task {
-    @discardableResult static func mainActor(priority: TaskPriority? = nil, operation: @escaping @MainActor() async throws -> Success) -> Task<Success, Failure> where Failure == any Error {
+    @discardableResult static func mainActor(priority: TaskPriority? = nil, operation: @escaping @MainActor () async throws -> Success) -> Task<Success, Failure> where Failure == any Error {
         Task(priority: priority) { @MainActor in
             try await operation()
         }
