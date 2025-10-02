@@ -26,7 +26,7 @@ final class StreamAudioWaveformAnalyser: AudioAnalysing {
     private let audioSamplesExtractor: AudioSamplesExtractor
     private let audioSamplesProcessor: AudioSamplesProcessor
     private let audioSamplesPercentageNormaliser: AudioValuePercentageNormaliser
-    nonisolated(unsafe) private let outputSettings: [String: Any]
+    private nonisolated(unsafe) let outputSettings: [String: Any]
 
     init(
         audioSamplesExtractor: AudioSamplesExtractor,

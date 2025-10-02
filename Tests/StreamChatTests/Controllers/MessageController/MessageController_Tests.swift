@@ -1185,7 +1185,6 @@ final class MessageController_Tests: XCTestCase {
             skipEnrichUrl: skipEnrichUrl,
             extraData: extraData
         ) { result in
-            
             AssertResultSuccess(result, newMessage.id)
             completionCalled = true
         }
@@ -2063,7 +2062,6 @@ final class MessageController_Tests: XCTestCase {
         // Simulate `pin` calls and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.pin(pinning) { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -2110,7 +2108,6 @@ final class MessageController_Tests: XCTestCase {
         // Simulate `unpin` calls and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.unpin { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -2160,7 +2157,6 @@ final class MessageController_Tests: XCTestCase {
         // Simulate `restartFailedAttachmentUploading` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.restartFailedAttachmentUploading(with: attachmentId) { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -2595,7 +2591,6 @@ final class MessageController_Tests: XCTestCase {
         // When
         let exp = expectation(description: "Completion is called")
         controller.partialUpdateMessage(text: .unique) { result in
-            
             if case let .failure(error) = result {
                 completionError = error
             }

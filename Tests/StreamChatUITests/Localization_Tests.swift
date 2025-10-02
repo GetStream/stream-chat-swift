@@ -10,7 +10,7 @@ import XCTest
 final class Localization_Tests: XCTestCase {
     /// Testing bundle which should be empty.
     private var testBundle: Bundle!
-    private var defaultLocalizationProvider: (@Sendable(String, String) -> String)!
+    private var defaultLocalizationProvider: (@Sendable (String, String) -> String)!
 
     @MainActor override func setUp() {
         super.setUp()

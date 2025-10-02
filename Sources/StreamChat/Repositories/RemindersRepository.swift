@@ -33,7 +33,7 @@ class RemindersRepository: @unchecked Sendable {
     ///   - completion: Called when the operation completes.
     func loadReminders(
         query: MessageReminderListQuery,
-        completion: @escaping @Sendable(Result<ReminderListResponse, Error>) -> Void
+        completion: @escaping @Sendable (Result<ReminderListResponse, Error>) -> Void
     ) {
         apiClient.request(endpoint: .queryReminders(query: query)) { [weak self] result in
             switch result {
@@ -69,7 +69,7 @@ class RemindersRepository: @unchecked Sendable {
         messageId: MessageId,
         cid: ChannelId,
         remindAt: Date?,
-        completion: @escaping @Sendable(Result<MessageReminder, Error>) -> Void
+        completion: @escaping @Sendable (Result<MessageReminder, Error>) -> Void
     ) {
         let requestBody = ReminderRequestBody(remindAt: remindAt)
         let endpoint: Endpoint<ReminderResponsePayload> = .createReminder(
@@ -119,7 +119,7 @@ class RemindersRepository: @unchecked Sendable {
         messageId: MessageId,
         cid: ChannelId,
         remindAt: Date?,
-        completion: @escaping @Sendable(Result<MessageReminder, Error>) -> Void
+        completion: @escaping @Sendable (Result<MessageReminder, Error>) -> Void
     ) {
         let requestBody = ReminderRequestBody(remindAt: remindAt)
         let endpoint: Endpoint<ReminderResponsePayload> = .updateReminder(messageId: messageId, request: requestBody)
@@ -169,7 +169,7 @@ class RemindersRepository: @unchecked Sendable {
     func deleteReminder(
         messageId: MessageId,
         cid: ChannelId,
-        completion: @escaping @Sendable(Error?) -> Void
+        completion: @escaping @Sendable (Error?) -> Void
     ) {
         let endpoint: Endpoint<EmptyResponse> = .deleteReminder(messageId: messageId)
         

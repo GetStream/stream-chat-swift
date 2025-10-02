@@ -173,7 +173,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     /// Use this method to safely mutate the content of the database. This method is asynchronous.
     ///
     /// - Parameter actions: A block that performs the actual mutation.
-    func write(_ actions: @escaping @Sendable(DatabaseSession) throws -> Void) {
+    func write(_ actions: @escaping @Sendable (DatabaseSession) throws -> Void) {
         write(actions, completion: { _ in })
     }
 
@@ -185,7 +185,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     /// - Parameters:
     ///   - actions: A block that performs the actual mutation.
     ///   - completion: Called when the changes are saved to the DB. If the changes can't be saved, called with an error.
-    func write(_ actions: @escaping @Sendable(DatabaseSession) throws -> Void, completion: @escaping @Sendable(Error?) -> Void) {
+    func write(_ actions: @escaping @Sendable (DatabaseSession) throws -> Void, completion: @escaping @Sendable (Error?) -> Void) {
         writableContext.perform {
             log.debug("Starting a database session.", subsystems: .database)
             do {
@@ -211,7 +211,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         }
     }
     
-    func write(_ actions: @escaping @Sendable(DatabaseSession) throws -> Void) async throws {
+    func write(_ actions: @escaping @Sendable (DatabaseSession) throws -> Void) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             write(actions) { error in
                 if let error {
@@ -223,7 +223,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         }
     }
     
-    func write<T>(converting actions: @escaping @Sendable(DatabaseSession) throws -> T, completion: @escaping @Sendable(Result<T, Error>) -> Void) where T: Sendable {
+    func write<T>(converting actions: @escaping @Sendable (DatabaseSession) throws -> T, completion: @escaping @Sendable (Result<T, Error>) -> Void) where T: Sendable {
         nonisolated(unsafe) var result: T?
         write { session in
             result = try actions(session)
@@ -241,8 +241,8 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         
     private func read<T>(
         from context: NSManagedObjectContext,
-        _ actions: @escaping @Sendable(DatabaseSession) throws -> T,
-        completion: @escaping @Sendable(Result<T, Error>) -> Void
+        _ actions: @escaping @Sendable (DatabaseSession) throws -> T,
+        completion: @escaping @Sendable (Result<T, Error>) -> Void
     ) {
         context.perform {
             do {
@@ -258,11 +258,11 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         }
     }
     
-    func read<T>(_ actions: @escaping @Sendable(DatabaseSession) throws -> T, completion: @escaping @Sendable(Result<T, Error>) -> Void) {
+    func read<T>(_ actions: @escaping @Sendable (DatabaseSession) throws -> T, completion: @escaping @Sendable (Result<T, Error>) -> Void) {
         read(from: backgroundReadOnlyContext, actions, completion: completion)
     }
     
-    func read<T>(_ actions: @escaping @Sendable(DatabaseSession) throws -> T) async throws -> T where T: Sendable {
+    func read<T>(_ actions: @escaping @Sendable (DatabaseSession) throws -> T) async throws -> T where T: Sendable {
         try await withCheckedThrowingContinuation { continuation in
             read(from: stateLayerContext, actions) { result in
                 continuation.resume(with: result)

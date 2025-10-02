@@ -89,7 +89,7 @@ private final class RepeatingTimer: RepeatingTimerControl {
     #if compiler(>=6.1)
     private let timer: DispatchSourceTimer
     #else
-    nonisolated(unsafe) private let timer: DispatchSourceTimer
+    private nonisolated(unsafe) let timer: DispatchSourceTimer
     #endif
 
     init(timeInterval: TimeInterval, queue: DispatchQueue, onFire: @escaping () -> Void) {

@@ -26,7 +26,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     ///   - cid: The channel identifier the message relates to.
     ///   - messageId: The message identifier.
     ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
-    func getMessage(cid: ChannelId, messageId: MessageId, completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil) {
+    func getMessage(cid: ChannelId, messageId: MessageId, completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil) {
         repository.getMessage(cid: cid, messageId: messageId, store: true, completion: completion)
     }
 
@@ -43,7 +43,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     ///   - messageId: The message identifier.
     ///   - hard: A Boolean value to determine if the message will be delete permanently on the backend.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
-    func deleteMessage(messageId: MessageId, hard: Bool, completion: (@Sendable(Error?) -> Void)? = nil) {
+    func deleteMessage(messageId: MessageId, hard: Bool, completion: (@Sendable (Error?) -> Void)? = nil) {
         nonisolated(unsafe) var shouldDeleteOnBackend = true
 
         database.write({ session in
@@ -114,7 +114,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         attachments: [AnyAttachmentPayload] = [],
         restrictedVisibility: [UserId],
         extraData: [String: RawJSON]? = nil,
-        completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         nonisolated(unsafe) var message: ChatMessage?
         database.write({ session in
@@ -192,7 +192,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         attachments: [AnyAttachmentPayload]? = nil,
         extraData: [String: RawJSON]? = nil,
         unset: [String]? = nil,
-        completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         let attachmentPayloads: [MessageAttachmentPayload]? = attachments?.compactMap { attachment in
             guard let payloadData = try? JSONEncoder.default.encode(attachment.payload) else {
@@ -292,7 +292,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         extraData: [String: RawJSON],
-        completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         nonisolated(unsafe) var newMessage: ChatMessage?
         database.write({ (session) in
@@ -336,7 +336,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     func updateLiveLocation(
         messageId: MessageId,
         locationInfo: LocationInfo,
-        completion: @escaping @Sendable(Result<SharedLocation, Error>) -> Void
+        completion: @escaping @Sendable (Result<SharedLocation, Error>) -> Void
     ) {
         database.write { [weak self] session in
             // Update the location locally first so that the observers
@@ -383,7 +383,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     /// Stops live location sharing for the given message.
     func stopLiveLocationSharing(
         messageId: MessageId,
-        completion: @escaping @Sendable(Result<SharedLocation, Error>) -> Void
+        completion: @escaping @Sendable (Result<SharedLocation, Error>) -> Void
     ) {
         // Optimistic update
         nonisolated(unsafe) var previousEndAt: DBDate?
@@ -440,7 +440,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         messageId: MessageId,
         pagination: MessagesPagination,
         paginationStateHandler: MessagesPaginationStateHandling,
-        completion: (@Sendable(Result<MessageRepliesPayload, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<MessageRepliesPayload, Error>) -> Void)? = nil
     ) {
         paginationStateHandler.begin(pagination: pagination)
 
@@ -487,7 +487,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         cid: ChannelId,
         messageId: MessageId,
         pagination: Pagination,
-        completion: (@Sendable(Result<[ChatMessageReaction], Error>) -> Void)? = nil
+        completion: (@Sendable (Result<[ChatMessageReaction], Error>) -> Void)? = nil
     ) {
         let endpoint: Endpoint<MessageReactionsPayload> = .loadReactions(
             messageId: messageId,
@@ -525,7 +525,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         in cid: ChannelId,
         reason: String? = nil,
         extraData: [String: RawJSON]? = nil,
-        completion: (@Sendable(Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         fetchAndSaveMessageIfNeeded(messageId, cid: cid) { error in
             guard error == nil else {
@@ -576,7 +576,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         pushEmojiCode: String?,
         extraData: [String: RawJSON],
         messageId: MessageId,
-        completion: (@Sendable(Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         let version = UUID().uuidString
 
@@ -624,7 +624,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     func deleteReaction(
         _ type: MessageReactionType,
         messageId: MessageId,
-        completion: (@Sendable(Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         nonisolated(unsafe) var reactionScore: Int?
         database.write { session in
@@ -655,7 +655,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     ///  - Parameters:
     ///   - messageId: The message identifier.
     ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
-    func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil) {
+    func pinMessage(messageId: MessageId, pinning: MessagePinning, completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil) {
         pinLocalMessage(on: messageId, pinning: pinning) { [weak self] pinResult in
             switch pinResult {
             case .failure(let pinError):
@@ -684,7 +684,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     ///  - Parameters:
     ///   - messageId: The message identifier.
     ///   - completion: The completion handler with the result.
-    func unpinMessage(messageId: MessageId, completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil) {
+    func unpinMessage(messageId: MessageId, completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil) {
         unpinLocalMessage(on: messageId) { [weak self] unpinResult, pinning in
             switch unpinResult {
             case .failure(let unpinError):
@@ -712,7 +712,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     private func pinLocalMessage(
         on messageId: MessageId,
         pinning: MessagePinning,
-        completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil
     ) {
         nonisolated(unsafe) var message: ChatMessage!
         database.write { session in
@@ -733,7 +733,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
 
     private func unpinLocalMessage(
         on messageId: MessageId,
-        completion: (@Sendable(Result<ChatMessage, Error>, MessagePinning) -> Void)? = nil
+        completion: (@Sendable (Result<ChatMessage, Error>, MessagePinning) -> Void)? = nil
     ) {
         nonisolated(unsafe) var message: ChatMessage!
         nonisolated(unsafe) var pinning: MessagePinning = .noExpiration
@@ -758,7 +758,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
 
     func downloadAttachment<Payload>(
         _ attachment: ChatMessageAttachment<Payload>,
-        completion: @escaping @Sendable(Result<ChatMessageAttachment<Payload>, Error>) -> Void
+        completion: @escaping @Sendable (Result<ChatMessageAttachment<Payload>, Error>) -> Void
     ) where Payload: DownloadableAttachmentPayload {
         let attachmentId = attachment.id
         let localURL = URL.streamAttachmentLocalStorageURL(forRelativePath: attachment.relativeStoragePath)
@@ -791,7 +791,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         )
     }
 
-    func deleteLocalAttachmentDownload(for attachmentId: AttachmentId, completion: @escaping @Sendable(Error?) -> Void) {
+    func deleteLocalAttachmentDownload(for attachmentId: AttachmentId, completion: @escaping @Sendable (Error?) -> Void) {
         database.write({ session in
             let dto = session.attachment(id: attachmentId)
             guard let attachment = dto?.asAnyModel() else {
@@ -810,7 +810,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         payloadType: Payload.Type,
         newState: LocalAttachmentDownloadState,
         localURL: URL,
-        completion: (@Sendable(Result<ChatMessageAttachment<Payload>, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<ChatMessageAttachment<Payload>, Error>) -> Void)? = nil
     ) where Payload: DownloadableAttachmentPayload {
         nonisolated(unsafe) var model: ChatMessageAttachment<Payload>?
         database.write({ session in
@@ -853,7 +853,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the attachment database entity is updated. Called with `Error` if update fails.
     func restartFailedAttachmentUploading(
         with id: AttachmentId,
-        completion: @escaping @Sendable(Error?) -> Void
+        completion: @escaping @Sendable (Error?) -> Void
     ) {
         database.write({
             guard let attachmentDTO = $0.attachment(id: id) else {
@@ -877,7 +877,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the message database entity is updated. Called with `Error` if update fails.
     func resendMessage(
         with messageId: MessageId,
-        completion: @escaping @Sendable(Error?) -> Void
+        completion: @escaping @Sendable (Error?) -> Void
     ) {
         database.write({
             let messageDTO = try $0.messageEditableByCurrentUser(messageId)
@@ -908,7 +908,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         cid: ChannelId,
         messageId: MessageId,
         action: AttachmentAction,
-        completion: (@Sendable(Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         database.write({ session in
             let messageDTO = try session.messageEditableByCurrentUser(messageId)
@@ -959,7 +959,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         })
     }
 
-    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: (@Sendable(Result<MessageSearchResults, Error>) -> Void)? = nil) {
+    func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: (@Sendable (Result<MessageSearchResults, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .search(query: query)) { result in
             switch result {
             case let .success(payload):
@@ -987,7 +987,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         }
     }
 
-    func clearSearchResults(for query: MessageSearchQuery, completion: (@Sendable(Error?) -> Void)? = nil) {
+    func clearSearchResults(for query: MessageSearchQuery, completion: (@Sendable (Error?) -> Void)? = nil) {
         database.write { session in
             let dto = session.saveQuery(query: query)
             dto.messages.removeAll()
@@ -996,7 +996,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         }
     }
 
-    func translate(messageId: MessageId, to language: TranslationLanguage, completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil) {
+    func translate(messageId: MessageId, to language: TranslationLanguage, completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .translate(messageId: messageId, to: language), completion: { result in
             switch result {
             case let .success(boxedMessage):
@@ -1028,7 +1028,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     func markThreadRead(
         cid: ChannelId,
         threadId: MessageId,
-        completion: @escaping (@Sendable(Error?) -> Void)
+        completion: @escaping (@Sendable (Error?) -> Void)
     ) {
         apiClient.request(
             endpoint: .markThreadRead(cid: cid, threadId: threadId)
@@ -1040,7 +1040,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     func markThreadUnread(
         cid: ChannelId,
         threadId: MessageId,
-        completion: @escaping (@Sendable(Error?) -> Void)
+        completion: @escaping (@Sendable (Error?) -> Void)
     ) {
         apiClient.request(
             endpoint: .markThreadUnread(cid: cid, threadId: threadId)
@@ -1049,7 +1049,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
         }
     }
 
-    func loadThread(query: ThreadQuery, completion: @escaping @Sendable(Result<ChatThread, Error>) -> Void) {
+    func loadThread(query: ThreadQuery, completion: @escaping @Sendable (Result<ChatThread, Error>) -> Void) {
         apiClient.request(endpoint: .thread(query: query)) { result in
             switch result {
             case .success(let response):
@@ -1066,23 +1066,23 @@ class MessageUpdater: Worker, @unchecked Sendable {
     func updateThread(
         for messageId: MessageId,
         request: ThreadPartialUpdateRequest,
-        completion: @escaping @Sendable(Result<ChatThread, Error>) -> Void
+        completion: @escaping @Sendable (Result<ChatThread, Error>) -> Void
     ) {
         apiClient.request(
             endpoint: .partialThreadUpdate(
                 messageId: messageId,
                 request: request
             )) { result in
-            switch result {
-            case .success(let response):
-                self.database.write { session in
-                    let thread = try session.saveThread(partialPayload: response.thread).asModel()
-                    completion(.success(thread))
+                switch result {
+                case .success(let response):
+                    self.database.write { session in
+                        let thread = try session.saveThread(partialPayload: response.thread).asModel()
+                        completion(.success(thread))
+                    }
+                case .failure(let error):
+                    completion(.failure(error))
                 }
-            case .failure(let error):
-                completion(.failure(error))
             }
-        }
     }
 }
 
@@ -1098,7 +1098,7 @@ extension MessageUpdater {
 // MARK: - Private
 
 private extension MessageUpdater {
-    func fetchAndSaveMessageIfNeeded(_ messageId: MessageId, cid: ChannelId, completion: @escaping @Sendable(Error?) -> Void) {
+    func fetchAndSaveMessageIfNeeded(_ messageId: MessageId, cid: ChannelId, completion: @escaping @Sendable (Error?) -> Void) {
         checkMessageExistsLocally(messageId) { exists in
             exists ? completion(nil) : self.getMessage(
                 cid: cid,

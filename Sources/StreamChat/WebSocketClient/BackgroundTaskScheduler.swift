@@ -9,7 +9,7 @@ protocol BackgroundTaskScheduler: Sendable {
     /// It's your responsibility to finish previously running task.
     ///
     /// Returns: `false` if system forbid background task, `true` otherwise
-    func beginTask(expirationHandler: (@Sendable @MainActor() -> Void)?) -> Bool
+    func beginTask(expirationHandler: (@Sendable @MainActor () -> Void)?) -> Bool
     func endTask()
     func startListeningForAppStateUpdates(
         onEnteringBackground: @escaping () -> Void,
@@ -40,7 +40,7 @@ class IOSBackgroundTaskScheduler: BackgroundTaskScheduler, @unchecked Sendable {
         }
     }
 
-    func beginTask(expirationHandler: (@Sendable @MainActor() -> Void)?) -> Bool {
+    func beginTask(expirationHandler: (@Sendable @MainActor () -> Void)?) -> Bool {
         // Only a single task is allowed at the same time
         endTask()
         

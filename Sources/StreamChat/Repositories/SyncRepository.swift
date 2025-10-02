@@ -128,7 +128,7 @@ class SyncRepository: @unchecked Sendable {
 
     // MARK: - Syncing
     
-    func syncLocalState(completion: @escaping @Sendable() -> Void) {
+    func syncLocalState(completion: @escaping @Sendable () -> Void) {
         cancelRecoveryFlow()
 
         getUser { [weak self] in
@@ -165,7 +165,7 @@ class SyncRepository: @unchecked Sendable {
     ///      * channel controllers targeting other channels
     ///      * no channel lists active, but channel controllers are
     /// 4. Re-watch channels what we were watching before disconnect
-    private func syncLocalState(lastSyncAt: Date, completion: @escaping @Sendable() -> Void) {
+    private func syncLocalState(lastSyncAt: Date, completion: @escaping @Sendable () -> Void) {
         let context = SyncContext(lastSyncAt: lastSyncAt)
         var operations: [Operation] = []
         let start = CFAbsoluteTimeGetCurrent()
@@ -234,7 +234,7 @@ class SyncRepository: @unchecked Sendable {
         channelIds: [ChannelId],
         lastSyncAt: Date,
         isRecovery: Bool,
-        completion: @escaping @Sendable(Result<[ChannelId], SyncError>) -> Void
+        completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
     ) {
         guard lastSyncAt.numberOfDaysUntilNow < Constants.maximumDaysSinceLastSync else {
             updateLastSyncAt(with: Date()) { error in
@@ -267,7 +267,7 @@ class SyncRepository: @unchecked Sendable {
         using date: Date,
         channelIds: [ChannelId],
         isRecoveryRequest: Bool,
-        completion: @escaping @Sendable(Result<[ChannelId], SyncError>) -> Void
+        completion: @escaping @Sendable (Result<[ChannelId], SyncError>) -> Void
     ) {
         log.info("Synching events for existing channels since \(date)", subsystems: .offlineSupport)
 
@@ -277,7 +277,7 @@ class SyncRepository: @unchecked Sendable {
         }
 
         let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: date, cids: channelIds)
-        let requestCompletion: @Sendable(Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
+        let requestCompletion: @Sendable (Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
             switch result {
             case let .success(payload):
                 log.info("Processing pending events. Count \(payload.eventPayloads.count)", subsystems: .offlineSupport)
@@ -317,7 +317,7 @@ class SyncRepository: @unchecked Sendable {
         }
     }
 
-    private func updateLastSyncAt(with date: Date, completion: @escaping @Sendable(SyncError?) -> Void) {
+    private func updateLastSyncAt(with date: Date, completion: @escaping @Sendable (SyncError?) -> Void) {
         database.write { session in
             session.currentUser?.lastSynchedEventDate = date.bridgeDate
         } completion: { error in
@@ -331,7 +331,7 @@ class SyncRepository: @unchecked Sendable {
         }
     }
 
-    private func processMissingEventsPayload(_ payload: MissingEventsPayload, completion: @escaping @Sendable() -> Void) {
+    private func processMissingEventsPayload(_ payload: MissingEventsPayload, completion: @escaping @Sendable () -> Void) {
         eventNotificationCenter.process(payload.eventPayloads.asEvents(), postNotifications: false) {
             log.info(
                 "Successfully processed pending events. Count \(payload.eventPayloads.count)",

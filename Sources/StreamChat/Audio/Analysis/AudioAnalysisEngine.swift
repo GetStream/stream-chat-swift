@@ -53,7 +53,7 @@ public struct AudioAnalysisEngine: Sendable {
     public func waveformVisualisation(
         fromAudioURL audioURL: URL,
         for targetSamples: Int,
-        completionHandler: @escaping @Sendable(Result<[Float], Error>) -> Void
+        completionHandler: @escaping @Sendable (Result<[Float], Error>) -> Void
     ) {
         let asset = AVURLAsset(
             url: audioURL,

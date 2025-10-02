@@ -147,7 +147,7 @@ extension Reachability {
                 _ = unmanagedWeakifiedReachability.retain()
                 return UnsafeRawPointer(unmanagedWeakifiedReachability.toOpaque())
             },
-            release: { (info: UnsafeRawPointer) -> Void in
+            release: { (info: UnsafeRawPointer) in
                 let unmanagedWeakifiedReachability = Unmanaged<ReachabilityWeakifier>
                     .fromOpaque(info)
                 unmanagedWeakifiedReachability.release()
@@ -209,7 +209,7 @@ private extension Reachability {
     }
 
     func notifyReachabilityChanged() {
-        let notify: @Sendable() -> Void = { [weak self] in
+        let notify: @Sendable () -> Void = { [weak self] in
             guard let self = self else { return }
             self.connection != .unavailable ? self.whenReachable?(self) : self.whenUnreachable?(self)
         }

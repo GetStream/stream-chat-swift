@@ -20,7 +20,7 @@ class ChatMessageListVC_Mock: ChatMessageListVC {
     }
 
     var jumpToUnreadMessageCallCount = 0
-    override func jumpToUnreadMessage(animated: Bool = true, onHighlight: (@Sendable(IndexPath) -> Void)? = nil) {
+    override func jumpToUnreadMessage(animated: Bool = true, onHighlight: (@Sendable (IndexPath) -> Void)? = nil) {
         jumpToUnreadMessageCallCount += 1
     }
 }

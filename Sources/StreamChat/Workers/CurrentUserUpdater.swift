@@ -28,7 +28,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
         teamsRole: [TeamId: UserRole]?,
         userExtraData: [String: RawJSON]?,
         unset: Set<String>,
-        completion: (@Sendable(Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         let params: [Any?] = [name, imageURL, userExtraData]
         guard !params.allSatisfy({ $0 == nil }) || !unset.isEmpty else {
@@ -72,7 +72,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
         pushProvider: PushProvider,
         providerName: String? = nil,
         currentUserId: UserId,
-        completion: (@Sendable(Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         database.write({ session in
             try session.saveCurrentDevice(deviceId)
@@ -109,7 +109,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     ///   - currentUserId: The current user identifier.
     ///   If `currentUser.devices` is not up-to-date, please make an `fetchDevices` call.
     ///   - completion: Called when device is successfully deregistered, or with error.
-    func removeDevice(id: DeviceId, currentUserId: UserId, completion: (@Sendable(Error?) -> Void)? = nil) {
+    func removeDevice(id: DeviceId, currentUserId: UserId, completion: (@Sendable (Error?) -> Void)? = nil) {
         database.write({ session in
             session.deleteDevice(id: id)
         }, completion: { databaseError in
@@ -134,7 +134,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     /// - Parameters:
     ///     - currentUserId: The current user identifier.
     ///     - completion: Called when request is successfully completed, or with error.
-    func fetchDevices(currentUserId: UserId, completion: (@Sendable(Result<[Device], Error>) -> Void)? = nil) {
+    func fetchDevices(currentUserId: UserId, completion: (@Sendable (Result<[Device], Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .devices(userId: currentUserId)) { [weak self] result in
             do {
                 nonisolated(unsafe) var devices = [Device]()
@@ -160,7 +160,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
         }
     }
     
-    func deleteAllLocalAttachmentDownloads(completion: @escaping @Sendable(Error?) -> Void) {
+    func deleteAllLocalAttachmentDownloads(completion: @escaping @Sendable (Error?) -> Void) {
         database.write({ session in
             // Try to delete all the local files even when one of them happens to fail.
             var latestError: Error?
@@ -186,13 +186,13 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
 
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func markAllRead(completion: (@Sendable(Error?) -> Void)? = nil) {
+    func markAllRead(completion: (@Sendable (Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .markAllRead()) {
             completion?($0.error)
         }
     }
 
-    func loadAllUnreads(completion: @escaping (@Sendable(Result<CurrentUserUnreads, Error>) -> Void)) {
+    func loadAllUnreads(completion: @escaping (@Sendable (Result<CurrentUserUnreads, Error>) -> Void)) {
         apiClient.request(endpoint: .unreads()) { result in
             switch result {
             case .success(let response):
@@ -206,7 +206,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
 
     func setPushPreference(
         _ preference: PushPreferenceRequestPayload,
-        completion: @escaping @Sendable(Result<PushPreference, Error>) -> Void
+        completion: @escaping @Sendable (Result<PushPreference, Error>) -> Void
     ) {
         apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] result in
             switch result {
@@ -237,7 +237,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     ///
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func loadBlockedUsers(completion: @escaping @Sendable(Result<[BlockedUserDetails], Error>) -> Void) {
+    func loadBlockedUsers(completion: @escaping @Sendable (Result<[BlockedUserDetails], Error>) -> Void) {
         apiClient.request(endpoint: .loadBlockedUsers()) {
             switch $0 {
             case let .success(payload):
@@ -258,7 +258,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
         }
     }
 
-    func loadActiveLiveLocations(completion: @escaping @Sendable(Result<[SharedLocation], Error>) -> Void) {
+    func loadActiveLiveLocations(completion: @escaping @Sendable (Result<[SharedLocation], Error>) -> Void) {
         apiClient.request(endpoint: .currentUserActiveLiveLocations()) { result in
             switch result {
             case let .success(payload):

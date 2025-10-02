@@ -210,21 +210,21 @@ public final class ConnectedUser: Sendable {
 
 extension ConnectedUser {
     struct Environment: Sendable {
-        var stateBuilder: @Sendable @MainActor(
+        var stateBuilder: @Sendable @MainActor (
             _ user: CurrentChatUser,
             _ database: DatabaseContainer
         ) -> ConnectedUserState = { @MainActor in
             ConnectedUserState(user: $0, database: $1)
         }
         
-        var currentUserUpdaterBuilder: @Sendable(
+        var currentUserUpdaterBuilder: @Sendable (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> CurrentUserUpdater = {
             CurrentUserUpdater(database: $0, apiClient: $1)
         }
         
-        var userUpdaterBuilder: @Sendable(
+        var userUpdaterBuilder: @Sendable (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> UserUpdater = {

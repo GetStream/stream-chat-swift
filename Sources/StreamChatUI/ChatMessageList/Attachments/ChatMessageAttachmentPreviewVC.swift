@@ -102,13 +102,13 @@ open class ChatMessageAttachmentPreviewVC: _ViewController, WKNavigationDelegate
 
     // MARK: - WKNavigationDelegate
 
-    nonisolated public func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+    public nonisolated func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
         StreamConcurrency.onMain {
             activityIndicatorView.startAnimating()
         }
     }
 
-    nonisolated public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    public nonisolated func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
         StreamConcurrency.onMain {
             activityIndicatorView.stopAnimating()
             

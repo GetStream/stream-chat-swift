@@ -9,7 +9,7 @@ final class AudioRecordingContextAccessor: Sendable {
     /// The queue that thread-safe access to the value's storage
     private let accessQueue: DispatchQueue
 
-    nonisolated(unsafe) private var _value: AudioRecordingContext
+    private nonisolated(unsafe) var _value: AudioRecordingContext
     var value: AudioRecordingContext {
         get { readValue() }
         set { writeValue(newValue) }

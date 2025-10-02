@@ -31,7 +31,7 @@ class MessageRepository: @unchecked Sendable {
 
     func sendMessage(
         with messageId: MessageId,
-        completion: @escaping @Sendable(Result<ChatMessage, MessageRepositoryError>) -> Void
+        completion: @escaping @Sendable (Result<ChatMessage, MessageRepositoryError>) -> Void
     ) {
         // Check the message with the given id is still in the DB.
         database.backgroundReadOnlyContext.perform { [weak self] in
@@ -100,7 +100,7 @@ class MessageRepository: @unchecked Sendable {
     }
 
     /// Marks the message's local status to failed and adds it to the offline retry which sends the message when connection comes back.
-    func scheduleOfflineRetry(for messageId: MessageId, completion: @escaping @Sendable(Result<ChatMessage, MessageRepositoryError>) -> Void) {
+    func scheduleOfflineRetry(for messageId: MessageId, completion: @escaping @Sendable (Result<ChatMessage, MessageRepositoryError>) -> Void) {
         nonisolated(unsafe) var dataEndpoint: DataEndpoint!
         nonisolated(unsafe) var messageModel: ChatMessage!
         database.write { session in
@@ -143,7 +143,7 @@ class MessageRepository: @unchecked Sendable {
     func saveSuccessfullySentMessage(
         cid: ChannelId,
         message: MessagePayload,
-        completion: @escaping @Sendable(Result<ChatMessage, Error>) -> Void
+        completion: @escaping @Sendable (Result<ChatMessage, Error>) -> Void
     ) {
         nonisolated(unsafe) var messageModel: ChatMessage!
         database.write({
@@ -173,7 +173,7 @@ class MessageRepository: @unchecked Sendable {
         _ result: Result<MessagePayload.Boxed, Error>,
         cid: ChannelId,
         messageId: MessageId,
-        completion: @escaping @Sendable(Result<ChatMessage, MessageRepositoryError>) -> Void
+        completion: @escaping @Sendable (Result<ChatMessage, MessageRepositoryError>) -> Void
     ) {
         switch result {
         case let .success(payload):
@@ -198,7 +198,7 @@ class MessageRepository: @unchecked Sendable {
     private func handleInterceptedMessage(
         _ result: Result<SendMessageResponse, Error>,
         messageId: MessageId,
-        completion: @escaping @Sendable(Result<ChatMessage, MessageRepositoryError>) -> Void
+        completion: @escaping @Sendable (Result<ChatMessage, MessageRepositoryError>) -> Void
     ) {
         switch result {
         case let .success(response):
@@ -224,7 +224,7 @@ class MessageRepository: @unchecked Sendable {
     private func handleSendingMessageError(
         _ error: Error,
         messageId: MessageId,
-        completion: @escaping @Sendable(Result<ChatMessage, MessageRepositoryError>) -> Void
+        completion: @escaping @Sendable (Result<ChatMessage, MessageRepositoryError>) -> Void
     ) {
         log.error("Sending the message with id \(messageId) failed with error: \(error)")
 
@@ -251,7 +251,7 @@ class MessageRepository: @unchecked Sendable {
         }
     }
 
-    private func markMessageAsFailedToSend(id: MessageId, completion: @escaping @Sendable() -> Void) {
+    private func markMessageAsFailedToSend(id: MessageId, completion: @escaping @Sendable () -> Void) {
         database.write({
             let dto = $0.message(id: id)
             if dto?.localMessageState == .sending {
@@ -268,11 +268,11 @@ class MessageRepository: @unchecked Sendable {
         })
     }
 
-    func saveSuccessfullyEditedMessage(for id: MessageId, completion: @escaping @Sendable() -> Void) {
+    func saveSuccessfullyEditedMessage(for id: MessageId, completion: @escaping @Sendable () -> Void) {
         updateMessage(withID: id, localState: nil, completion: { _ in completion() })
     }
 
-    func saveSuccessfullyDeletedMessage(message: MessagePayload, completion: (@Sendable(Error?) -> Void)? = nil) {
+    func saveSuccessfullyDeletedMessage(message: MessagePayload, completion: (@Sendable (Error?) -> Void)? = nil) {
         database.write({ session in
             guard let messageDTO = session.message(id: message.id), let cid = messageDTO.channel?.cid else { return }
             let deletedMessage = try session.saveMessage(
@@ -301,7 +301,7 @@ class MessageRepository: @unchecked Sendable {
     ///   - messageId: The message identifier.
     ///   - store: A boolean indicating if the message should be stored to database or should only be retrieved
     ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
-    func getMessage(cid: ChannelId, messageId: MessageId, store: Bool, completion: (@Sendable(Result<ChatMessage, Error>) -> Void)? = nil) {
+    func getMessage(cid: ChannelId, messageId: MessageId, store: Bool, completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil) {
         let endpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
         apiClient.request(endpoint: endpoint) {
             switch $0 {
@@ -341,7 +341,7 @@ class MessageRepository: @unchecked Sendable {
     func getMessage(
         before messageId: MessageId,
         in cid: ChannelId,
-        completion: @escaping @Sendable(Result<MessageId?, Error>) -> Void
+        completion: @escaping @Sendable (Result<MessageId?, Error>) -> Void
     ) {
         let context = database.backgroundReadOnlyContext
         context.perform {
@@ -365,7 +365,7 @@ class MessageRepository: @unchecked Sendable {
 
     func getCurrentUserActiveLiveLocationMessages(
         for channelId: ChannelId,
-        completion: @escaping @Sendable(Result<[ChatMessage], Error>) -> Void
+        completion: @escaping @Sendable (Result<[ChatMessage], Error>) -> Void
     ) {
         let context = database.backgroundReadOnlyContext
         context.perform {
@@ -388,7 +388,7 @@ class MessageRepository: @unchecked Sendable {
         }
     }
 
-    func updateMessage(withID id: MessageId, localState: LocalMessageState?, completion: @escaping @Sendable(Result<ChatMessage, Error>) -> Void) {
+    func updateMessage(withID id: MessageId, localState: LocalMessageState?, completion: @escaping @Sendable (Result<ChatMessage, Error>) -> Void) {
         database.write(converting: {
             guard let dto = $0.message(id: id) else { throw ClientError.MessageDoesNotExist(messageId: id) }
             dto.localMessageState = localState
@@ -399,7 +399,7 @@ class MessageRepository: @unchecked Sendable {
     func undoReactionAddition(
         on messageId: MessageId,
         type: MessageReactionType,
-        completion: (@Sendable() -> Void)? = nil
+        completion: (@Sendable () -> Void)? = nil
     ) {
         database.write {
             let reaction = try $0.removeReaction(from: messageId, type: type, on: nil)
@@ -416,7 +416,7 @@ class MessageRepository: @unchecked Sendable {
         on messageId: MessageId,
         type: MessageReactionType,
         score: Int,
-        completion: (@Sendable() -> Void)? = nil
+        completion: (@Sendable () -> Void)? = nil
     ) {
         database.write {
             _ = try $0.addReaction(to: messageId, type: type, score: score, enforceUnique: false, extraData: [:], localState: .deletingFailed)

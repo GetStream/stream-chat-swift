@@ -23,7 +23,7 @@ class PollsRepository: @unchecked Sendable {
         votingVisibility: String?,
         options: [PollOption]?,
         custom: [String: RawJSON]?,
-        completion: @escaping @Sendable(Result<PollPayload, Error>) -> Void
+        completion: @escaping @Sendable (Result<PollPayload, Error>) -> Void
     ) {
         let request = CreatePollRequestBody(
             name: name,
@@ -54,7 +54,7 @@ class PollsRepository: @unchecked Sendable {
         currentUserId: String?,
         query: PollVoteListQuery?,
         deleteExistingVotes: [PollVote],
-        completion: (@Sendable(Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         guard let optionId, !optionId.isEmpty else {
             // No optimistic updates for answers.
@@ -142,7 +142,7 @@ class PollsRepository: @unchecked Sendable {
         messageId: MessageId,
         pollId: String,
         voteId: String,
-        completion: (@Sendable(Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         nonisolated(unsafe) var exists = false
         nonisolated(unsafe) var answerText: String?
@@ -188,7 +188,7 @@ class PollsRepository: @unchecked Sendable {
     
     func closePoll(
         pollId: String,
-        completion: (@Sendable(Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         let request = UpdatePollPartialRequestBody(
             pollId: pollId,
@@ -203,7 +203,7 @@ class PollsRepository: @unchecked Sendable {
     
     func deletePoll(
         pollId: String,
-        completion: (@Sendable(Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .deletePoll(pollId: pollId)) { [weak self] in
             if $0.error == nil {
@@ -220,7 +220,7 @@ class PollsRepository: @unchecked Sendable {
         text: String,
         position: Int? = nil,
         custom: [String: RawJSON]? = nil,
-        completion: (@Sendable(Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         let request = CreatePollOptionRequestBody(
             pollId: pollId,
@@ -238,7 +238,7 @@ class PollsRepository: @unchecked Sendable {
     
     func queryPollVotes(
         query: PollVoteListQuery,
-        completion: (@Sendable(Result<VotePaginationResponse, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<VotePaginationResponse, Error>) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .queryPollVotes(pollId: query.pollId, query: query)
@@ -268,7 +268,7 @@ class PollsRepository: @unchecked Sendable {
         prev: String?,
         sort: [SortParamRequest?],
         filter: [String: RawJSON]?,
-        completion: (@Sendable(Result<PollVoteListResponse, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<PollVoteListResponse, Error>) -> Void)? = nil
     ) {
         let request = QueryPollVotesRequestBody(
             pollId: pollId,

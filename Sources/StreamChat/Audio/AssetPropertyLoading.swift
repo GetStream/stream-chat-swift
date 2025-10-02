@@ -94,7 +94,7 @@ public protocol AssetPropertyLoading: Sendable {
     func loadProperties<Asset: AVAsset>(
         _ properties: [AssetProperty],
         of asset: Asset,
-        completion: @escaping @Sendable(Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
+        completion: @escaping @Sendable (Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
     )
 }
 
@@ -105,7 +105,7 @@ public struct StreamAssetPropertyLoader: AssetPropertyLoading {
     public func loadProperties<Asset: AVAsset>(
         _ properties: [AssetProperty],
         of asset: Asset,
-        completion: @escaping @Sendable(Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
+        completion: @escaping @Sendable (Result<Asset, AssetPropertyLoadingCompositeError>) -> Void
     ) {
         // it's worth noting here that according to the documentation, the completion
         // handler will be invoked only once, regardless of the number of

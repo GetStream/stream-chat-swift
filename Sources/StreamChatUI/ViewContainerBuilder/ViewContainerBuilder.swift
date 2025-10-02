@@ -78,7 +78,7 @@ public func VContainer(
     spacing: CGFloat = 0,
     distribution: UIStackView.Distribution = .fill,
     alignment: UIStackView.Alignment = .fill,
-    @ViewContainerBuilder content: @MainActor() -> UIStackView = { UIStackView() }
+    @ViewContainerBuilder content: @MainActor () -> UIStackView = { UIStackView() }
 ) -> UIStackView {
     let stack = content()
     stack.translatesAutoresizingMaskIntoConstraints = false
@@ -100,7 +100,7 @@ public func HContainer(
     spacing: CGFloat = 0,
     distribution: UIStackView.Distribution = .fill,
     alignment: UIStackView.Alignment = .fill,
-    @ViewContainerBuilder content: @MainActor() -> UIStackView = { UIStackView() }
+    @ViewContainerBuilder content: @MainActor () -> UIStackView = { UIStackView() }
 ) -> UIStackView {
     let stack = content()
     stack.translatesAutoresizingMaskIntoConstraints = false

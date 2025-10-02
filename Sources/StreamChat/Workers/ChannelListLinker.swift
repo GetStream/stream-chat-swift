@@ -14,14 +14,14 @@ import Foundation
 final class ChannelListLinker: Sendable {
     private let clientConfig: ChatClientConfig
     private let databaseContainer: DatabaseContainer
-    nonisolated(unsafe) private var eventObservers = [EventObserver]()
-    private let filter: (@Sendable(ChatChannel) -> Bool)?
+    private nonisolated(unsafe) var eventObservers = [EventObserver]()
+    private let filter: (@Sendable (ChatChannel) -> Bool)?
     private let query: ChannelListQuery
     private let worker: ChannelListUpdater
     
     init(
         query: ChannelListQuery,
-        filter: (@Sendable(ChatChannel) -> Bool)?,
+        filter: (@Sendable (ChatChannel) -> Bool)?,
         clientConfig: ChatClientConfig,
         databaseContainer: DatabaseContainer,
         worker: ChannelListUpdater

@@ -126,7 +126,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
         }
     }
 
-    private func prepareAttachmentForUpload(with id: AttachmentId, completion: @escaping @Sendable(Result<AnyChatMessageAttachment, Error>) -> Void) {
+    private func prepareAttachmentForUpload(with id: AttachmentId, completion: @escaping @Sendable (Result<AnyChatMessageAttachment, Error>) -> Void) {
         let attachmentStorage = self.attachmentStorage
         nonisolated(unsafe) var model: AnyChatMessageAttachment?
         nonisolated(unsafe) var attachmentLocalURL: URL?
@@ -191,7 +191,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
         attachmentId: AttachmentId,
         uploadedAttachment: UploadedAttachment?,
         newState: LocalAttachmentState,
-        completion: @escaping @Sendable() -> Void = {}
+        completion: @escaping @Sendable () -> Void = {}
     ) {
         database.write({ [minSignificantUploadingProgressChange, weak self] session in
             guard let attachmentDTO = session.attachment(id: attachmentId) else { return }

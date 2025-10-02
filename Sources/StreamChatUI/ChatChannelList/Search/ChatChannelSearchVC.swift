@@ -10,7 +10,7 @@ import UIKit
 @available(iOSApplicationExtension, unavailable)
 open class ChatChannelSearchVC: ChatChannelListSearchVC {
     /// The closure that is triggered whenever a channel is selected from the search result.
-    public var didSelectChannel: (@MainActor(ChatChannel) -> Void)?
+    public var didSelectChannel: (@MainActor (ChatChannel) -> Void)?
 
     // MARK: - ChatChannelListSearchVC Abstract Implementations
 

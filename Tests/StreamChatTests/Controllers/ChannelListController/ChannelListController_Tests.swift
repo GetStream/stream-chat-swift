@@ -461,7 +461,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenFilterMatches_shouldLinkChannelToQuery() {
-        let filter: @Sendable(ChatChannel) -> Bool = { channel in
+        let filter: @Sendable (ChatChannel) -> Bool = { channel in
             channel.memberCount == 4
         }
         setupControllerWithFilter(filter)
@@ -482,7 +482,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenFilterMatches_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
-        let filter: @Sendable(ChatChannel) -> Bool = { channel in
+        let filter: @Sendable (ChatChannel) -> Bool = { channel in
             channel.memberCount == 4
         }
         setupControllerWithFilter(filter)
@@ -512,7 +512,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenFilterDoesNotMatch_shouldNotLinkChannelToQuery() {
-        let filter: @Sendable(ChatChannel) -> Bool = { channel in
+        let filter: @Sendable (ChatChannel) -> Bool = { channel in
             channel.memberCount == 1
         }
         setupControllerWithFilter(filter)
@@ -529,7 +529,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenChannelUpdatedEvent_whenFilterDoesNotMatch_shouldUnlinkChannelFromQuery() throws {
-        let filter: @Sendable(ChatChannel) -> Bool = { channel in
+        let filter: @Sendable (ChatChannel) -> Bool = { channel in
             channel.memberCount == 1
         }
         setupControllerWithFilter(filter)
@@ -558,7 +558,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenChannelUpdatedEvent__whenFilterMatches_shouldNotUnlinkChannelFromQuery() throws {
-        let filter: @Sendable(ChatChannel) -> Bool = { channel in
+        let filter: @Sendable (ChatChannel) -> Bool = { channel in
             channel.memberCount == 4
         }
         setupControllerWithFilter(filter)
@@ -586,7 +586,7 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     func test_didReceiveEvent_whenChannelUpdatedEvent__whenFilterDoesNotMatch_whenChannelNotPresent_shouldNotUnlinkChannelFromQuery() throws {
-        let filter: @Sendable(ChatChannel) -> Bool = { channel in
+        let filter: @Sendable (ChatChannel) -> Bool = { channel in
             channel.memberCount == 1
         }
         setupControllerWithFilter(filter)
@@ -1841,7 +1841,7 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
-    private func setupControllerWithFilter(_ filter: @escaping @Sendable(ChatChannel) -> Bool) {
+    private func setupControllerWithFilter(_ filter: @escaping @Sendable (ChatChannel) -> Bool) {
         // Prepare controller
         controller = ChatChannelListController(
             query: query,
@@ -1864,8 +1864,8 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     private func writeAndWaitForChannelsUpdates(
-        _ actions: @escaping @Sendable(DatabaseSession) throws -> Void,
-        completion: (@Sendable(Error?) -> Void)? = nil,
+        _ actions: @escaping @Sendable (DatabaseSession) throws -> Void,
+        completion: (@Sendable (Error?) -> Void)? = nil,
         file: StaticString = #file,
         line: UInt = #line
     ) {

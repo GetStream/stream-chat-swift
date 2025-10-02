@@ -22,7 +22,7 @@ public protocol AudioRecording {
     /// - Note: If the recording permission has been answered before
     /// the completionHandler will be called immediately, otherwise it will be called once the user has
     /// replied on the request permission prompt.
-    func beginRecording(_ completionHandler: @escaping @Sendable() -> Void)
+    func beginRecording(_ completionHandler: @escaping @Sendable () -> Void)
 
     /// Pause the currently active recording process
     func pauseRecording()
@@ -79,7 +79,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         }
 
         /// The default Configuration that is being used by `StreamAudioRecorder`
-        nonisolated(unsafe) public static let `default` = Configuration(
+        public nonisolated(unsafe) static let `default` = Configuration(
             audioRecorderSettings: [
                 AVFormatIDKey: Int(kAudioFormatMPEG4AAC),
                 AVSampleRateKey: 12000,
@@ -209,7 +209,7 @@ open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegat
         multicastDelegate.add(additionalDelegate: subscriber)
     }
 
-    open func beginRecording(_ completionHandler: @escaping @Sendable() -> Void) {
+    open func beginRecording(_ completionHandler: @escaping @Sendable () -> Void) {
         do {
             /// Enable recording on `AudioSession`
             try audioSessionConfigurator.activateRecordingSession()

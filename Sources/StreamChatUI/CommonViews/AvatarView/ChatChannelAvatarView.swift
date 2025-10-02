@@ -120,7 +120,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
     open func loadAvatarsFrom(
         urls: [URL?],
         channelId: ChannelId,
-        completion: @escaping @Sendable([UIImage], ChannelId)
+        completion: @escaping @Sendable ([UIImage], ChannelId)
             -> Void
     ) {
         nonisolated(unsafe) var placeholderImages = [

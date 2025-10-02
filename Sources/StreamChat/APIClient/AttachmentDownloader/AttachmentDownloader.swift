@@ -16,8 +16,8 @@ protocol AttachmentDownloader {
     func download(
         from remoteURL: URL,
         to localURL: URL,
-        progress: (@Sendable(Double) -> Void)?,
-        completion: @escaping @Sendable(Error?) -> Void
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Error?) -> Void
     )
 }
 
@@ -32,8 +32,8 @@ final class StreamAttachmentDownloader: AttachmentDownloader, @unchecked Sendabl
     func download(
         from remoteURL: URL,
         to localURL: URL,
-        progress: (@Sendable(Double) -> Void)?,
-        completion: @escaping @Sendable(Error?) -> Void
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Error?) -> Void
     ) {
         let request = URLRequest(url: remoteURL)
         let task = session.downloadTask(with: request) { temporaryURL, _, downloadError in

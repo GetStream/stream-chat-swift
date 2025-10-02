@@ -89,7 +89,7 @@ public extension ChatConnectionController {
     /// - Parameter completion: Called when the connection is established. If the connection fails, the completion is
     /// called with an error.
     ///
-    func connect(completion: (@MainActor(Error?) -> Void)? = nil) {
+    func connect(completion: (@MainActor (Error?) -> Void)? = nil) {
         connectionRepository.connect { [weak self] error in
             self?.callback {
                 completion?(error)
@@ -130,8 +130,8 @@ public extension ChatConnectionController {
 private class ConnectionEventObserver: EventObserver {
     init(
         notificationCenter: NotificationCenter,
-        filter: (@Sendable(ConnectionStatusUpdated) -> Bool)? = nil,
-        callback: @escaping @Sendable(ConnectionStatusUpdated) -> Void
+        filter: (@Sendable (ConnectionStatusUpdated) -> Bool)? = nil,
+        callback: @escaping @Sendable (ConnectionStatusUpdated) -> Void
     ) {
         super.init(notificationCenter: notificationCenter, transform: { $0 as? ConnectionStatusUpdated }) {
             guard filter == nil || filter?($0) == true else { return }

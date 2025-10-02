@@ -256,7 +256,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             try? database.viewContext.channel(cid: cid)?.asModel()
         }
 
-        let callback: @Sendable(ChannelId) -> Void = {
+        let callback: @Sendable (ChannelId) -> Void = {
             cid = $0
             // Assert channel is not saved to DB before callback returns
             AssertAsync.staysTrue(channel == nil)
@@ -290,7 +290,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             try? database.viewContext.channel(cid: cid)?.asModel()
         }
 
-        let callback: @Sendable(ChannelId) -> Void = {
+        let callback: @Sendable (ChannelId) -> Void = {
             cid = $0
             // Assert channel is not saved to DB before callback returns
             AssertAsync.staysTrue(channel == nil)

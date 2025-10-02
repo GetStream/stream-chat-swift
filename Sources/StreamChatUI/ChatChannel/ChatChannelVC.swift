@@ -13,8 +13,7 @@ open class ChatChannelVC: _ViewController,
     ChatMessageListVCDelegate,
     ChatChannelControllerDelegate,
     EventsControllerDelegate,
-    AudioQueuePlayerDatasource
-{
+    AudioQueuePlayerDatasource {
     /// Controller for observing data changes within the channel.
     open var channelController: ChatChannelController!
 
@@ -309,7 +308,7 @@ open class ChatChannelVC: _ViewController,
     // MARK: - Loading previous and next messages state handling.
 
     /// Called when the channel will load previous (older) messages.
-    open func loadPreviousMessages(completion: @escaping @MainActor(Error?) -> Void) {
+    open func loadPreviousMessages(completion: @escaping @MainActor (Error?) -> Void) {
         channelController.loadPreviousMessages { [weak self] error in
             completion(error)
             self?.didFinishLoadingPreviousMessages(with: error)
@@ -323,7 +322,7 @@ open class ChatChannelVC: _ViewController,
     }
 
     /// Called when the channel will load next (newer) messages.
-    open func loadNextMessages(completion: @escaping @MainActor(Error?) -> Void) {
+    open func loadNextMessages(completion: @escaping @MainActor (Error?) -> Void) {
         channelController.loadNextMessages { [weak self] error in
             completion(error)
             self?.didFinishLoadingNextMessages(with: error)
@@ -376,7 +375,7 @@ open class ChatChannelVC: _ViewController,
     public func chatMessageListVC(
         _ vc: ChatMessageListVC,
         shouldLoadPageAroundMessageId messageId: MessageId,
-        _ completion: @escaping @MainActor(Error?) -> Void
+        _ completion: @escaping @MainActor (Error?) -> Void
     ) {
         if let message = channelController.dataStore.message(id: messageId),
            let parentMessageId = getParentMessageId(forMessageInsideThread: message) {
@@ -481,7 +480,7 @@ open class ChatChannelVC: _ViewController,
         let shouldShowDate = vc.shouldShowDateSeparator(forMessage: message, at: indexPath)
         let shouldShowUnreadMessages = components.isUnreadMessagesSeparatorEnabled && message.id == firstUnreadMessageId
 
-        guard (shouldShowDate || shouldShowUnreadMessages), let channel = channelController.channel else {
+        guard shouldShowDate || shouldShowUnreadMessages, let channel = channelController.channel else {
             return nil
         }
 

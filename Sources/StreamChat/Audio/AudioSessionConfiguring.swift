@@ -27,7 +27,7 @@ public protocol AudioSessionConfiguring {
     /// with a result, call the completionHandler to continue the flow.
     /// - Parameter completionHandler: The completion handler that will be called to continue the flow.
     func requestRecordPermission(
-        _ completionHandler: @escaping @Sendable(Bool) -> Void
+        _ completionHandler: @escaping @Sendable (Bool) -> Void
     )
 }
 
@@ -46,7 +46,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
     public func deactivatePlaybackSession() throws { /* No-op */ }
 
-    public func requestRecordPermission(_ completionHandler: @escaping @Sendable(Bool) -> Void) { completionHandler(true) }
+    public func requestRecordPermission(_ completionHandler: @escaping @Sendable (Bool) -> Void) { completionHandler(true) }
 }
 #else
 open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked Sendable {
@@ -120,7 +120,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
     ///     with a response.
     ///     - Note: The closure's invocation will be dispatched on the MainThread.
     open func requestRecordPermission(
-        _ completionHandler: @escaping @Sendable(Bool) -> Void
+        _ completionHandler: @escaping @Sendable (Bool) -> Void
     ) {
         audioSession.requestRecordPermission { [weak self] in
             self?.handleRecordPermissionResponse($0, completionHandler: completionHandler)
@@ -141,7 +141,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
 
     private func handleRecordPermissionResponse(
         _ permissionGranted: Bool,
-        completionHandler: @escaping @Sendable(Bool) -> Void
+        completionHandler: @escaping @Sendable (Bool) -> Void
     ) {
         guard Thread.isMainThread else {
             DispatchQueue.main.async { [weak self] in

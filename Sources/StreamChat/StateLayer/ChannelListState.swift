@@ -10,7 +10,7 @@ import Foundation
     
     init(
         query: ChannelListQuery,
-        dynamicFilter: (@Sendable(ChatChannel) -> Bool)?,
+        dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
         clientConfig: ChatClientConfig,
         channelListUpdater: ChannelListUpdater,
         database: DatabaseContainer,

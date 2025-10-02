@@ -19,7 +19,7 @@ public protocol ImageLoading: AnyObject {
         into imageView: UIImageView,
         from url: URL?,
         with options: ImageLoaderOptions,
-        completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)?
+        completion: (@MainActor (_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable?
 
     /// Load an image into an imageView from a given `ImageAttachmentPayload`.
@@ -34,7 +34,7 @@ public protocol ImageLoading: AnyObject {
         into imageView: UIImageView,
         from attachmentPayload: ImageAttachmentPayload?,
         maxResolutionInPixels: Double,
-        completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)?
+        completion: (@MainActor (_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable?
 
     /// Download an image from the given `URL`.
@@ -45,7 +45,7 @@ public protocol ImageLoading: AnyObject {
     @discardableResult
     func downloadImage(
         with request: ImageDownloadRequest,
-        completion: @escaping (@MainActor(_ result: Result<UIImage, Error>) -> Void)
+        completion: @escaping (@MainActor (_ result: Result<UIImage, Error>) -> Void)
     ) -> Cancellable?
 
     /// Load a batch of images and get notified when all of them complete loading.
@@ -55,7 +55,7 @@ public protocol ImageLoading: AnyObject {
     ///   It returns an array of image and errors in case the image failed to load.
     func downloadMultipleImages(
         with requests: [ImageDownloadRequest],
-        completion: @escaping (@MainActor([Result<UIImage, Error>]) -> Void)
+        completion: @escaping (@MainActor ([Result<UIImage, Error>]) -> Void)
     )
 }
 
@@ -67,7 +67,7 @@ public extension ImageLoading {
         into imageView: UIImageView,
         from attachmentPayload: ImageAttachmentPayload?,
         maxResolutionInPixels: Double,
-        completion: (@MainActor(_ result: Result<UIImage, Error>) -> Void)?
+        completion: (@MainActor (_ result: Result<UIImage, Error>) -> Void)?
     ) -> Cancellable? {
         guard let originalWidth = attachmentPayload?.originalWidth,
               let originalHeight = attachmentPayload?.originalHeight else {

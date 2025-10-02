@@ -7,7 +7,7 @@ import CoreData
 class ReactionListUpdater: Worker, @unchecked Sendable {
     func loadReactions(
         query: ReactionListQuery,
-        completion: @escaping @Sendable(Result<[ChatMessageReaction], Error>) -> Void
+        completion: @escaping @Sendable (Result<[ChatMessageReaction], Error>) -> Void
     ) {
         apiClient.request(
             endpoint: .loadReactionsV2(query: query)

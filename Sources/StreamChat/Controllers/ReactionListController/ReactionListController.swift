@@ -110,7 +110,7 @@ public class ChatReactionListController: DataController, DelegateCallable, DataS
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         startReactionListObserverIfNeeded()
 
         worker.loadReactions(query: query) { result in
@@ -148,7 +148,7 @@ public extension ChatReactionListController {
     ///   - completion: The completion callback.
     func loadMoreReactions(
         limit: Int = 25,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         var updatedQuery = query
         updatedQuery.pagination = Pagination(pageSize: limit, offset: reactions.count)

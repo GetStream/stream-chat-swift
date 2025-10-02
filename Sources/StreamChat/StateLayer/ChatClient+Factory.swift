@@ -47,7 +47,7 @@ extension ChatClient {
     /// - Returns: An instance of ``ChannelList`` which represents actions and the state of the list.
     public func makeChannelList(
         with query: ChannelListQuery,
-        dynamicFilter: (@Sendable(ChatChannel) -> Bool)? = nil
+        dynamicFilter: (@Sendable (ChatChannel) -> Bool)? = nil
     ) -> ChannelList {
         ChannelList(query: query, dynamicFilter: dynamicFilter, client: self)
     }

@@ -13,8 +13,8 @@ public protocol AttachmentUploader: Sendable {
     ///   - completion: The callback with the uploaded attachment.
     func upload(
         _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable(Double) -> Void)?,
-        completion: @escaping @Sendable(Result<UploadedAttachment, Error>) -> Void
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Result<UploadedAttachment, Error>) -> Void
     )
     
     /// Uploads a standalone attachment (not tied to message or channel), and returns the attachment with the remote information.
@@ -24,8 +24,8 @@ public protocol AttachmentUploader: Sendable {
     ///   - completion: The callback with the uploaded attachment.
     func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamAttachment<Payload>,
-        progress: (@Sendable(Double) -> Void)?,
-        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     )
 }
 
@@ -38,8 +38,8 @@ public class StreamAttachmentUploader: AttachmentUploader, @unchecked Sendable {
 
     public func upload(
         _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable(Double) -> Void)?,
-        completion: @escaping @Sendable(Result<UploadedAttachment, Error>) -> Void
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Result<UploadedAttachment, Error>) -> Void
     ) {
         cdnClient.uploadAttachment(attachment, progress: progress) { (result: Result<UploadedFile, Error>) in
             completion(result.map { file in
@@ -55,8 +55,8 @@ public class StreamAttachmentUploader: AttachmentUploader, @unchecked Sendable {
     
     public func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamAttachment<Payload>,
-        progress: (@Sendable(Double) -> Void)?,
-        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
         cdnClient.uploadStandaloneAttachment(
             attachment,

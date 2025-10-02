@@ -102,7 +102,7 @@ public struct Filter<Scope: FilterScope>: Sendable {
 
     /// The mapper that will transform the input value to a value that
     /// can be compared with the DB value
-    typealias ValueMapper = @Sendable(Any) -> FilterValue?
+    typealias ValueMapper = @Sendable (Any) -> FilterValue?
     let valueMapper: ValueMapper?
 
     /// The keypath of the DB object that will be compared with the input value during
@@ -114,7 +114,7 @@ public struct Filter<Scope: FilterScope>: Sendable {
 
     /// The mapper that will override the DB Predicate. This might be needed
     /// for cases where our DB value is completely different from the server value.
-    typealias PredicateMapper = @Sendable(FilterOperator, Any) -> NSPredicate?
+    typealias PredicateMapper = @Sendable (FilterOperator, Any) -> NSPredicate?
     let predicateMapper: PredicateMapper?
 
     init(
@@ -234,14 +234,14 @@ public struct FilterKey<Scope: FilterScope, Value: FilterValue>: ExpressibleBySt
 
     /// The mapper that will transform the input value to a value that
     /// can be compared with the DB value
-    typealias ValueMapper = @Sendable(Any) -> FilterValue?
-    typealias TypedValueMapper = @Sendable(Value) -> FilterValue?
+    typealias ValueMapper = @Sendable (Any) -> FilterValue?
+    typealias TypedValueMapper = @Sendable (Value) -> FilterValue?
     let valueMapper: ValueMapper?
 
     /// The mapper that will override the DB Predicate. This might be needed
     /// for cases where our DB value is completely different from the server value.
-    typealias PredicateMapper = @Sendable(FilterOperator, Any) -> NSPredicate?
-    typealias TypedPredicateMapper = @Sendable(FilterOperator, Value) -> NSPredicate?
+    typealias PredicateMapper = @Sendable (FilterOperator, Any) -> NSPredicate?
+    typealias TypedPredicateMapper = @Sendable (FilterOperator, Value) -> NSPredicate?
     let predicateMapper: PredicateMapper?
 
     let isCollectionFilter: Bool

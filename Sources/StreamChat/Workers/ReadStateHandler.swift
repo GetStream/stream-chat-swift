@@ -24,7 +24,7 @@ final class ReadStateHandler: @unchecked Sendable {
         self.messageRepository = messageRepository
     }
     
-    func markRead(_ channel: ChatChannel, completion: @escaping @Sendable(Error?) -> Void) {
+    func markRead(_ channel: ChatChannel, completion: @escaping @Sendable (Error?) -> Void) {
         guard !markingRead, let currentUserId = authenticationRepository.currentUserId else {
             completion(nil)
             return
@@ -48,7 +48,7 @@ final class ReadStateHandler: @unchecked Sendable {
     func markUnread(
         from messageId: MessageId,
         in channel: ChatChannel,
-        completion: @escaping @Sendable(Result<ChatChannel, Error>) -> Void
+        completion: @escaping @Sendable (Result<ChatChannel, Error>) -> Void
     ) {
         guard !markingRead,
               let currentUserId = authenticationRepository.currentUserId

@@ -723,7 +723,7 @@ final class CurrentUserController_Tests: XCTestCase {
     // Delay execution for a bit to make sure background thread acquires lock
     // (from Atomic, in EntityDatabaseObserver.item) if we don't sleep, main thread acquires lock first
     // & no deadlock occurs
-    private func delayExecution(of function: @escaping @Sendable((@Sendable(Error?) -> Void)?) -> Void, onCompletion: (@Sendable() -> Void)?) {
+    private func delayExecution(of function: @escaping @Sendable ((@Sendable (Error?) -> Void)?) -> Void, onCompletion: (@Sendable () -> Void)?) {
         let exp = expectation(description: "completion called")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             function() { _ in

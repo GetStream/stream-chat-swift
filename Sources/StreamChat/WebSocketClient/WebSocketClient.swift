@@ -144,7 +144,7 @@ class WebSocketClient: @unchecked Sendable {
     /// - Parameter source: Additional information about the source of the disconnection. Default value is `.userInitiated`.
     func disconnect(
         source: WebSocketConnectionState.DisconnectionSource = .userInitiated,
-        completion: @escaping @Sendable() -> Void
+        completion: @escaping @Sendable () -> Void
     ) {
         switch connectionState {
         case .initialized, .disconnected, .disconnecting:
@@ -185,7 +185,7 @@ extension WebSocketClient {
         }
 
         var eventBatcherBuilder: (
-            _ handler: @escaping ([Event], @escaping @Sendable() -> Void) -> Void
+            _ handler: @escaping ([Event], @escaping @Sendable () -> Void) -> Void
         ) -> EventBatcher = {
             Batcher<Event>(period: 0.5, handler: $0)
         }

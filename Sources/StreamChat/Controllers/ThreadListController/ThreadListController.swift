@@ -105,7 +105,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
         self.environment = environment
     }
 
-    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         startThreadListObserverIfNeeded()
         threadsRepository.loadThreads(
             query: query
@@ -134,7 +134,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
     ///   - completion: The completion.
     public func loadMoreThreads(
         limit: Int? = nil,
-        completion: (@MainActor(Result<[ChatThread], Error>) -> Void)? = nil
+        completion: (@MainActor (Result<[ChatThread], Error>) -> Void)? = nil
     ) {
         let limit = limit ?? query.limit
         var updatedQuery = query

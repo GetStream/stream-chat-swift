@@ -133,7 +133,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         }
     }
 
-    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         startPollVotesListObserverIfNeeded()
 
         pollsRepository.queryPollVotes(query: query) { [weak self] result in
@@ -174,7 +174,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     ///   - completion: The completion callback.
     public func loadMoreVotes(
         limit: Int? = nil,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query

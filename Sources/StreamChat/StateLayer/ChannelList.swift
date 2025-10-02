@@ -13,7 +13,7 @@ public class ChannelList: @unchecked Sendable {
     
     init(
         query: ChannelListQuery,
-        dynamicFilter: (@Sendable(ChatChannel) -> Bool)?,
+        dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
         client: ChatClient,
         environment: Environment = .init()
     ) {
@@ -92,14 +92,14 @@ public class ChannelList: @unchecked Sendable {
 
 extension ChannelList {
     struct Environment: Sendable {
-        var channelListUpdater: @Sendable(
+        var channelListUpdater: @Sendable (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelListUpdater = { ChannelListUpdater(database: $0, apiClient: $1) }
         
-        var stateBuilder: @Sendable @MainActor(
+        var stateBuilder: @Sendable @MainActor (
             _ query: ChannelListQuery,
-            _ dynamicFilter: (@Sendable(ChatChannel) -> Bool)?,
+            _ dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
             _ clientConfig: ChatClientConfig,
             _ channelListUpdater: ChannelListUpdater,
             _ database: DatabaseContainer,

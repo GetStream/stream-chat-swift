@@ -16,7 +16,7 @@ class APIClient: @unchecked Sendable {
     let decoder: RequestDecoder
 
     /// Used for reobtaining tokens when they expire and API client receives token expiration error
-    var tokenRefresher: ((@escaping @Sendable() -> Void) -> Void)?
+    var tokenRefresher: ((@escaping @Sendable () -> Void) -> Void)?
 
     /// Used to queue requests that happen while we are offline
     var queueOfflineRequest: QueueOfflineRequestBlock?
@@ -79,7 +79,7 @@ class APIClient: @unchecked Sendable {
     ///   - completion: Called when the networking request is finished.
     func request<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        completion: @escaping @Sendable(Result<Response, Error>) -> Void
+        completion: @escaping @Sendable (Result<Response, Error>) -> Void
     ) {
         let requestOperation = operation(endpoint: endpoint, isRecoveryOperation: false, completion: completion)
         operationQueue.addOperation(requestOperation)
@@ -92,7 +92,7 @@ class APIClient: @unchecked Sendable {
     ///   - completion: Called when the networking request is finished.
     func recoveryRequest<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        completion: @escaping @Sendable(Result<Response, Error>) -> Void
+        completion: @escaping @Sendable (Result<Response, Error>) -> Void
     ) {
         if !isInRecoveryMode {
             log.assertionFailure("We should not call this method if not in recovery mode")
@@ -110,7 +110,7 @@ class APIClient: @unchecked Sendable {
     ///   - completion: Called when the networking request is finished.
     func unmanagedRequest<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        completion: @escaping @Sendable(Result<Response, Error>) -> Void
+        completion: @escaping @Sendable (Result<Response, Error>) -> Void
     ) {
         OperationQueue.main.addOperation(
             unmanagedOperation(endpoint: endpoint, completion: completion)
@@ -120,7 +120,7 @@ class APIClient: @unchecked Sendable {
     private func operation<Response: Decodable>(
         endpoint: Endpoint<Response>,
         isRecoveryOperation: Bool,
-        completion: @escaping @Sendable(Result<Response, Error>) -> Void
+        completion: @escaping @Sendable (Result<Response, Error>) -> Void
     ) -> AsyncOperation {
         AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
             guard let self = self else {
@@ -189,7 +189,7 @@ class APIClient: @unchecked Sendable {
 
     private func unmanagedOperation<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        completion: @escaping @Sendable(Result<Response, Error>) -> Void
+        completion: @escaping @Sendable (Result<Response, Error>) -> Void
     ) -> AsyncOperation {
         AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
             self?.executeRequest(endpoint: endpoint) { [weak self] result in
@@ -219,7 +219,7 @@ class APIClient: @unchecked Sendable {
     ///   - completion: Called when the networking request is finished.
     private func executeRequest<Response: Decodable>(
         endpoint: Endpoint<Response>,
-        completion: @escaping @Sendable(Result<Response, Error>) -> Void
+        completion: @escaping @Sendable (Result<Response, Error>) -> Void
     ) {
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             let urlRequest: URLRequest
@@ -268,7 +268,7 @@ class APIClient: @unchecked Sendable {
         }
     }
 
-    private func refreshToken(completion: @escaping @Sendable(ClientError) -> Void) {
+    private func refreshToken(completion: @escaping @Sendable (ClientError) -> Void) {
         guard !isRefreshingToken else {
             completion(ClientError.RefreshingToken())
             return
@@ -290,8 +290,8 @@ class APIClient: @unchecked Sendable {
     func downloadFile(
         from remoteURL: URL,
         to localURL: URL,
-        progress: (@Sendable(Double) -> Void)?,
-        completion: @escaping @Sendable(Error?) -> Void
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Error?) -> Void
     ) {
         let downloadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
             self?.attachmentDownloader.download(from: remoteURL, to: localURL, progress: progress) { [weak self] error in
@@ -314,8 +314,8 @@ class APIClient: @unchecked Sendable {
     
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable(Double) -> Void)?,
-        completion: @escaping @Sendable(Result<UploadedAttachment, Error>) -> Void
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Result<UploadedAttachment, Error>) -> Void
     ) {
         let uploadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
             self?.attachmentUploader.upload(attachment, progress: progress) { [weak self] result in

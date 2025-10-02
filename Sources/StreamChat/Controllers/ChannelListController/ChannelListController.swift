@@ -24,7 +24,7 @@ extension ChatClient {
     /// - Returns: A new instance of `ChatChannelListController`
     public func channelListController(
         query: ChannelListQuery,
-        filter: (@Sendable(ChatChannel) -> Bool)? = nil
+        filter: (@Sendable (ChatChannel) -> Bool)? = nil
     ) -> ChatChannelListController {
         .init(query: query, client: self, filter: filter)
     }
@@ -126,7 +126,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     init(
         query: ChannelListQuery,
         client: ChatClient,
-        filter: (@Sendable(ChatChannel) -> Bool)? = nil,
+        filter: (@Sendable (ChatChannel) -> Bool)? = nil,
         environment: Environment = .init()
     ) {
         self.client = client
@@ -143,7 +143,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         super.init()
     }
 
-    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         startChannelListObserverIfNeeded()
         channelListLinker.start(with: client.eventNotificationCenter)
         client.syncRepository.startTrackingChannelListController(self)
@@ -166,7 +166,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     ///
     public func loadNextChannels(
         limit: Int? = nil,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         if hasLoadedAllPreviousChannels {
             callback {
@@ -191,7 +191,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     // MARK: - Internal
 
-    func refreshLoadedChannels(completion: @escaping @Sendable(Result<Set<ChannelId>, Error>) -> Void) {
+    func refreshLoadedChannels(completion: @escaping @Sendable (Result<Set<ChannelId>, Error>) -> Void) {
         let channelCount = channelListObserver.items.count
         worker.refreshLoadedChannels(for: query, channelCount: channelCount, completion: completion)
     }
@@ -199,7 +199,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     // MARK: - Helpers
 
     private func updateChannelList(
-        _ completion: (@MainActor(_ error: Error?) -> Void)? = nil
+        _ completion: (@MainActor (_ error: Error?) -> Void)? = nil
     ) {
         let limit = query.pagination.pageSize
         worker.update(
@@ -244,7 +244,7 @@ extension ChatChannelListController {
 
         var channelListLinkerBuilder: (
             _ query: ChannelListQuery,
-            _ filter: (@Sendable(ChatChannel) -> Bool)?,
+            _ filter: (@Sendable (ChatChannel) -> Bool)?,
             _ clientConfig: ChatClientConfig,
             _ databaseContainer: DatabaseContainer,
             _ worker: ChannelListUpdater

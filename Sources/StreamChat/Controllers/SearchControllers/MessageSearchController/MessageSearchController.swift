@@ -145,7 +145,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   - text: The message text.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
-    public func search(text: String, completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
+    public func search(text: String, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         startObserversIfNeeded()
 
         guard let currentUserId = client.currentUserId else {
@@ -193,7 +193,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///   - query: Search query.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
-    public func search(query: MessageSearchQuery, completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
+    public func search(query: MessageSearchQuery, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         var query = query
         query.filterHash = explicitFilterHash
 
@@ -224,7 +224,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///
     public func loadNextMessages(
         limit: Int = 25,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         guard let lastQuery = lastQuery else {
             callback {

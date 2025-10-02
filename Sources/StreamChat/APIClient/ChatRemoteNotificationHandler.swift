@@ -136,7 +136,7 @@ public class ChatRemoteNotificationHandler {
         messageRepository = client.messageRepository
     }
 
-    public func handleNotification(completion: @escaping @Sendable(ChatPushNotificationContent) -> Void) -> Bool {
+    public func handleNotification(completion: @escaping @Sendable (ChatPushNotificationContent) -> Void) -> Bool {
         guard chatCategoryIdentifiers.contains(content.categoryIdentifier) else {
             return false
         }
@@ -145,7 +145,7 @@ public class ChatRemoteNotificationHandler {
         return true
     }
 
-    private func getContent(completion: @escaping @Sendable(ChatPushNotificationContent) -> Void) {
+    private func getContent(completion: @escaping @Sendable (ChatPushNotificationContent) -> Void) {
         guard let payload = content.userInfo["stream"], let dict = payload as? [String: String] else {
             return completion(.unknown(UnknownNotificationContent(content: content)))
         }
@@ -176,7 +176,7 @@ public class ChatRemoteNotificationHandler {
         }
     }
     
-    private func getContent(cid: ChannelId, messageId: MessageId, completion: @escaping @Sendable(ChatMessage?, ChatChannel?) -> Void) {
+    private func getContent(cid: ChannelId, messageId: MessageId, completion: @escaping @Sendable (ChatMessage?, ChatChannel?) -> Void) {
         var query = ChannelQuery(cid: cid, pageSize: 10, membersLimit: 10)
         query.options = .state
         channelRepository.getChannel(for: query, store: false) { [messageRepository] channelResult in

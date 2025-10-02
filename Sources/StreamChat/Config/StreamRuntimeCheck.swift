@@ -18,7 +18,7 @@ public enum StreamRuntimeCheck {
     ///  Relationship:    Message --->  QuotedMessage --->    QuotedMessage   ---X---     NIL
     ///  Relationship:    Channel  --->      Message         --->     QuotedMessage  ---X---     NIL
     ///  Depth:                     0                         1                                     2                               3
-    static nonisolated(unsafe) var _backgroundMappingRelationshipsMaxDepth = 2
+    nonisolated(unsafe) static var _backgroundMappingRelationshipsMaxDepth = 2
 
     /// For *internal use* only
     ///

@@ -13,7 +13,7 @@ extension DemoAppCoordinator {
         StreamChatWrapper.shared
     }
 
-    func start(cid: ChannelId? = nil, completion: @escaping @MainActor(Error?) -> Void) {
+    func start(cid: ChannelId? = nil, completion: @escaping @MainActor (Error?) -> Void) {
         if let user = UserDefaults.shared.currentUser {
             showChat(for: .credentials(user), cid: cid, animated: false, completion: completion)
         } else {
@@ -21,7 +21,7 @@ extension DemoAppCoordinator {
         }
     }
 
-    func showChat(for user: DemoUserType, cid: ChannelId?, animated: Bool, completion: @escaping @MainActor(Error?) -> Void) {
+    func showChat(for user: DemoUserType, cid: ChannelId?, animated: Bool, completion: @escaping @MainActor (Error?) -> Void) {
         logIn(as: user, completion: completion)
 
         let chatVC = makeChatVC(
@@ -207,7 +207,7 @@ extension DemoAppCoordinator {
 // MARK: - User Auth
 
 private extension DemoAppCoordinator {
-    func logIn(as user: DemoUserType, completion: @escaping @MainActor(Error?) -> Void) {
+    func logIn(as user: DemoUserType, completion: @escaping @MainActor (Error?) -> Void) {
         // Store current user id
         UserDefaults.shared.currentUserId = user.staticUserId
 

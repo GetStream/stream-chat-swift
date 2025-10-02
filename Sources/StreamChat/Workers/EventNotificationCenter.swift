@@ -49,7 +49,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
         middlewares.append(middleware)
     }
 
-    func process(_ events: [Event], postNotifications: Bool = true, completion: (@Sendable() -> Void)? = nil) {
+    func process(_ events: [Event], postNotifications: Bool = true, completion: (@Sendable () -> Void)? = nil) {
         let processingEventsDebugMessage: () -> String = {
             let eventNames = events.map(\.name)
             return "Processing Events: \(eventNames)"
@@ -98,7 +98,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
 }
 
 extension EventNotificationCenter {
-    func process(_ event: Event, postNotification: Bool = true, completion: (@Sendable() -> Void)? = nil) {
+    func process(_ event: Event, postNotification: Bool = true, completion: (@Sendable () -> Void)? = nil) {
         process([event], postNotifications: postNotification, completion: completion)
     }
 }

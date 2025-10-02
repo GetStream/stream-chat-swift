@@ -87,8 +87,8 @@ final class RetryStrategy_Tests: XCTestCase {
         // Create mock strategy
         struct MockStrategy: RetryStrategy {
             let consecutiveFailuresCount: Int = 0
-            let incrementConsecutiveFailuresClosure: @Sendable() -> Void
-            let nextRetryDelayClosure: @Sendable() -> Void
+            let incrementConsecutiveFailuresClosure: @Sendable () -> Void
+            let nextRetryDelayClosure: @Sendable () -> Void
 
             func resetConsecutiveFailures() {}
 

@@ -69,7 +69,7 @@ public class ChannelEventsController: EventsController, @unchecked Sendable {
     /// - Parameters:
     ///   - payload: A custom event payload to be sent.
     ///   - completion: A completion.
-    public func sendEvent<T: CustomEventPayload>(_ payload: T, completion: (@Sendable(Error?) -> Void)? = nil) {
+    public func sendEvent<T: CustomEventPayload>(_ payload: T, completion: (@Sendable (Error?) -> Void)? = nil) {
         guard let cid = cid else {
             callback { completion?(ClientError.ChannelNotCreatedYet()) }
             return

@@ -20,8 +20,7 @@ open class ChatMessageListVC: _ViewController,
     UITableViewDataSource,
     UITableViewDelegate,
     UIGestureRecognizerDelegate,
-    VoiceRecordingAttachmentPresentationViewDelegate
-{
+    VoiceRecordingAttachmentPresentationViewDelegate {
     /// The object that acts as the data source of the message list.
     public weak var dataSource: ChatMessageListVCDataSource? {
         didSet {
@@ -641,7 +640,7 @@ open class ChatMessageListVC: _ViewController,
     /// Jump to the current unread message if there is one.
     /// - Parameter animated: `true` if you want to animate the change in position; `false` if it should be immediate.
     /// - Parameter onHighlight: An optional closure to provide highlighting style when the message appears on screen.
-    open func jumpToUnreadMessage(animated: Bool = true, onHighlight: (@Sendable(IndexPath) -> Void)? = nil) {
+    open func jumpToUnreadMessage(animated: Bool = true, onHighlight: (@Sendable (IndexPath) -> Void)? = nil) {
         getCurrentUnreadMessageId { [weak self] messageId in
             guard let jumpToUnreadMessageId = messageId else { return }
 
@@ -744,7 +743,7 @@ open class ChatMessageListVC: _ViewController,
     ///
     /// Note: This is a current backend limitation. Ideally, in the future,
     /// we will get the `unreadMessageId` directly from the backend.
-    private func getCurrentUnreadMessageId(completion: @escaping @Sendable(MessageId?) -> Void) {
+    private func getCurrentUnreadMessageId(completion: @escaping @Sendable (MessageId?) -> Void) {
         if let jumpToUnreadMessageId = self.jumpToUnreadMessageId {
             return completion(jumpToUnreadMessageId)
         }

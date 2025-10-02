@@ -8,11 +8,11 @@ import Foundation
 class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @unchecked Sendable {
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerWillChangeContent`
     /// on its delegate.
-    var onWillChange: (@Sendable() -> Void)?
+    var onWillChange: (@Sendable () -> Void)?
 
     /// Called with the aggregated changes after the internal `NSFetchResultsController` calls `controllerDidChangeContent`
     /// on its delegate.
-    var onDidChange: (@Sendable([ListChange<Item>]) -> Void)?
+    var onDidChange: (@Sendable ([ListChange<Item>]) -> Void)?
 
     /// Used to convert the `DTO`s to the resulting `Item`s.
     private let itemCreator: (DTO) throws -> Item

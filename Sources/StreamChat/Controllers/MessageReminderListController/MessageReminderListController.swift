@@ -118,7 +118,7 @@ public class MessageReminderListController: DataController, DelegateCallable, Da
         super.init()
     }
 
-    override public func synchronize(_ completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
+    override public func synchronize(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         startMessageRemindersObserverIfNeeded()
 
         remindersRepository.loadReminders(query: query) { [weak self] result in
@@ -159,7 +159,7 @@ public class MessageReminderListController: DataController, DelegateCallable, Da
     ///   - completion: The completion callback.
     public func loadMoreReminders(
         limit: Int? = nil,
-        completion: (@MainActor(Result<[MessageReminder], Error>) -> Void)? = nil
+        completion: (@MainActor (Result<[MessageReminder], Error>) -> Void)? = nil
     ) {
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query

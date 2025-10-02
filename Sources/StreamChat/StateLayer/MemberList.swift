@@ -65,14 +65,14 @@ public final class MemberList: Sendable {
 
 extension MemberList {
     struct Environment: Sendable {
-        var memberListUpdaterBuilder: @Sendable(
+        var memberListUpdaterBuilder: @Sendable (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelMemberListUpdater = {
             ChannelMemberListUpdater(database: $0, apiClient: $1)
         }
         
-        var stateBuilder: @Sendable @MainActor(
+        var stateBuilder: @Sendable @MainActor (
             _ query: ChannelMemberListQuery,
             _ database: DatabaseContainer
         ) -> MemberListState = { @MainActor in

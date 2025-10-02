@@ -10,7 +10,7 @@ class ChannelMemberListUpdater: Worker, @unchecked Sendable {
     /// - Parameters:
     ///   - query: The query used in the request.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func load(_ query: ChannelMemberListQuery, completion: (@Sendable(Result<[ChatChannelMember], Error>) -> Void)? = nil) {
+    func load(_ query: ChannelMemberListQuery, completion: (@Sendable (Result<[ChatChannelMember], Error>) -> Void)? = nil) {
         fetchAndSaveChannelIfNeeded(query.cid) { [weak self] error in
             if let error {
                 completion?(.failure(error))
@@ -64,13 +64,13 @@ extension ChannelMemberListUpdater {
 // MARK: - Private
 
 private extension ChannelMemberListUpdater {
-    func fetchAndSaveChannelIfNeeded(_ cid: ChannelId, completion: @escaping @Sendable(Error?) -> Void) {
+    func fetchAndSaveChannelIfNeeded(_ cid: ChannelId, completion: @escaping @Sendable (Error?) -> Void) {
         checkChannelExistsLocally(with: cid) { [weak self] exists in
             exists ? completion(nil) : self?.fetchAndSaveChannel(with: cid, completion: completion)
         }
     }
 
-    func fetchAndSaveChannel(with cid: ChannelId, completion: @escaping @Sendable(Error?) -> Void) {
+    func fetchAndSaveChannel(with cid: ChannelId, completion: @escaping @Sendable (Error?) -> Void) {
         let query = ChannelQuery(cid: cid)
         apiClient.request(endpoint: .updateChannel(query: query)) { [weak self] in
             switch $0 {

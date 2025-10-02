@@ -69,14 +69,14 @@ public final class ReactionList: Sendable {
 
 extension ReactionList {
     struct Environment: Sendable {
-        var reactionListUpdaterBuilder: @Sendable(
+        var reactionListUpdaterBuilder: @Sendable (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ReactionListUpdater = {
             ReactionListUpdater(database: $0, apiClient: $1)
         }
         
-        var stateBuilder: @Sendable @MainActor(
+        var stateBuilder: @Sendable @MainActor (
             _ query: ReactionListQuery,
             _ database: DatabaseContainer
         ) -> ReactionListState = { @MainActor in

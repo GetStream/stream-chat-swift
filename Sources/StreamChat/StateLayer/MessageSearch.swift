@@ -101,7 +101,7 @@ public class MessageSearch: @unchecked Sendable {
 
 extension MessageSearch {
     struct Environment: Sendable {
-        var messageUpdaterBuilder: @Sendable(
+        var messageUpdaterBuilder: @Sendable (
             _ isLocalStorageEnabled: Bool,
             _ messageRepository: MessageRepository,
             _ database: DatabaseContainer,
@@ -115,7 +115,7 @@ extension MessageSearch {
             )
         }
         
-        var stateBuilder: @Sendable @MainActor(
+        var stateBuilder: @Sendable @MainActor (
             _ database: DatabaseContainer
         ) -> MessageSearchState = { @MainActor in
             MessageSearchState(database: $0)

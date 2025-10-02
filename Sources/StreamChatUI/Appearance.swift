@@ -29,7 +29,7 @@ public struct Appearance: @unchecked Sendable {
     public var formatters = Formatters()
 
     /// Provider for custom localization which is dependent on App Bundle.
-    public var localizationProvider: @Sendable(_ key: String, _ table: String) -> String = { key, table in
+    public var localizationProvider: @Sendable (_ key: String, _ table: String) -> String = { key, table in
         Bundle.streamChatUI.localizedString(forKey: key, value: nil, table: table)
     }
 
@@ -39,5 +39,5 @@ public struct Appearance: @unchecked Sendable {
 // MARK: - Appearance + Default
 
 public extension Appearance {
-    static nonisolated(unsafe) var `default`: Appearance = .init()
+    nonisolated(unsafe) static var `default`: Appearance = .init()
 }

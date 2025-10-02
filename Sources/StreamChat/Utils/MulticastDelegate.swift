@@ -38,7 +38,7 @@ struct MulticastDelegate<T> {
         additionalDelegates.forEach { action($0) }
     }
     
-    func invokeOnMain(_ action: @MainActor(T) -> Void) {
+    func invokeOnMain(_ action: @MainActor (T) -> Void) {
         nonisolated(unsafe) let delegates = (additionalDelegates + [mainDelegate]).compactMap { $0 }
         StreamConcurrency.onMain {
             delegates.forEach { action($0) }

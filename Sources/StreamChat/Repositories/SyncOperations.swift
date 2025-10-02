@@ -30,7 +30,7 @@ final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
                 return
             }
             
-            let completion: @Sendable() -> Void = {
+            let completion: @Sendable () -> Void = {
                 context.localChannelIds = Set(context.localChannelIds)
                 log.info("Found \(context.localChannelIds.count) active channels", subsystems: .offlineSupport)
                 done(.continue)

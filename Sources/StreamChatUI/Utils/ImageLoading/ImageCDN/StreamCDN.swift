@@ -5,7 +5,7 @@
 import UIKit
 
 open class StreamImageCDN: ImageCDN, @unchecked Sendable {
-    nonisolated(unsafe) public static var streamCDNURL = "stream-io-cdn.com"
+    public nonisolated(unsafe) static var streamCDNURL = "stream-io-cdn.com"
 
     public init() {}
 

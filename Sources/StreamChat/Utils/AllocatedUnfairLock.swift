@@ -8,7 +8,7 @@ import os
 @available(iOS, introduced: 13.0, deprecated: 16.0, message: "Use OSAllocatedUnfairLock instead")
 final class AllocatedUnfairLock<State>: @unchecked Sendable {
     private let lock: UnsafeMutablePointer<os_unfair_lock>
-    nonisolated(unsafe) private var _value: State
+    private nonisolated(unsafe) var _value: State
     
     init(_ initialState: State) {
         lock = UnsafeMutablePointer<os_unfair_lock>.allocate(capacity: 1)

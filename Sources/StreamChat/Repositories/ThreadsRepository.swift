@@ -20,7 +20,7 @@ class ThreadsRepository: @unchecked Sendable {
 
     func loadThreads(
         query: ThreadListQuery,
-        completion: @escaping @Sendable(Result<ThreadListResponse, Error>) -> Void
+        completion: @escaping @Sendable (Result<ThreadListResponse, Error>) -> Void
     ) {
         apiClient.request(endpoint: .threads(query: query)) { [weak self] result in
             switch result {

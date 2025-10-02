@@ -13,7 +13,7 @@ class UserListUpdater: Worker, @unchecked Sendable {
     ///   - policy: The update policy for the resulting user set. See `UpdatePolicy`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
-    func update(userListQuery: UserListQuery, policy: UpdatePolicy = .merge, completion: (@Sendable(Result<[ChatUser], Error>) -> Void)? = nil) {
+    func update(userListQuery: UserListQuery, policy: UpdatePolicy = .merge, completion: (@Sendable (Result<[ChatUser], Error>) -> Void)? = nil) {
         fetch(userListQuery: userListQuery) { [weak self] (result: Result<UserListPayload, Error>) in
             switch result {
             case let .success(userListPayload):
@@ -50,7 +50,7 @@ class UserListUpdater: Worker, @unchecked Sendable {
     ///
     func fetch(
         userListQuery: UserListQuery,
-        completion: @escaping @Sendable(Result<UserListPayload, Error>) -> Void
+        completion: @escaping @Sendable (Result<UserListPayload, Error>) -> Void
     ) {
         apiClient.request(
             endpoint: .users(query: userListQuery),

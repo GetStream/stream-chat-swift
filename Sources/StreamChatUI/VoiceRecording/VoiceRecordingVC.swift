@@ -494,7 +494,6 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
 
         case .send where content.location == nil,
              .confirm where content.location == nil:
-
             sendImmediately = true
             audioRecorder.stopRecording()
 

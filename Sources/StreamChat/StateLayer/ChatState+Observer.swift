@@ -54,10 +54,10 @@ extension ChatState {
         }
         
         struct Handlers {
-            let channelDidChange: @Sendable @MainActor(ChatChannel?) async -> Void
-            let membersDidChange: @Sendable @MainActor(StreamCollection<ChatChannelMember>) async -> Void
-            let messagesDidChange: @Sendable @MainActor(StreamCollection<ChatMessage>) async -> Void
-            let watchersDidChange: @Sendable @MainActor(StreamCollection<ChatUser>) async -> Void
+            let channelDidChange: @Sendable @MainActor (ChatChannel?) async -> Void
+            let membersDidChange: @Sendable @MainActor (StreamCollection<ChatChannelMember>) async -> Void
+            let messagesDidChange: @Sendable @MainActor (StreamCollection<ChatMessage>) async -> Void
+            let watchersDidChange: @Sendable @MainActor (StreamCollection<ChatUser>) async -> Void
         }
         
         @MainActor func start(

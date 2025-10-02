@@ -515,7 +515,7 @@ final class ChannelList_Tests: XCTestCase {
         loadState: Bool = true,
         filter: Filter<ChannelListFilterScope>? = nil,
         sort: [Sorting<ChannelListSortingKey>] = [.init(key: .createdAt, isAscending: true)],
-        dynamicFilter: (@Sendable(ChatChannel) -> Bool)? = nil
+        dynamicFilter: (@Sendable (ChatChannel) -> Bool)? = nil
     ) {
         channelList = ChannelList(
             query: ChannelListQuery(

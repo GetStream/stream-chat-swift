@@ -17,7 +17,7 @@ extension ChannelListState {
         
         init(
             query: ChannelListQuery,
-            dynamicFilter: (@Sendable(ChatChannel) -> Bool)?,
+            dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
             clientConfig: ChatClientConfig,
             channelListUpdater: ChannelListUpdater,
             database: DatabaseContainer,
@@ -50,7 +50,7 @@ extension ChannelListState {
         }
         
         struct Handlers {
-            let channelsDidChange: @Sendable @MainActor(StreamCollection<ChatChannel>) async -> Void
+            let channelsDidChange: @Sendable @MainActor (StreamCollection<ChatChannel>) async -> Void
         }
         
         func start(with handlers: Handlers) -> StreamCollection<ChatChannel> {

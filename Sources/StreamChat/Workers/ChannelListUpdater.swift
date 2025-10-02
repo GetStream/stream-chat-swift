@@ -14,13 +14,13 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     ///
     func update(
         channelListQuery: ChannelListQuery,
-        completion: (@Sendable(Result<[ChatChannel], Error>) -> Void)? = nil
+        completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
         fetch(channelListQuery: channelListQuery) { [weak self] in
             switch $0 {
             case let .success(channelListPayload):
                 let isInitialFetch = channelListQuery.pagination.cursor == nil && channelListQuery.pagination.offset == 0
-                var initialActions: (@Sendable(DatabaseSession) -> Void)?
+                var initialActions: (@Sendable (DatabaseSession) -> Void)?
                 if isInitialFetch {
                     initialActions = { session in
                         let filterHash = channelListQuery.filter.filterHash
@@ -41,7 +41,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         }
     }
 
-    func refreshLoadedChannels(for query: ChannelListQuery, channelCount: Int, completion: @escaping @Sendable(Result<Set<ChannelId>, Error>) -> Void) {
+    func refreshLoadedChannels(for query: ChannelListQuery, channelCount: Int, completion: @escaping @Sendable (Result<Set<ChannelId>, Error>) -> Void) {
         guard channelCount > 0 else {
             completion(.success(Set()))
             return
@@ -65,7 +65,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         }
     }
         
-    private func refreshLoadedChannels(for pageQueries: [ChannelListQuery], refreshedChannelIds: Set<ChannelId>, completion: @escaping @Sendable(Result<Set<ChannelId>, Error>) -> Void) {
+    private func refreshLoadedChannels(for pageQueries: [ChannelListQuery], refreshedChannelIds: Set<ChannelId>, completion: @escaping @Sendable (Result<Set<ChannelId>, Error>) -> Void) {
         guard let nextQuery = pageQueries.first else {
             completion(.success(refreshedChannelIds))
             return
@@ -102,7 +102,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     /// - Parameters:
     ///   - ids: The channel ids.
     ///   - completion: The callback once the request is complete.
-    func startWatchingChannels(withIds ids: [ChannelId], completion: (@Sendable(Error?) -> Void)? = nil) {
+    func startWatchingChannels(withIds ids: [ChannelId], completion: (@Sendable (Error?) -> Void)? = nil) {
         var query = ChannelListQuery(filter: .in(.cid, values: ids))
         query.options = .all
 
@@ -127,7 +127,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     ///   - completion: The completion to call with the results.
     func fetch(
         channelListQuery: ChannelListQuery,
-        completion: @escaping @Sendable(Result<ChannelListPayload, Error>) -> Void
+        completion: @escaping @Sendable (Result<ChannelListPayload, Error>) -> Void
     ) {
         apiClient.request(
             endpoint: .channels(query: channelListQuery),
@@ -137,14 +137,14 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
 
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func markAllRead(completion: (@Sendable(Error?) -> Void)? = nil) {
+    func markAllRead(completion: (@Sendable (Error?) -> Void)? = nil) {
         apiClient.request(endpoint: .markAllRead()) {
             completion?($0.error)
         }
     }
 
     /// Links a channel to the given query.
-    func link(channel: ChatChannel, with query: ChannelListQuery, completion: (@Sendable(Error?) -> Void)? = nil) {
+    func link(channel: ChatChannel, with query: ChannelListQuery, completion: (@Sendable (Error?) -> Void)? = nil) {
         database.write { session in
             guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: channel.cid, query: query) else {
                 return
@@ -156,7 +156,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     }
 
     /// Unlinks a channel to the given query.
-    func unlink(channel: ChatChannel, with query: ChannelListQuery, completion: (@Sendable(Error?) -> Void)? = nil) {
+    func unlink(channel: ChatChannel, with query: ChannelListQuery, completion: (@Sendable (Error?) -> Void)? = nil) {
         database.write { session in
             guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: channel.cid, query: query) else {
                 return
@@ -188,8 +188,8 @@ private extension ChannelListUpdater {
     func writeChannelListPayload(
         payload: ChannelListPayload,
         query: ChannelListQuery,
-        initialActions: (@Sendable(DatabaseSession) -> Void)? = nil,
-        completion: (@Sendable(Result<[ChatChannel], Error>) -> Void)? = nil
+        initialActions: (@Sendable (DatabaseSession) -> Void)? = nil,
+        completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
         nonisolated(unsafe) var channels: [ChatChannel] = []
         database.write { session in

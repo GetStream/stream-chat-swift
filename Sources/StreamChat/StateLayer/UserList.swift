@@ -73,14 +73,14 @@ public final class UserList: Sendable {
 
 extension UserList {
     struct Environment: Sendable {
-        var userListUpdater: @Sendable(
+        var userListUpdater: @Sendable (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> UserListUpdater = {
             UserListUpdater(database: $0, apiClient: $1)
         }
         
-        var stateBuilder: @Sendable @MainActor(
+        var stateBuilder: @Sendable @MainActor (
             _ query: UserListQuery,
             _ database: DatabaseContainer
         ) -> UserListState = { @MainActor in

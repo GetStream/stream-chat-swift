@@ -20,7 +20,7 @@ class DraftMessagesRepository: @unchecked Sendable {
     
     func loadDrafts(
         query: DraftListQuery,
-        completion: @escaping @Sendable(Result<DraftListResponse, Error>) -> Void
+        completion: @escaping @Sendable (Result<DraftListResponse, Error>) -> Void
     ) {
         apiClient.request(endpoint: .drafts(query: query)) { [weak self] result in
             switch result {
@@ -60,7 +60,7 @@ class DraftMessagesRepository: @unchecked Sendable {
         mentionedUserIds: [UserId],
         quotedMessageId: MessageId?,
         extraData: [String: RawJSON],
-        completion: (@Sendable(Result<DraftMessage, Error>) -> Void)?
+        completion: (@Sendable (Result<DraftMessage, Error>) -> Void)?
     ) {
         nonisolated(unsafe) var draftRequestBody: DraftMessageRequestBody?
         database.write({ (session) in
@@ -115,7 +115,7 @@ class DraftMessagesRepository: @unchecked Sendable {
     func getDraft(
         for cid: ChannelId,
         threadId: MessageId?,
-        completion: (@Sendable(Result<DraftMessage?, Error>) -> Void)?
+        completion: (@Sendable (Result<DraftMessage?, Error>) -> Void)?
     ) {
         apiClient.request(
             endpoint: .getDraftMessage(channelId: cid, threadId: threadId)
@@ -146,7 +146,7 @@ class DraftMessagesRepository: @unchecked Sendable {
     func deleteDraft(
         for cid: ChannelId,
         threadId: MessageId?,
-        completion: @escaping @Sendable(Error?) -> Void
+        completion: @escaping @Sendable (Error?) -> Void
     ) {
         database.write { session in
             session.deleteDraftMessage(in: cid, threadId: threadId)

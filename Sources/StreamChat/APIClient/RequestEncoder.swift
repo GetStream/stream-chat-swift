@@ -19,7 +19,7 @@ protocol RequestEncoder: Sendable {
     ///   - completion: Called when the encoded `URLRequest` is ready. Called with en `Error` if the encoding fails.
     func encodeRequest<ResponsePayload: Decodable>(
         for endpoint: Endpoint<ResponsePayload>,
-        completion: @escaping @Sendable(Result<URLRequest, Error>) -> Void
+        completion: @escaping @Sendable (Result<URLRequest, Error>) -> Void
     )
 
     /// Creates a new `RequestEncoder`.
@@ -87,7 +87,7 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
 
     func encodeRequest<ResponsePayload: Decodable>(
         for endpoint: Endpoint<ResponsePayload>,
-        completion: @escaping @Sendable(Result<URLRequest, Error>) -> Void
+        completion: @escaping @Sendable (Result<URLRequest, Error>) -> Void
     ) {
         var request: URLRequest
 
@@ -135,7 +135,7 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
     private func addAuthorizationHeader<T: Decodable>(
         request: URLRequest,
         endpoint: Endpoint<T>,
-        completion: @escaping @Sendable(Result<URLRequest, Error>) -> Void
+        completion: @escaping @Sendable (Result<URLRequest, Error>) -> Void
     ) {
         guard endpoint.requiresToken else {
             var updatedRequest = request
@@ -175,7 +175,7 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
     private func addConnectionIdIfNeeded<T: Decodable>(
         request: URLRequest,
         endpoint: Endpoint<T>,
-        completion: @escaping @Sendable(Result<URLRequest, Error>) -> Void
+        completion: @escaping @Sendable (Result<URLRequest, Error>) -> Void
     ) {
         guard endpoint.requiresConnectionId else {
             completion(.success(request))
@@ -299,8 +299,8 @@ private extension URL {
 
 typealias WaiterToken = String
 protocol ConnectionDetailsProviderDelegate: AnyObject {
-    func provideConnectionId(timeout: TimeInterval, completion: @escaping @Sendable(Result<ConnectionId, Error>) -> Void)
-    func provideToken(timeout: TimeInterval, completion: @escaping @Sendable(Result<Token, Error>) -> Void)
+    func provideConnectionId(timeout: TimeInterval, completion: @escaping @Sendable (Result<ConnectionId, Error>) -> Void)
+    func provideToken(timeout: TimeInterval, completion: @escaping @Sendable (Result<Token, Error>) -> Void)
 }
 
 public extension ClientError {

@@ -7,7 +7,7 @@ import Foundation
 public class ScheduledStreamTimer: StreamTimer, @unchecked Sendable {
     var runLoop = RunLoop.current
     var timer: Foundation.Timer?
-    public var onChange: (@Sendable() -> Void)?
+    public var onChange: (@Sendable () -> Void)?
 
     let interval: TimeInterval
     let fireOnStart: Bool

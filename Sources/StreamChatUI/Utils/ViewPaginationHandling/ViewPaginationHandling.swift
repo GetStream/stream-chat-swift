@@ -12,7 +12,7 @@ import Foundation
     var onNewBottomPage: (() -> Void)? { get set }
 }
 
-typealias StatefulViewPaginationHandlingBlock = ((_ notifyItemCount: (Int) -> Void, _ completion: @escaping @Sendable(Error?) -> Void) -> Void)
+typealias StatefulViewPaginationHandlingBlock = ((_ notifyItemCount: (Int) -> Void, _ completion: @escaping @Sendable (Error?) -> Void) -> Void)
 @MainActor protocol StatefulViewPaginationHandling {
     var topThreshold: Int { get set }
     var bottomThreshold: Int { get set }

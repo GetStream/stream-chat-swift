@@ -314,7 +314,7 @@ public class ChatClient: @unchecked Sendable {
     public func connectUser(
         userInfo: UserInfo,
         tokenProvider: @escaping TokenProvider,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         reconnectionTimeoutHandler?.start()
         connectionRecoveryHandler?.start()
@@ -365,7 +365,7 @@ public class ChatClient: @unchecked Sendable {
     public func connectUser(
         userInfo: UserInfo,
         token: Token,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         guard token.expiration == nil else {
             let error = ClientError.MissingTokenProvider()
@@ -413,7 +413,7 @@ public class ChatClient: @unchecked Sendable {
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     public func connectGuestUser(
         userInfo: UserInfo,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         connectionRepository.initialize()
         connectionRecoveryHandler?.start()
@@ -444,7 +444,7 @@ public class ChatClient: @unchecked Sendable {
 
     /// Connects an anonymous user
     /// - Parameter completion: The completion that will be called once the **first** user session for the given token is setup.
-    public func connectAnonymousUser(completion: (@MainActor(Error?) -> Void)? = nil) {
+    public func connectAnonymousUser(completion: (@MainActor (Error?) -> Void)? = nil) {
         connectionRepository.initialize()
         reconnectionTimeoutHandler?.start()
         connectionRecoveryHandler?.start()
@@ -479,7 +479,7 @@ public class ChatClient: @unchecked Sendable {
 
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
-    public func disconnect(completion: @escaping @MainActor() -> Void) {
+    public func disconnect(completion: @escaping @MainActor () -> Void) {
         connectionRepository.disconnect(source: .userInitiated) {
             log.info("The `ChatClient` has been disconnected.", subsystems: .webSocket)
             StreamConcurrency.onMain {
@@ -506,7 +506,7 @@ public class ChatClient: @unchecked Sendable {
     ///  By default it is enabled.
     public func logout(
         removeDevice: Bool = true,
-        completion: @escaping @MainActor() -> Void
+        completion: @escaping @MainActor () -> Void
     ) {
         let currentUserController = currentUserController()
         if removeDevice, let currentUserDevice = currentUserController.currentUser?.currentDevice {
@@ -602,7 +602,7 @@ public class ChatClient: @unchecked Sendable {
     /// Fetches the app settings and updates the ``ChatClient/appSettings``.
     /// - Parameter completion: The completion block once the app settings has finished fetching.
     public func loadAppSettings(
-        completion: (@Sendable(Result<AppSettings, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<AppSettings, Error>) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .appSettings()) { [weak self] result in
             switch result {
@@ -637,8 +637,8 @@ public class ChatClient: @unchecked Sendable {
     ///  - completion: called when the attachment is uploaded.
     public func upload<Payload>(
         _ attachment: StreamAttachment<Payload>,
-        progress: (@Sendable(Double) -> Void)?,
-        completion: @escaping @Sendable(Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
         apiClient.attachmentUploader.uploadStandaloneAttachment(
             attachment,
@@ -685,7 +685,7 @@ public class ChatClient: @unchecked Sendable {
 
     /// Starts the process to  refresh the token
     /// - Parameter completion: A block to be executed when the process is completed. Contains an error if something went wrong
-    private func refreshToken(completion: (@Sendable(Error?) -> Void)?) {
+    private func refreshToken(completion: (@Sendable (Error?) -> Void)?) {
         authenticationRepository.refreshToken {
             completion?($0)
         }
@@ -702,7 +702,7 @@ public class ChatClient: @unchecked Sendable {
 }
 
 extension ChatClient: AuthenticationRepositoryDelegate {
-    func logOutUser(completion: @escaping @MainActor() -> Void) {
+    func logOutUser(completion: @escaping @MainActor () -> Void) {
         logout(removeDevice: false, completion: completion)
     }
 
@@ -744,11 +744,11 @@ extension ChatClient: ConnectionStateDelegate {
 
 /// `Client` provides connection details for the `RequestEncoder`s it creates.
 extension ChatClient: ConnectionDetailsProviderDelegate {
-    func provideToken(timeout: TimeInterval = 10, completion: @escaping @Sendable(Result<Token, Error>) -> Void) {
+    func provideToken(timeout: TimeInterval = 10, completion: @escaping @Sendable (Result<Token, Error>) -> Void) {
         authenticationRepository.provideToken(timeout: timeout, completion: completion)
     }
 
-    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping @Sendable(Result<ConnectionId, Error>) -> Void) {
+    func provideConnectionId(timeout: TimeInterval = 10, completion: @escaping @Sendable (Result<ConnectionId, Error>) -> Void) {
         connectionRepository.provideConnectionId(timeout: timeout, completion: completion)
     }
 

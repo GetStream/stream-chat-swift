@@ -6,10 +6,10 @@ import Foundation
 
 /// A builder for objects requiring @MainActor.
 struct StateBuilder<State: Sendable>: Sendable {
-    private var builder: ((@Sendable @MainActor() -> State))?
+    private var builder: ((@Sendable @MainActor () -> State))?
     @MainActor private var _state: State?
     
-    init(builder: (@escaping @Sendable @MainActor() -> State)) {
+    init(builder: (@escaping @Sendable @MainActor () -> State)) {
         self.builder = builder
     }
     

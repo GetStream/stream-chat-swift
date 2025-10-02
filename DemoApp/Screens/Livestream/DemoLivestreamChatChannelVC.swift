@@ -11,8 +11,7 @@ class DemoLivestreamChatChannelVC: _ViewController,
     ChatMessageListVCDataSource,
     ChatMessageListVCDelegate,
     LivestreamChannelControllerDelegate,
-    EventsControllerDelegate
-{
+    EventsControllerDelegate {
     /// Controller for observing data changes within the channel.
     var livestreamChannelController: LivestreamChannelController!
 

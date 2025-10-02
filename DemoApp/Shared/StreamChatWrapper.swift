@@ -61,7 +61,7 @@ extension StreamChatWrapper {
 // MARK: User Authentication
 
 extension StreamChatWrapper {
-    func connect(user: DemoUserType, completion: @escaping @MainActor(Error?) -> Void) {
+    func connect(user: DemoUserType, completion: @escaping @MainActor (Error?) -> Void) {
         switch user {
         case let .credentials(userCredentials):
             connectUser(credentials: userCredentials, completion: completion)
@@ -74,7 +74,7 @@ extension StreamChatWrapper {
         }
     }
 
-    func connectUser(credentials: UserCredentials?, completion: @escaping @MainActor(Error?) -> Void) {
+    func connectUser(credentials: UserCredentials?, completion: @escaping @MainActor (Error?) -> Void) {
         guard let userCredentials = credentials else {
             log.error("User credentials are missing")
             return
@@ -121,7 +121,7 @@ extension StreamChatWrapper {
         )
     }
 
-    func logIn(as user: DemoUserType, completion: @escaping @MainActor(Error?) -> Void) {
+    func logIn(as user: DemoUserType, completion: @escaping @MainActor (Error?) -> Void) {
         // Setup Stream Chat
         setUpChat()
 
@@ -138,7 +138,7 @@ extension StreamChatWrapper {
         }
     }
 
-    func logOut(completion: @escaping @MainActor() -> Void) {
+    func logOut(completion: @escaping @MainActor () -> Void) {
         guard let client = self.client else {
             logClientNotInstantiated()
             return

@@ -1773,7 +1773,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `updateChannel` call and assert the error is returned
         var error: Error? = try waitFor { completion in
             controller.updateChannel(name: .unique, imageURL: .unique(), team: nil, extraData: .init()) { error in
-                
                 completion(error)
             }
         }
@@ -1785,7 +1784,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `updateChannel` call and assert no error is returned
         error = try waitFor { completion in
             controller.updateChannel(name: .unique, imageURL: .unique(), team: nil, extraData: .init()) { error in
-                
                 completion(error)
             }
             env.channelUpdater!.updateChannel_completion?(nil)
@@ -1797,7 +1795,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `updateChannel` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.updateChannel(name: .unique, imageURL: .unique(), team: .unique, extraData: .init()) { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -1848,7 +1845,6 @@ final class ChannelController_Tests: XCTestCase {
         nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "partialChannelUpdate completes")
         controller.partialChannelUpdate { error in
-            
             receivedError = error
             expectation.fulfill()
         }
@@ -1877,7 +1873,6 @@ final class ChannelController_Tests: XCTestCase {
             extraData: extraData,
             unsetProperties: unsetProperties
         ) { error in
-            
             receivedError = error
             expectation.fulfill()
         }
@@ -1912,7 +1907,6 @@ final class ChannelController_Tests: XCTestCase {
             extraData: [:],
             unsetProperties: []
         ) { error in
-            
             receivedError = error
             expectation.fulfill()
         }
@@ -1939,7 +1933,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `muteChannel` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.muteChannel { error in
-                
                 completion(error)
             }
         }
@@ -1951,7 +1944,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `muteChannel` call and assert no error is returned
         error = try waitFor { completion in
             controller.muteChannel { error in
-                
                 completion(error)
             }
             env.channelUpdater!.muteChannel_completion?(nil)
@@ -1970,7 +1962,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `muteChannel` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.muteChannel(expiration: expiration) { error in
-                
                 completion(error)
             }
         }
@@ -1982,7 +1973,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `muteChannel` call and assert no error is returned
         error = try waitFor { completion in
             controller.muteChannel(expiration: expiration) { error in
-                
                 completion(error)
             }
             env.channelUpdater!.muteChannel_completion?(nil)
@@ -1995,7 +1985,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `muteChannel` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.muteChannel { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -2028,7 +2017,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `muteChannel` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.muteChannel(expiration: expiration) { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -2098,7 +2086,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `unmuteChannel` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.muteChannel { error in
-                
                 completion(error)
             }
         }
@@ -2110,7 +2097,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `unmuteChannel` call and assert no error is returned
         error = try waitFor { completion in
             controller.unmuteChannel { error in
-                
                 completion(error)
             }
             env.channelUpdater!.unmuteChannel_completion?(nil)
@@ -2123,7 +2109,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `unmuteChannel` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.unmuteChannel { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -2179,7 +2164,6 @@ final class ChannelController_Tests: XCTestCase {
         )
         let resultingError = try waitFor { done in
             controller.archive { error in
-                
                 done(error)
             }
         }
@@ -2202,7 +2186,6 @@ final class ChannelController_Tests: XCTestCase {
         )
         let resultingError = try waitFor { done in
             controller.unarchive { error in
-                
                 done(error)
             }
         }
@@ -2220,7 +2203,6 @@ final class ChannelController_Tests: XCTestCase {
         env.memberUpdater!.partialUpdate_completion_result = .failure(expectedError)
         let resultingError = try waitFor { done in
             controller.archive { error in
-                
                 done(error)
             }
         }
@@ -2238,7 +2220,6 @@ final class ChannelController_Tests: XCTestCase {
         env.memberUpdater!.partialUpdate_completion_result = .failure(expectedError)
         let resultingError = try waitFor { done in
             controller.unarchive { error in
-                
                 done(error)
             }
         }
@@ -2259,7 +2240,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `deleteChannel` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.deleteChannel { error in
-                
                 completion(error)
             }
         }
@@ -2272,7 +2252,6 @@ final class ChannelController_Tests: XCTestCase {
         error = try waitFor { completion in
             env.channelUpdater?.deleteChannel_completion_result = .success(())
             controller.deleteChannel { error in
-                
                 completion(error)
             }
             env.channelUpdater!.deleteChannel_completion?(nil)
@@ -2285,7 +2264,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `deleteChannel` calls and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.deleteChannel { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -2337,7 +2315,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `truncateChannel` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.truncateChannel { error in
-                
                 completion(error)
             }
         }
@@ -2349,7 +2326,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `truncateChannel` call and assert no error is returned
         error = try waitFor { completion in
             controller.truncateChannel { error in
-                
                 completion(error)
             }
             env.channelUpdater!.truncateChannel_completion?(nil)
@@ -2362,7 +2338,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `truncateChannel` calls and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.truncateChannel { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -2414,7 +2389,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `hideChannel` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.hideChannel { error in
-                
                 completion(error)
             }
         }
@@ -2426,7 +2400,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `hideChannel` call and assert no error is returned
         error = try waitFor { completion in
             controller.hideChannel { error in
-                
                 completion(error)
             }
             env.channelUpdater!.hideChannel_completion?(nil)
@@ -2439,7 +2412,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `hideChannel` calls and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.hideChannel(clearHistory: false) { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -2492,7 +2464,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `showChannel` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.showChannel { error in
-                
                 completion(error)
             }
         }
@@ -2504,7 +2475,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `showChannel` call and assert no error is returned
         error = try waitFor { completion in
             controller.showChannel { error in
-                
                 completion(error)
             }
             env.channelUpdater!.showChannel_completion?(nil)
@@ -2517,7 +2487,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `showChannel` calls and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.showChannel { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -2567,7 +2536,6 @@ final class ChannelController_Tests: XCTestCase {
 
         nonisolated(unsafe) var completionCalled = false
         controller.loadPreviousMessages(before: messageId, limit: 25) { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -2635,7 +2603,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `loadPreviousMessages` call and assert error is returned
         let error: Error? = try waitFor { completion in
             controller.loadPreviousMessages { error in
-                
                 completion(error)
             }
         }
@@ -2782,7 +2749,6 @@ final class ChannelController_Tests: XCTestCase {
 
         nonisolated(unsafe) var completionCalled = false
         controller.loadNextMessages(after: messageId, limit: 25) { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -2807,7 +2773,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `loadNextMessages` call and assert error is returned
         let error: Error? = try waitFor { completion in
             controller.loadNextMessages { error in
-                
                 completion(error)
             }
         }
@@ -3439,7 +3404,6 @@ final class ChannelController_Tests: XCTestCase {
             skipEnrichUrl: skipEnrichUrl,
             extraData: extraData
         ) { result in
-            
             AssertResultSuccess(result, newMessage.id)
             completionCalled = true
         }
@@ -3488,7 +3452,6 @@ final class ChannelController_Tests: XCTestCase {
 //                arguments: .unique,
                 extraData: [:]
             ) { result in
-                
                 completion(result)
             }
         }
@@ -3575,7 +3538,6 @@ final class ChannelController_Tests: XCTestCase {
         controller.createSystemMessage(
             text: text
         ) { result in
-            
             AssertResultSuccess(result, systemMessage.id)
             completionCalled = true
         }
@@ -3602,7 +3564,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `addMembers` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.addMembers(members) { error in
-                
                 completion(error)
             }
         }
@@ -3614,7 +3575,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `addMembers` call and assert no error is returned
         error = try waitFor { completion in
             controller.addMembers(members) { error in
-                
                 completion(error)
             }
             env.channelUpdater!.addMembers_completion?(nil)
@@ -3629,7 +3589,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `addMembers` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.addMembers(members) { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -3682,7 +3641,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `inviteMembers` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.inviteMembers(userIds: members) { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -3735,7 +3693,6 @@ final class ChannelController_Tests: XCTestCase {
         nonisolated(unsafe) var completionCalled = false
         let message = "Hooray"
         controller.acceptInvite(message: message) { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -3785,7 +3742,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `acceptInvite` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.rejectInvite { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -3839,7 +3795,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `removeMembers` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.removeMembers(userIds: members) { error in
-                
                 completion(error)
             }
         }
@@ -3851,7 +3806,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `removeMembers` call and assert no error is returned
         error = try waitFor { completion in
             controller.removeMembers(userIds: members) { error in
-                
                 completion(error)
             }
             env.channelUpdater!.removeMembers_completion?(nil)
@@ -3866,7 +3820,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `removeMembers` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.removeMembers(userIds: members) { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -3941,7 +3894,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `markRead` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.markRead { error in
-                
                 completion(error)
             }
         }
@@ -3957,7 +3909,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `markRead` call and assert no error is returned
         error = try waitFor { completion in
             controller.markRead { error in
-                
                 completion(error)
             }
             env.channelUpdater!.markRead_completion?(nil)
@@ -3990,7 +3941,6 @@ final class ChannelController_Tests: XCTestCase {
         // WHEN
         nonisolated(unsafe) var completionCalled = false
         controller.markRead { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -4035,7 +3985,6 @@ final class ChannelController_Tests: XCTestCase {
         // WHEN
         nonisolated(unsafe) var completionCalled = false
         controller.markRead { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -4305,7 +4254,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `loadChannelReads` call and assert error is returned
         let error: Error? = try waitFor { completion in
             controller.loadChannelReads { error in
-                
                 completion(error)
             }
         }
@@ -4368,7 +4316,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `enableSlowMode` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.enableSlowMode(cooldownDuration: .random(in: 1...120)) { error in
-                
                 completion(error)
             }
         }
@@ -4380,7 +4327,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `enableSlowMode` call and assert no error is returned
         error = try waitFor { completion in
             controller.enableSlowMode(cooldownDuration: .random(in: 1...120)) { error in
-                
                 completion(error)
             }
             env.channelUpdater!.enableSlowMode_completion?(nil)
@@ -4393,7 +4339,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `enableSlowMode` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.enableSlowMode(cooldownDuration: .random(in: 1...120)) { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -4445,7 +4390,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `disableSlowMode` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.disableSlowMode { error in
-                
                 completion(error)
             }
         }
@@ -4457,7 +4401,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `disableSlowMode` call and assert no error is returned
         error = try waitFor { completion in
             controller.disableSlowMode { error in
-                
                 completion(error)
             }
             env.channelUpdater!.disableSlowMode_completion?(nil)
@@ -4470,7 +4413,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `disableSlowMode` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.disableSlowMode { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -4589,7 +4531,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `startWatching` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.startWatching(isInRecoveryMode: false) { error in
-                
                 completion(error)
             }
         }
@@ -4601,7 +4542,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `startWatching` call and assert no error is returned
         error = try waitFor { completion in
             controller.startWatching(isInRecoveryMode: false) { error in
-                
                 completion(error)
             }
             env.channelUpdater!.startWatching_completion?(nil)
@@ -4614,7 +4554,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `startWatching` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.startWatching(isInRecoveryMode: false) { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -4757,7 +4696,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `stopWatching` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.stopWatching { error in
-                
                 completion(error)
             }
         }
@@ -4769,7 +4707,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `stopWatching` call and assert no error is returned
         error = try waitFor { completion in
             controller.stopWatching { error in
-                
                 completion(error)
             }
             env.channelUpdater!.stopWatching_completion?(nil)
@@ -4782,7 +4719,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `stopWatching` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.stopWatching { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -4852,7 +4788,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `freezeChannel` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.freezeChannel { error in
-                
                 completion(error)
             }
         }
@@ -4864,7 +4799,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `freezeChannel` call and assert no error is returned
         error = try waitFor { completion in
             controller.freezeChannel { error in
-                
                 completion(error)
             }
             env.channelUpdater!.freezeChannel_completion?(nil)
@@ -4877,7 +4811,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `freezeChannel` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.freezeChannel { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -4934,7 +4867,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `unfreezeChannel` call and assert error is returned
         var error: Error? = try waitFor { completion in
             controller.unfreezeChannel { error in
-                
                 completion(error)
             }
         }
@@ -4946,7 +4878,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `unfreezeChannel` call and assert no error is returned
         error = try waitFor { completion in
             controller.unfreezeChannel { error in
-                
                 completion(error)
             }
             env.channelUpdater!.freezeChannel_completion?(nil)
@@ -4959,7 +4890,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `unfreezeChannel` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.unfreezeChannel { error in
-            
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -5020,7 +4950,6 @@ final class ChannelController_Tests: XCTestCase {
         )
         let resultingError = try waitFor { done in
             controller.pin { error in
-                
                 done(error)
             }
         }
@@ -5043,7 +4972,6 @@ final class ChannelController_Tests: XCTestCase {
         )
         let resultingError = try waitFor { done in
             controller.unpin { error in
-                
                 done(error)
             }
         }
@@ -5061,7 +4989,6 @@ final class ChannelController_Tests: XCTestCase {
         env.memberUpdater!.partialUpdate_completion_result = .failure(expectedError)
         let resultingError = try waitFor { done in
             controller.pin { error in
-                
                 done(error)
             }
         }
@@ -5079,7 +5006,6 @@ final class ChannelController_Tests: XCTestCase {
         env.memberUpdater!.partialUpdate_completion_result = .failure(expectedError)
         let resultingError = try waitFor { done in
             controller.unpin { error in
-                
                 done(error)
             }
         }
@@ -5100,7 +5026,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `uploadFile` call and assert error is returned
         let error: Error? = try waitFor { completion in
             controller.uploadAttachment(localFileURL: .localYodaImage, type: .image) { result in
-                
                 completion(result.error)
             }
         }
@@ -5111,7 +5036,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `uploadFile` call and catch the completion
         nonisolated(unsafe) var completionCalled = false
         controller.uploadAttachment(localFileURL: .localYodaImage, type: .image) { result in
-            
             XCTAssertNil(result.error)
             completionCalled = true
         }
@@ -5163,7 +5087,6 @@ final class ChannelController_Tests: XCTestCase {
         let url = URL(string: "www.google.com")!
         let exp = expectation(description: "enrichUrl completes")
         controller.enrichUrl(url) { result in
-            
             XCTAssertEqual(result.value?.originalURL, url)
             exp.fulfill()
         }
@@ -5180,7 +5103,6 @@ final class ChannelController_Tests: XCTestCase {
         let url = URL(string: "www.google.com")!
         let exp = expectation(description: "enrichUrl completes")
         controller.enrichUrl(url) { result in
-            
             XCTAssertNotNil(result.error)
             exp.fulfill()
         }
@@ -5203,7 +5125,6 @@ final class ChannelController_Tests: XCTestCase {
         // Simulate `loadPinnedMessages` call and assert error is returned
         let error: Error? = try waitFor { completion in
             controller.loadPinnedMessages { result in
-                
                 completion(result.error)
             }
         }
@@ -5456,7 +5377,6 @@ final class ChannelController_Tests: XCTestCase {
         nonisolated(unsafe) var receivedError: Error?
         let error: Error? = try waitFor { completion in
             controller.deletePoll(pollId: pollId) { error in
-                
                 receivedError = error
                 completion(error)
             }
@@ -5479,7 +5399,6 @@ final class ChannelController_Tests: XCTestCase {
         nonisolated(unsafe) var receivedError: Error?
         let error: Error? = try waitFor { completion in
             controller.deletePoll(pollId: pollId) { error in
-                
                 receivedError = error
                 completion(error)
             }
@@ -5883,7 +5802,7 @@ extension ChannelController_Tests {
         waitForMessagesUpdate(count: count) {}
     }
 
-    private func writeAndWaitForMessageUpdates(count: Int, channelChanges: Bool = false, _ actions: @escaping @Sendable(DatabaseSession) throws -> Void, file: StaticString = #file, line: UInt = #line) {
+    private func writeAndWaitForMessageUpdates(count: Int, channelChanges: Bool = false, _ actions: @escaping @Sendable (DatabaseSession) throws -> Void, file: StaticString = #file, line: UInt = #line) {
         waitForMessagesUpdate(count: count, channelChanges: channelChanges, file: file, line: line) {
             do {
                 try client.databaseContainer.writeSynchronously(actions)

@@ -1232,7 +1232,7 @@ public class Chat: @unchecked Sendable {
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
     public func subscribe<E>(
         toEvent event: E.Type,
-        handler: @escaping @Sendable(E) -> Void
+        handler: @escaping @Sendable (E) -> Void
     ) -> AnyCancellable where E: Event {
         eventNotificationCenter.subscribe(
             to: event,
@@ -1249,7 +1249,7 @@ public class Chat: @unchecked Sendable {
     /// - Parameter handler: The handler closure which is called when the event happens.
     ///
     /// - Returns: A cancellable instance, which you use when you end the subscription. Deallocation of the result will tear down the subscription stream.
-    public func subscribe(_ handler: @escaping @Sendable(Event) -> Void) -> AnyCancellable {
+    public func subscribe(_ handler: @escaping @Sendable (Event) -> Void) -> AnyCancellable {
         eventNotificationCenter.subscribe(
             handler: { [weak self] event in
                 self?.dispatchSubscribeHandler(event, callback: handler)
@@ -1453,7 +1453,7 @@ public class Chat: @unchecked Sendable {
     public func uploadAttachment(
         with localFileURL: URL,
         type: AttachmentType,
-        progress: (@Sendable(Double) -> Void)? = nil
+        progress: (@Sendable (Double) -> Void)? = nil
     ) async throws -> UploadedAttachment {
         try await channelUpdater.uploadFile(
             type: type,
@@ -1498,7 +1498,7 @@ extension Chat {
         }
     }
     
-    func dispatchSubscribeHandler<E>(_ event: E, callback: @escaping @Sendable(E) -> Void) where E: Event {
+    func dispatchSubscribeHandler<E>(_ event: E, callback: @escaping @Sendable (E) -> Void) where E: Event {
         Task.mainActor {
             guard let cid = try? self.cid else { return }
             guard EventNotificationCenter.channelFilter(cid: cid, event: event) else { return }
@@ -1539,7 +1539,7 @@ extension Chat {
 
 extension Chat {
     struct Environment: Sendable {
-        var chatStateBuilder: @Sendable @MainActor(
+        var chatStateBuilder: @Sendable @MainActor (
             _ channelQuery: ChannelQuery,
             _ messageOrder: MessageOrdering,
             _ memberSorting: [Sorting<ChannelMemberListSortingKey>],
@@ -1557,7 +1557,7 @@ extension Chat {
             )
         }
         
-        var channelUpdaterBuilder: @Sendable(
+        var channelUpdaterBuilder: @Sendable (
             _ channelRepository: ChannelRepository,
             _ messageRepository: MessageRepository,
             _ paginationStateHandler: MessagesPaginationStateHandling,
@@ -1573,17 +1573,17 @@ extension Chat {
             )
         }
 
-        var eventSenderBuilder: @Sendable(
+        var eventSenderBuilder: @Sendable (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> EventSender = { EventSender(database: $0, apiClient: $1) }
         
-        var memberUpdaterBuilder: @Sendable(
+        var memberUpdaterBuilder: @Sendable (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelMemberUpdater = { ChannelMemberUpdater(database: $0, apiClient: $1) }
 
-        var messageUpdaterBuilder: @Sendable(
+        var messageUpdaterBuilder: @Sendable (
             _ isLocalStorageEnabled: Bool,
             _ messageRepository: MessageRepository,
             _ database: DatabaseContainer,
@@ -1597,7 +1597,7 @@ extension Chat {
             )
         }
         
-        var readStateHandlerBuilder: @Sendable(
+        var readStateHandlerBuilder: @Sendable (
             _ authenticationRepository: AuthenticationRepository,
             _ channelUpdater: ChannelUpdater,
             _ messageRepository: MessageRepository
@@ -1609,7 +1609,7 @@ extension Chat {
             )
         }
         
-        var typingEventsSenderBuilder: @Sendable(
+        var typingEventsSenderBuilder: @Sendable (
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> TypingEventsSender = { TypingEventsSender(database: $0, apiClient: $1) }

@@ -17,7 +17,7 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         in cid: ChannelId,
         updates: MemberUpdatePayload?,
         unset: [String]?,
-        completion: @escaping (@Sendable(Result<ChatChannelMember, Error>) -> Void)
+        completion: @escaping (@Sendable (Result<ChatChannelMember, Error>) -> Void)
     ) {
         apiClient.request(
             endpoint: .partialMemberUpdate(
@@ -43,7 +43,7 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         _ isPinned: Bool,
         userId: UserId,
         cid: ChannelId,
-        completion: @escaping @Sendable(Error?) -> Void
+        completion: @escaping @Sendable (Error?) -> Void
     ) {
         partialUpdate(
             userId: userId,
@@ -70,7 +70,7 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         _ isArchived: Bool,
         userId: UserId,
         cid: ChannelId,
-        completion: @escaping @Sendable(Error?) -> Void
+        completion: @escaping @Sendable (Error?) -> Void
     ) {
         partialUpdate(
             userId: userId,
@@ -107,7 +107,7 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         shadow: Bool,
         for timeoutInMinutes: Int? = nil,
         reason: String? = nil,
-        completion: (@Sendable(Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         apiClient.request(
             endpoint: .banMember(userId, cid: cid, shadow: shadow, timeoutInMinutes: timeoutInMinutes, reason: reason)
@@ -124,7 +124,7 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
     func unbanMember(
         _ userId: UserId,
         in cid: ChannelId,
-        completion: (@Sendable(Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .unbanMember(userId, cid: cid)) {
             completion?($0.error)

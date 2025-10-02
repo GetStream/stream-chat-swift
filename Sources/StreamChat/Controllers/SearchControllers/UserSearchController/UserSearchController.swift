@@ -68,7 +68,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///   - term: Search term. If empty string or `nil`, all users are fetched.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
-    public func search(term: String?, completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
+    public func search(term: String?, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         fetch(.search(term: term), completion: completion)
     }
 
@@ -83,7 +83,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///   - query: Search query.
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
-    public func search(query: UserListQuery, completion: (@MainActor(_ error: Error?) -> Void)? = nil) {
+    public func search(query: UserListQuery, completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
         fetch(query, completion: completion)
     }
 
@@ -96,7 +96,7 @@ public class ChatUserSearchController: DataController, DelegateCallable, DataSto
     ///
     public func loadNextUsers(
         limit: Int = 25,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         guard let lastQuery = query else {
             callback {
@@ -123,7 +123,7 @@ private extension ChatUserSearchController {
     /// - Parameters:
     ///   - query: The query to fetch.
     ///   - completion: The completion that is triggered when the query is processed.
-    func fetch(_ query: UserListQuery, completion: (@MainActor(Error?) -> Void)? = nil) {
+    func fetch(_ query: UserListQuery, completion: (@MainActor (Error?) -> Void)? = nil) {
         // TODO: Remove with the next major
         //
         // This is needed to make the delegate fire about state changes at the same time with the same
@@ -165,7 +165,7 @@ private extension ChatUserSearchController {
     /// - Parameters:
     ///   - page: The page of users fetched from the API.
     ///   - completion: The completion that will be called with user models when database write is completed.
-    func save(page: UserListPayload, completion: @escaping @Sendable([ChatUser]) -> Void) {
+    func save(page: UserListPayload, completion: @escaping @Sendable ([ChatUser]) -> Void) {
         client.databaseContainer.write(converting: { session in
             page
                 .users

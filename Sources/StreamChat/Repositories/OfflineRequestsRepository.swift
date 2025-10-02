@@ -51,7 +51,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
     /// - If the requests succeeds -> The request is removed from the pending ones
     /// - If the request fails with a connection error -> The request is kept to be executed once the connection is back (we are not putting it back at the queue to make sure we respect the order)
     /// - If the request fails with any other error -> We are dismissing the request, and removing it from the queue
-    func runQueuedRequests(completion: @escaping @Sendable() -> Void) {
+    func runQueuedRequests(completion: @escaping @Sendable () -> Void) {
         database.read { session in
             let dtos = session.allQueuedRequests()
             var requests = [Request]()
@@ -125,7 +125,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
         }
     }
     
-    private func deleteRequests(with ids: Set<String>, completion: @escaping @Sendable() -> Void) {
+    private func deleteRequests(with ids: Set<String>, completion: @escaping @Sendable () -> Void) {
         guard !ids.isEmpty else {
             completion()
             return
@@ -139,7 +139,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
         }
     }
     
-    private func executeRequests(_ requests: [Request], completion: @escaping @Sendable() -> Void) {
+    private func executeRequests(_ requests: [Request], completion: @escaping @Sendable () -> Void) {
         let database = self.database
         let group = DispatchGroup()
         for request in requests {
@@ -147,7 +147,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
             let endpoint = request.endpoint
             
             group.enter()
-            let deleteQueuedRequestAndComplete: @Sendable() -> Void = {
+            let deleteQueuedRequestAndComplete: @Sendable () -> Void = {
                 database.write({ session in
                     session.deleteQueuedRequest(id: id)
                 }, completion: { _ in group.leave() })
@@ -189,7 +189,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
     private func performDatabaseRecoveryActionsUponSuccess(
         for endpoint: DataEndpoint,
         data: Data,
-        completion: @escaping @Sendable() -> Void
+        completion: @escaping @Sendable () -> Void
     ) {
         func decodeTo<T: Decodable>(_ type: T.Type) -> T? {
             try? JSONDecoder.stream.decode(T.self, from: data)
@@ -219,7 +219,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
         }
     }
 
-    func queueOfflineRequest(endpoint: DataEndpoint, completion: (@Sendable() -> Void)? = nil) {
+    func queueOfflineRequest(endpoint: DataEndpoint, completion: (@Sendable () -> Void)? = nil) {
         guard endpoint.shouldBeQueuedOffline else {
             completion?()
             return
