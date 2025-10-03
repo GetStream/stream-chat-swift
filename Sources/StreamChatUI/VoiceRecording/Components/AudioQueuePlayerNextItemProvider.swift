@@ -5,6 +5,10 @@
 import Foundation
 import StreamChat
 
+open class AudioTest {
+    public required init() {}
+}
+
 /// An object responsible for providing the next VoiceRecording to play.
 open class AudioQueuePlayerNextItemProvider {
     /// Describes the lookUp scope in which the Provider will look into for the next available VoiceRecording.
@@ -82,6 +86,10 @@ open class AudioQueuePlayerNextItemProvider {
         default:
             return nil
         }
+    }
+    
+    func testmeplz() {
+        print("works")
     }
 
     // MARK: - Helpers
