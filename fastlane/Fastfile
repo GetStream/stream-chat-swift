@@ -4,6 +4,7 @@ skip_docs
 
 require 'json'
 require 'net/http'
+require 'xcodeproj'
 import 'Sonarfile'
 import 'Allurefile'
 
@@ -26,7 +27,7 @@ before_all do |lane|
   if is_ci
     setup_ci
     setup_git_config
-    select_xcode(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :pod_lint, :sync_mock_server, :copyright, :merge_main].include?(lane)
+    select_xcode(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :sync_mock_server, :copyright, :merge_main].include?(lane)
   end
 end
 
@@ -86,12 +87,10 @@ lane :release do |options|
   end
 
   match_me
-  pod_lint
   release_ios_sdk(
     version: options[:version],
     bump_type: options[:type],
     sdk_names: sdk_names,
-    podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
     github_repo: github_repo,
     extra_changes: extra_changes,
     create_pull_request: true
@@ -128,7 +127,6 @@ lane :publish_release do |options|
     skip_git_status_check: false,
     version: release_version,
     sdk_names: sdk_names,
-    podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
     github_repo: github_repo,
     upload_assets: ['Products/StreamChat.zip', 'Products/StreamChatUI.zip', 'Products/StreamChat-All.zip']
   )
@@ -240,11 +238,6 @@ private_lane :appstore_api_key do
     key_content: ENV.fetch('APPSTORE_API_KEY', nil),
     in_house: false
   )
-end
-
-lane :pod_lint do
-  # We don't lint StreamChatUI.podspec since pod lints it against StreamChat's remote version instead of local one
-  pod_lib_lint(podspec: 'StreamChat.podspec', allow_warnings: true)
 end
 
 desc "If `readonly: true` (by default), installs all Certs and Profiles necessary for development and ad-hoc.\nIf `readonly: false`, recreates all Profiles necessary for development and ad-hoc, updates them locally and remotely."
@@ -740,28 +733,6 @@ lane :spm_integration do
   )
 end
 
-desc 'Test CocoaPods Integration'
-lane :cocoapods_integration do
-  next unless is_check_required(sources: sources_matrix[:integration], force_check: @force_check)
-
-  cocoapods(
-    clean_install: true,
-    podfile: 'Integration/CocoaPods/'
-  )
-
-  gym(
-    workspace: 'Integration/CocoaPods/CocoaPods.xcworkspace',
-    scheme: 'CocoaPods',
-    skip_package_ipa: true,
-    skip_archive: true,
-    clean: is_localhost,
-    derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path,
-    destination: 'generic/platform=iOS Simulator',
-    xcargs: buildcache_xcargs
-  )
-end
-
 private_lane :update_testplan_on_ci do |options|
   update_testplan(path: options[:path], env_vars: { key: 'CI', value: 'TRUE' }) if is_ci
 end
@@ -847,12 +818,15 @@ end
 lane :validate_public_interface do
   next unless is_check_required(sources: sources_matrix[:public_interface], force_check: @force_check)
 
-  # Run the analysis on the current branch
+  # Get branch names
   original_branch = current_branch
+  target_branch = ENV['GITHUB_BASE_REF'] || (original_branch.include?('release/') ? 'main' : 'develop')
+  UI.important("Target branch: #{target_branch} 🕊️")
+
+  # Run the analysis on the current branch
   sh('interface-analyser analysis ../Sources/ public_interface_current.json')
 
   # Checkout the target branch
-  target_branch = original_branch.include?('release/') ? 'main' : 'develop'
   sh("git fetch origin #{target_branch}")
   sh("git checkout #{target_branch}")
 
