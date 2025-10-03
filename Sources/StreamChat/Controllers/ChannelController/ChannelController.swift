@@ -55,7 +55,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// To observe changes of the messages, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var messages: LazyCachedMapCollection<ChatMessage> {
+    public var messages: [ChatMessage] {
         if state == .initialized {
             setLocalStateBasedOnError(startDatabaseObservers())
         }
@@ -1697,7 +1697,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     public func getFirstUnreadMessageId(for channel: ChatChannel) -> MessageId? {
         UnreadMessageLookup.firstUnreadMessageId(
             in: channel,
-            messages: StreamCollection(messages),
+            messages: messages,
             hasLoadedAllPreviousMessages: hasLoadedAllPreviousMessages,
             currentUserId: client.currentUserId
         )

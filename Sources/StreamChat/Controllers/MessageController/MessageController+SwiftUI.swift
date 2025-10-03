@@ -18,7 +18,7 @@ extension ChatMessageController {
         @Published public private(set) var message: ChatMessage?
 
         /// The replies the message controller observes.
-        @Published public private(set) var replies: LazyCachedMapCollection<ChatMessage> = []
+        @Published public private(set) var replies: [ChatMessage] = []
 
         /// The reactions the message controller observes.
         @Published public private(set) var reactions: [ChatMessageReaction] = []

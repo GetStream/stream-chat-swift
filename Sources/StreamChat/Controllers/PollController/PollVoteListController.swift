@@ -41,7 +41,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     ///
     /// To observe changes of the votes, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
-    public var votes: LazyCachedMapCollection<PollVote> {
+    public var votes: [PollVote] {
         startPollVotesListObserverIfNeeded()
         return pollVotesObserver.items
     }

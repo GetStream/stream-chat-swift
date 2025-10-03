@@ -7,7 +7,7 @@ import Foundation
 enum UnreadMessageLookup {
     static func firstUnreadMessageId(
         in channel: ChatChannel,
-        messages: StreamCollection<ChatMessage>,
+        messages: [ChatMessage],
         hasLoadedAllPreviousMessages: Bool,
         currentUserId: UserId?
     ) -> MessageId? {

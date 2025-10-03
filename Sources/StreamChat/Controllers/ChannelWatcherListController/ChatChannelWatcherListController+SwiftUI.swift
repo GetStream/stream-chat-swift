@@ -16,7 +16,7 @@ extension ChatChannelWatcherListController {
         public let controller: ChatChannelWatcherListController
 
         /// The channel members.
-        @Published public private(set) var watchers: LazyCachedMapCollection<ChatUser> = []
+        @Published public private(set) var watchers: [ChatUser] = []
 
         /// The current state of the controller.
         @Published public private(set) var state: DataController.State

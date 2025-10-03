@@ -34,5 +34,5 @@ import Foundation
     public let query: ChannelListQuery
     
     /// An array of channels for the specified ``ChannelListQuery``.
-    @Published public internal(set) var channels = StreamCollection<ChatChannel>([])
+    @Published public internal(set) var channels: [ChatChannel] = []
 }

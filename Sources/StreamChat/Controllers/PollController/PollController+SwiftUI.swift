@@ -18,7 +18,7 @@ extension PollController {
         @Published public private(set) var poll: Poll?
 
         /// The current user's votes.
-        @Published public private(set) var ownVotes: LazyCachedMapCollection<PollVote> = []
+        @Published public private(set) var ownVotes: [PollVote] = []
 
         /// The current state of the controller.
         @Published public private(set) var state: DataController.State

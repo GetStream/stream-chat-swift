@@ -12,7 +12,7 @@ import Foundation
     @Published public internal(set) var query: UserListQuery?
     
     /// An array of search results for the specified query and pagination state.
-    @Published public internal(set) var users = StreamCollection<ChatUser>([])
+    @Published public internal(set) var users: [ChatUser] = []
 }
 
 extension UserSearchState {
@@ -36,16 +36,16 @@ extension UserSearchState {
             // Discard since filter or sorting has changed
             return
         }
-        let result: StreamCollection<ChatUser>
+        let result: [ChatUser]
         if completedQuery.pagination?.offset == 0 {
             // Reset to the first page
-            result = StreamCollection(incomingUsers)
+            result = incomingUsers
         } else {
             // Filter and sorting are the same but incoming users might contain duplicates (depends how pagination is used)
             let incomingIds = Set(incomingUsers.map(\.id))
             let incomingRemovedUsers = users.filter { !incomingIds.contains($0.id) }
             let sortValues = completedQuery.sort.map(\.sortValue)
-            result = StreamCollection((incomingRemovedUsers + incomingUsers).sorted(using: sortValues))
+            result = (incomingRemovedUsers + incomingUsers).sorted(using: sortValues)
         }
         users = result
     }

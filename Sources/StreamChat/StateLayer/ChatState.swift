@@ -59,7 +59,7 @@ import Foundation
     /// An array of loaded channel members.
     ///
     /// Use load members in ``Chat`` for loading more members.
-    @Published public private(set) var members = StreamCollection<ChatChannelMember>([])
+    @Published public private(set) var members: [ChatChannelMember] = []
     
     /// The sorting order for channel members (the default sorting is by created at in ascending order).
     public let memberSorting: [Sorting<ChannelMemberListSortingKey>]
@@ -74,7 +74,7 @@ import Foundation
     /// Messages are ordered by timestamp and ``messageOrder`` (In case of ``MessageOrdering/bottomToTop`` the list is sorted in ascending order).
     ///
     /// Use load messages in ``Chat`` for loading more messages.
-    @Published public internal(set) var messages = StreamCollection<ChatMessage>([])
+    @Published public internal(set) var messages: [ChatMessage] = []
     
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
     public var hasLoadedAllOldestMessages: Bool {
@@ -161,7 +161,7 @@ import Foundation
     /// An array of users who are currently watching the channel.
     ///
     /// Use load watchers method in ``Chat`` for populating this array.
-    @Published public internal(set) var watchers = StreamCollection<ChatUser>([])
+    @Published public internal(set) var watchers: [ChatUser] = []
 }
 
 // MARK: - Internal

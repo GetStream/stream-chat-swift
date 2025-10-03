@@ -13,7 +13,7 @@ public class UserSearch_Mock: UserSearch, @unchecked Sendable {
     }
     
     @MainActor public func setUsers(_ users: [ChatUser]) {
-        state.users = StreamCollection(users)
+        state.users = users
     }
     
     override public func loadMoreUsers(limit: Int? = nil) async throws -> [ChatUser] {

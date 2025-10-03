@@ -34,7 +34,7 @@ public class ChatThreadListController: DataController, DelegateCallable, DataSto
     ///
     /// To observe changes of the threads, set your class as a delegate of this controller
     /// or use the provided combine publishers.
-    public var threads: LazyCachedMapCollection<ChatThread> {
+    public var threads: [ChatThread] {
         startThreadListObserverIfNeeded()
         return threadListObserver.items
     }

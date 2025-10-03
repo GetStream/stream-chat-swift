@@ -43,7 +43,7 @@ class PollVoteListController_Mock: PollVoteListController, @unchecked Sendable {
     }
 
     var mockedVotes: [PollVote] = []
-    override var votes: LazyCachedMapCollection<PollVote> {
-        LazyCachedMapCollection(elements: mockedVotes)
+    override var votes: [PollVote] {
+        mockedVotes
     }
 }

@@ -50,16 +50,16 @@ extension ChannelListState {
         }
         
         struct Handlers {
-            let channelsDidChange: @Sendable @MainActor (StreamCollection<ChatChannel>) async -> Void
+            let channelsDidChange: @Sendable @MainActor ([ChatChannel]) async -> Void
         }
         
-        func start(with handlers: Handlers) -> StreamCollection<ChatChannel> {
+        func start(with handlers: Handlers) -> [ChatChannel] {
             do {
                 channelListLinker.start(with: eventNotificationCenter)
                 return try channelListObserver.startObserving(didChange: handlers.channelsDidChange)
             } catch {
                 log.error("Failed to start the channel list observer for query: \(query)")
-                return StreamCollection([])
+                return []
             }
         }
     }
