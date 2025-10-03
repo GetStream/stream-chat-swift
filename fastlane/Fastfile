@@ -819,12 +819,9 @@ lane :validate_public_interface do
   next unless is_check_required(sources: sources_matrix[:public_interface], force_check: @force_check)
 
   # Get branch names
-  puts "GITHUB_BASE_REF: #{ENV.fetch('GITHUB_BASE_REF', nil)}"
-  puts "GITHUB_HEAD_REF: #{ENV.fetch('GITHUB_HEAD_REF', nil)}"
-  puts "GITHUB_REF: #{ENV.fetch('GITHUB_REF', nil)}"
   original_branch = current_branch
-  target_branch = ENV['GITHUB_BASE_REF'] || original_branch.include?('release/') ? 'main' : 'develop'
-  UI.message("Current branch: #{original_branch}\nTarget branch: #{target_branch}")
+  target_branch = ENV['GITHUB_BASE_REF'] || (original_branch.include?('release/') ? 'main' : 'develop')
+  UI.important("Target branch: #{target_branch} 🕊️")
 
   # Run the analysis on the current branch
   sh('interface-analyser analysis ../Sources/ public_interface_current.json')
