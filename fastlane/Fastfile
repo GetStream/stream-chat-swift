@@ -823,7 +823,7 @@ lane :validate_public_interface do
   sh('interface-analyser analysis ../Sources/ public_interface_current.json')
 
   # Checkout the target branch
-  target_branch = original_branch.include?('release/') ? 'main' : 'develop'
+  target_branch = ENV['GITHUB_BASE_REF'] || original_branch.include?('release/') ? 'main' : 'develop'
   sh("git fetch origin #{target_branch}")
   sh("git checkout #{target_branch}")
 
