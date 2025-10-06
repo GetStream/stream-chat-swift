@@ -460,6 +460,7 @@
 		4FE6E1AE2BAC7A1B00C80AF1 /* UserListState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */; };
 		4FE913872D82C8ED0048AC16 /* BoxedAny.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE913862D82C8E90048AC16 /* BoxedAny.swift */; };
 		4FE913882D82C8ED0048AC16 /* BoxedAny.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FE913862D82C8E90048AC16 /* BoxedAny.swift */; };
+		4FECE0902E9392A3007D14F0 /* StreamCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4FECE08F2E9392A3007D14F0 /* StreamCore */; };
 		4FF2A80D2B8E011000941A64 /* ChatState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */; };
 		4FF2A80E2B8E011000941A64 /* ChatState+Observer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */; };
 		4FF9B2682C6F697300A3B711 /* AttachmentDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FF9B2672C6F696B00A3B711 /* AttachmentDownloader.swift */; };
@@ -3455,6 +3456,7 @@
 		4FE6E1A92BAC79F400C80AF1 /* MemberListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MemberListState+Observer.swift"; sourceTree = "<group>"; };
 		4FE6E1AC2BAC7A1B00C80AF1 /* UserListState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UserListState+Observer.swift"; sourceTree = "<group>"; };
 		4FE913862D82C8E90048AC16 /* BoxedAny.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxedAny.swift; sourceTree = "<group>"; };
+		4FECE1E22E939BF1007D14F0 /* stream-core-swift */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "stream-core-swift"; path = "../stream-core-swift"; sourceTree = SOURCE_ROOT; };
 		4FF2A80C2B8E011000941A64 /* ChatState+Observer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatState+Observer.swift"; sourceTree = "<group>"; };
 		4FF9B2672C6F696B00A3B711 /* AttachmentDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachmentDownloader.swift; sourceTree = "<group>"; };
 		4FFB5E9F2BA0507900F0454F /* Collection+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+Extensions.swift"; sourceTree = "<group>"; };
@@ -5158,6 +5160,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FECE0902E9392A3007D14F0 /* StreamCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -7009,6 +7012,7 @@
 		8AD5EC8522E9A3E8005CFAC9 = {
 			isa = PBXGroup;
 			children = (
+				4FECE1E22E939BF1007D14F0 /* stream-core-swift */,
 				4A4E184528D06CA30062378D /* Documentation.docc */,
 				AD9BE32526680E4200A6D284 /* Stream.playground */,
 				792E3D6A25C97D920040B0C2 /* Package.swift */,
@@ -10207,6 +10211,7 @@
 			);
 			name = StreamChat;
 			packageProductDependencies = (
+				4FECE08F2E9392A3007D14F0 /* StreamCore */,
 			);
 			productName = Sources;
 			productReference = 799C941B247D2F80001F1104 /* StreamChat.framework */;
@@ -10563,6 +10568,7 @@
 				A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */,
 				C1B49B39282283C100F4E89E /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */,
 				E334B384282468F2002E9640 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */,
 			);
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
 			projectDirPath = "";
@@ -15913,6 +15919,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/GetStream/stream-core-swift";
+			requirement = {
+				kind = exactVersion;
+				version = 0.3.0;
+			};
+		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/AliSoftware/OHHTTPStubs.git";
@@ -15964,6 +15978,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4FECE08F2E9392A3007D14F0 /* StreamCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 4FECE08E2E9392A3007D14F0 /* XCRemoteSwiftPackageReference "stream-core-swift" */;
+			productName = StreamCore;
+		};
 		8274181E2ACDE85E004A23DA /* StreamSwiftTestHelpers */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = A3D15D8C27E9D839006B34D7 /* XCRemoteSwiftPackageReference "stream-chat-swift-test-helpers" */;
