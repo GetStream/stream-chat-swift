@@ -58,7 +58,6 @@ final class YTChatComposerViewController: ComposerVC {
             preferredStyle: .actionSheet
         )
         ["😃", "😇", "😅", "😂"].forEach { emoji in
-
             let action = UIAlertAction(title: emoji, style: .default) { _ in
                 let inputTextView = self.composerView.inputMessageView.textView
                 inputTextView.replaceSelectedText(emoji)

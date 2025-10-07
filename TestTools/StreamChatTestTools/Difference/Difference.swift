@@ -1,9 +1,5 @@
 //
-//  Difference.swift
-//  Difference
-//
-//  Created by Krzysztof Zablocki on 18.10.2017
-//  Copyright © 2017 Krzysztof Zablocki. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -66,7 +62,7 @@ private struct Differ {
         let expectedMirror = Mirror(reflecting: expected)
         let receivedMirror = Mirror(reflecting: received)
 
-        guard expectedMirror.children.count != 0, receivedMirror.children.count != 0 else {
+        guard !expectedMirror.children.isEmpty, !receivedMirror.children.isEmpty else {
             let receivedDump = String(dumping: received)
             if receivedDump != String(dumping: expected) {
                 return handleChildless(expected, expectedMirror, received, receivedMirror, level)
@@ -97,7 +93,7 @@ private struct Differ {
             return [generateDifferentCountBlock(expected, expectedMirror, received, receivedMirror, level)]
         case (.dictionary?, .dictionary?):
             if let expectedDict = expected as? Dictionary<AnyHashable, Any>,
-                let receivedDict = received as? Dictionary<AnyHashable, Any> {
+               let receivedDict = received as? Dictionary<AnyHashable, Any> {
                 var resultLines: [Line] = []
                 let missingKeys = Set(expectedDict.keys).subtracting(receivedDict.keys)
                 let extraKeys = Set(receivedDict.keys).subtracting(expectedDict.keys)
@@ -126,7 +122,7 @@ private struct Differ {
             }
         case (.set?, .set?):
             if let expectedSet = expected as? Set<AnyHashable>,
-                let receivedSet = received as? Set<AnyHashable> {
+               let receivedSet = received as? Set<AnyHashable> {
                 let missing = expectedSet.subtracting(receivedSet)
                     .map { unique in
                         Line(contents: "\(nameLabels.missing): \(unique.description)", indentationLevel: level, canBeOrdered: true)
@@ -155,7 +151,8 @@ private struct Differ {
             let results = diffLines(lhs.value, rhs.value, level: level + 1)
 
             if !results.isEmpty {
-                let line = Line(contents: childName,
+                let line = Line(
+                    contents: childName,
                     indentationLevel: level,
                     canBeOrdered: true,
                     children: results
@@ -182,12 +179,12 @@ private struct Differ {
         let receivedPrintable: String
         let expectedPrintable: String
         // Received mirror has a different number of arguments to expected
-        if receivedMirror.children.count == 0, expectedMirror.children.count != 0 {
+        if receivedMirror.children.isEmpty, !expectedMirror.children.isEmpty {
             // Print whole description of received, as it's only a label if childless
             receivedPrintable = String(dumping: received)
             // Get the label from the expected, to prevent printing long list of arguments
             expectedPrintable = enumLabelFromFirstChild(expectedMirror) ?? String(describing: expected)
-        } else if expectedMirror.children.count == 0, receivedMirror.children.count != 0 {
+        } else if expectedMirror.children.isEmpty, !receivedMirror.children.isEmpty {
             receivedPrintable = enumLabelFromFirstChild(receivedMirror) ?? String(describing: received)
             expectedPrintable = String(dumping: expected)
         } else {
@@ -311,7 +308,7 @@ public struct Line {
                 guard lhs.canBeOrdered && rhs.canBeOrdered else { return false }
                 return lhs.contents < rhs.contents
             }
-            .map { $0.generateContents(indentationType: indentationType)}
+            .map { $0.generateContents(indentationType: indentationType) }
             .joined()
         return "\(indentationString)\(contents)\n" + childrenContents
     }
@@ -321,7 +318,7 @@ public struct Line {
     }
 }
 
-fileprivate extension String {
+private extension String {
     init<T>(dumping object: T) {
         self.init()
         dump(object, to: &self)
@@ -344,7 +341,7 @@ private func enumLabelFromFirstChild(_ mirror: Mirror) -> String? {
     }
 }
 
-fileprivate extension Mirror {
+private extension Mirror {
     func displayStyleDescriptor(index: Int) -> String {
         switch self.displayStyle {
         case .enum: return "Enum "
@@ -436,7 +433,6 @@ public func dumpDiff<T: Equatable>(
         skipPrintingOnDiffCount: skipPrintingOnDiffCount
     ).forEach { print($0) }
 }
-
 
 /// Prints list of differences between 2 objects
 ///

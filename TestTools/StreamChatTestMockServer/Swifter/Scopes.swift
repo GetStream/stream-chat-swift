@@ -1,8 +1,5 @@
 //
-//  HttpHandlers+Scopes.swift
-//  Swifter
-//
-//  Copyright © 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 // swiftlint:disable file_length
@@ -13,7 +10,7 @@ public func scopes(_ scope: @escaping Closure) -> ((HttpRequest) -> HttpResponse
         scopesBuffer[Process.tid] = ""
         scope()
         return .raw(200, "OK", ["Content-Type": "text/html"], {
-            try? $0.write([UInt8](("<!DOCTYPE html>"  + (scopesBuffer[Process.tid] ?? "")).utf8))
+            try? $0.write([UInt8](("<!DOCTYPE html>" + (scopesBuffer[Process.tid] ?? "")).utf8))
         })
     }
 }
@@ -337,7 +334,6 @@ var scopesBuffer = [UInt64: String]()
 
 // swiftlint:disable cyclomatic_complexity function_body_length
 private func evaluate(_ node: String, _ attrs: [String: String?] = [:], _ closure: Closure) {
-
     // Push the attributes.
 
     let stackid = idd
@@ -752,7 +748,7 @@ private func evaluate(_ node: String, _ attrs: [String: String?] = [:], _ closur
     if let inner = inner {
         scopesBuffer[Process.tid] = output + ">" + (inner) + "</" + node + ">"
     } else {
-        let current = scopesBuffer[Process.tid]  ?? ""
+        let current = scopesBuffer[Process.tid] ?? ""
         scopesBuffer[Process.tid] = output + ">" + current + "</" + node + ">"
     }
 

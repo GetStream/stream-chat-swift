@@ -1,14 +1,10 @@
 //
-//  String+Misc.swift
-//  Swifter
-//
-//  Copyright (c) 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
 extension String {
-
     public func unquote() -> String {
         var scalars = self.unicodeScalars
         if scalars.first == "\"" && scalars.last == "\"" && scalars.count >= 2 {
@@ -21,7 +17,6 @@ extension String {
 }
 
 extension UnicodeScalar {
-
     public func asWhitespace() -> UInt8? {
         if self.value >= 9 && self.value <= 13 {
             return UInt8(self.value)

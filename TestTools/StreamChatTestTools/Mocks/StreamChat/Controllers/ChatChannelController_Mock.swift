@@ -6,7 +6,6 @@ import Foundation
 @testable import StreamChat
 
 class ChatChannelController_Mock: ChatChannelController {
-
     var mockCid: ChannelId?
     override var cid: ChannelId? {
         mockCid ?? super.cid
@@ -67,7 +66,7 @@ class ChatChannelController_Mock: ChatChannelController {
         skipEnrichUrl: Bool = false,
         restrictedVisibility: [UserId] = [],
         location: NewLocationInfo? = nil,
-        extraData: [String : RawJSON] = [:],
+        extraData: [String: RawJSON] = [:],
         completion: ((Result<MessageId, Error>) -> Void)? = nil
     ) {
         createNewMessageCallCount += 1
@@ -146,7 +145,7 @@ class ChatChannelController_Mock: ChatChannelController {
         mentionedUserIds: [UserId] = [],
         quotedMessageId: MessageId? = nil,
         command: Command? = nil,
-        extraData: [String : RawJSON] = [:],
+        extraData: [String: RawJSON] = [:],
         completion: ((Result<DraftMessage, any Error>) -> Void)? = nil
     ) {
         updateDraftMessage_text = text

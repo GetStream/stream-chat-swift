@@ -2,12 +2,11 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChat
 import Foundation
+@testable import StreamChat
 import XCTest
 
 public final class StreamMockServer {
-
     // Delays all HTTP responses by given time interval, 0 by default
     public static var httpResponseDelay: TimeInterval = 0.0
     // Waits for all HTTP and Websocket responses during given time interval, 10 by default
@@ -106,7 +105,6 @@ extension StreamMockServer {
 // MARK: Config
 
 public extension StreamMockServer {
-
     func config(forChannelId id: String) -> ChannelConfig_Mock? {
         channelConfigs.config(forChannelId: id, server: self)
     }
@@ -121,7 +119,6 @@ public extension StreamMockServer {
 }
 
 public extension StreamMockServer {
-
     func setCooldown(enabled: Bool, duration: Int, inChannelWithId id: String) {
         channelConfigs.setCooldown(enabled: enabled, duration: duration)
 

@@ -6,7 +6,6 @@ import Foundation
 import XCTest
 
 public class BackendRobot {
-
     private var server: StreamMockServer
 
     public init(_ server: StreamMockServer) {
@@ -50,7 +49,7 @@ public class BackendRobot {
             UserDetails.countDooku
         ],
         withAttachments: Bool = false
-    ) -> Self  {
+    ) -> Self {
         var json = server.channelList
         guard let sampleChannel = (json[JSONKey.channels] as? [[String: Any]])?.first else { return self }
 

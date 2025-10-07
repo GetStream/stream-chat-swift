@@ -6,7 +6,6 @@ import Foundation
 import StreamChat
 
 extension UserCredentials {
-
     static var `default`: UserCredentials {
         UserCredentials.luke
     }

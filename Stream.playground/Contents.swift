@@ -1,7 +1,11 @@
+//
+// Copyright © 2025 Stream.io Inc. All rights reserved.
+//
+
 import PlaygroundSupport
-import UIKit
 import StreamChat
 import StreamChatUI
+import UIKit
 
 PlaygroundPage.current.needsIndefiniteExecution = true
 /*:
@@ -9,7 +13,7 @@ PlaygroundPage.current.needsIndefiniteExecution = true
  Playground used for testing the StreamChat and StreamChatUI components of the SDK.
 
  ⚠️ Please, feel free to change the playground and test different components, but do not commit the changes.
-*/
+ */
 let apiKeyString = "8br4watad788"
 
 LogConfig.level = .info

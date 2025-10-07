@@ -6,7 +6,6 @@
 import XCTest
 
 public class ParticipantRobot {
-
     private var server: StreamMockServer
     private var threadParentId: String?
     private var user: [String: String] = UserDetails.hanSolo
@@ -66,7 +65,7 @@ public class ParticipantRobot {
     // Sleep in seconds
     @discardableResult
     public func wait(_ duration: TimeInterval) -> Self {
-        let sleepTime = UInt32(duration * 1000000)
+        let sleepTime = UInt32(duration * 1_000_000)
         usleep(sleepTime)
         return self
     }
@@ -97,14 +96,16 @@ public class ParticipantRobot {
     }
 
     @discardableResult
-    public func sendMessage(_ text: String,
-                            withPushNotification: Bool = false,
-                            bundleIdForPushNotification: String = "",
-                            waitForAppearance: Bool = true,
-                            waitForChannelQuery: Bool = true,
-                            waitBeforeSending: TimeInterval = 0,
-                            file: StaticString = #filePath,
-                            line: UInt = #line) -> Self {
+    public func sendMessage(
+        _ text: String,
+        withPushNotification: Bool = false,
+        bundleIdForPushNotification: String = "",
+        waitForAppearance: Bool = true,
+        waitForChannelQuery: Bool = true,
+        waitBeforeSending: TimeInterval = 0,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
         if waitBeforeSending > 0 {
             wait(waitBeforeSending)
         }
@@ -379,17 +380,19 @@ public class ParticipantRobot {
     }
 
     @discardableResult
-    public func uploadAttachment(type: AttachmentType,
-                                 count: Int = 1,
-                                 asReplyToFirstMessage: Bool = false,
-                                 asReplyToLastMessage: Bool = false,
-                                 inThread: Bool = false,
-                                 alsoInChannel: Bool = false,
-                                 waitForAppearance: Bool = true,
-                                 waitForChannelQuery: Bool = true,
-                                 waitBeforeSending: TimeInterval = 0,
-                                 file: StaticString = #filePath,
-                                 line: UInt = #line) -> Self {
+    public func uploadAttachment(
+        type: AttachmentType,
+        count: Int = 1,
+        asReplyToFirstMessage: Bool = false,
+        asReplyToLastMessage: Bool = false,
+        inThread: Bool = false,
+        alsoInChannel: Bool = false,
+        waitForAppearance: Bool = true,
+        waitForChannelQuery: Bool = true,
+        waitBeforeSending: TimeInterval = 0,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
         if waitBeforeSending > 0 {
             wait(waitBeforeSending)
         }
@@ -433,7 +436,7 @@ public class ParticipantRobot {
             }
 
             if type != .image {
-                file[AttachmentFile.CodingKeys.size.rawValue] = 123456
+                file[AttachmentFile.CodingKeys.size.rawValue] = 123_456
             }
 
             for i in 1...count {

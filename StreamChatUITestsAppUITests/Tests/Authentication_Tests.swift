@@ -6,7 +6,6 @@ import XCTest
 
 // Requires running a standalone Sinatra server
 final class Authentication_Tests: StreamTestCase {
-
     override func setUpWithError() throws {
         mockServerEnabled = false
         app.setLaunchArguments(.jwt)

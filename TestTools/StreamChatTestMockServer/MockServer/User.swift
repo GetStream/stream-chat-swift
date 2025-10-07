@@ -7,7 +7,6 @@
 public let userKey = UserPayloadsCodingKeys.self
 
 public extension StreamMockServer {
-
     func setUpUser(
         source: [String: Any]?,
         details: [String: String] = [:]

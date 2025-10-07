@@ -9,7 +9,6 @@ import UIKit
 // MARK: - Navigation
 
 extension DemoAppCoordinator {
-
     func start(cid: ChannelId? = nil, completion: @escaping (Error?) -> Void) {
         if let cid = cid {
             navigateToChannel(with: cid)
@@ -32,5 +31,4 @@ extension DemoAppCoordinator {
             viewController.router?.showChannel(for: cid)
         }
     }
-
 }

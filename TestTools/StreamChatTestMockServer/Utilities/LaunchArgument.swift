@@ -12,7 +12,6 @@ public enum MockServerConfiguration {
 }
 
 public enum EnvironmentVariable: String {
-
     // This changes the base url to localhost with assigned port.
     // Two conditions need to be met in order to leverage the web socket server in LLC.
     //   1. App runs in Debug build configuration

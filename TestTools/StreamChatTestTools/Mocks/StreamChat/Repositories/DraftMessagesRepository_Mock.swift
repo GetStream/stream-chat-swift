@@ -101,4 +101,4 @@ final class DraftMessagesRepository_Mock: DraftMessagesRepository {
         deleteDraft_calledWith = (cid: cid, threadId: threadId)
         deleteDraft_completion = completion
     }
-} 
+}

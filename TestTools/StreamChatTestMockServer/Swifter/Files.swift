@@ -1,8 +1,5 @@
 //
-//  HttpHandlers+Files.swift
-//  Swifter
-//
-//  Copyright (c) 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -14,7 +11,7 @@ public func shareFile(_ path: String) -> ((HttpRequest) -> HttpResponse) {
             var responseHeader: [String: String] = ["Content-Type": mimeType]
             
             if let attr = try? FileManager.default.attributesOfItem(atPath: path),
-                let fileSize = attr[FileAttributeKey.size] as? UInt64 {
+               let fileSize = attr[FileAttributeKey.size] as? UInt64 {
                 responseHeader["Content-Length"] = String(fileSize)
             }
             return .raw(200, "OK", responseHeader, { writer in
@@ -48,7 +45,7 @@ public func shareFilesFromDirectory(_ directoryPath: String, defaults: [String] 
             var responseHeader: [String: String] = ["Content-Type": mimeType]
 
             if let attr = try? FileManager.default.attributesOfItem(atPath: filePath),
-                let fileSize = attr[FileAttributeKey.size] as? UInt64 {
+               let fileSize = attr[FileAttributeKey.size] as? UInt64 {
                 responseHeader["Content-Length"] = String(fileSize)
             }
 
@@ -73,7 +70,7 @@ public func directoryBrowser(_ dir: String) -> ((HttpRequest) -> HttpResponse) {
             }
             if try filePath.directory() {
                 var files = try filePath.files()
-                files.sort(by: {$0.lowercased() < $1.lowercased()})
+                files.sort(by: { $0.lowercased() < $1.lowercased() })
                 return scopes {
                     html {
                         body {
@@ -89,7 +86,7 @@ public func directoryBrowser(_ dir: String) -> ((HttpRequest) -> HttpResponse) {
                             }
                         }
                     }
-                    }(request)
+                }(request)
             } else {
                 guard let file = try? filePath.openForReading() else {
                     return .notFound()
