@@ -88,7 +88,6 @@ public struct ChatMessage {
     /// A flag indicating whether the message was deleted only for the current user.
     ///
     /// Messages with this flag set to true are deleted for the current user but still visible to others.
-    ///
     public let deletedForMe: Bool
 
     /// The reactions to the message created by any user.
