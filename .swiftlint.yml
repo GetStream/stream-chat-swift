@@ -1,21 +1,16 @@
 excluded:
   - Scripts
-  - Package.swift
-  - Dependencies
   - Sources/StreamChatUI/Generated
   - Sources/StreamChatUI/StreamSwiftyGif
   - Sources/StreamChatUI/StreamNuke
   - Sources/StreamChat/StreamStarscream
   - Sources/StreamChatUI/StreamDifferenceKit
-  - vendor
   - UISDKdocumentation
   - Tests
-  - TestTools
   - Pods
   - .build
   - spm_cache
   - vendor/bundle
-  - .ruby-lsp
   - derived_data
 
 only_rules:

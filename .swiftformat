@@ -81,4 +81,4 @@
 --wrapcollections before-first
 
 # Exclude paths
---exclude **/Generated,Sources/StreamChatUI/StreamNuke,Sources/StreamChatUI/StreamSwiftyGif,Sources/StreamChatUI/StreamDifferenceKit
+--exclude **/Generated,Sources/StreamChatUI/StreamNuke,Sources/StreamChatUI/StreamSwiftyGif,Sources/StreamChatUI/StreamDifferenceKit,vendor/bundle,Pods,spm_cache,derived_data,.build

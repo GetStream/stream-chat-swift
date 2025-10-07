@@ -92,8 +92,8 @@ private struct Differ {
              (.enum?, .enum?) where hasDiffNumOfChildren:
             return [generateDifferentCountBlock(expected, expectedMirror, received, receivedMirror, level)]
         case (.dictionary?, .dictionary?):
-            if let expectedDict = expected as? Dictionary<AnyHashable, Any>,
-               let receivedDict = received as? Dictionary<AnyHashable, Any> {
+            if let expectedDict = expected as? [AnyHashable: Any],
+               let receivedDict = received as? [AnyHashable: Any] {
                 var resultLines: [Line] = []
                 let missingKeys = Set(expectedDict.keys).subtracting(receivedDict.keys)
                 let extraKeys = Set(receivedDict.keys).subtracting(expectedDict.keys)
@@ -104,14 +104,14 @@ private struct Differ {
                         resultLines.append(Line(contents: "Key \(key.description):", indentationLevel: level, canBeOrdered: true, children: results))
                     }
                 }
-                if (!missingKeys.isEmpty) {
+                if !missingKeys.isEmpty {
                     var missingKeyPairs: [Line] = []
                     missingKeys.forEach { key in
                         missingKeyPairs.append(Line(contents: "\(key.description): \(String(describing: expectedDict[key]))", indentationLevel: level + 1, canBeOrdered: true))
                     }
                     resultLines.append(Line(contents: "\(nameLabels.missing) key pairs:", indentationLevel: level, canBeOrdered: false, children: missingKeyPairs))
                 }
-                if (!extraKeys.isEmpty) {
+                if !extraKeys.isEmpty {
                     var extraKeyPairs: [Line] = []
                     extraKeys.forEach { key in
                         extraKeyPairs.append(Line(contents: "\(key.description): \(String(describing: receivedDict[key]))", indentationLevel: level + 1, canBeOrdered: true))
