@@ -53,7 +53,8 @@ extension MessagePayload {
         poll: PollPayload? = nil,
         draft: DraftPayload? = nil,
         sharedLocation: SharedLocationPayload? = nil,
-        member: MemberInfoPayload? = nil
+        member: MemberInfoPayload? = nil,
+        deletedForMe: Bool? = nil
     ) -> MessagePayload {
         .init(
             id: messageId,
@@ -97,7 +98,8 @@ extension MessagePayload {
             poll: poll,
             draft: draft,
             location: sharedLocation,
-            member: member
+            member: member,
+            deletedForMe: deletedForMe
         )
     }
 

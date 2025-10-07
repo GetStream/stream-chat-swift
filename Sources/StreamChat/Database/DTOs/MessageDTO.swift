@@ -118,6 +118,7 @@ class MessageDTO: NSManagedObject {
     @NSManaged var defaultSortingKey: DBDate!
     
     @NSManaged var channelRole: String?
+    @NSManaged var deletedForMe: Bool
 
     override func willSave() {
         super.willSave()
@@ -990,6 +991,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         dto.isSilent = payload.isSilent
         dto.isShadowed = payload.isShadowed
+        dto.deletedForMe = payload.deletedForMe ?? false
         // Due to backend not working as advertised
         // (sending `shadowed: true` flag to the shadow banned user)
         // we have to implement this workaround to get the advertised behavior
@@ -1776,6 +1778,7 @@ private extension ChatMessage {
         let isBounced = dto.isBounced
         let isSilent = dto.isSilent
         let isShadowed = dto.isShadowed
+        let deletedForMe = dto.deletedForMe
         let reactionScores = dto.reactionScores.mapKeys { MessageReactionType(rawValue: $0) }
         let reactionCounts = dto.reactionCounts.mapKeys { MessageReactionType(rawValue: $0) }
         let reactionGroups = dto.reactionGroups.asModel()
@@ -1890,6 +1893,7 @@ private extension ChatMessage {
             isBounced: isBounced,
             isSilent: isSilent,
             isShadowed: isShadowed,
+            deletedForMe: deletedForMe,
             reactionScores: reactionScores,
             reactionCounts: reactionCounts,
             reactionGroups: reactionGroups,

@@ -85,6 +85,12 @@ public struct ChatMessage {
     ///
     public let isShadowed: Bool
 
+    /// A flag indicating whether the message was deleted only for the current user.
+    ///
+    /// Messages with this flag set to true are deleted for the current user but still visible to others.
+    ///
+    public let deletedForMe: Bool
+
     /// The reactions to the message created by any user.
     public let reactionScores: [MessageReactionType: Int]
 
@@ -206,6 +212,7 @@ public struct ChatMessage {
         isBounced: Bool,
         isSilent: Bool,
         isShadowed: Bool,
+        deletedForMe: Bool,
         reactionScores: [MessageReactionType: Int],
         reactionCounts: [MessageReactionType: Int],
         reactionGroups: [MessageReactionType: ChatMessageReactionGroup],
@@ -248,6 +255,7 @@ public struct ChatMessage {
         self.isBounced = isBounced
         self.isSilent = isSilent
         self.isShadowed = isShadowed
+        self.deletedForMe = deletedForMe
         self.reactionScores = reactionScores
         self.reactionCounts = reactionCounts
         self.reactionGroups = reactionGroups
@@ -312,6 +320,7 @@ public struct ChatMessage {
             isBounced: isBounced,
             isSilent: isSilent,
             isShadowed: isShadowed,
+            deletedForMe: deletedForMe,
             reactionScores: reactionScores,
             reactionCounts: reactionCounts,
             reactionGroups: reactionGroups,
@@ -427,6 +436,7 @@ public struct ChatMessage {
             isBounced: isBounced,
             isSilent: isSilent,
             isShadowed: isShadowed,
+            deletedForMe: deletedForMe,
             reactionScores: reactionScores,
             reactionCounts: reactionCounts,
             reactionGroups: reactionGroups,
