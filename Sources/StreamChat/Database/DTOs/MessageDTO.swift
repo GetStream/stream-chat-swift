@@ -991,7 +991,10 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         dto.isSilent = payload.isSilent
         dto.isShadowed = payload.isShadowed
-        dto.deletedForMe = payload.deletedForMe ?? false
+        if let deletedForMe = payload.deletedForMe {
+            dto.deletedForMe = deletedForMe
+        }
+
         // Due to backend not working as advertised
         // (sending `shadowed: true` flag to the shadow banned user)
         // we have to implement this workaround to get the advertised behavior
