@@ -6,7 +6,6 @@ import Foundation
 @testable import StreamChat
 
 public class ChannelList_Mock: ChannelList {
-    
     public static func mock(
         query: ChannelListQuery? = nil,
         client: ChatClient? = nil
@@ -36,7 +35,7 @@ public class ChannelList_Mock: ChannelList {
     }
     
     public var loadNextChannelsIsCalled = false
-    public override func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
+    override public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
         loadNextChannelsIsCalled = true
         return await MainActor.run {
             Array(state.channels)

@@ -56,7 +56,6 @@ class ChatMessageController_Mock: ChatMessageController {
         synchronize_completion = completion
     }
 
-
     var loadPageAroundReplyId_callCount = 0
     var loadPageAroundReplyId_completion: ((Error?) -> Void)?
     override func loadPageAroundReplyId(

@@ -1,16 +1,11 @@
 //
-//  MessagesPaginationStateHandler_Mock.swift
-//  StreamChatTestTools
-//
-//  Created by Nuno Vieira on 05/05/2023.
-//  Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 @testable import StreamChat
 
 final class MessagesPaginationStateHandler_Mock: MessagesPaginationStateHandling {
-
     var mockState: MessagesPaginationState = .initial
 
     var beginCallCount = 0
@@ -32,5 +27,4 @@ final class MessagesPaginationStateHandler_Mock: MessagesPaginationStateHandling
         endCallCount += 1
         endCalledWith = (pagination, result)
     }
-
 }

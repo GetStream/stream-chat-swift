@@ -3,8 +3,8 @@
 //
 
 import Foundation
-import XCTest
 @testable import StreamChat
+import XCTest
 
 public struct AnyEndpoint: Equatable {
     public let path: EndpointPath

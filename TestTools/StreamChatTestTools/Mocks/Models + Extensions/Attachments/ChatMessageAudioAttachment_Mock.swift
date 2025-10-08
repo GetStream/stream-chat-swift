@@ -2,8 +2,8 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChat
 import Foundation
+@testable import StreamChat
 
 public extension ChatMessageAudioAttachment {
     static func mock(

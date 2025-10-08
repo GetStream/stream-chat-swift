@@ -21,7 +21,6 @@ final class WebSocketClient_Mock: WebSocketClient {
     var disconnect_called: Bool { disconnect_calledCounter > 0 }
     var disconnect_completion: (() -> Void)?
 
-
     var mockedConnectionState: WebSocketConnectionState?
 
     override var connectionState: WebSocketConnectionState {
@@ -56,11 +55,13 @@ final class WebSocketClient_Mock: WebSocketClient {
         init_eventNotificationCenter = eventNotificationCenter
         init_environment = environment
 
-        super.init(sessionConfiguration: sessionConfiguration,
-                  requestEncoder: requestEncoder,
-                  eventDecoder: eventDecoder,
-                  eventNotificationCenter: eventNotificationCenter,
-                  environment: environment)
+        super.init(
+            sessionConfiguration: sessionConfiguration,
+            requestEncoder: requestEncoder,
+            eventDecoder: eventDecoder,
+            eventNotificationCenter: eventNotificationCenter,
+            environment: environment
+        )
     }
 
     override func connect() {

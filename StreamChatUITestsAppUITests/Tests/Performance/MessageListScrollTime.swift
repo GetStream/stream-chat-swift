@@ -6,7 +6,6 @@ import XCTest
 
 @available(iOS 15.0, *)
 class MessageListScrollTime: StreamTestCase {
-    
     func testMessageListScrollTime() {
         WHEN("user opens the message list") {
             backendRobot.generateChannels(count: 1, messagesCount: 100, withAttachments: true)

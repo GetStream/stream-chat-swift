@@ -3,16 +3,14 @@
 //
 
 import Foundation
-import UIKit
 import StreamChatUI
+import UIKit
 
 final class ThreadVC: ChatThreadVC {
-
     var onViewWillAppear: ((ChatThreadVC) -> Void)?
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         onViewWillAppear?(self)
     }
-
 }

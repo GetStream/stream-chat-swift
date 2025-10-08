@@ -42,7 +42,7 @@ final class AttachmentUploader_Spy: AttachmentUploader, Spy {
 
         if let uploadAttachmentResult = uploadAttachmentResult {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                completion(uploadAttachmentResult.map { UploadedFile(fileURL: $0.remoteURL )})
+                completion(uploadAttachmentResult.map { UploadedFile(fileURL: $0.remoteURL) })
             }
         }
     }

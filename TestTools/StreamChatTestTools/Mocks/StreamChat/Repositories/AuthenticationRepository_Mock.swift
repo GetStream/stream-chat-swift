@@ -38,16 +38,20 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy {
         return mockedToken
     }
 
-    override init(apiClient: APIClient,
-                  databaseContainer: DatabaseContainer,
-                  connectionRepository: ConnectionRepository,
-                  tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy(),
-                  timerType: StreamChat.Timer.Type = DefaultTimer.self) {
-        super.init(apiClient: apiClient,
-                   databaseContainer: databaseContainer,
-                   connectionRepository: connectionRepository,
-                   tokenExpirationRetryStrategy: tokenExpirationRetryStrategy,
-                   timerType: timerType)
+    override init(
+        apiClient: APIClient,
+        databaseContainer: DatabaseContainer,
+        connectionRepository: ConnectionRepository,
+        tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy(),
+        timerType: StreamChat.Timer.Type = DefaultTimer.self
+    ) {
+        super.init(
+            apiClient: apiClient,
+            databaseContainer: databaseContainer,
+            connectionRepository: connectionRepository,
+            tokenExpirationRetryStrategy: tokenExpirationRetryStrategy,
+            timerType: timerType
+        )
     }
 
     override func fetchCurrentUser() {

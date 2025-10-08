@@ -1,15 +1,11 @@
 //
-//  DemoServer.swift
-//  Swifter
-//
-//  Copyright (c) 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
 // swiftlint:disable function_body_length
 public func demoServer(_ publicDir: String) -> HttpServer {
-
     print(publicDir)
 
     let server = HttpServer()
@@ -125,7 +121,6 @@ public func demoServer(_ publicDir: String) -> HttpServer {
                             }
                         }
                     }
-
                 }
                 javascript {
                     src = "http://cdn.staticfile.org/twitter-bootstrap/3.3.0/js/bootstrap.min.js"

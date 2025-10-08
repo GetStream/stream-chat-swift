@@ -63,7 +63,7 @@ final class PollController_Mock: PollController {
     override func suggestPollOption(
         text: String,
         position: Int? = nil,
-        extraData: [String : RawJSON]? = nil,
+        extraData: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         suggestPollOption_called = true

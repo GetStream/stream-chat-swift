@@ -11,9 +11,11 @@ final class OfflineRequestsRepository_Mock: OfflineRequestsRepository, Spy {
     convenience init() {
         let apiClient = APIClient_Spy()
         let database = DatabaseContainer_Spy()
-        self.init(messageRepository: MessageRepository_Mock(database: database, apiClient: apiClient),
-                  database: database,
-                  apiClient: apiClient)
+        self.init(
+            messageRepository: MessageRepository_Mock(database: database, apiClient: apiClient),
+            database: database,
+            apiClient: apiClient
+        )
     }
 
     override init(

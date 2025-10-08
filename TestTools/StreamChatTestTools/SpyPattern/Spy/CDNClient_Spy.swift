@@ -2,8 +2,8 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-import StreamChat
 import Foundation
+import StreamChat
 
 final class CDNClient_Spy: CDNClient, Spy {
     let spyState = SpyState()

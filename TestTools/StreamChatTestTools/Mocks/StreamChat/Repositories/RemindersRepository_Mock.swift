@@ -110,8 +110,8 @@ final class RemindersRepository_Mock: RemindersRepository {
     }
     
     override func deleteReminder(
-        messageId: MessageId, 
-        cid: ChannelId, 
+        messageId: MessageId,
+        cid: ChannelId,
         completion: @escaping ((Error?) -> Void)
     ) {
         deleteReminder_messageId = messageId
@@ -120,4 +120,4 @@ final class RemindersRepository_Mock: RemindersRepository {
         
         completion(deleteReminder_error)
     }
-} 
+}
