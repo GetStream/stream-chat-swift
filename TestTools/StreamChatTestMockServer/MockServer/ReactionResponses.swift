@@ -8,7 +8,6 @@ import XCTest
 public let reactionKey = MessageReactionPayload.CodingKeys.self
 
 public extension StreamMockServer {
-
     func configureReactionEndpoints() {
         server.register(MockEndpoint.reaction) { [weak self] request in
             let messageId = try XCTUnwrap(request.params[EndpointQuery.messageId])

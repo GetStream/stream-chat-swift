@@ -53,7 +53,7 @@ final class PollsRepository_Mock: PollsRepository, Spy {
         pollId: String,
         text: String,
         position: Int? = nil,
-        custom: [String : RawJSON]? = nil,
+        custom: [String: RawJSON]? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         suggestPollOption_completion = completion

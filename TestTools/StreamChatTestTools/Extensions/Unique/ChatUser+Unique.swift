@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 extension ChatUser {
-    static public var unique: ChatUser {
+    public static var unique: ChatUser {
         .mock(
             id: .unique,
             isOnline: true,

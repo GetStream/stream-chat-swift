@@ -8,7 +8,6 @@ import XCTest
 let app = XCUIApplication()
 
 class StreamTestCase: XCTestCase {
-
     let deviceRobot = DeviceRobot(app)
     var userRobot: UserRobot!
     var backendRobot: BackendRobot!
@@ -47,7 +46,6 @@ class StreamTestCase: XCTestCase {
 }
 
 extension StreamTestCase {
-    
     func assertMockServer() {
         XCTAssertFalse(mockServerCrashed, "Mock server failed on start")
     }

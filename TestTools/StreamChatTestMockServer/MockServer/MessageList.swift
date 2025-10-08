@@ -6,7 +6,6 @@
 import XCTest
 
 public extension StreamMockServer {
-
     func saveMessage(_ message: [String: Any]?) {
         guard let newMessage = message else { return }
 
@@ -142,20 +141,24 @@ public extension StreamMockServer {
         return newMessageList.first
     }
 
-    func waitForWebsocketMessage(withText text: String,
-                                 timeout: Double = StreamMockServer.waitTimeout) {
+    func waitForWebsocketMessage(
+        withText text: String,
+        timeout: Double = StreamMockServer.waitTimeout
+    ) {
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
         while latestWebsocketMessage != text
-                && endTime > Date().timeIntervalSince1970 * 1000 {
+            && endTime > Date().timeIntervalSince1970 * 1000 {
             print("Waiting for websocket message with text: '\(text)'")
         }
     }
 
-    func waitForHttpMessage(withText text: String,
-                            timeout: Double = StreamMockServer.waitTimeout) {
+    func waitForHttpMessage(
+        withText text: String,
+        timeout: Double = StreamMockServer.waitTimeout
+    ) {
         let endTime = Date().timeIntervalSince1970 * 1000 + timeout * 1000
         while latestHttpMessage != text
-                && endTime > Date().timeIntervalSince1970 * 1000 {
+            && endTime > Date().timeIntervalSince1970 * 1000 {
             print("Waiting for http message with text: '\(text)'")
         }
     }

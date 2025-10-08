@@ -6,7 +6,6 @@ import XCTest
 
 @available(iOS 15.0, *)
 class ChannelListScrollTime: StreamTestCase {
-    
     override func setUpWithError() throws {
         mockServerEnabled = false
         switchApiKey = true

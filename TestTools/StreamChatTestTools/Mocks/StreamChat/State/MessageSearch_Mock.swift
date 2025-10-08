@@ -21,13 +21,13 @@ public class MessageSearch_Mock: MessageSearch {
     }
 
     var loadNextMessagesCallCount = 0
-    public override func loadMoreMessages(limit: Int? = nil) async throws -> [ChatMessage] {
+    override public func loadMoreMessages(limit: Int? = nil) async throws -> [ChatMessage] {
         loadNextMessagesCallCount += 1
         return await Array(state.messages)
     }
     
     var searchCallCount = 0
-    public override func search(query: MessageSearchQuery) async throws -> [ChatMessage] {
+    override public func search(query: MessageSearchQuery) async throws -> [ChatMessage] {
         searchCallCount += 1
         return await MainActor.run {
             state.messages = messages
@@ -35,7 +35,7 @@ public class MessageSearch_Mock: MessageSearch {
         }
     }
 
-    public override func search(text: String) async throws -> [ChatMessage] {
+    override public func search(text: String) async throws -> [ChatMessage] {
         searchCallCount += 1
         return await MainActor.run {
             state.messages = messages

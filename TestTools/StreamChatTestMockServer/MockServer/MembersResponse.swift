@@ -2,9 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-
 public extension StreamMockServer {
-
     func configureMembersEndpoints() {
         server.register(MockEndpoint.members) { [weak self] request in
             return self?.mockMembersQuery(request)

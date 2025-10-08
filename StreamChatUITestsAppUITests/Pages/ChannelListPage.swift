@@ -3,11 +3,10 @@
 //
 
 import Foundation
-import XCTest
 import StreamChat
+import XCTest
 
 enum ChannelListPage {
-
     static var userAvatar: XCUIElement { app.otherElements["CurrentChatUserAvatarView"] }
 
     static var cells: XCUIElementQuery {
@@ -64,5 +63,4 @@ enum ChannelListPage {
             return cell.images[identifier]
         }
     }
-
 }

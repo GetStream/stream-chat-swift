@@ -4,8 +4,8 @@
 
 import Foundation
 #if TESTS
-@testable import StreamChat
 import OHHTTPStubs
+@testable import StreamChat
 #else
 import StreamChat
 #endif
@@ -13,7 +13,6 @@ import StreamChatUI
 import UIKit
 
 extension StreamChatWrapper {
-
     func mockConnection(isConnected: Bool) {
         #if TESTS
         let client = StreamChatWrapper.shared.client
@@ -24,9 +23,11 @@ extension StreamChatWrapper {
                 let baseURL = StreamChatWrapper.shared.config.baseURL.restAPIBaseURL.absoluteString
                 return request.url?.absoluteString.contains(baseURL) ?? false
             }, withStubResponse: { _ -> HTTPStubsResponse in
-                let error = NSError(domain: "NSURLErrorDomain",
-                                    code: -1009,
-                                    userInfo: nil)
+                let error = NSError(
+                    domain: "NSURLErrorDomain",
+                    code: -1009,
+                    userInfo: nil
+                )
                 return HTTPStubsResponse(error: error)
             })
 
@@ -57,5 +58,4 @@ extension StreamChatWrapper {
         let channelList = ChannelList.make(with: controller)
         return channelList
     }
-
 }
