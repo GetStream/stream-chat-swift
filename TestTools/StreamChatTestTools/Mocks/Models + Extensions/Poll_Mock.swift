@@ -17,8 +17,8 @@ extension Poll {
         name: String = .unique,
         updatedAt: Date? = nil,
         voteCount: Int = 0,
-        extraData: [String : RawJSON] = [:],
-        voteCountsByOption: [String : Int]? = nil,
+        extraData: [String: RawJSON] = [:],
+        voteCountsByOption: [String: Int]? = nil,
         isClosed: Bool = false,
         maxVotesAllowed: Int? = nil,
         votingVisibility: VotingVisibility? = nil,
@@ -48,12 +48,13 @@ extension Poll {
             createdBy: createdBy,
             latestAnswers: latestAnswers,
             options: options,
-            latestVotesByOption: latestVotesByOption, 
+            latestVotesByOption: latestVotesByOption,
             latestVotes: latestVotes,
             ownVotes: ownVotes
         )
     }
 }
+
 extension PollVote {
     static func mock(
         id: String = .unique,

@@ -1,21 +1,16 @@
 excluded:
   - Scripts
-  - Package.swift
-  - Dependencies
   - Sources/StreamChatUI/Generated
   - Sources/StreamChatUI/StreamSwiftyGif
   - Sources/StreamChatUI/StreamNuke
   - Sources/StreamChat/StreamStarscream
   - Sources/StreamChatUI/StreamDifferenceKit
-  - vendor
   - UISDKdocumentation
   - Tests
-  - TestTools
   - Pods
   - .build
   - spm_cache
   - vendor/bundle
-  - .ruby-lsp
   - derived_data
 
 only_rules:
@@ -56,7 +51,6 @@ only_rules:
   - trailing_comma
   - trailing_newline
   - trailing_semicolon
-  - trailing_whitespace
   - unneeded_break_in_switch
   - unneeded_override
   - unused_closure_parameter
@@ -67,9 +61,6 @@ only_rules:
 
 multiline_arguments:
   only_enforce_after_first_closure_on_first_line: true
-
-trailing_whitespace:
-  ignores_empty_lines: true
 
 file_name_no_space:
   severity: error

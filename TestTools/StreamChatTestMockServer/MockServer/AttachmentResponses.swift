@@ -6,12 +6,11 @@
 import XCTest
 
 public extension StreamMockServer {
-
     func configureAttachmentEndpoints() {
-        server.register(MockEndpoint.image) { [weak self] request in
+        server.register(MockEndpoint.image) { [weak self] _ in
             self?.attachmentCreation(fileUrl: Attachments.image)
         }
-        server.register(MockEndpoint.file) { [weak self] request in
+        server.register(MockEndpoint.file) { [weak self] _ in
             self?.attachmentCreation(fileUrl: Attachments.file)
         }
     }
@@ -21,5 +20,4 @@ public extension StreamMockServer {
         json[JSONKey.file] = fileUrl
         return .ok(.json(json))
     }
-
 }

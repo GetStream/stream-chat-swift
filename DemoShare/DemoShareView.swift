@@ -7,7 +7,6 @@ import StreamChatUI
 import SwiftUI
 
 struct DemoShareView: View {
-    
     @StateObject var viewModel: DemoShareViewModel
         
     init(
@@ -42,7 +41,7 @@ struct DemoShareView: View {
                     .padding(.vertical)
                 
                 HStack {
-                    if viewModel.channels.count == 0 {
+                    if viewModel.channels.isEmpty {
                         ProgressView()
                     } else {
                         Text("Select a channel")
@@ -61,7 +60,6 @@ struct DemoShareView: View {
 }
 
 struct TopView: View {
-    
     @ObservedObject var viewModel: DemoShareViewModel
     
     var body: some View {
@@ -89,7 +87,6 @@ struct TopView: View {
                 }
             })
             .disabled(viewModel.selectedChannel == nil)
-
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 16)
@@ -102,7 +99,6 @@ struct TopView: View {
 }
 
 struct ImageToShareView: View {
-    
     private let imageHeight: CGFloat = 180
     
     var image: UIImage
@@ -115,11 +111,9 @@ struct ImageToShareView: View {
             .frame(height: imageHeight)
             .cornerRadius(8)
     }
-    
 }
 
 struct ShareChannelsView: View {
-    
     @ObservedObject var viewModel: DemoShareViewModel
     
     var body: some View {
@@ -149,7 +143,6 @@ struct ShareChannelsView: View {
             }
         }
     }
-    
 }
 
 extension ChatChannel: Identifiable {

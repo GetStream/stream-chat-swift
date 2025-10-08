@@ -1,8 +1,5 @@
 //
-//  HttpParser.swift
-//  Swifter
-// 
-//  Copyright (c) 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -13,8 +10,7 @@ enum HttpParserError: Error, Equatable {
 }
 
 public class HttpParser {
-
-    public init() { }
+    public init() {}
 
     public func readHttpRequest(_ socket: Socket) throws -> HttpRequest {
         let statusLine = try socket.readLine()
@@ -38,7 +34,7 @@ public class HttpParser {
             request.body = try readBody(socket, size: contentLengthValue)
         }
         return request
-        }
+    }
 
     private func readBody(_ socket: Socket, size: Int) throws -> [UInt8] {
         return try socket.read(length: size)
@@ -57,7 +53,7 @@ public class HttpParser {
 
     func supportsKeepAlive(_ headers: [String: String]) -> Bool {
         if let value = headers["connection"] {
-            return "keep-alive" == value.trimmingCharacters(in: .whitespaces)
+            return value.trimmingCharacters(in: .whitespaces) == "keep-alive"
         }
         return false
     }

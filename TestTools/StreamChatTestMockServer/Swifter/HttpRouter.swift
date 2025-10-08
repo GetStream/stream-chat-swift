@@ -1,18 +1,13 @@
 //
-//  HttpRouter.swift
-//  Swifter
-//
-//  Copyright (c) 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
 open class HttpRouter {
-
     public init() {}
 
     private class Node {
-
         /// The children nodes that form the route
         var nodes = [String: Node]()
 
@@ -59,7 +54,6 @@ open class HttpRouter {
     }
 
     public func route(_ method: String?, path: String) -> ([String: String], (HttpRequest) -> HttpResponse)? {
-
         return queue.sync {
             if let method = method {
                 let pathSegments = (method + "/" + stripQuery(path)).split("/")
@@ -82,7 +76,6 @@ open class HttpRouter {
     }
 
     private func inflate(_ node: inout Node, generator: inout IndexingIterator<[String]>) -> Node {
-
         var currentNode = node
 
         while let pathSegment = generator.next() {
@@ -99,7 +92,6 @@ open class HttpRouter {
     }
 
     private func findHandler(_ node: inout Node, params: inout [String: String], generator: inout IndexingIterator<[String]>) -> ((HttpRequest) -> HttpResponse)? {
-
         var matchedRoutes = [Node]()
         let pattern = generator.map { $0 }
         let numberOfElements = pattern.count
@@ -119,9 +111,7 @@ open class HttpRouter {
     ///   - index: The index of current position in the generator
     ///   - count: The number of elements if the route to match
     private func findHandler(_ node: inout Node, params: inout [String: String], pattern: [String], matchedNodes: inout [Node], index: Int, count: Int) {
-
         if index < count, let pathToken = pattern[index].removingPercentEncoding {
-
             var currentIndex = index + 1
             let variableNodes = node.nodes.filter { $0.0.first == ":" }
             if let variableNode = variableNodes.first {
@@ -129,7 +119,7 @@ open class HttpRouter {
                     // if it's the last element of the pattern and it's a variable, stop the search and
                     // append a tail as a value for the variable.
                     let tail = pattern[currentIndex..<count].joined(separator: "/")
-                    if tail.count > 0 {
+                    if !tail.isEmpty {
                         params[variableNode.0] = pathToken + "/" + tail
                     } else {
                         params[variableNode.0] = pathToken
@@ -184,9 +174,7 @@ open class HttpRouter {
 }
 
 extension String {
-
     func split(_ separator: Character) -> [String] {
         return self.split { $0 == separator }.map(String.init)
     }
-
 }

@@ -18,7 +18,6 @@ struct SettingValue {
 }
 
 struct Settings {
-
     // Connectivity
     var showsConnectivity = SettingValue(setting: .showsConnectivity, isOn: true)
     var setConnectivity = SettingValue(setting: .setConnectivity, isOn: false)

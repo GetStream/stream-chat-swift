@@ -1,11 +1,17 @@
 //
-//  HttpHandlers+WebSockets.swift
-//  Swifter
-//
-//  Copyright © 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
+
+@available(*, deprecated, message: "Use websocket(text:binary:pong:connected:disconnected:) instead.")
+public func websocket(
+    _ text: @escaping (WebSocketSession, String) -> Void,
+    _ binary: @escaping (WebSocketSession, [UInt8]) -> Void,
+    _ pong: @escaping (WebSocketSession, [UInt8]) -> Void
+) -> ((HttpRequest) -> HttpResponse) {
+    return websocket(text: text, binary: binary, pong: pong)
+}
 
 // swiftlint:disable function_body_length
 public func websocket(
@@ -13,7 +19,8 @@ public func websocket(
     binary: ((WebSocketSession, [UInt8]) -> Void)? = nil,
     pong: ((WebSocketSession, [UInt8]) -> Void)? = nil,
     connected: ((WebSocketSession) -> Void)? = nil,
-    disconnected: ((WebSocketSession) -> Void)? = nil) -> ((HttpRequest) -> HttpResponse) {
+    disconnected: ((WebSocketSession) -> Void)? = nil
+) -> ((HttpRequest) -> HttpResponse) {
     return { request in
         guard request.hasTokenForHeader("upgrade", token: "websocket") else {
             return .badRequest(.text("Invalid value of 'Upgrade' header: \(request.headers["upgrade"] ?? "unknown")"))
@@ -32,7 +39,7 @@ public func websocket(
             func handleTextPayload(_ frame: WebSocketSession.Frame) throws {
                 if let handleText = text {
                     if frame.fin {
-                        if payload.count > 0 {
+                        if !payload.isEmpty {
                             throw WebSocketSession.WsError.protocolError("Continuing fragmented frame cannot have an operation code.")
                         }
                         var textFramePayload = frame.payload.map { Int8(bitPattern: $0) }
@@ -52,7 +59,7 @@ public func websocket(
             func handleBinaryPayload(_ frame: WebSocketSession.Frame) throws {
                 if let handleBinary = binary {
                     if frame.fin {
-                        if payload.count > 0 {
+                        if !payload.isEmpty {
                             throw WebSocketSession.WsError.protocolError("Continuing fragmented frame cannot have an operation code.")
                         }
                         handleBinary(session, frame.payload)
@@ -94,7 +101,7 @@ public func websocket(
                     }
                 case .pong:
                     if let handlePong = pong {
-                       handlePong(session, frame.payload)
+                        handlePong(session, frame.payload)
                     }
                 }
             }
@@ -110,7 +117,7 @@ public func websocket(
 
             do {
                 try read()
-            } catch let error {
+            } catch {
                 switch error {
                 case WebSocketSession.Control.close:
                     // Normal close
@@ -139,9 +146,8 @@ public func websocket(
 }
 
 public class WebSocketSession: Hashable, Equatable {
-
     public enum WsError: Error { case unknownOpCode(String), unMaskedFrame(String), protocolError(String), invalidUTF8(String) }
-    public enum OpCode: UInt8 { case `continue` = 0x00, close = 0x08, ping = 0x09, pong = 0x0A, text = 0x01, binary = 0x02 }
+    public enum OpCode: UInt8 { case `continue` = 0x00, close = 0x08, ping = 0x09, pong = 0x0a, text = 0x01, binary = 0x02 }
     public enum Control: Error { case close }
 
     public class Frame {
@@ -199,19 +205,19 @@ public class WebSocketSession: Hashable, Equatable {
         case 0...125:
             encodedBytes.append(encodedLngth | UInt8(len))
         case 126...UInt64(UINT16_MAX):
-            encodedBytes.append(encodedLngth | 0x7E)
-            encodedBytes.append(UInt8(len >> 8 & 0xFF))
-            encodedBytes.append(UInt8(len >> 0 & 0xFF))
+            encodedBytes.append(encodedLngth | 0x7e)
+            encodedBytes.append(UInt8(len >> 8 & 0xff))
+            encodedBytes.append(UInt8(len >> 0 & 0xff))
         default:
-            encodedBytes.append(encodedLngth | 0x7F)
-            encodedBytes.append(UInt8(len >> 56 & 0xFF))
-            encodedBytes.append(UInt8(len >> 48 & 0xFF))
-            encodedBytes.append(UInt8(len >> 40 & 0xFF))
-            encodedBytes.append(UInt8(len >> 32 & 0xFF))
-            encodedBytes.append(UInt8(len >> 24 & 0xFF))
-            encodedBytes.append(UInt8(len >> 16 & 0xFF))
-            encodedBytes.append(UInt8(len >> 08 & 0xFF))
-            encodedBytes.append(UInt8(len >> 00 & 0xFF))
+            encodedBytes.append(encodedLngth | 0x7f)
+            encodedBytes.append(UInt8(len >> 56 & 0xff))
+            encodedBytes.append(UInt8(len >> 48 & 0xff))
+            encodedBytes.append(UInt8(len >> 40 & 0xff))
+            encodedBytes.append(UInt8(len >> 32 & 0xff))
+            encodedBytes.append(UInt8(len >> 24 & 0xff))
+            encodedBytes.append(UInt8(len >> 16 & 0xff))
+            encodedBytes.append(UInt8(len >> 08 & 0xff))
+            encodedBytes.append(UInt8(len >> 00 & 0xff))
         }
         return encodedBytes
     }
@@ -225,10 +231,10 @@ public class WebSocketSession: Hashable, Equatable {
         frm.rsv2 = fst & 0x20
         frm.rsv3 = fst & 0x10
         guard frm.rsv1 == 0 && frm.rsv2 == 0 && frm.rsv3 == 0
-            else {
+        else {
             throw WsError.protocolError("Reserved frame bit has not been negociated.")
         }
-        let opc = fst & 0x0F
+        let opc = fst & 0x0f
         guard let opcode = OpCode(rawValue: opc) else {
             // "If an unknown opcode is received, the receiving endpoint MUST _Fail the WebSocket Connection_."
             // http://tools.ietf.org/html/rfc6455#section-5.2 ( Page 29 )
@@ -252,12 +258,12 @@ public class WebSocketSession: Hashable, Equatable {
             // http://tools.ietf.org/html/rfc6455#section-5.1
             throw WsError.unMaskedFrame("A client must mask all frames that it sends to the server.")
         }
-        var len = UInt64(sec & 0x7F)
-        if len == 0x7E {
+        var len = UInt64(sec & 0x7f)
+        if len == 0x7e {
             let b0 = UInt64(try socket.read()) << 8
             let b1 = UInt64(try socket.read())
             len = UInt64(littleEndian: b0 | b1)
-        } else if len == 0x7F {
+        } else if len == 0x7f {
             let b0 = UInt64(try socket.read()) << 54
             let b1 = UInt64(try socket.read()) << 48
             let b2 = UInt64(try socket.read()) << 40

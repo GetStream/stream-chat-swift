@@ -90,14 +90,14 @@ open class Socket: Hashable, Equatable, @unchecked Sendable {
 
     public func writeData(_ data: Data) throws {
         #if compiler(>=5.0)
-        try data.withUnsafeBytes { (body: UnsafeRawBufferPointer) -> Void in
+        try data.withUnsafeBytes { (body: UnsafeRawBufferPointer) in
             if let baseAddress = body.baseAddress, !body.isEmpty {
                 let pointer = baseAddress.assumingMemoryBound(to: UInt8.self)
                 try self.writeBuffer(pointer, length: data.count)
             }
         }
         #else
-        try data.withUnsafeBytes { (pointer: UnsafePointer<UInt8>) -> Void in
+        try data.withUnsafeBytes { (pointer: UnsafePointer<UInt8>) in
             try self.writeBuffer(pointer, length: data.count)
         }
         #endif
@@ -107,9 +107,9 @@ open class Socket: Hashable, Equatable, @unchecked Sendable {
         var sent = 0
         while sent < length {
             #if os(Linux)
-            let result = send(socketFileDescriptor, pointer + sent, Int(length - sent), Int32(MSG_NOSIGNAL))
+            let result = send(self.socketFileDescriptor, pointer + sent, Int(length - sent), Int32(MSG_NOSIGNAL))
             #else
-            let result = write(socketFileDescriptor, pointer + sent, Int(length - sent))
+            let result = write(self.socketFileDescriptor, pointer + sent, Int(length - sent))
             #endif
             if result <= 0 {
                 throw SocketError.writeFailed(Errno.description())
@@ -128,9 +128,9 @@ open class Socket: Hashable, Equatable, @unchecked Sendable {
         var byte: UInt8 = 0
 
         #if os(Linux)
-        let count = Glibc.read(socketFileDescriptor as Int32, &byte, 1)
+        let count = Glibc.read(self.socketFileDescriptor as Int32, &byte, 1)
         #else
-        let count = Darwin.read(socketFileDescriptor as Int32, &byte, 1)
+        let count = Darwin.read(self.socketFileDescriptor as Int32, &byte, 1)
         #endif
 
         guard count > 0 else {
@@ -167,9 +167,9 @@ open class Socket: Hashable, Equatable, @unchecked Sendable {
             let readLength = offset + Socket.kBufferLength < length ? Socket.kBufferLength : length - offset
 
             #if os(Linux)
-            let bytesRead = Glibc.read(socketFileDescriptor as Int32, baseAddress + offset, readLength)
+            let bytesRead = Glibc.read(self.socketFileDescriptor as Int32, baseAddress + offset, readLength)
             #else
-            let bytesRead = Darwin.read(socketFileDescriptor as Int32, baseAddress + offset, readLength)
+            let bytesRead = Darwin.read(self.socketFileDescriptor as Int32, baseAddress + offset, readLength)
             #endif
 
             guard bytesRead > 0 else {

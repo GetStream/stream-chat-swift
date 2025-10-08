@@ -2,11 +2,10 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChat
 import Foundation
+@testable import StreamChat
 
 public extension StreamMockServer {
-
     /// Sends an event over a websocket connection
     ///
     /// - Parameters:
@@ -198,7 +197,6 @@ public extension StreamMockServer {
 // MARK: Channel Members
 
 public extension StreamMockServer {
-
     /// Adds new members to channel
     ///
     /// - Parameters:

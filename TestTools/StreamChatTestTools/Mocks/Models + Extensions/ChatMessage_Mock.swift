@@ -2,8 +2,8 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
 import CoreData.NSManagedObjectContext
+import Foundation
 @testable import StreamChat
 
 public extension ChatMessage {

@@ -3,11 +3,10 @@
 //
 
 import Foundation
-import StreamChatUI
 import StreamChat
+import StreamChatUI
 
 final class CustomChannelListRouter: ChatChannelListRouter {
-
     var onLeave: (() -> Void)?
     var onChannelViewWillAppear: ((ChannelVC) -> Void)?
     var onChannelListViewWillAppear: ((ChannelList) -> Void)?
