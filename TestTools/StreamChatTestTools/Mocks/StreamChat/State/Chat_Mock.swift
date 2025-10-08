@@ -49,13 +49,13 @@ public class Chat_Mock: Chat, Spy {
     }
 
     var createNewMessageCallCount = 0
-    public override func sendMessage(
+    override public func sendMessage(
         with text: String,
         attachments: [AnyAttachmentPayload] = [],
         quote quotedMessageId: MessageId? = nil,
         mentions: [UserId] = [],
         pinning: MessagePinning? = nil,
-        extraData: [String : RawJSON] = [:],
+        extraData: [String: RawJSON] = [:],
         silent: Bool = false,
         skipPushNotification: Bool = false,
         skipEnrichURL: Bool = false,
@@ -67,11 +67,11 @@ public class Chat_Mock: Chat, Spy {
     }
     
     public var loadPageAroundMessageIdCallCount = 0
-    public override func loadMessages(around messageId: MessageId, limit: Int? = nil) async throws {
+    override public func loadMessages(around messageId: MessageId, limit: Int? = nil) async throws {
         loadPageAroundMessageIdCallCount += 1
     }
     
-    public override func watch() async throws {
+    override public func watch() async throws {
         record()
     }
 }

@@ -2,11 +2,10 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-import XCTest
 @testable import StreamChatUI
+import XCTest
 
 final class QuotedReply_Tests: StreamTestCase {
-    
     let messageCount = 30
     let pageSize = 25
     let quotedText = "1"

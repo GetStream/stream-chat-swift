@@ -1,16 +1,11 @@
 //
-//  HttpServer.swift
-//  Swifter
-//
-//  Copyright (c) 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
 open class HttpServer: HttpServerIO {
-
     public static let VERSION: String = {
-
         #if os(Linux)
         return "1.5.0"
         #else
@@ -22,20 +17,20 @@ open class HttpServer: HttpServerIO {
 
     private let router = HttpRouter()
 
-    public override init() {
+    override public init() {
         self.DELETE = MethodRoute(method: "DELETE", router: router)
-        self.PATCH  = MethodRoute(method: "PATCH", router: router)
-        self.HEAD   = MethodRoute(method: "HEAD", router: router)
-        self.POST   = MethodRoute(method: "POST", router: router)
-        self.GET    = MethodRoute(method: "GET", router: router)
-        self.PUT    = MethodRoute(method: "PUT", router: router)
+        self.PATCH = MethodRoute(method: "PATCH", router: router)
+        self.HEAD = MethodRoute(method: "HEAD", router: router)
+        self.POST = MethodRoute(method: "POST", router: router)
+        self.GET = MethodRoute(method: "GET", router: router)
+        self.PUT = MethodRoute(method: "PUT", router: router)
 
         self.delete = MethodRoute(method: "DELETE", router: router)
-        self.patch  = MethodRoute(method: "PATCH", router: router)
-        self.head   = MethodRoute(method: "HEAD", router: router)
-        self.post   = MethodRoute(method: "POST", router: router)
-        self.get    = MethodRoute(method: "GET", router: router)
-        self.put    = MethodRoute(method: "PUT", router: router)
+        self.patch = MethodRoute(method: "PATCH", router: router)
+        self.head = MethodRoute(method: "HEAD", router: router)
+        self.post = MethodRoute(method: "POST", router: router)
+        self.get = MethodRoute(method: "GET", router: router)
+        self.put = MethodRoute(method: "PUT", router: router)
     }
 
     public var DELETE, PATCH, HEAD, POST, GET, PUT: MethodRoute

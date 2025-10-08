@@ -52,7 +52,7 @@ final class UserUpdater_Mock: UserUpdater {
         loadUser_completion_result?.invoke(with: completion)
     }
 
-    override func flagUser(_ flag: Bool, with userId: UserId, reason: String?, extraData: [String : RawJSON]?, completion: (((any Error)?) -> Void)? = nil) {
+    override func flagUser(_ flag: Bool, with userId: UserId, reason: String?, extraData: [String: RawJSON]?, completion: (((any Error)?) -> Void)? = nil) {
         flagUser_flag = flag
         flagUser_userId = userId
         flagUser_reason = reason

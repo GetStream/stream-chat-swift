@@ -13,7 +13,7 @@ public extension FileManager {
         )
         guard let urls else { return }
         let urlsToDelete = urls.filter({ $0.lastPathComponent == URL.temporaryFileName })
-        guard urlsToDelete.count > 0 else { return }
+        guard !urlsToDelete.isEmpty else { return }
         urlsToDelete.forEach { url in
             try? FileManager.default.removeItem(at: url)
         }

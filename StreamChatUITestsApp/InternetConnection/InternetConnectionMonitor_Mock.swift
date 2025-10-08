@@ -19,6 +19,5 @@ final class InternetConnectionMonitor_Mock: InternetConnectionMonitor {
         self.status = status
         delegate?.internetConnectionStatusDidChange(status: status)
     }
-
 }
 #endif

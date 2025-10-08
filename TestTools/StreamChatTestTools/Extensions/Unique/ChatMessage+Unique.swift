@@ -32,7 +32,8 @@ extension ChatMessage {
             reactionGroups: [
                 "like": .init(
                     type: "like",
-                    sumScores: 1, count: 1,
+                    sumScores: 1,
+                    count: 1,
                     firstReactionAt: .unique,
                     lastReactionAt: .unique
                 )

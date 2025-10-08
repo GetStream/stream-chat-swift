@@ -6,7 +6,6 @@ import Foundation
 @testable import StreamChat
 
 class ChatUserSearchController_Mock: ChatUserSearchController {
-
     var searchCallCount = 0
 
     static func mock(client: ChatClient? = nil) -> ChatUserSearchController_Mock {

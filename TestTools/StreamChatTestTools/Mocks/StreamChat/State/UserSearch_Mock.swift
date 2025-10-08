@@ -6,7 +6,6 @@ import Foundation
 @testable import StreamChat
 
 public class UserSearch_Mock: UserSearch {
-
     var searchCallCount = 0
 
     public static func mock(client: ChatClient? = nil) -> UserSearch_Mock {
@@ -17,7 +16,7 @@ public class UserSearch_Mock: UserSearch {
         self.state.users = StreamCollection(users)
     }
     
-    public override func loadMoreUsers(limit: Int? = nil) async throws -> [ChatUser] {
+    override public func loadMoreUsers(limit: Int? = nil) async throws -> [ChatUser] {
         await Array(state.users)
     }
 

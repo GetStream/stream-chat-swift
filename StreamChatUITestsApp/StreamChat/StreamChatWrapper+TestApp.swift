@@ -11,7 +11,6 @@ import StreamChat
 import StreamChatUI
 
 extension StreamChatWrapper {
-
     func setUpChat() {
         // Set the log level
         LogConfig.level = .debug
@@ -41,5 +40,4 @@ extension StreamChatWrapper {
         Components.default.messageActionsVC = MessageActionsVC.self
         Components.default.messageSwipeToReplyEnabled = true
     }
-
 }

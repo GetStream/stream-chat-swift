@@ -25,7 +25,7 @@ let package = Package(
         .library(
             name: "StreamChatTestMockServer",
             targets: ["StreamChatTestMockServer"]
-        ),
+        )
     ],
     targets: [
         .target(
@@ -52,7 +52,7 @@ let package = Package(
             path: "TestTools/StreamChatTestMockServer",
             exclude: ["Info.plist"],
             resources: [.process("Fixtures")]
-        ),
+        )
     ]
 )
 

@@ -92,7 +92,7 @@ extension Dictionary {
                 "online": true,
                 "name": "Steep Moon",
                 "test": 1
-            ] as [String : Any],
+            ] as [String: Any],
             "type": "health.check",
             "connection_id": connectionId
         ]

@@ -11,6 +11,7 @@ final class APIClient_Spy: APIClient, Spy {
     enum Signature {
         static let flushRequestsQueue = "flushRequestsQueue()"
     }
+
     let spyState = SpyState()
 
     /// The last endpoint `request` function was called with.
@@ -158,7 +159,7 @@ final class APIClient_Spy: APIClient, Spy {
     override func unmanagedRequest<Response>(
         endpoint: Endpoint<Response>,
         completion: @escaping (Result<Response, Error>) -> Void
-    ) where Response : Decodable {
+    ) where Response: Decodable {
         unmanagedRequest_endpoint = AnyEndpoint(endpoint)
         unmanagedRequest_completion = completion
         _unmanagedRequest_allRecordedCalls.mutate { $0.append((unmanagedRequest_endpoint!, unmanagedRequest_completion!)) }
@@ -184,7 +185,6 @@ final class APIClient_Spy: APIClient, Spy {
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<UploadedAttachment, Error>) -> Void
     ) {
-
         uploadFile_attachment = attachment
         uploadFile_progress = progress
         uploadFile_completion = completion

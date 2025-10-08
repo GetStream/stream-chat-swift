@@ -5,7 +5,6 @@
 import Foundation
 
 extension Bundle {
-
     private final class StreamChatTestMockServer {}
 
     static let bundleName = "StreamChat_StreamChatTestMockServer"

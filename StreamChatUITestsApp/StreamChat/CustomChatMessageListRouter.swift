@@ -3,11 +3,10 @@
 //
 
 import Foundation
-import StreamChatUI
 import StreamChat
+import StreamChatUI
 
 final class CustomMessageListRouter: ChatMessageListRouter {
-
     var onThreadViewWillAppear: ((ThreadVC) -> Void)?
 
     override func showThread(messageId: MessageId, cid: ChannelId, client: ChatClient) {
@@ -42,5 +41,4 @@ final class CustomMessageListRouter: ChatMessageListRouter {
         }
         rootNavigationController?.show(threadVC, sender: self)
     }
-
 }

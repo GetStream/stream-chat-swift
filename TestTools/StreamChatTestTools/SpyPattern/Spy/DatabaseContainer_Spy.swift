@@ -336,7 +336,8 @@ extension DatabaseContainer {
                 channelDTO: channelDTO,
                 syncOwnReactions: true,
                 skipDraftUpdate: true,
-                cache: nil)
+                cache: nil
+            )
 
             messageDTO.localMessageState = localState
             messageDTO.reactionCounts = reactionCounts.mapKeys(\.rawValue)

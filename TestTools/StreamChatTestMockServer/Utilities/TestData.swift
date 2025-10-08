@@ -6,7 +6,6 @@
 import XCTest
 
 public enum TestData {
-
     public static var uniqueId: String { UUID().uuidString }
 
     public static var currentDate: String {
@@ -22,7 +21,7 @@ public enum TestData {
     }
 
     public static var waitingEndTime: TimeInterval {
-        currentTimeInterval + 10_000
+        currentTimeInterval + 10000
     }
 
     public static func getMockResponse(fromFile file: MockFile) -> String {

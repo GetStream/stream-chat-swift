@@ -5,7 +5,6 @@
 import XCTest
 
 final class ChannelList_Tests: StreamTestCase {
-
     let message = "message"
 
     override func setUpWithError() throws {

@@ -6,7 +6,6 @@ import Foundation
 import StreamChat
 
 public final class MockAudioRecorder: AudioRecording {
-
     public private(set) var subscribeWasCalledWithSubscriber: AudioRecordingDelegate?
     public private(set) var beginRecordingWasCalledWithCompletionHandler: (() -> Void)?
     public private(set) var pauseRecordingWasCalled: Bool = false

@@ -5,7 +5,6 @@
 import XCTest
 
 final class MessageList_Tests: StreamTestCase {
-
     override func setUpWithError() throws {
         try super.setUpWithError()
         addTags([.coreFeatures])
@@ -342,7 +341,6 @@ final class MessageList_Tests: StreamTestCase {
 // MARK: Scroll to bottom
     
 extension MessageList_Tests {
-    
     func test_messageListScrollsDown_whenMessageListIsScrolledUp_andUserSendsNewMessage() throws {
         linkToScenario(withId: 193)
 
@@ -529,7 +527,6 @@ extension MessageList_Tests {
 // MARK: Mentions
 
 extension MessageList_Tests {
-    
     func test_addingCommandHidesLeftButtons() {
         linkToScenario(withId: 104)
         
@@ -588,7 +585,6 @@ extension MessageList_Tests {
 // MARK: Links preview
 
 extension MessageList_Tests {
-
     func test_addMessageWithLinkToUnsplash() {
         linkToScenario(withId: 59)
 
@@ -697,6 +693,7 @@ extension MessageList_Tests {
 }
 
 // MARK: - Thread replies
+
 extension MessageList_Tests {
     func test_threadReplyAppearsInThread_whenParticipantAddsThreadReply() {
         linkToScenario(withId: 50)

@@ -20,7 +20,7 @@ public class MockAVPlayer: AVPlayer {
     public private(set) var seekWasCalledWithToleranceAfter: CMTime?
     public var holdSeekCompletion = false
 
-    public override var rate: Float {
+    override public var rate: Float {
         didSet {
             rateWasUpdatedTo = rate
             mockPlayerObserver?.addPeriodicTimeObserverWasCalledWithBlock?()
