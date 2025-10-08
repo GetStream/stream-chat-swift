@@ -1,14 +1,10 @@
 //
-//  HttpRequest.swift
-//  Swifter
-//
-//  Copyright (c) 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
 public class HttpRequest {
-
     public var path: String = ""
     public var queryParams: [(String, String)] = []
     public var method: String = ""
@@ -23,7 +19,7 @@ public class HttpRequest {
         guard let headerValue = headers[headerName] else {
             return false
         }
-        return headerValue.components(separatedBy: ",").filter({ $0.trimmingCharacters(in: .whitespaces).lowercased() == token }).count > 0
+        return !headerValue.components(separatedBy: ",").filter({ $0.trimmingCharacters(in: .whitespaces).lowercased() == token }).isEmpty
     }
 
     public func parseUrlencodedForm() -> [(String, String)] {
@@ -41,15 +37,16 @@ public class HttpRequest {
         return utf8String.components(separatedBy: "&").map { param -> (String, String) in
             let tokens = param.components(separatedBy: "=")
             if let name = tokens.first?.removingPercentEncoding, let value = tokens.last?.removingPercentEncoding, tokens.count == 2 {
-                return (name.replacingOccurrences(of: "+", with: " "),
-                        value.replacingOccurrences(of: "+", with: " "))
+                return (
+                    name.replacingOccurrences(of: "+", with: " "),
+                    value.replacingOccurrences(of: "+", with: " ")
+                )
             }
             return ("", "")
         }
     }
 
     public struct MultiPart {
-
         public let headers: [String: String]
         public let body: [UInt8]
 
@@ -74,7 +71,7 @@ public class HttpRequest {
                     }
                     return results
                 })
-                }.first
+            }.first
         }
     }
 
@@ -93,7 +90,7 @@ public class HttpRequest {
                 boundary = tokens.last
             }
         })
-        if let boundary = boundary, boundary.utf8.count > 0 {
+        if let boundary = boundary, !boundary.utf8.isEmpty {
             return parseMultiPartFormData(body, boundary: "--\(boundary)")
         }
         return []
@@ -114,7 +111,7 @@ public class HttpRequest {
                 return nil
             }
         } else {
-            let /* ignore */ _ = nextUTF8MultiPartLine(&generator)
+            /* ignore */ _ = nextUTF8MultiPartLine(&generator)
         }
         var headers = [String: String]()
         while let line = nextUTF8MultiPartLine(&generator), !line.isEmpty {
@@ -151,13 +148,13 @@ public class HttpRequest {
         let boundaryArray = [UInt8](boundary.utf8)
         var matchOffset = 0
         while let x = generator.next() {
-            matchOffset = ( x == boundaryArray[matchOffset] ? matchOffset + 1 : 0 )
+            matchOffset = (x == boundaryArray[matchOffset] ? matchOffset + 1 : 0)
             body.append(x)
             if matchOffset == boundaryArray.count {
                 #if swift(>=4.2)
-                body.removeSubrange(body.count-matchOffset ..< body.count)
+                body.removeSubrange(body.count - matchOffset..<body.count)
                 #else
-                body.removeSubrange(CountableRange<Int>(body.count-matchOffset ..< body.count))
+                body.removeSubrange(CountableRange<Int>(body.count - matchOffset..<body.count))
                 #endif
                 if body.last == HttpRequest.NL {
                     body.removeLast()

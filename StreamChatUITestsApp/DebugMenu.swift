@@ -3,109 +3,123 @@
 //
 
 import Foundation
-import UIKit
 import StreamChat
+import UIKit
 
 final class DebugMenu {
-
     static let shared = DebugMenu()
 
     func showMenu(in viewController: UIViewController, channelController: ChatChannelController) {
-        presentAlert(in: viewController,
-                     title: "Select an action",
-                     actions: [
-                        .init(title: "Add member", style: .default, handler: { [unowned self] _ in
-                            self.presentAlert(in: viewController,
-                                              title: "Enter user id",
-                                              textFieldPlaceholder: "User ID") { id in
-                                guard let id = id, !id.isEmpty else {
-                                    self.presentAlert(
-                                        in: viewController,
-                                        title: "User ID is not valid",
-                                        actions: []
-                                    )
-                                    return
-                                }
-                                channelController.addMembers(userIds: [id]) { [unowned self] error in
+        presentAlert(
+            in: viewController,
+            title: "Select an action",
+            actions: [
+                .init(title: "Add member", style: .default, handler: { [unowned self] _ in
+                    self.presentAlert(
+                        in: viewController,
+                        title: "Enter user id",
+                        textFieldPlaceholder: "User ID"
+                    ) { id in
+                        guard let id = id, !id.isEmpty else {
+                            self.presentAlert(
+                                in: viewController,
+                                title: "User ID is not valid",
+                                actions: []
+                            )
+                            return
+                        }
+                        channelController.addMembers(userIds: [id]) { [unowned self] error in
+                            if let error = error {
+                                self.presentAlert(
+                                    in: viewController,
+                                    title: "Couldn't add user \(id) to channel \(String(describing: channelController.cid))",
+                                    message: "\(error)",
+                                    actions: []
+                                )
+                            }
+                        }
+                    }
+                }),
+                .init(
+                    title: "Remove a member",
+                    style: .default,
+                    handler: { [unowned self] _ in
+                        let actions = channelController.channel?.lastActiveMembers.map { member in
+                            UIAlertAction(title: member.id, style: .default) { _ in
+                                channelController.removeMembers(userIds: [member.id]) { [unowned self] error in
                                     if let error = error {
                                         self.presentAlert(
                                             in: viewController,
-                                            title: "Couldn't add user \(id) to channel \(String(describing: channelController.cid))",
+                                            title: "Couldn't remove user \(member.id) from channel \(String(describing: channelController.cid))",
                                             message: "\(error)",
                                             actions: []
                                         )
                                     }
                                 }
                             }
-                        }),
-                        .init(title: "Remove a member",
-                              style: .default,
-                              handler: { [unowned self] _ in
-                                  let actions = channelController.channel?.lastActiveMembers.map { member in
-                                      UIAlertAction(title: member.id, style: .default) { _ in
-                                          channelController.removeMembers(userIds: [member.id]) { [unowned self] error in
-                                              if let error = error {
-                                                  self.presentAlert(
-                                                    in: viewController,
-                                                    title: "Couldn't remove user \(member.id) from channel \(String(describing: channelController.cid))",
-                                                    message: "\(error)",
-                                                    actions: []
-                                                  )
-                                              }
-                                          }
-                                      }} ?? []
-                                  self.presentAlert(
+                        } ?? []
+                        self.presentAlert(
+                            in: viewController,
+                            title: "Select a member",
+                            actions: actions
+                        )
+                    }
+                ),
+                .init(
+                    title: "Show Members",
+                    style: .default,
+                    handler: { [unowned self] _ in
+                        self.presentAlert(
+                            in: viewController,
+                            title: "Members",
+                            message: channelController.channel?.lastActiveMembers.map(\.name).debugDescription,
+                            actions: []
+                        )
+                    }
+                ),
+                .init(
+                    title: "Truncate channel w/o message",
+                    style: .default,
+                    handler: { _ in
+                        channelController.truncateChannel { [unowned self] error in
+                            if let error = error {
+                                self.presentAlert(
                                     in: viewController,
-                                    title: "Select a member",
-                                    actions: actions
-                                  )
-                              }),
-                        .init(title: "Show Members",
-                              style: .default,
-                              handler: { [unowned self] _ in
-                                  self.presentAlert(
-                                    in: viewController,
-                                    title: "Members",
-                                    message: channelController.channel?.lastActiveMembers.map(\.name).debugDescription,
+                                    title: "Couldn't truncate channel",
+                                    message: "\(error.localizedDescription)",
                                     actions: []
-                                  )
-                              }),
-                        .init(title: "Truncate channel w/o message",
-                              style: .default,
-                              handler: { _ in
-                                channelController.truncateChannel { [unowned self] error in
-                                    if let error = error {
-                                        self.presentAlert(
-                                            in: viewController,
-                                            title: "Couldn't truncate channel",
-                                            message: "\(error.localizedDescription)",
-                                            actions: []
-                                        )
-                                    }
-                                }
-                              }),
-                        .init(title: "Truncate channel with message",
-                              style: .default,
-                              handler: { _ in
-                                channelController.truncateChannel(systemMessage: "Channel truncated") { [unowned self] error in
-                                    if let error = error {
-                                        self.presentAlert(
-                                            in: viewController,
-                                            title: "Couldn't truncate channel",
-                                            message: "\(error.localizedDescription)",
-                                            actions: []
-                                        )
-                                    }
-                                }
-                              })
-                     ])
+                                )
+                            }
+                        }
+                    }
+                ),
+                .init(
+                    title: "Truncate channel with message",
+                    style: .default,
+                    handler: { _ in
+                        channelController.truncateChannel(systemMessage: "Channel truncated") { [unowned self] error in
+                            if let error = error {
+                                self.presentAlert(
+                                    in: viewController,
+                                    title: "Couldn't truncate channel",
+                                    message: "\(error.localizedDescription)",
+                                    actions: []
+                                )
+                            }
+                        }
+                    }
+                )
+            ]
+        )
     }
 
-    func presentAlert(in viewController: UIViewController,
-                      title: String?,
-                      message: String? = nil,
-                      actions: [UIAlertAction],
-                      cancelHandler: (() -> Void)? = nil) {
+    func presentAlert(
+        in viewController: UIViewController,
+        title: String?,
+        message: String? = nil,
+        actions: [UIAlertAction],
+        cancelHandler: (() -> Void)? = nil
+    ) {
         let alert = UIAlertController(
             title: title,
             message: message,
@@ -149,5 +163,4 @@ final class DebugMenu {
 
         viewController.present(alert, animated: true, completion: nil)
     }
-
 }

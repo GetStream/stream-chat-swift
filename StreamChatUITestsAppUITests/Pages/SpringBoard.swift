@@ -14,9 +14,9 @@ enum SpringBoard {
 
     static var notificationBanner: XCUIElement {
         app.otherElements["Notification"]
-           .descendants(matching: .any)
-           .matching(NSPredicate(format: "label CONTAINS[c] ', now,'"))
-           .firstMatch
+            .descendants(matching: .any)
+            .matching(NSPredicate(format: "label CONTAINS[c] ', now,'"))
+            .firstMatch
     }
 
     static var testAppIcon: XCUIElement {

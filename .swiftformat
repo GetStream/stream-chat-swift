@@ -17,7 +17,6 @@
 --rules fileHeader
 --rules indent
 --rules initCoderUnavailable
---rules isEmpty
 --rules leadingDelimiters
 --rules linebreakAtEndOfFile
 --rules linebreaks
@@ -35,7 +34,7 @@
 --rules redundantRawValues
 --rules redundantVoidReturnType
 --rules semicolons
---rules sortedImports
+--rules sortImports
 --rules spaceAroundBraces
 --rules spaceAroundBrackets
 --rules spaceAroundComments
@@ -81,4 +80,4 @@
 --wrapcollections before-first
 
 # Exclude paths
---exclude **/Generated,Sources/StreamChatUI/StreamNuke,Sources/StreamChatUI/StreamSwiftyGif,Sources/StreamChatUI/StreamDifferenceKit
+--exclude **/Generated,Sources/StreamChatUI/StreamNuke,Sources/StreamChatUI/StreamSwiftyGif,Sources/StreamChatUI/StreamDifferenceKit,vendor/bundle,Pods,spm_cache,derived_data,.build

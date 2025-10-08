@@ -3,14 +3,13 @@
 //
 
 import Foundation
-import XCTest
 import StreamChat
 @testable import StreamChatUI
+import XCTest
 
 // swiftlint:disable convenience_type
 
 class MessageListPage {
-
     static var cells: XCUIElementQuery {
         app.cells.matching(NSPredicate(format: "identifier LIKE 'ChatMessageCell'"))
     }
@@ -32,7 +31,6 @@ class MessageListPage {
     }
 
     enum NavigationBar {
-
         static var header: XCUIElement { app.otherElements["ChatChannelHeaderView"] }
 
         static var chatAvatar: XCUIElement {
@@ -57,8 +55,8 @@ class MessageListPage {
             // Add member
             static var alert: XCUIElement { app.alerts["Select an action"] }
             static var addMember: XCUIElement { alert.buttons["Add member"] }
-            static var addMemberTextField: XCUIElement {app.textFields["debug_alert_textfield"] }
-            static var addMemberOKButton: XCUIElement {app.alerts["Enter user id"].buttons["OK"] }
+            static var addMemberTextField: XCUIElement { app.textFields["debug_alert_textfield"] }
+            static var addMemberOKButton: XCUIElement { app.alerts["Enter user id"].buttons["OK"] }
 
             // Remove member
             static var removeMember: XCUIElement { alert.buttons["Remove a member"] }
@@ -148,7 +146,7 @@ class MessageListPage {
             }
         }
 
-        struct Element {
+        enum Element {
             static var reactionsView: XCUIElement { app.otherElements["ChatReactionPickerReactionsView"] }
             static var reply: XCUIElement { app.otherElements["InlineReplyActionItem"] }
             static var threadReply: XCUIElement { app.otherElements["ThreadReplyActionItem"] }

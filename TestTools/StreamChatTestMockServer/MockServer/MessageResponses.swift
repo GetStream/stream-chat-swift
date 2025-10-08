@@ -9,7 +9,6 @@ public let messageKey = MessagePayloadsCodingKeys.self
 public let paginationKey = PaginationParameter.CodingKeys.self
 
 public extension StreamMockServer {
-
     func configureMessagingEndpoints() {
         server.register(MockEndpoint.message) { [weak self] request in
             let channelId = try XCTUnwrap(request.params[EndpointQuery.channelId])
@@ -26,15 +25,19 @@ public extension StreamMockServer {
             let messageId = json[AttachmentActionRequestBody.CodingKeys.messageId.rawValue] as? String
             let channelId = json[AttachmentActionRequestBody.CodingKeys.channelId.rawValue] as? String
             let formData = json[AttachmentActionRequestBody.CodingKeys.data.rawValue] as? [String: Any]
-            return self?.ephemeralMessageCreation(messageId: try XCTUnwrap(messageId),
-                                                  channelId: try XCTUnwrap(channelId),
-                                                  formData: try XCTUnwrap(formData))
+            return self?.ephemeralMessageCreation(
+                messageId: try XCTUnwrap(messageId),
+                channelId: try XCTUnwrap(channelId),
+                formData: try XCTUnwrap(formData)
+            )
         }
     }
 
-    private func trackMessage(_ text: String,
-                              messageType: MessageType,
-                              eventType: EventType) {
+    private func trackMessage(
+        _ text: String,
+        messageType: MessageType,
+        eventType: EventType
+    ) {
         if eventType == .messageNew && messageType != .ephemeral {
             latestHttpMessage = text
         }
@@ -81,10 +84,10 @@ public extension StreamMockServer {
             mockedMessage?[messageKey.text.rawValue] = text
             mockedMessage?[messageKey.html.rawValue] = text.html
 
-            if [Links.youtube, Links.unsplash].contains(where: {text.contains($0)}) {
+            if [Links.youtube, Links.unsplash].contains(where: { text.contains($0) }) {
                 let jsonWithLink = text.contains(Links.youtube) ? MockFile.youtube : MockFile.unsplash
                 let json = TestData.toJson(jsonWithLink)[JSONKey.message] as? [String: Any]
-                let linkAttachments =  json?[messageKey.attachments.rawValue]
+                let linkAttachments = json?[messageKey.attachments.rawValue]
                 var updatedAttachments = attachments as? [[String: Any]] ?? []
                 updatedAttachments += linkAttachments as? [[String: Any]] ?? []
                 mockedMessage?[messageKey.attachments.rawValue] = updatedAttachments
@@ -201,10 +204,12 @@ public extension StreamMockServer {
             messageType = .reply
         }
         if messageText.starts(with: "/") && messageType != .ephemeral {
-            return messageInvalidCommand(message,
-                                         command: String(messageText.dropFirst(1)),
-                                         channelId: channelId,
-                                         parentId: parentId)
+            return messageInvalidCommand(
+                message,
+                command: String(messageText.dropFirst(1)),
+                channelId: channelId,
+                parentId: parentId
+            )
         } else if messageType != .ephemeral && !forbiddenWords.isDisjoint(with: messageTextComponents) {
             return errorMessageHttpResponse(
                 from: message,
@@ -407,7 +412,6 @@ public extension StreamMockServer {
         let attachments = message?[messageKey.attachments.rawValue]
             ?? responseMessage?[messageKey.attachments.rawValue]
 
-
         let mockedMessage = mockMessage(
             responseMessage,
             messageType: messageType,
@@ -448,7 +452,7 @@ public extension StreamMockServer {
         messageType: MessageType,
         eventType: EventType,
         channelReply: Bool? = false
-    ){
+    ) {
         if let parentId = httpMessage?[messageKey.parentId.rawValue] as? String {
             let parentMessage = findMessageById(parentId)
             websocketMessage(
