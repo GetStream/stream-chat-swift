@@ -370,7 +370,6 @@ extension UserRobot {
 
     @discardableResult
     func openComposerCommands() -> Self {
-        // swiftformat:disable:next isEmpty
         if MessageListPage.ComposerCommands.cells.count == 0 {
             MessageListPage.Composer.commandButton.wait().safeTap()
         }

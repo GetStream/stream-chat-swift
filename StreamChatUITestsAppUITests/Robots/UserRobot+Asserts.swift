@@ -399,7 +399,6 @@ extension UserRobot {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
-        // swiftformat:disable:next isEmpty
         if MessageListPage.cells.count > 0 {
             let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
             let actualText = attributes.text(in: messageCell).waitForTextDisappearance(deletedText).text

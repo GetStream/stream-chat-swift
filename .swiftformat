@@ -17,7 +17,6 @@
 --rules fileHeader
 --rules indent
 --rules initCoderUnavailable
---rules isEmpty
 --rules leadingDelimiters
 --rules linebreakAtEndOfFile
 --rules linebreaks
