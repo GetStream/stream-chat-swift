@@ -2,8 +2,8 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChat
 import Foundation
+@testable import StreamChat
 
 public enum Message {
     public static func message(withInvalidCommand command: String) -> String {
@@ -123,7 +123,6 @@ public enum APNSKey {
 }
 
 public enum UserDetails {
-
     public static var users: [[String: String]] {
         [
             hanSolo,

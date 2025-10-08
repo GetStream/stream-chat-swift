@@ -1,8 +1,5 @@
 //
-//  HttpResponse.swift
-//  Swifter
-//
-//  Copyright (c) 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -21,7 +18,6 @@ public protocol HttpResponseBodyWriter {
 }
 
 public enum HttpResponseBody {
-
     case json(Any)
     case html(String)
     case htmlBody(String)
@@ -33,13 +29,13 @@ public enum HttpResponseBody {
         do {
             switch self {
             case .json(let object):
-              guard JSONSerialization.isValidJSONObject(object) else {
-                throw SerializationError.invalidObject
-              }
-              let data = try JSONSerialization.data(withJSONObject: object)
-              return (data.count, {
-                try $0.write(data)
-              })
+                guard JSONSerialization.isValidJSONObject(object) else {
+                    throw SerializationError.invalidObject
+                }
+                let data = try JSONSerialization.data(withJSONObject: object)
+                return (data.count, {
+                    try $0.write(data)
+                })
             case .text(let body):
                 let data = [UInt8](body.utf8)
                 return (data.count, {
@@ -78,49 +74,48 @@ public enum HttpResponseBody {
 
 // swiftlint:disable cyclomatic_complexity
 public enum HttpResponse {
-
     case switchProtocols([String: String], (Socket) -> Void)
     case ok(HttpResponseBody, [String: String] = [:]), created, accepted
     case movedPermanently(String)
     case movedTemporarily(String)
     case badRequest(HttpResponseBody?), unauthorized(HttpResponseBody?), forbidden(HttpResponseBody?), notFound(HttpResponseBody? = nil), notAcceptable(HttpResponseBody?), tooManyRequests(HttpResponseBody?), internalServerError(HttpResponseBody?)
-    case raw(Int, String, [String: String]?, ((HttpResponseBodyWriter) throws -> Void)? )
+    case raw(Int, String, [String: String]?, ((HttpResponseBodyWriter) throws -> Void)?)
 
     public var statusCode: Int {
         switch self {
-        case .switchProtocols         : return 101
-        case .ok                      : return 200
-        case .created                 : return 201
-        case .accepted                : return 202
-        case .movedPermanently        : return 301
-        case .movedTemporarily        : return 307
-        case .badRequest              : return 400
-        case .unauthorized            : return 401
-        case .forbidden               : return 403
-        case .notFound                : return 404
-        case .notAcceptable           : return 406
-        case .tooManyRequests         : return 429
-        case .internalServerError     : return 500
-        case .raw(let code, _, _, _)  : return code
+        case .switchProtocols: return 101
+        case .ok: return 200
+        case .created: return 201
+        case .accepted: return 202
+        case .movedPermanently: return 301
+        case .movedTemporarily: return 307
+        case .badRequest: return 400
+        case .unauthorized: return 401
+        case .forbidden: return 403
+        case .notFound: return 404
+        case .notAcceptable: return 406
+        case .tooManyRequests: return 429
+        case .internalServerError: return 500
+        case .raw(let code, _, _, _): return code
         }
     }
 
     public var reasonPhrase: String {
         switch self {
-        case .switchProtocols          : return "Switching Protocols"
-        case .ok                       : return "OK"
-        case .created                  : return "Created"
-        case .accepted                 : return "Accepted"
-        case .movedPermanently         : return "Moved Permanently"
-        case .movedTemporarily         : return "Moved Temporarily"
-        case .badRequest               : return "Bad Request"
-        case .unauthorized             : return "Unauthorized"
-        case .forbidden                : return "Forbidden"
-        case .notFound                 : return "Not Found"
-        case .notAcceptable            : return "Not Acceptable"
-        case .tooManyRequests          : return "Too Many Requests"
-        case .internalServerError      : return "Internal Server Error"
-        case .raw(_, let phrase, _, _) : return phrase
+        case .switchProtocols: return "Switching Protocols"
+        case .ok: return "OK"
+        case .created: return "Created"
+        case .accepted: return "Accepted"
+        case .movedPermanently: return "Moved Permanently"
+        case .movedTemporarily: return "Moved Temporarily"
+        case .badRequest: return "Bad Request"
+        case .unauthorized: return "Unauthorized"
+        case .forbidden: return "Forbidden"
+        case .notFound: return "Not Found"
+        case .notAcceptable: return "Not Acceptable"
+        case .tooManyRequests: return "Too Many Requests"
+        case .internalServerError: return "Internal Server Error"
+        case .raw(_, let phrase, _, _): return phrase
         }
     }
 
@@ -140,7 +135,7 @@ public enum HttpResponse {
             case .html, .htmlBody: headers["Content-Type"] = "text/html"
             case .text: headers["Content-Type"] = "text/plain"
             case .data(_, let contentType): headers["Content-Type"] = contentType
-            default:break
+            default: break
             }
         case .movedPermanently(let location):
             headers["Location"] = location
@@ -152,38 +147,38 @@ public enum HttpResponse {
                     headers.updateValue(value, forKey: key)
                 }
             }
-        default:break
+        default: break
         }
         return headers
     }
 
     func content() -> (length: Int, write: ((HttpResponseBodyWriter) throws -> Void)?) {
         switch self {
-        case .ok(let body, _)          : return body.content()
-        case .badRequest(let body), .unauthorized(let body), .forbidden(let body), .notFound(let body), .tooManyRequests(let body), .internalServerError(let body) : return body?.content() ?? (-1, nil)
-        case .raw(_, _, _, let writer) : return (-1, writer)
-        default                        : return (-1, nil)
+        case .ok(let body, _): return body.content()
+        case .badRequest(let body), .unauthorized(let body), .forbidden(let body), .notFound(let body), .tooManyRequests(let body), .internalServerError(let body): return body?.content() ?? (-1, nil)
+        case .raw(_, _, _, let writer): return (-1, writer)
+        default: return (-1, nil)
         }
     }
 
     func socketSession() -> ((Socket) -> Void)? {
         switch self {
-        case .switchProtocols(_, let handler) : return handler
+        case .switchProtocols(_, let handler): return handler
         default: return nil
         }
     }
 }
 
 /**
-    Makes it possible to compare handler responses with '==', but
-	ignores any associated values. This should generally be what
-	you want. E.g.:
+ Makes it possible to compare handler responses with '==', but
+ ignores any associated values. This should generally be what
+ you want. E.g.:
 
-    let resp = handler(updatedRequest)
-        if resp == .NotFound {
-        print("Client requested not found: \(request.url)")
-    }
-*/
+ let resp = handler(updatedRequest)
+ if resp == .NotFound {
+ print("Client requested not found: \(request.url)")
+ }
+ */
 
 func == (inLeft: HttpResponse, inRight: HttpResponse) -> Bool {
     return inLeft.statusCode == inRight.statusCode

@@ -27,7 +27,7 @@ extension Poll {
             latestAnswers: [],
             options: [],
             latestVotesByOption: [],
-            latestVotes: [], 
+            latestVotes: [],
             ownVotes: []
         )
     }

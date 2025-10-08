@@ -15,7 +15,6 @@ public let defaultTimeoutForInversedExpecations: TimeInterval = TestRunnerEnviro
 public let evaluationPeriod: TimeInterval = 0.00001
 
 extension Bundle {
-
     private final class StreamChatTestTools {}
 
     static let bundleName = "StreamChat_StreamChatTestTools"

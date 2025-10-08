@@ -28,6 +28,7 @@ final class ChannelListController_Mock: ChatChannelListController, @unchecked Se
 
     override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
         synchronize_callCount += 1
+        synchronize_called = true
         synchronize_completion = completion
     }
 }

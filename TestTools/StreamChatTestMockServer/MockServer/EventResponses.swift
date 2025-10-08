@@ -8,7 +8,6 @@ import XCTest
 public let eventKey = EventPayload.CodingKeys.self
 
 public extension StreamMockServer {
-
     func configureEventEndpoints() {
         server.register(MockEndpoint.event) { [weak self] request in
             let channelId = try XCTUnwrap(request.params[EndpointQuery.channelId])

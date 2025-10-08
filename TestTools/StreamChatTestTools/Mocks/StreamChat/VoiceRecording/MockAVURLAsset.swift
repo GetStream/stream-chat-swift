@@ -6,7 +6,6 @@ import AVFoundation
 
 @dynamicMemberLookup
 public final class MockAVURLAsset: AVURLAsset, Spy, Stub, @unchecked Sendable {
-
     public let spyState = SpyState()
     public var stubbedProperties: [String: Any] = [:]
 
@@ -15,11 +14,11 @@ public final class MockAVURLAsset: AVURLAsset, Spy, Stub, @unchecked Sendable {
 
     public private(set) var loadValuesAsynchronouslyWasCalledWithKeys: [String]?
 
-    public override var duration: CMTime {
+    override public var duration: CMTime {
         get { self[dynamicMember: \.duration] }
     }
 
-    public override func statusOfValue(
+    override public func statusOfValue(
         forKey key: String,
         error outError: NSErrorPointer
     ) -> AVKeyValueStatus {
@@ -28,7 +27,7 @@ public final class MockAVURLAsset: AVURLAsset, Spy, Stub, @unchecked Sendable {
         return statusOfValueResultMap[key] ?? super.statusOfValue(forKey: key, error: outError)
     }
 
-    public override func loadValuesAsynchronously(
+    override public func loadValuesAsynchronously(
         forKeys keys: [String],
         completionHandler handler: (() -> Void)? = nil
     ) {

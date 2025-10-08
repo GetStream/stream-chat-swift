@@ -10,7 +10,6 @@ import XCTest
 // MARK: - Config
 
 public struct ChannelConfigs {
-
     struct Cooldown {
         var isEnabled = false
         var duration: Int = 3
@@ -37,9 +36,11 @@ public struct ChannelConfigs {
         channel[JSONKey.channel] = innerChannel
     }
 
-    mutating func updateConfig(config: ChannelConfig_Mock,
-                               forChannelWithId id: String,
-                               server: StreamMockServer) {
+    mutating func updateConfig(
+        config: ChannelConfig_Mock,
+        forChannelWithId id: String,
+        server: StreamMockServer
+    ) {
         var json = server.channelList
         guard
             var channels = json[JSONKey.channels] as? [[String: Any]],
@@ -57,8 +58,10 @@ public struct ChannelConfigs {
         server.channelList = json
     }
 
-    mutating func config(forChannelId id: String,
-                         server: StreamMockServer) -> ChannelConfig_Mock? {
+    mutating func config(
+        forChannelId id: String,
+        server: StreamMockServer
+    ) -> ChannelConfig_Mock? {
         if let config = configs[id] { return config }
 
         let config = loadConfig(forChannelId: id, server: server)
@@ -66,8 +69,10 @@ public struct ChannelConfigs {
         return config
     }
 
-    private func loadConfig(forChannelId id: String,
-                            server: StreamMockServer) -> ChannelConfig_Mock? {
+    private func loadConfig(
+        forChannelId id: String,
+        server: StreamMockServer
+    ) -> ChannelConfig_Mock? {
         guard
             let channel = server.channel(withId: id),
             let innerChannel = channel[JSONKey.channel] as? [String: Any],
@@ -78,7 +83,6 @@ public struct ChannelConfigs {
 
         return try? ChannelConfig_Mock(configJson)
     }
-
 }
 
 public struct ChannelConfig_Mock: Codable {
@@ -100,16 +104,16 @@ public struct ChannelConfig_Mock: Codable {
         case typingEvents = "typing_events"
         case readEvents = "read_events"
         case connectEvents = "connect_events"
-        case search = "search"
-        case reactions = "reactions"
-        case replies = "replies"
-        case quotes = "quotes"
-        case mutes = "mutes"
-        case uploads = "uploads"
+        case search
+        case reactions
+        case replies
+        case quotes
+        case mutes
+        case uploads
         case urlEnrichment = "url_enrichment"
         case customEvents = "custom_events"
         case pushNotifications = "push_notifications"
-        case reminders = "reminders"
+        case reminders
     }
 
     public func update(json: inout [String: Any]) {

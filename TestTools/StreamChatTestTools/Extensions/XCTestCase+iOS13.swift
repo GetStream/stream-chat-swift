@@ -10,8 +10,4 @@ import XCTest
 /// If you make you tests class a subclass of this class, it will still be visible to Xcode but the test won't be executed.
 ///
 /// Stack overflow: https://stackoverflow.com/questions/59645536/available-attribute-does-not-work-with-xctest-classes-or-methods
-open class iOS13TestCase: XCTestCase {
-    override public func invokeTest() {
-        return super.invokeTest()
-    }
-}
+open class iOS13TestCase: XCTestCase {}

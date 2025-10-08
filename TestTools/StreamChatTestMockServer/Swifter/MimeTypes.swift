@@ -1,8 +1,5 @@
 //
-//  MimeTypes.swift
-//  Swifter
-//
-//  Created by Daniel Große on 16.02.18.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
