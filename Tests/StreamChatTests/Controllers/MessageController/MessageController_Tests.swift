@@ -913,6 +913,59 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.deleteMessage_hard, true)
     }
 
+    func test_deleteMessageForMe_propagatesError() {
+        // Simulate `deleteMessageForMe` call and catch the completion
+        var completionError: Error?
+        controller.deleteMessageForMe { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = $0
+        }
+
+        // Simulate network response with the error
+        let networkError = TestError()
+        env.messageUpdater.deleteMessage_completion?(networkError)
+
+        // Assert error is propagated
+        AssertAsync.willBeEqual(completionError as? TestError, networkError)
+    }
+
+    func test_deleteMessageForMe_propagatesNilError() {
+        // Simulate `deleteMessageForMe` call and catch the completion
+        var completionCalled = false
+        controller.deleteMessageForMe { [callbackQueueID] in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil($0)
+            completionCalled = true
+        }
+
+        // Keep a weak ref so we can check if it's actually deallocated
+        weak var weakController = controller
+
+        // (Try to) deallocate the controller
+        // by not keeping any references to it
+        controller = nil
+
+        // Simulate successful network response
+        env.messageUpdater.deleteMessage_completion?(nil)
+        // Release reference of completion so we can deallocate stuff
+        env.messageUpdater.deleteMessage_completion = nil
+
+        // Assert completion is called
+        AssertAsync.willBeTrue(completionCalled)
+        // `weakController` should be deallocated too
+        AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_deleteMessageForMe_callsMessageUpdater_withCorrectValues() {
+        // Simulate `deleteMessageForMe` call
+        controller.deleteMessageForMe()
+
+        // Assert messageUpdater is called with correct `messageId`, hard: false, and deleteForMe: true
+        XCTAssertEqual(env.messageUpdater.deleteMessage_messageId, controller.messageId)
+        XCTAssertEqual(env.messageUpdater.deleteMessage_hard, false)
+        XCTAssertEqual(env.messageUpdater.deleteMessage_deleteForMe, true)
+    }
+
     // MARK: - Edit message
 
     func test_editMessage_propagatesError() {

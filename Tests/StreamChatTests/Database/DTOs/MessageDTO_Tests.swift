@@ -5130,4 +5130,75 @@ final class MessageDTO_Tests: XCTestCase {
         let message = try XCTUnwrap(database.viewContext.message(id: messagePayload.id)?.asModel())
         XCTAssertNil(message.draftReply)
     }
+    
+    // MARK: - deletedForMe Tests
+    
+    func test_saveMessage_savesDeletedForMe_whenTrue() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let messagePayload = MessagePayload.dummy(
+            messageId: .unique,
+            deletedForMe: true
+        )
+        
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .admin))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveMessage(payload: messagePayload, for: cid, syncOwnReactions: false, cache: nil)
+        }
+        
+        // THEN
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messagePayload.id))
+        XCTAssertEqual(messageDTO.deletedForMe, true)
+        
+        let message = try XCTUnwrap(messageDTO.asModel())
+        XCTAssertEqual(message.deletedForMe, true)
+    }
+    
+    func test_saveMessage_savesDeletedForMe_whenFalse() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let messagePayload = MessagePayload.dummy(
+            messageId: .unique,
+            deletedForMe: false
+        )
+        
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .admin))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveMessage(payload: messagePayload, for: cid, syncOwnReactions: false, cache: nil)
+        }
+        
+        // THEN
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messagePayload.id))
+        XCTAssertEqual(messageDTO.deletedForMe, false)
+        
+        let message = try XCTUnwrap(messageDTO.asModel())
+        XCTAssertEqual(message.deletedForMe, false)
+    }
+    
+    func test_saveMessage_savesDeletedForMe_whenNil_defaultsToFalse() throws {
+        // GIVEN
+        let cid: ChannelId = .unique
+        let messagePayload = MessagePayload.dummy(
+            messageId: .unique,
+            deletedForMe: nil
+        )
+        
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .admin))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            try session.saveMessage(payload: messagePayload, for: cid, syncOwnReactions: false, cache: nil)
+        }
+        
+        // THEN
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messagePayload.id))
+        XCTAssertEqual(messageDTO.deletedForMe, false)
+        
+        let message = try XCTUnwrap(messageDTO.asModel())
+        XCTAssertEqual(message.deletedForMe, false)
+    }
 }

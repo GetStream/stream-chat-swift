@@ -15,13 +15,17 @@ extension Endpoint {
         )
     }
 
-    static func deleteMessage(messageId: MessageId, hard: Bool) -> Endpoint<MessagePayload.Boxed> {
-        .init(
+    static func deleteMessage(messageId: MessageId, hard: Bool, deleteForMe: Bool? = nil) -> Endpoint<MessagePayload.Boxed> {
+        var body: [String: AnyEncodable] = ["hard": AnyEncodable(hard)]
+        if let deleteForMe = deleteForMe {
+            body["delete_for_me"] = AnyEncodable(deleteForMe)
+        }
+        return .init(
             path: .deleteMessage(messageId),
             method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["hard": hard]
+            body: body
         )
     }
 

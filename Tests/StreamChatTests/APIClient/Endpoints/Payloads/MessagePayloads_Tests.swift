@@ -63,6 +63,7 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertEqual(payload.moderation?.blocklistMatched, "profanity_2021_01")
         XCTAssertEqual(payload.moderation?.semanticFilterMatched, "bad_phrases")
         XCTAssertEqual(payload.moderation?.platformCircumvented, false)
+        XCTAssertEqual(payload.deletedForMe, true)
         XCTAssertEqual(payload.member?.channelRole, .moderator)
     }
 
@@ -335,6 +336,44 @@ final class MessagePayload_Tests: XCTestCase {
         XCTAssertNil(chatMessage.poll)
         XCTAssertNil(chatMessage.reminder)
         XCTAssertNil(chatMessage.sharedLocation)
+    }
+
+    // MARK: - deletedForMe Tests
+
+    func test_messagePayload_asModel_deletedForMe_whenTrue() {
+        let payload = MessagePayload.dummy(deletedForMe: true)
+
+        let message = payload.asModel(
+            cid: ChannelId(type: .messaging, id: "test"),
+            currentUserId: "test-user",
+            channelReads: []
+        )
+
+        XCTAssertEqual(message.deletedForMe, true)
+    }
+
+    func test_messagePayload_asModel_deletedForMe_whenFalse() {
+        let payload = MessagePayload.dummy(deletedForMe: false)
+
+        let message = payload.asModel(
+            cid: ChannelId(type: .messaging, id: "test"),
+            currentUserId: "test-user",
+            channelReads: []
+        )
+
+        XCTAssertEqual(message.deletedForMe, false)
+    }
+
+    func test_messagePayload_asModel_deletedForMe_whenNil_defaultsToFalse() {
+        let payload = MessagePayload.dummy(deletedForMe: nil)
+
+        let message = payload.asModel(
+            cid: ChannelId(type: .messaging, id: "test"),
+            currentUserId: "test-user",
+            channelReads: []
+        )
+
+        XCTAssertEqual(message.deletedForMe, false)
     }
 }
 

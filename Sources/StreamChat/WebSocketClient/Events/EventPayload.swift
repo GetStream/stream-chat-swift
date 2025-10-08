@@ -28,6 +28,7 @@ class EventPayload: Decodable {
         case banExpiredAt = "expiration"
         case parentId = "parent_id"
         case hardDelete = "hard_delete"
+        case deletedForMe = "deleted_for_me"
         case firstUnreadMessageId = "first_unread_message_id"
         case lastReadAt = "last_read_at"
         case lastReadMessageId = "last_read_message_id"
@@ -62,6 +63,7 @@ class EventPayload: Decodable {
     let banExpiredAt: Date?
     let parentId: MessageId?
     let hardDelete: Bool
+    let deletedForMe: Bool?
     let shadow: Bool?
     // Mark as unread properties
     let firstUnreadMessageId: MessageId?
@@ -115,7 +117,8 @@ class EventPayload: Decodable {
         aiMessage: String? = nil,
         draft: DraftPayload? = nil,
         reminder: ReminderPayload? = nil,
-        channelMessageCount: Int? = nil
+        channelMessageCount: Int? = nil,
+        deletedForMe: Bool? = nil
     ) {
         self.eventType = eventType
         self.connectionId = connectionId
@@ -150,6 +153,7 @@ class EventPayload: Decodable {
         self.draft = draft
         self.reminder = reminder
         self.channelMessageCount = channelMessageCount
+        self.deletedForMe = deletedForMe
     }
 
     required init(from decoder: Decoder) throws {
@@ -189,6 +193,7 @@ class EventPayload: Decodable {
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
         channelMessageCount = try container.decodeIfPresent(Int.self, forKey: .channelMessageCount)
+        deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
     }
 
     func event() throws -> Event {

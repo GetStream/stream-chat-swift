@@ -165,5 +165,6 @@ extension ChatMessage {
         reminder = nil
         sharedLocation = nil
         channelRole = nil
+        deletedForMe = false
     }
 }

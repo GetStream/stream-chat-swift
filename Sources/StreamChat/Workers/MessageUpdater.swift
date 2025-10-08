@@ -42,8 +42,9 @@ class MessageUpdater: Worker {
     /// - Parameters:
     ///   - messageId: The message identifier.
     ///   - hard: A Boolean value to determine if the message will be delete permanently on the backend.
+    ///   - deleteForMe: A Boolean value to determine if the message should be deleted only for the current user.
     ///   - completion: The completion. Will be called with an error if smth goes wrong, otherwise - will be called with `nil`.
-    func deleteMessage(messageId: MessageId, hard: Bool, completion: ((Error?) -> Void)? = nil) {
+    func deleteMessage(messageId: MessageId, hard: Bool, deleteForMe: Bool? = nil, completion: ((Error?) -> Void)? = nil) {
         var shouldDeleteOnBackend = true
 
         database.write({ session in
@@ -80,7 +81,13 @@ class MessageUpdater: Worker {
                 return
             }
 
-            apiClient?.request(endpoint: .deleteMessage(messageId: messageId, hard: hard)) { result in
+            apiClient?.request(
+                endpoint: .deleteMessage(
+                    messageId: messageId,
+                    hard: hard,
+                    deleteForMe: deleteForMe
+                )
+            ) { result in
                 switch result {
                 case let .success(response):
                     repository?.saveSuccessfullyDeletedMessage(message: response.message, completion: completion)
@@ -1239,9 +1246,9 @@ extension MessageUpdater {
         }
     }
 
-    func deleteMessage(messageId: MessageId, hard: Bool) async throws {
+    func deleteMessage(messageId: MessageId, hard: Bool, deleteForMe: Bool? = nil) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            deleteMessage(messageId: messageId, hard: hard) { error in
+            deleteMessage(messageId: messageId, hard: hard, deleteForMe: deleteForMe) { error in
                 continuation.resume(with: error)
             }
         }
