@@ -10,7 +10,7 @@ final class AttachmentDownloader_Spy: AttachmentDownloader, Spy {
     @Atomic var downloadAttachmentProgress: Double?
     @Atomic var downloadAttachmentResult: Error?
 
-    func download(from remoteURL: URL, to localURL: URL, progress: (@Sendable(Double) -> Void)?, completion: @escaping @Sendable((any Error)?) -> Void) {
+    func download(from remoteURL: URL, to localURL: URL, progress: (@Sendable (Double) -> Void)?, completion: @escaping @Sendable ((any Error)?) -> Void) {
         record()
         if let downloadAttachmentProgress {
             progress?(downloadAttachmentProgress)

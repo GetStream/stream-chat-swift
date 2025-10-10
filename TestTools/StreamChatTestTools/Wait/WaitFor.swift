@@ -33,7 +33,7 @@ public func waitFor<T>(
     timeout: TimeInterval = waitForTimeout,
     file: StaticString = #filePath,
     line: UInt = #line,
-    _ action: (_ done: @escaping @Sendable(T) -> Void) -> Void
+    _ action: (_ done: @escaping @Sendable (T) -> Void) -> Void
 ) throws -> T {
     let expectation = XCTestExpectation(description: "Action completed")
     nonisolated(unsafe) var result: T?

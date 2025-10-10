@@ -17,14 +17,14 @@ class ChatUserSearchController_Mock: ChatUserSearchController, @unchecked Sendab
         users_mock ?? super.userArray
     }
 
-    override func search(query: UserListQuery, completion: (@MainActor(Error?) -> Void)? = nil) {
+    override func search(query: UserListQuery, completion: (@MainActor (Error?) -> Void)? = nil) {
         searchCallCount += 1
         callback {
             completion?(nil)
         }
     }
 
-    override func search(term: String?, completion: (@MainActor(Error?) -> Void)? = nil) {
+    override func search(term: String?, completion: (@MainActor (Error?) -> Void)? = nil) {
         searchCallCount += 1
         users_mock = users_mock?.filter { user in
             user.name?.contains(term ?? "") ?? true

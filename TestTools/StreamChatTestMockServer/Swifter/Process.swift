@@ -19,8 +19,8 @@ public class Process {
         #endif
     }
 
-    private static nonisolated(unsafe) var signalsWatchers = [(Int32) -> Void]()
-    private static nonisolated(unsafe) var signalsObserved = false
+    private nonisolated(unsafe) static var signalsWatchers = [(Int32) -> Void]()
+    private nonisolated(unsafe) static var signalsObserved = false
 
     public static func watchSignals(_ callback: @escaping (Int32) -> Void) {
         if !signalsObserved {

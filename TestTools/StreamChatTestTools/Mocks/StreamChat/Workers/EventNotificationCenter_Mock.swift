@@ -13,7 +13,7 @@ final class EventNotificationCenter_Mock: EventNotificationCenter, @unchecked Se
 
     var newMessageIdsMock: Set<MessageId>?
 
-    lazy var mock_process = MockFunc<([Event], Bool, (@Sendable() -> Void)?), Void>.mock(for: process)
+    lazy var mock_process = MockFunc<([Event], Bool, (@Sendable () -> Void)?), Void>.mock(for: process)
     var mock_processCalledWithEvents: [Event] = []
 
     var registerManualEventHandling_calledWith: ChannelId?
@@ -35,7 +35,7 @@ final class EventNotificationCenter_Mock: EventNotificationCenter, @unchecked Se
     override func process(
         _ events: [Event],
         postNotifications: Bool = true,
-        completion: (@Sendable() -> Void)? = nil
+        completion: (@Sendable () -> Void)? = nil
     ) {
         super.process(events, postNotifications: postNotifications, completion: completion)
         

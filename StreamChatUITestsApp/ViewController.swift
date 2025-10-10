@@ -190,7 +190,7 @@ extension ViewController {
 }
 
 extension StreamChatWrapper {
-    func connectUser(completion: @escaping @Sendable(Error?) -> Void) {
+    func connectUser(completion: @escaping @Sendable (Error?) -> Void) {
         let userCredentials = UserCredentials.default
         let tokenProvider = mockTokenProvider(for: userCredentials)
         client?.connectUser(
@@ -200,7 +200,7 @@ extension StreamChatWrapper {
         )
     }
 
-    func connectGuestUser(completion: @escaping @Sendable(Error?) -> Void) {
+    func connectGuestUser(completion: @escaping @Sendable (Error?) -> Void) {
         client?.connectGuestUser(
             userInfo: .init(id: "123"),
             completion: completion
