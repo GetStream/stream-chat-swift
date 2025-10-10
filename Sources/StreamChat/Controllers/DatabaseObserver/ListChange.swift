@@ -144,10 +144,6 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
     /// Used for converting the `DTO`s provided by `FetchResultsController` to the resulting `Item`.
     let itemCreator: (DTO) throws -> Item
 
-    /// Called when the aggregator is about to change the current content. It gets called when the `FetchedResultsController`
-    /// calls `controllerWillChangeContent` on its delegate.
-    var onWillChange: (() -> Void)?
-
     /// Called with the aggregated changes after `FetchResultsController` calls controllerDidChangeContent` on its delegate.
     var onDidChange: (([ListChange<Item>]) -> Void)?
 
@@ -167,7 +163,6 @@ class ListChangeAggregator<DTO: NSManagedObject, Item>: NSObject, NSFetchedResul
     // This should ideally be in the extensions but it's not possible to implement @objc methods in extensions of generic types.
 
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        onWillChange?()
         currentChanges = []
     }
 

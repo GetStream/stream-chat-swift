@@ -651,28 +651,18 @@ final class ChannelListController_Tests: XCTestCase {
         let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: cid)).asModel()
 
         AssertAsync {
-            Assert.willBeTrue(delegate.willChangeChannels_called)
             Assert.willBeEqual(delegate.didChangeChannels_changes, [.insert(channel, index: [0, 0])])
         }
     }
 
-    @MainActor func test_willAndDidCallbacks_areCalledInCorrectOrder() throws {
+    @MainActor func test_didCallbacks_areCalledInCorrectOrder() throws {
         class Delegate: ChatChannelListControllerDelegate {
             let cid: ChannelId
 
-            var willChangeCallbackCalled = false
             var didChangeCallbackCalled = false
 
             init(cid: ChannelId) {
                 self.cid = cid
-            }
-
-            func controllerWillChangeChannels(_ controller: ChatChannelListController) {
-                // Check the new channel is NOT in reported channels yet
-                XCTAssertFalse(controller.channels.contains { $0.cid == cid })
-                // Assert the "did" callback hasn't been called yet
-                XCTAssertFalse(didChangeCallbackCalled)
-                willChangeCallbackCalled = true
             }
 
             func controller(
@@ -681,8 +671,6 @@ final class ChannelListController_Tests: XCTestCase {
             ) {
                 // Check the new channel is in reported channels
                 XCTAssertTrue(controller.channels.contains { $0.cid == cid })
-                // Assert the "will" callback has been called
-                XCTAssertTrue(willChangeCallbackCalled)
                 didChangeCallbackCalled = true
             }
         }
@@ -699,7 +687,6 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         AssertAsync {
-            Assert.willBeTrue(delegate.willChangeCallbackCalled)
             Assert.willBeTrue(delegate.didChangeCallbackCalled)
         }
     }
