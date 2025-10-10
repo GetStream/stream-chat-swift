@@ -86,18 +86,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 $0.controller(self, didChangeChannels: changes)
             }
         }
-
-        observer.onWillChange = { [weak self] in
-            self?.delegateCallback { [weak self] in
-                guard let self = self else {
-                    log.warning("Callback called while self is nil")
-                    return
-                }
-
-                $0.controllerWillChangeChannels(self)
-            }
-        }
-
         return observer
     }()
 
@@ -278,12 +266,6 @@ extension ChatChannelListController {
 
 /// `ChatChannelListController` uses this protocol to communicate changes to its delegate.
 public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
-    /// The controller will update the list of observed channels.
-    ///
-    /// - Parameter controller: The controller emitting the change callback.
-    ///
-    func controllerWillChangeChannels(_ controller: ChatChannelListController)
-
     /// The controller changed the list of observed channels.
     ///
     /// - Parameters:
@@ -297,8 +279,6 @@ public protocol ChatChannelListControllerDelegate: DataControllerStateDelegate {
 }
 
 public extension ChatChannelListControllerDelegate {
-    func controllerWillChangeChannels(_ controller: ChatChannelListController) {}
-
     func controller(
         _ controller: ChatChannelListController,
         didChangeChannels changes: [ListChange<ChatChannel>]

@@ -29,16 +29,6 @@ final class ListChangeAggregator_Tests: XCTestCase {
         super.tearDown()
     }
 
-    func test_onWillChange_isCalled() {
-        // Set up aggregator callback
-        var callbackCalled = false
-        aggregator.onWillChange = { callbackCalled = true }
-
-        // Simulate FRC starts updating
-        aggregator.controllerWillChangeContent(fakeController)
-        XCTAssertTrue(callbackCalled)
-    }
-
     func test_addingItems() {
         // Set up aggregator callback
         var result: [ListChange<String>]?

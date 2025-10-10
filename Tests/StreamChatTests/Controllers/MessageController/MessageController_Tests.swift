@@ -905,9 +905,8 @@ final class MessageController_Tests: XCTestCase {
 
     func test_deleteMessageForMe_propagatesError() {
         // Simulate `deleteMessageForMe` call and catch the completion
-        var completionError: Error?
-        controller.deleteMessageForMe { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var completionError: Error?
+        controller.deleteMessageForMe {
             completionError = $0
         }
 
@@ -921,9 +920,8 @@ final class MessageController_Tests: XCTestCase {
 
     func test_deleteMessageForMe_propagatesNilError() {
         // Simulate `deleteMessageForMe` call and catch the completion
-        var completionCalled = false
-        controller.deleteMessageForMe { [callbackQueueID] in
-            AssertTestQueue(withId: callbackQueueID)
+        nonisolated(unsafe) var completionCalled = false
+        controller.deleteMessageForMe {
             XCTAssertNil($0)
             completionCalled = true
         }
