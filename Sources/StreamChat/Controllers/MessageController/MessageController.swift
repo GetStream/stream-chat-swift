@@ -363,7 +363,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
     ///
-    public func deleteMessageForMe(completion: ((Error?) -> Void)? = nil) {
+    public func deleteMessageForMe(completion: (@MainActor (Error?) -> Void)? = nil) {
         messageUpdater.deleteMessage(
             messageId: messageId,
             hard: false,
