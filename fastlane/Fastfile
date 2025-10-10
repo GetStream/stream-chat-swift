@@ -942,5 +942,5 @@ lane :size_analyze do
     skip_codesigning: true
   )
 
-  show_detailed_sdk_size(sdk_names: sdk_names, threshold: 1)
+  show_detailed_sdk_size(sdk_names: sdk_names, threshold: 42)
 end
