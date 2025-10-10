@@ -1696,6 +1696,7 @@
 		AD6E32A52BBC502D0073831B /* ThreadQuery.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E32A32BBC502D0073831B /* ThreadQuery.swift */; };
 		AD6E32AD2BBC86950073831B /* ThreadEndpoint_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6E32AC2BBC86950073831B /* ThreadEndpoint_Tests.swift */; };
 		AD6F531927175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD6F531827175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift */; };
+		AD70CC852E956C590007AB6D /* MessageDeletedForMe.json in Resources */ = {isa = PBXBuildFile; fileRef = AD70CC842E956C4F0007AB6D /* MessageDeletedForMe.json */; };
 		AD70DC362ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD70DC352ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift */; };
 		AD70DC372ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD70DC352ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift */; };
 		AD70DC392ADEC3C400CFC3B7 /* MessageModerationDetailsDTO.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD70DC382ADEC3C400CFC3B7 /* MessageModerationDetailsDTO.swift */; };
@@ -4515,6 +4516,7 @@
 		AD6E32A32BBC502D0073831B /* ThreadQuery.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadQuery.swift; sourceTree = "<group>"; };
 		AD6E32AC2BBC86950073831B /* ThreadEndpoint_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadEndpoint_Tests.swift; sourceTree = "<group>"; };
 		AD6F531827175FDB00D428B4 /* ChatMessageGiphyView+GiphyBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatMessageGiphyView+GiphyBadge.swift"; sourceTree = "<group>"; };
+		AD70CC842E956C4F0007AB6D /* MessageDeletedForMe.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessageDeletedForMe.json; sourceTree = "<group>"; };
 		AD70DC352ADEC0F600CFC3B7 /* MessageModerationDetailsPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModerationDetailsPayload.swift; sourceTree = "<group>"; };
 		AD70DC382ADEC3C400CFC3B7 /* MessageModerationDetailsDTO.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModerationDetailsDTO.swift; sourceTree = "<group>"; };
 		AD70DC3B2ADEF09C00CFC3B7 /* MessageModerationDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageModerationDetails.swift; sourceTree = "<group>"; };
@@ -6914,6 +6916,7 @@
 		8A0C3BD524C1E25400CAFD19 /* Message */ = {
 			isa = PBXGroup;
 			children = (
+				AD70CC842E956C4F0007AB6D /* MessageDeletedForMe.json */,
 				8A0C3BDB24C1E5AE00CAFD19 /* MessageDeleted.json */,
 				846C633B26FC834800F7518B /* MessageDeleted+MissingUser.json */,
 				ADC4AAAD2788ACFE0004BB35 /* MessageDeletedHard.json */,
@@ -10734,6 +10737,7 @@
 				841BAA172BD01930000C73E4 /* Poll.json in Resources */,
 				A311B3FF27E8B9A800CFCF6D /* MessageRead.json in Resources */,
 				E3B987EF2844DE1200C2E101 /* MemberRole.json in Resources */,
+				AD70CC852E956C590007AB6D /* MessageDeletedForMe.json in Resources */,
 				A311B40427E8B9AD00CFCF6D /* NotificationInviteRejected.json in Resources */,
 				A311B3F127E8B99800CFCF6D /* ChannelUpdated_ServerSide.json in Resources */,
 				A311B3DE27E8B98C00CFCF6D /* ChannelMembersQuery.json in Resources */,

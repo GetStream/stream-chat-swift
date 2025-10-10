@@ -516,13 +516,12 @@ public class ChatClient: @unchecked Sendable {
                 }
                 self?.authenticationRepository.logOutUser()
             }
-        }
-
-        authenticationRepository.clearCurrentUserId()
-
-        if removeDevice == false {
+        } else {
             authenticationRepository.logOutUser()
         }
+
+        // Clear current user id instantly even if pending removing device.
+        authenticationRepository.clearCurrentUserId()
 
         // Stop tracking active components
         syncRepository.removeAllTracked()

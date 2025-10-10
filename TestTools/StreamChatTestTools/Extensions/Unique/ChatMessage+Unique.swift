@@ -26,6 +26,7 @@ extension ChatMessage {
             isBounced: false,
             isSilent: false,
             isShadowed: false,
+            deletedForMe: false,
             reactionScores: ["like": 1],
             reactionCounts: ["like": 1],
             reactionGroups: [

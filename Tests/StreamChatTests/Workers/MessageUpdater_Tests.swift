@@ -851,6 +851,48 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(channelDTO.previewMessage?.id, firstPreviewMessage.id)
     }
 
+    func test_deleteMessage_withDeleteForMe_sendsCorrectAPICall() throws {
+        let messageId: MessageId = .unique
+
+        // Create current user in the database
+        try database.createCurrentUser()
+
+        // Simulate `deleteMessage(messageId:, hard:, deleteForMe:)` call
+        messageUpdater.deleteMessage(messageId: messageId, hard: false, deleteForMe: true)
+
+        // Assert correct endpoint is called
+        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: true)
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_deleteMessage_withDeleteForMeFalse_sendsCorrectAPICall() throws {
+        let messageId: MessageId = .unique
+
+        // Create current user in the database
+        try database.createCurrentUser()
+
+        // Simulate `deleteMessage(messageId:, hard:, deleteForMe:)` call
+        messageUpdater.deleteMessage(messageId: messageId, hard: false, deleteForMe: false)
+
+        // Assert correct endpoint is called
+        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: false)
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_deleteMessage_withDeleteForMeNil_sendsCorrectAPICall() throws {
+        let messageId: MessageId = .unique
+
+        // Create current user in the database
+        try database.createCurrentUser()
+
+        // Simulate `deleteMessage(messageId:, hard:, deleteForMe:)` call
+        messageUpdater.deleteMessage(messageId: messageId, hard: false, deleteForMe: nil)
+
+        // Assert correct endpoint is called
+        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: nil)
+        AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
     // MARK: Get message
 
     func test_getMessage_shouldForwardSuccess() {

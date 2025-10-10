@@ -156,7 +156,8 @@ class ManualEventHandler: @unchecked Sendable {
             channel: channel,
             message: message,
             createdAt: createdAt,
-            isHardDelete: payload.hardDelete
+            isHardDelete: payload.hardDelete,
+            deletedForMe: payload.deletedForMe ?? false
         )
     }
 

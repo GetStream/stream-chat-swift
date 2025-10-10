@@ -75,6 +75,10 @@ final class DemoChatMessageContentView: ChatMessageContentView {
             timestampLabel?.text?.append(" - Translated to Turkish")
         }
 
+        if content?.deletedForMe == true {
+            timestampLabel?.text?.append(" - Deleted only for me")
+        }
+
         if content?.isPinned == true, let pinInfoLabel = pinInfoLabel {
             pinInfoLabel.text = "📌 Pinned"
             if let pinDetails = content?.pinDetails {
