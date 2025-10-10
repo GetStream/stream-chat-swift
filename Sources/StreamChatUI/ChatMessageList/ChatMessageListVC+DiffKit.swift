@@ -12,7 +12,7 @@ public extension ChatMessageListVC {
     }
 
     /// Set the new message snapshot reported by the data controller.
-    func setNewMessagesSnapshot(_ messages: LazyCachedMapCollection<ChatMessage>) {
+    func setNewMessagesSnapshot(_ messages: [ChatMessage]) {
         listView.currentMessagesFromDataSource = messages
         listView.newMessagesSnapshot = messages
     }

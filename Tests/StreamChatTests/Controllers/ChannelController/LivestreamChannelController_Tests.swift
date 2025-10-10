@@ -1288,7 +1288,8 @@ extension LivestreamChannelController_Tests {
             channel: .mock(cid: controller.cid!),
             message: messageToDelete,
             createdAt: .unique,
-            isHardDelete: true
+            isHardDelete: true,
+            deletedForMe: false
         )
         
         // When
@@ -1323,7 +1324,8 @@ extension LivestreamChannelController_Tests {
             channel: .mock(cid: controller.cid!),
             message: deletedMessage,
             createdAt: .unique,
-            isHardDelete: false
+            isHardDelete: false,
+            deletedForMe: false
         )
         
         // When

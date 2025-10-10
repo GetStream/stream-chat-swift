@@ -55,12 +55,12 @@ import Foundation
     /// An array of loaded message reactions sorted by ``ChatMessageReaction/updatedAt`` with descending order.
     ///
     /// Use ``Chat/loadReactions(of:pagination:)`` for loading more reactions.
-    @Published public private(set) var reactions = StreamCollection<ChatMessageReaction>([])
+    @Published public private(set) var reactions: [ChatMessageReaction] = []
     
     // MARK: - Replies
     
     /// An array of loaded replies sorted by ``MessageOrdering``.
-    @Published public internal(set) var replies = StreamCollection<ChatMessage>([])
+    @Published public internal(set) var replies: [ChatMessage] = []
     
     /// A Boolean value that returns whether the oldest replies have all been loaded or not.
     public var hasLoadedAllOldestReplies: Bool {

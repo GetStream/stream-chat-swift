@@ -25,7 +25,7 @@ import Foundation
     @Published public private(set) var query: MessageSearchQuery?
     
     /// An array of search results for the specified query and pagination state.
-    @Published public internal(set) var messages = StreamCollection<ChatMessage>([])
+    @Published public internal(set) var messages: [ChatMessage] = []
     
     // MARK: - Mutating the State
     

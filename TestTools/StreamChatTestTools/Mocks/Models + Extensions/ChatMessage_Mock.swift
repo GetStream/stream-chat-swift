@@ -53,7 +53,8 @@ public extension ChatMessage {
         draftReply: DraftMessage? = nil,
         reminder: MessageReminderInfo? = nil,
         sharedLocation: SharedLocation? = nil,
-        channelRole: MemberRole? = nil
+        channelRole: MemberRole? = nil,
+        deletedForMe: Bool = false
     ) -> Self {
         .init(
             id: id,
@@ -74,6 +75,7 @@ public extension ChatMessage {
             isBounced: isBounced,
             isSilent: isSilent,
             isShadowed: isShadowed,
+            deletedForMe: deletedForMe,
             reactionScores: reactionScores,
             reactionCounts: reactionCounts,
             reactionGroups: reactionGroups,

@@ -15,7 +15,7 @@ extension ChatUserListController {
         public let controller: ChatUserListController
 
         /// The users matching the query.
-        @Published public private(set) var users: LazyCachedMapCollection<ChatUser> = []
+        @Published public private(set) var users: [ChatUser] = []
 
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State

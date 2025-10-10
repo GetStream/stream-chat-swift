@@ -48,16 +48,16 @@ extension MessageState {
         
         struct Handlers {
             let messageDidChange: @Sendable @MainActor (ChatMessage) async -> Void
-            let reactionsDidChange: @Sendable @MainActor (StreamCollection<ChatMessageReaction>) async -> Void
-            let repliesDidChange: @Sendable @MainActor (StreamCollection<ChatMessage>) async -> Void
+            let reactionsDidChange: @Sendable @MainActor ([ChatMessageReaction]) async -> Void
+            let repliesDidChange: @Sendable @MainActor ([ChatMessage]) async -> Void
         }
         
         func start(
             with handlers: Handlers
         ) -> (
             message: ChatMessage?,
-            reactions: StreamCollection<ChatMessageReaction>,
-            replies: StreamCollection<ChatMessage>
+            reactions: [ChatMessageReaction],
+            replies: [ChatMessage]
         ) {
             do {
                 let message = try messageObserver.startObserving(onContextDidChange: { message, _ in
@@ -69,7 +69,7 @@ extension MessageState {
                 return (message, reactions, replies)
             } catch {
                 log.error("Failed to start the observers for message: \(messageId) with error \(error)")
-                return (nil, StreamCollection([]), StreamCollection([]))
+                return (nil, [], [])
             }
         }
     }

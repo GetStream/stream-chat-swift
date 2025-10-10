@@ -16,7 +16,7 @@ extension ChatReactionListController {
         public let controller: ChatReactionListController
 
         /// The message reactions.
-        @Published public private(set) var reactions: LazyCachedMapCollection<ChatMessageReaction> = []
+        @Published public private(set) var reactions: [ChatMessageReaction] = []
 
         /// The current state of the controller.
         @Published public private(set) var state: DataController.State

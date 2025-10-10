@@ -21,5 +21,5 @@ import Foundation
     public let query: UserListQuery
     
     /// An array of users for the specified ``UserListQuery``.
-    @Published public private(set) var users = StreamCollection<ChatUser>([])
+    @Published public private(set) var users: [ChatUser] = []
 }

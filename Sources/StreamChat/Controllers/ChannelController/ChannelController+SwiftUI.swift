@@ -18,7 +18,7 @@ extension ChatChannelController {
         @Published public private(set) var channel: ChatChannel?
 
         /// The messages related to the channel.
-        @Published public private(set) var messages: LazyCachedMapCollection<ChatMessage> = []
+        @Published public private(set) var messages: [ChatMessage] = []
 
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State

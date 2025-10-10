@@ -18,15 +18,15 @@ extension MemberListState {
         }
         
         struct Handlers {
-            let membersDidChange: @Sendable @MainActor (StreamCollection<ChatChannelMember>) async -> Void
+            let membersDidChange: @Sendable @MainActor ([ChatChannelMember]) async -> Void
         }
         
-        func start(with handlers: Handlers) -> StreamCollection<ChatChannelMember> {
+        func start(with handlers: Handlers) -> [ChatChannelMember] {
             do {
                 return try memberListObserver.startObserving(didChange: handlers.membersDidChange)
             } catch {
                 log.error("Failed to start the member list observer with error \(error)")
-                return StreamCollection([])
+                return []
             }
         }
     }

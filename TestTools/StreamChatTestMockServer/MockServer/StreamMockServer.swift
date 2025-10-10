@@ -8,9 +8,9 @@ import XCTest
 
 public final class StreamMockServer {
     // Delays all HTTP responses by given time interval, 0 by default
-    public static nonisolated(unsafe) var httpResponseDelay: TimeInterval = 0.0
+    public nonisolated(unsafe) static var httpResponseDelay: TimeInterval = 0.0
     // Waits for all HTTP and Websocket responses during given time interval, 10 by default
-    public static nonisolated(unsafe) var waitTimeout = 10.0
+    public nonisolated(unsafe) static var waitTimeout = 10.0
     // Expires JWT after given timeout if `MOCK_JWT environment variable is provided
     public static let jwtTimeout: UInt32 = 5
 

@@ -15,6 +15,7 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     @Atomic var deleteMessage_completion: ((Error?) -> Void)?
     @Atomic var deleteMessage_completion_result: Result<Void, Error>?
     @Atomic var deleteMessage_hard: Bool?
+    @Atomic var deleteMessage_deleteForMe: Bool?
 
     @Atomic var downloadAttachment_attachmentId: AttachmentId?
     @Atomic var downloadAttachment_completion_result: Result<AnyChatMessageAttachment, Error>?
@@ -286,9 +287,10 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         getMessage_completion = completion
     }
 
-    override func deleteMessage(messageId: MessageId, hard: Bool, completion: ((Error?) -> Void)? = nil) {
+    override func deleteMessage(messageId: MessageId, hard: Bool, deleteForMe: Bool? = nil, completion: ((Error?) -> Void)? = nil) {
         deleteMessage_messageId = messageId
         deleteMessage_hard = hard
+        deleteMessage_deleteForMe = deleteForMe
         deleteMessage_completion = completion
         deleteMessage_completion_result?.invoke(with: completion)
     }

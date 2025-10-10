@@ -61,7 +61,7 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///
     /// To observe changes of the messages, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
-    public var messages: LazyCachedMapCollection<ChatMessage> {
+    public var messages: [ChatMessage] {
         startObserversIfNeeded()
         return messagesObserver?.items ?? []
     }

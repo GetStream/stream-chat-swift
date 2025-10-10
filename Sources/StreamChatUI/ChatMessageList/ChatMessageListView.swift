@@ -23,7 +23,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
     /// This property is especially useful when resetting the skipped messages
     /// since we want to reload the data and insert back the skipped messages, for this,
     /// we update the messages data with the one originally reported by the data controller.
-    internal var currentMessagesFromDataSource: LazyCachedMapCollection<ChatMessage> = []
+    internal var currentMessagesFromDataSource: [ChatMessage] = []
 
     /// The current messages from the data source, including skipped messages as an array.
     /// Used mostly for the Livestream version of the message list.
@@ -31,7 +31,7 @@ open class ChatMessageListView: UITableView, Customizable, ComponentsProvider {
 
     /// The new messages snapshot reported by the channel or message controller.
     /// If messages are being skipped, this snapshot doesn't include skipped messages.
-    internal var newMessagesSnapshot: LazyCachedMapCollection<ChatMessage> = []
+    internal var newMessagesSnapshot: [ChatMessage] = []
 
     /// The new messages snapshot reported by the channel or message controller as an array.
     /// Used mostly for the Livestream version of the message list.

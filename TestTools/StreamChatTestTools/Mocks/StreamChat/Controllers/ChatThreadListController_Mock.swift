@@ -11,8 +11,8 @@ class ChatThreadListController_Mock: ChatThreadListController, @unchecked Sendab
     }
 
     var threads_mock: [ChatThread]?
-    override var threads: LazyCachedMapCollection<ChatThread> {
-        threads_mock.map { $0.lazyCachedMap { $0 } } ?? super.threads
+    override var threads: [ChatThread] {
+        threads_mock ?? super.threads
     }
 
     var state_mock: State?
@@ -21,9 +21,9 @@ class ChatThreadListController_Mock: ChatThreadListController, @unchecked Sendab
         set { super.state = newValue }
     }
 
-    var synchronize_completion: (@MainActor(Error?) -> Void)?
+    var synchronize_completion: (@MainActor (Error?) -> Void)?
     var synchronize_callCount = 0
-    override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
+    override func synchronize(_ completion: (@MainActor (Error?) -> Void)? = nil) {
         synchronize_callCount += 1
         synchronize_completion = completion
     }

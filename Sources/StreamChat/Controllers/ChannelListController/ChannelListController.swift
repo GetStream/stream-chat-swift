@@ -45,7 +45,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// To observe changes of the channels, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var channels: LazyCachedMapCollection<ChatChannel> {
+    public var channels: [ChatChannel] {
         startChannelListObserverIfNeeded()
         return channelListObserver.items
     }

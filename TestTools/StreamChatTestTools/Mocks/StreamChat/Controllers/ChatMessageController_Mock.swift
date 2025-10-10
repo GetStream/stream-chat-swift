@@ -29,8 +29,8 @@ class ChatMessageController_Mock: ChatMessageController, @unchecked Sendable {
     }
 
     var replies_mock: [ChatMessage]?
-    override var replies: LazyCachedMapCollection<ChatMessage> {
-        replies_mock.map { $0.lazyCachedMap { $0 } } ?? super.replies
+    override var replies: [ChatMessage] {
+        replies_mock ?? super.replies
     }
 
     var state_mock: State?
@@ -50,18 +50,18 @@ class ChatMessageController_Mock: ChatMessageController, @unchecked Sendable {
     }
 
     var synchronize_callCount = 0
-    var synchronize_completion: (@MainActor(Error?) -> Void)?
-    override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
+    var synchronize_completion: (@MainActor (Error?) -> Void)?
+    override func synchronize(_ completion: (@MainActor (Error?) -> Void)? = nil) {
         synchronize_callCount += 1
         synchronize_completion = completion
     }
 
     var loadPageAroundReplyId_callCount = 0
-    var loadPageAroundReplyId_completion: (@MainActor(Error?) -> Void)?
+    var loadPageAroundReplyId_completion: (@MainActor (Error?) -> Void)?
     override func loadPageAroundReplyId(
         _ replyId: MessageId,
         limit: Int? = nil,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         loadPageAroundReplyId_callCount += 1
         loadPageAroundReplyId_completion = completion

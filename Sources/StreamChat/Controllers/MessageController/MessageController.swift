@@ -47,7 +47,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// To observe changes of the replies, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var replies: LazyCachedMapCollection<ChatMessage> {
+    public var replies: [ChatMessage] {
         startObserversIfNeeded()
         return repliesObserver?.items ?? []
     }
@@ -349,6 +349,26 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     public func deleteMessage(hard: Bool = false, completion: (@MainActor (Error?) -> Void)? = nil) {
         messageUpdater.deleteMessage(messageId: messageId, hard: hard) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Deletes the message this controller manages only for the current user.
+    ///
+    /// This method deletes the message only for the current user, making it invisible to them while keeping it visible to other users.
+    /// This is different from the regular delete which affects all users in the channel.
+    ///
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                         If request fails, the completion will be called with an error.
+    ///
+    public func deleteMessageForMe(completion: (@MainActor (Error?) -> Void)? = nil) {
+        messageUpdater.deleteMessage(
+            messageId: messageId,
+            hard: false,
+            deleteForMe: true
+        ) { error in
             self.callback {
                 completion?(error)
             }

@@ -18,15 +18,15 @@ extension ReactionListState {
         }
         
         struct Handlers {
-            let reactionsDidChange: @Sendable @MainActor (StreamCollection<ChatMessageReaction>) async -> Void
+            let reactionsDidChange: @Sendable @MainActor ([ChatMessageReaction]) async -> Void
         }
         
-        func start(with handlers: Handlers) -> StreamCollection<ChatMessageReaction> {
+        func start(with handlers: Handlers) -> [ChatMessageReaction] {
             do {
                 return try reactionListObserver.startObserving(didChange: handlers.reactionsDidChange)
             } catch {
                 log.error("Failed to start the reaction list observer with error \(error)")
-                return StreamCollection([])
+                return []
             }
         }
     }

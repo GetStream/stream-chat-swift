@@ -85,6 +85,11 @@ public struct ChatMessage: Sendable {
     ///
     public let isShadowed: Bool
 
+    /// A flag indicating whether the message was deleted only for the current user.
+    ///
+    /// Messages with this flag set to true are deleted for the current user but still visible to others.
+    public let deletedForMe: Bool
+
     /// The reactions to the message created by any user.
     public let reactionScores: [MessageReactionType: Int]
 
@@ -206,6 +211,7 @@ public struct ChatMessage: Sendable {
         isBounced: Bool,
         isSilent: Bool,
         isShadowed: Bool,
+        deletedForMe: Bool,
         reactionScores: [MessageReactionType: Int],
         reactionCounts: [MessageReactionType: Int],
         reactionGroups: [MessageReactionType: ChatMessageReactionGroup],
@@ -248,6 +254,7 @@ public struct ChatMessage: Sendable {
         self.isBounced = isBounced
         self.isSilent = isSilent
         self.isShadowed = isShadowed
+        self.deletedForMe = deletedForMe
         self.reactionScores = reactionScores
         self.reactionCounts = reactionCounts
         self.reactionGroups = reactionGroups
@@ -312,6 +319,7 @@ public struct ChatMessage: Sendable {
             isBounced: isBounced,
             isSilent: isSilent,
             isShadowed: isShadowed,
+            deletedForMe: deletedForMe,
             reactionScores: reactionScores,
             reactionCounts: reactionCounts,
             reactionGroups: reactionGroups,
@@ -427,6 +435,7 @@ public struct ChatMessage: Sendable {
             isBounced: isBounced,
             isSilent: isSilent,
             isShadowed: isShadowed,
+            deletedForMe: deletedForMe,
             reactionScores: reactionScores,
             reactionCounts: reactionCounts,
             reactionGroups: reactionGroups,
@@ -562,6 +571,7 @@ extension ChatMessage: Hashable {
         guard lhs.localState == rhs.localState else { return false }
         guard lhs.updatedAt == rhs.updatedAt else { return false }
         guard lhs.deletedAt == rhs.deletedAt else { return false }
+        guard lhs.deletedForMe == rhs.deletedForMe else { return false }
         guard lhs.allAttachments == rhs.allAttachments else { return false }
         guard lhs.poll == rhs.poll else { return false }
         guard lhs.author == rhs.author else { return false }

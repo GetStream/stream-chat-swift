@@ -13,8 +13,8 @@ final class AttachmentUploader_Spy: AttachmentUploader, Spy, @unchecked Sendable
 
     func upload(
         _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable(Double) -> Void)?,
-        completion: @escaping @Sendable(Result<UploadedAttachment, Error>) -> Void
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Result<UploadedAttachment, Error>) -> Void
     ) {
         record()
 
@@ -31,8 +31,8 @@ final class AttachmentUploader_Spy: AttachmentUploader, Spy, @unchecked Sendable
     
     func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamAttachment<Payload>,
-        progress: (@Sendable(Double) -> Void)?,
-        completion: @escaping @Sendable(Result<UploadedFile, any Error>) -> Void
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Result<UploadedFile, any Error>) -> Void
     ) {
         record()
 

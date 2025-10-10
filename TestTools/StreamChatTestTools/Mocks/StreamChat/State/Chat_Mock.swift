@@ -80,7 +80,7 @@ public extension Chat_Mock {
     /// Simulates the initial conditions. Setting these values doesn't trigger any observer callback.
     @MainActor func simulateInitial(channel: ChatChannel, messages: [ChatMessage]) {
         state.channel = channel
-        state.messages = StreamCollection(messages)
+        state.messages = messages
     }
 
     /// Simulates a change of the `channel` value. Observers are notified with the provided `change` value.
@@ -98,6 +98,6 @@ public extension Chat_Mock {
             newMessages.append(message)
         }
         
-        state.messages = StreamCollection(newMessages)
+        state.messages = newMessages
     }
 }
