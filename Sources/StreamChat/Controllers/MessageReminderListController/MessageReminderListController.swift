@@ -40,7 +40,7 @@ public class MessageReminderListController: DataController, DelegateCallable, Da
     ///
     /// To observe changes of the reminders, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
-    public var reminders: LazyCachedMapCollection<MessageReminder> {
+    public var reminders: [MessageReminder] {
         startMessageRemindersObserverIfNeeded()
         return messageRemindersObserver.items
     }

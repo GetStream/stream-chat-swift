@@ -32,7 +32,7 @@ public class ChatReactionListController: DataController, DelegateCallable, DataS
     ///
     /// To observe changes of the reactions, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
-    public var reactions: LazyCachedMapCollection<ChatMessageReaction> {
+    public var reactions: [ChatMessageReaction] {
         startReactionListObserverIfNeeded()
         return reactionListObserver.items
     }

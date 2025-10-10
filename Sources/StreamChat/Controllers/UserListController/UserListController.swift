@@ -32,7 +32,7 @@ public class ChatUserListController: DataController, DelegateCallable, DataStore
     /// To observe changes of the users, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var users: LazyCachedMapCollection<ChatUser> {
+    public var users: [ChatUser] {
         startUserListObserverIfNeeded()
         return userListObserver.items
     }

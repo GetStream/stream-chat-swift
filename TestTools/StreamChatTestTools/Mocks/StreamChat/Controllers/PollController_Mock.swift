@@ -22,8 +22,8 @@ final class PollController_Mock: PollController, @unchecked Sendable {
         poll_simulated
     }
     
-    var ownVotes_simulated: LazyCachedMapCollection<PollVote> = .init([])
-    override var ownVotes: LazyCachedMapCollection<PollVote> {
+    var ownVotes_simulated: [PollVote] = .init([])
+    override var ownVotes: [PollVote] {
         ownVotes_simulated
     }
 
@@ -34,8 +34,8 @@ final class PollController_Mock: PollController, @unchecked Sendable {
     }
 
     var synchronize_callCount = 0
-    var synchronize_completion: (@MainActor(Error?) -> Void)?
-    override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
+    var synchronize_completion: (@MainActor (Error?) -> Void)?
+    override func synchronize(_ completion: (@MainActor (Error?) -> Void)? = nil) {
         synchronize_callCount += 1
         synchronize_called = true
         synchronize_completion = completion
@@ -44,7 +44,7 @@ final class PollController_Mock: PollController, @unchecked Sendable {
     override func castPollVote(
         answerText: String?,
         optionId: String?,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         castPollVote_called = true
         castPollVote_completion_result?.invoke(with: completion)
@@ -52,15 +52,15 @@ final class PollController_Mock: PollController, @unchecked Sendable {
     
     override func removePollVote(
         voteId: String,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         removePollVote_called = true
         removePollVote_completion_result?.invoke(with: completion)
     }
     
     var closePoll_callCount = 0
-    var closePoll_completion: (@MainActor(Error?) -> Void)?
-    override func closePoll(completion: (@MainActor(Error?) -> Void)? = nil) {
+    var closePoll_completion: (@MainActor (Error?) -> Void)?
+    override func closePoll(completion: (@MainActor (Error?) -> Void)? = nil) {
         closePoll_callCount += 1
         closePoll_called = true
         closePoll_completion = completion
@@ -70,7 +70,7 @@ final class PollController_Mock: PollController, @unchecked Sendable {
         text: String,
         position: Int? = nil,
         extraData: [String: RawJSON]? = nil,
-        completion: (@MainActor(Error?) -> Void)? = nil
+        completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         suggestPollOption_called = true
         suggestPollOption_completion_result?.invoke(with: completion)

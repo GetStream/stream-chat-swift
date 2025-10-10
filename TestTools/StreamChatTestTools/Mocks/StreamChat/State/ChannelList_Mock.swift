@@ -18,7 +18,7 @@ public class ChannelList_Mock: ChannelList, @unchecked Sendable {
     
     override init(
         query: ChannelListQuery,
-        dynamicFilter: (@Sendable(ChatChannel) -> Bool)? = nil,
+        dynamicFilter: (@Sendable (ChatChannel) -> Bool)? = nil,
         client: ChatClient,
         environment: ChannelList.Environment = .init()
     ) {
@@ -31,7 +31,7 @@ public class ChannelList_Mock: ChannelList, @unchecked Sendable {
     }
     
     @MainActor public func simulate(channels: [ChatChannel]) async throws {
-        state.channels = StreamCollection(channels)
+        state.channels = channels
     }
     
     public var loadNextChannelsIsCalled = false

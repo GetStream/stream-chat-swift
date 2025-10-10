@@ -55,18 +55,18 @@ extension ChatState {
         
         struct Handlers {
             let channelDidChange: @Sendable @MainActor (ChatChannel?) async -> Void
-            let membersDidChange: @Sendable @MainActor (StreamCollection<ChatChannelMember>) async -> Void
-            let messagesDidChange: @Sendable @MainActor (StreamCollection<ChatMessage>) async -> Void
-            let watchersDidChange: @Sendable @MainActor (StreamCollection<ChatUser>) async -> Void
+            let membersDidChange: @Sendable @MainActor ([ChatChannelMember]) async -> Void
+            let messagesDidChange: @Sendable @MainActor ([ChatMessage]) async -> Void
+            let watchersDidChange: @Sendable @MainActor ([ChatUser]) async -> Void
         }
         
         @MainActor func start(
             with handlers: Handlers
         ) -> (
             channel: ChatChannel?,
-            members: StreamCollection<ChatChannelMember>,
-            messages: StreamCollection<ChatMessage>,
-            watchers: StreamCollection<ChatUser>
+            members: [ChatChannelMember],
+            messages: [ChatMessage],
+            watchers: [ChatUser]
         ) {
             memberListObserver = memberListState.$members
                 .dropFirst()
@@ -81,7 +81,7 @@ extension ChatState {
                 return (channel, memberListState.members, messages, watchers)
             } catch {
                 log.error("Failed to start the observers for cid: \(cid) with error \(error)")
-                return (nil, StreamCollection([]), StreamCollection([]), StreamCollection([]))
+                return (nil, [], [], [])
             }
         }
     }

@@ -20,5 +20,5 @@ import Foundation
     public let query: ChannelMemberListQuery
     
     /// An array of members for the specified ``ChannelMemberListQuery``.
-    @Published public private(set) var members = StreamCollection<ChatChannelMember>([])
+    @Published public private(set) var members: [ChatChannelMember] = []
 }

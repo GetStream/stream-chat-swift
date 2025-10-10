@@ -507,7 +507,7 @@ open class ChatThreadVC: _ViewController,
     }
 
     /// Gets the replies of the thread, plus the parent message if needed.
-    private func getMessages(from messageController: ChatMessageController) -> LazyCachedMapCollection<ChatMessage> {
+    private func getMessages(from messageController: ChatMessageController) -> [ChatMessage] {
         guard shouldRenderParentMessage else {
             return messageController.replies
         }

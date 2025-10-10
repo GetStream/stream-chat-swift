@@ -127,15 +127,15 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy, @unchecked Sen
         super.recreatePersistentStore(completion: completion)
     }
 
-    override public func write(_ actions: @escaping @Sendable(DatabaseSession) throws -> Void, completion: @escaping @Sendable(Error?) -> Void) {
+    override public func write(_ actions: @escaping @Sendable (DatabaseSession) throws -> Void, completion: @escaping @Sendable (Error?) -> Void) {
         record()
-        let wrappedActions: (@Sendable(DatabaseSession) throws -> Void) = { session in
+        let wrappedActions: (@Sendable (DatabaseSession) throws -> Void) = { session in
             self.isWriteSessionInProgress = true
             try actions(self.sessionMock ?? session)
             self.isWriteSessionInProgress = false
         }
 
-        let completion: @Sendable(Error?) -> Void = { error in
+        let completion: @Sendable (Error?) -> Void = { error in
             completion(error)
             self._writeSessionCounter { $0 += 1 }
             self.didWrite?()
@@ -159,7 +159,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy, @unchecked Sen
 
 extension DatabaseContainer {
     /// Reads changes from the DB synchronously. Only for test purposes!
-    func readSynchronously<T>(_ actions: @escaping @Sendable(DatabaseSession) throws -> T) throws -> T {
+    func readSynchronously<T>(_ actions: @escaping @Sendable (DatabaseSession) throws -> T) throws -> T {
         let result = try waitFor { completion in
             self.read(actions, completion: completion)
         }
@@ -172,7 +172,7 @@ extension DatabaseContainer {
     }
     
     /// Writes changes to the DB synchronously. Only for test purposes!
-    func writeSynchronously(_ actions: @escaping @Sendable(DatabaseSession) throws -> Void) throws {
+    func writeSynchronously(_ actions: @escaping @Sendable (DatabaseSession) throws -> Void) throws {
         let error = try waitFor { completion in
             self.write(actions, completion: completion)
         }

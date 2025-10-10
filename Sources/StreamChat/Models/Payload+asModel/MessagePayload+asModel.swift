@@ -76,6 +76,7 @@ extension MessagePayload {
             isBounced: moderationDetails?.action == MessageModerationAction.bounce.rawValue,
             isSilent: isSilent,
             isShadowed: isShadowed,
+            deletedForMe: deletedForMe ?? false,
             reactionScores: reactionScores,
             reactionCounts: reactionCounts,
             reactionGroups: reactionGroups.reduce(into: [:]) { acc, element in

@@ -20,15 +20,15 @@ extension UserListState {
         }
         
         struct Handlers {
-            let usersDidChange: @Sendable @MainActor (StreamCollection<ChatUser>) async -> Void
+            let usersDidChange: @Sendable @MainActor ([ChatUser]) async -> Void
         }
         
-        func start(with handlers: Handlers) -> StreamCollection<ChatUser> {
+        func start(with handlers: Handlers) -> [ChatUser] {
             do {
                 return try usersObserver.startObserving(didChange: handlers.usersDidChange)
             } catch {
                 log.error("Failed to start the user list observer for query: \(query)")
-                return StreamCollection([])
+                return []
             }
         }
     }

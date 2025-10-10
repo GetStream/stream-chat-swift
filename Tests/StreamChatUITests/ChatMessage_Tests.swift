@@ -429,6 +429,19 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertTrue(deletedMessage.isDeleted)
     }
 
+    func test_isDeleted_whenMessageIsDeletedForMe_returnsTrue() {
+        let deletedMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: .mock(id: .unique),
+            deletedAt: nil,
+            deletedForMe: true
+        )
+
+        XCTAssertTrue(deletedMessage.isDeleted)
+    }
+
     // MARK: - shouldRenderAsSystemMessage
 
     func test_shouldRenderAsSystemMessage_whenMessageIsSystem_returnsTrue() {

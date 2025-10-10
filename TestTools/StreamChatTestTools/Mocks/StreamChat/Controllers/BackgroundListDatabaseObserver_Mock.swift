@@ -17,8 +17,8 @@ final class BackgroundListDatabaseObserver_Mock<Item: Sendable, DTO: NSManagedOb
         }
     }
 
-    var items_mock: LazyCachedMapCollection<Item>?
-    override var items: LazyCachedMapCollection<Item> {
+    var items_mock: [Item]?
+    override var items: [Item] {
         items_mock ?? super.items
     }
 }

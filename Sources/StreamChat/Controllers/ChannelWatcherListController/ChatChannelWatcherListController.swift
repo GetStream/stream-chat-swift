@@ -27,7 +27,7 @@ public class ChatChannelWatcherListController: DataController, DelegateCallable,
     /// The channel watchers matching the query.
     /// To observe the watcher list changes, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
-    public var watchers: LazyCachedMapCollection<ChatUser> {
+    public var watchers: [ChatUser] {
         startObservingIfNeeded()
         return watchersObserver.items
     }

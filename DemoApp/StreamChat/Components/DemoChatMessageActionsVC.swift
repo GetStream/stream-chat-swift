@@ -14,6 +14,7 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
         if message?.isSentByCurrentUser == true {
             if AppConfig.shared.demoAppConfig.isHardDeleteEnabled {
                 actions.append(hardDeleteActionItem())
+                actions.append(deleteForMeActionItem())
             }
         }
 
@@ -100,6 +101,22 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
                     guard confirmed else { return }
 
                     self.messageController.deleteMessage(hard: true) { _ in
+                        self.delegate?.chatMessageActionsVCDidFinish(self)
+                    }
+                }
+            },
+            appearance: appearance
+        )
+    }
+
+    func deleteForMeActionItem() -> ChatMessageActionItem {
+        DeleteForMeActionItem(
+            action: { [weak self] _ in
+                guard let self = self else { return }
+                self.alertsRouter.showMessageDeletionConfirmationAlert { confirmed in
+                    guard confirmed else { return }
+
+                    self.messageController.deleteMessageForMe { _ in
                         self.delegate?.chatMessageActionsVCDidFinish(self)
                     }
                 }
@@ -211,6 +228,21 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
 
     struct HardDeleteActionItem: ChatMessageActionItem {
         var title: String { "Hard Delete Message" }
+        var isDestructive: Bool { true }
+        let icon: UIImage
+        let action: (ChatMessageActionItem) -> Void
+
+        init(
+            action: @escaping (ChatMessageActionItem) -> Void,
+            appearance: Appearance = .default
+        ) {
+            self.action = action
+            icon = appearance.images.messageActionDelete
+        }
+    }
+
+    struct DeleteForMeActionItem: ChatMessageActionItem {
+        var title: String { "Delete only for me" }
         var isDestructive: Bool { true }
         let icon: UIImage
         let action: (ChatMessageActionItem) -> Void

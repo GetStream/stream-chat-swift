@@ -20,5 +20,5 @@ import Foundation
     public let query: ReactionListQuery
     
     /// An array of reactions for the specified ``ReactionListQuery``.
-    @Published public private(set) var reactions = StreamCollection<ChatMessageReaction>([])
+    @Published public private(set) var reactions: [ChatMessageReaction] = []
 }

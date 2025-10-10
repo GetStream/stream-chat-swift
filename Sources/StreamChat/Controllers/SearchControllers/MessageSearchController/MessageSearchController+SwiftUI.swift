@@ -15,7 +15,7 @@ extension ChatMessageSearchController {
         public let controller: ChatMessageSearchController
 
         /// The current result of messages.
-        @Published public private(set) var messages: LazyCachedMapCollection<ChatMessage> = []
+        @Published public private(set) var messages: [ChatMessage] = []
 
         /// The current state of the controller.
         @Published public private(set) var state: DataController.State

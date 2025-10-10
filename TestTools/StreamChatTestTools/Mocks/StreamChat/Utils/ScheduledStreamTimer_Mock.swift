@@ -10,7 +10,7 @@ public final class ScheduledStreamTimer_Mock: StreamTimer {
     public var startCallCount: Int = 0
 
     public var isRunning: Bool = false
-    public var onChange: (@Sendable() -> Void)?
+    public var onChange: (@Sendable () -> Void)?
 
     public init() {}
 

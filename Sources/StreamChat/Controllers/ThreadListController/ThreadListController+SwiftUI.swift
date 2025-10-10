@@ -15,7 +15,7 @@ extension ChatThreadListController {
         internal let controller: ChatThreadListController
 
         /// The threads.
-        @Published internal private(set) var threads: LazyCachedMapCollection<ChatThread> = []
+        @Published internal private(set) var threads: [ChatThread] = []
 
         /// The current state of the controller.
         @Published internal private(set) var state: DataController.State

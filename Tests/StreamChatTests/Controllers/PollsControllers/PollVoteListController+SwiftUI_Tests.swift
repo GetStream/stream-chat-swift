@@ -42,7 +42,7 @@ final class PollVoteListController_SwiftUI_Tests: iOS13TestCase {
 
         // Simulate poll vote creation
         let pollVote: PollVote = .unique
-        let votes = LazyCachedMapCollection([pollVote])
+        let votes = [pollVote]
         voteListController.votes_simulated = votes
 
         voteListController.delegateCallback {
