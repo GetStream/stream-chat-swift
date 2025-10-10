@@ -21,7 +21,7 @@ extension Result where Success == Void {
         }
     }
     
-    func invoke(with completion: (@MainActor(Error?) -> Void)? = nil) {
+    func invoke(with completion: (@MainActor (Error?) -> Void)? = nil) {
         StreamConcurrency.onMain {
             switch self {
             case .success:

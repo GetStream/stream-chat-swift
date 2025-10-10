@@ -1144,7 +1144,7 @@ extension ChannelUpdater {
         before messageId: MessageId?,
         limit: Int?,
         channelQuery: ChannelQuery,
-        loaded: StreamCollection<ChatMessage>
+        loaded: [ChatMessage]
     ) async throws {
         guard !paginationState.isLoadingPreviousMessages else { return }
         guard !paginationState.hasLoadedAllPreviousMessages else { return }
@@ -1161,7 +1161,7 @@ extension ChannelUpdater {
         after messageId: MessageId?,
         limit: Int?,
         channelQuery: ChannelQuery,
-        loaded: StreamCollection<ChatMessage>
+        loaded: [ChatMessage]
     ) async throws {
         guard !paginationState.isLoadingNextMessages else { return }
         guard !paginationState.hasLoadedAllNextMessages else { return }
@@ -1177,7 +1177,7 @@ extension ChannelUpdater {
         around messageId: MessageId,
         limit: Int?,
         channelQuery: ChannelQuery,
-        loaded: StreamCollection<ChatMessage>
+        loaded: [ChatMessage]
     ) async throws {
         guard !paginationState.isLoadingMiddleMessages else { return }
         let limit = limit ?? channelQuery.pagination?.pageSize ?? .messagesPageSize

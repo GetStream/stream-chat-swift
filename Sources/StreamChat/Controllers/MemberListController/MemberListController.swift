@@ -29,7 +29,7 @@ public class ChatChannelMemberListController: DataController, DelegateCallable, 
     /// The channel members matching the query.
     /// To observe the member list changes, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
-    public var members: LazyCachedMapCollection<ChatChannelMember> {
+    public var members: [ChatChannelMember] {
         startObservingIfNeeded()
         return memberListObserver.items
     }

@@ -47,7 +47,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// To observe changes of the replies, set your class as a delegate of this controller or use the provided
     /// `Combine` publishers.
     ///
-    public var replies: LazyCachedMapCollection<ChatMessage> {
+    public var replies: [ChatMessage] {
         startObserversIfNeeded()
         return repliesObserver?.items ?? []
     }
@@ -363,7 +363,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                         If request fails, the completion will be called with an error.
     ///
-    public func deleteMessageForMe(completion: ((Error?) -> Void)? = nil) {
+    public func deleteMessageForMe(completion: (@MainActor (Error?) -> Void)? = nil) {
         messageUpdater.deleteMessage(
             messageId: messageId,
             hard: false,

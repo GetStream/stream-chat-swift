@@ -153,12 +153,12 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         )
     }
 
-    var items: StreamCollection<Item> {
-        var collection: StreamCollection<Item>!
+    var items: [Item] {
+        var collection: [Item]!
         context.performAndWait {
             // When we already have loaded items, reuse them, otherwise refetch all
             let items = reuseItems ?? updateItems(nil)
-            collection = StreamCollection(items)
+            collection = items
         }
         return collection
     }
@@ -168,7 +168,7 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
     /// - Parameter didChange: The callback which is triggered when the observed item changes. Runs on the ``MainActor``.
     ///
     /// - Returns: Returns the current state of items in the local database.
-    func startObserving(didChange: @escaping @Sendable @MainActor (StreamCollection<Item>) async -> Void) throws -> StreamCollection<Item> where Item: Sendable {
+    func startObserving(didChange: @escaping @Sendable @MainActor ([Item]) async -> Void) throws -> [Item] where Item: Sendable {
         try startObserving(onContextDidChange: { items, _ in
             Task.mainActor { await didChange(items) }
         })
@@ -181,12 +181,12 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
     /// - Note: Use it if you need to do additional processing on the context's queue.
     ///
     /// - Returns: Returns the current state of items in the local database.
-    @discardableResult func startObserving(onContextDidChange: @escaping (StreamCollection<Item>, [ListChange<Item>]) -> Void) throws -> StreamCollection<Item> {
+    @discardableResult func startObserving(onContextDidChange: @escaping ([Item], [ListChange<Item>]) -> Void) throws -> [Item] {
         changeAggregator.onDidChange = { [weak self] changes in
             guard let self else { return }
             // Runs on the NSManagedObjectContext's queue, therefore skip performAndWait
             let items = self.updateItems(changes)
-            onContextDidChange(StreamCollection(items), changes)
+            onContextDidChange(items, changes)
         }
         frc.delegate = changeAggregator
         try frc.performFetch()

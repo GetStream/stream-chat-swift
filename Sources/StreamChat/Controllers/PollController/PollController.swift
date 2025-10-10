@@ -35,7 +35,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
     }
     
     /// Returns the current user's votes.
-    public var ownVotes: LazyCachedMapCollection<PollVote> {
+    public var ownVotes: [PollVote] {
         ownVotesObserver.items
     }
     

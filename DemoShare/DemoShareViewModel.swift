@@ -32,7 +32,7 @@ class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
         chatClient.currentUserId
     }
     
-    @Published var channels = LazyCachedMapCollection<ChatChannel>()
+    @Published var channels: [ChatChannel] = []
     @Published var text = ""
     @Published var images = [UIImage]()
     @Published var selectedChannel: ChatChannel?

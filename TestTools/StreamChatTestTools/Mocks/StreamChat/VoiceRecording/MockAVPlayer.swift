@@ -55,7 +55,7 @@ public class MockAVPlayer: AVPlayer {
         to time: CMTime,
         toleranceBefore: CMTime,
         toleranceAfter: CMTime,
-        completionHandler: @escaping @Sendable(Bool) -> Void
+        completionHandler: @escaping @Sendable (Bool) -> Void
     ) {
         StreamConcurrency.onMain {
             seekWasCalledWithTime = time

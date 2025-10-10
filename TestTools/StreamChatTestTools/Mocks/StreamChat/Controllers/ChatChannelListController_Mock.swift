@@ -17,8 +17,8 @@ class ChatChannelListController_Mock: ChatChannelListController, Spy, @unchecked
     }
 
     var channels_mock: [ChatChannel]?
-    override var channels: LazyCachedMapCollection<ChatChannel> {
-        channels_mock.map { $0.lazyCachedMap { $0 } } ?? super.channels
+    override var channels: [ChatChannel] {
+        channels_mock ?? super.channels
     }
 
     var state_mock: State?
@@ -27,7 +27,7 @@ class ChatChannelListController_Mock: ChatChannelListController, Spy, @unchecked
         set { super.state = newValue }
     }
 
-    override func loadNextChannels(limit: Int?, completion: (@MainActor(Error?) -> Void)?) {
+    override func loadNextChannels(limit: Int?, completion: (@MainActor (Error?) -> Void)?) {
         loadNextChannelsCallCount += 1
         loadNextChannelsIsCalled = true
     }

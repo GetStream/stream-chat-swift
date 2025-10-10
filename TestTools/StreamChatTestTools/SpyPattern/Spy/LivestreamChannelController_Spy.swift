@@ -13,7 +13,7 @@ final class LivestreamChannelController_Spy: LivestreamChannelController, Spy, @
         super.init(channelQuery: .init(cid: .unique), client: client)
     }
 
-    override func startWatching(isInRecoveryMode: Bool, completion: (@MainActor(Error?) -> Void)? = nil) {
+    override func startWatching(isInRecoveryMode: Bool, completion: (@MainActor (Error?) -> Void)? = nil) {
         record()
         StreamConcurrency.onMain {
             completion?(startWatchingError)

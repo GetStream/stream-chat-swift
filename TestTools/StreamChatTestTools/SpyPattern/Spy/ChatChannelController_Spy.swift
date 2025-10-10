@@ -13,7 +13,7 @@ final class ChatChannelController_Spy: ChatChannelController, Spy, @unchecked Se
         super.init(channelQuery: .init(cid: .unique), channelListQuery: nil, client: client)
     }
 
-    override func recoverWatchedChannel(recovery: Bool, completion: @escaping @MainActor(Error?) -> Void) {
+    override func recoverWatchedChannel(recovery: Bool, completion: @escaping @MainActor (Error?) -> Void) {
         record()
         callback {
             completion(self.watchActiveChannelError)
@@ -30,8 +30,8 @@ final class ChannelControllerSpy: ChatChannelController, @unchecked Sendable {
     }
 
     var messages_simulated: [ChatMessage]?
-    override var messages: LazyCachedMapCollection<ChatMessage> {
-        messages_simulated.map { $0.lazyCachedMap { $0 } } ?? super.messages
+    override var messages: [ChatMessage] {
+        messages_simulated ?? super.messages
     }
 
     var state_simulated: DataController.State?
@@ -48,7 +48,7 @@ final class ChannelControllerSpy: ChatChannelController, @unchecked Sendable {
         )
     }
 
-    override func synchronize(_ completion: (@MainActor(Error?) -> Void)? = nil) {
+    override func synchronize(_ completion: (@MainActor (Error?) -> Void)? = nil) {
         synchronize_called = true
     }
 }

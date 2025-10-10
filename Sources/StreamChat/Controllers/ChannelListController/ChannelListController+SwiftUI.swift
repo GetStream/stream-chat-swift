@@ -15,7 +15,7 @@ extension ChatChannelListController {
         public let controller: ChatChannelListController
 
         /// The channels matching the query.
-        @Published public private(set) var channels: LazyCachedMapCollection<ChatChannel> = []
+        @Published public private(set) var channels: [ChatChannel] = []
 
         /// The current state of the Controller.
         @Published public private(set) var state: DataController.State

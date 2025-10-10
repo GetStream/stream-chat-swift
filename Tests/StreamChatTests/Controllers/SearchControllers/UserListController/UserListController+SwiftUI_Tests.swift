@@ -67,8 +67,8 @@ final class UserListControllerMock: ChatUserListController, @unchecked Sendable 
     @Atomic var synchronize_called = false
 
     var users_simulated: [ChatUser]?
-    override var users: LazyCachedMapCollection<ChatUser> {
-        users_simulated.map { $0.lazyCachedMap { $0 } } ?? super.users
+    override var users: [ChatUser] {
+        users_simulated ?? super.users
     }
 
     var state_simulated: DataController.State?

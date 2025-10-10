@@ -6,9 +6,9 @@ import Foundation
 import XCTest
 
 public enum MockServerConfiguration {
-    public static nonisolated(unsafe) var port: UInt16 = UInt16(Int.random(in: 61000..<62000))
-    public static nonisolated(unsafe) var websocketHost = "ws://localhost"
-    public static nonisolated(unsafe) var httpHost = "http://localhost"
+    public nonisolated(unsafe) static var port: UInt16 = UInt16(Int.random(in: 61000..<62000))
+    public nonisolated(unsafe) static var websocketHost = "ws://localhost"
+    public nonisolated(unsafe) static var httpHost = "http://localhost"
 }
 
 public enum EnvironmentVariable: String {
