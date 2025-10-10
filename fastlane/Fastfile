@@ -931,3 +931,16 @@ def frameworks_sizes
     StreamChatUI: stream_chat_ui_size_kb.round(0)
   }
 end
+
+lane :size_analyze do
+  gym(
+    scheme: 'DemoApp',
+    configuration: 'Release',
+    skip_archive: true,
+    skip_package_ipa: true,
+    skip_package_pkg: true,
+    skip_codesigning: true
+  )
+
+  show_detailed_sdk_size(sdk_names: sdk_names, threshold: 1)
+end

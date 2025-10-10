@@ -18,6 +18,7 @@ jobs:
     runs-on: macos-15
     env:
       GITHUB_TOKEN: '${{ secrets.CI_BOT_GITHUB_TOKEN }}'
+      GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
     steps:
       - name: Connect Bot
         uses: webfactory/ssh-agent@v0.7.0
@@ -28,10 +29,13 @@ jobs:
 
       - uses: ./.github/actions/bootstrap
 
-      - name: Run SDK Size Metrics
+      - name: Run General SDK Size Metrics
         run: bundle exec fastlane show_frameworks_sizes
         timeout-minutes: 30
         env:
-          GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
           MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
           APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
+
+      - name: Run Detailed SDK Size Metrics
+        run: bundle exec fastlane size_analyze
+        timeout-minutes: 30
