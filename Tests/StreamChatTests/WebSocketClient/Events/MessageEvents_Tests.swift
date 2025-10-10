@@ -82,6 +82,18 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.hardDelete, true)
     }
 
+    func test_messageDeletedEvent_whenDeletedForMe_deletedForMeIsTrue() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "MessageDeletedForMe")
+        let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
+        XCTAssertEqual(event?.deletedForMe, true)
+    }
+
+    func test_messageDeletedEvent_whenNotDeletedForMe_deletedForMeIsNil() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
+        let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
+        XCTAssertEqual(event?.deletedForMe, nil)
+    }
+
     func test_messageDeletedEvent_toDomainEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO

@@ -355,6 +355,26 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         }
     }
 
+    /// Deletes the message this controller manages only for the current user.
+    ///
+    /// This method deletes the message only for the current user, making it invisible to them while keeping it visible to other users.
+    /// This is different from the regular delete which affects all users in the channel.
+    ///
+    /// - Parameter completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
+    ///                         If request fails, the completion will be called with an error.
+    ///
+    public func deleteMessageForMe(completion: ((Error?) -> Void)? = nil) {
+        messageUpdater.deleteMessage(
+            messageId: messageId,
+            hard: false,
+            deleteForMe: true
+        ) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
     /// Creates a new reply message locally and schedules it for send.
     ///
     /// - Parameters:

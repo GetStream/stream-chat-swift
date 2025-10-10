@@ -219,6 +219,7 @@
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="defaultSortingKey" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="deletedAt" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="deletedForMe" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="extraData" optional="YES" attributeType="Binary"/>
         <attribute name="id" attributeType="String"/>
         <attribute name="isActiveLiveLocation" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
