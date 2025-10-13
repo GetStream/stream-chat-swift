@@ -34,6 +34,7 @@ final class ChannelListController_Tests: XCTestCase {
         client.mockAPIClient.cleanUp()
         client = nil
         env.channelListUpdater?.cleanUp()
+        env.currentUserUpdater?.cleanUp()
 
         AssertAsync {
             Assert.canBeReleased(&controller)
@@ -860,6 +861,244 @@ final class ChannelListController_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(receivedError, error)
+    }
+
+    // MARK: - Mark Channels as Delivered
+
+    func test_synchronize_callsMarkChannelsAsDeliveredAfterSuccessfulUpdate() {
+        // GIVEN
+        client.authenticationRepository.setMockToken()
+        let currentUserId = client.currentUserId!
+        
+        // Create channels with messages that can be marked as delivered
+        let channel1 = ChatChannel.mock(
+            cid: .unique,
+            reads: [
+                ChatChannelRead.mock(
+                    lastReadAt: Date().addingTimeInterval(-200),
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 1,
+                    user: ChatUser.mock(id: currentUserId),
+                    lastDeliveredAt: Date().addingTimeInterval(-300),
+                    lastDeliveredMessageId: nil
+                )
+            ], latestMessages: [
+                ChatMessage.mock(
+                    id: .unique,
+                    createdAt: Date().addingTimeInterval(-100)
+                )
+            ]
+        )
+        
+        let channel2 = ChatChannel.mock(
+            cid: .unique,
+            reads: [
+                ChatChannelRead.mock(
+                    lastReadAt: Date().addingTimeInterval(-100),
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 1,
+                    user: ChatUser.mock(id: currentUserId),
+                    lastDeliveredAt: Date().addingTimeInterval(-200),
+                    lastDeliveredMessageId: nil
+                )
+            ], latestMessages: [
+                ChatMessage.mock(
+                    id: .unique,
+                    createdAt: Date().addingTimeInterval(-50)
+                )
+            ]
+        )
+        
+        let channels = [channel1, channel2]
+        
+        // WHEN
+        controller.synchronize()
+        env.channelListUpdater?.update_completion?(.success(channels))
+        
+        // THEN
+        AssertAsync.willBeTrue(env.currentUserUpdater?.markChannelsDelivered_deliveredMessages != nil)
+        
+        let deliveredMessages = env.currentUserUpdater?.markChannelsDelivered_deliveredMessages
+        XCTAssertEqual(deliveredMessages?.count, 2)
+        XCTAssertEqual(deliveredMessages?.map(\.channelId), [channel1.cid, channel2.cid])
+        XCTAssertEqual(deliveredMessages?.map(\.messageId), [channel1.latestMessages.first!.id, channel2.latestMessages.first!.id])
+    }
+    
+    func test_loadNextChannels_callsMarkChannelsAsDeliveredAfterSuccessfulUpdate() {
+        // GIVEN
+        client.authenticationRepository.setMockToken()
+        let currentUserId = client.currentUserId!
+        
+        // Create channels with messages that can be marked as delivered
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: [
+                ChatChannelRead.mock(
+                    lastReadAt: Date().addingTimeInterval(-200),
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 1,
+                    user: ChatUser.mock(id: currentUserId),
+                    lastDeliveredAt: Date().addingTimeInterval(-300),
+                    lastDeliveredMessageId: nil
+                )
+            ], latestMessages: [
+                ChatMessage.mock(
+                    id: .unique,
+                    createdAt: Date().addingTimeInterval(-100)
+                )
+            ]
+        )
+        
+        let channels = [channel]
+        
+        // WHEN
+        controller.loadNextChannels()
+        env.channelListUpdater?.update_completion?(.success(channels))
+        
+        // THEN
+        AssertAsync.willBeTrue(env.currentUserUpdater?.markChannelsDelivered_deliveredMessages != nil)
+        
+        let deliveredMessages = env.currentUserUpdater?.markChannelsDelivered_deliveredMessages
+        XCTAssertEqual(deliveredMessages?.count, 1)
+        XCTAssertEqual(deliveredMessages?.first?.channelId, channel.cid)
+        XCTAssertEqual(deliveredMessages?.first?.messageId, channel.latestMessages.first!.id)
+    }
+    
+    func test_markChannelsAsDeliveredIfNeeded_doesNotCallAPIWhenNoChannelsCanBeMarkedAsDelivered() {
+        // GIVEN
+        client.authenticationRepository.setMockToken()
+        let currentUserId = client.currentUserId!
+        
+        // Create channels with messages that cannot be marked as delivered
+        let channel1 = ChatChannel.mock(
+            cid: .unique,
+            reads: [
+                ChatChannelRead.mock(
+                    lastReadAt: Date().addingTimeInterval(-100), // Message is older than lastReadAt
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 0,
+                    user: ChatUser.mock(id: currentUserId),
+                    lastDeliveredAt: Date().addingTimeInterval(-50), // Message is older than lastDeliveredAt
+                    lastDeliveredMessageId: nil
+                )
+            ], latestMessages: [
+                ChatMessage.mock(
+                    id: .unique,
+                    createdAt: Date().addingTimeInterval(-200)
+                )
+            ]
+        )
+        
+        let channel2 = ChatChannel.mock(
+            cid: .unique,
+            reads: [
+                ChatChannelRead.mock(
+                    lastReadAt: Date().addingTimeInterval(-100),
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 0,
+                    user: ChatUser.mock(id: currentUserId),
+                    lastDeliveredAt: Date().addingTimeInterval(-50),
+                    lastDeliveredMessageId: nil
+                )
+            ], latestMessages: []
+        )
+        
+        let channel3 = ChatChannel.mock(
+            cid: .unique,
+            reads: [], latestMessages: [
+                ChatMessage.mock(
+                    id: .unique,
+                    createdAt: Date().addingTimeInterval(-100)
+                )
+            ] // No read state
+        )
+        
+        let channels = [channel1, channel2, channel3]
+        
+        // WHEN
+        controller.synchronize()
+        env.channelListUpdater?.update_completion?(.success(channels))
+        
+        // THEN
+        AssertAsync.willBeTrue(env.currentUserUpdater?.markChannelsDelivered_deliveredMessages == nil)
+    }
+    
+    func test_markChannelsAsDeliveredIfNeeded_onlyMarksChannelsMeetingDeliveryCriteria() {
+        // GIVEN
+        client.authenticationRepository.setMockToken()
+        let currentUserId = client.currentUserId!
+        
+        // Create channels with different delivery criteria
+        let channel1 = ChatChannel.mock(
+            cid: .unique,
+            reads: [
+                ChatChannelRead.mock(
+                    lastReadAt: Date().addingTimeInterval(-200),
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 1,
+                    user: ChatUser.mock(id: currentUserId),
+                    lastDeliveredAt: Date().addingTimeInterval(-300), // Can be marked as delivered
+                    lastDeliveredMessageId: nil
+                )
+            ], latestMessages: [
+                ChatMessage.mock(
+                    id: .unique,
+                    createdAt: Date().addingTimeInterval(-100)
+                )
+            ]
+        )
+        
+        let channel2 = ChatChannel.mock(
+            cid: .unique,
+            reads: [
+                ChatChannelRead.mock(
+                    lastReadAt: Date().addingTimeInterval(-100), // Cannot be marked as delivered
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 0,
+                    user: ChatUser.mock(id: currentUserId),
+                    lastDeliveredAt: Date().addingTimeInterval(-50),
+                    lastDeliveredMessageId: nil
+                )
+            ], latestMessages: [
+                ChatMessage.mock(
+                    id: .unique,
+                    createdAt: Date().addingTimeInterval(-200)
+                )
+            ]
+        )
+        
+        let channel3 = ChatChannel.mock(
+            cid: .unique,
+            reads: [
+                ChatChannelRead.mock(
+                    lastReadAt: Date().addingTimeInterval(-100),
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 1,
+                    user: ChatUser.mock(id: currentUserId),
+                    lastDeliveredAt: Date().addingTimeInterval(-200), // Can be marked as delivered
+                    lastDeliveredMessageId: nil
+                )
+            ], latestMessages: [
+                ChatMessage.mock(
+                    id: .unique,
+                    createdAt: Date().addingTimeInterval(-50)
+                )
+            ]
+        )
+        
+        let channels = [channel1, channel2, channel3]
+        
+        // WHEN
+        controller.synchronize()
+        env.channelListUpdater?.update_completion?(.success(channels))
+        
+        // THEN
+        AssertAsync.willBeTrue(env.currentUserUpdater?.markChannelsDelivered_deliveredMessages != nil)
+        
+        let deliveredMessages = env.currentUserUpdater?.markChannelsDelivered_deliveredMessages
+        XCTAssertEqual(deliveredMessages?.count, 2) // Only channel1 and channel3
+        XCTAssertEqual(deliveredMessages?.map(\.channelId), [channel1.cid, channel3.cid])
+        XCTAssertEqual(deliveredMessages?.map(\.messageId), [channel1.latestMessages.first!.id, channel3.latestMessages.first!.id])
     }
 
     // MARK: - Mark all read
@@ -2005,13 +2244,24 @@ private class ChannelsUpdateWaiter: ChatChannelListControllerDelegate {
 
 private class TestEnvironment {
     @Atomic var channelListUpdater: ChannelListUpdater_Spy?
+    @Atomic var currentUserUpdater: CurrentUserUpdater_Mock?
 
     lazy var environment: ChatChannelListController.Environment =
-        .init(channelQueryUpdaterBuilder: { [unowned self] in
-            self.channelListUpdater = ChannelListUpdater_Spy(
-                database: $0,
-                apiClient: $1
-            )
-            return self.channelListUpdater!
-        })
+        .init(
+            channelQueryUpdaterBuilder: { [unowned self] in
+                self.channelListUpdater = ChannelListUpdater_Spy(
+                    database: $0,
+                    apiClient: $1
+                )
+                return self.channelListUpdater!
+            },
+            currentUserUpdaterBuilder: { [unowned self] in
+                self.currentUserUpdater = CurrentUserUpdater_Mock(
+                    database: $0,
+                    apiClient: $1
+                )
+                return self.currentUserUpdater!
+            }
+        )
 }
+

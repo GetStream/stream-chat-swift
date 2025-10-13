@@ -383,6 +383,25 @@ extension ChatChannel {
 
     /// Returns `true` if the channel has one or more unread messages for the current user.
     public var isUnread: Bool { unreadCount != .noUnread }
+    
+    /// Returns the current user's read state for this channel.
+    /// - Parameter currentUserId: The ID of the current user.
+    /// - Returns: The read state for the current user, or `nil` if not found.
+    public func currentUserReadState(for currentUserId: UserId) -> ChatChannelRead? {
+        reads.first { $0.user.id == currentUserId }
+    }
+
+    /// Returns a message if the channel can be marked as delivered.
+    /// 
+    /// - Parameter currentUserId: The current logged-in user id.
+    public func messageToMarkAsDelivered(
+        for currentUserId: UserId
+    ) -> DeliveredMessageInfo? {
+        guard let latestMessage = latestMessages.first else { return nil }
+        guard let currentUserRead = currentUserReadState(for: currentUserId) else { return nil }
+        guard latestMessage.createdAt > currentUserRead.lastReadAt else { return nil }
+        return DeliveredMessageInfo(channelId: cid, messageId: latestMessage.id)
+    }
 }
 
 /// A type-erased version of `ChannelModel<CustomData>`. Not intended to be used directly.

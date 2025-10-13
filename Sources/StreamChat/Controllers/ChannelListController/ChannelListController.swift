@@ -56,6 +56,13 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             client.databaseContainer,
             client.apiClient
         )
+    
+    /// The worker used to update current user data.
+    private lazy var currentUserUpdater: CurrentUserUpdater = self.environment
+        .currentUserUpdaterBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
 
     /// A Boolean value that returns whether pagination is finished
     public private(set) var hasLoadedAllPreviousChannels: Bool = false
@@ -174,6 +181,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         worker.update(channelListQuery: updatedQuery) { result in
             switch result {
             case let .success(channels):
+                self.markChannelsAsDeliveredIfNeeded(channels: channels)
                 self.hasLoadedAllPreviousChannels = channels.count < limit
                 self.callback { completion?(nil) }
             case let .failure(error):
@@ -211,10 +219,35 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             case let .success(channels):
                 self?.state = .remoteDataFetched
                 self?.hasLoadedAllPreviousChannels = channels.count < limit
+                
+                // Mark channels as delivered if synchronization was successful
+                self?.markChannelsAsDeliveredIfNeeded(channels: channels)
+                
                 self?.callback { completion?(nil) }
             case let .failure(error):
                 self?.state = .remoteDataFetchFailed(ClientError(with: error))
                 self?.callback { completion?(error) }
+            }
+        }
+    }
+    
+    /// Marks channels as delivered if they meet the specified criteria.
+    /// - Parameter channels: The channels to evaluate for marking as delivered.
+    private func markChannelsAsDeliveredIfNeeded(channels: [ChatChannel]) {
+        guard let currentUserId = client.currentUserId else { return }
+        
+        // Extract channels that should be marked as delivered
+        let deliveredMessages = channels.compactMap {
+            $0.messageToMarkAsDelivered(for: currentUserId)
+        }
+
+        // Only make the API call if there are channels to mark as delivered
+        guard !deliveredMessages.isEmpty else { return }
+        
+        // Mark channels as delivered
+        currentUserUpdater.markChannelsDelivered(deliveredMessages: deliveredMessages) { error in
+            if let error = error {
+                log.error("Failed to mark channels as delivered: \(error)")
             }
         }
     }
@@ -251,6 +284,11 @@ extension ChatChannelListController {
             _ databaseContainer: DatabaseContainer,
             _ worker: ChannelListUpdater
         ) -> ChannelListLinker = ChannelListLinker.init
+        
+        var currentUserUpdaterBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> CurrentUserUpdater = CurrentUserUpdater.init
         
         var createChannelListDatabaseObserver: (
             _ database: DatabaseContainer,
