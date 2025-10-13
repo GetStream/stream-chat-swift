@@ -991,6 +991,83 @@ final class CurrentUserController_Tests: XCTestCase {
         // THEN
         AssertAsync.willBeEqual(completionResult?.error as? TestError, expectedError)
     }
+
+    // MARK: - Mark Channels Delivered
+
+    func test_markChannelsDelivered_callsUpdaterWithCorrectParameters() {
+        // GIVEN
+        client.authenticationRepository.setMockToken()
+        let deliveredMessages = [
+            DeliveredMessageInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique),
+            DeliveredMessageInfo(channelId: .init(type: .livestream, id: "channel2"), messageId: .unique)
+        ]
+
+        // WHEN
+        controller.markChannelsDelivered(deliveredMessages: deliveredMessages)
+
+        // THEN
+        XCTAssertEqual(env.currentUserUpdater?.markChannelsDelivered_deliveredMessages, deliveredMessages)
+        XCTAssertNotNil(env.currentUserUpdater?.markChannelsDelivered_completion)
+    }
+
+    func test_markChannelsDelivered_whenCurrentUserDoesNotExist_shouldError() throws {
+        // GIVEN
+        client.authenticationRepository.logOutUser()
+        let deliveredMessages = [
+            DeliveredMessageInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
+        ]
+
+        // WHEN
+        let error = try waitFor {
+            controller.markChannelsDelivered(deliveredMessages: deliveredMessages, completion: $0)
+        }
+
+        // THEN
+        XCTAssert(error is ClientError.CurrentUserDoesNotExist)
+    }
+
+    func test_markChannelsDelivered_propagatesError() {
+        // GIVEN
+        client.authenticationRepository.setMockToken()
+        let deliveredMessages = [
+            DeliveredMessageInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
+        ]
+        let expectedError = TestError()
+
+        // WHEN
+        var completionError: Error?
+        controller.markChannelsDelivered(deliveredMessages: deliveredMessages) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            completionError = error
+        }
+
+        // Simulate error from updater
+        env.currentUserUpdater?.markChannelsDelivered_completion?(expectedError)
+
+        // THEN
+        AssertAsync.willBeEqual(completionError as? TestError, expectedError)
+    }
+
+    func test_markChannelsDelivered_keepsControllerAlive() {
+        // GIVEN
+        client.authenticationRepository.setMockToken()
+        let deliveredMessages = [
+            DeliveredMessageInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
+        ]
+
+        // Create weak reference to controller
+        weak var weakController = controller
+
+        // WHEN
+        controller.markChannelsDelivered(deliveredMessages: deliveredMessages) { _ in }
+
+        // Try to deallocate controller
+        controller = nil
+
+        // THEN
+        // Verify controller is still alive due to the async operation
+        AssertAsync.staysTrue(weakController != nil)
+    }
 }
 
 private class TestEnvironment {
