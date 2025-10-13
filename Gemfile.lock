@@ -209,9 +209,11 @@ GEM
       fastlane
       pry
     fastlane-plugin-sonarcloud_metric_kit (0.2.1)
-    fastlane-plugin-stream_actions (0.3.90)
+    fastlane-plugin-stream_actions (0.3.100)
       xctest_list (= 1.2.1)
     fastlane-plugin-versioning (0.7.1)
+    fastlane-plugin-xcsize (1.1.0)
+      xcsize (= 1.1.0)
     fastlane-sirp (1.0.0)
       sysrandom (~> 1.0)
     faye-websocket (0.12.0)
@@ -431,6 +433,8 @@ GEM
       rouge (~> 3.28.0)
     xcpretty-travis-formatter (1.0.1)
       xcpretty (~> 0.2, >= 0.0.7)
+    xcsize (1.1.0)
+      commander (>= 4.6, < 6.0)
     xctest_list (1.2.1)
 
 PLATFORMS
@@ -445,8 +449,9 @@ DEPENDENCIES
   fastlane-plugin-create_xcframework
   fastlane-plugin-lizard
   fastlane-plugin-sonarcloud_metric_kit
-  fastlane-plugin-stream_actions (= 0.3.90)
+  fastlane-plugin-stream_actions (= 0.3.100)
   fastlane-plugin-versioning
+  fastlane-plugin-xcsize (= 1.1.0)
   faye-websocket
   json
   lefthook
