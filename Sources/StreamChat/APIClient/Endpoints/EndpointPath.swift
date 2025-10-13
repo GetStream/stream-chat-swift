@@ -34,6 +34,7 @@ enum EndpointPath: Codable {
     case markChannelRead(String)
     case markChannelUnread(String)
     case markAllChannelsRead
+    case markChannelsDelivered
     case channelEvent(String)
     case stopWatchingChannel(String)
     case pinnedMessages(String)
@@ -125,6 +126,7 @@ enum EndpointPath: Codable {
         case let .markChannelRead(channelId): return "channels/\(channelId)/read"
         case let .markChannelUnread(channelId): return "channels/\(channelId)/unread"
         case .markAllChannelsRead: return "channels/read"
+        case .markChannelsDelivered: return "channels/delivered"
         case let .channelEvent(channelId): return "channels/\(channelId)/event"
         case let .stopWatchingChannel(channelId): return "channels/\(channelId)/stop-watching"
         case let .pinnedMessages(channelId): return "channels/\(channelId)/pinned_messages"

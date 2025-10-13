@@ -102,6 +102,11 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertTrue(EndpointPath.draftMessage(.unique).shouldBeQueuedOffline)
     }
 
+    func test_markChannelsDelivered_value() {
+        let path = EndpointPath.markChannelsDelivered.value
+        XCTAssertEqual(path, "channels/delivered")
+    }
+
     // MARK: - Codable
 
     func test_isProperlyEncodedAndDecoded() throws {
@@ -128,6 +133,7 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.truncateChannel("channel_idq"))
         assertResultEncodingAndDecoding(.markChannelRead("channel_idq"))
         assertResultEncodingAndDecoding(.markAllChannelsRead)
+        assertResultEncodingAndDecoding(.markChannelsDelivered)
         assertResultEncodingAndDecoding(.channelEvent("channel_idq"))
         assertResultEncodingAndDecoding(.stopWatchingChannel("channel_idq"))
         assertResultEncodingAndDecoding(.pinnedMessages("channel_idq"))
