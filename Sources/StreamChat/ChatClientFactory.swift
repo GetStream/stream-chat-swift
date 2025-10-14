@@ -113,7 +113,8 @@ class ChatClientFactory {
 
     func makeEventNotificationCenter(
         databaseContainer: DatabaseContainer,
-        currentUserId: @escaping () -> UserId?
+        currentUserId: @escaping () -> UserId?,
+        currentUserUpdater: CurrentUserUpdater
     ) -> EventNotificationCenter {
         let center = environment.notificationCenterBuilder(databaseContainer, nil)
         let middlewares: [EventMiddleware] = [
@@ -134,6 +135,7 @@ class ChatClientFactory {
             UserWatchingEventMiddleware(),
             UserUpdateMiddleware(),
             ChannelVisibilityEventMiddleware(),
+            ChannelDeliveredMiddleware(currentUserUpdater: currentUserUpdater),
             EventDTOConverterMiddleware()
         ]
 

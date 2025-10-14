@@ -42,7 +42,9 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
     @Atomic var setPushPreference_completion_result: Result<PushPreference, Error>?
 
     @Atomic var markChannelsDelivered_deliveredMessages: [DeliveredMessageInfo]?
+    @Atomic var markChannelsDelivered_callCount = 0
     @Atomic var markChannelsDelivered_completion: ((Error?) -> Void)?
+    @Atomic var markChannelsDelivered_completion_result: Error?
 
     override func updateUserData(
         currentUserId: UserId,
@@ -116,8 +118,13 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         deliveredMessages: [DeliveredMessageInfo],
         completion: ((Error?) -> Void)? = nil
     ) {
+        markChannelsDelivered_callCount += 1
         markChannelsDelivered_deliveredMessages = deliveredMessages
-        markChannelsDelivered_completion = completion
+        if let completion = markChannelsDelivered_completion {
+            completion(markChannelsDelivered_completion_result)
+        } else {
+            markChannelsDelivered_completion = completion
+        }
     }
 
     // Cleans up all recorded values

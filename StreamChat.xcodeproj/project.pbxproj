@@ -1464,6 +1464,9 @@
 		AD37D7D12BC9937F00800D8C /* ThreadParticipant.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD37D7CF2BC9937F00800D8C /* ThreadParticipant.swift */; };
 		AD37D7D32BC9938E00800D8C /* ThreadRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD37D7D22BC9938E00800D8C /* ThreadRead.swift */; };
 		AD37D7D42BC9938E00800D8C /* ThreadRead.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD37D7D22BC9938E00800D8C /* ThreadRead.swift */; };
+		AD3895302E9EB73F0039E6BF /* ChannelDeliveredMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD38952F2E9EB73F0039E6BF /* ChannelDeliveredMiddleware.swift */; };
+		AD3895312E9EB73F0039E6BF /* ChannelDeliveredMiddleware.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD38952F2E9EB73F0039E6BF /* ChannelDeliveredMiddleware.swift */; };
+		AD3895332E9EC3F20039E6BF /* ChannelDeliveredMiddleware_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3895322E9EC3F20039E6BF /* ChannelDeliveredMiddleware_Tests.swift */; };
 		AD3D0CC026A8727800A6D813 /* SlackChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CBF26A8727800A6D813 /* SlackChatChannelHeaderView.swift */; };
 		AD3D0CC226A88E5100A6D813 /* MessengerChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CC126A88E5100A6D813 /* MessengerChatChannelHeaderView.swift */; };
 		AD3D0CC426A89E6300A6D813 /* iMessageChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */; };
@@ -4341,6 +4344,8 @@
 		AD37D7CC2BC9937200800D8C /* Thread.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Thread.swift; sourceTree = "<group>"; };
 		AD37D7CF2BC9937F00800D8C /* ThreadParticipant.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadParticipant.swift; sourceTree = "<group>"; };
 		AD37D7D22BC9938E00800D8C /* ThreadRead.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThreadRead.swift; sourceTree = "<group>"; };
+		AD38952F2E9EB73F0039E6BF /* ChannelDeliveredMiddleware.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelDeliveredMiddleware.swift; sourceTree = "<group>"; };
+		AD3895322E9EC3F20039E6BF /* ChannelDeliveredMiddleware_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelDeliveredMiddleware_Tests.swift; sourceTree = "<group>"; };
 		AD3D0CBF26A8727800A6D813 /* SlackChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlackChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3D0CC126A88E5100A6D813 /* MessengerChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatChannelHeaderView.swift; sourceTree = "<group>"; };
@@ -5920,6 +5925,7 @@
 		796610B7248E64EC00761629 /* EventMiddlewares */ = {
 			isa = PBXGroup;
 			children = (
+				AD38952F2E9EB73F0039E6BF /* ChannelDeliveredMiddleware.swift */,
 				ADB8B90E2D8C7B2500549C95 /* ReminderUpdaterMiddleware.swift */,
 				79896D63250A62EE00BA8F1C /* ChannelReadUpdaterMiddleware.swift */,
 				79158CF325F133FB00186102 /* ChannelTruncatedEventMiddleware.swift */,
@@ -7190,6 +7196,7 @@
 		A364D08D27D0BD8E0029857A /* EventMiddlewares */ = {
 			isa = PBXGroup;
 			children = (
+				AD3895322E9EC3F20039E6BF /* ChannelDeliveredMiddleware_Tests.swift */,
 				ADB8B9112D8C7B2D00549C95 /* ReminderUpdaterMiddleware_Tests.swift */,
 				79896D65250A6D1500BA8F1C /* ChannelReadUpdaterMiddleware_Tests.swift */,
 				79158CEA25F0EADF00186102 /* ChannelTruncatedEventMiddleware_Tests.swift */,
@@ -12054,6 +12061,7 @@
 				C173538E27D9F804008AC412 /* KeyedDecodingContainer+Array.swift in Sources */,
 				84AA4E3626F264610056A684 /* EventDTOConverterMiddleware.swift in Sources */,
 				ADF34FA625CDD8F600AD637C /* ConnectionController+Combine.swift in Sources */,
+				AD3895312E9EB73F0039E6BF /* ChannelDeliveredMiddleware.swift in Sources */,
 				799C945E247D7283001F1104 /* DatabaseContainer.swift in Sources */,
 				22692C8725D176F4007C41D0 /* ChatMessageLinkAttachment.swift in Sources */,
 				79877A092498E4BC00015F8B /* User.swift in Sources */,
@@ -12291,6 +12299,7 @@
 				792FCB4D24A3D56D000290C7 /* DatabaseSession_Tests.swift in Sources */,
 				AD7BE16D2C20CC02000A5756 /* ThreadUpdaterMiddlware_Tests.swift in Sources */,
 				A34ECB5227F5CB9B00A804C1 /* ListChange_Tests.swift in Sources */,
+				AD3895332E9EC3F20039E6BF /* ChannelDeliveredMiddleware_Tests.swift in Sources */,
 				AD8C7C632BA464E600260715 /* AppSettingsPayload_Tests.swift in Sources */,
 				430156F226B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift in Sources */,
 				84A1D2F626AB357900014712 /* UnknownChannelEvent_Tests.swift in Sources */,
@@ -13016,6 +13025,7 @@
 				C121E8EF274544B200023E4C /* MainQueue+Synchronous.swift in Sources */,
 				C121E8F0274544B200023E4C /* Dictionary+Extensions.swift in Sources */,
 				C121E8F1274544B200023E4C /* MultipartFormData.swift in Sources */,
+				AD3895302E9EB73F0039E6BF /* ChannelDeliveredMiddleware.swift in Sources */,
 				AD545E672D53C271008FD399 /* DraftMessagesRepository.swift in Sources */,
 				C121E8F2274544B200023E4C /* SystemEnvironment+Version.swift in Sources */,
 				AD78F9EF28EC718D00BC0FCE /* EventBatcher.swift in Sources */,

@@ -155,11 +155,16 @@ public class ChatClient {
             encoder: apiClientEncoder,
             urlSessionConfiguration: urlSessionConfiguration
         )
+        let currentUserUpdater = environment.currentUserUpdaterBuilder(
+            databaseContainer,
+            apiClient
+        )
         let eventNotificationCenter = factory.makeEventNotificationCenter(
             databaseContainer: databaseContainer,
             currentUserId: {
                 nil
-            }
+            },
+            currentUserUpdater: currentUserUpdater
         )
         let messageRepository = environment.messageRepositoryBuilder(
             databaseContainer,
