@@ -41,9 +41,14 @@ class ChannelDeliveredMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
         case let messageNewEvent as MessageNewEventDTO:
+            if session.currentUser?.user.id == messageNewEvent.message.user.id {
+                break
+            }
             handleMessageNewEvent(messageNewEvent)
         case let notificationMarkReadEvent as NotificationMarkReadEventDTO:
             handleNotificationMarkReadEvent(notificationMarkReadEvent)
+        case let messageDeliveredEvent as MessageDeliveredEventDTO:
+            handleMessageDeliveredEvent(messageDeliveredEvent, session: session)
         default:
             break
         }
@@ -75,6 +80,31 @@ class ChannelDeliveredMiddleware: EventMiddleware {
             guard let self = self else { return }
             self.pendingDeliveredChannels.removeValue(forKey: event.cid)
         }
+    }
+    
+    /// Handles a message delivered event by updating the local channel read data.
+    ///
+    /// - Parameters:
+    ///   - event: The message delivered event.
+    ///   - session: The database session.
+    private func handleMessageDeliveredEvent(_ event: MessageDeliveredEventDTO, session: DatabaseSession) {
+        // Update the channel read data for the user who received the delivered message
+        guard let channelDTO = session.channel(cid: event.cid),
+              let userDTO = session.user(id: event.user.id) else {
+            return
+        }
+        
+        // Find or create the channel read for this user
+        guard let channelRead = session.loadOrCreateChannelRead(
+            cid: event.cid,
+            userId: event.user.id
+        ) else {
+            return
+        }
+
+        // Update the delivered message information
+        channelRead.lastDeliveredAt = event.lastDeliveredAt.bridgeDate
+        channelRead.lastDeliveredMessageId = event.lastDeliveredMessageId
     }
     
     /// Marks all pending channels as delivered and clears the successfully processed channels.

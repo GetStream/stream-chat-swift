@@ -398,6 +398,7 @@ extension ChatChannel {
         for currentUserId: UserId
     ) -> DeliveredMessageInfo? {
         guard let latestMessage = latestMessages.first else { return nil }
+        guard latestMessage.author.id != currentUserId else { return nil }
         guard let currentUserRead = currentUserReadState(for: currentUserId) else { return nil }
         guard latestMessage.createdAt > currentUserRead.lastReadAt else { return nil }
         guard latestMessage.createdAt > currentUserRead.lastDeliveredAt ?? .distantPast else { return nil }

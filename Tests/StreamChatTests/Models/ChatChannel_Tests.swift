@@ -671,6 +671,38 @@ final class ChatChannel_Tests: XCTestCase {
         XCTAssertEqual(result?.channelId, channelId)
         XCTAssertEqual(result?.messageId, messageId)
     }
+    
+    func test_messageToMarkAsDelivered_whenMessageFromCurrentUser_returnsNil() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let messageId = MessageId.unique
+        let channelId = ChannelId.unique
+        let readAt = Date(timeIntervalSince1970: 1000)
+        let latestMessage = ChatMessage.mock(
+            id: messageId,
+            cid: channelId,
+            text: "Test message",
+            author: .mock(id: currentUserId), // Message from current user
+            createdAt: Date(timeIntervalSince1970: 2000) // After readAt
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: readAt,
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: currentUserId)
+        )
+        let channel = ChatChannel.mock(
+            cid: channelId,
+            reads: [readState],
+            latestMessages: [latestMessage]
+        )
+
+        // WHEN
+        let result = channel.messageToMarkAsDelivered(for: currentUserId)
+
+        // THEN
+        XCTAssertNil(result)
+    }
 
     // MARK: - Helper Methods
 

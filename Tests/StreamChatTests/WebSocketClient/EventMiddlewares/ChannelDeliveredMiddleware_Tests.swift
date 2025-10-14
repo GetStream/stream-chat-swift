@@ -63,6 +63,36 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         XCTAssertEqual(deliveredMessages?.first?.messageId, messageId)
         XCTAssertEqual(currentUserUpdater.markChannelsDelivered_callCount, 1)
     }
+    
+    func test_handleMessageNewEvent_whenMessageFromCurrentUser_doesNotTriggerMarkChannelsDelivered() throws {
+        // GIVEN
+        let channelId = ChannelId.unique
+        let messageId = MessageId.unique
+        let currentUserId = UserId.unique
+        let messageNewEvent = try createMessageNewEvent(
+            channelId: channelId,
+            messageId: messageId,
+            authorUserId: currentUserId
+        )
+
+        // Set up current user in database
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId))
+        }
+
+        let exp = expectation(description: "should complete")
+        exp.isInverted = true
+        currentUserUpdater.markChannelsDelivered_completion = { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+
+        // WHEN
+        _ = middleware.handle(event: messageNewEvent, session: database.viewContext)
+
+        // THEN
+        waitForExpectations(timeout: 1)
+    }
 
     func test_handleMessageNewEvent_whenMultipleChannels_triggersOnlyOneDeliveredCall() throws {
         // GIVEN
@@ -163,10 +193,123 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         AssertAsync.willBeTrue(middleware.pendingDeliveredChannels.isEmpty)
     }
 
+    // MARK: - MessageDeliveredEvent Tests
+
+    func test_handleMessageDeliveredEvent_updatesChannelReadData() throws {
+        // GIVEN
+        let channelId = ChannelId.unique
+        let messageId = MessageId.unique
+        let userId = UserId.unique
+        let deliveredAt = Date()
+        
+        // Create channel and user in database
+        let channelDTO = ChannelDTO.loadOrCreate(cid: channelId, context: database.viewContext, cache: nil)
+        let userDTO = UserDTO.loadOrCreate(id: userId, context: database.viewContext, cache: nil)
+        
+        // Add channel to pending list
+        middleware.pendingDeliveredChannels = [channelId: messageId]
+        
+        let messageDeliveredEvent = try createMessageDeliveredEvent(
+            channelId: channelId,
+            userId: userId,
+            messageId: messageId,
+            deliveredAt: deliveredAt
+        )
+
+        // WHEN
+        _ = middleware.handle(event: messageDeliveredEvent, session: database.viewContext)
+
+        // THEN
+        // Channel read should be created/updated
+        let channelRead = channelDTO.reads.first { $0.user.id == userId }
+        XCTAssertNotNil(channelRead)
+        XCTAssertEqual(channelRead?.lastDeliveredMessageId, messageId)
+        XCTAssertEqual(channelRead?.lastDeliveredAt?.bridgeDate, deliveredAt)
+        
+        // Channel should be removed from pending list
+        AssertAsync.willBeTrue(middleware.pendingDeliveredChannels.isEmpty)
+    }
+    
+    func test_handleMessageDeliveredEvent_createsNewChannelReadIfNotExists() throws {
+        // GIVEN
+        let channelId = ChannelId.unique
+        let messageId = MessageId.unique
+        let userId = UserId.unique
+        let deliveredAt = Date()
+        
+        // Create channel and user in database
+        let channelDTO = ChannelDTO.loadOrCreate(cid: channelId, context: database.viewContext, cache: nil)
+        let userDTO = UserDTO.loadOrCreate(id: userId, context: database.viewContext, cache: nil)
+        
+        // Ensure no existing channel read
+        XCTAssertTrue(channelDTO.reads.isEmpty)
+        
+        let messageDeliveredEvent = try createMessageDeliveredEvent(
+            channelId: channelId,
+            userId: userId,
+            messageId: messageId,
+            deliveredAt: deliveredAt
+        )
+
+        // WHEN
+        _ = middleware.handle(event: messageDeliveredEvent, session: database.viewContext)
+
+        // THEN
+        // New channel read should be created
+        XCTAssertEqual(channelDTO.reads.count, 1)
+        let channelRead = channelDTO.reads.first!
+        XCTAssertEqual(channelRead.user.id, userId)
+        XCTAssertEqual(channelRead.lastDeliveredMessageId, messageId)
+        XCTAssertEqual(channelRead.lastDeliveredAt?.bridgeDate, deliveredAt)
+    }
+    
+    func test_handleMessageDeliveredEvent_updatesExistingChannelRead() throws {
+        // GIVEN
+        let channelId = ChannelId.unique
+        let oldMessageId = MessageId.unique
+        let newMessageId = MessageId.unique
+        let userId = UserId.unique
+        let oldDeliveredAt = Date().addingTimeInterval(-3600) // 1 hour ago
+        let newDeliveredAt = Date()
+        
+        // Create channel and user in database
+        let channelDTO = ChannelDTO.loadOrCreate(cid: channelId, context: database.viewContext, cache: nil)
+        let userDTO = UserDTO.loadOrCreate(id: userId, context: database.viewContext, cache: nil)
+        
+        // Create existing channel read
+        let existingRead = ChannelReadDTO.loadOrCreate(
+            cid: channelId,
+            userId: userId,
+            context: database.viewContext,
+            cache: nil
+        )
+        existingRead.lastDeliveredMessageId = oldMessageId
+        existingRead.lastDeliveredAt = oldDeliveredAt.bridgeDate
+        channelDTO.reads.insert(existingRead)
+        
+        let messageDeliveredEvent = try createMessageDeliveredEvent(
+            channelId: channelId,
+            userId: userId,
+            messageId: newMessageId,
+            deliveredAt: newDeliveredAt
+        )
+
+        // WHEN
+        _ = middleware.handle(event: messageDeliveredEvent, session: database.viewContext)
+
+        // THEN
+        // Existing channel read should be updated
+        XCTAssertEqual(channelDTO.reads.count, 1)
+        let channelRead = channelDTO.reads.first!
+        XCTAssertEqual(channelRead.lastDeliveredMessageId, newMessageId)
+        XCTAssertEqual(channelRead.lastDeliveredAt?.bridgeDate, newDeliveredAt)
+    }
+
     // MARK: - Helper Methods
 
-    private func createMessageNewEvent(channelId: ChannelId, messageId: MessageId) throws -> MessageNewEventDTO {
-        let user = UserPayload.dummy(userId: .unique)
+    private func createMessageNewEvent(channelId: ChannelId, messageId: MessageId, authorUserId: UserId? = nil) throws -> MessageNewEventDTO {
+        let userId = authorUserId ?? UserId.unique
+        let user = UserPayload.dummy(userId: userId)
         let message = MessagePayload.dummy(messageId: messageId, authorUserId: user.id)
         let channel = ChannelDetailPayload.dummy(cid: channelId)
         
@@ -196,5 +339,27 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         )
         
         return try NotificationMarkReadEventDTO(from: eventPayload)
+    }
+    
+    private func createMessageDeliveredEvent(
+        channelId: ChannelId,
+        userId: UserId,
+        messageId: MessageId,
+        deliveredAt: Date
+    ) throws -> MessageDeliveredEventDTO {
+        let user = UserPayload.dummy(userId: userId)
+        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        
+        let eventPayload = EventPayload(
+            eventType: .messageDelivered,
+            cid: channelId,
+            user: user,
+            channel: channel,
+            createdAt: .unique(after: Date()),
+            lastDeliveredAt: deliveredAt,
+            lastDeliveredMessageId: messageId
+        )
+        
+        return try MessageDeliveredEventDTO(from: eventPayload)
     }
 }

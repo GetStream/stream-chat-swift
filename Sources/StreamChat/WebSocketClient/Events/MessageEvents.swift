@@ -258,3 +258,57 @@ public struct NewMessageErrorEvent: ChannelSpecificEvent {
     public let cid: ChannelId
     public let error: Error
 }
+
+/// Triggered when a message is delivered to a user.
+public struct MessageDeliveredEvent: ChannelSpecificEvent {
+    /// The user who received the delivered message.
+    public let user: ChatUser
+    
+    /// The channel identifier the message was delivered to.
+    public var cid: ChannelId { channel.cid }
+    
+    /// The channel the message was delivered to.
+    public let channel: ChatChannel
+    
+    /// The event timestamp.
+    public let createdAt: Date
+    
+    /// The ID of the last delivered message.
+    public let lastDeliveredMessageId: MessageId
+    
+    /// The timestamp when the message was delivered.
+    public let lastDeliveredAt: Date
+}
+
+class MessageDeliveredEventDTO: EventDTO {
+    let user: UserPayload
+    let cid: ChannelId
+    let createdAt: Date
+    let lastDeliveredMessageId: MessageId
+    let lastDeliveredAt: Date
+    let payload: EventPayload
+
+    init(from response: EventPayload) throws {
+        user = try response.value(at: \.user)
+        cid = try response.value(at: \.cid)
+        createdAt = try response.value(at: \.createdAt)
+        lastDeliveredMessageId = try response.value(at: \.lastDeliveredMessageId)
+        lastDeliveredAt = try response.value(at: \.lastDeliveredAt)
+        payload = response
+    }
+
+    func toDomainEvent(session: DatabaseSession) -> Event? {
+        guard
+            let userDTO = session.user(id: user.id),
+            let channelDTO = session.channel(cid: cid)
+        else { return nil }
+
+        return try? MessageDeliveredEvent(
+            user: userDTO.asModel(),
+            channel: channelDTO.asModel(),
+            createdAt: createdAt,
+            lastDeliveredMessageId: lastDeliveredMessageId,
+            lastDeliveredAt: lastDeliveredAt
+        )
+    }
+}
