@@ -56,13 +56,17 @@ public extension ChatChannelRead {
         lastReadAt: Date,
         lastReadMessageId: MessageId?,
         unreadMessagesCount: Int,
-        user: ChatUser
+        user: ChatUser,
+        lastDeliveredAt: Date? = nil,
+        lastDeliveredMessageId: MessageId? = nil
     ) -> Self {
         .init(
             lastReadAt: lastReadAt,
             lastReadMessageId: lastReadMessageId,
             unreadMessagesCount: unreadMessagesCount,
-            user: user
+            user: user,
+            lastDeliveredAt: lastDeliveredAt,
+            lastDeliveredMessageId: lastDeliveredMessageId
         )
     }
 }

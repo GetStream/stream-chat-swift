@@ -116,7 +116,7 @@ extension XCTestCase {
     }
 
     var dummyChannelRead: ChannelReadPayload {
-        ChannelReadPayload(user: dummyCurrentUser, lastReadAt: Date(timeIntervalSince1970: 1), lastReadMessageId: .unique, unreadMessagesCount: 10)
+        ChannelReadPayload(user: dummyCurrentUser, lastReadAt: Date(timeIntervalSince1970: 1), lastReadMessageId: .unique, unreadMessagesCount: 10, lastDeliveredAt: nil, lastDeliveredMessageId: nil)
     }
 
     func dummyPayload(
@@ -243,7 +243,7 @@ extension XCTestCase {
     }
 
     var dummyChannelReadWithNoExtraData: ChannelReadPayload {
-        ChannelReadPayload(user: dummyUser, lastReadAt: .unique, lastReadMessageId: .unique, unreadMessagesCount: .random(in: 0...10))
+        ChannelReadPayload(user: dummyUser, lastReadAt: .unique, lastReadMessageId: .unique, unreadMessagesCount: .random(in: 0...10), lastDeliveredAt: nil, lastDeliveredMessageId: nil)
     }
 
     func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload {

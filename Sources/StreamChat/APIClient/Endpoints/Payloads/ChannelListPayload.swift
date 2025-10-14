@@ -211,6 +211,8 @@ struct ChannelReadPayload: Decodable {
         case lastReadAt = "last_read"
         case lastReadMessageId = "last_read_message_id"
         case unreadMessagesCount = "unread_messages"
+        case lastDeliveredAt = "last_delivered_at"
+        case lastDeliveredMessageId = "last_delivered_message_id"
     }
 
     /// A user (see `User`).
@@ -221,6 +223,10 @@ struct ChannelReadPayload: Decodable {
     public let lastReadMessageId: MessageId?
     /// Unread message count for the user.
     public let unreadMessagesCount: Int
+    /// A last delivered date by the user.
+    public let lastDeliveredAt: Date?
+    /// Id for the last message the user has delivered. Nil means the user has never delivered this channel
+    public let lastDeliveredMessageId: MessageId?
 }
 
 /// A channel config.

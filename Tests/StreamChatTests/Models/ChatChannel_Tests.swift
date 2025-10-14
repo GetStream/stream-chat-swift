@@ -496,19 +496,189 @@ final class ChatChannel_Tests: XCTestCase {
         XCTAssertEqual(completelyUpdatedChannel.cid, originalChannel.cid)
     }
     
-    // MARK: - Helper Methods
+    // MARK: - MessageToMarkAsDelivered Tests
     
+    func test_messageToMarkAsDelivered_whenChannelIsEmpty_returnsNil() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            latestMessages: []
+        )
+
+        // WHEN
+        let result = channel.messageToMarkAsDelivered(for: currentUserId)
+
+        // THEN
+        XCTAssertNil(result)
+    }
+
+    func test_messageToMarkAsDelivered_whenNoReadState_returnsNil() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let latestMessage = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 1000)
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: [],
+            latestMessages: [latestMessage]
+        )
+
+        // WHEN
+        let result = channel.messageToMarkAsDelivered(for: currentUserId)
+
+        // THEN
+        XCTAssertNil(result)
+    }
+
+    func test_messageToMarkAsDelivered_whenLatestMessageNotAfterReadAt_returnsNil() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let readAt = Date(timeIntervalSince1970: 2000)
+        let latestMessage = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 1000) // Before readAt
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: readAt,
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: currentUserId)
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: [readState],
+            latestMessages: [latestMessage]
+        )
+
+        // WHEN
+        let result = channel.messageToMarkAsDelivered(for: currentUserId)
+
+        // THEN
+        XCTAssertNil(result)
+    }
+
+    func test_messageToMarkAsDelivered_whenMessageAlreadyDelivered_returnsNil() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let messageId = MessageId.unique
+        let readAt = Date(timeIntervalSince1970: 1000)
+        let messageCreatedAt = Date(timeIntervalSince1970: 2000)
+        let latestMessage = ChatMessage.mock(
+            id: messageId,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: messageCreatedAt // After readAt
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: readAt,
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: currentUserId),
+            lastDeliveredAt: Date(timeIntervalSince1970: 2500), // After message creation
+            lastDeliveredMessageId: .unique
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: [readState],
+            latestMessages: [latestMessage]
+        )
+
+        // WHEN
+        let result = channel.messageToMarkAsDelivered(for: currentUserId)
+
+        // THEN
+        XCTAssertNil(result)
+    }
+
+    func test_messageToMarkAsDelivered_whenMessageNotDelivered_returnsDeliveredMessageInfo() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let messageId = MessageId.unique
+        let channelId = ChannelId.unique
+        let readAt = Date(timeIntervalSince1970: 1000)
+        let messageCreatedAt = Date(timeIntervalSince1970: 2000)
+        let latestMessage = ChatMessage.mock(
+            id: messageId,
+            cid: channelId,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: messageCreatedAt // After readAt
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: readAt,
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: currentUserId),
+            lastDeliveredAt: Date(timeIntervalSince1970: 1500), // Before message creation
+            lastDeliveredMessageId: .unique
+        )
+        let channel = ChatChannel.mock(
+            cid: channelId,
+            reads: [readState],
+            latestMessages: [latestMessage]
+        )
+
+        // WHEN
+        let result = channel.messageToMarkAsDelivered(for: currentUserId)
+
+        // THEN
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result?.channelId, channelId)
+        XCTAssertEqual(result?.messageId, messageId)
+    }
+
+    func test_messageToMarkAsDelivered_whenNoDeliveredState_returnsDeliveredMessageInfo() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let messageId = MessageId.unique
+        let channelId = ChannelId.unique
+        let readAt = Date(timeIntervalSince1970: 1000)
+        let latestMessage = ChatMessage.mock(
+            id: messageId,
+            cid: channelId,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000) // After readAt
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: readAt,
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: currentUserId)
+            // No delivered state
+        )
+        let channel = ChatChannel.mock(
+            cid: channelId,
+            reads: [readState],
+            latestMessages: [latestMessage]
+        )
+
+        // WHEN
+        let result = channel.messageToMarkAsDelivered(for: currentUserId)
+
+        // THEN
+        XCTAssertNotNil(result)
+        XCTAssertEqual(result?.channelId, channelId)
+        XCTAssertEqual(result?.messageId, messageId)
+    }
+
+    // MARK: - Helper Methods
+
     private func createComprehensiveChannel() -> ChatChannel {
         let createdBy = ChatUser.mock(id: .unique, name: "Original Creator")
         let member = ChatChannelMember.dummy(id: .unique)
         let watcher = ChatUser.mock(id: .unique, name: "Original Watcher")
-        let read = ChatChannelRead.mock(
-            lastReadAt: Date().addingTimeInterval(-1800),
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 5,
-            user: .mock(id: .unique)
-        )
-        
+
         return ChatChannel.mock(
             cid: .unique,
             name: "Original Channel",

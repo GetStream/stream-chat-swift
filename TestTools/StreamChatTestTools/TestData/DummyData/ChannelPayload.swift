@@ -40,3 +40,21 @@ extension ChannelPayload {
         )
     }
 }
+
+extension ChannelReadPayload {
+    init(
+        user: UserPayload,
+        lastReadAt: Date,
+        lastReadMessageId: MessageId? = nil,
+        unreadMessagesCount: Int
+    ) {
+        self.init(
+            user: user,
+            lastReadAt: lastReadAt,
+            lastReadMessageId: lastReadMessageId,
+            unreadMessagesCount: unreadMessagesCount,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
+        )
+    }
+}

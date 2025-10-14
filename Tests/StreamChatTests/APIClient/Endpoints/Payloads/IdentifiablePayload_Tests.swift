@@ -154,7 +154,14 @@ final class IdentifiablePayload_Tests: XCTestCase {
     }
 
     func test_ChannelReadPayload_isIdentifiablePayload() {
-        let payload = ChannelReadPayload(user: .dummy(userId: "u3"), lastReadAt: Date(), lastReadMessageId: .unique, unreadMessagesCount: 2)
+        let payload = ChannelReadPayload(
+            user: .dummy(userId: "u3"),
+            lastReadAt: Date(),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 2,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
+        )
         XCTAssertNil(payload.databaseId)
         XCTAssertTrue(ChannelReadPayload.modelClass == ChannelReadDTO.self)
     }
@@ -401,7 +408,9 @@ final class IdentifiablePayload_Tests: XCTestCase {
                         user: users[i],
                         lastReadAt: .unique(after: channelDetail.createdAt),
                         lastReadMessageId: .unique,
-                        unreadMessagesCount: (0..<10).randomElement()!
+                        unreadMessagesCount: (0..<10).randomElement()!,
+                        lastDeliveredAt: nil,
+                        lastDeliveredMessageId: nil
                     )
                 },
                 isHidden: false,

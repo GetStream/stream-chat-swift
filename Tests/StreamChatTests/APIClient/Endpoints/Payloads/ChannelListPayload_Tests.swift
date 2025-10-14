@@ -245,7 +245,9 @@ final class ChannelListPayload_Tests: XCTestCase {
                         user: channelUsers[i],
                         lastReadAt: .unique(after: channelCreatedDate),
                         lastReadMessageId: .unique,
-                        unreadMessagesCount: (0..<10).randomElement()!
+                        unreadMessagesCount: (0..<10).randomElement()!,
+                        lastDeliveredAt: nil,
+                        lastDeliveredMessageId: nil
                     )
                 },
                 isHidden: false,
@@ -421,7 +423,9 @@ final class ChannelPayload_Tests: XCTestCase {
             user: UserPayload.dummy(userId: "reader-user-id", name: "Reader User"),
             lastReadAt: Date(timeIntervalSince1970: 1_609_459_400),
             lastReadMessageId: "last-read-message-id",
-            unreadMessagesCount: 5
+            unreadMessagesCount: 5,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
         )
         
         let membershipPayload = MemberPayload.dummy(user: .dummy(userId: currentUserId), role: .admin)

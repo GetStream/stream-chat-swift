@@ -1915,7 +1915,9 @@ final class ChannelListController_Tests: XCTestCase {
                             user: .dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
-                            unreadMessagesCount: 3
+                            unreadMessagesCount: 3,
+                            lastDeliveredAt: nil,
+                            lastDeliveredMessageId: nil
                         )
                     ]
                 ),
@@ -1924,7 +1926,9 @@ final class ChannelListController_Tests: XCTestCase {
                         user: .dummy(userId: .unique),
                         lastReadAt: .unique,
                         lastReadMessageId: nil,
-                        unreadMessagesCount: 10
+                        unreadMessagesCount: 10,
+                        lastDeliveredAt: nil,
+                        lastDeliveredMessageId: nil
                     )
                 ]),
                 .dummy(channel: .dummy(team: .unique)),
@@ -1936,7 +1940,9 @@ final class ChannelListController_Tests: XCTestCase {
                             user: .dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
-                            unreadMessagesCount: 20
+                            unreadMessagesCount: 20,
+                            lastDeliveredAt: nil,
+                            lastDeliveredMessageId: nil
                         )
                     ]
                 )
@@ -1968,7 +1974,9 @@ final class ChannelListController_Tests: XCTestCase {
                             user: .dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
-                            unreadMessagesCount: 3
+                            unreadMessagesCount: 3,
+                            lastDeliveredAt: nil,
+                            lastDeliveredMessageId: nil
                         )
                     ]
                 ),
@@ -1981,7 +1989,9 @@ final class ChannelListController_Tests: XCTestCase {
                             user: .dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
-                            unreadMessagesCount: 20
+                            unreadMessagesCount: 20,
+                            lastDeliveredAt: nil,
+                            lastDeliveredMessageId: nil
                         )
                     ]
                 )

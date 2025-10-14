@@ -391,8 +391,8 @@ extension ChatChannel {
         reads.first { $0.user.id == currentUserId }
     }
 
-    /// Returns a message if the channel can be marked as delivered.
-    /// 
+    /// Returns the latest message of the channel if it can be marked as delivered.
+    ///
     /// - Parameter currentUserId: The current logged-in user id.
     public func messageToMarkAsDelivered(
         for currentUserId: UserId
@@ -400,6 +400,7 @@ extension ChatChannel {
         guard let latestMessage = latestMessages.first else { return nil }
         guard let currentUserRead = currentUserReadState(for: currentUserId) else { return nil }
         guard latestMessage.createdAt > currentUserRead.lastReadAt else { return nil }
+        guard latestMessage.createdAt > currentUserRead.lastDeliveredAt ?? .distantPast else { return nil }
         return DeliveredMessageInfo(channelId: cid, messageId: latestMessage.id)
     }
 }

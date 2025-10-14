@@ -18,15 +18,25 @@ public struct ChatChannelRead: Equatable {
     /// The user who read the channel.
     public let user: ChatUser
 
+    /// The last time the user has delivered the channel.
+    public let lastDeliveredAt: Date?
+
+    /// Id for the last message the user has delivered. Nil means the user has never delivered this channel
+    public let lastDeliveredMessageId: MessageId?
+
     init(
         lastReadAt: Date,
         lastReadMessageId: MessageId?,
         unreadMessagesCount: Int,
-        user: ChatUser
+        user: ChatUser,
+        lastDeliveredAt: Date?,
+        lastDeliveredMessageId: MessageId?
     ) {
         self.lastReadAt = lastReadAt
         self.lastReadMessageId = lastReadMessageId
         self.unreadMessagesCount = unreadMessagesCount
         self.user = user
+        self.lastDeliveredAt = lastDeliveredAt
+        self.lastDeliveredMessageId = lastDeliveredMessageId
     }
 }
