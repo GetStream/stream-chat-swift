@@ -36,5 +36,24 @@ final class DemoChatChannelListItemView: ChatChannelListItemView {
         super.updateContent()
 
         backgroundColor = contentBackgroundColor
+        setMessageDeliveredInfoStateIfNeeded()
     }
+
+    private func setMessageDeliveredInfoStateIfNeeded() {
+        guard let content = self.content else { return }
+        guard let previewMessage =  content.channel.previewMessage else { return }
+        guard AppConfig.shared.demoAppConfig.isMessageDeliveredInfoEnabled else { return }
+
+        let deliveredReads = content.channel.reads
+            .filter { read in
+                read.lastDeliveredAt ?? .distantPast > previewMessage.createdAt
+                && read.user.id != previewMessage.author.id
+            }
+
+        if !deliveredReads.isEmpty && previewMessage.readByCount == 0 {
+            previewMessageDeliveryStatusView.imageView.image = appearance.images.messageDeliveryStatusRead
+            previewMessageDeliveryStatusView.imageView.tintColor = appearance.colorPalette.textLowEmphasis
+        }
+    }
+
 }

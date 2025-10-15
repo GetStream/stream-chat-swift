@@ -1472,6 +1472,8 @@
 		AD3D0CC426A89E6300A6D813 /* iMessageChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */; };
 		AD3DB8312E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3DB8302E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift */; };
 		AD3DB8322E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3DB8302E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift */; };
+		AD3DBBA72E9EE846005090E2 /* DemoMessageReadsInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3DBBA62E9EE846005090E2 /* DemoMessageReadsInfoView.swift */; };
+		AD3DBBA92E9FBF18005090E2 /* DemoChatMessageDeliveryStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3DBBA82E9FBF10005090E2 /* DemoChatMessageDeliveryStatusView.swift */; };
 		AD3EE5442832921400ACEFD9 /* VirtualTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D15D8527E9D4B5006B34D7 /* VirtualTime.swift */; };
 		AD4118832D5E1368000EF88E /* UILabel+highlightText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4118822D5E135D000EF88E /* UILabel+highlightText.swift */; };
 		AD4118842D5E1368000EF88E /* UILabel+highlightText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4118822D5E135D000EF88E /* UILabel+highlightText.swift */; };
@@ -4350,6 +4352,8 @@
 		AD3D0CC126A88E5100A6D813 /* MessengerChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessengerChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3D0CC326A89E6300A6D813 /* iMessageChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iMessageChatChannelHeaderView.swift; sourceTree = "<group>"; };
 		AD3DB8302E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryHeaderViewDateFormatter.swift; sourceTree = "<group>"; };
+		AD3DBBA62E9EE846005090E2 /* DemoMessageReadsInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoMessageReadsInfoView.swift; sourceTree = "<group>"; };
+		AD3DBBA82E9FBF10005090E2 /* DemoChatMessageDeliveryStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatMessageDeliveryStatusView.swift; sourceTree = "<group>"; };
 		AD4118822D5E135D000EF88E /* UILabel+highlightText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+highlightText.swift"; sourceTree = "<group>"; };
 		AD43DE6C2A712B0F0040C0FD /* ChatChannelListSearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListSearchVC.swift; sourceTree = "<group>"; };
 		AD43F90826153BAD00F2D4BB /* QuotedChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotedChatMessageView.swift; sourceTree = "<group>"; };
@@ -6972,6 +6976,7 @@
 				79B8B64A285CBDC00059FB2D /* DemoChatMessageLayoutOptionsResolver.swift */,
 				A3227E71284A4BF700EBE6CC /* HiddenChannelListVC.swift */,
 				ADA2D6492C46B66E001D2B44 /* DemoChatChannelListErrorView.swift */,
+				AD3DBBAA2E9FBF53005090E2 /* DeliveredMessages */,
 				AD053B982B33581A003612B6 /* CustomAttachments */,
 				A3227E67284A4AA400EBE6CC /* Banner */,
 			);
@@ -8726,6 +8731,15 @@
 				AD25F74B2E84A1EB00F16B14 /* PushPreferencesView.swift */,
 			);
 			path = UserProfile;
+			sourceTree = "<group>";
+		};
+		AD3DBBAA2E9FBF53005090E2 /* DeliveredMessages */ = {
+			isa = PBXGroup;
+			children = (
+				AD3DBBA62E9EE846005090E2 /* DemoMessageReadsInfoView.swift */,
+				AD3DBBA82E9FBF10005090E2 /* DemoChatMessageDeliveryStatusView.swift */,
+			);
+			path = DeliveredMessages;
 			sourceTree = "<group>";
 		};
 		AD4473DD263AC2B80030E583 /* ChatCommandSuggestionView */ = {
@@ -11330,6 +11344,7 @@
 				6428DD5526201DCC0065DA1D /* BannerShowingConnectionDelegate.swift in Sources */,
 				AD053BA52B335A63003612B6 /* DemoQuotedChatMessageView.swift in Sources */,
 				AD053BAB2B33638B003612B6 /* LocationAttachmentSnapshotView.swift in Sources */,
+				AD3DBBA72E9EE846005090E2 /* DemoMessageReadsInfoView.swift in Sources */,
 				AD053BAD2B336493003612B6 /* DemoChatMessageListVC.swift in Sources */,
 				C10B5C722A1F794A006A5BCB /* MembersViewController.swift in Sources */,
 				AD6BEFF02786070800E184B4 /* SwitchButton.swift in Sources */,
@@ -11382,6 +11397,7 @@
 				A3227E5B284A489000EBE6CC /* UIViewController+Alert.swift in Sources */,
 				A3227E6D284A4B6A00EBE6CC /* UserCredentialsCell.swift in Sources */,
 				AD26CB772E3ACAB9002FC1A7 /* DemoLivestreamChatChannelVC.swift in Sources */,
+				AD3DBBA92E9FBF18005090E2 /* DemoChatMessageDeliveryStatusView.swift in Sources */,
 				84A33ABA28F86B8500CEC8FD /* StreamChatWrapper+DemoApp.swift in Sources */,
 				AD053BA92B336331003612B6 /* LocationDetailViewController.swift in Sources */,
 				ADFCA5B72D1232B3000F515F /* LocationProvider.swift in Sources */,

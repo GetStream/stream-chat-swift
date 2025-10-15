@@ -14,6 +14,10 @@ struct DemoAppConfig {
     var isAtlantisEnabled: Bool
     /// A Boolean value to define if an additional message debugger action will be added.
     var isMessageDebuggerEnabled: Bool
+    /// A boolean value to define if message delivered info should be enabled.
+    /// If enabled it will include a message action to see message reads and delivery info.
+    /// It will also display double grey check-marks for delivered messages in the message list.
+    var isMessageDeliveredInfoEnabled: Bool
     /// Set this value to define if we should mimic token refresh scenarios.
     var tokenRefreshDetails: TokenRefreshDetails?
     /// A Boolean value that determines if a connection banner UI should be shown.
@@ -49,6 +53,7 @@ class AppConfig {
             isHardDeleteEnabled: false,
             isAtlantisEnabled: false,
             isMessageDebuggerEnabled: false,
+            isMessageDeliveredInfoEnabled: false,
             tokenRefreshDetails: nil,
             shouldShowConnectionBanner: false,
             isPremiumMemberFeatureEnabled: false,
@@ -64,6 +69,7 @@ class AppConfig {
             demoAppConfig.isPremiumMemberFeatureEnabled = true
             demoAppConfig.isRemindersEnabled = true
             demoAppConfig.shouldDeletePollOnMessageDeletion = true
+            demoAppConfig.isMessageDeliveredInfoEnabled = true
             StreamRuntimeCheck.assertionsEnabled = true
         }
     }
@@ -172,6 +178,7 @@ class AppConfigViewController: UITableViewController {
         case isHardDeleteEnabled
         case isAtlantisEnabled
         case isMessageDebuggerEnabled
+        case isMessageReadsInfoEnabled
         case tokenRefreshDetails
         case shouldShowConnectionBanner
         case isPremiumMemberFeatureEnabled
@@ -322,6 +329,10 @@ class AppConfigViewController: UITableViewController {
         case .isMessageDebuggerEnabled:
             cell.accessoryView = makeSwitchButton(demoAppConfig.isMessageDebuggerEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isMessageDebuggerEnabled = newValue
+            }
+        case .isMessageReadsInfoEnabled:
+            cell.accessoryView = makeSwitchButton(demoAppConfig.isMessageDeliveredInfoEnabled) { [weak self] newValue in
+                self?.demoAppConfig.isMessageDeliveredInfoEnabled = newValue
             }
         case .tokenRefreshDetails:
             if let tokenRefreshDuration = demoAppConfig.tokenRefreshDetails?.expirationDuration {

@@ -88,12 +88,6 @@ class ChannelDeliveredMiddleware: EventMiddleware {
     ///   - event: The message delivered event.
     ///   - session: The database session.
     private func handleMessageDeliveredEvent(_ event: MessageDeliveredEventDTO, session: DatabaseSession) {
-        // Update the channel read data for the user who received the delivered message
-        guard let channelDTO = session.channel(cid: event.cid),
-              let userDTO = session.user(id: event.user.id) else {
-            return
-        }
-        
         // Find or create the channel read for this user
         guard let channelRead = session.loadOrCreateChannelRead(
             cid: event.cid,
