@@ -384,24 +384,20 @@ extension ChatChannel {
     /// Returns `true` if the channel has one or more unread messages for the current user.
     public var isUnread: Bool { unreadCount != .noUnread }
     
-    /// Returns the current user's read state for this channel.
-    /// - Parameter currentUserId: The ID of the current user.
-    /// - Returns: The read state for the current user, or `nil` if not found.
-    public func currentUserReadState(for currentUserId: UserId) -> ChatChannelRead? {
-        reads.first { $0.user.id == currentUserId }
+    /// Returns the user's read state for this channel.
+    /// - Parameter userId: The ID of the user.
+    /// - Returns: The read state, or `nil` if not found.
+    public func readState(for userId: UserId) -> ChatChannelRead? {
+        reads.first { $0.user.id == userId }
     }
 
-    /// Returns the latest message of the channel if it can be marked as delivered.
-    ///
-    /// - Parameter currentUserId: The current logged-in user id.
-    public func messageToMarkAsDelivered(
-        for currentUserId: UserId
-    ) -> DeliveredMessageInfo? {
+    /// Returns the latest message of the channel if it can be marked as delivered for the given user.
+    public func latestMessageNotMarkedAsDelivered(for userId: UserId) -> DeliveredMessageInfo? {
+        guard let userRead = readState(for: userId) else { return nil }
         guard let latestMessage = latestMessages.first else { return nil }
-        guard latestMessage.author.id != currentUserId else { return nil }
-        guard let currentUserRead = currentUserReadState(for: currentUserId) else { return nil }
-        guard latestMessage.createdAt > currentUserRead.lastReadAt else { return nil }
-        guard latestMessage.createdAt > currentUserRead.lastDeliveredAt ?? .distantPast else { return nil }
+        guard latestMessage.author.id != userId else { return nil }
+        guard latestMessage.createdAt > userRead.lastReadAt else { return nil }
+        guard latestMessage.createdAt > userRead.lastDeliveredAt ?? .distantPast else { return nil }
         return DeliveredMessageInfo(channelId: cid, messageId: latestMessage.id)
     }
 }

@@ -238,7 +238,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         
         // Extract channels that should be marked as delivered
         let deliveredMessages = channels.compactMap {
-            $0.messageToMarkAsDelivered(for: currentUserId)
+            $0.latestMessageNotMarkedAsDelivered(for: currentUserId)
         }
 
         // Only make the API call if there are channels to mark as delivered

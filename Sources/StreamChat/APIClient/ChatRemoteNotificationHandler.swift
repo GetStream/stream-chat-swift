@@ -148,7 +148,11 @@ public class ChatRemoteNotificationHandler {
     /// Marks the message as delivered and throttles the requests to at most one per second.
     public func markMessageAsDelivered(_ messageId: MessageId, for channel: ChatChannel) {
         /// Make sure if the message was already delivered, do not mark it as delivered.
-        guard let message = channel.messageToMarkAsDelivered, message.messageId == messageId else {
+        guard let currentUserId = client.currentUserId else {
+            return log.debug("No current user to mark messages as delivered")
+        }
+        guard let message = channel.latestMessageNotMarkedAsDelivered(for: currentUserId),
+              message.messageId == messageId else {
             log.debug("No message to be marked as delivered for messageId:\(messageId))")
             return
         }
