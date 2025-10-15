@@ -1474,6 +1474,7 @@
 		AD3DB8322E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3DB8302E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift */; };
 		AD3DBBA72E9EE846005090E2 /* DemoMessageReadsInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3DBBA62E9EE846005090E2 /* DemoMessageReadsInfoView.swift */; };
 		AD3DBBA92E9FBF18005090E2 /* DemoChatMessageDeliveryStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD3DBBA82E9FBF10005090E2 /* DemoChatMessageDeliveryStatusView.swift */; };
+		AD3DBBAE2E9FE2AE005090E2 /* MessageDelivered.json in Resources */ = {isa = PBXBuildFile; fileRef = AD3DBBAD2E9FE2AE005090E2 /* MessageDelivered.json */; };
 		AD3EE5442832921400ACEFD9 /* VirtualTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = A3D15D8527E9D4B5006B34D7 /* VirtualTime.swift */; };
 		AD4118832D5E1368000EF88E /* UILabel+highlightText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4118822D5E135D000EF88E /* UILabel+highlightText.swift */; };
 		AD4118842D5E1368000EF88E /* UILabel+highlightText.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4118822D5E135D000EF88E /* UILabel+highlightText.swift */; };
@@ -4354,6 +4355,7 @@
 		AD3DB8302E7C48BF0023D377 /* GalleryHeaderViewDateFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryHeaderViewDateFormatter.swift; sourceTree = "<group>"; };
 		AD3DBBA62E9EE846005090E2 /* DemoMessageReadsInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoMessageReadsInfoView.swift; sourceTree = "<group>"; };
 		AD3DBBA82E9FBF10005090E2 /* DemoChatMessageDeliveryStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatMessageDeliveryStatusView.swift; sourceTree = "<group>"; };
+		AD3DBBAD2E9FE2AE005090E2 /* MessageDelivered.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = MessageDelivered.json; sourceTree = "<group>"; };
 		AD4118822D5E135D000EF88E /* UILabel+highlightText.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UILabel+highlightText.swift"; sourceTree = "<group>"; };
 		AD43DE6C2A712B0F0040C0FD /* ChatChannelListSearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelListSearchVC.swift; sourceTree = "<group>"; };
 		AD43F90826153BAD00F2D4BB /* QuotedChatMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotedChatMessageView.swift; sourceTree = "<group>"; };
@@ -6733,6 +6735,7 @@
 		8A0C3BD524C1E25400CAFD19 /* Message */ = {
 			isa = PBXGroup;
 			children = (
+				AD3DBBAD2E9FE2AE005090E2 /* MessageDelivered.json */,
 				AD70CC842E956C4F0007AB6D /* MessageDeletedForMe.json */,
 				8A0C3BDB24C1E5AE00CAFD19 /* MessageDeleted.json */,
 				846C633B26FC834800F7518B /* MessageDeleted+MissingUser.json */,
@@ -10544,6 +10547,7 @@
 				A311B3D727E8B98C00CFCF6D /* CurrentUserPayloadWithCustom.json in Resources */,
 				C10B0A0A29D20B3A006517FC /* DeactivatedUser.json in Resources */,
 				A311B3E127E8B98C00CFCF6D /* Messages.json in Resources */,
+				AD3DBBAE2E9FE2AE005090E2 /* MessageDelivered.json in Resources */,
 				A311B3F327E8B99800CFCF6D /* ChannelVisible.json in Resources */,
 				A311B42127E8B9C900CFCF6D /* GuestUser+InvalidToken.json in Resources */,
 				A311B41427E8B9B900CFCF6D /* UserStopWatching.json in Resources */,
