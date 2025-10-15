@@ -990,7 +990,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     // MARK: - Mark Channels Delivered
 
-    func test_markChannelsDelivered_makesCorrectAPICall() {
+    func test_markMessagesAsDelivered_makesCorrectAPICall() {
         // GIVEN
         let deliveredMessages = [
             DeliveredMessageInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique),
@@ -998,7 +998,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         ]
 
         // WHEN
-        currentUserUpdater.markChannelsDelivered(deliveredMessages: deliveredMessages)
+        currentUserUpdater.markMessagesAsDelivered(deliveredMessages)
 
         // THEN
         let expectedPayload = ChannelDeliveredRequestPayload(
@@ -1008,7 +1008,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
-    func test_markChannelsDelivered_successfulResponse_isPropagatedToCompletion() {
+    func test_markMessagesAsDelivered_successfulResponse_isPropagatedToCompletion() {
         // GIVEN
         let deliveredMessages = [
             DeliveredMessageInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
@@ -1016,7 +1016,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         var completionCalled = false
 
         // WHEN
-        currentUserUpdater.markChannelsDelivered(deliveredMessages: deliveredMessages) { error in
+        currentUserUpdater.markMessagesAsDelivered(deliveredMessages) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -1027,7 +1027,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionCalled)
     }
 
-    func test_markChannelsDelivered_errorResponse_isPropagatedToCompletion() {
+    func test_markMessagesAsDelivered_errorResponse_isPropagatedToCompletion() {
         // GIVEN
         let deliveredMessages = [
             DeliveredMessageInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
@@ -1036,8 +1036,8 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let error = TestError()
 
         // WHEN
-        currentUserUpdater.markChannelsDelivered(
-            deliveredMessages: deliveredMessages
+        currentUserUpdater.markMessagesAsDelivered(
+            deliveredMessages
         ) {
             completionCalledError = $0
         }

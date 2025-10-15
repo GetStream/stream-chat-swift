@@ -103,25 +103,30 @@ class ChannelDeliveredMiddleware: EventMiddleware {
     
     /// Marks all pending channels as delivered and clears the successfully processed channels.
     private func markChannelsAsDelivered() {
-        let messages: [DeliveredMessageInfo] = queue.sync {
+        let deliveredMessages: [DeliveredMessageInfo] = queue.sync {
             return pendingDeliveredChannels.map { channelId, messageId in
                 DeliveredMessageInfo(channelId: channelId, messageId: messageId)
             }
         }
         
-        guard !messages.isEmpty else { return }
-        
-        currentUserUpdater.markChannelsDelivered(deliveredMessages: messages) { [weak self] error in
+        guard !deliveredMessages.isEmpty else { return }
+
+        currentUserUpdater.markMessagesAsDelivered(deliveredMessages) { [weak self] error in
             if let error = error {
                 log.error("Failed to mark channels as delivered: \(error)")
                 return
             }
             
-            // Clear the successfully processed channels
+            // Clear the successfully processed channels in case
+            // there are no new message ids.
             self?.queue.async(flags: .barrier) { [weak self] in
-                let processedChannelIds = Set(messages.map(\.channelId))
-                for channelId in processedChannelIds {
-                    self?.pendingDeliveredChannels.removeValue(forKey: channelId)
+                for deliveredMessage in deliveredMessages {
+                    let messageId = deliveredMessage.messageId
+                    let channelId = deliveredMessage.channelId
+                    let currentMessageId = self?.pendingDeliveredChannels[channelId]
+                    if currentMessageId == messageId {
+                        self?.pendingDeliveredChannels[channelId] = nil
+                    }
                 }
             }
         }

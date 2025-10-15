@@ -276,16 +276,16 @@ class CurrentUserUpdater: Worker {
         }
     }
 
-    /// Marks channels as delivered for the current user.
+    /// Marks messages as delivered for the current user.
     /// - Parameters:
     ///   - deliveredMessages: Array of delivered message information.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func markChannelsDelivered(
-        deliveredMessages: [DeliveredMessageInfo],
+    func markMessagesAsDelivered(
+        _ messages: [DeliveredMessageInfo],
         completion: ((Error?) -> Void)? = nil
     ) {
         let payload = ChannelDeliveredRequestPayload(
-            latestDeliveredMessages: deliveredMessages.map { $0.asPayload }
+            latestDeliveredMessages: messages.map { $0.asPayload }
         )
         
         apiClient.request(endpoint: .markChannelsDelivered(payload: payload)) { result in
@@ -369,14 +369,6 @@ extension CurrentUserUpdater {
                 userExtraData: userExtraData,
                 unset: unset
             ) { error in
-                continuation.resume(with: error)
-            }
-        }
-    }
-
-    func markChannelsDelivered(deliveredMessages: [DeliveredMessageInfo]) async throws {
-        try await withCheckedThrowingContinuation { continuation in
-            markChannelsDelivered(deliveredMessages: deliveredMessages) { error in
                 continuation.resume(with: error)
             }
         }

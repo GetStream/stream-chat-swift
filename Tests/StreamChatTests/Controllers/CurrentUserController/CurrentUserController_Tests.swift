@@ -992,9 +992,9 @@ final class CurrentUserController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionResult?.error as? TestError, expectedError)
     }
 
-    // MARK: - Mark Channels Delivered
+    // MARK: - Mark Messages Delivered
 
-    func test_markChannelsDelivered_callsUpdaterWithCorrectParameters() {
+    func test_markMessagesAsDelivered_callsUpdaterWithCorrectParameters() {
         // GIVEN
         client.authenticationRepository.setMockToken()
         let deliveredMessages = [
@@ -1003,40 +1003,46 @@ final class CurrentUserController_Tests: XCTestCase {
         ]
 
         // WHEN
-        controller.markChannelsDelivered(deliveredMessages: deliveredMessages)
+        controller.markMessagesAsDelivered(deliveredMessages)
 
         // THEN
         XCTAssertEqual(env.currentUserUpdater?.markChannelsDelivered_deliveredMessages, deliveredMessages)
         XCTAssertNotNil(env.currentUserUpdater?.markChannelsDelivered_completion)
     }
 
-    func test_markChannelsDelivered_whenCurrentUserDoesNotExist_shouldError() throws {
+    func test_markMessagesAsDelivered_whenCurrentUserDoesNotExist_shouldError() throws {
         // GIVEN
         client.authenticationRepository.logOutUser()
         let deliveredMessages = [
-            DeliveredMessageInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
+            DeliveredMessageInfo(
+                channelId: .init(type: .messaging, id: "channel1"),
+                messageId: .unique
+            )
         ]
 
         // WHEN
         let error = try waitFor {
-            controller.markChannelsDelivered(deliveredMessages: deliveredMessages, completion: $0)
+            controller.markMessagesAsDelivered(deliveredMessages, completion: $0)
         }
 
         // THEN
         XCTAssert(error is ClientError.CurrentUserDoesNotExist)
     }
 
-    func test_markChannelsDelivered_propagatesError() {
+    func test_markMessagesAsDelivered_propagatesError() {
         // GIVEN
         client.authenticationRepository.setMockToken()
         let deliveredMessages = [
-            DeliveredMessageInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
+            DeliveredMessageInfo(
+                channelId: .init(type: .messaging, id: "channel1"),
+                messageId: .unique
+            )
         ]
         let expectedError = TestError()
 
         // WHEN
         var completionError: Error?
-        controller.markChannelsDelivered(deliveredMessages: deliveredMessages) { [callbackQueueID] error in
+        controller.markMessagesAsDelivered(deliveredMessages) { [callbackQueueID] error in
             AssertTestQueue(withId: callbackQueueID)
             completionError = error
         }
@@ -1048,7 +1054,7 @@ final class CurrentUserController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionError as? TestError, expectedError)
     }
 
-    func test_markChannelsDelivered_keepsControllerAlive() {
+    func test_markMessagesAsDelivered_keepsControllerAlive() {
         // GIVEN
         client.authenticationRepository.setMockToken()
         let deliveredMessages = [
@@ -1059,7 +1065,7 @@ final class CurrentUserController_Tests: XCTestCase {
         weak var weakController = controller
 
         // WHEN
-        controller.markChannelsDelivered(deliveredMessages: deliveredMessages) { _ in }
+        controller.markMessagesAsDelivered(deliveredMessages) { _ in }
 
         // Try to deallocate controller
         controller = nil

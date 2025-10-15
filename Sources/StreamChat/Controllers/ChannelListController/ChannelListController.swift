@@ -245,7 +245,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         guard !deliveredMessages.isEmpty else { return }
         
         // Mark channels as delivered
-        currentUserUpdater.markChannelsDelivered(deliveredMessages: deliveredMessages) { error in
+        currentUserUpdater.markMessagesAsDelivered(deliveredMessages) { error in
             if let error = error {
                 log.error("Failed to mark channels as delivered: \(error)")
             }

@@ -161,9 +161,7 @@ public class ChatRemoteNotificationHandler {
             channelId: channel.cid,
             messageId: messageId
         )
-        client.currentUserController().markChannelsDelivered(
-            deliveredMessages: [deliveredMessageInfo]
-        ) { error in
+        client.currentUserController().markMessagesAsDelivered([deliveredMessageInfo]) { error in
             if let error = error {
                 log.error("Failed to mark messages as delivered: \(error)")
             } else {

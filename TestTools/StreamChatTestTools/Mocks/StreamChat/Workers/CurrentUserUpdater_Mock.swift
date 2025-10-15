@@ -114,12 +114,12 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater {
         setPushPreference_completion_result?.invoke(with: completion)
     }
 
-    override func markChannelsDelivered(
-        deliveredMessages: [DeliveredMessageInfo],
+    override func markMessagesAsDelivered(
+        _ messages: [DeliveredMessageInfo],
         completion: ((Error?) -> Void)? = nil
     ) {
         markChannelsDelivered_callCount += 1
-        markChannelsDelivered_deliveredMessages = deliveredMessages
+        markChannelsDelivered_deliveredMessages = messages
         if let completion = markChannelsDelivered_completion {
             completion(markChannelsDelivered_completion_result)
         } else {

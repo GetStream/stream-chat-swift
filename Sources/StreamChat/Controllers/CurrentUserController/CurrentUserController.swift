@@ -576,15 +576,15 @@ public extension CurrentChatUserController {
         }
     }
 
-    /// Marks channels as delivered for the current user.
+    /// Marks messages as delivered for the current user.
     ///
     /// - Parameters:
-    ///   - deliveredMessages: Array of delivered message information. It should be the
+    ///   - messages: Array of delivered message information. It should be the
     ///   latest message of a channel and its respective channel id.
     ///   - completion: Called when the API call is finished.
     ///   Called with `Error` if the remote update fails.
-    func markChannelsDelivered(
-        deliveredMessages: [DeliveredMessageInfo],
+    func markMessagesAsDelivered(
+        _ messages: [DeliveredMessageInfo],
         completion: ((Error?) -> Void)? = nil
     ) {
         guard client.currentUserId != nil else {
@@ -592,7 +592,7 @@ public extension CurrentChatUserController {
             return
         }
 
-        currentUserUpdater.markChannelsDelivered(deliveredMessages: deliveredMessages) { error in
+        currentUserUpdater.markMessagesAsDelivered(messages) { error in
             self.callback {
                 completion?(error)
             }
