@@ -103,6 +103,15 @@ class NotificationService: UNNotificationServiceExtension {
                     content.title = "\(authorName) on \(channelName)"
                     content.subtitle = ""
                     content.body = messageNotification.message.text
+                    
+                    // Mark the message as delivered
+                    if let channel = messageNotification.channel {
+                        chatHandler.markMessageAsDelivered(
+                            messageId: messageNotification.message.id,
+                            channelId: channel.cid
+                        )
+                    }
+                    
                     self.addMessageAttachments(message: messageNotification.message, content: content) {
                         contentHandler($0)
                     }
