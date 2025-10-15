@@ -1,7 +1,7 @@
 {
   "type": "member.added",
-  "cid": "messaging:3d2fd1b6-7992-4fd6-9c0e-bbfda0a14071",
-  "channel_id": "3d2fd1b6-7992-4fd6-9c0e-bbfda0a14071",
+  "cid": "messaging:ec9f758c-3f7e-46f3-9618-bc5760428e5e",
+  "channel_id": "ec9f758c-3f7e-46f3-9618-bc5760428e5e",
   "channel_type": "messaging",
   "member": {
     "user_id": "leia_organa",
@@ -11,19 +11,19 @@
       "teams_role": null,
       "created_at": "2024-04-04T09:42:00.68335Z",
       "updated_at": "2025-10-01T16:49:27.725672Z",
-      "last_active": "2025-10-15T00:05:05.129522092Z",
-      "last_engaged_at": "2025-10-14T00:29:19.533078Z",
+      "last_active": "2025-10-15T11:19:09.931581Z",
+      "last_engaged_at": "2025-10-15T00:02:20.390107Z",
       "banned": false,
       "online": true,
-      "avg_response_time": 647382,
+      "avg_response_time": 638602,
+      "name": "Leia Organa",
       "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
       "birthland": "Polis Massa",
-      "is_moderator": true,
-      "name": "Leia Organa"
+      "is_moderator": true
     },
     "status": "member",
-    "created_at": "2025-10-15T00:16:19.350017Z",
-    "updated_at": "2025-10-15T00:16:19.350017Z",
+    "created_at": "2025-10-15T11:22:22.248971Z",
+    "updated_at": "2025-10-15T11:22:22.248971Z",
     "banned": false,
     "shadow_banned": false,
     "is_global_banned": false,
@@ -39,16 +39,16 @@
     "teams_role": null,
     "created_at": "2024-04-04T09:42:00.68335Z",
     "updated_at": "2025-10-01T16:49:27.725672Z",
-    "last_active": "2025-10-15T00:05:05.129522092Z",
-    "last_engaged_at": "2025-10-14T00:29:19.533078Z",
+    "last_active": "2025-10-15T11:19:09.931581Z",
+    "last_engaged_at": "2025-10-15T00:02:20.390107Z",
     "banned": false,
     "online": true,
-    "avg_response_time": 647382,
-    "is_moderator": true,
+    "avg_response_time": 638602,
     "name": "Leia Organa",
     "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
-    "birthland": "Polis Massa"
+    "birthland": "Polis Massa",
+    "is_moderator": true
   },
-  "channel_last_message_at": "2025-10-15T00:16:18.211632Z",
-  "created_at": "2025-10-15T00:16:19.358842504Z"
+  "channel_last_message_at": "2025-10-15T11:22:21.804306Z",
+  "created_at": "2025-10-15T11:22:22.257574084Z"
 }

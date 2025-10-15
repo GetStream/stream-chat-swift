@@ -1,6 +1,6 @@
 {
   "message": {
-    "id": "04083975-f424-47ea-9af1-44d68aca0f2a",
+    "id": "81c8fe15-790d-44d8-860c-2e832f76cda8",
     "text": "https://giphy.com/gifs/test-gw3IWyGkC0rsazTi",
     "html": "<p><a href=\"https://giphy.com/gifs/test-gw3IWyGkC0rsazTi\" rel=\"nofollow\">https://giphy.com/gifs/test-gw3IWyGkC0rsazTi</a></p>\n",
     "type": "regular",
@@ -15,16 +15,16 @@
       "updated_at": "2025-09-15T05:51:41.748915Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-10-15T00:16:14.472266191Z",
+      "last_active": "2025-10-15T11:22:19.961028904Z",
       "blocked_user_ids": [],
       "avg_response_time": 203648,
-      "custom_extra_data_key": true,
-      "canBeAddedToGroups": true,
+      "birthland": "Tatooine",
+      "canReceiveMessages": false,
       "team": "test",
       "type": "team",
+      "canBeAddedToGroups": true,
       "pando": "{\"speciality\":\"ios engineer\"}",
-      "canReceiveMessages": false,
-      "birthland": "Tatooine"
+      "custom_extra_data_key": true
     },
     "member": {
       "channel_role": "channel_member"
@@ -47,9 +47,9 @@
     "reaction_scores": {},
     "reply_count": 0,
     "deleted_reply_count": 0,
-    "cid": "messaging:3d2fd1b6-7992-4fd6-9c0e-bbfda0a14071",
-    "created_at": "2025-10-15T00:16:30.511327Z",
-    "updated_at": "2025-10-15T00:16:30.511327Z",
+    "cid": "messaging:ec9f758c-3f7e-46f3-9618-bc5760428e5e",
+    "created_at": "2025-10-15T11:22:24.446739Z",
+    "updated_at": "2025-10-15T11:22:24.446739Z",
     "shadowed": false,
     "mentioned_users": [],
     "silent": false,
@@ -59,5 +59,5 @@
     "pin_expires": null,
     "restricted_visibility": []
   },
-  "duration": "412.09ms"
+  "duration": "430.22ms"
 }

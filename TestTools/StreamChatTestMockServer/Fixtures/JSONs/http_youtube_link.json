@@ -1,6 +1,6 @@
 {
   "message": {
-    "id": "4ddcb1eb-a018-48da-ac41-0beebc8d3d73",
+    "id": "10f63aac-6f52-40f0-ad13-2ac8a6dd2784",
     "text": "https://youtube.com/watch?v=xOX7MsrbaPY",
     "html": "<p><a href=\"https://youtube.com/watch?v=xOX7MsrbaPY\" rel=\"nofollow\">https://youtube.com/watch?v=xOX7MsrbaPY</a></p>\n",
     "type": "regular",
@@ -15,16 +15,16 @@
       "updated_at": "2025-09-15T05:51:41.748915Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-10-15T00:16:14.472266191Z",
+      "last_active": "2025-10-15T11:22:19.961028904Z",
       "blocked_user_ids": [],
       "avg_response_time": 203648,
       "birthland": "Tatooine",
-      "canBeAddedToGroups": true,
       "custom_extra_data_key": true,
-      "pando": "{\"speciality\":\"ios engineer\"}",
       "canReceiveMessages": false,
+      "canBeAddedToGroups": true,
+      "team": "test",
       "type": "team",
-      "team": "test"
+      "pando": "{\"speciality\":\"ios engineer\"}"
     },
     "member": {
       "channel_role": "channel_member"
@@ -46,9 +46,9 @@
     "reaction_scores": {},
     "reply_count": 0,
     "deleted_reply_count": 0,
-    "cid": "messaging:3d2fd1b6-7992-4fd6-9c0e-bbfda0a14071",
-    "created_at": "2025-10-15T00:16:25.14529Z",
-    "updated_at": "2025-10-15T00:16:25.14529Z",
+    "cid": "messaging:ec9f758c-3f7e-46f3-9618-bc5760428e5e",
+    "created_at": "2025-10-15T11:22:23.388057Z",
+    "updated_at": "2025-10-15T11:22:23.388057Z",
     "shadowed": false,
     "mentioned_users": [],
     "silent": false,
@@ -58,5 +58,5 @@
     "pin_expires": null,
     "restricted_visibility": []
   },
-  "duration": "3882.82ms"
+  "duration": "290.31ms"
 }

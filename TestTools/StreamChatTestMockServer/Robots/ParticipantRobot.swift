@@ -8,7 +8,7 @@ import XCTest
 public class ParticipantRobot {
     private var server: StreamMockServer
     private var threadParentId: String?
-    private var user: [String: String] = UserDetails.hanSolo
+    private var user: [String: String] = UserDetails.countDooku
 
     public init(_ server: StreamMockServer) {
         self.server = server

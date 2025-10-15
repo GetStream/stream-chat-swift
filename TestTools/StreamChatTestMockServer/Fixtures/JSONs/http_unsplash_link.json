@@ -1,6 +1,6 @@
 {
   "message": {
-    "id": "0c8933a4-43c0-47a0-88cf-3fd3596228c0",
+    "id": "b3e2003e-e090-4b17-b52c-584c7ff149a6",
     "text": "https://unsplash.com/photos/1_2d3MRbI9c",
     "html": "<p><a href=\"https://unsplash.com/photos/1_2d3MRbI9c\" rel=\"nofollow\">https://unsplash.com/photos/1_2d3MRbI9c</a></p>\n",
     "type": "regular",
@@ -15,16 +15,16 @@
       "updated_at": "2025-09-15T05:51:41.748915Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-10-15T00:16:14.472266191Z",
+      "last_active": "2025-10-15T11:22:19.961028904Z",
       "blocked_user_ids": [],
       "avg_response_time": 203648,
-      "canBeAddedToGroups": true,
-      "team": "test",
-      "custom_extra_data_key": true,
       "type": "team",
+      "canBeAddedToGroups": true,
       "birthland": "Tatooine",
       "canReceiveMessages": false,
-      "pando": "{\"speciality\":\"ios engineer\"}"
+      "pando": "{\"speciality\":\"ios engineer\"}",
+      "custom_extra_data_key": true,
+      "team": "test"
     },
     "member": {
       "channel_role": "channel_member"
@@ -47,9 +47,9 @@
     "reaction_scores": {},
     "reply_count": 0,
     "deleted_reply_count": 0,
-    "cid": "messaging:3d2fd1b6-7992-4fd6-9c0e-bbfda0a14071",
-    "created_at": "2025-10-15T00:16:29.594369Z",
-    "updated_at": "2025-10-15T00:16:29.594369Z",
+    "cid": "messaging:ec9f758c-3f7e-46f3-9618-bc5760428e5e",
+    "created_at": "2025-10-15T11:22:23.80289Z",
+    "updated_at": "2025-10-15T11:22:23.80289Z",
     "shadowed": false,
     "mentioned_users": [],
     "silent": false,
@@ -59,5 +59,5 @@
     "pin_expires": null,
     "restricted_visibility": []
   },
-  "duration": "3945.21ms"
+  "duration": "274.32ms"
 }

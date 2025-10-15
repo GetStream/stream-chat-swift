@@ -114,7 +114,7 @@ end
 def create_channel(connection_id)
   payload = {
     data: {
-      members: [STREAM_USER_ID, 'han_solo', 'count_dooku'],
+      members: [STREAM_USER_ID, 'lando_calrissian', 'count_dooku'],
       name: 'Sync Mock Server'
     },
     presence: true,
@@ -262,6 +262,8 @@ EM.run do
       save_json(JSON.parse(event.data), 'ws_events_member.json')
     when 'channel.updated'
       json = JSON.parse(event.data)
+      json['user']['privacy_settings']['typing_indicators']['enabled'] = true
+      json['user']['privacy_settings']['read_receipts']['enabled'] = true
       json['channel']['members'].each do |member|
         member['user']['privacy_settings']['typing_indicators']['enabled'] = true
         member['user']['privacy_settings']['read_receipts']['enabled'] = true

@@ -1,16 +1,16 @@
 {
   "type": "message.new",
-  "created_at": "2025-10-15T00:16:18.284317522Z",
-  "cid": "messaging:3d2fd1b6-7992-4fd6-9c0e-bbfda0a14071",
-  "channel_member_count": 2,
+  "created_at": "2025-10-15T11:22:21.838194472Z",
+  "cid": "messaging:ec9f758c-3f7e-46f3-9618-bc5760428e5e",
+  "channel_member_count": 3,
   "channel_custom": {
     "name": "Sync Mock Server"
   },
   "channel_type": "messaging",
-  "channel_id": "3d2fd1b6-7992-4fd6-9c0e-bbfda0a14071",
-  "message_id": "d5b5b82f-07f8-4fbd-9d75-6f333caa2eef",
+  "channel_id": "ec9f758c-3f7e-46f3-9618-bc5760428e5e",
+  "message_id": "dc702391-84b6-44af-aa67-c349d2e72441",
   "message": {
-    "id": "d5b5b82f-07f8-4fbd-9d75-6f333caa2eef",
+    "id": "dc702391-84b6-44af-aa67-c349d2e72441",
     "text": "Test",
     "html": "<p>Test</p>\n",
     "type": "regular",
@@ -25,7 +25,7 @@
       "updated_at": "2025-09-15T05:51:41.748915Z",
       "banned": false,
       "online": true,
-      "last_active": "2025-10-15T00:16:14.472266191Z",
+      "last_active": "2025-10-15T11:22:19.961028904Z",
       "blocked_user_ids": [],
       "avg_response_time": 203648,
       "shadow_banned": false,
@@ -193,13 +193,13 @@
         }
       ],
       "invisible": false,
-      "canBeAddedToGroups": true,
-      "team": "test",
-      "type": "team",
-      "birthland": "Tatooine",
-      "custom_extra_data_key": true,
       "pando": "{\"speciality\":\"ios engineer\"}",
-      "canReceiveMessages": false
+      "team": "test",
+      "canBeAddedToGroups": true,
+      "type": "team",
+      "canReceiveMessages": false,
+      "birthland": "Tatooine",
+      "custom_extra_data_key": true
     },
     "member": {
       "channel_role": "channel_member"
@@ -211,9 +211,9 @@
     "reaction_scores": {},
     "reply_count": 0,
     "deleted_reply_count": 0,
-    "cid": "messaging:3d2fd1b6-7992-4fd6-9c0e-bbfda0a14071",
-    "created_at": "2025-10-15T00:16:18.211632Z",
-    "updated_at": "2025-10-15T00:16:18.211632Z",
+    "cid": "messaging:ec9f758c-3f7e-46f3-9618-bc5760428e5e",
+    "created_at": "2025-10-15T11:22:21.804306Z",
+    "updated_at": "2025-10-15T11:22:21.804306Z",
     "shadowed": false,
     "mentioned_users": [],
     "silent": false,
@@ -234,13 +234,13 @@
     "updated_at": "2025-09-15T05:51:41.748915Z",
     "banned": false,
     "online": true,
-    "last_active": "2025-10-15T00:16:14.472266191Z",
+    "last_active": "2025-10-15T11:22:19.961028904Z",
     "blocked_user_ids": [],
     "avg_response_time": 203648,
-    "canBeAddedToGroups": true,
+    "custom_extra_data_key": true,
+    "pando": "{\"speciality\":\"ios engineer\"}",
     "team": "test",
     "type": "team",
-    "custom_extra_data_key": true,
     "canReceiveMessages": false,
     "privacy_settings": {
       "read_receipts": {
@@ -250,11 +250,11 @@
         "enabled": false
       }
     },
-    "birthland": "Tatooine",
-    "pando": "{\"speciality\":\"ios engineer\"}"
+    "canBeAddedToGroups": true,
+    "birthland": "Tatooine"
   },
   "watcher_count": 1,
-  "unread_count": 2,
-  "total_unread_count": 2,
+  "unread_count": 9,
+  "total_unread_count": 9,
   "unread_channels": 1
 }
