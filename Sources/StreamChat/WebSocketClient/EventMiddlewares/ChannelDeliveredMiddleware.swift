@@ -65,10 +65,8 @@ class ChannelDeliveredMiddleware: EventMiddleware {
             // Update the latest message ID for this channel
             self.pendingDeliveredChannels[event.cid] = event.message.id
             
-            // Trigger the throttled mark channels delivered request
-            self.throttler.execute { [weak self] in
-                self?.markChannelsAsDelivered()
-            }
+            // Trigger  mark channels delivered request
+            self.markMessagesAsDelivered()
         }
     }
     
@@ -101,8 +99,8 @@ class ChannelDeliveredMiddleware: EventMiddleware {
         channelRead.lastDeliveredMessageId = event.lastDeliveredMessageId
     }
     
-    /// Marks all pending channels as delivered and clears the successfully processed channels.
-    private func markChannelsAsDelivered() {
+    /// Marks all pending messages as delivered and clears the successfully processed messages.
+    private func markMessagesAsDelivered() {
         let deliveredMessages: [DeliveredMessageInfo] = queue.sync {
             return pendingDeliveredChannels.map { channelId, messageId in
                 DeliveredMessageInfo(channelId: channelId, messageId: messageId)
@@ -111,21 +109,23 @@ class ChannelDeliveredMiddleware: EventMiddleware {
         
         guard !deliveredMessages.isEmpty else { return }
 
-        currentUserUpdater.markMessagesAsDelivered(deliveredMessages) { [weak self] error in
-            if let error = error {
-                log.error("Failed to mark channels as delivered: \(error)")
-                return
-            }
-            
-            // Clear the successfully processed channels in case
-            // there are no new message ids.
-            self?.queue.async(flags: .barrier) { [weak self] in
-                for deliveredMessage in deliveredMessages {
-                    let messageId = deliveredMessage.messageId
-                    let channelId = deliveredMessage.channelId
-                    let currentMessageId = self?.pendingDeliveredChannels[channelId]
-                    if currentMessageId == messageId {
-                        self?.pendingDeliveredChannels[channelId] = nil
+        throttler.execute { [weak self] in
+            self?.currentUserUpdater.markMessagesAsDelivered(deliveredMessages) { [weak self] error in
+                if let error = error {
+                    log.error("Failed to mark channels as delivered: \(error)")
+                    return
+                }
+
+                // Clear the successfully processed channels in case
+                // there are no new message ids.
+                self?.queue.async(flags: .barrier) { [weak self] in
+                    for deliveredMessage in deliveredMessages {
+                        let messageId = deliveredMessage.messageId
+                        let channelId = deliveredMessage.channelId
+                        let currentMessageId = self?.pendingDeliveredChannels[channelId]
+                        if currentMessageId == messageId {
+                            self?.pendingDeliveredChannels[channelId] = nil
+                        }
                     }
                 }
             }
