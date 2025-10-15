@@ -128,7 +128,6 @@ public class ChatRemoteNotificationHandler {
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
     let channelRepository: ChannelRepository
     let messageRepository: MessageRepository
-    let deliveredMessagesThrottler = Throttler(interval: 1.0, broadcastLatestEvent: true)
 
     public init(client: ChatClient, content: UNNotificationContent) {
         self.client = client
@@ -147,17 +146,24 @@ public class ChatRemoteNotificationHandler {
     }
 
     /// Marks the message as delivered and throttles the requests to at most one per second.
-    public func markMessageAsDelivered(messageId: MessageId, channelId: ChannelId) {
-        let deliveredMessageInfo = DeliveredMessageInfo(channelId: channelId, messageId: messageId)
-        deliveredMessagesThrottler.execute { [weak self] in
-            self?.client.currentUserController().markChannelsDelivered(
-                deliveredMessages: [deliveredMessageInfo]
-            ) { error in
-                if let error = error {
-                    log.error("Failed to mark messages as delivered: \(error)")
-                } else {
-                    log.debug("Successfully marked messageId:\(messageId) as delivered")
-                }
+    public func markMessageAsDelivered(_ messageId: MessageId, for channel: ChatChannel) {
+        /// Make sure if the message was already delivered, do not mark it as delivered.
+        guard let message = channel.messageToMarkAsDelivered, message.messageId == messageId else {
+            log.debug("No message to be marked as delivered for messageId:\(messageId))")
+            return
+        }
+
+        let deliveredMessageInfo = DeliveredMessageInfo(
+            channelId: channel.cid,
+            messageId: messageId
+        )
+        client.currentUserController().markChannelsDelivered(
+            deliveredMessages: [deliveredMessageInfo]
+        ) { error in
+            if let error = error {
+                log.error("Failed to mark messages as delivered: \(error)")
+            } else {
+                log.debug("Successfully marked messageId:\(messageId) as delivered")
             }
         }
     }
