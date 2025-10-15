@@ -178,7 +178,7 @@ class AppConfigViewController: UITableViewController {
         case isHardDeleteEnabled
         case isAtlantisEnabled
         case isMessageDebuggerEnabled
-        case isMessageReadsInfoEnabled
+        case isMessageDeliveredInfoEnabled
         case tokenRefreshDetails
         case shouldShowConnectionBanner
         case isPremiumMemberFeatureEnabled
@@ -330,7 +330,7 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(demoAppConfig.isMessageDebuggerEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isMessageDebuggerEnabled = newValue
             }
-        case .isMessageReadsInfoEnabled:
+        case .isMessageDeliveredInfoEnabled:
             cell.accessoryView = makeSwitchButton(demoAppConfig.isMessageDeliveredInfoEnabled) { [weak self] newValue in
                 self?.demoAppConfig.isMessageDeliveredInfoEnabled = newValue
             }
