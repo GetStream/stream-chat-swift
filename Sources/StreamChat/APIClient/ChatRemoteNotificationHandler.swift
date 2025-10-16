@@ -128,12 +128,14 @@ public class ChatRemoteNotificationHandler {
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
     let channelRepository: ChannelRepository
     let messageRepository: MessageRepository
+    let channelDeliveryTracker: ChannelDeliveryTracker
 
     public init(client: ChatClient, content: UNNotificationContent) {
         self.client = client
         self.content = content
         channelRepository = client.channelRepository
         messageRepository = client.messageRepository
+        channelDeliveryTracker = client.channelDeliveryTracker
     }
 
     public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
@@ -151,24 +153,18 @@ public class ChatRemoteNotificationHandler {
         guard let currentUserId = client.currentUserId else {
             return log.debug("No current user to mark messages as delivered")
         }
+        /// Make sure if the message was already delivered, do not mark it as delivered.
+        /// If the app is active, the middleware will mark it as delivered so the push
+        /// does not need to do it.
         guard let message = channel.latestMessageNotMarkedAsDelivered(for: currentUserId),
               message.messageId == messageId else {
             log.debug("No message to be marked as delivered for messageId:\(messageId))")
             return
         }
 
-        let deliveredMessageInfo = DeliveredMessageInfo(
-            channelId: channel.cid,
-            messageId: messageId
-        )
-        client.currentUserController().markMessagesAsDelivered([deliveredMessageInfo]) { error in
-            if let error = error {
-                log.error("Failed to mark messages as delivered: \(error)")
-            } else {
-                log.debug("Successfully marked messageId:\(messageId) as delivered")
-            }
-        }
+        channelDeliveryTracker.submitForDelivery(channelId: channel.cid, messageId: messageId)
     }
+    
 
     private func getContent(completion: @escaping (ChatPushNotificationContent) -> Void) {
         guard let payload = content.userInfo["stream"], let dict = payload as? [String: String] else {

@@ -8,6 +8,7 @@ import UserNotifications
 class NotificationService: UNNotificationServiceExtension {
     var contentHandler: ((UNNotificationContent) -> Void)?
     var request: UNNotificationRequest?
+    var chatHandler: ChatRemoteNotificationHandler?
 
     func addAttachments(
         url: URL,
@@ -91,9 +92,9 @@ class NotificationService: UNNotificationServiceExtension {
         let client = ChatClient(config: config)
         client.setToken(token: Token(stringLiteral: userCredentials.token.rawValue))
 
-        let chatHandler = ChatRemoteNotificationHandler(client: client, content: content)
+        chatHandler = ChatRemoteNotificationHandler(client: client, content: content)
 
-        let chatNotification = chatHandler.handleNotification { chatContent in
+        let chatNotification = chatHandler?.handleNotification { chatContent in
             switch chatContent {
             case let .message(messageNotification):
                 switch messageNotification.type {
@@ -106,7 +107,7 @@ class NotificationService: UNNotificationServiceExtension {
                     
                     // Mark the message as delivered
                     if let channel = messageNotification.channel {
-                        chatHandler.markMessageAsDelivered(messageNotification.message.id, for: channel)
+                        self.chatHandler?.markMessageAsDelivered(messageNotification.message.id, for: channel)
                     }
                     
                     self.addMessageAttachments(message: messageNotification.message, content: content) {
@@ -135,7 +136,7 @@ class NotificationService: UNNotificationServiceExtension {
             }
         }
 
-        if !chatNotification {
+        if chatNotification == false {
             // this was not a notification from Stream Chat
             // perform any other transformation to the notification if needed
             contentHandler(content)
