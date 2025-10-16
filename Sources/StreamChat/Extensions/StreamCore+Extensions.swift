@@ -4,7 +4,3 @@
 
 import Foundation
 @_exported import StreamCore
-
-public var log: Logger {
-    LogConfig.logger
-}
