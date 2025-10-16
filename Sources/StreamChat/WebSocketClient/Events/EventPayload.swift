@@ -273,9 +273,9 @@ extension Array where Element == EventPayload {
                 return try $0.event()
             } catch {
                 if error is ClientError.IgnoredEventType {
-                    log.info("Skipping unsupported event type: \($0.eventType)")
+                    StreamChat.log.info("Skipping unsupported event type: \($0.eventType)")
                 } else {
-                    log.error("Failed to decode event from event payload: \($0), error: \(error)")
+                    StreamChat.log.error("Failed to decode event from event payload: \($0), error: \(error)")
                 }
                 return nil
             }
