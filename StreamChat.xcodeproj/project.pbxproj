@@ -1732,6 +1732,8 @@
 		ADA03A252D65041B00DFE048 /* DraftMessage_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA03A242D65041300DFE048 /* DraftMessage_Mock.swift */; };
 		ADA2D64A2C46B66E001D2B44 /* DemoChatChannelListErrorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA2D6492C46B66E001D2B44 /* DemoChatChannelListErrorView.swift */; };
 		ADA3572F269C807A004AD8E9 /* ChatChannelHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3572D269C562A004AD8E9 /* ChatChannelHeaderView.swift */; };
+		ADA3ED202EA123B60091F2DC /* ChannelDeliveryTracker_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3ED1F2EA123B60091F2DC /* ChannelDeliveryTracker_Mock.swift */; };
+		ADA3ED222EA123D60091F2DC /* ChannelDeliveryTracker_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA3ED212EA123D60091F2DC /* ChannelDeliveryTracker_Tests.swift */; };
 		ADA5A0F8276790C100E1C465 /* ChatMessageListDateSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA5A0F7276790C100E1C465 /* ChatMessageListDateSeparatorView.swift */; };
 		ADA5A0F9276790C100E1C465 /* ChatMessageListDateSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA5A0F7276790C100E1C465 /* ChatMessageListDateSeparatorView.swift */; };
 		ADA83B3E2D974DCC003B3928 /* MessageReminderListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADA83B3C2D974DCB003B3928 /* MessageReminderListController.swift */; };
@@ -1806,6 +1808,8 @@
 		ADC40C3626E2980D005B616C /* MessageSearchController+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC40C3526E2980D005B616C /* MessageSearchController+SwiftUI.swift */; };
 		ADC4AAB02788C8850004BB35 /* Appearance+Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC4AAAF2788C8850004BB35 /* Appearance+Formatters.swift */; };
 		ADC4AAB12788C8850004BB35 /* Appearance+Formatters.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADC4AAAF2788C8850004BB35 /* Appearance+Formatters.swift */; };
+		ADCB37E02EA06F6300E13B49 /* ChannelDeliveryTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCB37DF2EA06F6300E13B49 /* ChannelDeliveryTracker.swift */; };
+		ADCB37E12EA06F6300E13B49 /* ChannelDeliveryTracker.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCB37DF2EA06F6300E13B49 /* ChannelDeliveryTracker.swift */; };
 		ADCB576628A425D500B81AE8 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = ADCB576528A425D500B81AE8 /* Sentry */; };
 		ADCB577528A42D7700B81AE8 /* ContentEquatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCB576828A42D7700B81AE8 /* ContentEquatable.swift */; };
 		ADCB577628A42D7700B81AE8 /* ContentEquatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADCB576828A42D7700B81AE8 /* ContentEquatable.swift */; };
@@ -4534,6 +4538,8 @@
 		ADA03A242D65041300DFE048 /* DraftMessage_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessage_Mock.swift; sourceTree = "<group>"; };
 		ADA2D6492C46B66E001D2B44 /* DemoChatChannelListErrorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoChatChannelListErrorView.swift; sourceTree = "<group>"; };
 		ADA3572D269C562A004AD8E9 /* ChatChannelHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelHeaderView.swift; sourceTree = "<group>"; };
+		ADA3ED1F2EA123B60091F2DC /* ChannelDeliveryTracker_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelDeliveryTracker_Mock.swift; sourceTree = "<group>"; };
+		ADA3ED212EA123D60091F2DC /* ChannelDeliveryTracker_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelDeliveryTracker_Tests.swift; sourceTree = "<group>"; };
 		ADA5A0F7276790C100E1C465 /* ChatMessageListDateSeparatorView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageListDateSeparatorView.swift; sourceTree = "<group>"; };
 		ADA83B3C2D974DCB003B3928 /* MessageReminderListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageReminderListController.swift; sourceTree = "<group>"; };
 		ADA83B3D2D974DCB003B3928 /* MessageReminderListController+Combine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageReminderListController+Combine.swift"; sourceTree = "<group>"; };
@@ -4590,6 +4596,7 @@
 		ADC40C3526E2980D005B616C /* MessageSearchController+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessageSearchController+SwiftUI.swift"; sourceTree = "<group>"; };
 		ADC4AAAD2788ACFE0004BB35 /* MessageDeletedHard.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MessageDeletedHard.json; sourceTree = "<group>"; };
 		ADC4AAAF2788C8850004BB35 /* Appearance+Formatters.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Appearance+Formatters.swift"; sourceTree = "<group>"; };
+		ADCB37DF2EA06F6300E13B49 /* ChannelDeliveryTracker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelDeliveryTracker.swift; sourceTree = "<group>"; };
 		ADCB576828A42D7700B81AE8 /* ContentEquatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ContentEquatable.swift; sourceTree = "<group>"; };
 		ADCB576928A42D7700B81AE8 /* ArraySection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ArraySection.swift; sourceTree = "<group>"; };
 		ADCB576A28A42D7700B81AE8 /* Algorithm.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Algorithm.swift; sourceTree = "<group>"; };
@@ -6067,6 +6074,7 @@
 				797A756324814E7A003CF16D /* WebSocketConnectPayload.swift */,
 				8A618E4424D19D510003D83C /* WebSocketPingController.swift */,
 				799BE2E9248A8C9D00DAC8A0 /* RetryStrategy.swift */,
+				ADCB37DF2EA06F6300E13B49 /* ChannelDeliveryTracker.swift */,
 				79280F76248917EB00CDEB89 /* Engine */,
 				796610B7248E64EC00761629 /* EventMiddlewares */,
 				79280F402484F4DD00CDEB89 /* Events */,
@@ -7195,6 +7203,7 @@
 				79A0E9AE2498BFD800E9BD50 /* WebSocketClient_Tests.swift */,
 				430156F126B4523A0006E7EA /* WebSocketConnectPayload_Tests.swift */,
 				8A08C6A524D437DF00DEF995 /* WebSocketPingController_Tests.swift */,
+				ADA3ED212EA123D60091F2DC /* ChannelDeliveryTracker_Tests.swift */,
 				A364D08D27D0BD8E0029857A /* EventMiddlewares */,
 				A364D08E27D0BDB20029857A /* Events */,
 			);
@@ -7479,6 +7488,7 @@
 		A364D09E27D0C74E0029857A /* WebSocketClient */ = {
 			isa = PBXGroup;
 			children = (
+				ADA3ED1F2EA123B60091F2DC /* ChannelDeliveryTracker_Mock.swift */,
 				84EB4E732769F76500E47E73 /* BackgroundTaskScheduler_Mock.swift */,
 				8802F9BC25AF1DE200475159 /* WebSocketClient_Mock.swift */,
 				79280F7B24891B0F00CDEB89 /* WebSocketEngine_Mock.swift */,
@@ -11422,6 +11432,7 @@
 			files = (
 				A3C3BC6127E8AA0A00224761 /* Token+Unique.swift in Sources */,
 				A3C7BAEA27E4ED3B00BBF4FA /* ChatChannelMember.swift in Sources */,
+				ADA3ED202EA123B60091F2DC /* ChannelDeliveryTracker_Mock.swift in Sources */,
 				A3C3BC1A27E87EFE00224761 /* DatabaseContainer_Spy.swift in Sources */,
 				A311B43627E8BC8400CFCF6D /* ChannelMemberController_Delegate.swift in Sources */,
 				A3C3BC7827E8AA9400224761 /* ChannelListQuery+Equatable.swift in Sources */,
@@ -11803,6 +11814,7 @@
 				C143788D27BBEBB700E23965 /* OfflineRequestsRepository.swift in Sources */,
 				ADB8B90B2D8C756600549C95 /* ReminderEvents.swift in Sources */,
 				79877A0F2498E4BC00015F8B /* ChannelId.swift in Sources */,
+				ADCB37E12EA06F6300E13B49 /* ChannelDeliveryTracker.swift in Sources */,
 				AD0CC0312BDC1964005E2C66 /* ReactionListQueryDTO.swift in Sources */,
 				882C5760252C7CC400E60C44 /* ChannelMemberListQueryDTO.swift in Sources */,
 				88DA57E02631E80D00FA8C53 /* MutedChannelPayload.swift in Sources */,
@@ -12202,6 +12214,7 @@
 				C1EFF3F828633B5D0057B91B /* IdentifiableModel_Tests.swift in Sources */,
 				40789D4829F6C1DC0018C2BB /* StreamAppStateObserver_Tests.swift in Sources */,
 				C143789727BE6D4800E23965 /* OfflineRequestsRepository_Tests.swift in Sources */,
+				ADA3ED222EA123D60091F2DC /* ChannelDeliveryTracker_Tests.swift in Sources */,
 				ADA83B4B2D977D59003B3928 /* ReminderEndpoints_Tests.swift in Sources */,
 				84355D8B2AB3440E00FD5838 /* FileEndpoints_Tests.swift in Sources */,
 				84D5BC5B277B18AF00A65C75 /* PinnedMessagesQuery_Tests.swift in Sources */,
@@ -12817,6 +12830,7 @@
 				C121E878274544AF00023E4C /* ChannelDTO.swift in Sources */,
 				40C20EB329F69E1D00702EEE /* ChatMessageVoiceRecordingAttachment.swift in Sources */,
 				C189D7792AEBC6CD00D4B966 /* BackgroundDatabaseObserver.swift in Sources */,
+				ADCB37E02EA06F6300E13B49 /* ChannelDeliveryTracker.swift in Sources */,
 				40789D1A29F6AC500018C2BB /* AudioPlayerObserving.swift in Sources */,
 				AD25F74F2E8606A300F16B14 /* PushPreferenceDTO.swift in Sources */,
 				4042969329FBF84B0089126D /* AudioSamplesProcessor_Tests.swift in Sources */,

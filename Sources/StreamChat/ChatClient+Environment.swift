@@ -187,5 +187,11 @@ extension ChatClient {
         ) -> CurrentUserUpdater = {
             CurrentUserUpdater(database: $0, apiClient: $1)
         }
+
+        var channelDeliveryTrackerBuilder: (
+            _ currentUserUpdater: CurrentUserUpdater
+        ) -> ChannelDeliveryTracker = {
+            ChannelDeliveryTracker(currentUserUpdater: $0)
+        }
     }
 }

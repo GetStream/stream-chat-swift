@@ -9,30 +9,25 @@ import XCTest
 
 final class ChannelDeliveredMiddleware_Tests: XCTestCase {
     var middleware: ChannelDeliveredMiddleware!
-    var currentUserUpdater: CurrentUserUpdater_Mock!
+    var deliveryTracker: ChannelDeliveryTracker_Mock!
     var database: DatabaseContainer_Spy!
 
     override func setUp() {
         super.setUp()
         
         database = DatabaseContainer_Spy(kind: .inMemory)
-        currentUserUpdater = CurrentUserUpdater_Mock(database: database, apiClient: APIClient_Spy())
-        
-        middleware = ChannelDeliveredMiddleware(
-            currentUserUpdater: currentUserUpdater,
-            throttler: Throttler(interval: 0.0),
-            queue: .main
-        )
+        deliveryTracker = ChannelDeliveryTracker_Mock()
+        middleware = ChannelDeliveredMiddleware(deliveryTracker: deliveryTracker)
     }
 
     override func tearDown() {
-        currentUserUpdater.cleanUp()
+        deliveryTracker.cleanUp()
         AssertAsync.canBeReleased(&middleware)
-        AssertAsync.canBeReleased(&currentUserUpdater)
+        AssertAsync.canBeReleased(&deliveryTracker)
         AssertAsync.canBeReleased(&database)
         
         middleware = nil
-        currentUserUpdater = nil
+        deliveryTracker = nil
         database = nil
         
         super.tearDown()
@@ -40,31 +35,22 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
 
     // MARK: - MessageNewEvent Tests
 
-    func test_handleMessageNewEvent_triggersMarkChannelsDelivered() throws {
+    func test_handleMessageNewEvent_callsSubmitForDelivery() throws {
         // GIVEN
         let channelId = ChannelId.unique
         let messageId = MessageId.unique
         let messageNewEvent = try createMessageNewEvent(channelId: channelId, messageId: messageId)
 
-        let exp = expectation(description: "should complete")
-        currentUserUpdater.markChannelsDelivered_completion = { error in
-            XCTAssertNil(error)
-            exp.fulfill()
-        }
-
         // WHEN
         _ = middleware.handle(event: messageNewEvent, session: database.viewContext)
-        waitForExpectations(timeout: defaultTimeout)
 
         // THEN
-        let deliveredMessages = currentUserUpdater.markChannelsDelivered_deliveredMessages
-        XCTAssertEqual(deliveredMessages?.count, 1)
-        XCTAssertEqual(deliveredMessages?.first?.channelId, channelId)
-        XCTAssertEqual(deliveredMessages?.first?.messageId, messageId)
-        XCTAssertEqual(currentUserUpdater.markChannelsDelivered_callCount, 1)
+        XCTAssertEqual(deliveryTracker.submitForDelivery_callCount, 1)
+        XCTAssertEqual(deliveryTracker.submitForDelivery_channelId, channelId)
+        XCTAssertEqual(deliveryTracker.submitForDelivery_messageId, messageId)
     }
     
-    func test_handleMessageNewEvent_whenMessageFromCurrentUser_doesNotTriggerMarkChannelsDelivered() throws {
+    func test_handleMessageNewEvent_whenMessageFromCurrentUser_doesNotCallSubmitForDelivery() throws {
         // GIVEN
         let channelId = ChannelId.unique
         let messageId = MessageId.unique
@@ -80,117 +66,26 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId))
         }
 
-        let exp = expectation(description: "should complete")
-        exp.isInverted = true
-        currentUserUpdater.markChannelsDelivered_completion = { error in
-            XCTAssertNil(error)
-            exp.fulfill()
-        }
-
         // WHEN
         _ = middleware.handle(event: messageNewEvent, session: database.viewContext)
 
         // THEN
-        waitForExpectations(timeout: 1)
-    }
-
-    func test_handleMessageNewEvent_whenMultipleChannels_triggersOnlyOneDeliveredCall() throws {
-        // GIVEN
-        let channelId1 = ChannelId.unique
-        let channelId2 = ChannelId.unique
-        let messageId1 = MessageId.unique
-        let messageId2 = MessageId.unique
-        
-        let event1 = try createMessageNewEvent(channelId: channelId1, messageId: messageId1)
-        let event2 = try createMessageNewEvent(channelId: channelId2, messageId: messageId2)
-
-        let exp = expectation(description: "should complete")
-        currentUserUpdater.markChannelsDelivered_completion = { error in
-            XCTAssertNil(error)
-            exp.fulfill()
-        }
-
-        // WHEN
-        _ = middleware.handle(event: event1, session: database.viewContext)
-        _ = middleware.handle(event: event2, session: database.viewContext)
-        waitForExpectations(timeout: defaultTimeout)
-
-        // THEN
-        let deliveredMessages = currentUserUpdater.markChannelsDelivered_deliveredMessages
-        XCTAssertEqual(deliveredMessages?.count, 2)
-        
-        let channelIds = Set(deliveredMessages?.map(\.channelId) ?? [])
-        XCTAssertTrue(channelIds.contains(channelId1))
-        XCTAssertTrue(channelIds.contains(channelId2))
-        XCTAssertEqual(currentUserUpdater.markChannelsDelivered_callCount, 1)
-    }
-    
-    func test_handleMessageNewEvent_directlyUpdatesPendingChannels() throws {
-        // GIVEN
-        let channelId1 = ChannelId.unique
-        let channelId2 = ChannelId.unique
-        let messageId1 = MessageId.unique
-        let messageId2 = MessageId.unique
-        
-        let event1 = try createMessageNewEvent(channelId: channelId1, messageId: messageId1)
-        let event2 = try createMessageNewEvent(channelId: channelId2, messageId: messageId2)
-
-        // WHEN
-        _ = middleware.handle(event: event1, session: database.viewContext)
-        _ = middleware.handle(event: event2, session: database.viewContext)
-
-        // THEN
-        // Wait for async operations to complete
-        AssertAsync.willBeTrue(middleware.pendingDeliveredChannels[channelId1] == messageId1, timeout: 1.0)
-        AssertAsync.willBeTrue(middleware.pendingDeliveredChannels[channelId2] == messageId2, timeout: 1.0)
-        AssertAsync.willBeTrue(middleware.pendingDeliveredChannels.count == 2, timeout: 1.0)
-    }
-
-    func test_handleMessageNewEvent_updatesExistingChannelWithLatestMessage() throws {
-        // GIVEN
-        let channelId = ChannelId.unique
-        let firstMessageId = MessageId.unique
-        let secondMessageId = MessageId.unique
-        
-        let firstEvent = try createMessageNewEvent(channelId: channelId, messageId: firstMessageId)
-        let secondEvent = try createMessageNewEvent(channelId: channelId, messageId: secondMessageId)
-
-        let exp = expectation(description: "should complete")
-        currentUserUpdater.markChannelsDelivered_completion = { error in
-            XCTAssertNil(error)
-            exp.fulfill()
-        }
-
-        // WHEN
-        _ = middleware.handle(event: firstEvent, session: database.viewContext)
-        _ = middleware.handle(event: secondEvent, session: database.viewContext)
-        waitForExpectations(timeout: defaultTimeout)
-
-        // THEN
-        let deliveredMessages = currentUserUpdater.markChannelsDelivered_deliveredMessages
-        XCTAssertEqual(deliveredMessages?.count, 1)
-        XCTAssertEqual(deliveredMessages?.first?.channelId, channelId)
-        XCTAssertEqual(deliveredMessages?.first?.messageId, secondMessageId)
-        XCTAssertEqual(currentUserUpdater.markChannelsDelivered_callCount, 1)
+        XCTAssertEqual(deliveryTracker.submitForDelivery_callCount, 0)
     }
 
     // MARK: - NotificationMarkReadEvent Tests
 
-    func test_handleNotificationMarkReadEvent_removesChannelFromPendingList() throws {
+    func test_handleNotificationMarkReadEvent_callsCancel() throws {
         // GIVEN
         let channelId = ChannelId.unique
-        let messageId = MessageId.unique
-        
-        // Add channel to pending list first
-        middleware.pendingDeliveredChannels = [
-            channelId: messageId
-        ]
-        
         let markReadEvent = try createNotificationMarkReadEvent(channelId: channelId)
+
+        // WHEN
         _ = middleware.handle(event: markReadEvent, session: database.viewContext)
 
         // THEN
-        AssertAsync.willBeTrue(middleware.pendingDeliveredChannels.isEmpty)
+        XCTAssertEqual(deliveryTracker.cancel_callCount, 1)
+        XCTAssertEqual(deliveryTracker.cancel_channelId, channelId)
     }
 
     // MARK: - MessageDeliveredEvent Tests

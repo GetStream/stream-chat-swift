@@ -5,37 +5,15 @@
 import Foundation
 
 /// A middleware that automatically marks channels as delivered when new messages are received.
-/// It throttles the requests to avoid spamming the server and removes channels from tracking
-/// when they are marked as read.
 class ChannelDeliveredMiddleware: EventMiddleware {
-    /// Dictionary to track channels and their latest message IDs for delivery marking.
-    var pendingDeliveredChannels: [ChannelId: MessageId] = [:]
-    
-    /// Throttler to limit the frequency of markChannelsDelivered requests.
-    private let throttler: Throttler
-    
-    /// The current user updater used to mark channels as delivered.
-    private let currentUserUpdater: CurrentUserUpdater
-    
-    /// Queue for thread-safe access to the pending channels dictionary.
-    private let queue: DispatchQueue
+    /// The delivery tracker that manages pending deliveries and throttling.
+    private let deliveryTracker: ChannelDeliveryTracker
 
     /// Creates a new `ChannelDeliveredMiddleware` instance.
     ///
-    /// - Parameters:
-    ///   - currentUserUpdater: The current user updater used to mark channels as delivered.
-    ///   - throttler: The throttler to limit request frequency. Defaults to 1 second interval.
-    init(
-        currentUserUpdater: CurrentUserUpdater,
-        throttler: Throttler = Throttler(interval: 1.0),
-        queue: DispatchQueue? = nil,
-    ) {
-        self.currentUserUpdater = currentUserUpdater
-        self.throttler = throttler
-        self.queue = queue ?? DispatchQueue(
-            label: "io.getstream.channel-delivered-middleware",
-            attributes: .concurrent
-        )
+    /// - Parameter deliveryTracker: The delivery tracker instance.
+    init(deliveryTracker: ChannelDeliveryTracker) {
+        self.deliveryTracker = deliveryTracker
     }
     
     func handle(event: Event, session: DatabaseSession) -> Event? {
@@ -59,25 +37,14 @@ class ChannelDeliveredMiddleware: EventMiddleware {
     ///
     /// - Parameter event: The message new event.
     private func handleMessageNewEvent(_ event: MessageNewEventDTO) {
-        queue.async(flags: .barrier) { [weak self] in
-            guard let self = self else { return }
-            
-            // Update the latest message ID for this channel
-            self.pendingDeliveredChannels[event.cid] = event.message.id
-            
-            // Trigger  mark channels delivered request
-            self.markMessagesAsDelivered()
-        }
+        deliveryTracker.submitForDelivery(channelId: event.cid, messageId: event.message.id)
     }
     
     /// Handles a notification mark read event by removing the channel from pending delivered channels.
     ///
     /// - Parameter event: The notification mark read event.
     private func handleNotificationMarkReadEvent(_ event: NotificationMarkReadEventDTO) {
-        queue.async(flags: .barrier) { [weak self] in
-            guard let self = self else { return }
-            self.pendingDeliveredChannels.removeValue(forKey: event.cid)
-        }
+        deliveryTracker.cancel(channelId: event.cid)
     }
     
     /// Handles a message delivered event by updating the local channel read data.
@@ -97,38 +64,5 @@ class ChannelDeliveredMiddleware: EventMiddleware {
         // Update the delivered message information
         channelRead.lastDeliveredAt = event.lastDeliveredAt.bridgeDate
         channelRead.lastDeliveredMessageId = event.lastDeliveredMessageId
-    }
-    
-    /// Marks all pending messages as delivered and clears the successfully processed messages.
-    private func markMessagesAsDelivered() {
-        let deliveredMessages: [DeliveredMessageInfo] = queue.sync {
-            return pendingDeliveredChannels.map { channelId, messageId in
-                DeliveredMessageInfo(channelId: channelId, messageId: messageId)
-            }
-        }
-        
-        guard !deliveredMessages.isEmpty else { return }
-
-        throttler.execute { [weak self] in
-            self?.currentUserUpdater.markMessagesAsDelivered(deliveredMessages) { [weak self] error in
-                if let error = error {
-                    log.error("Failed to mark channels as delivered: \(error)")
-                    return
-                }
-
-                // Clear the successfully processed channels in case
-                // there are no new message ids.
-                self?.queue.async(flags: .barrier) { [weak self] in
-                    for deliveredMessage in deliveredMessages {
-                        let messageId = deliveredMessage.messageId
-                        let channelId = deliveredMessage.channelId
-                        let currentMessageId = self?.pendingDeliveredChannels[channelId]
-                        if currentMessageId == messageId {
-                            self?.pendingDeliveredChannels[channelId] = nil
-                        }
-                    }
-                }
-            }
-        }
     }
 }
