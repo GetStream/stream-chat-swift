@@ -1,5 +1,5 @@
 {
-  "connection_id": "684a957c-0a15-3975-0200-000000000f8a",
+  "connection_id": "68e67b7d-0a15-3975-0200-0000000082cb",
   "me": {
     "id": "luke_skywalker",
     "name": "Luke Skywalker",
@@ -8,10 +8,11 @@
     "role": "admin",
     "teams": [],
     "created_at": "2024-04-04T09:26:11.805899Z",
-    "updated_at": "2025-06-06T08:22:36.844279Z",
+    "updated_at": "2025-09-15T05:51:41.748915Z",
     "banned": false,
     "online": true,
-    "last_active": "2025-06-15T00:25:32.362084978Z",
+    "last_active": "2025-10-15T11:22:19.961028904Z",
+    "avg_response_time": 203648,
     "privacy_settings": {
       "typing_indicators": {
         "enabled": true
@@ -24,16 +25,19 @@
     "invisible": false,
     "mutes": [],
     "channel_mutes": [],
-    "unread_count": 0,
-    "total_unread_count": 0,
-    "unread_channels": 0,
+    "unread_count": 9,
+    "total_unread_count": 9,
+    "unread_channels": 1,
     "unread_threads": 0,
-    "type": "team",
+    "canBeAddedToGroups": true,
     "pando": "{\"speciality\":\"ios engineer\"}",
+    "custom_extra_data_key": true,
+    "canReceiveMessages": false,
     "birthland": "Tatooine",
-    "team": "test"
+    "team": "test",
+    "type": "team"
   },
   "cid": "*",
   "type": "health.check",
-  "created_at": "2025-06-15T00:25:32.398620669Z"
+  "created_at": "2025-10-15T11:22:20.040248985Z"
 }

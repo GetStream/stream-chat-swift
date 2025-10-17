@@ -103,7 +103,6 @@ final class MessageList_Tests: StreamTestCase {
         linkToScenario(withId: 64)
 
         let message = "🚢"
-        let author = "Han Solo"
 
         GIVEN("user opens the channel") {
             userRobot.login().openChannel()
@@ -112,7 +111,7 @@ final class MessageList_Tests: StreamTestCase {
             participantRobot.sendMessage(message)
         }
         THEN("the message is delivered") {
-            userRobot.assertMessageAuthor(author)
+            userRobot.assertMessage(message)
         }
     }
 
