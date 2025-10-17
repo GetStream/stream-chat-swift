@@ -392,6 +392,16 @@ extension ChatChannel {
     }
 
     /// Returns the latest message of the channel if it can be marked as delivered for the given user.
+    ///
+    /// A message is considered deliverable when:
+    /// - The user has a read state in the channel
+    /// - A latest message exists
+    /// - The message was not authored by the specified user
+    /// - The message was created after the user's last read timestamp
+    /// - The message was created after the user's last delivered timestamp
+    ///
+    /// - Parameter userId: The ID of the user.
+    /// - Returns: Delivery information for the latest undelivered message, or `nil` if no message qualifies.
     public func latestMessageNotMarkedAsDelivered(for userId: UserId) -> DeliveredMessageInfo? {
         guard let userRead = readState(for: userId) else { return nil }
         guard let latestMessage = latestMessages.first else { return nil }
