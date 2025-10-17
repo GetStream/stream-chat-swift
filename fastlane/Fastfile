@@ -16,7 +16,6 @@ derived_data_path = 'derived_data'
 source_packages_path = 'spm_cache'
 metrics_git = 'git@github.com:GetStream/stream-internal-metrics.git'
 xcmetrics_path = "metrics/#{github_repo.split('/').last}-xcmetrics.json"
-swift_optimization_level = 'SWIFT_OPTIMIZATION_LEVEL=-Osize'
 testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/SystemEnvironment+Version.swift')
 is_localhost = !is_ci
@@ -293,8 +292,7 @@ lane :uikit_testflight_build do |options|
     configuration: configuration,
     extensions: ['DemoShare'],
     use_changelog: true,
-    is_manual_upload: is_manual_upload,
-    xcargs: swift_optimization_level
+    is_manual_upload: is_manual_upload
   )
 end
 
@@ -900,12 +898,12 @@ private_lane :frameworks_sizes do
 
   gym(
     scheme: 'DemoApp',
+    configuration: 'Release',
     archive_path: archive_dir,
     export_method: 'ad-hoc',
     export_options: 'fastlane/sdk_size_export_options.plist',
     derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path,
-    xcargs: swift_optimization_level
+    cloned_source_packages_path: source_packages_path
   )
 
   # Parse the thinned size of Assets.car from Packaging.log
@@ -938,8 +936,7 @@ lane :size_analyze do
     skip_package_pkg: true,
     skip_codesigning: true,
     derived_data_path: derived_data_path,
-    cloned_source_packages_path: source_packages_path,
-    xcargs: swift_optimization_level
+    cloned_source_packages_path: source_packages_path
   )
 
   show_detailed_sdk_size(sdk_names: sdk_names, threshold: 42)
