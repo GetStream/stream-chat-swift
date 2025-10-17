@@ -5,12 +5,21 @@
 import SwiftUI
 import StreamChat
 import StreamChatUI
+import Combine
 
 struct DemoMessageReadsInfoView: View {
     let message: ChatMessage
-    let channel: ChatChannel
+    let channelController: ChatChannelController
     
     @Environment(\.dismiss) private var dismiss
+    @State private var channel: ChatChannel?
+    @State private var cancellables = Set<AnyCancellable>()
+    
+    init(message: ChatMessage, channelController: ChatChannelController) {
+        self.message = message
+        self.channelController = channelController
+        self._channel = State(initialValue: channelController.channel)
+    }
     
     var body: some View {
         NavigationView {
@@ -66,33 +75,50 @@ struct DemoMessageReadsInfoView: View {
                     }
                 }
             }
+            .onAppear {
+                setupChannelObserver()
+            }
         }
     }
     
     // MARK: - Computed Properties
     
     private var deliveredUsers: [ChatUser] {
-        channel.deliveredReads(for: message)
+        channel?.deliveredReads(for: message)
             .sorted { $0.lastDeliveredAt ?? Date.distantPast < $1.lastDeliveredAt ?? Date.distantPast }
-            .map(\.user)
+            .map(\.user) ?? []
     }
     
     private var readUsers: [ChatUser] {
-        channel.reads(for: message)
+        channel?.reads(for: message)
             .sorted { $0.lastReadAt < $1.lastReadAt }
-            .map(\.user)
+            .map(\.user) ?? []
     }
     
     // MARK: - Helper Methods
     
+    private func setupChannelObserver() {
+        channelController.channelChangePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { channelChange in
+                switch channelChange {
+                case .create(let newChannel), .update(let newChannel):
+                    self.channel = newChannel
+                case .remove:
+                    break
+                }
+            }
+            .store(in: &cancellables)
+    }
+    
     private func getDeliveredTimestamp(for user: ChatUser) -> Date? {
-        channel.reads
+        channel?.reads
             .first { $0.user.id == user.id }
             .flatMap { $0.lastDeliveredAt }
     }
     
     private func getReadTimestamp(for user: ChatUser) -> Date? {
-        channel.reads
+        channel?.reads
             .first { $0.user.id == user.id }
             .flatMap { $0.lastReadAt }
     }

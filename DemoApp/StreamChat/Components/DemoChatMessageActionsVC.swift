@@ -223,8 +223,9 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
             guard let self = self,
                   let message = self.message,
                   let channel = self.channel else { return }
-            
-            let readsView = DemoMessageReadsInfoView(message: message, channel: channel)
+
+            let channelController = messageController.client.channelController(for: channel.cid)
+            let readsView = DemoMessageReadsInfoView(message: message, channelController: channelController)
             let hostingController = UIHostingController(rootView: readsView)
             hostingController.modalPresentationStyle = .pageSheet
             
