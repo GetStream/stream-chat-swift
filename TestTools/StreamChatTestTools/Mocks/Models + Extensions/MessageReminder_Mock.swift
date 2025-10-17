@@ -23,4 +23,4 @@ public extension MessageReminder {
             updatedAt: updatedAt
         )
     }
-} 
+}

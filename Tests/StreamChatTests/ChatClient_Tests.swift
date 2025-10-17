@@ -340,7 +340,7 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(testEnv.apiClient?.request_endpoint?.method, .delete)
     }
 
-    func test_logout_whenNoCurrentDevice_doesNotRemoveDevice() throws {
+    func test_logout_whenNoCurrentDevice_doesNotRemoveDevice_shouldClearToken() throws {
         // GIVEN
         let client = ChatClient(
             config: inMemoryStorageConfig,
@@ -363,6 +363,7 @@ final class ChatClient_Tests: XCTestCase {
 
         // THEN
         XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: testEnv.connectionRepository!)
+        XCTAssertCall(AuthenticationRepository_Mock.Signature.logOut, on: testEnv.authenticationRepository!)
         XCTAssertNil(testEnv.apiClient?.request_endpoint?.path)
         XCTAssertNil(testEnv.apiClient?.request_endpoint?.method)
     }

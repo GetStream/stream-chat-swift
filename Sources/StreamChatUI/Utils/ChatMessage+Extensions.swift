@@ -65,7 +65,7 @@ public extension ChatMessage {
 
     /// A boolean value that says if the message is deleted.
     var isDeleted: Bool {
-        deletedAt != nil
+        deletedAt != nil || deletedForMe == true
     }
 
     /// A boolean value that determines whether the text message should be rendered as large emojis

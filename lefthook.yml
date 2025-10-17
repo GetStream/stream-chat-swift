@@ -4,11 +4,6 @@ pre-commit:
     - run: swiftlint lint --config .swiftlint.yml --fix --progress --reporter json {staged_files}
       glob: "*.{swift}"
       stage_fixed: true
-      exclude:
-        - "**/Generated/**"
-        - Sources/StreamChatUI/StreamNuke/**
-        - Sources/StreamChatUI/StreamSwiftyGif/**
-        - Sources/StreamChatUI/StreamDifferenceKit/**
       skip:
         - merge
         - rebase
@@ -16,11 +11,6 @@ pre-commit:
     - run: swiftformat --config .swiftformat {staged_files}
       glob: "*.{swift}"
       stage_fixed: true
-      exclude:
-        - "**/Generated/**"
-        - Sources/StreamChatUI/StreamNuke/**
-        - Sources/StreamChatUI/StreamSwiftyGif/**
-        - Sources/StreamChatUI/StreamDifferenceKit/**
       skip:
         - merge
         - rebase
@@ -29,10 +19,5 @@ pre-push:
   jobs:
     - run: swiftlint lint --config .swiftlint.yml --strict --progress --reporter json {push_files}
       glob: "*.{swift}"
-      exclude:
-        - "**/Generated/**"
-        - Sources/StreamChatUI/StreamNuke/**
-        - Sources/StreamChatUI/StreamSwiftyGif/**
-        - Sources/StreamChatUI/StreamDifferenceKit/**
       skip:
         - merge-commit

@@ -134,6 +134,9 @@ public struct MessageDeletedEvent: ChannelSpecificEvent {
 
     /// A Boolean value indicating whether it is an hard delete or not.
     public let isHardDelete: Bool
+
+    /// A Boolean value indicating whether the message was deleted only for the current user.
+    public let deletedForMe: Bool
 }
 
 class MessageDeletedEventDTO: EventDTO {
@@ -143,6 +146,7 @@ class MessageDeletedEventDTO: EventDTO {
     let createdAt: Date
     let payload: EventPayload
     let hardDelete: Bool
+    let deletedForMe: Bool?
 
     init(from response: EventPayload) throws {
         user = try? response.value(at: \.user)
@@ -151,6 +155,7 @@ class MessageDeletedEventDTO: EventDTO {
         createdAt = try response.value(at: \.createdAt)
         payload = response
         hardDelete = response.hardDelete
+        deletedForMe = response.deletedForMe
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
@@ -174,7 +179,8 @@ class MessageDeletedEventDTO: EventDTO {
             channel: channelDTO.asModel(),
             message: message,
             createdAt: createdAt,
-            isHardDelete: hardDelete
+            isHardDelete: hardDelete,
+            deletedForMe: deletedForMe ?? false
         )
     }
 }

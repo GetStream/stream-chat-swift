@@ -5,6 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
+- Add support for deleting messages only for the current user [#3836](https://github.com/GetStream/stream-chat-swift/pull/3836)
+  - Add `ChatMessageController.deleteMessageForMe()`
+  - Add `ChatMessage.deletedForMe`
+### 🐞 Fixed
+- Fix logout not clearing token when current user had no device registered [#3838](https://github.com/GetStream/stream-chat-swift/pull/3838)
+
+# [4.90.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.90.0)
+_October 07, 2025_
+
+## StreamChat
+### ✅ Added
 - Add support for push preferences [#3820](https://github.com/GetStream/stream-chat-swift/pull/3820)
   - Add `CurrentChatUserController.setPushPreference(level:)`
   - Add `CurrentChatUserController.snoozePushNotifications(until:)`

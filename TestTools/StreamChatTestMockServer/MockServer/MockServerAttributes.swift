@@ -2,8 +2,8 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChat
 import Foundation
+@testable import StreamChat
 
 public enum Message {
     public static func message(withInvalidCommand command: String) -> String {
@@ -26,6 +26,7 @@ public enum MockFile: String {
     case httpAttachment = "http_attachment"
     case httpTruncate = "http_truncate"
 
+    case wsMessage = "ws_message"
     case wsChatEvent = "ws_events"
     case wsChannelEvent = "ws_events_channel"
     case wsMemberEvent = "ws_events_member"
@@ -123,7 +124,6 @@ public enum APNSKey {
 }
 
 public enum UserDetails {
-
     public static var users: [[String: String]] {
         [
             hanSolo,
@@ -153,6 +153,8 @@ public enum UserDetails {
         userKey.imageURL.rawValue: lukeSkywalkerImageURL
     ]
 
+    public static let countDookuId = "count_dooku"
+    public static let countDookuName = "Count Dooku"
     public static let countDooku = [
         userKey.id.rawValue: "count_dooku",
         userKey.name.rawValue: "Count Dooku",
@@ -160,12 +162,15 @@ public enum UserDetails {
     ]
 
     public static let leiaOrganaId = "leia_organa"
+    public static let leiaOrganaName = "Leia Organa"
     public static let leiaOrgana = [
         userKey.id.rawValue: leiaOrganaId,
         userKey.name.rawValue: "Leia Organa",
         userKey.imageURL.rawValue: "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
     ]
 
+    public static let landoCalrissianId = "lando_calrissian"
+    public static let landoCalrissianName = "Lando Calrissian"
     public static let landoCalrissian = [
         userKey.id.rawValue: "lando_calrissian",
         userKey.name.rawValue: "Lando Calrissian",

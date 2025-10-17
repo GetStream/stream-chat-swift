@@ -2,13 +2,12 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 import UserNotifications
-import StreamChat
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
     private let pushNotifications = PushNotifications()
 
     var window: UIWindow?
@@ -78,13 +77,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func application(
-      _ application: UIApplication,
-      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+        _ application: UIApplication,
+        didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         let tokenParts = deviceToken.map { data in String(format: "%02.2hhx", data) }
         let token = tokenParts.joined()
         print("Device Token: \(token)")
     }
+
     func application(
         _ application: UIApplication,
         didFailToRegisterForRemoteNotificationsWithError error: Error

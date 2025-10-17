@@ -2,14 +2,13 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
 import StreamChat
 import StreamChatUI
+import UIKit
 
 var settings = Settings()
 
 final class ViewController: UIViewController {
-
     var streamChat = StreamChatWrapper.shared
 
     var channelController: ChatChannelController?
@@ -123,13 +122,11 @@ final class ViewController: UIViewController {
             DebugMenu.shared.showMenu(in: self, channelController: controller)
         }
     }
-
 }
 
 // MARK: UI Components
 
 extension ViewController {
-
     func createIsConnectedSwitchIfNeeded() -> UISwitch? {
         guard settings.showsConnectivity.isOn else { return nil }
         let sw = UISwitch()
@@ -190,7 +187,6 @@ extension ViewController {
         item.accessibilityIdentifier = "debug"
         return item
     }
-
 }
 
 extension StreamChatWrapper {
@@ -240,7 +236,6 @@ extension StreamChatWrapper {
 }
 
 extension URLSession {
-
     enum HTTPError: Error {
         case transportError(Error)
         case serverSideError(Int)

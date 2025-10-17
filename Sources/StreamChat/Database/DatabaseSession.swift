@@ -842,6 +842,11 @@ extension DatabaseSession {
             return
         }
 
+        // Update the message if deleted only for the current user.
+        if payload.eventType == .messageDeleted && payload.deletedForMe == true {
+            savedMessage.deletedForMe = true
+        }
+
         // When a message is updated, make sure to update
         // the messages quoting the edited message by triggering a DB Update.
         if payload.eventType == .messageUpdated {

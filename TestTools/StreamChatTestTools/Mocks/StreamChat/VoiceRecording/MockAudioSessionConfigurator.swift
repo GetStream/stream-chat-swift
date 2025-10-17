@@ -6,15 +6,17 @@ import Foundation
 @testable import StreamChat
 
 public final class MockAudioSessionConfigurator: Stub, Spy, AudioSessionConfiguring {
-
     // MARK: - Stub & Spy requirements
-    public var stubbedProperties: [String : Any] = [:]
+
+    public var stubbedProperties: [String: Any] = [:]
     public let spyState = SpyState()
 
     // MARK: - Recorded function parameters
+
     public private(set) var requestRecordPermissionCompletionHandler: ((Bool) -> Void)?
 
     // MARK: - Flow Control properties
+
     public var activateRecordingSessionThrowsError: Error?
     public var deactivateRecordingSessionThrowsError: Error?
     public var activatePlaybackSessionThrowsError: Error?

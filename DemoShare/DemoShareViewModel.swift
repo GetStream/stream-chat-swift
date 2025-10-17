@@ -4,13 +4,12 @@
 
 import Combine
 import CoreServices
-import UIKit
-import StreamChat
 import Social
+import StreamChat
+import UIKit
 
 @MainActor
 class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
-    
     private let chatClient: ChatClient
     private let userCredentials: UserCredentials
     private var channelListController: ChatChannelListController?

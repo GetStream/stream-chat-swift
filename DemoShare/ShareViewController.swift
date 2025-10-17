@@ -2,14 +2,13 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
+import CoreServices
 import Social
 import StreamChat
 import SwiftUI
-import CoreServices
+import UIKit
 
 class ShareViewController: UIViewController {
-        
     override func viewDidLoad() {
         super.viewDidLoad()
         

@@ -1,25 +1,21 @@
 //
-//  Process
-//  Swifter
-//
-//  Copyright (c) 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
 public class Process {
-
     public static var pid: Int {
         return Int(getpid())
     }
 
     public static var tid: UInt64 {
         #if os(Linux)
-            return UInt64(pthread_self())
+        return UInt64(pthread_self())
         #else
-            var tid: __uint64_t = 0
-            pthread_threadid_np(nil, &tid)
-            return UInt64(tid)
+        var tid: __uint64_t = 0
+        pthread_threadid_np(nil, &tid)
+        return UInt64(tid)
         #endif
     }
 

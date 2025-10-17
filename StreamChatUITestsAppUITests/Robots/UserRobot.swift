@@ -3,12 +3,11 @@
 //
 
 import Foundation
-import XCTest
 import StreamChat
+import XCTest
 
 /// Simulates user behavior
 final class UserRobot: Robot {
-
     let composer = MessageListPage.Composer.self
     let contextMenu = MessageListPage.ContextMenu.self
     let debugAlert = MessageListPage.Alert.Debug.self
@@ -62,7 +61,7 @@ final class UserRobot: Robot {
 
     @discardableResult
     public func waitForJwtToExpire() -> Self {
-        let sleepTime = UInt32(StreamMockServer.jwtTimeout * 1000000)
+        let sleepTime = UInt32(StreamMockServer.jwtTimeout * 1_000_000)
         usleep(sleepTime)
         return self
     }
@@ -71,7 +70,6 @@ final class UserRobot: Robot {
 // MARK: Message List
 
 extension UserRobot {
-
     @discardableResult
     func openContextMenu(messageCellIndex: Int = 0) -> Self {
         messageCell(withIndex: messageCellIndex).waitForHitPoint().safePress(forDuration: 1)
@@ -89,11 +87,13 @@ extension UserRobot {
     }
 
     @discardableResult
-    func sendMessage(_ text: String,
-                     at messageCellIndex: Int? = nil,
-                     waitForAppearance: Bool = true,
-                     file: StaticString = #filePath,
-                     line: UInt = #line) -> Self {
+    func sendMessage(
+        _ text: String,
+        at messageCellIndex: Int? = nil,
+        waitForAppearance: Bool = true,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
         server.channelsEndpointWasCalled = false
 
         typeText(text)
@@ -204,16 +204,20 @@ extension UserRobot {
     }
 
     @discardableResult
-    func quoteMessage(_ text: String,
-                      messageCellIndex: Int = 0,
-                      waitForAppearance: Bool = true,
-                      file: StaticString = #filePath,
-                      line: UInt = #line) -> Self {
+    func quoteMessage(
+        _ text: String,
+        messageCellIndex: Int = 0,
+        waitForAppearance: Bool = true,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
         selectOptionFromContextMenu(option: .reply, forMessageAtIndex: messageCellIndex)
-        sendMessage(text,
-                    waitForAppearance: waitForAppearance,
-                    file: file,
-                    line: line)
+        sendMessage(
+            text,
+            waitForAppearance: waitForAppearance,
+            file: file,
+            line: line
+        )
         return self
     }
 
@@ -288,11 +292,13 @@ extension UserRobot {
         if alsoSendInChannel {
             threadCheckbox.wait().safeTap()
         }
-        sendMessage(text,
-                    at: messageCellIndex,
-                    waitForAppearance: waitForAppearance,
-                    file: file,
-                    line: line)
+        sendMessage(
+            text,
+            at: messageCellIndex,
+            waitForAppearance: waitForAppearance,
+            file: file,
+            line: line
+        )
         return self
     }
 
@@ -471,7 +477,7 @@ extension UserRobot {
 
     @discardableResult
     func mentionParticipant(manually: Bool = false) -> Self {
-        let text = "@\(UserDetails.hanSoloId)"
+        let text = "@\(UserDetails.countDookuId)"
         if manually {
             typeText(text)
         } else {
@@ -485,7 +491,6 @@ extension UserRobot {
 // MARK: Debug menu
 
 extension UserRobot {
-
     @discardableResult
     private func tapOnDebugMenu() -> Self {
         MessageListPage.NavigationBar.debugMenu.safeTap()
@@ -526,7 +531,6 @@ extension UserRobot {
 // MARK: Connectivity
 
 extension UserRobot {
-
     /// Toggles the visibility of the connectivity switch control. When set to `.on`, the switch control will be displayed in the navigation bar.
     @discardableResult
     func setConnectivitySwitchVisibility(to state: SwitchState) -> Self {
@@ -547,7 +551,6 @@ extension UserRobot {
 // MARK: Config
 
 extension UserRobot {
-
     @discardableResult
     func setIsLocalStorageEnabled(to state: SwitchState) -> Self {
         setSwitchState(Settings.isLocalStorageEnabled.element, state: state)
@@ -557,5 +560,4 @@ extension UserRobot {
     func setStaysConnectedInBackground(to state: SwitchState) -> Self {
         setSwitchState(Settings.staysConnectedInBackground.element, state: state)
     }
-
 }

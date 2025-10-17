@@ -13,6 +13,6 @@ extension StreamTestCase {
     }
 
     func addTags(_ tags: [Tags]) {
-        addTagsToScenario(tags.map{ $0.rawValue })
+        addTagsToScenario(tags.map { $0.rawValue })
     }
 }

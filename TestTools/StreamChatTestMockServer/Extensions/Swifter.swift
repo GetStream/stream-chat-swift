@@ -5,7 +5,7 @@
 import Foundation
 
 public extension HttpServer {
-    func register(_ path: String, execution: @escaping ((HttpRequest) throws -> HttpResponse?))  {
+    func register(_ path: String, execution: @escaping ((HttpRequest) throws -> HttpResponse?)) {
         self[path] = { [weak self] in
             self?.delayServerResponseIfNeeded()
 

@@ -1,19 +1,15 @@
 //
-//  HttpServer.swift
-//  Swifter
-//
-//  Copyright (c) 2014-2016 Damian Kołakowski. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-import Foundation
 import Dispatch
+import Foundation
 
 public protocol HttpServerIODelegate: AnyObject {
     func socketConnectionReceived(_ socket: Socket)
 }
 
 open class HttpServerIO {
-
     public weak var delegate: HttpServerIODelegate?
 
     private var socket = Socket(socketFileDescriptor: -1)
@@ -142,7 +138,6 @@ open class HttpServerIO {
     }
 
     private struct InnerWriteContext: HttpResponseBodyWriter {
-
         let socket: Socket
 
         func write(_ file: String.File) throws {

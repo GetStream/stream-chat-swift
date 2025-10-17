@@ -5,7 +5,6 @@
 import XCTest
 
 final class SlowMode_Tests: StreamTestCase {
-
     let cooldownDuration = 15
     let message = "message"
     let anotherNewMessage = "Another new message"

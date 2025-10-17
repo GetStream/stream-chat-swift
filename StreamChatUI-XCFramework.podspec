@@ -1,6 +1,6 @@
 Pod::Spec.new do |spec|
   spec.name = 'StreamChatUI-XCFramework'
-  spec.version = '4.89.0'
+  spec.version = '4.90.0'
   spec.summary = 'StreamChat UI Components'
   spec.description = 'StreamChatUI SDK offers flexible UI components able to display data provided by StreamChat SDK.'
 
@@ -16,7 +16,7 @@ Pod::Spec.new do |spec|
   spec.framework = 'Foundation', 'UIKit'
 
   spec.module_name = 'StreamChatUI'
-  spec.source = { http: "https://github.com/GetStream/stream-chat-swift/releases/download//#{spec.version}/#{spec.module_name}.zip" }
+  spec.source = { http: "https://github.com/GetStream/stream-chat-swift/releases/download/#{spec.version}/#{spec.module_name}.zip" }
   spec.vendored_frameworks = "#{spec.module_name}.xcframework"
   spec.preserve_paths = "#{spec.module_name}.xcframework/*"
 

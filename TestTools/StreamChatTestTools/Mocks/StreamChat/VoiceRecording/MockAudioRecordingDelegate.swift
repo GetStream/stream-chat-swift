@@ -6,7 +6,6 @@ import Foundation
 import StreamChat
 
 public final class MockAudioRecordingDelegate: AudioRecordingDelegate {
-
     public private(set) var didUpdateContextWasCalledWithAudioRecorder: AudioRecording?
     public private(set) var didUpdateContextWasCalledWithContext: AudioRecordingContext?
 

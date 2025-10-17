@@ -26,12 +26,14 @@ extension ChatMessage {
             isBounced: false,
             isSilent: false,
             isShadowed: false,
+            deletedForMe: false,
             reactionScores: ["like": 1],
             reactionCounts: ["like": 1],
             reactionGroups: [
                 "like": .init(
                     type: "like",
-                    sumScores: 1, count: 1,
+                    sumScores: 1,
+                    count: 1,
                     firstReactionAt: .unique,
                     lastReactionAt: .unique
                 )

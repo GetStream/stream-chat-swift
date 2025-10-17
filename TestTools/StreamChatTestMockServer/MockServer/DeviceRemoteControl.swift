@@ -5,7 +5,6 @@
 import Foundation
 
 public extension StreamMockServer {
-
     func pushNotification(
         senderName: String,
         text: String,

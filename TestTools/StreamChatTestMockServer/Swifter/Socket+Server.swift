@@ -1,25 +1,20 @@
 //
-//  Socket+Server.swift
-//  Swifter
-//
-//  Created by Damian Kolakowski on 13/07/16.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 
 extension Socket {
-
     // swiftlint:disable function_body_length
     /// - Parameters:
     ///   - listenAddress: String representation of the address the socket should accept
     ///       connections from. It should be in IPv4 format if forceIPv4 == true,
     ///       otherwise - in IPv6.
     public class func tcpSocketForListen(_ port: in_port_t, _ forceIPv4: Bool = false, _ maxPendingConnection: Int32 = SOMAXCONN, _ listenAddress: String? = nil) throws -> Socket {
-
         #if os(Linux)
-            let socketFileDescriptor = socket(forceIPv4 ? AF_INET : AF_INET6, Int32(SOCK_STREAM.rawValue), 0)
+        let socketFileDescriptor = socket(forceIPv4 ? AF_INET : AF_INET6, Int32(SOCK_STREAM.rawValue), 0)
         #else
-            let socketFileDescriptor = socket(forceIPv4 ? AF_INET : AF_INET6, SOCK_STREAM, 0)
+        let socketFileDescriptor = socket(forceIPv4 ? AF_INET : AF_INET6, SOCK_STREAM, 0)
         #endif
 
         if socketFileDescriptor == -1 {
@@ -41,21 +36,23 @@ extension Socket {
                 sin_family: sa_family_t(AF_INET),
                 sin_port: port.bigEndian,
                 sin_addr: in_addr(s_addr: in_addr_t(0)),
-                sin_zero: (0, 0, 0, 0, 0, 0, 0, 0))
+                sin_zero: (0, 0, 0, 0, 0, 0, 0, 0)
+            )
             #else
             var addr = sockaddr_in(
                 sin_len: UInt8(MemoryLayout<sockaddr_in>.stride),
                 sin_family: UInt8(AF_INET),
                 sin_port: port.bigEndian,
                 sin_addr: in_addr(s_addr: in_addr_t(0)),
-                sin_zero: (0, 0, 0, 0, 0, 0, 0, 0))
+                sin_zero: (0, 0, 0, 0, 0, 0, 0, 0)
+            )
             #endif
             if let address = listenAddress {
-              if address.withCString({ cstring in inet_pton(AF_INET, cstring, &addr.sin_addr) }) == 1 {
-                // print("\(address) is converted to \(addr.sin_addr).")
-              } else {
-                // print("\(address) is not converted.")
-              }
+                if address.withCString({ cstring in inet_pton(AF_INET, cstring, &addr.sin_addr) }) == 1 {
+                    // print("\(address) is converted to \(addr.sin_addr).")
+                } else {
+                    // print("\(address) is not converted.")
+                }
             }
             bindResult = withUnsafePointer(to: &addr) {
                 bind(socketFileDescriptor, UnsafePointer<sockaddr>(OpaquePointer($0)), socklen_t(MemoryLayout<sockaddr_in>.size))
@@ -67,7 +64,8 @@ extension Socket {
                 sin6_port: port.bigEndian,
                 sin6_flowinfo: 0,
                 sin6_addr: in6addr_any,
-                sin6_scope_id: 0)
+                sin6_scope_id: 0
+            )
             #else
             var addr = sockaddr_in6(
                 sin6_len: UInt8(MemoryLayout<sockaddr_in6>.stride),
@@ -75,14 +73,15 @@ extension Socket {
                 sin6_port: port.bigEndian,
                 sin6_flowinfo: 0,
                 sin6_addr: in6addr_any,
-                sin6_scope_id: 0)
+                sin6_scope_id: 0
+            )
             #endif
             if let address = listenAddress {
-              if address.withCString({ cstring in inet_pton(AF_INET6, cstring, &addr.sin6_addr) }) == 1 {
-                //print("\(address) is converted to \(addr.sin6_addr).")
-              } else {
-                //print("\(address) is not converted.")
-              }
+                if address.withCString({ cstring in inet_pton(AF_INET6, cstring, &addr.sin6_addr) }) == 1 {
+                    // print("\(address) is converted to \(addr.sin6_addr).")
+                } else {
+                    // print("\(address) is not converted.")
+                }
             }
             bindResult = withUnsafePointer(to: &addr) {
                 bind(socketFileDescriptor, UnsafePointer<sockaddr>(OpaquePointer($0)), socklen_t(MemoryLayout<sockaddr_in6>.size))

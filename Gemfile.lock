@@ -209,9 +209,11 @@ GEM
       fastlane
       pry
     fastlane-plugin-sonarcloud_metric_kit (0.2.1)
-    fastlane-plugin-stream_actions (0.3.90)
+    fastlane-plugin-stream_actions (0.3.101)
       xctest_list (= 1.2.1)
     fastlane-plugin-versioning (0.7.1)
+    fastlane-plugin-xcsize (1.1.0)
+      xcsize (= 1.1.0)
     fastlane-sirp (1.0.0)
       sysrandom (~> 1.0)
     faye-websocket (0.12.0)
@@ -287,7 +289,7 @@ GEM
     molinillo (0.8.0)
     multi_json (1.17.0)
     multipart-post (2.4.1)
-    mustermann (3.0.3)
+    mustermann (3.0.4)
       ruby2_keywords (~> 0.0.1)
     mutex_m (0.3.0)
     nanaimo (0.4.0)
@@ -322,8 +324,8 @@ GEM
     puma (6.6.1)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.2.0)
-    rack-protection (4.1.1)
+    rack (3.2.3)
+    rack-protection (4.2.0)
       base64 (>= 0.1.0)
       logger (>= 1.6.0)
       rack (>= 3.0.0, < 4)
@@ -378,11 +380,11 @@ GEM
     simctl (1.6.10)
       CFPropertyList
       naturally
-    sinatra (4.1.1)
+    sinatra (4.2.0)
       logger (>= 1.6.0)
       mustermann (~> 3.0)
       rack (>= 3.0.0, < 4)
-      rack-protection (= 4.1.1)
+      rack-protection (= 4.2.0)
       rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
     slather (2.8.5)
@@ -431,6 +433,8 @@ GEM
       rouge (~> 3.28.0)
     xcpretty-travis-formatter (1.0.1)
       xcpretty (~> 0.2, >= 0.0.7)
+    xcsize (1.1.0)
+      commander (>= 4.6, < 6.0)
     xctest_list (1.2.1)
 
 PLATFORMS
@@ -445,8 +449,9 @@ DEPENDENCIES
   fastlane-plugin-create_xcframework
   fastlane-plugin-lizard
   fastlane-plugin-sonarcloud_metric_kit
-  fastlane-plugin-stream_actions (= 0.3.90)
+  fastlane-plugin-stream_actions (= 0.3.101)
   fastlane-plugin-versioning
+  fastlane-plugin-xcsize (= 1.1.0)
   faye-websocket
   json
   lefthook

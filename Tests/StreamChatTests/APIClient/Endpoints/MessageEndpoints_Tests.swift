@@ -68,6 +68,71 @@ final class MessageEndpoints_Tests: XCTestCase {
         XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
 
+    func test_deleteMessage_whenDeleteForMeEnabled_buildsCorrectly() {
+        let messageId: MessageId = .unique
+
+        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+            path: .message(messageId),
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "hard": false,
+                "delete_for_me": true
+            ]
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: true)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
+    }
+
+    func test_deleteMessage_whenDeleteForMeDisabled_buildsCorrectly() {
+        let messageId: MessageId = .unique
+
+        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+            path: .message(messageId),
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "hard": false,
+                "delete_for_me": false
+            ]
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: false)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
+    }
+
+    func test_deleteMessage_whenDeleteForMeIsNil_buildsCorrectly() {
+        let messageId: MessageId = .unique
+
+        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+            path: .message(messageId),
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "hard": false
+            ]
+        )
+
+        // Build endpoint
+        let endpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: nil)
+
+        // Assert endpoint is built correctly
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
+    }
+
     func test_editMessage_buildsCorrectly() {
         let payload = MessageRequestBody(
             id: .unique,
