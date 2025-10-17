@@ -872,7 +872,7 @@ lane :validate_public_interface do
 end
 
 lane :show_frameworks_sizes do |options|
-  next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
+  # next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
 
   sizes = options[:sizes] || frameworks_sizes
   show_sdk_size(branch_sizes: sizes, github_repo: github_repo)
@@ -926,7 +926,7 @@ private_lane :frameworks_sizes do
 end
 
 lane :size_analyze do
-  next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
+  # next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
 
   gym(
     scheme: 'DemoApp',
