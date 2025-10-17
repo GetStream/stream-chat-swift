@@ -8,6 +8,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add support for deleting messages only for the current user [#3836](https://github.com/GetStream/stream-chat-swift/pull/3836)
   - Add `ChatMessageController.deleteMessageForMe()`
   - Add `ChatMessage.deletedForMe`
+- Add support for message delivered info [#3846](https://github.com/GetStream/stream-chat-swift/pull/3846)
+  - Add `CurrentChatUserController.markMessagesAsDelivered()`
+  - Add `ChatRemoteNotificationHandler.markMessageAsDelivered()`
+  - Add `ChatChannel.latestMessageNotMarkedAsDelivered()`
+  - Add `ChatChannelRead.lastDeliveredAt`
+  - Add `ChatChannelRead.lastDeliveredMessageId`
 ### 🐞 Fixed
 - Fix logout not clearing token when current user had no device registered [#3838](https://github.com/GetStream/stream-chat-swift/pull/3838)
 
