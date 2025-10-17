@@ -387,8 +387,39 @@ extension ChatChannel {
     /// Returns the user's read state for this channel.
     /// - Parameter userId: The ID of the user.
     /// - Returns: The read state, or `nil` if not found.
-    public func readState(for userId: UserId) -> ChatChannelRead? {
+    public func read(for userId: UserId) -> ChatChannelRead? {
         reads.first { $0.user.id == userId }
+    }
+
+    /// Returns read states for users who have read the given message.
+    ///
+    /// A user is considered to have read a message when:
+    /// - The user has a read state in the channel
+    /// - The user's last read timestamp is after the message creation time
+    /// - The user is not the author of the message
+    ///
+    /// - Parameter message: The message to check read status for.
+    /// - Returns: Array of read states for users who have read the message.
+    public func reads(for message: ChatMessage) -> [ChatChannelRead] {
+        reads.filter { read in
+            read.lastReadAt > message.createdAt && read.user.id != message.author.id
+        }
+    }
+
+    /// Returns read states for users who have delivered the given message.
+    ///
+    /// A user is considered to have delivered a message when:
+    /// - The user has a read state in the channel
+    /// - The user's last delivered timestamp is after the message creation time
+    /// - The user is not the author of the message
+    ///
+    /// - Parameter message: The message to check delivery status for.
+    /// - Returns: Array of read states for users who have delivered the message.
+    public func deliveredReads(for message: ChatMessage) -> [ChatChannelRead] {
+        reads.filter { read in
+            read.lastDeliveredAt ?? .distantPast > message.createdAt
+                && read.user.id != message.author.id
+        }
     }
 
     /// Returns the latest message of the channel if it can be marked as delivered for the given user.
@@ -403,7 +434,7 @@ extension ChatChannel {
     /// - Parameter userId: The ID of the user.
     /// - Returns: Return the latest undelivered message, or `nil` if no message qualifies.
     public func latestMessageNotMarkedAsDelivered(for userId: UserId) -> ChatMessage? {
-        guard let userRead = readState(for: userId) else { return nil }
+        guard let userRead = read(for: userId) else { return nil }
         guard let latestMessage = latestMessages.first else { return nil }
         guard latestMessage.author.id != userId else { return nil }
         guard latestMessage.createdAt > userRead.lastReadAt else { return nil }

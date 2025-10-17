@@ -44,12 +44,8 @@ final class DemoChatChannelListItemView: ChatChannelListItemView {
         guard let previewMessage =  content.channel.previewMessage else { return }
         guard AppConfig.shared.demoAppConfig.isMessageDeliveredInfoEnabled else { return }
 
-        let deliveredReads = content.channel.reads
-            .filter { read in
-                read.lastDeliveredAt ?? .distantPast > previewMessage.createdAt
-                && read.user.id != previewMessage.author.id
-            }
-
+        let deliveredReads = content.channel.deliveredReads(for: previewMessage)
+        // Message has been delivered but not read yet by someone
         if !deliveredReads.isEmpty && previewMessage.readByCount == 0 {
             previewMessageDeliveryStatusView.imageView.image = appearance.images.messageDeliveryStatusRead
             previewMessageDeliveryStatusView.imageView.tintColor = appearance.colorPalette.textLowEmphasis

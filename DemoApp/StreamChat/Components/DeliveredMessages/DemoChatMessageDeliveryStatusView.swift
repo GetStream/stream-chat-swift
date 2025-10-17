@@ -15,12 +15,8 @@ class DemoChatMessageDeliveryStatusView: ChatMessageDeliveryStatusView {
             return
         }
 
-        let deliveredReads = content.channel.reads
-            .filter { read in
-                read.lastDeliveredAt ?? .distantPast > content.message.createdAt
-                && read.user.id != content.message.author.id
-            }
-
+        let deliveredReads = content.channel.deliveredReads(for: content.message)
+        // Message has been delivered but not read yet by someone
         if !deliveredReads.isEmpty && content.message.readByCount == 0 {
             messageDeliveryChekmarkView.imageView.image = appearance.images.messageDeliveryStatusRead
             messageDeliveryChekmarkView.imageView.tintColor = appearance.colorPalette.textLowEmphasis

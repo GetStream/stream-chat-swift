@@ -72,20 +72,13 @@ struct DemoMessageReadsInfoView: View {
     // MARK: - Computed Properties
     
     private var deliveredUsers: [ChatUser] {
-        channel.reads
-            .filter { read in
-                read.lastDeliveredAt ?? .distantPast > message.createdAt
-                    && read.user.id != message.author.id
-            }
+        channel.deliveredReads(for: message)
             .sorted { $0.lastDeliveredAt ?? Date.distantPast < $1.lastDeliveredAt ?? Date.distantPast }
             .map(\.user)
     }
     
     private var readUsers: [ChatUser] {
-        channel.reads
-            .filter { read in
-                read.lastReadAt > message.createdAt && read.user.id != message.author.id
-            }
+        channel.reads(for: message)
             .sorted { $0.lastReadAt < $1.lastReadAt }
             .map(\.user)
     }
