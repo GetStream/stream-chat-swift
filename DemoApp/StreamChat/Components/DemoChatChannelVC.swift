@@ -96,6 +96,8 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
         _ controller: EventsController,
         didReceiveEvent event: any Event
     ) {
+        super.eventsController(controller, didReceiveEvent: event)
+        
         if let deliveredMessageEvent = event as? MessageDeliveredEvent {
             messageListVC.listView.reloadRows(at: [.init(item: 0, section: 0)], with: .none)
         }
