@@ -401,14 +401,14 @@ extension ChatChannel {
     /// - The message was created after the user's last delivered timestamp
     ///
     /// - Parameter userId: The ID of the user.
-    /// - Returns: Delivery information for the latest undelivered message, or `nil` if no message qualifies.
-    public func latestMessageNotMarkedAsDelivered(for userId: UserId) -> DeliveredMessageInfo? {
+    /// - Returns: Return the latest undelivered message, or `nil` if no message qualifies.
+    public func latestMessageNotMarkedAsDelivered(for userId: UserId) -> ChatMessage? {
         guard let userRead = readState(for: userId) else { return nil }
         guard let latestMessage = latestMessages.first else { return nil }
         guard latestMessage.author.id != userId else { return nil }
         guard latestMessage.createdAt > userRead.lastReadAt else { return nil }
         guard latestMessage.createdAt > userRead.lastDeliveredAt ?? .distantPast else { return nil }
-        return DeliveredMessageInfo(channelId: cid, messageId: latestMessage.id)
+        return latestMessage
     }
 }
 

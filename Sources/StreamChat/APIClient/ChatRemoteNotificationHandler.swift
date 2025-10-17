@@ -157,7 +157,7 @@ public class ChatRemoteNotificationHandler {
         /// If the app is active, the middleware will mark it as delivered so the push
         /// does not need to do it.
         guard let message = channel.latestMessageNotMarkedAsDelivered(for: currentUserId),
-              message.messageId == messageId else {
+              message.id == messageId else {
             log.debug("No message to be marked as delivered for messageId:\(messageId))")
             return
         }

@@ -600,7 +600,7 @@ final class ChatChannel_Tests: XCTestCase {
         XCTAssertNil(result)
     }
 
-    func test_latestMessageNotMarkedAsDelivered_whenMessageNotDelivered_returnsDeliveredMessageInfo() {
+    func test_latestMessageNotMarkedAsDelivered_whenMessageNotDelivered_returnsDeliveredMessage() {
         // GIVEN
         let currentUserId = UserId.unique
         let messageId = MessageId.unique
@@ -633,11 +633,10 @@ final class ChatChannel_Tests: XCTestCase {
 
         // THEN
         XCTAssertNotNil(result)
-        XCTAssertEqual(result?.channelId, channelId)
-        XCTAssertEqual(result?.messageId, messageId)
+        XCTAssertEqual(result?.id, messageId)
     }
 
-    func test_latestMessageNotMarkedAsDelivered_whenNoDeliveredState_returnsDeliveredMessageInfo() {
+    func test_latestMessageNotMarkedAsDelivered_whenNoDeliveredState_returnsDeliveredMessage() {
         // GIVEN
         let currentUserId = UserId.unique
         let messageId = MessageId.unique
@@ -668,8 +667,7 @@ final class ChatChannel_Tests: XCTestCase {
 
         // THEN
         XCTAssertNotNil(result)
-        XCTAssertEqual(result?.channelId, channelId)
-        XCTAssertEqual(result?.messageId, messageId)
+        XCTAssertEqual(result?.id, messageId)
     }
     
     func test_latestMessageNotMarkedAsDelivered_whenMessageFromSameUser_returnsNil() {
