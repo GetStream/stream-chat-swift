@@ -166,4 +166,11 @@ open class PollResultsVoteListVC:
         snapshot.appendItems(Array(controller.votes))
         dataSource.apply(snapshot, animatingDifferences: true)
     }
+
+    public func controller(_ controller: PollVoteListController, didUpdatePoll poll: Poll) {
+        self.poll = poll
+        var newSnapshot = dataSource.snapshot()
+        newSnapshot.reloadSections([option])
+        dataSource.apply(newSnapshot, animatingDifferences: true)
+    }
 }
