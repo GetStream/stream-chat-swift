@@ -546,7 +546,14 @@ final class PollVoteListController_Tests: XCTestCase {
         // Set up delegate
         let delegate = TestDelegate()
         controller.delegate = delegate
-        
+
+        // Wait for expection
+        let exp = expectation(description: "didUpdatePoll called")
+        exp.expectedFulfillmentCount = 2
+        delegate.didUpdatePollCompletion = {
+            exp.fulfill()
+        }
+
         // Synchronize to start observers
         controller.synchronize()
         
@@ -562,7 +569,8 @@ final class PollVoteListController_Tests: XCTestCase {
         }
         
         // Verify delegate was notified
-        AssertAsync.willBeTrue(delegate.didUpdatePollCalled)
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertEqual(delegate.didUpdatePollCalled, true)
         XCTAssertEqual(delegate.updatedPoll?.id, pollId)
         XCTAssertEqual(delegate.updatedPoll?.name, "Updated Poll Name")
     }
@@ -571,12 +579,14 @@ final class PollVoteListController_Tests: XCTestCase {
 // MARK: - Test Helper
 
 private class TestDelegate: PollVoteListControllerDelegate {
-    @Atomic var didUpdatePollCalled = false
-    @Atomic var updatedPoll: Poll?
-    
+    var didUpdatePollCalled = false
+    var updatedPoll: Poll?
+    var didUpdatePollCompletion: (() -> Void)?
+
     func controller(_ controller: PollVoteListController, didUpdatePoll poll: Poll) {
         didUpdatePollCalled = true
         updatedPoll = poll
+        didUpdatePollCompletion?()
     }
     
     func controller(_ controller: PollVoteListController, didChangeVotes changes: [ListChange<PollVote>]) {
