@@ -26,6 +26,24 @@ public protocol PollVoteListControllerDelegate: DataControllerStateDelegate {
         _ controller: PollVoteListController,
         didChangeVotes changes: [ListChange<PollVote>]
     )
+    
+    /// The controller updated the poll.
+    ///
+    /// - Parameters:
+    ///   - controller: The controller emitting the change callback.
+    ///   - poll: The poll with the new data.
+    func controller(
+        _ controller: PollVoteListController,
+        didUpdatePoll poll: Poll
+    )
+}
+
+/// Optional delegate methods.
+public extension PollVoteListControllerDelegate {
+    func controller(
+        _ controller: PollVoteListController,
+        didUpdatePoll poll: Poll
+    ) {}
 }
 
 /// A controller which allows querying and filtering the votes of a poll.
@@ -37,12 +55,15 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     public let client: ChatClient
 
     /// The votes of the poll the controller represents.
-    ///
-    /// To observe changes of the votes, set your class as a delegate of this controller or use the provided
-    /// `Combine` publishers.
     public var votes: LazyCachedMapCollection<PollVote> {
-        startPollVotesListObserverIfNeeded()
+        startObserversIfNeeded()
         return pollVotesObserver.items
+    }
+    
+    /// Returns the poll that this controller represents.
+    public var poll: Poll? {
+        startObserversIfNeeded()
+        return pollObserver?.item
     }
     
     /// A Boolean value that returns whether pagination is finished.
@@ -59,9 +80,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         didSet {
             stateMulticastDelegate.set(mainDelegate: multicastDelegate.mainDelegate)
             stateMulticastDelegate.set(additionalDelegates: multicastDelegate.additionalDelegates)
-
-            // After setting delegate local changes will be fetched and observed.
-            startPollVotesListObserverIfNeeded()
+            startObserversIfNeeded()
         }
     }
 
@@ -78,11 +97,35 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
         observer.onDidChange = { [weak self] changes in
             self?.delegateCallback { [weak self] in
                 guard let self = self else {
-                    log.warning("Callback called while self is nil")
                     return
                 }
 
                 $0.controller(self, didChangeVotes: changes)
+            }
+        }
+
+        return observer
+    }()
+
+    /// Used for observing the poll for changes.
+    private lazy var pollObserver: BackgroundEntityDatabaseObserver<Poll, PollDTO>? = { [weak self] in
+        guard let self = self else {
+            return nil
+        }
+        
+        let observer = environment.pollObserverBuilder(
+            self.client.databaseContainer,
+            PollDTO.fetchRequest(for: query.pollId),
+            { try $0.asModel() as Poll },
+            NSFetchedResultsController<PollDTO>.self
+        )
+        .onChange { [weak self] change in
+            self?.delegateCallback { [weak self] delegate in
+                guard let self = self else {
+                    log.warning("Callback called while self is nil")
+                    return
+                }
+                delegate.controller(self, didUpdatePoll: change.item)
             }
         }
 
@@ -122,7 +165,7 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     }
 
     override public func synchronize(_ completion: ((_ error: Error?) -> Void)? = nil) {
-        startPollVotesListObserverIfNeeded()
+        startObserversIfNeeded()
 
         pollsRepository.queryPollVotes(query: query) { [weak self] result in
             guard let self else { return }
@@ -140,12 +183,13 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
     }
 
     /// If the `state` of the controller is `initialized`, this method calls `startObserving` on the
-    /// `pollVotesObserver` to fetch the local data and start observing the changes. It also changes
+    /// `pollVotesObserver` and `pollObserver` to fetch the local data and start observing the changes. It also changes
     /// `state` based on the result.
-    private func startPollVotesListObserverIfNeeded() {
+    private func startObserversIfNeeded() {
         guard state == .initialized else { return }
         do {
             try pollVotesObserver.startObserving()
+            try pollObserver?.startObserving()
             state = .localDataFetched
         } catch {
             state = .localDataFetchFailed(ClientError(with: error))
@@ -198,6 +242,20 @@ extension PollVoteListController {
                     itemReuseKeyPaths: (\PollVote.id, \PollVoteDTO.id)
                 )
             }
+        
+        var pollObserverBuilder: (
+            _ database: DatabaseContainer,
+            _ fetchRequest: NSFetchRequest<PollDTO>,
+            _ itemCreator: @escaping (PollDTO) throws -> Poll,
+            _ fetchedResultsControllerType: NSFetchedResultsController<PollDTO>.Type
+        ) -> BackgroundEntityDatabaseObserver<Poll, PollDTO> = {
+            BackgroundEntityDatabaseObserver(
+                database: $0,
+                fetchRequest: $1,
+                itemCreator: $2,
+                fetchedResultsControllerType: $3
+            )
+        }
     }
 }
 

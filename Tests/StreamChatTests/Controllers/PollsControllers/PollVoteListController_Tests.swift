@@ -506,4 +506,80 @@ final class PollVoteListController_Tests: XCTestCase {
         // Restore original method
         client.mockPollsRepository.link = originalLink
     }
+    
+    // MARK: - Poll Observer Tests
+    
+    func test_pollProperty_returnsPollFromObserver() {
+        // Create a poll in the database
+        let user = UserPayload.dummy(userId: currentUserId)
+        let poll = dummyPollPayload(id: pollId, user: user)
+
+        try! client.databaseContainer.writeSynchronously { session in
+            try session.savePoll(payload: poll, cache: nil)
+        }
+        
+        // Synchronize to start observers
+        controller.synchronize()
+        
+        // Verify poll is returned
+        XCTAssertNotNil(controller.poll)
+        XCTAssertEqual(controller.poll?.id, pollId)
+    }
+    
+    func test_pollProperty_returnsNilWhenNoPollExists() {
+        // Don't create any poll in database
+        controller.synchronize()
+        
+        // Verify poll is nil
+        XCTAssertNil(controller.poll)
+    }
+    
+    func test_pollObserver_notifiesDelegateOnPollUpdate() {
+        // Create initial poll
+        let user = UserPayload.dummy(userId: currentUserId)
+        let initialPoll = dummyPollPayload(id: pollId, user: user)
+
+        try! client.databaseContainer.writeSynchronously { session in
+            try session.savePoll(payload: initialPoll, cache: nil)
+        }
+
+        // Set up delegate
+        let delegate = TestDelegate()
+        controller.delegate = delegate
+        
+        // Synchronize to start observers
+        controller.synchronize()
+        
+        // Update poll in database
+        let updatedPoll = dummyPollPayload(
+            id: pollId,
+            name: "Updated Poll Name",
+            user: user
+        )
+        
+        try! client.databaseContainer.writeSynchronously { session in
+            try session.savePoll(payload: updatedPoll, cache: nil)
+        }
+        
+        // Verify delegate was notified
+        AssertAsync.willBeTrue(delegate.didUpdatePollCalled)
+        XCTAssertEqual(delegate.updatedPoll?.id, pollId)
+        XCTAssertEqual(delegate.updatedPoll?.name, "Updated Poll Name")
+    }
+}
+
+// MARK: - Test Helper
+
+private class TestDelegate: PollVoteListControllerDelegate {
+    @Atomic var didUpdatePollCalled = false
+    @Atomic var updatedPoll: Poll?
+    
+    func controller(_ controller: PollVoteListController, didUpdatePoll poll: Poll) {
+        didUpdatePollCalled = true
+        updatedPoll = poll
+    }
+    
+    func controller(_ controller: PollVoteListController, didChangeVotes changes: [ListChange<PollVote>]) {
+        // Not used in these tests
+    }
 }
