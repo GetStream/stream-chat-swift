@@ -139,15 +139,6 @@ open class PollResultsVoteListVC:
         return view
     }
 
-    // MARK: - PollVoteListControllerDelegate
-
-    public func controller(_ controller: PollVoteListController, didChangeVotes changes: [ListChange<PollVote>]) {
-        var snapshot = NSDiffableDataSourceSnapshot<PollOption, PollVote>()
-        snapshot.appendSections([option])
-        snapshot.appendItems(Array(controller.votes))
-        dataSource.apply(snapshot, animatingDifferences: true)
-    }
-
     // MARK: - Actions
 
     /// Loads the next page of votes.
@@ -165,5 +156,14 @@ open class PollResultsVoteListVC:
     /// Called when loading a new page of votes is finished.
     open func didFinishLoadingMoreVotes(with error: Error?) {
         isPaginatingVotes = false
+    }
+
+    // MARK: - PollVoteListControllerDelegate
+
+    public func controller(_ controller: PollVoteListController, didChangeVotes changes: [ListChange<PollVote>]) {
+        var snapshot = NSDiffableDataSourceSnapshot<PollOption, PollVote>()
+        snapshot.appendSections([option])
+        snapshot.appendItems(Array(controller.votes))
+        dataSource.apply(snapshot, animatingDifferences: true)
     }
 }

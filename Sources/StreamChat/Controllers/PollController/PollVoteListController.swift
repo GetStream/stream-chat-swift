@@ -210,7 +210,13 @@ extension PollVoteListController: EventsControllerDelegate {
             vote = event.vote
         }
         guard let vote else { return }
-        if vote.isAnswer == true && query.pollId == vote.pollId && query.optionId == nil {
+        if vote.isAnswer == true
+            && query.pollId == vote.pollId
+            && query.optionId == nil {
+            pollsRepository.link(pollVote: vote, to: query)
+        } else if vote.isAnswer == false
+            && query.pollId == vote.pollId
+            && query.optionId == vote.optionId {
             pollsRepository.link(pollVote: vote, to: query)
         }
     }
