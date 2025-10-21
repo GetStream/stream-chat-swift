@@ -11,7 +11,7 @@ extension PollVoteListController {
         basePublishers.state.keepAlive(self)
     }
 
-    /// A publisher emitting a new value every time the votes change.
+    /// A publisher emitting a new value every time the poll changes.
     public var pollPublisher: AnyPublisher<Poll, Never> {
         basePublishers.poll.keepAlive(self)
     }
