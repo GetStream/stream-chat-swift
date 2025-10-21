@@ -27,9 +27,16 @@ let package = Package(
             targets: ["StreamChatTestMockServer"]
         )
     ],
+    dependencies: [
+        .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.0.0"),
+        .package(url: "https://github.com/GetStream/stream-core-swift.git", exact: "0.4.0")
+    ],
     targets: [
         .target(
             name: "StreamChat",
+            dependencies: [
+                .product(name: "StreamCore", package: "stream-core-swift")
+            ],
             exclude: ["Info.plist"],
             resources: [.copy("Database/StreamChatModel.xcdatamodeld")]
         ),
@@ -54,8 +61,4 @@ let package = Package(
             resources: [.process("Fixtures")]
         )
     ]
-)
-
-package.dependencies.append(
-    .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.0.0")
 )

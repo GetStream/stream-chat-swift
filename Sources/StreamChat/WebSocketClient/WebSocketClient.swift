@@ -72,7 +72,7 @@ class WebSocketClient: @unchecked Sendable {
         do {
             request = try requestEncoder.encodeRequest(for: connectEndpoint)
         } catch {
-            log.log(.error, message: error.localizedDescription)
+            log(.error, message: error.localizedDescription, error: error)
             throw error
         }
 
