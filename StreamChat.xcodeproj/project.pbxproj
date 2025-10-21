@@ -15851,8 +15851,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
-				branch = "restructure-for-chat";
-				kind = branch;
+				kind = exactVersion;
+				version = 0.4.0;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
