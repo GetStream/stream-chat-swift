@@ -67,7 +67,7 @@ public class Chat: @unchecked Sendable {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the channel.
-    @MainActor public var state: ChatState { stateBuilder.state() }
+    @MainActor public var state: ChatState { stateBuilder.state }
     
     /// Fetches the most recent state from the server and updates the local store.
     ///

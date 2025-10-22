@@ -39,7 +39,7 @@ public class ChannelList: @unchecked Sendable {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the channel list.
-    @MainActor public var state: ChannelListState { stateBuilder.state() }
+    @MainActor public var state: ChannelListState { stateBuilder.state }
     
     /// Fetches the most recent state from the server and updates the local store.
     ///

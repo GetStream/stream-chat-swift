@@ -4,12 +4,7 @@
 
 import Foundation
 
-public enum StreamRuntimeCheck {
-    /// Enables assertions thrown by the Stream SDK.
-    ///
-    /// When set to false, a message will be logged on console, but the assertion will not be thrown.
-    public nonisolated(unsafe) static var assertionsEnabled = false
-
+public extension StreamRuntimeCheck {
     /// For *internal use* only
     ///
     ///  Established the maximum depth of relationships to fetch when performing a mapping
@@ -30,5 +25,5 @@ public enum StreamRuntimeCheck {
     /// For *internal use* only
     ///
     /// Core Data prefetches data used for creating immutable model objects (faulting is disabled).
-    public nonisolated(unsafe) static var _isDatabasePrefetchingEnabled = false
+    nonisolated(unsafe) static var _isDatabasePrefetchingEnabled = false
 }

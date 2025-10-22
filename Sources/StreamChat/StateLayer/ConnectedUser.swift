@@ -32,7 +32,7 @@ public final class ConnectedUser: Sendable {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the user.
-    @MainActor public var state: ConnectedUserState { stateBuilder.state() }
+    @MainActor public var state: ConnectedUserState { stateBuilder.state }
     
     // MARK: - Connected User Data
     

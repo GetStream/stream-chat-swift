@@ -27,7 +27,7 @@ public final class UserList: Sendable {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the users list.
-    @MainActor public var state: UserListState { stateBuilder.state() }
+    @MainActor public var state: UserListState { stateBuilder.state }
     
     /// Fetches the most recent state from the server and updates the local store.
     ///
