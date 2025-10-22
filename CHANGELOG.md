@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix logout not clearing token when current user had no device registered [#3838](https://github.com/GetStream/stream-chat-swift/pull/3838)
 - Fix `PollVoteListController` not updating votes on the vote cast event [#3849](https://github.com/GetStream/stream-chat-swift/pull/3849)
+- Fix showing channel when receiving a campaign message with `show_channels` false [#3851](https://github.com/GetStream/stream-chat-swift/pull/3851)
 
 ## StreamChatUI
 ### 🐞 Fixed
