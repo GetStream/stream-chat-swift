@@ -15,3 +15,9 @@ public struct ThreadParticipant: Equatable, Sendable {
     /// The date when the participant last read the thread.
     public let lastReadAt: Date?
 }
+
+extension ThreadParticipant: Identifiable {
+    public var id: String {
+        "\(threadId)-\(user.id)"
+    }
+}

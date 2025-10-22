@@ -488,7 +488,6 @@
 		7865705825FB6DF300974045 /* UIViewController+Extensions_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */; };
 		78C8473825FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C8473725FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift */; };
 		78C8474125FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 78C8474025FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift */; };
-		7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7900452525374CA20096ECA1 /* User+SwiftUI.swift */; };
 		7908820625432B7200896F03 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		7908823325432C6400896F03 /* StreamChatUI.h in Headers */ = {isa = PBXBuildFile; fileRef = 7908823125432C6400896F03 /* StreamChatUI.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		7908824A25432CC600896F03 /* StreamChatStressTestPlan.xctestplan in Resources */ = {isa = PBXBuildFile; fileRef = 7908824725432CC600896F03 /* StreamChatStressTestPlan.xctestplan */; };
@@ -2217,7 +2216,6 @@
 		C121E894274544B000023E4C /* ChatMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 799C9431247D2FB9001F1104 /* ChatMessage.swift */; };
 		C121E895274544B000023E4C /* MessagePinning.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD7AC98B260A94C6004AADA5 /* MessagePinning.swift */; };
 		C121E896274544B000023E4C /* UnreadCount.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AAB1C6524CB39F2009B783F /* UnreadCount.swift */; };
-		C121E897274544B000023E4C /* User+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7900452525374CA20096ECA1 /* User+SwiftUI.swift */; };
 		C121E898274544B000023E4C /* MessageReaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8899BC52254318CC003CB98B /* MessageReaction.swift */; };
 		C121E899274544B000023E4C /* MessageReactionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88EA9AED254721C0007EE76B /* MessageReactionType.swift */; };
 		C121E89A274544B000023E4C /* MuteDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88DA57632631CF1F00FA8C53 /* MuteDetails.swift */; };
@@ -3470,7 +3468,6 @@
 		7865705725FB6DF300974045 /* UIViewController+Extensions_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extensions_Tests.swift"; sourceTree = "<group>"; };
 		78C8473725FA0EF000A5D1D0 /* ChatChannelUnreadCountView+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelUnreadCountView+SwiftUI.swift"; sourceTree = "<group>"; };
 		78C8474025FA0F2900A5D1D0 /* ChatChannelUnreadCountView+SwiftUI_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ChatChannelUnreadCountView+SwiftUI_Tests.swift"; sourceTree = "<group>"; };
-		7900452525374CA20096ECA1 /* User+SwiftUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "User+SwiftUI.swift"; sourceTree = "<group>"; };
 		790881FD25432B7200896F03 /* StreamChatUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7908820525432B7200896F03 /* StreamChatUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7908823125432C6400896F03 /* StreamChatUI.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamChatUI.h; sourceTree = "<group>"; };
@@ -6295,7 +6292,6 @@
 				AD37D7D22BC9938E00800D8C /* ThreadRead.swift */,
 				8AAB1C6524CB39F2009B783F /* UnreadCount.swift */,
 				79877A012498E4BB00015F8B /* User.swift */,
-				7900452525374CA20096ECA1 /* User+SwiftUI.swift */,
 				64C8C86D26934C6100329F82 /* UserInfo.swift */,
 			);
 			path = Models;
@@ -11944,7 +11940,6 @@
 				ADB8B90F2D8C7B2500549C95 /* ReminderUpdaterMiddleware.swift in Sources */,
 				882C5759252C794900E60C44 /* MemberEndpoints.swift in Sources */,
 				DA640FC12535CFA100D32944 /* ChannelMemberListSortingKey.swift in Sources */,
-				7900452625374CA20096ECA1 /* User+SwiftUI.swift in Sources */,
 				82C18FDC2C10C8E600C5283C /* BlockedUserPayload.swift in Sources */,
 				404296DA2A0112D00089126D /* AudioQueuePlayer.swift in Sources */,
 				4F51519C2BC66FBE001B7152 /* Task+Extensions.swift in Sources */,
@@ -12940,7 +12935,6 @@
 				C121E896274544B000023E4C /* UnreadCount.swift in Sources */,
 				ADFCA5B42D121EB8000F515F /* LocationInfo.swift in Sources */,
 				842F9746277A09B10060A489 /* PinnedMessagesQuery.swift in Sources */,
-				C121E897274544B000023E4C /* User+SwiftUI.swift in Sources */,
 				C121E898274544B000023E4C /* MessageReaction.swift in Sources */,
 				C121E899274544B000023E4C /* MessageReactionType.swift in Sources */,
 				84B7383E2BE8C13A00EC66EC /* PollController+SwiftUI.swift in Sources */,

@@ -369,6 +369,10 @@ public struct ChatChannel: Sendable {
     }
 }
 
+extension ChatChannel: Identifiable {
+    public var id: String { cid.rawValue }
+}
+
 extension ChatChannel {
     /// The type of the channel.
     public var type: ChannelType { cid.type }

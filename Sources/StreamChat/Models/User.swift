@@ -12,7 +12,7 @@ public typealias TeamId = String
 
 /// A type representing a chat user. `ChatUser` is an immutable snapshot of a chat user entity at the given time.
 ///
-public class ChatUser: @unchecked Sendable {
+public class ChatUser: Identifiable, @unchecked Sendable {
     /// The unique identifier of the user.
     public let id: UserId
 
