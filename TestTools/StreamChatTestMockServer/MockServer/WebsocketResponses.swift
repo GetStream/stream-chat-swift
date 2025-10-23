@@ -61,7 +61,7 @@ public extension StreamMockServer {
     ) -> Self {
         guard let messageId = messageId else { return self }
 
-        let mockFile = messageType == .ephemeral ? MockFile.ephemeralMessage : MockFile.message
+        let mockFile = messageType == .ephemeral ? MockFile.ephemeralMessage : MockFile.wsMessage
         var json = TestData.getMockResponse(fromFile: mockFile).json
         var mockedMessage: [String: Any]?
 

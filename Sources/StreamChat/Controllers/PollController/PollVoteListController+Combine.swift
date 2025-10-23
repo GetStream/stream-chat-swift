@@ -11,6 +11,11 @@ extension PollVoteListController {
         basePublishers.state.keepAlive(self)
     }
 
+    /// A publisher emitting a new value every time the poll changes.
+    public var pollPublisher: AnyPublisher<Poll, Never> {
+        basePublishers.poll.keepAlive(self)
+    }
+
     /// A publisher emitting a new value every time the votes change.
     public var voteChangesPublisher: AnyPublisher<[ListChange<PollVote>], Never> {
         basePublishers.voteChanges.keepAlive(self)
@@ -25,6 +30,9 @@ extension PollVoteListController {
 
         /// A backing subject for `statePublisher`.
         let state: CurrentValueSubject<DataController.State, Never>
+
+        /// A backing subject for `pollPublisher`.
+        let poll: PassthroughSubject<Poll, Never> = .init()
 
         /// A backing subject for `voteChangesPublisher`.
         let voteChanges: PassthroughSubject<[ListChange<PollVote>], Never> = .init()
@@ -48,5 +56,9 @@ extension PollVoteListController.BasePublishers: PollVoteListControllerDelegate 
         didChangeVotes changes: [ListChange<PollVote>]
     ) {
         voteChanges.send(changes)
+    }
+
+    func controller(_ controller: PollVoteListController, didUpdatePoll poll: Poll) {
+        self.poll.send(poll)
     }
 }

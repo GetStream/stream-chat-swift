@@ -91,6 +91,7 @@ App Thinning Size Report.txt
 app-thinning.plist
 *.dmg
 *.pkg*
+*LinkMap.txt
 
 # gcloud
 google-cloud-sdk

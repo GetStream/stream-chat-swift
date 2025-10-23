@@ -58,6 +58,7 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case reminder
     case member
     case deletedForMe = "deleted_for_me"
+    case campaignId = "created_by_campaign_id"
 }
 
 extension MessagePayload {
@@ -121,6 +122,8 @@ final class MessagePayload: Decodable, Sendable {
     let reminder: ReminderPayload?
     let member: MemberInfoPayload?
     let deletedForMe: Bool?
+    
+    let campaignId: String?
 
     /// Only message payload from `getMessage` endpoint contains channel data. It's a convenience workaround for having to
     /// make an extra call do get channel details.
@@ -192,6 +195,7 @@ final class MessagePayload: Decodable, Sendable {
         reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
         member = try container.decodeIfPresent(MemberInfoPayload.self, forKey: .member)
         deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
+        campaignId = try container.decodeIfPresent(String.self, forKey: .campaignId)
     }
 
     init(
@@ -237,7 +241,8 @@ final class MessagePayload: Decodable, Sendable {
         reminder: ReminderPayload? = nil,
         location: SharedLocationPayload? = nil,
         member: MemberInfoPayload? = nil,
-        deletedForMe: Bool? = nil
+        deletedForMe: Bool? = nil,
+        campaignId: String? = nil
     ) {
         self.id = id
         self.cid = cid
@@ -282,6 +287,7 @@ final class MessagePayload: Decodable, Sendable {
         self.reminder = reminder
         self.member = member
         self.deletedForMe = deletedForMe
+        self.campaignId = campaignId
     }
 }
 

@@ -3,13 +3,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.91.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.91.0)
+_October 22, 2025_
+
 ## StreamChat
 ### ✅ Added
 - Add support for deleting messages only for the current user [#3836](https://github.com/GetStream/stream-chat-swift/pull/3836)
   - Add `ChatMessageController.deleteMessageForMe()`
   - Add `ChatMessage.deletedForMe`
+- Allow observing poll changes in `PollVoteListController` [#3849](https://github.com/GetStream/stream-chat-swift/pull/3849)
 ### 🐞 Fixed
 - Fix logout not clearing token when current user had no device registered [#3838](https://github.com/GetStream/stream-chat-swift/pull/3838)
+- Fix `PollVoteListController` not updating votes on the vote cast event [#3849](https://github.com/GetStream/stream-chat-swift/pull/3849)
+- Fix showing channel when receiving a campaign message with `show_channels` false [#3851](https://github.com/GetStream/stream-chat-swift/pull/3851)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix `PollResultsVoteListVC` not updating the vote count [#3849](https://github.com/GetStream/stream-chat-swift/pull/3849)
 
 # [4.90.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.90.0)
 _October 07, 2025_

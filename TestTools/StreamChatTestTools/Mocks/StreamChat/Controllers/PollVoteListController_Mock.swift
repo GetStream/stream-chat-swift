@@ -15,6 +15,11 @@ final class PollVoteListController_Mock: PollVoteListController, @unchecked Send
     override var votes: [PollVote] {
         votes_simulated
     }
+    
+    var poll_simulated: Poll?
+    override var poll: Poll? {
+        poll_simulated
+    }
 
     var state_simulated: DataController.State?
     override var state: DataController.State {

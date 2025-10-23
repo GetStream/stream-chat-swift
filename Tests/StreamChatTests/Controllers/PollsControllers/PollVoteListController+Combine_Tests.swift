@@ -79,4 +79,26 @@ final class PollVoteListController_Combine_Tests: iOS13TestCase {
 
         XCTAssertEqual(recording.output, .init(arrayLiteral: [.insert(vote, index: .init())]))
     }
+    
+    func test_pollPublisher() {
+        // Setup Recording publishers
+        var recording = Record<Poll, Never>.Recording()
+
+        // Setup the chain
+        voteListController
+            .pollPublisher
+            .sink(receiveValue: { recording.receive($0) })
+            .store(in: &cancellables)
+
+        // Keep only the weak reference to the controller. The existing publisher should keep it alive.
+        weak var controller: PollVoteListController? = voteListController
+        voteListController = nil
+
+        let poll: Poll = .unique
+        controller?.delegateCallback {
+            $0.controller(controller!, didUpdatePoll: poll)
+        }
+
+        XCTAssertEqual(recording.output, [poll])
+    }
 }

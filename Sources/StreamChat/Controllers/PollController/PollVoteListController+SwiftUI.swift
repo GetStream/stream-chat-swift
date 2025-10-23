@@ -18,6 +18,9 @@ extension PollVoteListController {
         /// The poll votes.
         @Published public private(set) var votes: [PollVote] = []
 
+        /// The poll which the votes belong to.
+        @Published public private(set) var poll: Poll?
+
         /// The current state of the controller.
         @Published public private(set) var state: DataController.State
 
@@ -29,6 +32,7 @@ extension PollVoteListController {
             controller.multicastDelegate.add(additionalDelegate: self)
 
             votes = controller.votes
+            poll = controller.poll
         }
     }
 }
@@ -39,6 +43,10 @@ extension PollVoteListController.ObservableObject: PollVoteListControllerDelegat
         didChangeVotes changes: [ListChange<PollVote>]
     ) {
         votes = controller.votes
+    }
+
+    public func controller(_ controller: PollVoteListController, didUpdatePoll poll: Poll) {
+        self.poll = poll
     }
 
     public func controller(_ controller: DataController, didChangeState state: DataController.State) {

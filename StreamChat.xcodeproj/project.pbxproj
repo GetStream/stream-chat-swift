@@ -13952,6 +13952,8 @@
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_GENERATE_MAP_FILE = YES;
+				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -13981,6 +13983,8 @@
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_GENERATE_MAP_FILE = YES;
+				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -14010,6 +14014,8 @@
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_GENERATE_MAP_FILE = YES;
+				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
@@ -14331,6 +14337,8 @@
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_GENERATE_MAP_FILE = YES;
+				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
@@ -14362,6 +14370,8 @@
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_GENERATE_MAP_FILE = YES;
+				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
@@ -15082,6 +15092,8 @@
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2025 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				LD_GENERATE_MAP_FILE = YES;
+				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
 				MACOSX_DEPLOYMENT_TARGET = 10.15;
 				PRODUCT_BUNDLE_IDENTIFIER = io.getstream.StreamChat;
