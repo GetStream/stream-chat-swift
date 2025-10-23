@@ -47,9 +47,8 @@ class ChannelUpdater: Worker {
         actions: ChannelUpdateActions? = nil,
         completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
-        if let pagination = channelQuery.pagination {
-            paginationStateHandler.begin(pagination: pagination)
-        }
+        let pagination = channelQuery.pagination
+        paginationStateHandler.begin(pagination: pagination)
 
         let didLoadFirstPage = channelQuery.pagination?.parameter == nil
         let didJumpToMessage: Bool = channelQuery.pagination?.parameter?.isJumpingToMessage == true
@@ -60,9 +59,8 @@ class ChannelUpdater: Worker {
 
         let completion: (Result<ChannelPayload, Error>) -> Void = { [weak database] result in
             do {
-                if let pagination = channelQuery.pagination {
-                    self.paginationStateHandler.end(pagination: pagination, with: result.map(\.messages))
-                }
+                let pagination = channelQuery.pagination
+                self.paginationStateHandler.end(pagination: pagination, with: result.map(\.messages))
 
                 let payload = try result.get()
 
