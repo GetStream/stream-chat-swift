@@ -98,7 +98,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_updateChannelQuery_whenNoPagination_thenCallsPaginationStateHandlerWithNil() {
         // Simulate `update(channelQuery:)` call with no pagination
-        let query = ChannelQuery(cid: .unique)
+        let query = ChannelQuery(channelPayload: .unique)
         let expectation = self.expectation(description: "Update completes")
         var updateResult: Result<ChannelPayload, Error>!
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
