@@ -9,7 +9,7 @@ import StreamCore
 final class Logger_Spy: Logger, Spy, @unchecked Sendable {
     let spyState = SpyState()
     var originalLogger: Logger?
-    @StreamCore.Atomic var failedAsserts: Int = 0
+    @Atomic var failedAsserts: Int = 0
 
     func injectMock() {
         let logger = LogConfig.logger

@@ -207,7 +207,7 @@ final class PollVoteListController_Tests: XCTestCase {
     
     func test_eventsController_didReceiveEvent_PollVoteCastedEvent_withAnswerVote() {
         // Create a vote list controller for answers (optionId = nil)
-        let answerQuery = PollVoteListQuery(pollId: pollId, optionId: nil)
+        let answerQuery = PollVoteListQuery(pollId: pollId)
         let answerController = PollVoteListController(
             query: answerQuery,
             client: client,
@@ -298,7 +298,7 @@ final class PollVoteListController_Tests: XCTestCase {
     
     func test_eventsController_didReceiveEvent_PollVoteChangedEvent_withAnswerVote() {
         // Create a vote list controller for answers (optionId = nil)
-        let answerQuery = PollVoteListQuery(pollId: pollId, optionId: nil)
+        let answerQuery = PollVoteListQuery(pollId: pollId)
         let answerController = PollVoteListController(
             query: answerQuery,
             client: client,

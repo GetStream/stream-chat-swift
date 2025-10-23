@@ -170,8 +170,14 @@ public class PollVoteListController: DataController, DelegateCallable, DataStore
                 vote = event.vote
             }
             guard let vote else { return }
-            if vote.isAnswer == true && self.query.pollId == vote.pollId && self.query.optionId == nil {
-                self.pollsRepository.link(pollVote: vote, to: query)
+            if vote.isAnswer == true
+                && query.pollId == vote.pollId
+                && query.optionId == nil {
+                pollsRepository.link(pollVote: vote, to: query)
+            } else if vote.isAnswer == false
+                && query.pollId == vote.pollId
+                && query.optionId == vote.optionId {
+                pollsRepository.link(pollVote: vote, to: query)
             }
         }
     }
@@ -267,27 +273,6 @@ extension PollVoteListController {
                 itemCreator: $2,
                 fetchedResultsControllerType: $3
             )
-        }
-    }
-}
-
-extension PollVoteListController: EventsControllerDelegate {
-    public func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
-        var vote: PollVote?
-        if let event = event as? PollVoteCastedEvent {
-            vote = event.vote
-        } else if let event = event as? PollVoteChangedEvent {
-            vote = event.vote
-        }
-        guard let vote else { return }
-        if vote.isAnswer == true
-            && query.pollId == vote.pollId
-            && query.optionId == nil {
-            pollsRepository.link(pollVote: vote, to: query)
-        } else if vote.isAnswer == false
-            && query.pollId == vote.pollId
-            && query.optionId == vote.optionId {
-            pollsRepository.link(pollVote: vote, to: query)
         }
     }
 }

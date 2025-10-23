@@ -1105,22 +1105,6 @@ extension ChatClient_Tests {
     }
 }
 
-private struct Queue<Element> {
-    @Atomic private var storage = [Element]()
-    mutating func push(_ element: Element) {
-        _storage.mutate { $0.append(element) }
-    }
-
-    mutating func pop() -> Element? {
-        var first: Element?
-        _storage.mutate { storage in
-            first = storage.first
-            storage = Array(storage.dropFirst())
-        }
-        return first
-    }
-}
-
 private extension ChatClientConfig {
     init() {
         self = .init(apiKey: APIKey(.unique))

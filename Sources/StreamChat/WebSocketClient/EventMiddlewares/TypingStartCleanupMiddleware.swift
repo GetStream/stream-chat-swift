@@ -34,7 +34,7 @@ class TypingStartCleanupMiddleware: EventMiddleware {
             return event
         }
 
-        _typingEventTimeoutTimerControls {
+        _typingEventTimeoutTimerControls.mutate {
             $0[typingEvent.user.id]?.cancel()
             $0[typingEvent.user.id] = nil
 

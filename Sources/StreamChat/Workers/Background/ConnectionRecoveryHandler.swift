@@ -76,10 +76,12 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler, @unchec
 
 private extension DefaultConnectionRecoveryHandler {
     func subscribeOnNotifications() {
-        backgroundTaskScheduler?.startListeningForAppStateUpdates(
-            onEnteringBackground: { [weak self] in self?.appDidEnterBackground() },
-            onEnteringForeground: { [weak self] in self?.appDidBecomeActive() }
-        )
+        StreamConcurrency.onMain {
+            backgroundTaskScheduler?.startListeningForAppStateUpdates(
+                onEnteringBackground: { [weak self] in self?.appDidEnterBackground() },
+                onEnteringForeground: { [weak self] in self?.appDidBecomeActive() }
+            )
+        }
 
         internetConnection.notificationCenter.addObserver(
             self,
@@ -90,7 +92,9 @@ private extension DefaultConnectionRecoveryHandler {
     }
 
     func unsubscribeFromNotifications() {
-        backgroundTaskScheduler?.stopListeningForAppStateUpdates()
+        StreamConcurrency.onMain {
+            backgroundTaskScheduler?.stopListeningForAppStateUpdates()
+        }
 
         internetConnection.notificationCenter.removeObserver(
             self,
@@ -103,7 +107,7 @@ private extension DefaultConnectionRecoveryHandler {
 // MARK: - Event handlers
 
 extension DefaultConnectionRecoveryHandler {
-    private func appDidBecomeActive() {
+    @MainActor private func appDidBecomeActive() {
         log.debug("App -> ✅", subsystems: .webSocket)
 
         backgroundTaskScheduler?.endTask()
@@ -113,7 +117,7 @@ extension DefaultConnectionRecoveryHandler {
         }
     }
 
-    private func appDidEnterBackground() {
+    @MainActor private func appDidEnterBackground() {
         log.debug("App -> 💤", subsystems: .webSocket)
 
         guard canBeDisconnected else {
