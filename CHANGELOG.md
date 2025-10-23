@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChatUI
+### 🐞 Fixed
+- Fix composer deleting newly entered text after deleting draft text [#3854](https://github.com/GetStream/stream-chat-swift/pull/3854)
 
 # [4.91.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.91.0)
 _October 22, 2025_
