@@ -41,7 +41,7 @@ public struct DraftMessage: Sendable {
     /// Quoted message.
     ///
     /// If message is inline reply this property will contain the message quoted by this reply.
-    public var quotedMessage: ChatMessage? { _quotedMessage?.value as? ChatMessage }
+    public var quotedMessage: ChatMessage? { _quotedMessage?.getValue() }
     let _quotedMessage: BoxedAny?
 
     /// A list of users that are mentioned in this message.

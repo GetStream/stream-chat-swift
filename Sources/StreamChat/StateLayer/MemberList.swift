@@ -27,7 +27,7 @@ public final class MemberList: Sendable {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the member list.
-    @MainActor public var state: MemberListState { stateBuilder.state() }
+    @MainActor public var state: MemberListState { stateBuilder.state }
     
     /// Fetches the most recent state from the server and updates the local store.
     ///

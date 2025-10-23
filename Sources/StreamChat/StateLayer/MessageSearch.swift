@@ -25,7 +25,7 @@ public class MessageSearch: @unchecked Sendable {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the search.
-    @MainActor public var state: MessageSearchState { stateBuilder.state() }
+    @MainActor public var state: MessageSearchState { stateBuilder.state }
     
     // MARK: - Search Results and Pagination
     

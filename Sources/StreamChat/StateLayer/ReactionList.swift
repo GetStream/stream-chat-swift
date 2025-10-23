@@ -27,7 +27,7 @@ public final class ReactionList: Sendable {
     // MARK: - Accessing the State
     
     /// An observable object representing the current state of the reaction list.
-    @MainActor public var state: ReactionListState { stateBuilder.state() }
+    @MainActor public var state: ReactionListState { stateBuilder.state }
     
     /// Fetches the most recent state from the server and updates the local store.
     ///

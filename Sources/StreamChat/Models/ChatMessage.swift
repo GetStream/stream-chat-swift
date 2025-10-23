@@ -61,7 +61,7 @@ public struct ChatMessage: Sendable {
     ///
     /// If message is inline reply this property will contain the message quoted by this reply.
     ///
-    public var quotedMessage: ChatMessage? { _quotedMessage?.value as? ChatMessage }
+    public var quotedMessage: ChatMessage? { _quotedMessage?.getValue() }
     let _quotedMessage: BoxedAny?
 
     /// The draft reply to this message. Applies only for the messages of the current user.
