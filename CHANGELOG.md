@@ -3,8 +3,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix `ChannelController.hasLoadedAllPreviousMessages` not correct for newly created channels [#3855](https://github.com/GetStream/stream-chat-swift/pull/3855)
+
 ## StreamChatUI
 ### 🐞 Fixed
+- Fix date separator not shown on newly created channel [#3855](https://github.com/GetStream/stream-chat-swift/pull/3855)
 - Fix composer deleting newly entered text after deleting draft text [#3854](https://github.com/GetStream/stream-chat-swift/pull/3854)
 
 # [4.91.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.91.0)

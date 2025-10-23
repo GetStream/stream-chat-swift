@@ -83,6 +83,19 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
         XCTAssertEqual(sut.state, .initial)
     }
 
+    func test_begin_whenPaginationIsNil_thenSetsStateToInitial() {
+        // Given
+        sut.state.isLoadingNextMessages = true
+        sut.state.hasLoadedAllNextMessages = false
+        sut.state.oldestFetchedMessage = .dummy()
+
+        // When
+        sut.begin(pagination: nil)
+
+        // Then
+        XCTAssertEqual(sut.state, .initial)
+    }
+
     // MARK: - end
 
     func test_end_whenLoadingNewestPage_thenSetsOldestFetchedMessageAndHasLoadedAllNextMessages() {
@@ -362,6 +375,22 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
 
         // Then
         XCTAssertEqual(sut.state, stateBefore)
+    }
+
+    func test_end_whenPaginationIsNil_thenSetsStateForNewChannel() {
+        // Given
+        sut.state.hasLoadedAllNextMessages = false
+        sut.state.hasLoadedAllPreviousMessages = false
+
+        // When
+        sut.end(pagination: nil, with: .success([]))
+
+        // Then
+        XCTAssertTrue(sut.state.hasLoadedAllNextMessages)
+        XCTAssertTrue(sut.state.hasLoadedAllPreviousMessages)
+        XCTAssertFalse(sut.state.isLoadingNextMessages)
+        XCTAssertFalse(sut.state.isLoadingMiddleMessages)
+        XCTAssertFalse(sut.state.isLoadingPreviousMessages)
     }
 }
 
