@@ -6,7 +6,7 @@ import Combine
 import Foundation
 
 /// The type is designed to pre-process some incoming `Event` via middlewares before being published
-class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
+class EventPersistentNotificationCenter: NotificationCenter, EventNotificationCenter, @unchecked Sendable {
     private(set) var middlewares: [EventMiddleware] = []
 
     /// The database used when evaluating middlewares.
@@ -97,36 +97,30 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     }
 }
 
-extension EventNotificationCenter {
+extension EventPersistentNotificationCenter {
     func process(_ event: Event, postNotification: Bool = true, completion: (@Sendable () -> Void)? = nil) {
         process([event], postNotifications: postNotification, completion: completion)
     }
 }
 
-extension EventNotificationCenter {
-    func subscribe<E>(
-        to event: E.Type,
-        filter: @escaping (E) -> Bool = { _ in true },
-        handler: @escaping (E) -> Void
-    ) -> AnyCancellable where E: Event {
-        publisher(for: .NewEventReceived)
-            .compactMap { $0.event as? E }
-            .filter(filter)
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: handler)
+extension Notification.Name {
+    /// The name of the notification posted when a new event is published/
+    static let NewEventReceived = Notification.Name("io.getstream.new_event_received")
+}
+
+extension Notification {
+    private static let eventKey = "io.getstream.event_key"
+
+    init(newEventReceived event: Event, sender: Any) {
+        self.init(name: .NewEventReceived, object: sender, userInfo: [Self.eventKey: event])
     }
 
-    func subscribe(
-        filter: @escaping (Event) -> Bool = { _ in true },
-        handler: @escaping (Event) -> Void
-    ) -> AnyCancellable {
-        publisher(for: .NewEventReceived)
-            .compactMap(\.event)
-            .filter(filter)
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: handler)
+    var event: Event? {
+        userInfo?[Self.eventKey] as? Event
     }
+}
 
+extension EventPersistentNotificationCenter {
     static func channelFilter(cid: ChannelId, event: Event) -> Bool {
         switch event {
         case let channelEvent as ChannelSpecificEvent:

@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+@testable import StreamCore
 
 final class EventBatcher_Mock: EventBatcher, @unchecked Sendable {
     var currentBatch: [Event] = []
@@ -12,7 +13,7 @@ final class EventBatcher_Mock: EventBatcher, @unchecked Sendable {
 
     init(
         period: TimeInterval = 0,
-        timerType: StreamChat.Timer.Type = DefaultTimer.self,
+        timerType: TimerScheduling.Type = DefaultTimer.self,
         handler: @escaping (_ batch: [Event], _ completion: @escaping @Sendable () -> Void) -> Void
     ) {
         self.handler = handler

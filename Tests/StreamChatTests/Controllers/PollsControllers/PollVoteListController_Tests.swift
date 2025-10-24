@@ -239,7 +239,7 @@ final class PollVoteListController_Tests: XCTestCase {
         }
         
         // Simulate receiving the event
-        answerController.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        answerController.didReceiveEvent(event)
         
         // Verify the vote was linked
         XCTAssertEqual(linkCallCount, 1)
@@ -284,7 +284,7 @@ final class PollVoteListController_Tests: XCTestCase {
         }
         
         // Simulate receiving the event
-        regularController.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        regularController.didReceiveEvent(event)
         
         // Verify the vote was linked
         XCTAssertEqual(linkCallCount, 1)
@@ -330,7 +330,7 @@ final class PollVoteListController_Tests: XCTestCase {
         }
         
         // Simulate receiving the event
-        answerController.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        answerController.didReceiveEvent(event)
         
         // Verify the vote was linked
         XCTAssertEqual(linkCallCount, 1)
@@ -375,7 +375,7 @@ final class PollVoteListController_Tests: XCTestCase {
         }
         
         // Simulate receiving the event
-        regularController.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        regularController.didReceiveEvent(event)
         
         // Verify the vote was linked
         XCTAssertEqual(linkCallCount, 1)
@@ -416,7 +416,7 @@ final class PollVoteListController_Tests: XCTestCase {
         }
         
         // Simulate receiving the event
-        controller.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        controller.didReceiveEvent(event)
         
         // Verify the vote was NOT linked due to different poll ID
         XCTAssertEqual(linkCallCount, 0)
@@ -454,7 +454,7 @@ final class PollVoteListController_Tests: XCTestCase {
         }
         
         // Simulate receiving the event
-        regularQuery.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        regularQuery.didReceiveEvent(event)
         
         // Verify the vote was NOT linked because answer votes should only be linked when optionId is nil
         XCTAssertEqual(linkCallCount, 0)
@@ -492,7 +492,7 @@ final class PollVoteListController_Tests: XCTestCase {
         }
         
         // Simulate receiving the event
-        controller.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        controller.didReceiveEvent(event)
         
         // Verify the vote was NOT linked because option IDs don't match
         XCTAssertEqual(linkCallCount, 0)
@@ -528,7 +528,7 @@ final class PollVoteListController_Tests: XCTestCase {
         XCTAssertNil(controller.poll)
     }
     
-    func test_pollObserver_notifiesDelegateOnPollUpdate() {
+    @MainActor func test_pollObserver_notifiesDelegateOnPollUpdate() {
         // Create initial poll
         let user = UserPayload.dummy(userId: currentUserId)
         let initialPoll = dummyPollPayload(id: pollId, user: user)

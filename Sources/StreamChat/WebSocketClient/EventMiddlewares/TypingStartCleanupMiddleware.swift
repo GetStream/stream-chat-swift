@@ -15,7 +15,7 @@ class TypingStartCleanupMiddleware: EventMiddleware {
     /// after `start typing` event.
     let emitEvent: (Event) -> Void
     /// A timer type.
-    var timer: Timer.Type = DefaultTimer.self
+    var timer: TimerScheduling.Type = DefaultTimer.self
 
     /// A list of timers per user id.
     @Atomic private var typingEventTimeoutTimerControls: [UserId: TimerControl] = [:]

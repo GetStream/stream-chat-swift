@@ -38,10 +38,18 @@ final class WebSocketEngine_Mock: WebSocketEngine, @unchecked Sendable {
     func disconnect() {
         disconnect_calledCount += 1
     }
+    
+    func disconnect(with code: URLSessionWebSocketTask.CloseCode) {
+        disconnect_calledCount += 1
+    }
 
     func sendPing() {
         sendPing_calledCount += 1
     }
+    
+    func send(message: any StreamCore.SendableEvent) {}
+    
+    func send(jsonMessage: any Codable) {}
 
     // MARK: - Functions to simulate behavior
 
@@ -56,7 +64,7 @@ final class WebSocketEngine_Mock: WebSocketEngine, @unchecked Sendable {
     }
 
     func simulateMessageReceived(_ data: Data) {
-        delegate?.webSocketDidReceiveMessage(String(data: data, encoding: .utf8)!)
+        delegate?.webSocketDidReceiveMessage(data)
     }
 
     func simulatePong() {

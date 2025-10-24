@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+@testable import StreamCore
 
 /// Mock implementation of `WebSocketClient`.
 final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
@@ -21,10 +22,9 @@ final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
     var disconnect_called: Bool { disconnect_calledCounter > 0 }
     var disconnect_completion: (() -> Void)?
 
-    var mockedConnectionState: WebSocketConnectionState?
-
-    override var connectionState: WebSocketConnectionState {
-        mockedConnectionState ?? super.connectionState
+    var mockedConnectionState: WebSocketConnectionState {
+        get { super.connectionState }
+        set { super.connectionState = newValue }
     }
 
     init(
@@ -38,7 +38,7 @@ final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
     ) {
         var environment = WebSocketClient.Environment.mock
         if let pingController = pingController {
-            environment.createPingController = { _, _ in pingController }
+            environment.createPingController = { _, _, _ in pingController }
         }
 
         if let webSocketEngine = webSocketEngine {
@@ -57,10 +57,11 @@ final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
 
         super.init(
             sessionConfiguration: sessionConfiguration,
-            requestEncoder: requestEncoder,
             eventDecoder: eventDecoder,
             eventNotificationCenter: eventNotificationCenter,
-            environment: environment
+            webSocketClientType: .coordinator,
+            environment: environment,
+            connectRequest: nil
         )
     }
 
@@ -69,6 +70,7 @@ final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
     }
 
     override func disconnect(
+        code: URLSessionWebSocketTask.CloseCode = .normalClosure,
         source: WebSocketConnectionState.DisconnectionSource = .userInitiated,
         completion: @escaping () -> Void
     ) {

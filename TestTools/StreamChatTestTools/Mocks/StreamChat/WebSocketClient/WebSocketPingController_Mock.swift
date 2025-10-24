@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+@testable import StreamCore
 import XCTest
 
 final class WebSocketPingController_Mock: WebSocketPingController, @unchecked Sendable {

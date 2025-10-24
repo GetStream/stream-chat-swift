@@ -4,6 +4,7 @@
 
 @testable import StreamChat
 @testable import StreamChatTestTools
+@testable import StreamCore
 import XCTest
 
 final class RequestDecoder_Tests: XCTestCase {

@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 /// Mock implementation of `EventNotificationCenter`
-final class EventNotificationCenter_Mock: EventNotificationCenter, @unchecked Sendable {
+final class EventNotificationCenter_Mock: EventPersistentNotificationCenter, @unchecked Sendable {
     override var newMessageIds: Set<MessageId> {
         newMessageIdsMock ?? super.newMessageIds
     }

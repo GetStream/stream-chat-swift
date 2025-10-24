@@ -4,22 +4,26 @@
 
 @testable import StreamChat
 @testable import StreamChatTestTools
+@testable import StreamCore
 import XCTest
 
 final class ConnectionRepository_Tests: XCTestCase {
     private var repository: ConnectionRepository!
     private var webSocketClient: WebSocketClient_Mock!
+    private var webSocketRequestEncoder: DefaultRequestEncoder!
     private var syncRepository: SyncRepository_Mock!
     private var apiClient: APIClient_Spy!
 
     override func setUp() {
         super.setUp()
         webSocketClient = WebSocketClient_Mock()
+        webSocketRequestEncoder = DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique))
         apiClient = APIClient_Spy()
         syncRepository = SyncRepository_Mock()
         repository = ConnectionRepository(
             isClientInActiveMode: true,
             syncRepository: syncRepository,
+            webSocketRequestEncoder: webSocketRequestEncoder,
             webSocketClient: webSocketClient,
             apiClient: apiClient,
             timerType: DefaultTimer.self
@@ -46,6 +50,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         repository = ConnectionRepository(
             isClientInActiveMode: false,
             syncRepository: syncRepository,
+            webSocketRequestEncoder: webSocketRequestEncoder,
             webSocketClient: webSocketClient,
             apiClient: apiClient,
             timerType: DefaultTimer.self
@@ -91,7 +96,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         }
 
         // Simulate error scenario (change status + force waiters completion)
-        webSocketClient.mockedConnectionState = .waitingForConnectionId
+        webSocketClient.mockedConnectionState = .authenticating
         repository.completeConnectionIdWaiters(connectionId: nil)
 
         waitForExpectations(timeout: defaultTimeout)
@@ -157,6 +162,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         repository = ConnectionRepository(
             isClientInActiveMode: false,
             syncRepository: syncRepository,
+            webSocketRequestEncoder: webSocketRequestEncoder,
             webSocketClient: webSocketClient,
             apiClient: apiClient,
             timerType: DefaultTimer.self
@@ -196,18 +202,12 @@ final class ConnectionRepository_Tests: XCTestCase {
         let tokenUserId = "123-token-userId"
         let token = Token(rawValue: "", userId: tokenUserId, expiration: nil)
 
-        XCTAssertNil(webSocketClient.connectEndpoint)
         repository.updateWebSocketEndpoint(with: token, userInfo: nil)
-
+        
+        let expected = try apiClient.encoder.encodeRequest(for: .webSocketConnect(userInfo: UserInfo(id: tokenUserId)))
+        
         // UserInfo should take priority
-        XCTAssertEqual(
-            webSocketClient.connectEndpoint.map(AnyEndpoint.init),
-            AnyEndpoint(
-                .webSocketConnect(
-                    userInfo: UserInfo(id: tokenUserId)
-                )
-            )
-        )
+        XCTAssertEqual(webSocketClient.connectRequest, expected)
     }
 
     func test_updateWebSocketEndpointWithTokenAndUserInfo() throws {
@@ -216,33 +216,22 @@ final class ConnectionRepository_Tests: XCTestCase {
         let tokenUserId = "123-token-userId"
         let token = Token(rawValue: "", userId: tokenUserId, expiration: nil)
 
-        XCTAssertNil(webSocketClient.connectEndpoint)
         repository.updateWebSocketEndpoint(with: token, userInfo: userInfo)
 
+        let expected = try apiClient.encoder.encodeRequest(for: .webSocketConnect(userInfo: UserInfo(id: userInfoUserId)))
+        
         // UserInfo should take priority
-        XCTAssertEqual(
-            webSocketClient.connectEndpoint.map(AnyEndpoint.init),
-            AnyEndpoint(
-                .webSocketConnect(
-                    userInfo: UserInfo(id: userInfoUserId)
-                )
-            )
-        )
+        XCTAssertEqual(webSocketClient.connectRequest, expected)
     }
 
     func test_updateWebSocketEndpointWithUserId() throws {
         let userId = "123-userId"
-        XCTAssertNil(webSocketClient.connectEndpoint)
         repository.updateWebSocketEndpoint(with: userId)
-
-        XCTAssertEqual(
-            webSocketClient.connectEndpoint.map(AnyEndpoint.init),
-            AnyEndpoint(
-                .webSocketConnect(
-                    userInfo: UserInfo(id: userId)
-                )
-            )
-        )
+        
+        let expected = try apiClient.encoder.encodeRequest(for: .webSocketConnect(userInfo: UserInfo(id: userId)))
+        
+        // UserInfo should take priority
+        XCTAssertEqual(webSocketClient.connectRequest, expected)
     }
 
     // MARK: Handle connection update
@@ -257,8 +246,8 @@ final class ConnectionRepository_Tests: XCTestCase {
         let pairs: [(WebSocketConnectionState, ConnectionStatus)] = [
             (.initialized, .initialized),
             (.connecting, .connecting),
-            (.waitingForConnectionId, .connecting),
-            (.connected(connectionId: "123"), .connected),
+            (.authenticating, .connecting),
+            (.connected(healthCheckInfo: HealthCheckInfo(connectionId: "123")), .connected),
             (.disconnecting(source: .userInitiated), .disconnecting),
             (.disconnecting(source: .noPongReceived), .disconnecting),
             (.disconnected(source: .userInitiated), .disconnected(error: nil)),
@@ -288,8 +277,8 @@ final class ConnectionRepository_Tests: XCTestCase {
         let pairs: [(WebSocketConnectionState, Bool)] = [
             (.initialized, false),
             (.connecting, false),
-            (.waitingForConnectionId, false),
-            (.connected(connectionId: "123"), true),
+            (.authenticating, false),
+            (.connected(healthCheckInfo: HealthCheckInfo(connectionId: "123")), true),
             (.disconnecting(source: .userInitiated), false),
             (.disconnecting(source: .noPongReceived), false),
             (.disconnected(source: .userInitiated), true),
@@ -302,6 +291,7 @@ final class ConnectionRepository_Tests: XCTestCase {
             let repository = ConnectionRepository(
                 isClientInActiveMode: true,
                 syncRepository: syncRepository,
+                webSocketRequestEncoder: webSocketRequestEncoder,
                 webSocketClient: webSocketClient,
                 apiClient: apiClient,
                 timerType: DefaultTimer.self
@@ -332,8 +322,8 @@ final class ConnectionRepository_Tests: XCTestCase {
         let pairs: [(WebSocketConnectionState, ConnectionId?)] = [
             (.initialized, nil),
             (.connecting, nil),
-            (.waitingForConnectionId, nil),
-            (.connected(connectionId: "123"), "123"),
+            (.authenticating, nil),
+            (.connected(healthCheckInfo: HealthCheckInfo(connectionId: "123")), "123"),
             (.disconnecting(source: .userInitiated), nil),
             (.disconnected(source: .userInitiated), nil)
         ]
@@ -342,6 +332,7 @@ final class ConnectionRepository_Tests: XCTestCase {
             let repository = ConnectionRepository(
                 isClientInActiveMode: true,
                 syncRepository: syncRepository,
+                webSocketRequestEncoder: webSocketRequestEncoder,
                 webSocketClient: webSocketClient,
                 apiClient: apiClient,
                 timerType: DefaultTimer.self
@@ -402,7 +393,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     }
 
     func test_handleConnectionUpdate_whenNoError_shouldNOTExecuteRefreshTokenBlock() {
-        let states: [WebSocketConnectionState] = [.connecting, .initialized, .connected(connectionId: .newUniqueId), .waitingForConnectionId]
+        let states: [WebSocketConnectionState] = [.connecting, .initialized, .connected(healthCheckInfo: HealthCheckInfo(connectionId: .newUniqueId)), .authenticating]
 
         for state in states {
             repository.handleConnectionUpdate(state: state, onExpiredToken: {
@@ -510,7 +501,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         // Set initial connectionId
         let initialConnectionId = "initial-connection-id"
         repository.handleConnectionUpdate(
-            state: .connected(connectionId: initialConnectionId),
+            state: .connected(healthCheckInfo: HealthCheckInfo(connectionId: initialConnectionId)),
             onExpiredToken: {}
         )
         XCTAssertEqual(repository.connectionId, initialConnectionId)
@@ -545,6 +536,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         repository = ConnectionRepository(
             isClientInActiveMode: true,
             syncRepository: syncRepository,
+            webSocketRequestEncoder: webSocketRequestEncoder,
             webSocketClient: webSocketClient,
             apiClient: apiClient,
             timerType: DefaultTimer.self
@@ -561,6 +553,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         repository = ConnectionRepository(
             isClientInActiveMode: false,
             syncRepository: syncRepository,
+            webSocketRequestEncoder: webSocketRequestEncoder,
             webSocketClient: webSocketClient,
             apiClient: apiClient,
             timerType: DefaultTimer.self

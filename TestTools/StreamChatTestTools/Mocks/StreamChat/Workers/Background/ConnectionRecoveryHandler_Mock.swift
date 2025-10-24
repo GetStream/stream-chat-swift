@@ -6,7 +6,7 @@
 import XCTest
 
 /// Mock implementation of `ConnectionRecoveryHandler`
-final class ConnectionRecoveryHandler_Mock: ConnectionRecoveryHandler {
+final class ConnectionRecoveryHandler_Mock: ConnectionRecoveryHandler, @unchecked Sendable {
     var startCallCount = 0
     var stopCallCount = 0
 

@@ -25,29 +25,6 @@ extension ClientError {
     public final class IgnoredEventType: ClientError, @unchecked Sendable {
         override public var localizedDescription: String { "The incoming event type is not supported. Ignoring." }
     }
-
-    public final class EventDecoding: ClientError, @unchecked Sendable {
-        override init(_ message: String, _ file: StaticString = #file, _ line: UInt = #line) {
-            super.init(message, file, line)
-        }
-
-        init<T>(missingValue: String, for type: T.Type, _ file: StaticString = #file, _ line: UInt = #line) {
-            super.init("`\(missingValue)` field can't be `nil` for the `\(type)` event.", file, line)
-        }
-
-        init(missingValue: String, for type: EventType, _ file: StaticString = #file, _ line: UInt = #line) {
-            super.init("`\(missingValue)` field can't be `nil` for the `\(type.rawValue)` event.", file, line)
-        }
-
-        init(failedParsingValue: String, for type: EventType, with error: Error, _ file: StaticString = #file, _ line: UInt = #line) {
-            super.init("`\(failedParsingValue)` failed to parse for the `\(type.rawValue)` event. Error: \(error)", file, line)
-        }
-    }
-}
-
-/// A type-erased wrapper protocol for `EventDecoder`.
-protocol AnyEventDecoder {
-    func decode(from: Data) throws -> Event
 }
 
 extension EventDecoder: AnyEventDecoder {}

@@ -30,7 +30,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
         ]
 
         // Create notification center with middlewares
-        let center = EventNotificationCenter(database: database)
+        let center = EventPersistentNotificationCenter(database: database)
         middlewares.forEach(center.add)
 
         // Assert middlewares are assigned correctly
@@ -50,7 +50,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
         ]
 
         // Create notification center without any middlewares
-        let center = EventNotificationCenter(database: database)
+        let center = EventPersistentNotificationCenter(database: database)
 
         // Add middlewares via `add` method
         middlewares.forEach(center.add)
@@ -67,7 +67,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
         let consumingMiddleware = EventMiddleware_Mock { _, _ in nil }
 
         // Create a notification center with blocking middleware
-        let center = EventNotificationCenter(database: database)
+        let center = EventPersistentNotificationCenter(database: database)
         center.add(middleware: consumingMiddleware)
 
         // Create event logger to check published events
@@ -82,7 +82,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
 
     func test_eventIsPublishedAsItIs_ifThereAreNoMiddlewares() {
         // Create a notification center without any middlewares
-        let center = EventNotificationCenter(database: database)
+        let center = EventPersistentNotificationCenter(database: database)
 
         // Create event logger to check published events
         let eventLogger = EventLogger(center)
@@ -97,7 +97,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
 
     func test_eventsAreProcessed_fromWithinTheWriteClosure() {
         // Create a notification center without any middlewares
-        let center = EventNotificationCenter(database: database)
+        let center = EventPersistentNotificationCenter(database: database)
 
         // Create event logger to check published events
         let eventLogger = EventLogger(center)
@@ -126,7 +126,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
 
     func test_process_whenShouldPostEventsIsTrue_eventsArePosted() {
         // Create a notification center with just a forwarding middleware
-        let center = EventNotificationCenter(database: database)
+        let center = EventPersistentNotificationCenter(database: database)
 
         // Create event logger to check published events
         let eventLogger = EventLogger(center)
@@ -149,7 +149,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
 
     func test_process_whenShouldPostEventsIsFalse_eventsAreNotPosted() {
         // Create a notification center with just a forwarding middleware
-        let center = EventNotificationCenter(database: database)
+        let center = EventPersistentNotificationCenter(database: database)
 
         // Create event logger to check published events
         let eventLogger = EventLogger(center)
@@ -172,7 +172,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
 
     func test_process_postsEventsOnPostingQueue() {
         // Create notification center
-        let center = EventNotificationCenter(database: database)
+        let center = EventPersistentNotificationCenter(database: database)
 
         // Assign mock events posting queue
         let mockQueueUUID = UUID()
@@ -216,7 +216,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
         let outputEvent = TestEvent()
 
         // Create a notification center
-        let center = EventNotificationCenter(database: database)
+        let center = EventPersistentNotificationCenter(database: database)
 
         // Create event logger to check published events
         let eventLogger = EventLogger(center)
@@ -269,7 +269,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
         }
 
         // Create a notification center
-        let center = EventNotificationCenter(database: database)
+        let center = EventPersistentNotificationCenter(database: database)
 
         measure {
             center.process(events)
@@ -280,7 +280,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
 
     func test_registerManualEventHandling_callsManualEventHandler() {
         let mockHandler = ManualEventHandler_Mock()
-        let center = EventNotificationCenter(database: database, manualEventHandler: mockHandler)
+        let center = EventPersistentNotificationCenter(database: database, manualEventHandler: mockHandler)
         let cid: ChannelId = .unique
 
         center.registerManualEventHandling(for: cid)
@@ -291,7 +291,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
 
     func test_unregisterManualEventHandling_callsManualEventHandler() {
         let mockHandler = ManualEventHandler_Mock()
-        let center = EventNotificationCenter(database: database, manualEventHandler: mockHandler)
+        let center = EventPersistentNotificationCenter(database: database, manualEventHandler: mockHandler)
         let cid: ChannelId = .unique
 
         center.unregisterManualEventHandling(for: cid)
@@ -302,7 +302,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
 
     func test_process_whenManualEventHandlerReturnsEvent_eventIsAddedToEventsToPost() {
         let mockHandler = ManualEventHandler_Mock()
-        let center = EventNotificationCenter(database: database, manualEventHandler: mockHandler)
+        let center = EventPersistentNotificationCenter(database: database, manualEventHandler: mockHandler)
         
         // Create event logger to check published events
         let eventLogger = EventLogger(center)
@@ -326,7 +326,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
 
     func test_process_whenManualEventHandlerReturnsNil_eventIsProcessedByMiddlewares() {
         let mockHandler = ManualEventHandler_Mock()
-        let center = EventNotificationCenter(database: database, manualEventHandler: mockHandler)
+        let center = EventPersistentNotificationCenter(database: database, manualEventHandler: mockHandler)
         
         // Create event logger to check published events
         let eventLogger = EventLogger(center)
