@@ -54,7 +54,8 @@ extension MessagePayload {
         draft: DraftPayload? = nil,
         sharedLocation: SharedLocationPayload? = nil,
         member: MemberInfoPayload? = nil,
-        deletedForMe: Bool? = nil
+        deletedForMe: Bool? = nil,
+        campaignId: String? = nil
     ) -> MessagePayload {
         .init(
             id: messageId,
@@ -99,7 +100,8 @@ extension MessagePayload {
             draft: draft,
             location: sharedLocation,
             member: member,
-            deletedForMe: deletedForMe
+            deletedForMe: deletedForMe,
+            campaignId: campaignId
         )
     }
 

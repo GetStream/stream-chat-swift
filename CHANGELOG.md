@@ -5,9 +5,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- Add support for deleting messages only for the current user [#3836](https://github.com/GetStream/stream-chat-swift/pull/3836)
-  - Add `ChatMessageController.deleteMessageForMe()`
-  - Add `ChatMessage.deletedForMe`
 - Add support for message delivered info [#3846](https://github.com/GetStream/stream-chat-swift/pull/3846)
   - Add `CurrentChatUserController.markMessagesAsDelivered(messages:)`
   - Add `ChatRemoteNotificationHandler.markMessageAsDelivered(messages:)`
@@ -15,7 +12,29 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
   - Add `ChatChannel.reads(message:)` and `ChatChannel.deliveredReads(message:)`
   - Add `ChatChannelRead.lastDeliveredAt` and `ChatChannelRead.lastDeliveredMessageId`
 ### 🐞 Fixed
+- Fix `ChannelController.hasLoadedAllPreviousMessages` not correct for newly created channels [#3855](https://github.com/GetStream/stream-chat-swift/pull/3855)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix date separator not shown on newly created channel [#3855](https://github.com/GetStream/stream-chat-swift/pull/3855)
+- Fix composer deleting newly entered text after deleting draft text [#3854](https://github.com/GetStream/stream-chat-swift/pull/3854)
+
+# [4.91.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.91.0)
+_October 22, 2025_
+
+## StreamChat
+### ✅ Added
+- Add support for deleting messages only for the current user [#3836](https://github.com/GetStream/stream-chat-swift/pull/3836)
+  - Add `ChatMessageController.deleteMessageForMe()`
+  - Add `ChatMessage.deletedForMe`
+### 🐞 Fixed
 - Fix logout not clearing token when current user had no device registered [#3838](https://github.com/GetStream/stream-chat-swift/pull/3838)
+- Fix `PollVoteListController` not updating votes on the vote cast event [#3849](https://github.com/GetStream/stream-chat-swift/pull/3849)
+- Fix showing channel when receiving a campaign message with `show_channels` false [#3851](https://github.com/GetStream/stream-chat-swift/pull/3851)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix `PollResultsVoteListVC` not updating the vote count [#3849](https://github.com/GetStream/stream-chat-swift/pull/3849)
 
 # [4.90.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.90.0)
 _October 07, 2025_

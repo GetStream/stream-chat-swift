@@ -92,7 +92,40 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(channel?.messages.count, 2)
 
         XCTAssertEqual(paginationStateHandler.endCallCount, 1)
-        XCTAssertEqual(paginationStateHandler.endCalledWith?.0.parameter, expectedPaginationParameter)
+        XCTAssertEqual(paginationStateHandler.endCalledWith?.0?.parameter, expectedPaginationParameter)
+        XCTAssertEqual(paginationStateHandler.endCalledWith?.1.value?.count, 2)
+    }
+
+    func test_updateChannelQuery_whenNoPagination_thenCallsPaginationStateHandlerWithNil() {
+        // Simulate `update(channelQuery:)` call with no pagination
+        let query = ChannelQuery(channelPayload: .unique)
+        let expectation = self.expectation(description: "Update completes")
+        var updateResult: Result<ChannelPayload, Error>!
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
+            updateResult = result
+            expectation.fulfill()
+        })
+
+        // Assert begin is called with nil pagination
+        XCTAssertEqual(paginationStateHandler.beginCallCount, 1)
+        XCTAssertNil(paginationStateHandler.beginCalledWith)
+        XCTAssertEqual(paginationStateHandler.endCallCount, 0)
+
+        // Simulate API response with channel data
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let payload = dummyPayload(with: cid, numberOfMessages: 2)
+        apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        let channel = database.viewContext.channel(cid: cid)
+        XCTAssertNotNil(channel)
+        XCTAssertNil(updateResult.error)
+        XCTAssertEqual(channel?.messages.count, 2)
+
+        // Assert end is called with nil pagination
+        XCTAssertEqual(paginationStateHandler.endCallCount, 1)
+        XCTAssertNil(paginationStateHandler.endCalledWith?.0)
         XCTAssertEqual(paginationStateHandler.endCalledWith?.1.value?.count, 2)
     }
 

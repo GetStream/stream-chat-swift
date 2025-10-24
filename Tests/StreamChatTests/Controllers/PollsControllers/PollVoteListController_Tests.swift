@@ -208,4 +208,388 @@ final class PollVoteListController_Tests: XCTestCase {
         wait(for: [exp], timeout: defaultTimeout)
         XCTAssertTrue(controller.hasLoadedAllVotes)
     }
+    
+    // MARK: - EventsControllerDelegate Tests
+    
+    func test_eventsController_didReceiveEvent_PollVoteCastedEvent_withAnswerVote() {
+        // Create a vote list controller for answers (optionId = nil)
+        let answerQuery = PollVoteListQuery(pollId: pollId, optionId: nil)
+        let answerController = PollVoteListController(
+            query: answerQuery,
+            client: client,
+            environment: env
+        )
+        
+        // Create an answer vote (isAnswer = true)
+        let answerVote = PollVote.mock(
+            pollId: pollId,
+            optionId: nil,
+            isAnswer: true,
+            answerText: "Test answer"
+        )
+        
+        let poll = Poll.unique
+        let event = PollVoteCastedEvent(vote: answerVote, poll: poll, createdAt: Date())
+        
+        // Track link method calls
+        var linkCallCount = 0
+        var linkedVote: PollVote?
+        var linkedQuery: PollVoteListQuery?
+        
+        // Mock the link method to track calls
+        let originalLink = client.mockPollsRepository.link
+        client.mockPollsRepository.link = { pollVote, query in
+            linkCallCount += 1
+            linkedVote = pollVote
+            linkedQuery = query
+        }
+        
+        // Simulate receiving the event
+        answerController.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        
+        // Verify the vote was linked
+        XCTAssertEqual(linkCallCount, 1)
+        XCTAssertEqual(linkedVote?.id, answerVote.id)
+        XCTAssertEqual(linkedQuery?.pollId, answerQuery.pollId)
+        XCTAssertEqual(linkedQuery?.optionId, answerQuery.optionId)
+        
+        // Restore original method
+        client.mockPollsRepository.link = originalLink
+    }
+    
+    func test_eventsController_didReceiveEvent_PollVoteCastedEvent_withRegularVote() {
+        // Create a vote list controller for a specific option
+        let regularQuery = PollVoteListQuery(pollId: pollId, optionId: optionId)
+        let regularController = PollVoteListController(
+            query: regularQuery,
+            client: client,
+            environment: env
+        )
+        
+        // Create a regular vote (isAnswer = false)
+        let regularVote = PollVote.mock(
+            pollId: pollId,
+            optionId: optionId,
+            isAnswer: false
+        )
+        
+        let poll = Poll.unique
+        let event = PollVoteCastedEvent(vote: regularVote, poll: poll, createdAt: Date())
+        
+        // Track link method calls
+        var linkCallCount = 0
+        var linkedVote: PollVote?
+        var linkedQuery: PollVoteListQuery?
+        
+        // Mock the link method to track calls
+        let originalLink = client.mockPollsRepository.link
+        client.mockPollsRepository.link = { pollVote, query in
+            linkCallCount += 1
+            linkedVote = pollVote
+            linkedQuery = query
+        }
+        
+        // Simulate receiving the event
+        regularController.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        
+        // Verify the vote was linked
+        XCTAssertEqual(linkCallCount, 1)
+        XCTAssertEqual(linkedVote?.id, regularVote.id)
+        XCTAssertEqual(linkedQuery?.pollId, regularQuery.pollId)
+        XCTAssertEqual(linkedQuery?.optionId, regularQuery.optionId)
+        
+        // Restore original method
+        client.mockPollsRepository.link = originalLink
+    }
+    
+    func test_eventsController_didReceiveEvent_PollVoteChangedEvent_withAnswerVote() {
+        // Create a vote list controller for answers (optionId = nil)
+        let answerQuery = PollVoteListQuery(pollId: pollId, optionId: nil)
+        let answerController = PollVoteListController(
+            query: answerQuery,
+            client: client,
+            environment: env
+        )
+        
+        // Create an answer vote (isAnswer = true)
+        let answerVote = PollVote.mock(
+            pollId: pollId,
+            optionId: nil,
+            isAnswer: true,
+            answerText: "Updated answer"
+        )
+        
+        let poll = Poll.unique
+        let event = PollVoteChangedEvent(vote: answerVote, poll: poll, createdAt: Date())
+        
+        // Track link method calls
+        var linkCallCount = 0
+        var linkedVote: PollVote?
+        var linkedQuery: PollVoteListQuery?
+        
+        // Mock the link method to track calls
+        let originalLink = client.mockPollsRepository.link
+        client.mockPollsRepository.link = { pollVote, query in
+            linkCallCount += 1
+            linkedVote = pollVote
+            linkedQuery = query
+        }
+        
+        // Simulate receiving the event
+        answerController.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        
+        // Verify the vote was linked
+        XCTAssertEqual(linkCallCount, 1)
+        XCTAssertEqual(linkedVote?.id, answerVote.id)
+        XCTAssertEqual(linkedQuery?.pollId, answerQuery.pollId)
+        XCTAssertEqual(linkedQuery?.optionId, answerQuery.optionId)
+        
+        // Restore original method
+        client.mockPollsRepository.link = originalLink
+    }
+    
+    func test_eventsController_didReceiveEvent_PollVoteChangedEvent_withRegularVote() {
+        // Create a vote list controller for a specific option
+        let regularQuery = PollVoteListQuery(pollId: pollId, optionId: optionId)
+        let regularController = PollVoteListController(
+            query: regularQuery,
+            client: client,
+            environment: env
+        )
+        
+        // Create a regular vote (isAnswer = false)
+        let regularVote = PollVote.mock(
+            pollId: pollId,
+            optionId: optionId,
+            isAnswer: false
+        )
+        
+        let poll = Poll.unique
+        let event = PollVoteChangedEvent(vote: regularVote, poll: poll, createdAt: Date())
+        
+        // Track link method calls
+        var linkCallCount = 0
+        var linkedVote: PollVote?
+        var linkedQuery: PollVoteListQuery?
+        
+        // Mock the link method to track calls
+        let originalLink = client.mockPollsRepository.link
+        client.mockPollsRepository.link = { pollVote, query in
+            linkCallCount += 1
+            linkedVote = pollVote
+            linkedQuery = query
+        }
+        
+        // Simulate receiving the event
+        regularController.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        
+        // Verify the vote was linked
+        XCTAssertEqual(linkCallCount, 1)
+        XCTAssertEqual(linkedVote?.id, regularVote.id)
+        XCTAssertEqual(linkedQuery?.pollId, regularQuery.pollId)
+        XCTAssertEqual(linkedQuery?.optionId, regularQuery.optionId)
+        
+        // Restore original method
+        client.mockPollsRepository.link = originalLink
+    }
+    
+    func test_eventsController_didReceiveEvent_ignoresVotesWithDifferentPollId() {
+        // Create a vote list controller
+        let controller = PollVoteListController(
+            query: query,
+            client: client,
+            environment: env
+        )
+        
+        // Create a vote with different poll ID
+        let differentPollId = String.unique
+        let vote = PollVote.mock(
+            pollId: differentPollId,
+            optionId: optionId,
+            isAnswer: false
+        )
+        
+        let poll = Poll.unique
+        let event = PollVoteCastedEvent(vote: vote, poll: poll, createdAt: Date())
+        
+        // Track link method calls
+        var linkCallCount = 0
+        
+        // Mock the link method to track calls
+        let originalLink = client.mockPollsRepository.link
+        client.mockPollsRepository.link = { _, _ in
+            linkCallCount += 1
+        }
+        
+        // Simulate receiving the event
+        controller.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        
+        // Verify the vote was NOT linked due to different poll ID
+        XCTAssertEqual(linkCallCount, 0)
+        
+        // Restore original method
+        client.mockPollsRepository.link = originalLink
+    }
+    
+    func test_eventsController_didReceiveEvent_ignoresAnswerVotesWhenOptionIdIsSet() {
+        // Create a vote list controller for a specific option
+        let regularQuery = PollVoteListController(
+            query: query,
+            client: client,
+            environment: env
+        )
+        
+        // Create an answer vote (isAnswer = true) but controller is for specific option
+        let answerVote = PollVote.mock(
+            pollId: pollId,
+            optionId: nil,
+            isAnswer: true,
+            answerText: "Test answer"
+        )
+        
+        let poll = Poll.unique
+        let event = PollVoteCastedEvent(vote: answerVote, poll: poll, createdAt: Date())
+        
+        // Track link method calls
+        var linkCallCount = 0
+        
+        // Mock the link method to track calls
+        let originalLink = client.mockPollsRepository.link
+        client.mockPollsRepository.link = { _, _ in
+            linkCallCount += 1
+        }
+        
+        // Simulate receiving the event
+        regularQuery.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        
+        // Verify the vote was NOT linked because answer votes should only be linked when optionId is nil
+        XCTAssertEqual(linkCallCount, 0)
+        
+        // Restore original method
+        client.mockPollsRepository.link = originalLink
+    }
+    
+    func test_eventsController_didReceiveEvent_ignoresRegularVotesWhenOptionIdDoesNotMatch() {
+        // Create a vote list controller for a specific option
+        let controller = PollVoteListController(
+            query: query,
+            client: client,
+            environment: env
+        )
+        
+        // Create a regular vote with different option ID
+        let differentOptionId = String.unique
+        let vote = PollVote.mock(
+            pollId: pollId,
+            optionId: differentOptionId,
+            isAnswer: false
+        )
+        
+        let poll = Poll.unique
+        let event = PollVoteCastedEvent(vote: vote, poll: poll, createdAt: Date())
+        
+        // Track link method calls
+        var linkCallCount = 0
+        
+        // Mock the link method to track calls
+        let originalLink = client.mockPollsRepository.link
+        client.mockPollsRepository.link = { _, _ in
+            linkCallCount += 1
+        }
+        
+        // Simulate receiving the event
+        controller.eventsController(EventsController(notificationCenter: client.eventNotificationCenter), didReceiveEvent: event)
+        
+        // Verify the vote was NOT linked because option IDs don't match
+        XCTAssertEqual(linkCallCount, 0)
+        
+        // Restore original method
+        client.mockPollsRepository.link = originalLink
+    }
+    
+    // MARK: - Poll Observer Tests
+    
+    func test_pollProperty_returnsPollFromObserver() {
+        // Create a poll in the database
+        let user = UserPayload.dummy(userId: currentUserId)
+        let poll = dummyPollPayload(id: pollId, user: user)
+
+        try! client.databaseContainer.writeSynchronously { session in
+            try session.savePoll(payload: poll, cache: nil)
+        }
+        
+        // Synchronize to start observers
+        controller.synchronize()
+        
+        // Verify poll is returned
+        XCTAssertNotNil(controller.poll)
+        XCTAssertEqual(controller.poll?.id, pollId)
+    }
+    
+    func test_pollProperty_returnsNilWhenNoPollExists() {
+        // Don't create any poll in database
+        controller.synchronize()
+        
+        // Verify poll is nil
+        XCTAssertNil(controller.poll)
+    }
+    
+    func test_pollObserver_notifiesDelegateOnPollUpdate() {
+        // Create initial poll
+        let user = UserPayload.dummy(userId: currentUserId)
+        let initialPoll = dummyPollPayload(id: pollId, user: user)
+
+        try! client.databaseContainer.writeSynchronously { session in
+            try session.savePoll(payload: initialPoll, cache: nil)
+        }
+
+        // Set up delegate
+        let delegate = TestDelegate()
+        controller.delegate = delegate
+
+        // Wait for expection
+        let exp = expectation(description: "didUpdatePoll called")
+        exp.expectedFulfillmentCount = 2
+        delegate.didUpdatePollCompletion = {
+            exp.fulfill()
+        }
+
+        // Synchronize to start observers
+        controller.synchronize()
+        
+        // Update poll in database
+        let updatedPoll = dummyPollPayload(
+            id: pollId,
+            name: "Updated Poll Name",
+            user: user
+        )
+        
+        try! client.databaseContainer.writeSynchronously { session in
+            try session.savePoll(payload: updatedPoll, cache: nil)
+        }
+        
+        // Verify delegate was notified
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertEqual(delegate.didUpdatePollCalled, true)
+        XCTAssertEqual(delegate.updatedPoll?.id, pollId)
+        XCTAssertEqual(delegate.updatedPoll?.name, "Updated Poll Name")
+    }
+}
+
+// MARK: - Test Helper
+
+private class TestDelegate: PollVoteListControllerDelegate {
+    var didUpdatePollCalled = false
+    var updatedPoll: Poll?
+    var didUpdatePollCompletion: (() -> Void)?
+
+    func controller(_ controller: PollVoteListController, didUpdatePoll poll: Poll) {
+        didUpdatePollCalled = true
+        updatedPoll = poll
+        didUpdatePollCompletion?()
+    }
+    
+    func controller(_ controller: PollVoteListController, didChangeVotes changes: [ListChange<PollVote>]) {
+        // Not used in these tests
+    }
 }
