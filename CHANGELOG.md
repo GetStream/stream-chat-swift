@@ -6,11 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add support for message delivered info [#3846](https://github.com/GetStream/stream-chat-swift/pull/3846)
-  - Add `CurrentChatUserController.markMessagesAsDelivered(messages:)`
-  - Add `ChatRemoteNotificationHandler.markMessageAsDelivered(messages:)`
-  - Add `ChatChannel.latestMessageNotMarkedAsDelivered(userId:)`
-  - Add `ChatChannel.reads(message:)` and `ChatChannel.deliveredReads(message:)`
-  - Add `ChatChannelRead.lastDeliveredAt` and `ChatChannelRead.lastDeliveredMessageId`
 ### 🐞 Fixed
 - Fix `ChannelController.hasLoadedAllPreviousMessages` not correct for newly created channels [#3855](https://github.com/GetStream/stream-chat-swift/pull/3855)
 
