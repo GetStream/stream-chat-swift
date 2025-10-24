@@ -11,7 +11,7 @@ public extension ChannelConfig {
         reactionsEnabled: Bool = true,
         typingEventsEnabled: Bool = true,
         readEventsEnabled: Bool = true,
-        deliveredEventsEnabled: Bool = false,
+        deliveredEventsEnabled: Bool = true,
         connectEventsEnabled: Bool = true,
         uploadsEnabled: Bool = true,
         repliesEnabled: Bool = true,

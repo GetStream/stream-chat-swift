@@ -792,7 +792,7 @@ final class ChatChannel_Tests: XCTestCase {
         XCTAssertFalse(result)
     }
     
-    func test_canMarkMessageAsDelivered_whenNoReadState_returnsFalse() {
+    func test_canMarkMessageAsDelivered_whenNoReadState_returnsTrue() {
         // GIVEN
         let currentUser = CurrentChatUser.mock(currentUserId: .unique)
         let message = ChatMessage.mock(
@@ -812,7 +812,7 @@ final class ChatChannel_Tests: XCTestCase {
         let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
         
         // THEN
-        XCTAssertFalse(result)
+        XCTAssertTrue(result)
     }
     
     func test_canMarkMessageAsDelivered_whenMessageNotAfterLastReadAt_returnsFalse() {

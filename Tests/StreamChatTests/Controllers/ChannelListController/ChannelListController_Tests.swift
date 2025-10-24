@@ -865,11 +865,13 @@ final class ChannelListController_Tests: XCTestCase {
 
     // MARK: - Mark Channels as Delivered
 
-    func test_synchronize_callsMarkChannelsAsDeliveredAfterSuccessfulUpdate() {
+    func test_synchronize_callsMarkChannelsAsDeliveredAfterSuccessfulUpdate() throws {
         // GIVEN
-        client.authenticationRepository.setMockToken()
-        let currentUserId = client.currentUserId!
-        
+        let currentUserId = UserId.unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
+        }
+
         // Create channels with messages that can be marked as delivered
         let channel1 = ChatChannel.mock(
             cid: .unique,
@@ -924,11 +926,13 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(deliveredMessages?.map(\.messageId), [channel1.latestMessages.first!.id, channel2.latestMessages.first!.id])
     }
     
-    func test_loadNextChannels_callsMarkChannelsAsDeliveredAfterSuccessfulUpdate() {
+    func test_loadNextChannels_callsMarkChannelsAsDeliveredAfterSuccessfulUpdate() throws {
         // GIVEN
-        client.authenticationRepository.setMockToken()
-        let currentUserId = client.currentUserId!
-        
+        let currentUserId = UserId.unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
+        }
+
         // Create channels with messages that can be marked as delivered
         let channel = ChatChannel.mock(
             cid: .unique,
@@ -964,70 +968,13 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(deliveredMessages?.first?.messageId, channel.latestMessages.first!.id)
     }
     
-    func test_markChannelsAsDeliveredIfNeeded_doesNotCallAPIWhenNoChannelsCanBeMarkedAsDelivered() {
+    func test_markChannelsAsDeliveredIfNeeded_onlyMarksChannelsMeetingDeliveryCriteria() throws {
         // GIVEN
-        client.authenticationRepository.setMockToken()
-        let currentUserId = client.currentUserId!
-        
-        // Create channels with messages that cannot be marked as delivered
-        let channel1 = ChatChannel.mock(
-            cid: .unique,
-            reads: [
-                ChatChannelRead.mock(
-                    lastReadAt: Date().addingTimeInterval(-100), // Message is older than lastReadAt
-                    lastReadMessageId: nil,
-                    unreadMessagesCount: 0,
-                    user: ChatUser.mock(id: currentUserId),
-                    lastDeliveredAt: Date().addingTimeInterval(-50), // Message is older than lastDeliveredAt
-                    lastDeliveredMessageId: nil
-                )
-            ], latestMessages: [
-                ChatMessage.mock(
-                    id: .unique,
-                    createdAt: Date().addingTimeInterval(-200)
-                )
-            ]
-        )
-        
-        let channel2 = ChatChannel.mock(
-            cid: .unique,
-            reads: [
-                ChatChannelRead.mock(
-                    lastReadAt: Date().addingTimeInterval(-100),
-                    lastReadMessageId: nil,
-                    unreadMessagesCount: 0,
-                    user: ChatUser.mock(id: currentUserId),
-                    lastDeliveredAt: Date().addingTimeInterval(-50),
-                    lastDeliveredMessageId: nil
-                )
-            ], latestMessages: []
-        )
-        
-        let channel3 = ChatChannel.mock(
-            cid: .unique,
-            reads: [], latestMessages: [
-                ChatMessage.mock(
-                    id: .unique,
-                    createdAt: Date().addingTimeInterval(-100)
-                )
-            ] // No read state
-        )
-        
-        let channels = [channel1, channel2, channel3]
-        
-        // WHEN
-        controller.synchronize()
-        env.channelListUpdater?.update_completion?(.success(channels))
-        
-        // THEN
-        AssertAsync.willBeTrue(env.currentUserUpdater?.markChannelsDelivered_deliveredMessages == nil)
-    }
-    
-    func test_markChannelsAsDeliveredIfNeeded_onlyMarksChannelsMeetingDeliveryCriteria() {
-        // GIVEN
-        client.authenticationRepository.setMockToken()
-        let currentUserId = client.currentUserId!
-        
+        let currentUserId = UserId.unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
+        }
+
         // Create channels with different delivery criteria
         let channel1 = ChatChannel.mock(
             cid: .unique,
@@ -2274,4 +2221,3 @@ private class TestEnvironment {
             }
         )
 }
-

@@ -482,16 +482,9 @@ extension ChatChannel {
             return false
         }
 
-        guard let userRead = read(for: currentUser.id) else {
-            return false
-        }
-
-        guard message.createdAt > userRead.lastReadAt else {
-            return false
-        }
-
-        guard message.createdAt > userRead.lastDeliveredAt ?? .distantPast else {
-            return false
+        if let userRead = read(for: currentUser.id) {
+            return message.createdAt > userRead.lastReadAt
+                && message.createdAt > userRead.lastDeliveredAt ?? .distantPast
         }
 
         return true
