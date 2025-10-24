@@ -2,10 +2,10 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-import SwiftUI
+import Combine
 import StreamChat
 import StreamChatUI
-import Combine
+import SwiftUI
 
 struct DemoMessageReadsInfoView: View {
     let message: ChatMessage
@@ -85,13 +85,19 @@ struct DemoMessageReadsInfoView: View {
     
     private var deliveredUsers: [ChatUser] {
         channel?.deliveredReads(for: message)
-            .sorted { $0.lastDeliveredAt ?? Date.distantPast < $1.lastDeliveredAt ?? Date.distantPast }
+            .sorted {
+                $0.lastDeliveredAt ?? Date.distantPast < $1.lastDeliveredAt ?? Date.distantPast
+                    && $0.user.id < $1.user.id
+            }
             .map(\.user) ?? []
     }
     
     private var readUsers: [ChatUser] {
         channel?.reads(for: message)
-            .sorted { $0.lastReadAt < $1.lastReadAt }
+            .sorted {
+                $0.lastReadAt < $1.lastReadAt
+                    && $0.user.id < $1.user.id
+            }
             .map(\.user) ?? []
     }
     
