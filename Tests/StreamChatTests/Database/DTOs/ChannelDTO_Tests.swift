@@ -389,7 +389,7 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.config.reactionsEnabled, loadedChannel.config.reactionsEnabled)
             Assert.willBeEqual(payload.channel.config.typingEventsEnabled, loadedChannel.config.typingEventsEnabled)
             Assert.willBeEqual(payload.channel.config.readEventsEnabled, loadedChannel.config.readEventsEnabled)
-            Assert.willBeEqual(payload.channel.config.deliveredEventsEnabled, loadedChannel.config.deliveredEventsEnabled)
+            Assert.willBeEqual(payload.channel.config.deliveryEventsEnabled, loadedChannel.config.deliveryEventsEnabled)
             Assert.willBeEqual(payload.channel.config.connectEventsEnabled, loadedChannel.config.connectEventsEnabled)
             Assert.willBeEqual(payload.channel.config.uploadsEnabled, loadedChannel.config.uploadsEnabled)
             Assert.willBeEqual(payload.channel.config.repliesEnabled, loadedChannel.config.repliesEnabled)

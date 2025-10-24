@@ -47,7 +47,7 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId))
             try session.saveChannel(payload: self.dummyPayload(
                 with: channelId,
-                channelConfig: .mock(deliveredEventsEnabled: true)
+                channelConfig: .mock(deliveryEventsEnabled: true)
             ))
 
             // Save message from another user
@@ -84,7 +84,7 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         // Set up database with channel that has delivered events disabled
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId))
-            let channelPayload = self.dummyPayload(with: channelId, channelConfig: .mock(deliveredEventsEnabled: false))
+            let channelPayload = self.dummyPayload(with: channelId, channelConfig: .mock(deliveryEventsEnabled: false))
             try session.saveChannel(payload: channelPayload)
             
             // Save the message

@@ -19,7 +19,7 @@
     <entity name="ChannelConfigDTO" representedClassName="ChannelConfigDTO" syncable="YES">
         <attribute name="connectEventsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO"/>
-        <attribute name="deliveredEventsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="deliveryEventsEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="maxMessageLength" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="messageRemindersEnabled" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="messageRetention" attributeType="String" defaultValueString=""/>
@@ -153,10 +153,10 @@
     </entity>
     <entity name="CurrentUserDTO" representedClassName="CurrentUserDTO" syncable="YES">
         <attribute name="blockedUserIds" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
+        <attribute name="isDeliveryReceiptsEnabled" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="isInvisible" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isReadReceiptsEnabled" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="isTypingIndicatorsEnabled" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
-        <attribute name="isDeliveryReceiptsEnabled" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="lastSynchedEventDate" optional="YES" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="uniquenessKey" attributeType="String" defaultValueString="this is an immmutable arbitrary key which makes sure we have only once instance of CurrentUserDTO in the db"/>
         <attribute name="unreadChannelsCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>

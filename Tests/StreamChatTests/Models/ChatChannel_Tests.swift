@@ -593,7 +593,7 @@ final class ChatChannel_Tests: XCTestCase {
         let message = ChatMessage.mock(id: .unique, cid: .unique, text: "Test")
         let channel = ChatChannel.mock(
             cid: .unique,
-            config: .mock(deliveredEventsEnabled: false)
+            config: .mock(deliveryEventsEnabled: false)
         )
         
         // WHEN
@@ -609,7 +609,7 @@ final class ChatChannel_Tests: XCTestCase {
         let message = ChatMessage.mock(id: .unique, cid: .unique, text: "Test", author: .mock(id: .unique))
         let channel = ChatChannel.mock(
             cid: .unique,
-            config: .mock(deliveredEventsEnabled: true),
+            config: .mock(deliveryEventsEnabled: true),
             muteDetails: .init(createdAt: .unique, updatedAt: nil, expiresAt: nil)
         )
         
@@ -627,7 +627,7 @@ final class ChatChannel_Tests: XCTestCase {
         let channel = ChatChannel.mock(
             cid: .unique,
             isHidden: true,
-            config: .mock(deliveredEventsEnabled: true)
+            config: .mock(deliveryEventsEnabled: true)
         )
         
         // WHEN
@@ -650,7 +650,7 @@ final class ChatChannel_Tests: XCTestCase {
         let message = ChatMessage.mock(id: .unique, cid: .unique, text: "Test", author: .mock(id: .unique))
         let channel = ChatChannel.mock(
             cid: .unique,
-            config: .mock(deliveredEventsEnabled: true)
+            config: .mock(deliveryEventsEnabled: true)
         )
         
         // WHEN
@@ -679,7 +679,7 @@ final class ChatChannel_Tests: XCTestCase {
         )
         let channel = ChatChannel.mock(
             cid: .unique,
-            config: .mock(deliveredEventsEnabled: true),
+            config: .mock(deliveryEventsEnabled: true),
             reads: [readState]
         )
         
@@ -711,7 +711,7 @@ final class ChatChannel_Tests: XCTestCase {
         )
         let channel = ChatChannel.mock(
             cid: .unique,
-            config: .mock(deliveredEventsEnabled: true),
+            config: .mock(deliveryEventsEnabled: true),
             reads: [readState]
         )
         
@@ -741,7 +741,7 @@ final class ChatChannel_Tests: XCTestCase {
         )
         let channel = ChatChannel.mock(
             cid: .unique,
-            config: .mock(deliveredEventsEnabled: true),
+            config: .mock(deliveryEventsEnabled: true),
             reads: [readState]
         )
         
@@ -772,7 +772,7 @@ final class ChatChannel_Tests: XCTestCase {
         )
         let channel = ChatChannel.mock(
             cid: .unique,
-            config: .mock(deliveredEventsEnabled: true),
+            config: .mock(deliveryEventsEnabled: true),
             reads: [readState]
         )
         
@@ -804,7 +804,7 @@ final class ChatChannel_Tests: XCTestCase {
         )
         let channel = ChatChannel.mock(
             cid: .unique,
-            config: .mock(deliveredEventsEnabled: true),
+            config: .mock(deliveryEventsEnabled: true),
             reads: [readState]
         )
         
@@ -827,7 +827,7 @@ final class ChatChannel_Tests: XCTestCase {
         )
         let channel = ChatChannel.mock(
             cid: .unique,
-            config: .mock(deliveredEventsEnabled: true),
+            config: .mock(deliveryEventsEnabled: true),
             reads: []
         )
         
@@ -857,7 +857,7 @@ final class ChatChannel_Tests: XCTestCase {
         )
         let channel = ChatChannel.mock(
             cid: .unique,
-            config: .mock(deliveredEventsEnabled: true),
+            config: .mock(deliveryEventsEnabled: true),
             reads: [readState]
         )
         
@@ -889,7 +889,7 @@ final class ChatChannel_Tests: XCTestCase {
         )
         let channel = ChatChannel.mock(
             cid: .unique,
-            config: .mock(deliveredEventsEnabled: true),
+            config: .mock(deliveryEventsEnabled: true),
             reads: [readState]
         )
         
@@ -921,7 +921,7 @@ final class ChatChannel_Tests: XCTestCase {
         )
         let channel = ChatChannel.mock(
             cid: .unique,
-            config: .mock(deliveredEventsEnabled: true),
+            config: .mock(deliveryEventsEnabled: true),
             reads: [readState]
         )
         
@@ -952,7 +952,7 @@ final class ChatChannel_Tests: XCTestCase {
         )
         let channel = ChatChannel.mock(
             cid: .unique,
-            config: .mock(deliveredEventsEnabled: true),
+            config: .mock(deliveryEventsEnabled: true),
             reads: [readState]
         )
         

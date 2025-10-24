@@ -104,7 +104,7 @@ public struct ChannelConfig_Mock: Codable {
     public enum CodingKeys: String, CodingKey, CaseIterable {
         case typingEvents = "typing_events"
         case readEvents = "read_events"
-        case deliveredEvents = "delivered_events"
+        case deliveryEvents = "delivery_events"
         case connectEvents = "connect_events"
         case search
         case reactions
@@ -121,7 +121,7 @@ public struct ChannelConfig_Mock: Codable {
     public func update(json: inout [String: Any]) {
         json[CodingKeys.typingEvents.rawValue] = typingEvents
         json[CodingKeys.readEvents.rawValue] = readEvents
-        json[CodingKeys.deliveredEvents.rawValue] = deliveredEvents
+        json[CodingKeys.deliveryEvents.rawValue] = deliveredEvents
         json[CodingKeys.connectEvents.rawValue] = connectEvents
         json[CodingKeys.search.rawValue] = search
         json[CodingKeys.reactions.rawValue] = reactions

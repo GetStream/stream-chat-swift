@@ -385,7 +385,7 @@ extension ChatChannel {
     public var isUnread: Bool { unreadCount != .noUnread }
 
     public var canBeMarkedAsDelivered: Bool {
-        config.deliveredEventsEnabled && !isMuted && !isHidden
+        config.deliveryEventsEnabled && !isMuted && !isHidden
     }
 
     /// Returns the user's read state for this channel.

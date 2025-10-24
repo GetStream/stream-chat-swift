@@ -234,7 +234,7 @@ public class ChannelConfig: Codable {
     private enum CodingKeys: String, CodingKey {
         case reactionsEnabled = "reactions"
         case typingEventsEnabled = "typing_events"
-        case deliveredEventsEnabled = "delivered_events"
+        case deliveryEventsEnabled = "delivery_events"
         case readEventsEnabled = "read_events"
         case connectEventsEnabled = "connect_events"
         case uploadsEnabled = "uploads"
@@ -261,7 +261,7 @@ public class ChannelConfig: Codable {
     /// Controls whether the chat shows how far you've read. Enabled by default.
     public let readEventsEnabled: Bool
     /// Controls whether messages delivered events are handled. Disabled by default.
-    public let deliveredEventsEnabled: Bool
+    public let deliveryEventsEnabled: Bool
     /// Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
     public let connectEventsEnabled: Bool
     /// Enables uploads.
@@ -300,7 +300,7 @@ public class ChannelConfig: Codable {
         reactionsEnabled = try container.decode(Bool.self, forKey: .reactionsEnabled)
         typingEventsEnabled = try container.decode(Bool.self, forKey: .typingEventsEnabled)
         readEventsEnabled = try container.decode(Bool.self, forKey: .readEventsEnabled)
-        deliveredEventsEnabled = try container.decodeIfPresent(Bool.self, forKey: .deliveredEventsEnabled) ?? false
+        deliveryEventsEnabled = try container.decodeIfPresent(Bool.self, forKey: .deliveryEventsEnabled) ?? false
         connectEventsEnabled = try container.decode(Bool.self, forKey: .connectEventsEnabled)
         uploadsEnabled = try container.decodeIfPresent(Bool.self, forKey: .uploadsEnabled) ?? false
         repliesEnabled = try container.decode(Bool.self, forKey: .repliesEnabled)
@@ -328,7 +328,7 @@ public class ChannelConfig: Codable {
         reactionsEnabled: Bool = false,
         typingEventsEnabled: Bool = false,
         readEventsEnabled: Bool = false,
-        deliveredEventsEnabled: Bool = false,
+        deliveryEventsEnabled: Bool = false,
         connectEventsEnabled: Bool = false,
         uploadsEnabled: Bool = false,
         repliesEnabled: Bool = false,
@@ -349,7 +349,7 @@ public class ChannelConfig: Codable {
         self.reactionsEnabled = reactionsEnabled
         self.typingEventsEnabled = typingEventsEnabled
         self.readEventsEnabled = readEventsEnabled
-        self.deliveredEventsEnabled = deliveredEventsEnabled
+        self.deliveryEventsEnabled = deliveryEventsEnabled
         self.connectEventsEnabled = connectEventsEnabled
         self.uploadsEnabled = uploadsEnabled
         self.repliesEnabled = repliesEnabled
