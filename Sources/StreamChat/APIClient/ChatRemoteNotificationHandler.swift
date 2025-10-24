@@ -145,22 +145,20 @@ public class ChatRemoteNotificationHandler {
         return true
     }
 
-    /// Marks the message as delivered and throttles the requests to at most one per second.
-    public func markMessageAsDelivered(_ messageId: MessageId, for channel: ChatChannel) {
-        /// Make sure if the message was already delivered, do not mark it as delivered.
+    /// Marks the message as delivered from a push notification if the app is not active.
+    public func markMessageAsDelivered(_ message: ChatMessage, for channel: ChatChannel) {
         guard let currentUser = client.currentUserController().currentUser else {
             return log.debug("No current user to mark messages as delivered")
         }
         /// Make sure if the message was already delivered, do not mark it as delivered.
         /// If the app is active, the middleware will mark it as delivered so the push
         /// does not need to do it.
-        guard let message = channel.latestUndeliveredMessage(for: currentUser),
-              message.id == messageId else {
-            log.debug("No message to be marked as delivered for messageId:\(messageId))")
+        guard channel.canMarkMessageAsDelivered(message, for: currentUser) else {
+            log.debug("No message to be marked as delivered for messageId:\(message.id))")
             return
         }
 
-        let deliveredInfo = DeliveredMessageInfo(channelId: channel.cid, messageId: messageId)
+        let deliveredInfo = DeliveredMessageInfo(channelId: channel.cid, messageId: message.id)
         client.currentUserController().markMessagesAsDelivered([deliveredInfo])
     }
 

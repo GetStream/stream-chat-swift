@@ -106,7 +106,7 @@ class NotificationService: UNNotificationServiceExtension {
                     
                     // Mark the message as delivered
                     if let channel = messageNotification.channel {
-                        chatHandler.markMessageAsDelivered(messageNotification.message.id, for: channel)
+                        chatHandler.markMessageAsDelivered(messageNotification.message, for: channel)
                     }
                     
                     self.addMessageAttachments(message: messageNotification.message, content: content) {
