@@ -84,7 +84,8 @@ final class WebSocketConnectPayload_Tests: XCTestCase {
             isInvisible: nil,
             privacySettings: .init(
                 typingIndicators: .init(enabled: true),
-                readReceipts: .init(enabled: true)
+                readReceipts: .init(enabled: true),
+                deliveryReceipts: .init(enabled: false)
             ),
             extraData: custom
         ))
@@ -99,7 +100,8 @@ final class WebSocketConnectPayload_Tests: XCTestCase {
                 "color": "blue",
                 "privacy_settings": [
                     "typing_indicators": ["enabled": true],
-                    "read_receipts": ["enabled": true]
+                    "read_receipts": ["enabled": true],
+                    "delivery_receipts": ["enabled": false]
                 ]
             ] as [String: Any]
         ]

@@ -80,6 +80,7 @@ class UserConfig {
     var language: TranslationLanguage?
     var typingIndicatorsEnabled: Bool?
     var readReceiptsEnabled: Bool?
+    var deliveryReceiptsEnabled: Bool?
 
     static var shared = UserConfig()
 

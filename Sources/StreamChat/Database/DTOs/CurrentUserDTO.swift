@@ -29,6 +29,7 @@ class CurrentUserDTO: NSManagedObject {
     // But if new properties are added, we might need to create new DTOs specific to each setting.
     @NSManaged var isTypingIndicatorsEnabled: Bool
     @NSManaged var isReadReceiptsEnabled: Bool
+    @NSManaged var isDeliveryReceiptsEnabled: Bool
     
     @NSManaged var pushPreference: PushPreferenceDTO?
 
@@ -94,7 +95,8 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         dto.isInvisible = payload.isInvisible
         dto.isReadReceiptsEnabled = payload.privacySettings?.readReceipts?.enabled ?? true
         dto.isTypingIndicatorsEnabled = payload.privacySettings?.typingIndicators?.enabled ?? true
-        
+        dto.isDeliveryReceiptsEnabled = payload.privacySettings?.deliveryReceipts?.enabled ?? false
+
         // Save push preference
         if let pushPreference = payload.pushPreference {
             dto.pushPreference = try savePushPreference(id: payload.id, payload: pushPreference)
@@ -279,7 +281,8 @@ extension CurrentChatUser {
             mutedChannels: mutedChannels,
             privacySettings: .init(
                 typingIndicators: .init(enabled: dto.isTypingIndicatorsEnabled),
-                readReceipts: .init(enabled: dto.isReadReceiptsEnabled)
+                readReceipts: .init(enabled: dto.isReadReceiptsEnabled),
+                deliveryReceipts: .init(enabled: dto.isDeliveryReceiptsEnabled)
             ),
             avgResponseTime: dto.user.avgResponseTime?.intValue,
             pushPreference: pushPreference

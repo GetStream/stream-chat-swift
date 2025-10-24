@@ -68,7 +68,8 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             ],
             privacySettings: .init(settings: .init(
                 typingIndicators: .init(enabled: false),
-                readReceipts: .init(enabled: false)
+                readReceipts: .init(enabled: false),
+                deliveryReceipts: .init(enabled: false)
             )),
             pushPreference: .init(
                 chatLevel: "mentions",
@@ -107,6 +108,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(payload.language, loadedCurrentUser.language?.languageCode)
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.readReceipts?.enabled)
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.typingIndicators?.enabled)
+        XCTAssertEqual(false, loadedCurrentUser.privacySettings.deliveryReceipts?.enabled)
         XCTAssertEqual(payload.pushPreference?.chatLevel, loadedCurrentUser.pushPreference?.level.rawValue)
         XCTAssertNearlySameDate(payload.pushPreference?.disabledUntil, loadedCurrentUser.pushPreference?.disabledUntil)
     }
@@ -291,9 +293,9 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             database.viewContext.currentUser?.asModel()
         )
 
-        // By default, the values should be true if not set.
         XCTAssertEqual(true, loadedCurrentUser.privacySettings.readReceipts?.enabled)
         XCTAssertEqual(true, loadedCurrentUser.privacySettings.typingIndicators?.enabled)
+        XCTAssertEqual(false, loadedCurrentUser.privacySettings.deliveryReceipts?.enabled)
     }
     
     func test_deletingCurrentUser() throws {
