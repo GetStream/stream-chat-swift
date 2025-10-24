@@ -465,6 +465,11 @@ extension ChatChannel {
         guard canBeMarkedAsDelivered else {
             return false
         }
+        
+        // Check if delivery receipts are enabled in privacy settings
+        guard currentUser.privacySettings.deliveryReceipts?.enabled ?? false else {
+            return false
+        }
 
         if message.parentMessageId != nil && !message.showReplyInChannel {
             return false

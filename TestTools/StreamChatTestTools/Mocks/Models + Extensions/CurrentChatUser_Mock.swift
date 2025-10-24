@@ -32,7 +32,11 @@ public extension CurrentChatUser {
         flaggedMessageIDs: Set<MessageId> = [],
         unreadCount: UnreadCount = .noUnread,
         mutedChannels: Set<ChatChannel> = [],
-        privacySettings: UserPrivacySettings = .init(),
+        privacySettings: UserPrivacySettings = .init(
+            typingIndicators: .init(enabled: true),
+            readReceipts: .init(enabled: true),
+            deliveryReceipts: .init(enabled: true)
+        ),
         avgResponseTime: Int? = nil
     ) -> CurrentChatUser {
         .init(

@@ -637,6 +637,29 @@ final class ChatChannel_Tests: XCTestCase {
         XCTAssertFalse(result)
     }
     
+    func test_canMarkMessageAsDelivered_whenDeliveryReceiptsDisabled_returnsFalse() {
+        // GIVEN
+        let currentUser = CurrentChatUser.mock(
+            currentUserId: .unique,
+            privacySettings: .init(
+                typingIndicators: .init(enabled: true),
+                readReceipts: .init(enabled: true),
+                deliveryReceipts: .init(enabled: false)
+            )
+        )
+        let message = ChatMessage.mock(id: .unique, cid: .unique, text: "Test", author: .mock(id: .unique))
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(deliveredEventsEnabled: true)
+        )
+        
+        // WHEN
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
+        // THEN
+        XCTAssertFalse(result)
+    }
+    
     func test_canMarkMessageAsDelivered_whenMessageIsThreadReplyNotShownInChannel_returnsFalse() {
         // GIVEN
         let currentUser = CurrentChatUser.mock(currentUserId: .unique)

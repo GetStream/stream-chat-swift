@@ -72,7 +72,11 @@ extension CurrentUserPayload {
             teams: teams,
             language: language,
             extraData: extraData,
-            privacySettings: privacySettings,
+            privacySettings: privacySettings ?? .init(
+                typingIndicators: .init(enabled: true),
+                readReceipts: .init(enabled: true),
+                deliveryReceipts: .init(enabled: true)
+            ),
             pushPreference: nil
         )
     }
