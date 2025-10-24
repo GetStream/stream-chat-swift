@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new message is sent to channel.
-public struct MessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
+public class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The user who sent a message.
     public let user: ChatUser
 
@@ -26,6 +26,22 @@ public struct MessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
 
     /// The unread counts.
     public let unreadCount: UnreadCount?
+
+    init(
+        user: ChatUser,
+        message: ChatMessage,
+        channel: ChatChannel,
+        createdAt: Date,
+        watcherCount: Int?,
+        unreadCount: UnreadCount?
+    ) {
+        self.user = user
+        self.message = message
+        self.channel = channel
+        self.createdAt = createdAt
+        self.watcherCount = watcherCount
+        self.unreadCount = unreadCount
+    }
 }
 
 class MessageNewEventDTO: EventDTO {
@@ -67,7 +83,7 @@ class MessageNewEventDTO: EventDTO {
 }
 
 /// Triggered when a message is updated.
-public struct MessageUpdatedEvent: ChannelSpecificEvent {
+public class MessageUpdatedEvent: ChannelSpecificEvent {
     /// The use who updated the message.
     public let user: ChatUser
 
@@ -82,6 +98,18 @@ public struct MessageUpdatedEvent: ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(
+        user: ChatUser,
+        channel: ChatChannel,
+        message: ChatMessage,
+        createdAt: Date
+    ) {
+        self.user = user
+        self.channel = channel
+        self.message = message
+        self.createdAt = createdAt
+    }
 }
 
 class MessageUpdatedEventDTO: EventDTO {
@@ -116,7 +144,7 @@ class MessageUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when a new message is deleted.
-public struct MessageDeletedEvent: ChannelSpecificEvent {
+public class MessageDeletedEvent: ChannelSpecificEvent {
     /// The user who deleted the message.
     public let user: ChatUser?
 
@@ -137,6 +165,22 @@ public struct MessageDeletedEvent: ChannelSpecificEvent {
 
     /// A Boolean value indicating whether the message was deleted only for the current user.
     public let deletedForMe: Bool
+
+    init(
+        user: ChatUser?,
+        channel: ChatChannel,
+        message: ChatMessage,
+        createdAt: Date,
+        isHardDelete: Bool,
+        deletedForMe: Bool
+    ) {
+        self.user = user
+        self.channel = channel
+        self.message = message
+        self.createdAt = createdAt
+        self.isHardDelete = isHardDelete
+        self.deletedForMe = deletedForMe
+    }
 }
 
 class MessageDeletedEventDTO: EventDTO {
@@ -189,7 +233,7 @@ class MessageDeletedEventDTO: EventDTO {
 public typealias ChannelReadEvent = MessageReadEvent
 
 /// `ChannelReadEvent`, this event tells that User has mark read all messages in channel.
-public struct MessageReadEvent: ChannelSpecificEvent {
+public class MessageReadEvent: ChannelSpecificEvent {
     /// The user who read the channel.
     public let user: ChatUser
 
@@ -207,6 +251,20 @@ public struct MessageReadEvent: ChannelSpecificEvent {
 
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
+
+    init(
+        user: ChatUser,
+        channel: ChatChannel,
+        thread: ChatThread?,
+        createdAt: Date,
+        unreadCount: UnreadCount?
+    ) {
+        self.user = user
+        self.channel = channel
+        self.thread = thread
+        self.createdAt = createdAt
+        self.unreadCount = unreadCount
+    }
 }
 
 class MessageReadEventDTO: EventDTO {
@@ -247,20 +305,31 @@ class MessageReadEventDTO: EventDTO {
 }
 
 // Triggered when the current user creates a new message and is pending to be sent.
-public struct NewMessagePendingEvent: ChannelSpecificEvent {
+public class NewMessagePendingEvent: ChannelSpecificEvent {
     public var message: ChatMessage
     public var cid: ChannelId
+
+    init(message: ChatMessage, cid: ChannelId) {
+        self.message = message
+        self.cid = cid
+    }
 }
 
 // Triggered when a message failed being sent.
-public struct NewMessageErrorEvent: ChannelSpecificEvent {
+public class NewMessageErrorEvent: ChannelSpecificEvent {
     public let messageId: MessageId
     public let cid: ChannelId
     public let error: Error
+
+    init(messageId: MessageId, cid: ChannelId, error: Error) {
+        self.messageId = messageId
+        self.cid = cid
+        self.error = error
+    }
 }
 
 /// Triggered when a message is delivered to a user.
-public struct MessageDeliveredEvent: ChannelSpecificEvent {
+public class MessageDeliveredEvent: ChannelSpecificEvent {
     /// The user who received the delivered message.
     public let user: ChatUser
     
@@ -278,6 +347,20 @@ public struct MessageDeliveredEvent: ChannelSpecificEvent {
     
     /// The timestamp when the message was delivered.
     public let lastDeliveredAt: Date
+
+    init(
+        user: ChatUser,
+        channel: ChatChannel,
+        createdAt: Date,
+        lastDeliveredMessageId: MessageId,
+        lastDeliveredAt: Date
+    ) {
+        self.user = user
+        self.channel = channel
+        self.createdAt = createdAt
+        self.lastDeliveredMessageId = lastDeliveredMessageId
+        self.lastDeliveredAt = lastDeliveredAt
+    }
 }
 
 class MessageDeliveredEventDTO: EventDTO {
