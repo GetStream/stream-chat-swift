@@ -10,6 +10,7 @@ final class ChannelConfigDTO: NSManagedObject {
     @NSManaged var reactionsEnabled: Bool
     @NSManaged var typingEventsEnabled: Bool
     @NSManaged var readEventsEnabled: Bool
+    @NSManaged var deliveredEventsEnabled: Bool
     @NSManaged var connectEventsEnabled: Bool
     @NSManaged var skipLastMsgAtUpdateForSystemMsg: Bool
     @NSManaged var uploadsEnabled: Bool
@@ -33,6 +34,7 @@ final class ChannelConfigDTO: NSManagedObject {
             reactionsEnabled: reactionsEnabled,
             typingEventsEnabled: typingEventsEnabled,
             readEventsEnabled: readEventsEnabled,
+            deliveredEventsEnabled: deliveredEventsEnabled,
             connectEventsEnabled: connectEventsEnabled,
             uploadsEnabled: uploadsEnabled,
             repliesEnabled: repliesEnabled,
@@ -70,6 +72,7 @@ extension ChannelConfig {
         dto.reactionsEnabled = reactionsEnabled
         dto.typingEventsEnabled = typingEventsEnabled
         dto.readEventsEnabled = readEventsEnabled
+        dto.deliveredEventsEnabled = deliveredEventsEnabled
         dto.connectEventsEnabled = connectEventsEnabled
         dto.uploadsEnabled = uploadsEnabled
         dto.repliesEnabled = repliesEnabled

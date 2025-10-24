@@ -127,6 +127,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                     reactionsEnabled: true,
                     typingEventsEnabled: true,
                     readEventsEnabled: true,
+                    deliveredEventsEnabled: false,
                     connectEventsEnabled: true,
                     uploadsEnabled: true,
                     repliesEnabled: true,
@@ -328,6 +329,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.reactionsEnabled, true)
         XCTAssertEqual(config.typingEventsEnabled, true)
         XCTAssertEqual(config.readEventsEnabled, true)
+        XCTAssertEqual(config.deliveredEventsEnabled, false)
         XCTAssertEqual(config.connectEventsEnabled, true)
         XCTAssertEqual(config.uploadsEnabled, true)
         XCTAssertEqual(config.repliesEnabled, true)
