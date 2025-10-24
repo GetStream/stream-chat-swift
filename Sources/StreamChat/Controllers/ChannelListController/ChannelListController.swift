@@ -234,11 +234,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// Marks channels as delivered if they meet the specified criteria.
     /// - Parameter channels: The channels to evaluate for marking as delivered.
     private func markChannelsAsDeliveredIfNeeded(channels: [ChatChannel]) {
-        guard let currentUserId = client.currentUserId else { return }
+        guard let currentUser = client.currentUserController().currentUser else { return }
         
         // Extract channels that should be marked as delivered
         let deliveredMessages = channels.compactMap { channel in
-            channel.latestMessageNotMarkedAsDelivered(for: currentUserId).map { message in
+            channel.latestUndeliveredMessage(for: currentUser).map { message in
                 DeliveredMessageInfo(channelId: channel.cid, messageId: message.id)
             }
         }

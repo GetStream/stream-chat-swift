@@ -35,11 +35,32 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
 
     // MARK: - MessageNewEvent Tests
 
-    func test_handleMessageNewEvent_callsSubmitForDelivery() throws {
+    func test_handleMessageNewEvent_whenCanMarkMessageAsDelivered_callsSubmitForDelivery() throws {
         // GIVEN
         let channelId = ChannelId.unique
         let messageId = MessageId.unique
-        let messageNewEvent = try createMessageNewEvent(channelId: channelId, messageId: messageId)
+        let currentUserId = UserId.unique
+        let authorUserId = UserId.unique
+
+        // Set up valid scenario in database
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId))
+            try session.saveChannel(payload: self.dummyPayload(with: channelId, channelConfig: .mock(deliveredEventsEnabled: true)))
+
+            // Save message from another user
+            try session.saveMessage(
+                payload: .dummy(messageId: messageId, authorUserId: authorUserId),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        let messageNewEvent = try createMessageNewEvent(
+            channelId: channelId,
+            messageId: messageId,
+            authorUserId: authorUserId
+        )
 
         // WHEN
         _ = middleware.handle(event: messageNewEvent, session: database.viewContext)
@@ -49,26 +70,38 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         XCTAssertEqual(deliveryTracker.submitForDelivery_channelId, channelId)
         XCTAssertEqual(deliveryTracker.submitForDelivery_messageId, messageId)
     }
-    
-    func test_handleMessageNewEvent_whenMessageFromCurrentUser_doesNotCallSubmitForDelivery() throws {
+
+    func test_handleMessageNewEvent_whenCantMarkMessageAsDelivered_doesNotCallSubmitForDelivery() throws {
         // GIVEN
         let channelId = ChannelId.unique
         let messageId = MessageId.unique
         let currentUserId = UserId.unique
+        let authorUserId = UserId.unique
+        
+        // Set up database with channel that has delivered events disabled
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserId))
+            var channelPayload = self.dummyPayload(with: channelId, channelConfig: .mock(deliveredEventsEnabled: false))
+            try session.saveChannel(payload: channelPayload)
+            
+            // Save the message
+            try session.saveMessage(
+                payload: .dummy(messageId: messageId, authorUserId: authorUserId),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+        
         let messageNewEvent = try createMessageNewEvent(
             channelId: channelId,
             messageId: messageId,
-            authorUserId: currentUserId
+            authorUserId: authorUserId
         )
-
-        // Set up current user in database
-        try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: .dummy(userId: currentUserId))
-        }
-
+        
         // WHEN
         _ = middleware.handle(event: messageNewEvent, session: database.viewContext)
-
+        
         // THEN
         XCTAssertEqual(deliveryTracker.submitForDelivery_callCount, 0)
     }
@@ -184,6 +217,10 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
     }
 
     // MARK: - Helper Methods
+
+    private func dummyPayload(with channelId: ChannelId) -> ChannelPayload {
+        ChannelPayload.dummy(channel: .dummy(cid: channelId))
+    }
 
     private func createMessageNewEvent(channelId: ChannelId, messageId: MessageId, authorUserId: UserId? = nil) throws -> MessageNewEventDTO {
         let userId = authorUserId ?? UserId.unique

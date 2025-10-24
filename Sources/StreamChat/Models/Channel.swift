@@ -383,7 +383,11 @@ extension ChatChannel {
 
     /// Returns `true` if the channel has one or more unread messages for the current user.
     public var isUnread: Bool { unreadCount != .noUnread }
-    
+
+    public var canBeMarkedAsDelivered: Bool {
+        config.deliveredEventsEnabled && !isMuted && !isHidden
+    }
+
     /// Returns the user's read state for this channel.
     /// - Parameter userId: The ID of the user.
     /// - Returns: The read state, or `nil` if not found.
@@ -422,24 +426,75 @@ extension ChatChannel {
         }
     }
 
-    /// Returns the latest message of the channel if it can be marked as delivered for the given user.
+    /// Returns the latest undelivered message for the given user.
     ///
-    /// A message is considered deliverable when:
-    /// - The user has a read state in the channel
-    /// - A latest message exists
-    /// - The message was not authored by the specified user
+    /// This method checks if the latest message in the channel can be marked as delivered
+    /// by using the `canMarkMessageAsDelivered(_:for:)` function.
+    ///
+    /// - Parameter currentUser: The current user.
+    /// - Returns: Return the latest undelivered message, or `nil` if no message qualifies.
+    public func latestUndeliveredMessage(for currentUser: CurrentChatUser) -> ChatMessage? {
+        guard let latestMessage = latestMessages.first else { return nil }
+        guard canMarkMessageAsDelivered(latestMessage, for: currentUser) else { return nil }
+        return latestMessage
+    }
+
+    /// Determines whether a specific message can be marked as delivered for the current user.
+    ///
+    /// This function validates whether a message meets all the criteria required to be marked as delivered.
+    /// It checks various conditions including channel configuration, message properties, user state, and read status.
+    ///
+    /// A message can be marked as delivered when all of the following conditions are met:
+    /// - The channel has delivered events enabled and is not muted or hidden
+    /// - The message is not a thread reply (or if it is, it shows in the channel via `showReplyInChannel`)
+    /// - The message was not authored by the current user
+    /// - The message is not shadowed
+    /// - The message author is not muted by the current user
+    /// - The current user has a read state in the channel
     /// - The message was created after the user's last read timestamp
     /// - The message was created after the user's last delivered timestamp
     ///
-    /// - Parameter userId: The ID of the user.
-    /// - Returns: Return the latest undelivered message, or `nil` if no message qualifies.
-    public func latestMessageNotMarkedAsDelivered(for userId: UserId) -> ChatMessage? {
-        guard let userRead = read(for: userId) else { return nil }
-        guard let latestMessage = latestMessages.first else { return nil }
-        guard latestMessage.author.id != userId else { return nil }
-        guard latestMessage.createdAt > userRead.lastReadAt else { return nil }
-        guard latestMessage.createdAt > userRead.lastDeliveredAt ?? .distantPast else { return nil }
-        return latestMessage
+    /// - Parameters:
+    ///   - message: The message to check for delivery status.
+    ///   - currentUser: The current user who would mark the message as delivered.
+    /// - Returns: `true` if the message can be marked as delivered, `false` otherwise.
+    public func canMarkMessageAsDelivered(
+        _ message: ChatMessage,
+        for currentUser: CurrentChatUser
+    ) -> Bool {
+        guard canBeMarkedAsDelivered else {
+            return false
+        }
+
+        if message.parentMessageId != nil && !message.showReplyInChannel {
+            return false
+        }
+
+        guard message.author.id != currentUser.id else {
+            return false
+        }
+
+        if message.isShadowed {
+            return false
+        }
+
+        if currentUser.mutedUsers.contains(message.author) {
+            return false
+        }
+
+        guard let userRead = read(for: currentUser.id) else {
+            return false
+        }
+
+        guard message.createdAt > userRead.lastReadAt else {
+            return false
+        }
+
+        guard message.createdAt > userRead.lastDeliveredAt ?? .distantPast else {
+            return false
+        }
+
+        return true
     }
 }
 

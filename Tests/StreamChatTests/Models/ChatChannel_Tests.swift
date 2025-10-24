@@ -496,79 +496,27 @@ final class ChatChannel_Tests: XCTestCase {
         XCTAssertEqual(completelyUpdatedChannel.cid, originalChannel.cid)
     }
     
-    // MARK: - MessageToMarkAsDelivered Tests
-    
-    func test_latestMessageNotMarkedAsDelivered_whenChannelIsEmpty_returnsNil() {
+    // MARK: - latestUndeliveredMessage Tests
+
+    func test_latestUndeliveredMessage_whenChannelIsEmpty_returnsNil() {
         // GIVEN
-        let currentUserId = UserId.unique
+        let currentUser = CurrentChatUser.mock(currentUserId: .unique)
         let channel = ChatChannel.mock(
             cid: .unique,
             latestMessages: []
         )
 
         // WHEN
-        let result = channel.latestMessageNotMarkedAsDelivered(for: currentUserId)
+        let result = channel.latestUndeliveredMessage(for: currentUser)
 
         // THEN
         XCTAssertNil(result)
     }
 
-    func test_latestMessageNotMarkedAsDelivered_whenNoReadState_returnsNil() {
+    func test_latestUndeliveredMessage_whenMessageAlreadyDelivered_returnsNil() {
         // GIVEN
         let currentUserId = UserId.unique
-        let latestMessage = ChatMessage.mock(
-            id: .unique,
-            cid: .unique,
-            text: "Test message",
-            author: .mock(id: .unique),
-            createdAt: Date(timeIntervalSince1970: 1000)
-        )
-        let channel = ChatChannel.mock(
-            cid: .unique,
-            reads: [],
-            latestMessages: [latestMessage]
-        )
-
-        // WHEN
-        let result = channel.latestMessageNotMarkedAsDelivered(for: currentUserId)
-
-        // THEN
-        XCTAssertNil(result)
-    }
-
-    func test_latestMessageNotMarkedAsDelivered_whenLatestMessageNotAfterReadAt_returnsNil() {
-        // GIVEN
-        let currentUserId = UserId.unique
-        let readAt = Date(timeIntervalSince1970: 2000)
-        let latestMessage = ChatMessage.mock(
-            id: .unique,
-            cid: .unique,
-            text: "Test message",
-            author: .mock(id: .unique),
-            createdAt: Date(timeIntervalSince1970: 1000) // Before readAt
-        )
-        let readState = ChatChannelRead(
-            lastReadAt: readAt,
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 0,
-            user: .mock(id: currentUserId)
-        )
-        let channel = ChatChannel.mock(
-            cid: .unique,
-            reads: [readState],
-            latestMessages: [latestMessage]
-        )
-
-        // WHEN
-        let result = channel.latestMessageNotMarkedAsDelivered(for: currentUserId)
-
-        // THEN
-        XCTAssertNil(result)
-    }
-
-    func test_latestMessageNotMarkedAsDelivered_whenMessageAlreadyDelivered_returnsNil() {
-        // GIVEN
-        let currentUserId = UserId.unique
+        let currentUser = CurrentChatUser.mock(currentUserId: currentUserId)
         let messageId = MessageId.unique
         let readAt = Date(timeIntervalSince1970: 1000)
         let messageCreatedAt = Date(timeIntervalSince1970: 2000)
@@ -594,15 +542,16 @@ final class ChatChannel_Tests: XCTestCase {
         )
 
         // WHEN
-        let result = channel.latestMessageNotMarkedAsDelivered(for: currentUserId)
+        let result = channel.latestUndeliveredMessage(for: currentUser)
 
         // THEN
         XCTAssertNil(result)
     }
 
-    func test_latestMessageNotMarkedAsDelivered_whenMessageNotDelivered_returnsDeliveredMessage() {
+    func test_latestUndeliveredMessage_whenMessageNotDelivered_returnsDeliveredMessage() {
         // GIVEN
         let currentUserId = UserId.unique
+        let currentUser = CurrentChatUser.mock(currentUserId: currentUserId)
         let messageId = MessageId.unique
         let channelId = ChannelId.unique
         let readAt = Date(timeIntervalSince1970: 1000)
@@ -629,78 +578,366 @@ final class ChatChannel_Tests: XCTestCase {
         )
 
         // WHEN
-        let result = channel.latestMessageNotMarkedAsDelivered(for: currentUserId)
-
-        // THEN
-        XCTAssertNotNil(result)
-        XCTAssertEqual(result?.id, messageId)
-    }
-
-    func test_latestMessageNotMarkedAsDelivered_whenNoDeliveredState_returnsDeliveredMessage() {
-        // GIVEN
-        let currentUserId = UserId.unique
-        let messageId = MessageId.unique
-        let channelId = ChannelId.unique
-        let readAt = Date(timeIntervalSince1970: 1000)
-        let latestMessage = ChatMessage.mock(
-            id: messageId,
-            cid: channelId,
-            text: "Test message",
-            author: .mock(id: .unique),
-            createdAt: Date(timeIntervalSince1970: 2000) // After readAt
-        )
-        let readState = ChatChannelRead(
-            lastReadAt: readAt,
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 0,
-            user: .mock(id: currentUserId)
-            // No delivered state
-        )
-        let channel = ChatChannel.mock(
-            cid: channelId,
-            reads: [readState],
-            latestMessages: [latestMessage]
-        )
-
-        // WHEN
-        let result = channel.latestMessageNotMarkedAsDelivered(for: currentUserId)
+        let result = channel.latestUndeliveredMessage(for: currentUser)
 
         // THEN
         XCTAssertNotNil(result)
         XCTAssertEqual(result?.id, messageId)
     }
     
-    func test_latestMessageNotMarkedAsDelivered_whenMessageFromSameUser_returnsNil() {
+    // MARK: - canMarkMessageAsDelivered Tests
+    
+    func test_canMarkMessageAsDelivered_whenChannelCannotBeMarkedAsDelivered_returnsFalse() {
         // GIVEN
-        let currentUserId = UserId.unique
-        let messageId = MessageId.unique
-        let channelId = ChannelId.unique
-        let readAt = Date(timeIntervalSince1970: 1000)
-        let latestMessage = ChatMessage.mock(
-            id: messageId,
-            cid: channelId,
-            text: "Test message",
-            author: .mock(id: currentUserId),
-            createdAt: Date(timeIntervalSince1970: 2000),
-            isSentByCurrentUser: true
+        let currentUser = CurrentChatUser.mock(currentUserId: .unique)
+        let message = ChatMessage.mock(id: .unique, cid: .unique, text: "Test")
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(deliveredEventsEnabled: false)
+        )
+        
+        // WHEN
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
+        // THEN
+        XCTAssertFalse(result)
+    }
+    
+    func test_canMarkMessageAsDelivered_whenChannelIsMuted_returnsFalse() {
+        // GIVEN
+        let currentUser = CurrentChatUser.mock(currentUserId: .unique)
+        let message = ChatMessage.mock(id: .unique, cid: .unique, text: "Test", author: .mock(id: .unique))
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(deliveredEventsEnabled: true),
+            muteDetails: .init(createdAt: .unique, updatedAt: nil, expiresAt: nil)
+        )
+        
+        // WHEN
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
+        // THEN
+        XCTAssertFalse(result)
+    }
+    
+    func test_canMarkMessageAsDelivered_whenChannelIsHidden_returnsFalse() {
+        // GIVEN
+        let currentUser = CurrentChatUser.mock(currentUserId: .unique)
+        let message = ChatMessage.mock(id: .unique, cid: .unique, text: "Test", author: .mock(id: .unique))
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            isHidden: true,
+            config: .mock(deliveredEventsEnabled: true)
+        )
+        
+        // WHEN
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
+        // THEN
+        XCTAssertFalse(result)
+    }
+    
+    func test_canMarkMessageAsDelivered_whenMessageIsThreadReplyNotShownInChannel_returnsFalse() {
+        // GIVEN
+        let currentUser = CurrentChatUser.mock(currentUserId: .unique)
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Thread reply",
+            author: .mock(id: .unique),
+            parentMessageId: .unique,
+            showReplyInChannel: false
         )
         let readState = ChatChannelRead(
-            lastReadAt: readAt,
+            lastReadAt: Date(timeIntervalSince1970: 1000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: currentUser.id)
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(deliveredEventsEnabled: true),
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
+        // THEN
+        XCTAssertFalse(result)
+    }
+    
+    func test_canMarkMessageAsDelivered_whenMessageIsThreadReplyShownInChannel_canReturnTrue() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let currentUser = CurrentChatUser.mock(currentUserId: currentUserId)
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Thread reply shown in channel",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000),
+            parentMessageId: .unique,
+            showReplyInChannel: true
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 1000),
             lastReadMessageId: .unique,
             unreadMessagesCount: 0,
             user: .mock(id: currentUserId)
         )
         let channel = ChatChannel.mock(
-            cid: channelId,
-            reads: [readState],
-            latestMessages: [latestMessage]
+            cid: .unique,
+            config: .mock(deliveredEventsEnabled: true),
+            reads: [readState]
         )
-
+        
         // WHEN
-        let result = channel.latestMessageNotMarkedAsDelivered(for: currentUserId)
-
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
         // THEN
-        XCTAssertNil(result)
+        XCTAssertTrue(result)
+    }
+    
+    func test_canMarkMessageAsDelivered_whenMessageFromCurrentUser_returnsFalse() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let currentUser = CurrentChatUser.mock(currentUserId: currentUserId)
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "My message",
+            author: .mock(id: currentUserId),
+            isSentByCurrentUser: true
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 1000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: currentUserId)
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(deliveredEventsEnabled: true),
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
+        // THEN
+        XCTAssertFalse(result)
+    }
+    
+    func test_canMarkMessageAsDelivered_whenMessageIsShadowed_returnsFalse() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let currentUser = CurrentChatUser.mock(currentUserId: currentUserId)
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Shadowed message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000),
+            isShadowed: true
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 1000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: currentUserId)
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(deliveredEventsEnabled: true),
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
+        // THEN
+        XCTAssertFalse(result)
+    }
+    
+    func test_canMarkMessageAsDelivered_whenMessageAuthorIsMuted_returnsFalse() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let mutedUserId = UserId.unique
+        let mutedUser = ChatUser.mock(id: mutedUserId)
+        let currentUser = CurrentChatUser.mock(currentUserId: currentUserId, mutedUsers: [mutedUser])
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Message from muted user",
+            author: mutedUser,
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 1000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: currentUserId)
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(deliveredEventsEnabled: true),
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
+        // THEN
+        XCTAssertFalse(result)
+    }
+    
+    func test_canMarkMessageAsDelivered_whenNoReadState_returnsFalse() {
+        // GIVEN
+        let currentUser = CurrentChatUser.mock(currentUserId: .unique)
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(deliveredEventsEnabled: true),
+            reads: []
+        )
+        
+        // WHEN
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
+        // THEN
+        XCTAssertFalse(result)
+    }
+    
+    func test_canMarkMessageAsDelivered_whenMessageNotAfterLastReadAt_returnsFalse() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let currentUser = CurrentChatUser.mock(currentUserId: currentUserId)
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Old message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 1000)
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 2000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: currentUserId)
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(deliveredEventsEnabled: true),
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
+        // THEN
+        XCTAssertFalse(result)
+    }
+    
+    func test_canMarkMessageAsDelivered_whenMessageAlreadyDelivered_returnsFalse() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let currentUser = CurrentChatUser.mock(currentUserId: currentUserId)
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Already delivered message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 1000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: currentUserId),
+            lastDeliveredAt: Date(timeIntervalSince1970: 2500),
+            lastDeliveredMessageId: .unique
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(deliveredEventsEnabled: true),
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
+        // THEN
+        XCTAssertFalse(result)
+    }
+    
+    func test_canMarkMessageAsDelivered_whenAllConditionsMet_returnsTrue() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let currentUser = CurrentChatUser.mock(currentUserId: currentUserId)
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "New undelivered message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 1000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: currentUserId),
+            lastDeliveredAt: Date(timeIntervalSince1970: 1500),
+            lastDeliveredMessageId: .unique
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(deliveredEventsEnabled: true),
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
+        // THEN
+        XCTAssertTrue(result)
+    }
+    
+    func test_canMarkMessageAsDelivered_whenNoDeliveredStateYet_returnsTrue() {
+        // GIVEN
+        let currentUserId = UserId.unique
+        let currentUser = CurrentChatUser.mock(currentUserId: currentUserId)
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "First message to deliver",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 1000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: currentUserId)
+            // No lastDeliveredAt
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            config: .mock(deliveredEventsEnabled: true),
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.canMarkMessageAsDelivered(message, for: currentUser)
+        
+        // THEN
+        XCTAssertTrue(result)
     }
 
     // MARK: - Reads and DeliveredReads Tests

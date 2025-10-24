@@ -19,10 +19,7 @@ class ChannelDeliveredMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
         case let messageNewEvent as MessageNewEventDTO:
-            if session.currentUser?.user.id == messageNewEvent.message.user.id {
-                break
-            }
-            handleMessageNewEvent(messageNewEvent)
+            handleMessageNewEvent(messageNewEvent, session: session)
         case let notificationMarkReadEvent as NotificationMarkReadEventDTO:
             handleNotificationMarkReadEvent(notificationMarkReadEvent)
         case let messageDeliveredEvent as MessageDeliveredEventDTO:
@@ -35,8 +32,25 @@ class ChannelDeliveredMiddleware: EventMiddleware {
     
     /// Handles a new message event by adding the channel to the pending delivered channels.
     ///
-    /// - Parameter event: The message new event.
-    private func handleMessageNewEvent(_ event: MessageNewEventDTO) {
+    /// - Parameters:
+    ///   - event: The message new event.
+    ///   - session: The database session.
+    private func handleMessageNewEvent(_ event: MessageNewEventDTO, session: DatabaseSession) {
+        guard let domainEvent = event.toDomainEvent(session: session) as? MessageNewEvent else {
+            return
+        }
+
+        guard let currentUser = (try? session.currentUser?.asModel()) else {
+            return
+        }
+
+        let channel = domainEvent.channel
+        let message = domainEvent.message
+
+        guard channel.canMarkMessageAsDelivered(message, for: currentUser) else {
+            return
+        }
+
         deliveryTracker.submitForDelivery(channelId: event.cid, messageId: event.message.id)
     }
     

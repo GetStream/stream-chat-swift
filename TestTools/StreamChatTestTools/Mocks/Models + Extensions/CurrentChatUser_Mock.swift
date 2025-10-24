@@ -8,7 +8,7 @@ import Foundation
 public extension CurrentChatUser {
     /// Creates a new `CurrentChatUser` object from the provided data.
     static func mock(
-        id: String,
+        currentUserId: UserId,
         name: String? = nil,
         imageURL: URL? = nil,
         isOnline: Bool = false,
@@ -36,7 +36,7 @@ public extension CurrentChatUser {
         avgResponseTime: Int? = nil
     ) -> CurrentChatUser {
         .init(
-            id: id,
+            id: currentUserId,
             name: name,
             imageURL: imageURL,
             isOnline: isOnline,
