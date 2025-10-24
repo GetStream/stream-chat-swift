@@ -204,10 +204,15 @@ final class ConnectionRepository_Tests: XCTestCase {
 
         repository.updateWebSocketEndpoint(with: token, userInfo: nil)
         
-        let expected = try apiClient.encoder.encodeRequest(for: .webSocketConnect(userInfo: UserInfo(id: tokenUserId)))
-        
         // UserInfo should take priority
-        XCTAssertEqual(webSocketClient.connectRequest, expected)
+        XCTAssertEqual(
+            repository.webSocketConnectEndpoint.map(AnyEndpoint.init),
+            AnyEndpoint(
+                .webSocketConnect(
+                    userInfo: UserInfo(id: tokenUserId)
+                )
+            )
+        )
     }
 
     func test_updateWebSocketEndpointWithTokenAndUserInfo() throws {
@@ -218,20 +223,29 @@ final class ConnectionRepository_Tests: XCTestCase {
 
         repository.updateWebSocketEndpoint(with: token, userInfo: userInfo)
 
-        let expected = try apiClient.encoder.encodeRequest(for: .webSocketConnect(userInfo: UserInfo(id: userInfoUserId)))
-        
         // UserInfo should take priority
-        XCTAssertEqual(webSocketClient.connectRequest, expected)
+        XCTAssertEqual(
+            repository.webSocketConnectEndpoint.map(AnyEndpoint.init),
+            AnyEndpoint(
+                .webSocketConnect(
+                    userInfo: UserInfo(id: userInfoUserId)
+                )
+            )
+        )
     }
 
     func test_updateWebSocketEndpointWithUserId() throws {
         let userId = "123-userId"
         repository.updateWebSocketEndpoint(with: userId)
         
-        let expected = try apiClient.encoder.encodeRequest(for: .webSocketConnect(userInfo: UserInfo(id: userId)))
-        
-        // UserInfo should take priority
-        XCTAssertEqual(webSocketClient.connectRequest, expected)
+        XCTAssertEqual(
+            repository.webSocketConnectEndpoint.map(AnyEndpoint.init),
+            AnyEndpoint(
+                .webSocketConnect(
+                    userInfo: UserInfo(id: userId)
+                )
+            )
+        )
     }
 
     // MARK: Handle connection update

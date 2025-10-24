@@ -175,7 +175,6 @@ final class ChatClient_Tests: XCTestCase {
         let webSocket = testEnv.webSocketClient
         assertMandatoryHeaderFields(webSocket?.init_sessionConfiguration)
         XCTAssertEqual(webSocket?.init_sessionConfiguration.waitsForConnectivity, false)
-        XCTAssert(webSocket?.init_requestEncoder is RequestEncoder_Spy)
         XCTAssert((webSocket?.init_eventNotificationCenter as? EventPersistentNotificationCenter)?.database === client.databaseContainer)
         XCTAssertNotNil(webSocket?.init_eventDecoder)
 
@@ -183,7 +182,7 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert((webSocket?.init_eventNotificationCenter as? EventPersistentNotificationCenter)?.middlewares[0] is EventDataProcessorMiddleware)
 
         // Assert Client sets itself as delegate for the request encoder
-        XCTAssert(webSocket?.init_requestEncoder.connectionDetailsProviderDelegate === client)
+        XCTAssert(client.webSocketRequestEncoder?.connectionDetailsProviderDelegate === client)
     }
 
     func test_webSocketClient_hasAllMandatoryMiddlewares() throws {
@@ -475,30 +474,28 @@ final class ChatClient_Tests: XCTestCase {
         AssertAsync.canBeReleased(&chatClient)
 
         // Take main then background queue.
-        for queue in [DispatchQueue.main, DispatchQueue.global()] {
-            let error: Error? = try waitFor { completion in
-                // Dispatch creating a chat-client to specific queue.
-                queue.async {
-                    // Create a `ChatClient` instance with the same config
-                    // to access the storage with exited current user.
-                    let chatClient = ChatClient(config: config)
-                    chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
-
-                    let expected = try? chatClient.apiClient.encoder.encodeRequest(for: .webSocketConnect(userInfo: UserInfo(id: currentUserId)))
-
-                    // 1. Check `currentUserId` is fetched synchronously
-                    // 2. `webSocket` has correct connect endpoint
-                    if chatClient.currentUserId == currentUserId,
-                       chatClient.webSocketClient?.connectRequest == expected {
-                        completion(nil)
-                    } else {
-                        completion(TestError())
-                    }
+        let queueAndExpectation: [(DispatchQueue, XCTestExpectation)] = [
+            (.main, XCTestExpectation(description: "main")),
+            (.global(), XCTestExpectation(description: "global"))
+        ]
+        for (queue, expectation) in queueAndExpectation {
+            // Dispatch creating a chat-client to specific queue.
+            queue.async {
+                // Create a `ChatClient` instance with the same config
+                // to access the storage with exited current user.
+                let chatClient = ChatClient(config: config)
+                chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
+                
+                let expectedWebSocketEndpoint = AnyEndpoint(.webSocketConnect(userInfo: UserInfo(id: currentUserId)))
+                // 1. Check `currentUserId` is fetched synchronously
+                // 2. `webSocket` has correct connect endpoint
+                if chatClient.currentUserId == currentUserId,
+                   chatClient.connectionRepository.webSocketConnectEndpoint.map(AnyEndpoint.init) == expectedWebSocketEndpoint {
+                    expectation.fulfill()
                 }
             }
-
-            XCTAssertNil(error)
         }
+        wait(for: queueAndExpectation.map({ $1 }), timeout: defaultTimeout)
     }
 
     // MARK: - Connect Token Provider

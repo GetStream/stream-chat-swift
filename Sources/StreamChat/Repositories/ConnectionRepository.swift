@@ -26,7 +26,7 @@ class ConnectionRepository: @unchecked Sendable {
     private let syncRepository: SyncRepository
     private let webSocketRequestEncoder: RequestEncoder?
     private let webSocketClient: WebSocketClient?
-    private var webSocketConnectEndpoint: Endpoint<EmptyResponse>?
+    private(set) var webSocketConnectEndpoint: Endpoint<EmptyResponse>?
     private let apiClient: APIClient
     private let timerType: TimerScheduling.Type
 
@@ -145,6 +145,12 @@ class ConnectionRepository: @unchecked Sendable {
         state: WebSocketConnectionState,
         onExpiredToken: () -> Void
     ) {
+        // Publish Connection event with the new state
+        let event = ConnectionStatusUpdated(webSocketConnectionState: state)
+        if event.connectionStatus != connectionStatus {
+            webSocketClient?.eventNotificationCenter.process(event, postNotification: true)
+        }
+
         connectionStatus = .init(webSocketConnectionState: state)
 
         // We should notify waiters if connectionId was obtained (i.e. state is .connected)

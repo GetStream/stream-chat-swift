@@ -9,7 +9,6 @@ import Foundation
 /// Mock implementation of `WebSocketClient`.
 final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
     let init_sessionConfiguration: URLSessionConfiguration
-    let init_requestEncoder: RequestEncoder
     let init_eventDecoder: AnyEventDecoder
     let init_eventNotificationCenter: EventNotificationCenter
     let init_environment: WebSocketClient.Environment
@@ -29,7 +28,6 @@ final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
 
     init(
         sessionConfiguration: URLSessionConfiguration = .ephemeral,
-        requestEncoder: RequestEncoder = DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
         eventDecoder: AnyEventDecoder = EventDecoder(),
         eventNotificationCenter: EventNotificationCenter = EventNotificationCenter_Mock(database: DatabaseContainer_Spy()),
         pingController: WebSocketPingController? = nil,
@@ -50,7 +48,6 @@ final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
         }
 
         init_sessionConfiguration = sessionConfiguration
-        init_requestEncoder = requestEncoder
         init_eventDecoder = eventDecoder
         init_eventNotificationCenter = eventNotificationCenter
         init_environment = environment
