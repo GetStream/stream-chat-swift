@@ -66,4 +66,25 @@ final class PollVoteListController_SwiftUI_Tests: iOS13TestCase {
 
         AssertAsync.willBeEqual(observableObject.state, newState)
     }
+    
+    func test_observableObject_initialPollValue() {
+        let observableObject = voteListController.observableObject
+        
+        // Initially poll should be nil
+        XCTAssertNil(observableObject.poll)
+    }
+    
+    func test_observableObject_reactsToDelegateUpdatePollCallback() {
+        let observableObject = voteListController.observableObject
+        
+        // Simulate poll update
+        let poll: Poll = .unique
+        voteListController.poll_simulated = poll
+        
+        voteListController.delegateCallback {
+            $0.controller(self.voteListController, didUpdatePoll: poll)
+        }
+        
+        AssertAsync.willBeEqual(observableObject.poll, poll)
+    }
 }

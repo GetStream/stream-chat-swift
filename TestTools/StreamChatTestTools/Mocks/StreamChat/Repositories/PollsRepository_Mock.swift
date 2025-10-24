@@ -15,6 +15,9 @@ final class PollsRepository_Mock: PollsRepository, Spy {
     
     var recordedFunctions: [String] = []
     var spyState: SpyState = .init()
+    
+    // Mock for link method
+    var link: ((PollVote, PollVoteListQuery) -> Void)?
 
     override func queryPollVotes(
         query: PollVoteListQuery,
@@ -64,5 +67,9 @@ final class PollsRepository_Mock: PollsRepository, Spy {
         completion: ((Error?) -> Void)? = nil
     ) {
         deletePoll_completion = completion
+    }
+    
+    override func link(pollVote: PollVote, to query: PollVoteListQuery) {
+        link?(pollVote, query)
     }
 }

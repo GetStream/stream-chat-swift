@@ -586,11 +586,6 @@ open class ChatChannelVC: _ViewController,
            draftUpdatedEvent.cid == channelController.cid, draftUpdatedEvent.draftMessage.threadId == nil {
             messageComposerVC.content.draftMessage(draft)
         }
-
-        if let draftDeletedEvent = event as? DraftDeletedEvent,
-           draftDeletedEvent.cid == channelController.cid, draftDeletedEvent.threadId == nil {
-            messageComposerVC.content.clear()
-        }
     }
 
     // MARK: - AudioQueuePlayerDatasource

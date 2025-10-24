@@ -51,7 +51,7 @@ final class CurrentUserController_Tests: XCTestCase {
         let expectedId = UserId.unique
         let expectedUnreadCount = UnreadCount(channels: .unique, messages: .unique, threads: .unique)
 
-        env.currentUserObserverItem = .mock(id: expectedId, unreadCount: expectedUnreadCount)
+        env.currentUserObserverItem = .mock(currentUserId: expectedId, unreadCount: expectedUnreadCount)
 
         XCTAssertEqual(controller.currentUser?.id, expectedId)
         XCTAssertTrue(env.currentUserObserver.startObservingCalled)
@@ -63,7 +63,7 @@ final class CurrentUserController_Tests: XCTestCase {
         let expectedId = UserId.unique
         let expectedUnreadCount = UnreadCount(channels: .unique, messages: .unique, threads: .unique)
 
-        env.currentUserObserverItem = .mock(id: expectedId, unreadCount: expectedUnreadCount)
+        env.currentUserObserverItem = .mock(currentUserId: expectedId, unreadCount: expectedUnreadCount)
 
         let expectation = self.expectation(description: "synchronize called")
 
@@ -111,7 +111,7 @@ final class CurrentUserController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .initialized)
 
         // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        env.currentUserObserverItem = .mock(currentUserId: .unique)
 
         var synchronizeCalled = false
         controller.synchronize { [callbackQueueID] error in
@@ -134,7 +134,7 @@ final class CurrentUserController_Tests: XCTestCase {
         XCTAssertEqual(controller.state, .initialized)
 
         // Simulate current user
-        env.currentUserObserverItem = .mock(id: .unique)
+        env.currentUserObserverItem = .mock(currentUserId: .unique)
 
         var synchronizeError: Error?
         controller.synchronize { [callbackQueueID] error in
