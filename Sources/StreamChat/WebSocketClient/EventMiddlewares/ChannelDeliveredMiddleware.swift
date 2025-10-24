@@ -53,16 +53,19 @@ class ChannelDeliveredMiddleware: EventMiddleware {
     ///   - event: The message delivered event.
     ///   - session: The database session.
     private func handleMessageDeliveredEvent(_ event: MessageDeliveredEventDTO, session: DatabaseSession) {
-        // Find or create the channel read for this user
-        guard let channelRead = session.loadOrCreateChannelRead(
+        // Update the delivered message information
+        if let channelRead = session.loadOrCreateChannelRead(
             cid: event.cid,
             userId: event.user.id
-        ) else {
-            return
+        ) {
+            channelRead.lastDeliveredAt = event.lastDeliveredAt.bridgeDate
+            channelRead.lastDeliveredMessageId = event.lastDeliveredMessageId
         }
 
-        // Update the delivered message information
-        channelRead.lastDeliveredAt = event.lastDeliveredAt.bridgeDate
-        channelRead.lastDeliveredMessageId = event.lastDeliveredMessageId
+        // Remove pending for delivery if marked delivered from another device
+        if let message = session.message(id: event.lastDeliveredMessageId),
+           message.user.id == session.currentUser?.user.id {
+            deliveryTracker.cancel(channelId: event.cid)
+        }
     }
 }

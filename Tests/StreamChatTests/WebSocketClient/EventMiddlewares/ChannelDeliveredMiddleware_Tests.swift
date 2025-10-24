@@ -150,6 +150,39 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         XCTAssertNotNil(channelRead.lastDeliveredAt)
     }
 
+    func test_handleMessageDeliveredEvent_whenFromCurrentUser_cancelsDelivery() throws {
+        // GIVEN
+        let channelId = ChannelId.unique
+        let messageId = MessageId.unique
+        let userId = UserId.unique
+        let deliveredAt = Date()
+
+        // Create channel and user in database
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: userId, role: .admin))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: channelId)))
+            try session.saveMessage(
+                payload: .dummy(messageId: messageId, authorUserId: userId),
+                for: channelId,
+                syncOwnReactions: false,
+                cache: nil
+            )
+        }
+
+        let messageDeliveredEvent = try createMessageDeliveredEvent(
+            channelId: channelId,
+            userId: userId,
+            messageId: messageId,
+            deliveredAt: deliveredAt
+        )
+
+        // WHEN
+        _ = middleware.handle(event: messageDeliveredEvent, session: database.viewContext)
+
+        // THEN
+        XCTAssertEqual(deliveryTracker.cancel_callCount, 1)
+    }
+
     // MARK: - Helper Methods
 
     private func createMessageNewEvent(channelId: ChannelId, messageId: MessageId, authorUserId: UserId? = nil) throws -> MessageNewEventDTO {
