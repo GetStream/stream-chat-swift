@@ -128,12 +128,17 @@ public class ChatRemoteNotificationHandler {
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
     let channelRepository: ChannelRepository
     let messageRepository: MessageRepository
+    let currentUserUpdater: CurrentUserUpdater
 
     public init(client: ChatClient, content: UNNotificationContent) {
         self.client = client
         self.content = content
         channelRepository = client.channelRepository
         messageRepository = client.messageRepository
+        currentUserUpdater = CurrentUserUpdater(
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
     }
 
     public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
@@ -159,7 +164,7 @@ public class ChatRemoteNotificationHandler {
         }
 
         let deliveredInfo = DeliveredMessageInfo(channelId: channel.cid, messageId: message.id)
-        client.currentUserController().markMessagesAsDelivered([deliveredInfo])
+        currentUserUpdater.markMessagesAsDelivered([deliveredInfo])
     }
 
     private func getContent(completion: @escaping (ChatPushNotificationContent) -> Void) {
