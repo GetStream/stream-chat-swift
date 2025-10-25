@@ -993,8 +993,8 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     func test_markMessagesAsDelivered_makesCorrectAPICall() {
         // GIVEN
         let deliveredMessages = [
-            DeliveredMessageInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique),
-            DeliveredMessageInfo(channelId: .init(type: .livestream, id: "channel2"), messageId: .unique)
+            MessageDeliveryInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique),
+            MessageDeliveryInfo(channelId: .init(type: .livestream, id: "channel2"), messageId: .unique)
         ]
 
         // WHEN
@@ -1011,7 +1011,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     func test_markMessagesAsDelivered_successfulResponse_isPropagatedToCompletion() {
         // GIVEN
         let deliveredMessages = [
-            DeliveredMessageInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
+            MessageDeliveryInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
         ]
         var completionCalled = false
 
@@ -1030,7 +1030,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     func test_markMessagesAsDelivered_errorResponse_isPropagatedToCompletion() {
         // GIVEN
         let deliveredMessages = [
-            DeliveredMessageInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
+            MessageDeliveryInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
         ]
         var completionCalledError: Error?
         let error = TestError()

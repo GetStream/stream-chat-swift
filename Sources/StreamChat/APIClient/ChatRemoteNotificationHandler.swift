@@ -129,8 +129,12 @@ public class ChatRemoteNotificationHandler {
     let channelRepository: ChannelRepository
     let messageRepository: MessageRepository
     let currentUserUpdater: CurrentUserUpdater
+    let deliveryCriteriaValidator: MessageDeliveryCriteriaValidating
 
-    public init(client: ChatClient, content: UNNotificationContent) {
+    public init(
+        client: ChatClient,
+        content: UNNotificationContent
+    ) {
         self.client = client
         self.content = content
         channelRepository = client.channelRepository
@@ -139,6 +143,7 @@ public class ChatRemoteNotificationHandler {
             database: client.databaseContainer,
             apiClient: client.apiClient
         )
+        self.deliveryCriteriaValidator = MessageDeliveryCriteriaValidator()
     }
 
     public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
@@ -158,13 +163,13 @@ public class ChatRemoteNotificationHandler {
         /// Make sure if the message was already delivered, do not mark it as delivered.
         /// If the app is active, the middleware will mark it as delivered so the push
         /// does not need to do it.
-        guard channel.canMarkMessageAsDelivered(message, for: currentUser) else {
+        guard deliveryCriteriaValidator.canMarkMessageAsDelivered(message, for: currentUser, in: channel) else {
             log.debug("No message to be marked as delivered for messageId:\(message.id))")
             return
         }
 
-        let deliveredInfo = DeliveredMessageInfo(channelId: channel.cid, messageId: message.id)
-        currentUserUpdater.markMessagesAsDelivered([deliveredInfo])
+        let deliveryInfo = MessageDeliveryInfo(channelId: channel.cid, messageId: message.id)
+        currentUserUpdater.markMessagesAsDelivered([deliveryInfo])
     }
 
     private func getContent(completion: @escaping (ChatPushNotificationContent) -> Void) {

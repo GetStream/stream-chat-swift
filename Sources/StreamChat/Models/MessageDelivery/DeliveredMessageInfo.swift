@@ -5,14 +5,14 @@
 import Foundation
 
 /// Represents information about a delivered message for a specific channel.
-public struct DeliveredMessageInfo: Equatable {
+public struct MessageDeliveryInfo: Equatable {
     /// The channel identifier where the message was delivered.
     public let channelId: ChannelId
     
     /// The message identifier that was delivered.
     public let messageId: MessageId
     
-    /// Creates a new `DeliveredMessageInfo` instance.
+    /// Creates a new `MessageDeliveryInfo` instance.
     ///
     /// - Parameters:
     ///   - channelId: The channel identifier where the message was delivered.
@@ -25,7 +25,7 @@ public struct DeliveredMessageInfo: Equatable {
 
 // MARK: - Conversion to Payload
 
-extension DeliveredMessageInfo {
+extension MessageDeliveryInfo {
     /// Converts this model to its corresponding payload representation.
     var asPayload: DeliveredMessagePayload {
         DeliveredMessagePayload(cid: channelId, id: messageId)

@@ -72,9 +72,9 @@ class ChannelDeliveryTracker {
     /// Marks all pending messages as delivered and clears the successfully processed messages.
     private func markMessagesAsDelivered() {
         throttler.execute { [weak self] in
-            let deliveredMessages: [DeliveredMessageInfo] = self?.queue.sync {
+            let deliveredMessages: [MessageDeliveryInfo] = self?.queue.sync {
                 return self?.pendingDeliveredChannels.map { channelId, messageId in
-                    DeliveredMessageInfo(channelId: channelId, messageId: messageId)
+                    MessageDeliveryInfo(channelId: channelId, messageId: messageId)
                 }
             } ?? []
 

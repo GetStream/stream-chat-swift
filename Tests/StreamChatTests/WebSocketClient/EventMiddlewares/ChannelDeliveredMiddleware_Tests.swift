@@ -10,6 +10,7 @@ import XCTest
 final class ChannelDeliveredMiddleware_Tests: XCTestCase {
     var middleware: ChannelDeliveredMiddleware!
     var deliveryTracker: ChannelDeliveryTracker_Mock!
+    var deliveryCriteriaValidator: MessageDeliveryCriteriaValidator_Mock!
     var database: DatabaseContainer_Spy!
 
     override func setUp() {
@@ -17,17 +18,23 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         
         database = DatabaseContainer_Spy(kind: .inMemory)
         deliveryTracker = ChannelDeliveryTracker_Mock()
-        middleware = ChannelDeliveredMiddleware(deliveryTracker: deliveryTracker)
+        deliveryCriteriaValidator = MessageDeliveryCriteriaValidator_Mock()
+        middleware = ChannelDeliveredMiddleware(
+            deliveryTracker: deliveryTracker,
+            deliveryCriteriaValidator: deliveryCriteriaValidator
+        )
     }
 
     override func tearDown() {
         deliveryTracker.cleanUp()
         AssertAsync.canBeReleased(&middleware)
         AssertAsync.canBeReleased(&deliveryTracker)
+        AssertAsync.canBeReleased(&deliveryCriteriaValidator)
         AssertAsync.canBeReleased(&database)
         
         middleware = nil
         deliveryTracker = nil
+        deliveryCriteriaValidator = nil
         database = nil
         
         super.tearDown()
@@ -42,15 +49,10 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         let currentUserId = UserId.unique
         let authorUserId = UserId.unique
 
-        // Set up valid scenario in database
+        // Set up minimal database state
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId))
-            try session.saveChannel(payload: self.dummyPayload(
-                with: channelId,
-                channelConfig: .mock(deliveryEventsEnabled: true)
-            ))
-
-            // Save message from another user
+            try session.saveChannel(payload: self.dummyPayload(with: channelId))
             try session.saveMessage(
                 payload: .dummy(messageId: messageId, authorUserId: authorUserId),
                 for: channelId,
@@ -58,6 +60,9 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
                 cache: nil
             )
         }
+        
+        // Configure mock to allow delivery
+        deliveryCriteriaValidator.canMarkMessageAsDeliveredClosure = { _, _, _ in true }
 
         let messageNewEvent = try createMessageNewEvent(
             channelId: channelId,
@@ -81,13 +86,10 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         let currentUserId = UserId.unique
         let authorUserId = UserId.unique
         
-        // Set up database with channel that has delivered events disabled
+        // Set up minimal database state
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId))
-            let channelPayload = self.dummyPayload(with: channelId, channelConfig: .mock(deliveryEventsEnabled: false))
-            try session.saveChannel(payload: channelPayload)
-            
-            // Save the message
+            try session.saveChannel(payload: self.dummyPayload(with: channelId))
             try session.saveMessage(
                 payload: .dummy(messageId: messageId, authorUserId: authorUserId),
                 for: channelId,
@@ -95,6 +97,9 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
                 cache: nil
             )
         }
+        
+        // Configure mock to reject delivery
+        deliveryCriteriaValidator.canMarkMessageAsDeliveredClosure = { _, _, _ in false }
         
         let messageNewEvent = try createMessageNewEvent(
             channelId: channelId,

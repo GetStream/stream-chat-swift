@@ -63,6 +63,10 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             client.databaseContainer,
             client.apiClient
         )
+    
+    /// The validator used to determine if messages can be marked as delivered.
+    private lazy var deliveryCriteriaValidator: MessageDeliveryCriteriaValidating = self.environment
+        .deliveryCriteriaValidatorBuilder()
 
     /// A Boolean value that returns whether pagination is finished
     public private(set) var hasLoadedAllPreviousChannels: Bool = false
@@ -237,21 +241,21 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         guard let currentUser = client.currentUserController().currentUser else { return }
 
         // Extract channels that should be marked as delivered
-        let deliveredMessages: [DeliveredMessageInfo] = channels.compactMap { channel in
+        let deliveries: [MessageDeliveryInfo] = channels.compactMap { channel in
             guard let message = channel.latestMessages.first else {
                 return nil
             }
-            guard channel.canMarkMessageAsDelivered(message, for: currentUser) else {
+            guard deliveryCriteriaValidator.canMarkMessageAsDelivered(message, for: currentUser, in: channel) else {
                 return nil
             }
-            return DeliveredMessageInfo(channelId: channel.cid, messageId: message.id)
+            return MessageDeliveryInfo(channelId: channel.cid, messageId: message.id)
         }
 
         // Only make the API call if there are channels to mark as delivered
-        guard !deliveredMessages.isEmpty else { return }
-        
+        guard !deliveries.isEmpty else { return }
+
         // Mark channels as delivered
-        currentUserUpdater.markMessagesAsDelivered(deliveredMessages) { error in
+        currentUserUpdater.markMessagesAsDelivered(deliveries) { error in
             if let error = error {
                 log.error("Failed to mark channels as delivered: \(error)")
             }
@@ -295,6 +299,10 @@ extension ChatChannelListController {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> CurrentUserUpdater = CurrentUserUpdater.init
+        
+        var deliveryCriteriaValidatorBuilder: () -> MessageDeliveryCriteriaValidating = {
+            MessageDeliveryCriteriaValidator()
+        }
         
         var createChannelListDatabaseObserver: (
             _ database: DatabaseContainer,

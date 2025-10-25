@@ -8,12 +8,21 @@ import Foundation
 class ChannelDeliveredMiddleware: EventMiddleware {
     /// The delivery tracker that manages pending deliveries and throttling.
     private let deliveryTracker: ChannelDeliveryTracker
+    
+    /// The validator used to determine if messages can be marked as delivered.
+    private let deliveryCriteriaValidator: MessageDeliveryCriteriaValidating
 
     /// Creates a new `ChannelDeliveredMiddleware` instance.
     ///
-    /// - Parameter deliveryTracker: The delivery tracker instance.
-    init(deliveryTracker: ChannelDeliveryTracker) {
+    /// - Parameters:
+    ///   - deliveryTracker: The delivery tracker instance.
+    ///   - deliveryCriteriaValidator: The validator for delivery criteria. Defaults to `MessageDeliveryCriteriaValidator()`.
+    init(
+        deliveryTracker: ChannelDeliveryTracker,
+        deliveryCriteriaValidator: MessageDeliveryCriteriaValidating = MessageDeliveryCriteriaValidator()
+    ) {
         self.deliveryTracker = deliveryTracker
+        self.deliveryCriteriaValidator = deliveryCriteriaValidator
     }
     
     func handle(event: Event, session: DatabaseSession) -> Event? {
@@ -47,7 +56,7 @@ class ChannelDeliveredMiddleware: EventMiddleware {
         let channel = domainEvent.channel
         let message = domainEvent.message
 
-        guard channel.canMarkMessageAsDelivered(message, for: currentUser) else {
+        guard deliveryCriteriaValidator.canMarkMessageAsDelivered(message, for: currentUser, in: channel) else {
             return
         }
 

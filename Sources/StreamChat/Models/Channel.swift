@@ -384,10 +384,6 @@ extension ChatChannel {
     /// Returns `true` if the channel has one or more unread messages for the current user.
     public var isUnread: Bool { unreadCount != .noUnread }
 
-    public var canBeMarkedAsDelivered: Bool {
-        config.deliveryEventsEnabled && !isMuted && !isHidden
-    }
-
     /// Returns the user's read state for this channel.
     /// - Parameter userId: The ID of the user.
     /// - Returns: The read state, or `nil` if not found.
@@ -424,62 +420,6 @@ extension ChatChannel {
             read.lastDeliveredAt ?? .distantPast > message.createdAt
                 && read.user.id != message.author.id
         }
-    }
-    
-    /// Determines whether a specific message can be marked as delivered for the current user.
-    ///
-    /// This function validates whether a message meets all the criteria required to be marked as delivered.
-    /// It checks various conditions including channel configuration, message properties, user state, and read status.
-    ///
-    /// A message can be marked as delivered when all of the following conditions are met:
-    /// - The channel has delivered events enabled and is not muted or hidden
-    /// - The message is not a thread reply (or if it is, it shows in the channel via `showReplyInChannel`)
-    /// - The message was not authored by the current user
-    /// - The message is not shadowed
-    /// - The message author is not muted by the current user
-    /// - The current user has a read state in the channel
-    /// - The message was created after the user's last read timestamp
-    /// - The message was created after the user's last delivered timestamp
-    ///
-    /// - Parameters:
-    ///   - message: The message to check for delivery status.
-    ///   - currentUser: The current user who would mark the message as delivered.
-    /// - Returns: `true` if the message can be marked as delivered, `false` otherwise.
-    public func canMarkMessageAsDelivered(
-        _ message: ChatMessage,
-        for currentUser: CurrentChatUser
-    ) -> Bool {
-        guard canBeMarkedAsDelivered else {
-            return false
-        }
-        
-        // Check if delivery receipts are enabled in privacy settings
-        guard currentUser.privacySettings.deliveryReceipts?.enabled ?? false else {
-            return false
-        }
-
-        if message.parentMessageId != nil && !message.showReplyInChannel {
-            return false
-        }
-
-        guard message.author.id != currentUser.id else {
-            return false
-        }
-
-        if message.isShadowed {
-            return false
-        }
-
-        if currentUser.mutedUsers.contains(message.author) {
-            return false
-        }
-
-        if let userRead = read(for: currentUser.id) {
-            return message.createdAt > userRead.lastReadAt
-                && message.createdAt > userRead.lastDeliveredAt ?? .distantPast
-        }
-
-        return true
     }
 }
 

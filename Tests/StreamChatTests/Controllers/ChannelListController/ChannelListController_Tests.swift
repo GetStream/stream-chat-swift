@@ -872,46 +872,14 @@ final class ChannelListController_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
         }
 
-        // Create channels with messages that can be marked as delivered
-        let channel1 = ChatChannel.mock(
-            cid: .unique,
-            reads: [
-                ChatChannelRead.mock(
-                    lastReadAt: Date().addingTimeInterval(-200),
-                    lastReadMessageId: nil,
-                    unreadMessagesCount: 1,
-                    user: ChatUser.mock(id: currentUserId),
-                    lastDeliveredAt: Date().addingTimeInterval(-300),
-                    lastDeliveredMessageId: nil
-                )
-            ], latestMessages: [
-                ChatMessage.mock(
-                    id: .unique,
-                    createdAt: Date().addingTimeInterval(-100)
-                )
-            ]
-        )
-        
-        let channel2 = ChatChannel.mock(
-            cid: .unique,
-            reads: [
-                ChatChannelRead.mock(
-                    lastReadAt: Date().addingTimeInterval(-100),
-                    lastReadMessageId: nil,
-                    unreadMessagesCount: 1,
-                    user: ChatUser.mock(id: currentUserId),
-                    lastDeliveredAt: Date().addingTimeInterval(-200),
-                    lastDeliveredMessageId: nil
-                )
-            ], latestMessages: [
-                ChatMessage.mock(
-                    id: .unique,
-                    createdAt: Date().addingTimeInterval(-50)
-                )
-            ]
-        )
-        
+        let message1 = ChatMessage.mock(id: .unique)
+        let message2 = ChatMessage.mock(id: .unique)
+        let channel1 = ChatChannel.mock(cid: .unique, latestMessages: [message1])
+        let channel2 = ChatChannel.mock(cid: .unique, latestMessages: [message2])
         let channels = [channel1, channel2]
+        
+        // Configure mock to mark all messages as deliverable
+        env.deliveryCriteriaValidator?.canMarkMessageAsDeliveredClosure = { _, _, _ in true }
         
         // WHEN
         controller.synchronize()
@@ -923,7 +891,7 @@ final class ChannelListController_Tests: XCTestCase {
         let deliveredMessages = env.currentUserUpdater?.markChannelsDelivered_deliveredMessages
         XCTAssertEqual(deliveredMessages?.count, 2)
         XCTAssertEqual(deliveredMessages?.map(\.channelId), [channel1.cid, channel2.cid])
-        XCTAssertEqual(deliveredMessages?.map(\.messageId), [channel1.latestMessages.first!.id, channel2.latestMessages.first!.id])
+        XCTAssertEqual(deliveredMessages?.map(\.messageId), [message1.id, message2.id])
     }
     
     func test_loadNextChannels_callsMarkChannelsAsDeliveredAfterSuccessfulUpdate() throws {
@@ -933,27 +901,12 @@ final class ChannelListController_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
         }
 
-        // Create channels with messages that can be marked as delivered
-        let channel = ChatChannel.mock(
-            cid: .unique,
-            reads: [
-                ChatChannelRead.mock(
-                    lastReadAt: Date().addingTimeInterval(-200),
-                    lastReadMessageId: nil,
-                    unreadMessagesCount: 1,
-                    user: ChatUser.mock(id: currentUserId),
-                    lastDeliveredAt: Date().addingTimeInterval(-300),
-                    lastDeliveredMessageId: nil
-                )
-            ], latestMessages: [
-                ChatMessage.mock(
-                    id: .unique,
-                    createdAt: Date().addingTimeInterval(-100)
-                )
-            ]
-        )
-        
+        let message = ChatMessage.mock(id: .unique)
+        let channel = ChatChannel.mock(cid: .unique, latestMessages: [message])
         let channels = [channel]
+        
+        // Configure mock to mark all messages as deliverable
+        env.deliveryCriteriaValidator?.canMarkMessageAsDeliveredClosure = { _, _, _ in true }
         
         // WHEN
         controller.loadNextChannels()
@@ -965,7 +918,7 @@ final class ChannelListController_Tests: XCTestCase {
         let deliveredMessages = env.currentUserUpdater?.markChannelsDelivered_deliveredMessages
         XCTAssertEqual(deliveredMessages?.count, 1)
         XCTAssertEqual(deliveredMessages?.first?.channelId, channel.cid)
-        XCTAssertEqual(deliveredMessages?.first?.messageId, channel.latestMessages.first!.id)
+        XCTAssertEqual(deliveredMessages?.first?.messageId, message.id)
     }
     
     func test_markChannelsAsDeliveredIfNeeded_onlyMarksChannelsMeetingDeliveryCriteria() throws {
@@ -975,65 +928,18 @@ final class ChannelListController_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
         }
 
-        // Create channels with different delivery criteria
-        let channel1 = ChatChannel.mock(
-            cid: .unique,
-            reads: [
-                ChatChannelRead.mock(
-                    lastReadAt: Date().addingTimeInterval(-200),
-                    lastReadMessageId: nil,
-                    unreadMessagesCount: 1,
-                    user: ChatUser.mock(id: currentUserId),
-                    lastDeliveredAt: Date().addingTimeInterval(-300), // Can be marked as delivered
-                    lastDeliveredMessageId: nil
-                )
-            ], latestMessages: [
-                ChatMessage.mock(
-                    id: .unique,
-                    createdAt: Date().addingTimeInterval(-100)
-                )
-            ]
-        )
-        
-        let channel2 = ChatChannel.mock(
-            cid: .unique,
-            reads: [
-                ChatChannelRead.mock(
-                    lastReadAt: Date().addingTimeInterval(-100), // Cannot be marked as delivered
-                    lastReadMessageId: nil,
-                    unreadMessagesCount: 0,
-                    user: ChatUser.mock(id: currentUserId),
-                    lastDeliveredAt: Date().addingTimeInterval(-50),
-                    lastDeliveredMessageId: nil
-                )
-            ], latestMessages: [
-                ChatMessage.mock(
-                    id: .unique,
-                    createdAt: Date().addingTimeInterval(-200)
-                )
-            ]
-        )
-        
-        let channel3 = ChatChannel.mock(
-            cid: .unique,
-            reads: [
-                ChatChannelRead.mock(
-                    lastReadAt: Date().addingTimeInterval(-100),
-                    lastReadMessageId: nil,
-                    unreadMessagesCount: 1,
-                    user: ChatUser.mock(id: currentUserId),
-                    lastDeliveredAt: Date().addingTimeInterval(-200), // Can be marked as delivered
-                    lastDeliveredMessageId: nil
-                )
-            ], latestMessages: [
-                ChatMessage.mock(
-                    id: .unique,
-                    createdAt: Date().addingTimeInterval(-50)
-                )
-            ]
-        )
-        
+        let message1 = ChatMessage.mock(id: .unique)
+        let message2 = ChatMessage.mock(id: .unique)
+        let message3 = ChatMessage.mock(id: .unique)
+        let channel1 = ChatChannel.mock(cid: .unique, latestMessages: [message1])
+        let channel2 = ChatChannel.mock(cid: .unique, latestMessages: [message2])
+        let channel3 = ChatChannel.mock(cid: .unique, latestMessages: [message3])
         let channels = [channel1, channel2, channel3]
+        
+        // Configure mock to only mark channel1 and channel3 as deliverable
+        env.deliveryCriteriaValidator?.canMarkMessageAsDeliveredClosure = { _, _, channel in
+            channel.cid == channel1.cid || channel.cid == channel3.cid
+        }
         
         // WHEN
         controller.synchronize()
@@ -1045,7 +951,7 @@ final class ChannelListController_Tests: XCTestCase {
         let deliveredMessages = env.currentUserUpdater?.markChannelsDelivered_deliveredMessages
         XCTAssertEqual(deliveredMessages?.count, 2) // Only channel1 and channel3
         XCTAssertEqual(deliveredMessages?.map(\.channelId), [channel1.cid, channel3.cid])
-        XCTAssertEqual(deliveredMessages?.map(\.messageId), [channel1.latestMessages.first!.id, channel3.latestMessages.first!.id])
+        XCTAssertEqual(deliveredMessages?.map(\.messageId), [message1.id, message3.id])
     }
 
     // MARK: - Mark all read
@@ -2202,6 +2108,7 @@ private class ChannelsUpdateWaiter: ChatChannelListControllerDelegate {
 private class TestEnvironment {
     @Atomic var channelListUpdater: ChannelListUpdater_Spy?
     @Atomic var currentUserUpdater: CurrentUserUpdater_Mock?
+    @Atomic var deliveryCriteriaValidator: MessageDeliveryCriteriaValidator_Mock?
 
     lazy var environment: ChatChannelListController.Environment =
         .init(
@@ -2218,6 +2125,10 @@ private class TestEnvironment {
                     apiClient: $1
                 )
                 return self.currentUserUpdater!
+            },
+            deliveryCriteriaValidatorBuilder: { [unowned self] in
+                self.deliveryCriteriaValidator = MessageDeliveryCriteriaValidator_Mock()
+                return self.deliveryCriteriaValidator!
             }
         )
 }
