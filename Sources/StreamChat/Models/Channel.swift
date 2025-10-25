@@ -425,20 +425,7 @@ extension ChatChannel {
                 && read.user.id != message.author.id
         }
     }
-
-    /// Returns the latest undelivered message for the given user.
-    ///
-    /// This method checks if the latest message in the channel can be marked as delivered
-    /// by using the `canMarkMessageAsDelivered(_:for:)` function.
-    ///
-    /// - Parameter currentUser: The current user.
-    /// - Returns: Return the latest undelivered message, or `nil` if no message qualifies.
-    public func latestUndeliveredMessage(for currentUser: CurrentChatUser) -> ChatMessage? {
-        guard let latestMessage = latestMessages.first else { return nil }
-        guard canMarkMessageAsDelivered(latestMessage, for: currentUser) else { return nil }
-        return latestMessage
-    }
-
+    
     /// Determines whether a specific message can be marked as delivered for the current user.
     ///
     /// This function validates whether a message meets all the criteria required to be marked as delivered.
