@@ -3186,11 +3186,11 @@ class MockPaginationStateHandler: MessagesPaginationStateHandling, @unchecked Se
     var beginCallCount = 0
     var endCallCount = 0
 
-    func begin(pagination: MessagesPagination) {
+    func begin(pagination: MessagesPagination?) {
         beginCallCount += 1
     }
     
-    func end(pagination: MessagesPagination, with result: Result<[MessagePayload], any Error>) {
+    func end(pagination: MessagesPagination?, with result: Result<[MessagePayload], any Error>) {
         endCallCount += 1
     }
 }
