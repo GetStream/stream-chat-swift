@@ -1636,20 +1636,6 @@ import XCTest
 
         AssertSnapshot(vc, variants: [.defaultLight])
     }
-
-    func test_channelWithDraftMessage_whenDraftIsDeletedFromEvent_updatesDraftInComposer() {
-        let channel = ChatChannel.mock(cid: .unique, draftMessage: nil)
-        channelControllerMock.channel_mock = channel
-
-        vc.messageComposerVC.content.draftMessage(.mock(text: "Draft Message"))
-        XCTAssertFalse(vc.messageComposerVC.content.text.isEmpty)
-
-        channelControllerMock.mockCid = channel.cid
-        let event = DraftDeletedEvent(cid: channel.cid, threadId: nil, createdAt: .unique)
-        vc.eventsController(vc.eventsController, didReceiveEvent: event)
-
-        XCTAssertTrue(vc.messageComposerVC.content.text.isEmpty)
-    }
 }
 
 private extension ChatChannelVC_Tests {

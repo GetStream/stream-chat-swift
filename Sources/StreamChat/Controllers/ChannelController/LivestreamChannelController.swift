@@ -828,9 +828,8 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         channelQuery: ChannelQuery,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
-        if let pagination = channelQuery.pagination {
-            paginationStateHandler.begin(pagination: pagination)
-        }
+        let pagination = channelQuery.pagination
+        paginationStateHandler.begin(pagination: pagination)
 
         let requestCompletion: @Sendable (Result<ChannelPayload, Error>) -> Void = { [weak self] result in
             self?.callback { [weak self] in
@@ -842,9 +841,10 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
                     completion?(nil)
 
                 case .failure(let error):
-                    if let pagination = channelQuery.pagination {
-                        self.paginationStateHandler.end(pagination: pagination, with: .failure(error))
-                    }
+                    self.paginationStateHandler.end(
+                        pagination: channelQuery.pagination,
+                        with: .failure(error)
+                    )
                     completion?(error)
                 }
             }
@@ -858,9 +858,7 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
     }
 
     private func handleChannelPayload(_ payload: ChannelPayload, channelQuery: ChannelQuery) {
-        if let pagination = channelQuery.pagination {
-            paginationStateHandler.end(pagination: pagination, with: .success(payload.messages))
-        }
+        paginationStateHandler.end(pagination: channelQuery.pagination, with: .success(payload.messages))
 
         let newChannel = payload.asModel(
             currentUserId: currentUserId,

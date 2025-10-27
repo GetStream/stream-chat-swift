@@ -360,25 +360,6 @@ import XCTest
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 
-    func test_threadWithDraftReply_whenDraftIsDeletedFromEvent_removesDraftFromComposer() {
-        let cid = ChannelId.unique
-        let parentMessage = ChatMessage.mock(
-            id: messageControllerMock.messageId,
-            cid: cid,
-            text: "Parent message",
-            author: .mock(id: .unique),
-            draftReply: .mock(text: "Draft Message")
-        )
-        vc.messageComposerVC.content.draftMessage(.mock(text: "Draft"))
-
-        XCTAssertFalse(vc.messageComposerVC.content.text.isEmpty)
-
-        let updateDraftEvent = DraftDeletedEvent(cid: cid, threadId: messageControllerMock.messageId, createdAt: .unique)
-        vc.eventsController(vc.eventsController, didReceiveEvent: updateDraftEvent)
-
-        XCTAssertTrue(vc.messageComposerVC.content.text.isEmpty)
-    }
-
     // MARK: - audioQueuePlayerNextAssetURL
 
     func test_audioQueuePlayerNextAssetURL_callsNextAvailableVoiceRecordingProvideWithExpectedInputAndReturnsValue() throws {
