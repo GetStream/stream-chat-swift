@@ -21,7 +21,8 @@ extension ChannelListState {
             clientConfig: ChatClientConfig,
             channelListUpdater: ChannelListUpdater,
             database: DatabaseContainer,
-            eventNotificationCenter: EventNotificationCenter
+            eventNotificationCenter: EventNotificationCenter,
+            ongoingWatchingChannels: WatchingChannelsOngoingRequests
         ) {
             self.clientConfig = clientConfig
             self.channelListUpdater = channelListUpdater
@@ -45,7 +46,8 @@ extension ChannelListState {
                 filter: dynamicFilter,
                 clientConfig: clientConfig,
                 databaseContainer: database,
-                worker: channelListUpdater
+                worker: channelListUpdater,
+                ongoingWatchingChannels: ongoingWatchingChannels
             )
         }
         
