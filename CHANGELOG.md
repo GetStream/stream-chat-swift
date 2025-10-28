@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### 🐞 Fixed
 - Fix `ChannelController.hasLoadedAllPreviousMessages` not correct for newly created channels [#3855](https://github.com/GetStream/stream-chat-swift/pull/3855)
+- Fix duplicated watch channel requests when a channel is created and it belongs to multiple queries [#3857](https://github.com/GetStream/stream-chat-swift/pull/3857)
 
 ## StreamChatUI
 ### 🐞 Fixed
