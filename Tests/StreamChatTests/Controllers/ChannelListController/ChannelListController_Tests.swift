@@ -340,7 +340,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
-        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 1)
+        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
     }
 
     func test_didReceiveEvent_whenMessageNewEvent_shouldLinkChannelToQuery() {
@@ -357,7 +357,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
-        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 1)
+        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
     }
     
     func test_didReceiveEvent_whenChannelVisibleEvent_shouldLinkChannelToQuery() {
@@ -376,7 +376,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
-        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 1)
+        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
     }
 
     func test_didReceiveEvent_whenNotificationMessageNewEvent_shouldLinkChannelToQuery() {
@@ -393,7 +393,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
-        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 1)
+        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
     }
 
     func test_didReceiveEvent_whenNotificationAddedToChannelEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
@@ -421,7 +421,7 @@ final class ChannelListController_Tests: XCTestCase {
         wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
-        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
+        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 0)
     }
 
     func test_didReceiveEvent_whenMessageNewEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
@@ -449,7 +449,7 @@ final class ChannelListController_Tests: XCTestCase {
         wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
-        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
+        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 0)
     }
 
     func test_didReceiveEvent_whenNotificationMessageNewEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
@@ -477,7 +477,7 @@ final class ChannelListController_Tests: XCTestCase {
         wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
-        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
+        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 0)
     }
 
     func test_didReceiveEvent_whenFilterMatches_shouldLinkChannelToQuery() {
@@ -498,7 +498,7 @@ final class ChannelListController_Tests: XCTestCase {
         env.channelListUpdater?.link_completion?(nil)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
-        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 1)
+        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
     }
 
     func test_didReceiveEvent_whenFilterMatches_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
@@ -528,7 +528,7 @@ final class ChannelListController_Tests: XCTestCase {
         wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
-        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
+        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 0)
     }
 
     func test_didReceiveEvent_whenFilterDoesNotMatch_shouldNotLinkChannelToQuery() {
@@ -545,7 +545,7 @@ final class ChannelListController_Tests: XCTestCase {
         wait(for: [eventExpectation], timeout: defaultTimeout)
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
-        XCTAssertEqual(env.channelListUpdater?.startWatchingChannels_callCount, 0)
+        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 0)
     }
 
     func test_didReceiveEvent_whenChannelUpdatedEvent_whenFilterDoesNotMatch_shouldUnlinkChannelFromQuery() throws {
@@ -2005,13 +2005,28 @@ private class ChannelsUpdateWaiter: ChatChannelListControllerDelegate {
 
 private class TestEnvironment {
     @Atomic var channelListUpdater: ChannelListUpdater_Spy?
+    @Atomic var channelWatcherHandler: ChannelWatcherHandler_Mock?
 
     lazy var environment: ChatChannelListController.Environment =
-        .init(channelQueryUpdaterBuilder: { [unowned self] in
-            self.channelListUpdater = ChannelListUpdater_Spy(
-                database: $0,
-                apiClient: $1
-            )
-            return self.channelListUpdater!
-        })
+        .init(
+            channelQueryUpdaterBuilder: { [unowned self] in
+                self.channelListUpdater = ChannelListUpdater_Spy(
+                    database: $0,
+                    apiClient: $1
+                )
+                return self.channelListUpdater!
+            },
+            channelListLinkerBuilder: { [unowned self] query, filter, config, database, worker, _ in
+                self.channelWatcherHandler = ChannelWatcherHandler_Mock()
+                self.channelWatcherHandler?.attemptToWatch_completion_success = true
+                return ChannelListLinker(
+                    query: query,
+                    filter: filter,
+                    clientConfig: config,
+                    databaseContainer: database,
+                    worker: worker,
+                    channelWatcherHandler: self.channelWatcherHandler!
+                )
+            }
+        )
 }

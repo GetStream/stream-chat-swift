@@ -1783,6 +1783,7 @@
 		ADB97E8C2EB129FB0065824C /* ChannelWatcherHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB97E8B2EB129FB0065824C /* ChannelWatcherHandler.swift */; };
 		ADB97E8D2EB129FB0065824C /* ChannelWatcherHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB97E8B2EB129FB0065824C /* ChannelWatcherHandler.swift */; };
 		ADB97E8F2EB1368D0065824C /* ChannelWatcherHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB97E8E2EB1368D0065824C /* ChannelWatcherHandler_Tests.swift */; };
+		ADB97E912EB165890065824C /* ChannelWatcherHandler_Mock.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB97E902EB165890065824C /* ChannelWatcherHandler_Mock.swift */; };
 		ADBBDA1F279F0CEA00E47B1C /* VideoDurationFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */; };
 		ADBBDA20279F0CEA00E47B1C /* VideoDurationFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */; };
 		ADBBDA22279F0CFA00E47B1C /* UploadingProgressFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA21279F0CFA00E47B1C /* UploadingProgressFormatter.swift */; };
@@ -4565,6 +4566,7 @@
 		ADB951B6291DDCE600800554 /* StreamAttachmentUploader_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamAttachmentUploader_Tests.swift; sourceTree = "<group>"; };
 		ADB97E8B2EB129FB0065824C /* ChannelWatcherHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWatcherHandler.swift; sourceTree = "<group>"; };
 		ADB97E8E2EB1368D0065824C /* ChannelWatcherHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWatcherHandler_Tests.swift; sourceTree = "<group>"; };
+		ADB97E902EB165890065824C /* ChannelWatcherHandler_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWatcherHandler_Mock.swift; sourceTree = "<group>"; };
 		ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDurationFormatter.swift; sourceTree = "<group>"; };
 		ADBBDA21279F0CFA00E47B1C /* UploadingProgressFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadingProgressFormatter.swift; sourceTree = "<group>"; };
 		ADBBDA27279F0E9B00E47B1C /* ChannelNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelNameFormatter.swift; sourceTree = "<group>"; };
@@ -7367,6 +7369,7 @@
 		A364D09727D0C5940029857A /* Workers */ = {
 			isa = PBXGroup;
 			children = (
+				ADB97E902EB165890065824C /* ChannelWatcherHandler_Mock.swift */,
 				AD7C76842E42CDF6009250FB /* ManualEventHandler_Mock.swift */,
 				882C5762252C7F6500E60C44 /* ChannelMemberListUpdater_Mock.swift */,
 				88F6DF96252C88BB009A8AF0 /* ChannelMemberUpdater_Mock.swift */,
@@ -11471,6 +11474,7 @@
 				A3C3BC6527E8AA0A00224761 /* Int+Unique.swift in Sources */,
 				4F862F9A2C38001000062502 /* FileManager+Extensions.swift in Sources */,
 				AD17E1212E00985B001AF308 /* SharedLocationPayload.swift in Sources */,
+				ADB97E912EB165890065824C /* ChannelWatcherHandler_Mock.swift in Sources */,
 				A3C3BC6327E8AA0A00224761 /* AttachmentId+Unique.swift in Sources */,
 				A3C3BC3827E87F5100224761 /* BackgroundTaskScheduler_Mock.swift in Sources */,
 				84EE53B12BBC32AD00FD2A13 /* Chat_Mock.swift in Sources */,
