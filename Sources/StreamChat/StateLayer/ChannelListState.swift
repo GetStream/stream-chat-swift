@@ -15,7 +15,7 @@ import Foundation
         channelListUpdater: ChannelListUpdater,
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter,
-        ongoingWatchingChannels: WatchingChannelsActiveRequests
+        channelWatcherHandler: ChannelWatcherHandling
     ) {
         self.query = query
         observer = Observer(
@@ -25,7 +25,7 @@ import Foundation
             channelListUpdater: channelListUpdater,
             database: database,
             eventNotificationCenter: eventNotificationCenter,
-            ongoingWatchingChannels: ongoingWatchingChannels
+            channelWatcherHandler: channelWatcherHandler
         )
         channels = observer.start(
             with: .init(channelsDidChange: { [weak self] in self?.channels = $0 })

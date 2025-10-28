@@ -90,11 +90,11 @@ public class ChatClient {
 
     let channelListUpdater: ChannelListUpdater
 
-    /// An object for avoiding duplicate watching requests.
+    /// Handler for watching channels and preventing duplicate watch requests.
     ///
     /// If a channel is created and belongs to multiple queries at the same time,
     /// we want to make sure we only watch it one time, not for every query it belongs.
-    let ongoingWatchingChannels: WatchingChannelsActiveRequests
+    let channelWatcherHandler: ChannelWatcherHandling
 
     func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
         MessagesPaginationStateHandler()
@@ -224,7 +224,9 @@ public class ChatClient {
             apiClient
         )
         pollsRepository = environment.pollsRepositoryBuilder(databaseContainer, apiClient)
-        ongoingWatchingChannels = WatchingChannelsActiveRequests()
+        channelWatcherHandler = ChannelWatcherHandler(
+            channelListUpdater: channelListUpdater
+        )
 
         authRepository.delegate = self
         apiClientEncoder.connectionDetailsProviderDelegate = self

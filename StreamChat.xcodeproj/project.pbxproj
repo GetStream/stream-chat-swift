@@ -1780,9 +1780,9 @@
 		ADB951B3291C3CE900800554 /* AnyAttachmentUpdater.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951B1291C3CE900800554 /* AnyAttachmentUpdater.swift */; };
 		ADB951B5291DD30400800554 /* AnyAttachmentUpdater_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951B4291DD30400800554 /* AnyAttachmentUpdater_Tests.swift */; };
 		ADB951B7291DDCE600800554 /* StreamAttachmentUploader_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB951B6291DDCE600800554 /* StreamAttachmentUploader_Tests.swift */; };
-		ADB97E852EB036250065824C /* WatchingChannelsActiveRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB97E842EB036250065824C /* WatchingChannelsActiveRequests.swift */; };
-		ADB97E862EB036250065824C /* WatchingChannelsActiveRequests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB97E842EB036250065824C /* WatchingChannelsActiveRequests.swift */; };
-		ADB97E8A2EB03BB60065824C /* WatchingChannelsActiveRequests_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB97E882EB03BB60065824C /* WatchingChannelsActiveRequests_Tests.swift */; };
+		ADB97E8C2EB129FB0065824C /* ChannelWatcherHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB97E8B2EB129FB0065824C /* ChannelWatcherHandler.swift */; };
+		ADB97E8D2EB129FB0065824C /* ChannelWatcherHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB97E8B2EB129FB0065824C /* ChannelWatcherHandler.swift */; };
+		ADB97E8F2EB1368D0065824C /* ChannelWatcherHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADB97E8E2EB1368D0065824C /* ChannelWatcherHandler_Tests.swift */; };
 		ADBBDA1F279F0CEA00E47B1C /* VideoDurationFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */; };
 		ADBBDA20279F0CEA00E47B1C /* VideoDurationFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */; };
 		ADBBDA22279F0CFA00E47B1C /* UploadingProgressFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = ADBBDA21279F0CFA00E47B1C /* UploadingProgressFormatter.swift */; };
@@ -4563,8 +4563,8 @@
 		ADB951B1291C3CE900800554 /* AnyAttachmentUpdater.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyAttachmentUpdater.swift; sourceTree = "<group>"; };
 		ADB951B4291DD30400800554 /* AnyAttachmentUpdater_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyAttachmentUpdater_Tests.swift; sourceTree = "<group>"; };
 		ADB951B6291DDCE600800554 /* StreamAttachmentUploader_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamAttachmentUploader_Tests.swift; sourceTree = "<group>"; };
-		ADB97E842EB036250065824C /* WatchingChannelsActiveRequests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchingChannelsActiveRequests.swift; sourceTree = "<group>"; };
-		ADB97E882EB03BB60065824C /* WatchingChannelsActiveRequests_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WatchingChannelsActiveRequests_Tests.swift; sourceTree = "<group>"; };
+		ADB97E8B2EB129FB0065824C /* ChannelWatcherHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWatcherHandler.swift; sourceTree = "<group>"; };
+		ADB97E8E2EB1368D0065824C /* ChannelWatcherHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelWatcherHandler_Tests.swift; sourceTree = "<group>"; };
 		ADBBDA1E279F0CEA00E47B1C /* VideoDurationFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDurationFormatter.swift; sourceTree = "<group>"; };
 		ADBBDA21279F0CFA00E47B1C /* UploadingProgressFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UploadingProgressFormatter.swift; sourceTree = "<group>"; };
 		ADBBDA27279F0E9B00E47B1C /* ChannelNameFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelNameFormatter.swift; sourceTree = "<group>"; };
@@ -6061,7 +6061,7 @@
 		799C9427247D2FB9001F1104 /* Workers */ = {
 			isa = PBXGroup;
 			children = (
-				ADB97E842EB036250065824C /* WatchingChannelsActiveRequests.swift */,
+				ADB97E8B2EB129FB0065824C /* ChannelWatcherHandler.swift */,
 				AD1BA40A2E3A2D180092D602 /* ManualEventHandler.swift */,
 				4F45802D2BEE0B4B0099F540 /* ChannelListLinker.swift */,
 				792A4F1A247FE84900EAF71D /* ChannelListUpdater.swift */,
@@ -7343,7 +7343,7 @@
 		A364D09627D0C56C0029857A /* Workers */ = {
 			isa = PBXGroup;
 			children = (
-				ADB97E882EB03BB60065824C /* WatchingChannelsActiveRequests_Tests.swift */,
+				ADB97E8E2EB1368D0065824C /* ChannelWatcherHandler_Tests.swift */,
 				AD7C767E2E426B34009250FB /* ManualEventHandler_Tests.swift */,
 				AD9490582BF5701D00E69224 /* ThreadsRepository_Tests.swift */,
 				792921C424C0479700116BBB /* ChannelListUpdater_Tests.swift */,
@@ -11658,7 +11658,6 @@
 				4F1BEE792BE384FE00B6685C /* ReactionListState.swift in Sources */,
 				79C5CBE825F66DBD00D98001 /* ChatChannelWatcherListController.swift in Sources */,
 				8A62706E24BF45360040BFD6 /* BanEnabling.swift in Sources */,
-				ADB97E862EB036250065824C /* WatchingChannelsActiveRequests.swift in Sources */,
 				7985BDAA252B1E53002B8C30 /* MainQueue+Synchronous.swift in Sources */,
 				ADF9E1F72A03E7E400109108 /* MessagesPaginationState.swift in Sources */,
 				79983C8126663436000995F6 /* ChatMessageVideoAttachment.swift in Sources */,
@@ -11930,6 +11929,7 @@
 				792A4F482480107A00EAF71D /* Pagination.swift in Sources */,
 				79AF43B42632AF1C00E75CDA /* ChannelVisibilityEventMiddleware.swift in Sources */,
 				DAF1BED525066114003CEDC0 /* MessageController+Combine.swift in Sources */,
+				ADB97E8C2EB129FB0065824C /* ChannelWatcherHandler.swift in Sources */,
 				AD8E75E62E04963200AE0F70 /* ActiveLiveLocationsEndTimeTracker.swift in Sources */,
 				ADB8B8EA2D8890B900549C95 /* MessageReminderDTO.swift in Sources */,
 				A36C39F52860680A0004EB7E /* URL+EnrichedURL.swift in Sources */,
@@ -12155,7 +12155,6 @@
 				40789D4B29F6C87B0018C2BB /* AudioRecordingState_Tests.swift in Sources */,
 				4042967229FA97110089126D /* StreamΑudioRecorderMeterNormaliser_Tests.swift in Sources */,
 				84ABF69A274E570600EDDA68 /* EventBatcher_Tests.swift in Sources */,
-				ADB97E8A2EB03BB60065824C /* WatchingChannelsActiveRequests_Tests.swift in Sources */,
 				DA4971542549C2A000AC68C2 /* MessageAttachmentPayload_Tests.swift in Sources */,
 				84D5BC59277B188E00A65C75 /* PinnedMessagesPagination_Tests.swift in Sources */,
 				A36C39F828606B5D0004EB7E /* URL_EnrichedURL_Tests.swift in Sources */,
@@ -12391,6 +12390,7 @@
 				ADB951B7291DDCE600800554 /* StreamAttachmentUploader_Tests.swift in Sources */,
 				AD0F7F1C2B616DD000914C4C /* TextLinkDetector_Tests.swift in Sources */,
 				BCE486580F913CFFDB3B5ECD /* JSONEncoder_Tests.swift in Sources */,
+				ADB97E8F2EB1368D0065824C /* ChannelWatcherHandler_Tests.swift in Sources */,
 				BCE48639FD7B6B05CD63A6AF /* FilterDecoding_Tests.swift in Sources */,
 				ADB8B8FB2D8B904D00549C95 /* MessageController+Reminders_Tests.swift in Sources */,
 				C152F5FE27C65C18003B4805 /* MessageRepository_Tests.swift in Sources */,
@@ -12755,7 +12755,6 @@
 				841BAA112BCEADAC000C73E4 /* PollsEvents.swift in Sources */,
 				C121E86D274544AF00023E4C /* DatabaseContainer.swift in Sources */,
 				C121E86E274544AF00023E4C /* DatabaseSession.swift in Sources */,
-				ADB97E852EB036250065824C /* WatchingChannelsActiveRequests.swift in Sources */,
 				C121E86F274544AF00023E4C /* DataStore.swift in Sources */,
 				4F312D0F2C905A2E0073A1BC /* FlagRequestBody.swift in Sources */,
 				84355D892AB2FCAC00FD5838 /* FilesEndpoints.swift in Sources */,
@@ -12978,6 +12977,7 @@
 				84B7383B2BE8BF8E00EC66EC /* PollController+Combine.swift in Sources */,
 				CFE616BA28348A6100AE2ABF /* CountdownTracker.swift in Sources */,
 				C121E8DB274544B100023E4C /* ConsoleLogDestination.swift in Sources */,
+				ADB97E8D2EB129FB0065824C /* ChannelWatcherHandler.swift in Sources */,
 				C121E8DC274544B100023E4C /* BaseLogDestination.swift in Sources */,
 				C121E8DD274544B100023E4C /* LogDestination.swift in Sources */,
 				C121E8DE274544B100023E4C /* Logger.swift in Sources */,

@@ -22,7 +22,7 @@ extension ChannelListState {
             channelListUpdater: ChannelListUpdater,
             database: DatabaseContainer,
             eventNotificationCenter: EventNotificationCenter,
-            ongoingWatchingChannels: WatchingChannelsActiveRequests
+            channelWatcherHandler: ChannelWatcherHandling
         ) {
             self.clientConfig = clientConfig
             self.channelListUpdater = channelListUpdater
@@ -47,7 +47,7 @@ extension ChannelListState {
                 clientConfig: clientConfig,
                 databaseContainer: database,
                 worker: channelListUpdater,
-                ongoingWatchingChannels: ongoingWatchingChannels
+                channelWatcherHandler: channelWatcherHandler
             )
         }
         

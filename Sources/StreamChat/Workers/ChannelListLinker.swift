@@ -18,7 +18,7 @@ final class ChannelListLinker {
     private let filter: ((ChatChannel) -> Bool)?
     private let query: ChannelListQuery
     private let worker: ChannelListUpdater
-    private let ongoingWatchingChannels: WatchingChannelsActiveRequests
+    private let channelWatcherHandler: ChannelWatcherHandling
 
     init(
         query: ChannelListQuery,
@@ -26,14 +26,14 @@ final class ChannelListLinker {
         clientConfig: ChatClientConfig,
         databaseContainer: DatabaseContainer,
         worker: ChannelListUpdater,
-        ongoingWatchingChannels: WatchingChannelsActiveRequests
+        channelWatcherHandler: ChannelWatcherHandling
     ) {
         self.clientConfig = clientConfig
         self.databaseContainer = databaseContainer
         self.filter = filter
         self.query = query
         self.worker = worker
-        self.ongoingWatchingChannels = ongoingWatchingChannels
+        self.channelWatcherHandler = channelWatcherHandler
     }
     
     func start(with nc: EventNotificationCenter) {
@@ -92,7 +92,7 @@ final class ChannelListLinker {
     /// Handles if a channel should be linked to the current query or not.
     private func linkChannelIfNeeded(_ channel: ChatChannel) {
         guard shouldChannelBelongToCurrentQuery(channel) else { return }
-        isInChannelList(channel) { [worker, query, ongoingWatchingChannels] exists, belongsToOtherQuery in
+        isInChannelList(channel) { [worker, query, channelWatcherHandler] exists, belongsToOtherQuery in
             guard !exists else { return }
             worker.link(channel: channel, with: query) { error in
                 if let error = error {
@@ -101,17 +101,10 @@ final class ChannelListLinker {
                 }
 
                 // If it belongs to another query, it means it is already being watched.
-                if belongsToOtherQuery {
-                    return
-                }
-
-                guard !ongoingWatchingChannels.isExecutingRequest(for: channel.cid) else { return }
-
-                ongoingWatchingChannels.add(channelIds: [channel.cid])
-
-                worker.startWatchingChannels(withIds: [channel.cid]) { error in
-                    ongoingWatchingChannels.remove(channelIds: [channel.cid])
-
+                guard !belongsToOtherQuery else { return }
+                
+                // Watch the channel, handler will prevent duplicate requests.
+                channelWatcherHandler.attemptToWatch(channelIds: [channel.cid]) { error in
                     guard let error = error else { return }
                     log.warning(
                         "Failed to start watching linked channel: \(channel.cid), error: \(error.localizedDescription)"

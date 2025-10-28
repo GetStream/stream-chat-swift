@@ -32,7 +32,7 @@ public class ChannelList {
                 channelListUpdater,
                 client.databaseContainer,
                 client.eventNotificationCenter,
-                client.ongoingWatchingChannels
+                client.channelWatcherHandler
             )
         }
     }
@@ -105,7 +105,7 @@ extension ChannelList {
             _ channelListUpdater: ChannelListUpdater,
             _ database: DatabaseContainer,
             _ eventNotificationCenter: EventNotificationCenter,
-            _ ongoingWatchingChannels: WatchingChannelsActiveRequests
+            _ channelWatcherHandler: ChannelWatcherHandling
         ) -> ChannelListState = { @MainActor in
             ChannelListState(
                 query: $0,
@@ -114,7 +114,7 @@ extension ChannelList {
                 channelListUpdater: $3,
                 database: $4,
                 eventNotificationCenter: $5,
-                ongoingWatchingChannels: $6
+                channelWatcherHandler: $6
             )
         }
     }
