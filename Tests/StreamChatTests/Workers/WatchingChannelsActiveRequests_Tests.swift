@@ -7,16 +7,16 @@ import Foundation
 @testable import StreamChatTestTools
 import XCTest
 
-final class WatchingChannelsOngoingRequests_Tests: XCTestCase {
-    var tracker: WatchingChannelsOngoingRequests!
+final class WatchingChannelsActiveRequests_Tests: XCTestCase {
+    var sut: WatchingChannelsActiveRequests!
     
     override func setUp() {
         super.setUp()
-        tracker = WatchingChannelsOngoingRequests()
+        sut = WatchingChannelsActiveRequests()
     }
     
     override func tearDown() {
-        tracker = nil
+        sut = nil
         super.tearDown()
     }
     
@@ -27,30 +27,30 @@ final class WatchingChannelsOngoingRequests_Tests: XCTestCase {
         let cid = ChannelId.unique
         
         // When / Then
-        XCTAssertFalse(tracker.isExecutingRequest(for: cid))
+        XCTAssertFalse(sut.isExecutingRequest(for: cid))
     }
     
     func test_isExecutingRequest_whenChannelTracked_returnsTrue() {
         // Given
         let cid = ChannelId.unique
-        tracker.add(channelIds: [cid])
+        sut.add(channelIds: [cid])
         
         // When / Then
-        AssertAsync.willBeTrue(tracker.isExecutingRequest(for: cid))
+        AssertAsync.willBeTrue(sut.isExecutingRequest(for: cid))
     }
     
     func test_isExecutingRequest_whenChannelRemovedAfterBeingTracked_returnsFalse() {
         // Given
         let cid = ChannelId.unique
-        tracker.add(channelIds: [cid])
+        sut.add(channelIds: [cid])
         
-        AssertAsync.willBeTrue(tracker.isExecutingRequest(for: cid))
+        AssertAsync.willBeTrue(sut.isExecutingRequest(for: cid))
         
         // When
-        tracker.remove(channelIds: [cid])
+        sut.remove(channelIds: [cid])
         
         // Then
-        AssertAsync.willBeFalse(tracker.isExecutingRequest(for: cid))
+        AssertAsync.willBeFalse(sut.isExecutingRequest(for: cid))
     }
     
     // MARK: - isExecutingRequests
@@ -60,7 +60,7 @@ final class WatchingChannelsOngoingRequests_Tests: XCTestCase {
         let cids: [ChannelId] = [.unique, .unique, .unique]
         
         // When / Then
-        XCTAssertFalse(tracker.isExecutingRequests(for: cids))
+        XCTAssertFalse(sut.isExecutingRequests(for: cids))
     }
     
     func test_isExecutingRequests_whenSomeChannelsTracked_returnsTrue() {
@@ -69,19 +69,19 @@ final class WatchingChannelsOngoingRequests_Tests: XCTestCase {
         let cid2 = ChannelId.unique
         let cid3 = ChannelId.unique
         
-        tracker.add(channelIds: [cid1])
+        sut.add(channelIds: [cid1])
         
         // When / Then
-        AssertAsync.willBeTrue(tracker.isExecutingRequests(for: [cid1, cid2, cid3]))
+        AssertAsync.willBeTrue(sut.isExecutingRequests(for: [cid1, cid2, cid3]))
     }
     
     func test_isExecutingRequests_whenAllChannelsTracked_returnsTrue() {
         // Given
         let cids: [ChannelId] = [.unique, .unique, .unique]
-        tracker.add(channelIds: cids)
+        sut.add(channelIds: cids)
         
         // When / Then
-        AssertAsync.willBeTrue(tracker.isExecutingRequests(for: cids))
+        AssertAsync.willBeTrue(sut.isExecutingRequests(for: cids))
     }
     
     func test_isExecutingRequests_whenNoChannelsFromListTracked_returnsFalse() {
@@ -89,10 +89,10 @@ final class WatchingChannelsOngoingRequests_Tests: XCTestCase {
         let trackedCids: [ChannelId] = [.unique, .unique]
         let queryCids: [ChannelId] = [.unique, .unique, .unique]
         
-        tracker.add(channelIds: trackedCids)
+        sut.add(channelIds: trackedCids)
         
         // When / Then
-        AssertAsync.willBeFalse(tracker.isExecutingRequests(for: queryCids))
+        AssertAsync.willBeFalse(sut.isExecutingRequests(for: queryCids))
     }
     
     // MARK: - add
@@ -102,10 +102,10 @@ final class WatchingChannelsOngoingRequests_Tests: XCTestCase {
         let cid = ChannelId.unique
         
         // When
-        tracker.add(channelIds: [cid])
+        sut.add(channelIds: [cid])
         
         // Then
-        AssertAsync.willBeTrue(tracker.isExecutingRequest(for: cid))
+        AssertAsync.willBeTrue(sut.isExecutingRequest(for: cid))
     }
     
     func test_add_multipleChannels_tracksAllChannels() {
@@ -113,11 +113,11 @@ final class WatchingChannelsOngoingRequests_Tests: XCTestCase {
         let cids: [ChannelId] = [.unique, .unique, .unique]
         
         // When
-        tracker.add(channelIds: cids)
+        sut.add(channelIds: cids)
         
         // Then
         for cid in cids {
-            AssertAsync.willBeTrue(self.tracker.isExecutingRequest(for: cid))
+            AssertAsync.willBeTrue(self.sut.isExecutingRequest(for: cid))
         }
     }
     
@@ -126,17 +126,17 @@ final class WatchingChannelsOngoingRequests_Tests: XCTestCase {
         let cid = ChannelId.unique
         
         // When
-        tracker.add(channelIds: [cid])
-        tracker.add(channelIds: [cid])
+        sut.add(channelIds: [cid])
+        sut.add(channelIds: [cid])
         
         // Then
-        AssertAsync.willBeTrue(tracker.isExecutingRequest(for: cid))
+        AssertAsync.willBeTrue(sut.isExecutingRequest(for: cid))
         
         // Remove once
-        tracker.remove(channelIds: [cid])
+        sut.remove(channelIds: [cid])
         
         // Should be removed completely
-        AssertAsync.willBeFalse(tracker.isExecutingRequest(for: cid))
+        AssertAsync.willBeFalse(sut.isExecutingRequest(for: cid))
     }
     
     // MARK: - remove
@@ -144,32 +144,32 @@ final class WatchingChannelsOngoingRequests_Tests: XCTestCase {
     func test_remove_singleChannel_removesChannel() {
         // Given
         let cid = ChannelId.unique
-        tracker.add(channelIds: [cid])
+        sut.add(channelIds: [cid])
         
-        AssertAsync.willBeTrue(tracker.isExecutingRequest(for: cid))
+        AssertAsync.willBeTrue(sut.isExecutingRequest(for: cid))
         
         // When
-        tracker.remove(channelIds: [cid])
+        sut.remove(channelIds: [cid])
         
         // Then
-        AssertAsync.willBeFalse(tracker.isExecutingRequest(for: cid))
+        AssertAsync.willBeFalse(sut.isExecutingRequest(for: cid))
     }
     
     func test_remove_multipleChannels_removesAllChannels() {
         // Given
         let cids: [ChannelId] = [.unique, .unique, .unique]
-        tracker.add(channelIds: cids)
+        sut.add(channelIds: cids)
         
         for cid in cids {
-            AssertAsync.willBeTrue(self.tracker.isExecutingRequest(for: cid))
+            AssertAsync.willBeTrue(self.sut.isExecutingRequest(for: cid))
         }
 
         // When
-        tracker.remove(channelIds: cids)
+        sut.remove(channelIds: cids)
         
         // Then
         for cid in cids {
-            AssertAsync.willBeFalse(self.tracker.isExecutingRequest(for: cid))
+            AssertAsync.willBeFalse(self.sut.isExecutingRequest(for: cid))
         }
     }
     
@@ -178,8 +178,8 @@ final class WatchingChannelsOngoingRequests_Tests: XCTestCase {
         let cid = ChannelId.unique
         
         // When / Then - Should not crash
-        tracker.remove(channelIds: [cid])
-        XCTAssertFalse(tracker.isExecutingRequest(for: cid))
+        sut.remove(channelIds: [cid])
+        XCTAssertFalse(sut.isExecutingRequest(for: cid))
     }
 
     // MARK: - Thread Safety
@@ -195,15 +195,15 @@ final class WatchingChannelsOngoingRequests_Tests: XCTestCase {
             let cid = cids[index]
             
             // Add
-            self.tracker.add(channelIds: [cid])
+            self.sut.add(channelIds: [cid])
             expectation.fulfill()
             
             // Check
-            _ = self.tracker.isExecutingRequest(for: cid)
+            _ = self.sut.isExecutingRequest(for: cid)
             expectation.fulfill()
             
             // Remove
-            self.tracker.remove(channelIds: [cid])
+            self.sut.remove(channelIds: [cid])
             expectation.fulfill()
         }
         
@@ -221,14 +221,14 @@ final class WatchingChannelsOngoingRequests_Tests: XCTestCase {
         // When - Concurrently add and remove the same channel
         DispatchQueue.global().async {
             for _ in 0..<iterations {
-                self.tracker.add(channelIds: [cid])
+                self.sut.add(channelIds: [cid])
                 expectation.fulfill()
             }
         }
         
         DispatchQueue.global().async {
             for _ in 0..<iterations {
-                self.tracker.remove(channelIds: [cid])
+                self.sut.remove(channelIds: [cid])
                 expectation.fulfill()
             }
         }

@@ -15,7 +15,7 @@ import Foundation
         channelListUpdater: ChannelListUpdater,
         database: DatabaseContainer,
         eventNotificationCenter: EventNotificationCenter,
-        ongoingWatchingChannels: WatchingChannelsOngoingRequests
+        ongoingWatchingChannels: WatchingChannelsActiveRequests
     ) {
         self.query = query
         observer = Observer(

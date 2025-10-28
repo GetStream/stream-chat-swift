@@ -5,7 +5,7 @@
 import Foundation
 
 /// Keeps track of ongoing channel watching requests to prevent duplicate calls.
-class WatchingChannelsOngoingRequests {
+class WatchingChannelsActiveRequests {
     private var ongoingWatchRequests: Set<ChannelId> = []
     private let queue = DispatchQueue(
         label: "io.getstream.WatchingChannelsOngoingRequests",

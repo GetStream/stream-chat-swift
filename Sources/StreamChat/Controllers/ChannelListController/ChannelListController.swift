@@ -250,7 +250,7 @@ extension ChatChannelListController {
             _ clientConfig: ChatClientConfig,
             _ databaseContainer: DatabaseContainer,
             _ worker: ChannelListUpdater,
-            _ ongoingWatchingChannels: WatchingChannelsOngoingRequests
+            _ ongoingWatchingChannels: WatchingChannelsActiveRequests
         ) -> ChannelListLinker = ChannelListLinker.init
         
         var createChannelListDatabaseObserver: (

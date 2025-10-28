@@ -105,7 +105,7 @@ extension ChannelList {
             _ channelListUpdater: ChannelListUpdater,
             _ database: DatabaseContainer,
             _ eventNotificationCenter: EventNotificationCenter,
-            _ ongoingWatchingChannels: WatchingChannelsOngoingRequests
+            _ ongoingWatchingChannels: WatchingChannelsActiveRequests
         ) -> ChannelListState = { @MainActor in
             ChannelListState(
                 query: $0,

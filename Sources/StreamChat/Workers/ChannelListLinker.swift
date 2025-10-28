@@ -18,7 +18,7 @@ final class ChannelListLinker {
     private let filter: ((ChatChannel) -> Bool)?
     private let query: ChannelListQuery
     private let worker: ChannelListUpdater
-    private let ongoingWatchingChannels: WatchingChannelsOngoingRequests
+    private let ongoingWatchingChannels: WatchingChannelsActiveRequests
 
     init(
         query: ChannelListQuery,
@@ -26,7 +26,7 @@ final class ChannelListLinker {
         clientConfig: ChatClientConfig,
         databaseContainer: DatabaseContainer,
         worker: ChannelListUpdater,
-        ongoingWatchingChannels: WatchingChannelsOngoingRequests
+        ongoingWatchingChannels: WatchingChannelsActiveRequests
     ) {
         self.clientConfig = clientConfig
         self.databaseContainer = databaseContainer
