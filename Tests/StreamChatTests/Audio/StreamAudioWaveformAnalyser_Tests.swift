@@ -102,8 +102,8 @@ final class StreamAudioWaveformAnalyser_Tests: XCTestCase {
             XCTFail(file: file, line: line)
         } catch {
             XCTAssertEqual(
-                (error as? ClientError)?.errorDescription,
-                expectedError().errorDescription,
+                (error as? ClientError)?.localizedDescription,
+                expectedError().localizedDescription,
                 file: file,
                 line: line
             )
