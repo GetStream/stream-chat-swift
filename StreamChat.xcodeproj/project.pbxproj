@@ -440,6 +440,7 @@
 		4FC7445D2D8D9A2600E314EB /* Graphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC743BC2D8D9A2600E314EB /* Graphics.swift */; };
 		4FCB7DF52EB229BB00908631 /* StreamCore+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCB7DF42EB229B400908631 /* StreamCore+Extensions.swift */; };
 		4FCB7DF62EB229BB00908631 /* StreamCore+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCB7DF42EB229B400908631 /* StreamCore+Extensions.swift */; };
+		4FCB80B12EB2455A00908631 /* StreamCore in Frameworks */ = {isa = PBXBuildFile; productRef = 4FCB80B02EB2455A00908631 /* StreamCore */; };
 		4FCCACE42BC939EB009D23E1 /* MemberList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCCACE32BC939EB009D23E1 /* MemberList_Tests.swift */; };
 		4FD2BE502B99F68300FFC6F2 /* ReadStateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE4F2B99F68300FFC6F2 /* ReadStateHandler.swift */; };
 		4FD2BE512B99F68300FFC6F2 /* ReadStateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE4F2B99F68300FFC6F2 /* ReadStateHandler.swift */; };
@@ -5170,6 +5171,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4FCB80B12EB2455A00908631 /* StreamCore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -10232,6 +10234,7 @@
 			);
 			name = StreamChatTestMockServer;
 			packageProductDependencies = (
+				4FCB80B02EB2455A00908631 /* StreamCore */,
 			);
 			productName = StreamChatUITestTools;
 			productReference = A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */;
@@ -15812,7 +15815,7 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
-				branch = "chat-errors";
+				branch = "chat-json-encoding-decoding";
 				kind = branch;
 			};
 		};
@@ -15888,6 +15891,10 @@
 			productName = StreamCore;
 		};
 		4F110E4F2EA8E9FF00273036 /* StreamCore */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StreamCore;
+		};
+		4FCB80B02EB2455A00908631 /* StreamCore */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StreamCore;
 		};
