@@ -4,9 +4,6 @@
 
 import Foundation
 
-/// An `Event` object representing an event in the chat system.
-public protocol Event: Sendable {}
-
 public extension Event {
     var name: String {
         String(describing: Self.self).replacingOccurrences(of: "DTO", with: "")

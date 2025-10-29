@@ -185,7 +185,7 @@ extension WebSocketClient {
         }
 
         var eventBatcherBuilder: (
-            _ handler: @escaping ([Event], @escaping @Sendable () -> Void) -> Void
+            _ handler: @escaping @Sendable ([Event], @escaping @Sendable () -> Void) -> Void
         ) -> EventBatcher = {
             Batcher<Event>(period: 0.5, handler: $0)
         }
