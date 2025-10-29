@@ -16,7 +16,7 @@ import XCTest
     /// Another user.
     private let myFriend: ChatUser = .mock(id: .unique, imageURL: TestImages.vader.url)
     /// The `createdAt` for all test messages
-    private let createdAt = DateFormatter.Stream.rfc3339Date(from: "2019-12-12T15:33:46.488935Z")!
+    private let createdAt = "2019-12-12T15:33:46.488935Z".toDate()
 
     /// Static setUp() is only run once. Which is what we want in this case to preload the images.
     override class func setUp() {
