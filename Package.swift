@@ -29,7 +29,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.0.0"),
-        .package(url: "https://github.com/GetStream/stream-core-swift.git", branch: "chat-concurrency-and-timers")
+        .package(url: "https://github.com/GetStream/stream-core-swift.git", branch: "chat-errors")
     ],
     targets: [
         .target(

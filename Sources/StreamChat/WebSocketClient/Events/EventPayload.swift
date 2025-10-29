@@ -243,7 +243,7 @@ extension EventPayload {
     /// Get an unwrapped value from the payload or throw an error.
     func value<Value>(at keyPath: KeyPath<EventPayload, Value?>) throws -> Value {
         guard let value = self[keyPath: keyPath] else {
-            throw ClientError.EventDecoding(missingValue: keyPath.stringValue, for: eventType)
+            throw ClientError.EventDecoding(missingValue: keyPath.stringValue, for: eventType.rawValue)
         }
 
         return value
@@ -252,11 +252,11 @@ extension EventPayload {
     /// Get the value from the event payload and if it is a `Result` report the decoding error.
     func value<Value>(at keyPath: KeyPath<EventPayload, Result<Value, Error>?>) throws -> Value {
         guard let value = self[keyPath: keyPath] else {
-            throw ClientError.EventDecoding(missingValue: keyPath.stringValue, for: eventType)
+            throw ClientError.EventDecoding(missingValue: keyPath.stringValue, for: eventType.rawValue)
         }
 
         if let error = value.error {
-            throw ClientError.EventDecoding(failedParsingValue: keyPath.stringValue, for: eventType, with: error)
+            throw ClientError.EventDecoding(failedParsingValue: keyPath.stringValue, for: eventType.rawValue, with: error)
         }
 
         return try value.get()

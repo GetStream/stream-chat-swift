@@ -46,7 +46,7 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
         stubAudioSession.stubProperty(\.availableInputs, with: [])
 
         XCTAssertThrowsError(try subject.activateRecordingSession()) { error in
-            XCTAssertEqual("No available audio inputs found.", (error as? AudioSessionConfiguratorError)?.message)
+            XCTAssertEqual("No available audio inputs found.", (error as? AudioSessionConfiguratorError)?.errorDescription)
         }
     }
 

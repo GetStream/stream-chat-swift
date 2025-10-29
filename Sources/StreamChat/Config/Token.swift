@@ -72,10 +72,6 @@ public extension Token {
     }
 }
 
-extension ClientError {
-    public final class InvalidToken: ClientError, @unchecked Sendable {}
-}
-
 private extension String {
     var jwtPayload: [String: Any]? {
         let parts = split(separator: ".")

@@ -423,8 +423,8 @@ import XCTest
             line: line
         )
         XCTAssertEqual(
-            (mockRecorderDelegate.didFailWithErrorWasCalledWithError as? ClientError)?.message,
-            expectedError().message,
+            (mockRecorderDelegate.didFailWithErrorWasCalledWithError as? ClientError)?.errorDescription,
+            expectedError().errorDescription,
             file: file,
             line: line
         )

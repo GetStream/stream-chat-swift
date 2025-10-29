@@ -295,10 +295,6 @@ extension WebSocketClient {
 }
 #endif
 
-extension ClientError {
-    public final class WebSocket: ClientError, @unchecked Sendable {}
-}
-
 /// WebSocket Error
 struct WebSocketErrorContainer: Decodable {
     /// A server error was received.

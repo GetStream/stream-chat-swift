@@ -304,7 +304,6 @@ protocol ConnectionDetailsProviderDelegate: AnyObject {
 }
 
 public extension ClientError {
-    final class InvalidURL: ClientError, @unchecked Sendable {}
     final class InvalidJSON: ClientError, @unchecked Sendable {}
     final class MissingConnectionId: ClientError, @unchecked Sendable {}
 }
