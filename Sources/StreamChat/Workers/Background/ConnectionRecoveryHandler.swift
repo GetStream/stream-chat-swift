@@ -31,7 +31,7 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler, @unchec
     private let syncRepository: SyncRepository
     private let backgroundTaskScheduler: BackgroundTaskScheduler?
     private let internetConnection: InternetConnection
-    private let reconnectionTimerType: Timer.Type
+    private let reconnectionTimerType: TimerScheduling.Type
     private var reconnectionStrategy: RetryStrategy
     private var reconnectionTimer: TimerControl?
     private let keepConnectionAliveInBackground: Bool
@@ -45,7 +45,7 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler, @unchec
         backgroundTaskScheduler: BackgroundTaskScheduler?,
         internetConnection: InternetConnection,
         reconnectionStrategy: RetryStrategy,
-        reconnectionTimerType: Timer.Type,
+        reconnectionTimerType: TimerScheduling.Type,
         keepConnectionAliveInBackground: Bool
     ) {
         self.webSocketClient = webSocketClient

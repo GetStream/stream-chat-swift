@@ -78,7 +78,7 @@ extension ChatClient {
             _ syncRepository: SyncRepository,
             _ webSocketClient: WebSocketClient?,
             _ apiClient: APIClient,
-            _ timerType: Timer.Type
+            _ timerType: TimerScheduling.Type
         ) -> ConnectionRepository = {
             ConnectionRepository(
                 isClientInActiveMode: $0,
@@ -103,7 +103,7 @@ extension ChatClient {
             }
         }
 
-        var timerType: Timer.Type = DefaultTimer.self
+        var timerType: TimerScheduling.Type = DefaultTimer.self
 
         var tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy()
 
@@ -132,7 +132,7 @@ extension ChatClient {
             _ databaseContainer: DatabaseContainer,
             _ connectionRepository: ConnectionRepository,
             _ tokenExpirationRetryStrategy: RetryStrategy,
-            _ timerType: Timer.Type
+            _ timerType: TimerScheduling.Type
         ) -> AuthenticationRepository = {
             AuthenticationRepository(
                 apiClient: $0,

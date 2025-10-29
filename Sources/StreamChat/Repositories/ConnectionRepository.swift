@@ -26,14 +26,14 @@ class ConnectionRepository: @unchecked Sendable {
     private let syncRepository: SyncRepository
     private let webSocketClient: WebSocketClient?
     private let apiClient: APIClient
-    private let timerType: Timer.Type
+    private let timerType: TimerScheduling.Type
 
     init(
         isClientInActiveMode: Bool,
         syncRepository: SyncRepository,
         webSocketClient: WebSocketClient?,
         apiClient: APIClient,
-        timerType: Timer.Type
+        timerType: TimerScheduling.Type
     ) {
         self.isClientInActiveMode = isClientInActiveMode
         self.syncRepository = syncRepository

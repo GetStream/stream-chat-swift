@@ -13,7 +13,7 @@ protocol EventBatcher: Sendable {
     var currentBatch: Batch { get }
 
     /// Creates new batch processor.
-    init(period: TimeInterval, timerType: Timer.Type, handler: @escaping BatchHandler)
+    init(period: TimeInterval, timerType: TimerScheduling.Type, handler: @escaping BatchHandler)
 
     /// Adds the item to the current batch of events. If it's the first event also schedules batch processing
     /// that will happen when `period` has passed.
@@ -32,7 +32,7 @@ final class Batcher<Item> {
     /// The batching period. If the item is added sonner then `period` has passed after the first item they will get into the same batch.
     private let period: TimeInterval
     /// The time used to create timers.
-    private let timerType: Timer.Type
+    private let timerType: TimerScheduling.Type
     /// The timer that  calls `processor` when fired.
     private nonisolated(unsafe) var batchProcessingTimer: TimerControl?
     /// The closure which processes the batch.
@@ -44,7 +44,7 @@ final class Batcher<Item> {
 
     init(
         period: TimeInterval,
-        timerType: Timer.Type = DefaultTimer.self,
+        timerType: TimerScheduling.Type = DefaultTimer.self,
         handler: @escaping (_ batch: [Item], _ completion: @escaping @Sendable () -> Void) -> Void
     ) {
         self.period = max(period, 0)

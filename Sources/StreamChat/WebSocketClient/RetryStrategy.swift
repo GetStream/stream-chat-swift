@@ -51,15 +51,9 @@ struct DefaultRetryStrategy: RetryStrategy {
     }
 
     func nextRetryDelay() -> TimeInterval {
-        var delay: TimeInterval = 0
-
-        _consecutiveFailuresCount.mutate {
-            let maxDelay: TimeInterval = min(0.5 + Double($0 * 2), Self.maximumReconnectionDelay)
-            let minDelay: TimeInterval = min(max(0.25, (Double($0) - 1) * 2), Self.maximumReconnectionDelay)
-
-            delay = TimeInterval.random(in: minDelay...maxDelay)
-        }
-
-        return delay
+        let count = consecutiveFailuresCount
+        let maxDelay: TimeInterval = min(0.5 + Double(count * 2), Self.maximumReconnectionDelay)
+        let minDelay: TimeInterval = min(max(0.25, (Double(count) - 1) * 2), Self.maximumReconnectionDelay)
+        return TimeInterval.random(in: minDelay...maxDelay)
     }
 }

@@ -22,7 +22,7 @@ private struct TypingInfo {
 /// Sends typing events.
 class TypingEventsSender: Worker, @unchecked Sendable {
     /// A timer type.
-    var timer: Timer.Type = DefaultTimer.self
+    var timer: TimerScheduling.Type = DefaultTimer.self
     /// `TypingInfo` for channel (and parent message) that typing has occurred in. Stored to stop typing when `TypingEventsSender` is deallocated
     @Atomic private var typingInfo: TypingInfo?
 

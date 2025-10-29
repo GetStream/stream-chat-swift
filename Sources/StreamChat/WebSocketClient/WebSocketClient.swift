@@ -168,7 +168,7 @@ protocol ConnectionStateDelegate: AnyObject {
 extension WebSocketClient {
     /// An object encapsulating all dependencies of `WebSocketClient`.
     struct Environment {
-        typealias CreatePingController = (_ timerType: Timer.Type, _ timerQueue: DispatchQueue) -> WebSocketPingController
+        typealias CreatePingController = (_ timerType: TimerScheduling.Type, _ timerQueue: DispatchQueue) -> WebSocketPingController
 
         typealias CreateEngine = (
             _ request: URLRequest,
@@ -176,7 +176,7 @@ extension WebSocketClient {
             _ callbackQueue: DispatchQueue
         ) -> WebSocketEngine
 
-        var timerType: Timer.Type = DefaultTimer.self
+        var timerType: TimerScheduling.Type = DefaultTimer.self
 
         var createPingController: CreatePingController = WebSocketPingController.init
 

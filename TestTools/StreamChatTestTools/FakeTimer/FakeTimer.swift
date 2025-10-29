@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-class FakeTimer: StreamChat.Timer {
+class FakeTimer: TimerScheduling {
     static let mockTimer = AllocatedUnfairLock<TimerControl?>(nil)
     static let mockRepeatingTimer = AllocatedUnfairLock<RepeatingTimerControl?>(nil)
 
