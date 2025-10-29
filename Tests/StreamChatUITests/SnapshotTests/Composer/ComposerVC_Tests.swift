@@ -837,7 +837,7 @@ import XCTest
         composerVC.updateContent()
 
         let url = URL(string: "https://github.com/GetStream/stream-chat-swift")!
-        mockAPIClient.test_mockResponseResult(Result<LinkAttachmentPayload, Error>.failure(ClientError()))
+        mockAPIClient.test_mockResponseResult(Result<LinkAttachmentPayload, Error>.failure(StreamChat.ClientError()))
 
         composerVC.didChangeLinks([
             .init(url: url, originalText: "https://github.com/GetStream/stream-chat-swift", range: .init(location: 0, length: 0)),
@@ -865,7 +865,7 @@ import XCTest
         composerVC.updateContent()
 
         let url = URL(string: "https://github.com/GetStream/stream-chat-swift")!
-        mockAPIClient.test_mockResponseResult(Result<LinkAttachmentPayload, Error>.failure(ClientError()))
+        mockAPIClient.test_mockResponseResult(Result<LinkAttachmentPayload, Error>.failure(StreamChat.ClientError()))
 
         composerVC.didChangeLinks([
             .init(url: url, originalText: "https://github.com/GetStream/stream-chat-swift", range: .init(location: 0, length: 0)),
@@ -894,7 +894,7 @@ import XCTest
         composerVC.updateContent()
 
         let url = URL(string: "https://github.com/GetStream/stream-chat-swift")!
-        mockAPIClient.test_mockResponseResult(Result<LinkAttachmentPayload, Error>.failure(ClientError()))
+        mockAPIClient.test_mockResponseResult(Result<LinkAttachmentPayload, Error>.failure(StreamChat.ClientError()))
 
         composerVC.didChangeLinks([
             .init(url: url, originalText: "https://github.com/GetStream/stream-chat-swift", range: .init(location: 0, length: 0)),

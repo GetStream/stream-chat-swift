@@ -478,7 +478,7 @@ extension DemoReminderListVC: MessageReminderListControllerDelegate, EventsContr
         updateRemindersData()
     }
 
-    func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
+    func eventsController(_ controller: EventsController, didReceiveEvent event: any StreamChat.Event) {
         if event is MessageReminderDueEvent {
             updateReminderListsWithNewNowDate()
         }

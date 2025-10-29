@@ -72,7 +72,7 @@ class DemoChatThreadVC: ChatThreadVC, CurrentChatUserControllerDelegate {
 
     // MARK: - Dismissing the thread if the root message was hard deleted.
 
-    override func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
+    override func eventsController(_ controller: EventsController, didReceiveEvent event: any StreamChat.Event) {
         super.eventsController(controller, didReceiveEvent: event)
 
         // Dismiss the thread if the root message was hard deleted.

@@ -393,7 +393,7 @@ class DemoLivestreamChatChannelVC: _ViewController,
         messageListVC.scrollToBottomButton.content = .init(messages: skippedMessagesAmount, mentions: 0)
     }
 
-    func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
+    func eventsController(_ controller: EventsController, didReceiveEvent event: any StreamChat.Event) {
         if event is NewMessagePendingEvent {
             if livestreamChannelController.isPaused {
                 pauseBannerView.setState(.resuming)
