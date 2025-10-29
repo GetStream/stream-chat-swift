@@ -14,7 +14,8 @@ import Foundation
         clientConfig: ChatClientConfig,
         channelListUpdater: ChannelListUpdater,
         database: DatabaseContainer,
-        eventNotificationCenter: EventNotificationCenter
+        eventNotificationCenter: EventNotificationCenter,
+        channelWatcherHandler: ChannelWatcherHandling
     ) {
         self.query = query
         observer = Observer(
@@ -23,7 +24,8 @@ import Foundation
             clientConfig: clientConfig,
             channelListUpdater: channelListUpdater,
             database: database,
-            eventNotificationCenter: eventNotificationCenter
+            eventNotificationCenter: eventNotificationCenter,
+            channelWatcherHandler: channelWatcherHandler
         )
         channels = observer.start(
             with: .init(channelsDidChange: { [weak self] in self?.channels = $0 })

@@ -18,19 +18,22 @@ final class ChannelListLinker {
     private let filter: ((ChatChannel) -> Bool)?
     private let query: ChannelListQuery
     private let worker: ChannelListUpdater
-    
+    private let channelWatcherHandler: ChannelWatcherHandling
+
     init(
         query: ChannelListQuery,
         filter: ((ChatChannel) -> Bool)?,
         clientConfig: ChatClientConfig,
         databaseContainer: DatabaseContainer,
-        worker: ChannelListUpdater
+        worker: ChannelListUpdater,
+        channelWatcherHandler: ChannelWatcherHandling
     ) {
         self.clientConfig = clientConfig
         self.databaseContainer = databaseContainer
         self.filter = filter
         self.query = query
         self.worker = worker
+        self.channelWatcherHandler = channelWatcherHandler
     }
     
     func start(with nc: EventNotificationCenter) {
@@ -69,15 +72,19 @@ final class ChannelListLinker {
         ]
     }
 
-    private func isInChannelList(_ channel: ChatChannel, completion: @escaping (Bool) -> Void) {
+    private func isInChannelList(
+        _ channel: ChatChannel,
+        completion: @escaping (_ isPresent: Bool, _ belongsToOtherQuery: Bool) -> Void
+    ) {
         let context = databaseContainer.backgroundReadOnlyContext
         context.performAndWait { [weak self] in
             guard let self else { return }
             if let (channelDTO, queryDTO) = context.getChannelWithQuery(cid: channel.cid, query: self.query) {
                 let isPresent = queryDTO.channels.contains(channelDTO)
-                completion(isPresent)
+                let belongsToOtherQuery = channelDTO.queries.count > 0
+                completion(isPresent, belongsToOtherQuery)
             } else {
-                completion(false)
+                completion(false, false)
             }
         }
     }
@@ -85,14 +92,19 @@ final class ChannelListLinker {
     /// Handles if a channel should be linked to the current query or not.
     private func linkChannelIfNeeded(_ channel: ChatChannel) {
         guard shouldChannelBelongToCurrentQuery(channel) else { return }
-        isInChannelList(channel) { [worker, query] exists in
+        isInChannelList(channel) { [worker, query, channelWatcherHandler] exists, belongsToOtherQuery in
             guard !exists else { return }
             worker.link(channel: channel, with: query) { error in
                 if let error = error {
                     log.error(error)
                     return
                 }
-                worker.startWatchingChannels(withIds: [channel.cid]) { error in
+
+                // If it belongs to another query, it means it is already being watched.
+                guard !belongsToOtherQuery else { return }
+                
+                // Watch the channel, handler will prevent duplicate requests.
+                channelWatcherHandler.attemptToWatch(channelIds: [channel.cid]) { error in
                     guard let error = error else { return }
                     log.warning(
                         "Failed to start watching linked channel: \(channel.cid), error: \(error.localizedDescription)"
@@ -105,7 +117,7 @@ final class ChannelListLinker {
     /// Handles if a channel should be unlinked from the current query or not.
     private func unlinkChannelIfNeeded(_ channel: ChatChannel) {
         guard !shouldChannelBelongToCurrentQuery(channel) else { return }
-        isInChannelList(channel) { [worker, query] exists in
+        isInChannelList(channel) { [worker, query] exists, _ in
             guard exists else { return }
             worker.unlink(channel: channel, with: query)
         }
