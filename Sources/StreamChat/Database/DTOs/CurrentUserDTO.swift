@@ -93,9 +93,13 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.user = try saveUser(payload: payload)
         dto.isInvisible = payload.isInvisible
+
+        // If not privacy setting is provided by the backend then we treat as enabled by default.
+        // This is a bit different than the rest of the backend responses, but it was done like this
+        // for backwards compatibility reasons on the server side.
         dto.isReadReceiptsEnabled = payload.privacySettings?.readReceipts?.enabled ?? true
         dto.isTypingIndicatorsEnabled = payload.privacySettings?.typingIndicators?.enabled ?? true
-        dto.isDeliveryReceiptsEnabled = payload.privacySettings?.deliveryReceipts?.enabled ?? false
+        dto.isDeliveryReceiptsEnabled = payload.privacySettings?.deliveryReceipts?.enabled ?? true
 
         // Save push preference
         if let pushPreference = payload.pushPreference {

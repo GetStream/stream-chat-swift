@@ -293,9 +293,10 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             database.viewContext.currentUser?.asModel()
         )
 
+        // By default, if not privacy setting is provided, it is enabled by default.
         XCTAssertEqual(true, loadedCurrentUser.privacySettings.readReceipts?.enabled)
         XCTAssertEqual(true, loadedCurrentUser.privacySettings.typingIndicators?.enabled)
-        XCTAssertEqual(false, loadedCurrentUser.privacySettings.deliveryReceipts?.enabled)
+        XCTAssertEqual(true, loadedCurrentUser.privacySettings.deliveryReceipts?.enabled)
     }
     
     func test_deletingCurrentUser() throws {
