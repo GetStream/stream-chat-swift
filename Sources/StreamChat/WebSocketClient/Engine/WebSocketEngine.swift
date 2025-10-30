@@ -21,31 +21,3 @@ protocol WebSocketEngineDelegate: AnyObject {
     func webSocketDidDisconnect(error: WebSocketEngineError?)
     func webSocketDidReceiveMessage(_ message: String)
 }
-
-struct WebSocketEngineError: Error {
-    static let stopErrorCode = 1000
-
-    let reason: String
-    let code: Int
-    let engineError: Error?
-
-    var localizedDescription: String { reason }
-}
-
-extension WebSocketEngineError {
-    init(error: Error?) {
-        if let error = error {
-            self.init(
-                reason: error.localizedDescription,
-                code: (error as NSError).code,
-                engineError: error
-            )
-        } else {
-            self.init(
-                reason: "Unknown",
-                code: 0,
-                engineError: nil
-            )
-        }
-    }
-}
