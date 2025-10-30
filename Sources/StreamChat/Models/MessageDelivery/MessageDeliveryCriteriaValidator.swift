@@ -23,7 +23,7 @@ protocol MessageDeliveryCriteriaValidating {
 
 /// Default implementation of message delivery criteria validation.
 struct MessageDeliveryCriteriaValidator: MessageDeliveryCriteriaValidating {
-    public init() {}
+    init() {}
     
     /// Determines if a message can be marked as delivered for a specific user in a channel.
     ///
@@ -43,7 +43,7 @@ struct MessageDeliveryCriteriaValidator: MessageDeliveryCriteriaValidating {
     ///   - currentUser: The current user who would mark the message as delivered.
     ///   - channel: The channel containing the message.
     /// - Returns: `true` if the message can be marked as delivered, `false` otherwise.
-    public func canMarkMessageAsDelivered(
+    func canMarkMessageAsDelivered(
         _ message: ChatMessage,
         for currentUser: CurrentChatUser,
         in channel: ChatChannel
@@ -53,7 +53,7 @@ struct MessageDeliveryCriteriaValidator: MessageDeliveryCriteriaValidating {
         }
         
         // Check if delivery receipts are enabled in privacy settings
-        guard currentUser.privacySettings.deliveryReceipts?.enabled ?? false else {
+        guard currentUser.privacySettings.deliveryReceipts?.enabled ?? true else {
             return false
         }
 

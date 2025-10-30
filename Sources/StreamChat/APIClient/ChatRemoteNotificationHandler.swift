@@ -160,9 +160,9 @@ public class ChatRemoteNotificationHandler {
         guard let currentUser = client.currentUserController().currentUser else {
             return log.debug("No current user to mark messages as delivered")
         }
-        /// Make sure if the message was already delivered, do not mark it as delivered.
-        /// If the app is active, the middleware will mark it as delivered so the push
-        /// does not need to do it.
+        // Make sure if the message was already delivered, do not mark it as delivered.
+        // If the app is active, the middleware will mark it as delivered so the push
+        // does not need to do it.
         guard deliveryCriteriaValidator.canMarkMessageAsDelivered(message, for: currentUser, in: channel) else {
             log.debug("No message to be marked as delivered for messageId:\(message.id))")
             return
