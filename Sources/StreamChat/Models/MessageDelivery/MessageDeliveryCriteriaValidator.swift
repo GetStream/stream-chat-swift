@@ -74,8 +74,8 @@ struct MessageDeliveryCriteriaValidator: MessageDeliveryCriteriaValidating {
         }
 
         if let userRead = channel.read(for: currentUser.id) {
-            return message.createdAt > userRead.lastReadAt
-                && message.createdAt > userRead.lastDeliveredAt ?? .distantPast
+            return message.createdAt >= userRead.lastReadAt
+                && message.createdAt >= userRead.lastDeliveredAt ?? .distantPast
         }
 
         return true

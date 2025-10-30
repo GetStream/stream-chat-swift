@@ -402,7 +402,7 @@ extension ChatChannel {
     /// - Returns: Array of read states for users who have read the message.
     public func reads(for message: ChatMessage) -> [ChatChannelRead] {
         reads.filter { read in
-            read.lastReadAt > message.createdAt && read.user.id != message.author.id
+            read.lastReadAt >= message.createdAt && read.user.id != message.author.id
         }
     }
 
@@ -417,7 +417,7 @@ extension ChatChannel {
     /// - Returns: Array of read states for users who have delivered the message.
     public func deliveredReads(for message: ChatMessage) -> [ChatChannelRead] {
         reads.filter { read in
-            read.lastDeliveredAt ?? .distantPast > message.createdAt
+            read.lastDeliveredAt ?? .distantPast >= message.createdAt
                 && read.user.id != message.author.id
         }
     }
