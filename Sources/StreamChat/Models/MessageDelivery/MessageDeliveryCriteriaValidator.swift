@@ -34,7 +34,6 @@ struct MessageDeliveryCriteriaValidator: MessageDeliveryCriteriaValidating {
     /// - The message was not sent by the current user
     /// - The message is not shadowed
     /// - The message author is not muted by the current user
-    /// - The current user has a read state in the channel
     /// - The message was created after the user's last read timestamp
     /// - The message was created after the user's last delivered timestamp
     ///
