@@ -133,9 +133,9 @@ class ConnectionRepository: @unchecked Sendable {
         let shouldNotifyConnectionIdWaiters: Bool
         let connectionId: String?
         switch state {
-        case let .connected(connectionId: id):
+        case let .connected(healthCheckInfo: healthCheckInfo):
             shouldNotifyConnectionIdWaiters = true
-            connectionId = id
+            connectionId = healthCheckInfo.connectionId
         case let .disconnected(source) where source.serverError?.isExpiredTokenError == true:
             onExpiredToken()
             shouldNotifyConnectionIdWaiters = false
@@ -146,7 +146,7 @@ class ConnectionRepository: @unchecked Sendable {
         case .initialized,
              .connecting,
              .disconnecting,
-             .waitingForConnectionId:
+             .authenticating:
             shouldNotifyConnectionIdWaiters = false
             connectionId = nil
         }

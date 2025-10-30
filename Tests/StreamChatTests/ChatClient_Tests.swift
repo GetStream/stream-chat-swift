@@ -928,7 +928,7 @@ final class ChatClient_Tests: XCTestCase {
         let timerMock = try! XCTUnwrap(client.reconnectionTimeoutHandler as? ScheduledStreamTimer_Mock)
         
         // When
-        client.webSocketClient(client.webSocketClient!, didUpdateConnectionState: .connected(connectionId: .unique))
+        client.webSocketClient(client.webSocketClient!, didUpdateConnectionState: .connected(healthCheckInfo: HealthCheckInfo(connectionId: .unique)))
 
         // Then
         XCTAssertEqual(timerMock.stopCallCount, 1)

@@ -283,7 +283,7 @@ extension ChatClient {
             )
             return
         }
-        webSocketClient(mockWebSocketClient, didUpdateConnectionState: .connected(connectionId: connectionId))
+        webSocketClient(mockWebSocketClient, didUpdateConnectionState: .connected(healthCheckInfo: HealthCheckInfo(connectionId: connectionId)))
     }
 }
 

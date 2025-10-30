@@ -91,7 +91,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         }
 
         // Simulate error scenario (change status + force waiters completion)
-        webSocketClient.mockedConnectionState = .waitingForConnectionId
+        webSocketClient.mockedConnectionState = .authenticating
         repository.completeConnectionIdWaiters(connectionId: nil)
 
         waitForExpectations(timeout: defaultTimeout)
@@ -257,8 +257,8 @@ final class ConnectionRepository_Tests: XCTestCase {
         let pairs: [(WebSocketConnectionState, ConnectionStatus)] = [
             (.initialized, .initialized),
             (.connecting, .connecting),
-            (.waitingForConnectionId, .connecting),
-            (.connected(connectionId: "123"), .connected),
+            (.authenticating, .connecting),
+            (.connected(healthCheckInfo: HealthCheckInfo(connectionId: "123")), .connected),
             (.disconnecting(source: .userInitiated), .disconnecting),
             (.disconnecting(source: .noPongReceived), .disconnecting),
             (.disconnected(source: .userInitiated), .disconnected(error: nil)),
@@ -288,8 +288,8 @@ final class ConnectionRepository_Tests: XCTestCase {
         let pairs: [(WebSocketConnectionState, Bool)] = [
             (.initialized, false),
             (.connecting, false),
-            (.waitingForConnectionId, false),
-            (.connected(connectionId: "123"), true),
+            (.authenticating, false),
+            (.connected(healthCheckInfo: HealthCheckInfo(connectionId: "123")), true),
             (.disconnecting(source: .userInitiated), false),
             (.disconnecting(source: .noPongReceived), false),
             (.disconnected(source: .userInitiated), true),
@@ -332,8 +332,8 @@ final class ConnectionRepository_Tests: XCTestCase {
         let pairs: [(WebSocketConnectionState, ConnectionId?)] = [
             (.initialized, nil),
             (.connecting, nil),
-            (.waitingForConnectionId, nil),
-            (.connected(connectionId: "123"), "123"),
+            (.authenticating, nil),
+            (.connected(healthCheckInfo: HealthCheckInfo(connectionId: "123")), "123"),
             (.disconnecting(source: .userInitiated), nil),
             (.disconnected(source: .userInitiated), nil)
         ]
@@ -402,7 +402,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     }
 
     func test_handleConnectionUpdate_whenNoError_shouldNOTExecuteRefreshTokenBlock() {
-        let states: [WebSocketConnectionState] = [.connecting, .initialized, .connected(connectionId: .newUniqueId), .waitingForConnectionId]
+        let states: [WebSocketConnectionState] = [.connecting, .initialized, .connected(healthCheckInfo: HealthCheckInfo(connectionId: .newUniqueId)), .authenticating]
 
         for state in states {
             repository.handleConnectionUpdate(state: state, onExpiredToken: {
@@ -510,7 +510,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         // Set initial connectionId
         let initialConnectionId = "initial-connection-id"
         repository.handleConnectionUpdate(
-            state: .connected(connectionId: initialConnectionId),
+            state: .connected(healthCheckInfo: HealthCheckInfo(connectionId: initialConnectionId)),
             onExpiredToken: {}
         )
         XCTAssertEqual(repository.connectionId, initialConnectionId)

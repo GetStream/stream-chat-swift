@@ -526,7 +526,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false)
 
         // Simulate connection update
-        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connected(connectionId: "124"))
+        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connected(healthCheckInfo: HealthCheckInfo(connectionId: "124")))
 
         XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: mockRetryStrategy, times: 1)
         XCTAssertCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository, times: 1)
@@ -536,7 +536,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false, withReconnectionTimeout: true)
 
         // Simulate connection update
-        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connected(connectionId: "124"))
+        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .connected(healthCheckInfo: HealthCheckInfo(connectionId: "124")))
 
         XCTAssertCall(RetryStrategy_Spy.Signature.resetConsecutiveFailures, on: mockRetryStrategy, times: 1)
         XCTAssertCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository, times: 1)
@@ -589,7 +589,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false)
 
         // Simulate connection update
-        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .waitingForConnectionId)
+        handler.webSocketClient(mockChatClient.mockWebSocketClient, didUpdateConnectionState: .authenticating)
 
         XCTAssertNotCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository)
     }
@@ -637,8 +637,8 @@ private extension ConnectionRecoveryHandler_Tests {
         let ws = mockChatClient.mockWebSocketClient
 
         ws.simulateConnectionStatus(.connecting)
-        ws.simulateConnectionStatus(.waitingForConnectionId)
-        ws.simulateConnectionStatus(.connected(connectionId: .unique))
+        ws.simulateConnectionStatus(.authenticating)
+        ws.simulateConnectionStatus(.connected(healthCheckInfo: HealthCheckInfo(connectionId: .unique)))
     }
 
     func disconnectWebSocket(source: WebSocketConnectionState.DisconnectionSource) {

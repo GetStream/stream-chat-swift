@@ -120,7 +120,7 @@ class WebSocketClient: @unchecked Sendable {
 
         switch connectionState {
         // Calling connect in the following states has no effect
-        case .connecting, .waitingForConnectionId, .connected:
+        case .connecting, .authenticating, .connected:
             return
         default: break
         }
@@ -149,7 +149,7 @@ class WebSocketClient: @unchecked Sendable {
         switch connectionState {
         case .initialized, .disconnected, .disconnecting:
             connectionState = .disconnected(source: source)
-        case .connecting, .waitingForConnectionId, .connected:
+        case .connecting, .authenticating, .connected:
             connectionState = .disconnecting(source: source)
         }
         
@@ -196,7 +196,7 @@ extension WebSocketClient {
 
 extension WebSocketClient: WebSocketEngineDelegate {
     func webSocketDidConnect() {
-        connectionState = .waitingForConnectionId
+        connectionState = .authenticating
     }
 
     func webSocketDidReceiveMessage(_ message: String) {
@@ -209,7 +209,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
                 eventNotificationCenter.process(healthCheckEvent, postNotification: false) { [weak self] in
                     self?.engineQueue.async { [weak self] in
                         self?.pingController.pongReceived()
-                        self?.connectionState = .connected(connectionId: healthCheckEvent.connectionId)
+                        self?.connectionState = .connected(healthCheckInfo: HealthCheckInfo(connectionId: healthCheckEvent.connectionId))
                     }
                 }
             } else {
@@ -235,7 +235,7 @@ extension WebSocketClient: WebSocketEngineDelegate {
 
     func webSocketDidDisconnect(error engineError: WebSocketEngineError?) {
         switch connectionState {
-        case .connecting, .waitingForConnectionId, .connected:
+        case .connecting, .authenticating, .connected:
             let serverError = engineError.map { ClientError.WebSocket(with: $0) }
 
             connectionState = .disconnected(source: .serverInitiated(error: serverError))

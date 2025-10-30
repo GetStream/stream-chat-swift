@@ -163,27 +163,27 @@ final class WebSocketClient_Tests: XCTestCase {
 
         // Simulate the engine is connected and check the connection state is updated
         engine!.simulateConnectionSuccess()
-        AssertAsync.willBeEqual(webSocketClient.connectionState, .waitingForConnectionId)
+        AssertAsync.willBeEqual(webSocketClient.connectionState, .authenticating)
 
         // Simulate a health check event is received and the connection state is updated
         decoder.decodedEvent = .success(HealthCheckEvent(connectionId: connectionId))
         engine!.simulateMessageReceived()
 
-        AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
+        AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(healthCheckInfo: HealthCheckInfo(connectionId: connectionId)))
     }
 
     func test_callingConnect_whenAlreadyConnected_hasNoEffect() {
         // Simulate connection
         test_connectionFlow()
 
-        assert(webSocketClient.connectionState == .connected(connectionId: connectionId))
+        assert(webSocketClient.connectionState == .connected(healthCheckInfo: HealthCheckInfo(connectionId: connectionId)))
         assert(engine!.connect_calledCount == 1)
 
         // Call connect and assert it has no effect
         webSocketClient.connect()
         AssertAsync {
             Assert.staysTrue(self.engine!.connect_calledCount == 1)
-            Assert.staysTrue(self.webSocketClient.connectionState == .connected(connectionId: self.connectionId))
+            Assert.staysTrue(self.webSocketClient.connectionState == .connected(healthCheckInfo: HealthCheckInfo(connectionId: self.connectionId)))
         }
     }
 
@@ -191,7 +191,7 @@ final class WebSocketClient_Tests: XCTestCase {
         // Simulate connection
         test_connectionFlow()
 
-        assert(webSocketClient.connectionState == .connected(connectionId: connectionId))
+        assert(webSocketClient.connectionState == .connected(healthCheckInfo: HealthCheckInfo(connectionId: connectionId)))
         assert(engine!.disconnect_calledCount == 0)
 
         // Call `disconnect`, it should change connection state and call `disconnect` on the engine
@@ -282,7 +282,7 @@ final class WebSocketClient_Tests: XCTestCase {
         )
         engine!.simulateMessageReceived()
 
-        AssertAsync.staysEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
+        AssertAsync.staysEqual(webSocketClient.connectionState, .connected(healthCheckInfo: HealthCheckInfo(connectionId: connectionId)))
     }
 
     // MARK: - Ping Controller
@@ -291,7 +291,7 @@ final class WebSocketClient_Tests: XCTestCase {
         test_connectionFlow()
         AssertAsync.willBeEqual(
             pingController.connectionStateDidChange_connectionStates,
-            [.connecting, .waitingForConnectionId, .connected(connectionId: connectionId)]
+            [.connecting, .authenticating, .connected(healthCheckInfo: HealthCheckInfo(connectionId: connectionId))]
         )
     }
 
@@ -383,10 +383,10 @@ final class WebSocketClient_Tests: XCTestCase {
         let connectionStates: [WebSocketConnectionState] = [
             .connecting,
             .connecting, // duplicate state should be ignored
-            .waitingForConnectionId,
-            .waitingForConnectionId, // duplicate state should be ignored
-            .connected(connectionId: connectionId),
-            .connected(connectionId: connectionId), // duplicate state should be ignored
+            .authenticating,
+            .authenticating, // duplicate state should be ignored
+            .connected(healthCheckInfo: HealthCheckInfo(connectionId: connectionId)),
+            .connected(healthCheckInfo: HealthCheckInfo(connectionId: connectionId)), // duplicate state should be ignored
             .disconnecting(source: .userInitiated),
             .disconnecting(source: .userInitiated), // duplicate state should be ignored
             .disconnected(source: .userInitiated),
@@ -397,7 +397,7 @@ final class WebSocketClient_Tests: XCTestCase {
 
         let expectedEvents = [
             WebSocketConnectionState.connecting, // states 0...3
-            .connected(connectionId: connectionId), // states 4...5
+            .connected(healthCheckInfo: HealthCheckInfo(connectionId: connectionId)), // states 4...5
             .disconnecting(source: .userInitiated), // states 6...7
             .disconnected(source: .userInitiated) // states 8...9
         ].map {
@@ -440,7 +440,7 @@ final class WebSocketClient_Tests: XCTestCase {
 
         // Simulate the engine is connected and check the connection state is updated
         engine!.simulateConnectionSuccess()
-        AssertAsync.willBeEqual(webSocketClient.connectionState, .waitingForConnectionId)
+        AssertAsync.willBeEqual(webSocketClient.connectionState, .authenticating)
 
         // Simulate a health check event is received and the connection state is updated
         let payloadCurrentUser = dummyCurrentUser
@@ -456,7 +456,7 @@ final class WebSocketClient_Tests: XCTestCase {
 
         // We should see `CurrentUserDTO` being saved before we get connectionId
         AssertAsync.willBeEqual(currentUser?.user.id, payloadCurrentUser.id)
-        AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(connectionId: connectionId))
+        AssertAsync.willBeEqual(webSocketClient.connectionState, .connected(healthCheckInfo: HealthCheckInfo(connectionId: connectionId)))
     }
 
     func test_whenHealthCheckEventComes_itGetProcessedSilentlyWithoutBatching() throws {
@@ -477,7 +477,7 @@ final class WebSocketClient_Tests: XCTestCase {
         engine!.simulateConnectionSuccess()
 
         // Wait for the connection state to be propagated to web-socket client
-        AssertAsync.willBeEqual(webSocketClient.connectionState, .waitingForConnectionId)
+        AssertAsync.willBeEqual(webSocketClient.connectionState, .authenticating)
 
         // Simulate received health check event
         let healthCheckEvent = HealthCheckEvent(connectionId: .unique)

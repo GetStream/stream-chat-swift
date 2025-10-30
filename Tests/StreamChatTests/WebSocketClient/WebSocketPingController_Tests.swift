@@ -37,7 +37,7 @@ final class WebSocketPingController_Tests: XCTestCase {
         XCTAssertEqual(delegate.sendPing_calledCount, 0)
 
         // Set the connection state as connected
-        pingController.connectionStateDidChange(.connected(connectionId: .unique))
+        pingController.connectionStateDidChange(.connected(healthCheckInfo: HealthCheckInfo(connectionId: .unique)))
 
         // Simulate time passed 3x pingTimeInterval (+1 for margin errors)
         time.run(numberOfSeconds: 3 * (WebSocketPingController.pingTimeInterval + 1))
@@ -46,14 +46,14 @@ final class WebSocketPingController_Tests: XCTestCase {
         let oldPingCount = delegate.sendPing_calledCount
 
         // Set the connection state to not connected and check `sendPing` is no longer called
-        pingController.connectionStateDidChange(.waitingForConnectionId)
+        pingController.connectionStateDidChange(.authenticating)
         time.run(numberOfSeconds: 3 * (WebSocketPingController.pingTimeInterval + 1))
         XCTAssertEqual(delegate.sendPing_calledCount, oldPingCount)
     }
 
     func test_disconnectOnNoPongReceived_called_whenNoPongReceived() throws {
         // Set the connection state as connected
-        pingController.connectionStateDidChange(.connected(connectionId: .unique))
+        pingController.connectionStateDidChange(.connected(healthCheckInfo: HealthCheckInfo(connectionId: .unique)))
 
         assert(delegate.sendPing_calledCount == 0)
 
