@@ -76,12 +76,10 @@ final class DefaultConnectionRecoveryHandler: ConnectionRecoveryHandler, @unchec
 
 private extension DefaultConnectionRecoveryHandler {
     func subscribeOnNotifications() {
-        Task { @MainActor in
-            backgroundTaskScheduler?.startListeningForAppStateUpdates(
-                onEnteringBackground: { [weak self] in self?.appDidEnterBackground() },
-                onEnteringForeground: { [weak self] in self?.appDidBecomeActive() }
-            )
-        }
+        backgroundTaskScheduler?.startListeningForAppStateUpdates(
+            onEnteringBackground: { [weak self] in self?.appDidEnterBackground() },
+            onEnteringForeground: { [weak self] in self?.appDidBecomeActive() }
+        )
 
         internetConnection.notificationCenter.addObserver(
             self,
@@ -92,9 +90,7 @@ private extension DefaultConnectionRecoveryHandler {
     }
 
     func unsubscribeFromNotifications() {
-        Task { @MainActor [backgroundTaskScheduler] in
-            backgroundTaskScheduler?.stopListeningForAppStateUpdates()
-        }
+        backgroundTaskScheduler?.stopListeningForAppStateUpdates()
         internetConnection.notificationCenter.removeObserver(
             self,
             name: .internetConnectionStatusDidChange,
@@ -109,9 +105,7 @@ extension DefaultConnectionRecoveryHandler {
     private func appDidBecomeActive() {
         log.debug("App -> ✅", subsystems: .webSocket)
 
-        Task { @MainActor [backgroundTaskScheduler] in
-            backgroundTaskScheduler?.endTask()
-        }
+        backgroundTaskScheduler?.endTask()
 
         if canReconnectFromOffline {
             webSocketClient.connect()
@@ -134,19 +128,17 @@ extension DefaultConnectionRecoveryHandler {
 
         guard let scheduler = backgroundTaskScheduler else { return }
 
-        Task { @MainActor [scheduler] in
-            let succeed = scheduler.beginTask { [weak self] in
-                log.debug("Background task -> ❌", subsystems: .webSocket)
-                
-                self?.disconnectIfNeeded()
-            }
+        let succeed = scheduler.beginTask { [weak self] in
+            log.debug("Background task -> ❌", subsystems: .webSocket)
             
-            if succeed {
-                log.debug("Background task -> ✅", subsystems: .webSocket)
-            } else {
-                // Can't initiate a background task, close the connection
-                disconnectIfNeeded()
-            }
+            self?.disconnectIfNeeded()
+        }
+        
+        if succeed {
+            log.debug("Background task -> ✅", subsystems: .webSocket)
+        } else {
+            // Can't initiate a background task, close the connection
+            disconnectIfNeeded()
         }
     }
 
