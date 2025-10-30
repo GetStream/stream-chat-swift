@@ -417,8 +417,10 @@ extension ChatChannel {
     /// - Returns: Array of read states for users who have delivered the message.
     public func deliveredReads(for message: ChatMessage) -> [ChatChannelRead] {
         reads.filter { read in
-            read.lastDeliveredAt ?? .distantPast >= message.createdAt
-                && read.user.id != message.author.id
+            // We add a 1 second error interval in case the delivery is instant.
+            let lastDeliveredAt = read.lastDeliveredAt?.addingTimeInterval(1) ?? .distantPast
+            let isNotCurrentUser = read.user.id != message.author.id
+            return lastDeliveredAt >= message.createdAt && isNotCurrentUser
         }
     }
 }
