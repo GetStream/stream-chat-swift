@@ -1090,8 +1090,6 @@
 		8AC9CBD624C73689006E236C /* NotificationEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC9CBD524C73689006E236C /* NotificationEvents.swift */; };
 		8AC9CBE424C74ECB006E236C /* NotificationEvents_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AC9CBE324C74E54006E236C /* NotificationEvents_Tests.swift */; };
 		8AE335A824FCF999002B6677 /* Reachability_Vendor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A524FCF999002B6677 /* Reachability_Vendor.swift */; };
-		8AE335A924FCF999002B6677 /* InternetConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A624FCF999002B6677 /* InternetConnection.swift */; };
-		8AE335AA24FCF99E002B6677 /* InternetConnection_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A424FCF999002B6677 /* InternetConnection_Tests.swift */; };
 		9041E4AD2AE9768800CA2A2A /* MembersResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9041E4AC2AE9768800CA2A2A /* MembersResponse.swift */; };
 		A30C3F20276B428F00DA5968 /* UnknownUserEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30C3F1F276B428F00DA5968 /* UnknownUserEvent.swift */; };
 		A30C3F22276B4F8800DA5968 /* UnknownUserEvent_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A30C3F21276B4F8800DA5968 /* UnknownUserEvent_Tests.swift */; };
@@ -2267,7 +2265,6 @@
 		C121E8D0274544B100023E4C /* UserListSortingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA640FBD2535CF9200D32944 /* UserListSortingKey.swift */; };
 		C121E8D1274544B100023E4C /* ChannelMemberListSortingKey.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA640FC02535CFA100D32944 /* ChannelMemberListSortingKey.swift */; };
 		C121E8D4274544B100023E4C /* NSManagedObject+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6D61D9A2510B3FC00EB0624 /* NSManagedObject+Extensions.swift */; };
-		C121E8D6274544B100023E4C /* InternetConnection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A624FCF999002B6677 /* InternetConnection.swift */; };
 		C121E8D7274544B100023E4C /* Reachability_Vendor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE335A524FCF999002B6677 /* Reachability_Vendor.swift */; };
 		C121E8D8274544B100023E4C /* Error+InternetNotAvailable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79200D4B25025B81002F4EB1 /* Error+InternetNotAvailable.swift */; };
 		C121E8DF274544B100023E4C /* StringInterpolation+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA0BB1602513B5F200CAEFBD /* StringInterpolation+Extensions.swift */; };
@@ -4094,9 +4091,7 @@
 		8AC9CBE324C74E54006E236C /* NotificationEvents_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationEvents_Tests.swift; sourceTree = "<group>"; };
 		8AC9CBE524C74FFE006E236C /* NotificationMarkAllRead.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = NotificationMarkAllRead.json; sourceTree = "<group>"; };
 		8ACFBF642507AA440093C6FD /* TypingEventsSender_Mock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TypingEventsSender_Mock.swift; sourceTree = "<group>"; };
-		8AE335A424FCF999002B6677 /* InternetConnection_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternetConnection_Tests.swift; sourceTree = "<group>"; };
 		8AE335A524FCF999002B6677 /* Reachability_Vendor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Reachability_Vendor.swift; sourceTree = "<group>"; };
-		8AE335A624FCF999002B6677 /* InternetConnection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InternetConnection.swift; sourceTree = "<group>"; };
 		9041E4AC2AE9768800CA2A2A /* MembersResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MembersResponse.swift; sourceTree = "<group>"; };
 		A30C3F1F276B428F00DA5968 /* UnknownUserEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownUserEvent.swift; sourceTree = "<group>"; };
 		A30C3F21276B4F8800DA5968 /* UnknownUserEvent_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnknownUserEvent_Tests.swift; sourceTree = "<group>"; };
@@ -6973,7 +6968,6 @@
 		8AE335A324FCF95D002B6677 /* InternetConnection */ = {
 			isa = PBXGroup;
 			children = (
-				8AE335A624FCF999002B6677 /* InternetConnection.swift */,
 				8AE335A524FCF999002B6677 /* Reachability_Vendor.swift */,
 				79200D4B25025B81002F4EB1 /* Error+InternetNotAvailable.swift */,
 			);
@@ -7914,7 +7908,6 @@
 		A364D0BE27D12C950029857A /* InternetConnection */ = {
 			isa = PBXGroup;
 			children = (
-				8AE335A424FCF999002B6677 /* InternetConnection_Tests.swift */,
 				64F70D4A26257FD400C9F979 /* Error+InternetNotAvailable_Tests.swift */,
 			);
 			path = InternetConnection;
@@ -11750,7 +11743,6 @@
 				AD0E278E2BF789630037554F /* ThreadsRepository.swift in Sources */,
 				40789D2529F6AC500018C2BB /* AudioSessionConfiguring.swift in Sources */,
 				F6778F9A24F5144F005E7D22 /* EventNotificationCenter.swift in Sources */,
-				8AE335A924FCF999002B6677 /* InternetConnection.swift in Sources */,
 				F6ED5F7A2502791F005D7327 /* MissingEventsPayload.swift in Sources */,
 				4F73F3982B91BD3000563CD9 /* MessageState.swift in Sources */,
 				88EA9AEE254721C0007EE76B /* MessageReactionType.swift in Sources */,
@@ -12137,7 +12129,6 @@
 				79D6CF2125FA6ACF00BE2EEC /* MemberEventMiddleware_Tests.swift in Sources */,
 				40B345F429C46AE500B96027 /* AudioPlaybackState_Tests.swift in Sources */,
 				F61D7C3724FFE17200188A0E /* MessageEditor_Tests.swift in Sources */,
-				8AE335AA24FCF99E002B6677 /* InternetConnection_Tests.swift in Sources */,
 				790A4C4E252E092E001F4A23 /* DevicePayloads_Tests.swift in Sources */,
 				79D6CE9D25F7D73300BE2EEC /* ChatChannelWatcherListController+SwiftUI_Tests.swift in Sources */,
 				F6CCA24F2512491B004C1859 /* UserTypingStateUpdaterMiddleware_Tests.swift in Sources */,
@@ -12987,7 +12978,6 @@
 				C121E8D4274544B100023E4C /* NSManagedObject+Extensions.swift in Sources */,
 				4F877D3A2D019E0900CB66EC /* ChannelPinningScope.swift in Sources */,
 				40789D4029F6AFC40018C2BB /* Debouncer_Tests.swift in Sources */,
-				C121E8D6274544B100023E4C /* InternetConnection.swift in Sources */,
 				C121E8D7274544B100023E4C /* Reachability_Vendor.swift in Sources */,
 				C121E8D8274544B100023E4C /* Error+InternetNotAvailable.swift in Sources */,
 				4F83FA472BA43DC3008BD8CD /* MemberList.swift in Sources */,
