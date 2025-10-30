@@ -6,7 +6,7 @@ import Combine
 import Foundation
 
 /// The type is designed to pre-process some incoming `Event` via middlewares before being published
-class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
+class PersistentEventNotificationCenter: NotificationCenter, EventNotificationCenter, @unchecked Sendable {
     private(set) var middlewares: [EventMiddleware] = []
 
     /// The database used when evaluating middlewares.
@@ -97,36 +97,7 @@ class EventNotificationCenter: NotificationCenter, @unchecked Sendable {
     }
 }
 
-extension EventNotificationCenter {
-    func process(_ event: Event, postNotification: Bool = true, completion: (@Sendable () -> Void)? = nil) {
-        process([event], postNotifications: postNotification, completion: completion)
-    }
-}
-
-extension EventNotificationCenter {
-    func subscribe<E>(
-        to event: E.Type,
-        filter: @escaping (E) -> Bool = { _ in true },
-        handler: @escaping (E) -> Void
-    ) -> AnyCancellable where E: Event {
-        publisher(for: .NewEventReceived)
-            .compactMap { $0.event as? E }
-            .filter(filter)
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: handler)
-    }
-
-    func subscribe(
-        filter: @escaping (Event) -> Bool = { _ in true },
-        handler: @escaping (Event) -> Void
-    ) -> AnyCancellable {
-        publisher(for: .NewEventReceived)
-            .compactMap(\.event)
-            .filter(filter)
-            .receive(on: DispatchQueue.main)
-            .sink(receiveValue: handler)
-    }
-
+extension PersistentEventNotificationCenter {
     static func channelFilter(cid: ChannelId, event: Event) -> Bool {
         switch event {
         case let channelEvent as ChannelSpecificEvent:

@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+@testable import StreamCore
 import XCTest
 
 final class ChatClient_Mock: ChatClient, @unchecked Sendable {
@@ -29,7 +30,7 @@ final class ChatClient_Mock: ChatClient, @unchecked Sendable {
 
     var mockedEventNotificationCenter: EventNotificationCenter_Mock?
 
-    override var eventNotificationCenter: EventNotificationCenter {
+    override var eventNotificationCenter: PersistentEventNotificationCenter {
         mockedEventNotificationCenter ?? super.eventNotificationCenter
     }
 
@@ -151,9 +152,8 @@ extension ChatClient {
                 webSocketClientBuilder: {
                     WebSocketClient_Mock(
                         sessionConfiguration: $0,
-                        requestEncoder: $1,
-                        eventDecoder: $2,
-                        eventNotificationCenter: $3
+                        eventDecoder: $1,
+                        eventNotificationCenter: $2
                     )
                 },
                 databaseContainerBuilder: {
@@ -302,9 +302,8 @@ extension ChatClient.Environment {
             webSocketClientBuilder: {
                 WebSocketClient_Mock(
                     sessionConfiguration: $0,
-                    requestEncoder: $1,
-                    eventDecoder: $2,
-                    eventNotificationCenter: $3
+                    eventDecoder: $1,
+                    eventNotificationCenter: $2
                 )
             },
             databaseContainerBuilder: {
@@ -323,7 +322,7 @@ extension ChatClient.Environment {
                 EventDecoder()
             },
             notificationCenterBuilder: {
-                EventNotificationCenter(database: $0, manualEventHandler: $1)
+                PersistentEventNotificationCenter(database: $0, manualEventHandler: $1)
             },
             authenticationRepositoryBuilder: {
                 AuthenticationRepository_Mock(
@@ -390,10 +389,11 @@ extension ChatClient.Environment {
 
                 return WebSocketClient(
                     sessionConfiguration: $0,
-                    requestEncoder: $1,
-                    eventDecoder: $2,
-                    eventNotificationCenter: $3,
-                    environment: webSocketEnvironment
+                    eventDecoder: $1,
+                    eventNotificationCenter: $2,
+                    webSocketClientType: .coordinator,
+                    environment: webSocketEnvironment,
+                    connectRequest: nil
                 )
             }
         )

@@ -86,7 +86,14 @@ final class ChatClient_Tests: XCTestCase {
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.connectionRepositoryBuilder = {
-            ConnectionRepository_Mock(isClientInActiveMode: $0, syncRepository: $1, webSocketClient: $2, apiClient: $3, timerType: $4)
+            ConnectionRepository_Mock(
+                isClientInActiveMode: $0,
+                syncRepository: $1,
+                webSocketEncoder: $2,
+                webSocketClient: $3,
+                apiClient: $4,
+                timerType: $5
+            )
         }
         env.databaseContainerBuilder = { [config] kind, clientConfig in
             XCTAssertEqual(
@@ -116,7 +123,14 @@ final class ChatClient_Tests: XCTestCase {
         // Create env object with custom database builder
         var env = ChatClient.Environment()
         env.connectionRepositoryBuilder = {
-            ConnectionRepository_Mock(isClientInActiveMode: $0, syncRepository: $1, webSocketClient: $2, apiClient: $3, timerType: $4)
+            ConnectionRepository_Mock(
+                isClientInActiveMode: $0,
+                syncRepository: $1,
+                webSocketEncoder: $2,
+                webSocketClient: $3,
+                apiClient: $4,
+                timerType: $5
+            )
         }
         env.databaseContainerBuilder = { kind, _ in
             XCTAssertEqual(kind, .inMemory)
@@ -141,7 +155,14 @@ final class ChatClient_Tests: XCTestCase {
         // Create env object and store all `kinds it's called with.
         var env = ChatClient.Environment()
         env.connectionRepositoryBuilder = {
-            ConnectionRepository_Mock(isClientInActiveMode: $0, syncRepository: $1, webSocketClient: $2, apiClient: $3, timerType: $4)
+            ConnectionRepository_Mock(
+                isClientInActiveMode: $0,
+                syncRepository: $1,
+                webSocketEncoder: $2,
+                webSocketClient: $3,
+                apiClient: $4,
+                timerType: $5
+            )
         }
         env.databaseContainerBuilder = { kind, _ in
             XCTAssertEqual(.inMemory, kind)
@@ -175,7 +196,6 @@ final class ChatClient_Tests: XCTestCase {
         let webSocket = testEnv.webSocketClient
         assertMandatoryHeaderFields(webSocket?.init_sessionConfiguration)
         XCTAssertEqual(webSocket?.init_sessionConfiguration.waitsForConnectivity, false)
-        XCTAssert(webSocket?.init_requestEncoder is RequestEncoder_Spy)
         XCTAssert(webSocket?.init_eventNotificationCenter.database === client.databaseContainer)
         XCTAssertNotNil(webSocket?.init_eventDecoder)
 
@@ -183,7 +203,7 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(webSocket?.init_eventNotificationCenter.middlewares[0] is EventDataProcessorMiddleware)
 
         // Assert Client sets itself as delegate for the request encoder
-        XCTAssert(webSocket?.init_requestEncoder.connectionDetailsProviderDelegate === client)
+        XCTAssert(client.webSocketEncoder?.connectionDetailsProviderDelegate === client)
     }
 
     func test_webSocketClient_hasAllMandatoryMiddlewares() throws {
@@ -473,34 +493,29 @@ final class ChatClient_Tests: XCTestCase {
         try chatClient.databaseContainer.createCurrentUser(id: currentUserId)
 
         AssertAsync.canBeReleased(&chatClient)
-
-        // Take main then background queue.
-        for queue in [DispatchQueue.main, DispatchQueue.global()] {
-            let error: Error? = try waitFor { completion in
-                // Dispatch creating a chat-client to specific queue.
-                queue.async {
-                    // Create a `ChatClient` instance with the same config
-                    // to access the storage with exited current user.
-                    let chatClient = ChatClient(config: config)
-                    chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
-
-                    let expectedWebSocketEndpoint = AnyEndpoint(
-                        .webSocketConnect(userInfo: UserInfo(id: currentUserId))
-                    )
-
-                    // 1. Check `currentUserId` is fetched synchronously
-                    // 2. `webSocket` has correct connect endpoint
-                    if chatClient.currentUserId == currentUserId,
-                       chatClient.webSocketClient?.connectEndpoint.map(AnyEndpoint.init) == expectedWebSocketEndpoint {
-                        completion(nil)
-                    } else {
-                        completion(TestError())
-                    }
+        
+        let queueAndExpectation: [(DispatchQueue, XCTestExpectation)] = [
+            (.main, XCTestExpectation(description: "main")),
+            (.global(), XCTestExpectation(description: "global"))
+        ]
+        for (queue, expectation) in queueAndExpectation {
+            // Dispatch creating a chat-client to specific queue.
+            queue.async {
+                // Create a `ChatClient` instance with the same config
+                // to access the storage with exited current user.
+                let chatClient = ChatClient(config: config)
+                chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
+                
+                let expectedWebSocketEndpoint = AnyEndpoint(.webSocketConnect(userInfo: UserInfo(id: currentUserId)))
+                // 1. Check `currentUserId` is fetched synchronously
+                // 2. `webSocket` has correct connect endpoint
+                if chatClient.currentUserId == currentUserId,
+                   chatClient.connectionRepository.webSocketConnectEndpoint.value.map(AnyEndpoint.init) == expectedWebSocketEndpoint {
+                    expectation.fulfill()
                 }
             }
-
-            XCTAssertNil(error)
         }
+        wait(for: queueAndExpectation.map({ $1 }), timeout: defaultTimeout)
     }
 
     // MARK: - Connect Token Provider
@@ -992,7 +1007,7 @@ private class TestEnvironment {
 
     @Atomic var eventDecoder: EventDecoder?
 
-    @Atomic var notificationCenter: EventNotificationCenter?
+    @Atomic var notificationCenter: PersistentEventNotificationCenter?
 
     @Atomic var connectionRepository: ConnectionRepository_Mock?
 
@@ -1016,9 +1031,8 @@ private class TestEnvironment {
             webSocketClientBuilder: {
                 self.webSocketClient = WebSocketClient_Mock(
                     sessionConfiguration: $0,
-                    requestEncoder: $1,
-                    eventDecoder: $2,
-                    eventNotificationCenter: $3
+                    eventDecoder: $1,
+                    eventNotificationCenter: $2
                 )
                 return self.webSocketClient!
             },
@@ -1060,7 +1074,14 @@ private class TestEnvironment {
             },
             monitor: InternetConnectionMonitor_Mock(),
             connectionRepositoryBuilder: {
-                self.connectionRepository = ConnectionRepository_Mock(isClientInActiveMode: $0, syncRepository: $1, webSocketClient: $2, apiClient: $3, timerType: $4)
+                self.connectionRepository = ConnectionRepository_Mock(
+                    isClientInActiveMode: $0,
+                    syncRepository: $1,
+                    webSocketEncoder: $2,
+                    webSocketClient: $3,
+                    apiClient: $4,
+                    timerType: $5
+                )
                 return self.connectionRepository!
             },
             backgroundTaskSchedulerBuilder: {
@@ -1068,7 +1089,7 @@ private class TestEnvironment {
                 return self.backgroundTaskScheduler!
             },
             timerType: VirtualTimeTimer.self,
-            connectionRecoveryHandlerBuilder: { _, _, _, _, _, _ in
+            connectionRecoveryHandlerBuilder: { _, _, _, _, _ in
                 ConnectionRecoveryHandler_Mock()
             },
             authenticationRepositoryBuilder: {

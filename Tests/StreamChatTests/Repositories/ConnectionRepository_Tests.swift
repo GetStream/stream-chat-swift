@@ -9,17 +9,20 @@ import XCTest
 final class ConnectionRepository_Tests: XCTestCase {
     private var repository: ConnectionRepository!
     private var webSocketClient: WebSocketClient_Mock!
+    private var webSocketRequestEncoder: DefaultRequestEncoder!
     private var syncRepository: SyncRepository_Mock!
     private var apiClient: APIClient_Spy!
 
     override func setUp() {
         super.setUp()
         webSocketClient = WebSocketClient_Mock()
+        webSocketRequestEncoder = DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique))
         apiClient = APIClient_Spy()
         syncRepository = SyncRepository_Mock()
         repository = ConnectionRepository(
             isClientInActiveMode: true,
             syncRepository: syncRepository,
+            webSocketEncoder: webSocketRequestEncoder,
             webSocketClient: webSocketClient,
             apiClient: apiClient,
             timerType: DefaultTimer.self
@@ -46,6 +49,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         repository = ConnectionRepository(
             isClientInActiveMode: false,
             syncRepository: syncRepository,
+            webSocketEncoder: webSocketRequestEncoder,
             webSocketClient: webSocketClient,
             apiClient: apiClient,
             timerType: DefaultTimer.self
@@ -157,6 +161,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         repository = ConnectionRepository(
             isClientInActiveMode: false,
             syncRepository: syncRepository,
+            webSocketEncoder: webSocketRequestEncoder,
             webSocketClient: webSocketClient,
             apiClient: apiClient,
             timerType: DefaultTimer.self
@@ -196,12 +201,12 @@ final class ConnectionRepository_Tests: XCTestCase {
         let tokenUserId = "123-token-userId"
         let token = Token(rawValue: "", userId: tokenUserId, expiration: nil)
 
-        XCTAssertNil(webSocketClient.connectEndpoint)
+        XCTAssertNil(repository.webSocketConnectEndpoint.value)
         repository.updateWebSocketEndpoint(with: token, userInfo: nil)
 
         // UserInfo should take priority
         XCTAssertEqual(
-            webSocketClient.connectEndpoint.map(AnyEndpoint.init),
+            repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
             AnyEndpoint(
                 .webSocketConnect(
                     userInfo: UserInfo(id: tokenUserId)
@@ -216,12 +221,12 @@ final class ConnectionRepository_Tests: XCTestCase {
         let tokenUserId = "123-token-userId"
         let token = Token(rawValue: "", userId: tokenUserId, expiration: nil)
 
-        XCTAssertNil(webSocketClient.connectEndpoint)
+        XCTAssertNil(repository.webSocketConnectEndpoint.value)
         repository.updateWebSocketEndpoint(with: token, userInfo: userInfo)
 
         // UserInfo should take priority
         XCTAssertEqual(
-            webSocketClient.connectEndpoint.map(AnyEndpoint.init),
+            repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
             AnyEndpoint(
                 .webSocketConnect(
                     userInfo: UserInfo(id: userInfoUserId)
@@ -232,11 +237,11 @@ final class ConnectionRepository_Tests: XCTestCase {
 
     func test_updateWebSocketEndpointWithUserId() throws {
         let userId = "123-userId"
-        XCTAssertNil(webSocketClient.connectEndpoint)
+        XCTAssertNil(repository.webSocketConnectEndpoint.value)
         repository.updateWebSocketEndpoint(with: userId)
 
         XCTAssertEqual(
-            webSocketClient.connectEndpoint.map(AnyEndpoint.init),
+            repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
             AnyEndpoint(
                 .webSocketConnect(
                     userInfo: UserInfo(id: userId)
@@ -302,6 +307,7 @@ final class ConnectionRepository_Tests: XCTestCase {
             let repository = ConnectionRepository(
                 isClientInActiveMode: true,
                 syncRepository: syncRepository,
+                webSocketEncoder: webSocketRequestEncoder,
                 webSocketClient: webSocketClient,
                 apiClient: apiClient,
                 timerType: DefaultTimer.self
@@ -342,6 +348,7 @@ final class ConnectionRepository_Tests: XCTestCase {
             let repository = ConnectionRepository(
                 isClientInActiveMode: true,
                 syncRepository: syncRepository,
+                webSocketEncoder: webSocketRequestEncoder,
                 webSocketClient: webSocketClient,
                 apiClient: apiClient,
                 timerType: DefaultTimer.self
@@ -545,6 +552,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         repository = ConnectionRepository(
             isClientInActiveMode: true,
             syncRepository: syncRepository,
+            webSocketEncoder: webSocketRequestEncoder,
             webSocketClient: webSocketClient,
             apiClient: apiClient,
             timerType: DefaultTimer.self
@@ -561,6 +569,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         repository = ConnectionRepository(
             isClientInActiveMode: false,
             syncRepository: syncRepository,
+            webSocketEncoder: webSocketRequestEncoder,
             webSocketClient: webSocketClient,
             apiClient: apiClient,
             timerType: DefaultTimer.self

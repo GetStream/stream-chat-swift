@@ -22,8 +22,10 @@ class ConnectionRepository: @unchecked Sendable {
         set { connectionQueue.async(flags: .barrier) { self._connectionId = newValue }}
     }
 
+    let webSocketConnectEndpoint = AllocatedUnfairLock<Endpoint<EmptyResponse>?>(nil)
     let isClientInActiveMode: Bool
     private let syncRepository: SyncRepository
+    private let webSocketEncoder: RequestEncoder?
     private let webSocketClient: WebSocketClient?
     private let apiClient: APIClient
     private let timerType: TimerScheduling.Type
@@ -31,12 +33,14 @@ class ConnectionRepository: @unchecked Sendable {
     init(
         isClientInActiveMode: Bool,
         syncRepository: SyncRepository,
+        webSocketEncoder: RequestEncoder?,
         webSocketClient: WebSocketClient?,
         apiClient: APIClient,
         timerType: TimerScheduling.Type
     ) {
         self.isClientInActiveMode = isClientInActiveMode
         self.syncRepository = syncRepository
+        self.webSocketEncoder = webSocketEncoder
         self.webSocketClient = webSocketClient
         self.apiClient = apiClient
         self.timerType = timerType
@@ -80,6 +84,7 @@ class ConnectionRepository: @unchecked Sendable {
                 }
             }
         }
+        updateWebSocketConnectURLRequest()
         webSocketClient?.connect()
     }
 
@@ -114,18 +119,38 @@ class ConnectionRepository: @unchecked Sendable {
 
     /// Updates the WebSocket endpoint to use the passed token and user information for the connection
     func updateWebSocketEndpoint(with token: Token, userInfo: UserInfo?) {
-        webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: userInfo ?? .init(id: token.userId))
+        webSocketConnectEndpoint.value = .webSocketConnect(userInfo: userInfo ?? .init(id: token.userId))
     }
-
+    
     /// Updates the WebSocket endpoint to use the passed user id
     func updateWebSocketEndpoint(with currentUserId: UserId) {
-        webSocketClient?.connectEndpoint = .webSocketConnect(userInfo: UserInfo(id: currentUserId))
+        webSocketConnectEndpoint.value = .webSocketConnect(userInfo: UserInfo(id: currentUserId))
+    }
+    
+    private func updateWebSocketConnectURLRequest() {
+        guard let webSocketClient, let webSocketEncoder, let webSocketConnectEndpoint = webSocketConnectEndpoint.value else { return }
+        let request: URLRequest? = {
+            do {
+                return try webSocketEncoder.encodeRequest(for: webSocketConnectEndpoint)
+            } catch {
+                log.error(error.localizedDescription, error: error)
+                return nil
+            }
+        }()
+        guard let request else { return }
+        webSocketClient.connectRequest = request
     }
 
     func handleConnectionUpdate(
         state: WebSocketConnectionState,
         onExpiredToken: () -> Void
     ) {
+        let event = ConnectionStatusUpdated(webSocketConnectionState: state)
+        if event.connectionStatus != connectionStatus {
+            // Publish Connection event with the new state
+            webSocketClient?.publishEvent(event)
+        }
+        
         connectionStatus = .init(webSocketConnectionState: state)
 
         // We should notify waiters if connectionId was obtained (i.e. state is .connected)
@@ -136,6 +161,9 @@ class ConnectionRepository: @unchecked Sendable {
         case let .connected(healthCheckInfo: healthCheckInfo):
             shouldNotifyConnectionIdWaiters = true
             connectionId = healthCheckInfo.connectionId
+            syncRepository.syncLocalState {
+                log.info("Local state sync completed", subsystems: .offlineSupport)
+            }
         case let .disconnected(source) where source.serverError?.isExpiredTokenError == true:
             onExpiredToken()
             shouldNotifyConnectionIdWaiters = false
