@@ -17,15 +17,6 @@ struct EventDecoder {
             return try decoder.decode(UnknownUserEvent.self, from: data)
         } catch let error as ClientError.IgnoredEventType {
             throw error
-        } catch {
-            // Web-socket errors are passed on as a custom event to the web-socket client
-            // which in turn triggers a disconnection if needed. When chat moves to
-            // OpenAPI, this can be removed from here.
-            if let errorPayload = try? decoder.decode(ErrorPayloadContainer.self, from: data) {
-                return errorPayload.toEvent()
-            } else {
-                throw error
-            }
         }
     }
 }

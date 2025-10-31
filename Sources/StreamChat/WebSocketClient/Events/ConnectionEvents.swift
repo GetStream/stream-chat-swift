@@ -38,23 +38,6 @@ public final class HealthCheckEvent: ConnectionEvent, EventDTO, Sendable {
     }
 }
 
-struct WebSocketErrorEvent: Event {
-    let payload: ErrorPayload
-    
-    func error() -> (any Error)? {
-        payload
-    }
-}
-
-struct ErrorPayloadContainer: Decodable {
-    /// A server error was received.
-    let error: ErrorPayload
-    
-    func toEvent() -> Event {
-        WebSocketErrorEvent(payload: error)
-    }
-}
-
 /// Emitted when `Client` changes it's connection status. You can listen to this event and indicate the different connection
 /// states in the UI (banners like "Offline", "Reconnecting"", etc.).
 public struct ConnectionStatusUpdated: Event {

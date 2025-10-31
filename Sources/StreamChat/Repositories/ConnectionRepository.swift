@@ -164,7 +164,7 @@ class ConnectionRepository: @unchecked Sendable {
             syncRepository.syncLocalState {
                 log.info("Local state sync completed", subsystems: .offlineSupport)
             }
-        case let .disconnected(source) where source.serverError?.isExpiredTokenError == true:
+        case let .disconnected(source) where source.serverError?.isTokenExpiredError == true:
             onExpiredToken()
             shouldNotifyConnectionIdWaiters = false
             connectionId = nil
