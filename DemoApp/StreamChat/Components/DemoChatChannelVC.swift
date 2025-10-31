@@ -49,6 +49,12 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
         navigationItem.leftBarButtonItems = [customBackButton]
         navigationController?.interactivePopGestureRecognizer?.delegate = self
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        navigationController?.setNavigationBarHidden(false, animated: false)
+    }
 
     @objc private func debugTap() {
         guard let cid = channelController.cid else { return }
