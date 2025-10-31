@@ -44,7 +44,7 @@ get '/jwt/:udid' do
   if time < jwt[:generation_error_timeout][params['udid']].to_i
     halt(500, 'Intentional error')
   elsif time < jwt[:expiration_timeout][params['udid']].to_i
-    'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIiLCJleHAiOjE2NjgwMTIzNTN9.UJ-LDHZFDP10sqpZU9bzPAChgersjDfqKjoi5Plg8qI'
+    halt(401, 'eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoibHVrZV9za3l3YWxrZXIiLCJleHAiOjE2NjgwMTIzNTN9.UJ-LDHZFDP10sqpZU9bzPAChgersjDfqKjoi5Plg8qI')
   else
     client = StreamChat::Client.new(params[:api_key], ENV.fetch('STREAM_DEMO_APP_SECRET'))
     expiration = time + 5
