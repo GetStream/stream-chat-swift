@@ -132,7 +132,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     private let environment: Environment
     private lazy var channelListLinker: ChannelListLinker = self.environment
         .channelListLinkerBuilder(
-            query, filter, client.config, client.databaseContainer, worker
+            query, filter, client.config, client.databaseContainer, worker, client.channelWatcherHandler
         )
 
     /// Creates a new `ChannelListController`.
@@ -292,7 +292,8 @@ extension ChatChannelListController {
             _ filter: ((ChatChannel) -> Bool)?,
             _ clientConfig: ChatClientConfig,
             _ databaseContainer: DatabaseContainer,
-            _ worker: ChannelListUpdater
+            _ worker: ChannelListUpdater,
+            _ channelWatcherHandler: ChannelWatcherHandling
         ) -> ChannelListLinker = ChannelListLinker.init
         
         var currentUserUpdaterBuilder: (
