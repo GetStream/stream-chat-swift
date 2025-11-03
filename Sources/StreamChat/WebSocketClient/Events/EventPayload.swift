@@ -48,7 +48,7 @@ final class EventPayload: Decodable, Sendable {
 
     let eventType: EventType
     let connectionId: String?
-    let connectionError: ErrorPayload?
+    let connectionError: APIError?
     let cid: ChannelId?
     let currentUser: CurrentUserPayload?
     let user: UserPayload?
@@ -89,7 +89,7 @@ final class EventPayload: Decodable, Sendable {
     init(
         eventType: EventType,
         connectionId: String? = nil,
-        connectionError: ErrorPayload? = nil,
+        connectionError: APIError? = nil,
         cid: ChannelId? = nil,
         currentUser: CurrentUserPayload? = nil,
         user: UserPayload? = nil,
@@ -164,7 +164,7 @@ final class EventPayload: Decodable, Sendable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         eventType = try container.decode(EventType.self, forKey: .eventType)
         connectionId = try container.decodeIfPresent(String.self, forKey: .connectionId)
-        connectionError = try container.decodeIfPresent(ErrorPayload.self, forKey: .connectionError)
+        connectionError = try container.decodeIfPresent(APIError.self, forKey: .connectionError)
         // In healthCheck event we can receive invalid id containing "*".
         // We don't need to throw error in that case and can treat it like missing cid.
         cid = try? container.decodeIfPresent(ChannelId.self, forKey: .cid)

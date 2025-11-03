@@ -39,18 +39,18 @@ public final class HealthCheckEvent: ConnectionEvent, EventDTO, Sendable {
 }
 
 final class ConnectionErrorEvent: Event {
-    let errorPayload: ErrorPayload
+    let apiError: APIError
     
     init(from eventResponse: EventPayload) throws {
-        guard let errorPayload = eventResponse.connectionError else {
+        guard let apiError = eventResponse.connectionError else {
             throw ClientError.EventDecoding(missingValue: "error", for: Self.self)
         }
 
-        self.errorPayload = errorPayload
+        self.apiError = apiError
     }
     
     func error() -> (any Error)? {
-        errorPayload
+        apiError
     }
 }
 

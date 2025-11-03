@@ -46,9 +46,9 @@ struct DefaultRequestDecoder: RequestDecoder {
         log.debug("URL request response: \(httpResponse), data:\n\(data.debugPrettyPrintedJSON))", subsystems: .httpRequests)
 
         guard httpResponse.statusCode < 300 else {
-            let serverError: ErrorPayload
+            let serverError: APIError
             do {
-                serverError = try JSONDecoder.default.decode(ErrorPayload.self, from: data)
+                serverError = try JSONDecoder.default.decode(APIError.self, from: data)
             } catch {
                 log
                     .error(

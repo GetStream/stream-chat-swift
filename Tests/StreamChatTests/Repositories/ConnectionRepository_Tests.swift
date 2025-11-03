@@ -116,7 +116,7 @@ final class ConnectionRepository_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        let invalidTokenError = ClientError(with: ErrorPayload(
+        let invalidTokenError = ClientError(with: APIError(
             code: .random(in: ClosedRange.tokenInvalidErrorCodes),
             message: .unique,
             statusCode: .unique
@@ -253,7 +253,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     // MARK: Handle connection update
 
     func test_handleConnectionUpdate_setsCorrectConnectionStatus() {
-        let invalidTokenError = ClientError(with: ErrorPayload(
+        let invalidTokenError = ClientError(with: APIError(
             code: .random(in: ClosedRange.tokenInvalidErrorCodes),
             message: .unique,
             statusCode: .unique
@@ -278,13 +278,13 @@ final class ConnectionRepository_Tests: XCTestCase {
     }
 
     func test_handleConnectionUpdate_shouldNotifyWaitersWhenNeeded() {
-        let invalidTokenError = ClientError(with: ErrorPayload(
+        let invalidTokenError = ClientError(with: APIError(
             code: StreamErrorCode.accessKeyInvalid,
             message: .unique,
             statusCode: .unique
         ))
 
-        let expiredTokenError = ClientError(with: ErrorPayload(
+        let expiredTokenError = ClientError(with: APIError(
             code: StreamErrorCode.expiredToken,
             message: .unique,
             statusCode: .unique
@@ -366,7 +366,7 @@ final class ConnectionRepository_Tests: XCTestCase {
 
     func test_handleConnectionUpdate_whenExpiredToken_shouldExecuteExpiredTokenBlock() {
         let expectation = self.expectation(description: "Expired Token Block Not Executed")
-        let expiredTokenError = ClientError(with: ErrorPayload(
+        let expiredTokenError = ClientError(with: APIError(
             code: StreamErrorCode.expiredToken,
             message: .unique,
             statusCode: .unique
@@ -382,7 +382,7 @@ final class ConnectionRepository_Tests: XCTestCase {
     func test_handleConnectionUpdate_whenInvalidToken_shouldNotExecuteExpiredTokenBlock() {
         let expectation = self.expectation(description: "Expired Token Block Not Executed")
         expectation.isInverted = true
-        let invalidTokenError = ClientError(with: ErrorPayload(
+        let invalidTokenError = ClientError(with: APIError(
             code: StreamErrorCode.invalidTokenSignature,
             message: .unique,
             statusCode: .unique
@@ -397,7 +397,7 @@ final class ConnectionRepository_Tests: XCTestCase {
 
     func test_handleConnectionUpdate_whenInvalidToken_whenDisconnecting_shouldNOTExecuteRefreshTokenBlock() {
         // We only want to refresh the token when it is actually disconnected, not while it is disconnecting, otherwise we trigger refresh token twice.
-        let invalidTokenError = ClientError(with: ErrorPayload(
+        let invalidTokenError = ClientError(with: APIError(
             code: .random(in: ClosedRange.tokenInvalidErrorCodes),
             message: .unique,
             statusCode: .unique
