@@ -206,13 +206,15 @@ open class ChatMessageLayoutOptionsResolver {
     ///   - channel: The channel the message is sent to.
     /// - Returns: `true` if delivery status should be shown.
     open func canShowDeliveryStatus(for message: ChatMessage, in channel: ChatChannel) -> Bool {
-        guard let status = message.deliveryStatus else { return false }
+        guard let status = message.deliveryStatus(for: channel) else { return false }
 
         switch status {
         case .pending:
             return true
         case .sent, .read:
             return channel.config.readEventsEnabled
+        case .delivered:
+            return channel.config.deliveryEventsEnabled
         default:
             return false
         }

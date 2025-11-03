@@ -532,8 +532,7 @@ public extension ChatMessage {
     }
 
     /// The message delivery status.
-    /// Always returns `nil` when the message is authored by another user.
-    /// Always returns `nil` when the message is `system/error/ephemeral/deleted`.
+    @available(*, deprecated, message: "The function `deliveryStatus(for:)` is preferred.")
     var deliveryStatus: MessageDeliveryStatus? {
         guard isSentByCurrentUser else {
             // Delivery status exists only for messages sent by the current user.
@@ -551,6 +550,32 @@ public extension ChatMessage {
         case .sendingFailed, .syncingFailed, .deletingFailed:
             return .failed
         case nil:
+            return readByCount > 0 ? .read : .sent
+        }
+    }
+
+    /// The message delivery status.
+    func deliveryStatus(for channel: ChatChannel) -> MessageDeliveryStatus? {
+        guard isSentByCurrentUser else {
+            // Delivery status exists only for messages sent by the current user.
+            return nil
+        }
+
+        guard type == .regular || type == .reply else {
+            // Delivery status only makes sense for regular messages and thread replies.
+            return nil
+        }
+
+        switch localState {
+        case .pendingSend, .sending, .pendingSync, .syncing, .deleting:
+            return .pending
+        case .sendingFailed, .syncingFailed, .deletingFailed:
+            return .failed
+        case nil:
+            let deliveredReads = channel.deliveredReads(for: self)
+            if !deliveredReads.isEmpty && readByCount == 0 {
+                return .delivered
+            }
             return readByCount > 0 ? .read : .sent
         }
     }
@@ -703,8 +728,13 @@ public struct MessageDeliveryStatus: RawRepresentable, Hashable {
     /// The message delivery state for message that is being sent/edited/deleted.
     public static let pending = Self(rawValue: "pending")
 
-    /// The message delivery state for message that is successfully sent.
+    /// The message delivery state for message that is successfully sent to the server but did
+    /// not reach the user's device yet.
     public static let sent = Self(rawValue: "sent")
+
+    /// The message delivery state for message that is successfully sent to the server and
+    /// already reached the user's device.
+    public static let delivered = Self(rawValue: "delivered")
 
     /// The message delivery state for message that is successfully sent and read by at least one channel member.
     public static let read = Self(rawValue: "read")
