@@ -65,8 +65,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         )
     
     /// The validator used to determine if messages can be marked as delivered.
-    private lazy var deliveryCriteriaValidator: MessageDeliveryCriteriaValidating = self.environment
-        .deliveryCriteriaValidatorBuilder()
+    private let deliveryCriteriaValidator: MessageDeliveryCriteriaValidating
 
     /// A Boolean value that returns whether pagination is finished
     public private(set) var hasLoadedAllPreviousChannels: Bool = false
@@ -151,6 +150,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         self.query = query
         self.filter = filter
         self.environment = environment
+        self.deliveryCriteriaValidator = environment.deliveryCriteriaValidatorBuilder()
         super.init()
     }
 

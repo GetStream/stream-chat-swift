@@ -13,16 +13,19 @@ final class ChannelListController_Tests: XCTestCase {
     private lazy var query: ChannelListQuery! = .init(filter: .in(.members, values: [memberId]))
     private lazy var client: ChatClient! = ChatClient.mock()
     private lazy var controllerCallbackQueueID: UUID! = .init()
-    private lazy var controller: ChatChannelListController! = {
-        let controller = ChatChannelListController(query: query, client: client, environment: env.environment)
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
-        return controller
-    }()
+    private var controller: ChatChannelListController!
 
     /// Workaround for unwrapping **controllerCallbackQueueID!** in each closure that captures it
     private var callbackQueueID: UUID { controllerCallbackQueueID }
 
     var database: DatabaseContainer_Spy { client.databaseContainer as! DatabaseContainer_Spy }
+
+    override func setUp() {
+        super.setUp()
+
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+    }
 
     override func tearDown() {
         query = nil
