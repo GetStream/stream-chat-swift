@@ -11,6 +11,7 @@ final class EventPayload: Decodable, Sendable {
     enum CodingKeys: String, CodingKey, CaseIterable {
         case eventType = "type"
         case connectionId = "connection_id"
+        case connectionError = "error"
         case cid
         case channelType = "channel_type"
         case channelId = "channel_id"
@@ -47,6 +48,7 @@ final class EventPayload: Decodable, Sendable {
 
     let eventType: EventType
     let connectionId: String?
+    let connectionError: ErrorPayload?
     let cid: ChannelId?
     let currentUser: CurrentUserPayload?
     let user: UserPayload?
@@ -87,6 +89,7 @@ final class EventPayload: Decodable, Sendable {
     init(
         eventType: EventType,
         connectionId: String? = nil,
+        connectionError: ErrorPayload? = nil,
         cid: ChannelId? = nil,
         currentUser: CurrentUserPayload? = nil,
         user: UserPayload? = nil,
@@ -122,6 +125,7 @@ final class EventPayload: Decodable, Sendable {
     ) {
         self.eventType = eventType
         self.connectionId = connectionId
+        self.connectionError = connectionError
         self.cid = cid
         self.currentUser = currentUser
         self.user = user
@@ -160,6 +164,7 @@ final class EventPayload: Decodable, Sendable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         eventType = try container.decode(EventType.self, forKey: .eventType)
         connectionId = try container.decodeIfPresent(String.self, forKey: .connectionId)
+        connectionError = try container.decodeIfPresent(ErrorPayload.self, forKey: .connectionError)
         // In healthCheck event we can receive invalid id containing "*".
         // We don't need to throw error in that case and can treat it like missing cid.
         cid = try? container.decodeIfPresent(ChannelId.self, forKey: .cid)

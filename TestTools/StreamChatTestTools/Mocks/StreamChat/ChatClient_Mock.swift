@@ -382,11 +382,7 @@ extension ChatClient.Environment {
     static var withZeroEventBatchingPeriod: Self {
         .init(
             webSocketClientBuilder: {
-                var webSocketEnvironment = WebSocketClient.Environment()
-                webSocketEnvironment.eventBatcherBuilder = {
-                    Batcher<Event>(period: 0, handler: $0)
-                }
-
+                let webSocketEnvironment = WebSocketClient.Environment(eventBatchingPeriod: 0)
                 return WebSocketClient(
                     sessionConfiguration: $0,
                     eventDecoder: $1,

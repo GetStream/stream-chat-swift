@@ -28,12 +28,15 @@ extension ChatClient {
             _ eventDecoder: AnyEventDecoder,
             _ notificationCenter: PersistentEventNotificationCenter
         ) -> WebSocketClient)? = {
-            WebSocketClient(
+            let wsEnvironment = WebSocketClient.Environment(eventBatchingPeriod: 0.5)
+            return WebSocketClient(
                 sessionConfiguration: $0,
                 eventDecoder: $1,
                 eventNotificationCenter: $2,
                 webSocketClientType: .coordinator,
-                connectRequest: nil
+                environment: wsEnvironment,
+                connectRequest: nil,
+                healthCheckBeforeConnected: true
             )
         }
 

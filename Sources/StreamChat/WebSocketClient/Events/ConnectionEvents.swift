@@ -38,6 +38,22 @@ public final class HealthCheckEvent: ConnectionEvent, EventDTO, Sendable {
     }
 }
 
+final class ConnectionErrorEvent: Event {
+    let errorPayload: ErrorPayload
+    
+    init(from eventResponse: EventPayload) throws {
+        guard let errorPayload = eventResponse.connectionError else {
+            throw ClientError.EventDecoding(missingValue: "error", for: Self.self)
+        }
+
+        self.errorPayload = errorPayload
+    }
+    
+    func error() -> (any Error)? {
+        errorPayload
+    }
+}
+
 /// Emitted when `Client` changes it's connection status. You can listen to this event and indicate the different connection
 /// states in the UI (banners like "Offline", "Reconnecting"", etc.).
 public struct ConnectionStatusUpdated: Event {
