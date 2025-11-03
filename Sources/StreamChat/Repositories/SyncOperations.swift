@@ -122,7 +122,7 @@ final class SyncEventsOperation: AsyncOperation, @unchecked Sendable {
             }
             
             syncRepository?.syncChannelsEvents(
-                channelIds: Array(channelIds),
+                channelIds: Array(channelIds.prefix(100)),
                 lastSyncAt: context.lastSyncAt,
                 isRecovery: recovery
             ) { result in
