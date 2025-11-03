@@ -223,6 +223,10 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             guard content.channel.config.readEventsEnabled else { return nil }
 
             return deliveryStatus
+        case .delivered:
+            guard content.channel.config.deliveryEventsEnabled else { return nil }
+
+            return deliveryStatus
         default:
             return nil
         }

@@ -27,16 +27,6 @@ struct MessageDeliveryCriteriaValidator: MessageDeliveryCriteriaValidating {
     
     /// Determines if a message can be marked as delivered for a specific user in a channel.
     ///
-    /// A message can be marked as delivered when all of the following conditions are met:
-    /// - The channel can be marked as delivered (not muted, not hidden)
-    /// - The current user has delivery receipts enabled in privacy settings
-    /// - The message is not a thread reply (unless it's shown in the channel)
-    /// - The message was not sent by the current user
-    /// - The message is not shadowed
-    /// - The message author is not muted by the current user
-    /// - The message was created after the user's last read timestamp
-    /// - The message was created after the user's last delivered timestamp
-    ///
     /// - Parameters:
     ///   - message: The message to check for delivery status.
     ///   - currentUser: The current user who would mark the message as delivered.
