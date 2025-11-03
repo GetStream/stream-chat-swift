@@ -590,7 +590,7 @@ open class ChatChannelVC: _ViewController,
         // The `ChatMessage` object has no data related to delivery info.
         // So the diffing won't notify of UI changes, so we need to manually refresh
         // the latest cell to update the double gray checkmark.
-        if event is MessageDeliveredEvent {
+        if let event = event as? MessageDeliveredEvent, event.cid == channelController.cid, !messages.isEmpty {
             messageListVC.listView.reloadRows(at: [.init(item: 0, section: 0)], with: .none)
         }
     }
