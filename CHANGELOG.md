@@ -6,12 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add support for message delivered info [#3846](https://github.com/GetStream/stream-chat-swift/pull/3846)
+  - Add `ChatRemoteNotificationHandler.markMessageAsDelivered(deliveries:)`
+  - Add `ChatChannel.reads(message:)` and `ChatChannel.deliveredReads(message:)`
+  - Add `ChatChannelRead.lastDeliveredAt`
+  - Add `ChatChannelRead.lastDeliveredMessageId`
+  - Add `MessageDeliveryStatus.delivered`
 ### 🐞 Fixed
 - Fix `ChannelController.hasLoadedAllPreviousMessages` not correct for newly created channels [#3855](https://github.com/GetStream/stream-chat-swift/pull/3855)
 - Fix duplicated watch channel requests when a channel is created and it belongs to multiple queries [#3857](https://github.com/GetStream/stream-chat-swift/pull/3857)
 - Fix calling watch channel request when a channel is updated and it already belongs to another query [#3857](https://github.com/GetStream/stream-chat-swift/pull/3857)
 
 ## StreamChatUI
+### ✅ Added
+- Display double grey checkmark when delivery events are enabled [#3846](https://github.com/GetStream/stream-chat-swift/pull/3846)
 ### 🐞 Fixed
 - Fix date separator not shown on newly created channel [#3855](https://github.com/GetStream/stream-chat-swift/pull/3855)
 - Fix composer deleting newly entered text after deleting draft text [#3854](https://github.com/GetStream/stream-chat-swift/pull/3854)
@@ -24,6 +31,7 @@ _October 22, 2025_
 - Add support for deleting messages only for the current user [#3836](https://github.com/GetStream/stream-chat-swift/pull/3836)
   - Add `ChatMessageController.deleteMessageForMe()`
   - Add `ChatMessage.deletedForMe`
+- Allow observing poll changes in `PollVoteListController` [#3849](https://github.com/GetStream/stream-chat-swift/pull/3849)
 ### 🐞 Fixed
 - Fix logout not clearing token when current user had no device registered [#3838](https://github.com/GetStream/stream-chat-swift/pull/3838)
 - Fix `PollVoteListController` not updating votes on the vote cast event [#3849](https://github.com/GetStream/stream-chat-swift/pull/3849)
