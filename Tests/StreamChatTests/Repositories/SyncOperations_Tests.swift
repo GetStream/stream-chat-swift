@@ -69,6 +69,27 @@ final class SyncOperations_Tests: XCTestCase {
             times: 1
         )
     }
+    
+    func test_SyncEventsOperation_limitChannelIdsTo100() throws {
+        let context = SyncContext(lastSyncAt: .init())
+        context.localChannelIds = Set((0..<255).map { ChannelId(type: .messaging, id: "\($0)") })
+        try database.createCurrentUser()
+        try database.writeSynchronously { session in
+            session.currentUser?.lastSynchedEventDate = DBDate().addingTimeInterval(-3600)
+        }
+
+        let operation = SyncEventsOperation(syncRepository: syncRepository, context: context, recovery: false)
+        syncRepository.syncMissingEventsResult = .success([.unique])
+
+        operation.startAndWaitForCompletion()
+
+        XCTAssertEqual(syncRepository.syncMissingEvents_syncChannels?.count, 100)
+        XCTAssertCall(
+            "syncChannelsEvents(channelIds:lastSyncAt:isRecovery:completion:)",
+            on: syncRepository,
+            times: 1
+        )
+    }
 
     // MARK: - WatchChannelOperation
 
