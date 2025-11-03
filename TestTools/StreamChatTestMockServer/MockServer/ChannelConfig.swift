@@ -88,7 +88,7 @@ public struct ChannelConfigs {
 public struct ChannelConfig_Mock: Codable {
     public var typingEvents: Bool
     public var readEvents: Bool
-    public var deliveredEvents: Bool
+    public var deliveryEvents: Bool
     public var connectEvents: Bool
     public var search: Bool
     public var reactions: Bool
@@ -121,7 +121,7 @@ public struct ChannelConfig_Mock: Codable {
     public func update(json: inout [String: Any]) {
         json[CodingKeys.typingEvents.rawValue] = typingEvents
         json[CodingKeys.readEvents.rawValue] = readEvents
-        json[CodingKeys.deliveryEvents.rawValue] = deliveredEvents
+        json[CodingKeys.deliveryEvents.rawValue] = deliveryEvents
         json[CodingKeys.connectEvents.rawValue] = connectEvents
         json[CodingKeys.search.rawValue] = search
         json[CodingKeys.reactions.rawValue] = reactions
