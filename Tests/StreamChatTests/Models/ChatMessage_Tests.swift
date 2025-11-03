@@ -399,7 +399,7 @@ final class ChatMessage_Tests: XCTestCase {
 
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: .unique,
+            cid: cid,
             text: .unique,
             type: .regular,
             author: messageAuthor,

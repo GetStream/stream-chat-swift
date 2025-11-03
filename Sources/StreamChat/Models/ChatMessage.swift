@@ -554,7 +554,12 @@ public extension ChatMessage {
         }
     }
 
-    /// The message delivery status.
+    /// Returns the delivery status of the message within the context of the channel it belongs.
+    ///
+    /// This method determines the delivery status by considering both the local message state
+    /// and the channel's delivery/read information.
+    /// - Parameter channel: The channel which the message belongs to.
+    /// - Returns: The delivery status of the message if applicable.
     func deliveryStatus(for channel: ChatChannel) -> MessageDeliveryStatus? {
         guard isSentByCurrentUser else {
             // Delivery status exists only for messages sent by the current user.
