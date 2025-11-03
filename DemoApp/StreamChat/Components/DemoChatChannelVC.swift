@@ -89,17 +89,4 @@ final class DemoChatChannelVC: ChatChannelVC, UIGestureRecognizerDelegate {
     override func didFinishLoadingNextMessages(with: Error?) {
         messageListVC.footerView = nil
     }
-
-    // MARK: didReceiveEvent
-
-    override func eventsController(
-        _ controller: EventsController,
-        didReceiveEvent event: any Event
-    ) {
-        super.eventsController(controller, didReceiveEvent: event)
-        
-        if event is MessageDeliveredEvent {
-            messageListVC.listView.reloadRows(at: [.init(item: 0, section: 0)], with: .none)
-        }
-    }
 }
