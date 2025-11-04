@@ -8,6 +8,7 @@ import XCTest
 final class Authentication_Tests: StreamTestCase {
     override func setUpWithError() throws {
         mockServerEnabled = false
+        switchApiKey = "8br4watad788"
         app.setLaunchArguments(.jwt)
         try super.setUpWithError()
     }
