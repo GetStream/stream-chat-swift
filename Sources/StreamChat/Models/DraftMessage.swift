@@ -4,7 +4,7 @@
 
 import Foundation
 
-public struct DraftMessage: Sendable {
+public struct DraftMessage: Sendable, Identifiable {
     /// A unique identifier of the message.
     public let id: MessageId
 

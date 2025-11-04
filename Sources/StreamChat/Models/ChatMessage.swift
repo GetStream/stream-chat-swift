@@ -9,7 +9,7 @@ import Foundation
 public typealias MessageId = String
 
 /// A type representing a chat message. `ChatMessage` is an immutable snapshot of a chat message entity at the given time.
-public struct ChatMessage: Sendable {
+public struct ChatMessage: Identifiable, Sendable {
     /// A unique identifier of the message.
     public let id: MessageId
 

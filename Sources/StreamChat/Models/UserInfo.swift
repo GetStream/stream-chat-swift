@@ -5,7 +5,7 @@
 import Foundation
 
 /// The user information used to connect the user to chat.
-public struct UserInfo: Sendable {
+public struct UserInfo: Identifiable, Sendable {
     /// The id of the user.
     public let id: UserId
     /// The name of the user.

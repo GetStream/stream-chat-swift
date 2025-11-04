@@ -5,7 +5,7 @@
 import Foundation
 
 /// A type representing a message reminder.
-public struct MessageReminder: Sendable {
+public struct MessageReminder: Identifiable, Sendable {
     /// A unique identifier of the reminder, based on the message ID.
     public let id: String
     

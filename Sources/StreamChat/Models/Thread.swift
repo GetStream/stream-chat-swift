@@ -5,7 +5,8 @@
 import Foundation
 
 /// A type representing a thread.
-public struct ChatThread: Sendable {
+public struct ChatThread: Identifiable, Sendable {
+    public var id: MessageId { parentMessageId }
     /// The id of the message which created the thread. It is also the id of the thread.
     public let parentMessageId: MessageId
     /// The parent message which is the root of this thread.
