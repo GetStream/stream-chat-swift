@@ -16,7 +16,7 @@ class StreamTestCase: XCTestCase {
     var recordVideo = false
     var mockServerEnabled = true
     var mockServerCrashed = false
-    var switchApiKey = false
+    var switchApiKey: String?
 
     override func setUpWithError() throws {
         continueAfterFailure = false
@@ -61,9 +61,8 @@ extension StreamTestCase {
                 .httpHost: "\(MockServerConfiguration.httpHost)",
                 .port: "\(MockServerConfiguration.port)"
             ])
-        } else if switchApiKey {
-            // Use SwiftUI api key instead
-            app.setEnvironmentVariables([.customApiKey: "zcgvnykxsfm8"])
+        } else if let switchApiKey {
+            app.setEnvironmentVariables([.customApiKey: switchApiKey])
         }
     }
 
