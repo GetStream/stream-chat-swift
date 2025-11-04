@@ -34,9 +34,6 @@ let package = Package(
     targets: [
         .target(
             name: "StreamChat",
-            dependencies: [
-                .product(name: "StreamCore", package: "stream-core-swift")
-            ],
             exclude: ["Info.plist"],
             resources: [.copy("Database/StreamChatModel.xcdatamodeld")]
         ),
