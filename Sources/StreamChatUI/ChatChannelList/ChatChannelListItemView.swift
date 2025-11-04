@@ -213,7 +213,7 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
 
         guard
             let content = content,
-            let deliveryStatus = content.channel.previewMessage?.deliveryStatus
+            let deliveryStatus = content.channel.previewMessage?.deliveryStatus(for: content.channel)
         else { return nil }
 
         switch deliveryStatus {
@@ -221,6 +221,10 @@ open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
             return deliveryStatus
         case .sent, .read:
             guard content.channel.config.readEventsEnabled else { return nil }
+
+            return deliveryStatus
+        case .delivered:
+            guard content.channel.config.deliveryEventsEnabled else { return nil }
 
             return deliveryStatus
         default:

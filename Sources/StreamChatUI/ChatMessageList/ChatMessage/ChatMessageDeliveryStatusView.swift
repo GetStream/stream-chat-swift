@@ -15,6 +15,10 @@ open class ChatMessageDeliveryStatusView: _Control, ThemeProvider {
             self.message = message
             self.channel = channel
         }
+
+        public var deliveryStatus: MessageDeliveryStatus? {
+            message.deliveryStatus(for: channel)
+        }
     }
 
     /// The content the view displays.
@@ -77,7 +81,7 @@ open class ChatMessageDeliveryStatusView: _Control, ThemeProvider {
     override open func updateContent() {
         super.updateContent()
 
-        messageDeliveryChekmarkView.content = content?.message.deliveryStatus.map {
+        messageDeliveryChekmarkView.content = content?.deliveryStatus.map {
             .init(deliveryStatus: $0)
         }
 

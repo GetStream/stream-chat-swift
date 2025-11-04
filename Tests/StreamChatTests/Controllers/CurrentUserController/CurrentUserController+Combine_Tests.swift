@@ -43,7 +43,7 @@ final class CurrentUserController_Combine_Tests: iOS13TestCase {
         weak var controller: CurrentUserController_Mock? = currentUserController
         currentUserController = nil
 
-        let newCurrentUser: CurrentChatUser = .mock(id: .unique)
+        let newCurrentUser: CurrentChatUser = .mock(currentUserId: .unique)
         controller?.currentUser_simulated = newCurrentUser
         controller?.delegateCallback {
             $0.currentUserController(controller!, didChangeCurrentUser: .create(newCurrentUser))

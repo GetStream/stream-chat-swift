@@ -29,6 +29,7 @@ class CurrentUserDTO: NSManagedObject {
     // But if new properties are added, we might need to create new DTOs specific to each setting.
     @NSManaged var isTypingIndicatorsEnabled: Bool
     @NSManaged var isReadReceiptsEnabled: Bool
+    @NSManaged var isDeliveryReceiptsEnabled: Bool
     
     @NSManaged var pushPreference: PushPreferenceDTO?
 
@@ -92,9 +93,14 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.user = try saveUser(payload: payload)
         dto.isInvisible = payload.isInvisible
+
+        // If not privacy setting is provided by the backend then we treat as enabled by default.
+        // This is a bit different than the rest of the backend responses, but it was done like this
+        // for backwards compatibility reasons on the server side.
         dto.isReadReceiptsEnabled = payload.privacySettings?.readReceipts?.enabled ?? true
         dto.isTypingIndicatorsEnabled = payload.privacySettings?.typingIndicators?.enabled ?? true
-        
+        dto.isDeliveryReceiptsEnabled = payload.privacySettings?.deliveryReceipts?.enabled ?? true
+
         // Save push preference
         if let pushPreference = payload.pushPreference {
             dto.pushPreference = try savePushPreference(id: payload.id, payload: pushPreference)
@@ -279,7 +285,8 @@ extension CurrentChatUser {
             mutedChannels: mutedChannels,
             privacySettings: .init(
                 typingIndicators: .init(enabled: dto.isTypingIndicatorsEnabled),
-                readReceipts: .init(enabled: dto.isReadReceiptsEnabled)
+                readReceipts: .init(enabled: dto.isReadReceiptsEnabled),
+                deliveryReceipts: .init(enabled: dto.isDeliveryReceiptsEnabled)
             ),
             avgResponseTime: dto.user.avgResponseTime?.intValue,
             pushPreference: pushPreference

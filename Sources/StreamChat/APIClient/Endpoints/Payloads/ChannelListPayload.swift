@@ -211,6 +211,8 @@ struct ChannelReadPayload: Decodable {
         case lastReadAt = "last_read"
         case lastReadMessageId = "last_read_message_id"
         case unreadMessagesCount = "unread_messages"
+        case lastDeliveredAt = "last_delivered_at"
+        case lastDeliveredMessageId = "last_delivered_message_id"
     }
 
     /// A user (see `User`).
@@ -221,6 +223,10 @@ struct ChannelReadPayload: Decodable {
     public let lastReadMessageId: MessageId?
     /// Unread message count for the user.
     public let unreadMessagesCount: Int
+    /// A last delivered date by the user.
+    public let lastDeliveredAt: Date?
+    /// Id for the last message the user has delivered. Nil means the user has never delivered this channel
+    public let lastDeliveredMessageId: MessageId?
 }
 
 /// A channel config.
@@ -228,6 +234,7 @@ public class ChannelConfig: Codable {
     private enum CodingKeys: String, CodingKey {
         case reactionsEnabled = "reactions"
         case typingEventsEnabled = "typing_events"
+        case deliveryEventsEnabled = "delivery_events"
         case readEventsEnabled = "read_events"
         case connectEventsEnabled = "connect_events"
         case uploadsEnabled = "uploads"
@@ -253,6 +260,8 @@ public class ChannelConfig: Codable {
     public let typingEventsEnabled: Bool
     /// Controls whether the chat shows how far you've read. Enabled by default.
     public let readEventsEnabled: Bool
+    /// Controls whether messages delivered events are handled. Disabled by default.
+    public let deliveryEventsEnabled: Bool
     /// Determines if events are fired for connecting and disconnecting to a chat. Enabled by default.
     public let connectEventsEnabled: Bool
     /// Enables uploads.
@@ -291,6 +300,7 @@ public class ChannelConfig: Codable {
         reactionsEnabled = try container.decode(Bool.self, forKey: .reactionsEnabled)
         typingEventsEnabled = try container.decode(Bool.self, forKey: .typingEventsEnabled)
         readEventsEnabled = try container.decode(Bool.self, forKey: .readEventsEnabled)
+        deliveryEventsEnabled = try container.decodeIfPresent(Bool.self, forKey: .deliveryEventsEnabled) ?? false
         connectEventsEnabled = try container.decode(Bool.self, forKey: .connectEventsEnabled)
         uploadsEnabled = try container.decodeIfPresent(Bool.self, forKey: .uploadsEnabled) ?? false
         repliesEnabled = try container.decode(Bool.self, forKey: .repliesEnabled)
@@ -318,6 +328,7 @@ public class ChannelConfig: Codable {
         reactionsEnabled: Bool = false,
         typingEventsEnabled: Bool = false,
         readEventsEnabled: Bool = false,
+        deliveryEventsEnabled: Bool = false,
         connectEventsEnabled: Bool = false,
         uploadsEnabled: Bool = false,
         repliesEnabled: Bool = false,
@@ -338,6 +349,7 @@ public class ChannelConfig: Codable {
         self.reactionsEnabled = reactionsEnabled
         self.typingEventsEnabled = typingEventsEnabled
         self.readEventsEnabled = readEventsEnabled
+        self.deliveryEventsEnabled = deliveryEventsEnabled
         self.connectEventsEnabled = connectEventsEnabled
         self.uploadsEnabled = uploadsEnabled
         self.repliesEnabled = repliesEnabled

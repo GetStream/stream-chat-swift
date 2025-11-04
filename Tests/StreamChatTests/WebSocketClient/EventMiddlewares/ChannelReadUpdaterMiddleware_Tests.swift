@@ -38,7 +38,9 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             user: currentUserPayload,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
-            unreadMessagesCount: 5
+            unreadMessagesCount: 5,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
         )
 
         channelPayload = ChannelPayload(

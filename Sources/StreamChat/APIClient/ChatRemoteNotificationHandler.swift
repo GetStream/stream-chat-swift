@@ -128,12 +128,22 @@ public class ChatRemoteNotificationHandler {
     let chatCategoryIdentifiers: Set<String> = ["stream.chat", "MESSAGE_NEW"]
     let channelRepository: ChannelRepository
     let messageRepository: MessageRepository
+    let currentUserUpdater: CurrentUserUpdater
+    let deliveryCriteriaValidator: MessageDeliveryCriteriaValidating
 
-    public init(client: ChatClient, content: UNNotificationContent) {
+    public init(
+        client: ChatClient,
+        content: UNNotificationContent
+    ) {
         self.client = client
         self.content = content
         channelRepository = client.channelRepository
         messageRepository = client.messageRepository
+        currentUserUpdater = CurrentUserUpdater(
+            database: client.databaseContainer,
+            apiClient: client.apiClient
+        )
+        self.deliveryCriteriaValidator = MessageDeliveryCriteriaValidator()
     }
 
     public func handleNotification(completion: @escaping (ChatPushNotificationContent) -> Void) -> Bool {
@@ -143,6 +153,23 @@ public class ChatRemoteNotificationHandler {
 
         getContent(completion: completion)
         return true
+    }
+
+    /// Marks the message as delivered from a push notification if the app is not active.
+    public func markMessageAsDelivered(_ message: ChatMessage, for channel: ChatChannel) {
+        guard let currentUser = client.currentUserController().currentUser else {
+            return log.debug("No current user to mark messages as delivered")
+        }
+        // Make sure if the message was already delivered, do not mark it as delivered.
+        // If the app is active, the middleware will mark it as delivered so the push
+        // does not need to do it.
+        guard deliveryCriteriaValidator.canMarkMessageAsDelivered(message, for: currentUser, in: channel) else {
+            log.debug("No message to be marked as delivered for messageId:\(message.id))")
+            return
+        }
+
+        let deliveryInfo = MessageDeliveryInfo(channelId: channel.cid, messageId: message.id)
+        currentUserUpdater.markMessagesAsDelivered([deliveryInfo])
     }
 
     private func getContent(completion: @escaping (ChatPushNotificationContent) -> Void) {

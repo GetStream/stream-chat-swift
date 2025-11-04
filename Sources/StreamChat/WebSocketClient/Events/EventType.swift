@@ -66,6 +66,8 @@ public extension EventType {
     static let messageDeleted: Self = "message.deleted"
     /// When a channel was marked as read.
     static let messageRead: Self = "message.read"
+    /// When a message was delivered to a user.
+    static let messageDelivered: Self = "message.delivered"
 
     /// When a member was added to a channel.
     static let memberAdded: Self = "member.added"
@@ -207,6 +209,7 @@ extension EventType {
         case .messageUpdated: return try MessageUpdatedEventDTO(from: response)
         case .messageDeleted: return try MessageDeletedEventDTO(from: response)
         case .messageRead: return try MessageReadEventDTO(from: response)
+        case .messageDelivered: return try MessageDeliveredEventDTO(from: response)
 
         case .memberAdded: return try MemberAddedEventDTO(from: response)
         case .memberUpdated: return try MemberUpdatedEventDTO(from: response)

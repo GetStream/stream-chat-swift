@@ -13,16 +13,19 @@ final class ChannelListController_Tests: XCTestCase {
     private lazy var query: ChannelListQuery! = .init(filter: .in(.members, values: [memberId]))
     private lazy var client: ChatClient! = ChatClient.mock()
     private lazy var controllerCallbackQueueID: UUID! = .init()
-    private lazy var controller: ChatChannelListController! = {
-        let controller = ChatChannelListController(query: query, client: client, environment: env.environment)
-        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
-        return controller
-    }()
+    private var controller: ChatChannelListController!
 
     /// Workaround for unwrapping **controllerCallbackQueueID!** in each closure that captures it
     private var callbackQueueID: UUID { controllerCallbackQueueID }
 
     var database: DatabaseContainer_Spy { client.databaseContainer as! DatabaseContainer_Spy }
+
+    override func setUp() {
+        super.setUp()
+
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+    }
 
     override func tearDown() {
         query = nil
@@ -34,6 +37,7 @@ final class ChannelListController_Tests: XCTestCase {
         client.mockAPIClient.cleanUp()
         client = nil
         env.channelListUpdater?.cleanUp()
+        env.currentUserUpdater?.cleanUp()
 
         AssertAsync {
             Assert.canBeReleased(&controller)
@@ -328,7 +332,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_didReceiveEvent_whenNotificationAddedToChannelEvent_shouldLinkChannelToQuery() {
         controller.synchronize()
-        
+
         let event = makeAddedChannelEvent(with: .mock(cid: .unique))
         let eventExpectation = XCTestExpectation(description: "Event processed")
         controller.client.eventNotificationCenter.process(event) {
@@ -345,7 +349,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_didReceiveEvent_whenMessageNewEvent_shouldLinkChannelToQuery() {
         controller.synchronize()
-        
+
         let event = makeMessageNewEvent(with: .mock(cid: .unique))
         let eventExpectation = XCTestExpectation(description: "Event processed")
         controller.client.eventNotificationCenter.process(event) {
@@ -359,10 +363,10 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
         XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
     }
-    
+
     func test_didReceiveEvent_whenChannelVisibleEvent_shouldLinkChannelToQuery() {
         controller.synchronize()
-        
+
         let channel = ChatChannel.mock(cid: .unique)
         try? database.createChannel(cid: channel.cid, channelReads: [])
         let event = makeChannelVisibleEvent(with: channel)
@@ -381,7 +385,7 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_didReceiveEvent_whenNotificationMessageNewEvent_shouldLinkChannelToQuery() {
         controller.synchronize()
-        
+
         let event = makeNotificationMessageNewEvent(with: .mock(cid: .unique))
         let eventExpectation = XCTestExpectation(description: "Event processed")
         controller.client.eventNotificationCenter.process(event) {
@@ -862,6 +866,97 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(receivedError, error)
     }
 
+    // MARK: - Mark Channels as Delivered
+
+    func test_synchronize_callsMarkChannelsAsDeliveredAfterSuccessfulUpdate() throws {
+        // GIVEN
+        let currentUserId = UserId.unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
+        }
+
+        let message1 = ChatMessage.mock(id: .unique)
+        let message2 = ChatMessage.mock(id: .unique)
+        let channel1 = ChatChannel.mock(cid: .unique, latestMessages: [message1])
+        let channel2 = ChatChannel.mock(cid: .unique, latestMessages: [message2])
+        let channels = [channel1, channel2]
+
+        // Configure mock to mark all messages as deliverable
+        env.deliveryCriteriaValidator?.canMarkMessageAsDeliveredClosure = { _, _, _ in true }
+
+        // WHEN
+        controller.synchronize()
+        env.channelListUpdater?.update_completion?(.success(channels))
+
+        // THEN
+        AssertAsync.willBeTrue(env.currentUserUpdater?.markChannelsDelivered_deliveredMessages != nil)
+
+        let deliveredMessages = env.currentUserUpdater?.markChannelsDelivered_deliveredMessages
+        XCTAssertEqual(deliveredMessages?.count, 2)
+        XCTAssertEqual(deliveredMessages?.map(\.channelId), [channel1.cid, channel2.cid])
+        XCTAssertEqual(deliveredMessages?.map(\.messageId), [message1.id, message2.id])
+    }
+
+    func test_loadNextChannels_callsMarkChannelsAsDeliveredAfterSuccessfulUpdate() throws {
+        // GIVEN
+        let currentUserId = UserId.unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
+        }
+
+        let message = ChatMessage.mock(id: .unique)
+        let channel = ChatChannel.mock(cid: .unique, latestMessages: [message])
+        let channels = [channel]
+
+        // Configure mock to mark all messages as deliverable
+        env.deliveryCriteriaValidator?.canMarkMessageAsDeliveredClosure = { _, _, _ in true }
+
+        // WHEN
+        controller.loadNextChannels()
+        env.channelListUpdater?.update_completion?(.success(channels))
+
+        // THEN
+        AssertAsync.willBeTrue(env.currentUserUpdater?.markChannelsDelivered_deliveredMessages != nil)
+
+        let deliveredMessages = env.currentUserUpdater?.markChannelsDelivered_deliveredMessages
+        XCTAssertEqual(deliveredMessages?.count, 1)
+        XCTAssertEqual(deliveredMessages?.first?.channelId, channel.cid)
+        XCTAssertEqual(deliveredMessages?.first?.messageId, message.id)
+    }
+
+    func test_markChannelsAsDeliveredIfNeeded_onlyMarksChannelsMeetingDeliveryCriteria() throws {
+        // GIVEN
+        let currentUserId = UserId.unique
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
+        }
+
+        let message1 = ChatMessage.mock(id: .unique)
+        let message2 = ChatMessage.mock(id: .unique)
+        let message3 = ChatMessage.mock(id: .unique)
+        let channel1 = ChatChannel.mock(cid: .unique, latestMessages: [message1])
+        let channel2 = ChatChannel.mock(cid: .unique, latestMessages: [message2])
+        let channel3 = ChatChannel.mock(cid: .unique, latestMessages: [message3])
+        let channels = [channel1, channel2, channel3]
+
+        // Configure mock to only mark channel1 and channel3 as deliverable
+        env.deliveryCriteriaValidator?.canMarkMessageAsDeliveredClosure = { _, _, channel in
+            channel.cid == channel1.cid || channel.cid == channel3.cid
+        }
+
+        // WHEN
+        controller.synchronize()
+        env.channelListUpdater?.update_completion?(.success(channels))
+
+        // THEN
+        AssertAsync.willBeTrue(env.currentUserUpdater?.markChannelsDelivered_deliveredMessages != nil)
+
+        let deliveredMessages = env.currentUserUpdater?.markChannelsDelivered_deliveredMessages
+        XCTAssertEqual(deliveredMessages?.count, 2) // Only channel1 and channel3
+        XCTAssertEqual(deliveredMessages?.map(\.channelId), [channel1.cid, channel3.cid])
+        XCTAssertEqual(deliveredMessages?.map(\.messageId), [message1.id, message3.id])
+    }
+
     // MARK: - Mark all read
 
     func test_markAllRead_callsChannelListUpdater() {
@@ -1235,7 +1330,7 @@ final class ChannelListController_Tests: XCTestCase {
             expectedResult: [cid1, cid2, cid3]
         )
     }
-    
+
     func test_filterPredicate_and_withORAndOnlyCustomKeys() throws {
         let memberId1 = UserId.unique
         let memberId2 = UserId.unique
@@ -1260,7 +1355,7 @@ final class ChannelListController_Tests: XCTestCase {
             expectedResult: [cid1, cid2]
         )
     }
-    
+
     func test_filterPredicate_and_withANDAndOnlyCustomKeys() throws {
         let cid1 = ChannelId(type: .messaging, id: "1")
         let cid2 = ChannelId(type: .messaging, id: "2")
@@ -1283,7 +1378,7 @@ final class ChannelListController_Tests: XCTestCase {
             expectedResult: [cid1, cid2]
         )
     }
-    
+
     func test_filterPredicate_and_withNORAndOnlyCustomKeys() throws {
         let cid1 = ChannelId(type: .messaging, id: "1")
         let cid2 = ChannelId(type: .messaging, id: "2")
@@ -1676,7 +1771,9 @@ final class ChannelListController_Tests: XCTestCase {
                             user: .dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
-                            unreadMessagesCount: 3
+                            unreadMessagesCount: 3,
+                            lastDeliveredAt: nil,
+                            lastDeliveredMessageId: nil
                         )
                     ]
                 ),
@@ -1685,7 +1782,9 @@ final class ChannelListController_Tests: XCTestCase {
                         user: .dummy(userId: .unique),
                         lastReadAt: .unique,
                         lastReadMessageId: nil,
-                        unreadMessagesCount: 10
+                        unreadMessagesCount: 10,
+                        lastDeliveredAt: nil,
+                        lastDeliveredMessageId: nil
                     )
                 ]),
                 .dummy(channel: .dummy(team: .unique)),
@@ -1697,7 +1796,9 @@ final class ChannelListController_Tests: XCTestCase {
                             user: .dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
-                            unreadMessagesCount: 20
+                            unreadMessagesCount: 20,
+                            lastDeliveredAt: nil,
+                            lastDeliveredMessageId: nil
                         )
                     ]
                 )
@@ -1729,7 +1830,9 @@ final class ChannelListController_Tests: XCTestCase {
                             user: .dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
-                            unreadMessagesCount: 3
+                            unreadMessagesCount: 3,
+                            lastDeliveredAt: nil,
+                            lastDeliveredMessageId: nil
                         )
                     ]
                 ),
@@ -1742,7 +1845,9 @@ final class ChannelListController_Tests: XCTestCase {
                             user: .dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
-                            unreadMessagesCount: 20
+                            unreadMessagesCount: 20,
+                            lastDeliveredAt: nil,
+                            lastDeliveredMessageId: nil
                         )
                     ]
                 )
@@ -1805,7 +1910,7 @@ final class ChannelListController_Tests: XCTestCase {
             expectedResult.map(\.rawValue).sorted()
         )
     }
-  
+
     func test_filterPredicate_noTeam_returnsExpectedResults() throws {
         let cid = ChannelId.unique
 
@@ -1918,7 +2023,7 @@ final class ChannelListController_Tests: XCTestCase {
             unreadCount: nil
         )
     }
-    
+
     private func makeChannelVisibleEvent(with channel: ChatChannel) -> ChannelVisibleEvent {
         ChannelVisibleEvent(
             cid: channel.cid,
@@ -2005,6 +2110,8 @@ private class ChannelsUpdateWaiter: ChatChannelListControllerDelegate {
 
 private class TestEnvironment {
     @Atomic var channelListUpdater: ChannelListUpdater_Spy?
+    @Atomic var currentUserUpdater: CurrentUserUpdater_Mock?
+    @Atomic var deliveryCriteriaValidator: MessageDeliveryCriteriaValidator_Mock?
     @Atomic var channelWatcherHandler: ChannelWatcherHandler_Mock?
 
     lazy var environment: ChatChannelListController.Environment =
@@ -2027,6 +2134,17 @@ private class TestEnvironment {
                     worker: worker,
                     channelWatcherHandler: self.channelWatcherHandler!
                 )
+            },
+            currentUserUpdaterBuilder: { [unowned self] in
+                self.currentUserUpdater = CurrentUserUpdater_Mock(
+                    database: $0,
+                    apiClient: $1
+                )
+                return self.currentUserUpdater!
+            },
+            deliveryCriteriaValidatorBuilder: { [unowned self] in
+                self.deliveryCriteriaValidator = MessageDeliveryCriteriaValidator_Mock()
+                return self.deliveryCriteriaValidator!
             }
         )
 }

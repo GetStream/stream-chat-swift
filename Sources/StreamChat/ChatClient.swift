@@ -78,6 +78,9 @@ public class ChatClient {
     
     let pollsRepository: PollsRepository
 
+    /// Tracker for managing channel delivery status and throttling
+    let channelDeliveryTracker: ChannelDeliveryTracker
+
     /// Repository for handling draft messages
     lazy var draftMessagesRepository: DraftMessagesRepository = {
         environment.draftMessagesRepositoryBuilder(databaseContainer, apiClient)
@@ -161,11 +164,20 @@ public class ChatClient {
             encoder: apiClientEncoder,
             urlSessionConfiguration: urlSessionConfiguration
         )
+        let currentUserUpdater = environment.currentUserUpdaterBuilder(
+            databaseContainer,
+            apiClient
+        )
+        let channelDeliveryTracker = environment.channelDeliveryTrackerBuilder(
+            currentUserUpdater
+        )
         let eventNotificationCenter = factory.makeEventNotificationCenter(
             databaseContainer: databaseContainer,
             currentUserId: {
                 nil
-            }
+            },
+            currentUserUpdater: currentUserUpdater,
+            channelDeliveryTracker: channelDeliveryTracker
         )
         let messageRepository = environment.messageRepositoryBuilder(
             databaseContainer,
@@ -224,6 +236,7 @@ public class ChatClient {
             apiClient
         )
         pollsRepository = environment.pollsRepositoryBuilder(databaseContainer, apiClient)
+        self.channelDeliveryTracker = channelDeliveryTracker
         channelWatcherHandler = ChannelWatcherHandler(
             channelListUpdater: channelListUpdater
         )

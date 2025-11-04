@@ -495,20 +495,327 @@ final class ChatChannel_Tests: XCTestCase {
         // Verify immutable properties remain the same
         XCTAssertEqual(completelyUpdatedChannel.cid, originalChannel.cid)
     }
+
+    // MARK: - Reads and DeliveredReads Tests
     
+    func test_reads_forMessage_whenNoReads_returnsEmptyArray() {
+        // GIVEN
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: []
+        )
+        
+        // WHEN
+        let result = channel.reads(for: message)
+        
+        // THEN
+        XCTAssertTrue(result.isEmpty)
+    }
+    
+    func test_reads_forMessage_whenNoReadsAfterMessage_returnsEmptyArray() {
+        // GIVEN
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 1000), // Before message
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: .unique)
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.reads(for: message)
+        
+        // THEN
+        XCTAssertTrue(result.isEmpty)
+    }
+    
+    func test_reads_forMessage_whenMessageFromSameUser_returnsEmptyArray() {
+        // GIVEN
+        let authorId = UserId.unique
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: authorId),
+            createdAt: Date(timeIntervalSince1970: 1000)
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 2000), // After message
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: authorId) // Same as message author
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.reads(for: message)
+        
+        // THEN
+        XCTAssertTrue(result.isEmpty)
+    }
+    
+    func test_reads_forMessage_whenValidReads_returnsCorrectReads() {
+        // GIVEN
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let user1 = ChatUser.mock(id: .unique)
+        let user2 = ChatUser.mock(id: .unique)
+        let user3 = ChatUser.mock(id: .unique)
+        
+        let readState1 = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 3000), // After message
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: user1
+        )
+        let readState2 = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 1000), // Before message
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: user2
+        )
+        let readState3 = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 2500), // After message
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: user3
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: [readState1, readState2, readState3]
+        )
+        
+        // WHEN
+        let result = channel.reads(for: message)
+        
+        // THEN
+        XCTAssertEqual(result.count, 2)
+        XCTAssertTrue(result.contains { $0.user.id == user1.id })
+        XCTAssertTrue(result.contains { $0.user.id == user3.id })
+        XCTAssertFalse(result.contains { $0.user.id == user2.id })
+    }
+    
+    func test_deliveredReads_forMessage_whenNoReads_returnsEmptyArray() {
+        // GIVEN
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: []
+        )
+        
+        // WHEN
+        let result = channel.deliveredReads(for: message)
+        
+        // THEN
+        XCTAssertTrue(result.isEmpty)
+    }
+    
+    func test_deliveredReads_forMessage_whenNoDeliveredAfterMessage_returnsEmptyArray() {
+        // GIVEN
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 3000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: .unique),
+            lastDeliveredAt: Date(timeIntervalSince1970: 1000), // Before message
+            lastDeliveredMessageId: .unique
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.deliveredReads(for: message)
+        
+        // THEN
+        XCTAssertTrue(result.isEmpty)
+    }
+    
+    func test_deliveredReads_forMessage_whenNoDeliveredState_returnsEmptyArray() {
+        // GIVEN
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 3000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: .unique)
+            // No delivered state
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.deliveredReads(for: message)
+        
+        // THEN
+        XCTAssertTrue(result.isEmpty)
+    }
+    
+    func test_deliveredReads_forMessage_whenMessageFromSameUser_returnsEmptyArray() {
+        // GIVEN
+        let authorId = UserId.unique
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: authorId),
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 3000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: authorId), // Same as message author
+            lastDeliveredAt: Date(timeIntervalSince1970: 2500), // After message
+            lastDeliveredMessageId: .unique
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.deliveredReads(for: message)
+        
+        // THEN
+        XCTAssertTrue(result.isEmpty)
+    }
+    
+    func test_deliveredReads_forMessage_whenValidDeliveredReads_returnsCorrectReads() {
+        // GIVEN
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let user1 = ChatUser.mock(id: .unique)
+        let user2 = ChatUser.mock(id: .unique)
+        let user3 = ChatUser.mock(id: .unique)
+        
+        let readState1 = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 3000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: user1,
+            lastDeliveredAt: Date(timeIntervalSince1970: 2500), // After message
+            lastDeliveredMessageId: .unique
+        )
+        let readState2 = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 3000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: user2,
+            lastDeliveredAt: Date(timeIntervalSince1970: 1000), // Before message
+            lastDeliveredMessageId: .unique
+        )
+        let readState3 = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 3000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: user3,
+            lastDeliveredAt: Date(timeIntervalSince1970: 2200), // After message
+            lastDeliveredMessageId: .unique
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: [readState1, readState2, readState3]
+        )
+        
+        // WHEN
+        let result = channel.deliveredReads(for: message)
+        
+        // THEN
+        XCTAssertEqual(result.count, 2)
+        XCTAssertTrue(result.contains { $0.user.id == user1.id })
+        XCTAssertTrue(result.contains { $0.user.id == user3.id })
+        XCTAssertFalse(result.contains { $0.user.id == user2.id })
+    }
+    
+    func test_deliveredReads_forMessage_whenDeliveredAtIsNil_returnsEmptyArray() {
+        // GIVEN
+        let message = ChatMessage.mock(
+            id: .unique,
+            cid: .unique,
+            text: "Test message",
+            author: .mock(id: .unique),
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let readState = ChatChannelRead(
+            lastReadAt: Date(timeIntervalSince1970: 3000),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 0,
+            user: .mock(id: .unique),
+            lastDeliveredAt: nil, // nil delivered time
+            lastDeliveredMessageId: .unique
+        )
+        let channel = ChatChannel.mock(
+            cid: .unique,
+            reads: [readState]
+        )
+        
+        // WHEN
+        let result = channel.deliveredReads(for: message)
+        
+        // THEN
+        XCTAssertTrue(result.isEmpty)
+    }
+
     // MARK: - Helper Methods
-    
+
     private func createComprehensiveChannel() -> ChatChannel {
         let createdBy = ChatUser.mock(id: .unique, name: "Original Creator")
         let member = ChatChannelMember.dummy(id: .unique)
         let watcher = ChatUser.mock(id: .unique, name: "Original Watcher")
-        let read = ChatChannelRead.mock(
-            lastReadAt: Date().addingTimeInterval(-1800),
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 5,
-            user: .mock(id: .unique)
-        )
-        
+
         return ChatChannel.mock(
             cid: .unique,
             name: "Original Channel",

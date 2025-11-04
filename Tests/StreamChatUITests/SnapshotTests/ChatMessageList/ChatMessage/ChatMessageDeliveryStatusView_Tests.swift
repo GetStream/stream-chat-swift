@@ -113,4 +113,86 @@ final class ChatMessageDeliveryStatusView_Tests: XCTestCase {
 
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
+
+    // MARK: - Delivered
+
+    func test_appearance_whenMessageIsDeliveredInDirectMessagesChannel() {
+        let messageAuthor: ChatUser = .mock(id: .unique)
+        let otherUser: ChatUser = .mock(id: .unique)
+        let messageCreatedAt = Date()
+        let cid = ChannelId.unique
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: .unique,
+            author: messageAuthor,
+            createdAt: messageCreatedAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+
+        let channel: ChatChannel = .mock(
+            cid: cid,
+            config: .mock(readEventsEnabled: true, deliveryEventsEnabled: true),
+            memberCount: 2,
+            reads: [
+                .mock(
+                    lastReadAt: Date.distantPast,
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 0,
+                    user: otherUser,
+                    lastDeliveredAt: messageCreatedAt,
+                    lastDeliveredMessageId: message.id
+                )
+            ]
+        )
+
+        let view = ChatMessageDeliveryStatusView().withoutAutoresizingMaskConstraints
+
+        view.content = .init(message: message, channel: channel)
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenMessageIsDeliveredInGroupChannel() {
+        let messageAuthor: ChatUser = .mock(id: .unique)
+        let otherUser: ChatUser = .mock(id: .unique)
+        let messageCreatedAt = Date()
+        let cid = ChannelId.unique
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            author: messageAuthor,
+            createdAt: messageCreatedAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+
+        let channel: ChatChannel = .mock(
+            cid: cid,
+            config: .mock(readEventsEnabled: true, deliveryEventsEnabled: true),
+            memberCount: 10,
+            reads: [
+                .mock(
+                    lastReadAt: Date.distantPast,
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 0,
+                    user: otherUser,
+                    lastDeliveredAt: messageCreatedAt,
+                    lastDeliveredMessageId: message.id
+                )
+            ]
+        )
+
+        let view = ChatMessageDeliveryStatusView().withoutAutoresizingMaskConstraints
+
+        view.content = .init(message: message, channel: channel)
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
 }

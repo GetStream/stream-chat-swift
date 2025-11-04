@@ -124,7 +124,9 @@ extension ChannelReadPayload {
             lastReadAt: lastReadAt,
             lastReadMessageId: lastReadMessageId,
             unreadMessagesCount: unreadMessagesCount,
-            user: user.asModel()
+            user: user.asModel(),
+            lastDeliveredAt: lastDeliveredAt,
+            lastDeliveredMessageId: lastDeliveredMessageId
         )
     }
 }

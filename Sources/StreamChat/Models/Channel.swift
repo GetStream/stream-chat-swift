@@ -383,6 +383,46 @@ extension ChatChannel {
 
     /// Returns `true` if the channel has one or more unread messages for the current user.
     public var isUnread: Bool { unreadCount != .noUnread }
+
+    /// Returns the user's read state for this channel.
+    /// - Parameter userId: The ID of the user.
+    /// - Returns: The read state, or `nil` if not found.
+    public func read(for userId: UserId) -> ChatChannelRead? {
+        reads.first { $0.user.id == userId }
+    }
+
+    /// Returns read states for users who have read the given message.
+    ///
+    /// A user is considered to have read a message when:
+    /// - The user has a read state in the channel
+    /// - The user's last read timestamp is after the message creation time
+    /// - The user is not the author of the message
+    ///
+    /// - Parameter message: The message to check read status for.
+    /// - Returns: Array of read states for users who have read the message.
+    public func reads(for message: ChatMessage) -> [ChatChannelRead] {
+        reads.filter { read in
+            read.lastReadAt >= message.createdAt && read.user.id != message.author.id
+        }
+    }
+
+    /// Returns read states for users who have delivered the given message.
+    ///
+    /// A user is considered to have delivered a message when:
+    /// - The user has a read state in the channel
+    /// - The user's last delivered timestamp is after the message creation time
+    /// - The user is not the author of the message
+    ///
+    /// - Parameter message: The message to check delivery status for.
+    /// - Returns: Array of read states for users who have delivered the message.
+    public func deliveredReads(for message: ChatMessage) -> [ChatChannelRead] {
+        reads.filter { read in
+            // We add a 1 second error interval in case the delivery is instant.
+            let lastDeliveredAt = read.lastDeliveredAt?.addingTimeInterval(1) ?? .distantPast
+            let isNotCurrentUser = read.user.id != message.author.id
+            return lastDeliveredAt >= message.createdAt && isNotCurrentUser
+        }
+    }
 }
 
 /// A type-erased version of `ChannelModel<CustomData>`. Not intended to be used directly.

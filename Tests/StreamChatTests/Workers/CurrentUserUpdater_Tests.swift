@@ -987,4 +987,63 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         // THEN
         AssertAsync.willBeTrue(completionError is ClientError.CurrentUserDoesNotExist)
     }
+
+    // MARK: - Mark Channels Delivered
+
+    func test_markMessagesAsDelivered_makesCorrectAPICall() {
+        // GIVEN
+        let deliveredMessages = [
+            MessageDeliveryInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique),
+            MessageDeliveryInfo(channelId: .init(type: .livestream, id: "channel2"), messageId: .unique)
+        ]
+
+        // WHEN
+        currentUserUpdater.markMessagesAsDelivered(deliveredMessages)
+
+        // THEN
+        let expectedPayload = ChannelDeliveredRequestPayload(
+            latestDeliveredMessages: deliveredMessages.map { $0.asPayload }
+        )
+        let expectedEndpoint: Endpoint<EmptyResponse> = .markChannelsDelivered(payload: expectedPayload)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_markMessagesAsDelivered_successfulResponse_isPropagatedToCompletion() {
+        // GIVEN
+        let deliveredMessages = [
+            MessageDeliveryInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
+        ]
+        var completionCalled = false
+
+        // WHEN
+        currentUserUpdater.markMessagesAsDelivered(deliveredMessages) { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        // THEN
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
+    func test_markMessagesAsDelivered_errorResponse_isPropagatedToCompletion() {
+        // GIVEN
+        let deliveredMessages = [
+            MessageDeliveryInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
+        ]
+        var completionCalledError: Error?
+        let error = TestError()
+
+        // WHEN
+        currentUserUpdater.markMessagesAsDelivered(
+            deliveredMessages
+        ) {
+            completionCalledError = $0
+        }
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+
+        // THEN
+        AssertAsync.willBeEqual(completionCalledError as? TestError, error)
+    }
 }

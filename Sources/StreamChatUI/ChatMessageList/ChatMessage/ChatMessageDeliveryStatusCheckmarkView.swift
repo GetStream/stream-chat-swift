@@ -42,7 +42,7 @@ open class ChatMessageDeliveryStatusCheckmarkView: _View, ThemeProvider {
                 return appearance.images.messageDeliveryStatusSending
             case .sent:
                 return appearance.images.messageDeliveryStatusSent
-            case .read:
+            case .read, .delivered:
                 return appearance.images.messageDeliveryStatusRead
             case .failed:
                 return appearance.images.messageDeliveryStatusFailed

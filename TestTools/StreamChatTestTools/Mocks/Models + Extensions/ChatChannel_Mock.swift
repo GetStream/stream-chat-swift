@@ -11,6 +11,7 @@ public extension ChannelConfig {
         reactionsEnabled: Bool = true,
         typingEventsEnabled: Bool = true,
         readEventsEnabled: Bool = true,
+        deliveryEventsEnabled: Bool = true,
         connectEventsEnabled: Bool = true,
         uploadsEnabled: Bool = true,
         repliesEnabled: Bool = true,
@@ -31,6 +32,7 @@ public extension ChannelConfig {
             reactionsEnabled: reactionsEnabled,
             typingEventsEnabled: typingEventsEnabled,
             readEventsEnabled: readEventsEnabled,
+            deliveryEventsEnabled: deliveryEventsEnabled,
             connectEventsEnabled: connectEventsEnabled,
             uploadsEnabled: uploadsEnabled,
             repliesEnabled: repliesEnabled,
@@ -56,13 +58,17 @@ public extension ChatChannelRead {
         lastReadAt: Date,
         lastReadMessageId: MessageId?,
         unreadMessagesCount: Int,
-        user: ChatUser
+        user: ChatUser,
+        lastDeliveredAt: Date? = nil,
+        lastDeliveredMessageId: MessageId? = nil
     ) -> Self {
         .init(
             lastReadAt: lastReadAt,
             lastReadMessageId: lastReadMessageId,
             unreadMessagesCount: unreadMessagesCount,
-            user: user
+            user: user,
+            lastDeliveredAt: lastDeliveredAt,
+            lastDeliveredMessageId: lastDeliveredMessageId
         )
     }
 }

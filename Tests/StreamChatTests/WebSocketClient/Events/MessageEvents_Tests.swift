@@ -147,4 +147,27 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
         XCTAssertNil(event?.unreadCount)
     }
+
+    func test_delivered() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "MessageDelivered")
+        let event = try eventDecoder.decode(from: json) as? MessageDeliveredEventDTO
+        XCTAssertEqual(event?.user.id, "broken-waterfall-5")
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
+        XCTAssertEqual(event?.lastDeliveredMessageId, messageId)
+        XCTAssertEqual(event?.lastDeliveredAt.description, "2020-07-17 13:55:56 +0000")
+    }
+
+    func test_messageDeliveredEvent_toDomainEvent() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "MessageDelivered")
+        let event = try eventDecoder.decode(from: json) as? MessageDeliveredEventDTO
+
+        let channelId = try XCTUnwrap(event?.cid)
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
+        _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
+        _ = try session.saveUser(payload: .dummy(userId: event?.user.id ?? ""))
+
+        let domainEvent = event?.toDomainEvent(session: session)
+        XCTAssertEqual(domainEvent is MessageDeliveredEvent, true)
+    }
 }

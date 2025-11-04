@@ -10,6 +10,8 @@ class ChannelReadDTO: NSManagedObject {
     @NSManaged var lastReadAt: DBDate
     @NSManaged var lastReadMessageId: MessageId?
     @NSManaged var unreadMessageCount: Int32
+    @NSManaged var lastDeliveredAt: DBDate?
+    @NSManaged var lastDeliveredMessageId: MessageId?
 
     // MARK: - Relationships
 
@@ -87,6 +89,8 @@ extension NSManagedObjectContext {
         dto.lastReadAt = payload.lastReadAt.bridgeDate
         dto.lastReadMessageId = payload.lastReadMessageId
         dto.unreadMessageCount = Int32(payload.unreadMessagesCount)
+        dto.lastDeliveredAt = payload.lastDeliveredAt?.bridgeDate
+        dto.lastDeliveredMessageId = payload.lastDeliveredMessageId
 
         return dto
     }
@@ -209,7 +213,9 @@ extension ChatChannelRead {
             lastReadAt: dto.lastReadAt.bridgeDate,
             lastReadMessageId: dto.lastReadMessageId,
             unreadMessagesCount: Int(dto.unreadMessageCount),
-            user: dto.user.asModel()
+            user: dto.user.asModel(),
+            lastDeliveredAt: dto.lastDeliveredAt?.bridgeDate,
+            lastDeliveredMessageId: dto.lastDeliveredMessageId
         )
     }
 }
