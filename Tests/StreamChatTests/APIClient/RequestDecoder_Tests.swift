@@ -4,6 +4,7 @@
 
 @testable import StreamChat
 @testable import StreamChatTestTools
+import StreamCore
 import XCTest
 
 final class RequestDecoder_Tests: XCTestCase {
@@ -54,7 +55,7 @@ final class RequestDecoder_Tests: XCTestCase {
 
     func test_decodingResponseWithServerError() throws {
         // Prepare test data to simulate error payload from the server
-        let errorPayload = ErrorPayload(code: 0, message: "Test", statusCode: 400)
+        let errorPayload = APIError(code: 0, message: "Test", statusCode: 400)
         let data = try JSONEncoder.stream.encode(errorPayload)
         let response = HTTPURLResponse(url: .unique(), statusCode: 400, httpVersion: nil, headerFields: nil)
 
@@ -62,13 +63,13 @@ final class RequestDecoder_Tests: XCTestCase {
         XCTAssertThrowsError(try {
             let _: Data = try self.decoder.decodeRequestResponse(data: data, response: response, error: nil)
         }()) { (error) in
-            XCTAssert((error as? ClientError)?.underlyingError is ErrorPayload)
+            XCTAssertNotNil((error as? ClientError)?.apiError)
         }
     }
 
     func test_decodingResponseWithServerError_containingExpiredToken() throws {
         // Prepare test data to simulate the "token expired" server error
-        let errorPayload = ErrorPayload(code: 40, message: "Test", statusCode: 400)
+        let errorPayload = APIError(code: 40, message: "Test", statusCode: 400)
         let data = try JSONEncoder.stream.encode(errorPayload)
         let response = HTTPURLResponse(url: .unique(), statusCode: 400, httpVersion: nil, headerFields: nil)
 

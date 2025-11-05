@@ -4,13 +4,13 @@
 
 import Foundation
 @testable import StreamChat
+@testable import StreamCore
 
 /// Mock implementation of `WebSocketClient`.
 final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
     let init_sessionConfiguration: URLSessionConfiguration
-    let init_requestEncoder: RequestEncoder
     let init_eventDecoder: AnyEventDecoder
-    let init_eventNotificationCenter: EventNotificationCenter
+    let init_eventNotificationCenter: PersistentEventNotificationCenter
     let init_environment: WebSocketClient.Environment
 
     var connect_calledCounter = 0
@@ -21,24 +21,22 @@ final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
     var disconnect_called: Bool { disconnect_calledCounter > 0 }
     var disconnect_completion: (() -> Void)?
 
-    var mockedConnectionState: WebSocketConnectionState?
-
-    override var connectionState: WebSocketConnectionState {
-        mockedConnectionState ?? super.connectionState
+    var mockedConnectionState: WebSocketConnectionState {
+        get { connectionState }
+        set { connectionState = newValue }
     }
 
     init(
         sessionConfiguration: URLSessionConfiguration = .ephemeral,
-        requestEncoder: RequestEncoder = DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
         eventDecoder: AnyEventDecoder = EventDecoder(),
-        eventNotificationCenter: EventNotificationCenter = EventNotificationCenter_Mock(database: DatabaseContainer_Spy()),
+        eventNotificationCenter: PersistentEventNotificationCenter = EventNotificationCenter_Mock(database: DatabaseContainer_Spy()),
         pingController: WebSocketPingController? = nil,
         webSocketEngine: WebSocketEngine? = nil,
         eventBatcher: EventBatcher? = nil
     ) {
         var environment = WebSocketClient.Environment.mock
         if let pingController = pingController {
-            environment.createPingController = { _, _ in pingController }
+            environment.createPingController = { _, _, _ in pingController }
         }
 
         if let webSocketEngine = webSocketEngine {
@@ -50,17 +48,17 @@ final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
         }
 
         init_sessionConfiguration = sessionConfiguration
-        init_requestEncoder = requestEncoder
         init_eventDecoder = eventDecoder
         init_eventNotificationCenter = eventNotificationCenter
         init_environment = environment
 
         super.init(
             sessionConfiguration: sessionConfiguration,
-            requestEncoder: requestEncoder,
             eventDecoder: eventDecoder,
             eventNotificationCenter: eventNotificationCenter,
-            environment: environment
+            webSocketClientType: .coordinator,
+            environment: environment,
+            connectRequest: nil
         )
     }
 
@@ -68,9 +66,10 @@ final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
         connect_calledCounter += 1
     }
 
-    override func disconnect(
+    override public func disconnect(
+        code: URLSessionWebSocketTask.CloseCode = .normalClosure,
         source: WebSocketConnectionState.DisconnectionSource = .userInitiated,
-        completion: @escaping () -> Void
+        completion: @Sendable @escaping () -> Void
     ) {
         disconnect_calledCounter += 1
         disconnect_source = source

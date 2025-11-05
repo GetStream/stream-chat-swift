@@ -99,15 +99,15 @@ final class Error_Tests: XCTestCase {
         XCTAssertFalse(error.isBackendErrorWith400StatusCode)
     }
 
-    func test_isBackendErrorWith400StatusCode_errorIsClientErrorWithErrorPayload() {
+    func test_isBackendErrorWith400StatusCode_errorIsClientErrorWithAPIError() {
         // When error is a ClientError, it's unerdlying error is a backend error,
         // but it's status code is not 400
-        let error = ClientError(with: ErrorPayload(code: 0, message: "", statusCode: 503))
+        let error = ClientError(with: APIError(code: 0, message: "", statusCode: 503))
         XCTAssertFalse(error.isBackendErrorWith400StatusCode)
     }
 
     func test_isBackendErrorWith400StatusCode() {
-        let error = ClientError(with: ErrorPayload(code: 0, message: "", statusCode: 400))
+        let error = ClientError(with: APIError(code: 0, message: "", statusCode: 400))
         XCTAssertTrue(error.isBackendErrorWith400StatusCode)
     }
 }
