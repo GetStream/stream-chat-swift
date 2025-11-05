@@ -68,7 +68,7 @@ extension Array where Element == ChatChannel {
     }
 }
 
-extension ChatChannelRead{
+extension ChatChannelRead {
     init(
         lastReadAt: Date,
         lastReadMessageId: MessageId?,
