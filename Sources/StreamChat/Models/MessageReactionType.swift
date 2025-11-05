@@ -39,3 +39,9 @@ public struct MessageReactionType: RawRepresentable, Codable, Hashable, Expressi
         try container.encode(rawValue)
     }
 }
+
+extension MessageReactionType: Identifiable {
+    public var id: String {
+        rawValue
+    }
+}
