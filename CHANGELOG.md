@@ -11,7 +11,7 @@ _November 05, 2025_
 ## StreamChat
 ### ✅ Added
 - Add support for message delivered info [#3846](https://github.com/GetStream/stream-chat-swift/pull/3846)
-  - Add `ChatRemoteNotificationHandler.markMessageAsDelivered(deliveries:)`
+  - Add `ChatRemoteNotificationHandler.markMessageAsDelivered(message:channel:)`
   - Add `ChatChannel.reads(message:)` and `ChatChannel.deliveredReads(message:)`
   - Add `ChatChannelRead.lastDeliveredAt`
   - Add `ChatChannelRead.lastDeliveredMessageId`
