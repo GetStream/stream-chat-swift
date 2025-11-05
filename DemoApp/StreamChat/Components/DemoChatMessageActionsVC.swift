@@ -5,8 +5,8 @@
 import Foundation
 import StreamChat
 import StreamChatUI
-import UIKit
 import SwiftUI
+import UIKit
 
 final class DemoChatMessageActionsVC: ChatMessageActionsVC {
     var demoAppConfig: DemoAppConfig {

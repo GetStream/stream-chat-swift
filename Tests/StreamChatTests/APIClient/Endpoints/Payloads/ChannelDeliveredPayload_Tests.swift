@@ -7,7 +7,6 @@
 import XCTest
 
 final class ChannelDeliveredPayload_Tests: XCTestCase {
-    
     func test_deliveredMessagePayload_encodesCorrectly() throws {
         // GIVEN
         let cid = ChannelId(type: .messaging, id: "test-channel")
