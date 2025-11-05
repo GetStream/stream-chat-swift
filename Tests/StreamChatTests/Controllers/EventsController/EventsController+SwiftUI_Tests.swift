@@ -8,7 +8,7 @@ import XCTest
 
 final class EventsController_SwiftUI_Tests: iOS13TestCase {
     var controller: EventsController!
-    var notificationCenter: EventNotificationCenter!
+    var notificationCenter: PersistentEventNotificationCenter!
 
     // MARK: - Setup
 

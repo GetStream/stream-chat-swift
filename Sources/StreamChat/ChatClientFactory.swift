@@ -65,13 +65,11 @@ class ChatClientFactory {
     }
 
     func makeWebSocketClient(
-        requestEncoder: RequestEncoder,
         urlSessionConfiguration: URLSessionConfiguration,
-        eventNotificationCenter: EventNotificationCenter
+        eventNotificationCenter: PersistentEventNotificationCenter
     ) -> WebSocketClient? {
         environment.webSocketClientBuilder?(
             urlSessionConfiguration,
-            requestEncoder,
             EventDecoder(),
             eventNotificationCenter
         )
@@ -114,7 +112,7 @@ class ChatClientFactory {
     func makeEventNotificationCenter(
         databaseContainer: DatabaseContainer,
         currentUserId: @escaping () -> UserId?
-    ) -> EventNotificationCenter {
+    ) -> PersistentEventNotificationCenter {
         let center = environment.notificationCenterBuilder(databaseContainer, nil)
         let middlewares: [EventMiddleware] = [
             EventDataProcessorMiddleware(),

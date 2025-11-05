@@ -5,6 +5,7 @@
 import CoreData
 @testable import StreamChat
 @testable import StreamChatTestTools
+@testable import StreamCore
 import XCTest
 
 final class ChatConnectionController_Tests: XCTestCase {
@@ -84,7 +85,7 @@ final class ChatConnectionController_Tests: XCTestCase {
 
         // Simulate connection status updates.
         client.webSocketClient?.simulateConnectionStatus(.connecting)
-        client.webSocketClient?.simulateConnectionStatus(.connected(connectionId: .unique))
+        client.webSocketClient?.simulateConnectionStatus(.connected(healthCheckInfo: HealthCheckInfo(connectionId: .unique)))
 
         // Assert updates are received
         AssertAsync.willBeEqual(delegate.didUpdateConnectionStatus_statuses, [.connecting, .connected])
@@ -124,5 +125,12 @@ final class ChatConnectionController_Tests: XCTestCase {
         // Assert the `chatClientUpdater` is called.
         XCTAssertEqual(connectionRepository.disconnectSource, .userInitiated)
         XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: connectionRepository)
+    }
+}
+
+extension WebSocketClient {
+    /// Simulates connection status change
+    func simulateConnectionStatus(_ status: WebSocketConnectionState) {
+        connectionState = status
     }
 }

@@ -21,15 +21,4 @@ struct EventDecoder {
     }
 }
 
-extension ClientError {
-    public final class IgnoredEventType: ClientError, @unchecked Sendable {
-        override public var localizedDescription: String { "The incoming event type is not supported. Ignoring." }
-    }
-}
-
-/// A type-erased wrapper protocol for `EventDecoder`.
-protocol AnyEventDecoder {
-    func decode(from: Data) throws -> Event
-}
-
 extension EventDecoder: AnyEventDecoder {}

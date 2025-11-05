@@ -592,14 +592,14 @@ private struct FilterRightSide: Decodable {
         self.operator = container.allKeys.first!.stringValue
         var value: FilterValue?
 
-        if let dateValue = try? container.decode(Date.self, forKey: key) {
-            value = dateValue
-        } else if let stringValue = try? container.decode(String.self, forKey: key) {
-            value = stringValue
-        } else if let intValue = try? container.decode(Int.self, forKey: key) {
+        if let intValue = try? container.decode(Int.self, forKey: key) {
             value = intValue
         } else if let doubleValue = try? container.decode(Double.self, forKey: key) {
             value = doubleValue
+        } else if let dateValue = try? container.decode(Date.self, forKey: key) {
+            value = dateValue
+        } else if let stringValue = try? container.decode(String.self, forKey: key) {
+            value = stringValue
         } else if let boolValue = try? container.decode(Bool.self, forKey: key) {
             value = boolValue
         } else if let stringArray = try? container.decode([String].self, forKey: key) {
