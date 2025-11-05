@@ -43,7 +43,7 @@ class AuthenticationRepository_Mock: AuthenticationRepository, Spy, @unchecked S
         databaseContainer: DatabaseContainer,
         connectionRepository: ConnectionRepository,
         tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy(),
-        timerType: StreamChat.Timer.Type = DefaultTimer.self
+        timerType: TimerScheduling.Type = DefaultTimer.self
     ) {
         super.init(
             apiClient: apiClient,

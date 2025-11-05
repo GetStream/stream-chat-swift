@@ -4,6 +4,7 @@
 
 import Foundation
 @testable import StreamChat
+@testable import StreamCore
 
 public extension String {
     /// Converts a string to `Date`. Only for testing!

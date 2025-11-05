@@ -26,7 +26,7 @@ extension Error {
     }
 
     var isBackendErrorWith400StatusCode: Bool {
-        if let error = (self as? ClientError)?.underlyingError as? ErrorPayload,
+        if let error = (self as? ClientError)?.apiError,
            error.statusCode == 400 {
             return true
         }
@@ -34,16 +34,8 @@ extension Error {
     }
     
     var isBackendNotFound404StatusCode: Bool {
-        if let error = (self as? ClientError)?.underlyingError as? ErrorPayload,
+        if let error = (self as? ClientError)?.apiError,
            error.statusCode == 404 {
-            return true
-        }
-        return false
-    }
-
-    var isRateLimitError: Bool {
-        if let error = (self as? ClientError)?.underlyingError as? ErrorPayload,
-           error.statusCode == 429 {
             return true
         }
         return false

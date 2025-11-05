@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-struct VirtualTimeTimer: StreamChat.Timer {
+struct VirtualTimeTimer: TimerScheduling {
     nonisolated(unsafe) static var time: VirtualTime!
 
     static func invalidate() {

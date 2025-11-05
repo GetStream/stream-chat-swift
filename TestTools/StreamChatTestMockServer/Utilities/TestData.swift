@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamCore
 import XCTest
 
 public enum TestData {

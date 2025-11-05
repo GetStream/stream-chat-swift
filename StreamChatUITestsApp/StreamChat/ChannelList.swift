@@ -30,12 +30,12 @@ final class ChannelList: ChatChannelListVC, ChatConnectionControllerDelegate {
 
     func connectionController(
         _ controller: ChatConnectionController,
-        didUpdateConnectionStatus status: ConnectionStatus
+        didUpdateConnectionStatus status: StreamChat.ConnectionStatus
     ) {
         updateTitle(with: status)
     }
 
-    private func updateTitle(with status: ConnectionStatus) {
+    private func updateTitle(with status: StreamChat.ConnectionStatus) {
         switch status {
         case .initialized:
             title = "initialized"

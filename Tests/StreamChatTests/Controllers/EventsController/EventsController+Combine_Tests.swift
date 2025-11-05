@@ -9,7 +9,7 @@ import XCTest
 
 final class EventsController_Combine_Tests: iOS13TestCase {
     var controller: EventsController!
-    var notificationCenter: EventNotificationCenter!
+    var notificationCenter: PersistentEventNotificationCenter!
     var cancellables: Set<AnyCancellable>!
 
     // MARK: - Setup

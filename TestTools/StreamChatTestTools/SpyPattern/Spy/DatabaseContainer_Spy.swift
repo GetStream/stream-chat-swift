@@ -137,7 +137,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy, @unchecked Sen
 
         let completion: @Sendable (Error?) -> Void = { error in
             completion(error)
-            self._writeSessionCounter { $0 += 1 }
+            self._writeSessionCounter.mutate { $0 += 1 }
             self.didWrite?()
         }
 

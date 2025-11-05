@@ -37,6 +37,7 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy, @unchecked Sen
         self.init(
             isClientInActiveMode: true,
             syncRepository: SyncRepository_Mock(),
+            webSocketEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             webSocketClient: WebSocketClient_Mock(),
             apiClient: APIClient_Spy(),
             timerType: DefaultTimer.self
@@ -47,16 +48,18 @@ final class ConnectionRepository_Mock: ConnectionRepository, Spy, @unchecked Sen
         self.init(
             isClientInActiveMode: client.config.isClientInActiveMode,
             syncRepository: client.syncRepository,
+            webSocketEncoder: client.webSocketEncoder,
             webSocketClient: client.webSocketClient,
             apiClient: client.apiClient,
             timerType: DefaultTimer.self
         )
     }
 
-    override init(isClientInActiveMode: Bool, syncRepository: SyncRepository, webSocketClient: WebSocketClient?, apiClient: APIClient, timerType: StreamChat.Timer.Type) {
+    override init(isClientInActiveMode: Bool, syncRepository: SyncRepository, webSocketEncoder: RequestEncoder?, webSocketClient: WebSocketClient?, apiClient: APIClient, timerType: TimerScheduling.Type) {
         super.init(
             isClientInActiveMode: isClientInActiveMode,
             syncRepository: syncRepository,
+            webSocketEncoder: webSocketEncoder,
             webSocketClient: webSocketClient,
             apiClient: apiClient,
             timerType: timerType

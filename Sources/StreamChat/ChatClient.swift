@@ -52,7 +52,7 @@ public class ChatClient: @unchecked Sendable {
     private(set) var connectionRecoveryHandler: ConnectionRecoveryHandler?
 
     /// The notification center used to send and receive notifications about incoming events.
-    private(set) var eventNotificationCenter: EventNotificationCenter
+    private(set) var eventNotificationCenter: PersistentEventNotificationCenter
 
     /// The registry that contains all the attachment payloads associated with their attachment types.
     /// For the meantime this is a static property to avoid breaking changes. On v5, this can be changed.
@@ -99,6 +99,7 @@ public class ChatClient: @unchecked Sendable {
 
     /// The `WebSocketClient` instance `Client` uses to communicate with Stream WS servers.
     let webSocketClient: WebSocketClient?
+    let webSocketEncoder: RequestEncoder?
 
     /// The `DatabaseContainer` instance `Client` uses to store and cache data.
     let databaseContainer: DatabaseContainer
@@ -184,13 +185,13 @@ public class ChatClient: @unchecked Sendable {
             channelListUpdater
         )
         let webSocketClient = factory.makeWebSocketClient(
-            requestEncoder: webSocketEncoder,
             urlSessionConfiguration: urlSessionConfiguration,
             eventNotificationCenter: eventNotificationCenter
         )
         let connectionRepository = environment.connectionRepositoryBuilder(
             config.isClientInActiveMode,
             syncRepository,
+            webSocketEncoder,
             webSocketClient,
             apiClient,
             environment.timerType
@@ -207,6 +208,7 @@ public class ChatClient: @unchecked Sendable {
         self.databaseContainer = databaseContainer
         self.apiClient = apiClient
         self.webSocketClient = webSocketClient
+        self.webSocketEncoder = webSocketEncoder
         self.eventNotificationCenter = eventNotificationCenter
         self.offlineRequestsRepository = offlineRequestsRepository
         self.connectionRepository = connectionRepository
@@ -268,7 +270,6 @@ public class ChatClient: @unchecked Sendable {
         connectionRecoveryHandler = environment.connectionRecoveryHandlerBuilder(
             webSocketClient,
             eventNotificationCenter,
-            syncRepository,
             environment.backgroundTaskSchedulerBuilder(),
             environment.internetConnection(eventNotificationCenter, environment.internetMonitor),
             config.staysConnectedInBackground
@@ -718,7 +719,7 @@ extension ChatClient: AuthenticationRepositoryDelegate {
 }
 
 extension ChatClient: ConnectionStateDelegate {
-    func webSocketClient(_ client: WebSocketClient, didUpdateConnectionState state: WebSocketConnectionState) {
+    public func webSocketClient(_ client: WebSocketClient, didUpdateConnectionState state: WebSocketConnectionState) {
         connectionRepository.handleConnectionUpdate(
             state: state,
             onExpiredToken: { [weak self] in

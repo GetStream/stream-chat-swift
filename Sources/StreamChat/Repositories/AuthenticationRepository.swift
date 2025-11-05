@@ -97,14 +97,14 @@ class AuthenticationRepository: @unchecked Sendable {
     private let apiClient: APIClient
     private let databaseContainer: DatabaseContainer
     private let connectionRepository: ConnectionRepository
-    private let timerType: Timer.Type
+    private let timerType: TimerScheduling.Type
 
     init(
         apiClient: APIClient,
         databaseContainer: DatabaseContainer,
         connectionRepository: ConnectionRepository,
         tokenExpirationRetryStrategy: RetryStrategy,
-        timerType: Timer.Type
+        timerType: TimerScheduling.Type
     ) {
         self.apiClient = apiClient
         self.databaseContainer = databaseContainer
