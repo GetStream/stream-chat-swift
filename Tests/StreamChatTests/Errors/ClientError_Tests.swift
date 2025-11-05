@@ -9,7 +9,7 @@ import XCTest
 
 final class ClientError_Tests: XCTestCase {
     func test_rateLimitError_isNotEphemeralError() {
-        let errorPayload = ErrorPayload(
+        let errorPayload = APIError(
             code: 9,
             message: .unique,
             statusCode: 429

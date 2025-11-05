@@ -32,6 +32,26 @@ public final class HealthCheckEvent: ConnectionEvent, EventDTO, Sendable {
             channel: nil
         )
     }
+    
+    public func healthcheck() -> HealthCheckInfo? {
+        HealthCheckInfo(connectionId: connectionId)
+    }
+}
+
+final class ConnectionErrorEvent: Event {
+    let apiError: APIError
+    
+    init(from eventResponse: EventPayload) throws {
+        guard let apiError = eventResponse.connectionError else {
+            throw ClientError.EventDecoding(missingValue: "error", for: Self.self)
+        }
+
+        self.apiError = apiError
+    }
+    
+    func error() -> (any Error)? {
+        apiError
+    }
 }
 
 /// Emitted when `Client` changes it's connection status. You can listen to this event and indicate the different connection

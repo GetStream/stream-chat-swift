@@ -25,15 +25,18 @@ extension ChatClient {
 
         var webSocketClientBuilder: (@Sendable (
             _ sessionConfiguration: URLSessionConfiguration,
-            _ requestEncoder: RequestEncoder,
             _ eventDecoder: AnyEventDecoder,
-            _ notificationCenter: EventNotificationCenter
+            _ notificationCenter: PersistentEventNotificationCenter
         ) -> WebSocketClient)? = {
-            WebSocketClient(
+            let wsEnvironment = WebSocketClient.Environment(eventBatchingPeriod: 0.5)
+            return WebSocketClient(
                 sessionConfiguration: $0,
-                requestEncoder: $1,
-                eventDecoder: $2,
-                eventNotificationCenter: $3
+                eventDecoder: $1,
+                eventNotificationCenter: $2,
+                webSocketClientType: .coordinator,
+                environment: wsEnvironment,
+                connectRequest: nil,
+                healthCheckBeforeConnected: true
             )
         }
 
@@ -57,7 +60,7 @@ extension ChatClient {
 
         var eventDecoderBuilder: @Sendable () -> EventDecoder = { EventDecoder() }
 
-        var notificationCenterBuilder: @Sendable (_ database: DatabaseContainer, _ manualEventHandler: ManualEventHandler?) -> EventNotificationCenter = { EventNotificationCenter(database: $0, manualEventHandler: $1) }
+        var notificationCenterBuilder: @Sendable (_ database: DatabaseContainer, _ manualEventHandler: ManualEventHandler?) -> PersistentEventNotificationCenter = { PersistentEventNotificationCenter(database: $0, manualEventHandler: $1) }
 
         var internetConnection: @Sendable (_ center: NotificationCenter, _ monitor: InternetConnectionMonitor) -> InternetConnection = {
             InternetConnection(notificationCenter: $0, monitor: $1)
@@ -76,6 +79,7 @@ extension ChatClient {
         var connectionRepositoryBuilder: @Sendable (
             _ isClientInActiveMode: Bool,
             _ syncRepository: SyncRepository,
+            _ webSocketEncoder: RequestEncoder?,
             _ webSocketClient: WebSocketClient?,
             _ apiClient: APIClient,
             _ timerType: TimerScheduling.Type
@@ -83,9 +87,10 @@ extension ChatClient {
             ConnectionRepository(
                 isClientInActiveMode: $0,
                 syncRepository: $1,
-                webSocketClient: $2,
-                apiClient: $3,
-                timerType: $4
+                webSocketEncoder: $2,
+                webSocketClient: $3,
+                apiClient: $4,
+                timerType: $5
             )
         }
 
@@ -110,7 +115,6 @@ extension ChatClient {
         var connectionRecoveryHandlerBuilder: @Sendable (
             _ webSocketClient: WebSocketClient,
             _ eventNotificationCenter: EventNotificationCenter,
-            _ syncRepository: SyncRepository,
             _ backgroundTaskScheduler: BackgroundTaskScheduler?,
             _ internetConnection: InternetConnection,
             _ keepConnectionAliveInBackground: Bool
@@ -118,12 +122,11 @@ extension ChatClient {
             DefaultConnectionRecoveryHandler(
                 webSocketClient: $0,
                 eventNotificationCenter: $1,
-                syncRepository: $2,
-                backgroundTaskScheduler: $3,
-                internetConnection: $4,
+                backgroundTaskScheduler: $2,
+                internetConnection: $3,
                 reconnectionStrategy: DefaultRetryStrategy(),
                 reconnectionTimerType: DefaultTimer.self,
-                keepConnectionAliveInBackground: $5
+                keepConnectionAliveInBackground: $4
             )
         }
 

@@ -10,12 +10,12 @@ import Foundation
 final class InternetConnectionMonitor_Mock: InternetConnectionMonitor, @unchecked Sendable {
     var delegate: InternetConnectionDelegate?
 
-    var status: InternetConnection.Status = .available(.great)
+    var status: InternetConnectionStatus = .available(.great)
 
     func start() {}
     func stop() {}
 
-    func update(with status: InternetConnection.Status) {
+    func update(with status: InternetConnectionStatus) {
         self.status = status
         delegate?.internetConnectionStatusDidChange(status: status)
     }

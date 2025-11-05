@@ -1501,7 +1501,7 @@ extension Chat {
     func dispatchSubscribeHandler<E>(_ event: E, callback: @escaping @Sendable (E) -> Void) where E: Event {
         Task.mainActor {
             guard let cid = try? self.cid else { return }
-            guard EventNotificationCenter.channelFilter(cid: cid, event: event) else { return }
+            guard PersistentEventNotificationCenter.channelFilter(cid: cid, event: event) else { return }
             callback(event)
         }
     }

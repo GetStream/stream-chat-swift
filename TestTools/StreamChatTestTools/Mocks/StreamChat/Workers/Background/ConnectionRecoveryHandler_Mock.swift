@@ -6,9 +6,9 @@
 import XCTest
 
 /// Mock implementation of `ConnectionRecoveryHandler`
-final class ConnectionRecoveryHandler_Mock: ConnectionRecoveryHandler {
-    var startCallCount = 0
-    var stopCallCount = 0
+final class ConnectionRecoveryHandler_Mock: ConnectionRecoveryHandler, @unchecked Sendable {
+    @Atomic var startCallCount = 0
+    @Atomic var stopCallCount = 0
 
     func start() {
         startCallCount += 1

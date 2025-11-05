@@ -114,7 +114,7 @@ final class MessageRepositoryTests: XCTestCase {
 
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
-        let error = ClientError(with: ErrorPayload(code: 4, message: "Message X already exists.", statusCode: 400))
+        let error = ClientError(with: APIError(code: 4, message: "Message X already exists.", statusCode: 400))
         (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.failure(error))
 
         wait(for: [expectation], timeout: defaultTimeout)
