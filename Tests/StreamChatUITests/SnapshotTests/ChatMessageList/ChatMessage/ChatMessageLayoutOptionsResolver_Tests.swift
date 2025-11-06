@@ -1755,6 +1755,96 @@ final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
         XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
     }
 
+    func test_optionsForMessage_whenMessageIsDeliveredAndDeliveryEventsEnabled_includesDeliveryStatusIndicator() {
+        let sut = createOptionsResolver()
+
+        let messageAuthor: ChatUser = .mock(id: .unique)
+        let otherUser: ChatUser = .mock(id: .unique)
+        let messageCreatedAt = Date()
+        let cid = ChannelId.unique
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            type: .regular,
+            author: messageAuthor,
+            createdAt: messageCreatedAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+
+        let channel: ChatChannel = .mock(
+            cid: cid,
+            config: .mock(readEventsEnabled: true, deliveryEventsEnabled: true),
+            reads: [
+                .mock(
+                    lastReadAt: Date.distantPast,
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 0,
+                    user: otherUser,
+                    lastDeliveredAt: messageCreatedAt,
+                    lastDeliveredMessageId: message.id
+                )
+            ]
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertTrue(layoutOptions.contains(.deliveryStatusIndicator))
+    }
+
+    func test_optionsForMessage_whenMessageIsDeliveredAndDeliveryEventsDisabled_doesNotIncludeDeliveryStatusIndicator() {
+        let sut = createOptionsResolver()
+
+        let messageAuthor: ChatUser = .mock(id: .unique)
+        let otherUser: ChatUser = .mock(id: .unique)
+        let messageCreatedAt = Date()
+        let cid = ChannelId.unique
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            type: .regular,
+            author: messageAuthor,
+            createdAt: messageCreatedAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+
+        let channel: ChatChannel = .mock(
+            cid: cid,
+            config: .mock(readEventsEnabled: true, deliveryEventsEnabled: false),
+            reads: [
+                .mock(
+                    lastReadAt: Date.distantPast,
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 0,
+                    user: otherUser,
+                    lastDeliveredAt: messageCreatedAt,
+                    lastDeliveredMessageId: message.id
+                )
+            ]
+        )
+
+        let layoutOptions = sut.optionsForMessage(
+            at: .init(item: 0, section: 0),
+            in: channel,
+            with: .init([message]),
+            appearance: appearance
+        )
+
+        XCTAssertFalse(layoutOptions.contains(.deliveryStatusIndicator))
+    }
+
     func test_optionsForMessage_whenMessageAutoTranslatedEnabled_whenShouldRenderTranslation_thenIncludesTranslationOption() {
         let sut = createOptionsResolver()
         sut.components = .mock

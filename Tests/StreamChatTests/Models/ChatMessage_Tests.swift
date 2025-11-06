@@ -124,65 +124,71 @@ final class ChatMessage_Tests: XCTestCase {
         XCTAssertEqual(message.totalReactionsCount, 5)
     }
 
-    // MARK: - deliveryStatus
+    // MARK: - deliveryStatus(for:)
 
-    func test_deliveryStatus_whenMessageIsAuthoredByAnotherUser_returnsNil() {
+    func test_deliveryStatusForChannel_whenMessageIsAuthoredByAnotherUser_returnsNil() {
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(deliveryEventsEnabled: true))
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: .unique,
+            cid: channel.cid,
             text: .unique,
             type: .regular,
             author: .mock(id: .unique),
             isSentByCurrentUser: false
         )
 
-        XCTAssertNil(message.deliveryStatus)
+        XCTAssertNil(message.deliveryStatus(for: channel))
     }
 
-    func test_deliveryStatus_whenMessageIsError_returnsNil() {
+    func test_deliveryStatusForChannel_whenMessageIsError_returnsNil() {
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(deliveryEventsEnabled: true))
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: .unique,
+            cid: channel.cid,
             text: .unique,
             type: .error,
             author: .mock(id: .unique),
             isSentByCurrentUser: true
         )
 
-        XCTAssertNil(message.deliveryStatus)
+        XCTAssertNil(message.deliveryStatus(for: channel))
     }
 
-    func test_deliveryStatus_whenMessageIsSystem_returnsNil() {
+    func test_deliveryStatusForChannel_whenMessageIsSystem_returnsNil() {
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(deliveryEventsEnabled: true))
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: .unique,
+            cid: channel.cid,
             text: .unique,
             type: .system,
             author: .mock(id: .unique),
             isSentByCurrentUser: true
         )
 
-        XCTAssertNil(message.deliveryStatus)
+        XCTAssertNil(message.deliveryStatus(for: channel))
     }
 
-    func test_deliveryStatus_whenMessageIsEphemeral_returnsNil() {
+    func test_deliveryStatusForChannel_whenMessageIsEphemeral_returnsNil() {
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(deliveryEventsEnabled: true))
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: .unique,
+            cid: channel.cid,
             text: .unique,
             type: .ephemeral,
             author: .mock(id: .unique),
             isSentByCurrentUser: true
         )
 
-        XCTAssertNil(message.deliveryStatus)
+        XCTAssertNil(message.deliveryStatus(for: channel))
     }
 
-    func test_deliveryStatus_whenRegularMessageHasPendingLocalState_returnsPending() {
+    func test_deliveryStatusForChannel_whenRegularMessageHasPendingLocalState_returnsPending() {
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(deliveryEventsEnabled: true))
+        
         for localState in LocalMessageState.pendingStates {
             let message: ChatMessage = .mock(
                 id: .unique,
-                cid: .unique,
+                cid: channel.cid,
                 text: .unique,
                 type: .regular,
                 author: .mock(id: .unique),
@@ -190,15 +196,17 @@ final class ChatMessage_Tests: XCTestCase {
                 isSentByCurrentUser: true
             )
 
-            XCTAssertEqual(message.deliveryStatus, .pending)
+            XCTAssertEqual(message.deliveryStatus(for: channel), .pending)
         }
     }
 
-    func test_deliveryStatus_whenThreadReplyHasPendingLocalState_returnsPending() {
+    func test_deliveryStatusForChannel_whenThreadReplyHasPendingLocalState_returnsPending() {
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(deliveryEventsEnabled: true))
+        
         for localState in LocalMessageState.pendingStates {
             let message: ChatMessage = .mock(
                 id: .unique,
-                cid: .unique,
+                cid: channel.cid,
                 text: .unique,
                 type: .reply,
                 author: .mock(id: .unique),
@@ -206,15 +214,17 @@ final class ChatMessage_Tests: XCTestCase {
                 isSentByCurrentUser: true
             )
 
-            XCTAssertEqual(message.deliveryStatus, .pending)
+            XCTAssertEqual(message.deliveryStatus(for: channel), .pending)
         }
     }
 
-    func test_deliveryStatus_whenRegularMessageHasFailedLocalState_returnsFailed() {
+    func test_deliveryStatusForChannel_whenRegularMessageHasFailedLocalState_returnsFailed() {
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(deliveryEventsEnabled: true))
+        
         for localState in LocalMessageState.failedStates {
             let message: ChatMessage = .mock(
                 id: .unique,
-                cid: .unique,
+                cid: channel.cid,
                 text: .unique,
                 type: .regular,
                 author: .mock(id: .unique),
@@ -222,15 +232,17 @@ final class ChatMessage_Tests: XCTestCase {
                 isSentByCurrentUser: true
             )
 
-            XCTAssertEqual(message.deliveryStatus, .failed)
+            XCTAssertEqual(message.deliveryStatus(for: channel), .failed)
         }
     }
 
-    func test_deliveryStatus_whenThreadReplyHasFailedLocalState_returnsFailed() {
+    func test_deliveryStatusForChannel_whenThreadReplyHasFailedLocalState_returnsFailed() {
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(deliveryEventsEnabled: true))
+        
         for localState in LocalMessageState.failedStates {
             let message: ChatMessage = .mock(
                 id: .unique,
-                cid: .unique,
+                cid: channel.cid,
                 text: .unique,
                 type: .reply,
                 author: .mock(id: .unique),
@@ -238,14 +250,15 @@ final class ChatMessage_Tests: XCTestCase {
                 isSentByCurrentUser: true
             )
 
-            XCTAssertEqual(message.deliveryStatus, .failed)
+            XCTAssertEqual(message.deliveryStatus(for: channel), .failed)
         }
     }
 
-    func test_deliveryStatus_whenRegularMessageIsSent_returnsSent() {
+    func test_deliveryStatusForChannel_whenRegularMessageIsSent_returnsSent() {
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(deliveryEventsEnabled: true))
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: .unique,
+            cid: channel.cid,
             text: .unique,
             type: .regular,
             author: .mock(id: .unique),
@@ -254,13 +267,14 @@ final class ChatMessage_Tests: XCTestCase {
             readBy: []
         )
 
-        XCTAssertEqual(message.deliveryStatus, .sent)
+        XCTAssertEqual(message.deliveryStatus(for: channel), .sent)
     }
 
-    func test_deliveryStatus_whenThreadReplyIsSent_returnsSent() {
+    func test_deliveryStatusForChannel_whenThreadReplyIsSent_returnsSent() {
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(deliveryEventsEnabled: true))
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: .unique,
+            cid: channel.cid,
             text: .unique,
             type: .reply,
             author: .mock(id: .unique),
@@ -269,13 +283,86 @@ final class ChatMessage_Tests: XCTestCase {
             readBy: []
         )
 
-        XCTAssertEqual(message.deliveryStatus, .sent)
+        XCTAssertEqual(message.deliveryStatus(for: channel), .sent)
     }
 
-    func test_deliveryStatus_whenRegularMessageIsRead_returnsRead() {
+    func test_deliveryStatusForChannel_whenRegularMessageIsDelivered_returnsDelivered() {
+        let messageAuthor: ChatUser = .mock(id: .unique)
+        let otherUser: ChatUser = .mock(id: .unique)
+        let messageCreatedAt = Date()
+        let cid = ChannelId.unique
+
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: .unique,
+            cid: cid,
+            text: .unique,
+            type: .regular,
+            author: messageAuthor,
+            createdAt: messageCreatedAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+        
+        let channel: ChatChannel = .mock(
+            cid: cid,
+            config: .mock(deliveryEventsEnabled: true),
+            reads: [
+                .mock(
+                    lastReadAt: Date.distantPast,
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 0,
+                    user: otherUser,
+                    lastDeliveredAt: messageCreatedAt,
+                    lastDeliveredMessageId: message.id
+                )
+            ]
+        )
+
+        XCTAssertEqual(message.deliveryStatus(for: channel), .delivered)
+    }
+
+    func test_deliveryStatusForChannel_whenThreadReplyIsDelivered_returnsDelivered() {
+        let messageAuthor: ChatUser = .mock(id: .unique)
+        let otherUser: ChatUser = .mock(id: .unique)
+        let messageCreatedAt = Date()
+        let cid = ChannelId.unique
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            type: .reply,
+            author: messageAuthor,
+            createdAt: messageCreatedAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+        
+        let channel: ChatChannel = .mock(
+            cid: cid,
+            config: .mock(deliveryEventsEnabled: true),
+            reads: [
+                .mock(
+                    lastReadAt: Date.distantPast,
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 0,
+                    user: otherUser,
+                    lastDeliveredAt: messageCreatedAt.addingTimeInterval(1),
+                    lastDeliveredMessageId: message.id
+                )
+            ]
+        )
+
+        XCTAssertEqual(message.deliveryStatus(for: channel), .delivered)
+    }
+
+    func test_deliveryStatusForChannel_whenRegularMessageIsRead_returnsRead() {
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(deliveryEventsEnabled: true))
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: channel.cid,
             text: .unique,
             type: .regular,
             author: .mock(id: .unique),
@@ -284,13 +371,14 @@ final class ChatMessage_Tests: XCTestCase {
             readBy: [.mock(id: .unique)]
         )
 
-        XCTAssertEqual(message.deliveryStatus, .read)
+        XCTAssertEqual(message.deliveryStatus(for: channel), .read)
     }
 
-    func test_deliveryStatus_whenThreadReplyIsRead_returnsRead() {
+    func test_deliveryStatusForChannel_whenThreadReplyIsRead_returnsRead() {
+        let channel: ChatChannel = .mock(cid: .unique, config: .mock(deliveryEventsEnabled: true))
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: .unique,
+            cid: channel.cid,
             text: .unique,
             type: .reply,
             author: .mock(id: .unique),
@@ -299,8 +387,47 @@ final class ChatMessage_Tests: XCTestCase {
             readBy: [.mock(id: .unique)]
         )
 
-        XCTAssertEqual(message.deliveryStatus, .read)
+        XCTAssertEqual(message.deliveryStatus(for: channel), .read)
     }
+
+    func test_deliveryStatusForChannel_whenMessageIsDeliveredButAlsoRead_returnsRead() {
+        // Read takes precedence over delivered
+        let messageAuthor: ChatUser = .mock(id: .unique)
+        let otherUser: ChatUser = .mock(id: .unique)
+        let messageCreatedAt = Date()
+        let cid = ChannelId.unique
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: .unique,
+            type: .regular,
+            author: messageAuthor,
+            createdAt: messageCreatedAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: [otherUser]
+        )
+        
+        let channel: ChatChannel = .mock(
+            cid: cid,
+            config: .mock(deliveryEventsEnabled: true),
+            reads: [
+                .mock(
+                    lastReadAt: messageCreatedAt.addingTimeInterval(2),
+                    lastReadMessageId: message.id,
+                    unreadMessagesCount: 0,
+                    user: otherUser,
+                    lastDeliveredAt: messageCreatedAt,
+                    lastDeliveredMessageId: message.id
+                )
+            ]
+        )
+
+        XCTAssertEqual(message.deliveryStatus(for: channel), .read)
+    }
+
+    // MARK: - isLocalOnly
 
     func test_isLocalOnly_returnsTheCorrectValue() {
         let stateToLocalOnly: [LocalMessageState: Bool] = [

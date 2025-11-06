@@ -176,6 +176,98 @@ import XCTest
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
+    func test_appearance_deliveredPreviewMessageFromCurrentUser_deliveryEventsEnabled() {
+        let messageAuthor: ChatUser = currentUser
+        let otherUser: ChatUser = .mock(id: .unique)
+        let messageCreatedAt = Date(timeIntervalSince1970: 100)
+        let cid = ChannelId.unique
+
+        let deliveredMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: "Delivered message from current user",
+            author: messageAuthor,
+            createdAt: messageCreatedAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+
+        let channelWithDeliveredMessage: ChatChannel = .mock(
+            cid: cid,
+            name: "Channel 1",
+            imageURL: TestImages.yoda.url,
+            createdAt: Date(timeIntervalSince1970: 1),
+            config: .mock(readEventsEnabled: true, deliveryEventsEnabled: true),
+            reads: [
+                .mock(
+                    lastReadAt: Date.distantPast,
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 0,
+                    user: otherUser,
+                    lastDeliveredAt: messageCreatedAt.addingTimeInterval(10),
+                    lastDeliveredMessageId: deliveredMessage.id
+                )
+            ],
+            previewMessage: deliveredMessage
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channelWithDeliveredMessage,
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_deliveredPreviewMessageFromCurrentUser_deliveryEventsDisabled() {
+        let messageAuthor: ChatUser = currentUser
+        let otherUser: ChatUser = .mock(id: .unique)
+        let messageCreatedAt = Date(timeIntervalSince1970: 100)
+        let cid = ChannelId.unique
+
+        let deliveredMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: cid,
+            text: "Delivered message from current user",
+            author: messageAuthor,
+            createdAt: messageCreatedAt,
+            localState: nil,
+            isSentByCurrentUser: true,
+            readBy: []
+        )
+
+        let channelWithDeliveredMessage: ChatChannel = .mock(
+            cid: cid,
+            name: "Channel 1",
+            imageURL: TestImages.yoda.url,
+            createdAt: Date(timeIntervalSince1970: 1),
+            config: .mock(readEventsEnabled: true, deliveryEventsEnabled: false),
+            reads: [
+                .mock(
+                    lastReadAt: Date.distantPast,
+                    lastReadMessageId: nil,
+                    unreadMessagesCount: 0,
+                    user: otherUser,
+                    lastDeliveredAt: messageCreatedAt.addingTimeInterval(-10),
+                    lastDeliveredMessageId: deliveredMessage.id
+                )
+            ],
+            previewMessage: deliveredMessage
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channelWithDeliveredMessage,
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
     func test_appearance_failedPreviewMessageFromCurrentUser_readsEnabled() {
         let readMessage: ChatMessage = .mock(
             id: .unique,

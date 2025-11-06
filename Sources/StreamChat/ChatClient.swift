@@ -78,6 +78,9 @@ public class ChatClient: @unchecked Sendable {
     
     let pollsRepository: PollsRepository
 
+    /// Tracker for managing channel delivery status and throttling
+    let channelDeliveryTracker: ChannelDeliveryTracker
+
     /// Repository for handling draft messages
     lazy var draftMessagesRepository: DraftMessagesRepository = {
         environment.draftMessagesRepositoryBuilder(databaseContainer, apiClient)
@@ -89,6 +92,12 @@ public class ChatClient: @unchecked Sendable {
     }()
 
     let channelListUpdater: ChannelListUpdater
+
+    /// Handler for watching channels and preventing duplicate watch requests.
+    ///
+    /// If a channel is created and belongs to multiple queries at the same time,
+    /// we want to make sure we only watch it one time, not for every query it belongs.
+    let channelWatcherHandler: ChannelWatcherHandling
 
     func makeMessagesPaginationStateHandler() -> MessagesPaginationStateHandling {
         MessagesPaginationStateHandler()
@@ -156,11 +165,20 @@ public class ChatClient: @unchecked Sendable {
             encoder: apiClientEncoder,
             urlSessionConfiguration: urlSessionConfiguration
         )
+        let currentUserUpdater = environment.currentUserUpdaterBuilder(
+            databaseContainer,
+            apiClient
+        )
+        let channelDeliveryTracker = environment.channelDeliveryTrackerBuilder(
+            currentUserUpdater
+        )
         let eventNotificationCenter = factory.makeEventNotificationCenter(
             databaseContainer: databaseContainer,
             currentUserId: {
                 nil
-            }
+            },
+            currentUserUpdater: currentUserUpdater,
+            channelDeliveryTracker: channelDeliveryTracker
         )
         let messageRepository = environment.messageRepositoryBuilder(
             databaseContainer,
@@ -220,6 +238,10 @@ public class ChatClient: @unchecked Sendable {
             apiClient
         )
         pollsRepository = environment.pollsRepositoryBuilder(databaseContainer, apiClient)
+        self.channelDeliveryTracker = channelDeliveryTracker
+        channelWatcherHandler = ChannelWatcherHandler(
+            channelListUpdater: channelListUpdater
+        )
 
         authRepository.delegate = self
         apiClientEncoder.connectionDetailsProviderDelegate = self

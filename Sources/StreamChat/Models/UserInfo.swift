@@ -50,13 +50,17 @@ public struct UserPrivacySettings: Sendable {
     public var typingIndicators: TypingIndicatorPrivacySettings?
     /// The settings for the read receipt events.
     public var readReceipts: ReadReceiptsPrivacySettings?
+    /// The settings for the delivery receipt events.
+    public var deliveryReceipts: DeliveryReceiptsPrivacySettings?
 
     public init(
         typingIndicators: TypingIndicatorPrivacySettings? = nil,
-        readReceipts: ReadReceiptsPrivacySettings? = nil
+        readReceipts: ReadReceiptsPrivacySettings? = nil,
+        deliveryReceipts: DeliveryReceiptsPrivacySettings? = nil
     ) {
         self.typingIndicators = typingIndicators
         self.readReceipts = readReceipts
+        self.deliveryReceipts = deliveryReceipts
     }
 }
 
@@ -71,6 +75,15 @@ public struct TypingIndicatorPrivacySettings: Sendable {
 
 /// The settings for the read receipt events.
 public struct ReadReceiptsPrivacySettings: Sendable {
+    public var enabled: Bool
+
+    public init(enabled: Bool = true) {
+        self.enabled = enabled
+    }
+}
+
+/// The settings for the delivery receipt events.
+public struct DeliveryReceiptsPrivacySettings: Sendable {
     public var enabled: Bool
 
     public init(enabled: Bool = true) {

@@ -34,7 +34,7 @@ import XCTest
         mockedChannelListController = ChatChannelListController_Mock.mock()
         mockedCurrentUserController = CurrentChatUserController_Mock.mock()
         mockedCurrentUserController.currentUser_mock = .mock(
-            id: "Yoda",
+            currentUserId: "Yoda",
             imageURL: TestImages.yoda.url
         )
 

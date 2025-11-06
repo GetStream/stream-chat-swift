@@ -18,6 +18,7 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         case role
         case typingIndicatorsEnabled
         case readReceiptsEnabled
+        case deliveryReceiptsEnabled
         case pushPreferences
         case detailedUnreadCounts
         case avgResponseTime
@@ -58,7 +59,6 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         updateButton.backgroundColor = .systemBlue
         updateButton.contentEdgeInsets = UIEdgeInsets(top: 0.0, left: 15, bottom: 0.0, right: 15)
         updateButton.addTarget(self, action: #selector(didTapUpdateButton), for: .touchUpInside)
-        updateButton.isHidden = !StreamRuntimeCheck.isStreamInternalConfiguration
 
         NSLayoutConstraint.activate([
             imageView.widthAnchor.constraint(equalToConstant: 60),
@@ -109,6 +109,11 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
             cell.accessoryView = makeSwitchButton(UserConfig.shared.typingIndicatorsEnabled ?? true) { newValue in
                 UserConfig.shared.typingIndicatorsEnabled = newValue
             }
+        case .deliveryReceiptsEnabled:
+            cell.textLabel?.text = "Delivery Receipts Enabled"
+            cell.accessoryView = makeSwitchButton(UserConfig.shared.deliveryReceiptsEnabled ?? true) { newValue in
+                UserConfig.shared.deliveryReceiptsEnabled = newValue
+            }
         case .pushPreferences:
             cell.textLabel?.text = "Push Preferences"
             cell.detailTextLabel?.text = "Configure notification settings"
@@ -148,6 +153,9 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         }
         if let readReceiptsEnabled = currentUserController.currentUser?.privacySettings.readReceipts?.enabled {
             UserConfig.shared.readReceiptsEnabled = readReceiptsEnabled
+        }
+        if let deliveryReceiptsEnabled = currentUserController.currentUser?.privacySettings.deliveryReceipts?.enabled {
+            UserConfig.shared.deliveryReceiptsEnabled = deliveryReceiptsEnabled
         }
 
         tableView.reloadData()
@@ -199,7 +207,8 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
             name: name,
             privacySettings: .init(
                 typingIndicators: UserConfig.shared.typingIndicatorsEnabled.map { .init(enabled: $0) },
-                readReceipts: UserConfig.shared.readReceiptsEnabled.map { .init(enabled: $0) }
+                readReceipts: UserConfig.shared.readReceiptsEnabled.map { .init(enabled: $0) },
+                deliveryReceipts: UserConfig.shared.deliveryReceiptsEnabled.map { .init(enabled: $0) }
             )
         )
     }

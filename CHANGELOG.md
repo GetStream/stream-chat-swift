@@ -4,10 +4,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add support for message delivered info [#3846](https://github.com/GetStream/stream-chat-swift/pull/3846)
+  - Add `ChatRemoteNotificationHandler.markMessageAsDelivered(message:channel:)`
+  - Add `ChatChannel.reads(message:)` and `ChatChannel.deliveredReads(message:)`
+  - Add `ChatChannelRead.lastDeliveredAt`
+  - Add `ChatChannelRead.lastDeliveredMessageId`
+  - Add `MessageDeliveryStatus.delivered`
 ### 🐞 Fixed
 - Fix `ChannelController.hasLoadedAllPreviousMessages` not correct for newly created channels [#3855](https://github.com/GetStream/stream-chat-swift/pull/3855)
+- Fix duplicated watch channel requests when a channel is created and it belongs to multiple queries [#3857](https://github.com/GetStream/stream-chat-swift/pull/3857)
+- Fix calling watch channel request when a channel is updated and it already belongs to another query [#3857](https://github.com/GetStream/stream-chat-swift/pull/3857)
+- Fix syncing error when trying to sync too many channels [#3863](https://github.com/GetStream/stream-chat-swift/pull/3863)
+### 🔄 Changed
+- Deprecated `ChatMessage.deliveryStatus` in favour of `ChatMessage.deliveryStatus(channel:)` [#3846](https://github.com/GetStream/stream-chat-swift/pull/3846)
 
 ## StreamChatUI
+### ✅ Added
+- Display double grey checkmark when delivery events are enabled [#3846](https://github.com/GetStream/stream-chat-swift/pull/3846)
 ### 🐞 Fixed
 - Fix date separator not shown on newly created channel [#3855](https://github.com/GetStream/stream-chat-swift/pull/3855)
 - Fix composer deleting newly entered text after deleting draft text [#3854](https://github.com/GetStream/stream-chat-swift/pull/3854)

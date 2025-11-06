@@ -35,7 +35,9 @@ final class ChannelReadDTO_Tests: XCTestCase {
             user: dummyUser(id: userId),
             lastReadAt: lastReadAt,
             lastReadMessageId: lastReadMessageId,
-            unreadMessagesCount: unreadMessagesCount
+            unreadMessagesCount: unreadMessagesCount,
+            lastDeliveredAt: .unique,
+            lastDeliveredMessageId: .unique
         )
 
         // WHEN
@@ -47,6 +49,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
         XCTAssertEqual(readDTO.user.id, userId)
         XCTAssertEqual(readDTO.lastReadMessageId, lastReadMessageId)
         XCTAssertEqual(readDTO.lastReadAt.description, lastReadAt.description)
+        XCTAssertEqual(readDTO.lastDeliveredAt, payload.lastDeliveredAt?.bridgeDate)
+        XCTAssertEqual(readDTO.lastDeliveredMessageId, payload.lastDeliveredMessageId)
     }
 
     // MARK: - markChannelAsRead
@@ -57,7 +61,9 @@ final class ChannelReadDTO_Tests: XCTestCase {
             user: .dummy(userId: .unique),
             lastReadAt: .init(),
             lastReadMessageId: .unique,
-            unreadMessagesCount: 10
+            unreadMessagesCount: 10,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
         )
 
         let channel: ChannelPayload = .dummy(
@@ -151,7 +157,9 @@ final class ChannelReadDTO_Tests: XCTestCase {
             user: anotherUser,
             lastReadAt: anotherUserMessage.createdAt.addingTimeInterval(-1),
             lastReadMessageId: .unique,
-            unreadMessagesCount: 0
+            unreadMessagesCount: 0,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
         )
 
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
@@ -332,7 +340,9 @@ final class ChannelReadDTO_Tests: XCTestCase {
             user: member.user!,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
-            unreadMessagesCount: 10
+            unreadMessagesCount: 10,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
         )
 
         let channel: ChannelPayload = .dummy(
@@ -370,7 +380,9 @@ final class ChannelReadDTO_Tests: XCTestCase {
             user: member.user!,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
-            unreadMessagesCount: 10
+            unreadMessagesCount: 10,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
         )
         let firstMessageDate = Date()
         let messages: [MessagePayload] = [messageId, .unique, .unique].enumerated().map { index, id in
@@ -416,7 +428,9 @@ final class ChannelReadDTO_Tests: XCTestCase {
             user: member.user!,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
-            unreadMessagesCount: 10
+            unreadMessagesCount: 10,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
         )
         let firstMessageDate = Date()
         let messages: [MessagePayload] = [messageId, .unique, .unique].enumerated().map { index, id in
@@ -469,7 +483,9 @@ final class ChannelReadDTO_Tests: XCTestCase {
             user: member.user!,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
-            unreadMessagesCount: 10
+            unreadMessagesCount: 10,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
         )
 
         let channel: ChannelPayload = .dummy(
@@ -508,7 +524,9 @@ final class ChannelReadDTO_Tests: XCTestCase {
             user: .dummy(userId: .unique),
             lastReadAt: lastReadAt,
             lastReadMessageId: .unique,
-            unreadMessagesCount: 10
+            unreadMessagesCount: 10,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
         )
 
         let channel: ChannelPayload = .dummy(

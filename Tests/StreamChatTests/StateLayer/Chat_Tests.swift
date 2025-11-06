@@ -1251,7 +1251,9 @@ final class Chat_Tests: XCTestCase {
                         user: .dummy(userId: self.currentUserId),
                         lastReadAt: messages.first?.createdAt ?? .distantPast,
                         lastReadMessageId: nil,
-                        unreadMessagesCount: 2
+                        unreadMessagesCount: 2,
+                        lastDeliveredAt: nil,
+                        lastDeliveredMessageId: nil
                     )
                 ]
             )
@@ -1289,7 +1291,9 @@ final class Chat_Tests: XCTestCase {
                         user: .dummy(userId: self.currentUserId),
                         lastReadAt: lastMessage.createdAt,
                         lastReadMessageId: nil,
-                        unreadMessagesCount: 0
+                        unreadMessagesCount: 0,
+                        lastDeliveredAt: nil,
+                        lastDeliveredMessageId: nil
                     )
                 ]
             )
@@ -1788,7 +1792,9 @@ final class Chat_Tests: XCTestCase {
                     user: user,
                     lastReadAt: .unique,
                     lastReadMessageId: nil,
-                    unreadMessagesCount: 0
+                    unreadMessagesCount: 0,
+                    lastDeliveredAt: nil,
+                    lastDeliveredMessageId: nil
                 )
                 let member = MemberPayload.dummy(
                     user: user,

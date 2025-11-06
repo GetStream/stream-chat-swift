@@ -688,4 +688,34 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("channels/" + cid.apiPath + "/pinned_messages", endpoint.path.value)
     }
+
+    func test_markChannelsDelivered_buildsCorrectly() {
+        // GIVEN
+        let cid1 = ChannelId(type: .messaging, id: "test-channel-1")
+        let messageId1 = MessageId.unique
+        let deliveredMessage1 = DeliveredMessagePayload(cid: cid1, id: messageId1)
+        
+        let cid2 = ChannelId(type: .livestream, id: "test-channel-2")
+        let messageId2 = MessageId.unique
+        let deliveredMessage2 = DeliveredMessagePayload(cid: cid2, id: messageId2)
+        
+        let payload = ChannelDeliveredRequestPayload(latestDeliveredMessages: [deliveredMessage1, deliveredMessage2])
+
+        // WHEN
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: .markChannelsDelivered,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: payload
+        )
+
+        let endpoint: Endpoint<EmptyResponse> = .markChannelsDelivered(payload: payload)
+
+        // THEN
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual("channels/delivered", endpoint.path.value)
+        XCTAssertEqual(expectedEndpoint.method, endpoint.method)
+        XCTAssertEqual(expectedEndpoint.requiresConnectionId, endpoint.requiresConnectionId)
+    }
 }

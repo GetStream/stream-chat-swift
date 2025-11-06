@@ -51,7 +51,21 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     /// The worker used to fetch the remote data and communicate with servers.
-    private let worker: ChannelListUpdater
+    private lazy var worker: ChannelListUpdater = self.environment
+        .channelQueryUpdaterBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
+    
+    /// The worker used to update current user data.
+    private lazy var currentUserUpdater: CurrentUserUpdater = self.environment
+        .currentUserUpdaterBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
+    
+    /// The validator used to determine if messages can be marked as delivered.
+    private let deliveryCriteriaValidator: MessageDeliveryCriteriaValidating
 
     /// A Boolean value that returns whether pagination is finished
     public private(set) var hasLoadedAllPreviousChannels: Bool = false
@@ -101,9 +115,12 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         return _basePublishers as? BasePublishers ?? .init(controller: self)
     }
 
-    private let filter: ((ChatChannel) -> Bool)?
+    private let filter: (@Sendable (ChatChannel) -> Bool)?
     private let environment: Environment
-    private let channelListLinker: ChannelListLinker
+    private lazy var channelListLinker: ChannelListLinker = self.environment
+        .channelListLinkerBuilder(
+            query, filter, client.config, client.databaseContainer, worker, client.channelWatcherHandler
+        )
 
     /// Creates a new `ChannelListController`.
     ///
@@ -121,13 +138,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         self.query = query
         self.filter = filter
         self.environment = environment
-        worker = environment.channelQueryUpdaterBuilder(
-            client.databaseContainer,
-            client.apiClient
-        )
-        channelListLinker = environment.channelListLinkerBuilder(
-            query, filter, client.config, client.databaseContainer, worker
-        )
+        self.deliveryCriteriaValidator = environment.deliveryCriteriaValidatorBuilder()
         super.init()
     }
 
@@ -169,6 +180,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         worker.update(channelListQuery: updatedQuery) { result in
             switch result {
             case let .success(channels):
+                self.markChannelsAsDeliveredIfNeeded(channels: channels)
                 self.hasLoadedAllPreviousChannels = channels.count < limit
                 self.callback { completion?(nil) }
             case let .failure(error):
@@ -197,10 +209,41 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             case let .success(channels):
                 self?.state = .remoteDataFetched
                 self?.hasLoadedAllPreviousChannels = channels.count < limit
+                
+                // Mark channels as delivered if synchronization was successful
+                self?.markChannelsAsDeliveredIfNeeded(channels: channels)
+                
                 self?.callback { completion?(nil) }
             case let .failure(error):
                 self?.state = .remoteDataFetchFailed(ClientError(with: error))
                 self?.callback { completion?(error) }
+            }
+        }
+    }
+    
+    /// Marks channels as delivered if they meet the specified criteria.
+    /// - Parameter channels: The channels to evaluate for marking as delivered.
+    private func markChannelsAsDeliveredIfNeeded(channels: [ChatChannel]) {
+        guard let currentUser = client.currentUserController().currentUser else { return }
+
+        // Extract channels that should be marked as delivered
+        let deliveries: [MessageDeliveryInfo] = channels.compactMap { channel in
+            guard let message = channel.latestMessages.first else {
+                return nil
+            }
+            guard deliveryCriteriaValidator.canMarkMessageAsDelivered(message, for: currentUser, in: channel) else {
+                return nil
+            }
+            return MessageDeliveryInfo(channelId: channel.cid, messageId: message.id)
+        }
+
+        // Only make the API call if there are channels to mark as delivered
+        guard !deliveries.isEmpty else { return }
+
+        // Mark channels as delivered
+        currentUserUpdater.markMessagesAsDelivered(deliveries) { error in
+            if let error = error {
+                log.error("Failed to mark channels as delivered: \(error)")
             }
         }
     }
@@ -235,8 +278,18 @@ extension ChatChannelListController {
             _ filter: (@Sendable (ChatChannel) -> Bool)?,
             _ clientConfig: ChatClientConfig,
             _ databaseContainer: DatabaseContainer,
-            _ worker: ChannelListUpdater
+            _ worker: ChannelListUpdater,
+            _ channelWatcherHandler: ChannelWatcherHandling
         ) -> ChannelListLinker = ChannelListLinker.init
+        
+        var currentUserUpdaterBuilder: (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> CurrentUserUpdater = CurrentUserUpdater.init
+        
+        var deliveryCriteriaValidatorBuilder: () -> MessageDeliveryCriteriaValidating = {
+            MessageDeliveryCriteriaValidator()
+        }
         
         var createChannelListDatabaseObserver: (
             _ database: DatabaseContainer,

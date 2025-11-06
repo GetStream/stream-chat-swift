@@ -31,7 +31,8 @@ public class ChannelList: @unchecked Sendable {
                 client.config,
                 channelListUpdater,
                 client.databaseContainer,
-                client.eventNotificationCenter
+                client.eventNotificationCenter,
+                client.channelWatcherHandler
             )
         }
     }
@@ -103,7 +104,8 @@ extension ChannelList {
             _ clientConfig: ChatClientConfig,
             _ channelListUpdater: ChannelListUpdater,
             _ database: DatabaseContainer,
-            _ eventNotificationCenter: EventNotificationCenter
+            _ eventNotificationCenter: EventNotificationCenter,
+            _ channelWatcherHandler: ChannelWatcherHandling
         ) -> ChannelListState = { @MainActor in
             ChannelListState(
                 query: $0,
@@ -111,7 +113,8 @@ extension ChannelList {
                 clientConfig: $2,
                 channelListUpdater: $3,
                 database: $4,
-                eventNotificationCenter: $5
+                eventNotificationCenter: $5,
+                channelWatcherHandler: $6
             )
         }
     }

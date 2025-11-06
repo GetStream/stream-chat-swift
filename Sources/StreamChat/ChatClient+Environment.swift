@@ -219,5 +219,18 @@ extension ChatClient {
                 maxHoursThreshold: $3
             )
         }
+
+        var currentUserUpdaterBuilder: @Sendable (
+            _ database: DatabaseContainer,
+            _ apiClient: APIClient
+        ) -> CurrentUserUpdater = {
+            CurrentUserUpdater(database: $0, apiClient: $1)
+        }
+
+        var channelDeliveryTrackerBuilder: @Sendable (
+            _ currentUserUpdater: CurrentUserUpdater
+        ) -> ChannelDeliveryTracker = {
+            ChannelDeliveryTracker(currentUserUpdater: $0)
+        }
     }
 }

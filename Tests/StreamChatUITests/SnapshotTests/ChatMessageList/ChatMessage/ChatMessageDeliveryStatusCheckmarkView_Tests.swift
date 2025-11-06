@@ -60,6 +60,23 @@ final class ChatMessageDeliveryStatusCheckmarkView_Tests: XCTestCase {
         XCTAssertEqual(checkmark.imageView.accessibilityIdentifier, "imageView_read")
     }
 
+    // MARK: - Delivered
+
+    func test_appearance_delivered() {
+        AssertSnapshot(
+            checkmark(with: .delivered),
+            variants: .onlyUserInterfaceStyles
+        )
+    }
+
+    func test_accessibility_delivered() {
+        let checkmark = checkmark(with: .delivered)
+
+        checkmark.updateContent()
+
+        XCTAssertEqual(checkmark.imageView.accessibilityIdentifier, "imageView_delivered")
+    }
+
     // MARK: - Failed
 
     func test_appearance_failed() {

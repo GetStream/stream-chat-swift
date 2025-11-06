@@ -23,6 +23,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     var startWatchingChannels_callCount = 0
     @Atomic var startWatchingChannels_cids: [ChannelId] = []
     @Atomic var startWatchingChannels_completion: ((Error?) -> Void)?
+    var startWatchingChannels_completion_success = false
 
     var link_callCount = 0
     var link_completion: ((Error?) -> Void)?
@@ -41,6 +42,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
 
         startWatchingChannels_cids.removeAll()
         startWatchingChannels_completion = nil
+        startWatchingChannels_completion_success = false
     }
 
     override func update(
@@ -93,6 +95,10 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     override func startWatchingChannels(withIds ids: [ChannelId], completion: ((Error?) -> Void)?) {
         startWatchingChannels_callCount += 1
         startWatchingChannels_cids = ids
-        startWatchingChannels_completion = completion
+        if startWatchingChannels_completion_success {
+            completion?(nil)
+        } else {
+            startWatchingChannels_completion = completion
+        }
     }
 }

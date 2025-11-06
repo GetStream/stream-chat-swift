@@ -67,3 +67,21 @@ extension Array where Element == ChatChannel {
         ]
     }
 }
+
+extension ChatChannelRead {
+    init(
+        lastReadAt: Date,
+        lastReadMessageId: MessageId?,
+        unreadMessagesCount: Int,
+        user: ChatUser
+    ) {
+        self.init(
+            lastReadAt: lastReadAt,
+            lastReadMessageId: lastReadMessageId,
+            unreadMessagesCount: unreadMessagesCount,
+            user: user,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
+        )
+    }
+}

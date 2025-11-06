@@ -245,7 +245,8 @@ final class UserUpdateRequestBody_Tests: XCTestCase {
             imageURL: .unique(),
             privacySettings: .init(
                 typingIndicators: .init(enabled: true),
-                readReceipts: .init(enabled: true)
+                readReceipts: .init(enabled: true),
+                deliveryReceipts: .init(enabled: false)
             ),
             role: .admin,
             teamsRole: ["ios": "guest"],
@@ -257,7 +258,8 @@ final class UserUpdateRequestBody_Tests: XCTestCase {
             "image": payload.imageURL!.absoluteString,
             "privacy_settings": [
                 "typing_indicators": ["enabled": true],
-                "read_receipts": ["enabled": true]
+                "read_receipts": ["enabled": true],
+                "delivery_receipts": ["enabled": false]
             ],
             "role": UserRole.admin.rawValue,
             "secret_note": value,

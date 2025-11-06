@@ -33,6 +33,8 @@ final class EventPayload: Decodable, Sendable {
         case firstUnreadMessageId = "first_unread_message_id"
         case lastReadAt = "last_read_at"
         case lastReadMessageId = "last_read_message_id"
+        case lastDeliveredAt = "last_delivered_at"
+        case lastDeliveredMessageId = "last_delivered_message_id"
         case unreadMessagesCount = "unread_messages"
         case shadow
         case thread
@@ -67,10 +69,11 @@ final class EventPayload: Decodable, Sendable {
     let hardDelete: Bool
     let deletedForMe: Bool?
     let shadow: Bool?
-    // Mark as unread properties
     let firstUnreadMessageId: MessageId?
     let lastReadMessageId: MessageId?
     let lastReadAt: Date?
+    let lastDeliveredAt: Date?
+    let lastDeliveredMessageId: MessageId?
     let unreadMessagesCount: Int?
     let poll: PollPayload?
     let vote: PollVotePayload?
@@ -121,7 +124,9 @@ final class EventPayload: Decodable, Sendable {
         draft: DraftPayload? = nil,
         reminder: ReminderPayload? = nil,
         channelMessageCount: Int? = nil,
-        deletedForMe: Bool? = nil
+        deletedForMe: Bool? = nil,
+        lastDeliveredAt: Date? = nil,
+        lastDeliveredMessageId: MessageId? = nil
     ) {
         self.eventType = eventType
         self.connectionId = connectionId
@@ -158,6 +163,8 @@ final class EventPayload: Decodable, Sendable {
         self.reminder = reminder
         self.channelMessageCount = channelMessageCount
         self.deletedForMe = deletedForMe
+        self.lastDeliveredAt = lastDeliveredAt
+        self.lastDeliveredMessageId = lastDeliveredMessageId
     }
 
     required init(from decoder: Decoder) throws {
@@ -199,6 +206,8 @@ final class EventPayload: Decodable, Sendable {
         reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
         channelMessageCount = try container.decodeIfPresent(Int.self, forKey: .channelMessageCount)
         deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
+        lastDeliveredAt = try container.decodeIfPresent(Date.self, forKey: .lastDeliveredAt)
+        lastDeliveredMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastDeliveredMessageId)
     }
 
     func event() throws -> Event {

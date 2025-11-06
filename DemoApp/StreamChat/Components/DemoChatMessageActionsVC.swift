@@ -5,14 +5,19 @@
 import Foundation
 import StreamChat
 import StreamChatUI
+import SwiftUI
 import UIKit
 
 final class DemoChatMessageActionsVC: ChatMessageActionsVC {
+    var demoAppConfig: DemoAppConfig {
+        AppConfig.shared.demoAppConfig
+    }
+
     // For the propose of the demo app, we add an extra hard delete message to test it.
     override var messageActions: [ChatMessageActionItem] {
         var actions = super.messageActions
         if message?.isSentByCurrentUser == true {
-            if AppConfig.shared.demoAppConfig.isHardDeleteEnabled {
+            if demoAppConfig.isHardDeleteEnabled {
                 actions.append(hardDeleteActionItem())
                 actions.append(deleteForMeActionItem())
             }
@@ -22,7 +27,7 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
             actions.append(pinMessageActionItem())
             actions.append(translateActionItem())
 
-            let isDemoAppRemindersEnabled = AppConfig.shared.demoAppConfig.isRemindersEnabled
+            let isDemoAppRemindersEnabled = demoAppConfig.isRemindersEnabled
             let isChannelRemindersEnabled = channel?.config.messageRemindersEnabled ?? false
             if isDemoAppRemindersEnabled && isChannelRemindersEnabled {
                 actions.append(reminderActionItem())
@@ -30,8 +35,12 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
             }
         }
 
-        if AppConfig.shared.demoAppConfig.isMessageDebuggerEnabled {
+        if demoAppConfig.isMessageDebuggerEnabled {
             actions.append(messageDebugActionItem())
+        }
+
+        if message?.isSentByCurrentUser == true && demoAppConfig.isMessageDeliveredInfoEnabled {
+            actions.append(showMessageReadsActionItem())
         }
 
         let hasLocationAttachments = message?.sharedLocation != nil
@@ -51,7 +60,7 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
 
                     self.messageController.deleteMessage { _ in
                         let pollId = self.messageController.message?.poll?.id
-                        if let pollId, AppConfig.shared.demoAppConfig.shouldDeletePollOnMessageDeletion {
+                        if let pollId, self.demoAppConfig.shouldDeletePollOnMessageDeletion {
                             let channelController = self.messageController.client.channelController(
                                 for: self.messageController.cid
                             )
@@ -208,6 +217,26 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
             self?.present(vc, animated: true)
         }
     }
+    
+    func showMessageReadsActionItem() -> ChatMessageActionItem {
+        ShowMessageReadsActionItem { [weak self] _ in
+            guard let self = self,
+                  let message = self.message,
+                  let channel = self.channel else { return }
+
+            let channelController = messageController.client.channelController(for: channel.cid)
+            let readsView = DemoMessageReadsInfoView(message: message, channelController: channelController)
+            let hostingController = UIHostingController(rootView: readsView)
+            hostingController.modalPresentationStyle = .pageSheet
+            
+            if let sheet = hostingController.sheetPresentationController {
+                sheet.detents = [.medium(), .large()]
+                sheet.prefersGrabberVisible = true
+            }
+            
+            self.present(hostingController, animated: true)
+        }
+    }
 
     struct PinMessageActionItem: ChatMessageActionItem {
         var title: String
@@ -314,6 +343,18 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
             } else {
                 icon = UIImage(systemName: "bookmark") ?? .init()
             }
+        }
+    }
+    
+    struct ShowMessageReadsActionItem: ChatMessageActionItem {
+        var title: String { "Show Message Reads" }
+        var isDestructive: Bool { false }
+        let icon: UIImage
+        let action: (ChatMessageActionItem) -> Void
+        
+        init(action: @escaping (ChatMessageActionItem) -> Void) {
+            self.action = action
+            icon = UIImage(systemName: "eye") ?? .init()
         }
     }
 }
