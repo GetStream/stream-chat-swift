@@ -6,9 +6,10 @@ import StreamChat
 import SwiftUI
 import UIKit
 
-class UserProfileViewController: UITableViewController, CurrentChatUserControllerDelegate {
+class UserProfileViewController: UITableViewController, CurrentChatUserControllerDelegate, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     private let imageView = UIImageView()
     private let updateButton = UIButton()
+    private let loadingSpinner = UIActivityIndicatorView(style: .medium)
 
     var name: String?
     let properties = UserProperty.allCases
@@ -42,28 +43,39 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         tableView.allowsSelection = false
         view.backgroundColor = .systemBackground
 
-        [imageView, updateButton].forEach {
+        [imageView, updateButton, loadingSpinner].forEach {
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
 
         tableView.tableHeaderView = UIView(frame: .init(origin: .zero, size: .init(width: .zero, height: 80)))
         tableView.tableHeaderView?.addSubview(imageView)
+        tableView.tableHeaderView?.addSubview(loadingSpinner)
         tableView.tableFooterView = UIView(frame: .init(origin: .zero, size: .init(width: .zero, height: 80)))
         tableView.tableFooterView?.addSubview(updateButton)
 
         imageView.contentMode = .scaleAspectFill
         imageView.layer.cornerRadius = 30
         imageView.layer.masksToBounds = true
+        imageView.isUserInteractionEnabled = true
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapImageView))
+        imageView.addGestureRecognizer(tapGesture)
+        
         updateButton.setTitle("Update", for: .normal)
         updateButton.layer.cornerRadius = 4
         updateButton.backgroundColor = .systemBlue
         updateButton.contentEdgeInsets = UIEdgeInsets(top: 0.0, left: 15, bottom: 0.0, right: 15)
         updateButton.addTarget(self, action: #selector(didTapUpdateButton), for: .touchUpInside)
+        
+        loadingSpinner.hidesWhenStopped = true
+        loadingSpinner.color = .systemGray
 
         NSLayoutConstraint.activate([
             imageView.widthAnchor.constraint(equalToConstant: 60),
             imageView.heightAnchor.constraint(equalTo: imageView.widthAnchor),
             imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingSpinner.centerXAnchor.constraint(equalTo: imageView.centerXAnchor),
+            loadingSpinner.centerYAnchor.constraint(equalTo: imageView.centerYAnchor),
             updateButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             updateButton.heightAnchor.constraint(equalToConstant: 35),
             updateButton.centerYAnchor.constraint(equalTo: updateButton.superview!.centerYAnchor)
@@ -239,5 +251,131 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         label.numberOfLines = 1
         label.sizeToFit()
         return label
+    }
+    
+    // MARK: - Avatar Change
+    
+    @objc private func didTapImageView() {
+        let alertController = UIAlertController(title: "Change Avatar", message: nil, preferredStyle: .actionSheet)
+        
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            alertController.addAction(UIAlertAction(title: "Take Photo", style: .default) { [weak self] _ in
+                self?.presentImagePicker(sourceType: .camera)
+            })
+        }
+        
+        alertController.addAction(UIAlertAction(title: "Choose from Library", style: .default) { [weak self] _ in
+            self?.presentImagePicker(sourceType: .photoLibrary)
+        })
+        
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        
+        if let popover = alertController.popoverPresentationController {
+            popover.sourceView = imageView
+            popover.sourceRect = imageView.bounds
+        }
+        
+        present(alertController, animated: true)
+    }
+    
+    private func presentImagePicker(sourceType: UIImagePickerController.SourceType) {
+        let picker = UIImagePickerController()
+        picker.sourceType = sourceType
+        picker.delegate = self
+        picker.allowsEditing = true
+        present(picker, animated: true)
+    }
+    
+    // MARK: - UIImagePickerControllerDelegate
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        picker.dismiss(animated: true)
+        
+        guard let selectedImage = (info[.editedImage] as? UIImage) ?? (info[.originalImage] as? UIImage) else {
+            return
+        }
+        
+        loadingSpinner.startAnimating()
+        
+        uploadImageAndUpdateProfile(selectedImage) { [weak self] error in
+            self?.loadingSpinner.stopAnimating()
+            if let error = error {
+                self?.showError(error)
+            } else {
+                self?.showSuccess()
+            }
+        }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true)
+    }
+    
+    private func uploadImageAndUpdateProfile(_ image: UIImage, completion: @escaping (Error?) -> Void) {
+        guard let imageData = image.pngData() else {
+            completion(NSError(domain: "UserProfile", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to PNG data"]))
+            return
+        }
+        
+        // Create temporary file
+        let imageURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("avatar_\(UUID().uuidString).png")
+        
+        do {
+            try imageData.write(to: imageURL)
+        } catch {
+            completion(error)
+            return
+        }
+        
+        let uploadingState = AttachmentUploadingState(
+            localFileURL: imageURL,
+            state: .pendingUpload,
+            file: .init(type: .png, size: Int64(imageData.count), mimeType: "image/png")
+        )
+        
+        let attachment = StreamAttachment(
+            type: .image,
+            payload: imageData,
+            downloadingState: nil,
+            uploadingState: uploadingState
+        )
+        
+        // Upload the image
+        currentUserController.client.upload(attachment, progress: { progress in
+            print("Upload progress: \(progress)")
+        }, completion: { [weak self] result in
+            // Clean up temporary file
+            try? FileManager.default.removeItem(at: imageURL)
+            
+            switch result {
+            case .success(let file):
+                // Update user profile with new image URL
+                self?.currentUserController.updateUserData(imageURL: file.fileURL) { error in
+                    completion(error)
+                }
+            case .failure(let error):
+                completion(error)
+            }
+        })
+    }
+    
+    private func showError(_ error: Error) {
+        let alert = UIAlertController(
+            title: "Upload Failed",
+            message: error.localizedDescription,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
+    }
+    
+    private func showSuccess() {
+        let alert = UIAlertController(
+            title: "Success",
+            message: "Avatar updated successfully!",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "OK", style: .default))
+        present(alert, animated: true)
     }
 }
