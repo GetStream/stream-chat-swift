@@ -180,8 +180,6 @@ jobs:
       - build-test-app-and-frameworks
     env:
       LAUNCH_ID: ${{ needs.allure_testops_launch.outputs.launch_id }}
-      IOS_SIMULATOR_DEVICE: "iPhone 16 Pro (18.5)" # TODO: IOS-1181
-      XCODE_VERSION: "16.4" # TODO: IOS-1181
     strategy:
       matrix:
         batch: [0, 1]
