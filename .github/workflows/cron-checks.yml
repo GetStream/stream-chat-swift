@@ -140,10 +140,10 @@ jobs:
           fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
 
   build-old-xcode:
-    name: Build LLC + UI (Xcode 15)
+    name: Build SDKs (Old Xcode)
     runs-on: macos-14
     env:
-      XCODE_VERSION: "15.4"
+      XCODE_VERSION: "16.1"
     steps:
     - name: Connect Bot
       uses: webfactory/ssh-agent@v0.7.0
