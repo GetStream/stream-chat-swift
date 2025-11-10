@@ -43,7 +43,7 @@ jobs:
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
       STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
       XCODE_VERSION: "26.1"
-      IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})" # For the Allure report
+      IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})"
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
@@ -61,7 +61,7 @@ jobs:
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch cron:true
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_e2e_mock device:"${{ matrix.device }} (${{ matrix.ios }})"
+      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}"
       timeout-minutes: 120
     - name: Allure TestOps Upload
       if: success() || failure()
@@ -108,6 +108,7 @@ jobs:
     runs-on: macos-15
     env:
       XCODE_VERSION: "26.1"
+      IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})"
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
@@ -121,7 +122,7 @@ jobs:
         version: ${{ matrix.ios }}
         device: ${{ matrix.device }}
     - name: Run LLC Tests (Debug)
-      run: bundle exec fastlane test device:"${{ matrix.device }} (${{ matrix.ios }})" cron:true
+      run: bundle exec fastlane test device:"${{ env.IOS_SIMULATOR_DEVICE }}" cron:true
       timeout-minutes: 100
     - name: Parse xcresult
       if: failure()
