@@ -21,7 +21,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: "26.0"
+          - ios: "26.1"
             device: "iPhone 17 Pro"
             setup_runtime: false
           - ios: "18.5"
@@ -42,7 +42,7 @@ jobs:
       GITHUB_EVENT: ${{ toJson(github.event) }}
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
       STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
-      XCODE_VERSION: "26.0.1"
+      XCODE_VERSION: "26.1"
       IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})" # For the Allure report
     steps:
     - uses: actions/checkout@v4.1.1
@@ -89,7 +89,7 @@ jobs:
     strategy:
       matrix:
         include:
-          - ios: "26.0"
+          - ios: "26.1"
             device: "iPhone 17 Pro"
             setup_runtime: false
           - ios: "18.5"
@@ -107,7 +107,7 @@ jobs:
       fail-fast: false
     runs-on: macos-15
     env:
-      XCODE_VERSION: "26.0.1"
+      XCODE_VERSION: "26.1"
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
