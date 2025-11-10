@@ -326,7 +326,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                 writableContext.reset()
                 
                 for context in allContext where context != writableContext {
-                    context.performAndWait {
+                    context.perform {
                         context.invalidateCurrentUserCache()
                         context.reset()
                     }
