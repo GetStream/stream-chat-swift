@@ -22,23 +22,19 @@ jobs:
       matrix:
         include:
           - ios: 18.5
-            xcode: 16.4
             os: macos-15
             device: "iPhone 16 Pro"
             setup_runtime: false
           - ios: 17.5
-            xcode: 15.4
-            os: macos-14
+            os: macos-15
             device: "iPhone 15 Pro"
-            setup_runtime: false
+            setup_runtime: true
           - ios: 16.4
-            xcode: 15.3 # fails on 15.4
-            os: macos-14
+            os: macos-15
             device: "iPhone 14 Pro"
             setup_runtime: true
           - ios: 15.5
-            xcode: 15.3 # fails on 15.4
-            os: macos-14
+            os: macos-15
             device: "iPhone 13 Pro"
             setup_runtime: true
       fail-fast: false
@@ -47,7 +43,7 @@ jobs:
       GITHUB_EVENT: ${{ toJson(github.event) }}
       ALLURE_TOKEN: ${{ secrets.ALLURE_TOKEN }}
       STREAM_DEMO_APP_SECRET: ${{ secrets.STREAM_DEMO_APP_SECRET }}
-      XCODE_VERSION: ${{ matrix.xcode }}
+      XCODE_VERSION: "26.0.1"
       IOS_SIMULATOR_DEVICE: "${{ matrix.device }} (${{ matrix.ios }})" # For the Allure report
     steps:
     - uses: actions/checkout@v4.1.1
@@ -66,7 +62,7 @@ jobs:
     - name: Launch Allure TestOps
       run: bundle exec fastlane allure_launch cron:true
     - name: Run UI Tests (Debug)
-      run: bundle exec fastlane test_e2e_mock device:"${{ matrix.device }} (${{ matrix.ios }})"
+      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}"
       timeout-minutes: 120
     - name: Allure TestOps Upload
       if: success() || failure()
@@ -95,29 +91,26 @@ jobs:
       matrix:
         include:
           - ios: 18.5
-            xcode: 16.4
             os: macos-15
             device: "iPhone 16 Pro"
             setup_runtime: false
           - ios: 17.5
             xcode: 15.4
-            os: macos-14
+            os: macos-15
             device: "iPhone 15 Pro"
-            setup_runtime: false
+            setup_runtime: true
           - ios: 16.4
-            xcode: 15.3 # fails on 15.4
-            os: macos-14
+            os: macos-15
             device: "iPhone 14 Pro"
             setup_runtime: true
           - ios: 15.5
-            xcode: 15.3 # fails on 15.4
-            os: macos-14
+            os: macos-15
             device: "iPhone 13 Pro"
             setup_runtime: true
       fail-fast: false
     runs-on: ${{ matrix.os }}
     env:
-      XCODE_VERSION: ${{ matrix.xcode }}
+      XCODE_VERSION: "26.0.1"
     steps:
     - uses: actions/checkout@v4.1.1
     - uses: ./.github/actions/bootstrap
