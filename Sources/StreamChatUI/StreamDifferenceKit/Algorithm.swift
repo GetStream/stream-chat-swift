@@ -509,6 +509,9 @@ internal func diff<E: Differentiable, I>(
                     targetReferences[targetIndex] = sourceIndex
                     sourceTraces[sourceIndex].reference = targetIndex
                 }
+                
+            @unknown default:
+                break
             }
         }
     }
