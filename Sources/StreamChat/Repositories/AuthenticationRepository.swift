@@ -48,8 +48,8 @@ class AuthenticationRepository: @unchecked Sendable {
     private var _tokenProvider: TokenProvider?
     private var _tokenRequestCompletions: [@Sendable (Error?) -> Void] = []
     private var _tokenWaiters: [String: @Sendable (Result<Token, Error>) -> Void] = [:]
-    private var _tokenProviderTimer: TimerControl?
-    private var _connectionProviderTimer: TimerControl?
+    private let _tokenProviderTimer = AllocatedUnfairLock<TimerControl?>(nil)
+    private let _connectionProviderTimer = AllocatedUnfairLock<TimerControl?>(nil)
 
     private(set) var isGettingToken: Bool {
         get { tokenQueue.sync { _isGettingToken } }
@@ -79,17 +79,13 @@ class AuthenticationRepository: @unchecked Sendable {
     }
 
     private var tokenProviderTimer: TimerControl? {
-        get { tokenQueue.sync { _tokenProviderTimer } }
-        set { tokenQueue.async(flags: .barrier) {
-            self._tokenProviderTimer = newValue
-        }}
+        get { _tokenProviderTimer.value }
+        set { _tokenProviderTimer.value = newValue }
     }
     
     private var connectionProviderTimer: TimerControl? {
-        get { tokenQueue.sync { _connectionProviderTimer } }
-        set { tokenQueue.async(flags: .barrier) {
-            self._connectionProviderTimer = newValue
-        }}
+        get { _connectionProviderTimer.value }
+        set { _connectionProviderTimer.value = newValue }
     }
 
     weak var delegate: AuthenticationRepositoryDelegate?
