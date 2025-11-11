@@ -311,7 +311,7 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         picker.dismiss(animated: true)
     }
     
-    private func uploadImageAndUpdateProfile(_ image: UIImage, completion: @escaping (Error?) -> Void) {
+    private func uploadImageAndUpdateProfile(_ image: UIImage, completion: @escaping @Sendable (Error?) -> Void) {
         guard let imageData = image.pngData() else {
             completion(NSError(domain: "UserProfile", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to PNG data"]))
             return

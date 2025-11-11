@@ -134,3 +134,18 @@ extension WebSocketClient {
         connectionState = status
     }
 }
+
+final class ChatConnectionControllerMock: ChatConnectionController, @unchecked Sendable {
+    @Atomic var connectionStatus_simulated: ConnectionStatus?
+    override var connectionStatus: ConnectionStatus {
+        connectionStatus_simulated ?? super.connectionStatus
+    }
+
+    init() {
+        super.init(
+            connectionRepository: ConnectionRepository_Mock(),
+            webSocketClient: WebSocketClient_Mock(),
+            client: ChatClient_Mock(config: ChatClientConfig(apiKeyString: ""))
+        )
+    }
+}

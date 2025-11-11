@@ -346,3 +346,26 @@ private class TestEnvironment {
             return self.userListUpdater!
         })
 }
+
+final class UserListControllerMock: ChatUserListController, @unchecked Sendable {
+    @Atomic var synchronize_called = false
+
+    var users_simulated: [ChatUser]?
+    override var users: [ChatUser] {
+        users_simulated ?? super.users
+    }
+
+    var state_simulated: DataController.State?
+    override var state: DataController.State {
+        get { state_simulated ?? super.state }
+        set { super.state = newValue }
+    }
+
+    init() {
+        super.init(query: .init(filter: .none), client: .mock)
+    }
+
+    override func synchronize(_ completion: (@MainActor (Error?) -> Void)? = nil) {
+        synchronize_called = true
+    }
+}
