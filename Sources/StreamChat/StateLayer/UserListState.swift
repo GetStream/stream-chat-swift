@@ -2,6 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import Combine
 import Foundation
 
 /// Represents a list of users matching to the specified query.
