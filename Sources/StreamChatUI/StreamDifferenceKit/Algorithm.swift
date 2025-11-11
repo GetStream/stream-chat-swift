@@ -486,6 +486,9 @@ internal func diff<E: Differentiable, I>(
 
             case .duplicate(let reference)?:
                 reference.push(sourceIndex)
+                
+            @unknown default:
+                break
             }
         }
 
