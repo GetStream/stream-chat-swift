@@ -14,7 +14,8 @@
   "testTargets" : [
     {
       "selectedTests" : [
-        "Backend_Tests\/test_messageListUpdates_whenUserSendsMessage()"
+        "Backend_Tests\/test_message()",
+        "Backend_Tests\/test_reaction()"
       ],
       "target" : {
         "containerPath" : "container:StreamChat.xcodeproj",
