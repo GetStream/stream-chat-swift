@@ -629,6 +629,7 @@
 		8274A7962B7FAC3900D8696B /* ChannelListScrollTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8274A7952B7FAC3900D8696B /* ChannelListScrollTime.swift */; };
 		8279706F29689680006741A3 /* UserDetails_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8279706E29689680006741A3 /* UserDetails_Tests.swift */; };
 		827DD1A0289D5B3300910AC5 /* MessageActionsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 827DD19F289D5B3300910AC5 /* MessageActionsVC.swift */; };
+		82865DA42EC4B87B007D7053 /* Backend_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82865DA32EC4B874007D7053 /* Backend_Tests.swift */; };
 		8292D6DB29B78476007A17D1 /* QuotedReply_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8292D6DA29B78476007A17D1 /* QuotedReply_Tests.swift */; };
 		829762E028C7587500B953E8 /* PushNotification_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829762DF28C7587500B953E8 /* PushNotification_Tests.swift */; };
 		829CD5C52848C2EA003C3877 /* ParticipantRobot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829CD5C32848C25F003C3877 /* ParticipantRobot.swift */; };
@@ -3691,6 +3692,8 @@
 		8274A7952B7FAC3900D8696B /* ChannelListScrollTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelListScrollTime.swift; sourceTree = "<group>"; };
 		8279706E29689680006741A3 /* UserDetails_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDetails_Tests.swift; sourceTree = "<group>"; };
 		827DD19F289D5B3300910AC5 /* MessageActionsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageActionsVC.swift; sourceTree = "<group>"; };
+		82865DA12EC4B84F007D7053 /* Backend.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; name = Backend.xctestplan; path = StreamChatUITestsAppUITests/Backend.xctestplan; sourceTree = "<group>"; };
+		82865DA32EC4B874007D7053 /* Backend_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Backend_Tests.swift; sourceTree = "<group>"; };
 		8292D6DA29B78476007A17D1 /* QuotedReply_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuotedReply_Tests.swift; sourceTree = "<group>"; };
 		829762DF28C7587500B953E8 /* PushNotification_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushNotification_Tests.swift; sourceTree = "<group>"; };
 		8298C8E827D22C3E004082D3 /* UserRobot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserRobot.swift; sourceTree = "<group>"; };
@@ -6312,6 +6315,14 @@
 			path = Swifter;
 			sourceTree = "<group>";
 		};
+		82865DA22EC4B86A007D7053 /* Backend */ = {
+			isa = PBXGroup;
+			children = (
+				82865DA32EC4B874007D7053 /* Backend_Tests.swift */,
+			);
+			path = Backend;
+			sourceTree = "<group>";
+		};
 		829CD5C22848C244003C3877 /* Robots */ = {
 			isa = PBXGroup;
 			children = (
@@ -6370,6 +6381,7 @@
 		82AD02BE27D8E453000611B7 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				82865DA22EC4B86A007D7053 /* Backend */,
 				82EBA1822B30A63800B3A048 /* Performance */,
 				A3600B3D283F63C700E1C930 /* Base TestCase */,
 				A3B78F16282A670600348AD1 /* Message Delivery Status */,
@@ -6843,6 +6855,7 @@
 		8AD5EC8522E9A3E8005CFAC9 = {
 			isa = PBXGroup;
 			children = (
+				82865DA12EC4B84F007D7053 /* Backend.xctestplan */,
 				4A4E184528D06CA30062378D /* Documentation.docc */,
 				AD9BE32526680E4200A6D284 /* Stream.playground */,
 				792E3D6A25C97D920040B0C2 /* Package.swift */,
@@ -12534,6 +12547,7 @@
 				8232B84F28635C4A0032C7DB /* Attachments_Tests.swift in Sources */,
 				822F266027D9FDB500E454FB /* URLProtocol_Mock.swift in Sources */,
 				82BA52EF27E1EF7B00951B87 /* MessageList_Tests.swift in Sources */,
+				82865DA42EC4B87B007D7053 /* Backend_Tests.swift in Sources */,
 				A33FA818282E559A00DC40E8 /* SlowMode_Tests.swift in Sources */,
 				A39B040B27F196F200D6B18A /* StreamChatUITests.swift in Sources */,
 				825A32CF27DBB48D000402A9 /* StartPage.swift in Sources */,

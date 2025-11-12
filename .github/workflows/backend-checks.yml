@@ -1,0 +1,41 @@
+name: Backend Checks
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  HOMEBREW_NO_INSTALL_CLEANUP: 1 # Disable cleanup for homebrew, we don't need it on CI
+  IOS_SIMULATOR_DEVICE: "iPhone 16 Pro (18.5)"
+  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+jobs:
+  test-backend-integration:
+    name: Test Backend Integration
+    runs-on: macos-15
+    steps:
+    - uses: actions/checkout@v4.1.1
+    - uses: ./.github/actions/bootstrap
+      env:
+        INSTALL_YEETD: true
+        SKIP_SWIFT_BOOTSTRAP: true
+    - name: Run UI Tests (Debug)
+      run: bundle exec fastlane test_e2e_mock device:"${{ env.IOS_SIMULATOR_DEVICE }}" batch:'${{ matrix.batch }}'
+      timeout-minutes: 100
+    - name: Parse xcresult
+      if: failure()
+      run: |
+        brew install chargepoint/xcparse/xcparse
+        xcparse logs fastlane/test_output/StreamChatUITestsApp.xcresult fastlane/test_output/logs/
+    - uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: Test Data Backend Integration
+        path: |
+          fastlane/recordings
+          fastlane/sinatra_log.txt
+          fastlane/test_output/logs/*/Diagnostics/**/*.txt
+          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
