@@ -84,6 +84,7 @@ open class ChatMessageReactionsPickerVC: _ViewController, ThemeProvider, ChatMes
         switch change {
         case .create, .remove: break
         case .update: updateContentIfNeeded()
+        @unknown default: break
         }
     }
 }

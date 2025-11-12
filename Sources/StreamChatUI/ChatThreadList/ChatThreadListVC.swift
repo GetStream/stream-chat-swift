@@ -317,6 +317,8 @@ open class ChatThreadListVC:
             showErrorView()
         case .localDataFetchFailed:
             break
+        @unknown default:
+            break
         }
     }
 

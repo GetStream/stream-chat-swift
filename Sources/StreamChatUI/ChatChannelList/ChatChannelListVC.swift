@@ -441,6 +441,8 @@ open class ChatChannelListVC: _ViewController,
                 shouldHideEmptyView = emptyView.isHidden
                 isLoading = false
                 channelListErrorView.show()
+            @unknown default:
+                break
             }
 
             emptyView.isHidden = shouldHideEmptyView

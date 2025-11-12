@@ -185,6 +185,8 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
                 editActionItem(),
                 deleteActionItem()
             ]
+        @unknown default:
+            return []
         }
     }
 
