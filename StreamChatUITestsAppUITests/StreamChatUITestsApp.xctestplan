@@ -21,7 +21,6 @@
     {
       "skippedTests" : [
         "Backend_Tests",
-        "Backend_Tests\/test_messageListUpdates_whenUserSendsMessage()",
         "ChannelListScrollTime",
         "MessageListScrollTime"
       ],
