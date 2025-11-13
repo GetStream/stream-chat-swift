@@ -3,8 +3,6 @@ name: Backend Checks
 on:
   workflow_dispatch:
 
-  pull_request: #TODO: DELETE AFTER TESTING
-
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
