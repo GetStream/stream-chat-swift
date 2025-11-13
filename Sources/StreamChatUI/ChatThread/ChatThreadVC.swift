@@ -451,6 +451,8 @@ open class ChatThreadVC: _ViewController,
             listChange = .update(item, index: indexPath)
         case let .remove(item):
             listChange = .remove(item, index: indexPath)
+        @unknown default:
+            return
         }
 
         updateMessages(with: [listChange])

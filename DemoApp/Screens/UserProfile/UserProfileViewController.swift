@@ -298,11 +298,13 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         loadingSpinner.startAnimating()
         
         uploadImageAndUpdateProfile(selectedImage) { [weak self] error in
-            self?.loadingSpinner.stopAnimating()
-            if let error = error {
-                self?.showError(error)
-            } else {
-                self?.showSuccess()
+            Task { @MainActor [weak self] in
+                self?.loadingSpinner.stopAnimating()
+                if let error = error {
+                    self?.showError(error)
+                } else {
+                    self?.showSuccess()
+                }
             }
         }
     }

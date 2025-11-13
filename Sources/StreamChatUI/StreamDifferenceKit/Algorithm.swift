@@ -486,6 +486,9 @@ internal func diff<E: Differentiable, I>(
 
             case .duplicate(let reference)?:
                 reference.push(sourceIndex)
+                
+            @unknown default:
+                break
             }
         }
 
@@ -509,6 +512,9 @@ internal func diff<E: Differentiable, I>(
                     targetReferences[targetIndex] = sourceIndex
                     sourceTraces[sourceIndex].reference = targetIndex
                 }
+                
+            @unknown default:
+                break
             }
         }
     }

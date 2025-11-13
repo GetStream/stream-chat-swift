@@ -113,6 +113,8 @@ open class UploadingOverlayView: _View, ThemeProvider {
                 return .restart
             case .uploaded:
                 return .uploaded
+            @unknown default:
+                return nil
             }
         }
         actionButton.isHidden = actionButton.content == nil
@@ -127,6 +129,8 @@ open class UploadingOverlayView: _View, ThemeProvider {
                 return nil
             case .uploadingFailed:
                 return L10n.Message.Sending.attachmentUploadingFailed
+            @unknown default:
+                return nil
             }
         }
         uploadingProgressLabel.isHidden = uploadingProgressLabel.text == nil
@@ -171,6 +175,8 @@ extension LocalAttachmentState {
             return "0/\(file.sizeString)"
         case .uploaded, .uploadingFailed, .unknown:
             return file.sizeString
+        @unknown default:
+            return ""
         }
     }
 }
@@ -190,6 +196,8 @@ extension AttachmentDownloadingState {
             return file?.progressDescription(for: progress) ?? ""
         case .downloaded, .downloadingFailed:
             return file?.sizeString ?? ""
+        @unknown default:
+            return ""
         }
     }
 }
@@ -203,6 +211,8 @@ extension AttachmentUploadingState {
             return "0 / \(file.sizeString)"
         case .uploaded, .uploadingFailed, .unknown:
             return file.sizeString
+        @unknown default:
+            return ""
         }
     }
 }

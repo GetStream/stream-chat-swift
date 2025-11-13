@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new message is sent to channel.
-final public class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
+public final class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The user who sent a message.
     public let user: ChatUser
 
@@ -332,19 +332,19 @@ public final class NewMessageErrorEvent: ChannelSpecificEvent {
 public final class MessageDeliveredEvent: ChannelSpecificEvent {
     /// The user who received the delivered message.
     public let user: ChatUser
-    
+
     /// The channel identifier the message was delivered to.
     public var cid: ChannelId { channel.cid }
-    
+
     /// The channel the message was delivered to.
     public let channel: ChatChannel
-    
+
     /// The event timestamp.
     public let createdAt: Date
-    
+
     /// The ID of the last delivered message.
     public let lastDeliveredMessageId: MessageId
-    
+
     /// The timestamp when the message was delivered.
     public let lastDeliveredAt: Date
 

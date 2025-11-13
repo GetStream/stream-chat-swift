@@ -123,6 +123,8 @@ extension ChatMessageFileAttachmentListView {
                     fileSizeLabel.text = content?.downloadingState?.fileProgress
                 case .downloaded, .downloadingFailed:
                     fileSizeLabel.text = content?.payload.file.sizeString
+                @unknown default:
+                    break
                 }
             } else if let uploadState {
                 switch uploadState {
@@ -132,6 +134,8 @@ extension ChatMessageFileAttachmentListView {
                     fileSizeLabel.text = L10n.Message.Sending.attachmentUploadingFailed
                 case .pendingUpload, .uploaded, .unknown:
                     fileSizeLabel.text = content?.payload.file.sizeString
+                @unknown default:
+                    break
                 }
             } else {
                 fileSizeLabel.text = content?.payload.file.sizeString

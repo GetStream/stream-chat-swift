@@ -177,6 +177,9 @@ class ConnectionRepository: @unchecked Sendable {
              .authenticating:
             shouldNotifyConnectionIdWaiters = false
             connectionId = nil
+        @unknown default:
+            shouldNotifyConnectionIdWaiters = false
+            connectionId = nil
         }
 
         updateConnectionId(
