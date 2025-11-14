@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new message is sent to channel.
-public class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
+public final class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The user who sent a message.
     public let user: ChatUser
 
@@ -83,7 +83,7 @@ class MessageNewEventDTO: EventDTO {
 }
 
 /// Triggered when a message is updated.
-public class MessageUpdatedEvent: ChannelSpecificEvent {
+public final class MessageUpdatedEvent: ChannelSpecificEvent {
     /// The use who updated the message.
     public let user: ChatUser
 
@@ -144,7 +144,7 @@ class MessageUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when a new message is deleted.
-public class MessageDeletedEvent: ChannelSpecificEvent {
+public final class MessageDeletedEvent: ChannelSpecificEvent {
     /// The user who deleted the message.
     public let user: ChatUser?
 
@@ -233,7 +233,7 @@ class MessageDeletedEventDTO: EventDTO {
 public typealias ChannelReadEvent = MessageReadEvent
 
 /// `ChannelReadEvent`, this event tells that User has mark read all messages in channel.
-public class MessageReadEvent: ChannelSpecificEvent {
+public final class MessageReadEvent: ChannelSpecificEvent {
     /// The user who read the channel.
     public let user: ChatUser
 
@@ -305,7 +305,7 @@ class MessageReadEventDTO: EventDTO {
 }
 
 // Triggered when the current user creates a new message and is pending to be sent.
-public class NewMessagePendingEvent: ChannelSpecificEvent {
+public final class NewMessagePendingEvent: ChannelSpecificEvent {
     public var message: ChatMessage
     public var cid: ChannelId
 
@@ -316,7 +316,7 @@ public class NewMessagePendingEvent: ChannelSpecificEvent {
 }
 
 // Triggered when a message failed being sent.
-public class NewMessageErrorEvent: ChannelSpecificEvent {
+public final class NewMessageErrorEvent: ChannelSpecificEvent {
     public let messageId: MessageId
     public let cid: ChannelId
     public let error: Error
@@ -329,7 +329,7 @@ public class NewMessageErrorEvent: ChannelSpecificEvent {
 }
 
 /// Triggered when a message is delivered to a user.
-public class MessageDeliveredEvent: ChannelSpecificEvent {
+public final class MessageDeliveredEvent: ChannelSpecificEvent {
     /// The user who received the delivered message.
     public let user: ChatUser
     
