@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new member is added to a channel.
-public struct MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
+public class MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
     /// The user who added a member to a channel.
     public let user: ChatUser
 
@@ -17,6 +17,13 @@ public struct MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(user: ChatUser, cid: ChannelId, member: ChatChannelMember, createdAt: Date) {
+        self.user = user
+        self.cid = cid
+        self.member = member
+        self.createdAt = createdAt
+    }
 }
 
 class MemberAddedEventDTO: EventDTO {
@@ -50,7 +57,7 @@ class MemberAddedEventDTO: EventDTO {
 }
 
 /// Triggered when a channel member is updated.
-public struct MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
+public class MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
     /// The user who updated a member.
     public let user: ChatUser
 
@@ -62,6 +69,13 @@ public struct MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(user: ChatUser, cid: ChannelId, member: ChatChannelMember, createdAt: Date) {
+        self.user = user
+        self.cid = cid
+        self.member = member
+        self.createdAt = createdAt
+    }
 }
 
 class MemberUpdatedEventDTO: EventDTO {
@@ -95,7 +109,7 @@ class MemberUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when a member is removed from a channel.
-public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
+public class MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
     /// The user who stopped being a member.
     public let user: ChatUser
 
@@ -104,6 +118,12 @@ public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(user: ChatUser, cid: ChannelId, createdAt: Date) {
+        self.user = user
+        self.cid = cid
+        self.createdAt = createdAt
+    }
 }
 
 class MemberRemovedEventDTO: EventDTO {
