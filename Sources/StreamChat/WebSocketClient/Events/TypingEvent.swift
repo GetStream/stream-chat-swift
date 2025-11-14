@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when user starts/stops typing in a channel.
-public class TypingEvent: ChannelSpecificEvent {
+public final class TypingEvent: ChannelSpecificEvent {
     /// The flag saying if typing is started/stopped.
     public let isTyping: Bool
 
@@ -67,7 +67,7 @@ class TypingEventDTO: EventDTO {
 /// A special event type which is only emitted by the SDK and never the backend.
 /// This event is emitted by `TypingStartCleanupMiddleware` to signal that a typing event
 /// must be cleaned up, due to timeout of that event.
-public class CleanUpTypingEvent: Event {
+public final class CleanUpTypingEvent: Event {
     public let cid: ChannelId
     public let userId: UserId
 

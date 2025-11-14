@@ -48,7 +48,7 @@ extension PollEventDTO {
 }
 
 /// A model representing an event where a poll was closed.
-public class PollClosedEvent: Event {
+public final class PollClosedEvent: Event {
     /// The poll that was closed.
     public let poll: Poll
     
@@ -77,7 +77,7 @@ struct PollClosedEventDTO: PollEventDTO {
 }
 
 /// A model representing an event where a poll was created.
-public class PollCreatedEvent: Event {
+public final class PollCreatedEvent: Event {
     /// The poll that was created.
     public let poll: Poll
     
@@ -106,7 +106,7 @@ struct PollCreatedEventDTO: PollEventDTO {
 }
 
 /// A model representing an event where a poll was deleted.
-public class PollDeletedEvent: Event {
+public final class PollDeletedEvent: Event {
     /// The poll that was deleted.
     public let poll: Poll
     
@@ -135,7 +135,7 @@ struct PollDeletedEventDTO: PollEventDTO {
 }
 
 /// A model representing an event where a poll was updated.
-public class PollUpdatedEvent: Event {
+public final class PollUpdatedEvent: Event {
     /// The poll that was updated.
     public let poll: Poll
     
@@ -164,7 +164,7 @@ struct PollUpdatedEventDTO: PollEventDTO {
 }
 
 /// A model representing an event where a vote was casted in a poll.
-public class PollVoteCastedEvent: Event {
+public final class PollVoteCastedEvent: Event {
     /// The vote that was casted.
     public let vote: PollVote
     
@@ -199,7 +199,7 @@ struct PollVoteCastedEventDTO: PollVoteEventDTO {
 }
 
 /// A model representing an event where a vote was changed in a poll.
-public class PollVoteChangedEvent: Event {
+public final class PollVoteChangedEvent: Event {
     /// The vote that was changed.
     public let vote: PollVote
     
@@ -234,7 +234,7 @@ struct PollVoteChangedEventDTO: PollVoteEventDTO {
 }
 
 /// A model representing an event where a vote was removed from a poll.
-public class PollVoteRemovedEvent: Event {
+public final class PollVoteRemovedEvent: Event {
     /// The vote that was removed.
     public let vote: PollVote
     

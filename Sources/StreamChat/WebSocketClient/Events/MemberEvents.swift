@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new member is added to a channel.
-public class MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
+public final class MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
     /// The user who added a member to a channel.
     public let user: ChatUser
 
@@ -57,7 +57,7 @@ class MemberAddedEventDTO: EventDTO {
 }
 
 /// Triggered when a channel member is updated.
-public class MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
+public final class MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
     /// The user who updated a member.
     public let user: ChatUser
 
@@ -109,7 +109,7 @@ class MemberUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when a member is removed from a channel.
-public class MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
+public final class MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
     /// The user who stopped being a member.
     public let user: ChatUser
 

@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new message is sent to a thread.
-public class ThreadMessageNewEvent: Event {
+public final class ThreadMessageNewEvent: Event {
     /// The reply that was sent.
     public let message: ChatMessage
 
@@ -63,7 +63,7 @@ class ThreadMessageNewEventDTO: EventDTO {
 }
 
 /// Triggered when a thread is updated
-public class ThreadUpdatedEvent: Event {
+public final class ThreadUpdatedEvent: Event {
     /// The updated user
     public let thread: ChatThread
 

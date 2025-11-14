@@ -5,7 +5,7 @@
 import Foundation
 
 /// An event that provides updates about the state of the AI typing indicator.
-public class AIIndicatorUpdateEvent: Event {
+public final class AIIndicatorUpdateEvent: Event {
     /// The state of the AI typing indicator.
     public let state: AITypingState
     /// The channel ID this event is related to.
@@ -46,7 +46,7 @@ class AIIndicatorUpdateEventDTO: EventDTO {
 }
 
 /// An event that clears the AI typing indicator.
-public class AIIndicatorClearEvent: Event {
+public final class AIIndicatorClearEvent: Event {
     /// The channel ID this event is related to.
     public let cid: ChannelId?
 
@@ -68,7 +68,7 @@ class AIIndicatorClearEventDTO: EventDTO {
 }
 
 /// An event that indicates the AI has stopped generating the message.
-public class AIIndicatorStopEvent: CustomEventPayload, Event {
+public final class AIIndicatorStopEvent: CustomEventPayload, Event {
     public static var eventType: EventType = .aiTypingIndicatorStop
     
     /// The channel ID this event is related to.

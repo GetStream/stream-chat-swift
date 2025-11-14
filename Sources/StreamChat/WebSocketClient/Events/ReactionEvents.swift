@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered a new reaction is added.
-public class ReactionNewEvent: ChannelSpecificEvent {
+public final class ReactionNewEvent: ChannelSpecificEvent {
     /// The use who added a reaction.
     public let user: ChatUser
 
@@ -69,7 +69,7 @@ class ReactionNewEventDTO: EventDTO {
 }
 
 /// Triggered when a reaction is updated.
-public class ReactionUpdatedEvent: ChannelSpecificEvent {
+public final class ReactionUpdatedEvent: ChannelSpecificEvent {
     /// The use who updated a reaction.
     public let user: ChatUser
 
@@ -133,7 +133,7 @@ class ReactionUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when a reaction is deleted.
-public class ReactionDeletedEvent: ChannelSpecificEvent {
+public final class ReactionDeletedEvent: ChannelSpecificEvent {
     /// The use who deleted a reaction.
     public let user: ChatUser
 

@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when user status changes (eg. online, offline, away, etc.)
-public class UserPresenceChangedEvent: Event {
+public final class UserPresenceChangedEvent: Event {
     /// The user the status changed for
     public let user: ChatUser
 
@@ -40,7 +40,7 @@ class UserPresenceChangedEventDTO: EventDTO {
 }
 
 /// Triggered when user is updated
-public class UserUpdatedEvent: Event {
+public final class UserUpdatedEvent: Event {
     /// The updated user
     public let user: ChatUser
 
@@ -77,7 +77,7 @@ class UserUpdatedEventDTO: EventDTO {
 // MARK: - User Watching
 
 /// Triggered when a user starts/stops watching a channel
-public class UserWatchingEvent: ChannelSpecificEvent {
+public final class UserWatchingEvent: ChannelSpecificEvent {
     /// The channel identifier a user started/stopped watching
     public let cid: ChannelId
 
@@ -135,7 +135,7 @@ class UserWatchingEventDTO: EventDTO {
 // MARK: - User Ban
 
 /// Triggered when user is banned not in a specific channel but globally.
-public class UserGloballyBannedEvent: Event {
+public final class UserGloballyBannedEvent: Event {
     /// The banned user
     public let user: ChatUser
 
@@ -170,7 +170,7 @@ class UserGloballyBannedEventDTO: EventDTO {
 }
 
 /// Triggered when user is banned in a specific channel
-public class UserBannedEvent: ChannelSpecificEvent {
+public final class UserBannedEvent: ChannelSpecificEvent {
     /// The channel identifer user is banned at.
     public let cid: ChannelId
 
@@ -240,7 +240,7 @@ class UserBannedEventDTO: EventDTO {
 }
 
 /// Triggered when user is removed from global ban.
-public class UserGloballyUnbannedEvent: Event {
+public final class UserGloballyUnbannedEvent: Event {
     /// The unbanned user.
     public let user: ChatUser
 
@@ -275,7 +275,7 @@ class UserGloballyUnbannedEventDTO: EventDTO {
 }
 
 /// Triggered when banned user is unbanned in a specific channel
-public class UserUnbannedEvent: ChannelSpecificEvent {
+public final class UserUnbannedEvent: ChannelSpecificEvent {
     /// The channel identifer user is unbanned at.
     public let cid: ChannelId
 
@@ -317,7 +317,7 @@ class UserUnbannedEventDTO: EventDTO {
 }
 
 /// Triggered when the messages of a banned user should be deleted.
-public class UserMessagesDeletedEvent: Event {
+public final class UserMessagesDeletedEvent: Event {
     /// The banned user.
     public let user: ChatUser
 

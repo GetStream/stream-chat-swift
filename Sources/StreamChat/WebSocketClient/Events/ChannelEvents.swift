@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a channel is updated.
-public class ChannelUpdatedEvent: ChannelSpecificEvent {
+public final class ChannelUpdatedEvent: ChannelSpecificEvent {
     /// The identifier of updated channel.
     public var cid: ChannelId { channel.cid }
 
@@ -60,7 +60,7 @@ class ChannelUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when a channel is deleted.
-public class ChannelDeletedEvent: ChannelSpecificEvent {
+public final class ChannelDeletedEvent: ChannelSpecificEvent {
     /// The identifier of deleted channel.
     public var cid: ChannelId { channel.cid }
 
@@ -107,7 +107,7 @@ class ChannelDeletedEventDTO: EventDTO {
 }
 
 /// Triggered when a channel is truncated.
-public class ChannelTruncatedEvent: ChannelSpecificEvent {
+public final class ChannelTruncatedEvent: ChannelSpecificEvent {
     /// The identifier of deleted channel.
     public var cid: ChannelId { channel.cid }
 
@@ -162,7 +162,7 @@ class ChannelTruncatedEventDTO: EventDTO {
 }
 
 /// Triggered when a channel is made visible.
-public class ChannelVisibleEvent: ChannelSpecificEvent {
+public final class ChannelVisibleEvent: ChannelSpecificEvent {
     /// The channel identifier.
     public let cid: ChannelId
 
@@ -204,7 +204,7 @@ class ChannelVisibleEventDTO: EventDTO {
 }
 
 /// Triggered when a channel is hidden.
-public class ChannelHiddenEvent: ChannelSpecificEvent {
+public final class ChannelHiddenEvent: ChannelSpecificEvent {
     /// The hidden channel identifier.
     public let cid: ChannelId
 

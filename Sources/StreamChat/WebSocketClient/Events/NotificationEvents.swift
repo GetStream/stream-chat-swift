@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new message is sent to a channel the current user is member of.
-public class NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
+public final class NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The identifier of a channel a message is sent to.
     public var cid: ChannelId { channel.cid }
 
@@ -61,7 +61,7 @@ class NotificationMessageNewEventDTO: EventDTO {
 }
 
 /// Triggered when all channels the current user is member of are marked as read.
-public class NotificationMarkAllReadEvent: Event, HasUnreadCount {
+public final class NotificationMarkAllReadEvent: Event, HasUnreadCount {
     /// The current user.
     public let user: ChatUser
 
@@ -104,7 +104,7 @@ class NotificationMarkAllReadEventDTO: EventDTO {
 }
 
 /// Triggered when a channel the current user is member of is marked as read.
-public class NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount {
+public final class NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The current user.
     public let user: ChatUser
 
@@ -130,7 +130,7 @@ public class NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount {
 }
 
 /// Triggered when a channel the current user is member of is marked as unread.
-public class NotificationMarkUnreadEvent: ChannelSpecificEvent {
+public final class NotificationMarkUnreadEvent: ChannelSpecificEvent {
     /// The current user.
     public let user: ChatUser
 
@@ -239,7 +239,7 @@ class NotificationMarkUnreadEventDTO: EventDTO {
 }
 
 /// Triggered when current user mutes/unmutes a user.
-public class NotificationMutesUpdatedEvent: Event {
+public final class NotificationMutesUpdatedEvent: Event {
     /// The current user.
     public let currentUser: CurrentChatUser
 
@@ -274,7 +274,7 @@ class NotificationMutesUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when the current user is added to the channel member list.
-public class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCount {
+public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The identifier of a channel a message is sent to.
     public var cid: ChannelId { channel.cid }
 
@@ -331,7 +331,7 @@ class NotificationAddedToChannelEventDTO: EventDTO {
 }
 
 /// Triggered when the current user is removed from a channel member list.
-public class NotificationRemovedFromChannelEvent: ChannelSpecificEvent {
+public final class NotificationRemovedFromChannelEvent: ChannelSpecificEvent {
     /// The user who removed the current user from channel members.
     public let user: ChatUser
 
@@ -384,7 +384,7 @@ class NotificationRemovedFromChannelEventDTO: EventDTO {
 }
 
 /// Triggered when current user mutes/unmutes a channel.
-public class NotificationChannelMutesUpdatedEvent: Event {
+public final class NotificationChannelMutesUpdatedEvent: Event {
     /// The current user.
     public let currentUser: CurrentChatUser
 
@@ -419,7 +419,7 @@ class NotificationChannelMutesUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when current user is invited to a channel.
-public class NotificationInvitedEvent: MemberEvent, ChannelSpecificEvent {
+public final class NotificationInvitedEvent: MemberEvent, ChannelSpecificEvent {
     /// The inviter.
     public let user: ChatUser
 
@@ -472,7 +472,7 @@ class NotificationInvitedEventDTO: EventDTO {
 }
 
 /// Triggered when the current user accepts an invite to a channel.
-public class NotificationInviteAcceptedEvent: MemberEvent, ChannelSpecificEvent {
+public final class NotificationInviteAcceptedEvent: MemberEvent, ChannelSpecificEvent {
     /// The inviter.
     public let user: ChatUser
 
@@ -529,7 +529,7 @@ class NotificationInviteAcceptedEventDTO: EventDTO {
 }
 
 /// Triggered when the current user rejects an invite to a channel.
-public class NotificationInviteRejectedEvent: MemberEvent, ChannelSpecificEvent {
+public final class NotificationInviteRejectedEvent: MemberEvent, ChannelSpecificEvent {
     /// The inviter.
     public let user: ChatUser
 
@@ -586,7 +586,7 @@ class NotificationInviteRejectedEventDTO: EventDTO {
 }
 
 /// Triggered when a channel is deleted, this event is delivered to all channel members
-public class NotificationChannelDeletedEvent: ChannelSpecificEvent {
+public final class NotificationChannelDeletedEvent: ChannelSpecificEvent {
     /// The cid of the deleted channel
     public let cid: ChannelId
 
