@@ -5,7 +5,7 @@
 import Foundation
 
 /// An event that provides updates about the state of the AI typing indicator.
-public struct AIIndicatorUpdateEvent: Event {
+public final class AIIndicatorUpdateEvent: Event {
     /// The state of the AI typing indicator.
     public let state: AITypingState
     /// The channel ID this event is related to.
@@ -14,6 +14,13 @@ public struct AIIndicatorUpdateEvent: Event {
     public let messageId: MessageId?
     /// Optional server message, usually when an error occurs.
     public let aiMessage: String?
+
+    init(state: AITypingState, cid: ChannelId?, messageId: MessageId?, aiMessage: String?) {
+        self.state = state
+        self.cid = cid
+        self.messageId = messageId
+        self.aiMessage = aiMessage
+    }
 }
 
 class AIIndicatorUpdateEventDTO: EventDTO {
@@ -39,9 +46,13 @@ class AIIndicatorUpdateEventDTO: EventDTO {
 }
 
 /// An event that clears the AI typing indicator.
-public struct AIIndicatorClearEvent: Event {
+public final class AIIndicatorClearEvent: Event {
     /// The channel ID this event is related to.
     public let cid: ChannelId?
+
+    init(cid: ChannelId?) {
+        self.cid = cid
+    }
 }
 
 class AIIndicatorClearEventDTO: EventDTO {
@@ -57,7 +68,7 @@ class AIIndicatorClearEventDTO: EventDTO {
 }
 
 /// An event that indicates the AI has stopped generating the message.
-public struct AIIndicatorStopEvent: CustomEventPayload, Event {
+public final class AIIndicatorStopEvent: CustomEventPayload, Event {
     public static var eventType: EventType = .aiTypingIndicatorStop
     
     /// The channel ID this event is related to.
@@ -65,6 +76,14 @@ public struct AIIndicatorStopEvent: CustomEventPayload, Event {
     
     public init(cid: ChannelId?) {
         self.cid = cid
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(cid)
+    }
+
+    public static func == (lhs: AIIndicatorStopEvent, rhs: AIIndicatorStopEvent) -> Bool {
+        lhs.cid == rhs.cid
     }
 }
 

@@ -3,7 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ⚡️ Performance
+- Reduce SDK size by converting Events from structs to classes [#3878](https://github.com/GetStream/stream-chat-swift/pull/3878)
 ### 🔄 Changed
+- Change Events from structs to classes [#3878](https://github.com/GetStream/stream-chat-swift/pull/3878)
 
 # [4.92.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.92.0)
 _November 05, 2025_
