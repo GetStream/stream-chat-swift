@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add `ChatClientConfig.isAutomaticSyncOnReconnectEnabled` for toggling automatic syncing [#3879](https://github.com/GetStream/stream-chat-swift/pull/3879)
 ### ⚡️ Performance
 - Reduce SDK size by converting Events from structs to classes [#3878](https://github.com/GetStream/stream-chat-swift/pull/3878)
 ### 🔄 Changed

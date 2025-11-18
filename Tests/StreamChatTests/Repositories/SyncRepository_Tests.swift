@@ -277,6 +277,64 @@ class SyncRepository_Tests: XCTestCase {
         waitForSyncLocalStateRun()
     }
 
+    func test_syncLocalState_isAutomaticSyncOnReconnectEnabled_false_noOperationsRun() throws {
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isLocalStorageEnabled = true
+        config.isAutomaticSyncOnReconnectEnabled = false
+        let client = ChatClient_Mock(config: config)
+        repository = SyncRepository(
+            config: client.config,
+            offlineRequestsRepository: offlineRequestsRepository,
+            eventNotificationCenter: repository.eventNotificationCenter,
+            database: database,
+            apiClient: apiClient,
+            channelListUpdater: channelListUpdater
+        )
+
+        let cid = ChannelId.unique
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-3600),
+            createChannel: true,
+            cid: cid
+        )
+
+        // Set up active controllers and chats that would normally trigger sync operations
+        let chatController = ChatChannelController_Spy(client: client)
+        chatController.state = .remoteDataFetched
+        repository.startTrackingChannelController(chatController)
+        
+        let chat = Chat_Mock(
+            chatClient: client,
+            channelQuery: .init(cid: Chat_Mock.cid),
+            channelListQuery: nil
+        )
+        repository.startTrackingChat(chat)
+
+        let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
+        chatListController.state_mock = .remoteDataFetched
+        chatListController.channels_mock = [.mock(cid: cid)]
+        repository.startTrackingChannelListController(chatListController)
+
+        // WHEN: syncLocalState is called
+        let expectation = expectation(description: "syncLocalState completion")
+        repository.syncLocalState {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout, handler: nil)
+
+        // THEN: No background mode operations should run
+        // No /sync API calls should be made
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+        // No refreshLoadedChannels calls should be made
+        XCTAssertNotCall("refreshLoadedChannels(completion:)", on: chatListController)
+        // No watch() calls should be made
+        XCTAssertNotCall("watch()", on: chat)
+        // Recovery mode operations may still run if isLocalStorageEnabled is true
+        XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
+        XCTAssertCall("exitRecoveryMode()", on: apiClient)
+    }
+
     // MARK: - Queue offline requests
 
     func test_queueOfflineRequest_localStorageDisabled() {
