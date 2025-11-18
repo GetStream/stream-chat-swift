@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.93.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.93.0)
+_November 18, 2025_
+
 ## StreamChat
 ### ✅ Added
 - Add `ChatClientConfig.isAutomaticSyncOnReconnectEnabled` for toggling automatic syncing [#3879](https://github.com/GetStream/stream-chat-swift/pull/3879)
