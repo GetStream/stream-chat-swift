@@ -89,7 +89,12 @@ open class ChatChannelVC: _ViewController,
             return isLastMessageFullyVisible && isFirstPageLoaded
         }
 
-        return isLastMessageVisibleOrSeen && hasSeenFirstUnreadMessage && isFirstPageLoaded && !hasMarkedMessageAsUnread
+        let unreadMessageCount = channelController.channel?.unreadCount.messages ?? 0
+        return isLastMessageVisibleOrSeen
+            && hasSeenFirstUnreadMessage
+            && isFirstPageLoaded
+            && !hasMarkedMessageAsUnread
+            && unreadMessageCount > 0
     }
 
     private var isLastMessageVisibleOrSeen: Bool {
