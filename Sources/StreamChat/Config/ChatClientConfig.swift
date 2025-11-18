@@ -203,6 +203,30 @@ public struct ChatClientConfig {
     
     /// How many hours the unsent actions should be queued for sending when the internet connection is available.
     public var queuedActionsMaxHoursThreshold: Int = 12
+    
+    /// Specifies, if local data is updated with subscribing to web-socket events after reconnection.
+    ///
+    /// When turning this off it is up for SDK user to observe web-socket connection state for reconnection
+    /// and syncing data by calling, for example, controller's `synchronize` or state-layer's `get` methods.
+    /// Note that, these calls fetch the latest state and also subscribe to web-socket events if query's `watch` is true.
+    ///
+    /// Web-socket connection status can be updated either with subscribe method or through ``ChatConnectionController``.
+    /// ```swift
+    /// connectionCancellable = chatClient.subscribe(
+    ///     toEvent: ConnectionStatusUpdated.self,
+    ///     handler: { connectionEvent in
+    ///         switch connectionEvent.connectionStatus {
+    ///         case .connected:
+    ///             // Data can be updated and watching can be resumed
+    ///         default:
+    ///             break
+    ///         }
+    ///     }
+    /// )
+    /// ```
+    ///
+    /// - SeeAlso: Query option``QueryOptions/watch`` used by ``ChannelListQuery`` and ``ChannelQuery``.
+    public var isAutomaticSyncOnReconnectEnabled = true
 
     public init(
         apiKey: APIKey
