@@ -904,11 +904,12 @@ final class ChatChannelVC_Tests: XCTestCase {
         XCTAssertTrue(vc.shouldMarkChannelRead)
     }
 
-    func test_shouldMarkChannelRead_jumpToUnreadEnabled_viewIsVisible_remoteDataFetched_lastMessageVisible_hasLoadedAllNextMessages_hasNotMarkedMessageAsUnread_shouldReturnTrue() {
+    func test_shouldMarkChannelRead_jumpToUnreadEnabled_viewIsVisible_remoteDataFetched_lastMessageVisible_hasLoadedAllNextMessages_hasNotMarkedMessageAsUnread_withUnreads_shouldReturnTrue() {
         let mockedListView = makeMockMessageListView()
         vc.mockIsViewVisible(true)
         vc.components.isJumpToUnreadEnabled = true
         channelControllerMock.state_mock = .remoteDataFetched
+        channelControllerMock.channel_mock = .mock(cid: .unique, unreadCount: ChannelUnreadCount(messages: 1, mentions: 0))
         mockedListView.mockIsLastCellFullyVisible = true
         channelControllerMock.hasLoadedAllNextMessages_mock = true
         channelControllerMock.markedAsUnread_mock = false
@@ -918,6 +919,23 @@ final class ChatChannelVC_Tests: XCTestCase {
         vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
 
         XCTAssertTrue(vc.shouldMarkChannelRead)
+    }
+    
+    func test_shouldMarkChannelRead_jumpToUnreadEnabled_viewIsVisible_remoteDataFetched_lastMessageVisible_hasLoadedAllNextMessages_hasNotMarkedMessageAsUnread_withoutUnreads_shouldReturnFalse() {
+        let mockedListView = makeMockMessageListView()
+        vc.mockIsViewVisible(true)
+        vc.components.isJumpToUnreadEnabled = true
+        channelControllerMock.state_mock = .remoteDataFetched
+        channelControllerMock.channel_mock = .mock(cid: .unique, unreadCount: ChannelUnreadCount(messages: 0, mentions: 0))
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+
+        // Simulate display to update hasSeenLastMessage && hasSeenFirstUnreadMessage
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), willDisplayMessageAt: IndexPath(item: 0, section: 0))
+        vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
+
+        XCTAssertFalse(vc.shouldMarkChannelRead)
     }
 
     func test_shouldMarkChannelRead_jumpToUnreadEnabled_whenNotSeenLastMessage_whenNotSeenFirstUnreadMessage_shouldReturnFalse() {
