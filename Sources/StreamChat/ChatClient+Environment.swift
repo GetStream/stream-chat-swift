@@ -12,7 +12,8 @@ extension ChatClient {
             _ requestEncoder: RequestEncoder,
             _ requestDecoder: RequestDecoder,
             _ attachmentDownloader: AttachmentDownloader,
-            _ attachmentUploader: AttachmentUploader
+            _ attachmentUploader: AttachmentUploader,
+            _ cdnClient: CDNClient
         ) -> APIClient = APIClient.init
 
         var webSocketClientBuilder: ((

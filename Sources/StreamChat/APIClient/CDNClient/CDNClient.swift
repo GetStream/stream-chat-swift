@@ -51,6 +51,17 @@ public protocol CDNClient {
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<UploadedFile, Error>) -> Void
     )
+
+    /// Deletes the attachment from the CDN, given the remote URL.
+    /// - Parameters:
+    ///   - remoteUrl: The remote url of the attachment.
+    ///   - attachmentType: The attachment type.
+    ///   - completion: Returns an error in case the delete operation fails.
+    func deleteAttachment(
+        remoteUrl: URL,
+        attachmentType: AttachmentType,
+        completion: @escaping (Error?) -> Void
+    )
 }
 
 public extension CDNClient {
@@ -147,7 +158,36 @@ class StreamCDNClient: CDNClient {
             completion: completion
         )
     }
-    
+
+    func deleteAttachment(
+        remoteUrl: URL,
+        attachmentType: AttachmentType,
+        completion: @escaping (Error?) -> Void
+    ) {
+        let endpoint = Endpoint<FileUploadPayload>
+            .deleteAttachment(url: remoteUrl, type: attachmentType)
+
+        encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
+            var urlRequest: URLRequest
+
+            do {
+                urlRequest = try requestResult.get()
+            } catch {
+                log.error(error, subsystems: .httpRequests)
+                completion(error)
+                return
+            }
+
+            guard let self = self else {
+                return
+            }
+
+            self.session.dataTask(with: urlRequest, completionHandler: { _, _, error in
+                completion(error)
+            }).resume()
+        }
+    }
+
     private func uploadAttachment<ResponsePayload>(
         endpoint: Endpoint<ResponsePayload>,
         fileData: Data,
