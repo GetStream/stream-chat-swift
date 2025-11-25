@@ -690,7 +690,7 @@ public class ChatClient {
         }
 
         let attachment = StreamAttachment(
-            type: .image,
+            type: uploadingState.file.type.isImage ? .image : .file,
             payload: localUrl,
             downloadingState: nil,
             uploadingState: uploadingState
