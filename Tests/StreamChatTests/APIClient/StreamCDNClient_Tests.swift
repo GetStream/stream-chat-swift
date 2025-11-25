@@ -372,7 +372,7 @@ final class StreamCDNClient_Tests: XCTestCase {
 
         // Create test values
         let remoteURL = URL.unique()
-        let testEndpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: .image)
+        let testEndpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: .file)
 
         // Simulate file deletion
         client.deleteAttachment(

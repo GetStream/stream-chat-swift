@@ -28,7 +28,7 @@ extension Endpoint {
     static func deleteAttachment(url: URL, type: AttachmentType) -> Endpoint<EmptyResponse> {
         .init(
             path: .uploadAttachment(type == .image ? "image" : "file"),
-            method: .post,
+            method: .delete,
             queryItems: nil,
             requiresConnectionId: false,
             body: ["url": url.absoluteString]
