@@ -318,45 +318,20 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
     }
     
     private func uploadImageAndUpdateProfile(_ image: UIImage, completion: @escaping (Error?) -> Void) {
-        guard let imageData = image.pngData() else {
-            completion(NSError(domain: "UserProfile", code: -1, userInfo: [NSLocalizedDescriptionKey: "Failed to convert image to PNG data"]))
+        guard let imageLocalUrl = image.tempFileURL() else {
+            completion(ClientError("Failed to get local url."))
             return
         }
-        
-        // Create temporary file
-        let imageURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("avatar_\(UUID().uuidString).png")
-        
-        do {
-            try imageData.write(to: imageURL)
-        } catch {
-            completion(error)
-            return
-        }
-        
-        let uploadingState = AttachmentUploadingState(
-            localFileURL: imageURL,
-            state: .pendingUpload,
-            file: .init(type: .png, size: Int64(imageData.count), mimeType: "image/png")
-        )
-        
-        let attachment = StreamAttachment(
-            type: .image,
-            payload: imageData,
-            downloadingState: nil,
-            uploadingState: uploadingState
-        )
-        
+
         // Upload the image
-        currentUserController.client.upload(attachment, progress: { progress in
+        currentUserController.client.uploadAttachment(localUrl: imageLocalUrl, progress: { progress in
             print("Upload progress: \(progress)")
         }, completion: { [weak self] result in
-            // Clean up temporary file
-            try? FileManager.default.removeItem(at: imageURL)
-            
             switch result {
             case .success(let file):
                 // Update user profile with new image URL
                 self?.currentUserController.updateUserData(imageURL: file.fileURL) { error in
+                    self?.updateUserData()
                     completion(error)
                 }
             case .failure(let error):
@@ -417,5 +392,19 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         )
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
+    }
+}
+
+extension UIImage {
+    func tempFileURL() -> URL? {
+        guard let imageData = self.pngData() else { return nil }
+        let tempDir = URL(fileURLWithPath: NSTemporaryDirectory())
+        let imageURL = tempDir.appendingPathComponent("avatar_\(UUID().uuidString).png")
+        do {
+            try imageData.write(to: imageURL)
+            return imageURL
+        } catch {
+            return nil
+        }
     }
 }

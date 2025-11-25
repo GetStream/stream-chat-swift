@@ -665,6 +665,50 @@ public class ChatClient {
         )
     }
 
+    public func uploadAttachment(
+        localUrl: URL,
+        progress: ((Double) -> Void)?,
+        completion: @escaping (Result<UploadedFile, Error>) -> Void
+    ) {
+        let uploadingState: AttachmentUploadingState
+
+        do {
+            uploadingState = AttachmentUploadingState(
+                localFileURL: localUrl,
+                state: .pendingUpload,
+                file: try .init(url: localUrl)
+            )
+        } catch {
+            completion(.failure(error))
+            return
+        }
+
+        let attachment = StreamAttachment(
+            type: .image,
+            payload: localUrl,
+            downloadingState: nil,
+            uploadingState: uploadingState
+        )
+
+        apiClient.attachmentUploader.uploadStandaloneAttachment(
+            attachment,
+            progress: progress,
+            completion: completion
+        )
+    }
+
+    public func deleteAttachment(
+        remoteUrl: URL,
+        attachmentType: AttachmentType,
+        completion: @escaping (Error?) -> Void
+    ) {
+        apiClient.cdnClient.deleteAttachment(
+            remoteUrl: remoteUrl,
+            attachmentType: attachmentType,
+            completion: completion
+        )
+    }
+
     // MARK: - Internal
 
     func createBackgroundWorkers() {
