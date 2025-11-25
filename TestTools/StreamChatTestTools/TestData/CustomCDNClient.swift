@@ -3,6 +3,7 @@
 //
 
 import Foundation
+
 @testable import StreamChat
 
 public final class CustomCDNClient: CDNClient {
@@ -13,10 +14,17 @@ public final class CustomCDNClient: CDNClient {
         progress: ((Double) -> Void)?,
         completion: @escaping (Result<URL, Error>) -> Void
     ) {}
-    
+
     public func uploadStandaloneAttachment<Payload>(
         _ attachment: StreamChat.StreamAttachment<Payload>,
         progress: ((Double) -> Void)?,
-        completion: @escaping (Result<StreamChat.UploadedFile, any Error>) -> Void
+        completion:
+        @escaping (Result<StreamChat.UploadedFile, any Error>) -> Void
+    ) {}
+
+    public func deleteAttachment(
+        remoteUrl: URL,
+        attachmentType: AttachmentType,
+        completion: @escaping ((any Error)?) -> Void
     ) {}
 }
