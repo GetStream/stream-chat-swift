@@ -665,6 +665,12 @@ public class ChatClient {
         )
     }
 
+    /// Uploads an attachment to the specified CDN.
+    ///
+    /// - Parameters:
+    ///  - localUrl: the local url of the file to be uploaded.
+    ///  - progress: the progress of the upload.
+    ///  - completion: called when the attachment is uploaded.
     public func uploadAttachment(
         localUrl: URL,
         progress: ((Double) -> Void)?,
@@ -697,6 +703,11 @@ public class ChatClient {
         )
     }
 
+    /// Deletes the attachment from the CDN, given the remote URL.
+    /// - Parameters:
+    ///   - remoteUrl: The remote url of the attachment.
+    ///   - attachmentType: The attachment type.
+    ///   - completion: Returns an error in case the delete operation fails.
     public func deleteAttachment(
         remoteUrl: URL,
         attachmentType: AttachmentType,
