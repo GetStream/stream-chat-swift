@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatUI
 import SwiftUI
 import UIKit
 
@@ -152,13 +153,12 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
     }
 
     private func updateUserData() {
-        guard let imageURL = currentUserController.currentUser?.imageURL else { return }
-        DispatchQueue.global().async { [weak self] in
-            guard let data = try? Data(contentsOf: imageURL), let image = UIImage(data: data) else { return }
-            DispatchQueue.main.async {
-                self?.imageView.image = image
-            }
-        }
+        Components.default
+            .imageLoader
+            .loadImage(
+                into: imageView,
+                from: currentUserController.currentUser?.imageURL
+            )
 
         if let typingIndicatorsEnabled = currentUserController.currentUser?.privacySettings.typingIndicators?.enabled {
             UserConfig.shared.typingIndicatorsEnabled = typingIndicatorsEnabled
@@ -268,6 +268,12 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
             self?.presentImagePicker(sourceType: .photoLibrary)
         })
         
+        if currentUserController.currentUser?.imageURL != nil {
+            alertController.addAction(UIAlertAction(title: "Delete Avatar", style: .destructive) { [weak self] _ in
+                self?.deleteAvatar()
+            })
+        }
+        
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
         
         if let popover = alertController.popoverPresentationController {
@@ -357,6 +363,40 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
                 completion(error)
             }
         })
+    }
+    
+    private func deleteAvatar() {
+        guard let imageURL = currentUserController.currentUser?.imageURL else {
+            return
+        }
+        
+        loadingSpinner.startAnimating()
+        
+        // Delete the attachment from CDN
+        currentUserController.client.deleteAttachment(remoteUrl: imageURL, attachmentType: .image) { [weak self] error in
+            if let error = error {
+                self?.loadingSpinner.stopAnimating()
+                self?.showError(error)
+            } else {
+                // Only update user data if deletion was successful
+                self?.currentUserController.updateUserData(unsetProperties: ["image"]) { updateError in
+                    self?.loadingSpinner.stopAnimating()
+                    
+                    if let updateError = updateError {
+                        self?.showError(updateError)
+                    } else {
+                        self?.updateUserData()
+                        let alert = UIAlertController(
+                            title: "Success",
+                            message: "Avatar deleted successfully!",
+                            preferredStyle: .alert
+                        )
+                        alert.addAction(UIAlertAction(title: "OK", style: .default))
+                        self?.present(alert, animated: true)
+                    }
+                }
+            }
+        }
     }
     
     private func showError(_ error: Error) {
