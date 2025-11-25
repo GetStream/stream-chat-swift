@@ -372,13 +372,11 @@ final class StreamCDNClient_Tests: XCTestCase {
 
         // Create test values
         let remoteURL = URL.unique()
-        let attachmentType = AttachmentType.image
-        let testEndpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: attachmentType)
+        let testEndpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: .image)
 
         // Simulate file deletion
         client.deleteAttachment(
             remoteUrl: remoteURL,
-            attachmentType: attachmentType,
             completion: { _ in }
         )
 
@@ -395,13 +393,11 @@ final class StreamCDNClient_Tests: XCTestCase {
         builder.encoder.encodeRequest = .failure(testError)
 
         let remoteURL = URL.unique()
-        let attachmentType = AttachmentType.video
 
         // Create a request and assert the result is failure
         let result: Error? = try waitFor {
             client.deleteAttachment(
                 remoteUrl: remoteURL,
-                attachmentType: attachmentType,
                 completion: $0
             )
         }
@@ -421,13 +417,11 @@ final class StreamCDNClient_Tests: XCTestCase {
         URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 200)
 
         let remoteURL = URL.unique()
-        let attachmentType = AttachmentType.file
 
         // Create a request and wait for the completion block
         let result: Error? = try waitFor {
             client.deleteAttachment(
                 remoteUrl: remoteURL,
-                attachmentType: attachmentType,
                 completion: $0
             )
         }
@@ -451,13 +445,11 @@ final class StreamCDNClient_Tests: XCTestCase {
         URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 404, error: networkError)
 
         let remoteURL = URL.unique()
-        let attachmentType = AttachmentType.audio
 
         // Create a request and wait for the completion block
         let result: Error? = try waitFor {
             client.deleteAttachment(
                 remoteUrl: remoteURL,
-                attachmentType: attachmentType,
                 completion: $0
             )
         }

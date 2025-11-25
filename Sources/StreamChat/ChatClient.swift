@@ -706,16 +706,13 @@ public class ChatClient {
     /// Deletes the attachment from the CDN, given the remote URL.
     /// - Parameters:
     ///   - remoteUrl: The remote url of the attachment.
-    ///   - attachmentType: The attachment type.
     ///   - completion: Returns an error in case the delete operation fails.
     public func deleteAttachment(
         remoteUrl: URL,
-        attachmentType: AttachmentType,
         completion: @escaping (Error?) -> Void
     ) {
         apiClient.cdnClient.deleteAttachment(
             remoteUrl: remoteUrl,
-            attachmentType: attachmentType,
             completion: completion
         )
     }

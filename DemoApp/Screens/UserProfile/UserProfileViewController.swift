@@ -348,7 +348,7 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         loadingSpinner.startAnimating()
         
         // Delete the attachment from CDN
-        currentUserController.client.deleteAttachment(remoteUrl: imageURL, attachmentType: .image) { [weak self] error in
+        currentUserController.client.deleteAttachment(remoteUrl: imageURL) { [weak self] error in
             if let error = error {
                 self?.loadingSpinner.stopAnimating()
                 self?.showError(error)

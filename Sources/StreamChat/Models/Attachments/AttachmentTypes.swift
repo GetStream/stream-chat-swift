@@ -312,6 +312,15 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
         }
     }
 
+    public var isImage: Bool {
+        switch self {
+        case .jpeg, .png, .webp, .gif, .bmp:
+            return true
+        default:
+            return false
+        }
+    }
+
     public var isUnknown: Bool {
         self == .unknown
     }

@@ -24,7 +24,6 @@ public final class CustomCDNClient: CDNClient {
 
     public func deleteAttachment(
         remoteUrl: URL,
-        attachmentType: AttachmentType,
         completion: @escaping ((any Error)?) -> Void
     ) {}
 }

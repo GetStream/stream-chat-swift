@@ -13,7 +13,6 @@ final class CDNClient_Spy: CDNClient, Spy {
     var uploadAttachmentResult: Result<URL, Error>?
     
     var deleteAttachmentRemoteUrl: URL?
-    var deleteAttachmentType: AttachmentType?
     var deleteAttachmentResult: Error?
 
     func uploadAttachment(
@@ -52,12 +51,10 @@ final class CDNClient_Spy: CDNClient, Spy {
     
     func deleteAttachment(
         remoteUrl: URL,
-        attachmentType: AttachmentType,
         completion: @escaping (Error?) -> Void
     ) {
         record()
         deleteAttachmentRemoteUrl = remoteUrl
-        deleteAttachmentType = attachmentType
         if let result = deleteAttachmentResult {
             completion(result)
         }
