@@ -27,6 +27,9 @@ class APIClient {
     /// The attachment uploader.
     let attachmentUploader: AttachmentUploader
 
+    /// The CDN Client to store and delete attachments.
+    let cdnClient: CDNClient
+
     /// Queue in charge of handling incoming requests
     private let operationQueue: OperationQueue = {
         let operationQueue = OperationQueue()
@@ -63,13 +66,15 @@ class APIClient {
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         attachmentDownloader: AttachmentDownloader,
-        attachmentUploader: AttachmentUploader
+        attachmentUploader: AttachmentUploader,
+        cdnClient: CDNClient
     ) {
         encoder = requestEncoder
         decoder = requestDecoder
         session = URLSession(configuration: sessionConfiguration)
         self.attachmentDownloader = attachmentDownloader
         self.attachmentUploader = attachmentUploader
+        self.cdnClient = cdnClient
     }
 
     /// Performs a network request and retries in case of network failures

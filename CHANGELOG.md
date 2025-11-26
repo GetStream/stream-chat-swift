@@ -4,6 +4,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add `ChatClient.uploadAttachment(localUrl:progress:)` [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
+- Add `ChatClient.deleteAttachment(remoteUrl:)` [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
+- Add `CDNClient.deleteAttachment(remoteUrl:)` [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
+- Add `heic`, `heif` and `svg` formats to the supported image file types [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
 ### 🐞 Fixed
 - Fix rare crash in WebSocketClient.connectEndpoint [#3882](https://github.com/GetStream/stream-chat-swift/pull/3882)
 

@@ -359,4 +359,102 @@ final class StreamCDNClient_Tests: XCTestCase {
             body: multipartFormData.getMultipartFormData()
         )
     }
+    
+    // MARK: - Delete Attachment Tests
+    
+    func test_deleteAttachmentEncoderIsCalledWithEndpoint() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+
+        // Setup mock encoder response (it's not actually used, we just need to return something)
+        let request = URLRequest(url: .unique())
+        builder.encoder.encodeRequest = .success(request)
+
+        // Create test values
+        let remoteURL = URL.unique()
+        let testEndpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: .file)
+
+        // Simulate file deletion
+        client.deleteAttachment(
+            remoteUrl: remoteURL,
+            completion: { _ in }
+        )
+
+        // Check the encoder is called with the correct endpoint
+        XCTAssertEqual(builder.encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
+    }
+    
+    func test_deleteAttachmentEncoderFailingToEncode() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+        
+        // Setup mock encoder response to fail with `testError`
+        let testError = TestError()
+        builder.encoder.encodeRequest = .failure(testError)
+
+        let remoteURL = URL.unique()
+
+        // Create a request and assert the result is failure
+        let result: Error? = try waitFor {
+            client.deleteAttachment(
+                remoteUrl: remoteURL,
+                completion: $0
+            )
+        }
+
+        XCTAssertEqual(result as? TestError, testError)
+    }
+    
+    func test_deleteAttachmentSuccess() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+
+        // Create a test request and set it as a response from the encoder
+        let testRequest = URLRequest(url: .unique())
+        builder.encoder.encodeRequest = .success(testRequest)
+
+        // Set up a successful mock network response for the request (no body needed for delete)
+        URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 200)
+
+        let remoteURL = URL.unique()
+
+        // Create a request and wait for the completion block
+        let result: Error? = try waitFor {
+            client.deleteAttachment(
+                remoteUrl: remoteURL,
+                completion: $0
+            )
+        }
+
+        // Check the result is successful (nil error)
+        XCTAssertNil(result)
+    }
+    
+    func test_deleteAttachmentFailure() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+
+        // Create a test request and set it as a response from the encoder
+        let testRequest = URLRequest(url: .unique())
+        builder.encoder.encodeRequest = .success(testRequest)
+
+        // We cannot use `TestError` since iOS14 wraps this into another error
+        let networkError = NSError(domain: "TestNetworkError", code: -1, userInfo: nil)
+
+        // Set up a mock network response from the request with error
+        URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 404, error: networkError)
+
+        let remoteURL = URL.unique()
+
+        // Create a request and wait for the completion block
+        let result: Error? = try waitFor {
+            client.deleteAttachment(
+                remoteUrl: remoteURL,
+                completion: $0
+            )
+        }
+
+        // Check the error is propagated
+        XCTAssertNotNil(result)
+    }
 }
