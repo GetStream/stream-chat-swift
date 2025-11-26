@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix rare crash in WebSocketClient.connectEndpoint [#3882](https://github.com/GetStream/stream-chat-swift/pull/3882)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix marking channel read when scrolling to the bottom without unread counts [#3881](https://github.com/GetStream/stream-chat-swift/pull/3881)
