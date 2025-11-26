@@ -223,7 +223,7 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
     /// Video
     case mov, avi, wmv, webm
     /// Image
-    case jpeg, png, gif, bmp, webp
+    case jpeg, png, gif, bmp, webp, heic, heif, svg
     /// Unknown
     case unknown
 
@@ -260,7 +260,12 @@ public enum AttachmentFileType: String, Codable, Equatable, CaseIterable {
         "image/png": .png,
         "image/gif": .gif,
         "image/bmp": .bmp,
-        "image/webp": .webp
+        "image/webp": .webp,
+        "image/heic": .heic,
+        "image/heic-sequence": .heic,
+        "image/heif": .heif,
+        "image/heif-sequence": .heif,
+        "image/svg+xml": .svg
     ]
 
     /// Init an attachment file type by mime type.
