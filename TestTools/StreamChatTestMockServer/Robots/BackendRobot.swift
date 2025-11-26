@@ -6,75 +6,116 @@ import Foundation
 import XCTest
 
 public class BackendRobot {
-    private var server: StreamMockServer
+    private let mockServer: StreamMockServer
 
-    public init(_ server: StreamMockServer) {
-        self.server = server
-    }
-
-    @discardableResult
-    public func delayServerResponse(byTimeInterval timeInterval: TimeInterval) -> Self {
-        StreamMockServer.httpResponseDelay = timeInterval
-        return self
-    }
-
-    @discardableResult
-    public func setReadEvents(to value: Bool) -> Self {
-        let id = server.currentChannelId.isEmpty ? server.getFirstChannelId() : server.currentChannelId
-        guard var config = server.config(forChannelId: id) else {
-            return self
-        }
-        config.readEvents = value
-        server.updateConfig(config: config, forChannelWithId: id)
-        return self
-    }
-
-    @discardableResult
-    public func setCooldown(enabled value: Bool, duration: Int) -> Self {
-        let id = server.currentChannelId.isEmpty ? server.getFirstChannelId() : server.currentChannelId
-        server.setCooldown(enabled: value, duration: duration, inChannelWithId: id)
-        return self
+    public init(_ mockServer: StreamMockServer) {
+        self.mockServer = mockServer
     }
 
     @discardableResult
     public func generateChannels(
-        count: Int,
-        messageText: String? = nil,
+        channelsCount: Int,
         messagesCount: Int = 0,
-        replyCount: Int = 0,
-        authorDetails: [String: String] = UserDetails.lukeSkywalker,
-        memberDetails: [[String: String]] = [
-            UserDetails.lukeSkywalker,
-            UserDetails.hanSolo,
-            UserDetails.countDooku
-        ],
-        withAttachments: Bool = false
-    ) -> Self {
-        var json = server.channelList
-        guard let sampleChannel = (json[JSONKey.channels] as? [[String: Any]])?.first else { return self }
-
-        let userSources = TestData.toJson(.httpChatEvent)[JSONKey.event] as? [String: Any]
-
-        let members = server.mockMembers(
-            userSources: userSources,
-            sampleChannel: sampleChannel,
-            memberDetails: memberDetails
-        )
-
-        let author = server.setUpUser(source: userSources, details: authorDetails)
-        let channels = server.mockChannels(
-            count: count,
-            messageText: messageText,
-            messagesCount: messagesCount,
-            replyCount: replyCount,
-            author: author,
-            members: members,
-            sampleChannel: sampleChannel,
-            withAttachments: withAttachments
-        )
-
-        json[JSONKey.channels] = channels
-        server.channelList = json
+        repliesCount: Int = 0,
+        attachments: Bool = false,
+        messagesText: String? = nil,
+        repliesText: String? = nil
+    ) -> BackendRobot {
+        waitForMockServerToStart()
+        var messagesTextQueryParam = ""
+        if let messagesText {
+            messagesTextQueryParam = "messages_text=\(messagesText)&"
+        }
+        var repliesTextQueryParam = ""
+        if let repliesText {
+            repliesTextQueryParam = "replies_text=\(repliesText)&"
+        }
+        var attachmentsQueryParam = ""
+        if attachments {
+            attachmentsQueryParam = "attachments=true&"
+        }
+        let endpoint = "mock?" +
+            messagesTextQueryParam +
+            repliesTextQueryParam +
+            attachmentsQueryParam +
+            "channels=\(channelsCount)&" +
+            "messages=\(messagesCount)&" +
+            "replies=\(repliesCount)"
+        _ = mockServer.postRequest(endpoint: endpoint)
         return self
+    }
+
+    @discardableResult
+    public func failNewMessages() -> BackendRobot {
+        _ = mockServer.postRequest(endpoint: "fail_messages")
+        return self
+    }
+    
+    @discardableResult
+    public func delayNewMessages(by seconds: Int) -> BackendRobot {
+        _ = mockServer.postRequest(endpoint: "delay_messages?delay=\(seconds)")
+        return self
+    }
+
+    public func revokeToken(duration: Int = 5) {
+        waitForMockServerToStart()
+        _ = mockServer.postRequest(endpoint: "jwt/revoke_token?duration=\(duration)")
+    }
+
+    public func invalidateToken(duration: Int = 5) {
+        waitForMockServerToStart()
+        _ = mockServer.postRequest(endpoint: "jwt/invalidate_token?duration=\(duration)")
+    }
+
+    public func invalidateTokenDate(duration: Int = 5) {
+        waitForMockServerToStart()
+        _ = mockServer.postRequest(endpoint: "jwt/invalidate_token_date?duration=\(duration)")
+    }
+
+    public func invalidateTokenSignature(duration: Int = 5) {
+        waitForMockServerToStart()
+        _ = mockServer.postRequest(endpoint: "jwt/invalidate_token_signature?duration=\(duration)")
+    }
+
+    public func breakTokenGeneration(duration: Int = 5) {
+        waitForMockServerToStart()
+        _ = mockServer.postRequest(endpoint: "jwt/break_token_generation?duration=\(duration)")
+    }
+    
+    public func setReadEvents(to value: Bool) {
+        waitForMockServerToStart()
+        _ = mockServer.postRequest(endpoint: "config/read_events?value=\(value)")
+    }
+    
+    public func setCooldown(enabled: Bool, duration: Int) {
+        waitForMockServerToStart()
+        _ = mockServer.postRequest(endpoint: "config/cooldown?enabled=\(enabled)&duration=\(duration)")
+    }
+
+    private func waitForMockServerToStart() {
+        let startTime = Date().timeIntervalSince1970
+        while Date().timeIntervalSince1970 - startTime < 5.0 {
+            var request = URLRequest(url: URL(string: "\(StreamMockServer.url!)/ping")!)
+            request.httpMethod = "GET"
+            request.timeoutInterval = 1.0
+
+            let semaphore = DispatchSemaphore(value: 0)
+            var responseCode: Int?
+            let task = URLSession.shared.dataTask(with: request) { _, response, _ in
+                if let httpResponse = response as? HTTPURLResponse {
+                    responseCode = httpResponse.statusCode
+                }
+                semaphore.signal()
+            }
+            task.resume()
+            semaphore.wait()
+
+            if responseCode == 200 {
+                return
+            }
+
+            Thread.sleep(forTimeInterval: 0.5)
+        }
+        XCTFail("MockServer did not start within 5 seconds")
     }
 }

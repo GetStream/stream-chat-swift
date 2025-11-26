@@ -55,7 +55,10 @@ enum ChannelListPage {
             cell.staticTexts["unreadCountLabel"]
         }
 
-        static func statusCheckmark(for status: MessageDeliveryStatus?, in cell: XCUIElement) -> XCUIElement {
+        static func statusCheckmark(
+            for status: StreamChatTestMockServer.MessageDeliveryStatus?,
+            in cell: XCUIElement
+        ) -> XCUIElement {
             var identifier = "There is no status checkmark"
             if let status = status {
                 identifier = "imageView_\(status.rawValue)"

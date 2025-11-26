@@ -4,20 +4,107 @@
 
 import XCTest
 
-// Requires running a standalone Sinatra server
 final class Authentication_Tests: StreamTestCase {
     override func setUpWithError() throws {
-        mockServerEnabled = false
-        switchApiKey = "8br4watad788"
         app.setLaunchArguments(.jwt)
         try super.setUpWithError()
+    }
+    
+    func test_tokenInvalidatesBeforeUserLogsIn() {
+        linkToScenario(withId: 9674)
+
+        GIVEN("token is invalid") {
+            backendRobot.invalidateToken()
+        }
+        WHEN("user tries to log in") {
+            userRobot.login()
+        }
+        THEN("app requests a token refresh") {
+            userRobot.assertConnectionStatus(.connected)
+        }
+    }
+
+    func test_tokenInvalidatesAfterUserLogsIn() {
+        linkToScenario(withId: 9675)
+
+        GIVEN("user logs in") {
+            userRobot
+                .login()
+                .assertConnectionStatus(.connected)
+        }
+        WHEN("token invalidates") {
+            backendRobot.invalidateToken()
+        }
+        THEN("app requests a token refresh") {
+            userRobot.assertConnectionStatus(.connected)
+        }
+    }
+
+    func test_tokenDateInvalidatesBeforeUserLogsIn() {
+        linkToScenario(withId: 9676)
+
+        GIVEN("token is invalid") {
+            backendRobot.invalidateTokenDate()
+        }
+        WHEN("user tries to log in") {
+            userRobot.login()
+        }
+        THEN("app requests a token refresh") {
+            userRobot.assertConnectionStatus(.connected)
+        }
+    }
+
+    func test_tokenDateInvalidatesAfterUserLogsIn() {
+        linkToScenario(withId: 9677)
+
+        GIVEN("user logs in") {
+            userRobot
+                .login()
+                .assertConnectionStatus(.connected)
+        }
+        WHEN("token invalidates") {
+            backendRobot.invalidateTokenDate()
+        }
+        THEN("app requests a token refresh") {
+            userRobot.assertConnectionStatus(.connected)
+        }
+    }
+
+    func test_tokenSignatureInvalidatesBeforeUserLogsIn() {
+        linkToScenario(withId: 9678)
+
+        GIVEN("token is invalid") {
+            backendRobot.invalidateTokenSignature()
+        }
+        WHEN("user tries to log in") {
+            userRobot.login()
+        }
+        THEN("app requests a token refresh") {
+            userRobot.assertConnectionStatus(.connected)
+        }
+    }
+
+    func test_tokenSignatureInvalidatesAfterUserLogsIn() {
+        linkToScenario(withId: 9679)
+
+        GIVEN("user logs in") {
+            userRobot
+                .login()
+                .assertConnectionStatus(.connected)
+        }
+        WHEN("token invalidates") {
+            backendRobot.invalidateTokenSignature()
+        }
+        THEN("app requests a token refresh") {
+            userRobot.assertConnectionStatus(.connected)
+        }
     }
 
     func test_tokenExpiriesBeforeUserLogsIn() {
         linkToScenario(withId: 650)
 
         GIVEN("token expires") {
-            server.revokeJwt()
+            backendRobot.revokeToken()
         }
         WHEN("user tries to log in") {
             userRobot.login()
@@ -91,7 +178,7 @@ final class Authentication_Tests: StreamTestCase {
         linkToScenario(withId: 654)
 
         GIVEN("JWT generation breaks on server side") {
-            server.breakJwt()
+            backendRobot.breakTokenGeneration()
         }
         AND("user tries to log in") {
             userRobot.login()

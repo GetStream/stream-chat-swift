@@ -210,8 +210,8 @@ extension StreamChatWrapper {
     func mockTokenProvider(for userCredentials: UserCredentials) -> TokenProvider {
         { completion in
             if ProcessInfo.processInfo.arguments.contains("MOCK_JWT") {
-                let udid = ProcessInfo.processInfo.environment["SIMULATOR_UDID"] ?? ""
-                let urlString = "http://localhost:4567/jwt/\(udid)?api_key=\(apiKeyString)&user_name=\(userCredentials.id)"
+                let port = ProcessInfo.processInfo.environment["MOCK_SERVER_PORT"]!
+                let urlString = "http://localhost:\(port)/jwt/get?platform=ios"
                 guard let url = URL(string: urlString) else { return }
 
                 var request = URLRequest(url: url)
