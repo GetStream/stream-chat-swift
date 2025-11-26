@@ -3,151 +3,112 @@
 //
 
 import Foundation
-@testable import StreamChat
 import XCTest
 
 public final class StreamMockServer {
-    // Delays all HTTP responses by given time interval, 0 by default
-    public nonisolated(unsafe) static var httpResponseDelay: TimeInterval = 0.0
-    // Waits for all HTTP and Websocket responses during given time interval, 10 by default
-    public nonisolated(unsafe) static var waitTimeout = 10.0
-    // Expires JWT after given timeout if `MOCK_JWT environment variable is provided
+    public nonisolated(unsafe) static var url: String?
+    public nonisolated(unsafe) static var port: String?
+    private let urlSession: URLSession = URLSession.shared
     public static let jwtTimeout: UInt32 = 5
+    public let udid = ProcessInfo.processInfo.environment["SIMULATOR_UDID"] ?? ""
+    public let forbiddenWord: String = "wth"
+    public let jwtTimeout: UInt32 = 5
 
-    public private(set) var server: HttpServer = HttpServer()
-    private weak var globalSession: WebSocketSession?
-    private var channelConfigs = ChannelConfigs()
-    public var threadList: [[String: Any]] = []
-    public var messageList: [[String: Any]] = []
-    public var channelList = TestData.toJson(.httpChannels)
-    public var currentChannelId = ""
-    public var channelsEndpointWasCalled = false
-    public var channelQueryEndpointWasCalled = false
-    public var allChannelsWereLoaded = false
-    public var latestWebsocketMessage = ""
-    public var latestHttpMessage = ""
-    public let forbiddenWords: Set<String> = ["wth"]
-    public var pushNotificationPayload: [String: Any] = [:]
-    public var userDetails: [String: Any]? = [:]
+    public init(driverPort: String, testName: String) {
+        let driverUrl = "http://localhost:\(driverPort)"
+        let response = getRequest(baseUrl: driverUrl, endpoint: "start/\(testName)")
+        XCTAssertEqual(200, response.statusCode, "Failed connecting to mock server.")
 
-    public init() {}
-
-    public func start(port: UInt16) -> Bool {
-        do {
-            try server.start(port)
-            print("Server status: \(server.state). Port: \(port)")
-            return true
-        } catch {
-            print("Server start error: \(error)")
-            return false
-        }
+        let mockServerPort = response.body
+        StreamMockServer.port = mockServerPort
+        StreamMockServer.url = driverUrl.replacingOccurrences(
+            of: driverPort,
+            with: mockServerPort
+        )
     }
 
     public func stop() {
-        server.stop()
+        getRequest(endpoint: "stop")
     }
 
-    public func configure() {
-        StreamMockServer.httpResponseDelay = 0.0
-        configureWebsockets()
-        configureEventEndpoints()
-        configureChannelEndpoints()
-        configureReactionEndpoints()
-        configureMessagingEndpoints()
-        configureAttachmentEndpoints()
-        configureMembersEndpoints()
-    }
+    @discardableResult
+    public func postRequest(
+        baseUrl: String = url!,
+        endpoint: String,
+        body: Data = Data(),
+        async: Bool = false
+    ) -> (body: String, statusCode: Int) {
+        let url = URL(string: "\(baseUrl)/\(endpoint)")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = body
+        request.setValue("text/plain", forHTTPHeaderField: "Content-Type")
+        nonisolated(unsafe) var output = ""
+        nonisolated(unsafe) var statusCode = 0
 
-    public func writeText(_ text: String) {
-        globalSession?.writeText(text)
-    }
-
-    private func configureWebsockets() {
-        let websocket = websocket(connected: { [weak self] session in
-            self?.globalSession = session
-            self?.healthCheck()
-        }, disconnected: { [weak self] _ in
-            self?.globalSession = nil
-        })
-        
-        server.register(MockEndpoint.connect) { [weak self] request in
-            self?.userDetails = request.queryParams.first { $0.0 == "json" }?.1.removingPercentEncoding?.json
-            return websocket(request)
-        }
-    }
-
-    private func healthCheck() {
-        writeText(TestData.getMockResponse(fromFile: .wsHealthCheck))
-    }
-}
-
-// MARK: Shared
-
-extension StreamMockServer {
-    func findChannelById(_ id: String) -> [String: Any]? {
-        try? XCTUnwrap(waitForChannelWithId(id))
-    }
-    
-    func waitForChannelWithId(_ id: String) -> [String: Any]? {
-        let endTime = TestData.waitingEndTime
-        var newChannelList: [[String: Any]] = []
-        while newChannelList.isEmpty && endTime > TestData.currentTimeInterval {
-            guard let channels = channelList[JSONKey.channels] as? [[String: Any]] else { return nil }
-            newChannelList = channels.filter {
-                let channel = $0[JSONKey.channel] as? [String: Any]
-                return id == channel?[channelKey.id.rawValue] as? String
-            }
-        }
-        return newChannelList.first
-    }
-}
-
-// MARK: Config
-
-public extension StreamMockServer {
-    func config(forChannelId id: String) -> ChannelConfig_Mock? {
-        channelConfigs.config(forChannelId: id, server: self)
-    }
-
-    func updateConfig(config: ChannelConfig_Mock, forChannelWithId id: String) {
-        channelConfigs.updateConfig(config: config, forChannelWithId: id, server: self)
-    }
-
-    func updateConfig(in channel: inout [String: Any], withId id: String) {
-        channelConfigs.updateChannel(channel: &channel, withId: id)
-    }
-}
-
-public extension StreamMockServer {
-    func setCooldown(enabled: Bool, duration: Int, inChannelWithId id: String) {
-        channelConfigs.setCooldown(enabled: enabled, duration: duration)
-
-        var json = channelList
-        guard
-            var channels = json[JSONKey.channels] as? [[String: Any]],
-            let channelIndex = channelIndex(withId: id),
-            var channel = channel(withId: id),
-            var innerChannel = channel[JSONKey.channel] as? [String: Any]
-        else {
-            return
-        }
-
-        setCooldown(in: &innerChannel)
-        channel[JSONKey.channel] = innerChannel
-        channels[channelIndex] = channel
-        json[JSONKey.channels] = channels
-        channelList = json
-    }
-
-    func setCooldown(in channel: inout [String: Any]) {
-        let cooldown = channelConfigs.coolDown
-        if cooldown.isEnabled {
-            channel[channelKey.cooldownDuration.rawValue] = cooldown.duration
-            var ownCapabilities = channel[channelKey.ownCapabilities.rawValue] as? [String]
-            ownCapabilities?.removeAll { $0 == ChannelCapability.skipSlowMode.rawValue }
-            channel[channelKey.ownCapabilities.rawValue] = ownCapabilities
+        if async {
+            URLSession.shared.dataTask(with: request) { data, response, _ in
+                if let httpResponse = response as? HTTPURLResponse {
+                    statusCode = httpResponse.statusCode
+                }
+                if let data = data, let string = String(data: data, encoding: .utf8) {
+                    output = string
+                }
+            }.resume()
         } else {
-            channel[channelKey.cooldownDuration.rawValue] = nil
+            let semaphore = DispatchSemaphore(value: 0)
+            let task = URLSession.shared.dataTask(with: request) { data, response, _ in
+                if let httpResponse = response as? HTTPURLResponse {
+                    statusCode = httpResponse.statusCode
+                }
+                if let data = data, let string = String(data: data, encoding: .utf8) {
+                    output = string
+                }
+                semaphore.signal()
+            }
+            task.resume()
+            semaphore.wait()
         }
+
+        return (output, statusCode)
+    }
+
+    @discardableResult
+    public func getRequest(
+        baseUrl: String = url!,
+        endpoint: String,
+        async: Bool = false
+    ) -> (body: String, statusCode: Int) {
+        let url = URL(string: "\(baseUrl)/\(endpoint)")!
+        var request = URLRequest(url: url)
+        request.httpMethod = "GET"
+        nonisolated(unsafe) var output = ""
+        nonisolated(unsafe) var statusCode = 0
+
+        if async {
+            URLSession.shared.dataTask(with: request) { data, response, _ in
+                if let httpResponse = response as? HTTPURLResponse {
+                    statusCode = httpResponse.statusCode
+                }
+                if let data = data, let string = String(data: data, encoding: .utf8) {
+                    output = string
+                }
+            }.resume()
+        } else {
+            let semaphore = DispatchSemaphore(value: 0)
+            let task = URLSession.shared.dataTask(with: request) { data, response, _ in
+                if let httpResponse = response as? HTTPURLResponse {
+                    statusCode = httpResponse.statusCode
+                }
+                if let data = data, let string = String(data: data, encoding: .utf8) {
+                    output = string
+                }
+                semaphore.signal()
+            }
+            task.resume()
+            semaphore.wait()
+        }
+
+        return (output, statusCode)
     }
 }

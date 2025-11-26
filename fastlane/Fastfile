@@ -20,18 +20,19 @@ xcmetrics_path = "metrics/#{github_repo.split('/').last}-xcmetrics.json"
 testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/SystemEnvironment+Version.swift')
 is_localhost = !is_ci
+mock_server_driver_port = 4566
 @force_check = false
 
 before_all do |lane|
   if is_ci
     setup_ci
     setup_git_config
-    select_xcode(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :sync_mock_server, :copyright, :merge_main].include?(lane)
+    select_xcode(version: xcode_version) unless [:sonar_upload, :allure_launch, :allure_upload, :copyright, :merge_main].include?(lane)
   end
 end
 
 after_all do |lane|
-  stop_sinatra if lane == :test_e2e_mock
+  stop_mock_server if lane == :test_e2e_mock
 end
 
 desc "Build .xcframeworks"
@@ -343,14 +344,30 @@ lane :test do |options|
   slather
 end
 
-desc 'Starts Sinatra web server'
-lane :start_sinatra do
-  sh('bundle exec ruby sinatra.rb > sinatra_log.txt 2>&1 &')
+lane :start_mock_server do |options|
+  mock_server_repo = 'stream-chat-test-mock-server'
+  stop_mock_server if is_localhost
+
+  if options[:local_server]
+    mock_server_repo = options[:local_server]
+  else
+    branch = options[:branch].to_s.empty? ? 'main' : options[:branch]
+    sh("rm -rf #{mock_server_repo}") if File.directory?(mock_server_repo)
+    sh("git clone -b #{branch} https://github.com/#{github_repo.split('/').first}/#{mock_server_repo}.git")
+  end
+
+  Dir.chdir(mock_server_repo) do
+    FileUtils.mkdir_p('logs')
+    sh("bundle exec ruby driver.rb #{mock_server_driver_port} > logs/driver.log 2>&1 &")
+  end
 end
 
-desc 'Stops Sinatra web server'
-lane :stop_sinatra do
-  sh('lsof -t -i:4567 | xargs kill -9')
+lane :stop_mock_server do
+  begin
+    Net::HTTP.get_response(URI("http://localhost:#{mock_server_driver_port}/stop"))
+  rescue StandardError
+    nil
+  end
 end
 
 lane :build_test_app_and_frameworks do
@@ -556,7 +573,7 @@ desc 'Runs e2e ui tests using mock server in Debug config'
 lane :test_e2e_mock do |options|
   next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
 
-  start_sinatra
+  start_mock_server
 
   scan_options = {
     project: xcode_project,
@@ -752,17 +769,6 @@ end
 
 private_lane :update_testplan_on_ci do |options|
   update_testplan(path: options[:path], env_vars: { key: 'CI', value: 'TRUE' }) if is_ci
-end
-
-lane :sync_mock_server do
-  sh('bundle exec ruby sync_mock_server.rb')
-  next unless is_ci
-
-  pr_create(
-    title: '[CI] Sync Mock Server',
-    head_branch: "ci/sync-mock-server-#{Time.now.to_i}",
-    git_add: 'TestTools/StreamChatTestMockServer/Fixtures/'
-  )
 end
 
 desc 'Run fastlane linting'
