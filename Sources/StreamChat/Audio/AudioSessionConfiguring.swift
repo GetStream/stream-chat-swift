@@ -74,6 +74,8 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
             mode: .spokenAudio,
             policy: .default,
             options: [
+                // It is deprecated, but for now we need to use it,
+                // since the newer ones are not available in Xcode 15.
                 .allowBluetooth
             ]
         )
