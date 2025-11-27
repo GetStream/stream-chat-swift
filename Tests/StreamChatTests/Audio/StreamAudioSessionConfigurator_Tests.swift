@@ -125,7 +125,7 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithCategory, .playAndRecord)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithMode, .default)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithPolicy, .default)
-        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [.defaultToSpeaker, .allowBluetoothHFP])
+        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [.defaultToSpeaker, .allowBluetooth])
     }
 
     func test_activatePlaybackSession_setActiveFailed() {

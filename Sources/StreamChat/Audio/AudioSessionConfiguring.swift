@@ -91,7 +91,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     /// Calling this method should activate the provided `AVAudioSession` for playback and record.
     ///
     /// - Note: This method uses the `.playAndRecord` category with `.default` mode and policy.
-    /// Options include `.defaultToSpeaker` and `.allowBluetoothHFP` to ensure
+    /// Options include `.defaultToSpeaker` and `.allowBluetooth` to ensure
     /// proper audio routing including support for Bluetooth devices like AirPods.
     open func activatePlaybackSession() throws {
         try audioSession.setCategory(
@@ -100,7 +100,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
             policy: .default,
             options: [
                 .defaultToSpeaker,
-                .allowBluetoothHFP
+                .allowBluetooth
             ]
         )
         try activateSession()
