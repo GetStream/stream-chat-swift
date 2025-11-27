@@ -68,7 +68,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     /// Calling this method should activate the provided `AVAudioSession` for recording and playback.
     ///
     /// - Note: This method is using the `.playAndRecord` category with the `.spokenAudio` mode.
-    /// The preferredInput will be set to `.buildInMic` and overrideOutputAudioPort to `.speaker`.
+    /// The preferredInput will be set to `.builtInMic`.
     open func activateRecordingSession() throws {
         try audioSession.setCategory(
             .playAndRecord,
@@ -90,16 +90,19 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
     /// Calling this method should activate the provided `AVAudioSession` for playback and record.
     ///
-    /// - Note: The method will check if the audioSession's category contains the `playAndRecord` capability
-    /// and if it doesn't it will activate it using the `.playbackAndRecord` category and `.default` for both mode
-    /// and policy.  OverrideOutputAudioPort is set to `.speaker`. The `record` capability is required
-    /// ensure that the output port can be set to `.speaker`.
+    /// - Note: This method uses the `.playAndRecord` category with `.default` mode and policy.
+    /// Options include `.defaultToSpeaker`, `.allowBluetoothA2DP`, and `.allowBluetoothHFP` to ensure
+    /// proper audio routing including support for Bluetooth devices like AirPods.
     open func activatePlaybackSession() throws {
         try audioSession.setCategory(
             .playAndRecord,
             mode: .default,
             policy: .default,
-            options: []
+            options: [
+                .defaultToSpeaker,
+                .allowBluetoothA2DP,
+                .allowBluetoothHFP
+            ]
         )
         try activateSession()
     }
@@ -130,12 +133,10 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     // MARK: - Helpers
 
     private func activateSession() throws {
-        try audioSession.overrideOutputAudioPort(.speaker)
         try audioSession.setActive(true, options: [])
     }
 
     private func deactivateSession() throws {
-        try audioSession.overrideOutputAudioPort(.none)
         try audioSession.setActive(false, options: [])
     }
 
