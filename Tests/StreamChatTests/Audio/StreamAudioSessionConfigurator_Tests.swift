@@ -23,7 +23,6 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
 
     func test_activateRecordingSession_setCategoryFailedToComplete() {
         stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [makeAvailableInput(with: .builtInMic)])
         stubAudioSession.setCategoryResult = .failure(genericError)
 
         XCTAssertThrowsError(try subject.activateRecordingSession(), genericError)
@@ -31,35 +30,17 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
 
     func test_activateRecordingSession_setCategoryCompletedSuccessfully() throws {
         stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [makeAvailableInput(with: .builtInMic)])
 
         try subject.activateRecordingSession()
 
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithCategory, .playAndRecord)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithMode, .spokenAudio)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithPolicy, .default)
-        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [])
-    }
-
-    func test_activateRecordingSession_setUpPreferredInputFailedToCompleteDueToNoAvailableInput() {
-        stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [])
-
-        XCTAssertThrowsError(try subject.activateRecordingSession()) { error in
-            XCTAssertEqual("No available audio inputs found.", (error as? AudioSessionConfiguratorError)?.message)
-        }
-    }
-
-    func test_activateRecordingSession_setUpPreferredInputCompletedSuccessfully() throws {
-        stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [makeAvailableInput(with: .builtInMic)])
-
-        try subject.activateRecordingSession()
+        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [.allowBluetooth])
     }
 
     func test_activateRecordingSession_setActiveFailed() {
         stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [makeAvailableInput(with: .builtInMic)])
         stubAudioSession.setActiveResult = .failure(genericError)
 
         XCTAssertThrowsError(try subject.activateRecordingSession(), genericError)
@@ -68,7 +49,6 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
 
     func test_activateRecordingSession_setActiveCompletedSuccessfully() throws {
         stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [makeAvailableInput(with: .builtInMic)])
 
         try subject.activateRecordingSession()
         XCTAssertTrue(stubAudioSession.setActiveWasCalledWithActive ?? false)
@@ -184,16 +164,6 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
 
         XCTAssertNotNil(stubAudioSession.requestRecordPermissionWasCalledWithResponse)
     }
-
-    // MARK: - Private Helpers
-
-    private func makeAvailableInput(
-        with portType: AVAudioSession.Port
-    ) -> AVAudioSessionPortDescription {
-        let result = StubAVAudioSessionPortDescription()
-        result.stubProperty(\.portType, with: portType)
-        return result
-    }
 }
 
 @dynamicMemberLookup
@@ -201,7 +171,6 @@ private final class StubAVAudioSession: AudioSessionProtocol, Stub {
     var stubbedProperties: [String: Any] = [:]
 
     @objc var category: AVAudioSession.Category { self[dynamicMember: \.category] }
-    @objc var availableInputs: [AVAudioSessionPortDescription]? { self[dynamicMember: \.availableInputs] }
 
     private(set) var setCategoryWasCalledWithCategory: AVAudioSession.Category?
     private(set) var setCategoryWasCalledWithMode: AVAudioSession.Mode?
@@ -214,9 +183,6 @@ private final class StubAVAudioSession: AudioSessionProtocol, Stub {
 
     private(set) var requestRecordPermissionWasCalledWithResponse: ((Bool) -> Void)?
     var requestRecordPermissionResult: Bool = false
-
-    private(set) var setPreferredInputWasCalledWithInPort: AVAudioSessionPortDescription?
-    var setPreferredInputResult: Result<Void, Error> = .success(())
 
     private(set) var overrideOutputAudioPortWasCalledWithPortOverride: AVAudioSession.PortOverride?
     var overrideOutputAudioPortResult: Result<Void, Error> = .success(())
@@ -259,17 +225,6 @@ private final class StubAVAudioSession: AudioSessionProtocol, Stub {
         response(requestRecordPermissionResult)
     }
 
-    func setPreferredInput(_ inPort: AVAudioSessionPortDescription?) throws {
-        setPreferredInputWasCalledWithInPort = inPort
-
-        switch setCategoryResult {
-        case .success:
-            break
-        case let .failure(error):
-            throw error
-        }
-    }
-
     func overrideOutputAudioPort(_ portOverride: AVAudioSession.PortOverride) throws {
         overrideOutputAudioPortWasCalledWithPortOverride = portOverride
         switch overrideOutputAudioPortResult {
@@ -279,11 +234,4 @@ private final class StubAVAudioSession: AudioSessionProtocol, Stub {
             throw error
         }
     }
-}
-
-@dynamicMemberLookup
-private final class StubAVAudioSessionPortDescription: AVAudioSessionPortDescription, Stub, @unchecked Sendable {
-    var stubbedProperties: [String: Any] = [:]
-
-    override var portType: AVAudioSession.Port { self[dynamicMember: \.portType] }
 }

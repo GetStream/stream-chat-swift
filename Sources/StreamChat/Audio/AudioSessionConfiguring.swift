@@ -68,15 +68,15 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     /// Calling this method should activate the provided `AVAudioSession` for recording and playback.
     ///
     /// - Note: This method is using the `.playAndRecord` category with the `.spokenAudio` mode.
-    /// The preferredInput will be set to `.builtInMic`.
     open func activateRecordingSession() throws {
         try audioSession.setCategory(
             .playAndRecord,
             mode: .spokenAudio,
             policy: .default,
-            options: []
+            options: [
+                .allowBluetooth
+            ]
         )
-        try setUpPreferredInput(.builtInMic)
         try activateSession()
     }
 
@@ -91,8 +91,6 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
     /// Calling this method should activate the provided `AVAudioSession` for playback and record.
     ///
     /// - Note: This method uses the `.playAndRecord` category with `.default` mode and policy.
-    /// Options include `.defaultToSpeaker` and `.allowBluetooth` to ensure
-    /// proper audio routing including support for Bluetooth devices like AirPods.
     open func activatePlaybackSession() throws {
         try audioSession.setCategory(
             .playAndRecord,
@@ -163,29 +161,5 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
 
         completionHandler(permissionGranted)
     }
-
-    private func setUpPreferredInput(
-        _ preferredInput: AVAudioSession.Port
-    ) throws {
-        guard
-            let availableInputs = audioSession.availableInputs,
-            let preferredInput = availableInputs.first(where: { $0.portType == preferredInput })
-        else {
-            throw AudioSessionConfiguratorError.noAvailableInputsFound()
-        }
-        try audioSession.setPreferredInput(preferredInput)
-    }
 }
 #endif
-
-// MARK: - Errors
-
-final class AudioSessionConfiguratorError: ClientError {
-    /// An unknown error occurred
-    static func noAvailableInputsFound(
-        file: StaticString = #file,
-        line: UInt = #line
-    ) -> AudioSessionConfiguratorError {
-        .init("No available audio inputs found.", file, line)
-    }
-}
