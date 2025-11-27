@@ -100,7 +100,6 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring {
             policy: .default,
             options: [
                 .defaultToSpeaker,
-                .allowBluetoothA2DP,
                 .allowBluetoothHFP
             ]
         )
