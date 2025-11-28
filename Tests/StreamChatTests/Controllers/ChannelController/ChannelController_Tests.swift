@@ -4135,7 +4135,7 @@ final class ChannelController_Tests: XCTestCase {
     func test_markUnread_whenChannelDoesNotExist() {
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { result in
+        controller.markUnread(from: MessageId.unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -4156,7 +4156,7 @@ final class ChannelController_Tests: XCTestCase {
 
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { result in
+        controller.markUnread(from: MessageId.unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -4211,7 +4211,7 @@ final class ChannelController_Tests: XCTestCase {
 
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { result in
+        controller.markUnread(from: MessageId.unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -4232,7 +4232,7 @@ final class ChannelController_Tests: XCTestCase {
 
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { result in
+        controller.markUnread(from: MessageId.unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -4255,7 +4255,7 @@ final class ChannelController_Tests: XCTestCase {
         env.channelUpdater?.markUnread_completion_result = .failure(mockedError)
         var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { result in
+        controller.markUnread(from: MessageId.unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -4291,7 +4291,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Because we don't have other messages, we fallback to the passed messageId as lastReadMessageId.
         XCTAssertNil(updater.markUnread_lastReadMessageId)
-        XCTAssertEqual(updater.markUnread_messageId, messageId)
+        XCTAssertEqual(updater.markUnread_criteria, MarkUnreadCriteria.messageId(messageId))
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenThereAreOtherMessages_whenUpdaterSucceeds() throws {
@@ -4324,7 +4324,7 @@ final class ChannelController_Tests: XCTestCase {
 
         XCTAssertNil(receivedError)
         XCTAssertEqual(updater.markUnread_lastReadMessageId, previousMessageId)
-        XCTAssertEqual(updater.markUnread_messageId, messageId)
+        XCTAssertEqual(updater.markUnread_criteria, MarkUnreadCriteria.messageId(messageId))
     }
     
     // MARK: - Load more channel reads

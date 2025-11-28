@@ -138,15 +138,29 @@ extension NSManagedObjectContext {
     func markChannelAsUnread(
         for cid: ChannelId,
         userId: UserId,
-        from messageId: MessageId,
+        from unreadCriteria: MarkUnreadCriteria,
         lastReadMessageId: MessageId?,
         lastReadAt: Date?,
         unreadMessagesCount: Int?
     ) {
-        guard let read = loadChannelRead(cid: cid, userId: userId),
-              let message = self.message(id: messageId) else {
-            return
+        guard let read = loadChannelRead(cid: cid, userId: userId) else { return }
+        
+        let findMessageDTO: () -> MessageDTO? = {
+            switch unreadCriteria {
+            case .messageId(let messageId):
+                return self.message(id: messageId)
+            case .messageTimestamp(let messageTimestamp):
+                let clientConfig = self.chatClientConfig
+                return try? MessageDTO.loadMessage(
+                    beforeOrEqual: messageTimestamp,
+                    cid: cid.rawValue,
+                    deletedMessagesVisibility: clientConfig?.deletedMessagesVisibility ?? .alwaysVisible,
+                    shouldShowShadowedMessages: clientConfig?.shouldShowShadowedMessages ?? false,
+                    context: self
+                )
+            }
         }
+        guard let message = findMessageDTO() else { return }
 
         let lastReadAt = lastReadAt ?? message.createdAt.bridgeDate
         read.lastReadAt = lastReadAt.bridgeDate

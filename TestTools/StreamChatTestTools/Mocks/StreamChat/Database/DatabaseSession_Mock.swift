@@ -360,11 +360,11 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.markChannelAsUnread(cid: cid, by: userId)
     }
     
-    func markChannelAsUnread(for cid: ChannelId, userId: UserId, from messageId: MessageId, lastReadMessageId: MessageId?, lastReadAt: Date?, unreadMessagesCount: Int?) {
+    func markChannelAsUnread(for cid: ChannelId, userId: UserId, from unreadCriteria: MarkUnreadCriteria, lastReadMessageId: MessageId?, lastReadAt: Date?, unreadMessagesCount: Int?) {
         underlyingSession.markChannelAsUnread(
             for: cid,
             userId: userId,
-            from: messageId,
+            from: unreadCriteria,
             lastReadMessageId: lastReadMessageId,
             lastReadAt: lastReadAt,
             unreadMessagesCount: unreadMessagesCount

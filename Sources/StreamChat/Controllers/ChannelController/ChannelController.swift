@@ -1327,7 +1327,47 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         readStateHandler.markUnread(
-            from: messageId,
+            from: .messageId(messageId),
+            in: channel
+        ) { [weak self] result in
+            self?.callback {
+                completion?(result)
+            }
+        }
+    }
+    
+    /// Marks all messages of the channel as unread that were created after the specified timestamp.
+    ///
+    /// This method finds the first message with a creation timestamp greater than to the provided timestamp,
+    /// and marks all messages from that point forward as unread. If no message is found after the timestamp,
+    /// the operation completes without error but no messages are marked as unread.
+    ///
+    /// - Parameters:
+    ///   - timestamp: The timestamp used to find the first message to mark as unread. All messages created after this timestamp will be marked as unread.
+    ///   - completion: The completion handler to be called after marking messages as unread. Called with a `Result` containing the updated `ChatChannel` on success, or an `Error` on failure.
+    public func markUnread(from timestamp: Date, completion: ((Result<ChatChannel, Error>) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let channel = channel else {
+            let error = ClientError.ChannelNotCreatedYet()
+            log.error(error.localizedDescription)
+            callback {
+                completion?(.failure(error))
+            }
+            return
+        }
+
+        /// Read events are not enabled for this channel
+        guard channel.canReceiveReadEvents == true else {
+            let error = ClientError.ChannelFeatureDisabled("Channel feature: read events is disabled for this channel.")
+            log.error(error.localizedDescription)
+            callback {
+                completion?(.failure(error))
+            }
+            return
+        }
+
+        readStateHandler.markUnread(
+            from: .messageTimestamp(timestamp),
             in: channel
         ) { [weak self] result in
             self?.callback {

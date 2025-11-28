@@ -339,7 +339,7 @@ class MessageRepository {
 
     /// Fetches a message id before the specified message when sorting by the creation date in the local database.
     func getMessage(
-        before messageId: MessageId,
+        before unreadCriteria: MarkUnreadCriteria,
         in cid: ChannelId,
         completion: @escaping (Result<MessageId?, Error>) -> Void
     ) {
@@ -349,14 +349,26 @@ class MessageRepository {
             let deletedMessagesVisibility = clientConfig?.deletedMessagesVisibility ?? .alwaysVisible
             let shouldShowShadowedMessages = clientConfig?.shouldShowShadowedMessages ?? false
             do {
-                let resultId = try MessageDTO.loadMessage(
-                    before: messageId,
-                    cid: cid.rawValue,
-                    deletedMessagesVisibility: deletedMessagesVisibility,
-                    shouldShowShadowedMessages: shouldShowShadowedMessages,
-                    context: context
-                )?.id
-                completion(.success(resultId))
+                switch unreadCriteria {
+                case .messageId(let messageId):
+                    let resultId = try MessageDTO.loadMessage(
+                        before: messageId,
+                        cid: cid.rawValue,
+                        deletedMessagesVisibility: deletedMessagesVisibility,
+                        shouldShowShadowedMessages: shouldShowShadowedMessages,
+                        context: context
+                    )?.id
+                    completion(.success(resultId))
+                case .messageTimestamp(let messageTimestamp):
+                    let resultId = try MessageDTO.loadMessage(
+                        beforeOrEqual: messageTimestamp,
+                        cid: cid.rawValue,
+                        deletedMessagesVisibility: deletedMessagesVisibility,
+                        shouldShowShadowedMessages: shouldShowShadowedMessages,
+                        context: context
+                    )?.id
+                    completion(.success(resultId))
+                }
             } catch {
                 completion(.failure(error))
             }
