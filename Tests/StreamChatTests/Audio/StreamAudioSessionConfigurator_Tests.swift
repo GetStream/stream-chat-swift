@@ -23,7 +23,6 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
 
     func test_activateRecordingSession_setCategoryFailedToComplete() {
         stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [makeAvailableInput(with: .builtInMic)])
         stubAudioSession.setCategoryResult = .failure(genericError)
 
         XCTAssertThrowsError(try subject.activateRecordingSession(), genericError)
@@ -31,52 +30,17 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
 
     func test_activateRecordingSession_setCategoryCompletedSuccessfully() throws {
         stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [makeAvailableInput(with: .builtInMic)])
 
         try subject.activateRecordingSession()
 
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithCategory, .playAndRecord)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithMode, .spokenAudio)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithPolicy, .default)
-        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [])
-    }
-
-    func test_activateRecordingSession_setUpPreferredInputFailedToCompleteDueToNoAvailableInput() {
-        stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [])
-
-        XCTAssertThrowsError(try subject.activateRecordingSession()) { error in
-            XCTAssertEqual("No available audio inputs found.", (error as? AudioSessionConfiguratorError)?.message)
-        }
-    }
-
-    func test_activateRecordingSession_setUpPreferredInputCompletedSuccessfully() throws {
-        stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [makeAvailableInput(with: .builtInMic)])
-
-        try subject.activateRecordingSession()
-    }
-
-    func test_activateRecordingSession_setOverrideOutputFailed() {
-        stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [makeAvailableInput(with: .builtInMic)])
-        stubAudioSession.overrideOutputAudioPortResult = .failure(genericError)
-
-        XCTAssertThrowsError(try subject.activateRecordingSession(), genericError)
-        XCTAssertEqual(stubAudioSession.overrideOutputAudioPortWasCalledWithPortOverride, .speaker)
-    }
-
-    func test_activateRecordingSession_setOverrideOutputCompletedSuccessfully() throws {
-        stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [makeAvailableInput(with: .builtInMic)])
-
-        try subject.activateRecordingSession()
-        XCTAssertEqual(stubAudioSession.overrideOutputAudioPortWasCalledWithPortOverride, .speaker)
+        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [.allowBluetooth])
     }
 
     func test_activateRecordingSession_setActiveFailed() {
         stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [makeAvailableInput(with: .builtInMic)])
         stubAudioSession.setActiveResult = .failure(genericError)
 
         XCTAssertThrowsError(try subject.activateRecordingSession(), genericError)
@@ -85,29 +49,12 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
 
     func test_activateRecordingSession_setActiveCompletedSuccessfully() throws {
         stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.stubProperty(\.availableInputs, with: [makeAvailableInput(with: .builtInMic)])
 
         try subject.activateRecordingSession()
         XCTAssertTrue(stubAudioSession.setActiveWasCalledWithActive ?? false)
     }
 
     // MARK: - deactivateRecordingSession
-
-    func test_deactivateRecordingSession_categoryIsRecord_setOverrideOutputFailed() {
-        stubAudioSession.stubProperty(\.category, with: .record)
-        stubAudioSession.overrideOutputAudioPortResult = .failure(genericError)
-
-        XCTAssertThrowsError(try subject.deactivateRecordingSession(), genericError)
-        XCTAssertEqual(stubAudioSession.overrideOutputAudioPortWasCalledWithPortOverride, AVAudioSession.PortOverride.none)
-    }
-
-    func test_deactivateRecordingSession_categoryIsRecord_setOverrideOutputCompletedSuccessfully() throws {
-        stubAudioSession.stubProperty(\.category, with: .record)
-
-        try subject.deactivateRecordingSession()
-
-        XCTAssertEqual(stubAudioSession.overrideOutputAudioPortWasCalledWithPortOverride, AVAudioSession.PortOverride.none)
-    }
 
     func test_deactivateRecordingSession_categoryIsRecord_setActiveCompletedSuccesfully() throws {
         stubAudioSession.stubProperty(\.category, with: .record)
@@ -141,22 +88,6 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
         XCTAssertFalse(stubAudioSession.setActiveWasCalledWithActive ?? true)
     }
 
-    func test_deactivateRecordingSession_categoryIsPlayAndRecord_setOverrideOutputFailed() {
-        stubAudioSession.stubProperty(\.category, with: .playAndRecord)
-        stubAudioSession.overrideOutputAudioPortResult = .failure(genericError)
-
-        XCTAssertThrowsError(try subject.deactivateRecordingSession(), genericError)
-        XCTAssertEqual(stubAudioSession.overrideOutputAudioPortWasCalledWithPortOverride, AVAudioSession.PortOverride.none)
-    }
-
-    func test_deactivateRecordingSession_categoryIsPlayAndRecord_setOverrideOutputCompletedSuccessfully() throws {
-        stubAudioSession.stubProperty(\.category, with: .playAndRecord)
-
-        try subject.deactivateRecordingSession()
-
-        XCTAssertEqual(stubAudioSession.overrideOutputAudioPortWasCalledWithPortOverride, AVAudioSession.PortOverride.none)
-    }
-
     // MARK: - activatePlaybackSession
 
     func test_activatePlaybackSession_setCategoryFailedToComplete() {
@@ -174,23 +105,7 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithCategory, .playAndRecord)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithMode, .default)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithPolicy, .default)
-        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [])
-    }
-
-    func test_activatePlaybackSession_setOverrideOutputFailed() {
-        stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-        stubAudioSession.overrideOutputAudioPortResult = .failure(genericError)
-
-        XCTAssertThrowsError(try subject.activatePlaybackSession(), genericError)
-        XCTAssertEqual(stubAudioSession.overrideOutputAudioPortWasCalledWithPortOverride, .speaker)
-    }
-
-    func test_activatePlaybackSession_setOverrideOutputCompletedSuccessfully() throws {
-        stubAudioSession.stubProperty(\.category, with: .soloAmbient)
-
-        try subject.activatePlaybackSession()
-
-        XCTAssertEqual(stubAudioSession.overrideOutputAudioPortWasCalledWithPortOverride, .speaker)
+        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [.defaultToSpeaker, .allowBluetooth])
     }
 
     func test_activatePlaybackSession_setActiveFailed() {
@@ -226,22 +141,6 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
         XCTAssertFalse(stubAudioSession.setActiveWasCalledWithActive ?? true)
     }
 
-    func test_deactivatePlaybackSession_categoryIsPlayback_setOverrideOutputFailed() {
-        stubAudioSession.stubProperty(\.category, with: .playAndRecord)
-        stubAudioSession.overrideOutputAudioPortResult = .failure(genericError)
-
-        XCTAssertThrowsError(try subject.deactivatePlaybackSession(), genericError)
-        XCTAssertEqual(stubAudioSession.overrideOutputAudioPortWasCalledWithPortOverride, AVAudioSession.PortOverride.none)
-    }
-
-    func test_deactivatePlaybackSession_categoryIsPlayback_setOverrideOutputCompletedSuccessfully() throws {
-        stubAudioSession.stubProperty(\.category, with: .playAndRecord)
-
-        try subject.deactivatePlaybackSession()
-
-        XCTAssertEqual(stubAudioSession.overrideOutputAudioPortWasCalledWithPortOverride, AVAudioSession.PortOverride.none)
-    }
-
     func test_deactivatePlaybackSession_categoryIsPlayAndRecord_setActiveCompletedSuccesfully() throws {
         stubAudioSession.stubProperty(\.category, with: .playAndRecord)
 
@@ -265,16 +164,6 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
 
         XCTAssertNotNil(stubAudioSession.requestRecordPermissionWasCalledWithResponse)
     }
-
-    // MARK: - Private Helpers
-
-    private func makeAvailableInput(
-        with portType: AVAudioSession.Port
-    ) -> AVAudioSessionPortDescription {
-        let result = StubAVAudioSessionPortDescription()
-        result.stubProperty(\.portType, with: portType)
-        return result
-    }
 }
 
 @dynamicMemberLookup
@@ -282,7 +171,6 @@ private final class StubAVAudioSession: AudioSessionProtocol, Stub {
     var stubbedProperties: [String: Any] = [:]
 
     @objc var category: AVAudioSession.Category { self[dynamicMember: \.category] }
-    @objc var availableInputs: [AVAudioSessionPortDescription]? { self[dynamicMember: \.availableInputs] }
 
     private(set) var setCategoryWasCalledWithCategory: AVAudioSession.Category?
     private(set) var setCategoryWasCalledWithMode: AVAudioSession.Mode?
@@ -295,9 +183,6 @@ private final class StubAVAudioSession: AudioSessionProtocol, Stub {
 
     private(set) var requestRecordPermissionWasCalledWithResponse: ((Bool) -> Void)?
     var requestRecordPermissionResult: Bool = false
-
-    private(set) var setPreferredInputWasCalledWithInPort: AVAudioSessionPortDescription?
-    var setPreferredInputResult: Result<Void, Error> = .success(())
 
     private(set) var overrideOutputAudioPortWasCalledWithPortOverride: AVAudioSession.PortOverride?
     var overrideOutputAudioPortResult: Result<Void, Error> = .success(())
@@ -340,17 +225,6 @@ private final class StubAVAudioSession: AudioSessionProtocol, Stub {
         response(requestRecordPermissionResult)
     }
 
-    func setPreferredInput(_ inPort: AVAudioSessionPortDescription?) throws {
-        setPreferredInputWasCalledWithInPort = inPort
-
-        switch setCategoryResult {
-        case .success:
-            break
-        case let .failure(error):
-            throw error
-        }
-    }
-
     func overrideOutputAudioPort(_ portOverride: AVAudioSession.PortOverride) throws {
         overrideOutputAudioPortWasCalledWithPortOverride = portOverride
         switch overrideOutputAudioPortResult {
@@ -360,11 +234,4 @@ private final class StubAVAudioSession: AudioSessionProtocol, Stub {
             throw error
         }
     }
-}
-
-@dynamicMemberLookup
-private final class StubAVAudioSessionPortDescription: AVAudioSessionPortDescription, Stub, @unchecked Sendable {
-    var stubbedProperties: [String: Any] = [:]
-
-    override var portType: AVAudioSession.Port { self[dynamicMember: \.portType] }
 }
