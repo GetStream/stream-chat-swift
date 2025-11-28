@@ -78,6 +78,7 @@ public extension ChatClient {
         isCurrentUserMember: Bool = true,
         messageOrdering: MessageOrdering = .topToBottom,
         invites: Set<UserId> = [],
+        filterTags: Set<String> = [],
         extraData: [String: RawJSON] = [:],
         channelListQuery: ChannelListQuery? = nil
     ) throws -> ChatChannelController {
@@ -92,6 +93,7 @@ public extension ChatClient {
             team: team,
             members: members.union(isCurrentUserMember ? [currentUserId] : []),
             invites: invites,
+            filterTags: filterTags,
             extraData: extraData
         )
 
@@ -134,6 +136,7 @@ public extension ChatClient {
         name: String? = nil,
         imageURL: URL? = nil,
         team: String? = nil,
+        filterTags: Set<String> = [],
         extraData: [String: RawJSON],
         channelListQuery: ChannelListQuery? = nil
     ) throws -> ChatChannelController {
@@ -147,6 +150,7 @@ public extension ChatClient {
             team: team,
             members: members.union(isCurrentUserMember ? [currentUserId] : []),
             invites: [],
+            filterTags: filterTags,
             extraData: extraData
         )
         return .init(

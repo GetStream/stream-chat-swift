@@ -42,6 +42,7 @@ public enum ChannelCodingKeys: String, CodingKey, CaseIterable {
     case members
     /// Invites.
     case invites
+    case filterTags = "filter_tags"
     /// The team the channel belongs to.
     case team
     case memberCount = "member_count"

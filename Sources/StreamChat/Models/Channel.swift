@@ -41,6 +41,9 @@ public struct ChatChannel {
     /// A configuration struct of the channel. It contains additional information about the channel settings.
     public let config: ChannelConfig
 
+    /// The list of tags associated with the channel.
+    public let filterTags: Set<String>
+    
     /// The list of actions that the current user can perform in a channel.
     public let ownCapabilities: Set<ChannelCapability>
 
@@ -192,6 +195,7 @@ public struct ChatChannel {
         isHidden: Bool,
         createdBy: ChatUser? = nil,
         config: ChannelConfig = .init(),
+        filterTags: Set<String> = [],
         ownCapabilities: Set<ChannelCapability> = [],
         isFrozen: Bool = false,
         isDisabled: Bool = false,
@@ -228,6 +232,7 @@ public struct ChatChannel {
         self.isHidden = isHidden
         self.createdBy = createdBy
         self.config = config
+        self.filterTags = filterTags
         self.ownCapabilities = ownCapabilities
         self.isFrozen = isFrozen
         self.isDisabled = isDisabled
@@ -274,6 +279,7 @@ public struct ChatChannel {
             isHidden: isHidden,
             createdBy: createdBy,
             config: config,
+            filterTags: filterTags,
             ownCapabilities: ownCapabilities,
             isFrozen: isFrozen,
             isDisabled: isDisabled,
@@ -341,6 +347,7 @@ public struct ChatChannel {
             isHidden: isHidden ?? self.isHidden,
             createdBy: createdBy ?? self.createdBy,
             config: config ?? self.config,
+            filterTags: filterTags,
             ownCapabilities: ownCapabilities ?? self.ownCapabilities,
             isFrozen: isFrozen ?? self.isFrozen,
             isDisabled: isDisabled ?? self.isDisabled,
@@ -452,6 +459,7 @@ extension ChatChannel: Hashable {
         guard lhs.membership == rhs.membership else { return false }
         guard lhs.team == rhs.team else { return false }
         guard lhs.truncatedAt == rhs.truncatedAt else { return false }
+        guard lhs.filterTags == rhs.filterTags else { return false }
         guard lhs.ownCapabilities == rhs.ownCapabilities else { return false }
         guard lhs.draftMessage == rhs.draftMessage else { return false }
         guard lhs.activeLiveLocations.count == rhs.activeLiveLocations.count else { return false }

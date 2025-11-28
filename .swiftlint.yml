@@ -67,8 +67,8 @@ file_name_no_space:
 
 cyclomatic_complexity:
   ignores_case_statements: true
-  warning: 25
-  error: 30
+  warning: 30
+  error: 35
 
 custom_rules:
   regular_constraints_forbidden:

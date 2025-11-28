@@ -154,6 +154,7 @@ extension XCTestCase {
             createdAt: XCTestCase.channelCreatedDate,
             updatedAt: .unique
         ),
+        filterTags: [String]? = nil,
         ownCapabilities: [String] = [],
         channelExtraData: [String: RawJSON] = [:],
         createdAt: Date = XCTestCase.channelCreatedDate,
@@ -190,6 +191,7 @@ extension XCTestCase {
                     truncatedAt: truncatedAt,
                     createdBy: dummyUser,
                     config: channelConfig,
+                    filterTags: filterTags,
                     ownCapabilities: ownCapabilities,
                     isDisabled: false,
                     isFrozen: true,
@@ -310,6 +312,7 @@ extension XCTestCase {
                         createdAt: XCTestCase.channelCreatedDate,
                         updatedAt: .unique
                     ),
+                    filterTags: nil,
                     ownCapabilities: [],
                     isDisabled: false,
                     isFrozen: true,

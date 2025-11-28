@@ -24,6 +24,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Bool>.frozen.rawValue, ChannelCodingKeys.frozen.rawValue)
         XCTAssertEqual(Key<Int>.memberCount.rawValue, ChannelCodingKeys.memberCount.rawValue)
         XCTAssertEqual(Key<TeamId>.team.rawValue, ChannelCodingKeys.team.rawValue)
+        XCTAssertEqual(Key<String>.filterTags.rawValue, ChannelCodingKeys.filterTags.rawValue)
 
         // FilterKeys without corresponding ChannelCodingKeys
         XCTAssertEqual(Key<UserId>.createdBy.rawValue, "created_by_id")
@@ -60,6 +61,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Bool>.muted.keyPathString, "mute")
         XCTAssertEqual(Key<Bool>.archived.keyPathString, "membership.archivedAt")
         XCTAssertEqual(Key<Bool>.pinned.keyPathString, "membership.pinnedAt")
+        XCTAssertEqual(Key<String>.filterTags.keyPathString, "filter_tags")
         XCTAssertNil(Key<InviteFilterValue>.invite.keyPathString)
     }
 

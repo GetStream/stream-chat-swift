@@ -291,6 +291,10 @@ public extension FilterKey where Scope == ChannelListFilterScope {
     /// Filter for checking if the current user has a specific channel role set.
     /// Supported operatios: `equal`, `in`
     static var channelRole: FilterKey<Scope, String> { .init(rawValue: "channel_role", keyPathString: #keyPath(ChannelDTO.membership.channelRoleRaw)) }
+    
+    /// A filter key for matching channel filter tags.
+    /// Supported operators: `in`, `equal`
+    static var filterTags: FilterKey<Scope, String> { .init(rawValue: "filter_tags", keyPathString: #keyPath(ChannelDTO.filterTags)) }
 }
 
 /// Internal filter queries for the channel list.

@@ -13,22 +13,22 @@ extension ChannelPayload {
         unreadCount: ChannelUnreadCount?
     ) -> ChatChannel {
         let channelPayload = channel
-
+        
         // Map members
         let mappedMembers = members.compactMap { $0.asModel(channelId: channelPayload.cid) }
-
+        
         // Map latest messages
         let reads = channelReads.map { $0.asModel() }
         let latestMessages = messages.compactMap {
             $0.asModel(cid: channel.cid, currentUserId: currentUserId, channelReads: reads)
         }
-
+        
         // Map reads
         let mappedReads = channelReads.map { $0.asModel() }
-
+        
         // Map watchers
         let mappedWatchers = watchers?.map { $0.asModel() } ?? []
-
+        
         return ChatChannel(
             cid: channelPayload.cid,
             name: channelPayload.name,
@@ -41,6 +41,7 @@ extension ChannelPayload {
             isHidden: isHidden ?? false,
             createdBy: channelPayload.createdBy?.asModel(),
             config: channelPayload.config,
+            filterTags: Set(channelPayload.filterTags ?? []),
             ownCapabilities: Set(channelPayload.ownCapabilities?.compactMap { ChannelCapability(rawValue: $0) } ?? []),
             isFrozen: channelPayload.isFrozen,
             isDisabled: channelPayload.isDisabled,

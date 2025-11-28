@@ -253,6 +253,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - team: New team.
     ///   - members: New members.
     ///   - invites: New invites.
+    ///   - filterTags: New filter tags.
     ///   - extraData: New `ExtraData`.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
@@ -263,6 +264,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         team: String?,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
+        filterTags: Set<String> = [],
         extraData: [String: RawJSON] = [:],
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -279,6 +281,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             team: team,
             members: members,
             invites: invites,
+            filterTags: filterTags,
             extraData: extraData
         )
 
@@ -295,6 +298,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - team: New team.
     ///   - members: New members.
     ///   - invites: New invites.
+    ///   - filterTags: New filter tags.
     ///   - extraData: New `ExtraData`.
     ///   - unsetProperties: Properties from the channel that are going to be cleared/unset.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
@@ -306,6 +310,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         team: String? = nil,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
+        filterTags: Set<String> = [],
         extraData: [String: RawJSON] = [:],
         unsetProperties: [String] = [],
         completion: ((Error?) -> Void)? = nil
@@ -323,6 +328,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             team: team,
             members: members,
             invites: invites,
+            filterTags: filterTags,
             extraData: extraData
         )
 

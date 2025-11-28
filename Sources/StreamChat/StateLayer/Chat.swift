@@ -1356,6 +1356,7 @@ public class Chat {
     ///   - team: The team for the channel.
     ///   - members: A list of members for the channel.
     ///   - invites: A list of users who will get invites.
+    ///   - filterTags: A list of tags to add for the channel.
     ///   - extraData: Extra data for the new channel.
     ///
     /// - Throws: An error while communicating with the Stream API.
@@ -1365,6 +1366,7 @@ public class Chat {
         team: String?,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
+        filterTags: Set<String> = [],
         extraData: [String: RawJSON] = [:]
     ) async throws {
         try await channelUpdater.update(
@@ -1375,6 +1377,7 @@ public class Chat {
                 team: team,
                 members: members,
                 invites: invites,
+                filterTags: filterTags,
                 extraData: extraData
             )
         )
@@ -1391,6 +1394,7 @@ public class Chat {
     ///   - team: The team for the channel.
     ///   - members: A list of members for the channel.
     ///   - invites: A list of users who will get invites.
+    ///   - filterTags: A list of tags to add to the channel.
     ///   - extraData: Extra data for the channel.
     ///   - unsetProperties: A list of properties to reset.
     ///
@@ -1401,6 +1405,7 @@ public class Chat {
         team: String? = nil,
         members: [UserId] = [],
         invites: [UserId] = [],
+        filterTags: Set<String> = [],
         extraData: [String: RawJSON] = [:],
         unsetProperties: [String] = []
     ) async throws {
@@ -1412,6 +1417,7 @@ public class Chat {
                 team: team,
                 members: Set(members),
                 invites: Set(invites),
+                filterTags: filterTags,
                 extraData: extraData
             ),
             unsetProperties: unsetProperties
