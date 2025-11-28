@@ -10,7 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `CDNClient.deleteAttachment(remoteUrl:)` [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
 - Add `heic`, `heif` and `svg` formats to the supported image file types [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
 ### 🐞 Fixed
-- Fix rare crash in WebSocketClient.connectEndpoint [#3882](https://github.com/GetStream/stream-chat-swift/pull/3882)
+- Fix rare crash in `WebSocketClient.connectEndpoint` [#3882](https://github.com/GetStream/stream-chat-swift/pull/3882)
+- Fix audio recordings not playing from AirPods automatically [#3884](https://github.com/GetStream/stream-chat-swift/pull/3884)
+- Fix audio recordings not using AirPods mic automatically [#3884](https://github.com/GetStream/stream-chat-swift/pull/3884)
 
 ## StreamChatUI
 ### 🐞 Fixed
