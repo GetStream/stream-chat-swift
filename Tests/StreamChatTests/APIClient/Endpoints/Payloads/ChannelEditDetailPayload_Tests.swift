@@ -14,7 +14,7 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
         let imageURL: URL = .unique()
         let team: String = .unique
         let invite: UserId = .unique
-        let filterTags: Set<String> = [.unique]
+        let filterTag: String = .unique
 
         // Create ChannelEditDetailPayload
         let payload = ChannelEditDetailPayload(
@@ -24,7 +24,7 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
             team: team,
             members: [invite],
             invites: [invite],
-            filterTags: filterTags,
+            filterTags: [filterTag],
             extraData: [:]
         )
 
@@ -34,7 +34,7 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
             "team": team,
             "members": [invite],
             "invites": [invite],
-            "filter_tags": filterTags
+            "filter_tags": [filterTag]
         ]
 
         let encodedJSON = try JSONEncoder.default.encode(payload)
