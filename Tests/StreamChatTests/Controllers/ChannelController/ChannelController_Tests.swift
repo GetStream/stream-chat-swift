@@ -4326,6 +4326,86 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(updater.markUnread_lastReadMessageId, previousMessageId)
         XCTAssertEqual(updater.markUnread_criteria, MarkUnreadCriteria.messageId(messageId))
     }
+
+    func test_markUnread_whenChannelDoesNotExist_messageTimestamp() {
+        var receivedError: Error?
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: Date()) { result in
+            receivedError = result.error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertTrue(receivedError is ClientError.ChannelNotCreatedYet)
+    }
+
+    func test_markUnread_whenReadEventsAreNotEnabled_messageTimestamp() throws {
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, ownCapabilities: [])
+        )
+
+        writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        var receivedError: Error?
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: Date()) { result in
+            receivedError = result.error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertTrue(receivedError is ClientError.ChannelFeatureDisabled)
+    }
+
+    func test_markUnread_whenIsMarkingAsRead_andCurrentUserIdIsPresent_messageTimestamp() throws {
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
+        )
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        let currentUserId = UserId.unique
+        client.setToken(token: .unique(userId: currentUserId))
+        try simulateMarkingAsRead(userId: currentUserId)
+
+        var receivedError: Error?
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: Date()) { result in
+            receivedError = result.error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNil(receivedError)
+    }
+
+    func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsNotPresent_messageTimestamp() throws {
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
+        )
+
+        writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        var receivedError: Error?
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: Date()) { result in
+            receivedError = result.error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNil(receivedError)
+    }
     
     // MARK: - Load more channel reads
     
