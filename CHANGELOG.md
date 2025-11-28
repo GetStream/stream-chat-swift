@@ -9,6 +9,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `ChatClient.deleteAttachment(remoteUrl:)` [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
 - Add `CDNClient.deleteAttachment(remoteUrl:)` [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
 - Add `heic`, `heif` and `svg` formats to the supported image file types [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
+- Add support for filter tags in channels [#3886](https://github.com/GetStream/stream-chat-swift/pull/3886)
+  - Add `ChatChannel.filterTags`
+  - Add `filterTags` channel list filtering key
+  - Add `filterTags` argument to `ChatChannelController` and `Chat` factory methods in `ChatClient`
+  - Add `filterTags` argument to `ChatChannelController.updateChannel` and `ChatChannelController.partialUpdateChannel`
+  - Add `filterTags` argument to `Chat.update` and `Chat.updatePartial`
 ### 🐞 Fixed
 - Fix rare crash in WebSocketClient.connectEndpoint [#3882](https://github.com/GetStream/stream-chat-swift/pull/3882)
 
