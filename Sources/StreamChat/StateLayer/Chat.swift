@@ -1356,7 +1356,7 @@ public class Chat {
     ///   - team: The team for the channel.
     ///   - members: A list of members for the channel.
     ///   - invites: A list of users who will get invites.
-    ///   - filterTags: A list of tags to add for the channel.
+    ///   - filterTags: A list of tags to add to the channel.
     ///   - extraData: Extra data for the new channel.
     ///
     /// - Throws: An error while communicating with the Stream API.

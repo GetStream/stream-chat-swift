@@ -253,7 +253,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - team: New team.
     ///   - members: New members.
     ///   - invites: New invites.
-    ///   - filterTags: New filter tags.
+    ///   - filterTags: A list of tags to add to the channel.
     ///   - extraData: New `ExtraData`.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
@@ -298,7 +298,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - team: New team.
     ///   - members: New members.
     ///   - invites: New invites.
-    ///   - filterTags: New filter tags.
+    ///   - filterTags: A list of tags to add to the channel.
     ///   - extraData: New `ExtraData`.
     ///   - unsetProperties: Properties from the channel that are going to be cleared/unset.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
