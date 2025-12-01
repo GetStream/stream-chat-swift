@@ -1568,6 +1568,7 @@ extension LivestreamChannelController_Tests {
             isHidden: true,
             createdBy: newCreatedBy,
             config: .mock(),
+            filterTags: ["football"],
             ownCapabilities: [.sendMessage, .readEvents],
             isFrozen: true,
             isDisabled: true,
@@ -1605,6 +1606,7 @@ extension LivestreamChannelController_Tests {
         XCTAssertEqual(controller.channel?.isHidden, true)
         XCTAssertEqual(controller.channel?.createdBy?.id, newCreatedBy.id)
         XCTAssertEqual(controller.channel?.createdBy?.name, newCreatedBy.name)
+        XCTAssertEqual(controller.channel?.filterTags, ["football"])
         XCTAssertTrue(controller.channel?.ownCapabilities.contains(.sendMessage) ?? false)
         XCTAssertTrue(controller.channel?.ownCapabilities.contains(.readEvents) ?? false)
         XCTAssertEqual(controller.channel?.isFrozen, true)

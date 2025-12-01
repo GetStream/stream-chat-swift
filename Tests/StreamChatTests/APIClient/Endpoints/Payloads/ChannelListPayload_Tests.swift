@@ -146,7 +146,10 @@ final class ChannelListPayload_Tests: XCTestCase {
                     ],
                     createdAt: channelCreatedDate,
                     updatedAt: .unique
-                ), ownCapabilities: [
+                ), filterTags: [
+                    "football"
+                ],
+                ownCapabilities: [
                     "join-channel",
                     "delete-channel"
                 ],
@@ -349,6 +352,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.updatedAt, "2020-03-17T18:54:09.460881Z".toDate())
 
         XCTAssertEqual(payload.membership?.user?.id, "broken-waterfall-5")
+        XCTAssertEqual(payload.channel.filterTags, ["football"])
         XCTAssertEqual(payload.channel.ownCapabilities?.count, 27)
         XCTAssertEqual(payload.activeLiveLocations.count, 1)
         XCTAssertNotNil(payload.pushPreference)
@@ -445,6 +449,7 @@ final class ChannelPayload_Tests: XCTestCase {
             truncatedAt: Date(timeIntervalSince1970: 1_609_459_250),
             createdBy: createdByPayload,
             config: ChannelConfig(),
+            filterTags: ["football"],
             ownCapabilities: ["send-message", "upload-file"],
             isDisabled: true,
             isFrozen: true,
@@ -493,6 +498,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(chatChannel.isHidden, true)
         XCTAssertEqual(chatChannel.createdBy?.id, "creator-user-id")
         XCTAssertNotNil(chatChannel.config)
+        XCTAssertEqual(chatChannel.filterTags, ["football"])
         XCTAssertTrue(chatChannel.ownCapabilities.contains(.sendMessage))
         XCTAssertTrue(chatChannel.ownCapabilities.contains(.uploadFile))
         XCTAssertEqual(chatChannel.isFrozen, true)
@@ -542,6 +548,7 @@ final class ChannelPayload_Tests: XCTestCase {
             truncatedAt: nil,
             createdBy: nil,
             config: ChannelConfig(),
+            filterTags: nil,
             ownCapabilities: nil,
             isDisabled: false,
             isFrozen: false,
@@ -587,6 +594,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(chatChannel.isHidden, false)
         XCTAssertNil(chatChannel.createdBy)
         XCTAssertNotNil(chatChannel.config)
+        XCTAssertTrue(chatChannel.filterTags.isEmpty)
         XCTAssertTrue(chatChannel.ownCapabilities.isEmpty)
         XCTAssertEqual(chatChannel.isFrozen, false)
         XCTAssertEqual(chatChannel.isDisabled, false)

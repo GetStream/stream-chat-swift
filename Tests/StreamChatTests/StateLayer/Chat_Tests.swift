@@ -1344,6 +1344,104 @@ final class Chat_Tests: XCTestCase {
         
         await XCTAssertEqual(1, chat.state.channel?.reads.count)
         await XCTAssertEqual(3, chat.state.channel?.reads.first?.unreadMessagesCount)
+    // MARK: - Updating the Channel
+    
+    func test_update_whenChannelUpdaterSucceeds_thenUpdateSucceeds() async throws {
+        env.channelUpdaterMock.updateChannel_completion_result = .success(())
+        let name = "Updated Channel Name"
+        let imageURL = URL(string: "https://example.com/image.png")!
+        let team = "team123"
+        let members: Set<UserId> = [.unique, .unique]
+        let invites: Set<UserId> = [.unique]
+        let filterTags: Set<String> = ["tag1", "tag2"]
+        let extraData: [String: RawJSON] = ["custom": .string("value")]
+        
+        try await chat.update(
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: members,
+            invites: invites,
+            filterTags: filterTags,
+            extraData: extraData
+        )
+        
+        let payload = try XCTUnwrap(env.channelUpdaterMock.updateChannel_payload)
+        XCTAssertEqual(payload.name, name)
+        XCTAssertEqual(payload.imageURL, imageURL)
+        XCTAssertEqual(payload.team, team)
+        XCTAssertEqual(payload.members, members)
+        XCTAssertEqual(payload.invites, invites)
+        XCTAssertEqual(payload.filterTags, filterTags)
+        XCTAssertEqual(payload.extraData, extraData)
+    }
+    
+    func test_update_whenChannelUpdaterFails_thenUpdateFails() async throws {
+        env.channelUpdaterMock.updateChannel_completion_result = .failure(expectedTestError)
+        
+        await XCTAssertAsyncFailure(
+            try await chat.update(
+                name: "Updated Name",
+                imageURL: nil,
+                team: nil,
+                members: [],
+                invites: [],
+                filterTags: [],
+                extraData: [:]
+            ),
+            expectedTestError
+        )
+    }
+    
+    func test_updatePartial_whenChannelUpdaterSucceeds_thenUpdatePartialSucceeds() async throws {
+        env.channelUpdaterMock.partialChannelUpdate_completion_result = .success(())
+        let name = "Updated Channel Name"
+        let imageURL = URL(string: "https://example.com/image.png")!
+        let team = "team123"
+        let members: [UserId] = [.unique, .unique]
+        let invites: [UserId] = [.unique]
+        let filterTags: Set<String> = ["tag1", "tag2"]
+        let extraData: [String: RawJSON] = ["custom": .string("value")]
+        let unsetProperties = ["property1", "property2"]
+        
+        try await chat.updatePartial(
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: members,
+            invites: invites,
+            filterTags: filterTags,
+            extraData: extraData,
+            unsetProperties: unsetProperties
+        )
+        
+        let payload = try XCTUnwrap(env.channelUpdaterMock.partialChannelUpdate_updates)
+        XCTAssertEqual(payload.name, name)
+        XCTAssertEqual(payload.imageURL, imageURL)
+        XCTAssertEqual(payload.team, team)
+        XCTAssertEqual(payload.members, Set(members))
+        XCTAssertEqual(payload.invites, Set(invites))
+        XCTAssertEqual(payload.filterTags, filterTags)
+        XCTAssertEqual(payload.extraData, extraData)
+        XCTAssertEqual(env.channelUpdaterMock.partialChannelUpdate_unsetProperties, unsetProperties)
+    }
+    
+    func test_updatePartial_whenChannelUpdaterFails_thenUpdatePartialFails() async throws {
+        env.channelUpdaterMock.partialChannelUpdate_completion_result = .failure(expectedTestError)
+        
+        await XCTAssertAsyncFailure(
+            try await chat.updatePartial(
+                name: "Updated Name",
+                imageURL: nil,
+                team: nil,
+                members: [],
+                invites: [],
+                filterTags: [],
+                extraData: [:],
+                unsetProperties: []
+            ),
+            expectedTestError
+        )
     }
     
     // MARK: - Message Replies

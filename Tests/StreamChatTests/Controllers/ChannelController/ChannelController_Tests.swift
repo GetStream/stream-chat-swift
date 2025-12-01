@@ -4799,6 +4799,7 @@ final class ChannelController_Tests: XCTestCase {
             team: nil,
             members: Set(),
             invites: Set(),
+            filterTags: [],
             extraData: [:]
         )
 
@@ -5915,6 +5916,7 @@ extension ChannelController_Tests {
             team: nil,
             members: [currentUserId, otherUserId],
             invites: [],
+            filterTags: [],
             extraData: [:]
         )
 
@@ -5954,6 +5956,7 @@ extension ChannelController_Tests {
             team: nil,
             members: [],
             invites: [],
+            filterTags: [],
             extraData: [:]
         )
 
