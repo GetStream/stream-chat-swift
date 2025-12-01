@@ -294,7 +294,7 @@ public extension FilterKey where Scope == ChannelListFilterScope {
     
     /// A filter key for matching channel filter tags.
     /// Supported operators: `in`, `equal`
-    static var filterTags: FilterKey<Scope, String> { .init(rawValue: "filter_tags", keyPathString: #keyPath(ChannelDTO.filterTags)) }
+    static var filterTags: FilterKey<Scope, String> { .init(rawValue: "filter_tags", keyPathString: #keyPath(ChannelDTO.filterTags), isCollectionFilter: true) }
 }
 
 /// Internal filter queries for the channel list.
