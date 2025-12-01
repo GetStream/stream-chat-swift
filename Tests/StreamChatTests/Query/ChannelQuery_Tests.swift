@@ -47,6 +47,7 @@ final class ChannelQuery_Tests: XCTestCase {
             team: nil,
             members: [.unique],
             invites: [],
+            filterTags: [],
             extraData: [:]
         ))
 
@@ -69,6 +70,7 @@ final class ChannelQuery_Tests: XCTestCase {
             team: nil,
             members: [.unique],
             invites: [],
+            filterTags: [],
             extraData: [:]
         ))
         XCTAssertEqual(query.apiPath, "custom_type")
@@ -82,6 +84,7 @@ final class ChannelQuery_Tests: XCTestCase {
             team: nil,
             members: [.unique],
             invites: [],
+            filterTags: [],
             extraData: [:]
         ))
         XCTAssertEqual(query.apiPath, "custom_type/id")

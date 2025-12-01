@@ -65,6 +65,7 @@ public extension ChatClient {
     ///   - isCurrentUserMember: If set to `true` the current user will be included into the channel. Is `true` by default.
     ///   - messageOrdering: Describes the ordering the messages are presented.
     ///   - invites: IDs for the new channel invitees.
+    ///   - filterTags: A list of tags to add to the channel.
     ///   - extraData: Extra data for the new channel.
     ///   - channelListQuery: The channel list query the channel this controller represents is part of.
     /// - Throws: `ClientError.CurrentUserDoesNotExist` if there is no currently logged-in user.
@@ -78,6 +79,7 @@ public extension ChatClient {
         isCurrentUserMember: Bool = true,
         messageOrdering: MessageOrdering = .topToBottom,
         invites: Set<UserId> = [],
+        filterTags: Set<String> = [],
         extraData: [String: RawJSON] = [:],
         channelListQuery: ChannelListQuery? = nil
     ) throws -> ChatChannelController {
@@ -92,6 +94,7 @@ public extension ChatClient {
             team: team,
             members: members.union(isCurrentUserMember ? [currentUserId] : []),
             invites: invites,
+            filterTags: filterTags,
             extraData: extraData
         )
 
@@ -119,6 +122,7 @@ public extension ChatClient {
     ///   - name: The new channel name.
     ///   - imageURL: The new channel avatar URL.
     ///   - team: Team for the new channel.
+    ///   - filterTags: A list of tags to add to the channel.
     ///   - extraData: Extra data for the new channel.
     ///   - channelListQuery: The channel list query the channel this controller represents is part of.
     ///
@@ -134,6 +138,7 @@ public extension ChatClient {
         name: String? = nil,
         imageURL: URL? = nil,
         team: String? = nil,
+        filterTags: Set<String> = [],
         extraData: [String: RawJSON],
         channelListQuery: ChannelListQuery? = nil
     ) throws -> ChatChannelController {
@@ -147,6 +152,7 @@ public extension ChatClient {
             team: team,
             members: members.union(isCurrentUserMember ? [currentUserId] : []),
             invites: [],
+            filterTags: filterTags,
             extraData: extraData
         )
         return .init(

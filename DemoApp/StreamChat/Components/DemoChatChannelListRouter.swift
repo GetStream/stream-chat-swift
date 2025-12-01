@@ -477,6 +477,14 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
+            .init(title: "Add Premium Tag", isEnabled: canUpdateChannel, handler: { [unowned self] _ in
+                channelController.partialChannelUpdate(filterTags: ["premium"]) { error in
+                    if let error = error {
+                        self.rootViewController.presentAlert(title: "Couldn't make the channel \(cid) premium", message: "\(error)")
+                    }
+                }
+            }),
+            
             .init(title: "Unmute channel", isEnabled: canMuteChannel, handler: { [unowned self] _ in
                 channelController.unmuteChannel { error in
                     if let error = error {
