@@ -1317,6 +1317,7 @@ final class Chat_Tests: XCTestCase {
         let team = "team123"
         let members: Set<UserId> = [.unique, .unique]
         let invites: Set<UserId> = [.unique]
+        let filterTags: Set<String> = ["tag1", "tag2"]
         let extraData: [String: RawJSON] = ["custom": .string("value")]
         
         try await chat.update(
@@ -1325,6 +1326,7 @@ final class Chat_Tests: XCTestCase {
             team: team,
             members: members,
             invites: invites,
+            filterTags: filterTags,
             extraData: extraData
         )
         
@@ -1334,6 +1336,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(payload.team, team)
         XCTAssertEqual(payload.members, members)
         XCTAssertEqual(payload.invites, invites)
+        XCTAssertEqual(payload.filterTags, filterTags)
         XCTAssertEqual(payload.extraData, extraData)
     }
     
@@ -1347,6 +1350,7 @@ final class Chat_Tests: XCTestCase {
                 team: nil,
                 members: [],
                 invites: [],
+                filterTags: [],
                 extraData: [:]
             ),
             expectedTestError
@@ -1360,6 +1364,7 @@ final class Chat_Tests: XCTestCase {
         let team = "team123"
         let members: [UserId] = [.unique, .unique]
         let invites: [UserId] = [.unique]
+        let filterTags: Set<String> = ["tag1", "tag2"]
         let extraData: [String: RawJSON] = ["custom": .string("value")]
         let unsetProperties = ["property1", "property2"]
         
@@ -1369,6 +1374,7 @@ final class Chat_Tests: XCTestCase {
             team: team,
             members: members,
             invites: invites,
+            filterTags: filterTags,
             extraData: extraData,
             unsetProperties: unsetProperties
         )
@@ -1379,6 +1385,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(payload.team, team)
         XCTAssertEqual(payload.members, Set(members))
         XCTAssertEqual(payload.invites, Set(invites))
+        XCTAssertEqual(payload.filterTags, filterTags)
         XCTAssertEqual(payload.extraData, extraData)
         XCTAssertEqual(env.channelUpdaterMock.partialChannelUpdate_unsetProperties, unsetProperties)
     }
@@ -1393,6 +1400,7 @@ final class Chat_Tests: XCTestCase {
                 team: nil,
                 members: [],
                 invites: [],
+                filterTags: [],
                 extraData: [:],
                 unsetProperties: []
             ),
