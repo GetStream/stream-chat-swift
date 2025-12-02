@@ -104,7 +104,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
 
     @Atomic var markUnread_cid: ChannelId?
     @Atomic var markUnread_userId: UserId?
-    @Atomic var markUnread_messageId: MessageId?
+    @Atomic var markUnread_criteria: MarkUnreadCriteria?
     @Atomic var markUnread_lastReadMessageId: MessageId?
     @Atomic var markUnread_completion: ((Result<ChatChannel, Error>) -> Void)?
     @Atomic var markUnread_completion_result: Result<ChatChannel, Error>?
@@ -257,7 +257,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         
         markUnread_cid = nil
         markUnread_userId = nil
-        markUnread_messageId = nil
+        markUnread_criteria = nil
         markUnread_lastReadMessageId = nil
         markUnread_completion = nil
         markUnread_completion_result = nil
@@ -522,10 +522,10 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         markRead_completion_result?.invoke(with: completion)
     }
 
-    override func markUnread(cid: ChannelId, userId: UserId, from messageId: MessageId, lastReadMessageId: MessageId?, completion: ((Result<ChatChannel, Error>) -> Void)? = nil) {
+    override func markUnread(cid: ChannelId, userId: UserId, from unreadCriteria: MarkUnreadCriteria, lastReadMessageId: MessageId?, completion: ((Result<ChatChannel, any Error>) -> Void)? = nil) {
         markUnread_cid = cid
         markUnread_userId = userId
-        markUnread_messageId = messageId
+        markUnread_criteria = unreadCriteria
         markUnread_lastReadMessageId = lastReadMessageId
         markUnread_completion = completion
         markUnread_completion_result?.invoke(with: completion)

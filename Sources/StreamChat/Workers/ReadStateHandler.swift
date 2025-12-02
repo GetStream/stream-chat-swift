@@ -46,7 +46,7 @@ final class ReadStateHandler {
     }
     
     func markUnread(
-        from messageId: MessageId,
+        from unreadCriteria: MarkUnreadCriteria,
         in channel: ChatChannel,
         completion: @escaping (Result<ChatChannel, Error>) -> Void
     ) {
@@ -57,13 +57,13 @@ final class ReadStateHandler {
             return
         }
         markingRead = true
-        messageRepository.getMessage(before: messageId, in: channel.cid) { [weak self] result in
+        messageRepository.getMessage(before: unreadCriteria, in: channel.cid) { [weak self] result in
             switch result {
             case .success(let lastReadMessageId):
                 self?.channelUpdater.markUnread(
                     cid: channel.cid,
                     userId: currentUserId,
-                    from: messageId,
+                    from: unreadCriteria,
                     lastReadMessageId: lastReadMessageId
                 ) { [weak self] result in
                     if case .success = result {
@@ -80,12 +80,12 @@ final class ReadStateHandler {
     }
     
     func markUnread(
-        from messageId: MessageId,
+        from unreadCriteria: MarkUnreadCriteria,
         in channel: ChatChannel
     ) async throws {
         try await withCheckedThrowingContinuation { continuation in
             markUnread(
-                from: messageId,
+                from: unreadCriteria,
                 in: channel
             ) { result in
                 continuation.resume(with: result.error)

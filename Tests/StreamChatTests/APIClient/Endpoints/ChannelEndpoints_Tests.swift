@@ -449,7 +449,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual("channels/\(cid.type.rawValue)/\(cid.id)/read", endpoint.path.value)
     }
 
-    func test_markUnread_buildsCorrectly() {
+    func test_markUnreadWithMessageId_buildsCorrectly() {
         let cid = ChannelId.unique
         let messageId = MessageId.unique
         let userId = UserId.unique
@@ -459,13 +459,35 @@ final class ChannelEndpoints_Tests: XCTestCase {
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: [
-                "message_id": messageId,
-                "user_id": userId
-            ]
+            body: MarkUnreadPayload(
+                criteria: .messageId(messageId),
+                userId: userId
+            )
         )
 
-        let endpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, messageId: messageId, userId: userId)
+        let endpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, payload: .init(criteria: .messageId(messageId), userId: userId))
+
+        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual(endpoint.path.value, "channels/\(cid.type.rawValue)/\(cid.id)/unread")
+    }
+    
+    func test_markUnreadWithTimestamp_buildsCorrectly() {
+        let cid = ChannelId.unique
+        let messageTimestamp = Date.unique
+        let userId = UserId.unique
+
+        let expectedEndpoint = Endpoint<EmptyResponse>(
+            path: .markChannelUnread(cid.apiPath),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: MarkUnreadPayload(
+                criteria: .messageTimestamp(messageTimestamp),
+                userId: userId
+            )
+        )
+
+        let endpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, payload: .init(criteria: .messageTimestamp(messageTimestamp), userId: userId))
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual(endpoint.path.value, "channels/\(cid.type.rawValue)/\(cid.id)/unread")

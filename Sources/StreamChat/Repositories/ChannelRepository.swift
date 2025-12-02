@@ -58,23 +58,23 @@ class ChannelRepository {
         }
     }
 
-    /// Marks a subset of the messages of the channel as unread. All the following messages, including the one that is
+    /// Marks a subset of the messages of the channel as unread. All the following messages including the one that is
     /// passed as parameter, will be marked as not read.
     /// - Parameters:
     ///   - cid: The id of the channel to be marked as unread
     ///   - userId: The id of the current user
-    ///   - messageId: The id of the first message that will be marked as unread.
+    ///   - unreadCriteria: The id or timestamp of the first message that will be marked as unread.
     ///   - lastReadMessageId: The id of the last message that was read.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markUnread(
         for cid: ChannelId,
         userId: UserId,
-        from messageId: MessageId,
+        from unreadCriteria: MarkUnreadCriteria,
         lastReadMessageId: MessageId?,
         completion: ((Result<ChatChannel, Error>) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .markUnread(cid: cid, messageId: messageId, userId: userId)
+            endpoint: .markUnread(cid: cid, payload: .init(criteria: unreadCriteria, userId: userId))
         ) { [weak self] result in
             if let error = result.error {
                 completion?(.failure(error))
@@ -86,7 +86,7 @@ class ChannelRepository {
                 session.markChannelAsUnread(
                     for: cid,
                     userId: userId,
-                    from: messageId,
+                    from: unreadCriteria,
                     lastReadMessageId: lastReadMessageId,
                     lastReadAt: nil,
                     unreadMessagesCount: nil
