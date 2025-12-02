@@ -437,7 +437,37 @@ final class MessageRepositoryTests: XCTestCase {
             )
         }
         let result = try waitFor { done in
-            repository.getMessage(before: "3", in: cid, completion: done)
+            repository.getMessage(before: .messageId("3"), in: cid, completion: done)
+        }
+        switch result {
+        case .success(let messageId):
+            XCTAssertEqual("2", messageId)
+        case .failure(let error):
+            XCTFail(error.localizedDescription)
+        }
+    }
+
+    func test_getMessageBefore_returnsCorrectResult_messageTimestamp() throws {
+        let cid = ChannelId.unique
+        try database.createCurrentUser()
+        try database.writeSynchronously { session in
+            let messages = (0..<5).map { index in
+                MessagePayload.dummy(
+                    messageId: "\(index)",
+                    createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval(index))
+                )
+            }
+            try session.saveChannel(
+                payload: ChannelPayload.dummy(
+                    channel: .dummy(cid: cid),
+                    messages: messages
+                )
+            )
+        }
+        // Use a timestamp between message "2" and "3" to get message "2"
+        let timestamp = Date(timeIntervalSinceReferenceDate: 2.5)
+        let result = try waitFor { done in
+            repository.getMessage(before: .messageTimestamp(timestamp), in: cid, completion: done)
         }
         switch result {
         case .success(let messageId):

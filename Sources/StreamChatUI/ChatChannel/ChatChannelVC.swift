@@ -598,6 +598,10 @@ open class ChatChannelVC: _ViewController,
         if let event = event as? MessageDeliveredEvent, event.cid == channelController.cid, !messages.isEmpty {
             messageListVC.listView.reloadRows(at: [.init(item: 0, section: 0)], with: .none)
         }
+        
+        if let event = event as? NotificationMarkUnreadEvent, let channel = channelController.channel, event.cid == channelController.cid, !messages.isEmpty {
+            updateAllUnreadMessagesRelatedComponents(channel: channel)
+        }
     }
 
     // MARK: - AudioQueuePlayerDatasource
