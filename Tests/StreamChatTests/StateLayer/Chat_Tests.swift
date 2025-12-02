@@ -1344,6 +1344,8 @@ final class Chat_Tests: XCTestCase {
         
         await XCTAssertEqual(1, chat.state.channel?.reads.count)
         await XCTAssertEqual(3, chat.state.channel?.reads.first?.unreadMessagesCount)
+    }
+    
     // MARK: - Updating the Channel
     
     func test_update_whenChannelUpdaterSucceeds_thenUpdateSucceeds() async throws {
