@@ -121,7 +121,9 @@ class WebSocketClient {
         }
 
         do {
-            engine = try createEngineIfNeeded(for: endpoint)
+            try engineQueue.sync {
+                self.engine = try createEngineIfNeeded(for: endpoint)
+            }
         } catch {
             return
         }

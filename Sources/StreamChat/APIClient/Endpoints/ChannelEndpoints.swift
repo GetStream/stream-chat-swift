@@ -269,16 +269,13 @@ extension Endpoint {
         )
     }
 
-    static func markUnread(cid: ChannelId, messageId: MessageId, userId: UserId) -> Endpoint<EmptyResponse> {
+    static func markUnread(cid: ChannelId, payload: MarkUnreadPayload) -> Endpoint<EmptyResponse> {
         .init(
             path: .markChannelUnread(cid.apiPath),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: [
-                "message_id": messageId,
-                "user_id": userId
-            ]
+            body: payload
         )
     }
 

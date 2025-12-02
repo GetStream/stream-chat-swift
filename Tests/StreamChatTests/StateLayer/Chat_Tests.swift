@@ -1308,6 +1308,44 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(3, chat.state.channel?.reads.first?.unreadMessagesCount)
     }
     
+    func test_markUnread_whenAPIRequestSucceeds_thenReadStateUpdates_messageTimestamp() async throws {
+        try await setUpChat(
+            usesMockedUpdaters: false,
+            messageCount: 3
+        )
+        let messages = await chat.state.messages
+        let firstMessage = try XCTUnwrap(messages.first)
+        let lastMessage = try XCTUnwrap(messages.first)
+        
+        // Create a read state for the current user
+        try await env.client.databaseContainer.write { session in
+            let payload = ChannelPayload.dummy(
+                channel: .dummy(
+                    cid: self.channelId,
+                    lastMessageAt: lastMessage.createdAt
+                ),
+                channelReads: [
+                    ChannelReadPayload(
+                        user: .dummy(userId: self.currentUserId),
+                        lastReadAt: lastMessage.createdAt,
+                        lastReadMessageId: nil,
+                        unreadMessagesCount: 0,
+                        lastDeliveredAt: nil,
+                        lastDeliveredMessageId: nil
+                    )
+                ]
+            )
+            try session.saveChannel(payload: payload)
+        }
+        
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        try await chat.markUnread(from: firstMessage.createdAt)
+        XCTAssertNotNil(env.client.mockAPIClient.request_endpoint)
+        
+        await XCTAssertEqual(1, chat.state.channel?.reads.count)
+        await XCTAssertEqual(2, chat.state.channel?.reads.first?.unreadMessagesCount)
+    }
+    
     // MARK: - Updating the Channel
     
     func test_update_whenChannelUpdaterSucceeds_thenUpdateSucceeds() async throws {

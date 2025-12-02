@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `ChatClient.deleteAttachment(remoteUrl:)` [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
 - Add `CDNClient.deleteAttachment(remoteUrl:)` [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
 - Add `heic`, `heif` and `svg` formats to the supported image file types [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
+- Add `ChatChannelController.markUnread(from:completion:)` and `Chat.markUnread(from:)` where the from argument is `Date` [#3885](https://github.com/GetStream/stream-chat-swift/pull/3885)
 - Add support for filter tags in channels [#3886](https://github.com/GetStream/stream-chat-swift/pull/3886)
   - Add `ChatChannel.filterTags`
   - Add `filterTags` channel list filtering key
