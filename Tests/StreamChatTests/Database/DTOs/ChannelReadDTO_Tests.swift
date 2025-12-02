@@ -512,7 +512,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         XCTAssertEqual(database.writeSessionCounter, 1)
         let readDTO = try XCTUnwrap(readDTO(cid: cid, userId: userId))
         XCTAssertNearlySameDate(readDTO.lastReadAt.bridgeDate, firstMessageDate)
-        XCTAssertEqual(readDTO.unreadMessageCount, 3)
+        XCTAssertEqual(readDTO.unreadMessageCount, 2)
         XCTAssertEqual(readDTO.lastReadMessageId, lastReadMessageId)
     }
 

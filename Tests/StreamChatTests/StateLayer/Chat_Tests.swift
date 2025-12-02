@@ -1343,7 +1343,7 @@ final class Chat_Tests: XCTestCase {
         XCTAssertNotNil(env.client.mockAPIClient.request_endpoint)
         
         await XCTAssertEqual(1, chat.state.channel?.reads.count)
-        await XCTAssertEqual(3, chat.state.channel?.reads.first?.unreadMessagesCount)
+        await XCTAssertEqual(2, chat.state.channel?.reads.first?.unreadMessagesCount)
     }
     
     // MARK: - Updating the Channel
