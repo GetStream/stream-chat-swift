@@ -558,13 +558,17 @@ class MessageDTO: NSManagedObject {
     static func countOtherUserMessages(
         in cid: String,
         createdAtFrom: Date,
+        excludingMessageId: MessageId?,
         context: NSManagedObjectContext
     ) -> Int {
-        let subpredicates: [NSPredicate] = [
+        var subpredicates: [NSPredicate] = [
             sentMessagesPredicate(for: cid),
             .init(format: "createdAt >= %@", createdAtFrom.bridgeDate),
             .init(format: "user.currentUser == nil")
         ]
+        if let excludingMessageId {
+            subpredicates.append(.init(format: "id != %@", excludingMessageId))
+        }
 
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]

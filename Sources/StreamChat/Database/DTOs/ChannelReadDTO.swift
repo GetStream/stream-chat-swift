@@ -166,9 +166,16 @@ extension NSManagedObjectContext {
         read.lastReadAt = lastReadAt.bridgeDate
         read.lastReadMessageId = lastReadMessageId
 
+        let excludesMessageId: Bool = {
+            switch unreadCriteria {
+            case .messageId: return false
+            case .messageTimestamp: return true
+            }
+        }()
         let messagesCount = unreadMessagesCount ?? MessageDTO.countOtherUserMessages(
             in: read.channel.cid,
             createdAtFrom: lastReadAt,
+            excludingMessageId: excludesMessageId ? message.id : nil,
             context: self
         )
         read.unreadMessageCount = Int32(messagesCount)
