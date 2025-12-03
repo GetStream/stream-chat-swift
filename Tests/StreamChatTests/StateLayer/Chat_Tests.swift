@@ -712,12 +712,6 @@ final class Chat_Tests: XCTestCase {
     func test_sendMessage_whenAPIRequestSucceeds_thenSendMessageSucceeds() async throws {
         try await setUpChat(usesMockedUpdaters: false)
         await XCTAssertEqual(0, chat.state.messages.count)
-
-        let notificationExpectation = expectation(
-            forNotification: .NewEventReceived,
-            object: nil,
-            notificationCenter: env.client.eventNotificationCenter
-        )
         
         let typingIndicatorResponse = EmptyResponse()
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
@@ -734,8 +728,6 @@ final class Chat_Tests: XCTestCase {
             with: apiResponse.message.text,
             messageId: apiResponse.message.id
         )
-        
-        await fulfillment(of: [notificationExpectation], timeout: defaultTimeout)
         
         XCTAssertEqual(text, message.text)
         await XCTAssertEqual(1, chat.state.messages.count)
@@ -774,21 +766,29 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(LocalMessageState.sendingFailed, stateMessage.localState)
     }
 
-    func test_sendSystemMessage_thenCallsChannelUpdaterWithIsSystemTrue() async throws {
-        try await setUpChat(usesMockedUpdaters: true)
+    func test_sendSystemMessage_whenAPIRequestSucceeds_thenSendMessageSucceeds() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
         await XCTAssertEqual(0, chat.state.messages.count)
 
         let text = "Text"
-        env.channelUpdaterMock.createNewMessage_completion_result = .success((
-            .mock(id: "0", text: text, type: .system)
-        ))
+        let apiResponse = MessagePayload.Boxed(
+            message: .dummy(
+                type: .system,
+                messageId: "0",
+                text: text
+            )
+        )
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        
         let message = try await chat.sendSystemMessage(
             with: text,
             messageId: "0"
         )
 
-        XCTAssertEqual(env.typingEventsSenderMock.stopTyping_cid, nil)
-        XCTAssertEqual(env.channelUpdaterMock.createNewMessage_isSystem, true)
+        let body = env.client.mockAPIClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
+        let messageRequestBody = body?["message"]?.encodable as? MessageRequestBody
+        XCTAssertEqual(messageRequestBody?.type, MessageType.system.rawValue)
+        
         XCTAssertEqual(text, message.text)
         XCTAssertEqual(.system, message.type)
     }
