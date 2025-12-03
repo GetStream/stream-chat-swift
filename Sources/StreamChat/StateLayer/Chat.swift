@@ -406,8 +406,9 @@ public class Chat {
     /// - Returns: An instance of `ChatMessage` which was resent.
     @discardableResult public func resendMessage(_ messageId: MessageId) async throws -> ChatMessage {
         let messageSender = try client.backgroundWorker(of: MessageSender.self)
+        async let resentMessage = try await messageSender.waitForAPIRequest(messageId: messageId)
         try await messageUpdater.resendMessage(with: messageId)
-        return try await messageSender.waitForAPIRequest(messageId: messageId)
+        return try await resentMessage
     }
     
     /// Downloads the specified attachment and stores it locally on the device.
@@ -509,9 +510,11 @@ public class Chat {
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
         let cid = try await self.cid
+        let newMessageId = messageId ?? .newUniqueId
+        async let sentMessage = waitForMessageSender(messageId: newMessageId)
         let localMessage = try await channelUpdater.createNewMessage(
             in: cid,
-            messageId: messageId,
+            messageId: newMessageId,
             text: text,
             pinning: pinning,
             isSilent: silent,
@@ -526,8 +529,6 @@ public class Chat {
             restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
-        // Important to set up the waiter immediately
-        async let sentMessage = try await waitForAPIRequest(localMessage: localMessage)
         eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage, cid: cid))
         return try await sentMessage
     }
@@ -547,9 +548,11 @@ public class Chat {
         extraData: [String: RawJSON] = [:]
     ) async throws -> ChatMessage {
         let cid = try await self.cid
+        let newMessageId = messageId ?? .newUniqueId
+        async let sentMessage = waitForMessageSender(messageId: newMessageId)
         let localMessage = try await channelUpdater.createNewMessage(
             in: cid,
-            messageId: messageId,
+            messageId: newMessageId,
             text: text,
             pinning: nil,
             isSilent: false,
@@ -564,8 +567,6 @@ public class Chat {
             restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
-        // Important to set up the waiter immediately
-        async let sentMessage = try await waitForAPIRequest(localMessage: localMessage)
         eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage, cid: cid))
         return try await sentMessage
     }
@@ -593,7 +594,8 @@ public class Chat {
         skipPush: Bool = false
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
-        let localMessage = try await messageUpdater.editMessage(
+        async let updatedMessage = waitForMessageEditor(messageId: messageId)
+        _ = try await messageUpdater.editMessage(
             messageId: messageId,
             text: text,
             skipEnrichUrl: skipEnrichURL,
@@ -602,7 +604,7 @@ public class Chat {
             restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
-        return try await waitForAPIRequest(localMessage: localMessage)
+        return try await updatedMessage
     }
     
     // MARK: - Message Pagination
@@ -992,9 +994,11 @@ public class Chat {
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
         let cid = try await self.cid
+        let newMessageId = messageId ?? .newUniqueId
+        async let sentMessage = waitForMessageSender(messageId: newMessageId)
         let localMessage = try await messageUpdater.createNewReply(
             in: cid,
-            messageId: messageId,
+            messageId: newMessageId,
             text: text,
             pinning: pinning,
             command: nil,
@@ -1009,7 +1013,6 @@ public class Chat {
             skipEnrichUrl: skipEnrichURL,
             extraData: extraData
         )
-        async let sentMessage = try await waitForAPIRequest(localMessage: localMessage)
         eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage, cid: cid))
         return try await sentMessage
     }
@@ -1536,18 +1539,14 @@ extension Chat {
         }
     }
     
-    /// Depending on the local state we use different workers.
-    func waitForAPIRequest(localMessage: ChatMessage) async throws -> ChatMessage {
-        switch localMessage.localState {
-        case .pendingSend:
-            let messageSender = try client.backgroundWorker(of: MessageSender.self)
-            return try await messageSender.waitForAPIRequest(messageId: localMessage.id)
-        case .pendingSync:
-            let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
-            return try await messageEditor.waitForAPIRequest(messageId: localMessage.id)
-        default:
-            return localMessage
-        }
+    func waitForMessageEditor(messageId: MessageId) async throws -> ChatMessage {
+        let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
+        return try await messageEditor.waitForAPIRequest(messageId: messageId)
+    }
+    
+    func waitForMessageSender(messageId: MessageId) async throws -> ChatMessage {
+        let messageSender = try client.backgroundWorker(of: MessageSender.self)
+        return try await messageSender.waitForAPIRequest(messageId: messageId)
     }
 }
 
