@@ -183,7 +183,7 @@ extension Endpoint {
         var body: [String: AnyEncodable] = [
             "add_members": AnyEncodable(members)
         ]
-        if let hideHistoryBefore = hideHistoryBefore {
+        if let hideHistoryBefore {
             body["hide_history_before"] = AnyEncodable(hideHistoryBefore)
         } else {
             body["hide_history"] = AnyEncodable(hideHistory)
