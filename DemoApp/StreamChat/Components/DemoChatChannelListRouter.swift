@@ -251,31 +251,21 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                         self.rootViewController.presentAlert(title: "User ID is not valid")
                         return
                     }
-                    channelController.addMembers(
-                        [MemberInfo(userId: id, extraData: nil)],
-                        message: "Members added to the channel"
-                    ) { error in
-                        if let error = error {
-                            self.rootViewController.presentAlert(
-                                title: "Couldn't add user \(id) to channel \(cid)",
-                                message: "\(error)"
-                            )
-                        }
-                    }
-                }
-            }),
-            .init(title: "Add member w/o history", isEnabled: canUpdateChannelMembers, handler: { [unowned self] _ in
-                self.rootViewController.presentAlert(title: "Enter user id", textFieldPlaceholder: "User ID") { id in
-                    guard let id = id, !id.isEmpty else {
-                        self.rootViewController.presentAlert(title: "User ID is not valid")
-                        return
-                    }
-                    channelController.addMembers(
-                        [MemberInfo(userId: id, extraData: nil)],
-                        hideHistory: true,
-                        message: "Members added to the channel"
-                    ) { error in
-                        if let error = error {
+                    self.rootViewController.presentAlert(
+                        title: "How many days to show?",
+                        message: "Enter the number of days of history to show, 0 for full history",
+                        textFieldPlaceholder: "Days"
+                    ) { daysString in
+                        let hideHistoryBefore: Date? = {
+                            guard let daysString, let days = Int(daysString) else { return nil }
+                            return Calendar.current.date(byAdding: .day, value: -days, to: Date())
+                        }()
+                        channelController.addMembers(
+                            [MemberInfo(userId: id, extraData: nil)],
+                            hideHistoryBefore: hideHistoryBefore,
+                            message: "Members added to the channel"
+                        ) { error in
+                            guard let error else { return }
                             self.rootViewController.presentAlert(
                                 title: "Couldn't add user \(id) to channel \(cid)",
                                 message: "\(error)"

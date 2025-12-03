@@ -229,12 +229,14 @@ public class Chat {
     ///   - members: An array of member data that will be added to the channel.
     ///   - systemMessage: A system message to be added after adding members.
     ///   - hideHistory: If true, the previous history is available for added members, otherwise they do not see the history. The default value is false.
+    ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func addMembers(
         _ members: [MemberInfo],
         systemMessage: String? = nil,
-        hideHistory: Bool = false
+        hideHistory: Bool = false,
+        hideHistoryBefore: Date? = nil
     ) async throws {
         let currentUserId = client.authenticationRepository.currentUserId
         try await channelUpdater.addMembers(
@@ -242,7 +244,8 @@ public class Chat {
             cid: cid,
             members: members,
             message: systemMessage,
-            hideHistory: hideHistory
+            hideHistory: hideHistory,
+            hideHistoryBefore: hideHistoryBefore
         )
     }
 
@@ -254,17 +257,20 @@ public class Chat {
     ///   - members: An array of user ids that will be added to the channel.
     ///   - systemMessage: A system message to be added after adding members.
     ///   - hideHistory: If true, the previous history is available for added members, otherwise they do not see the history. The default value is false.
+    ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func addMembers(
         _ members: [UserId],
         systemMessage: String? = nil,
-        hideHistory: Bool = false
+        hideHistory: Bool = false,
+        hideHistoryBefore: Date? = nil
     ) async throws {
         try await addMembers(
             members.map { .init(userId: $0, extraData: nil) },
             systemMessage: systemMessage,
-            hideHistory: hideHistory
+            hideHistory: hideHistory,
+            hideHistoryBefore: hideHistoryBefore
         )
     }
     

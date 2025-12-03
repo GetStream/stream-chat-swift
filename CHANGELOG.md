@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### ✅ Added
+- Add `hideHistoryBefore` to add members for configuring how much of the history is visible for added members
 
 # [4.94.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.94.0)
 _December 02, 2025_

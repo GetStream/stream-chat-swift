@@ -3700,6 +3700,30 @@ final class ChannelController_Tests: XCTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    func test_addMembers_withHideHistoryBefore_callsChannelUpdater() {
+        let members: [MemberInfo] = [.init(userId: .unique, extraData: nil)]
+        let hideHistoryBefore = Date()
+
+        // Simulate `addMembers` call with hideHistoryBefore
+        controller.addMembers(
+            members,
+            hideHistory: false,
+            hideHistoryBefore: hideHistoryBefore
+        ) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+        }
+
+        // Assert hideHistoryBefore is passed to channelUpdater
+        XCTAssertEqual(env.channelUpdater!.addMembers_cid, channelId)
+        XCTAssertEqual(env.channelUpdater!.addMembers_memberInfos?.map(\.userId), members.map(\.userId))
+        XCTAssertEqual(env.channelUpdater!.addMembers_hideHistory, false)
+        XCTAssertEqual(env.channelUpdater!.addMembers_hideHistoryBefore, hideHistoryBefore)
+
+        // Simulate successful update
+        env.channelUpdater!.addMembers_completion?(nil)
+    }
 
     // MARK: - Inviting members
 

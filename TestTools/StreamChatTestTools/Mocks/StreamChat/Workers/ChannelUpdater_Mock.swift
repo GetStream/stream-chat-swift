@@ -56,6 +56,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
     @Atomic var addMembers_memberInfos: [MemberInfo]?
     @Atomic var addMembers_message: String?
     @Atomic var addMembers_hideHistory: Bool?
+    @Atomic var addMembers_hideHistoryBefore: Date?
     @Atomic var addMembers_completion: ((Error?) -> Void)?
     @Atomic var addMembers_completion_result: Result<Void, Error>?
 
@@ -213,6 +214,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         addMembers_message = nil
         addMembers_userIds = nil
         addMembers_hideHistory = nil
+        addMembers_hideHistoryBefore = nil
         addMembers_completion = nil
         addMembers_completion_result = nil
 
@@ -439,6 +441,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         members: [MemberInfo],
         message: String?,
         hideHistory: Bool,
+        hideHistoryBefore: Date? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         addMembers_currentUserId = currentUserId
@@ -447,6 +450,7 @@ final class ChannelUpdater_Mock: ChannelUpdater {
         addMembers_memberInfos = members
         addMembers_message = message
         addMembers_hideHistory = hideHistory
+        addMembers_hideHistoryBefore = hideHistoryBefore
         addMembers_completion = completion
         addMembers_completion_result?.invoke(with: completion)
     }

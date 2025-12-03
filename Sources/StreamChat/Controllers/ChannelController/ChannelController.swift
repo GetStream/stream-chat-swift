@@ -1145,6 +1145,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - members: An array of `MemberInfo` objects, each representing a member to be added to the channel.
     ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
+    ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
     ///   - message: Optional system message sent when adding members.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
@@ -1152,6 +1153,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     public func addMembers(
         _ members: [MemberInfo],
         hideHistory: Bool = false,
+        hideHistoryBefore: Date? = nil,
         message: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
@@ -1165,7 +1167,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             cid: cid,
             members: members,
             message: message,
-            hideHistory: hideHistory
+            hideHistory: hideHistory,
+            hideHistoryBefore: hideHistoryBefore
         ) { error in
             self.callback {
                 completion?(error)
@@ -1178,18 +1181,21 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - userIds: User ids that will be added to a channel.
     ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
+    ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
     ///   - message: Optional system message sent when adding members.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     public func addMembers(
         userIds: Set<UserId>,
         hideHistory: Bool = false,
+        hideHistoryBefore: Date? = nil,
         message: String? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         addMembers(
             userIds.map { .init(userId: $0, extraData: nil) },
             hideHistory: hideHistory,
+            hideHistoryBefore: hideHistoryBefore,
             message: message,
             completion: completion
         )
