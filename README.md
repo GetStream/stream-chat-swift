@@ -98,6 +98,16 @@ To find out more about this product, please check our [docs](https://getstream.i
 
 ---
 
+## AI Components
+
+Bring your AI experience to life with Stream’s frontend components available for [SwiftUI](https://github.com/GetStream/stream-chat-swift-ai) (and other platforms, such as React, React Native, and Android). 
+
+Featuring natural streaming message animation, full markdown and code rendering, charts, tables, thinking indicators, text-to-speech, and a completely flexible composer. Designed to work seamlessly with Stream Chat’s frontend SDKs, it’s everything you need to ship a premium AI chat interface out of the box.
+
+To find out more about these components, please check our [docs](https://getstream.io/chat/docs/sdk/ios/ai-integrations/overview/).
+
+---
+
 ## We are hiring
 
 We've closed a [\$38 million Series B funding round](https://techcrunch.com/2021/03/04/stream-raises-38m-as-its-chat-and-activity-feed-apis-power-communications-for-1b-users/) in 2021 and we keep actively growing.
