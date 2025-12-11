@@ -463,6 +463,24 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
+            .init(title: "Mark channel unread with timestamp", isEnabled: true, handler: { [unowned self] _ in
+                self.rootViewController.presentAlert(title: "Mark messages as unread with timestamp", message: "Marks messages as unread from the last number of days", textFieldPlaceholder: "Days") { offsetInDaysString in
+                    let calendar = Calendar.current
+                    guard let offsetInDays = Int(offsetInDaysString ?? ""),
+                          let date = calendar.date(byAdding: .day, value: -abs(offsetInDays), to: calendar.startOfDay(for: Date())) else {
+                        self.rootViewController.presentAlert(title: "Timestamp offset is not valid")
+                        return
+                    }
+                    channelController.markUnread(from: date) { result in
+                        switch result {
+                        case .failure(let error):
+                            self.rootViewController.presentAlert(title: "Couldn't mark messages as unread \(cid)", message: "\(error)")
+                        case .success:
+                            break
+                        }
+                    }
+                }
+            }),
             .init(title: "Cool channel", isEnabled: canMuteChannel, handler: { [unowned self] _ in
                 channelController.partialChannelUpdate(extraData: ["is_cool": true]) { error in
                     if let error = error {
@@ -477,6 +495,14 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
+            .init(title: "Add Premium Tag", isEnabled: canUpdateChannel, handler: { [unowned self] _ in
+                channelController.partialChannelUpdate(filterTags: ["premium"]) { error in
+                    if let error = error {
+                        self.rootViewController.presentAlert(title: "Couldn't make the channel \(cid) premium", message: "\(error)")
+                    }
+                }
+            }),
+            
             .init(title: "Unmute channel", isEnabled: canMuteChannel, handler: { [unowned self] _ in
                 channelController.unmuteChannel { error in
                     if let error = error {

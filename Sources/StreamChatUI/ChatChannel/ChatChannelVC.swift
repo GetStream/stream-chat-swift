@@ -89,7 +89,12 @@ open class ChatChannelVC: _ViewController,
             return isLastMessageFullyVisible && isFirstPageLoaded
         }
 
-        return isLastMessageVisibleOrSeen && hasSeenFirstUnreadMessage && isFirstPageLoaded && !hasMarkedMessageAsUnread
+        let unreadMessageCount = channelController.channel?.unreadCount.messages ?? 0
+        return isLastMessageVisibleOrSeen
+            && hasSeenFirstUnreadMessage
+            && isFirstPageLoaded
+            && !hasMarkedMessageAsUnread
+            && unreadMessageCount > 0
     }
 
     private var isLastMessageVisibleOrSeen: Bool {
@@ -592,6 +597,10 @@ open class ChatChannelVC: _ViewController,
         // the latest cell to update the double gray checkmark.
         if let event = event as? MessageDeliveredEvent, event.cid == channelController.cid, !messages.isEmpty {
             messageListVC.listView.reloadRows(at: [.init(item: 0, section: 0)], with: .none)
+        }
+        
+        if let event = event as? NotificationMarkUnreadEvent, let channel = channelController.channel, event.cid == channelController.cid, !messages.isEmpty {
+            updateAllUnreadMessagesRelatedComponents(channel: channel)
         }
     }
 

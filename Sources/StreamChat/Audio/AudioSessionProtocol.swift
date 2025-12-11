@@ -8,7 +8,6 @@ import AVFoundation
 /// A simple protocol that abstracts the usage of AVAudioSession
 protocol AudioSessionProtocol {
     var category: AVAudioSession.Category { get }
-    var availableInputs: [AVAudioSessionPortDescription]? { get }
 
     func setCategory(
         _ category: AVAudioSession.Category,
@@ -23,8 +22,6 @@ protocol AudioSessionProtocol {
     ) throws
 
     func requestRecordPermission(_ response: @escaping (Bool) -> Void)
-
-    func setPreferredInput(_ inPort: AVAudioSessionPortDescription?) throws
 
     func overrideOutputAudioPort(_ portOverride: AVAudioSession.PortOverride) throws
 }

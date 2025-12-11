@@ -14,6 +14,7 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
         let imageURL: URL = .unique()
         let team: String = .unique
         let invite: UserId = .unique
+        let filterTag: String = .unique
 
         // Create ChannelEditDetailPayload
         let payload = ChannelEditDetailPayload(
@@ -23,6 +24,7 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
             team: team,
             members: [invite],
             invites: [invite],
+            filterTags: [filterTag],
             extraData: [:]
         )
 
@@ -31,7 +33,8 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
             "image": imageURL.absoluteString,
             "team": team,
             "members": [invite],
-            "invites": [invite]
+            "invites": [invite],
+            "filter_tags": [filterTag]
         ]
 
         let encodedJSON = try JSONEncoder.default.encode(payload)
@@ -50,6 +53,7 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
             team: nil,
             members: [.unique],
             invites: [],
+            filterTags: [],
             extraData: [:]
         )
 
@@ -65,6 +69,7 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
             team: nil,
             members: [],
             invites: [],
+            filterTags: [],
             extraData: [:]
         )
 

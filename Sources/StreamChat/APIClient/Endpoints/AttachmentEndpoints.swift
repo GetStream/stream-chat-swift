@@ -25,6 +25,16 @@ extension Endpoint {
         )
     }
 
+    static func deleteAttachment(url: URL, type: AttachmentType) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .uploadAttachment(type == .image ? "image" : "file"),
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["url": url.absoluteString]
+        )
+    }
+
     static func enrichUrl(url: URL)
         -> Endpoint<LinkAttachmentPayload> {
         .init(

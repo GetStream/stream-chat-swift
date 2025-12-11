@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a channel is updated.
-public struct ChannelUpdatedEvent: ChannelSpecificEvent {
+public final class ChannelUpdatedEvent: ChannelSpecificEvent {
     /// The identifier of updated channel.
     public var cid: ChannelId { channel.cid }
 
@@ -20,6 +20,13 @@ public struct ChannelUpdatedEvent: ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(channel: ChatChannel, user: ChatUser?, message: ChatMessage?, createdAt: Date) {
+        self.channel = channel
+        self.user = user
+        self.message = message
+        self.createdAt = createdAt
+    }
 }
 
 class ChannelUpdatedEventDTO: EventDTO {
@@ -53,7 +60,7 @@ class ChannelUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when a channel is deleted.
-public struct ChannelDeletedEvent: ChannelSpecificEvent {
+public final class ChannelDeletedEvent: ChannelSpecificEvent {
     /// The identifier of deleted channel.
     public var cid: ChannelId { channel.cid }
 
@@ -65,6 +72,12 @@ public struct ChannelDeletedEvent: ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(channel: ChatChannel, user: ChatUser?, createdAt: Date) {
+        self.channel = channel
+        self.user = user
+        self.createdAt = createdAt
+    }
 }
 
 class ChannelDeletedEventDTO: EventDTO {
@@ -94,7 +107,7 @@ class ChannelDeletedEventDTO: EventDTO {
 }
 
 /// Triggered when a channel is truncated.
-public struct ChannelTruncatedEvent: ChannelSpecificEvent {
+public final class ChannelTruncatedEvent: ChannelSpecificEvent {
     /// The identifier of deleted channel.
     public var cid: ChannelId { channel.cid }
 
@@ -109,6 +122,13 @@ public struct ChannelTruncatedEvent: ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(channel: ChatChannel, user: ChatUser?, message: ChatMessage?, createdAt: Date) {
+        self.channel = channel
+        self.user = user
+        self.message = message
+        self.createdAt = createdAt
+    }
 }
 
 class ChannelTruncatedEventDTO: EventDTO {
@@ -142,7 +162,7 @@ class ChannelTruncatedEventDTO: EventDTO {
 }
 
 /// Triggered when a channel is made visible.
-public struct ChannelVisibleEvent: ChannelSpecificEvent {
+public final class ChannelVisibleEvent: ChannelSpecificEvent {
     /// The channel identifier.
     public let cid: ChannelId
 
@@ -151,6 +171,12 @@ public struct ChannelVisibleEvent: ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(cid: ChannelId, user: ChatUser, createdAt: Date) {
+        self.cid = cid
+        self.user = user
+        self.createdAt = createdAt
+    }
 }
 
 class ChannelVisibleEventDTO: EventDTO {
@@ -178,7 +204,7 @@ class ChannelVisibleEventDTO: EventDTO {
 }
 
 /// Triggered when a channel is hidden.
-public struct ChannelHiddenEvent: ChannelSpecificEvent {
+public final class ChannelHiddenEvent: ChannelSpecificEvent {
     /// The hidden channel identifier.
     public let cid: ChannelId
 
@@ -190,6 +216,13 @@ public struct ChannelHiddenEvent: ChannelSpecificEvent {
 
     /// The date a channel was hidden.
     public let createdAt: Date
+
+    init(cid: ChannelId, user: ChatUser, isHistoryCleared: Bool, createdAt: Date) {
+        self.cid = cid
+        self.user = user
+        self.isHistoryCleared = isHistoryCleared
+        self.createdAt = createdAt
+    }
 }
 
 class ChannelHiddenEventDTO: EventDTO {

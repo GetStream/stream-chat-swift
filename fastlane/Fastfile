@@ -533,6 +533,32 @@ private_lane :xcmetrics_log_parser do |options|
   metrics
 end
 
+desc 'Runs e2e ui tests using real backend server in Debug config'
+lane :test_e2e do |options|
+  scan_options = {
+    project: xcode_project,
+    scheme: 'StreamChatUITestsApp',
+    testplan: 'Backend',
+    result_bundle: true,
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
+    clean: is_localhost,
+    test_without_building: options[:test_without_building],
+    xcargs: buildcache_xcargs,
+    devices: options[:device],
+    prelaunch_simulator: is_ci,
+    number_of_retries: 3
+  }
+
+  begin
+    scan(scan_options)
+  rescue StandardError
+    failed_tests = retreive_failed_tests
+    UI.important("Re-running #{failed_tests.size} failed tests ⌛️")
+    scan(scan_options.merge(only_testing: failed_tests))
+  end
+end
+
 desc 'Runs e2e ui tests using mock server in Debug config'
 lane :test_e2e_mock do |options|
   next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)

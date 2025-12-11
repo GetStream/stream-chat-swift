@@ -372,6 +372,21 @@ final class WebSocketClient_Tests: XCTestCase {
             Assert.willBeEqual(self.engine!.connect_calledCount, 1)
         }
     }
+    
+    func test_changingConnectEndpointConcurrently() {
+        DispatchQueue.concurrentPerform(iterations: 100, execute: { index in
+            self.webSocketClient.connectEndpoint = .webSocketConnect(userInfo: UserInfo(id: "user_\(index)"))
+        })
+    }
+    
+    func test_recreatingEngineConcurrently() {
+        DispatchQueue.concurrentPerform(iterations: 100, execute: { _ in
+            self.webSocketClient.initialize()
+            // Change mocked request so that connect recreates the engine
+            requestEncoder.encodeRequest = .success(.init(url: .unique()))
+            self.webSocketClient.connect()
+        })
+    }
 
     // MARK: - Event handling tests
 

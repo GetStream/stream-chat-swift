@@ -13,7 +13,7 @@
   <a href="https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift"><img src="https://sonarcloud.io/api/project_badges/measure?project=GetStream_stream-chat-swift&metric=coverage" /></a>
 </p>
 <p align="center">
-  <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-7.88%20MB-blue"/>
+  <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-7.28%20MB-blue"/>
   <img id="stream-chat-ui-label" alt="StreamChatUI" src="https://img.shields.io/badge/StreamChatUI-4.89%20MB-blue"/>
 </p>
 
@@ -95,6 +95,16 @@ To find out more about this product, please check our [docs](https://getstream.i
 In addition to our chat and video SDKs, we also have a [Feeds iOS SDK](https://github.com/GetStream/stream-feeds-swift) (currently available as alpha release), that integrates with our Feeds product client-side.
 
 To find out more about this product, please check our [docs](https://getstream.io/activity-feeds/docs/ios/).
+
+---
+
+## AI Components
+
+Bring your AI experience to life with Stream’s frontend components available for [SwiftUI](https://github.com/GetStream/stream-chat-swift-ai) (and other platforms, such as React, React Native, and Android). 
+
+Featuring natural streaming message animation, full markdown and code rendering, charts, tables, thinking indicators, text-to-speech, and a completely flexible composer. Designed to work seamlessly with Stream Chat’s frontend SDKs, it’s everything you need to ship a premium AI chat interface out of the box.
+
+To find out more about these components, please check our [docs](https://getstream.io/chat/docs/sdk/ios/ai-integrations/overview/).
 
 ---
 

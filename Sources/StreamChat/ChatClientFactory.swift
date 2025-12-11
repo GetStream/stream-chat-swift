@@ -47,19 +47,21 @@ class ChatClientFactory {
     ) -> APIClient {
         let attachmentDownloader = StreamAttachmentDownloader(sessionConfiguration: urlSessionConfiguration)
         let decoder = environment.requestDecoderBuilder()
+        let cdnClient = config.customCDNClient ?? StreamCDNClient(
+            encoder: encoder,
+            decoder: decoder,
+            sessionConfiguration: urlSessionConfiguration
+        )
         let attachmentUploader = config.customAttachmentUploader ?? StreamAttachmentUploader(
-            cdnClient: config.customCDNClient ?? StreamCDNClient(
-                encoder: encoder,
-                decoder: decoder,
-                sessionConfiguration: urlSessionConfiguration
-            )
+            cdnClient: cdnClient
         )
         let apiClient = environment.apiClientBuilder(
             urlSessionConfiguration,
             encoder,
             decoder,
             attachmentDownloader,
-            attachmentUploader
+            attachmentUploader,
+            cdnClient
         )
         return apiClient
     }

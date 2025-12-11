@@ -1139,6 +1139,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             isHidden: event.channel.isHidden,
             createdBy: event.channel.createdBy,
             config: event.channel.config,
+            filterTags: event.channel.filterTags,
             ownCapabilities: event.channel.ownCapabilities,
             isFrozen: event.channel.isFrozen,
             isDisabled: event.channel.isDisabled,

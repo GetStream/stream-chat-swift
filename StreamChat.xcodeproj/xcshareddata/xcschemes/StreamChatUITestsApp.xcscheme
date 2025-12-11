@@ -35,6 +35,9 @@
          <TestPlanReference
             reference = "container:StreamChatUITestsAppUITests/Performance.xctestplan">
          </TestPlanReference>
+         <TestPlanReference
+            reference = "container:StreamChatUITestsAppUITests/Backend.xctestplan">
+         </TestPlanReference>
       </TestPlans>
       <Testables>
          <TestableReference

@@ -50,7 +50,8 @@ final class APIClient_Tests: XCTestCase {
             requestEncoder: encoder,
             requestDecoder: decoder,
             attachmentDownloader: attachmentDownloader,
-            attachmentUploader: attachmentUploader
+            attachmentUploader: attachmentUploader,
+            cdnClient: CDNClient_Spy()
         )
         apiClient.tokenRefresher = tokenRefresher
         apiClient.queueOfflineRequest = queueOfflineRequest
@@ -714,7 +715,8 @@ extension APIClient_Tests {
             requestEncoder: encoder,
             requestDecoder: decoder,
             attachmentDownloader: attachmentDownloader,
-            attachmentUploader: attachmentUploader
+            attachmentUploader: attachmentUploader,
+            cdnClient: CDNClient_Spy()
         )
         apiClient.tokenRefresher = self.tokenRefresher
         apiClient.queueOfflineRequest = self.queueOfflineRequest

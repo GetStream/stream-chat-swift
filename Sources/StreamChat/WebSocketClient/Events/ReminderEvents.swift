@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a message reminder is created.
-public class MessageReminderCreatedEvent: Event {
+public final class MessageReminderCreatedEvent: Event {
     /// The message ID associated with the reminder.
     public let messageId: MessageId
     
@@ -53,7 +53,7 @@ class ReminderCreatedEventDTO: EventDTO {
 }
 
 /// Triggered when a message reminder is updated.
-public class MessageReminderUpdatedEvent: Event {
+public final class MessageReminderUpdatedEvent: Event {
     /// The message ID associated with the reminder.
     public let messageId: MessageId
     
@@ -101,7 +101,7 @@ class ReminderUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when a message reminder is deleted.
-public class MessageReminderDeletedEvent: Event {
+public final class MessageReminderDeletedEvent: Event {
     /// The message ID associated with the reminder.
     public let messageId: MessageId
     
@@ -153,7 +153,7 @@ class ReminderDeletedEventDTO: EventDTO {
 }
 
 /// Triggered when a reminder is due and a notification should be shown.
-public class MessageReminderDueEvent: Event {
+public final class MessageReminderDueEvent: Event {
     /// The message ID associated with the reminder.
     public let messageId: MessageId
     

@@ -121,6 +121,7 @@ extension ChatClient {
     ///   - members: A list of members for the channel.
     ///   - isCurrentUserMember: If `true`, the current user is added as member.
     ///   - invites: A list of users who will get invites.
+    ///   - filterTags: A list of tags to add to the channel.
     ///   - messageOrdering: Describes the ordering the messages are presented.
     ///   - memberSorting: The sorting order for channel members (the default sorting is by created at in ascending order).
     ///   - channelListQuery: The channel list query the channel belongs to.
@@ -136,6 +137,7 @@ extension ChatClient {
         members: [UserId] = [],
         isCurrentUserMember: Bool = true,
         invites: [UserId] = [],
+        filterTags: Set<String> = [],
         messageOrdering: MessageOrdering = .topToBottom,
         memberSorting: [Sorting<ChannelMemberListSortingKey>] = [],
         channelListQuery: ChannelListQuery? = nil,
@@ -149,6 +151,7 @@ extension ChatClient {
             team: team,
             members: Set(members).union(isCurrentUserMember ? [currentUserId] : []),
             invites: Set(invites),
+            filterTags: filterTags,
             extraData: extraData
         )
         let channelQuery = ChannelQuery(channelPayload: payload)
@@ -175,6 +178,7 @@ extension ChatClient {
     ///   - name: The name of the channel.
     ///   - imageURL: The channel avatar URL.
     ///   - team: The team for the channel.
+    ///   - filterTags: A list of tags to add to the channel.
     ///   - messageOrdering: Describes the ordering the messages are presented.
     ///   - memberSorting: The sorting order for channel members (the default sorting is by created at in ascending order).
     ///   - channelListQuery: The channel list query the channel belongs to.
@@ -189,6 +193,7 @@ extension ChatClient {
         name: String? = nil,
         imageURL: URL? = nil,
         team: String? = nil,
+        filterTags: Set<String> = [],
         messageOrdering: MessageOrdering = .topToBottom,
         memberSorting: [Sorting<ChannelMemberListSortingKey>] = [],
         channelListQuery: ChannelListQuery? = nil,
@@ -203,6 +208,7 @@ extension ChatClient {
             team: team,
             members: Set(members).union(isCurrentUserMember ? [currentUserId] : []),
             invites: [],
+            filterTags: filterTags,
             extraData: extraData
         )
         let channelQuery = ChannelQuery(channelPayload: payload)

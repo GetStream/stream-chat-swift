@@ -1346,6 +1346,9 @@
       "uploads" : true,
       "name" : "messaging"
     },
+    "filter_tags": [
+        "football"
+    ],
     "own_capabilities": [
       "update-channel-members",
       "join-channel",

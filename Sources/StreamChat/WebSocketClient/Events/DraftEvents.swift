@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a draft message is updated or created.
-public class DraftUpdatedEvent: Event {
+public final class DraftUpdatedEvent: Event {
     /// The channel identifier of the draft.
     public let cid: ChannelId
 
@@ -55,7 +55,7 @@ class DraftUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when a draft message is deleted.
-public class DraftDeletedEvent: Event {
+public final class DraftDeletedEvent: Event {
     /// The channel identifier of the draft.
     public let cid: ChannelId
 
