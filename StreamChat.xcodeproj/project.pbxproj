@@ -1566,6 +1566,10 @@
 		AD4C2C902EF1BF58000E4FC1 /* Localizable.stringsdict in Resources */ = {isa = PBXBuildFile; fileRef = DBC8A4BD257E5BFB00B20A82 /* Localizable.stringsdict */; };
 		AD4C2C9D2EF1BFFA000E4FC1 /* StreamChatCommonUI.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4C2C9C2EF1BFFA000E4FC1 /* StreamChatCommonUI.h */; };
 		AD4C2C9E2EF1C075000E4FC1 /* StreamChatCommonUI.h in Headers */ = {isa = PBXBuildFile; fileRef = AD4C2C9C2EF1BFFA000E4FC1 /* StreamChatCommonUI.h */; };
+		AD4C2CA02EF1C179000E4FC1 /* CommonPrinter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C2C9F2EF1C14D000E4FC1 /* CommonPrinter.swift */; };
+		AD4C2CA12EF1C18F000E4FC1 /* StreamChatCommonUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; };
+		AD4C2CA62EF1C1A4000E4FC1 /* StreamChatCommonUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; };
+		AD4C2CA72EF1C1A4000E4FC1 /* StreamChatCommonUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AD4C8C222C5D479B00E1C414 /* StackedUserAvatarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */; };
 		AD4C8C232C5D479B00E1C414 /* StackedUserAvatarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */; };
 		AD4CDD85296499160057BC8A /* ScrollViewPaginationHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4CDD81296498D20057BC8A /* ScrollViewPaginationHandler_Tests.swift */; };
@@ -2879,6 +2883,20 @@
 			remoteGlobalIDString = 799C941A247D2F80001F1104;
 			remoteInfo = StreamChat;
 		};
+		AD4C2CA32EF1C18F000E4FC1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AD4C2B0B2EF1BF58000E4FC1;
+			remoteInfo = StreamChatCommonUI;
+		};
+		AD4C2CA82EF1C1A4000E4FC1 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = AD4C2B0B2EF1BF58000E4FC1;
+			remoteInfo = StreamChatCommonUI;
+		};
 		AD78F9F228EC729D00BC0FCE /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
@@ -3035,6 +3053,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				AD4C2CA72EF1C1A4000E4FC1 /* StreamChatCommonUI.framework in Embed Frameworks */,
 				C121EC622746AC8C00023E4C /* StreamChatUI.framework in Embed Frameworks */,
 				C121EC5E2746AC8C00023E4C /* StreamChat.framework in Embed Frameworks */,
 			);
@@ -4340,6 +4359,7 @@
 		AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatCommonUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD4C2C962EF1BF58000E4FC1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = Info.plist; path = "/Users/nunovieira/Documents/Work/StreamChat/stream-chat-swift/Sources/StreamChatCommonUI/Info.plist"; sourceTree = "<absolute>"; };
 		AD4C2C9C2EF1BFFA000E4FC1 /* StreamChatCommonUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamChatCommonUI.h; sourceTree = "<group>"; };
+		AD4C2C9F2EF1C14D000E4FC1 /* CommonPrinter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonPrinter.swift; sourceTree = "<group>"; };
 		AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackedUserAvatarsView.swift; sourceTree = "<group>"; };
 		AD4CDD81296498D20057BC8A /* ScrollViewPaginationHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewPaginationHandler_Tests.swift; sourceTree = "<group>"; };
 		AD4CDD83296498EB0057BC8A /* InvertedScrollViewPaginationHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedScrollViewPaginationHandler_Tests.swift; sourceTree = "<group>"; };
@@ -4987,6 +5007,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C121EC662746AD0E00023E4C /* StreamChat.framework in Frameworks */,
+				AD4C2CA12EF1C18F000E4FC1 /* StreamChatCommonUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -5010,6 +5031,7 @@
 				C1BE72732732CA62006EB51E /* Nuke in Frameworks */,
 				C121EC612746AC8C00023E4C /* StreamChatUI.framework in Frameworks */,
 				ADCB576628A425D500B81AE8 /* Sentry in Frameworks */,
+				AD4C2CA62EF1C1A4000E4FC1 /* StreamChatCommonUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -8772,6 +8794,7 @@
 		AD4C2C9B2EF1BFB9000E4FC1 /* StreamChatCommonUI */ = {
 			isa = PBXGroup;
 			children = (
+				AD4C2C9F2EF1C14D000E4FC1 /* CommonPrinter.swift */,
 				AD4C2C9C2EF1BFFA000E4FC1 /* StreamChatCommonUI.h */,
 				AD4C2C962EF1BF58000E4FC1 /* Info.plist */,
 			);
@@ -9918,6 +9941,7 @@
 			);
 			dependencies = (
 				C121EC692746AD0E00023E4C /* PBXTargetDependency */,
+				AD4C2CA42EF1C18F000E4FC1 /* PBXTargetDependency */,
 			);
 			name = StreamChatUI;
 			packageProductDependencies = (
@@ -9965,6 +9989,7 @@
 				C121EC602746AC8C00023E4C /* PBXTargetDependency */,
 				C121EC642746AC8C00023E4C /* PBXTargetDependency */,
 				84790E9E2AC1D346003AFF1C /* PBXTargetDependency */,
+				AD4C2CA92EF1C1A4000E4FC1 /* PBXTargetDependency */,
 			);
 			name = DemoApp;
 			packageProductDependencies = (
@@ -12530,6 +12555,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AD4C2CA02EF1C179000E4FC1 /* CommonPrinter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -13541,6 +13567,16 @@
 			isa = PBXTargetDependency;
 			target = 799C941A247D2F80001F1104 /* StreamChat */;
 			targetProxy = AD4C2B0D2EF1BF58000E4FC1 /* PBXContainerItemProxy */;
+		};
+		AD4C2CA42EF1C18F000E4FC1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AD4C2B0B2EF1BF58000E4FC1 /* StreamChatCommonUI */;
+			targetProxy = AD4C2CA32EF1C18F000E4FC1 /* PBXContainerItemProxy */;
+		};
+		AD4C2CA92EF1C1A4000E4FC1 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = AD4C2B0B2EF1BF58000E4FC1 /* StreamChatCommonUI */;
+			targetProxy = AD4C2CA82EF1C1A4000E4FC1 /* PBXContainerItemProxy */;
 		};
 		AD78F9F328EC729D00BC0FCE /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -15067,7 +15103,7 @@
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatCommonUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -15098,7 +15134,7 @@
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatCommonUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
@@ -15129,7 +15165,7 @@
 				LD_GENERATE_MAP_FILE = YES;
 				LD_MAP_FILE_PATH = "linkmaps/$(PRODUCT_NAME)-$(CURRENT_ARCH)-LinkMap.txt";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited)";
-				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatUI;
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatCommonUI;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;
