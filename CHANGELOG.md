@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChatUI
+### 🐞 Fixed
+- Fix reading messages from muted users [#3896](https://github.com/GetStream/stream-chat-swift/pull/3896)
 
 # [4.94.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.94.0)
 _December 02, 2025_
