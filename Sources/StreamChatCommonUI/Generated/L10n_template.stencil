@@ -77,7 +77,7 @@ extension {{enumName}} {
 {% if not param.bundle and not param.lookupFunction %}
 
 private final class BundleToken {
-  static let bundle: Bundle = .streamChatUI
+  static let bundle: Bundle = .streamChatCommonUI
 }
 
 {% endif %}

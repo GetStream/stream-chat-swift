@@ -5,6 +5,7 @@
 import Foundation
 import Nuke
 import StreamChat
+import StreamChatCommonUI
 import StreamChatUI
 import UIKit
 

@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// Button used to take an action on attachment being uploaded.

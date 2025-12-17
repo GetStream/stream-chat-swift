@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// The view controller that shows the comments/answers of a poll.

@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// A Button subclass that should be used for sharing content.

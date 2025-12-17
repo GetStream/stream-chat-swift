@@ -4,6 +4,7 @@
 
 import Foundation
 import StreamChat
+import StreamChatCommonUI
 
 public extension ChatMessage {
     /// A boolean value that checks if actions are available on the message (e.g. `edit`, `delete`, `resend`, etc.).

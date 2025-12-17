@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// The cell separator reusable view that acts as container of the visible part of the separator view.

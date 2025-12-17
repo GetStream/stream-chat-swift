@@ -4,6 +4,7 @@
 
 import Foundation
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// A ViewController that manages all aspects of the voice recording from the ComposerVC.

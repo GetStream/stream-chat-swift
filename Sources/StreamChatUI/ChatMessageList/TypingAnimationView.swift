@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// A `UIView` subclass with 3 dots which can be animated with fading out effect.

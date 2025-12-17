@@ -4,6 +4,7 @@
 
 import Combine
 import StreamChat
+import StreamChatCommonUI
 import StreamChatUI
 import UIKit
 

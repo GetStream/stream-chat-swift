@@ -11,7 +11,7 @@ public extension Appearance {
         /// - Parameter imageName: The required image name to load from the bundle
         /// - Returns: A UIImage that is either the correct image from the bundle or backup circular image
         private static func loadImageSafely(with imageName: String) -> UIImage {
-            if let image = UIImage(named: imageName, in: .streamChatUI) {
+            if let image = UIImage(named: imageName, in: .streamChatCommonUI) {
                 return image
             } else {
                 log.error(
@@ -218,7 +218,7 @@ public extension Appearance {
             get { _fileIcons ??
                 [AttachmentFileType: UIImage](
                     uniqueKeysWithValues: AttachmentFileType.allCases.compactMap {
-                        guard let icon = UIImage(named: $0.rawValue, in: .streamChatUI) else { return nil }
+                        guard let icon = UIImage(named: $0.rawValue, in: .streamChatCommonUI) else { return nil }
                         return ($0, icon)
                     }
                 )

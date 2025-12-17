@@ -4,6 +4,7 @@
 
 import AVFoundation
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// Sourced and modified from: https://github.com/bastienFalcou/SoundWave/blob/master/SoundWave/Classes/AudioVisualizationView.swift

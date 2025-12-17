@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 public struct ChatChannelMessageHeaderDecoratorViewContent {

@@ -4,6 +4,7 @@
 
 import Foundation
 import StreamChat
+import StreamChatCommonUI
 
 /// Resolves layout options for the message at given `indexPath`.
 open class ChatMessageLayoutOptionsResolver {

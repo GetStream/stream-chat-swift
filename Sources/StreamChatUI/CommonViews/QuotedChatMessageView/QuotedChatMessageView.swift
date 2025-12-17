@@ -4,6 +4,7 @@
 
 import AVKit
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// The quoted author's avatar position in relation with the text message.

@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// A `NavigationRouter` instance responsible for presenting alerts.
