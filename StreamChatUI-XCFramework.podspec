@@ -9,7 +9,7 @@ Pod::Spec.new do |spec|
   spec.author = { 'getstream.io' => 'support@getstream.io' }
   spec.social_media_url = 'https://getstream.io'
 
-  spec.swift_version = '5.7'
+  spec.swift_version = '5.10'
   spec.platform = :ios, '13.0'
   spec.requires_arc = true
 
@@ -20,7 +20,7 @@ Pod::Spec.new do |spec|
   spec.vendored_frameworks = "#{spec.module_name}.xcframework"
   spec.preserve_paths = "#{spec.module_name}.xcframework/*"
 
-  spec.dependency 'StreamChat-XCFramework', "#{spec.version}"
+  spec.dependency 'StreamChat-XCFramework', spec.version.to_s
 
   spec.cocoapods_version = '>= 1.11.0'
 end
