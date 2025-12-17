@@ -88,13 +88,15 @@ open class ChatChannelVC: _ViewController,
         guard components.isJumpToUnreadEnabled else {
             return isLastMessageFullyVisible && isFirstPageLoaded
         }
-
-        let unreadMessageCount = channelController.channel?.unreadCount.messages ?? 0
-        return isLastMessageVisibleOrSeen
-            && hasSeenFirstUnreadMessage
-            && isFirstPageLoaded
-            && !hasMarkedMessageAsUnread
-            && unreadMessageCount > 0
+        guard isLastMessageVisibleOrSeen else { return false }
+        guard isFirstPageLoaded else { return false }
+        guard !hasMarkedMessageAsUnread else { return false }
+        
+        guard let channel = channelController.channel, let currentUserId = client.currentUserId else { return false }
+        guard let read = channel.read(for: currentUserId), let lastMessage = messages.first else {
+            return true // no read state, always mark as read
+        }
+        return read.lastReadAt < lastMessage.createdAt
     }
 
     private var isLastMessageVisibleOrSeen: Bool {
