@@ -460,6 +460,7 @@ class ChannelUpdater: Worker {
     ///   - members: The members input data to be added.
     ///   - message: Optional system message sent when adding a member.
     ///   - hideHistory: Hide the history of the channel to the added member.
+    ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func addMembers(
         currentUserId: UserId? = nil,
@@ -467,6 +468,7 @@ class ChannelUpdater: Worker {
         members: [MemberInfo],
         message: String? = nil,
         hideHistory: Bool,
+        hideHistoryBefore: Date? = nil,
         completion: ((Error?) -> Void)? = nil
     ) {
         let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
@@ -475,6 +477,7 @@ class ChannelUpdater: Worker {
                 cid: cid,
                 members: members.map { MemberInfoRequest(userId: $0.userId, extraData: $0.extraData) },
                 hideHistory: hideHistory,
+                hideHistoryBefore: hideHistoryBefore,
                 messagePayload: messagePayload
             )
         ) {
@@ -841,7 +844,8 @@ extension ChannelUpdater {
         cid: ChannelId,
         members: [MemberInfo],
         message: String? = nil,
-        hideHistory: Bool
+        hideHistory: Bool,
+        hideHistoryBefore: Date? = nil
     ) async throws {
         try await withCheckedThrowingContinuation { continuation in
             addMembers(
@@ -849,7 +853,8 @@ extension ChannelUpdater {
                 cid: cid,
                 members: members,
                 message: message,
-                hideHistory: hideHistory
+                hideHistory: hideHistory,
+                hideHistoryBefore: hideHistoryBefore
             ) { error in
                 continuation.resume(with: error)
             }

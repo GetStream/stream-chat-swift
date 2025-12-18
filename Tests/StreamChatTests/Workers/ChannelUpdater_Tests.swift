@@ -1405,6 +1405,57 @@ final class ChannelUpdater_Tests: XCTestCase {
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
+    
+    func test_addMembersWithHideHistoryBefore_makesCorrectAPICall() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+        let hideHistoryBefore = Date()
+
+        // Simulate `addMembers` call with hideHistoryBefore
+        channelUpdater.addMembers(
+            cid: channelID,
+            members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
+            hideHistory: false,
+            hideHistoryBefore: hideHistoryBefore
+        )
+
+        // Assert correct endpoint is called
+        let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(
+            cid: channelID,
+            members: userIds.map { MemberInfoRequest(userId: $0, extraData: nil) },
+            hideHistory: false,
+            hideHistoryBefore: hideHistoryBefore
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+    
+    func test_addMembersWithHideHistoryBefore_takesPrecedenceOverHideHistory() {
+        let channelID = ChannelId.unique
+        let userIds: Set<UserId> = Set([UserId.unique])
+        let hideHistoryBefore = Date()
+
+        // Simulate `addMembers` call with both hideHistory and hideHistoryBefore
+        channelUpdater.addMembers(
+            cid: channelID,
+            members: userIds.map { MemberInfo(userId: $0, extraData: nil) },
+            hideHistory: true,
+            hideHistoryBefore: hideHistoryBefore
+        )
+
+        // Assert correct endpoint is called with hideHistoryBefore (precedence)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(
+            cid: channelID,
+            members: userIds.map { MemberInfoRequest(userId: $0, extraData: nil) },
+            hideHistory: true,
+            hideHistoryBefore: hideHistoryBefore
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+        
+        // Verify the body contains hide_history_before and not hide_history
+        let body = apiClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
+        XCTAssertNotNil(body?["hide_history_before"])
+        XCTAssertNil(body?["hide_history"])
+    }
 
     func test_addMembers_successfulResponse_isPropagatedToCompletion() {
         let channelID = ChannelId.unique

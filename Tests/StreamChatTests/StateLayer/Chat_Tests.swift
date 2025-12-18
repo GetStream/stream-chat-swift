@@ -327,6 +327,45 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
+    func test_addMembers_withHideHistoryBefore_whenChannelUpdaterSucceeds_thenAddMembersSucceeds() async throws {
+        env.channelUpdaterMock.addMembers_completion_result = .success(())
+        let members: [MemberInfo] = [.init(userId: .unique, extraData: nil), .init(userId: .unique, extraData: nil)]
+        let hideHistoryBefore = Date()
+        
+        try await chat.addMembers(
+            members,
+            systemMessage: "My system message",
+            hideHistory: false,
+            hideHistoryBefore: hideHistoryBefore
+        )
+        
+        XCTAssertEqual(channelId, env.channelUpdaterMock.addMembers_cid)
+        XCTAssertEqual(members.map(\.userId).sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
+        XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
+        XCTAssertEqual(false, env.channelUpdaterMock.addMembers_hideHistory)
+        XCTAssertEqual(hideHistoryBefore, env.channelUpdaterMock.addMembers_hideHistoryBefore)
+        XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
+    }
+    
+    func test_addMembers_withHideHistoryBefore_takesPrecedenceOverHideHistory() async throws {
+        env.channelUpdaterMock.addMembers_completion_result = .success(())
+        let members: [MemberInfo] = [.init(userId: .unique, extraData: nil)]
+        let hideHistoryBefore = Date()
+        
+        // Call with both hideHistory and hideHistoryBefore
+        try await chat.addMembers(
+            members,
+            systemMessage: nil,
+            hideHistory: true,
+            hideHistoryBefore: hideHistoryBefore
+        )
+        
+        // Verify hideHistoryBefore is passed through
+        XCTAssertEqual(hideHistoryBefore, env.channelUpdaterMock.addMembers_hideHistoryBefore)
+        // Verify hideHistory is also passed (but hideHistoryBefore takes precedence in the endpoint)
+        XCTAssertEqual(true, env.channelUpdaterMock.addMembers_hideHistory)
+    }
+    
     func test_removeMembers_whenChannelUpdaterSucceeds_thenRemoveMembersSucceeds() async throws {
         env.channelUpdaterMock.removeMembers_completion_result = .success(())
         let memberIds: [UserId] = [.unique, .unique]

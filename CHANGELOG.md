@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add `hideHistoryBefore` to add members for configuring the history visibility [#3892](https://github.com/GetStream/stream-chat-swift/pull/3892)
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix reading messages from muted users [#3896](https://github.com/GetStream/stream-chat-swift/pull/3896)
