@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.95.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.95.1)
+_December 18, 2025_
+
 ## StreamChat
 ### 🐞 Fixed
 - Fix `StreamChat` package not compiling because of -Osize unsafe flag [#3899](https://github.com/GetStream/stream-chat-swift/pull/3899)
