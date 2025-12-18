@@ -669,6 +669,58 @@ public class ChatClient: @unchecked Sendable {
         )
     }
 
+    /// Uploads an attachment to the specified CDN.
+    ///
+    /// - Parameters:
+    ///  - localUrl: the local url of the file to be uploaded.
+    ///  - progress: the progress of the upload.
+    ///  - completion: called when the attachment is uploaded.
+    public func uploadAttachment(
+        localUrl: URL,
+        progress: ((Double) -> Void)?,
+        completion: @escaping (Result<UploadedFile, Error>) -> Void
+    ) {
+        let uploadingState: AttachmentUploadingState
+
+        do {
+            uploadingState = AttachmentUploadingState(
+                localFileURL: localUrl,
+                state: .pendingUpload,
+                file: try .init(url: localUrl)
+            )
+        } catch {
+            completion(.failure(error))
+            return
+        }
+
+        let attachment = StreamAttachment(
+            type: uploadingState.file.type.isImage ? .image : .file,
+            payload: localUrl,
+            downloadingState: nil,
+            uploadingState: uploadingState
+        )
+
+        apiClient.attachmentUploader.uploadStandaloneAttachment(
+            attachment,
+            progress: progress,
+            completion: completion
+        )
+    }
+
+    /// Deletes the attachment from the CDN, given the remote URL.
+    /// - Parameters:
+    ///   - remoteUrl: The remote url of the attachment.
+    ///   - completion: Returns an error in case the delete operation fails.
+    public func deleteAttachment(
+        remoteUrl: URL,
+        completion: @escaping (Error?) -> Void
+    ) {
+        apiClient.cdnClient.deleteAttachment(
+            remoteUrl: remoteUrl,
+            completion: completion
+        )
+    }
+
     // MARK: - Internal
 
     func createBackgroundWorkers() {

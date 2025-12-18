@@ -16,7 +16,7 @@ class ChannelRepository_Mock: ChannelRepository, Spy, @unchecked Sendable {
 
     var markUnreadCid: ChannelId?
     var markUnreadUserId: UserId?
-    var markUnreadMessageId: UserId?
+    var markUnreadCriteria: MarkUnreadCriteria?
     var markUnreadLastReadMessageId: UserId?
     var markUnreadResult: Result<ChatChannel, Error>?
 
@@ -36,11 +36,11 @@ class ChannelRepository_Mock: ChannelRepository, Spy, @unchecked Sendable {
         }
     }
 
-    override func markUnread(for cid: ChannelId, userId: UserId, from messageId: MessageId, lastReadMessageId: MessageId?, completion: ((Result<ChatChannel, Error>) -> Void)? = nil) {
+    override func markUnread(for cid: ChannelId, userId: UserId, from unreadCriteria: MarkUnreadCriteria, lastReadMessageId: MessageId?, completion: ((Result<ChatChannel, any Error>) -> Void)? = nil) {
         record()
         markUnreadCid = cid
         markUnreadUserId = userId
-        markUnreadMessageId = messageId
+        markUnreadCriteria = unreadCriteria
         markUnreadLastReadMessageId = lastReadMessageId
 
         markUnreadResult.map {

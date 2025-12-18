@@ -48,13 +48,18 @@ extension PollEventDTO {
 }
 
 /// A model representing an event where a poll was closed.
-public struct PollClosedEvent: Event {
+public final class PollClosedEvent: Event {
     /// The poll that was closed.
     public let poll: Poll
     
     /// The date and time when the event was created.
     /// This property is optional and may be `nil`.
     public let createdAt: Date?
+
+    init(poll: Poll, createdAt: Date?) {
+        self.poll = poll
+        self.createdAt = createdAt
+    }
 }
 
 struct PollClosedEventDTO: PollEventDTO {
@@ -72,13 +77,18 @@ struct PollClosedEventDTO: PollEventDTO {
 }
 
 /// A model representing an event where a poll was created.
-public struct PollCreatedEvent: Event {
+public final class PollCreatedEvent: Event {
     /// The poll that was created.
     public let poll: Poll
     
     /// The date and time when the event was created.
     /// This property is optional and may be `nil`.
     public let createdAt: Date?
+
+    init(poll: Poll, createdAt: Date?) {
+        self.poll = poll
+        self.createdAt = createdAt
+    }
 }
 
 struct PollCreatedEventDTO: PollEventDTO {
@@ -96,13 +106,18 @@ struct PollCreatedEventDTO: PollEventDTO {
 }
 
 /// A model representing an event where a poll was deleted.
-public struct PollDeletedEvent: Event {
+public final class PollDeletedEvent: Event {
     /// The poll that was deleted.
     public let poll: Poll
     
     /// The date and time when the event was created.
     /// This property is optional and may be `nil`.
     public let createdAt: Date?
+
+    init(poll: Poll, createdAt: Date?) {
+        self.poll = poll
+        self.createdAt = createdAt
+    }
 }
 
 struct PollDeletedEventDTO: PollEventDTO {
@@ -120,13 +135,18 @@ struct PollDeletedEventDTO: PollEventDTO {
 }
 
 /// A model representing an event where a poll was updated.
-public struct PollUpdatedEvent: Event {
+public final class PollUpdatedEvent: Event {
     /// The poll that was updated.
     public let poll: Poll
     
     /// The date and time when the event was created.
     /// This property is optional and may be `nil`.
     public let createdAt: Date?
+
+    init(poll: Poll, createdAt: Date?) {
+        self.poll = poll
+        self.createdAt = createdAt
+    }
 }
 
 struct PollUpdatedEventDTO: PollEventDTO {
@@ -144,7 +164,7 @@ struct PollUpdatedEventDTO: PollEventDTO {
 }
 
 /// A model representing an event where a vote was casted in a poll.
-public struct PollVoteCastedEvent: Event {
+public final class PollVoteCastedEvent: Event {
     /// The vote that was casted.
     public let vote: PollVote
     
@@ -154,6 +174,12 @@ public struct PollVoteCastedEvent: Event {
     /// The date and time when the event was created.
     /// This property is optional and may be `nil`.
     public let createdAt: Date?
+
+    init(vote: PollVote, poll: Poll, createdAt: Date?) {
+        self.vote = vote
+        self.poll = poll
+        self.createdAt = createdAt
+    }
 }
 
 struct PollVoteCastedEventDTO: PollVoteEventDTO {
@@ -173,7 +199,7 @@ struct PollVoteCastedEventDTO: PollVoteEventDTO {
 }
 
 /// A model representing an event where a vote was changed in a poll.
-public struct PollVoteChangedEvent: Event {
+public final class PollVoteChangedEvent: Event {
     /// The vote that was changed.
     public let vote: PollVote
     
@@ -183,6 +209,12 @@ public struct PollVoteChangedEvent: Event {
     /// The date and time when the event was created.
     /// This property is optional and may be `nil`.
     public let createdAt: Date?
+
+    init(vote: PollVote, poll: Poll, createdAt: Date?) {
+        self.vote = vote
+        self.poll = poll
+        self.createdAt = createdAt
+    }
 }
 
 struct PollVoteChangedEventDTO: PollVoteEventDTO {
@@ -202,7 +234,7 @@ struct PollVoteChangedEventDTO: PollVoteEventDTO {
 }
 
 /// A model representing an event where a vote was removed from a poll.
-public struct PollVoteRemovedEvent: Event {
+public final class PollVoteRemovedEvent: Event {
     /// The vote that was removed.
     public let vote: PollVote
     
@@ -212,6 +244,12 @@ public struct PollVoteRemovedEvent: Event {
     /// The date and time when the event was created.
     /// This property is optional and may be `nil`.
     public let createdAt: Date?
+
+    init(vote: PollVote, poll: Poll, createdAt: Date?) {
+        self.vote = vote
+        self.poll = poll
+        self.createdAt = createdAt
+    }
 }
 
 struct PollVoteRemovedEventDTO: PollVoteEventDTO {

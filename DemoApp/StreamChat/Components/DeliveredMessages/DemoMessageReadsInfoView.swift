@@ -29,8 +29,7 @@ struct DemoMessageReadsInfoView: View {
                         ForEach(deliveredUsers, id: \.id) { user in
                             UserReadInfoRow(
                                 user: user,
-                                status: .delivered,
-                                timestamp: getDeliveredTimestamp(for: user)
+                                status: .delivered
                             )
                         }
                     }
@@ -41,8 +40,7 @@ struct DemoMessageReadsInfoView: View {
                         ForEach(readUsers, id: \.id) { user in
                             UserReadInfoRow(
                                 user: user,
-                                status: .read,
-                                timestamp: getReadTimestamp(for: user)
+                                status: .read
                             )
                         }
                     }
@@ -135,7 +133,6 @@ struct DemoMessageReadsInfoView: View {
 struct UserReadInfoRow: View {
     let user: ChatUser
     let status: ReadStatus
-    let timestamp: Date?
     
     enum ReadStatus {
         case delivered
@@ -184,12 +181,6 @@ struct UserReadInfoRow: View {
                 Text(user.name ?? user.id)
                     .font(.headline)
                     .foregroundColor(.primary)
-                
-                if let timestamp = timestamp {
-                    Text(formatTimestamp(timestamp))
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
             }
             
             Spacer()
@@ -200,21 +191,5 @@ struct UserReadInfoRow: View {
                 .font(.title3)
         }
         .padding(.vertical, 4)
-    }
-    
-    private func formatTimestamp(_ date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateStyle = .none
-        formatter.timeStyle = .short
-        
-        let calendar = Calendar.current
-        if calendar.isDateInToday(date) {
-            return "Today at \(formatter.string(from: date))"
-        } else if calendar.isDateInYesterday(date) {
-            return "Yesterday at \(formatter.string(from: date))"
-        } else {
-            formatter.dateStyle = .short
-            return formatter.string(from: date)
-        }
     }
 }

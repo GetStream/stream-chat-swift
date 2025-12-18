@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new message is sent to a thread.
-public struct ThreadMessageNewEvent: Event {
+public final class ThreadMessageNewEvent: Event {
     /// The reply that was sent.
     public let message: ChatMessage
 
@@ -20,6 +20,13 @@ public struct ThreadMessageNewEvent: Event {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(message: ChatMessage, channel: ChatChannel, unreadCount: UnreadCount, createdAt: Date) {
+        self.message = message
+        self.channel = channel
+        self.unreadCount = unreadCount
+        self.createdAt = createdAt
+    }
 }
 
 final class ThreadMessageNewEventDTO: EventDTO {
@@ -56,12 +63,17 @@ final class ThreadMessageNewEventDTO: EventDTO {
 }
 
 /// Triggered when a thread is updated
-public struct ThreadUpdatedEvent: Event {
+public final class ThreadUpdatedEvent: Event {
     /// The updated user
     public let thread: ChatThread
 
     /// The event timestamp
     public let createdAt: Date?
+
+    init(thread: ChatThread, createdAt: Date?) {
+        self.thread = thread
+        self.createdAt = createdAt
+    }
 }
 
 final class ThreadUpdatedEventDTO: EventDTO {

@@ -68,15 +68,17 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
     /// Calling this method should activate the provided `AVAudioSession` for recording and playback.
     ///
     /// - Note: This method is using the `.playAndRecord` category with the `.spokenAudio` mode.
-    /// The preferredInput will be set to `.buildInMic` and overrideOutputAudioPort to `.speaker`.
     open func activateRecordingSession() throws {
         try audioSession.setCategory(
             .playAndRecord,
             mode: .spokenAudio,
             policy: .default,
-            options: []
+            options: [
+                // It is deprecated, but for now we need to use it,
+                // since the newer ones are not available in Xcode 15.
+                .allowBluetooth
+            ]
         )
-        try setUpPreferredInput(.builtInMic)
         try activateSession()
     }
 
@@ -90,16 +92,18 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
 
     /// Calling this method should activate the provided `AVAudioSession` for playback and record.
     ///
-    /// - Note: The method will check if the audioSession's category contains the `playAndRecord` capability
-    /// and if it doesn't it will activate it using the `.playbackAndRecord` category and `.default` for both mode
-    /// and policy.  OverrideOutputAudioPort is set to `.speaker`. The `record` capability is required
-    /// ensure that the output port can be set to `.speaker`.
+    /// - Note: This method uses the `.playAndRecord` category with `.default` mode and policy.
     open func activatePlaybackSession() throws {
         try audioSession.setCategory(
             .playAndRecord,
             mode: .default,
             policy: .default,
-            options: []
+            options: [
+                .defaultToSpeaker,
+                // It is deprecated, but for now we need to use it,
+                // since the newer ones are not available in Xcode 15.
+                .allowBluetooth
+            ]
         )
         try activateSession()
     }
@@ -130,12 +134,10 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
     // MARK: - Helpers
 
     private func activateSession() throws {
-        try audioSession.overrideOutputAudioPort(.speaker)
         try audioSession.setActive(true, options: [])
     }
 
     private func deactivateSession() throws {
-        try audioSession.overrideOutputAudioPort(.none)
         try audioSession.setActive(false, options: [])
     }
 
@@ -160,18 +162,6 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
         }
 
         completionHandler(permissionGranted)
-    }
-
-    private func setUpPreferredInput(
-        _ preferredInput: AVAudioSession.Port
-    ) throws {
-        guard
-            let availableInputs = audioSession.availableInputs,
-            let preferredInput = availableInputs.first(where: { $0.portType == preferredInput })
-        else {
-            throw AudioSessionConfiguratorError.noAvailableInputsFound()
-        }
-        try audioSession.setPreferredInput(preferredInput)
     }
 }
 #endif

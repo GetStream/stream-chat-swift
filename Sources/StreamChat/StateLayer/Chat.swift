@@ -229,12 +229,14 @@ public class Chat: @unchecked Sendable {
     ///   - members: An array of member data that will be added to the channel.
     ///   - systemMessage: A system message to be added after adding members.
     ///   - hideHistory: If true, the previous history is available for added members, otherwise they do not see the history. The default value is false.
+    ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func addMembers(
         _ members: [MemberInfo],
         systemMessage: String? = nil,
-        hideHistory: Bool = false
+        hideHistory: Bool = false,
+        hideHistoryBefore: Date? = nil
     ) async throws {
         let currentUserId = client.authenticationRepository.currentUserId
         try await channelUpdater.addMembers(
@@ -242,7 +244,8 @@ public class Chat: @unchecked Sendable {
             cid: cid,
             members: members,
             message: systemMessage,
-            hideHistory: hideHistory
+            hideHistory: hideHistory,
+            hideHistoryBefore: hideHistoryBefore
         )
     }
 
@@ -254,17 +257,20 @@ public class Chat: @unchecked Sendable {
     ///   - members: An array of user ids that will be added to the channel.
     ///   - systemMessage: A system message to be added after adding members.
     ///   - hideHistory: If true, the previous history is available for added members, otherwise they do not see the history. The default value is false.
+    ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func addMembers(
         _ members: [UserId],
         systemMessage: String? = nil,
-        hideHistory: Bool = false
+        hideHistory: Bool = false,
+        hideHistoryBefore: Date? = nil
     ) async throws {
         try await addMembers(
             members.map { .init(userId: $0, extraData: nil) },
             systemMessage: systemMessage,
-            hideHistory: hideHistory
+            hideHistory: hideHistory,
+            hideHistoryBefore: hideHistoryBefore
         )
     }
     
@@ -406,8 +412,9 @@ public class Chat: @unchecked Sendable {
     /// - Returns: An instance of `ChatMessage` which was resent.
     @discardableResult public func resendMessage(_ messageId: MessageId) async throws -> ChatMessage {
         let messageSender = try client.backgroundWorker(of: MessageSender.self)
+        async let resentMessage = try await messageSender.waitForAPIRequest(messageId: messageId)
         try await messageUpdater.resendMessage(with: messageId)
-        return try await messageSender.waitForAPIRequest(messageId: messageId)
+        return try await resentMessage
     }
     
     /// Downloads the specified attachment and stores it locally on the device.
@@ -509,9 +516,11 @@ public class Chat: @unchecked Sendable {
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
         let cid = try await self.cid
+        let newMessageId = messageId ?? .newUniqueId
+        async let sentMessage = waitForMessageSender(messageId: newMessageId)
         let localMessage = try await channelUpdater.createNewMessage(
             in: cid,
-            messageId: messageId,
+            messageId: newMessageId,
             text: text,
             pinning: pinning,
             isSilent: silent,
@@ -526,8 +535,6 @@ public class Chat: @unchecked Sendable {
             restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
-        // Important to set up the waiter immediately
-        async let sentMessage = try await waitForAPIRequest(localMessage: localMessage)
         eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage, cid: cid))
         return try await sentMessage
     }
@@ -547,9 +554,11 @@ public class Chat: @unchecked Sendable {
         extraData: [String: RawJSON] = [:]
     ) async throws -> ChatMessage {
         let cid = try await self.cid
+        let newMessageId = messageId ?? .newUniqueId
+        async let sentMessage = waitForMessageSender(messageId: newMessageId)
         let localMessage = try await channelUpdater.createNewMessage(
             in: cid,
-            messageId: messageId,
+            messageId: newMessageId,
             text: text,
             pinning: nil,
             isSilent: false,
@@ -564,8 +573,6 @@ public class Chat: @unchecked Sendable {
             restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
-        // Important to set up the waiter immediately
-        async let sentMessage = try await waitForAPIRequest(localMessage: localMessage)
         eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage, cid: cid))
         return try await sentMessage
     }
@@ -593,7 +600,8 @@ public class Chat: @unchecked Sendable {
         skipPush: Bool = false
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
-        let localMessage = try await messageUpdater.editMessage(
+        async let updatedMessage = waitForMessageEditor(messageId: messageId)
+        _ = try await messageUpdater.editMessage(
             messageId: messageId,
             text: text,
             skipEnrichUrl: skipEnrichURL,
@@ -602,7 +610,7 @@ public class Chat: @unchecked Sendable {
             restrictedVisibility: restrictedVisibility,
             extraData: extraData
         )
-        return try await waitForAPIRequest(localMessage: localMessage)
+        return try await updatedMessage
     }
     
     // MARK: - Message Pagination
@@ -936,7 +944,17 @@ public class Chat: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func markUnread(from messageId: MessageId) async throws {
         guard let channel = await state.channel else { throw ClientError.ChannelNotCreatedYet() }
-        try await readStateHandler.markUnread(from: messageId, in: channel)
+        try await readStateHandler.markUnread(from: .messageId(messageId), in: channel)
+    }
+    
+    /// Marks all the messages after the specified timestamp as unread.
+    ///
+    /// - Parameter timestamp: The timestamp used to find the first message to mark as unread. All messages created after this timestamp will be marked as unread.
+    ///
+    /// - Throws: An error while communicating with the Stream API.
+    public func markUnread(from timestamp: Date) async throws {
+        guard let channel = await state.channel else { throw ClientError.ChannelNotCreatedYet() }
+        try await readStateHandler.markUnread(from: .messageTimestamp(timestamp), in: channel)
     }
     
     // MARK: - Message Replies and Pagination
@@ -982,9 +1000,11 @@ public class Chat: @unchecked Sendable {
     ) async throws -> ChatMessage {
         Task { try await stopTyping() } // errors explicitly ignored
         let cid = try await self.cid
+        let newMessageId = messageId ?? .newUniqueId
+        async let sentMessage = waitForMessageSender(messageId: newMessageId)
         let localMessage = try await messageUpdater.createNewReply(
             in: cid,
-            messageId: messageId,
+            messageId: newMessageId,
             text: text,
             pinning: pinning,
             command: nil,
@@ -999,7 +1019,6 @@ public class Chat: @unchecked Sendable {
             skipEnrichUrl: skipEnrichURL,
             extraData: extraData
         )
-        async let sentMessage = try await waitForAPIRequest(localMessage: localMessage)
         eventNotificationCenter.process(NewMessagePendingEvent(message: localMessage, cid: cid))
         return try await sentMessage
     }
@@ -1356,6 +1375,7 @@ public class Chat: @unchecked Sendable {
     ///   - team: The team for the channel.
     ///   - members: A list of members for the channel.
     ///   - invites: A list of users who will get invites.
+    ///   - filterTags: A list of tags to add to the channel.
     ///   - extraData: Extra data for the new channel.
     ///
     /// - Throws: An error while communicating with the Stream API.
@@ -1365,6 +1385,7 @@ public class Chat: @unchecked Sendable {
         team: String?,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
+        filterTags: Set<String> = [],
         extraData: [String: RawJSON] = [:]
     ) async throws {
         try await channelUpdater.update(
@@ -1375,6 +1396,7 @@ public class Chat: @unchecked Sendable {
                 team: team,
                 members: members,
                 invites: invites,
+                filterTags: filterTags,
                 extraData: extraData
             )
         )
@@ -1391,6 +1413,7 @@ public class Chat: @unchecked Sendable {
     ///   - team: The team for the channel.
     ///   - members: A list of members for the channel.
     ///   - invites: A list of users who will get invites.
+    ///   - filterTags: A list of tags to add to the channel.
     ///   - extraData: Extra data for the channel.
     ///   - unsetProperties: A list of properties to reset.
     ///
@@ -1401,6 +1424,7 @@ public class Chat: @unchecked Sendable {
         team: String? = nil,
         members: [UserId] = [],
         invites: [UserId] = [],
+        filterTags: Set<String> = [],
         extraData: [String: RawJSON] = [:],
         unsetProperties: [String] = []
     ) async throws {
@@ -1412,6 +1436,7 @@ public class Chat: @unchecked Sendable {
                 team: team,
                 members: Set(members),
                 invites: Set(invites),
+                filterTags: filterTags,
                 extraData: extraData
             ),
             unsetProperties: unsetProperties
@@ -1520,18 +1545,14 @@ extension Chat {
         }
     }
     
-    /// Depending on the local state we use different workers.
-    func waitForAPIRequest(localMessage: ChatMessage) async throws -> ChatMessage {
-        switch localMessage.localState {
-        case .pendingSend:
-            let messageSender = try client.backgroundWorker(of: MessageSender.self)
-            return try await messageSender.waitForAPIRequest(messageId: localMessage.id)
-        case .pendingSync:
-            let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
-            return try await messageEditor.waitForAPIRequest(messageId: localMessage.id)
-        default:
-            return localMessage
-        }
+    func waitForMessageEditor(messageId: MessageId) async throws -> ChatMessage {
+        let messageEditor = try client.backgroundWorker(of: MessageEditor.self)
+        return try await messageEditor.waitForAPIRequest(messageId: messageId)
+    }
+    
+    func waitForMessageSender(messageId: MessageId) async throws -> ChatMessage {
+        let messageSender = try client.backgroundWorker(of: MessageSender.self)
+        return try await messageSender.waitForAPIRequest(messageId: messageId)
     }
 }
 

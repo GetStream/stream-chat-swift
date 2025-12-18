@@ -2855,7 +2855,7 @@ final class MessageDTO_Tests: XCTestCase {
         let cid = ChannelId.unique
         let createdAtFrom = Date()
 
-        let count = MessageDTO.countOtherUserMessages(in: cid.rawValue, createdAtFrom: createdAtFrom, context: database.viewContext)
+        let count = MessageDTO.countOtherUserMessages(in: cid.rawValue, createdAtFrom: createdAtFrom, excludingMessageId: nil, context: database.viewContext)
         XCTAssertEqual(count, 0)
     }
 
@@ -2879,7 +2879,7 @@ final class MessageDTO_Tests: XCTestCase {
             }
         }
 
-        let count = MessageDTO.countOtherUserMessages(in: cid.rawValue, createdAtFrom: createdAtFrom, context: database.viewContext)
+        let count = MessageDTO.countOtherUserMessages(in: cid.rawValue, createdAtFrom: createdAtFrom, excludingMessageId: nil, context: database.viewContext)
         XCTAssertEqual(count, 0)
     }
 
@@ -2912,7 +2912,7 @@ final class MessageDTO_Tests: XCTestCase {
             }
         }
 
-        let count = MessageDTO.countOtherUserMessages(in: cid.rawValue, createdAtFrom: createdAtFrom, context: database.viewContext)
+        let count = MessageDTO.countOtherUserMessages(in: cid.rawValue, createdAtFrom: createdAtFrom, excludingMessageId: nil, context: database.viewContext)
         XCTAssertEqual(count, 2)
     }
 
@@ -2960,7 +2960,7 @@ final class MessageDTO_Tests: XCTestCase {
             )
         }
 
-        let count = MessageDTO.countOtherUserMessages(in: cid.rawValue, createdAtFrom: createdAtFrom, context: database.viewContext)
+        let count = MessageDTO.countOtherUserMessages(in: cid.rawValue, createdAtFrom: createdAtFrom, excludingMessageId: nil, context: database.viewContext)
         XCTAssertEqual(count, 2)
     }
 

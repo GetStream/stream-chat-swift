@@ -3,7 +3,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add `hideHistoryBefore` to add members for configuring the history visibility [#3892](https://github.com/GetStream/stream-chat-swift/pull/3892)
+## StreamChatUI
+### 🐞 Fixed
+- Fix reading messages from muted users [#3896](https://github.com/GetStream/stream-chat-swift/pull/3896)
+
+# [4.94.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.94.0)
+_December 02, 2025_
+
+## StreamChat
+### ✅ Added
+- Add `ChatClient.uploadAttachment(localUrl:progress:)` [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
+- Add `ChatClient.deleteAttachment(remoteUrl:)` [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
+- Add `CDNClient.deleteAttachment(remoteUrl:)` [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
+- Add `heic`, `heif` and `svg` formats to the supported image file types [#3883](https://github.com/GetStream/stream-chat-swift/pull/3883)
+- Add `ChatChannelController.markUnread(from:completion:)` and `Chat.markUnread(from:)` where the from argument is `Date` [#3885](https://github.com/GetStream/stream-chat-swift/pull/3885)
+- Add support for filter tags in channels [#3886](https://github.com/GetStream/stream-chat-swift/pull/3886)
+  - Add `ChatChannel.filterTags`
+  - Add `filterTags` channel list filtering key
+  - Add `filterTags` argument to `ChatChannelController` and `Chat` factory methods in `ChatClient`
+  - Add `filterTags` argument to `ChatChannelController.updateChannel` and `ChatChannelController.partialUpdateChannel`
+  - Add `filterTags` argument to `Chat.update` and `Chat.updatePartial`
+### 🐞 Fixed
+- Fix rare crash in `WebSocketClient.connectEndpoint` [#3882](https://github.com/GetStream/stream-chat-swift/pull/3882)
+- Fix audio recordings not playing from AirPods automatically [#3884](https://github.com/GetStream/stream-chat-swift/pull/3884)
+- Fix audio recordings not using AirPods mic automatically [#3884](https://github.com/GetStream/stream-chat-swift/pull/3884)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix marking channel read when scrolling to the bottom without unread counts [#3881](https://github.com/GetStream/stream-chat-swift/pull/3881)
+
+# [4.93.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.93.0)
+_November 18, 2025_
+
+## StreamChat
+### ✅ Added
+- Add `ChatClientConfig.isAutomaticSyncOnReconnectEnabled` for toggling automatic syncing [#3879](https://github.com/GetStream/stream-chat-swift/pull/3879)
+### ⚡️ Performance
+- Reduce SDK size by converting Events from structs to classes [#3878](https://github.com/GetStream/stream-chat-swift/pull/3878)
 ### 🔄 Changed
+- Change Events from structs to classes [#3878](https://github.com/GetStream/stream-chat-swift/pull/3878)
 
 # [4.92.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.92.0)
 _November 05, 2025_
@@ -219,7 +260,7 @@ _June 17, 2025_
 - Add new `Filter.isNil` to make it easier to query by nil values [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
 - Add Message Reminders [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
    - Add `ChatMessageController.createReminder()`
-   - Add `ChatMessageController.updateReminder()` 
+   - Add `ChatMessageController.updateReminder()`
    - Add `ChatMessageController.deleteReminder()`
    - Add `MessageReminderListController` and `MessageReminderListQuery`
 
@@ -356,7 +397,7 @@ _February 27, 2025_
   - Add `CurrentUserController`:
      - `deleteDraft()`
      - `loadDraftMessages()`
-     - `loadMoreDraftMessages()` 
+     - `loadMoreDraftMessages()`
 
 ### 🐞 Fixed
 - Update channel's preview message when coming back to online [#3574](https://github.com/GetStream/stream-chat-swift/pull/3574)

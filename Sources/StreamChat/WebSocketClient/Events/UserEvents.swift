@@ -5,12 +5,17 @@
 import Foundation
 
 /// Triggered when user status changes (eg. online, offline, away, etc.)
-public struct UserPresenceChangedEvent: Event {
+public final class UserPresenceChangedEvent: Event {
     /// The user the status changed for
     public let user: ChatUser
 
     /// The event timestamp
     public let createdAt: Date?
+
+    init(user: ChatUser, createdAt: Date?) {
+        self.user = user
+        self.createdAt = createdAt
+    }
 }
 
 final class UserPresenceChangedEventDTO: EventDTO {
@@ -35,12 +40,17 @@ final class UserPresenceChangedEventDTO: EventDTO {
 }
 
 /// Triggered when user is updated
-public struct UserUpdatedEvent: Event {
+public final class UserUpdatedEvent: Event {
     /// The updated user
     public let user: ChatUser
 
     /// The event timestamp
     public let createdAt: Date?
+
+    init(user: ChatUser, createdAt: Date?) {
+        self.user = user
+        self.createdAt = createdAt
+    }
 }
 
 final class UserUpdatedEventDTO: EventDTO {
@@ -67,7 +77,7 @@ final class UserUpdatedEventDTO: EventDTO {
 // MARK: - User Watching
 
 /// Triggered when a user starts/stops watching a channel
-public struct UserWatchingEvent: ChannelSpecificEvent {
+public final class UserWatchingEvent: ChannelSpecificEvent {
     /// The channel identifier a user started/stopped watching
     public let cid: ChannelId
 
@@ -82,6 +92,14 @@ public struct UserWatchingEvent: ChannelSpecificEvent {
 
     /// The flag saying if watching was started or stopped
     public let isStarted: Bool
+
+    init(cid: ChannelId, createdAt: Date, user: ChatUser, watcherCount: Int, isStarted: Bool) {
+        self.cid = cid
+        self.createdAt = createdAt
+        self.user = user
+        self.watcherCount = watcherCount
+        self.isStarted = isStarted
+    }
 }
 
 final class UserWatchingEventDTO: EventDTO {
@@ -117,15 +135,20 @@ final class UserWatchingEventDTO: EventDTO {
 // MARK: - User Ban
 
 /// Triggered when user is banned not in a specific channel but globally.
-public struct UserGloballyBannedEvent: Event {
+public final class UserGloballyBannedEvent: Event {
     /// The banned user
     public let user: ChatUser
 
     /// The event timestamp
     public let createdAt: Date
+
+    init(user: ChatUser, createdAt: Date) {
+        self.user = user
+        self.createdAt = createdAt
+    }
 }
 
-struct UserGloballyBannedEventDTO: EventDTO {
+class UserGloballyBannedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
@@ -147,7 +170,7 @@ struct UserGloballyBannedEventDTO: EventDTO {
 }
 
 /// Triggered when user is banned in a specific channel
-public struct UserBannedEvent: ChannelSpecificEvent {
+public final class UserBannedEvent: ChannelSpecificEvent {
     /// The channel identifer user is banned at.
     public let cid: ChannelId
 
@@ -168,6 +191,16 @@ public struct UserBannedEvent: ChannelSpecificEvent {
 
     /// A boolean value indicating if the ban is a shadowed ban or not.
     public let isShadowBan: Bool?
+
+    init(cid: ChannelId, user: ChatUser, ownerId: UserId, createdAt: Date?, reason: String?, expiredAt: Date?, isShadowBan: Bool?) {
+        self.cid = cid
+        self.user = user
+        self.ownerId = ownerId
+        self.createdAt = createdAt
+        self.reason = reason
+        self.expiredAt = expiredAt
+        self.isShadowBan = isShadowBan
+    }
 }
 
 final class UserBannedEventDTO: EventDTO {
@@ -207,15 +240,20 @@ final class UserBannedEventDTO: EventDTO {
 }
 
 /// Triggered when user is removed from global ban.
-public struct UserGloballyUnbannedEvent: Event {
+public final class UserGloballyUnbannedEvent: Event {
     /// The unbanned user.
     public let user: ChatUser
 
     /// The event timestamp
     public let createdAt: Date
+
+    init(user: ChatUser, createdAt: Date) {
+        self.user = user
+        self.createdAt = createdAt
+    }
 }
 
-struct UserGloballyUnbannedEventDTO: EventDTO {
+class UserGloballyUnbannedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
@@ -237,7 +275,7 @@ struct UserGloballyUnbannedEventDTO: EventDTO {
 }
 
 /// Triggered when banned user is unbanned in a specific channel
-public struct UserUnbannedEvent: ChannelSpecificEvent {
+public final class UserUnbannedEvent: ChannelSpecificEvent {
     /// The channel identifer user is unbanned at.
     public let cid: ChannelId
 
@@ -246,6 +284,12 @@ public struct UserUnbannedEvent: ChannelSpecificEvent {
 
     /// The event timestamp
     public let createdAt: Date?
+
+    init(cid: ChannelId, user: ChatUser, createdAt: Date?) {
+        self.cid = cid
+        self.user = user
+        self.createdAt = createdAt
+    }
 }
 
 final class UserUnbannedEventDTO: EventDTO {
@@ -273,7 +317,7 @@ final class UserUnbannedEventDTO: EventDTO {
 }
 
 /// Triggered when the messages of a banned user should be deleted.
-public struct UserMessagesDeletedEvent: Event {
+public final class UserMessagesDeletedEvent: Event {
     /// The banned user.
     public let user: ChatUser
 
@@ -282,6 +326,12 @@ public struct UserMessagesDeletedEvent: Event {
 
     /// The event timestamp
     public let createdAt: Date
+
+    init(user: ChatUser, hardDelete: Bool, createdAt: Date) {
+        self.user = user
+        self.hardDelete = hardDelete
+        self.createdAt = createdAt
+    }
 }
 
 final class UserMessagesDeletedEventDTO: EventDTO {

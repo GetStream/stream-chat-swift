@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new member is added to a channel.
-public struct MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
+public final class MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
     /// The user who added a member to a channel.
     public let user: ChatUser
 
@@ -17,10 +17,12 @@ public struct MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
-    
-    /// The member's user id.
-    public var memberUserId: UserId {
-        member.id
+
+    init(user: ChatUser, cid: ChannelId, member: ChatChannelMember, createdAt: Date) {
+        self.user = user
+        self.cid = cid
+        self.member = member
+        self.createdAt = createdAt
     }
 }
 
@@ -55,7 +57,7 @@ final class MemberAddedEventDTO: EventDTO {
 }
 
 /// Triggered when a channel member is updated.
-public struct MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
+public final class MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
     /// The user who updated a member.
     public let user: ChatUser
 
@@ -67,10 +69,12 @@ public struct MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
-    
-    /// The member's user id.
-    public var memberUserId: UserId {
-        member.id
+
+    init(user: ChatUser, cid: ChannelId, member: ChatChannelMember, createdAt: Date) {
+        self.user = user
+        self.cid = cid
+        self.member = member
+        self.createdAt = createdAt
     }
 }
 
@@ -105,7 +109,7 @@ final class MemberUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when a member is removed from a channel.
-public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
+public final class MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
     /// The user who stopped being a member.
     public let user: ChatUser
 
@@ -114,10 +118,11 @@ public struct MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
-    
-    /// The member's user id.
-    public var memberUserId: UserId {
-        user.id
+
+    init(user: ChatUser, cid: ChannelId, createdAt: Date) {
+        self.user = user
+        self.cid = cid
+        self.createdAt = createdAt
     }
 }
 

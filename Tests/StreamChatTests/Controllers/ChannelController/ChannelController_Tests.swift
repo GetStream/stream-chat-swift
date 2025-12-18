@@ -3632,6 +3632,30 @@ final class ChannelController_Tests: XCTestCase {
         // Completion should be called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
+    
+    func test_addMembers_withHideHistoryBefore_callsChannelUpdater() {
+        let members: [MemberInfo] = [.init(userId: .unique, extraData: nil)]
+        let hideHistoryBefore = Date()
+
+        // Simulate `addMembers` call with hideHistoryBefore
+        controller.addMembers(
+            members,
+            hideHistory: false,
+            hideHistoryBefore: hideHistoryBefore
+        ) { [callbackQueueID] error in
+            AssertTestQueue(withId: callbackQueueID)
+            XCTAssertNil(error)
+        }
+
+        // Assert hideHistoryBefore is passed to channelUpdater
+        XCTAssertEqual(env.channelUpdater!.addMembers_cid, channelId)
+        XCTAssertEqual(env.channelUpdater!.addMembers_memberInfos?.map(\.userId), members.map(\.userId))
+        XCTAssertEqual(env.channelUpdater!.addMembers_hideHistory, false)
+        XCTAssertEqual(env.channelUpdater!.addMembers_hideHistoryBefore, hideHistoryBefore)
+
+        // Simulate successful update
+        env.channelUpdater!.addMembers_completion?(nil)
+    }
 
     // MARK: - Inviting members
 
@@ -4052,7 +4076,7 @@ final class ChannelController_Tests: XCTestCase {
     func test_markUnread_whenChannelDoesNotExist() {
         nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { result in
+        controller.markUnread(from: MessageId.unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -4073,7 +4097,7 @@ final class ChannelController_Tests: XCTestCase {
 
         nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { result in
+        controller.markUnread(from: MessageId.unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -4128,7 +4152,7 @@ final class ChannelController_Tests: XCTestCase {
 
         nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { result in
+        controller.markUnread(from: MessageId.unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -4149,7 +4173,7 @@ final class ChannelController_Tests: XCTestCase {
 
         nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { result in
+        controller.markUnread(from: MessageId.unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -4172,7 +4196,7 @@ final class ChannelController_Tests: XCTestCase {
         env.channelUpdater?.markUnread_completion_result = .failure(mockedError)
         nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
-        controller.markUnread(from: .unique) { result in
+        controller.markUnread(from: MessageId.unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -4208,7 +4232,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Because we don't have other messages, we fallback to the passed messageId as lastReadMessageId.
         XCTAssertNil(updater.markUnread_lastReadMessageId)
-        XCTAssertEqual(updater.markUnread_messageId, messageId)
+        XCTAssertEqual(updater.markUnread_criteria, MarkUnreadCriteria.messageId(messageId))
     }
 
     func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsPresent_whenThereAreOtherMessages_whenUpdaterSucceeds() throws {
@@ -4241,7 +4265,87 @@ final class ChannelController_Tests: XCTestCase {
 
         XCTAssertNil(receivedError)
         XCTAssertEqual(updater.markUnread_lastReadMessageId, previousMessageId)
-        XCTAssertEqual(updater.markUnread_messageId, messageId)
+        XCTAssertEqual(updater.markUnread_criteria, MarkUnreadCriteria.messageId(messageId))
+    }
+
+    func test_markUnread_whenChannelDoesNotExist_messageTimestamp() {
+        var receivedError: Error?
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: Date()) { result in
+            receivedError = result.error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertTrue(receivedError is ClientError.ChannelNotCreatedYet)
+    }
+
+    func test_markUnread_whenReadEventsAreNotEnabled_messageTimestamp() throws {
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, ownCapabilities: [])
+        )
+
+        writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        var receivedError: Error?
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: Date()) { result in
+            receivedError = result.error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertTrue(receivedError is ClientError.ChannelFeatureDisabled)
+    }
+
+    func test_markUnread_whenIsMarkingAsRead_andCurrentUserIdIsPresent_messageTimestamp() throws {
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
+        )
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        let currentUserId = UserId.unique
+        client.setToken(token: .unique(userId: currentUserId))
+        try simulateMarkingAsRead(userId: currentUserId)
+
+        var receivedError: Error?
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: Date()) { result in
+            receivedError = result.error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNil(receivedError)
+    }
+
+    func test_markUnread_whenIsNotMarkingAsRead_andCurrentUserIdIsNotPresent_messageTimestamp() throws {
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(cid: channelId, ownCapabilities: [ChannelCapability.readEvents.rawValue])
+        )
+
+        writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
+            try session.saveChannel(payload: channel)
+        }
+
+        var receivedError: Error?
+        let expectation = self.expectation(description: "Mark Unread completes")
+        controller.markUnread(from: Date()) { result in
+            receivedError = result.error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNil(receivedError)
     }
     
     // MARK: - Load more channel reads
@@ -4622,6 +4726,7 @@ final class ChannelController_Tests: XCTestCase {
             team: nil,
             members: Set(),
             invites: Set(),
+            filterTags: [],
             extraData: [:]
         )
 
@@ -5713,6 +5818,7 @@ extension ChannelController_Tests {
             team: nil,
             members: [currentUserId, otherUserId],
             invites: [],
+            filterTags: [],
             extraData: [:]
         )
 
@@ -5750,6 +5856,7 @@ extension ChannelController_Tests {
             team: nil,
             members: [],
             invites: [],
+            filterTags: [],
             extraData: [:]
         )
 

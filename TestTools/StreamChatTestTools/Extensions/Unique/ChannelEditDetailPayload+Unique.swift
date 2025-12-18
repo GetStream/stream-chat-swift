@@ -14,6 +14,7 @@ extension ChannelEditDetailPayload {
             team: .unique,
             members: [],
             invites: [],
+            filterTags: [],
             extraData: .init()
         )
     }

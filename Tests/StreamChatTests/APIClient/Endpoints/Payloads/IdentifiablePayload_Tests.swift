@@ -311,6 +311,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 truncatedAt: nil,
                 createdBy: owner,
                 config: .mock(),
+                filterTags: nil,
                 ownCapabilities: [],
                 isDisabled: false,
                 isFrozen: true,

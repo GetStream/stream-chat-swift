@@ -327,6 +327,45 @@ final class Chat_Tests: XCTestCase {
         }
     }
     
+    func test_addMembers_withHideHistoryBefore_whenChannelUpdaterSucceeds_thenAddMembersSucceeds() async throws {
+        env.channelUpdaterMock.addMembers_completion_result = .success(())
+        let members: [MemberInfo] = [.init(userId: .unique, extraData: nil), .init(userId: .unique, extraData: nil)]
+        let hideHistoryBefore = Date()
+        
+        try await chat.addMembers(
+            members,
+            systemMessage: "My system message",
+            hideHistory: false,
+            hideHistoryBefore: hideHistoryBefore
+        )
+        
+        XCTAssertEqual(channelId, env.channelUpdaterMock.addMembers_cid)
+        XCTAssertEqual(members.map(\.userId).sorted(), env.channelUpdaterMock.addMembers_userIds?.sorted())
+        XCTAssertEqual("My system message", env.channelUpdaterMock.addMembers_message)
+        XCTAssertEqual(false, env.channelUpdaterMock.addMembers_hideHistory)
+        XCTAssertEqual(hideHistoryBefore, env.channelUpdaterMock.addMembers_hideHistoryBefore)
+        XCTAssertEqual(currentUserId, env.channelUpdaterMock.addMembers_currentUserId)
+    }
+    
+    func test_addMembers_withHideHistoryBefore_takesPrecedenceOverHideHistory() async throws {
+        env.channelUpdaterMock.addMembers_completion_result = .success(())
+        let members: [MemberInfo] = [.init(userId: .unique, extraData: nil)]
+        let hideHistoryBefore = Date()
+        
+        // Call with both hideHistory and hideHistoryBefore
+        try await chat.addMembers(
+            members,
+            systemMessage: nil,
+            hideHistory: true,
+            hideHistoryBefore: hideHistoryBefore
+        )
+        
+        // Verify hideHistoryBefore is passed through
+        XCTAssertEqual(hideHistoryBefore, env.channelUpdaterMock.addMembers_hideHistoryBefore)
+        // Verify hideHistory is also passed (but hideHistoryBefore takes precedence in the endpoint)
+        XCTAssertEqual(true, env.channelUpdaterMock.addMembers_hideHistory)
+    }
+    
     func test_removeMembers_whenChannelUpdaterSucceeds_thenRemoveMembersSucceeds() async throws {
         env.channelUpdaterMock.removeMembers_completion_result = .success(())
         let memberIds: [UserId] = [.unique, .unique]
@@ -673,12 +712,6 @@ final class Chat_Tests: XCTestCase {
     func test_sendMessage_whenAPIRequestSucceeds_thenSendMessageSucceeds() async throws {
         try await setUpChat(usesMockedUpdaters: false)
         await XCTAssertEqual(0, chat.state.messages.count)
-
-        let notificationExpectation = expectation(
-            forNotification: .NewEventReceived,
-            object: nil,
-            notificationCenter: env.client.eventNotificationCenter
-        )
         
         let typingIndicatorResponse = EmptyResponse()
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
@@ -695,8 +728,6 @@ final class Chat_Tests: XCTestCase {
             with: apiResponse.message.text,
             messageId: apiResponse.message.id
         )
-        
-        await fulfillment(of: [notificationExpectation], timeout: defaultTimeout)
         
         XCTAssertEqual(text, message.text)
         await XCTAssertEqual(1, chat.state.messages.count)
@@ -735,21 +766,29 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(LocalMessageState.sendingFailed, stateMessage.localState)
     }
 
-    func test_sendSystemMessage_thenCallsChannelUpdaterWithIsSystemTrue() async throws {
-        try await setUpChat(usesMockedUpdaters: true)
+    func test_sendSystemMessage_whenAPIRequestSucceeds_thenSendMessageSucceeds() async throws {
+        try await setUpChat(usesMockedUpdaters: false)
         await XCTAssertEqual(0, chat.state.messages.count)
 
         let text = "Text"
-        env.channelUpdaterMock.createNewMessage_completion_result = .success((
-            .mock(id: "0", text: text, type: .system)
-        ))
+        let apiResponse = MessagePayload.Boxed(
+            message: .dummy(
+                type: .system,
+                messageId: "0",
+                text: text
+            )
+        )
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        
         let message = try await chat.sendSystemMessage(
             with: text,
             messageId: "0"
         )
 
-        XCTAssertEqual(env.typingEventsSenderMock.stopTyping_cid, nil)
-        XCTAssertEqual(env.channelUpdaterMock.createNewMessage_isSystem, true)
+        let body = env.client.mockAPIClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
+        let messageRequestBody = body?["message"]?.encodable as? MessageRequestBody
+        XCTAssertEqual(messageRequestBody?.type, MessageType.system.rawValue)
+        
         XCTAssertEqual(text, message.text)
         XCTAssertEqual(.system, message.type)
     }
@@ -1306,6 +1345,144 @@ final class Chat_Tests: XCTestCase {
         
         await XCTAssertEqual(1, chat.state.channel?.reads.count)
         await XCTAssertEqual(3, chat.state.channel?.reads.first?.unreadMessagesCount)
+    }
+    
+    func test_markUnread_whenAPIRequestSucceeds_thenReadStateUpdates_messageTimestamp() async throws {
+        try await setUpChat(
+            usesMockedUpdaters: false,
+            messageCount: 3
+        )
+        let messages = await chat.state.messages
+        let firstMessage = try XCTUnwrap(messages.first)
+        let lastMessage = try XCTUnwrap(messages.first)
+        
+        // Create a read state for the current user
+        try await env.client.databaseContainer.write { session in
+            let payload = ChannelPayload.dummy(
+                channel: .dummy(
+                    cid: self.channelId,
+                    lastMessageAt: lastMessage.createdAt
+                ),
+                channelReads: [
+                    ChannelReadPayload(
+                        user: .dummy(userId: self.currentUserId),
+                        lastReadAt: lastMessage.createdAt,
+                        lastReadMessageId: nil,
+                        unreadMessagesCount: 0,
+                        lastDeliveredAt: nil,
+                        lastDeliveredMessageId: nil
+                    )
+                ]
+            )
+            try session.saveChannel(payload: payload)
+        }
+        
+        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        try await chat.markUnread(from: firstMessage.createdAt)
+        XCTAssertNotNil(env.client.mockAPIClient.request_endpoint)
+        
+        await XCTAssertEqual(1, chat.state.channel?.reads.count)
+        await XCTAssertEqual(2, chat.state.channel?.reads.first?.unreadMessagesCount)
+    }
+    
+    // MARK: - Updating the Channel
+    
+    func test_update_whenChannelUpdaterSucceeds_thenUpdateSucceeds() async throws {
+        env.channelUpdaterMock.updateChannel_completion_result = .success(())
+        let name = "Updated Channel Name"
+        let imageURL = URL(string: "https://example.com/image.png")!
+        let team = "team123"
+        let members: Set<UserId> = [.unique, .unique]
+        let invites: Set<UserId> = [.unique]
+        let filterTags: Set<String> = ["tag1", "tag2"]
+        let extraData: [String: RawJSON] = ["custom": .string("value")]
+        
+        try await chat.update(
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: members,
+            invites: invites,
+            filterTags: filterTags,
+            extraData: extraData
+        )
+        
+        let payload = try XCTUnwrap(env.channelUpdaterMock.updateChannel_payload)
+        XCTAssertEqual(payload.name, name)
+        XCTAssertEqual(payload.imageURL, imageURL)
+        XCTAssertEqual(payload.team, team)
+        XCTAssertEqual(payload.members, members)
+        XCTAssertEqual(payload.invites, invites)
+        XCTAssertEqual(payload.filterTags, filterTags)
+        XCTAssertEqual(payload.extraData, extraData)
+    }
+    
+    func test_update_whenChannelUpdaterFails_thenUpdateFails() async throws {
+        env.channelUpdaterMock.updateChannel_completion_result = .failure(expectedTestError)
+        
+        await XCTAssertAsyncFailure(
+            try await chat.update(
+                name: "Updated Name",
+                imageURL: nil,
+                team: nil,
+                members: [],
+                invites: [],
+                filterTags: [],
+                extraData: [:]
+            ),
+            expectedTestError
+        )
+    }
+    
+    func test_updatePartial_whenChannelUpdaterSucceeds_thenUpdatePartialSucceeds() async throws {
+        env.channelUpdaterMock.partialChannelUpdate_completion_result = .success(())
+        let name = "Updated Channel Name"
+        let imageURL = URL(string: "https://example.com/image.png")!
+        let team = "team123"
+        let members: [UserId] = [.unique, .unique]
+        let invites: [UserId] = [.unique]
+        let filterTags: Set<String> = ["tag1", "tag2"]
+        let extraData: [String: RawJSON] = ["custom": .string("value")]
+        let unsetProperties = ["property1", "property2"]
+        
+        try await chat.updatePartial(
+            name: name,
+            imageURL: imageURL,
+            team: team,
+            members: members,
+            invites: invites,
+            filterTags: filterTags,
+            extraData: extraData,
+            unsetProperties: unsetProperties
+        )
+        
+        let payload = try XCTUnwrap(env.channelUpdaterMock.partialChannelUpdate_updates)
+        XCTAssertEqual(payload.name, name)
+        XCTAssertEqual(payload.imageURL, imageURL)
+        XCTAssertEqual(payload.team, team)
+        XCTAssertEqual(payload.members, Set(members))
+        XCTAssertEqual(payload.invites, Set(invites))
+        XCTAssertEqual(payload.filterTags, filterTags)
+        XCTAssertEqual(payload.extraData, extraData)
+        XCTAssertEqual(env.channelUpdaterMock.partialChannelUpdate_unsetProperties, unsetProperties)
+    }
+    
+    func test_updatePartial_whenChannelUpdaterFails_thenUpdatePartialFails() async throws {
+        env.channelUpdaterMock.partialChannelUpdate_completion_result = .failure(expectedTestError)
+        
+        await XCTAssertAsyncFailure(
+            try await chat.updatePartial(
+                name: "Updated Name",
+                imageURL: nil,
+                team: nil,
+                members: [],
+                invites: [],
+                filterTags: [],
+                extraData: [:],
+                unsetProperties: []
+            ),
+            expectedTestError
+        )
     }
     
     // MARK: - Message Replies

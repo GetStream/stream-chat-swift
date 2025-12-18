@@ -253,6 +253,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - team: New team.
     ///   - members: New members.
     ///   - invites: New invites.
+    ///   - filterTags: A list of tags to add to the channel.
     ///   - extraData: New `ExtraData`.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
@@ -263,6 +264,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         team: String?,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
+        filterTags: Set<String> = [],
         extraData: [String: RawJSON] = [:],
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
@@ -279,6 +281,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             team: team,
             members: members,
             invites: invites,
+            filterTags: filterTags,
             extraData: extraData
         )
 
@@ -295,6 +298,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     ///   - team: New team.
     ///   - members: New members.
     ///   - invites: New invites.
+    ///   - filterTags: A list of tags to add to the channel.
     ///   - extraData: New `ExtraData`.
     ///   - unsetProperties: Properties from the channel that are going to be cleared/unset.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
@@ -306,6 +310,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         team: String? = nil,
         members: Set<UserId> = [],
         invites: Set<UserId> = [],
+        filterTags: Set<String> = [],
         extraData: [String: RawJSON] = [:],
         unsetProperties: [String] = [],
         completion: (@MainActor (Error?) -> Void)? = nil
@@ -323,6 +328,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             team: team,
             members: members,
             invites: invites,
+            filterTags: filterTags,
             extraData: extraData
         )
 
@@ -1143,6 +1149,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - members: An array of `MemberInfo` objects, each representing a member to be added to the channel.
     ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
+    ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
     ///   - message: Optional system message sent when adding members.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
@@ -1150,6 +1157,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     public func addMembers(
         _ members: [MemberInfo],
         hideHistory: Bool = false,
+        hideHistoryBefore: Date? = nil,
         message: String? = nil,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
@@ -1163,7 +1171,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             cid: cid,
             members: members,
             message: message,
-            hideHistory: hideHistory
+            hideHistory: hideHistory,
+            hideHistoryBefore: hideHistoryBefore
         ) { error in
             self.callback {
                 completion?(error)
@@ -1176,18 +1185,21 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - userIds: User ids that will be added to a channel.
     ///   - hideHistory: Hide the history of the channel to the added member. By default, it is false.
+    ///   - hideHistoryBefore: Hide the history of the channel before this date. If both `hideHistoryBefore` and `hideHistory` are set, `hideHistoryBefore` takes precedence.
     ///   - message: Optional system message sent when adding members.
     ///   - completion: The completion. Will be called on a **callbackQueue** when the network request is finished.
     ///                 If request fails, the completion will be called with an error.
     public func addMembers(
         userIds: Set<UserId>,
         hideHistory: Bool = false,
+        hideHistoryBefore: Date? = nil,
         message: String? = nil,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         addMembers(
             userIds.map { .init(userId: $0, extraData: nil) },
             hideHistory: hideHistory,
+            hideHistoryBefore: hideHistoryBefore,
             message: message,
             completion: completion
         )
@@ -1331,7 +1343,47 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         readStateHandler.markUnread(
-            from: messageId,
+            from: .messageId(messageId),
+            in: channel
+        ) { [weak self] result in
+            self?.callback {
+                completion?(result)
+            }
+        }
+    }
+    
+    /// Marks all messages of the channel as unread that were created after the specified timestamp.
+    ///
+    /// This method finds the first message with a creation timestamp greater than to the provided timestamp,
+    /// and marks all messages from that point forward as unread. If no message is found after the timestamp,
+    /// the operation completes without error but no messages are marked as unread.
+    ///
+    /// - Parameters:
+    ///   - timestamp: The timestamp used to find the first message to mark as unread. All messages created after this timestamp will be marked as unread.
+    ///   - completion: The completion handler to be called after marking messages as unread. Called with a `Result` containing the updated `ChatChannel` on success, or an `Error` on failure.
+    public func markUnread(from timestamp: Date, completion: ((Result<ChatChannel, Error>) -> Void)? = nil) {
+        /// Perform action only if channel is already created on backend side and have a valid `cid`.
+        guard let channel = channel else {
+            let error = ClientError.ChannelNotCreatedYet()
+            log.error(error.localizedDescription)
+            callback {
+                completion?(.failure(error))
+            }
+            return
+        }
+
+        /// Read events are not enabled for this channel
+        guard channel.canReceiveReadEvents == true else {
+            let error = ClientError.ChannelFeatureDisabled("Channel feature: read events is disabled for this channel.")
+            log.error(error.localizedDescription)
+            callback {
+                completion?(.failure(error))
+            }
+            return
+        }
+
+        readStateHandler.markUnread(
+            from: .messageTimestamp(timestamp),
             in: channel
         ) { [weak self] result in
             self?.callback {

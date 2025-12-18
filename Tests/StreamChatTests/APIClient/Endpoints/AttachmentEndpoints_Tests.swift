@@ -37,4 +37,58 @@ final class AttachmentEndpoints_Tests: XCTestCase {
             XCTAssertEqual("channels/\(id.cid.type.rawValue)/\(id.cid.id)/\(pathComponent)", endpoint.path.value)
         }
     }
+    
+    func test_deleteAttachment_buildsCorrectly() {
+        let remoteURL = URL.unique()
+        
+        let testCases: [AttachmentType: String] = [
+            .image: "image",
+            .video: "file",
+            .audio: "file",
+            .file: "file"
+        ]
+        
+        for (type, pathComponent) in testCases {
+            let expectedEndpoint: Endpoint<EmptyResponse> = .init(
+                path: .uploadAttachment(pathComponent),
+                method: .delete,
+                queryItems: nil,
+                requiresConnectionId: false,
+                body: ["url": remoteURL.absoluteString]
+            )
+            
+            // Build endpoint
+            let endpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: type)
+            
+            // Assert endpoint is built correctly
+            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+            XCTAssertEqual(endpoint.method, .delete, "Method should be DELETE for \(type)")
+            XCTAssertEqual(endpoint.path.value, "uploads/\(pathComponent)", "Path should be \(pathComponent) for \(type)")
+            XCTAssertFalse(endpoint.requiresConnectionId, "Should not require connection ID")
+            
+            // Verify body contains the URL
+            let body = endpoint.body as? [String: String]
+            XCTAssertEqual(body?["url"], remoteURL.absoluteString, "Body should contain the remote URL for \(type)")
+        }
+    }
+    
+    func test_deleteAttachment_imageType_usesImagePath() {
+        let remoteURL = URL.unique()
+        let endpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: .image)
+        
+        XCTAssertEqual(endpoint.path.value, "uploads/image")
+        XCTAssertEqual(endpoint.method, .delete)
+    }
+    
+    func test_deleteAttachment_nonImageType_usesFilePath() {
+        let remoteURL = URL.unique()
+        let nonImageTypes: [AttachmentType] = [.video, .audio, .file]
+        
+        for type in nonImageTypes {
+            let endpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: type)
+            
+            XCTAssertEqual(endpoint.path.value, "uploads/file", "Path should be 'file' for \(type)")
+            XCTAssertEqual(endpoint.method, .delete)
+        }
+    }
 }

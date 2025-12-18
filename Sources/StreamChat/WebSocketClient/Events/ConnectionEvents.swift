@@ -56,7 +56,7 @@ final class ConnectionErrorEvent: Event {
 
 /// Emitted when `Client` changes it's connection status. You can listen to this event and indicate the different connection
 /// states in the UI (banners like "Offline", "Reconnecting"", etc.).
-public struct ConnectionStatusUpdated: Event {
+public final class ConnectionStatusUpdated: Event {
     /// The current connection status of `Client`
     public let connectionStatus: ConnectionStatus
 

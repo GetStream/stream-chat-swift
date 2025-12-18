@@ -36,7 +36,7 @@ final class ChatRemoteNotificationHandler_Tests: XCTestCase {
 
         var env = ChatClient.Environment()
         env.databaseContainerBuilder = { _, _ in self.database }
-        env.apiClientBuilder = { _, _, _, _, _ in self.apiClient }
+        env.apiClientBuilder = { _, _, _, _, _, _ in self.apiClient }
         env.messageRepositoryBuilder = { _, _ in self.messageRepository }
         env.channelRepositoryBuilder = { _, _ in self.channelRepository }
 

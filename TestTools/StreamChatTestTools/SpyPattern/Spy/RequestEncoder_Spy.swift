@@ -13,10 +13,10 @@ final class RequestEncoder_Spy: RequestEncoder, Spy, @unchecked Sendable {
 
     weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
 
-    var encodeRequest: Result<URLRequest, Error>? = .success(URLRequest(url: .unique()))
-    var onEncodeRequestCall: (() -> Void)?
-    var encodeRequest_endpoints: [AnyEndpoint] = []
-    var encodeRequest_completion: ((Result<URLRequest, Error>) -> Void)?
+    @Atomic var encodeRequest: Result<URLRequest, Error>? = .success(URLRequest(url: .unique()))
+    @Atomic var onEncodeRequestCall: (() -> Void)?
+    @Atomic var encodeRequest_endpoints: [AnyEndpoint] = []
+    @Atomic var encodeRequest_completion: ((Result<URLRequest, Error>) -> Void)?
 
     func encodeRequest<ResponsePayload>(
         for endpoint: Endpoint<ResponsePayload>,

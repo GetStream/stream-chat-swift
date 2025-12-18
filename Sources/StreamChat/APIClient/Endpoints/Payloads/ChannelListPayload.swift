@@ -127,6 +127,7 @@ struct ChannelDetailPayload {
     let createdBy: UserPayload?
     /// A config.
     let config: ChannelConfig
+    let filterTags: [String]?
     /// The list of actions that the current user can perform in a channel.
     /// It is optional, since not all events contain the own capabilities property for performance reasons.
     let ownCapabilities: [String]?
@@ -188,6 +189,7 @@ extension ChannelDetailPayload: Decodable {
             truncatedAt: try container.decodeIfPresent(Date.self, forKey: .truncatedAt),
             createdBy: try container.decodeIfPresent(UserPayload.self, forKey: .createdBy),
             config: try container.decode(ChannelConfig.self, forKey: .config),
+            filterTags: try container.decodeIfPresent([String].self, forKey: .filterTags),
             ownCapabilities: try container.decodeIfPresent([String].self, forKey: .ownCapabilities),
             isDisabled: try container.decode(Bool.self, forKey: .disabled),
             isFrozen: try container.decode(Bool.self, forKey: .frozen),

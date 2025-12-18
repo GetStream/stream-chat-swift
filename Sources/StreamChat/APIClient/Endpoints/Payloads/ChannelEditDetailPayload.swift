@@ -12,6 +12,7 @@ struct ChannelEditDetailPayload: Encodable {
     let team: String?
     let members: Set<UserId>
     let invites: Set<UserId>
+    let filterTags: Set<String>
     let extraData: [String: RawJSON]
 
     init(
@@ -21,6 +22,7 @@ struct ChannelEditDetailPayload: Encodable {
         team: String?,
         members: Set<UserId>,
         invites: Set<UserId>,
+        filterTags: Set<String>,
         extraData: [String: RawJSON]
     ) {
         id = cid.id
@@ -30,6 +32,7 @@ struct ChannelEditDetailPayload: Encodable {
         self.team = team
         self.members = members
         self.invites = invites
+        self.filterTags = filterTags
         self.extraData = extraData
     }
 
@@ -40,6 +43,7 @@ struct ChannelEditDetailPayload: Encodable {
         team: String?,
         members: Set<UserId>,
         invites: Set<UserId>,
+        filterTags: Set<String>,
         extraData: [String: RawJSON]
     ) {
         id = nil
@@ -49,6 +53,7 @@ struct ChannelEditDetailPayload: Encodable {
         self.team = team
         self.members = members
         self.invites = invites
+        self.filterTags = filterTags
         self.extraData = extraData
     }
 
@@ -62,6 +67,10 @@ struct ChannelEditDetailPayload: Encodable {
         if !invites.isEmpty {
             allMembers = allMembers.union(invites)
             try container.encode(invites, forKey: .invites)
+        }
+        
+        if !filterTags.isEmpty {
+            try container.encode(filterTags, forKey: .filterTags)
         }
 
         if !allMembers.isEmpty {

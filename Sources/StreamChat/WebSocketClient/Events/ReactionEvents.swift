@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered a new reaction is added.
-public struct ReactionNewEvent: ChannelSpecificEvent {
+public final class ReactionNewEvent: ChannelSpecificEvent {
     /// The use who added a reaction.
     public let user: ChatUser
 
@@ -20,6 +20,14 @@ public struct ReactionNewEvent: ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(user: ChatUser, cid: ChannelId, message: ChatMessage, reaction: ChatMessageReaction, createdAt: Date) {
+        self.user = user
+        self.cid = cid
+        self.message = message
+        self.reaction = reaction
+        self.createdAt = createdAt
+    }
 }
 
 final class ReactionNewEventDTO: EventDTO {
@@ -61,7 +69,7 @@ final class ReactionNewEventDTO: EventDTO {
 }
 
 /// Triggered when a reaction is updated.
-public struct ReactionUpdatedEvent: ChannelSpecificEvent {
+public final class ReactionUpdatedEvent: ChannelSpecificEvent {
     /// The use who updated a reaction.
     public let user: ChatUser
 
@@ -76,6 +84,14 @@ public struct ReactionUpdatedEvent: ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(user: ChatUser, cid: ChannelId, message: ChatMessage, reaction: ChatMessageReaction, createdAt: Date) {
+        self.user = user
+        self.cid = cid
+        self.message = message
+        self.reaction = reaction
+        self.createdAt = createdAt
+    }
 }
 
 final class ReactionUpdatedEventDTO: EventDTO {
@@ -117,7 +133,7 @@ final class ReactionUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when a reaction is deleted.
-public struct ReactionDeletedEvent: ChannelSpecificEvent {
+public final class ReactionDeletedEvent: ChannelSpecificEvent {
     /// The use who deleted a reaction.
     public let user: ChatUser
 
@@ -132,6 +148,14 @@ public struct ReactionDeletedEvent: ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(user: ChatUser, cid: ChannelId, message: ChatMessage, reaction: ChatMessageReaction, createdAt: Date) {
+        self.user = user
+        self.cid = cid
+        self.message = message
+        self.reaction = reaction
+        self.createdAt = createdAt
+    }
 }
 
 final class ReactionDeletedEventDTO: EventDTO {

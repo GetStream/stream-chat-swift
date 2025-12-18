@@ -88,8 +88,15 @@ open class ChatChannelVC: _ViewController,
         guard components.isJumpToUnreadEnabled else {
             return isLastMessageFullyVisible && isFirstPageLoaded
         }
-
-        return isLastMessageVisibleOrSeen && hasSeenFirstUnreadMessage && isFirstPageLoaded && !hasMarkedMessageAsUnread
+        guard isLastMessageVisibleOrSeen else { return false }
+        guard isFirstPageLoaded else { return false }
+        guard !hasMarkedMessageAsUnread else { return false }
+        
+        guard let channel = channelController.channel, let currentUserId = client.currentUserId else { return false }
+        guard let read = channel.read(for: currentUserId), let lastMessage = messages.first else {
+            return true // no read state, always mark as read
+        }
+        return read.lastReadAt < lastMessage.createdAt
     }
 
     private var isLastMessageVisibleOrSeen: Bool {
@@ -592,6 +599,10 @@ open class ChatChannelVC: _ViewController,
         // the latest cell to update the double gray checkmark.
         if let event = event as? MessageDeliveredEvent, event.cid == channelController.cid, !messages.isEmpty {
             messageListVC.listView.reloadRows(at: [.init(item: 0, section: 0)], with: .none)
+        }
+        
+        if let event = event as? NotificationMarkUnreadEvent, let channel = channelController.channel, event.cid == channelController.cid, !messages.isEmpty {
+            updateAllUnreadMessagesRelatedComponents(channel: channel)
         }
     }
 

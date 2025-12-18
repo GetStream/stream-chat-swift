@@ -558,13 +558,17 @@ class MessageDTO: NSManagedObject {
     static func countOtherUserMessages(
         in cid: String,
         createdAtFrom: Date,
+        excludingMessageId: MessageId?,
         context: NSManagedObjectContext
     ) -> Int {
-        let subpredicates: [NSPredicate] = [
+        var subpredicates: [NSPredicate] = [
             sentMessagesPredicate(for: cid),
             .init(format: "createdAt >= %@", createdAtFrom.bridgeDate),
             .init(format: "user.currentUser == nil")
         ]
+        if let excludingMessageId {
+            subpredicates.append(.init(format: "id != %@", excludingMessageId))
+        }
 
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: false)]
@@ -601,6 +605,23 @@ class MessageDTO: NSManagedObject {
             channelMessagesPredicate(for: cid, deletedMessagesVisibility: deletedMessagesVisibility, shouldShowShadowedMessages: shouldShowShadowedMessages),
             .init(format: "id != %@", id),
             .init(format: "createdAt <= %@", message.createdAt)
+        ])
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
+        request.fetchLimit = 1
+        return try context.fetch(request).first
+    }
+    
+    static func loadMessage(
+        beforeOrEqual timestamp: Date,
+        cid: String,
+        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
+        shouldShowShadowedMessages: Bool,
+        context: NSManagedObjectContext
+    ) throws -> MessageDTO? {
+        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
+        request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
+            .init(format: "createdAt <= %@", timestamp.bridgeDate),
+            channelMessagesPredicate(for: cid, deletedMessagesVisibility: deletedMessagesVisibility, shouldShowShadowedMessages: shouldShowShadowedMessages)
         ])
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = 1

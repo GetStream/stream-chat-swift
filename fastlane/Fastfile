@@ -8,7 +8,7 @@ require 'xcodeproj'
 import 'Sonarfile'
 import 'Allurefile'
 
-xcode_version = ENV['XCODE_VERSION'] || '16.4'
+xcode_version = ENV['XCODE_VERSION'] || '26.1.1'
 xcode_project = 'StreamChat.xcodeproj'
 sdk_names = ['StreamChat', 'StreamChatUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
@@ -17,7 +17,6 @@ derived_data_path = 'derived_data'
 source_packages_path = 'spm_cache'
 metrics_git = 'git@github.com:GetStream/stream-internal-metrics.git'
 xcmetrics_path = "metrics/#{github_repo.split('/').last}-xcmetrics.json"
-buildcache_xcargs = 'CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++'
 testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/SystemEnvironment+Version.swift')
 is_localhost = !is_ci
@@ -320,8 +319,7 @@ lane :test do |options|
     devices: options[:device],
     number_of_retries: 5,
     build_for_testing: options[:build_for_testing],
-    skip_build: options[:skip_build],
-    xcargs: buildcache_xcargs
+    skip_build: options[:skip_build]
   )
 
   next if options[:build_for_testing]
@@ -336,7 +334,6 @@ lane :test do |options|
     cloned_source_packages_path: source_packages_path,
     devices: options[:device],
     skip_build: true,
-    xcargs: buildcache_xcargs,
     number_of_retries: options[:cron] ? 3 : 2
   }
 
@@ -364,8 +361,7 @@ lane :build_test_app_and_frameworks do
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
     clean: is_localhost,
-    build_for_testing: true,
-    xcargs: buildcache_xcargs
+    build_for_testing: true
   )
 end
 
@@ -384,7 +380,6 @@ lane :xcmetrics do |options|
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
     clean: is_localhost,
-    xcargs: buildcache_xcargs,
     sdk: 'iphoneos',
     skip_detect_devices: true,
     build_for_testing: true
@@ -531,6 +526,32 @@ private_lane :xcmetrics_log_parser do |options|
   metrics
 end
 
+desc 'Runs e2e ui tests using real backend server in Debug config'
+lane :test_e2e do |options|
+  scan_options = {
+    project: xcode_project,
+    scheme: 'StreamChatUITestsApp',
+    testplan: 'Backend',
+    result_bundle: true,
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
+    clean: is_localhost,
+    test_without_building: options[:test_without_building],
+    xcargs: buildcache_xcargs,
+    devices: options[:device],
+    prelaunch_simulator: is_ci,
+    number_of_retries: 3
+  }
+
+  begin
+    scan(scan_options)
+  rescue StandardError
+    failed_tests = retreive_failed_tests
+    UI.important("Re-running #{failed_tests.size} failed tests ⌛️")
+    scan(scan_options.merge(only_testing: failed_tests))
+  end
+end
+
 desc 'Runs e2e ui tests using mock server in Debug config'
 lane :test_e2e_mock do |options|
   next unless is_check_required(sources: sources_matrix[:e2e], force_check: @force_check)
@@ -546,7 +567,6 @@ lane :test_e2e_mock do |options|
     cloned_source_packages_path: source_packages_path,
     clean: is_localhost,
     test_without_building: options[:test_without_building],
-    xcargs: buildcache_xcargs,
     devices: options[:device],
     prelaunch_simulator: is_ci,
     number_of_retries: 3
@@ -615,7 +635,6 @@ lane :test_ui do |options|
     skip_build: options[:skip_build],
     result_bundle: true,
     devices: options[:device],
-    xcargs: buildcache_xcargs,
     fail_build: !record_mode
   )
 
@@ -711,8 +730,7 @@ private_lane :build_example_app do |options|
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
     build_for_testing: true,
-    devices: options[:device],
-    xcargs: buildcache_xcargs
+    devices: options[:device]
   )
 end
 
@@ -728,8 +746,7 @@ lane :spm_integration do
     clean: is_localhost,
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
-    destination: 'generic/platform=iOS Simulator',
-    xcargs: buildcache_xcargs
+    destination: 'generic/platform=iOS Simulator'
   )
 end
 
@@ -879,6 +896,7 @@ private_lane :frameworks_sizes do
 
   gym(
     scheme: 'DemoApp',
+    configuration: 'Release',
     archive_path: archive_dir,
     export_method: 'ad-hoc',
     export_options: 'fastlane/sdk_size_export_options.plist',

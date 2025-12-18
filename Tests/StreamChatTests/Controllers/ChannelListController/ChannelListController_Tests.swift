@@ -1828,6 +1828,23 @@ final class ChannelListController_Tests: XCTestCase {
             expectedResult: [cid1, cid2]
         )
     }
+    
+    func test_filterPredicate_filterTags_returnsExpectedResults() throws {
+        let cid1 = ChannelId.unique
+        let cid2 = ChannelId.unique
+
+        try assertFilterPredicate(
+            .in(.filterTags, values: ["premium"]),
+            channelsInDB: [
+                .dummy(channel: .dummy(cid: cid1, filterTags: ["premium"])),
+                .dummy(channel: .dummy()),
+                .dummy(channel: .dummy()),
+                .dummy(channel: .dummy()),
+                .dummy(channel: .dummy(cid: cid2, filterTags: ["ai", "premium"]))
+            ],
+            expectedResult: [cid1, cid2]
+        )
+    }
 
     // MARK: - Private Helpers
 

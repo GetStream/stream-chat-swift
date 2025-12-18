@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new message is sent to a channel the current user is member of.
-public struct NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
+public final class NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The identifier of a channel a message is sent to.
     public var cid: ChannelId { channel.cid }
 
@@ -20,6 +20,13 @@ public struct NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadCount 
 
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
+
+    init(channel: ChatChannel, message: ChatMessage, createdAt: Date, unreadCount: UnreadCount?) {
+        self.channel = channel
+        self.message = message
+        self.createdAt = createdAt
+        self.unreadCount = unreadCount
+    }
 }
 
 final class NotificationMessageNewEventDTO: EventDTO {
@@ -54,7 +61,7 @@ final class NotificationMessageNewEventDTO: EventDTO {
 }
 
 /// Triggered when all channels the current user is member of are marked as read.
-public struct NotificationMarkAllReadEvent: Event, HasUnreadCount {
+public final class NotificationMarkAllReadEvent: Event, HasUnreadCount {
     /// The current user.
     public let user: ChatUser
 
@@ -63,6 +70,12 @@ public struct NotificationMarkAllReadEvent: Event, HasUnreadCount {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(user: ChatUser, unreadCount: UnreadCount?, createdAt: Date) {
+        self.user = user
+        self.unreadCount = unreadCount
+        self.createdAt = createdAt
+    }
 }
 
 final class NotificationMarkAllReadEventDTO: EventDTO {
@@ -91,7 +104,7 @@ final class NotificationMarkAllReadEventDTO: EventDTO {
 }
 
 /// Triggered when a channel the current user is member of is marked as read.
-public struct NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount {
+public final class NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The current user.
     public let user: ChatUser
 
@@ -106,10 +119,18 @@ public struct NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(user: ChatUser, cid: ChannelId, unreadCount: UnreadCount?, lastReadMessageId: MessageId?, createdAt: Date) {
+        self.user = user
+        self.cid = cid
+        self.unreadCount = unreadCount
+        self.lastReadMessageId = lastReadMessageId
+        self.createdAt = createdAt
+    }
 }
 
 /// Triggered when a channel the current user is member of is marked as unread.
-public struct NotificationMarkUnreadEvent: ChannelSpecificEvent {
+public final class NotificationMarkUnreadEvent: ChannelSpecificEvent {
     /// The current user.
     public let user: ChatUser
 
@@ -133,6 +154,17 @@ public struct NotificationMarkUnreadEvent: ChannelSpecificEvent {
 
     /// The number of unread messages for the channel
     public let unreadMessagesCount: Int
+
+    init(user: ChatUser, cid: ChannelId, createdAt: Date, firstUnreadMessageId: MessageId, lastReadMessageId: MessageId?, lastReadAt: Date, unreadCount: UnreadCount, unreadMessagesCount: Int) {
+        self.user = user
+        self.cid = cid
+        self.createdAt = createdAt
+        self.firstUnreadMessageId = firstUnreadMessageId
+        self.lastReadMessageId = lastReadMessageId
+        self.lastReadAt = lastReadAt
+        self.unreadCount = unreadCount
+        self.unreadMessagesCount = unreadMessagesCount
+    }
 }
 
 final class NotificationMarkReadEventDTO: EventDTO {
@@ -207,12 +239,17 @@ final class NotificationMarkUnreadEventDTO: EventDTO {
 }
 
 /// Triggered when current user mutes/unmutes a user.
-public struct NotificationMutesUpdatedEvent: Event {
+public final class NotificationMutesUpdatedEvent: Event {
     /// The current user.
     public let currentUser: CurrentChatUser
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(currentUser: CurrentChatUser, createdAt: Date) {
+        self.currentUser = currentUser
+        self.createdAt = createdAt
+    }
 }
 
 final class NotificationMutesUpdatedEventDTO: EventDTO {
@@ -237,7 +274,7 @@ final class NotificationMutesUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when the current user is added to the channel member list.
-public struct NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCount {
+public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The identifier of a channel a message is sent to.
     public var cid: ChannelId { channel.cid }
 
@@ -252,6 +289,13 @@ public struct NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnreadCo
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(channel: ChatChannel, unreadCount: UnreadCount?, member: ChatChannelMember, createdAt: Date) {
+        self.channel = channel
+        self.unreadCount = unreadCount
+        self.member = member
+        self.createdAt = createdAt
+    }
 }
 
 final class NotificationAddedToChannelEventDTO: EventDTO {
@@ -287,7 +331,7 @@ final class NotificationAddedToChannelEventDTO: EventDTO {
 }
 
 /// Triggered when the current user is removed from a channel member list.
-public struct NotificationRemovedFromChannelEvent: ChannelSpecificEvent {
+public final class NotificationRemovedFromChannelEvent: ChannelSpecificEvent {
     /// The user who removed the current user from channel members.
     public let user: ChatUser
 
@@ -299,6 +343,13 @@ public struct NotificationRemovedFromChannelEvent: ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(user: ChatUser, cid: ChannelId, member: ChatChannelMember, createdAt: Date) {
+        self.user = user
+        self.cid = cid
+        self.member = member
+        self.createdAt = createdAt
+    }
 }
 
 final class NotificationRemovedFromChannelEventDTO: EventDTO {
@@ -333,12 +384,17 @@ final class NotificationRemovedFromChannelEventDTO: EventDTO {
 }
 
 /// Triggered when current user mutes/unmutes a channel.
-public struct NotificationChannelMutesUpdatedEvent: Event {
+public final class NotificationChannelMutesUpdatedEvent: Event {
     /// The current user.
     public let currentUser: CurrentChatUser
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(currentUser: CurrentChatUser, createdAt: Date) {
+        self.currentUser = currentUser
+        self.createdAt = createdAt
+    }
 }
 
 final class NotificationChannelMutesUpdatedEventDTO: EventDTO {
@@ -363,7 +419,7 @@ final class NotificationChannelMutesUpdatedEventDTO: EventDTO {
 }
 
 /// Triggered when current user is invited to a channel.
-public struct NotificationInvitedEvent: MemberEvent, ChannelSpecificEvent {
+public final class NotificationInvitedEvent: MemberEvent, ChannelSpecificEvent {
     /// The inviter.
     public let user: ChatUser
 
@@ -375,10 +431,12 @@ public struct NotificationInvitedEvent: MemberEvent, ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
-    
-    /// The member's user id.
-    public var memberUserId: UserId {
-        member.id
+
+    init(user: ChatUser, cid: ChannelId, member: ChatChannelMember, createdAt: Date) {
+        self.user = user
+        self.cid = cid
+        self.member = member
+        self.createdAt = createdAt
     }
 }
 
@@ -414,7 +472,7 @@ final class NotificationInvitedEventDTO: EventDTO {
 }
 
 /// Triggered when the current user accepts an invite to a channel.
-public struct NotificationInviteAcceptedEvent: MemberEvent, ChannelSpecificEvent {
+public final class NotificationInviteAcceptedEvent: MemberEvent, ChannelSpecificEvent {
     /// The inviter.
     public let user: ChatUser
 
@@ -429,10 +487,12 @@ public struct NotificationInviteAcceptedEvent: MemberEvent, ChannelSpecificEvent
 
     /// The event timestamp.
     public let createdAt: Date
-    
-    /// The member's user id.
-    public var memberUserId: UserId {
-        member.id
+
+    init(user: ChatUser, channel: ChatChannel, member: ChatChannelMember, createdAt: Date) {
+        self.user = user
+        self.channel = channel
+        self.member = member
+        self.createdAt = createdAt
     }
 }
 
@@ -469,7 +529,7 @@ final class NotificationInviteAcceptedEventDTO: EventDTO {
 }
 
 /// Triggered when the current user rejects an invite to a channel.
-public struct NotificationInviteRejectedEvent: MemberEvent, ChannelSpecificEvent {
+public final class NotificationInviteRejectedEvent: MemberEvent, ChannelSpecificEvent {
     /// The inviter.
     public let user: ChatUser
 
@@ -484,10 +544,12 @@ public struct NotificationInviteRejectedEvent: MemberEvent, ChannelSpecificEvent
 
     /// The event timestamp.
     public let createdAt: Date
-    
-    /// The member's user id.
-    public var memberUserId: UserId {
-        member.id
+
+    init(user: ChatUser, channel: ChatChannel, member: ChatChannelMember, createdAt: Date) {
+        self.user = user
+        self.channel = channel
+        self.member = member
+        self.createdAt = createdAt
     }
 }
 
@@ -524,7 +586,7 @@ final class NotificationInviteRejectedEventDTO: EventDTO {
 }
 
 /// Triggered when a channel is deleted, this event is delivered to all channel members
-public struct NotificationChannelDeletedEvent: ChannelSpecificEvent {
+public final class NotificationChannelDeletedEvent: ChannelSpecificEvent {
     /// The cid of the deleted channel
     public let cid: ChannelId
 
@@ -533,6 +595,12 @@ public struct NotificationChannelDeletedEvent: ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
+
+    init(cid: ChannelId, channel: ChatChannel, createdAt: Date) {
+        self.cid = cid
+        self.channel = channel
+        self.createdAt = createdAt
+    }
 }
 
 final class NotificationChannelDeletedEventDTO: EventDTO {

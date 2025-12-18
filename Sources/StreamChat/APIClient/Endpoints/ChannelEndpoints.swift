@@ -177,12 +177,17 @@ extension Endpoint {
         cid: ChannelId,
         members: [MemberInfoRequest],
         hideHistory: Bool,
+        hideHistoryBefore: Date? = nil,
         messagePayload: MessageRequestBody? = nil
     ) -> Endpoint<EmptyResponse> {
         var body: [String: AnyEncodable] = [
-            "add_members": AnyEncodable(members),
-            "hide_history": AnyEncodable(hideHistory)
+            "add_members": AnyEncodable(members)
         ]
+        if let hideHistoryBefore {
+            body["hide_history_before"] = AnyEncodable(hideHistoryBefore)
+        } else {
+            body["hide_history"] = AnyEncodable(hideHistory)
+        }
         if let messagePayload = messagePayload {
             body["message"] = AnyEncodable(messagePayload)
         }
@@ -269,16 +274,13 @@ extension Endpoint {
         )
     }
 
-    static func markUnread(cid: ChannelId, messageId: MessageId, userId: UserId) -> Endpoint<EmptyResponse> {
+    static func markUnread(cid: ChannelId, payload: MarkUnreadPayload) -> Endpoint<EmptyResponse> {
         .init(
             path: .markChannelUnread(cid.apiPath),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: [
-                "message_id": messageId,
-                "user_id": userId
-            ]
+            body: payload
         )
     }
 

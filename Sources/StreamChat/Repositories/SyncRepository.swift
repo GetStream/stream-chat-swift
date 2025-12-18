@@ -169,7 +169,6 @@ class SyncRepository: @unchecked Sendable {
         let context = SyncContext(lastSyncAt: lastSyncAt)
         var operations: [Operation] = []
         let start = CFAbsoluteTimeGetCurrent()
-        log.info("Starting to refresh offline state", subsystems: .offlineSupport)
 
         //
         // Recovery mode operations (other API requests are paused)
@@ -185,36 +184,46 @@ class SyncRepository: @unchecked Sendable {
         //
         // Background mode operations
         //
-
-        /// 1. Collect all the **active** channel ids
-        operations.append(ActiveChannelIdsOperation(syncRepository: self, context: context))
-
-        // 2. Refresh channel lists
-        operations.append(contentsOf: activeChannelLists.allObjects.map { RefreshChannelListOperation(channelList: $0, context: context) })
-        operations.append(contentsOf: activeChannelListControllers.allObjects.map { RefreshChannelListOperation(controller: $0, context: context) })
-
-        // 3. /sync (for channels what not part of active channel lists)
-        operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
-
-        // 4. Re-watch channels what we were watching before disconnect
-        // Needs to be done explicitly after reconnection, otherwise SDK users need to handle connection changes
-        operations.append(contentsOf: activeChannelControllers.allObjects.map {
-            WatchChannelOperation(controller: $0, context: context, recovery: false)
-        })
-        operations.append(contentsOf: activeChats.allObjects.map {
-            WatchChannelOperation(chat: $0, context: context)
-        })
-        operations.append(contentsOf: activeLivestreamControllers.allObjects.map {
-            WatchChannelOperation(livestreamController: $0, context: context, recovery: false)
-        })
-
-        operations.append(BlockOperation(block: {
-            let duration = CFAbsoluteTimeGetCurrent() - start
-            log.info("Finished refreshing offline state (\(context.synchedChannelIds.count) channels in \(String(format: "%.1f", duration)) seconds)", subsystems: .offlineSupport)
-            DispatchQueue.main.async {
-                completion()
-            }
-        }))
+        if config.isAutomaticSyncOnReconnectEnabled {
+            log.info("Starting to refresh offline state", subsystems: .offlineSupport)
+            
+            /// 1. Collect all the **active** channel ids
+            operations.append(ActiveChannelIdsOperation(syncRepository: self, context: context))
+            
+            // 2. Refresh channel lists
+            operations.append(contentsOf: activeChannelLists.allObjects.map { RefreshChannelListOperation(channelList: $0, context: context) })
+            operations.append(contentsOf: activeChannelListControllers.allObjects.map { RefreshChannelListOperation(controller: $0, context: context) })
+            
+            // 3. /sync (for channels what not part of active channel lists)
+            operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
+            
+            // 4. Re-watch channels what we were watching before disconnect
+            // Needs to be done explicitly after reconnection, otherwise SDK users need to handle connection changes
+            operations.append(contentsOf: activeChannelControllers.allObjects.map {
+                WatchChannelOperation(controller: $0, context: context, recovery: false)
+            })
+            operations.append(contentsOf: activeChats.allObjects.map {
+                WatchChannelOperation(chat: $0, context: context)
+            })
+            operations.append(contentsOf: activeLivestreamControllers.allObjects.map {
+                WatchChannelOperation(livestreamController: $0, context: context, recovery: false)
+            })
+            
+            operations.append(BlockOperation(block: {
+                let duration = CFAbsoluteTimeGetCurrent() - start
+                log.info("Finished refreshing offline state (\(context.synchedChannelIds.count) channels in \(String(format: "%.1f", duration)) seconds)", subsystems: .offlineSupport)
+                DispatchQueue.main.async {
+                    completion()
+                }
+            }))
+        } else {
+            // When automatic sync is disabled, still call completion after recovery operations finish
+            operations.append(BlockOperation(block: {
+                DispatchQueue.main.async {
+                    completion()
+                }
+            }))
+        }
 
         var previousOperation: Operation?
         operations.reversed().forEach { operation in

@@ -121,8 +121,8 @@ final class ChannelRepository_Tests: XCTestCase {
         database.writeSessionCounter = 0
 
         let expectation = self.expectation(description: "markUnread completes")
-        nonisolated(unsafe) var receivedError: Error?
-        repository.markUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique) { result in
+        var receivedError: Error?
+        repository.markUnread(for: cid, userId: userId, from: .messageId(messageId), lastReadMessageId: .unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -130,7 +130,7 @@ final class ChannelRepository_Tests: XCTestCase {
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
         waitForExpectations(timeout: defaultTimeout)
 
-        let referenceEndpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, messageId: messageId, userId: userId)
+        let referenceEndpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, payload: .init(criteria: .messageId(messageId), userId: userId))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
         XCTAssertEqual(database.writeSessionCounter, 1)
         XCTAssertNil(receivedError)
@@ -142,8 +142,8 @@ final class ChannelRepository_Tests: XCTestCase {
         let messageId = MessageId.unique
 
         let expectation = self.expectation(description: "markUnread completes")
-        nonisolated(unsafe) var receivedError: Error?
-        repository.markUnread(for: cid, userId: userId, from: messageId, lastReadMessageId: .unique) { result in
+        var receivedError: Error?
+        repository.markUnread(for: cid, userId: userId, from: .messageId(messageId), lastReadMessageId: .unique) { result in
             receivedError = result.error
             expectation.fulfill()
         }
@@ -153,7 +153,7 @@ final class ChannelRepository_Tests: XCTestCase {
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let referenceEndpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, messageId: messageId, userId: userId)
+        let referenceEndpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, payload: .init(criteria: .messageId(messageId), userId: userId))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
         XCTAssertEqual(database.writeSessionCounter, 0)
         XCTAssertEqual(receivedError, error)

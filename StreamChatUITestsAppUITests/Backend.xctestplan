@@ -1,0 +1,28 @@
+{
+  "configurations" : [
+    {
+      "id" : "2125E461-58C7-480E-9DB9-4CF3B51D3C5C",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "selectedTests" : [
+        "Backend_Tests\/test_message()",
+        "Backend_Tests\/test_reaction()"
+      ],
+      "target" : {
+        "containerPath" : "container:StreamChat.xcodeproj",
+        "identifier" : "A34407DB27D8C3400044F150",
+        "name" : "StreamChatUITestsAppUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

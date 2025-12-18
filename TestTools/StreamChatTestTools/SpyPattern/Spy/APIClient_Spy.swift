@@ -85,7 +85,8 @@ final class APIClient_Spy: APIClient, Spy, @unchecked Sendable {
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         attachmentDownloader: AttachmentDownloader,
-        attachmentUploader: AttachmentUploader
+        attachmentUploader: AttachmentUploader,
+        cdnClient: CDNClient
     ) {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
@@ -101,7 +102,8 @@ final class APIClient_Spy: APIClient, Spy, @unchecked Sendable {
             requestEncoder: requestEncoder,
             requestDecoder: requestDecoder,
             attachmentDownloader: attachmentDownloader,
-            attachmentUploader: attachmentUploader
+            attachmentUploader: attachmentUploader,
+            cdnClient: CDNClient_Spy()
         )
     }
 
@@ -229,7 +231,8 @@ extension APIClient_Spy {
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
             attachmentDownloader: AttachmentDownloader_Spy(),
-            attachmentUploader: AttachmentUploader_Spy()
+            attachmentUploader: AttachmentUploader_Spy(),
+            cdnClient: CDNClient_Spy()
         )
     }
 }
