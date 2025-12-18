@@ -58,7 +58,7 @@ public protocol CDNClient: Sendable {
     ///   - completion: Returns an error in case the delete operation fails.
     func deleteAttachment(
         remoteUrl: URL,
-        completion: @escaping (Error?) -> Void
+        completion: @escaping @Sendable (Error?) -> Void
     )
 }
 
@@ -159,7 +159,7 @@ final class StreamCDNClient: CDNClient, @unchecked Sendable {
 
     func deleteAttachment(
         remoteUrl: URL,
-        completion: @escaping (Error?) -> Void
+        completion: @escaping @Sendable (Error?) -> Void
     ) {
         let isImage = AttachmentFileType(ext: remoteUrl.pathExtension).isImage
         let endpoint = Endpoint<EmptyResponse>

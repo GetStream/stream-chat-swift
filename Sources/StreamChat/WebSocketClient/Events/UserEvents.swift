@@ -148,7 +148,7 @@ public final class UserGloballyBannedEvent: Event {
     }
 }
 
-class UserGloballyBannedEventDTO: EventDTO {
+final class UserGloballyBannedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload
@@ -253,7 +253,7 @@ public final class UserGloballyUnbannedEvent: Event {
     }
 }
 
-class UserGloballyUnbannedEventDTO: EventDTO {
+final class UserGloballyUnbannedEventDTO: EventDTO {
     let user: UserPayload
     let createdAt: Date
     let payload: EventPayload

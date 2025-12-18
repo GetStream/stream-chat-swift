@@ -1361,7 +1361,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     /// - Parameters:
     ///   - timestamp: The timestamp used to find the first message to mark as unread. All messages created after this timestamp will be marked as unread.
     ///   - completion: The completion handler to be called after marking messages as unread. Called with a `Result` containing the updated `ChatChannel` on success, or an `Error` on failure.
-    public func markUnread(from timestamp: Date, completion: ((Result<ChatChannel, Error>) -> Void)? = nil) {
+    public func markUnread(from timestamp: Date, completion: (@Sendable (Result<ChatChannel, Error>) -> Void)? = nil) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.
         guard let channel = channel else {
             let error = ClientError.ChannelNotCreatedYet()

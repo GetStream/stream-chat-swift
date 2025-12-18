@@ -70,7 +70,7 @@ final class StreamAttachmentUploader_Tests: XCTestCase {
 
         let data = try! Data(contentsOf: expectedUrl)
         let mockedAttachment = StreamAttachment.mock(payload: data)
-        let mockProgress: ((Double) -> Void) = {
+        let mockProgress: (@Sendable (Double) -> Void) = {
             XCTAssertEqual($0, expectedProgress)
             expProgressCalled.fulfill()
         }

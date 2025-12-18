@@ -67,7 +67,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         }
         
         let eventDTO = TestEventDTO()
-        var result: Event!
+        nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
@@ -88,7 +88,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         )
         let eventDTO = try! MessageNewEventDTO(from: eventPayload)
         
-        var result: Event!
+        nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
@@ -107,7 +107,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         )
         let eventDTO = try! TypingEventDTO(from: eventPayload)
         
-        var result: Event!
+        nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
@@ -132,7 +132,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         )
         let eventDTO = try! MessageNewEventDTO(from: eventPayload)
         
-        var result: Event!
+        nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
@@ -162,7 +162,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         )
         let eventDTO = try! MessageUpdatedEventDTO(from: eventPayload)
 
-        var result: Event!
+        nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
@@ -191,7 +191,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         )
         let eventDTO = try! MessageDeletedEventDTO(from: eventPayload)
         
-        var result: Event!
+        nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
@@ -218,7 +218,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         )
         let eventDTO = try! MessageDeletedEventDTO(from: eventPayload)
         
-        var result: Event!
+        nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
@@ -249,7 +249,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         )
         let eventDTO = try! ReactionNewEventDTO(from: eventPayload)
         
-        var result: Event!
+        nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
@@ -280,7 +280,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         )
         let eventDTO = try! ReactionUpdatedEventDTO(from: eventPayload)
         
-        var result: Event!
+        nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
@@ -311,7 +311,7 @@ final class ManualEventHandler_Tests: XCTestCase {
         )
         let eventDTO = try! ReactionDeletedEventDTO(from: eventPayload)
         
-        var result: Event!
+        nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }

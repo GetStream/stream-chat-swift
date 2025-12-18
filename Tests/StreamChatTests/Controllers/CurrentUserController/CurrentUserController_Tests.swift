@@ -879,7 +879,7 @@ final class CurrentUserController_Tests: XCTestCase {
         )
 
         // WHEN
-        var completionResult: Result<PushPreference, Error>?
+        nonisolated(unsafe) var completionResult: Result<PushPreference, Error>?
         controller.setPushPreference(level: level) { result in
             completionResult = result
         }
@@ -897,7 +897,7 @@ final class CurrentUserController_Tests: XCTestCase {
         let expectedError = TestError()
 
         // WHEN
-        var completionResult: Result<PushPreference, Error>?
+        nonisolated(unsafe) var completionResult: Result<PushPreference, Error>?
         controller.setPushPreference(level: level) { result in
             completionResult = result
         }
@@ -937,7 +937,7 @@ final class CurrentUserController_Tests: XCTestCase {
         )
 
         // WHEN
-        var completionResult: Result<PushPreference, Error>?
+        nonisolated(unsafe) var completionResult: Result<PushPreference, Error>?
         controller.snoozePushNotifications(until: date) { result in
             completionResult = result
         }
@@ -955,7 +955,7 @@ final class CurrentUserController_Tests: XCTestCase {
         let expectedError = TestError()
 
         // WHEN
-        var completionResult: Result<PushPreference, Error>?
+        nonisolated(unsafe) var completionResult: Result<PushPreference, Error>?
         controller.snoozePushNotifications(until: date) { result in
             completionResult = result
         }

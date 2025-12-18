@@ -117,7 +117,7 @@ class AuthenticationRepository: @unchecked Sendable {
 
     /// Fetches the user saved in the database, if exists
     func fetchCurrentUser() {
-        var currentUserId: UserId?
+        nonisolated(unsafe) var currentUserId: UserId?
 
         databaseContainer.backgroundReadOnlyContext.performAndWait {
             currentUserId = databaseContainer.backgroundReadOnlyContext.currentUser?.user.id

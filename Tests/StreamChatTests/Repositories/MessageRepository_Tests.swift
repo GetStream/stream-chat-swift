@@ -738,7 +738,7 @@ final class MessageRepositoryTests: XCTestCase {
         try database.createChannel(cid: cid)
         
         let expectation = self.expectation(description: "getActiveLiveLocationMessages completes")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         
         repository.getCurrentUserActiveLiveLocationMessages(for: cid) { result in
             if case .failure(let error) = result {
@@ -797,7 +797,7 @@ final class MessageRepositoryTests: XCTestCase {
         )
         
         let expectation = self.expectation(description: "getActiveLiveLocationMessages completes")
-        var receivedMessages: [ChatMessage]?
+        nonisolated(unsafe) var receivedMessages: [ChatMessage]?
         
         repository.getCurrentUserActiveLiveLocationMessages(for: cid) { result in
             if case .success(let messages) = result {

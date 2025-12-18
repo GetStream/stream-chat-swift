@@ -41,7 +41,6 @@ public protocol HasUnreadCount: Event {
 
 /// A protocol for any `MemberEvent` where it has a `member`, and `channel` payload.
 public protocol MemberEvent: Event {
-    var memberUserId: UserId { get }
     var cid: ChannelId { get }
 }
 

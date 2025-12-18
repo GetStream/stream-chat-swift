@@ -51,7 +51,7 @@ final class ChannelWatcherHandler_Tests: XCTestCase {
         // Given
         let channelId = ChannelId.unique
         let expectation = self.expectation(description: "Completion called")
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         
         // When
         handler.attemptToWatch(channelIds: [channelId]) { error in

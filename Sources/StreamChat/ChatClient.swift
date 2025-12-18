@@ -677,8 +677,8 @@ public class ChatClient: @unchecked Sendable {
     ///  - completion: called when the attachment is uploaded.
     public func uploadAttachment(
         localUrl: URL,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<UploadedFile, Error>) -> Void
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
         let uploadingState: AttachmentUploadingState
 
@@ -713,7 +713,7 @@ public class ChatClient: @unchecked Sendable {
     ///   - completion: Returns an error in case the delete operation fails.
     public func deleteAttachment(
         remoteUrl: URL,
-        completion: @escaping (Error?) -> Void
+        completion: @escaping @Sendable (Error?) -> Void
     ) {
         apiClient.cdnClient.deleteAttachment(
             remoteUrl: remoteUrl,

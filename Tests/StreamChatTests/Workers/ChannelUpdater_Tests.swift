@@ -100,7 +100,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate `update(channelQuery:)` call with no pagination
         let query = ChannelQuery(channelPayload: .unique)
         let expectation = self.expectation(description: "Update completes")
-        var updateResult: Result<ChannelPayload, Error>!
+        nonisolated(unsafe) var updateResult: Result<ChannelPayload, Error>!
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
             updateResult = result
             expectation.fulfill()
@@ -1867,7 +1867,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_disableSlowMode_successfulResponse_isPropagatedToCompletion() {
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.disableSlowMode(cid: .unique) { error in
             XCTAssertNil(error)
             completionCalled = true
@@ -1881,7 +1881,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     }
 
     func test_disableSlowMode_errorResponse_isPropagatedToCompletion() {
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         channelUpdater.disableSlowMode(cid: .unique) { completionCalledError = $0 }
 
         let error = TestError()
@@ -2337,7 +2337,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         )
 
         // WHEN
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         channelUpdater.setPushPreference(preference, cid: cid) { result in
             XCTAssertNil(result.error)
             completionCalled = true
@@ -2360,7 +2360,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         )
 
         // WHEN
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         channelUpdater.setPushPreference(preference, cid: cid) { result in
             if case let .failure(error) = result {
                 completionError = error
@@ -2390,7 +2390,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         )
 
         // WHEN
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         channelUpdater.setPushPreference(preference, cid: cid) { result in
             if case let .failure(error) = result {
                 completionError = error

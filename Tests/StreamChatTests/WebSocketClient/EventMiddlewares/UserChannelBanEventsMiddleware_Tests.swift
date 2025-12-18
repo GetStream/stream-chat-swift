@@ -220,7 +220,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         try database.createMessage(id: messageId2, authorId: userId, cid: eventPayload.cid!)
 
         // Verify user and messages exist
-        let userDTO = try XCTUnwrap(database.viewContext.user(id: userId))
+        _ = try XCTUnwrap(database.viewContext.user(id: userId))
         let message1 = try XCTUnwrap(database.viewContext.message(id: messageId1))
         let message2 = try XCTUnwrap(database.viewContext.message(id: messageId2))
         
@@ -267,7 +267,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         try database.createMessage(id: messageId2, authorId: userId, cid: eventPayload.cid!)
 
         // Verify user and messages exist
-        let userDTO = try XCTUnwrap(database.viewContext.user(id: userId))
+        _ = try XCTUnwrap(database.viewContext.user(id: userId))
         let message1 = try XCTUnwrap(database.viewContext.message(id: messageId1))
         let message2 = try XCTUnwrap(database.viewContext.message(id: messageId2))
         

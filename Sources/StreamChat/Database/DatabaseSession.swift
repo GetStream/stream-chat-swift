@@ -8,7 +8,7 @@ extension NSManagedObjectContext: DatabaseSession {
     private static let chatClientConfigKey = "io.getStream.StreamChat.config.key"
 
     var chatClientConfig: ChatClientConfig? {
-        var config: ChatClientConfig?
+        nonisolated(unsafe) var config: ChatClientConfig?
         performAndWait {
             config = userInfo[Self.chatClientConfigKey] as? ChatClientConfig
         }

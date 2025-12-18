@@ -264,8 +264,8 @@ class SyncRepository: @unchecked Sendable {
         )
     }
 
-    private func getUser(completion: @escaping (CurrentUserDTO?) -> Void) {
-        var user: CurrentUserDTO?
+    private func getUser(completion: @escaping @Sendable (CurrentUserDTO?) -> Void) {
+        nonisolated(unsafe) var user: CurrentUserDTO?
         database.backgroundReadOnlyContext.perform {
             user = self.database.backgroundReadOnlyContext.currentUser
             completion(user)

@@ -924,7 +924,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // WHEN
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
         currentUserUpdater.setPushPreference(preference) { result in
             XCTAssertNil(result.error)
             completionCalled = true
@@ -946,7 +946,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // WHEN
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         currentUserUpdater.setPushPreference(preference) { result in
             if case let .failure(error) = result {
                 completionError = error
@@ -975,7 +975,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // WHEN
-        var completionError: Error?
+        nonisolated(unsafe) var completionError: Error?
         currentUserUpdater.setPushPreference(preference) { result in
             if case let .failure(error) = result {
                 completionError = error
@@ -1013,7 +1013,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let deliveredMessages = [
             MessageDeliveryInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
         ]
-        var completionCalled = false
+        nonisolated(unsafe) var completionCalled = false
 
         // WHEN
         currentUserUpdater.markMessagesAsDelivered(deliveredMessages) { error in
@@ -1032,7 +1032,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let deliveredMessages = [
             MessageDeliveryInfo(channelId: .init(type: .messaging, id: "channel1"), messageId: .unique)
         ]
-        var completionCalledError: Error?
+        nonisolated(unsafe) var completionCalledError: Error?
         let error = TestError()
 
         // WHEN

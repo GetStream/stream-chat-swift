@@ -3642,8 +3642,7 @@ final class ChannelController_Tests: XCTestCase {
             members,
             hideHistory: false,
             hideHistoryBefore: hideHistoryBefore
-        ) { [callbackQueueID] error in
-            AssertTestQueue(withId: callbackQueueID)
+        ) { error in
             XCTAssertNil(error)
         }
 
@@ -4269,7 +4268,7 @@ final class ChannelController_Tests: XCTestCase {
     }
 
     func test_markUnread_whenChannelDoesNotExist_messageTimestamp() {
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: Date()) { result in
             receivedError = result.error
@@ -4290,7 +4289,7 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
         }
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: Date()) { result in
             receivedError = result.error
@@ -4315,7 +4314,7 @@ final class ChannelController_Tests: XCTestCase {
         client.setToken(token: .unique(userId: currentUserId))
         try simulateMarkingAsRead(userId: currentUserId)
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: Date()) { result in
             receivedError = result.error
@@ -4336,7 +4335,7 @@ final class ChannelController_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
         }
 
-        var receivedError: Error?
+        nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "Mark Unread completes")
         controller.markUnread(from: Date()) { result in
             receivedError = result.error
@@ -5710,7 +5709,7 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         // WHEN
-        var completionResult: Result<PushPreference, Error>?
+        nonisolated(unsafe) var completionResult: Result<PushPreference, Error>?
         controller.setPushPreference(level: level) { result in
             completionResult = result
         }
@@ -5728,7 +5727,7 @@ final class ChannelController_Tests: XCTestCase {
         let expectedError = TestError()
 
         // WHEN
-        var completionResult: Result<PushPreference, Error>?
+        nonisolated(unsafe) var completionResult: Result<PushPreference, Error>?
         controller.setPushPreference(level: level) { result in
             completionResult = result
         }
@@ -5770,7 +5769,7 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         // WHEN
-        var completionResult: Result<PushPreference, Error>?
+        nonisolated(unsafe) var completionResult: Result<PushPreference, Error>?
         controller.snoozePushNotifications(until: date) { result in
             completionResult = result
         }
@@ -5788,7 +5787,7 @@ final class ChannelController_Tests: XCTestCase {
         let expectedError = TestError()
 
         // WHEN
-        var completionResult: Result<PushPreference, Error>?
+        nonisolated(unsafe) var completionResult: Result<PushPreference, Error>?
         controller.snoozePushNotifications(until: date) { result in
             completionResult = result
         }

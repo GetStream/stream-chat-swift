@@ -73,7 +73,7 @@ class MessageSender: Worker, @unchecked Sendable {
 
     func handleChanges(changes: [ListChange<MessageDTO>]) {
         // Convert changes to a dictionary of requests by their cid
-        var newRequests: [ChannelId: [MessageSendingQueue.SendRequest]] = [:]
+        nonisolated(unsafe) var newRequests: [ChannelId: [MessageSendingQueue.SendRequest]] = [:]
         changes.forEach { change in
             switch change {
             case .insert(let dto, index: _), .update(let dto, index: _):
