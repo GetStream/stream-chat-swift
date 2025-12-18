@@ -6,6 +6,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 - Add `hideHistoryBefore` to add members for configuring the history visibility [#3892](https://github.com/GetStream/stream-chat-swift/pull/3892)
+## StreamChatUI
+### 🐞 Fixed
+- Fix reading messages from muted users [#3896](https://github.com/GetStream/stream-chat-swift/pull/3896)
 
 # [4.94.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.94.0)
 _December 02, 2025_
@@ -257,7 +260,7 @@ _June 17, 2025_
 - Add new `Filter.isNil` to make it easier to query by nil values [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
 - Add Message Reminders [#3623](https://github.com/GetStream/stream-chat-swift/pull/3623)
    - Add `ChatMessageController.createReminder()`
-   - Add `ChatMessageController.updateReminder()` 
+   - Add `ChatMessageController.updateReminder()`
    - Add `ChatMessageController.deleteReminder()`
    - Add `MessageReminderListController` and `MessageReminderListQuery`
 
@@ -394,7 +397,7 @@ _February 27, 2025_
   - Add `CurrentUserController`:
      - `deleteDraft()`
      - `loadDraftMessages()`
-     - `loadMoreDraftMessages()` 
+     - `loadMoreDraftMessages()`
 
 ### 🐞 Fixed
 - Update channel's preview message when coming back to online [#3574](https://github.com/GetStream/stream-chat-swift/pull/3574)
