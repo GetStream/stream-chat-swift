@@ -21,6 +21,4 @@ Pod::Spec.new do |spec|
   spec.source = { git: 'https://github.com/GetStream/stream-chat-swift.git', tag: spec.version.to_s }
   spec.source_files = ['Sources/StreamChat/**/*.swift']
   spec.resource_bundles = { 'StreamChat' => ['Sources/StreamChat/**/*.xcdatamodeld'] }
-
-  spec.pod_target_xcconfig = { 'SWIFT_OPTIMIZATION_LEVEL' => '-Osize' }
 end

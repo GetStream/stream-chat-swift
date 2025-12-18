@@ -3,6 +3,9 @@ name: "Publish new release"
 on:
   workflow_dispatch:
 
+env:
+  XCODE_VERSION: "16.4"
+
 jobs:
   release:
     name: Publish new release
