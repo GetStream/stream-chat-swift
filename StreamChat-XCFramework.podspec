@@ -22,6 +22,4 @@ Pod::Spec.new do |spec|
   spec.preserve_paths = "#{spec.module_name}.xcframework/*"
 
   spec.cocoapods_version = '>= 1.11.0'
-
-  spec.pod_target_xcconfig = { 'SWIFT_OPTIMIZATION_LEVEL' => '-Osize' }
 end
