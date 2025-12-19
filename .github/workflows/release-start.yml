@@ -17,11 +17,20 @@ jobs:
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
+
       - uses: actions/checkout@v4.1.1
         with:
           fetch-depth: 0 # to fetch git tags
+
       - uses: ./.github/actions/ruby-cache
+
       - uses: ./.github/actions/xcode-cache
+
+      - name: Integration Test
+        run: gh workflow run test.yml --repo GetStream/apple-internal-testing-pipeline # reports to @support on failure
+        env:
+          GITHUB_TOKEN: ${{ secrets.DANGER_GITHUB_API_TOKEN }}
+
       - name: Create Release PR
         run: bundle exec fastlane release version:"${{ github.event.inputs.version }}" --verbose
         env:
