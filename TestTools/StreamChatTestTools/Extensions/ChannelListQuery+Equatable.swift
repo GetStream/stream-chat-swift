@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension ChannelListQuery: @retroactive Equatable {
+extension ChannelListQuery: Equatable {
     public static func == (lhs: ChannelListQuery, rhs: ChannelListQuery) -> Bool {
         lhs.filter == rhs.filter &&
             lhs.messagesLimit == rhs.messagesLimit &&

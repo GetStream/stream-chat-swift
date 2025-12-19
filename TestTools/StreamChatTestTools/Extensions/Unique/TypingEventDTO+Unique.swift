@@ -41,7 +41,7 @@ extension TypingEventDTO {
     }
 }
 
-extension TypingEventDTO: @retroactive Equatable {
+extension TypingEventDTO: Equatable {
     public static func == (lhs: TypingEventDTO, rhs: TypingEventDTO) -> Bool {
         lhs.isTyping == rhs.isTyping && lhs.cid == rhs.cid && lhs.user.id == rhs.user.id
     }
