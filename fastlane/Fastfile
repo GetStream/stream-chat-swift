@@ -544,7 +544,6 @@ lane :test_e2e do |options|
     cloned_source_packages_path: source_packages_path,
     clean: is_localhost,
     test_without_building: options[:test_without_building],
-    xcargs: buildcache_xcargs,
     devices: options[:device],
     prelaunch_simulator: is_ci,
     number_of_retries: 3
