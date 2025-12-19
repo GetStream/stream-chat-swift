@@ -74,7 +74,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
             mode: .spokenAudio,
             policy: .default,
             options: [
-                .allowBluetoothHFP
+                .allowBluetoothDevice
             ]
         )
         try activateSession()
@@ -98,7 +98,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
             policy: .default,
             options: [
                 .defaultToSpeaker,
-                .allowBluetoothHFP
+                .allowBluetoothDevice
             ]
         )
         try activateSession()
@@ -172,4 +172,14 @@ final class AudioSessionConfiguratorError: ClientError, @unchecked Sendable {
     ) -> AudioSessionConfiguratorError {
         .init("No available audio inputs found.", file, line)
     }
+}
+
+// MARK: -
+
+extension AVAudioSession.CategoryOptions {
+    #if compiler(>=6.2)
+    static let allowBluetoothDevice: AVAudioSession.CategoryOptions = .allowBluetoothHFP
+    #else
+    static let allowBluetoothDevice: AVAudioSession.CategoryOptions = .allowBluetooth
+    #endif
 }
