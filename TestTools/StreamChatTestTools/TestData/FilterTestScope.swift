@@ -19,7 +19,7 @@ extension FilterKey where Scope == FilterTestScope {
     static var testKeyArrayDouble: FilterKey<Scope, Double> { "test_key_ArrayDouble" }
 }
 
-extension Filter: Equatable {
+extension Filter: @retroactive Equatable {
     public static func == (lhs: Filter<Scope>, rhs: Filter<Scope>) -> Bool {
         String(describing: lhs) == String(describing: rhs)
     }

@@ -16,7 +16,7 @@ class ListResult: DatabaseObserverType {}
 /// A CoreData store observer which immediately reports changes as soon as the store has been changed.
 ///
 /// - Note: Requires the ``DatabaseContainer/stateLayerContext`` which is immediately synchronized.
-final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, DTO: NSManagedObject> {
+final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, DTO: NSManagedObject>: @unchecked Sendable {
     private let changeAggregator: ListChangeAggregator<DTO, Item>
     private let frc: NSFetchedResultsController<DTO>
     let itemCreator: (DTO) throws -> Item
@@ -67,7 +67,7 @@ extension StateLayerDatabaseObserver where ResultType == EntityResult {
     }
     
     var item: Item? {
-        var item: Item?
+        nonisolated(unsafe) var item: Item?
         context.performAndWait {
             item = Self.makeEntity(
                 frc: frc,
@@ -154,7 +154,7 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
     }
 
     var items: [Item] {
-        var collection: [Item]!
+        nonisolated(unsafe) var collection: [Item]!
         context.performAndWait {
             // When we already have loaded items, reuse them, otherwise refetch all
             let items = reuseItems ?? updateItems(nil)

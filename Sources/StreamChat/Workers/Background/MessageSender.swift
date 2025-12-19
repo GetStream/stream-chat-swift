@@ -22,10 +22,23 @@ class MessageSender: Worker, @unchecked Sendable {
     @Atomic private var sendingQueueByCid: [ChannelId: MessageSendingQueue] = [:]
     private var continuations = [MessageId: CheckedContinuation<ChatMessage, Error>]()
     
-    private lazy var observer = StateLayerDatabaseObserver<ListResult, MessageDTO, MessageDTO>(
-        context: self.database.backgroundReadOnlyContext,
-        fetchRequest: MessageDTO
-            .messagesPendingSendFetchRequest()
+    private lazy var observer = StateLayerDatabaseObserver<ListResult, MessageSendingQueue.SendRequest, MessageDTO>(
+        database: database,
+        fetchRequest: MessageDTO.messagesPendingSendFetchRequest(),
+        itemCreator: { dto in
+            let cid: ChannelId = {
+                if let rawValue = dto.channel?.cid, let cid = try? ChannelId(cid: rawValue) {
+                    return cid
+                }
+                return ChannelId(type: .messaging, id: "")
+            }()
+            return .init(
+                messageId: dto.id,
+                cid: cid,
+                createdLocallyAt: (dto.locallyCreatedAt ?? dto.createdAt).bridgeDate
+            )
+        },
+        itemReuseKeyPaths: nil
     )
 
     private let sendingDispatchQueue: DispatchQueue = .init(
@@ -71,26 +84,17 @@ class MessageSender: Worker, @unchecked Sendable {
         }
     }
 
-    func handleChanges(changes: [ListChange<MessageDTO>]) {
+    private func handleChanges(changes: [ListChange<MessageSendingQueue.SendRequest>]) {
         // Convert changes to a dictionary of requests by their cid
         nonisolated(unsafe) var newRequests: [ChannelId: [MessageSendingQueue.SendRequest]] = [:]
         changes.forEach { change in
             switch change {
-            case .insert(let dto, index: _), .update(let dto, index: _):
-                database.backgroundReadOnlyContext.performAndWait {
-                    guard let cid = dto.channel.map({ try? ChannelId(cid: $0.cid) }) else {
-                        log.error("Skipping sending of the message \(dto.id) because the channel info is missing.")
-                        return
-                    }
-                    // Create the array if it didn't exist
-                    guard let cid = cid else { return }
-                    newRequests[cid] = newRequests[cid] ?? []
-                    newRequests[cid]!.append(.init(
-                        messageId: dto.id,
-                        cid: cid,
-                        createdLocallyAt: (dto.locallyCreatedAt ?? dto.createdAt).bridgeDate
-                    ))
-                }
+            case .insert(let request, index: _), .update(let request, index: _):
+                // Create the array if it didn't exist
+                let cid = request.cid
+                guard !cid.id.isEmpty else { return }
+                newRequests[cid] = newRequests[cid] ?? []
+                newRequests[cid]!.append(request)
             case .move, .remove:
                 break
             }

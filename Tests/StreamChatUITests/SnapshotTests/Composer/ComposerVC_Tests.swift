@@ -992,15 +992,6 @@ import XCTest
         XCTAssertEqual(composerVC.maxAttachmentSize(for: .video), expectedValue)
     }
 
-    func test_maxAttachmentSize_whenSizeLimitNotDefined_thenReturnsLimitFromChatClientConfig() {
-        let expectedValue: Int64 = 50 * 1024 * 1024
-        var config = ChatClientConfig(apiKeyString: "sadsad")
-        config.maxAttachmentSize = expectedValue
-        composerVC.channelController = ChatChannelController_Mock.mock(chatClientConfig: config)
-
-        XCTAssertEqual(composerVC.maxAttachmentSize(for: .image), expectedValue)
-    }
-
     // MARK: - audioPlayer
     
     func test_audioPlayer_voiceRecordingAndAttachmentsVCGetTheSameInstance() {

@@ -74,9 +74,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
             mode: .spokenAudio,
             policy: .default,
             options: [
-                // It is deprecated, but for now we need to use it,
-                // since the newer ones are not available in Xcode 15.
-                .allowBluetooth
+                .allowBluetoothHFP
             ]
         )
         try activateSession()
@@ -100,9 +98,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
             policy: .default,
             options: [
                 .defaultToSpeaker,
-                // It is deprecated, but for now we need to use it,
-                // since the newer ones are not available in Xcode 15.
-                .allowBluetooth
+                .allowBluetoothHFP
             ]
         )
         try activateSession()

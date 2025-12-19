@@ -85,7 +85,7 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
     private let waiterTimeout: TimeInterval = 10
     weak var connectionDetailsProviderDelegate: ConnectionDetailsProviderDelegate?
 
-    func encodeRequest<ResponsePayload: Decodable>(
+    func encodeRequest<ResponsePayload: Decodable & Sendable>(
         for endpoint: Endpoint<ResponsePayload>,
         completion: @escaping @Sendable (Result<URLRequest, Error>) -> Void
     ) {

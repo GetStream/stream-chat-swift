@@ -115,30 +115,6 @@ public struct ChatClientConfig: Sendable {
     /// A component that can be used to change an attachment which was successfully uploaded.
     public var uploadedAttachmentPostProcessor: UploadedAttachmentPostProcessor?
 
-    /// Returns max possible attachment size in bytes.
-    /// By default the value is taken from `CDNClient.maxAttachmentSize` type.
-    /// But it can be overridden by setting a value here.
-    @available(*, deprecated, message: "The max attachment size can now be set from the Stream's Dashboard App Settings. It supports setting a size limit per attachment type.")
-    public var maxAttachmentSize: Int64 {
-        // TODO: For v5 the maxAttachmentSize should be responsibility of the UI SDK.
-        // Since this is not even used in the StreamChat LLC SDK.
-        get {
-            if let overrideMaxAttachmentSize = self.overrideMaxAttachmentSize {
-                return overrideMaxAttachmentSize
-            } else if let customCDNClient = customCDNClient {
-                return type(of: customCDNClient).maxAttachmentSize
-            } else {
-                return StreamCDNClient.maxAttachmentSize
-            }
-        }
-        set {
-            overrideMaxAttachmentSize = newValue
-        }
-    }
-
-    /// Used to override the maxAttachmentSize, by setting the value in the config instead of relying on `CDNClient`.
-    private var overrideMaxAttachmentSize: Int64?
-
     /// Returns max number of attachments that can be attached to a message.
     ///
     /// The current limit on the backend is `30`. You can only configure a value below `30`.

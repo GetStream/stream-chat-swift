@@ -71,12 +71,14 @@ open class ZoomAnimator: NSObject, UIViewControllerAnimatedTransitioning {
                 toVC.view.alpha = 1
             })
         }, completion: { _ in
-            fromImageView.isHidden = false
-            self.transitionImageView?.removeFromSuperview()
-            self.transitionImageView = nil
-            backgroundColorView.removeFromSuperview()
-
-            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            StreamConcurrency.onMain {
+                fromImageView.isHidden = false
+                self.transitionImageView?.removeFromSuperview()
+                self.transitionImageView = nil
+                backgroundColorView.removeFromSuperview()
+                
+                transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
+            }
         })
     }
 

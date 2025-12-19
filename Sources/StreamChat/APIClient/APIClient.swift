@@ -82,7 +82,7 @@ class APIClient: @unchecked Sendable {
     /// - Parameters:
     ///   - endpoint: The `Endpoint` used to create the network request.
     ///   - completion: Called when the networking request is finished.
-    func request<Response: Decodable>(
+    func request<Response: Decodable & Sendable>(
         endpoint: Endpoint<Response>,
         completion: @escaping @Sendable (Result<Response, Error>) -> Void
     ) {
@@ -95,7 +95,7 @@ class APIClient: @unchecked Sendable {
     /// - Parameters:
     ///   - endpoint: The `Endpoint` used to create the network request.
     ///   - completion: Called when the networking request is finished.
-    func recoveryRequest<Response: Decodable>(
+    func recoveryRequest<Response: Decodable & Sendable>(
         endpoint: Endpoint<Response>,
         completion: @escaping @Sendable (Result<Response, Error>) -> Void
     ) {
@@ -113,7 +113,7 @@ class APIClient: @unchecked Sendable {
     /// - Parameters:
     ///   - endpoint: The `Endpoint` used to create the network request.
     ///   - completion: Called when the networking request is finished.
-    func unmanagedRequest<Response: Decodable>(
+    func unmanagedRequest<Response: Decodable & Sendable>(
         endpoint: Endpoint<Response>,
         completion: @escaping @Sendable (Result<Response, Error>) -> Void
     ) {
@@ -122,7 +122,7 @@ class APIClient: @unchecked Sendable {
         )
     }
 
-    private func operation<Response: Decodable>(
+    private func operation<Response: Decodable & Sendable>(
         endpoint: Endpoint<Response>,
         isRecoveryOperation: Bool,
         completion: @escaping @Sendable (Result<Response, Error>) -> Void
@@ -192,7 +192,7 @@ class APIClient: @unchecked Sendable {
         }
     }
 
-    private func unmanagedOperation<Response: Decodable>(
+    private func unmanagedOperation<Response: Decodable & Sendable>(
         endpoint: Endpoint<Response>,
         completion: @escaping @Sendable (Result<Response, Error>) -> Void
     ) -> AsyncOperation {
@@ -222,7 +222,7 @@ class APIClient: @unchecked Sendable {
     /// - Parameters:
     ///   - endpoint: The `Endpoint` used to create the network request.
     ///   - completion: Called when the networking request is finished.
-    private func executeRequest<Response: Decodable>(
+    private func executeRequest<Response: Decodable & Sendable>(
         endpoint: Endpoint<Response>,
         completion: @escaping @Sendable (Result<Response, Error>) -> Void
     ) {

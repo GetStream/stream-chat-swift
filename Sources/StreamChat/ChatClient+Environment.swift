@@ -110,7 +110,7 @@ extension ChatClient {
             }
         }
 
-        var timerType: TimerScheduling.Type = DefaultTimer.self
+        nonisolated(unsafe) var timerType: TimerScheduling.Type = DefaultTimer.self
 
         var tokenExpirationRetryStrategy: RetryStrategy = DefaultRetryStrategy()
 

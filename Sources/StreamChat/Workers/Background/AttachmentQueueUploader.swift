@@ -22,7 +22,7 @@ import Foundation
 class AttachmentQueueUploader: Worker, @unchecked Sendable {
     @Atomic private var pendingAttachmentIDs: Set<AttachmentId> = []
 
-    private let observer: StateLayerDatabaseObserver<ListResult, AttachmentDTO, AttachmentDTO>
+    private let observer: StateLayerDatabaseObserver<ListResult, AttachmentId, AttachmentDTO>
     private let attachmentPostProcessor: UploadedAttachmentPostProcessor?
     private let attachmentUpdater = AnyAttachmentUpdater()
     private let attachmentStorage = AttachmentStorage()
@@ -35,8 +35,10 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
 
     init(database: DatabaseContainer, apiClient: APIClient, attachmentPostProcessor: UploadedAttachmentPostProcessor?) {
         observer = StateLayerDatabaseObserver(
-            context: database.backgroundReadOnlyContext,
-            fetchRequest: AttachmentDTO.pendingUploadFetchRequest()
+            database: database,
+            fetchRequest: AttachmentDTO.pendingUploadFetchRequest(),
+            itemCreator: { $0.attachmentID ?? AttachmentId(cid: ChannelId(type: .messaging, id: ""), messageId: "", index: -1) },
+            itemReuseKeyPaths: nil
         )
         
         self.attachmentPostProcessor = attachmentPostProcessor
@@ -67,7 +69,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
         }
     }
 
-    private func handleChanges(changes: [ListChange<AttachmentDTO>]) {
+    private func handleChanges(changes: [ListChange<AttachmentId>]) {
         guard !changes.isEmpty else { return }
 
         // Only start uploading attachment when inserted and it is present in pendingAttachmentIds
@@ -282,12 +284,12 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
     }
 }
 
-private extension Array where Element == ListChange<AttachmentDTO> {
+private extension Array where Element == ListChange<AttachmentId> {
     var attachmentIDs: [AttachmentId] {
         compactMap {
             switch $0 {
-            case let .insert(dto, _), let .update(dto, _):
-                return dto.attachmentID
+            case let .insert(id, _), let .update(id, _):
+                return id.messageId.isEmpty ? nil : id
             case .move, .remove:
                 return nil
             }

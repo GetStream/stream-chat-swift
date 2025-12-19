@@ -58,18 +58,16 @@ extension IdentifiablePayload {
             guard let modelClass = modelClass, let keyPath = modelClass.idKeyPath else { continue }
 
             let values = Array(identifiableValues)
-            var results: [NSManagedObject]?
+            nonisolated(unsafe) var modelMapping: [DatabaseId: NSManagedObjectID] = [:]
             context.performAndWait {
-                results = modelClass.batchFetch(keyPath: keyPath, equalTo: values, context: context)
-            }
-            guard let results = results else { continue }
-
-            var modelMapping: [DatabaseId: NSManagedObjectID] = [:]
-            results.forEach {
-                if let id = modelClass.id(for: $0) {
-                    modelMapping[id] = $0.objectID
+                let results = modelClass.batchFetch(keyPath: keyPath, equalTo: values, context: context)
+                results.forEach {
+                    if let id = modelClass.id(for: $0) {
+                        modelMapping[id] = $0.objectID
+                    }
                 }
             }
+
             cache[modelClass.className] = modelMapping
         }
 

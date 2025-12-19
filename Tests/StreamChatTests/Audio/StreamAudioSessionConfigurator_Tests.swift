@@ -36,7 +36,7 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithCategory, .playAndRecord)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithMode, .spokenAudio)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithPolicy, .default)
-        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [.allowBluetooth])
+        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [.allowBluetoothHFP])
     }
 
     func test_activateRecordingSession_setActiveFailed() {
@@ -105,7 +105,7 @@ final class StreamAudioSessionConfigurator_Tests: XCTestCase {
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithCategory, .playAndRecord)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithMode, .default)
         XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithPolicy, .default)
-        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [.defaultToSpeaker, .allowBluetooth])
+        XCTAssertEqual(stubAudioSession.setCategoryWasCalledWithOptions, [.defaultToSpeaker, .allowBluetoothHFP])
     }
 
     func test_activatePlaybackSession_setActiveFailed() {
