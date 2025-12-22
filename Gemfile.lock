@@ -248,9 +248,7 @@ GEM
     nanaimo (0.4.0)
     nap (1.1.0)
     naturally (2.3.0)
-    net-http-persistent (4.0.6)
-      connection_pool (~> 2.2, >= 2.2.4)
-    nio4r (2.7.4)
+    nio4r (2.7.5)
     nkf (0.2.0)
     nokogiri (1.18.9)
       mini_portile2 (~> 2.8.2)
@@ -273,18 +271,18 @@ GEM
       method_source (~> 1.0)
     pstore (0.2.0)
     public_suffix (4.0.7)
-    puma (6.6.1)
+    puma (7.1.0)
       nio4r (~> 2.0)
     racc (1.8.1)
-    rack (3.2.3)
-    rack-protection (4.2.0)
+    rack (3.2.4)
+    rack-protection (4.2.1)
       base64 (>= 0.1.0)
       logger (>= 1.6.0)
       rack (>= 3.0.0, < 4)
     rack-session (2.1.1)
       base64 (>= 0.1.0)
       rack (>= 3.0.0)
-    rackup (2.2.1)
+    rackup (2.3.1)
       rack (>= 3)
     rainbow (3.1.1)
     rake (13.3.0)
@@ -331,11 +329,11 @@ GEM
     simctl (1.6.10)
       CFPropertyList
       naturally
-    sinatra (4.2.0)
+    sinatra (4.2.1)
       logger (>= 1.6.0)
       mustermann (~> 3.0)
       rack (>= 3.0.0, < 4)
-      rack-protection (= 4.2.0)
+      rack-protection (= 4.2.1)
       rack-session (>= 2.0.0, < 3)
       tilt (~> 2.0)
     slather (2.8.5)
@@ -344,14 +342,6 @@ GEM
       clamp (~> 1.3)
       nokogiri (>= 1.14.3)
       xcodeproj (~> 1.27)
-    sorbet-runtime (0.5.12368)
-    stream-chat-ruby (3.0.0)
-      faraday
-      faraday-multipart
-      faraday-net_http_persistent
-      jwt
-      net-http-persistent
-      sorbet-runtime
     sysrandom (1.0.5)
     terminal-notifier (2.0.0)
     terminal-table (3.0.2)
@@ -411,7 +401,6 @@ DEPENDENCIES
   rubocop-require_tools
   sinatra
   slather
-  stream-chat-ruby (= 3.0.0)
   xctest_list
 
 BUNDLED WITH

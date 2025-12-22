@@ -4,24 +4,8 @@
 
 import XCTest
 
+// NOTE: Attachments tests used to freeze the test app on iOS > 18"
 final class Attachments_Tests: StreamTestCase {
-    override func setUpWithError() throws {
-        try XCTSkipIf(
-            ProcessInfo().operatingSystemVersion.majorVersion >= 18,
-            "Attachments tests freeze the test app on iOS > 18"
-        )
-        
-        try super.setUpWithError()
-        addTags([.coreFeatures])
-        assertMockServer()
-    }
-    
-    override func tearDownWithError() throws {
-        if ProcessInfo().operatingSystemVersion.majorVersion < 18 {
-            try super.tearDownWithError()
-        }
-    }
-
     func test_uploadImage() throws {
         linkToScenario(withId: 28)
 
@@ -61,6 +45,20 @@ final class Attachments_Tests: StreamTestCase {
         }
         THEN("user can see uploaded video") {
             userRobot.assertVideo(isPresent: true)
+        }
+    }
+    
+    func test_participantUploadsFile() throws {
+        linkToScenario(withId: 33)
+
+        GIVEN("user opens the channel") {
+            userRobot.login().openChannel()
+        }
+        WHEN("participant uploads a file") {
+            participantRobot.uploadAttachment(type: .file)
+        }
+        THEN("user can see uploaded file") {
+            userRobot.assertFile(isPresent: true)
         }
     }
 

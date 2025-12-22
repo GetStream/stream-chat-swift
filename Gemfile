@@ -25,7 +25,6 @@ group :sinatra_dependencies do
   gem 'faye-websocket'
   gem 'puma'
   gem 'rackup'
-  gem 'stream-chat-ruby', '3.0.0'
 end
 
 group :rubocop_dependencies do
