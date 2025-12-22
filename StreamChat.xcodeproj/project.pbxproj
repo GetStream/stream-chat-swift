@@ -14131,7 +14131,6 @@
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
-				SWIFT_OPTIMIZATION_LEVEL = "-Osize";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;

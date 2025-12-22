@@ -38,10 +38,7 @@ let package = Package(
                 .product(name: "StreamCore", package: "stream-core-swift")
             ],
             exclude: ["Info.plist"],
-            resources: [.copy("Database/StreamChatModel.xcdatamodeld")],
-            swiftSettings: [
-                .unsafeFlags(["-Osize"], .when(configuration: .release))
-            ]
+            resources: [.copy("Database/StreamChatModel.xcdatamodeld")]
         ),
         .target(
             name: "StreamChatUI",
