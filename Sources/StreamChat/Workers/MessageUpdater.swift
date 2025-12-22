@@ -1115,7 +1115,7 @@ private extension MessageUpdater {
         }
     }
 
-    func checkMessageExistsLocally(_ messageId: MessageId, completion: @escaping (Bool) -> Void) {
+    func checkMessageExistsLocally(_ messageId: MessageId, completion: @escaping @Sendable (Bool) -> Void) {
         let context = database.backgroundReadOnlyContext
         context.perform {
             let exists = context.message(id: messageId) != nil

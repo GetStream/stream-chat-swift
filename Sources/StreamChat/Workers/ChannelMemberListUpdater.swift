@@ -89,7 +89,7 @@ private extension ChannelMemberListUpdater {
         }
     }
 
-    func checkChannelExistsLocally(with cid: ChannelId, completion: @escaping (Bool) -> Void) {
+    func checkChannelExistsLocally(with cid: ChannelId, completion: @escaping @Sendable (Bool) -> Void) {
         let context = database.backgroundReadOnlyContext
         context.perform {
             let exists = context.channel(cid: cid) != nil

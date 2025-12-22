@@ -595,7 +595,6 @@ public extension ChatMessage {
 }
 
 extension ChatMessage: Hashable {
-    // swiftlint:disable cyclomatic_complexity
     public static func == (lhs: Self, rhs: Self) -> Bool {
         guard lhs.id == rhs.id else { return false }
         guard lhs.localState == rhs.localState else { return false }
@@ -628,8 +627,6 @@ extension ChatMessage: Hashable {
         guard lhs.reminder == rhs.reminder else { return false }
         return true
     }
-
-    // swiftlint:enable cyclomatic_complexity
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)

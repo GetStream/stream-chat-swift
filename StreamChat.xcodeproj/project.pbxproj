@@ -431,10 +431,10 @@
 		4FC7445B2D8D9A2600E314EB /* ImageProcessors+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC743D92D8D9A2600E314EB /* ImageProcessors+Resize.swift */; };
 		4FC7445C2D8D9A2600E314EB /* ImageDecompression.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC743D02D8D9A2600E314EB /* ImageDecompression.swift */; };
 		4FC7445D2D8D9A2600E314EB /* Graphics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC743BC2D8D9A2600E314EB /* Graphics.swift */; };
-		4FCB7DF52EB229BB00908631 /* StreamCore+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCB7DF42EB229B400908631 /* StreamCore+Extensions.swift */; };
-		4FCB7DF62EB229BB00908631 /* StreamCore+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCB7DF42EB229B400908631 /* StreamCore+Extensions.swift */; };
 		4FC7B3F02ED86E3000246903 /* MarkUnreadPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC7B3EF2ED86E1E00246903 /* MarkUnreadPayload.swift */; };
 		4FC7B3F12ED86E3000246903 /* MarkUnreadPayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FC7B3EF2ED86E1E00246903 /* MarkUnreadPayload.swift */; };
+		4FCB7DF52EB229BB00908631 /* StreamCore+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCB7DF42EB229B400908631 /* StreamCore+Extensions.swift */; };
+		4FCB7DF62EB229BB00908631 /* StreamCore+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCB7DF42EB229B400908631 /* StreamCore+Extensions.swift */; };
 		4FCCACE42BC939EB009D23E1 /* MemberList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FCCACE32BC939EB009D23E1 /* MemberList_Tests.swift */; };
 		4FD2BE502B99F68300FFC6F2 /* ReadStateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE4F2B99F68300FFC6F2 /* ReadStateHandler.swift */; };
 		4FD2BE512B99F68300FFC6F2 /* ReadStateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4FD2BE4F2B99F68300FFC6F2 /* ReadStateHandler.swift */; };
@@ -912,7 +912,6 @@
 		84F373EC280D803E0081E8BA /* TestChannelObserver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F373EB280D803E0081E8BA /* TestChannelObserver.swift */; };
 		84F373EE280D95690081E8BA /* ChatMessageDeliveryStatusCheckmarkView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F373ED280D95690081E8BA /* ChatMessageDeliveryStatusCheckmarkView_Tests.swift */; };
 		84F373F0280D95990081E8BA /* ChatMessageDeliveryStatusView_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F373EF280D95990081E8BA /* ChatMessageDeliveryStatusView_Tests.swift */; };
-		84F61270268B415C00DDF6EE /* ChatClientConfig_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F6126F268B415C00DDF6EE /* ChatClientConfig_Tests.swift */; };
 		84FD350827FD8BE300D68D85 /* ChatChannel_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FD350727FD8BE300D68D85 /* ChatChannel_Tests.swift */; };
 		8800A26F258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A26E258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift */; };
 		8800A28C258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8800A28B258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift */; };
@@ -3347,8 +3346,8 @@
 		4FC743E72D8D9A2600E314EB /* ImageTask.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageTask.swift; sourceTree = "<group>"; };
 		4FC743E92D8D9A2600E314EB /* ImageLoadingOptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageLoadingOptions.swift; sourceTree = "<group>"; };
 		4FC743EA2D8D9A2600E314EB /* ImageViewExtensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageViewExtensions.swift; sourceTree = "<group>"; };
-		4FCB7DF42EB229B400908631 /* StreamCore+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StreamCore+Extensions.swift"; sourceTree = "<group>"; };
 		4FC7B3EF2ED86E1E00246903 /* MarkUnreadPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkUnreadPayload.swift; sourceTree = "<group>"; };
+		4FCB7DF42EB229B400908631 /* StreamCore+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "StreamCore+Extensions.swift"; sourceTree = "<group>"; };
 		4FCCACE32BC939EB009D23E1 /* MemberList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemberList_Tests.swift; sourceTree = "<group>"; };
 		4FD2BE4F2B99F68300FFC6F2 /* ReadStateHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReadStateHandler.swift; sourceTree = "<group>"; };
 		4FD2BE552B9AF8A300FFC6F2 /* ChannelList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChannelList.swift; sourceTree = "<group>"; };
@@ -3821,7 +3820,6 @@
 		84F373EB280D803E0081E8BA /* TestChannelObserver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestChannelObserver.swift; sourceTree = "<group>"; };
 		84F373ED280D95690081E8BA /* ChatMessageDeliveryStatusCheckmarkView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageDeliveryStatusCheckmarkView_Tests.swift; sourceTree = "<group>"; };
 		84F373EF280D95990081E8BA /* ChatMessageDeliveryStatusView_Tests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatMessageDeliveryStatusView_Tests.swift; sourceTree = "<group>"; };
-		84F6126F268B415C00DDF6EE /* ChatClientConfig_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatClientConfig_Tests.swift; sourceTree = "<group>"; };
 		84FD350727FD8BE300D68D85 /* ChatChannel_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannel_Tests.swift; sourceTree = "<group>"; };
 		8800A26E258A04D5006D64C4 /* ChatMessageAttachmentPreviewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageAttachmentPreviewVC.swift; sourceTree = "<group>"; };
 		8800A28B258A1924006D64C4 /* ChatMessageFileAttachmentListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatMessageFileAttachmentListView.swift; sourceTree = "<group>"; };
@@ -7154,7 +7152,6 @@
 			isa = PBXGroup;
 			children = (
 				AD7977B92936D9450008B5FB /* Token_Tests.swift */,
-				84F6126F268B415C00DDF6EE /* ChatClientConfig_Tests.swift */,
 			);
 			path = Config;
 			sourceTree = "<group>";
@@ -12159,7 +12156,6 @@
 				7931818E24FD4275002F8C84 /* ChannelListController+Combine_Tests.swift in Sources */,
 				88EA9B0625472430007EE76B /* MessageReactionPayload_Tests.swift in Sources */,
 				79B8B649285B5ADD0059FB2D /* ChannelListSortingKey_Tests.swift in Sources */,
-				84F61270268B415C00DDF6EE /* ChatClientConfig_Tests.swift in Sources */,
 				79877A292498E51500015F8B /* ChannelDTO_Tests.swift in Sources */,
 				79D6CE1725F7C02400BE2EEC /* ChannelWatcherListQuery_Tests.swift in Sources */,
 				40789D4229F6B3250018C2BB /* VoiceRecordingAttachmentPayload_Tests.swift in Sources */,
@@ -14129,6 +14125,7 @@
 				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos macosx";
+				SWIFT_OPTIMIZATION_LEVEL = "-Osize";
 				SWIFT_STRICT_CONCURRENCY = complete;
 				SWIFT_VERSION = 6.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

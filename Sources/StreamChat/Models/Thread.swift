@@ -38,3 +38,23 @@ public struct ChatThread: Identifiable, Sendable {
     /// The custom data of the thread.
     public let extraData: [String: RawJSON]
 }
+
+extension ChatThread: Hashable {
+    public static func == (lhs: ChatThread, rhs: ChatThread) -> Bool {
+        lhs.parentMessageId == rhs.parentMessageId &&
+            lhs.updatedAt == rhs.updatedAt &&
+            lhs.title == rhs.title &&
+            lhs.reads == rhs.reads &&
+            lhs.latestReplies == rhs.latestReplies &&
+            lhs.lastMessageAt == rhs.lastMessageAt &&
+            lhs.channel == rhs.channel &&
+            lhs.participantCount == rhs.participantCount &&
+            lhs.replyCount == rhs.replyCount &&
+            lhs.threadParticipants == rhs.threadParticipants &&
+            lhs.extraData == rhs.extraData
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(parentMessageId)
+    }
+}

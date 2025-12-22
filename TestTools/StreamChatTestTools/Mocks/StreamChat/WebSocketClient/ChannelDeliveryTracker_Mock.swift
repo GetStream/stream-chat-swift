@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 
 /// A mock implementation of `ChannelDeliveryTracker` for testing purposes.
-final class ChannelDeliveryTracker_Mock: ChannelDeliveryTracker {
+final class ChannelDeliveryTracker_Mock: ChannelDeliveryTracker, @unchecked Sendable {
     init() {
         super.init(
             currentUserUpdater: CurrentUserUpdater_Mock(

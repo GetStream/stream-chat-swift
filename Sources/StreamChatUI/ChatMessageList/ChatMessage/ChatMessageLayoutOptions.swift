@@ -7,7 +7,7 @@ import Foundation
 /// A typealias of `Set<ChatMessageLayoutOption>` to make the API similar of an `OptionSet`.
 public typealias ChatMessageLayoutOptions = Set<ChatMessageLayoutOption>
 
-extension ChatMessageLayoutOptions: Identifiable {
+extension ChatMessageLayoutOptions: @retroactive Identifiable {
     /// The id is composed by the raw values of each option joined by "-".
     /// This id is then used to compute the reuse identifier of each message cell.
     public var id: String {

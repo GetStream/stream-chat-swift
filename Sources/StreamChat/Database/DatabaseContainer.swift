@@ -270,10 +270,10 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         }
     }
     
-    func readAndWait<T>(_ actions: (DatabaseSession) throws -> T) throws -> T {
+    func readAndWait<T>(_ actions: @Sendable (DatabaseSession) throws -> T) throws -> T where T: Sendable {
         let context = backgroundReadOnlyContext
-        var result: T?
-        var readError: Error?
+        nonisolated(unsafe) var result: T?
+        nonisolated(unsafe) var readError: Error?
         context.performAndWait {
             do {
                 result = try actions(context)
@@ -289,7 +289,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
     }
 
     /// Removes all data from the local storage.
-    func removeAllData(completion: ((Error?) -> Void)? = nil) {
+    func removeAllData(completion: (@Sendable (Error?) -> Void)? = nil) {
         let entityNames = managedObjectModel.entities.compactMap(\.name)
         writableContext.perform { [weak self] in
             let requests = entityNames
@@ -487,8 +487,9 @@ extension NSManagedObjectContext {
                 queue: nil
             ) { [weak self] notification in
                 guard let self else { return }
+                nonisolated(unsafe) let unsafeNotification = notification
                 self.performAndWait {
-                    self.mergeChanges(fromContextDidSave: notification)
+                    self.mergeChanges(fromContextDidSave: unsafeNotification)
                     // Keep the state clean after merging changes
                     guard self.hasChanges else { return }
                     self.perform {

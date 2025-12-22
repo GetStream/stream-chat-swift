@@ -105,7 +105,7 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy, @unchecked Sen
         }
     }
 
-    override public func removeAllData(completion: ((Error?) -> Void)? = nil) {
+    override public func removeAllData(completion: (@Sendable (Error?) -> Void)? = nil) {
         removeAllData_called = true
 
         if let error = removeAllData_errorResponse {

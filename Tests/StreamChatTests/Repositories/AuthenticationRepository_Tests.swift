@@ -1179,7 +1179,7 @@ private class AuthenticationRepositoryDelegateMock: AuthenticationRepositoryDele
     }
 }
 
-extension UserInfo: Equatable {}
+extension UserInfo: @retroactive Equatable {}
 
 public func == (lhs: UserInfo, rhs: UserInfo) -> Bool {
     lhs.id == rhs.id && lhs.name == rhs.name

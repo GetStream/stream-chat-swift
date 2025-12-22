@@ -9,7 +9,7 @@ import UIKit.UIApplication
 #endif
 
 // Internal memory-cache implementation.
-final class NukeCache<Key: Hashable, Value>: @unchecked Sendable {
+final class NukeCache<Key: Hashable & Sendable, Value>: @unchecked Sendable {
     // Can't use `NSCache` because it is not LRU
 
     struct Configuration {

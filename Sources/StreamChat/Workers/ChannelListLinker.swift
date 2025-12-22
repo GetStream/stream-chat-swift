@@ -63,7 +63,7 @@ final class ChannelListLinker: Sendable {
                 transform: { $0 as? ChannelVisibleEvent },
                 callback: { [weak self, databaseContainer] event in
                     let context = databaseContainer.backgroundReadOnlyContext
-                    context.perform {
+                    context.perform { [self] in
                         guard let channel = try? context.channel(cid: event.cid)?.asModel() else { return }
                         self?.linkChannelIfNeeded(channel)
                     }
@@ -74,7 +74,7 @@ final class ChannelListLinker: Sendable {
 
     private func isInChannelList(
         _ channel: ChatChannel,
-        completion: @escaping (_ isPresent: Bool, _ belongsToOtherQuery: Bool) -> Void
+        completion: @escaping @Sendable (_ isPresent: Bool, _ belongsToOtherQuery: Bool) -> Void
     ) {
         let context = databaseContainer.backgroundReadOnlyContext
         context.performAndWait { [weak self] in

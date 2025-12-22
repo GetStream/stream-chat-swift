@@ -1506,9 +1506,13 @@ open class ComposerVC: _ViewController,
         }
 
         // If no value is set in the dashboard, the size_limit will be nil or zero,
-        // so in this case we fallback to the deprecated value.
+        // so in this case we fallback to the default value.
         guard let maxSize = maxAttachmentSize, maxSize > 0 else {
-            return client.config.maxAttachmentSize
+            if let customCDNClient = client.config.customCDNClient {
+                return type(of: customCDNClient).maxAttachmentSize
+            } else {
+                return AttachmentValidationError.fileSizeMaxLimitFallback
+            }
         }
 
         return maxSize

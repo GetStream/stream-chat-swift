@@ -394,7 +394,7 @@ class MessagesPaginationStateHandlerTests: XCTestCase {
     }
 }
 
-extension MessagesPaginationState: Equatable {
+extension MessagesPaginationState: @retroactive Equatable {
     public static func == (lhs: MessagesPaginationState, rhs: MessagesPaginationState) -> Bool {
         lhs.hasLoadedAllNextMessages == rhs.hasLoadedAllNextMessages &&
             lhs.hasLoadedAllPreviousMessages == rhs.hasLoadedAllPreviousMessages &&

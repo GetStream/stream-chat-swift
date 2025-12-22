@@ -74,9 +74,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
             mode: .spokenAudio,
             policy: .default,
             options: [
-                // It is deprecated, but for now we need to use it,
-                // since the newer ones are not available in Xcode 15.
-                .allowBluetooth
+                .allowBluetoothDevice
             ]
         )
         try activateSession()
@@ -100,9 +98,7 @@ open class StreamAudioSessionConfigurator: AudioSessionConfiguring, @unchecked S
             policy: .default,
             options: [
                 .defaultToSpeaker,
-                // It is deprecated, but for now we need to use it,
-                // since the newer ones are not available in Xcode 15.
-                .allowBluetooth
+                .allowBluetoothDevice
             ]
         )
         try activateSession()
@@ -176,4 +172,14 @@ final class AudioSessionConfiguratorError: ClientError, @unchecked Sendable {
     ) -> AudioSessionConfiguratorError {
         .init("No available audio inputs found.", file, line)
     }
+}
+
+// MARK: -
+
+extension AVAudioSession.CategoryOptions {
+    #if compiler(>=6.2)
+    static let allowBluetoothDevice: AVAudioSession.CategoryOptions = .allowBluetoothHFP
+    #else
+    static let allowBluetoothDevice: AVAudioSession.CategoryOptions = .allowBluetooth
+    #endif
 }

@@ -364,31 +364,12 @@ open class ChatThreadListVC:
     }
 }
 
-extension ChatThread: Differentiable, Equatable, Hashable {
-    public static func == (lhs: ChatThread, rhs: ChatThread) -> Bool {
-        lhs.parentMessageId == rhs.parentMessageId &&
-            lhs.updatedAt == rhs.updatedAt &&
-            lhs.parentMessage.isContentEqual(to: rhs.parentMessage) &&
-            lhs.title == rhs.title &&
-            lhs.reads == rhs.reads &&
-            lhs.latestReplies == rhs.latestReplies &&
-            lhs.lastMessageAt == rhs.lastMessageAt &&
-            lhs.channel == rhs.channel &&
-            lhs.participantCount == rhs.participantCount &&
-            lhs.replyCount == rhs.replyCount &&
-            lhs.threadParticipants == rhs.threadParticipants &&
-            lhs.extraData == rhs.extraData
-    }
-    
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(parentMessageId)
-    }
-
+extension ChatThread: Differentiable {
     public var differenceIdentifier: Int {
         hashValue
     }
 
     public func isContentEqual(to source: ChatThread) -> Bool {
-        self == source
+        self == source && parentMessage.isContentEqual(to: source.parentMessage)
     }
 }

@@ -653,7 +653,7 @@ private class TestDelegate: QueueAwareDelegate, ChatUserSearchControllerDelegate
     }
 }
 
-extension UserListQuery: Equatable {
+extension UserListQuery: @retroactive Equatable {
     public static func == (lhs: UserListQuery, rhs: UserListQuery) -> Bool {
         lhs.filter == rhs.filter
             && lhs.sort == rhs.sort
