@@ -1,34 +1,24 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "Nuke",
-        "repositoryURL": "https://github.com/kean/Nuke.git",
-        "state": {
-          "branch": null,
-          "revision": "961597d324949c7003c77d602bfc4d5519b47e81",
-          "version": "9.2.4"
-        }
-      },
-      {
-        "package": "Starscream",
-        "repositoryURL": "https://github.com/daltoniam/Starscream.git",
-        "state": {
-          "branch": null,
-          "revision": "df8d82047f6654d8e4b655d1b1525c64e1059d21",
-          "version": "4.0.4"
-        }
-      },
-      {
-        "package": "SwiftyGif",
-        "repositoryURL": "https://github.com/kirualex/SwiftyGif.git",
-        "state": {
-          "branch": null,
-          "revision": "0cd770feed5807d9fd4fa8df5ad74b56b814b0c8",
-          "version": "5.4.0"
-        }
+  "originHash" : "98c0dab12e4e5f1ed38c5d4211def18d7345427ac9d3bf0da3efbd031530a056",
+  "pins" : [
+    {
+      "identity" : "stream-core-swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/GetStream/stream-core-swift",
+      "state" : {
+        "revision" : "64c7c5f6beec70dd155e391143ac2f5c84b05e25",
+        "version" : "0.5.0"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "swift-docc-plugin",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-docc-plugin",
+      "state" : {
+        "revision" : "3303b164430d9a7055ba484c8ead67a52f7b74f6",
+        "version" : "1.0.0"
+      }
+    }
+  ],
+  "version" : 3
 }

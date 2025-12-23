@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// The footer view of the poll comment list table view. By default it displays the button add or update a comment.

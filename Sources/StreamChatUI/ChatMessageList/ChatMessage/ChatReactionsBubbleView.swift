@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 open class ChatReactionBubbleBaseView: _View, AppearanceProvider {

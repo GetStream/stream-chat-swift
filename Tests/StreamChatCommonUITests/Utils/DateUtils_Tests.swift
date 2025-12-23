@@ -3,7 +3,7 @@
 //
 
 @testable import StreamChat
-@testable import StreamChatUI
+@testable import StreamChatCommonUI
 import XCTest
 
 final class DateUtils_Tests: XCTestCase {

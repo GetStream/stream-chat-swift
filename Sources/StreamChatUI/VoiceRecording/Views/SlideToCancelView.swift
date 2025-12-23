@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamChatCommonUI
 import UIKit
 
 /// A component used to guide the user on how to cancel an active recording flow.

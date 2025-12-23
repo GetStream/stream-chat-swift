@@ -4,6 +4,7 @@
 
 @testable import StreamChatTestTools
 @testable import StreamChatUI
+
 import XCTest
 
 @MainActor final class StatefulStatefulScrollViewPaginationHandler_Tests: XCTestCase {

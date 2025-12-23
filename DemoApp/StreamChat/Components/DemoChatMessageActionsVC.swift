@@ -4,6 +4,7 @@
 
 import Foundation
 import StreamChat
+import StreamChatCommonUI
 import StreamChatUI
 import SwiftUI
 import UIKit

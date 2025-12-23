@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 52;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -15,6 +15,7 @@
 		792E3D8B25C97F6E0040B0C2 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 792E3D8925C97F6E0040B0C2 /* LaunchScreen.storyboard */; };
 		792E3D9725C9BCF30040B0C2 /* StreamChat in Frameworks */ = {isa = PBXBuildFile; productRef = 792E3D9625C9BCF30040B0C2 /* StreamChat */; };
 		792E3D9925C9BCF30040B0C2 /* StreamChatUI in Frameworks */ = {isa = PBXBuildFile; productRef = 792E3D9825C9BCF30040B0C2 /* StreamChatUI */; };
+		AD557EEB2EFAFB960003AD07 /* StreamChatCommonUI in Frameworks */ = {isa = PBXBuildFile; productRef = AD557EEA2EFAFB960003AD07 /* StreamChatCommonUI */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 			files = (
 				792E3D9925C9BCF30040B0C2 /* StreamChatUI in Frameworks */,
 				792E3D9725C9BCF30040B0C2 /* StreamChat in Frameworks */,
+				AD557EEB2EFAFB960003AD07 /* StreamChatCommonUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,6 +102,7 @@
 			packageProductDependencies = (
 				792E3D9625C9BCF30040B0C2 /* StreamChat */,
 				792E3D9825C9BCF30040B0C2 /* StreamChatUI */,
+				AD557EEA2EFAFB960003AD07 /* StreamChatCommonUI */,
 			);
 			productName = SPM_Tests;
 			productReference = 792E3D7B25C97F6D0040B0C2 /* SwiftPackageManager.app */;
@@ -368,6 +371,10 @@
 		792E3D9825C9BCF30040B0C2 /* StreamChatUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = StreamChatUI;
+		};
+		AD557EEA2EFAFB960003AD07 /* StreamChatCommonUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = StreamChatCommonUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

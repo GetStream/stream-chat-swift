@@ -7,12 +7,12 @@ import Foundation
 private class BundleIdentifyingClass {}
 
 extension Bundle {
-    static var streamChatUI: Bundle {
+    static var streamChatCommonUI: Bundle {
         #if SWIFT_PACKAGE
         return Bundle.module
         #elseif STATIC_LIBRARY
         return Bundle.main
-            .url(forResource: "StreamChatUIResources", withExtension: "bundle")
+            .url(forResource: "StreamChatCommonUIResources", withExtension: "bundle")
             .flatMap(Bundle.init(url:))!
         #else
         return Bundle(for: BundleIdentifyingClass.self)

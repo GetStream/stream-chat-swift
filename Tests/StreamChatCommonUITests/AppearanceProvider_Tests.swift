@@ -4,6 +4,7 @@
 
 import Foundation
 import StreamChat
+@testable import StreamChatCommonUI
 @testable import StreamChatUI
 import XCTest
 

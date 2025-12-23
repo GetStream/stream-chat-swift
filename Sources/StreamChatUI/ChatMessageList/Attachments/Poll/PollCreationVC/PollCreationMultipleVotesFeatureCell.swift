@@ -2,6 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import StreamChatCommonUI
 import UIKit
 
 /// The cell to configure the multiple votes poll feature.

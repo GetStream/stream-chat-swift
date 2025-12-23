@@ -2,6 +2,7 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
+import StreamChatCommonUI
 import UIKit
 
 /// The thread list header banner view shown by default as a table view header to fetch new threads.

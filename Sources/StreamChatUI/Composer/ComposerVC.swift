@@ -4,6 +4,7 @@
 
 import Foundation
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// The possible errors that can occur in attachment validation

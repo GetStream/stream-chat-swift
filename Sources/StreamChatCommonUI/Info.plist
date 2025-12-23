@@ -15,10 +15,8 @@
 	<key>CFBundlePackageType</key>
 	<string>$(PRODUCT_BUNDLE_PACKAGE_TYPE)</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.2.9</string>
-	<key>NSPrincipalClass</key>
-	<string>$(PRINCIPAL_CLASS)</string>
+	<string>4.92.0</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 </dict>
 </plist>

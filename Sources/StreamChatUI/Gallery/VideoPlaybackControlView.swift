@@ -4,6 +4,7 @@
 
 import AVKit
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// A view that shows playback controls and timeline for the given player.
