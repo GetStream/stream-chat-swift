@@ -5,6 +5,7 @@
 import UIKit
 
 import StreamChat
+import StreamChatCommonUI
 import StreamChatUI
 
 @main

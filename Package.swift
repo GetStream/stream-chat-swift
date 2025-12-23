@@ -50,8 +50,7 @@ let package = Package(
         .target(
             name: "StreamChatUI",
             dependencies: ["StreamChat", "StreamChatCommonUI"],
-            exclude: ["Info.plist"],
-            resources: [.process("Resources")]
+            exclude: ["Info.plist"]
         ),
         .target(
             name: "StreamChatCommonUI",
