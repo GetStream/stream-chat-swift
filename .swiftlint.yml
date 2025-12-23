@@ -1,6 +1,6 @@
 excluded:
   - Scripts
-  - Sources/StreamChatUI/Generated
+  - Sources/StreamChatCommonUI/Generated
   - Sources/StreamChatUI/StreamSwiftyGif
   - Sources/StreamChatUI/StreamNuke
   - Sources/StreamChat/StreamStarscream
