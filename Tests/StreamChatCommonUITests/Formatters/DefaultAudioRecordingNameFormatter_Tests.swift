@@ -2,7 +2,8 @@
 // Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
-@testable import StreamChatUI
+@testable import StreamChatCommonUI
+import StreamChatTestTools
 import XCTest
 
 final class DefaultAudioRecordingNameFormatter_Tests: XCTestCase {

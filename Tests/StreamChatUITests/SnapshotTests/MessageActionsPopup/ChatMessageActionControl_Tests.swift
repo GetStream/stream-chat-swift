@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+@testable import StreamChatCommonUI
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
@@ -36,7 +37,7 @@ import XCTest
 
         content = TestChatMessageActionItem(
             title: "Action 1",
-            icon: UIImage(named: "icn_inline_reply", in: .streamChatUI)!
+            icon: UIImage(named: "icn_inline_reply", in: .streamChatCommonUI)!
         )
     }
 
@@ -55,7 +56,7 @@ import XCTest
     func test_defaultMultilineAppearance() {
         content = TestChatMessageActionItem(
             title: "Action that takes\n 2 lines of text",
-            icon: UIImage(named: "icn_inline_reply", in: .streamChatUI)!
+            icon: UIImage(named: "icn_inline_reply", in: .streamChatCommonUI)!
         )
         let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
         view.content = content
@@ -80,7 +81,7 @@ import XCTest
         let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
         view.content = TestChatMessageActionItem(
             title: "Action 1",
-            icon: UIImage(named: "icn_inline_reply", in: .streamChatUI)!,
+            icon: UIImage(named: "icn_inline_reply", in: .streamChatCommonUI)!,
             isDestructive: true
         )
 
@@ -91,7 +92,7 @@ import XCTest
         let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
         view.content = TestChatMessageActionItem(
             title: "Action 1",
-            icon: UIImage(named: "icn_inline_reply", in: .streamChatUI)!,
+            icon: UIImage(named: "icn_inline_reply", in: .streamChatCommonUI)!,
             isPrimary: true
         )
 
@@ -102,7 +103,7 @@ import XCTest
         let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
         view.content = TestChatMessageActionItem(
             title: "Action 1",
-            icon: UIImage(named: "icn_inline_reply", in: .streamChatUI)!,
+            icon: UIImage(named: "icn_inline_reply", in: .streamChatCommonUI)!,
             isDestructive: true,
             isPrimary: true
         )

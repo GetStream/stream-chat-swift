@@ -3,6 +3,7 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatCommonUI
 @testable import StreamChatUI
 
 class Calendar_Mock: StreamCalendar {
