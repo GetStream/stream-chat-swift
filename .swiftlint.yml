@@ -5,7 +5,6 @@ excluded:
   - Sources/StreamChatUI/StreamNuke
   - Sources/StreamChat/StreamStarscream
   - Sources/StreamChatUI/StreamDifferenceKit
-  - UISDKdocumentation
   - Tests
   - Pods
   - .build
