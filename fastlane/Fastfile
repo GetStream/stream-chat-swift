@@ -904,20 +904,20 @@ private_lane :frameworks_sizes do
     cloned_source_packages_path: source_packages_path
   )
 
+  # TODO: Handle StreamChatCommonUI size
   # Parse the thinned size of Assets.car from Packaging.log
-  assets_size_regex = %r{\b(\d+)\sbytes\sfor\s./Payload/ChatSample.app/Frameworks/StreamChatCommonUI.framework/Assets.car\b}
-  packaging_log_content = File.read("#{Gym.cache[:temporary_output_path]}/Packaging.log")
-  match = packaging_log_content.match(assets_size_regex)
-  assets_thinned_size = match[1].to_i
+  # assets_size_regex = %r{\b(\d+)\sbytes\sfor\s./Payload/ChatSample.app/Frameworks/StreamChatCommonUI.framework/Assets.car\b}
+  # packaging_log_content = File.read("#{Gym.cache[:temporary_output_path]}/Packaging.log")
+  # match = packaging_log_content.match(assets_size_regex)
+  # assets_thinned_size = match[1].to_i
 
   frameworks_path = "../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks"
   stream_chat_size = File.size("#{frameworks_path}/StreamChat.framework/StreamChat")
   stream_chat_ui_size = File.size("#{frameworks_path}/StreamChatUI.framework/StreamChatUI")
-  stream_chat_common_ui_size = File.size("#{frameworks_path}/StreamChatCommonUI.framework/StreamChatCommonUI")
+  # stream_chat_common_ui_size = File.size("#{frameworks_path}/StreamChatCommonUI.framework/StreamChatCommonUI")
 
   stream_chat_size_kb = stream_chat_size / 1024.0
   stream_chat_ui_size_kb = stream_chat_ui_size / 1024.0
-  # TODO: Handle StreamChatCommonUI size
   # stream_chat_common_ui_size_kb = (stream_chat_common_ui_size + assets_thinned_size) / 1024.0
 
   {
