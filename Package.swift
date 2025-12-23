@@ -19,6 +19,10 @@ let package = Package(
             targets: ["StreamChatUI"]
         ),
         .library(
+            name: "StreamChatCommonUI",
+            targets: ["StreamChatCommonUI"]
+        ),
+        .library(
             name: "StreamChatTestTools",
             targets: ["StreamChatTestTools"]
         ),
@@ -45,6 +49,12 @@ let package = Package(
         ),
         .target(
             name: "StreamChatUI",
+            dependencies: ["StreamChat", "StreamChatCommonUI"],
+            exclude: ["Info.plist"],
+            resources: [.process("Resources")]
+        ),
+        .target(
+            name: "StreamChatCommonUI",
             dependencies: ["StreamChat"],
             exclude: ["Info.plist", "Generated/L10n_template.stencil"],
             resources: [.process("Resources")]
