@@ -74,6 +74,37 @@ final class IdentifiablePayload_Tests: XCTestCase {
         XCTAssertEqual(cache["\(UserDTO.self)"]?.count, 50)
         XCTAssertEqual(cache["\(MessageReactionDTO.self)"]?.count, 1000)
     }
+    
+    func test_concurrentPerform_getPayloadToModelIdMappings() {
+        let database = DatabaseContainer_Spy()
+        let channelList = createChannelList(
+            channels: 5,
+            users: 5,
+            otherWatchers: 2,
+            messagesPerChannel: 10,
+            readCountsPerChannel: 2,
+            messageReactionsPerChannel: 2
+        )
+        savePayload(payload: channelList, database: database)
+
+        let contexts = [database.writableContext, database.backgroundReadOnlyContext, database.stateLayerContext]
+        let iterations = 2000
+        var caches: [PreWarmedCache] = (0..<iterations).map { _ in [:] }
+        DispatchQueue.concurrentPerform(iterations: iterations) { index in
+            autoreleasepool {
+                let context = contexts[index % contexts.count]
+                caches[index] = channelList.getPayloadToModelIdMappings(context: context)
+            }
+        }
+        
+        for cache in caches {
+            XCTAssertEqual(cache.keys.count, 4)
+            XCTAssertEqual(cache["\(ChannelDTO.self)"]?.count, 5)
+            XCTAssertEqual(cache["\(MessageDTO.self)"]?.count, 50)
+            XCTAssertEqual(cache["\(UserDTO.self)"]?.count, 7)
+            XCTAssertEqual(cache["\(MessageReactionDTO.self)"]?.count, 200)
+        }
+    }
 
     // Identifiable
 
