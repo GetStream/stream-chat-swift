@@ -6,7 +6,7 @@ import Foundation
 
 private class BundleIdentifyingClass {}
 
-extension Bundle {
+public extension Bundle {
     static var streamChatCommonUI: Bundle {
         #if SWIFT_PACKAGE
         return Bundle.module

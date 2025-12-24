@@ -5,13 +5,13 @@
 import Foundation
 import UIKit
 
-extension UIImage {
+public extension UIImage {
     convenience init?(named name: String, in bundle: Bundle) {
         self.init(named: name, in: bundle, compatibleWith: nil)
     }
 }
 
-extension UIImage {
+public extension UIImage {
     static let circleImage: UIImage = {
         let size: CGSize = CGSize(width: 24, height: 24)
         let renderer = UIGraphicsImageRenderer(size: size)
@@ -26,7 +26,7 @@ extension UIImage {
     }()
 }
 
-extension UIImage {
+public extension UIImage {
     func tinted(with fillColor: UIColor) -> UIImage? {
         let image = withRenderingMode(.alwaysTemplate)
         UIGraphicsBeginImageContextWithOptions(size, false, scale)

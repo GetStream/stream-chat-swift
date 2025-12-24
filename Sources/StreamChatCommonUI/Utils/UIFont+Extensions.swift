@@ -4,7 +4,7 @@
 
 import UIKit
 
-extension UIFont {
+public extension UIFont {
     func withTraits(traits: UIFontDescriptor.SymbolicTraits) -> UIFont {
         let descriptor = fontDescriptor.withSymbolicTraits(traits)
         return UIFont(descriptor: descriptor!, size: pointSize)

@@ -2,6 +2,7 @@
 
 import Foundation
 
+
 // MARK: - Strings
 
 public enum L10n {
@@ -504,3 +505,4 @@ extension L10n {
 private final class BundleToken {
   static let bundle: Bundle = .streamChatCommonUI
 }
+
