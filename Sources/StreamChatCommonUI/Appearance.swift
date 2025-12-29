@@ -30,10 +30,13 @@ public struct Appearance: @unchecked Sendable {
     /// By providing different object or changing individual formatters,
     /// you can change how data is formatted to textual representation.
     public var formatters = Formatters()
+    
+    nonisolated(unsafe) public static var bundle: Bundle?
 
     /// Provider for custom localization which is dependent on App Bundle.
     public var localizationProvider: @Sendable (_ key: String, _ table: String) -> String = { key, table in
-        Bundle.streamChatCommonUI.localizedString(forKey: key, value: nil, table: table)
+        let bundle = Self.bundle ?? Bundle.streamChatCommonUI
+        return bundle.localizedString(forKey: key, value: nil, table: table)
     }
 
     public init() {

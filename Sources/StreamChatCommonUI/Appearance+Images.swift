@@ -11,6 +11,9 @@ public extension Appearance {
         /// - Parameter imageName: The required image name to load from the bundle
         /// - Returns: A UIImage that is either the correct image from the bundle or backup circular image
         private static func loadImageSafely(with imageName: String) -> UIImage {
+            if let bundle, let image = UIImage(named: imageName, in: bundle) {
+                return image
+            }
             if let image = UIImage(named: imageName, in: .streamChatCommonUI) {
                 return image
             } else {
