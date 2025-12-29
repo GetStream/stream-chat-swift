@@ -3,9 +3,11 @@
 //
 
 import UIKit
+import StreamCore
+import SwiftUI
 
 public extension Appearance {
-    struct ColorPalette {
+    struct ColorPalette: Sendable {
         // MARK: - Text
 
         /// General textColor, should be something that contrasts great with your `background` Color
@@ -22,9 +24,9 @@ public extension Appearance {
 
         // MARK: - Text interactions
 
-        public var highlightedColorForColor: (UIColor) -> UIColor = { $0.withAlphaComponent(0.5) }
-        public var disabledColorForColor: (UIColor) -> UIColor = { _ in .lightGray }
-        public var unselectedColorForColor: (UIColor) -> UIColor = { _ in .lightGray }
+        public var highlightedColorForColor: @Sendable (UIColor) -> UIColor = { $0.withAlphaComponent(0.5) }
+        public var disabledColorForColor: @Sendable (UIColor) -> UIColor = { _ in .lightGray }
+        public var unselectedColorForColor: @Sendable (UIColor) -> UIColor = { _ in .lightGray }
 
         // MARK: - Background
 
@@ -67,6 +69,86 @@ public extension Appearance {
         public var alternativeInactiveTint: UIColor = .streamGrayGainsboro
 
         public var accentPrimary: UIColor = .streamAccentPrimary
+        
+        // MARK: - SwiftUI SDK
+        public var navigationBarTitle: UIColor {
+            didSet {
+                StreamConcurrency.onMain { [navigationBarTitle] in
+                    let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: navigationBarTitle]
+                    UINavigationBar.appearance().titleTextAttributes = attributes
+                    UINavigationBar.appearance().largeTitleTextAttributes = attributes
+                }
+            }
+        }
+               
+        public var innerBorder: UIColor = .streamInnerBorder
+        
+        public var navigationBarSubtitle: UIColor
+        
+        public var navigationBarBackground: UIColor?
+        
+        public var reactionCurrentUserColor: UIColor
+        
+        public var reactionOtherUserColor: UIColor
+        
+        public var quotedMessageBackgroundCurrentUser: UIColor
+        
+        public var quotedMessageBackgroundOtherUser: UIColor
+        
+        public var navigationBarTintColor: UIColor
+        
+        public var composerInputHighlightedBorder: UIColor
+        
+        public var voiceMessageControlBackground: UIColor = .streamWhiteStatic
+        
+        public var messageCurrentUserBackground: [UIColor]
+        
+        public var messageCurrentUserEmphemeralBackground: [UIColor]
+        
+        public var messageOtherUserBackground: [UIColor]
+        
+        public var messageCurrentUserTextColor: UIColor
+        
+        public var messageOtherUserTextColor: UIColor
+        
+        public var selectedReactionBackgroundColor: UIColor? = nil
+        
+        public var bannerBackgroundColor: UIColor = .streamDarkGray
+        
+        public var composerInputBackground: UIColor
+        
+        public var composerPlaceholderColor: UIColor
+        
+        public var messageLinkAttachmentAuthorColor: Color
+        
+        public var messageLinkAttachmentTitleColor: Color
+        
+        public var messageLinkAttachmentTextColor: Color
+        
+        public var navigationBarGlyph: UIColor
+                
+        public init() {
+            navigationBarGlyph = .white
+            navigationBarTitle = text
+            navigationBarSubtitle = textLowEmphasis
+            reactionCurrentUserColor = accentPrimary
+            reactionOtherUserColor = textLowEmphasis
+            quotedMessageBackgroundOtherUser = background8
+            quotedMessageBackgroundCurrentUser = background8
+            navigationBarTintColor = accentPrimary
+            composerInputHighlightedBorder = innerBorder
+            messageCurrentUserBackground = [background6]
+            messageCurrentUserEmphemeralBackground = [background8]
+            messageOtherUserBackground = [background8]
+            messageCurrentUserTextColor = text
+            messageOtherUserTextColor = text
+            reactionCurrentUserColor = accentPrimary
+            composerInputBackground = background
+            composerPlaceholderColor = subtitleText
+            messageLinkAttachmentAuthorColor = Color(accentPrimary)
+            messageLinkAttachmentTitleColor = Color(text)
+            messageLinkAttachmentTextColor = Color(text)
+        }
     }
 }
 
@@ -92,6 +174,7 @@ private extension UIColor {
     static let streamAccentRed = mode(0xff3742, 0xff3742)
     static let streamAccentGreen = mode(0x20e070, 0x20e070)
     static let streamGrayDisabledText = mode(0x72767e, 0x72767e)
+    static let streamInnerBorder = mode(0xdbdde1, 0x272a30)
     static let streamYellowBackground = mode(0xfbf4dd, 0x333024)
 
     // Currently we are not using the correct shadow color from figma's color palette. This is to avoid

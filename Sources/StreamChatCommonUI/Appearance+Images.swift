@@ -56,7 +56,7 @@ public extension Appearance {
         public var emptyChannelListMessageBubble: UIImage = loadImageSafely(with: "empty_channel_list_message_bubble")
         public var emptySearch: UIImage = loadImageSafely(with: "empty_search")
         public var download: UIImage = loadSafely(systemName: "icloud.and.arrow.down", assetsFallback: "download")
-
+        
         // MARK: - Recording
 
         public var mic: UIImage = loadSafely(systemName: "mic", assetsFallback: "mic")
@@ -156,6 +156,25 @@ public extension Appearance {
         }
 
         private var _availableReactionPushEmojis: [MessageReactionType: String]?
+        
+        public var availableEmojis: [String] = [
+            "😀", "😃", "😄", "😁", "😆", "😅", "🤣", "😂", "🙂", "🙃",
+            "😉", "😊", "😇", "🥰", "😍", "🤩", "😘", "😗", "😚", "😙",
+            "😋", "😛", "😜", "🤪", "😝", "🤑", "🤗", "🤭", "🤫", "🤔",
+            "🤐", "🤨", "😐", "😑", "😶", "😶‍🌫️", "😏", "😒", "🙄", "😬",
+            "🤥", "😌", "😔", "😪", "🤤", "😴", "😷", "🤒", "🤕", "🤢",
+            "🤮", "🤧", "🥵", "🥶", "🥴", "😵‍💫", "🤯", "🤠", "🥳", "😎",
+            "🤓", "🧐", "😕", "😟", "🙁", "☹️", "😮", "😯", "😲", "😳",
+            "🥺", "😦", "😧", "😨", "😰", "😥", "😢", "😭", "😱", "😖",
+            "😣", "😞", "😓", "😩", "😫", "🥱", "😤", "😡", "😠", "🤬",
+            "😈", "👿", "💀", "☠️", "💩", "🤡", "👹", "👺", "👻", "👽",
+            "👾", "🤖", "🎃", "😺", "😸", "😹", "😻", "😼", "😽", "🙀",
+            "😿", "😾", "👍", "👎", "👌", "🤌", "🤏", "✌️", "🤞", "🤟",
+            "🤘", "🤙", "👈", "👉", "👆", "👇", "☝️", "✋", "🤚", "🖐️",
+            "🖖", "👋", "🤝", "🙏", "💪", "👣", "👀", "🧠", "🫶", "💋",
+            "❤️", "🧡", "💛", "💚", "💙", "💜", "🖤", "🤍", "🤎", "💔",
+            "❣️", "💕", "💞", "💓", "💗", "💖", "💘", "💝"
+        ]
 
         // MARK: - MessageList
 
@@ -318,5 +337,37 @@ public extension Appearance {
             }
             set { _commandIcons = newValue }
         }
+        
+        // MARK: - SwiftUI images
+        
+        public var attachmentPickerPhotos: UIImage = UIImage(systemName: "photo")!
+        public var attachmentPickerFolder: UIImage = UIImage(systemName: "folder")!
+        public var attachmentPickerCamera: UIImage = UIImage(systemName: "camera")!
+        public var attachmentPickerPolls: UIImage = loadImageSafely(with: "attachment_picker_polls")
+        
+        public var muted: UIImage = UIImage(systemName: "speaker.slash")!
+        public var searchClose: UIImage = UIImage(systemName: "multiply.circle")!
+        public var pin: UIImage = loadImageSafely(with: "icn_pin")
+        public var imagePlaceholder: UIImage = UIImage(systemName: "photo")!
+        public var personPlaceholder: UIImage = UIImage(systemName: "person.circle")!
+        public var checkmarkFilled: UIImage = UIImage(systemName: "checkmark.circle.fill")!
+        public var closeFill: UIImage = UIImage(systemName: "xmark.circle.fill")!
+        public var videoIndicator: UIImage = UIImage(systemName: "video.fill")!
+        public var gallery: UIImage = UIImage(systemName: "square.grid.3x3.fill")!
+        
+        // MARK: - No Content Icons
+        
+        public var noContent: UIImage = UIImage(
+            systemName: "message",
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 100, weight: .regular)
+        ) ?? UIImage.circleImage
+        public var noMedia: UIImage = UIImage(
+            systemName: "folder",
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 100, weight: .regular)
+        ) ?? UIImage.circleImage
+        public var noThreads: UIImage = UIImage(
+            systemName: "text.bubble",
+            withConfiguration: UIImage.SymbolConfiguration(pointSize: 100, weight: .regular)
+        ) ?? UIImage.circleImage
     }
 }

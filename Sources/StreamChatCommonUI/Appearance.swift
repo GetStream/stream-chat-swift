@@ -16,6 +16,9 @@ public struct Appearance: @unchecked Sendable {
     ///
     /// By providing different object or changing individual fonts, you can change the look of the views.
     public var fonts = Fonts()
+    
+    /// SwiftUI representation of the fonts.
+    public var fontsSwiftUI: FontsSwiftUI
 
     /// A set of images to be used.
     ///
@@ -33,7 +36,9 @@ public struct Appearance: @unchecked Sendable {
         Bundle.streamChatCommonUI.localizedString(forKey: key, value: nil, table: table)
     }
 
-    public init() {}
+    public init() {
+        self.fontsSwiftUI = .init(fonts: fonts)
+    }
 }
 
 // MARK: - Appearance + Default
