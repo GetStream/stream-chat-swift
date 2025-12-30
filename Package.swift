@@ -52,8 +52,7 @@ let package = Package(
         .target(
             name: "StreamChatCommonUI",
             dependencies: ["StreamChat"],
-            exclude: ["Info.plist", "Generated/L10n_template.stencil"],
-            resources: [.process("Resources")]
+            exclude: ["Info.plist", "Generated/L10n_template.stencil"]
         ),
         .target(
             name: "StreamChatTestTools",
