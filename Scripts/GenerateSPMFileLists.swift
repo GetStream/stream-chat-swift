@@ -1,5 +1,5 @@
 //
-// Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
 // This script is used to generate list of excluded source files for StreamChat and StreamChatUI in Package.swift.
