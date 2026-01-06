@@ -1,5 +1,5 @@
 //
-// Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -23,7 +23,7 @@ class MessageSender: Worker, @unchecked Sendable {
     private var continuations = [MessageId: CheckedContinuation<ChatMessage, Error>]()
     
     private lazy var observer = StateLayerDatabaseObserver<ListResult, MessageSendingQueue.SendRequest, MessageDTO>(
-        database: database,
+        context: database.backgroundReadOnlyContext, // allow write context to finish
         fetchRequest: MessageDTO.messagesPendingSendFetchRequest(),
         itemCreator: { dto in
             let cid: ChannelId = {
