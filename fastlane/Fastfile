@@ -356,6 +356,9 @@ lane :start_mock_server do |options|
     sh("git clone -b #{branch} https://github.com/#{github_repo.split('/').first}/#{mock_server_repo}.git")
   end
 
+  pids = sh("lsof -ti :#{mock_server_driver_port} || true", log: false).strip
+  sh("kill -9 #{pids} || true", log: false) unless pids.empty?
+
   Dir.chdir(mock_server_repo) do
     FileUtils.mkdir_p('logs')
     sh("bundle exec ruby driver.rb #{mock_server_driver_port} > logs/driver.log 2>&1 &")
