@@ -1,5 +1,5 @@
 //
-// Copyright © 2026 Stream.io Inc. All rights reserved.
+// Copyright © 2025 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -27,7 +27,7 @@ final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, D
     // Keep track of last items for reuse
     private var reuseItems: [Item]?
     
-    init(
+    private init(
         context: NSManagedObjectContext,
         fetchRequest: NSFetchRequest<DTO>,
         itemCreator: @escaping (DTO) throws -> Item,
