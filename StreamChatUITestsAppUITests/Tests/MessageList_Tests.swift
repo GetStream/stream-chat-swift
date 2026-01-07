@@ -5,12 +5,6 @@
 import XCTest
 
 final class MessageList_Tests: StreamTestCase {
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        addTags([.coreFeatures])
-        assertMockServer()
-    }
-
     func test_messageListUpdates_whenUserSendsMessage() {
         linkToScenario(withId: 25)
 
@@ -200,32 +194,26 @@ final class MessageList_Tests: StreamTestCase {
     func test_typingIndicator() {
         linkToScenario(withId: 73)
 
-        let isIpad = UIDevice.current.userInterfaceIdiom == .pad
-        let typingIndicatorTimeout = isIpad ? 10 : XCUIElement.waitTimeout
-        let typingEventsTimeout: Double = 3
         let message = "message"
 
         GIVEN("user opens the channel") {
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
             userRobot
                 .login()
                 .openChannel()
                 .sendMessage(message)
         }
         WHEN("participant starts typing") {
-            participantRobot.wait(typingEventsTimeout).startTyping()
+            participantRobot.startTyping()
         }
         THEN("user observes typing indicator is shown") {
-            let typingUserName = UserDetails.userName(for: participantRobot.currentUserId)
-            userRobot.assertTypingIndicatorShown(
-                typingUserName: typingUserName,
-                waitTimeout: typingIndicatorTimeout
-            )
+            userRobot.assertTypingIndicatorShown(typingUserName: participantRobot.name)
         }
         WHEN("participant stops typing") {
-            participantRobot.wait(typingEventsTimeout).stopTyping()
+            participantRobot.stopTyping()
         }
         THEN("user observes typing indicator has disappeared") {
-            userRobot.assertTypingIndicatorHidden(waitTimeout: typingIndicatorTimeout)
+            userRobot.assertTypingIndicatorHidden()
         }
     }
 
@@ -233,7 +221,7 @@ final class MessageList_Tests: StreamTestCase {
         linkToScenario(withId: 98)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 30)
             userRobot.login().openChannel()
         }
         AND("user opens command suggestions") {
@@ -253,10 +241,7 @@ final class MessageList_Tests: StreamTestCase {
         let message = "test message"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 40)
-            userRobot
-                .login()
-                .openChannel()
+            userRobot.login().openChannel()
         }
         AND("user becomes offline") {
             userRobot.setConnectivity(to: .off)
@@ -326,7 +311,7 @@ final class MessageList_Tests: StreamTestCase {
             deviceRobot.moveApplication(to: .background)
         }
         WHEN("participant sends a new message") {
-            participantRobot.wait(1).sendMessage(message)
+            participantRobot.sleep(1).sendMessage(message)
         }
         AND("user comes back to the foreground") {
             deviceRobot.moveApplication(to: .foreground)
@@ -346,7 +331,7 @@ extension MessageList_Tests {
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 30)
             userRobot.login().openChannel()
         }
         WHEN("user scrolls up") {
@@ -368,7 +353,7 @@ extension MessageList_Tests {
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 30)
             userRobot.login().openChannel()
         }
         WHEN("participant sends a message") {
@@ -387,7 +372,7 @@ extension MessageList_Tests {
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 30)
             userRobot.login().openChannel()
         }
         WHEN("user scrolls up") {
@@ -409,7 +394,7 @@ extension MessageList_Tests {
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 30)
             userRobot.login().openChannel()
         }
         AND("user sends a new message") {
@@ -432,14 +417,14 @@ extension MessageList_Tests {
         linkToScenario(withId: 289)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 30)
             userRobot.login().openChannel()
         }
         AND("user scrolls up") {
             userRobot.scrollMessageListUpSlow()
         }
         AND("participant sends some messages") {
-            participantRobot.sendMultipleMessages(repeatingText: "Some message", count: 16)
+            participantRobot.sendMultipleMessages("Some message", count: 16)
         }
         WHEN("user scrolls to the bottom") {
             userRobot.tapOnScrollToBottomButton()
@@ -459,7 +444,7 @@ extension MessageList_Tests {
         let newMessage = "New message"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 30)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 30)
             userRobot.login().openChannel()
         }
         WHEN("user scrolls up") {
@@ -497,7 +482,7 @@ extension MessageList_Tests {
         let messagesCount = 60
         
         WHEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: messagesCount)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: messagesCount)
             userRobot.login().openChannel()
         }
         THEN("user makes sure that chat history is loaded") {
@@ -511,7 +496,7 @@ extension MessageList_Tests {
         let replyCount = 60
         
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1, replyCount: replyCount)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1, repliesCount: replyCount)
             userRobot.login().openChannel()
         }
         WHEN("user opens the thread") {
@@ -573,10 +558,10 @@ extension MessageList_Tests {
             userRobot.login().openChannel()
         }
         WHEN("user taps on participants name") {
-            userRobot.mentionParticipant()
+            userRobot.mentionParticipant(participantRobot.id)
         }
         THEN("composer fills in participants name") {
-            userRobot.assertMentionWasApplied()
+            userRobot.assertMentionWasApplied(userName: participantRobot.name)
         }
     }
 }
@@ -700,11 +685,11 @@ extension MessageList_Tests {
         let threadReply = "thread reply"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         WHEN("participant adds a thread reply") {
-            participantRobot.replyToMessageInThread(threadReply)
+            participantRobot.sendMessageInThread(threadReply)
         }
         AND("user enters thread") {
             userRobot.openThread()
@@ -720,17 +705,17 @@ extension MessageList_Tests {
         let threadReply = "thread reply"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         WHEN("participant adds a thread reply") {
-            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+            participantRobot.sendMessageInThread(threadReply, alsoSendInChannel: true)
         }
         THEN("user observes the thread reply in channel") {
             userRobot.assertMessage(threadReply)
         }
         WHEN("user enters thread") {
-            userRobot.openThread()
+            userRobot.openThread(waitForThreadIcon: true)
         }
         THEN("user observes the thread reply in thread") {
             userRobot.assertThreadReply(threadReply)
@@ -743,11 +728,11 @@ extension MessageList_Tests {
         let threadReply = "thread reply"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         WHEN("user adds a thread reply and sends it also to main channel") {
-            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+            userRobot.sendMessageInThread(threadReply, alsoSendInChannel: true)
         }
         THEN("user observes the thread reply in thread") {
             userRobot.assertThreadReply(threadReply)
@@ -763,21 +748,20 @@ extension MessageList_Tests {
         linkToScenario(withId: 243)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         AND("user opens the thread") {
             userRobot.openThread()
         }
         WHEN("participant starts typing in thread") {
-            participantRobot.wait(2).startTypingInThread()
+            participantRobot.startTypingInThread()
         }
         THEN("user observes typing indicator is shown") {
-            let typingUserName = UserDetails.userName(for: participantRobot.currentUserId)
-            userRobot.assertTypingIndicatorShown(typingUserName: typingUserName)
+            userRobot.assertTypingIndicatorShown(typingUserName: participantRobot.name)
         }
         WHEN("participant stops typing in thread") {
-            participantRobot.wait(2).stopTypingInThread()
+            participantRobot.stopTypingInThread()
         }
         THEN("user observes typing indicator has disappeared") {
             userRobot.assertTypingIndicatorHidden()
@@ -792,7 +776,7 @@ extension MessageList_Tests {
         linkToScenario(withId: 218)
 
         let message = "Hey there"
-        let messageWithForbiddenContent = server.forbiddenWords.first ?? ""
+        let messageWithForbiddenContent = mockServer.forbiddenWord
 
         GIVEN("user opens the channel") {
             userRobot
@@ -831,7 +815,7 @@ extension MessageList_Tests {
         }
         WHEN("user sends an ephemeral message") {
             userRobot
-                .sendGiphy(send: false)
+                .uploadGiphy(send: false)
                 .scrollMessageListDown() // to hide the keyboard
         }
         THEN("messages are not grouped, 1st message shows the timestamp") {
@@ -846,7 +830,7 @@ extension MessageList_Tests {
 
         GIVEN("user opens the channel") {
             backendRobot
-                .generateChannels(count: 1, messagesCount: 1)
+                .generateChannels(channelsCount: 1, messagesCount: 1)
             userRobot
                 .login()
                 .openChannel()
@@ -913,11 +897,11 @@ extension MessageList_Tests {
         let threadReply = "thread reply"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         AND("participant adds a thread reply and sends it also to main channel") {
-            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+            participantRobot.sendMessageInThread(threadReply, alsoSendInChannel: true)
         }
         WHEN("participant removes the thread reply from channel") {
             participantRobot.deleteMessage()
@@ -927,7 +911,7 @@ extension MessageList_Tests {
         }
         AND("user observes the thread reply removed in thread") {
             userRobot
-                .openThread(messageCellIndex: 1)
+                .openThread(messageCellIndex: 1, waitForThreadIcon: true)
                 .assertDeletedMessage()
         }
     }
@@ -938,11 +922,11 @@ extension MessageList_Tests {
         let threadReply = "thread reply"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         AND("user adds a thread reply and sends it also to main channel") {
-            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+            userRobot.sendMessageInThread(threadReply, alsoSendInChannel: true)
         }
         WHEN("user removes thread reply from thread") {
             userRobot.deleteMessage()
@@ -963,17 +947,17 @@ extension MessageList_Tests {
         let threadReply = "thread reply"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         AND("participant adds a thread reply") {
-            participantRobot.replyToMessageInThread(threadReply, alsoSendInChannel: false)
+            participantRobot.sendMessageInThread(threadReply, alsoSendInChannel: false)
         }
         WHEN("participant removes the thread reply") {
             participantRobot.deleteMessage()
         }
         THEN("user observes a thread reply count button in channel") {
-            userRobot.assertThreadReplyCountButton()
+            userRobot.assertThreadReplyCountButton(replies: 1)
         }
         THEN("user observes the thread reply removed in thread") {
             userRobot.openThread().assertDeletedMessage()
@@ -986,11 +970,11 @@ extension MessageList_Tests {
         let threadReply = "thread reply"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         AND("user adds a thread reply and sends it also to main channel") {
-            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: true)
+            userRobot.sendMessageInThread(threadReply, alsoSendInChannel: true)
         }
         WHEN("user goes back to channel and removes thread reply") {
             userRobot
@@ -1013,11 +997,11 @@ extension MessageList_Tests {
         let threadReply = "thread reply"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         AND("user adds a thread reply") {
-            userRobot.replyToMessageInThread(threadReply, alsoSendInChannel: false)
+            userRobot.sendMessageInThread(threadReply, alsoSendInChannel: false)
         }
         WHEN("user removes the thread reply") {
             userRobot.deleteMessage()
@@ -1028,7 +1012,7 @@ extension MessageList_Tests {
         AND("user observes a thread reply count button in channel") {
             userRobot
                 .tapOnBackButton()
-                .assertThreadReplyCountButton()
+                .assertThreadReplyCountButton(replies: 1)
         }
     }
 
@@ -1038,7 +1022,7 @@ extension MessageList_Tests {
         let message = "test message"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         WHEN("user sends the message: '\(message)'") {
@@ -1058,7 +1042,7 @@ extension MessageList_Tests {
         let message = "test message"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(count: 1, messagesCount: 1)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         WHEN("participant sends the message: '\(message)'") {
@@ -1068,7 +1052,7 @@ extension MessageList_Tests {
             userRobot.assertMessage(message)
         }
         AND("participant hard-deletes the message: '\(message)'") {
-            participantRobot.wait(2).deleteMessage(hard: true)
+            participantRobot.deleteMessage(hard: true)
         }
         THEN("the message is hard-deleted") {
             userRobot.assertHardDeletedMessage(withText: message)

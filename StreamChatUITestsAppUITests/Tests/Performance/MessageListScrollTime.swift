@@ -8,7 +8,7 @@ import XCTest
 class MessageListScrollTime: StreamTestCase {
     func testMessageListScrollTime() {
         WHEN("user opens the message list") {
-            backendRobot.generateChannels(count: 1, messagesCount: 100, withAttachments: true)
+            backendRobot.generateChannels(channelsCount: 1, messagesCount: 100, attachments: true)
             participantRobot.addReaction(type: .like)
             userRobot.login().openChannel()
         }

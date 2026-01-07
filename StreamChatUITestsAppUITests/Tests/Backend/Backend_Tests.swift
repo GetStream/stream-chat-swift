@@ -6,7 +6,7 @@ import XCTest
 
 final class Backend_Tests: StreamTestCase {
     override func setUpWithError() throws {
-        mockServerEnabled = false
+        useMockServer = false
         switchApiKey = "8br4watad788"
         try super.setUpWithError()
     }
