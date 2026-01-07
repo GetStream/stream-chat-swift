@@ -1,5 +1,5 @@
 //
-// Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -46,29 +46,18 @@ public final class StreamMockServer {
         nonisolated(unsafe) var output = ""
         nonisolated(unsafe) var statusCode = 0
 
-        if async {
-            URLSession.shared.dataTask(with: request) { data, response, _ in
-                if let httpResponse = response as? HTTPURLResponse {
-                    statusCode = httpResponse.statusCode
-                }
-                if let data = data, let string = String(data: data, encoding: .utf8) {
-                    output = string
-                }
-            }.resume()
-        } else {
-            let semaphore = DispatchSemaphore(value: 0)
-            let task = URLSession.shared.dataTask(with: request) { data, response, _ in
-                if let httpResponse = response as? HTTPURLResponse {
-                    statusCode = httpResponse.statusCode
-                }
-                if let data = data, let string = String(data: data, encoding: .utf8) {
-                    output = string
-                }
-                semaphore.signal()
+        let semaphore: DispatchSemaphore? = async ? nil : DispatchSemaphore(value: 0)
+        let task = URLSession.shared.dataTask(with: request) { data, response, _ in
+            if let httpResponse = response as? HTTPURLResponse {
+                statusCode = httpResponse.statusCode
             }
-            task.resume()
-            semaphore.wait()
+            if let data = data, let string = String(data: data, encoding: .utf8) {
+                output = string
+            }
+            semaphore?.signal()
         }
+        task.resume()
+        semaphore?.wait()
 
         return (output, statusCode)
     }
@@ -85,29 +74,18 @@ public final class StreamMockServer {
         nonisolated(unsafe) var output = ""
         nonisolated(unsafe) var statusCode = 0
 
-        if async {
-            URLSession.shared.dataTask(with: request) { data, response, _ in
-                if let httpResponse = response as? HTTPURLResponse {
-                    statusCode = httpResponse.statusCode
-                }
-                if let data = data, let string = String(data: data, encoding: .utf8) {
-                    output = string
-                }
-            }.resume()
-        } else {
-            let semaphore = DispatchSemaphore(value: 0)
-            let task = URLSession.shared.dataTask(with: request) { data, response, _ in
-                if let httpResponse = response as? HTTPURLResponse {
-                    statusCode = httpResponse.statusCode
-                }
-                if let data = data, let string = String(data: data, encoding: .utf8) {
-                    output = string
-                }
-                semaphore.signal()
+        let semaphore: DispatchSemaphore? = async ? nil : DispatchSemaphore(value: 0)
+        let task = URLSession.shared.dataTask(with: request) { data, response, _ in
+            if let httpResponse = response as? HTTPURLResponse {
+                statusCode = httpResponse.statusCode
             }
-            task.resume()
-            semaphore.wait()
+            if let data = data, let string = String(data: data, encoding: .utf8) {
+                output = string
+            }
+            semaphore?.signal()
         }
+        task.resume()
+        semaphore?.wait()
 
         return (output, statusCode)
     }
