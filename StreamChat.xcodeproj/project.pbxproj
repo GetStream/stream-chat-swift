@@ -1541,7 +1541,6 @@
 		AD4C2CAA2EF23C52000E4FC1 /* Appearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EA22632C50200BA007B /* Appearance.swift */; };
 		AD4C2CAB2EF23C67000E4FC1 /* Appearance+ColorPalette.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7166CB125BED22B00B03B07 /* Appearance+ColorPalette.swift */; };
 		AD4C2CAC2EF2C7B1000E4FC1 /* Appearance+Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7166CB925BED29200B03B07 /* Appearance+Fonts.swift */; };
-		AD4C2CAD2EF2C7C8000E4FC1 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 228190EA256733420048D7C6 /* UIFont+Extensions.swift */; };
 		AD4C2CB62EF2C814000E4FC1 /* Appearance+SwiftUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDDD1EA92632CE3C00BA007B /* Appearance+SwiftUI.swift */; };
 		AD4C2CB72EF2C814000E4FC1 /* Appearance+Images.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7166CE125BEE20600B03B07 /* Appearance+Images.swift */; };
 		AD4C2CB82EF2C846000E4FC1 /* MessageTimestampFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD99C902279B0716009DD9C5 /* MessageTimestampFormatter.swift */; };
@@ -3055,7 +3054,6 @@
 		226C438C25802AAD008B3648 /* InputTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputTextView.swift; sourceTree = "<group>"; };
 		227299B225DBF52D005EAFCF /* ChatChannelUnreadCountView_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatChannelUnreadCountView_Tests.swift; sourceTree = "<group>"; };
 		22753598257C442300D1FDB6 /* SendButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SendButton.swift; sourceTree = "<group>"; };
-		228190EA256733420048D7C6 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		2289852525CC0331007F2C26 /* AttachmentPayloadLink.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AttachmentPayloadLink.json; sourceTree = "<group>"; };
 		2289852625CC0331007F2C26 /* AttachmentPayloadCustom.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AttachmentPayloadCustom.json; sourceTree = "<group>"; };
 		2289852725CC0332007F2C26 /* AttachmentPayloadImage.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = AttachmentPayloadImage.json; sourceTree = "<group>"; };
@@ -8720,7 +8718,6 @@
 				224FF6902562F58F00725DD1 /* UIColor+Extensions.swift */,
 				AD4C2CC92EF2EB4B000E4FC1 /* Bundle+Extensions.swift */,
 				ACA3C98526CA23F300EB8B07 /* DateUtils.swift */,
-				228190EA256733420048D7C6 /* UIFont+Extensions.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -12448,7 +12445,6 @@
 			files = (
 				AD4C2CAA2EF23C52000E4FC1 /* Appearance.swift in Sources */,
 				AD4C2CAC2EF2C7B1000E4FC1 /* Appearance+Fonts.swift in Sources */,
-				AD4C2CAD2EF2C7C8000E4FC1 /* UIFont+Extensions.swift in Sources */,
 				AD4C2CC72EF2E9FF000E4FC1 /* DateUtils.swift in Sources */,
 				AD4C2CB62EF2C814000E4FC1 /* Appearance+SwiftUI.swift in Sources */,
 				AD4C2CCA2EF2EB50000E4FC1 /* Bundle+Extensions.swift in Sources */,
