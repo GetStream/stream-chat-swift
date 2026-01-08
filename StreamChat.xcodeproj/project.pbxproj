@@ -1565,8 +1565,6 @@
 		AD4C2CCD2EF30733000E4FC1 /* UIImage+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C2CCC2EF3072F000E4FC1 /* UIImage+Extensions.swift */; };
 		AD4C2CCF2EF30784000E4FC1 /* ChatMessageReactionAppearance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88D66E752599DF1400CFC102 /* ChatMessageReactionAppearance.swift */; };
 		AD4C2CD02EF30AEF000E4FC1 /* UIColor+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 224FF6902562F58F00725DD1 /* UIColor+Extensions.swift */; };
-		AD4C2CD22EF31813000E4FC1 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C2CD12EF3180B000E4FC1 /* UIFont+Extensions.swift */; };
-		AD4C2CD32EF31813000E4FC1 /* UIFont+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C2CD12EF3180B000E4FC1 /* UIFont+Extensions.swift */; };
 		AD4C8C222C5D479B00E1C414 /* StackedUserAvatarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */; };
 		AD4C8C232C5D479B00E1C414 /* StackedUserAvatarsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */; };
 		AD4CDD85296499160057BC8A /* ScrollViewPaginationHandler_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD4CDD81296498D20057BC8A /* ScrollViewPaginationHandler_Tests.swift */; };
@@ -4295,7 +4293,6 @@
 		AD4C2C9C2EF1BFFA000E4FC1 /* StreamChatCommonUI.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = StreamChatCommonUI.h; sourceTree = "<group>"; };
 		AD4C2CC92EF2EB4B000E4FC1 /* Bundle+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Bundle+Extensions.swift"; sourceTree = "<group>"; };
 		AD4C2CCC2EF3072F000E4FC1 /* UIImage+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIImage+Extensions.swift"; sourceTree = "<group>"; };
-		AD4C2CD12EF3180B000E4FC1 /* UIFont+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIFont+Extensions.swift"; sourceTree = "<group>"; };
 		AD4C8C212C5D479B00E1C414 /* StackedUserAvatarsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StackedUserAvatarsView.swift; sourceTree = "<group>"; };
 		AD4CDD81296498D20057BC8A /* ScrollViewPaginationHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollViewPaginationHandler_Tests.swift; sourceTree = "<group>"; };
 		AD4CDD83296498EB0057BC8A /* InvertedScrollViewPaginationHandler_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvertedScrollViewPaginationHandler_Tests.swift; sourceTree = "<group>"; };
@@ -8986,7 +8983,6 @@
 		AD95FD0F28F9B72200DBDF41 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				AD4C2CD12EF3180B000E4FC1 /* UIFont+Extensions.swift */,
 				88EF29FE2571288600B06EF1 /* Array+Extensions.swift */,
 				C171041D2768C34E008FB3F2 /* Array+SafeSubscript.swift */,
 				883051732630366E0069D731 /* CACornerMask+Extensions.swift */,
@@ -11092,7 +11088,6 @@
 				40FA4DD52A12A0C300DA21D2 /* RecordingTipView.swift in Sources */,
 				40824D212A1271B9003B61FD /* RecordButton.swift in Sources */,
 				ADF509712C5A80EE008F95CD /* PollAttachmentOptionListView.swift in Sources */,
-				AD4C2CD32EF31813000E4FC1 /* UIFont+Extensions.swift in Sources */,
 				ADCB577528A42D7700B81AE8 /* ContentEquatable.swift in Sources */,
 				400F063129A63A0B00242A86 /* ChatMessageDecorationView.swift in Sources */,
 				88CABC8E25936E440061BB67 /* ChatMessageReactionsBubbleTail.swift in Sources */,
@@ -13211,7 +13206,6 @@
 				C121EBED2746A1EB00023E4C /* GiphyAttachmentViewInjector.swift in Sources */,
 				C121EBEE2746A1EB00023E4C /* LinkAttachmentViewInjector.swift in Sources */,
 				40824D112A1270CB003B61FD /* ChatMessageVoiceRecordingAttachmentListView+ItemView.swift in Sources */,
-				AD4C2CD22EF31813000E4FC1 /* UIFont+Extensions.swift in Sources */,
 				ADDC08152C82A81F00EA0E5F /* TextFieldView.swift in Sources */,
 				401EBB6E29A79686004D9304 /* ChatMessagesCountDecorationView.swift in Sources */,
 				C121EBEF2746A1EB00023E4C /* FileAttachmentViewInjector.swift in Sources */,
