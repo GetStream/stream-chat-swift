@@ -309,12 +309,13 @@ desc 'Runs tests in Debug config'
 lane :test do |options|
   next unless is_check_required(sources: sources_matrix[:llc], force_check: @force_check)
 
-  update_testplan_on_ci(path: 'Tests/StreamChatTests/StreamChatFlakyTests.xctestplan')
+  scheme = 'StreamChat'
+  update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}FlakyTests.xctestplan")
 
   scan(
     project: xcode_project,
-    scheme: 'StreamChat',
-    testplan: 'StreamChatFlakyTests',
+    scheme: scheme,
+    testplan: "#{scheme}FlakyTests",
     clean: is_localhost,
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
@@ -326,12 +327,12 @@ lane :test do |options|
 
   next if options[:build_for_testing]
 
-  update_testplan_on_ci(path: 'Tests/StreamChatTests/StreamChatTestPlan.xctestplan')
+  update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
 
   scan_options = {
     project: xcode_project,
-    scheme: 'StreamChat',
-    testplan: 'StreamChatTestPlan',
+    scheme: scheme,
+    testplan: scheme,
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
     devices: options[:device],
@@ -640,14 +641,14 @@ lane :test_ui do |options|
   next unless is_check_required(sources: sources_matrix[:ui], force_check: @force_check)
 
   record_mode = options[:record].to_s == 'true'
+  scheme = 'StreamChatUI'
   remove_snapshots if record_mode
-
-  update_testplan_on_ci(path: 'Tests/StreamChatUITests/StreamChatUITestPlan.xctestplan')
+  update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
 
   scan(
     project: xcode_project,
-    scheme: 'StreamChatUI',
-    testplan: 'StreamChatUITestPlan',
+    scheme: scheme,
+    testplan: scheme,
     clean: is_localhost,
     derived_data_path: derived_data_path,
     cloned_source_packages_path: source_packages_path,
@@ -674,6 +675,28 @@ lane :test_ui do |options|
       head_branch: "#{current_branch}-snapshots-#{Time.now.to_i}"
     )
   end
+end
+
+desc 'Runs common ui tests in Debug config'
+lane :test_common_ui do |options|
+  next unless is_check_required(sources: sources_matrix[:common_ui], force_check: @force_check)
+
+  scheme = 'StreamChatCommonUI'
+  update_testplan_on_ci(path: "Tests/#{scheme}Tests/#{scheme}.xctestplan")
+
+  scan(
+    project: xcode_project,
+    scheme: scheme,
+    testplan: scheme,
+    clean: is_localhost,
+    derived_data_path: derived_data_path,
+    cloned_source_packages_path: source_packages_path,
+    build_for_testing: options[:build_for_testing],
+    skip_build: options[:skip_build],
+    result_bundle: true,
+    devices: options[:device],
+    number_of_retries: options[:cron] ? 3 : 2
+  )
 end
 
 private_lane :match_macos do
@@ -817,6 +840,7 @@ lane :sources_matrix do
     e2e: ['Sources', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', xcode_project],
     llc: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', xcode_project],
     ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', xcode_project],
+    common_ui: ['Sources', 'Tests/StreamChatCommonUITests', 'Tests/Shared', xcode_project],
     sample_apps: ['Sources', 'Examples', 'DemoApp', xcode_project],
     integration: ['Sources', 'Integration', xcode_project],
     ruby: ['fastlane', 'Gemfile', 'Gemfile.lock'],
