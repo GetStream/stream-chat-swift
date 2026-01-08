@@ -191,7 +191,7 @@ jobs:
           fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
 
   build-old-xcode:
-    name: Build LLC + UI (Old Xcode)
+    name: Build SDKs (Old Xcode)
     runs-on: macos-14
     env:
       XCODE_VERSION: "16.1"
