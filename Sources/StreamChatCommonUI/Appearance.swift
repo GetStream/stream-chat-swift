@@ -7,7 +7,7 @@ import StreamChat
 
 /// An object containing visual configuration for whole application.
 public struct Appearance: @unchecked Sendable {
-    /// A color pallete to provide basic set of colors for the Views.
+    /// A color palette to provide basic set of colors for the Views.
     ///
     /// By providing different object or changing individual colors, you can change the look of the views.
     public var colorPalette = ColorPalette()
