@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### 🐞 Fixed
 - Possible fix for rare `thereIsNoSadnessLikeTheDeathOfOptimism` crash in CoreData [#3908](https://github.com/GetStream/stream-chat-swift/pull/3908)
+- Fix crash when querying Channel List by `.filterTags` [#3916](https://github.com/GetStream/stream-chat-swift/pull/3916)
 
 # [4.95.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.95.1)
 _December 18, 2025_
