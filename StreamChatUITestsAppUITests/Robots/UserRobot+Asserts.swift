@@ -3,7 +3,7 @@
 //
 
 import Foundation
-@testable import StreamChatCommonUI
+@testable import StreamChatUI
 import XCTest
 
 let channelAttributes = ChannelListPage.Attributes.self
