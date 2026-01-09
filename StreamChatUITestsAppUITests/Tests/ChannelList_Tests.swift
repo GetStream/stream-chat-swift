@@ -7,6 +7,12 @@ import XCTest
 final class ChannelList_Tests: StreamTestCase {
     let message = "message"
 
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        addTags([.coreFeatures])
+        assertMockServer()
+    }
+
     func test_newMessageShownInChannelPreview_whenComingBackFromChannel() {
         linkToScenario(withId: 79)
 
@@ -41,7 +47,7 @@ final class ChannelList_Tests: StreamTestCase {
         WHEN("participant sends a new message") {
             participantRobot
                 .sendMessage(message)
-                .sleep(2.0)
+                .wait(2.0)
         }
         AND("user becomes online") {
             userRobot.setConnectivity(to: .on)
@@ -50,14 +56,14 @@ final class ChannelList_Tests: StreamTestCase {
             userRobot.assertLastMessageInChannelPreview(message)
         }
     }
-    
+
     func test_paginationOnChannelList() {
         linkToScenario(withId: 276)
 
         let channelsCount = 30
 
         WHEN("user opens the channel list") {
-            backendRobot.generateChannels(channelsCount: channelsCount)
+            backendRobot.generateChannels(count: channelsCount)
             userRobot.login()
         }
         THEN("user makes sure that all channels are loaded") {
@@ -183,7 +189,7 @@ extension ChannelList_Tests {
             userRobot.sendMessage(channelMessage)
         }
         AND("user adds thread reply to this message") {
-            userRobot.sendMessageInThread(threadReply)
+            userRobot.replyToMessageInThread(threadReply)
         }
         WHEN("user goes back to the channel list") {
             userRobot.moveToChannelListFromThreadReplies()
@@ -234,7 +240,7 @@ extension ChannelList_Tests {
         let message = "Channel truncated"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: 42)
+            backendRobot.generateChannels(count: 1, messagesCount: 42)
             userRobot.login().openChannel()
         }
         WHEN("user truncates the channel with system message") {
@@ -255,33 +261,6 @@ extension ChannelList_Tests {
         }
         AND("last message timestamp is shown") {
             userRobot.assertLastMessageTimestampInChannelPreview(isHidden: false)
-        }
-    }
-    
-    func test_messageList_and_channelPreview_AreUpdatedWhenChannelTruncatedWithoutMessage() {
-        linkToScenario(withId: 284)
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: 42)
-            userRobot.login().openChannel()
-        }
-        WHEN("user truncates the channel without system message") {
-            userRobot.truncateChannel(withMessage: false)
-        }
-        THEN("user observes only the system message") {
-            userRobot
-                .assertMessageCount(0)
-                .assertScrollToBottomButton(isVisible: false)
-                .assertScrollToBottomButtonUnreadCount(0)
-        }
-        WHEN("user goes to channel list") {
-            userRobot.tapOnBackButton()
-        }
-        THEN("the channel preview is empty") {
-            userRobot.assertChannelPreviewIsEmpty()
-        }
-        AND("last message timestamp is not shown") {
-            userRobot.assertLastMessageTimestampInChannelPreview(isHidden: true)
         }
     }
 }

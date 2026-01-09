@@ -4,6 +4,7 @@
 
 import XCTest
 
+// Application
 let app = XCUIApplication()
 
 class StreamTestCase: XCTestCase {
@@ -11,27 +12,32 @@ class StreamTestCase: XCTestCase {
     var userRobot: UserRobot!
     var backendRobot: BackendRobot!
     var participantRobot: ParticipantRobot!
-    var mockServer: StreamMockServer!
-    var useMockServer = true
+    var server: StreamMockServer!
+    var recordVideo = false
+    var mockServerEnabled = true
+    var mockServerCrashed = false
     var switchApiKey: String?
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+        startMockServer()
+        participantRobot = ParticipantRobot(server)
+        backendRobot = BackendRobot(server)
+        userRobot = UserRobot(server)
 
         try super.setUpWithError()
-        mockServer = StreamMockServer(driverPort: "4566", testName: testName)
-        backendRobot = BackendRobot(mockServer)
-        participantRobot = ParticipantRobot(mockServer)
-        userRobot = UserRobot(mockServer)
         alertHandler()
-        backendHandler()
+        useMockServer()
+        startVideo()
         app.launch()
     }
 
     override func tearDownWithError() throws {
         attachElementTree()
+        stopVideo()
         app.terminate()
-        mockServer.stop()
+        server.stop()
+        backendRobot.delayServerResponse(byTimeInterval: 0.0)
 
         try super.tearDownWithError()
         app.launchArguments.removeAll()
@@ -40,15 +46,21 @@ class StreamTestCase: XCTestCase {
 }
 
 extension StreamTestCase {
-    private func backendHandler() {
-        app.setEnvironmentVariables([
-            .websocketHost: "ws://localhost",
-            .httpHost: "http://localhost",
-            .port: StreamMockServer.port!
-        ])
-        
-        if useMockServer {
+    func assertMockServer() {
+        XCTAssertFalse(mockServerCrashed, "Mock server failed on start")
+    }
+
+    private func useMockServer() {
+        if mockServerEnabled {
+            // Leverage web socket server
             app.setLaunchArguments(.useMockServer)
+
+            // Configure web socket host
+            app.setEnvironmentVariables([
+                .websocketHost: "\(MockServerConfiguration.websocketHost)",
+                .httpHost: "\(MockServerConfiguration.httpHost)",
+                .port: "\(MockServerConfiguration.port)"
+            ])
         } else if let switchApiKey {
             app.setEnvironmentVariables([.customApiKey: switchApiKey])
         }
@@ -69,6 +81,34 @@ extension StreamTestCase {
                 return true
             }
             return false
+        }
+    }
+
+    private func startMockServer() {
+        server = StreamMockServer()
+        server.configure()
+        
+        for _ in 0...3 {
+            let serverHasStarted = server.start(port: MockServerConfiguration.port)
+            if serverHasStarted {
+                return
+            }
+            server.stop()
+            MockServerConfiguration.port = UInt16(Int.random(in: 61000..<62000))
+        }
+        
+        mockServerCrashed = true
+    }
+
+    private func startVideo() {
+        if recordVideo {
+            server.recordVideo(name: testName)
+        }
+    }
+
+    private func stopVideo() {
+        if recordVideo {
+            server.recordVideo(name: testName, delete: !isTestFailed(), stop: true)
         }
     }
 

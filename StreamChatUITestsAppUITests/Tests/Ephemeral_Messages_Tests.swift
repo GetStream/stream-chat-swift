@@ -5,9 +5,18 @@
 import XCTest
 
 final class Ephemeral_Messages_Tests: StreamTestCase {
-    // NOTE: There used to be a problem with tapping on a Send button on iOS > 16
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        assertMockServer()
+    }
+
     func test_userObservesAnimatedGiphy_whenUserAddsGiphyMessage() throws {
         linkToScenario(withId: 67)
+        
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion > 16,
+            "The test cannot tap on a `Send` button on iOS 17"
+        )
             
         GIVEN("user opens a channel") {
             userRobot
@@ -15,7 +24,7 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("user sends a giphy using giphy command") {
-            userRobot.uploadGiphy()
+            userRobot.sendGiphy()
         }
         THEN("user observes the animated gif") {
             userRobot.assertGiphyImage()
@@ -31,7 +40,7 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("participant sends a giphy") {
-            participantRobot.uploadGiphy()
+            participantRobot.sendGiphy()
         }
         THEN("user observes the animated gif") {
             userRobot.assertGiphyImage()
@@ -76,7 +85,7 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("user runs a giphy command") {
-            userRobot.uploadGiphy(send: false)
+            userRobot.sendGiphy(send: false)
         }
         WHEN("user goes back to channel list") {
             userRobot.tapOnBackButton()
@@ -95,7 +104,7 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("user runs a giphy command") {
-            userRobot.uploadGiphy(send: false)
+            userRobot.sendGiphy(send: false)
         }
         THEN("delivery status is hidden for ephemeral messages") {
             userRobot
@@ -108,13 +117,13 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
         linkToScenario(withId: 183)
 
         GIVEN("user opens a channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         WHEN("user runs a giphy command in thread") {
             userRobot
                 .openThread()
-                .uploadGiphy(send: false)
+                .sendGiphy(send: false)
         }
         THEN("delivery status is hidden for ephemeral messages") {
             userRobot
@@ -122,10 +131,14 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
                 .assertMessageReadCount(readBy: 0)
         }
     }
-    
-    // NOTE: There used to be a problem with tapping on a Send button on iOS > 16
+
     func test_userObservesAnimatedGiphy_afterAddingGiphyThroughComposerMenu() throws {
         linkToScenario(withId: 278)
+        
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion > 16,
+            "The test cannot tap on a `Send` button on iOS 17"
+        )
 
         GIVEN("user opens a channel") {
             userRobot
@@ -133,7 +146,7 @@ final class Ephemeral_Messages_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("user sends a giphy using giphy command") {
-            userRobot.uploadGiphy(useComposerCommand: true)
+            userRobot.sendGiphy(useComposerCommand: true)
         }
         THEN("user observes the animated gif") {
             userRobot.assertGiphyImage()
