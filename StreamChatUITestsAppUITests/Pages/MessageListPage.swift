@@ -208,7 +208,10 @@ class MessageListPage {
             messageCell.staticTexts["messageReadСountsLabel"]
         }
 
-        static func statusCheckmark(for status: MessageDeliveryStatus?, in messageCell: XCUIElement) -> XCUIElement {
+        static func statusCheckmark(
+            for status: StreamChatTestMockServer.MessageDeliveryStatus?,
+            in messageCell: XCUIElement
+        ) -> XCUIElement {
             var identifier = "There is no status checkmark"
             if let status = status {
                 identifier = "imageView_\(status.rawValue)"
