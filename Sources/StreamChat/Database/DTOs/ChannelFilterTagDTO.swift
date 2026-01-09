@@ -10,4 +10,3 @@ class ChannelFilterTagDTO: NSManagedObject {
     @NSManaged var name: String
     @NSManaged var channel: ChannelDTO?
 }
-
