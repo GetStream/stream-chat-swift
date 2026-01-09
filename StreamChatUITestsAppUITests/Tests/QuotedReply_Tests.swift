@@ -12,12 +12,17 @@ final class QuotedReply_Tests: StreamTestCase {
     let quotedText = "1"
     let parentText = "test"
     let replyText = "quoted reply"
+    
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        assertMockServer()
+    }
 
     func test_whenSwipingMessage_thenMessageIsQuotedReply() {
         linkToScenario(withId: 2096)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         WHEN("user swipes a message") {
@@ -36,61 +41,7 @@ final class QuotedReply_Tests: StreamTestCase {
         let messageCount = 20
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: 20)
-            userRobot.login().openChannel()
-        }
-        WHEN("user adds a quoted reply to participant message") {
-            userRobot
-                .scrollMessageListUp(times: 3)
-                .quoteMessage(replyText, messageCellIndex: messageCount - 1)
-        }
-        THEN("user observes the quote reply in message list") {
-            userRobot
-                .assertScrollToBottomButton(isVisible: false)
-                .assertQuotedMessage(replyText: replyText, quotedText: quotedText)
-        }
-        WHEN("user taps on a quoted message") {
-            userRobot.tapOnQuotedMessage(quotedText, at: 0)
-        }
-        THEN("user is scrolled up to the quoted message") {
-            userRobot
-                .assertScrollToBottomButton(isVisible: true)
-                .assertMessageIsVisible(at: messageCount)
-        }
-    }
-
-    func test_quotedReplyInList_whenParticipantAddsQuotedReply_Message() {
-        linkToScenario(withId: 1668)
-
-        let messageCount = 25
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: messageCount)
-            userRobot.login().openChannel()
-        }
-        WHEN("participant adds a quoted reply") {
-            participantRobot.quoteMessage(replyText, last: false)
-        }
-        THEN("user observes the quote reply in message list") {
-            userRobot
-                .assertScrollToBottomButton(isVisible: false)
-                .assertQuotedMessage(replyText: replyText, quotedText: quotedText)
-        }
-        WHEN("user taps on a quoted message") {
-            userRobot.tapOnQuotedMessage(quotedText, at: 0)
-        }
-        THEN("user is scrolled up to the quoted message") {
-            userRobot
-                .assertScrollToBottomButton(isVisible: true)
-                .assertMessageIsVisible(at: messageCount)
-        }
-    }
-
-    func test_quotedReplyNotInList_whenUserAddsQuotedReply() {
-        linkToScenario(withId: 51)
-
-        GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: messageCount)
+            backendRobot.generateChannels(count: 1, messagesCount: 20)
             userRobot.login().openChannel()
         }
         WHEN("user adds a quoted reply to participant message") {
@@ -101,16 +52,72 @@ final class QuotedReply_Tests: StreamTestCase {
         }
         THEN("user observes the quote reply in message list") {
             userRobot
-                .assertScrollToBottomButton(isVisible: false)
                 .assertQuotedMessage(replyText: replyText, quotedText: quotedText)
+                .assertScrollToBottomButton(isVisible: false)
         }
         WHEN("user taps on a quoted message") {
             userRobot.tapOnQuotedMessage(quotedText, at: 0)
         }
         THEN("user is scrolled up to the quoted message") {
             userRobot
-                .assertScrollToBottomButton(isVisible: true)
                 .assertMessageIsVisible(at: messageCount)
+                .assertScrollToBottomButton(isVisible: true)
+        }
+    }
+
+    func test_quotedReplyInList_whenParticipantAddsQuotedReply_Message() {
+        linkToScenario(withId: 1668)
+
+        let messageCount = 25
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: messageCount)
+            userRobot.login().openChannel()
+        }
+        WHEN("participant adds a quoted reply") {
+            participantRobot.quoteMessage(replyText, toLastMessage: false)
+            userRobot.waitForMessageVisibility(at: 0)
+        }
+        THEN("user observes the quote reply in message list") {
+            userRobot
+                .assertQuotedMessage(replyText: replyText, quotedText: quotedText)
+                .assertScrollToBottomButton(isVisible: false)
+        }
+        WHEN("user taps on a quoted message") {
+            userRobot.tapOnQuotedMessage(quotedText, at: 0)
+        }
+        THEN("user is scrolled up to the quoted message") {
+            userRobot
+                .assertMessageIsVisible(at: messageCount)
+                .assertScrollToBottomButton(isVisible: true)
+        }
+    }
+
+    func test_quotedReplyNotInList_whenUserAddsQuotedReply() {
+        linkToScenario(withId: 51)
+
+        GIVEN("user opens the channel") {
+            backendRobot.generateChannels(count: 1, messagesCount: messageCount)
+            userRobot.login().openChannel()
+        }
+        WHEN("user adds a quoted reply to participant message") {
+            userRobot
+                .scrollMessageListUp(times: 3)
+                .quoteMessage(replyText, messageCellIndex: messageCount - 1)
+                .waitForMessageVisibility(at: 0)
+        }
+        THEN("user observes the quote reply in message list") {
+            userRobot
+                .assertQuotedMessage(replyText: replyText, quotedText: quotedText)
+                .assertScrollToBottomButton(isVisible: false)
+        }
+        WHEN("user taps on a quoted message") {
+            userRobot.tapOnQuotedMessage(quotedText, at: 0)
+        }
+        THEN("user is scrolled up to the quoted message") {
+            userRobot
+                .assertMessageIsVisible(at: messageCount)
+                .assertScrollToBottomButton(isVisible: true)
         }
     }
 
@@ -118,24 +125,25 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 52)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: messageCount)
+            backendRobot.generateChannels(count: 1, messagesCount: messageCount)
             userRobot.login().openChannel()
         }
         WHEN("participant adds a quoted reply") {
-            participantRobot.quoteMessage(replyText, last: false)
+            participantRobot.quoteMessage(replyText, toLastMessage: false)
+            userRobot.waitForMessageVisibility(at: 0)
         }
         THEN("user observes the quote reply in message list") {
             userRobot
-                .assertScrollToBottomButton(isVisible: false)
                 .assertQuotedMessage(replyText: replyText, quotedText: quotedText)
+                .assertScrollToBottomButton(isVisible: false)
         }
         WHEN("user taps on a quoted message") {
             userRobot.tapOnQuotedMessage(quotedText, at: 0)
         }
         THEN("user is scrolled up to the quoted message") {
             userRobot
+                .assertMessageIsVisible(at: messageCount)
                 .assertScrollToBottomButton(isVisible: true)
-                .assertFirstMessageIsVisible(quotedText)
         }
     }
 
@@ -143,25 +151,26 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 1568)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: messageCount)
+            backendRobot.generateChannels(count: 1, messagesCount: messageCount)
             userRobot.login().openChannel()
         }
         WHEN("participant sends file as a quoted reply") {
-            participantRobot.quoteMessageWithAttachment(type: .file, last: false)
+            participantRobot.uploadAttachment(type: .file, asReplyToFirstMessage: true)
+            userRobot.waitForMessageVisibility(at: 0)
         }
         THEN("user observes the quote reply in message list") {
             userRobot
-                .assertScrollToBottomButton(isVisible: false)
                 .assertFile(isPresent: true)
                 .assertQuotedMessage(quotedText: quotedText)
+                .assertScrollToBottomButton(isVisible: false)
         }
         WHEN("user taps on a quoted message") {
             userRobot.tapOnQuotedMessage(quotedText, at: 0)
         }
         THEN("user is scrolled up to the quoted message") {
             userRobot
+                .assertMessageIsVisible(at: messageCount)
                 .assertScrollToBottomButton(isVisible: true)
-                .assertFirstMessageIsVisible(quotedText)
         }
     }
 
@@ -169,25 +178,26 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 1571)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: messageCount)
+            backendRobot.generateChannels(count: 1, messagesCount: messageCount)
             userRobot.login().openChannel()
         }
         WHEN("participant sends giphy as a quoted reply") {
-            participantRobot.quoteMessageWithGiphy(last: false)
+            participantRobot.replyWithGiphy(toLastMessage: false)
+            userRobot.waitForMessageVisibility(at: 0)
         }
         THEN("user observes the quote reply in message list") {
             userRobot
-                .assertScrollToBottomButton(isVisible: false)
                 .assertGiphyImage()
                 .assertQuotedMessage(quotedText: quotedText)
+                .assertScrollToBottomButton(isVisible: false)
         }
         WHEN("user taps on a quoted message") {
             userRobot.tapOnQuotedMessage(quotedText, at: 0)
         }
         THEN("user is scrolled up to the quoted message") {
             userRobot
+                .assertMessageIsVisible(at: messageCount)
                 .assertScrollToBottomButton(isVisible: true)
-                .assertFirstMessageIsVisible(quotedText)
         }
     }
 
@@ -195,7 +205,7 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 108)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         AND("participant adds a quoted reply") {
@@ -236,7 +246,7 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 109)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         AND("user adds a quoted reply") {
@@ -254,7 +264,7 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 6644)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         AND("user adds a quoted reply") {
@@ -277,7 +287,7 @@ final class QuotedReply_Tests: StreamTestCase {
         let invalidCommand = "invalid command"
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: messageCount)
+            backendRobot.generateChannels(count: 1, messagesCount: messageCount)
             userRobot.login().openChannel()
         }
         WHEN("user adds a quoted reply to participant message") {
@@ -308,12 +318,7 @@ final class QuotedReply_Tests: StreamTestCase {
         let replyToMessageIndex = messageCount - 1
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: messageCount,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
             userRobot.login().openChannel()
         }
         WHEN("user adds a quoted reply to participant message in thread") {
@@ -344,16 +349,11 @@ final class QuotedReply_Tests: StreamTestCase {
         let messageCount = 25
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: messageCount,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
             userRobot.login().openChannel()
         }
         WHEN("participant adds a quoted reply") {
-            participantRobot.quoteMessageInThread(replyText, last: false)
+            participantRobot.quoteMessageInThread(replyText, toLastMessage: false)
         }
         THEN("user observes the quote reply in thread") {
             userRobot
@@ -378,12 +378,7 @@ final class QuotedReply_Tests: StreamTestCase {
         let replyToMessageIndex = messageCount - 1
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: messageCount,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
             userRobot.login().openChannel()
         }
         WHEN("user adds a quoted reply to participant message in thread") {
@@ -413,16 +408,11 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 1934)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: messageCount,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
             userRobot.login().openChannel()
         }
         WHEN("participant adds a quoted reply in thread") {
-            participantRobot.quoteMessageInThread(replyText, last: false)
+            participantRobot.quoteMessageInThread(replyText, toLastMessage: false)
         }
         THEN("user observes the quote reply in thread") {
             userRobot
@@ -445,16 +435,11 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 1935)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: messageCount,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
             userRobot.login().openChannel()
         }
         WHEN("participant sends file as a quoted reply in thread") {
-            participantRobot.quoteMessageWithAttachmentInThread(type: .file, last: false)
+            participantRobot.uploadAttachment(type: .file, asReplyToFirstMessage: true, inThread: true)
         }
         THEN("user observes the quote reply in thread") {
             userRobot
@@ -472,22 +457,21 @@ final class QuotedReply_Tests: StreamTestCase {
                 .assertScrollToBottomButton(isVisible: true)
         }
     }
-    
-    // NOTE: There used to be a problem with tapping on a Send button on iOS > 16
+
     func test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Giphy_InThread() throws {
         linkToScenario(withId: 1936)
+        
+        try XCTSkipIf(
+            ProcessInfo().operatingSystemVersion.majorVersion > 16,
+            "The test cannot tap on a `Send` button on iOS 17"
+        )
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: messageCount,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
             userRobot.login().openChannel()
         }
         WHEN("participant sends giphy as a quoted reply") {
-            participantRobot.quoteMessageWithGiphyInThread(last: false)
+            participantRobot.replyWithGiphyInThread(toLastMessage: false)
         }
         THEN("user observes the quote reply in thread") {
             userRobot
@@ -513,12 +497,7 @@ final class QuotedReply_Tests: StreamTestCase {
         let replyToMessageIndex = messageCount - 1
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: messageCount,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
             userRobot.login().openChannel()
         }
         THEN("user adds a quoted reply in thread") {
@@ -545,26 +524,19 @@ final class QuotedReply_Tests: StreamTestCase {
 
     func test_threadRepliesCount() {
         linkToScenario(withId: 1938)
-        
-        let repliesCount = 5
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: repliesCount,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
             userRobot.login().openChannel()
         }
         THEN("user observes the number of replies in the channel") {
-            userRobot.assertThreadReplyCountButton(replies: repliesCount)
+            userRobot.assertThreadReplyCountButton(replies: messageCount)
         }
-        WHEN("user opens the tread") {
-            userRobot.openThread()
+        WHEN("user opens the tread and scrolls up") {
+            userRobot.openThread().scrollMessageListUp(times: 3)
         }
         AND("user observes the number of replies in the thread") {
-            userRobot.assertThreadRepliesCountLabel(repliesCount)
+            userRobot.assertThreadRepliesCountLabel(messageCount)
         }
     }
 
@@ -574,12 +546,7 @@ final class QuotedReply_Tests: StreamTestCase {
         let quotedText = String(messageCount)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: messageCount,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
             userRobot.login().openChannel()
         }
         WHEN("participant adds a quoted reply in thread and also in channel") {
@@ -602,12 +569,7 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 1964)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: 1,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: 1)
             userRobot.login().openChannel()
         }
         AND("participant adds a quoted reply") {
@@ -625,15 +587,11 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 6645)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1)
             userRobot.login().openChannel()
         }
         AND("participant sends a message") {
-            participantRobot.sendMessageInThread("1")
+            participantRobot.replyToMessageInThread("1")
         }
         AND("user adds a quoted reply") {
             userRobot.openThread().quoteMessage(replyText)
@@ -653,12 +611,7 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 1965)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: 1,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: 1)
             userRobot.login().openChannel()
         }
         AND("user adds a quoted reply in thread") {
@@ -676,7 +629,7 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 6646)
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot.login().openChannel()
         }
         AND("user adds a quoted reply") {
@@ -699,12 +652,7 @@ final class QuotedReply_Tests: StreamTestCase {
         let replyCount = 30
 
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: replyCount,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: replyCount)
             userRobot.login().openChannel()
         }
         WHEN("user opens the thread with \(replyCount) replies") {
@@ -727,12 +675,7 @@ final class QuotedReply_Tests: StreamTestCase {
         let pageSize = 25
         
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: pageSize,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: pageSize)
             userRobot.login().openChannel()
         }
         WHEN("user opens the thread with \(pageSize) replies") {
@@ -755,12 +698,7 @@ final class QuotedReply_Tests: StreamTestCase {
         let messageCount = 24
         
         GIVEN("user opens the channel") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: messageCount,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
             userRobot.login().openChannel()
         }
         WHEN("user opens the thread with \(messageCount) replies") {
@@ -775,12 +713,7 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 2000)
 
         GIVEN("user opens the thread with \(messageCount) replies") {
-            backendRobot.generateChannels(
-                channelsCount: 1,
-                messagesCount: 1,
-                repliesCount: messageCount,
-                messagesText: parentText
-            )
+            backendRobot.generateChannels(count: 1, messageText: parentText, messagesCount: 1, replyCount: messageCount)
             userRobot.login().openChannel().openThread()
         }
         WHEN("user quote replies root message") {

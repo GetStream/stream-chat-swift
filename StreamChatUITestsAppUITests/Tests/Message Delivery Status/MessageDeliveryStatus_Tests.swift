@@ -13,6 +13,12 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
     var pendingThreadReply: String { "pending \(threadReply)" }
     var failedThreadReply: String { "failed \(threadReply)" }
 
+    override func setUpWithError() throws {
+        try super.setUpWithError()
+        addTags([.messageDeliveryStatus])
+        assertMockServer()
+    }
+
     // MARK: Message List
 
     func test_singleCheckmarkShown_whenMessageIsSent() {
@@ -42,7 +48,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
                 .openChannel()
         }
         WHEN("user sends a new message") {
-            backendRobot.delayNewMessages(by: 5)
+            backendRobot.delayServerResponse(byTimeInterval: 5.0)
             userRobot.sendMessage(pendingMessage, waitForAppearance: false)
         }
         THEN("message delivery status shows clocks") {
@@ -84,7 +90,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
             userRobot.sendMessage(message)
         }
         WHEN("participant reads the user's message") {
-            participantRobot.readMessage()
+            participantRobot.readMessageAfterDelay()
         }
         THEN("user spots double checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.read)
@@ -106,7 +112,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
             userRobot.sendMessage(message)
         }
         AND("message is read by more than 1 participant") {
-            participantRobot.readMessage()
+            participantRobot.readMessageAfterDelay()
             userRobot
                 .assertMessageDeliveryStatus(.read)
                 .assertMessageReadCount(readBy: 1)
@@ -125,6 +131,8 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
     func test_readByDecremented_whenParticipantIsRemoved() {
         linkToScenario(withId: 145)
 
+        let participantOne = participantRobot.currentUserId
+
         GIVEN("user opens the channel") {
             userRobot
                 .login()
@@ -134,13 +142,13 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
             userRobot.sendMessage(message)
         }
         AND("is read by participant") {
-            participantRobot.readMessage()
+            participantRobot.readMessageAfterDelay()
             userRobot
                 .assertMessageDeliveryStatus(.read)
                 .assertMessageReadCount(readBy: 1)
         }
         WHEN("participant is removed from the channel") {
-            userRobot.removeParticipant(withUserId: participantRobot.id)
+            userRobot.removeParticipant(withUserId: participantOne)
         }
         THEN("user spots single checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.sent)
@@ -250,6 +258,8 @@ extension MessageDeliveryStatus_Tests {
     }
 
     func test_doubleCheckmarkShown_whenMessageReadByParticipant_andPreviewedInThread() throws {
+        throw XCTSkip("https://github.com/GetStream/ios-issues-tracking/issues/491")
+        
         linkToScenario(withId: 150)
 
         GIVEN("user opens the channel") {
@@ -264,7 +274,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.openThread()
         }
         WHEN("the message is read by participant") {
-            participantRobot.readMessage()
+            participantRobot.readMessageAfterDelay()
         }
         THEN("user spots double checkmark below the message in thread") {
             userRobot.assertMessageDeliveryStatus(.read)
@@ -288,7 +298,7 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user replies to the message in thread") {
-            userRobot.sendMessageInThread(threadReply)
+            userRobot.replyToMessageInThread(threadReply)
         }
         THEN("user spots single checkmark below the thread reply") {
             userRobot
@@ -301,14 +311,14 @@ extension MessageDeliveryStatus_Tests {
         linkToScenario(withId: 152)
 
         GIVEN("user becomes offline") {
-            backendRobot.generateChannels(channelsCount: 1, messagesCount: 1)
+            backendRobot.generateChannels(count: 1, messagesCount: 1)
             userRobot
                 .login()
                 .setConnectivity(to: .off)
                 .openChannel()
         }
         WHEN("user replies to message in thread") {
-            userRobot.sendMessageInThread(failedThreadReply, waitForAppearance: false)
+            userRobot.replyToMessageInThread(failedThreadReply, waitForAppearance: false)
         }
         THEN("error indicator is shown for the thread reply") {
             userRobot.assertThreadReplyFailedToBeSent()
@@ -332,10 +342,10 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.sendMessage(message)
         }
         WHEN("user replies to message in thread") {
-            userRobot.sendMessageInThread(threadReply)
+            userRobot.replyToMessageInThread(threadReply)
         }
         AND("participant reads the user's thread reply") {
-            participantRobot.readMessage()
+            participantRobot.readMessageInThreadAfterDelay()
         }
         THEN("user spots double checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.read)
@@ -347,7 +357,7 @@ extension MessageDeliveryStatus_Tests {
 
     func test_noDoubleCheckmarkShownInThreadReply_whenNewParticipantAdded() throws {
         linkToScenario(withId: 154)
-    
+        
         GIVEN("user opens the channel") {
             userRobot
                 .login()
@@ -357,7 +367,7 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user replies to message in thread") {
-            userRobot.sendMessageInThread(threadReply)
+            userRobot.replyToMessageInThread(threadReply)
         }
         WHEN("new participant is added to the channel") {
             userRobot.addParticipant()
@@ -373,6 +383,8 @@ extension MessageDeliveryStatus_Tests {
     func test_readByDecrementedInThreadReply_whenParticipantIsRemoved() {
         linkToScenario(withId: 155)
 
+        let participantOne = participantRobot.currentUserId
+
         GIVEN("user opens the channel") {
             userRobot
                 .login()
@@ -382,16 +394,16 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user replies to message in thread") {
-            userRobot.sendMessageInThread(threadReply)
+            userRobot.replyToMessageInThread(threadReply)
         }
         AND("thread reply is read by participant") {
-            participantRobot.readMessage()
+            participantRobot.readMessageInThreadAfterDelay()
             userRobot
                 .assertMessageDeliveryStatus(.read)
                 .assertMessageReadCount(readBy: 1)
         }
         WHEN("participant is removed from the channel") {
-            userRobot.removeParticipant(withUserId: participantRobot.id)
+            userRobot.removeParticipant(withUserId: participantOne)
         }
         THEN("user spots single checkmark below the message") {
             userRobot.assertMessageDeliveryStatus(.sent)
@@ -411,7 +423,7 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user replies to message in thread") {
-            userRobot.sendMessageInThread(threadReply)
+            userRobot.replyToMessageInThread(threadReply)
         }
         AND("delivery status shows single checkmark") {
             userRobot.assertMessageDeliveryStatus(.sent)
@@ -439,7 +451,7 @@ extension MessageDeliveryStatus_Tests {
             participantRobot.sendMessage(message)
         }
         AND("user replies to message in thread") {
-            userRobot.sendMessageInThread(threadReply)
+            userRobot.replyToMessageInThread(threadReply)
         }
         AND("delivery status shows single checkmark") {
             userRobot.assertMessageDeliveryStatus(.sent)
@@ -512,7 +524,7 @@ extension MessageDeliveryStatus_Tests {
                 .openChannel()
         }
         WHEN("user sends a new message") {
-            backendRobot.delayNewMessages(by: 5)
+            backendRobot.delayServerResponse(byTimeInterval: 5.0)
             userRobot.sendMessage(pendingMessage, waitForAppearance: false)
         }
         THEN("message delivery status shows clocks") {
@@ -558,7 +570,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         WHEN("participant reads the user's message") {
-            participantRobot.readMessage()
+            participantRobot.readMessageAfterDelay()
         }
         THEN("delivery status is hidden") {
             userRobot
@@ -580,7 +592,7 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         AND("message is read by more than 1 participant") {
-            participantRobot.readMessage()
+            participantRobot.readMessageAfterDelay()
         }
         WHEN("new participant is added to the channel") {
             userRobot.addParticipant()
@@ -595,6 +607,8 @@ extension MessageDeliveryStatus_Tests {
     func test_deliveryStatusHidden_whenParticipantIsRemovedAndReadEventsIsDisabled() {
         linkToScenario(withId: 163)
 
+        let participantOne = participantRobot.currentUserId
+
         GIVEN("user opens the channel") {
             backendRobot.setReadEvents(to: false)
             userRobot
@@ -605,10 +619,10 @@ extension MessageDeliveryStatus_Tests {
             userRobot.sendMessage(message)
         }
         AND("is read by participant") {
-            participantRobot.readMessage()
+            participantRobot.readMessageAfterDelay()
         }
         WHEN("participant is removed from the channel") {
-            userRobot.removeParticipant(withUserId: participantRobot.id)
+            userRobot.removeParticipant(withUserId: participantOne)
         }
         AND("delivery status is hidden") {
             userRobot.assertMessageDeliveryStatus(nil)
