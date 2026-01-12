@@ -16,7 +16,7 @@ class ChannelDTO: NSManagedObject {
     @NSManaged var typeRawValue: String
     @NSManaged var extraData: Data
     @NSManaged var config: ChannelConfigDTO
-    @NSManaged var filterTags: [String]
+    @NSManaged var filterTags: Set<ChannelFilterTagDTO>
     @NSManaged var ownCapabilities: [String]
 
     @NSManaged var createdAt: DBDate
@@ -257,7 +257,15 @@ extension NSManagedObjectContext {
         dto.id = payload.cid.id
         dto.config = payload.config.asDTO(context: self, cid: dto.cid)
         if let filterTags = payload.filterTags {
-            dto.filterTags = filterTags
+            // Remove existing filter tags
+            dto.filterTags.forEach { delete($0) }
+            // Create new filter tag DTOs
+            dto.filterTags = Set(filterTags.map { tagName in
+                let tagDTO = ChannelFilterTagDTO(context: self)
+                tagDTO.name = tagName
+                tagDTO.channel = dto
+                return tagDTO
+            })
         }
         if let ownCapabilities = payload.ownCapabilities {
             dto.ownCapabilities = ownCapabilities
@@ -649,7 +657,7 @@ extension ChatChannel {
             isHidden: dto.isHidden,
             createdBy: dto.createdBy?.asModel(),
             config: dto.config.asModel(),
-            filterTags: Set(dto.filterTags),
+            filterTags: Set(dto.filterTags.map(\.name)),
             ownCapabilities: Set(dto.ownCapabilities.compactMap(ChannelCapability.init(rawValue:))),
             isFrozen: dto.isFrozen,
             isDisabled: dto.isDisabled,

@@ -61,7 +61,7 @@ final class ChannelListFilterScope_Tests: XCTestCase {
         XCTAssertEqual(Key<Bool>.muted.keyPathString, "mute")
         XCTAssertEqual(Key<Bool>.archived.keyPathString, "membership.archivedAt")
         XCTAssertEqual(Key<Bool>.pinned.keyPathString, "membership.pinnedAt")
-        XCTAssertEqual(Key<String>.filterTags.keyPathString, "filterTags")
+        XCTAssertEqual(Key<String>.filterTags.keyPathString, "filterTags.name")
         XCTAssertNil(Key<InviteFilterValue>.invite.keyPathString)
     }
 
