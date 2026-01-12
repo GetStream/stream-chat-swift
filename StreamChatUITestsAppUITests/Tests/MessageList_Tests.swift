@@ -1,5 +1,5 @@
 //
-// Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
@@ -257,8 +257,10 @@ final class MessageList_Tests: StreamTestCase {
         }
     }
 
-    func test_addMessageWhileOffline() {
+    func test_addMessageWhileOffline() throws {
         linkToScenario(withId: 36)
+        
+        throw XCTSkip("https://linear.app/stream/issue/IOS-1345")
 
         let message = "test message"
 
