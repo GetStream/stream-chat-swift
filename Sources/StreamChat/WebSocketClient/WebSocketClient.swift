@@ -48,7 +48,7 @@ class WebSocketClient {
     private let eventDecoder: AnyEventDecoder
 
     /// The web socket engine used to make the actual WS connection
-    private(set) var engine: WebSocketEngine?
+    @Atomic private(set) var engine: WebSocketEngine?
 
     /// The queue on which web socket engine methods are called
     private let engineQueue: DispatchQueue = .init(label: "io.getStream.chat.core.web_socket_engine_queue", qos: .userInitiated)
@@ -121,9 +121,7 @@ class WebSocketClient {
         }
 
         do {
-            try engineQueue.sync {
-                self.engine = try createEngineIfNeeded(for: endpoint)
-            }
+            engine = try createEngineIfNeeded(for: endpoint)
         } catch {
             return
         }
