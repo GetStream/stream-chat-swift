@@ -1,11 +1,10 @@
 //
-// Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 @testable import StreamChat
 @testable import StreamChatCommonUI
-@testable import StreamChatUI
 import XCTest
 
 let channelAttributes = ChannelListPage.Attributes.self
@@ -36,6 +35,25 @@ extension UserRobot {
             line: line
         )
         return channelCells.element(boundBy: index)
+    }
+    
+    @discardableResult
+    func assertChannelPreviewIsEmpty(
+        at cellIndex: Int? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let emptyChannelPreviewText = "No messages"
+        let cell = channelCell(withIndex: cellIndex, file: file, line: line)
+        let message = channelAttributes.lastMessage(in: cell)
+        let actualText = message.waitForText(emptyChannelPreviewText, mustBeEqual: true).text
+        XCTAssertEqual(
+            actualText,
+            emptyChannelPreviewText,
+            file: file,
+            line: line
+        )
+        return self
     }
 
     @discardableResult
@@ -76,7 +94,7 @@ extension UserRobot {
 
     @discardableResult
     func assertMessageDeliveryStatusInChannelPreview(
-        _ deliveryStatus: MessageDeliveryStatus?,
+        _ deliveryStatus: StreamChatTestMockServer.MessageDeliveryStatus?,
         at cellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -230,8 +248,8 @@ extension UserRobot {
 
     @discardableResult
     func assertPushNotification(
-        withText text: String,
-        from sender: String,
+        title: String,
+        body: String,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> Self {
@@ -245,14 +263,14 @@ extension UserRobot {
 
         let pushNotificationContent = pushNotification.text
         XCTAssertTrue(
-            pushNotificationContent.contains(text),
-            "\(pushNotificationContent) does not contain \(text)",
+            pushNotificationContent.contains(body),
+            "\(pushNotificationContent) does not contain \(body)",
             file: file,
             line: line
         )
         XCTAssertTrue(
-            pushNotificationContent.contains(sender),
-            "\(pushNotificationContent) does not contain \(sender)",
+            pushNotificationContent.contains(title),
+            "\(pushNotificationContent) does not contain \(title)",
             file: file,
             line: line
         )
@@ -322,6 +340,19 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         let messageCell = messageCell(withIndex: messageCellIndex, file: file, line: line)
+        let message = attributes.text(text, in: messageCell).wait()
+        let actualText = message.waitForText(text).text
+        XCTAssertEqual(text, actualText, file: file, line: line)
+        return self
+    }
+    
+    @discardableResult
+    func assertFirstMessageIsVisible(
+        _ text: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let messageCell = messageCell(withIndex: cells.count - 1, file: file, line: line)
         let message = attributes.text(text, in: messageCell).wait()
         let actualText = message.waitForText(text).text
         XCTAssertEqual(text, actualText, file: file, line: line)
@@ -520,7 +551,7 @@ extension UserRobot {
 
     @discardableResult
     func waitForMessageDeliveryStatus(
-        _ deliveryStatus: MessageDeliveryStatus?,
+        _ deliveryStatus: StreamChatTestMockServer.MessageDeliveryStatus?,
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -536,7 +567,7 @@ extension UserRobot {
 
     @discardableResult
     func assertMessageDeliveryStatus(
-        _ deliveryStatus: MessageDeliveryStatus?,
+        _ deliveryStatus: StreamChatTestMockServer.MessageDeliveryStatus?,
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -679,9 +710,8 @@ extension UserRobot {
     }
 
     @discardableResult
-    func assertMentionWasApplied(file: StaticString = #filePath, line: UInt = #line) -> Self {
+    func assertMentionWasApplied(userName: String, file: StaticString = #filePath, line: UInt = #line) -> Self {
         let additionalSpace = " "
-        let userName = UserDetails.countDookuName
         let expectedText = "@\(userName)\(additionalSpace)"
         let actualText = MessageListPage.Composer.textView.waitForText(expectedText).text
         XCTAssertEqual(expectedText, actualText, file: file, line: line)
@@ -849,7 +879,7 @@ extension UserRobot {
 
     @discardableResult
     func assertThreadReplyDeliveryStatus(
-        _ deliveryStatus: MessageDeliveryStatus?,
+        _ deliveryStatus: StreamChatTestMockServer.MessageDeliveryStatus?,
         at messageCellIndex: Int? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -908,15 +938,6 @@ extension UserRobot {
         XCTAssertFalse(sendButton.exists, "Send button is visible", file: file, line: line)
         return self
     }
-
-    @discardableResult
-    func assertThreadReplyCountButton(
-        at messageCellIndex: Int? = nil,
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) -> Self {
-        assertThreadReplyCountButton(at: messageCellIndex, replies: 0, file: file, line: line)
-    }
     
     @discardableResult
     func assertThreadReplyCountButton(
@@ -933,10 +954,9 @@ extension UserRobot {
             file: file,
             line: line
         )
-        if replies > 0 {
-            let expectedText = "\(replies) Thread Replies"
-            XCTAssertEqual(expectedText, threadReplyCountButton.waitForText(expectedText).text)
-        }
+        
+        let expectedText = replies == 1 ? "1 Thread Reply" : "\(replies) Thread Replies"
+        XCTAssertEqual(expectedText, threadReplyCountButton.waitForText(expectedText).text)
         return self
     }
     
@@ -1038,7 +1058,7 @@ extension UserRobot {
         line: UInt = #line
     ) -> Self {
         let cell = messageCell(withIndex: messageCellIndex, file: file, line: line).wait()
-        let expectedText = Message.message(withInvalidCommand: invalidCommand)
+        let expectedText = "Sorry, command \(invalidCommand) doesn't exist. Try posting your message without the starting /"
         let actualText = attributes.text(in: cell).waitForText(expectedText).text
         XCTAssertEqual(actualText, expectedText, file: file, line: line)
         return self
@@ -1118,38 +1138,6 @@ extension UserRobot {
         let errMessage = isPresent ? "There are no files" : "Files are presented"
         _ = isPresent ? fileNames.firstMatch.wait() : fileNames.firstMatch.waitForDisappearance()
         XCTAssertEqual(fileNames.count, count, errMessage, file: file, line: line)
-        return self
-    }
-}
-
-// MARK: UserDetails
-
-extension UserRobot {
-    @discardableResult
-    func assertUserDetails(_ details: [String: Any]?) -> Self {
-        let userDetails = details?[WebSocketConnectPayload.CodingKeys.userDetails.rawValue] as? [String: Any]
-        
-        let serverDeterminesConnectionId = details?[WebSocketConnectPayload.CodingKeys.serverDeterminesConnectionId.rawValue] as? Bool
-        XCTAssertEqual(true, serverDeterminesConnectionId)
-        
-        let userId = details?[WebSocketConnectPayload.CodingKeys.userId.rawValue] as? String
-        XCTAssertEqual(UserDetails.lukeSkywalkerId, userId)
-        
-        let id = userDetails?[UserWebSocketPayload.CodingKeys.id.rawValue] as? String
-        XCTAssertEqual(UserDetails.lukeSkywalkerId, id)
-        
-        let isInvisible = userDetails?[UserWebSocketPayload.CodingKeys.isInvisible.rawValue] as? Bool
-        XCTAssertEqual(nil, isInvisible)
-
-        let name = userDetails?[UserWebSocketPayload.CodingKeys.name.rawValue] as? String
-        XCTAssertEqual(UserDetails.lukeSkywalkerName, name)
-        
-        let imageURL = userDetails?[UserWebSocketPayload.CodingKeys.imageURL.rawValue] as? String
-        XCTAssertEqual(UserDetails.lukeSkywalkerImageURL, imageURL)
-        
-        let birthland = userDetails?["birthland"] as? String
-        XCTAssertEqual("Tatooine", birthland)
-        
         return self
     }
 }

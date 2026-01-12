@@ -1,5 +1,5 @@
 //
-// Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
 import CoreData
@@ -374,7 +374,11 @@ final class DatabaseContainer_Tests: XCTestCase {
         try container.writeSynchronously { session in
             let cid = ChannelId.unique
             let currentUserId = UserId.unique
-            try session.saveChannel(payload: self.dummyPayload(with: cid), query: .init(filter: .nonEmpty), cache: nil)
+            try session.saveChannel(
+                payload: self.dummyPayload(with: cid, filterTags: ["premium"]),
+                query: .init(filter: .nonEmpty),
+                cache: nil
+            )
             try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
             try session.saveChannel(payload: self.dummyPayload(with: .unique), query: nil, cache: nil)
             try session.saveMember(payload: .dummy(), channelId: cid, query: .init(cid: cid), cache: nil)

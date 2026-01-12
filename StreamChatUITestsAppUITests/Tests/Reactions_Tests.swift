@@ -1,16 +1,10 @@
 //
-// Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
 
 final class Reactions_Tests: StreamTestCase {
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        addTags([.coreFeatures])
-        assertMockServer()
-    }
-
     func test_addsReaction() throws {
         linkToScenario(withId: 41)
 

@@ -1,15 +1,9 @@
 //
-// Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
 import XCTest
-
-public enum MockServerConfiguration {
-    public nonisolated(unsafe) static var port: UInt16 = UInt16(Int.random(in: 61000..<62000))
-    public nonisolated(unsafe) static var websocketHost = "ws://localhost"
-    public nonisolated(unsafe) static var httpHost = "http://localhost"
-}
 
 public enum EnvironmentVariable: String {
     // This changes the base url to localhost with assigned port.
