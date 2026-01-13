@@ -2,9 +2,9 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
 import StreamCore
 import SwiftUI
+import UIKit
 
 public extension Appearance {
     struct ColorPalette: Sendable {
@@ -71,6 +71,7 @@ public extension Appearance {
         public var accentPrimary: UIColor = .streamAccentPrimary
         
         // MARK: - SwiftUI SDK
+
         public var navigationBarTitle: UIColor {
             didSet {
                 StreamConcurrency.onMain { [navigationBarTitle] in
@@ -111,7 +112,7 @@ public extension Appearance {
         
         public var messageOtherUserTextColor: UIColor
         
-        public var selectedReactionBackgroundColor: UIColor? = nil
+        public var selectedReactionBackgroundColor: UIColor?
         
         public var bannerBackgroundColor: UIColor = .streamDarkGray
         

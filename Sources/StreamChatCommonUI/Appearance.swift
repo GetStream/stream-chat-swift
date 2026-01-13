@@ -31,7 +31,7 @@ public struct Appearance: @unchecked Sendable {
     /// you can change how data is formatted to textual representation.
     public var formatters = Formatters()
     
-    nonisolated(unsafe) public static var bundle: Bundle?
+    public nonisolated(unsafe) static var bundle: Bundle?
 
     /// Provider for custom localization which is dependent on App Bundle.
     public var localizationProvider: @Sendable (_ key: String, _ table: String) -> String = { key, table in

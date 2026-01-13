@@ -2,8 +2,8 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import UIKit.UIFont
 import SwiftUI
+import UIKit.UIFont
 
 public extension Appearance {
     struct Fonts {
