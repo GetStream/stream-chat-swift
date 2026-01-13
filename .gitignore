@@ -92,6 +92,7 @@ app-thinning.plist
 *.dmg
 *.pkg*
 *LinkMap.txt
+stream-chat-test-mock-server
 
 # gcloud
 google-cloud-sdk

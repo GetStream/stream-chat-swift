@@ -1,5 +1,5 @@
 //
-// Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
@@ -7,7 +7,7 @@ import XCTest
 @available(iOS 15.0, *)
 class ChannelListScrollTime: StreamTestCase {
     override func setUpWithError() throws {
-        mockServerEnabled = false
+        useMockServer = false
         switchApiKey = "zcgvnykxsfm8"
         try super.setUpWithError()
     }

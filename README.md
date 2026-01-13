@@ -8,12 +8,12 @@
 <p align="center">
   <a href="https://getstream.io/chat/docs/sdk/ios/"><img src="https://img.shields.io/badge/iOS-13%2B-lightblue" /></a>
   <a href="https://swift.org"><img src="https://img.shields.io/badge/Swift-6.0%2B-orange.svg" /></a>
-  <a href="https://github.com/GetStream/stream-chat-swift/actions"><img src="https://github.com/GetStream/stream-chat-swift/actions/workflows/cron-checks.yml/badge.svg" /></a>
   <a href="https://sonarcloud.io/summary/new_code?id=GetStream_stream-chat-swift"><img src="https://sonarcloud.io/api/project_badges/measure?project=GetStream_stream-chat-swift&metric=coverage" /></a>
 </p>
 <p align="center">
   <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-8.63%20MB-blue"/>
   <img id="stream-chat-ui-label" alt="StreamChatUI" src="https://img.shields.io/badge/StreamChatUI-4.91%20MB-blue"/>
+  <img id="stream-chat-common-ui-label" alt="StreamChatCommonUI" src="https://img.shields.io/badge/StreamChatCommonUI-0.75%20MB-blue"/>
 </p>
 
 This is the official iOS SDK for [Stream Chat](https://getstream.io/chat/sdk/ios/), a service for building chat and messaging applications. This library includes both a low-level SDK and a set of reusable UI components.
@@ -53,6 +53,7 @@ The **StreamChatSwiftUI SDK** is our UI SDK for SwiftUI components. If your appl
 - [SwiftUI](https://github.com/GetStream/stream-chat-swiftui): Check our SwiftUI SDK if you are developing with SwiftUI.
 - [Demo app](https://github.com/GetStream/stream-chat-swift/tree/main/DemoApp): This repo includes a fully functional demo app with example usage of the SDK.
 - [Example apps](https://github.com/GetStream/stream-chat-swift/tree/main/Examples): This section of the repo includes fully functional sample apps that you can use as reference.
+- [AI integrations](https://getstream.io/blog/ios-assistant/): Tutorial that shows how to integrate our UI components with LLMs and agents.
 
 ## Free for Makers
 
@@ -99,7 +100,7 @@ To find out more about this product, please check our [docs](https://getstream.i
 
 ## AI Components
 
-Bring your AI experience to life with Stream’s frontend components available for [SwiftUI](https://github.com/GetStream/stream-chat-swift-ai) (and other platforms, such as React, React Native, and Android). 
+Bring your AI experience to life with Stream’s frontend components available for [SwiftUI](https://github.com/GetStream/stream-chat-swift-ai) (and other platforms, such as React, React Native, and Android).
 
 Featuring natural streaming message animation, full markdown and code rendering, charts, tables, thinking indicators, text-to-speech, and a completely flexible composer. Designed to work seamlessly with Stream Chat’s frontend SDKs, it’s everything you need to ship a premium AI chat interface out of the box.
 

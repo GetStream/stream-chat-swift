@@ -78,6 +78,9 @@ jobs:
     - name: Build UI
       run: bundle exec fastlane test_ui device:"iPhone 16" build_for_testing:true
       timeout-minutes: 25
+    - name: Build Common UI
+      run: bundle exec fastlane test_common_ui device:"iPhone 16" build_for_testing:true
+      timeout-minutes: 25
 
   test-llc-debug:
     name: Test LLC (Debug)
@@ -150,6 +153,37 @@ jobs:
         path: |
           fastlane/test_output/snapshots
 
+
+  test-common-ui-debug:
+    name: Test Common UI (Debug)
+    runs-on: macos-15
+    needs: build-test-app-and-frameworks
+    steps:
+    - uses: actions/checkout@v4.1.1
+    - uses: actions/download-artifact@v4
+      with:
+        name: cache-derived-data
+        path: derived_data/Build/
+    - uses: ./.github/actions/bootstrap
+      env:
+        INSTALL_YEETD: true
+        SKIP_SWIFT_BOOTSTRAP: true
+    - name: Run Common UI Tests (Debug)
+      run: bundle exec fastlane test_common_ui device:"${{ env.IOS_SIMULATOR_DEVICE }}" skip_build:true
+      timeout-minutes: 60
+    - name: Parse xcresult
+      if: failure()
+      run: |
+        brew install chargepoint/xcparse/xcparse
+        xcparse logs fastlane/test_output/StreamChatCommonUI.xcresult fastlane/test_output/logs/
+    - uses: actions/upload-artifact@v4
+      if: failure()
+      with:
+        name: Test Data Common UI
+        path: |
+          fastlane/test_output/logs/*/Diagnostics/**/*.txt
+          fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
+
   allure_testops_launch:
     name: Launch Allure TestOps
     runs-on: macos-15
@@ -220,7 +254,7 @@ jobs:
         name: Test Data E2E
         path: |
           fastlane/recordings
-          fastlane/sinatra_log.txt
+          fastlane/stream-chat-test-mock-server/logs/*
           fastlane/test_output/logs/*/Diagnostics/**/*.txt
           fastlane/test_output/logs/*/Diagnostics/simctl_diagnostics/DiagnosticReports/*
 

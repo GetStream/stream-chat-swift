@@ -1,12 +1,12 @@
 //
-// Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
 
 final class Backend_Tests: StreamTestCase {
     override func setUpWithError() throws {
-        mockServerEnabled = false
+        useMockServer = false
         switchApiKey = "8br4watad788"
         try super.setUpWithError()
     }

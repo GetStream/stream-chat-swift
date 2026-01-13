@@ -1,5 +1,5 @@
 //
-// Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
 import XCTest
@@ -10,12 +10,6 @@ final class SlowMode_Tests: StreamTestCase {
     let anotherNewMessage = "Another new message"
     let replyMessage = "reply message"
     let editedMessage = "edited message"
-
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        addTags([.slowMode])
-        assertMockServer()
-    }
 
     func test_slowModeIsActiveAndCooldownIsShown_whenNewMessageIsSent() {
         linkToScenario(withId: 186)
@@ -134,7 +128,7 @@ final class SlowMode_Tests: StreamTestCase {
 
         GIVEN("user opens a channel") {
             backendRobot
-                .generateChannels(count: 1, messagesCount: 1)
+                .generateChannels(channelsCount: 1, messagesCount: 1)
                 .setCooldown(enabled: true, duration: cooldownDuration)
             userRobot
                 .login()

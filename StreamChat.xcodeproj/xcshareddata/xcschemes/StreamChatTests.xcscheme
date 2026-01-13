@@ -13,7 +13,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Tests/StreamChatTests/StreamChatTestPlan.xctestplan"
+            reference = "container:Tests/StreamChatTests/StreamChat.xctestplan"
             default = "YES">
          </TestPlanReference>
          <TestPlanReference

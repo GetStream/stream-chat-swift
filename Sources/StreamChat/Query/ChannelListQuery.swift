@@ -1,5 +1,5 @@
 //
-// Copyright © 2025 Stream.io Inc. All rights reserved.
+// Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
 import Foundation
@@ -294,7 +294,8 @@ public extension FilterKey where Scope == ChannelListFilterScope {
     
     /// A filter key for matching channel filter tags.
     /// Supported operators: `in`, `equal`
-    static var filterTags: FilterKey<Scope, String> { .init(rawValue: "filter_tags", keyPathString: #keyPath(ChannelDTO.filterTags), isCollectionFilter: true) }
+    static var filterTags: FilterKey<Scope, String> { .init(rawValue: "filter_tags", keyPathString: #keyPath(ChannelDTO.filterTags.name), isCollectionFilter: true)
+    }
 }
 
 /// Internal filter queries for the channel list.

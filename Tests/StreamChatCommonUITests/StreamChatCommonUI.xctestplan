@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "B5F761A2-3827-404C-891C-0BFC1023720B",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "environmentVariableEntries" : [
+      {
+        "key" : "CI",
+        "value" : "TRUE"
+      }
+    ],
+    "performanceAntipatternCheckerEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:StreamChat.xcodeproj",
+        "identifier" : "AD5D7BC32EFA26FF004A63E2",
+        "name" : "StreamChatCommonUITests"
+      }
+    }
+  ],
+  "version" : 1
+}
