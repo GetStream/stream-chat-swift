@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.96.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.96.0)
+_January 13, 2026_
+
 ## StreamChat
 ### 🐞 Fixed
 - Possible fix for rare `thereIsNoSadnessLikeTheDeathOfOptimism` crash in CoreData [#3908](https://github.com/GetStream/stream-chat-swift/pull/3908)
