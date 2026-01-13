@@ -213,12 +213,6 @@ jobs:
     - name: Build Common UI
       run: bundle exec fastlane test_common_ui device:"iPhone 16" build_for_testing:true
       timeout-minutes: 25
-    - name: Build XCFrameworks
-      run: bundle exec fastlane build_xcframeworks
-      timeout-minutes: 25
-      env:
-        MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-        APPSTORE_API_KEY: ${{ secrets.APPSTORE_API_KEY }}
 
   automated-code-review:
     name: Automated Code Review
