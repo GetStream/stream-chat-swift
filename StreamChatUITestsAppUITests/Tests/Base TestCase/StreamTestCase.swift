@@ -8,7 +8,7 @@ let app = XCUIApplication()
 
 class StreamTestCase: XCTestCase {
     let deviceRobot = DeviceRobot(app)
-    var userRobot: UserRobot!
+    let userRobot = UserRobot()
     var backendRobot: BackendRobot!
     var participantRobot: ParticipantRobot!
     var mockServer: StreamMockServer!
@@ -19,10 +19,6 @@ class StreamTestCase: XCTestCase {
         continueAfterFailure = false
 
         try super.setUpWithError()
-        mockServer = StreamMockServer(driverPort: "4566", testName: testName)
-        backendRobot = BackendRobot(mockServer)
-        participantRobot = ParticipantRobot(mockServer)
-        userRobot = UserRobot(mockServer)
         alertHandler()
         backendHandler()
         app.launch()
@@ -48,6 +44,9 @@ extension StreamTestCase {
         ])
         
         if useMockServer {
+            mockServer = StreamMockServer(driverPort: "4566", testName: testName)
+            backendRobot = BackendRobot(mockServer)
+            participantRobot = ParticipantRobot(mockServer)
             app.setLaunchArguments(.useMockServer)
         } else if let switchApiKey {
             app.setEnvironmentVariables([.customApiKey: switchApiKey])
