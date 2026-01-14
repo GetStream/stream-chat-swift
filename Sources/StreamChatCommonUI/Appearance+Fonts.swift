@@ -61,6 +61,11 @@ public extension Appearance {
 
 extension UIFont {
     var toFont: Font {
-        Font(self)
+        let textStyle = fontDescriptor.object(
+            forKey: .textStyle
+        ) as? UIFont.TextStyle ?? .body
+        let metrics = UIFontMetrics(forTextStyle: textStyle)
+        let scaledFont = metrics.scaledFont(for: self)
+        return Font(scaledFont)
     }
 }
