@@ -39,16 +39,15 @@ class StreamTestCase: XCTestCase {
 
 extension StreamTestCase {
     private func backendHandler() {
-        app.setEnvironmentVariables([
-            .websocketHost: "ws://localhost",
-            .httpHost: "http://localhost",
-            .port: StreamMockServer.port!
-        ])
-        
         if useMockServer {
             mockServer = StreamMockServer(driverPort: "4566", testName: testName)
             backendRobot = BackendRobot(mockServer)
             participantRobot = ParticipantRobot(mockServer)
+            app.setEnvironmentVariables([
+                .websocketHost: "ws://localhost",
+                .httpHost: "http://localhost",
+                .port: StreamMockServer.port!
+            ])
             app.setLaunchArguments(.useMockServer)
         } else if let switchApiKey {
             app.setEnvironmentVariables([.customApiKey: switchApiKey])
