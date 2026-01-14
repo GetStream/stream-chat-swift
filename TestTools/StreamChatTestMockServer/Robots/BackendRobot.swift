@@ -100,7 +100,7 @@ public class BackendRobot {
             request.timeoutInterval = 1.0
 
             let semaphore = DispatchSemaphore(value: 0)
-            var responseCode: Int?
+            nonisolated(unsafe) var responseCode: Int?
             let task = URLSession.shared.dataTask(with: request) { _, response, _ in
                 if let httpResponse = response as? HTTPURLResponse {
                     responseCode = httpResponse.statusCode
