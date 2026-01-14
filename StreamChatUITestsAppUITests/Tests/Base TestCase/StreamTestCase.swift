@@ -27,7 +27,9 @@ class StreamTestCase: XCTestCase {
     override func tearDownWithError() throws {
         attachElementTree()
         app.terminate()
-        mockServer.stop()
+        if useMockServer {
+            mockServer.stop()
+        }
 
         try super.tearDownWithError()
         app.launchArguments.removeAll()
