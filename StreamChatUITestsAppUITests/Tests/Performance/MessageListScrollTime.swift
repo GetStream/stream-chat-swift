@@ -13,8 +13,18 @@ class MessageListScrollTime: StreamTestCase {
     }
     
     func testMessageListScrollTime() {
-        WHEN("user opens the message list") {
-            userRobot.login().openChannel()
+        WHEN("user logs in") {
+            userRobot.login()
+        }
+        AND("user opens a channel with many messages") {
+            let minMessageCount = 20
+            for channelIndex in 0..<minMessageCount {
+                userRobot.openChannel(channelCellIndex: channelIndex)
+                if MessageListPage.cells.count >= minMessageCount {
+                    break
+                }
+                userRobot.tapOnBackButton()
+            }
         }
         THEN("user scrolls the message list") {
             let measureOptions = XCTMeasureOptions()
