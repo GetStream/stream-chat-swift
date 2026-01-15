@@ -39,9 +39,8 @@ public extension Appearance {
         public var headlineBold: Font = .headline.bold()
         public var title: Font = .title
 
-        // Backing storage (optional overrides)
-        private var _title2: Font? = nil
-        private var _title3: Font? = nil
+        private var _title2: Font?
+        private var _title3: Font?
 
         // Publicly mutable properties
         public var title2: Font {
