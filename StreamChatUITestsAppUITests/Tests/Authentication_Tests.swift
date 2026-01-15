@@ -123,7 +123,7 @@ final class Authentication_Tests: StreamTestCase {
                 .assertConnectionStatus(.connected)
         }
         WHEN("token expires") {
-            userRobot.waitForJwtToExpire()
+            backendRobot.waitForJwtToExpire()
         }
         THEN("app requests a token refresh") {
             userRobot.assertConnectionStatus(.connected)
@@ -142,7 +142,7 @@ final class Authentication_Tests: StreamTestCase {
             deviceRobot.moveApplication(to: .background)
         }
         AND("token expires") {
-            userRobot.waitForJwtToExpire()
+            backendRobot.waitForJwtToExpire()
         }
         WHEN("user comes back to foreground") {
             deviceRobot.moveApplication(to: .foreground)
@@ -164,7 +164,7 @@ final class Authentication_Tests: StreamTestCase {
             userRobot.setConnectivity(to: .off)
         }
         WHEN("token expires") {
-            userRobot.waitForJwtToExpire()
+            backendRobot.waitForJwtToExpire()
         }
         WHEN("user comes back online") {
             userRobot.setConnectivity(to: .on)
