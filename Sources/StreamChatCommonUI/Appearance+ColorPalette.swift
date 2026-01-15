@@ -494,3 +494,10 @@ extension UIColor {
     static let yellow900: UIColor = UIColor(hex: 0x7a5a00ff)
     static let yellow950: UIColor = UIColor(hex: 0x4f3900ff)
 }
+
+extension UIColor {
+    /// The color represented as SwiftUI color.
+    public var toColor: Color {
+        Color(self)
+    }
+}
