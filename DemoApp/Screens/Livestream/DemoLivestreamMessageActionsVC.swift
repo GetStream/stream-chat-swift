@@ -145,7 +145,7 @@ class DemoLivestreamMessageActionsVC: UIViewController {
         button.contentEdgeInsets = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
 
         let isSelected = message?.currentUserReactions.contains { $0.type == reactionType } ?? false
-        var colorPalette = Appearance.default.colorPalette
+        let colorPalette = Appearance.default.colorPalette
         button.backgroundColor = isSelected ? colorPalette.accentPrimary.withAlphaComponent(0.5) : .systemGray6
         button.layer.borderWidth = isSelected ? 2 : 0.5
         button.layer.borderColor = isSelected ? colorPalette.accentPrimary.cgColor : UIColor.separator.cgColor
