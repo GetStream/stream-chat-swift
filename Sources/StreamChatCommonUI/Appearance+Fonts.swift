@@ -60,12 +60,37 @@ public extension Appearance {
 }
 
 extension UIFont {
+    var inferredTextStyle: UIFont.TextStyle {
+        fontDescriptor.object(forKey: .textStyle) as? UIFont.TextStyle ?? .body
+    }
+
     var toFont: Font {
-        let textStyle = fontDescriptor.object(
-            forKey: .textStyle
-        ) as? UIFont.TextStyle ?? .body
-        let metrics = UIFontMetrics(forTextStyle: textStyle)
-        let scaledFont = metrics.scaledFont(for: self)
-        return Font(scaledFont)
+        if #available(iOS 14.0, *) {
+            Font.custom(fontName,
+                        size: pointSize,
+                        relativeTo: inferredTextStyle.toSwiftUITextStyle)
+        } else {
+            Font(self)
+        }
+    }
+}
+
+@available(iOS 14.0, *)
+extension UIFont.TextStyle {
+    var toSwiftUITextStyle: Font.TextStyle {
+        switch self {
+        case .largeTitle: return .largeTitle
+        case .title1:     return .title
+        case .title2:     return .title2
+        case .title3:     return .title3
+        case .headline:   return .headline
+        case .subheadline:return .subheadline
+        case .callout:    return .callout
+        case .caption1:   return .caption
+        case .caption2:   return .caption2
+        case .footnote:   return .footnote
+        case .body:       return .body
+        default:          return .body
+        }
     }
 }
