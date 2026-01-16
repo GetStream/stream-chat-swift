@@ -35,47 +35,9 @@ after_all do |lane|
   stop_mock_server if lane == :test_e2e_mock
 end
 
-desc "Build .xcframeworks"
-lane :build_xcframeworks do
-  match_me
-  output_directory = "#{Dir.pwd}/../Products"
-  team_id = File.read('Matchfile').match(/team_id\("(.*)"\)/)[1]
-  codesign = ["codesign --timestamp -v --sign 'Apple Distribution: Stream.io Inc (#{team_id})'"]
-  sdk_names.each do |sdk|
-    create_xcframework(
-      project: xcode_project,
-      scheme: sdk,
-      destinations: ['iOS'],
-      include_BCSymbolMaps: true,
-      include_debug_symbols: true,
-      xcframework_output_directory: output_directory,
-      remove_xcarchives: true
-    )
-    sh('../Scripts/removeUnneededSymbols.sh', sdk, output_directory)
-    codesign << lane_context[SharedValues::XCFRAMEWORK_OUTPUT_PATH]
-    resolve_swiftui_xcframework_issue if sdk == 'StreamChatUI'
-  end
-  sh(codesign.join(' ')) # We need to sign all frameworks at once
-end
-
-desc 'https://linear.app/stream/issue/IOS-630'
-private_lane :resolve_swiftui_xcframework_issue do
-  Dir.glob("#{lane_context[SharedValues::XCFRAMEWORK_OUTPUT_PATH]}/**/*.swiftinterface").each do |file|
-    old_text = File.read(file)
-    new_text = old_text.gsub(/SwiftUICore.View/, 'View')
-    File.open(file, 'w') { |f| f.puts(new_text) } if old_text != new_text
-  end
-end
-
 desc 'Start a new release'
 lane :release do |options|
-  artifacts_path = File.absolute_path('../StreamChatArtifacts.json')
   extra_changes = lambda do |release_version|
-    # Set the framework version on the artifacts
-    artifacts = JSON.parse(File.read(artifacts_path))
-    artifacts[release_version.to_s] = "https://github.com/#{github_repo}/releases/download/#{release_version}/StreamChat-All.zip"
-    File.write(artifacts_path, JSON.dump(artifacts))
-
     # Set the framework version in SystemEnvironment+Version.swift
     old_content = File.read(swift_environment_path)
     current_version = old_content[/version: String = "([^"]+)"/, 1]
@@ -119,17 +81,11 @@ lane :publish_release do |options|
   UI.user_error!('Release version cannot be empty') if release_version.to_s.empty?
   ensure_git_branch(branch: 'main')
 
-  clean_products
-  build_xcframeworks
-  compress_frameworks
-  clean_products
-
   publish_ios_sdk(
     skip_git_status_check: false,
     version: release_version,
     sdk_names: sdk_names,
-    github_repo: github_repo,
-    upload_assets: ['Products/StreamChat.zip', 'Products/StreamChatUI.zip', 'Products/StreamChat-All.zip']
+    github_repo: github_repo
   )
 
   update_spm(version: release_version)
@@ -137,99 +93,6 @@ end
 
 lane :get_sdk_version_from_environment do
   File.read(swift_environment_path).match(/String\s+=\s+"([\d.]+).*"/)[1]
-end
-
-desc 'Compresses the XCFrameworks into zip files'
-lane :compress_frameworks do
-  Dir.chdir('..') do
-    FileUtils.cp('LICENSE', 'Products/LICENSE')
-    Dir.chdir('Products') do
-      sdk_names.each do |framework|
-        sh("zip -r #{framework} ./#{framework}.xcframework ./LICENSE")
-        sh("swift package compute-checksum #{framework}.zip")
-      end
-      sh('zip -r "StreamChat-All" ./*.xcframework ./LICENSE')
-    end
-  end
-end
-
-desc 'Cleans Products and DerivedData folders'
-lane :clean_products do
-  Dir.chdir('..') do
-    ['*.xcframework', '*.bundle', '*.BCSymbolMaps', '*.dSYMs', 'LICENSE'].each do |f|
-      sh("rm -rf Products/#{f}") # FileUtils.rm_rf does not work from Makefile, using sh instead
-    end
-  end
-end
-
-desc 'Update XCFrameworks and submit to the SPM repository'
-private_lane :update_spm do |options|
-  version = options[:version] || ''
-  UI.user_error!('You need to pass the version of the release you want to obtain the changelog from') unless version.length > 0
-
-  # Generate Checksums
-  stream_chat_checksum = sh('swift package compute-checksum ../Products/StreamChat.zip').strip
-  stream_chat_ui_checksum = sh('swift package compute-checksum ../Products/StreamChatUI.zip').strip
-
-  initial_directory = Dir.pwd
-
-  # Update SPM Repo
-  spm_directory_name = 'StreamSPM'
-  spm_directory = "../../#{spm_directory_name}"
-  sh("git clone git@github.com:#{github_repo}-spm.git ../../#{spm_directory_name}")
-  Dir.chdir(spm_directory)
-
-  result = sh('basename `git rev-parse --show-toplevel`').strip
-  UI.error("Not using #{spm_directory_name} repo") unless result.to_s == spm_directory_name
-
-  file_lines = File.readlines('Package.swift')
-  file_data = ''
-  previous_module = ''
-
-  file_lines.each do |line|
-    formatted_line =
-      case previous_module
-      when 'StreamChat'
-        line.gsub(/(checksum: ")[a-z0-9]+(")/, "\\1#{stream_chat_checksum}\\2")
-      when "StreamChatUI"
-        line.gsub(/(checksum: ")[a-z0-9]+(")/, "\\1#{stream_chat_ui_checksum}\\2")
-      else
-        line
-      end
-
-    url_pattern = %r{(releases/download/)[.0-9]+(/)}
-    if line.match(url_pattern)
-      formatted_line = line.gsub(url_pattern, "\\1#{version}\\2")
-      previous_module = line.match(/([a-zA-Z]+).zip/).to_s.gsub(/.zip/, '')
-    end
-
-    file_data << formatted_line
-  end
-
-  # Write the new changes
-  File.open('./Package.swift', 'w') { |file| file << file_data }
-
-  # Update the repo
-  sh('git add -A')
-  sh("git commit -m 'Bump #{version}'")
-  sh('git push')
-
-  github_release = set_github_release(
-    repository_name: "#{github_repo}-spm",
-    api_token: ENV.fetch('GITHUB_TOKEN', nil),
-    name: version,
-    tag_name: version,
-    commitish: 'main',
-    description: "https://github.com/#{github_repo}/releases/tag/#{version}"
-  )
-
-  UI.message("Moving back to fastlane's directory - #{initial_directory}")
-  Dir.chdir(initial_directory)
-
-  # Clean Up
-  sh("rm -rf #{spm_directory}")
-  UI.success("New SPM release available: #{github_release['html_url']}")
-  github_release['html_url']
 end
 
 private_lane :appstore_api_key do
