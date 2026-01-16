@@ -18,7 +18,7 @@ public struct Appearance: @unchecked Sendable {
     public var fonts = Fonts()
     
     /// SwiftUI representation of the fonts.
-    public var fontsSwiftUI: FontsSwiftUI
+    public var fontsSwiftUI = FontsSwiftUI()
 
     /// A set of images to be used.
     ///
@@ -40,7 +40,7 @@ public struct Appearance: @unchecked Sendable {
     }
 
     public init() {
-        self.fontsSwiftUI = .init(fonts: fonts)
+        // Public init.
     }
 }
 
