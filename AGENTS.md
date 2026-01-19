@@ -10,7 +10,7 @@ Agents should prioritize backwards compatibility, API stability, and high test c
 
 ### Tech & toolchain
   • Language: Swift (iOS; Mac Catalyst supported)
-  • Package managers: Swift Package Manager (primary) and XCFrameworks (also supported)
+  • Package managers: Swift Package Manager (SPM)
   • Minimum Xcode: 15.x or newer (Apple Silicon supported)
   • iOS targets: Follow existing deployment targets in package file; don’t lower without approval
   • CI: GitHub Actions (assume PR validation on build + tests + lint)

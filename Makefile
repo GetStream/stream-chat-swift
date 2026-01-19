@@ -3,44 +3,6 @@ MAKEFLAGS += --silent
 bootstrap:
 	./Scripts/bootstrap.sh
 
-all_artifacts:
-	echo "🏁 Starting at $$(date +%T)"
-	make frameworks
-	echo "🏁 Finished creating dynamic libraries at $$(date +%T)"
-	make static_libraries
-	echo "🏁 Finished creating static libraries at $$(date +%T)"
-	open ./Products
-	echo "🏁 Ended at $$(date +%T)"
-
-frameworks: clean
-	echo "👉 Creating dynamic libraries. Will take a while... Logs available: fastlane/fastlane.log"
-	bundle exec fastlane build_xcframeworks > fastlane/fastlane.log
-	bundle exec fastlane compress_frameworks
-	make clean
-
-static_libraries: clean
-	echo "👉 Creating static libraries"
-	./Scripts/buildStaticLibraries.sh
-	echo "👉 Creating compressed archive"
-	make zip_artifacts name="StreamChat-All-Static" pattern='./*.xcframework ./*.bundle'
-	make clean
-
-clean:
-	echo "♻️ Cleaning ./Products"
-	bundle exec fastlane clean_products
-
-zip_artifacts:
-	@if [ "$(name)" = "" ]; then\
-		echo "❌ Missing name parameter"; \
-        exit 1;\
-    fi
-	@if [ "$(pattern)" = "" ]; then\
-		echo "❌ Missing pattern parameter"; \
-        exit 1;\
-    fi
-	echo "👉 Compressing $(name)"
-	cd ./Products && zip -r "$(name).zip" $(pattern) > /dev/null
-
 update_dependencies:
 	echo "👉 Updating Nuke"
 	make update_nuke version=10.3.3
