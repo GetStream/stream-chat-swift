@@ -6,45 +6,6 @@ import Foundation
 
 public enum DesignSystemTokens {
     // MARK: Foundations
-    static let fontFamilyGeist: String = "Geist"
-    static let fontFamilyGeistMono: String = "Geist Mono"
-    static let fontFamilyRoboto: String = "Roboto"
-    static let fontFamilyRobotoMono: String = "Roboto Mono"
-    static let fontFamilySfMono: String = "SF Mono"
-    static let fontFamilySfPro: String = "SF Pro"
-    static let fontSizeSize10: CGFloat = 10
-    static let fontSizeSize12: CGFloat = 12
-    static let fontSizeSize13: CGFloat = 13
-    static let fontSizeSize14: CGFloat = 14
-    static let fontSizeSize15: CGFloat = 15
-    static let fontSizeSize16: CGFloat = 16
-    static let fontSizeSize17: CGFloat = 17
-    static let fontSizeSize18: CGFloat = 18
-    static let fontSizeSize20: CGFloat = 20
-    static let fontSizeSize24: CGFloat = 24
-    static let fontSizeSize28: CGFloat = 28
-    static let fontSizeSize32: CGFloat = 32
-    static let fontSizeSize40: CGFloat = 40
-    static let fontSizeSize48: CGFloat = 48
-    static let fontSizeSize8: CGFloat = 8
-    static let fontWeightW400: CGFloat = 400
-    static let fontWeightW500: CGFloat = 500
-    static let fontWeightW600: CGFloat = 600
-    static let fontWeightW700: CGFloat = 700
-    static let lineHeightLineHeight10: CGFloat = 10
-    static let lineHeightLineHeight12: CGFloat = 12
-    static let lineHeightLineHeight14: CGFloat = 14
-    static let lineHeightLineHeight15: CGFloat = 15
-    static let lineHeightLineHeight16: CGFloat = 16
-    static let lineHeightLineHeight17: CGFloat = 17
-    static let lineHeightLineHeight18: CGFloat = 18
-    static let lineHeightLineHeight20: CGFloat = 20
-    static let lineHeightLineHeight24: CGFloat = 24
-    static let lineHeightLineHeight28: CGFloat = 28
-    static let lineHeightLineHeight32: CGFloat = 32
-    static let lineHeightLineHeight40: CGFloat = 40
-    static let lineHeightLineHeight48: CGFloat = 48
-    static let lineHeightLineHeight8: CGFloat = 8
     static let radius0: CGFloat = 0
     static let radius12: CGFloat = 12
     static let radius16: CGFloat = 16
@@ -144,21 +105,4 @@ public enum DesignSystemTokens {
     public static let spacingXl: CGFloat = space24
     public static let spacingXs: CGFloat = space8
     public static let spacingXxs: CGFloat = space4
-    public static let typographyFontFamilyMono: String = fontFamilySfMono
-    public static let typographyFontFamilySans: String = fontFamilySfPro
-    public static let typographyFontSize2xl: CGFloat = fontSizeSize24
-    public static let typographyFontSizeLg: CGFloat = fontSizeSize17
-    public static let typographyFontSizeMd: CGFloat = fontSizeSize15
-    public static let typographyFontSizeMicro: CGFloat = fontSizeSize8
-    public static let typographyFontSizeSm: CGFloat = fontSizeSize13
-    public static let typographyFontSizeXl: CGFloat = fontSizeSize20
-    public static let typographyFontSizeXs: CGFloat = fontSizeSize12
-    public static let typographyFontSizeXxs: CGFloat = fontSizeSize10
-    public static let typographyFontWeightBold: CGFloat = 700
-    public static let typographyFontWeightMedium: CGFloat = 500
-    public static let typographyFontWeightRegular: CGFloat = 400
-    public static let typographyFontWeightSemiBold: CGFloat = 600
-    public static let typographyLineHeightNormal: CGFloat = lineHeightLineHeight20
-    public static let typographyLineHeightRelaxed: CGFloat = lineHeightLineHeight24
-    public static let typographyLineHeightTight: CGFloat = lineHeightLineHeight16
 }
