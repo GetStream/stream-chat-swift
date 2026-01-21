@@ -133,6 +133,13 @@ public enum InviteFilterValue: String, FilterValue {
     case rejected
 }
 
+/// Filter values to be used with `.appBanned` FilterKey.
+/// Filter by application-banned users (only for 2-member channels).
+public enum AppBannedFilterValue: String, FilterValue {
+    case excluded
+    case only
+}
+
 /// Filter keys for channel list.
 public extension FilterKey where Scope == ChannelListFilterScope {
     /// A filter key for matching the `cid` value.
@@ -278,6 +285,10 @@ public extension FilterKey where Scope == ChannelListFilterScope {
     /// Filter for checking the status of the invite
     /// Supported operators: `equal`
     static var invite: FilterKey<Scope, InviteFilterValue> { "invite" }
+
+    /// Filter for filtering by application-banned users (only for 2-member channels).
+    /// Supported operators: `equal`
+    static var appBanned: FilterKey<Scope, AppBannedFilterValue> { "app_banned" }
 
     /// Filter for checking the `name` property of a user who is a member of the channel
     /// Supported operators: `equal`, `autocomplete`
