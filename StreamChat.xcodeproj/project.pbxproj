@@ -607,6 +607,8 @@
 		829CD5C72848C71B003C3877 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829CD5C62848C71B003C3877 /* Settings.swift */; };
 		829CD5CC2848C8D6003C3877 /* BackendRobot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 829CD5CB2848C8D6003C3877 /* BackendRobot.swift */; };
 		82A6F5C027E2031000F4A2F6 /* Reactions_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A6F5BF27E2031000F4A2F6 /* Reactions_Tests.swift */; };
+		82AA15092F211F9100555893 /* StreamSwiftTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 8274181E2ACDE85E004A23DA /* StreamSwiftTestHelpers */; };
+		82AA150B2F2234EA00555893 /* DraftMessages_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82AA150A2F2234D700555893 /* DraftMessages_Tests.swift */; };
 		82BA52EF27E1EF7B00951B87 /* MessageList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */; };
 		82BE0ACD2C009A17008DA9DC /* BlockedUserDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BE0ACC2C009A17008DA9DC /* BlockedUserDetails.swift */; };
 		82BE0ACE2C009A17008DA9DC /* BlockedUserDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BE0ACC2C009A17008DA9DC /* BlockedUserDetails.swift */; };
@@ -3615,6 +3617,7 @@
 		829CD5C62848C71B003C3877 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		829CD5CB2848C8D6003C3877 /* BackendRobot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendRobot.swift; sourceTree = "<group>"; };
 		82A6F5BF27E2031000F4A2F6 /* Reactions_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reactions_Tests.swift; sourceTree = "<group>"; };
+		82AA150A2F2234D700555893 /* DraftMessages_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessages_Tests.swift; sourceTree = "<group>"; };
 		82AA16CF28A400F8009816CD /* StreamChatFlakyTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatFlakyTests.xctestplan; sourceTree = "<group>"; };
 		82AD02BC27D8E44B000611B7 /* StreamTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamTestCase.swift; sourceTree = "<group>"; };
 		82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList_Tests.swift; sourceTree = "<group>"; };
@@ -5095,8 +5098,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				82AA15092F211F9100555893 /* StreamSwiftTestHelpers in Frameworks */,
 				E74DB0C82656631700508D22 /* StreamChatUI.framework in Frameworks */,
-				8274181F2ACDE85E004A23DA /* StreamSwiftTestHelpers in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -6241,6 +6244,7 @@
 				829762DF28C7587500B953E8 /* PushNotification_Tests.swift */,
 				826EF2B0291C01C1005A9EEF /* Authentication_Tests.swift */,
 				8292D6DA29B78476007A17D1 /* QuotedReply_Tests.swift */,
+				82AA150A2F2234D700555893 /* DraftMessages_Tests.swift */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -12320,6 +12324,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				829CD5CC2848C8D6003C3877 /* BackendRobot.swift in Sources */,
+				82AA150B2F2234EA00555893 /* DraftMessages_Tests.swift in Sources */,
 				82CED1C827DF492F006E967A /* ThreadPage.swift in Sources */,
 				8292D6DB29B78476007A17D1 /* QuotedReply_Tests.swift in Sources */,
 				8232B84F28635C4A0032C7DB /* Attachments_Tests.swift in Sources */,
