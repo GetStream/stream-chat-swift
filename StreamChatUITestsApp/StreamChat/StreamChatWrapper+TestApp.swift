@@ -39,5 +39,6 @@ extension StreamChatWrapper {
         Components.default.threadVC = ThreadVC.self
         Components.default.messageActionsVC = MessageActionsVC.self
         Components.default.messageSwipeToReplyEnabled = true
+        Components.default.isDraftMessagesEnabled = true
     }
 }
