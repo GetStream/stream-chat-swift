@@ -632,6 +632,9 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 }
                 textView?.attributedText = mutableAttributedText
             }
+            
+            // Set the textView's font to match the attributedText font
+            textView?.font = messageTextFont
         }
 
         // Mentions
