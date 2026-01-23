@@ -265,6 +265,9 @@ public extension Appearance {
 
         // MARK: - Placeholders
 
+        public var channelAvatarPlaceholder: UIImage = loadSafely(systemName: "person.3", assetsFallback: "pattern1")
+        public var userAvatarPlaceholder: UIImage = loadSafely(systemName: "person", assetsFallback: "pattern1")
+        
         public var userAvatarPlaceholder1: UIImage = loadImageSafely(with: "pattern1")
         public var userAvatarPlaceholder2: UIImage = loadImageSafely(with: "pattern2")
         public var userAvatarPlaceholder3: UIImage = loadImageSafely(with: "pattern3")
