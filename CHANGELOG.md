@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### 🐞 Fixed
-- Fix message text font being larger than expected due to textView font scaling overriding attributedText font [#0](https://github.com/GetStream/stream-chat-swift/pull/0)
+- Fix message text font being larger than expected due to textView font scaling overriding attributedText font [#3933](https://github.com/GetStream/stream-chat-swift/pull/3933)
 
 # [4.96.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.96.0)
 _January 13, 2026_
