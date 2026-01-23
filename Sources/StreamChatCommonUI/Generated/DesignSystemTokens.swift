@@ -60,6 +60,15 @@ public enum DesignSystemTokens {
     // MARK: Chat
     public static let buttonHitTargetMinHeight: CGFloat = size48
     public static let buttonHitTargetMinWidth: CGFloat = size48
+    public static let buttonPaddingXIconOnlyLg: CGFloat = 14
+    public static let buttonPaddingXIconOnlyMd: CGFloat = 10
+    public static let buttonPaddingXIconOnlySm: CGFloat = 6
+    public static let buttonPaddingXWithLabelLg: CGFloat = 16
+    public static let buttonPaddingXWithLabelMd: CGFloat = 16
+    public static let buttonPaddingXWithLabelSm: CGFloat = 16
+    public static let buttonPaddingYLg: CGFloat = 14
+    public static let buttonPaddingYMd: CGFloat = 10
+    public static let buttonPaddingYSm: CGFloat = 6
     public static let buttonRadiusFull: CGFloat = radiusFull
     public static let buttonRadiusLg: CGFloat = radiusFull
     public static let buttonRadiusMd: CGFloat = radiusFull
