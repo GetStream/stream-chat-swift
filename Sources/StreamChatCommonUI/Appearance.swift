@@ -31,6 +31,9 @@ public struct Appearance: @unchecked Sendable {
     /// you can change how data is formatted to textual representation.
     public var formatters = Formatters()
     
+    /// A set of tokens defining the rules for layout.
+    public let designTokens = DesignSystemTokens()
+    
     public nonisolated(unsafe) static var bundle: Bundle?
 
     /// Provider for custom localization which is dependent on App Bundle.
