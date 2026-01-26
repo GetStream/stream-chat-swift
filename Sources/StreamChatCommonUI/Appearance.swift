@@ -32,7 +32,7 @@ public struct Appearance: @unchecked Sendable {
     public var formatters = Formatters()
     
     /// A set of tokens defining the rules for layout.
-    public let designTokens = DesignSystemTokens()
+    public var designTokens = DesignSystemTokens()
     
     public nonisolated(unsafe) static var bundle: Bundle?
 
