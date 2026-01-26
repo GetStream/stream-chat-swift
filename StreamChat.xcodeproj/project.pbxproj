@@ -609,6 +609,7 @@
 		82A6F5C027E2031000F4A2F6 /* Reactions_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82A6F5BF27E2031000F4A2F6 /* Reactions_Tests.swift */; };
 		82AA15092F211F9100555893 /* StreamSwiftTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 8274181E2ACDE85E004A23DA /* StreamSwiftTestHelpers */; };
 		82AA150B2F2234EA00555893 /* DraftMessages_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82AA150A2F2234D700555893 /* DraftMessages_Tests.swift */; };
+		82B005252F27A13F00E360B4 /* MessageRead+Team.json in Resources */ = {isa = PBXBuildFile; fileRef = 82B005242F27A13300E360B4 /* MessageRead+Team.json */; };
 		82BA52EF27E1EF7B00951B87 /* MessageList_Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */; };
 		82BE0ACD2C009A17008DA9DC /* BlockedUserDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BE0ACC2C009A17008DA9DC /* BlockedUserDetails.swift */; };
 		82BE0ACE2C009A17008DA9DC /* BlockedUserDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 82BE0ACC2C009A17008DA9DC /* BlockedUserDetails.swift */; };
@@ -3620,6 +3621,7 @@
 		82AA150A2F2234D700555893 /* DraftMessages_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DraftMessages_Tests.swift; sourceTree = "<group>"; };
 		82AA16CF28A400F8009816CD /* StreamChatFlakyTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = StreamChatFlakyTests.xctestplan; sourceTree = "<group>"; };
 		82AD02BC27D8E44B000611B7 /* StreamTestCase.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamTestCase.swift; sourceTree = "<group>"; };
+		82B005242F27A13300E360B4 /* MessageRead+Team.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "MessageRead+Team.json"; sourceTree = "<group>"; };
 		82BA52EE27E1EF7B00951B87 /* MessageList_Tests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageList_Tests.swift; sourceTree = "<group>"; };
 		82BE0ACC2C009A17008DA9DC /* BlockedUserDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserDetails.swift; sourceTree = "<group>"; };
 		82C18FDB2C10C8E600C5283C /* BlockedUserPayload.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BlockedUserPayload.swift; sourceTree = "<group>"; };
@@ -6617,6 +6619,7 @@
 		8A0C3BD524C1E25400CAFD19 /* Message */ = {
 			isa = PBXGroup;
 			children = (
+				82B005242F27A13300E360B4 /* MessageRead+Team.json */,
 				AD3DBBAD2E9FE2AE005090E2 /* MessageDelivered.json */,
 				AD70CC842E956C4F0007AB6D /* MessageDeletedForMe.json */,
 				8A0C3BDB24C1E5AE00CAFD19 /* MessageDeleted.json */,
@@ -10393,6 +10396,7 @@
 				A311B40127E8B9AD00CFCF6D /* NotificationMarkRead.json in Resources */,
 				A311B42927E8B9D800CFCF6D /* UserUpdateResponse.json in Resources */,
 				A311B3D727E8B98C00CFCF6D /* CurrentUserPayloadWithCustom.json in Resources */,
+				82B005252F27A13F00E360B4 /* MessageRead+Team.json in Resources */,
 				C10B0A0A29D20B3A006517FC /* DeactivatedUser.json in Resources */,
 				A311B3E127E8B98C00CFCF6D /* Messages.json in Resources */,
 				AD3DBBAE2E9FE2AE005090E2 /* MessageDelivered.json in Resources */,
