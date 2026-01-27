@@ -388,21 +388,21 @@ public extension Appearance {
 
         // MARK: - V5 - Composer Icons
 
-        var composerAdd: UIImage = loadSafely(
+        public var composerAdd: UIImage = loadSafely(
             systemName: "plus",
             config: UIImage.SymbolConfiguration(
                 weight: .light
             )
         )
 
-        var composerSend: UIImage = loadSafely(
+        public var composerSend: UIImage = loadSafely(
             systemName: "paperplane",
             config: UIImage.SymbolConfiguration(
                 weight: .regular
             )
         )
 
-        var composerMic: UIImage = loadSafely(
+        public var composerMic: UIImage = loadSafely(
             systemName: "mic",
             config: UIImage.SymbolConfiguration(
                 weight: .regular
