@@ -27,8 +27,18 @@ public extension Appearance {
             }
         }
 
-        private static func loadSafely(systemName: String, assetsFallback: String) -> UIImage {
-            UIImage(systemName: systemName) ?? loadImageSafely(with: assetsFallback)
+        private static func loadSafely(
+            systemName: String,
+            config: UIImage.SymbolConfiguration? = nil,
+            assetsFallback: String? = nil
+        ) -> UIImage {
+            if let systemImage = UIImage(systemName: systemName, withConfiguration: config) {
+                return systemImage
+            }
+            if let assetsFallback {
+                return loadImageSafely(with: assetsFallback)
+            }
+            return UIImage.circleImage
         }
 
         // MARK: - General
@@ -375,5 +385,28 @@ public extension Appearance {
             systemName: "text.bubble",
             withConfiguration: UIImage.SymbolConfiguration(pointSize: 100, weight: .regular)
         ) ?? UIImage.circleImage
+
+        // MARK: - V5 - Composer Icons
+
+        var composerAdd: UIImage = loadSafely(
+            systemName: "plus",
+            config: UIImage.SymbolConfiguration(
+                weight: .light
+            )
+        )
+
+        var composerSend: UIImage = loadSafely(
+            systemName: "paperplane",
+            config: UIImage.SymbolConfiguration(
+                weight: .regular
+            )
+        )
+
+        var composerMic: UIImage = loadSafely(
+            systemName: "mic",
+            config: UIImage.SymbolConfiguration(
+                weight: .regular
+            )
+        )
     }
 }
