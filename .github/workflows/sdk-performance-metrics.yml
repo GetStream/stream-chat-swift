@@ -9,6 +9,10 @@ on:
     types:
       - opened
       - ready_for_review
+    paths-ignore:
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - '**/*.png'
 
   workflow_dispatch:
 
