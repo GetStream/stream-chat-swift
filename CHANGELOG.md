@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.97.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.97.0)
+_January 27, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Expose `team` field in `MessageReadEvent` for calculating team unread counts [#3935](https://github.com/GetStream/stream-chat-swift/pull/3935)
