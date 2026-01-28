@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 90;
+	objectVersion = 77;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -294,74 +294,88 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		437FC9FA26D630860000223C /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolder = PlugIns;
+			dstSubfolderSpec = 13;
 			files = (
 				437FCA0B26D67BE40000223C /* DemoAppPush.appex in Embed App Extensions */,
 				84790E9F2AC1D346003AFF1C /* DemoShare.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		82120C332B6AB3FD00347A35 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolder = Frameworks;
+			dstSubfolderSpec = 10;
 			files = (
 				82FF61E82B6AB5B3007185B6 /* StreamChatTestMockServer.framework in Embed Frameworks */,
 				82120C342B6AB41100347A35 /* StreamChat.framework in Embed Frameworks */,
 				82120C352B6AB41100347A35 /* StreamChatUI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		82DCB3B12A4AE8FB00738933 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolder = Frameworks;
+			dstSubfolderSpec = 10;
 			files = (
 				82DCB3AE2A4AE8FB00738933 /* StreamChatUI.framework in Embed Frameworks */,
 				82DCB3AA2A4AE8FB00738933 /* StreamChat.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C11B577A29D4403800D5A248 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolder = Frameworks;
+			dstSubfolderSpec = 10;
 			files = (
 				C11B577729D4403800D5A248 /* StreamChatUI.framework in Embed Frameworks */,
 				C11B577329D4403800D5A248 /* StreamChat.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C121EC652746AC8C00023E4C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolder = Frameworks;
+			dstSubfolderSpec = 10;
 			files = (
 				C121EC622746AC8C00023E4C /* StreamChatUI.framework in Embed Frameworks */,
 				C121EC5E2746AC8C00023E4C /* StreamChat.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F86C87E925F907B40000BCA9 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolder = Frameworks;
+			dstSubfolderSpec = 10;
 			files = (
 				F86C87E725F907AE0000BCA9 /* StreamChat.framework in Embed Frameworks */,
 				F86C87E825F907AE0000BCA9 /* StreamChatUI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F8933BD325FF56840054BBFF /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
 			dstPath = "";
-			dstSubfolder = Frameworks;
+			dstSubfolderSpec = 10;
 			files = (
 				F8933BD125FF56790054BBFF /* StreamChat.framework in Embed Frameworks */,
 				F8933BD225FF56790054BBFF /* StreamChatUI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
@@ -2581,26 +2595,33 @@
 /* Begin PBXFrameworksBuildPhase section */
 		437FCA0126D67BE40000223C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				437FCA1026D67CB40000223C /* StreamChat.framework in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		790881FA25432B7200896F03 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				C121EC662746AD0E00023E4C /* StreamChat.framework in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7908820225432B7200896F03 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				82E6553C2B06785700D64906 /* StreamChatTestTools.framework in Frameworks */,
 				7908820625432B7200896F03 /* StreamChatUI.framework in Frameworks */,
 				82F714AB2B078AE800442A74 /* StreamSwiftTestHelpers in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		792DDA54256FB69E001DB91B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				C1B49B3B282283C100F4E89E /* GDPerformanceView-Swift in Frameworks */,
 				ADDFDE2B2779EC8A003B3B07 /* Atlantis in Frameworks */,
@@ -2609,102 +2630,131 @@
 				C121EC612746AC8C00023E4C /* StreamChatUI.framework in Frameworks */,
 				ADCB576628A425D500B81AE8 /* Sentry in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		793060E325778896005CF846 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		793060EB25778897005CF846 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				793060EF25778897005CF846 /* StreamChatTestTools.framework in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		799C9418247D2F80001F1104 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		799C944E247D59B1001F1104 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				F8788F81261DE9B0006019DD /* StreamChatTestTools.framework in Frameworks */,
 				799C9456247D59B1001F1104 /* StreamChat.framework in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		84790E922AC1D346003AFF1C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				84748F8D2AC37F40007E3285 /* StreamChatUI.framework in Frameworks */,
 				84748F892AC37F40007E3285 /* StreamChat.framework in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A34407B727D8C33F0044F150 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				82DCB3A92A4AE8FB00738933 /* StreamChat.framework in Frameworks */,
 				A3BD486B281FD4500090D511 /* OHHTTPStubs in Frameworks */,
 				82DCB3AD2A4AE8FB00738933 /* StreamChatUI.framework in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A34407D927D8C3400044F150 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				82120C302B6AB3B400347A35 /* StreamChat.framework in Frameworks */,
 				82120C312B6AB3B400347A35 /* StreamChatUI.framework in Frameworks */,
 				827414272ACDE941009CD13C /* StreamChatTestMockServer.framework in Frameworks */,
 				827418212ACDE86F004A23DA /* StreamSwiftTestHelpers in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A3A0C996283E952900B18DA4 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		AC90837E268B115F00ACFB8E /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				AC90839D268B120900ACFB8E /* StreamChat.framework in Frameworks */,
 				AC908398268B120300ACFB8E /* StreamChatUI.framework in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C11B575829D43FD800D5A248 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				C11B577229D4403800D5A248 /* StreamChat.framework in Frameworks */,
 				C11B577129D4403800D5A248 /* Atlantis in Frameworks */,
 				C11B577629D4403800D5A248 /* StreamChatUI.framework in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E74DB0C72656631700508D22 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				82AA15092F211F9100555893 /* StreamSwiftTestHelpers in Frameworks */,
 				E74DB0C82656631700508D22 /* StreamChatUI.framework in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F86C87AF25F906630000BCA9 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				C1393361275F5D1E00225E7A /* Nuke in Frameworks */,
 				F86C87F125F907CA0000BCA9 /* StreamChat.framework in Frameworks */,
 				F86C87F225F907CA0000BCA9 /* StreamChatUI.framework in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F8933B8F25FF55E30054BBFF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				F8933BDB25FF569E0054BBFF /* StreamChat.framework in Frameworks */,
 				F8933BDC25FF569E0054BBFF /* StreamChatUI.framework in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F89C23A325E508DE0082CA5B /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				F89C23EE25E522FA0082CA5B /* StreamChatUI.framework in Frameworks */,
 				F89C23ED25E520140082CA5B /* StreamChat.framework in Frameworks */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
@@ -2773,23 +2823,31 @@
 /* Begin PBXHeadersBuildPhase section */
 		790881F825432B7200896F03 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		793060E125778896005CF846 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		799C9416247D2F80001F1104 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A3A0C994283E952900B18DA4 /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
@@ -2808,6 +2866,8 @@
 				437FCA1326D67CB40000223C /* PBXTargetDependency */,
 			);
 			name = DemoAppPush;
+			packageProductDependencies = (
+			);
 			productName = DemoAppPush;
 			productReference = 437FCA0426D67BE40000223C /* DemoAppPush.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -2828,6 +2888,8 @@
 				C121EC692746AD0E00023E4C /* PBXTargetDependency */,
 			);
 			name = StreamChatUI;
+			packageProductDependencies = (
+			);
 			productName = StreamChatUI;
 			productReference = 790881FD25432B7200896F03 /* StreamChatUI.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2904,6 +2966,8 @@
 				82B037F72F27D39400E360B4 /* TestTools */,
 			);
 			name = StreamChatTestTools;
+			packageProductDependencies = (
+			);
 			productName = StreamChatTestTools;
 			productReference = 793060E625778896005CF846 /* StreamChatTestTools.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2922,6 +2986,8 @@
 				793060F125778897005CF846 /* PBXTargetDependency */,
 			);
 			name = StreamChatTestToolsTests;
+			packageProductDependencies = (
+			);
 			productName = StreamChatTestToolsTests;
 			productReference = 793060EE25778897005CF846 /* StreamChatTestToolsTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -2937,10 +3003,14 @@
 			);
 			buildRules = (
 			);
+			dependencies = (
+			);
 			fileSystemSynchronizedGroups = (
 				82E666002F291FE70082E9A7 /* Sources */,
 			);
 			name = StreamChat;
+			packageProductDependencies = (
+			);
 			productName = Sources;
 			productReference = 799C941B247D2F80001F1104 /* StreamChat.framework */;
 			productType = "com.apple.product-type.framework";
@@ -2963,6 +3033,8 @@
 				82E675BE2F2922160082E9A7 /* Tests */,
 			);
 			name = StreamChatTests;
+			packageProductDependencies = (
+			);
 			productName = StreamChatClientTests;
 			productReference = 799C9451247D59B1001F1104 /* StreamChatTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
@@ -2985,6 +3057,8 @@
 				82B00B742F27C5DB00E360B4 /* DemoShare */,
 			);
 			name = DemoShare;
+			packageProductDependencies = (
+			);
 			productName = DemoShare;
 			productReference = 84790E952AC1D346003AFF1C /* DemoShare.appex */;
 			productType = "com.apple.product-type.app-extension";
@@ -3056,6 +3130,8 @@
 				A35715FD283E9A940014E3B0 /* PBXTargetDependency */,
 			);
 			name = StreamChatTestMockServer;
+			packageProductDependencies = (
+			);
 			productName = StreamChatUITestTools;
 			productReference = A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */;
 			productType = "com.apple.product-type.framework";
@@ -3075,6 +3151,8 @@
 				AC9083A0268B120900ACFB8E /* PBXTargetDependency */,
 			);
 			name = YouTube;
+			packageProductDependencies = (
+			);
 			productName = YouTubeClone;
 			productReference = AC908381268B115F00ACFB8E /* YouTube.app */;
 			productType = "com.apple.product-type.application";
@@ -3110,10 +3188,14 @@
 			);
 			buildRules = (
 			);
+			dependencies = (
+			);
 			fileSystemSynchronizedGroups = (
 				82E666002F291FE70082E9A7 /* Sources */,
 			);
 			name = StreamChatStatic;
+			packageProductDependencies = (
+			);
 			productName = "StreamChat-Static";
 			productReference = C121E758274543D000023E4C /* libStreamChat.a */;
 			productType = "com.apple.product-type.library.static";
@@ -3130,6 +3212,8 @@
 				AD78F9F328EC729D00BC0FCE /* PBXTargetDependency */,
 			);
 			name = StreamChatUIStatic;
+			packageProductDependencies = (
+			);
 			productName = "StreamChat-Static";
 			productReference = C121EA2F2746A19400023E4C /* libStreamChatUI.a */;
 			productType = "com.apple.product-type.library.static";
@@ -3195,6 +3279,8 @@
 				F8933BD025FF56710054BBFF /* PBXTargetDependency */,
 			);
 			name = Slack;
+			packageProductDependencies = (
+			);
 			productName = SlackClone;
 			productReference = F8933B9225FF55E30054BBFF /* Slack.app */;
 			productType = "com.apple.product-type.application";
@@ -3214,6 +3300,8 @@
 				F81582E425F66ADF00E11150 /* PBXTargetDependency */,
 			);
 			name = iMessage;
+			packageProductDependencies = (
+			);
 			productName = iMessageClone;
 			productReference = F89C23A625E508DE0082CA5B /* iMessage.app */;
 			productType = "com.apple.product-type.application";
@@ -3305,7 +3393,7 @@
 				C1B49B39282283C100F4E89E /* XCRemoteSwiftPackageReference "GDPerformanceView-Swift" */,
 				E334B384282468F2002E9640 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 			);
-			preferredProjectObjectVersion = 90;
+			preferredProjectObjectVersion = 77;
 			productRefGroup = 8AD5EC9022E9A3E8005CFAC9 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -3337,95 +3425,131 @@
 /* Begin PBXResourcesBuildPhase section */
 		437FCA0226D67BE40000223C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		790881FB25432B7200896F03 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				823F5B1B2A8D0294000C3081 /* PrivacyInfo.xcprivacy in Resources */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7908820325432B7200896F03 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		792DDA55256FB69E001DB91B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		793060E425778896005CF846 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		793060EC25778897005CF846 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		799C9419247D2F80001F1104 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				823F5B1A2A8D0294000C3081 /* PrivacyInfo.xcprivacy in Resources */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		799C944F247D59B1001F1104 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		84790E932AC1D346003AFF1C /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A34407B827D8C33F0044F150 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A34407DA27D8C3400044F150 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A3A0C997283E952900B18DA4 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		AC90837F268B115F00ACFB8E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C11B575929D43FD800D5A248 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E74DB0CA2656631700508D22 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F86C87B025F906630000BCA9 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F8933B9025FF55E30054BBFF /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F89C23A425E508DE0082CA5B /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
@@ -3433,141 +3557,165 @@
 		88F0D6EB257E40B300F4B050 /* SwiftGen */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
-			name = SwiftGen;
-			shellPath = /bin/sh;
-			shellScript = (
-				"# Adds support for Apple Silicon brew directory",
-				"export PATH=\"$PATH:/opt/homebrew/bin\"",
-				"",
-				"if which swiftgen; then",
-				"  xcrun --sdk macosx swiftgen config run --config ./Sources/StreamChatUI/.swiftgen.yml",
-				"else",
-				"  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"",
-				"fi",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
-				"",
+			buildActionMask = 2147483647;
+			files = (
 			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftGen;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which swiftgen; then\n  xcrun --sdk macosx swiftgen config run --config ./Sources/StreamChatUI/.swiftgen.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		437FCA0026D67BE40000223C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		790881F925432B7200896F03 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		7908820125432B7200896F03 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		792DDA53256FB69E001DB91B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		793060E225778896005CF846 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		793060EA25778897005CF846 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		799C9417247D2F80001F1104 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 				4A4E184728D06F260062378D /* Documentation.docc in Sources */,
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		799C944D247D59B1001F1104 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		84790E912AC1D346003AFF1C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A34407B627D8C33F0044F150 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A34407D827D8C3400044F150 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		A3A0C995283E952900B18DA4 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		AC90837D268B115F00ACFB8E /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C11B575729D43FD800D5A248 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C121E754274543D000023E4C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C121E9272746A19400023E4C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		E74DB0912656631700508D22 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F86C87AE25F906630000BCA9 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F8933B8E25FF55E30054BBFF /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 		F89C23A225E508DE0082CA5B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
@@ -3736,7 +3884,7 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		437FCA0C26D67BE40000223C /* Debug configuration for PBXNativeTarget "DemoAppPush" */ = {
+		437FCA0C26D67BE40000223C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
@@ -3760,7 +3908,7 @@
 			};
 			name = Debug;
 		};
-		437FCA0D26D67BE40000223C /* Release configuration for PBXNativeTarget "DemoAppPush" */ = {
+		437FCA0D26D67BE40000223C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
@@ -3783,7 +3931,7 @@
 			};
 			name = Release;
 		};
-		437FCA0E26D67BE40000223C /* Profile configuration for PBXNativeTarget "DemoAppPush" */ = {
+		437FCA0E26D67BE40000223C /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = DemoAppPush/DemoAppPush.entitlements;
@@ -3806,7 +3954,7 @@
 			};
 			name = Profile;
 		};
-		7908821525432B7200896F03 /* Debug configuration for PBXNativeTarget "StreamChatUI" */ = {
+		7908821525432B7200896F03 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -3835,7 +3983,7 @@
 			};
 			name = Debug;
 		};
-		7908821625432B7200896F03 /* Release configuration for PBXNativeTarget "StreamChatUI" */ = {
+		7908821625432B7200896F03 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -3865,7 +4013,7 @@
 			};
 			name = Release;
 		};
-		7908821725432B7200896F03 /* Profile configuration for PBXNativeTarget "StreamChatUI" */ = {
+		7908821725432B7200896F03 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -3895,7 +4043,7 @@
 			};
 			name = Profile;
 		};
-		7908821925432B7200896F03 /* Debug configuration for PBXNativeTarget "StreamChatUITests" */ = {
+		7908821925432B7200896F03 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -3917,7 +4065,7 @@
 			};
 			name = Debug;
 		};
-		7908821A25432B7200896F03 /* Release configuration for PBXNativeTarget "StreamChatUITests" */ = {
+		7908821A25432B7200896F03 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -3938,7 +4086,7 @@
 			};
 			name = Release;
 		};
-		7908821B25432B7200896F03 /* Profile configuration for PBXNativeTarget "StreamChatUITests" */ = {
+		7908821B25432B7200896F03 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -3959,7 +4107,7 @@
 			};
 			name = Profile;
 		};
-		792DDA68256FB69F001DB91B /* Debug configuration for PBXNativeTarget "DemoApp" */ = {
+		792DDA68256FB69F001DB91B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -3983,7 +4131,7 @@
 			};
 			name = Debug;
 		};
-		792DDA69256FB69F001DB91B /* Release configuration for PBXNativeTarget "DemoApp" */ = {
+		792DDA69256FB69F001DB91B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -4008,7 +4156,7 @@
 			};
 			name = Release;
 		};
-		792DDA6A256FB69F001DB91B /* Profile configuration for PBXNativeTarget "DemoApp" */ = {
+		792DDA6A256FB69F001DB91B /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -4031,7 +4179,7 @@
 			};
 			name = Profile;
 		};
-		793060F725778897005CF846 /* Debug configuration for PBXNativeTarget "StreamChatTestTools" */ = {
+		793060F725778897005CF846 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -4061,7 +4209,7 @@
 			};
 			name = Debug;
 		};
-		793060F825778897005CF846 /* Release configuration for PBXNativeTarget "StreamChatTestTools" */ = {
+		793060F825778897005CF846 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -4090,7 +4238,7 @@
 			};
 			name = Release;
 		};
-		793060F925778897005CF846 /* Profile configuration for PBXNativeTarget "StreamChatTestTools" */ = {
+		793060F925778897005CF846 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_ENABLE_MODULES = YES;
@@ -4120,7 +4268,7 @@
 			};
 			name = Profile;
 		};
-		793060FA25778897005CF846 /* Debug configuration for PBXNativeTarget "StreamChatTestToolsTests" */ = {
+		793060FA25778897005CF846 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -4141,7 +4289,7 @@
 			};
 			name = Debug;
 		};
-		793060FB25778897005CF846 /* Release configuration for PBXNativeTarget "StreamChatTestToolsTests" */ = {
+		793060FB25778897005CF846 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -4161,7 +4309,7 @@
 			};
 			name = Release;
 		};
-		793060FC25778897005CF846 /* Profile configuration for PBXNativeTarget "StreamChatTestToolsTests" */ = {
+		793060FC25778897005CF846 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
@@ -4181,7 +4329,7 @@
 			};
 			name = Profile;
 		};
-		799C9421247D2F80001F1104 /* Debug configuration for PBXNativeTarget "StreamChat" */ = {
+		799C9421247D2F80001F1104 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
@@ -4213,7 +4361,7 @@
 			};
 			name = Debug;
 		};
-		799C9422247D2F80001F1104 /* Release configuration for PBXNativeTarget "StreamChat" */ = {
+		799C9422247D2F80001F1104 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
@@ -4245,7 +4393,7 @@
 			};
 			name = Release;
 		};
-		799C945A247D59B1001F1104 /* Debug configuration for PBXNativeTarget "StreamChatTests" */ = {
+		799C945A247D59B1001F1104 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -4271,7 +4419,7 @@
 			};
 			name = Debug;
 		};
-		799C945B247D59B1001F1104 /* Release configuration for PBXNativeTarget "StreamChatTests" */ = {
+		799C945B247D59B1001F1104 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -4297,7 +4445,7 @@
 			};
 			name = Release;
 		};
-		84790EA02AC1D346003AFF1C /* Debug configuration for PBXNativeTarget "DemoShare" */ = {
+		84790EA02AC1D346003AFF1C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -4331,7 +4479,7 @@
 			};
 			name = Debug;
 		};
-		84790EA12AC1D346003AFF1C /* Release configuration for PBXNativeTarget "DemoShare" */ = {
+		84790EA12AC1D346003AFF1C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -4367,7 +4515,7 @@
 			};
 			name = Release;
 		};
-		84790EA22AC1D346003AFF1C /* Profile configuration for PBXNativeTarget "DemoShare" */ = {
+		84790EA22AC1D346003AFF1C /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -4400,7 +4548,7 @@
 			};
 			name = Profile;
 		};
-		8AD5EC9522E9A3E8005CFAC9 /* Debug configuration for PBXProject "StreamChat" */ = {
+		8AD5EC9522E9A3E8005CFAC9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4481,7 +4629,7 @@
 			};
 			name = Debug;
 		};
-		8AD5EC9622E9A3E8005CFAC9 /* Release configuration for PBXProject "StreamChat" */ = {
+		8AD5EC9622E9A3E8005CFAC9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4556,7 +4704,7 @@
 			};
 			name = Release;
 		};
-		A34407E427D8C3400044F150 /* Debug configuration for PBXNativeTarget "StreamChatUITestsApp" */ = {
+		A34407E427D8C3400044F150 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -4595,7 +4743,7 @@
 			};
 			name = Debug;
 		};
-		A34407E527D8C3400044F150 /* Release configuration for PBXNativeTarget "StreamChatUITestsApp" */ = {
+		A34407E527D8C3400044F150 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -4629,7 +4777,7 @@
 			};
 			name = Release;
 		};
-		A34407E627D8C3400044F150 /* Profile configuration for PBXNativeTarget "StreamChatUITestsApp" */ = {
+		A34407E627D8C3400044F150 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -4663,7 +4811,7 @@
 			};
 			name = Profile;
 		};
-		A34407EA27D8C3400044F150 /* Debug configuration for PBXNativeTarget "StreamChatUITestsAppUITests" */ = {
+		A34407EA27D8C3400044F150 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -4697,7 +4845,7 @@
 			};
 			name = Debug;
 		};
-		A34407EB27D8C3400044F150 /* Release configuration for PBXNativeTarget "StreamChatUITestsAppUITests" */ = {
+		A34407EB27D8C3400044F150 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -4726,7 +4874,7 @@
 			};
 			name = Release;
 		};
-		A34407EC27D8C3400044F150 /* Profile configuration for PBXNativeTarget "StreamChatUITestsAppUITests" */ = {
+		A34407EC27D8C3400044F150 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -4755,7 +4903,7 @@
 			};
 			name = Profile;
 		};
-		A3A0C99E283E952900B18DA4 /* Debug configuration for PBXNativeTarget "StreamChatTestMockServer" */ = {
+		A3A0C99E283E952900B18DA4 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -4789,7 +4937,7 @@
 			};
 			name = Debug;
 		};
-		A3A0C99F283E952900B18DA4 /* Release configuration for PBXNativeTarget "StreamChatTestMockServer" */ = {
+		A3A0C99F283E952900B18DA4 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -4824,7 +4972,7 @@
 			};
 			name = Release;
 		};
-		A3A0C9A0283E952900B18DA4 /* Profile configuration for PBXNativeTarget "StreamChatTestMockServer" */ = {
+		A3A0C9A0283E952900B18DA4 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -4857,7 +5005,7 @@
 			};
 			name = Profile;
 		};
-		A57E5C6D24C6FA3900187DC2 /* Profile configuration for PBXProject "StreamChat" */ = {
+		A57E5C6D24C6FA3900187DC2 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -4933,7 +5081,7 @@
 			};
 			name = Profile;
 		};
-		A57E5C7524C6FA3900187DC2 /* Profile configuration for PBXNativeTarget "StreamChat" */ = {
+		A57E5C7524C6FA3900187DC2 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
@@ -4966,7 +5114,7 @@
 			};
 			name = Profile;
 		};
-		A57E5C7624C6FA3900187DC2 /* Profile configuration for PBXNativeTarget "StreamChatTests" */ = {
+		A57E5C7624C6FA3900187DC2 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -4992,7 +5140,7 @@
 			};
 			name = Profile;
 		};
-		AC908392268B116000ACFB8E /* Debug configuration for PBXNativeTarget "YouTube" */ = {
+		AC908392268B116000ACFB8E /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5014,7 +5162,7 @@
 			};
 			name = Debug;
 		};
-		AC908393268B116000ACFB8E /* Release configuration for PBXNativeTarget "YouTube" */ = {
+		AC908393268B116000ACFB8E /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5036,7 +5184,7 @@
 			};
 			name = Release;
 		};
-		AC908394268B116000ACFB8E /* Profile configuration for PBXNativeTarget "YouTube" */ = {
+		AC908394268B116000ACFB8E /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5058,7 +5206,7 @@
 			};
 			name = Profile;
 		};
-		C11B576C29D43FD900D5A248 /* Debug configuration for PBXNativeTarget "EdgeCases" */ = {
+		C11B576C29D43FD900D5A248 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5088,7 +5236,7 @@
 			};
 			name = Debug;
 		};
-		C11B576D29D43FD900D5A248 /* Release configuration for PBXNativeTarget "EdgeCases" */ = {
+		C11B576D29D43FD900D5A248 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5117,7 +5265,7 @@
 			};
 			name = Release;
 		};
-		C11B576E29D43FD900D5A248 /* Profile configuration for PBXNativeTarget "EdgeCases" */ = {
+		C11B576E29D43FD900D5A248 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5146,7 +5294,7 @@
 			};
 			name = Profile;
 		};
-		C121E75C274543D000023E4C /* Debug configuration for PBXNativeTarget "StreamChatStatic" */ = {
+		C121E75C274543D000023E4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -5163,7 +5311,7 @@
 			};
 			name = Debug;
 		};
-		C121E75D274543D000023E4C /* Release configuration for PBXNativeTarget "StreamChatStatic" */ = {
+		C121E75D274543D000023E4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -5180,7 +5328,7 @@
 			};
 			name = Release;
 		};
-		C121E75E274543D000023E4C /* Profile configuration for PBXNativeTarget "StreamChatStatic" */ = {
+		C121E75E274543D000023E4C /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -5197,7 +5345,7 @@
 			};
 			name = Profile;
 		};
-		C121EA2C2746A19400023E4C /* Debug configuration for PBXNativeTarget "StreamChatUIStatic" */ = {
+		C121EA2C2746A19400023E4C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -5214,7 +5362,7 @@
 			};
 			name = Debug;
 		};
-		C121EA2D2746A19400023E4C /* Release configuration for PBXNativeTarget "StreamChatUIStatic" */ = {
+		C121EA2D2746A19400023E4C /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -5231,7 +5379,7 @@
 			};
 			name = Release;
 		};
-		C121EA2E2746A19400023E4C /* Profile configuration for PBXNativeTarget "StreamChatUIStatic" */ = {
+		C121EA2E2746A19400023E4C /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
@@ -5248,7 +5396,7 @@
 			};
 			name = Profile;
 		};
-		E74DB0D02656631700508D22 /* Debug configuration for PBXNativeTarget "UISDKDocumentation" */ = {
+		E74DB0D02656631700508D22 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -5270,7 +5418,7 @@
 			};
 			name = Debug;
 		};
-		E74DB0D12656631700508D22 /* Release configuration for PBXNativeTarget "UISDKDocumentation" */ = {
+		E74DB0D12656631700508D22 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -5291,7 +5439,7 @@
 			};
 			name = Release;
 		};
-		E74DB0D22656631700508D22 /* Profile configuration for PBXNativeTarget "UISDKDocumentation" */ = {
+		E74DB0D22656631700508D22 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
@@ -5312,7 +5460,7 @@
 			};
 			name = Profile;
 		};
-		F86C87C325F906670000BCA9 /* Debug configuration for PBXNativeTarget "Messenger" */ = {
+		F86C87C325F906670000BCA9 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5336,7 +5484,7 @@
 			};
 			name = Debug;
 		};
-		F86C87C425F906670000BCA9 /* Release configuration for PBXNativeTarget "Messenger" */ = {
+		F86C87C425F906670000BCA9 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5360,7 +5508,7 @@
 			};
 			name = Release;
 		};
-		F86C87C525F906670000BCA9 /* Profile configuration for PBXNativeTarget "Messenger" */ = {
+		F86C87C525F906670000BCA9 /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5383,7 +5531,7 @@
 			};
 			name = Profile;
 		};
-		F8933BA325FF55E50054BBFF /* Debug configuration for PBXNativeTarget "Slack" */ = {
+		F8933BA325FF55E50054BBFF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5405,7 +5553,7 @@
 			};
 			name = Debug;
 		};
-		F8933BA425FF55E50054BBFF /* Release configuration for PBXNativeTarget "Slack" */ = {
+		F8933BA425FF55E50054BBFF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5427,7 +5575,7 @@
 			};
 			name = Release;
 		};
-		F8933BA525FF55E50054BBFF /* Profile configuration for PBXNativeTarget "Slack" */ = {
+		F8933BA525FF55E50054BBFF /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5448,7 +5596,7 @@
 			};
 			name = Profile;
 		};
-		F89C23B725E508E20082CA5B /* Debug configuration for PBXNativeTarget "iMessage" */ = {
+		F89C23B725E508E20082CA5B /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5470,7 +5618,7 @@
 			};
 			name = Debug;
 		};
-		F89C23B825E508E20082CA5B /* Release configuration for PBXNativeTarget "iMessage" */ = {
+		F89C23B825E508E20082CA5B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5492,7 +5640,7 @@
 			};
 			name = Release;
 		};
-		F89C23B925E508E20082CA5B /* Profile configuration for PBXNativeTarget "iMessage" */ = {
+		F89C23B925E508E20082CA5B /* Profile */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -5519,190 +5667,211 @@
 		437FCA0F26D67BE40000223C /* Build configuration list for PBXNativeTarget "DemoAppPush" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				437FCA0C26D67BE40000223C /* Debug configuration for PBXNativeTarget "DemoAppPush" */,
-				437FCA0D26D67BE40000223C /* Release configuration for PBXNativeTarget "DemoAppPush" */,
-				437FCA0E26D67BE40000223C /* Profile configuration for PBXNativeTarget "DemoAppPush" */,
+				437FCA0C26D67BE40000223C /* Debug */,
+				437FCA0D26D67BE40000223C /* Release */,
+				437FCA0E26D67BE40000223C /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		7908821425432B7200896F03 /* Build configuration list for PBXNativeTarget "StreamChatUI" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7908821525432B7200896F03 /* Debug configuration for PBXNativeTarget "StreamChatUI" */,
-				7908821625432B7200896F03 /* Release configuration for PBXNativeTarget "StreamChatUI" */,
-				7908821725432B7200896F03 /* Profile configuration for PBXNativeTarget "StreamChatUI" */,
+				7908821525432B7200896F03 /* Debug */,
+				7908821625432B7200896F03 /* Release */,
+				7908821725432B7200896F03 /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		7908821825432B7200896F03 /* Build configuration list for PBXNativeTarget "StreamChatUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				7908821925432B7200896F03 /* Debug configuration for PBXNativeTarget "StreamChatUITests" */,
-				7908821A25432B7200896F03 /* Release configuration for PBXNativeTarget "StreamChatUITests" */,
-				7908821B25432B7200896F03 /* Profile configuration for PBXNativeTarget "StreamChatUITests" */,
+				7908821925432B7200896F03 /* Debug */,
+				7908821A25432B7200896F03 /* Release */,
+				7908821B25432B7200896F03 /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		792DDA6B256FB69F001DB91B /* Build configuration list for PBXNativeTarget "DemoApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				792DDA68256FB69F001DB91B /* Debug configuration for PBXNativeTarget "DemoApp" */,
-				792DDA69256FB69F001DB91B /* Release configuration for PBXNativeTarget "DemoApp" */,
-				792DDA6A256FB69F001DB91B /* Profile configuration for PBXNativeTarget "DemoApp" */,
+				792DDA68256FB69F001DB91B /* Debug */,
+				792DDA69256FB69F001DB91B /* Release */,
+				792DDA6A256FB69F001DB91B /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		793060FD25778897005CF846 /* Build configuration list for PBXNativeTarget "StreamChatTestTools" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				793060F725778897005CF846 /* Debug configuration for PBXNativeTarget "StreamChatTestTools" */,
-				793060F825778897005CF846 /* Release configuration for PBXNativeTarget "StreamChatTestTools" */,
-				793060F925778897005CF846 /* Profile configuration for PBXNativeTarget "StreamChatTestTools" */,
+				793060F725778897005CF846 /* Debug */,
+				793060F825778897005CF846 /* Release */,
+				793060F925778897005CF846 /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		793060FE25778897005CF846 /* Build configuration list for PBXNativeTarget "StreamChatTestToolsTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				793060FA25778897005CF846 /* Debug configuration for PBXNativeTarget "StreamChatTestToolsTests" */,
-				793060FB25778897005CF846 /* Release configuration for PBXNativeTarget "StreamChatTestToolsTests" */,
-				793060FC25778897005CF846 /* Profile configuration for PBXNativeTarget "StreamChatTestToolsTests" */,
+				793060FA25778897005CF846 /* Debug */,
+				793060FB25778897005CF846 /* Release */,
+				793060FC25778897005CF846 /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		799C9420247D2F80001F1104 /* Build configuration list for PBXNativeTarget "StreamChat" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				799C9421247D2F80001F1104 /* Debug configuration for PBXNativeTarget "StreamChat" */,
-				799C9422247D2F80001F1104 /* Release configuration for PBXNativeTarget "StreamChat" */,
-				A57E5C7524C6FA3900187DC2 /* Profile configuration for PBXNativeTarget "StreamChat" */,
+				799C9421247D2F80001F1104 /* Debug */,
+				799C9422247D2F80001F1104 /* Release */,
+				A57E5C7524C6FA3900187DC2 /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		799C9459247D59B1001F1104 /* Build configuration list for PBXNativeTarget "StreamChatTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				799C945A247D59B1001F1104 /* Debug configuration for PBXNativeTarget "StreamChatTests" */,
-				799C945B247D59B1001F1104 /* Release configuration for PBXNativeTarget "StreamChatTests" */,
-				A57E5C7624C6FA3900187DC2 /* Profile configuration for PBXNativeTarget "StreamChatTests" */,
+				799C945A247D59B1001F1104 /* Debug */,
+				799C945B247D59B1001F1104 /* Release */,
+				A57E5C7624C6FA3900187DC2 /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		84790EA32AC1D346003AFF1C /* Build configuration list for PBXNativeTarget "DemoShare" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				84790EA02AC1D346003AFF1C /* Debug configuration for PBXNativeTarget "DemoShare" */,
-				84790EA12AC1D346003AFF1C /* Release configuration for PBXNativeTarget "DemoShare" */,
-				84790EA22AC1D346003AFF1C /* Profile configuration for PBXNativeTarget "DemoShare" */,
+				84790EA02AC1D346003AFF1C /* Debug */,
+				84790EA12AC1D346003AFF1C /* Release */,
+				84790EA22AC1D346003AFF1C /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		8AD5EC8922E9A3E8005CFAC9 /* Build configuration list for PBXProject "StreamChat" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8AD5EC9522E9A3E8005CFAC9 /* Debug configuration for PBXProject "StreamChat" */,
-				8AD5EC9622E9A3E8005CFAC9 /* Release configuration for PBXProject "StreamChat" */,
-				A57E5C6D24C6FA3900187DC2 /* Profile configuration for PBXProject "StreamChat" */,
+				8AD5EC9522E9A3E8005CFAC9 /* Debug */,
+				8AD5EC9622E9A3E8005CFAC9 /* Release */,
+				A57E5C6D24C6FA3900187DC2 /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		A34407ED27D8C3400044F150 /* Build configuration list for PBXNativeTarget "StreamChatUITestsApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A34407E427D8C3400044F150 /* Debug configuration for PBXNativeTarget "StreamChatUITestsApp" */,
-				A34407E527D8C3400044F150 /* Release configuration for PBXNativeTarget "StreamChatUITestsApp" */,
-				A34407E627D8C3400044F150 /* Profile configuration for PBXNativeTarget "StreamChatUITestsApp" */,
+				A34407E427D8C3400044F150 /* Debug */,
+				A34407E527D8C3400044F150 /* Release */,
+				A34407E627D8C3400044F150 /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		A34407EF27D8C3400044F150 /* Build configuration list for PBXNativeTarget "StreamChatUITestsAppUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A34407EA27D8C3400044F150 /* Debug configuration for PBXNativeTarget "StreamChatUITestsAppUITests" */,
-				A34407EB27D8C3400044F150 /* Release configuration for PBXNativeTarget "StreamChatUITestsAppUITests" */,
-				A34407EC27D8C3400044F150 /* Profile configuration for PBXNativeTarget "StreamChatUITestsAppUITests" */,
+				A34407EA27D8C3400044F150 /* Debug */,
+				A34407EB27D8C3400044F150 /* Release */,
+				A34407EC27D8C3400044F150 /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		A3A0C99D283E952900B18DA4 /* Build configuration list for PBXNativeTarget "StreamChatTestMockServer" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				A3A0C99E283E952900B18DA4 /* Debug configuration for PBXNativeTarget "StreamChatTestMockServer" */,
-				A3A0C99F283E952900B18DA4 /* Release configuration for PBXNativeTarget "StreamChatTestMockServer" */,
-				A3A0C9A0283E952900B18DA4 /* Profile configuration for PBXNativeTarget "StreamChatTestMockServer" */,
+				A3A0C99E283E952900B18DA4 /* Debug */,
+				A3A0C99F283E952900B18DA4 /* Release */,
+				A3A0C9A0283E952900B18DA4 /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		AC908395268B116000ACFB8E /* Build configuration list for PBXNativeTarget "YouTube" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				AC908392268B116000ACFB8E /* Debug configuration for PBXNativeTarget "YouTube" */,
-				AC908393268B116000ACFB8E /* Release configuration for PBXNativeTarget "YouTube" */,
-				AC908394268B116000ACFB8E /* Profile configuration for PBXNativeTarget "YouTube" */,
+				AC908392268B116000ACFB8E /* Debug */,
+				AC908393268B116000ACFB8E /* Release */,
+				AC908394268B116000ACFB8E /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		C11B576F29D43FD900D5A248 /* Build configuration list for PBXNativeTarget "EdgeCases" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C11B576C29D43FD900D5A248 /* Debug configuration for PBXNativeTarget "EdgeCases" */,
-				C11B576D29D43FD900D5A248 /* Release configuration for PBXNativeTarget "EdgeCases" */,
-				C11B576E29D43FD900D5A248 /* Profile configuration for PBXNativeTarget "EdgeCases" */,
+				C11B576C29D43FD900D5A248 /* Debug */,
+				C11B576D29D43FD900D5A248 /* Release */,
+				C11B576E29D43FD900D5A248 /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		C121E75F274543D000023E4C /* Build configuration list for PBXNativeTarget "StreamChatStatic" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C121E75C274543D000023E4C /* Debug configuration for PBXNativeTarget "StreamChatStatic" */,
-				C121E75D274543D000023E4C /* Release configuration for PBXNativeTarget "StreamChatStatic" */,
-				C121E75E274543D000023E4C /* Profile configuration for PBXNativeTarget "StreamChatStatic" */,
+				C121E75C274543D000023E4C /* Debug */,
+				C121E75D274543D000023E4C /* Release */,
+				C121E75E274543D000023E4C /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		C121EA2B2746A19400023E4C /* Build configuration list for PBXNativeTarget "StreamChatUIStatic" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				C121EA2C2746A19400023E4C /* Debug configuration for PBXNativeTarget "StreamChatUIStatic" */,
-				C121EA2D2746A19400023E4C /* Release configuration for PBXNativeTarget "StreamChatUIStatic" */,
-				C121EA2E2746A19400023E4C /* Profile configuration for PBXNativeTarget "StreamChatUIStatic" */,
+				C121EA2C2746A19400023E4C /* Debug */,
+				C121EA2D2746A19400023E4C /* Release */,
+				C121EA2E2746A19400023E4C /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		E74DB0CF2656631700508D22 /* Build configuration list for PBXNativeTarget "UISDKDocumentation" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E74DB0D02656631700508D22 /* Debug configuration for PBXNativeTarget "UISDKDocumentation" */,
-				E74DB0D12656631700508D22 /* Release configuration for PBXNativeTarget "UISDKDocumentation" */,
-				E74DB0D22656631700508D22 /* Profile configuration for PBXNativeTarget "UISDKDocumentation" */,
+				E74DB0D02656631700508D22 /* Debug */,
+				E74DB0D12656631700508D22 /* Release */,
+				E74DB0D22656631700508D22 /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		F86C87C625F906670000BCA9 /* Build configuration list for PBXNativeTarget "Messenger" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F86C87C325F906670000BCA9 /* Debug configuration for PBXNativeTarget "Messenger" */,
-				F86C87C425F906670000BCA9 /* Release configuration for PBXNativeTarget "Messenger" */,
-				F86C87C525F906670000BCA9 /* Profile configuration for PBXNativeTarget "Messenger" */,
+				F86C87C325F906670000BCA9 /* Debug */,
+				F86C87C425F906670000BCA9 /* Release */,
+				F86C87C525F906670000BCA9 /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		F8933BA625FF55E50054BBFF /* Build configuration list for PBXNativeTarget "Slack" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F8933BA325FF55E50054BBFF /* Debug configuration for PBXNativeTarget "Slack" */,
-				F8933BA425FF55E50054BBFF /* Release configuration for PBXNativeTarget "Slack" */,
-				F8933BA525FF55E50054BBFF /* Profile configuration for PBXNativeTarget "Slack" */,
+				F8933BA325FF55E50054BBFF /* Debug */,
+				F8933BA425FF55E50054BBFF /* Release */,
+				F8933BA525FF55E50054BBFF /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 		F89C23BA25E508E20082CA5B /* Build configuration list for PBXNativeTarget "iMessage" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				F89C23B725E508E20082CA5B /* Debug configuration for PBXNativeTarget "iMessage" */,
-				F89C23B825E508E20082CA5B /* Release configuration for PBXNativeTarget "iMessage" */,
-				F89C23B925E508E20082CA5B /* Profile configuration for PBXNativeTarget "iMessage" */,
+				F89C23B725E508E20082CA5B /* Debug */,
+				F89C23B825E508E20082CA5B /* Release */,
+				F89C23B925E508E20082CA5B /* Profile */,
 			);
+			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
