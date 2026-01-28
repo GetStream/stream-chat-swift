@@ -56,6 +56,13 @@ public class BackendRobot {
         _ = mockServer.postRequest(endpoint: "delay_messages?delay=\(seconds)")
         return self
     }
+    
+    @discardableResult
+    public func waitForJwtToExpire() -> Self {
+        let sleepTime = UInt32((StreamMockServer.jwtTimeout + 2) * 1_000_000)
+        usleep(sleepTime)
+        return self
+    }
 
     public func revokeToken(duration: Int = 5) {
         waitForMockServerToStart()

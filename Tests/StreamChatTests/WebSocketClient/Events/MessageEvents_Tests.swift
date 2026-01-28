@@ -148,6 +148,52 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertNil(event?.unreadCount)
     }
 
+    func test_read_withTeam() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "MessageRead+Team")
+        let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
+        XCTAssertEqual(event?.user.id, "steep-moon-9")
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
+        XCTAssertEqual(event?.team, "team-123")
+    }
+
+    func test_read_withoutTeam() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "MessageRead")
+        let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
+        XCTAssertEqual(event?.user.id, "steep-moon-9")
+        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
+        XCTAssertNil(event?.team)
+    }
+
+    func test_messageReadEvent_toDomainEvent_withTeam() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "MessageRead+Team")
+        let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
+
+        let channelId = try XCTUnwrap(event?.cid)
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
+        _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
+        _ = try session.saveUser(payload: .dummy(userId: event?.user.id ?? ""))
+        _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: nil))
+
+        let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageReadEvent)
+        XCTAssertEqual(domainEvent.team, "team-123")
+    }
+
+    func test_messageReadEvent_toDomainEvent_withoutTeam() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "MessageRead")
+        let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
+
+        let channelId = try XCTUnwrap(event?.cid)
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
+        _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
+        _ = try session.saveUser(payload: .dummy(userId: event?.user.id ?? ""))
+        _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: nil))
+
+        let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageReadEvent)
+        XCTAssertNil(domainEvent.team)
+    }
+
     func test_delivered() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDelivered")
         let event = try eventDecoder.decode(from: json) as? MessageDeliveredEventDTO
