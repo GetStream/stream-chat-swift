@@ -266,12 +266,12 @@ lane :match_me do |options|
     'io.getstream.iOS.StreamChatUITestsApp',
     'io.getstream.iOS.StreamChatUITestsAppUITests.xctrunner'
   ]
-  # custom_match(
-  #   api_key: appstore_api_key,
-  #   app_identifier: app_identifiers,
-  #   readonly: options[:readonly],
-  #   register_device: options[:register_device]
-  # )
+  custom_match(
+    api_key: appstore_api_key,
+    app_identifier: app_identifiers,
+    readonly: options[:readonly],
+    register_device: options[:register_device]
+  )
 end
 
 desc 'Builds the latest version of Demo app and uploads it to TestFlight'
