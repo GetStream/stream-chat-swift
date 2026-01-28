@@ -408,5 +408,22 @@ public extension Appearance {
                 weight: .regular
             )
         )
+        
+        /// The reactions emoji unicode rendered in the message list.
+        public var availableMessagesReactionEmojis: [MessageReactionType: String] {
+            get {
+                _availableMessagesReactionEmojis ??
+                    [
+                        "love": "❤️",
+                        "haha": "😂",
+                        "like": "👍",
+                        "sad": "👎",
+                        "wow": "😮"
+                    ]
+            }
+            set { _availableMessagesReactionEmojis = newValue }
+        }
+
+        private var _availableMessagesReactionEmojis: [MessageReactionType: String]?
     }
 }
