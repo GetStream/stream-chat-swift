@@ -1028,6 +1028,8 @@
 		82E66F2A2F291FE70082E9A7 /* Exceptions for "Sources" folder in "StreamChatUI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"/Localized: StreamChatUI/Resources/Localizable.strings",
+				"/Localized: StreamChatUI/Resources/Localizable.stringsdict",
 				StreamChatUI/Appearance.swift,
 				"StreamChatUI/Appearance+ColorPalette.swift",
 				"StreamChatUI/Appearance+Fonts.swift",
@@ -1268,6 +1270,7 @@
 				StreamChatUI/Navigation/ChatThreadListRouter.swift,
 				StreamChatUI/Navigation/NavigationRouter.swift,
 				StreamChatUI/Navigation/NavigationVC.swift,
+				StreamChatUI/Resources/Assets.xcassets,
 				StreamChatUI/SDKIdentifier.swift,
 				StreamChatUI/StreamChatUI.h,
 				StreamChatUI/StreamDifferenceKit/Algorithm.swift,
