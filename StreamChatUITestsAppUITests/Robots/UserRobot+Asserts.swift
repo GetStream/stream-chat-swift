@@ -671,6 +671,22 @@ extension UserRobot {
         XCTAssertEqual(expectedCount, actualCount, file: file, line: line)
         return self
     }
+    
+    @discardableResult
+    func assertComposerText(
+        _ text: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Self {
+        let composerTextView = MessageListPage.Composer.textView.wait()
+        XCTAssertEqual(
+            composerTextView.text,
+            text,
+            file: file,
+            line: line
+        )
+        return self
+    }
 
     @discardableResult
     func assertComposerLeftButtons(

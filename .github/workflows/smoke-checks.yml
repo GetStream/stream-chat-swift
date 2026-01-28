@@ -5,6 +5,7 @@ on:
     paths-ignore:
       - 'README.md'
       - 'CHANGELOG.md'
+      - '**/*.png'
 
   workflow_dispatch:
     inputs:

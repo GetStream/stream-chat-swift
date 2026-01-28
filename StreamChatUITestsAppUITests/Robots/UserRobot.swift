@@ -11,11 +11,6 @@ final class UserRobot: Robot {
     let composer = MessageListPage.Composer.self
     let contextMenu = MessageListPage.ContextMenu.self
     let debugAlert = MessageListPage.Alert.Debug.self
-    private var server: StreamMockServer
-
-    init(_ server: StreamMockServer) {
-        self.server = server
-    }
 
     @discardableResult
     func login() -> Self {
@@ -54,13 +49,6 @@ final class UserRobot: Robot {
     func openChannel(channelCellIndex: Int = 0) -> Self {
         waitForChannelListToLoad()
         ChannelListPage.cells.allElementsBoundByIndex[channelCellIndex].waitForHitPoint().safeTap()
-        return self
-    }
-
-    @discardableResult
-    public func waitForJwtToExpire() -> Self {
-        let sleepTime = UInt32((StreamMockServer.jwtTimeout + 2) * 1_000_000)
-        usleep(sleepTime)
         return self
     }
     

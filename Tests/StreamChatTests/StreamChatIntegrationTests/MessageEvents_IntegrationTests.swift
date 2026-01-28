@@ -296,6 +296,40 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
         XCTAssertNotNil(event.thread)
     }
+
+    func test_messageReadEventDTO_toDomainEvent_withTeam() throws {
+        // Create database session
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
+
+        // Create event payload with team
+        let cid = ChannelId.unique
+        let teamId: TeamId = "team-123"
+        let eventPayload = EventPayload(
+            eventType: .messageRead,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            unreadCount: .init(channels: 12, messages: 44, threads: 10),
+            createdAt: .unique,
+            team: teamId
+        )
+
+        // Create event DTO
+        let dto = try MessageReadEventDTO(from: eventPayload)
+
+        // Save channel to database since it must exist when we get this event
+        _ = try session.saveChannel(payload: .dummy(cid: eventPayload.cid!), query: nil, cache: nil)
+
+        _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: eventPayload.unreadCount))
+
+        // Save event to database
+        try session.saveUser(payload: eventPayload.user!)
+
+        // Assert event can be created and has correct team field
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageReadEvent)
+        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.user.id, eventPayload.user?.id)
+        XCTAssertEqual(event.team, teamId)
+    }
 }
 
 extension UnreadCount {

@@ -8,7 +8,7 @@ let app = XCUIApplication()
 
 class StreamTestCase: XCTestCase {
     let deviceRobot = DeviceRobot(app)
-    var userRobot: UserRobot!
+    let userRobot = UserRobot()
     var backendRobot: BackendRobot!
     var participantRobot: ParticipantRobot!
     var mockServer: StreamMockServer!
@@ -19,10 +19,6 @@ class StreamTestCase: XCTestCase {
         continueAfterFailure = false
 
         try super.setUpWithError()
-        mockServer = StreamMockServer(driverPort: "4566", testName: testName)
-        backendRobot = BackendRobot(mockServer)
-        participantRobot = ParticipantRobot(mockServer)
-        userRobot = UserRobot(mockServer)
         alertHandler()
         backendHandler()
         app.launch()
@@ -31,7 +27,9 @@ class StreamTestCase: XCTestCase {
     override func tearDownWithError() throws {
         attachElementTree()
         app.terminate()
-        mockServer.stop()
+        if useMockServer {
+            mockServer.stop()
+        }
 
         try super.tearDownWithError()
         app.launchArguments.removeAll()
@@ -41,13 +39,15 @@ class StreamTestCase: XCTestCase {
 
 extension StreamTestCase {
     private func backendHandler() {
-        app.setEnvironmentVariables([
-            .websocketHost: "ws://localhost",
-            .httpHost: "http://localhost",
-            .port: StreamMockServer.port!
-        ])
-        
         if useMockServer {
+            mockServer = StreamMockServer(driverPort: "4566", testName: testName)
+            backendRobot = BackendRobot(mockServer)
+            participantRobot = ParticipantRobot(mockServer)
+            app.setEnvironmentVariables([
+                .websocketHost: "ws://localhost",
+                .httpHost: "http://localhost",
+                .port: StreamMockServer.port!
+            ])
             app.setLaunchArguments(.useMockServer)
         } else if let switchApiKey {
             app.setEnvironmentVariables([.customApiKey: switchApiKey])

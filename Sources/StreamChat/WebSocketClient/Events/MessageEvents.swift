@@ -252,18 +252,23 @@ public final class MessageReadEvent: ChannelSpecificEvent {
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
 
+    /// The team the channel belongs to.
+    public let team: TeamId?
+
     init(
         user: ChatUser,
         channel: ChatChannel,
         thread: ChatThread?,
         createdAt: Date,
-        unreadCount: UnreadCount?
+        unreadCount: UnreadCount?,
+        team: TeamId? = nil
     ) {
         self.user = user
         self.channel = channel
         self.thread = thread
         self.createdAt = createdAt
         self.unreadCount = unreadCount
+        self.team = team
     }
 }
 
@@ -272,6 +277,7 @@ final class MessageReadEventDTO: EventDTO {
     let cid: ChannelId
     let createdAt: Date
     let unreadCount: UnreadCountPayload?
+    let team: TeamId?
     let payload: EventPayload
 
     init(from response: EventPayload) throws {
@@ -279,6 +285,7 @@ final class MessageReadEventDTO: EventDTO {
         cid = try response.value(at: \.cid)
         createdAt = try response.value(at: \.createdAt)
         unreadCount = try? response.value(at: \.unreadCount)
+        team = response.team
         payload = response
     }
 
@@ -299,7 +306,8 @@ final class MessageReadEventDTO: EventDTO {
             channel: channelDTO.asModel(),
             thread: threadDTO?.asModel(),
             createdAt: createdAt,
-            unreadCount: UnreadCount(currentUserDTO: currentUser)
+            unreadCount: UnreadCount(currentUserDTO: currentUser),
+            team: team
         )
     }
 }
