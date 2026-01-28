@@ -942,9 +942,10 @@ private_lane :frameworks_sizes do
   )
 
   # Parse the thinned size of Assets.car from Packaging.log
+  packaging_log_path = "#{Gym.cache[:temporary_output_path]}/Packaging.log"
+  UI.message("Successfully exported the Packaging log file: \n#{packaging_log_path}")
   assets_size_regex = %r{\b(\d+)\sbytes\sfor\s./Payload/ChatSample.app/Frameworks/StreamChatUI.framework/Assets.car\b}
-  packaging_log_content = File.read("#{Gym.cache[:temporary_output_path]}/Packaging.log")
-  match = packaging_log_content.match(assets_size_regex)
+  match = File.read(packaging_log_path).match(assets_size_regex)
   assets_thinned_size = match[1].to_i
 
   frameworks_path = "../#{archive_dir}/Products/Library/Frameworks/ChatSample.app/Frameworks"
