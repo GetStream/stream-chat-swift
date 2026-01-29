@@ -22,7 +22,7 @@
       "parallelizable" : true,
       "target" : {
         "containerPath" : "container:StreamChat.xcodeproj",
-        "identifier" : "AD5D7BC32EFA26FF004A63E2",
+        "identifier" : "82AB561A2F2B77E70033E55E",
         "name" : "StreamChatCommonUITests"
       }
     }

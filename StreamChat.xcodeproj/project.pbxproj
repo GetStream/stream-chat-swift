@@ -522,6 +522,59 @@
 			);
 			target = C11B575A29D43FD800D5A248 /* EdgeCases */;
 		};
+		82AB91B52F2B79460033E55E /* Exceptions for "Sources" folder in "StreamChatCommonUI" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"/Localized: StreamChatCommonUI/Resources/Localizable.strings",
+				"/Localized: StreamChatCommonUI/Resources/Localizable.stringsdict",
+				StreamChatCommonUI/Appearance.swift,
+				"StreamChatCommonUI/Appearance+ColorPalette.swift",
+				"StreamChatCommonUI/Appearance+DesignTokens.swift",
+				"StreamChatCommonUI/Appearance+Fonts.swift",
+				"StreamChatCommonUI/Appearance+Formatters.swift",
+				"StreamChatCommonUI/Appearance+Formatters/AudioPlaybackRateFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/AudioRecordingNameFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/Calendar+StreamCalendar.swift",
+				"StreamChatCommonUI/Appearance+Formatters/ChannelListMessageTimestampFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/ChannelNameFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/ChatChannelNamer.swift",
+				"StreamChatCommonUI/Appearance+Formatters/GalleryHeaderViewDateFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/MarkdownFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/MessageDateSeparatorFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/MessageTimestampFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/PollTimestampFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/UploadingProgressFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/UserLastActivityFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/VideoDurationFormatter.swift",
+				"StreamChatCommonUI/Appearance+Images.swift",
+				"StreamChatCommonUI/Appearance+SwiftUI.swift",
+				StreamChatCommonUI/Generated/L10n_template.stencil,
+				StreamChatCommonUI/Generated/L10n.swift,
+				StreamChatCommonUI/Reactions/ChatMessageReactionAppearance.swift,
+				StreamChatCommonUI/Resources/Assets.xcassets,
+				StreamChatCommonUI/StreamChatCommonUI.h,
+				"StreamChatCommonUI/Utils/Bundle+Extensions.swift",
+				StreamChatCommonUI/Utils/DateUtils.swift,
+				"StreamChatCommonUI/Utils/UIColor+Extensions.swift",
+				"StreamChatCommonUI/Utils/UIFont+Extensions.swift",
+				"StreamChatCommonUI/Utils/UIImage+Extensions.swift",
+			);
+			target = 82AB560A2F2B77C60033E55E /* StreamChatCommonUI */;
+		};
+		82AB91D32F2B799D0033E55E /* Exceptions for "Tests" folder in "StreamChatCommonUITests" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				"StreamChatCommonUITests/Appearance+SwiftUI_Tests.swift",
+				StreamChatCommonUITests/Formatters/ChatChannelNamer_Tests.swift,
+				StreamChatCommonUITests/Formatters/DefaultAudioPlaybackRateFormatter_Tests.swift,
+				StreamChatCommonUITests/Formatters/DefaultAudioRecordingNameFormatter_Tests.swift,
+				StreamChatCommonUITests/Formatters/DefaultMarkdownFormatter_Tests.swift,
+				StreamChatCommonUITests/Localization_Tests.swift,
+				StreamChatCommonUITests/StreamChatCommonUI.xctestplan,
+				StreamChatCommonUITests/Utils/DateUtils_Tests.swift,
+			);
+			target = 82AB561A2F2B77E70033E55E /* StreamChatCommonUITests */;
+		};
 		82B00B632F27C56F00E360B4 /* Exceptions for "DemoApp" folder in "DemoApp" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
@@ -672,9 +725,38 @@
 				"/Localized: StreamChatCommonUI/Resources/Localizable.stringsdict",
 				StreamChat/Info.plist,
 				StreamChatCommonUI/.swiftgen.yml,
+				StreamChatCommonUI/Appearance.swift,
+				"StreamChatCommonUI/Appearance+ColorPalette.swift",
+				"StreamChatCommonUI/Appearance+DesignTokens.swift",
+				"StreamChatCommonUI/Appearance+Fonts.swift",
+				"StreamChatCommonUI/Appearance+Formatters.swift",
+				"StreamChatCommonUI/Appearance+Formatters/AudioPlaybackRateFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/AudioRecordingNameFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/Calendar+StreamCalendar.swift",
+				"StreamChatCommonUI/Appearance+Formatters/ChannelListMessageTimestampFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/ChannelNameFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/ChatChannelNamer.swift",
+				"StreamChatCommonUI/Appearance+Formatters/GalleryHeaderViewDateFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/MarkdownFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/MessageDateSeparatorFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/MessageTimestampFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/PollTimestampFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/UploadingProgressFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/UserLastActivityFormatter.swift",
+				"StreamChatCommonUI/Appearance+Formatters/VideoDurationFormatter.swift",
+				"StreamChatCommonUI/Appearance+Images.swift",
+				"StreamChatCommonUI/Appearance+SwiftUI.swift",
 				StreamChatCommonUI/Generated/L10n_template.stencil,
+				StreamChatCommonUI/Generated/L10n.swift,
 				StreamChatCommonUI/Info.plist,
+				StreamChatCommonUI/Reactions/ChatMessageReactionAppearance.swift,
 				StreamChatCommonUI/Resources/Assets.xcassets,
+				StreamChatCommonUI/StreamChatCommonUI.h,
+				"StreamChatCommonUI/Utils/Bundle+Extensions.swift",
+				StreamChatCommonUI/Utils/DateUtils.swift,
+				"StreamChatCommonUI/Utils/UIColor+Extensions.swift",
+				"StreamChatCommonUI/Utils/UIFont+Extensions.swift",
+				"StreamChatCommonUI/Utils/UIImage+Extensions.swift",
 				StreamChatUI/AppearanceProvider.swift,
 				StreamChatUI/ChatChannel/ChatChannelHeaderView.swift,
 				StreamChatUI/ChatChannel/ChatChannelVC.swift,
@@ -1280,7 +1362,14 @@
 			membershipExceptions = (
 				"/Localized: StreamChatUITests/TestLocalizable.strings",
 				Info.plist,
+				"StreamChatCommonUITests/Appearance+SwiftUI_Tests.swift",
+				StreamChatCommonUITests/Formatters/ChatChannelNamer_Tests.swift,
+				StreamChatCommonUITests/Formatters/DefaultAudioPlaybackRateFormatter_Tests.swift,
+				StreamChatCommonUITests/Formatters/DefaultAudioRecordingNameFormatter_Tests.swift,
+				StreamChatCommonUITests/Formatters/DefaultMarkdownFormatter_Tests.swift,
+				StreamChatCommonUITests/Localization_Tests.swift,
 				StreamChatCommonUITests/StreamChatCommonUI.xctestplan,
+				StreamChatCommonUITests/Utils/DateUtils_Tests.swift,
 				StreamChatTests/StreamChatFlakyTests.xctestplan,
 				StreamChatUITests/ChatMessage_Tests.swift,
 				"StreamChatUITests/Components+SwiftUI_Tests.swift",
@@ -2900,6 +2989,7 @@
 			exceptions = (
 				82E66F292F291FE70082E9A7 /* Exceptions for "Sources" folder in "StreamChat" target */,
 				82E66F2A2F291FE70082E9A7 /* Exceptions for "Sources" folder in "StreamChatUI" target */,
+				82AB91B52F2B79460033E55E /* Exceptions for "Sources" folder in "StreamChatCommonUI" target */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -2909,6 +2999,7 @@
 			exceptions = (
 				82E678562F2922160082E9A7 /* Exceptions for "Tests" folder in "StreamChatTests" target */,
 				82E678572F2922160082E9A7 /* Exceptions for "Tests" folder in "StreamChatUITests" target */,
+				82AB91D32F2B799D0033E55E /* Exceptions for "Tests" folder in "StreamChatCommonUITests" target */,
 				82E678582F2922160082E9A7 /* Exceptions for "Tests" folder in "UISDKDocumentation" target */,
 			);
 			path = Tests;
@@ -4833,7 +4924,8 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatCommonUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
@@ -4877,7 +4969,8 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatCommonUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
@@ -4920,7 +5013,8 @@
 				ENABLE_MODULE_VERIFIER = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
-				GENERATE_INFOPLIST_FILE = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "$(SRCROOT)/Sources/StreamChatCommonUI/Info.plist";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				IPHONEOS_DEPLOYMENT_TARGET = 26.1;

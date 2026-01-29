@@ -15,7 +15,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "AD4C2B0B2EF1BF58000E4FC1"
+               BlueprintIdentifier = "82AB560A2F2B77C60033E55E"
                BuildableName = "StreamChatCommonUI.framework"
                BlueprintName = "StreamChatCommonUI"
                ReferencedContainer = "container:StreamChat.xcodeproj">
@@ -40,7 +40,7 @@
             parallelizable = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "AD5D7BC32EFA26FF004A63E2"
+               BlueprintIdentifier = "82AB561A2F2B77E70033E55E"
                BuildableName = "StreamChatCommonUITests.xctest"
                BlueprintName = "StreamChatCommonUITests"
                ReferencedContainer = "container:StreamChat.xcodeproj">
@@ -68,7 +68,7 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "AD4C2B0B2EF1BF58000E4FC1"
+            BlueprintIdentifier = "82AB560A2F2B77C60033E55E"
             BuildableName = "StreamChatCommonUI.framework"
             BlueprintName = "StreamChatCommonUI"
             ReferencedContainer = "container:StreamChat.xcodeproj">
