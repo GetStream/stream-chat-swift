@@ -22,6 +22,9 @@
 		827414272ACDE941009CD13C /* StreamChatTestMockServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */; };
 		827418212ACDE86F004A23DA /* StreamSwiftTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 827418202ACDE86F004A23DA /* StreamSwiftTestHelpers */; };
 		82AA15092F211F9100555893 /* StreamSwiftTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 8274181E2ACDE85E004A23DA /* StreamSwiftTestHelpers */; };
+		82AB56112F2B77C60033E55E /* StreamChatCommonUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82AB560B2F2B77C60033E55E /* StreamChatCommonUI.framework */; };
+		82AB56122F2B77C60033E55E /* StreamChatCommonUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 82AB560B2F2B77C60033E55E /* StreamChatCommonUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		82AB561F2F2B77E70033E55E /* StreamChatCommonUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 82AB560B2F2B77C60033E55E /* StreamChatCommonUI.framework */; };
 		82DCB3A92A4AE8FB00738933 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		82DCB3AA2A4AE8FB00738933 /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		82DCB3AD2A4AE8FB00738933 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
@@ -114,6 +117,20 @@
 			remoteGlobalIDString = 790881FC25432B7200896F03;
 			remoteInfo = StreamChatUI;
 		};
+		82AB560F2F2B77C60033E55E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 82AB560A2F2B77C60033E55E;
+			remoteInfo = StreamChatCommonUI;
+		};
+		82AB56202F2B77E70033E55E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 82AB560A2F2B77C60033E55E;
+			remoteInfo = StreamChatCommonUI;
+		};
 		82FF61E92B6AB5E4007185B6 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
@@ -190,13 +207,6 @@
 			proxyType = 1;
 			remoteGlobalIDString = 799C941A247D2F80001F1104;
 			remoteInfo = StreamChat;
-		};
-		AD78F9F228EC729D00BC0FCE /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8AD5EC8622E9A3E8005CFAC9 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 793060E525778896005CF846;
-			remoteInfo = StreamChatTestTools;
 		};
 		C11B577429D4403800D5A248 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -347,6 +357,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				82AB56122F2B77C60033E55E /* StreamChatCommonUI.framework in Embed Frameworks */,
 				C121EC622746AC8C00023E4C /* StreamChatUI.framework in Embed Frameworks */,
 				C121EC5E2746AC8C00023E4C /* StreamChat.framework in Embed Frameworks */,
 			);
@@ -393,6 +404,8 @@
 		799C941B247D2F80001F1104 /* StreamChat.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChat.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		799C9451247D59B1001F1104 /* StreamChatTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		82AB560B2F2B77C60033E55E /* StreamChatCommonUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = StreamChatCommonUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		82AB561B2F2B77E70033E55E /* StreamChatCommonUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatCommonUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		84790E952AC1D346003AFF1C /* DemoShare.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DemoShare.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		A34407BA27D8C33F0044F150 /* StreamChatUITestsApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = StreamChatUITestsApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A34407DC27D8C3400044F150 /* StreamChatUITestsAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = StreamChatUITestsAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -400,8 +413,6 @@
 		AC908381268B115F00ACFB8E /* YouTube.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YouTube.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		AD9BE32526680E4200A6D284 /* Stream.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = Stream.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		C11B575B29D43FD800D5A248 /* EdgeCases.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EdgeCases.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		C121E758274543D000023E4C /* libStreamChat.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChat.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		C121EA2F2746A19400023E4C /* libStreamChatUI.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libStreamChatUI.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		E74DB0D32656631700508D22 /* UISDKDocumentation.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = UISDKDocumentation.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F86C87B225F906630000BCA9 /* Messenger.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Messenger.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8933B9225FF55E30054BBFF /* Slack.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Slack.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -657,29 +668,13 @@
 		82E66F292F291FE70082E9A7 /* Exceptions for "Sources" folder in "StreamChat" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"/Localized: StreamChatUI/Resources/Localizable.strings",
-				"/Localized: StreamChatUI/Resources/Localizable.stringsdict",
+				"/Localized: StreamChatCommonUI/Resources/Localizable.strings",
+				"/Localized: StreamChatCommonUI/Resources/Localizable.stringsdict",
 				StreamChat/Info.plist,
-				StreamChatUI/.swiftgen.yml,
-				StreamChatUI/Appearance.swift,
-				"StreamChatUI/Appearance+ColorPalette.swift",
-				"StreamChatUI/Appearance+Fonts.swift",
-				"StreamChatUI/Appearance+Formatters/Appearance+Formatters.swift",
-				"StreamChatUI/Appearance+Formatters/AudioPlaybackRateFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/AudioRecordingNameFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/Calendar+StreamCalendar.swift",
-				"StreamChatUI/Appearance+Formatters/ChannelListMessageTimestampFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/ChannelNameFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/GalleryHeaderViewDateFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/MarkdownFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/MessageDateSeparatorFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/MessageTimestampFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/PollTimestampFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/UploadingProgressFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/UserLastActivityFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/VideoDurationFormatter.swift",
-				"StreamChatUI/Appearance+Images.swift",
-				"StreamChatUI/Appearance+SwiftUI.swift",
+				StreamChatCommonUI/.swiftgen.yml,
+				StreamChatCommonUI/Generated/L10n_template.stencil,
+				StreamChatCommonUI/Info.plist,
+				StreamChatCommonUI/Resources/Assets.xcassets,
 				StreamChatUI/AppearanceProvider.swift,
 				StreamChatUI/ChatChannel/ChatChannelHeaderView.swift,
 				StreamChatUI/ChatChannel/ChatChannelVC.swift,
@@ -783,7 +778,6 @@
 				"StreamChatUI/ChatMessageList/ChatMessageListView+DiffKit.swift",
 				StreamChatUI/ChatMessageList/JumpToUnreadMessagesButton.swift,
 				StreamChatUI/ChatMessageList/Reactions/ChatMessageDefaultReactionsBubbleView.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAppearance.swift,
 				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorsFlowLayout.swift,
 				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorsVC.swift,
 				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorViewCell.swift,
@@ -880,7 +874,6 @@
 				StreamChatUI/Composer/Suggestions/ChatSuggestionsHeaderView.swift,
 				StreamChatUI/Composer/Suggestions/ChatSuggestionsVC.swift,
 				StreamChatUI/Composer/TypingSuggester.swift,
-				StreamChatUI/Deprecations.swift,
 				StreamChatUI/Gallery/Cells/GalleryCollectionViewCell.swift,
 				StreamChatUI/Gallery/Cells/ImageAttachmentGalleryCell.swift,
 				StreamChatUI/Gallery/Cells/VideoAttachmentGalleryCell.swift,
@@ -889,8 +882,6 @@
 				StreamChatUI/Gallery/ZoomAnimator.swift,
 				StreamChatUI/Gallery/ZoomDismissalInteractionController.swift,
 				StreamChatUI/Gallery/ZoomTransitionController.swift,
-				StreamChatUI/Generated/L10n_template.stencil,
-				StreamChatUI/Generated/L10n.swift,
 				StreamChatUI/Info.plist,
 				StreamChatUI/MessageActionsPopup/ChatMessageActionControl.swift,
 				StreamChatUI/MessageActionsPopup/ChatMessageActionItem.swift,
@@ -903,7 +894,6 @@
 				StreamChatUI/Navigation/ChatThreadListRouter.swift,
 				StreamChatUI/Navigation/NavigationRouter.swift,
 				StreamChatUI/Navigation/NavigationVC.swift,
-				StreamChatUI/Resources/Assets.xcassets,
 				StreamChatUI/SDKIdentifier.swift,
 				StreamChatUI/StreamChatUI.h,
 				StreamChatUI/StreamDifferenceKit/Algorithm.swift,
@@ -917,41 +907,6 @@
 				StreamChatUI/StreamDifferenceKit/ElementPath.swift,
 				StreamChatUI/StreamDifferenceKit/Extensions/AppKitExtension.swift,
 				StreamChatUI/StreamDifferenceKit/StagedChangeset.swift,
-				StreamChatUI/StreamNuke/Combine/ImagePublisher.swift,
-				StreamChatUI/StreamNuke/Core/DataCache.swift,
-				StreamChatUI/StreamNuke/Core/DataLoader.swift,
-				StreamChatUI/StreamNuke/Core/ImageCache.swift,
-				StreamChatUI/StreamNuke/Core/ImageDecoding.swift,
-				StreamChatUI/StreamNuke/Core/ImageEncoding.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipeline.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipelineCache.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipelineConfiguration.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipelineDelegate.swift,
-				StreamChatUI/StreamNuke/Core/ImagePrefetcher.swift,
-				StreamChatUI/StreamNuke/Core/ImageProcessing.swift,
-				StreamChatUI/StreamNuke/Core/ImageRequest.swift,
-				StreamChatUI/StreamNuke/Core/ImageResponse.swift,
-				StreamChatUI/StreamNuke/Core/ImageTask.swift,
-				StreamChatUI/StreamNuke/Internal/Allocations.swift,
-				StreamChatUI/StreamNuke/Internal/Combine.swift,
-				StreamChatUI/StreamNuke/Internal/Deprecated.swift,
-				StreamChatUI/StreamNuke/Internal/Extensions.swift,
-				StreamChatUI/StreamNuke/Internal/ImageRequestKeys.swift,
-				StreamChatUI/StreamNuke/Internal/LinkedList.swift,
-				StreamChatUI/StreamNuke/Internal/Log.swift,
-				StreamChatUI/StreamNuke/Internal/Operation.swift,
-				StreamChatUI/StreamNuke/Internal/RateLimiter.swift,
-				StreamChatUI/StreamNuke/Internal/ResumableData.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/ImagePipelineTask.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/OperationTask.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/Task.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskFetchDecodedImage.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskFetchOriginalImageData.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskFetchWithPublisher.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskLoadData.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskLoadImage.swift,
-				StreamChatUI/StreamNuke/UI/FetchImage.swift,
-				StreamChatUI/StreamNuke/UI/ImageViewExtensions.swift,
 				"StreamChatUI/StreamSwiftyGif/NSImage+SwiftyGif.swift",
 				"StreamChatUI/StreamSwiftyGif/NSImageView+SwiftyGif.swift",
 				StreamChatUI/StreamSwiftyGif/ObjcAssociatedWeakObject.swift,
@@ -959,24 +914,18 @@
 				"StreamChatUI/StreamSwiftyGif/UIImage+SwiftyGif.swift",
 				"StreamChatUI/StreamSwiftyGif/UIImageView+SwiftyGif.swift",
 				StreamChatUI/Utils/Animation.swift,
-				StreamChatUI/Utils/Cache.swift,
 				StreamChatUI/Utils/Cancellable.swift,
 				"StreamChatUI/Utils/ChatMessage+Extensions.swift",
-				StreamChatUI/Utils/DateUtils.swift,
 				"StreamChatUI/Utils/Extensions/Array+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/Array+SafeSubscript.swift",
-				"StreamChatUI/Utils/Extensions/Bundle+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/CACornerMask+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/CALayer+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/CGPoint+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/CGRect+Extensions.swift",
-				StreamChatUI/Utils/Extensions/ChatChannelNamer.swift,
 				"StreamChatUI/Utils/Extensions/DifferenceKit+Stream.swift",
 				"StreamChatUI/Utils/Extensions/NSLayoutConstraint+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/Reusable+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/String+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIColor+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIFont+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/UIImage+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/UILabel+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/UIScrollView+Extensions.swift",
@@ -1028,27 +977,6 @@
 		82E66F2A2F291FE70082E9A7 /* Exceptions for "Sources" folder in "StreamChatUI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				"/Localized: StreamChatUI/Resources/Localizable.strings",
-				"/Localized: StreamChatUI/Resources/Localizable.stringsdict",
-				StreamChatUI/Appearance.swift,
-				"StreamChatUI/Appearance+ColorPalette.swift",
-				"StreamChatUI/Appearance+Fonts.swift",
-				"StreamChatUI/Appearance+Formatters/Appearance+Formatters.swift",
-				"StreamChatUI/Appearance+Formatters/AudioPlaybackRateFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/AudioRecordingNameFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/Calendar+StreamCalendar.swift",
-				"StreamChatUI/Appearance+Formatters/ChannelListMessageTimestampFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/ChannelNameFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/GalleryHeaderViewDateFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/MarkdownFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/MessageDateSeparatorFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/MessageTimestampFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/PollTimestampFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/UploadingProgressFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/UserLastActivityFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/VideoDurationFormatter.swift",
-				"StreamChatUI/Appearance+Images.swift",
-				"StreamChatUI/Appearance+SwiftUI.swift",
 				StreamChatUI/AppearanceProvider.swift,
 				StreamChatUI/ChatChannel/ChatChannelHeaderView.swift,
 				StreamChatUI/ChatChannel/ChatChannelVC.swift,
@@ -1152,7 +1080,6 @@
 				"StreamChatUI/ChatMessageList/ChatMessageListView+DiffKit.swift",
 				StreamChatUI/ChatMessageList/JumpToUnreadMessagesButton.swift,
 				StreamChatUI/ChatMessageList/Reactions/ChatMessageDefaultReactionsBubbleView.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAppearance.swift,
 				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorsFlowLayout.swift,
 				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorsVC.swift,
 				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorViewCell.swift,
@@ -1249,7 +1176,6 @@
 				StreamChatUI/Composer/Suggestions/ChatSuggestionsHeaderView.swift,
 				StreamChatUI/Composer/Suggestions/ChatSuggestionsVC.swift,
 				StreamChatUI/Composer/TypingSuggester.swift,
-				StreamChatUI/Deprecations.swift,
 				StreamChatUI/Gallery/Cells/GalleryCollectionViewCell.swift,
 				StreamChatUI/Gallery/Cells/ImageAttachmentGalleryCell.swift,
 				StreamChatUI/Gallery/Cells/VideoAttachmentGalleryCell.swift,
@@ -1258,7 +1184,6 @@
 				StreamChatUI/Gallery/ZoomAnimator.swift,
 				StreamChatUI/Gallery/ZoomDismissalInteractionController.swift,
 				StreamChatUI/Gallery/ZoomTransitionController.swift,
-				StreamChatUI/Generated/L10n.swift,
 				StreamChatUI/MessageActionsPopup/ChatMessageActionControl.swift,
 				StreamChatUI/MessageActionsPopup/ChatMessageActionItem.swift,
 				StreamChatUI/MessageActionsPopup/ChatMessageActionsVC.swift,
@@ -1270,7 +1195,6 @@
 				StreamChatUI/Navigation/ChatThreadListRouter.swift,
 				StreamChatUI/Navigation/NavigationRouter.swift,
 				StreamChatUI/Navigation/NavigationVC.swift,
-				StreamChatUI/Resources/Assets.xcassets,
 				StreamChatUI/SDKIdentifier.swift,
 				StreamChatUI/StreamChatUI.h,
 				StreamChatUI/StreamDifferenceKit/Algorithm.swift,
@@ -1284,41 +1208,6 @@
 				StreamChatUI/StreamDifferenceKit/ElementPath.swift,
 				StreamChatUI/StreamDifferenceKit/Extensions/AppKitExtension.swift,
 				StreamChatUI/StreamDifferenceKit/StagedChangeset.swift,
-				StreamChatUI/StreamNuke/Combine/ImagePublisher.swift,
-				StreamChatUI/StreamNuke/Core/DataCache.swift,
-				StreamChatUI/StreamNuke/Core/DataLoader.swift,
-				StreamChatUI/StreamNuke/Core/ImageCache.swift,
-				StreamChatUI/StreamNuke/Core/ImageDecoding.swift,
-				StreamChatUI/StreamNuke/Core/ImageEncoding.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipeline.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipelineCache.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipelineConfiguration.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipelineDelegate.swift,
-				StreamChatUI/StreamNuke/Core/ImagePrefetcher.swift,
-				StreamChatUI/StreamNuke/Core/ImageProcessing.swift,
-				StreamChatUI/StreamNuke/Core/ImageRequest.swift,
-				StreamChatUI/StreamNuke/Core/ImageResponse.swift,
-				StreamChatUI/StreamNuke/Core/ImageTask.swift,
-				StreamChatUI/StreamNuke/Internal/Allocations.swift,
-				StreamChatUI/StreamNuke/Internal/Combine.swift,
-				StreamChatUI/StreamNuke/Internal/Deprecated.swift,
-				StreamChatUI/StreamNuke/Internal/Extensions.swift,
-				StreamChatUI/StreamNuke/Internal/ImageRequestKeys.swift,
-				StreamChatUI/StreamNuke/Internal/LinkedList.swift,
-				StreamChatUI/StreamNuke/Internal/Log.swift,
-				StreamChatUI/StreamNuke/Internal/Operation.swift,
-				StreamChatUI/StreamNuke/Internal/RateLimiter.swift,
-				StreamChatUI/StreamNuke/Internal/ResumableData.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/ImagePipelineTask.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/OperationTask.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/Task.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskFetchDecodedImage.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskFetchOriginalImageData.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskFetchWithPublisher.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskLoadData.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskLoadImage.swift,
-				StreamChatUI/StreamNuke/UI/FetchImage.swift,
-				StreamChatUI/StreamNuke/UI/ImageViewExtensions.swift,
 				"StreamChatUI/StreamSwiftyGif/NSImage+SwiftyGif.swift",
 				"StreamChatUI/StreamSwiftyGif/NSImageView+SwiftyGif.swift",
 				StreamChatUI/StreamSwiftyGif/ObjcAssociatedWeakObject.swift,
@@ -1326,24 +1215,18 @@
 				"StreamChatUI/StreamSwiftyGif/UIImage+SwiftyGif.swift",
 				"StreamChatUI/StreamSwiftyGif/UIImageView+SwiftyGif.swift",
 				StreamChatUI/Utils/Animation.swift,
-				StreamChatUI/Utils/Cache.swift,
 				StreamChatUI/Utils/Cancellable.swift,
 				"StreamChatUI/Utils/ChatMessage+Extensions.swift",
-				StreamChatUI/Utils/DateUtils.swift,
 				"StreamChatUI/Utils/Extensions/Array+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/Array+SafeSubscript.swift",
-				"StreamChatUI/Utils/Extensions/Bundle+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/CACornerMask+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/CALayer+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/CGPoint+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/CGRect+Extensions.swift",
-				StreamChatUI/Utils/Extensions/ChatChannelNamer.swift,
 				"StreamChatUI/Utils/Extensions/DifferenceKit+Stream.swift",
 				"StreamChatUI/Utils/Extensions/NSLayoutConstraint+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/Reusable+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/String+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIColor+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIFont+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/UIImage+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/UILabel+Extensions.swift",
 				"StreamChatUI/Utils/Extensions/UIScrollView+Extensions.swift",
@@ -1392,743 +1275,19 @@
 			);
 			target = 790881FC25432B7200896F03 /* StreamChatUI */;
 		};
-		82E66F2B2F291FE70082E9A7 /* Exceptions for "Sources" folder in "StreamChatStatic" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				StreamChat/Controllers/PollController/PollController.swift,
-				StreamChat/Controllers/PollController/PollControllerDelegate.swift,
-				"StreamChat/Controllers/ThreadListController/ChatClient+ThreadListController.swift",
-				StreamChat/Controllers/ThreadListController/ThreadListController.swift,
-				"StreamChat/Controllers/ThreadListController/ThreadListController+Combine.swift",
-				"StreamChat/Controllers/ThreadListController/ThreadListController+SwiftUI.swift",
-				StreamChat/Database/StreamChatModel.xcdatamodeld,
-				"StreamChat/Extensions/Task+Extensions.swift",
-				StreamChat/Query/Sorting/SortValue.swift,
-				"StreamChat/Utils/Array+Sampling.swift",
-				StreamChat/Utils/MessagesPaginationStateHandling/MessagesPaginationState.swift,
-				StreamChat/Utils/MessagesPaginationStateHandling/MessagesPaginationStateHandling.swift,
-				StreamChatUI/Appearance.swift,
-				"StreamChatUI/Appearance+ColorPalette.swift",
-				"StreamChatUI/Appearance+Fonts.swift",
-				"StreamChatUI/Appearance+Formatters/Appearance+Formatters.swift",
-				"StreamChatUI/Appearance+Formatters/AudioPlaybackRateFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/AudioRecordingNameFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/Calendar+StreamCalendar.swift",
-				"StreamChatUI/Appearance+Formatters/ChannelListMessageTimestampFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/ChannelNameFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/GalleryHeaderViewDateFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/MarkdownFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/MessageDateSeparatorFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/MessageTimestampFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/PollTimestampFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/UploadingProgressFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/UserLastActivityFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/VideoDurationFormatter.swift",
-				"StreamChatUI/Appearance+Images.swift",
-				"StreamChatUI/Appearance+SwiftUI.swift",
-				StreamChatUI/AppearanceProvider.swift,
-				StreamChatUI/ChatChannel/ChatChannelHeaderView.swift,
-				StreamChatUI/ChatChannel/ChatChannelVC.swift,
-				"StreamChatUI/ChatChannel/ChatChannelVC+SwiftUI.swift",
-				StreamChatUI/ChatChannel/StreamModalTransitioningDelegate.swift,
-				StreamChatUI/ChatChannelList/CellActionView.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListCollectionViewCell.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListCollectionViewDelegate.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListEmptyView.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListErrorView.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListItemView.swift,
-				"StreamChatUI/ChatChannelList/ChatChannelListItemView+SwiftUI.swift",
-				StreamChatUI/ChatChannelList/ChatChannelListLoadingView.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListLoadingViewCell.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListLoadingViewCellContentView.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListVC.swift,
-				"StreamChatUI/ChatChannelList/ChatChannelListVC+SwiftUI.swift",
-				StreamChatUI/ChatChannelList/ChatChannelUnreadCountView.swift,
-				"StreamChatUI/ChatChannelList/ChatChannelUnreadCountView+SwiftUI.swift",
-				StreamChatUI/ChatChannelList/Search/ChannelListSearchStrategy.swift,
-				StreamChatUI/ChatChannelList/Search/ChatChannelListSearchVC.swift,
-				StreamChatUI/ChatChannelList/Search/ChatChannelSearchVC.swift,
-				StreamChatUI/ChatChannelList/Search/ChatMessageSearchVC.swift,
-				StreamChatUI/ChatChannelList/SwipeableView.swift,
-				StreamChatUI/ChatMessageList/Attachments/AttachmentViewCatalog.swift,
-				StreamChatUI/ChatMessageList/Attachments/AttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/ChatMessageAttachmentPreviewVC.swift,
-				"StreamChatUI/ChatMessageList/Attachments/File/ChatFileAttachmentListView+ItemView.swift",
-				StreamChatUI/ChatMessageList/Attachments/File/ChatMessageFileAttachmentListView.swift,
-				StreamChatUI/ChatMessageList/Attachments/File/FileAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/Gallery/ChatMessageGalleryView.swift,
-				"StreamChatUI/ChatMessageList/Attachments/Gallery/ChatMessageImageGallery+ImagePreview.swift",
-				StreamChatUI/ChatMessageList/Attachments/Gallery/GalleryAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/Gallery/VideoAttachmentGalleryPreview.swift,
-				StreamChatUI/ChatMessageList/Attachments/Giphy/ChatMessageGiphyView.swift,
-				"StreamChatUI/ChatMessageList/Attachments/Giphy/ChatMessageGiphyView+GiphyBadge.swift",
-				StreamChatUI/ChatMessageList/Attachments/Giphy/ChatMessageInteractiveAttachmentView.swift,
-				"StreamChatUI/ChatMessageList/Attachments/Giphy/ChatMessageInteractiveAttachmentView+ActionButton.swift",
-				StreamChatUI/ChatMessageList/Attachments/Giphy/GiphyAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/Link/ChatMessageLinkPreviewView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Link/LinkAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/MixedAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollAllOptionsListVC/PollAllOptionsListItemCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollAllOptionsListVC/PollAllOptionsListVC.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollAttachmentOptionListView/PollAttachmentOptionListItemView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollAttachmentOptionListView/PollAttachmentOptionListView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollAttachmentView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCommentListVC/PollCommentListItemCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCommentListVC/PollCommentListItemView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCommentListVC/PollCommentListSectionFooterView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCommentListVC/PollCommentListSectionHeaderView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCommentListVC/PollCommentListVC.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationFeatureCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationFeatureSwitchView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationMultipleVotesFeatureCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationNameCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationOptionCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationSectionHeaderView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationTextFieldView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationVC.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollFeature.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsSectionFooterView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsSectionHeaderView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsTableHeaderView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsVC.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsVoteItem/PollResultsVoteItemCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsVoteItem/PollResultsVoteItemView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsVoteListVC/PollResultsVoteListVC.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollsConfig.swift,
-				StreamChatUI/ChatMessageList/Attachments/Unsupported/UnsupportedAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/UploadingOverlayView.swift,
-				StreamChatUI/ChatMessageList/Attachments/VoiceRecording/ChatMessageVoiceRecordingAttachmentListView.swift,
-				"StreamChatUI/ChatMessageList/Attachments/VoiceRecording/ChatMessageVoiceRecordingAttachmentListView+ItemView.swift",
-				"StreamChatUI/ChatMessageList/Attachments/VoiceRecording/ChatMessageVoiceRecordingAttachmentListView+ItemViewPresenter.swift",
-				StreamChatUI/ChatMessageList/Attachments/VoiceRecording/VoiceRecordingAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageBubbleView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageCell.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageContentView.swift,
-				"StreamChatUI/ChatMessageList/ChatMessage/ChatMessageContentView+SwiftUI.swift",
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageDeliveryStatusCheckmarkView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageDeliveryStatusView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageErrorIndicator.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatReactionsBubbleView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatThreadArrowView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/Decorators/ChatMessageDecorationView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/Decorators/ChatMessageHeaderDecoratorView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/Decorators/ChatMessagesCountDecorationView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/Decorators/ChatThreadRepliesCountDecorationView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/Decorators/ChatUnreadMessagesCountDecorationView.swift,
-				StreamChatUI/ChatMessageList/ChatMessageListDateSeparatorView.swift,
-				StreamChatUI/ChatMessageList/ChatMessageListScrollOverlayView.swift,
-				StreamChatUI/ChatMessageList/ChatMessageListUnreadCountView.swift,
-				StreamChatUI/ChatMessageList/ChatMessageListVC.swift,
-				"StreamChatUI/ChatMessageList/ChatMessageListVC+DiffKit.swift",
-				StreamChatUI/ChatMessageList/ChatMessageListVCDataSource.swift,
-				StreamChatUI/ChatMessageList/ChatMessageListVCDelegate.swift,
-				StreamChatUI/ChatMessageList/ChatMessageListView.swift,
-				"StreamChatUI/ChatMessageList/ChatMessageListView+DiffKit.swift",
-				StreamChatUI/ChatMessageList/JumpToUnreadMessagesButton.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageDefaultReactionsBubbleView.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAppearance.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorsFlowLayout.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorsVC.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorViewCell.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionItemView.swift,
-				"StreamChatUI/ChatMessageList/Reactions/ChatMessageReactions+Types.swift",
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionsBubbleTail.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionsPickerVC.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionsView.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatReactionPickerBubbleView.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatReactionPickerReactionsView.swift,
-				StreamChatUI/ChatMessageList/ScrollToBottomButton.swift,
-				StreamChatUI/ChatMessageList/SwipeToReplyGestureHandler.swift,
-				StreamChatUI/ChatMessageList/TypingAnimationView.swift,
-				StreamChatUI/ChatMessageList/TypingIndicatorView.swift,
-				StreamChatUI/ChatThread/ChatThreadHeaderView.swift,
-				StreamChatUI/ChatThread/ChatThreadVC.swift,
-				"StreamChatUI/ChatThread/ChatThreadVC+SwiftUI.swift",
-				StreamChatUI/ChatThreadList/ChatThreadListEmptyView.swift,
-				StreamChatUI/ChatThreadList/ChatThreadListErrorView.swift,
-				StreamChatUI/ChatThreadList/ChatThreadListHeaderBannerView.swift,
-				StreamChatUI/ChatThreadList/ChatThreadListItemCell.swift,
-				StreamChatUI/ChatThreadList/ChatThreadListItemView.swift,
-				StreamChatUI/ChatThreadList/ChatThreadListLoadingView.swift,
-				StreamChatUI/ChatThreadList/ChatThreadListVC.swift,
-				StreamChatUI/ChatThreadList/ChatThreadUnreadCountView.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentPreviewContainer.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentPreviewProvider.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentsPreviewVC.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentViews/FileAttachmentView.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentViews/ImageAttachmentComposerPreview.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentViews/VideoAttachmentComposerPreview.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentViews/VoiceRecordingAttachmentComposerPreview.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentViews/VoiceRecordingAttachmentQuotedPreview.swift,
-				StreamChatUI/CommonViews/Attachments/DefaultAttachmentPreviewProvider.swift,
-				StreamChatUI/CommonViews/AvatarView/ChatAvatarView.swift,
-				StreamChatUI/CommonViews/AvatarView/ChatChannelAvatarView.swift,
-				"StreamChatUI/CommonViews/AvatarView/ChatChannelAvatarView+SwiftUI.swift",
-				StreamChatUI/CommonViews/AvatarView/ChatPresenceAvatarView/ChatPresenceAvatarView.swift,
-				StreamChatUI/CommonViews/AvatarView/ChatPresenceAvatarView/OnlineIndicatorView.swift,
-				StreamChatUI/CommonViews/AvatarView/ChatUserAvatarView.swift,
-				StreamChatUI/CommonViews/AvatarView/CurrentChatUserAvatarView.swift,
-				StreamChatUI/CommonViews/BadgeView.swift,
-				StreamChatUI/CommonViews/BannerView.swift,
-				StreamChatUI/CommonViews/BaseViews.swift,
-				StreamChatUI/CommonViews/Buttons/AttachmentActionButton.swift,
-				StreamChatUI/CommonViews/Buttons/AttachmentButton.swift,
-				StreamChatUI/CommonViews/Buttons/CheckboxButton.swift,
-				StreamChatUI/CommonViews/Buttons/CheckboxControl.swift,
-				StreamChatUI/CommonViews/Buttons/CircularCloseButton.swift,
-				StreamChatUI/CommonViews/Buttons/CloseButton.swift,
-				StreamChatUI/CommonViews/Buttons/CommandButton.swift,
-				StreamChatUI/CommonViews/Buttons/ConfirmButton.swift,
-				StreamChatUI/CommonViews/Buttons/MediaButton.swift,
-				StreamChatUI/CommonViews/Buttons/PillButton.swift,
-				StreamChatUI/CommonViews/Buttons/PlayPauseButton.swift,
-				StreamChatUI/CommonViews/Buttons/RecordButton.swift,
-				StreamChatUI/CommonViews/Buttons/SendButton.swift,
-				StreamChatUI/CommonViews/Buttons/ShareButton.swift,
-				StreamChatUI/CommonViews/Buttons/ShrinkInputButton.swift,
-				StreamChatUI/CommonViews/ChatLoadingIndicator.swift,
-				StreamChatUI/CommonViews/ChatNavigationBar.swift,
-				StreamChatUI/CommonViews/ClampedView.swift,
-				StreamChatUI/CommonViews/CommandLabelView.swift,
-				StreamChatUI/CommonViews/ContainerStackView.swift,
-				StreamChatUI/CommonViews/CooldownView.swift,
-				StreamChatUI/CommonViews/GradientView.swift,
-				StreamChatUI/CommonViews/GroupedSectionListStyling.swift,
-				StreamChatUI/CommonViews/InputChatMessageView/InputChatMessageView.swift,
-				StreamChatUI/CommonViews/InputTextView/InputTextView.swift,
-				StreamChatUI/CommonViews/ListCollectionViewLayout/CellSeparatorView.swift,
-				StreamChatUI/CommonViews/ListCollectionViewLayout/ListCollectionViewLayout.swift,
-				StreamChatUI/CommonViews/OnlyLinkTappableTextView.swift,
-				StreamChatUI/CommonViews/PlayerView.swift,
-				StreamChatUI/CommonViews/QuotedChatMessageView/QuotedChatMessageView.swift,
-				"StreamChatUI/CommonViews/QuotedChatMessageView/QuotedChatMessageView+SwiftUI.swift",
-				StreamChatUI/CommonViews/SkeletonLoadable.swift,
-				StreamChatUI/CommonViews/StackedUserAvatarsView.swift,
-				StreamChatUI/CommonViews/SwiftUIViewRepresentable.swift,
-				StreamChatUI/CommonViews/TextFieldView.swift,
-				StreamChatUI/CommonViews/TitleContainerView/TitleContainerView.swift,
-				StreamChatUI/Components.swift,
-				"StreamChatUI/Components+SwiftUI.swift",
-				StreamChatUI/ComponentsProvider.swift,
-				StreamChatUI/Composer/ComposerLinkPreviewView.swift,
-				StreamChatUI/Composer/ComposerVC.swift,
-				StreamChatUI/Composer/ComposerView.swift,
-				StreamChatUI/Composer/Suggestions/ChatCommandSuggestionView/ChatCommandSuggestionCollectionViewCell.swift,
-				StreamChatUI/Composer/Suggestions/ChatCommandSuggestionView/ChatCommandSuggestionView.swift,
-				StreamChatUI/Composer/Suggestions/ChatMentionSuggestionView/ChatMentionSuggestionCollectionViewCell.swift,
-				StreamChatUI/Composer/Suggestions/ChatMentionSuggestionView/ChatMentionSuggestionView.swift,
-				StreamChatUI/Composer/Suggestions/ChatSuggestionsCollectionReusableView.swift,
-				StreamChatUI/Composer/Suggestions/ChatSuggestionsCollectionView.swift,
-				StreamChatUI/Composer/Suggestions/ChatSuggestionsCollectionViewLayout.swift,
-				StreamChatUI/Composer/Suggestions/ChatSuggestionsHeaderView.swift,
-				StreamChatUI/Composer/Suggestions/ChatSuggestionsVC.swift,
-				StreamChatUI/Composer/TypingSuggester.swift,
-				StreamChatUI/Deprecations.swift,
-				StreamChatUI/Gallery/Cells/GalleryCollectionViewCell.swift,
-				StreamChatUI/Gallery/Cells/ImageAttachmentGalleryCell.swift,
-				StreamChatUI/Gallery/Cells/VideoAttachmentGalleryCell.swift,
-				StreamChatUI/Gallery/GalleryVC.swift,
-				StreamChatUI/Gallery/VideoPlaybackControlView.swift,
-				StreamChatUI/Gallery/ZoomAnimator.swift,
-				StreamChatUI/Gallery/ZoomDismissalInteractionController.swift,
-				StreamChatUI/Gallery/ZoomTransitionController.swift,
-				StreamChatUI/Generated/L10n.swift,
-				StreamChatUI/MessageActionsPopup/ChatMessageActionControl.swift,
-				StreamChatUI/MessageActionsPopup/ChatMessageActionItem.swift,
-				StreamChatUI/MessageActionsPopup/ChatMessageActionsVC.swift,
-				StreamChatUI/MessageActionsPopup/ChatMessagePopupVC.swift,
-				StreamChatUI/MessageActionsPopup/MessageActionsTransitionController.swift,
-				StreamChatUI/Navigation/AlertsRouter.swift,
-				StreamChatUI/Navigation/ChatChannelListRouter.swift,
-				StreamChatUI/Navigation/ChatMessageListRouter.swift,
-				StreamChatUI/Navigation/ChatThreadListRouter.swift,
-				StreamChatUI/Navigation/NavigationRouter.swift,
-				StreamChatUI/Navigation/NavigationVC.swift,
-				StreamChatUI/SDKIdentifier.swift,
-				StreamChatUI/StreamDifferenceKit/Algorithm.swift,
-				StreamChatUI/StreamDifferenceKit/AnyDifferentiable.swift,
-				StreamChatUI/StreamDifferenceKit/ArraySection.swift,
-				StreamChatUI/StreamDifferenceKit/Changeset.swift,
-				StreamChatUI/StreamDifferenceKit/ContentEquatable.swift,
-				StreamChatUI/StreamDifferenceKit/ContentIdentifiable.swift,
-				StreamChatUI/StreamDifferenceKit/Differentiable.swift,
-				StreamChatUI/StreamDifferenceKit/DifferentiableSection.swift,
-				StreamChatUI/StreamDifferenceKit/ElementPath.swift,
-				StreamChatUI/StreamDifferenceKit/Extensions/AppKitExtension.swift,
-				StreamChatUI/StreamDifferenceKit/StagedChangeset.swift,
-				StreamChatUI/StreamNuke/Combine/ImagePublisher.swift,
-				StreamChatUI/StreamNuke/Core/DataCache.swift,
-				StreamChatUI/StreamNuke/Core/DataLoader.swift,
-				StreamChatUI/StreamNuke/Core/ImageCache.swift,
-				StreamChatUI/StreamNuke/Core/ImageDecoding.swift,
-				StreamChatUI/StreamNuke/Core/ImageEncoding.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipeline.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipelineCache.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipelineConfiguration.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipelineDelegate.swift,
-				StreamChatUI/StreamNuke/Core/ImagePrefetcher.swift,
-				StreamChatUI/StreamNuke/Core/ImageProcessing.swift,
-				StreamChatUI/StreamNuke/Core/ImageRequest.swift,
-				StreamChatUI/StreamNuke/Core/ImageResponse.swift,
-				StreamChatUI/StreamNuke/Core/ImageTask.swift,
-				StreamChatUI/StreamNuke/Internal/Allocations.swift,
-				StreamChatUI/StreamNuke/Internal/Combine.swift,
-				StreamChatUI/StreamNuke/Internal/Deprecated.swift,
-				StreamChatUI/StreamNuke/Internal/Extensions.swift,
-				StreamChatUI/StreamNuke/Internal/ImageRequestKeys.swift,
-				StreamChatUI/StreamNuke/Internal/LinkedList.swift,
-				StreamChatUI/StreamNuke/Internal/Log.swift,
-				StreamChatUI/StreamNuke/Internal/Operation.swift,
-				StreamChatUI/StreamNuke/Internal/RateLimiter.swift,
-				StreamChatUI/StreamNuke/Internal/ResumableData.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/ImagePipelineTask.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/OperationTask.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/Task.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskFetchDecodedImage.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskFetchOriginalImageData.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskFetchWithPublisher.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskLoadData.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskLoadImage.swift,
-				StreamChatUI/StreamNuke/UI/FetchImage.swift,
-				StreamChatUI/StreamNuke/UI/ImageViewExtensions.swift,
-				"StreamChatUI/StreamSwiftyGif/NSImage+SwiftyGif.swift",
-				"StreamChatUI/StreamSwiftyGif/NSImageView+SwiftyGif.swift",
-				StreamChatUI/StreamSwiftyGif/ObjcAssociatedWeakObject.swift,
-				StreamChatUI/StreamSwiftyGif/SwiftyGifManager.swift,
-				"StreamChatUI/StreamSwiftyGif/UIImage+SwiftyGif.swift",
-				"StreamChatUI/StreamSwiftyGif/UIImageView+SwiftyGif.swift",
-				StreamChatUI/Utils/Animation.swift,
-				StreamChatUI/Utils/Cache.swift,
-				StreamChatUI/Utils/Cancellable.swift,
-				"StreamChatUI/Utils/ChatMessage+Extensions.swift",
-				StreamChatUI/Utils/DateUtils.swift,
-				"StreamChatUI/Utils/Extensions/Array+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/Array+SafeSubscript.swift",
-				"StreamChatUI/Utils/Extensions/Bundle+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/CACornerMask+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/CALayer+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/CGPoint+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/CGRect+Extensions.swift",
-				StreamChatUI/Utils/Extensions/ChatChannelNamer.swift,
-				"StreamChatUI/Utils/Extensions/DifferenceKit+Stream.swift",
-				"StreamChatUI/Utils/Extensions/NSLayoutConstraint+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/Reusable+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/String+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIColor+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIFont+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIImage+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UILabel+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIScrollView+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIStackView+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UITextView+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIView+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIViewController+Extensions.swift",
-				StreamChatUI/Utils/ImageLoading/ImageCDN/ImageCDN.swift,
-				StreamChatUI/Utils/ImageLoading/ImageCDN/StreamCDN.swift,
-				StreamChatUI/Utils/ImageLoading/ImageDownloadOptions.swift,
-				StreamChatUI/Utils/ImageLoading/ImageDownloadRequest.swift,
-				StreamChatUI/Utils/ImageLoading/ImageLoaderOptions.swift,
-				StreamChatUI/Utils/ImageLoading/ImageLoading.swift,
-				StreamChatUI/Utils/ImageLoading/ImageMerger.swift,
-				StreamChatUI/Utils/ImageLoading/ImageResize.swift,
-				StreamChatUI/Utils/ImageLoading/ImageResultsMapper.swift,
-				StreamChatUI/Utils/ImageLoading/ImageSizeCalculator.swift,
-				StreamChatUI/Utils/ImageLoading/NukeImageLoader.swift,
-				StreamChatUI/Utils/ImageProcessor/NukeImageProcessor.swift,
-				StreamChatUI/Utils/KeyboardHandler/ComposerKeyboardHandler.swift,
-				StreamChatUI/Utils/KeyboardHandler/DefaultScrollViewKeyboardHandler.swift,
-				StreamChatUI/Utils/KeyboardHandler/KeyboardHandler.swift,
-				StreamChatUI/Utils/SystemEnvironment.swift,
-				StreamChatUI/Utils/TextViewMentionedUsersHandler.swift,
-				"StreamChatUI/Utils/UILabel+highlightText.swift",
-				StreamChatUI/Utils/VideoLoading/VideoLoading.swift,
-				StreamChatUI/Utils/ViewPaginationHandling/InvertedScrollViewPaginationHandler.swift,
-				StreamChatUI/Utils/ViewPaginationHandling/ScrollViewPaginationHandler.swift,
-				StreamChatUI/Utils/ViewPaginationHandling/StatefulScrollViewPaginationHandler.swift,
-				StreamChatUI/Utils/ViewPaginationHandling/ViewPaginationHandling.swift,
-				StreamChatUI/ViewContainerBuilder/ViewContainerBuilder.swift,
-				StreamChatUI/VoiceRecording/Components/AudioQueuePlayerNextItemProvider.swift,
-				StreamChatUI/VoiceRecording/Components/AudioSessionFeedbackGenerator.swift,
-				StreamChatUI/VoiceRecording/Components/BidirectionalPanGestureRecogniser.swift,
-				StreamChatUI/VoiceRecording/Views/AudioVisualizationView.swift,
-				StreamChatUI/VoiceRecording/Views/LiveRecordingView.swift,
-				StreamChatUI/VoiceRecording/Views/LockIndicatorView.swift,
-				StreamChatUI/VoiceRecording/Views/RecordingIndicatorView.swift,
-				StreamChatUI/VoiceRecording/Views/RecordingTipView.swift,
-				StreamChatUI/VoiceRecording/Views/SlideToCancelView.swift,
-				StreamChatUI/VoiceRecording/Views/WaveformView.swift,
-				StreamChatUI/VoiceRecording/VoiceRecordingVC.swift,
-			);
-			target = C121E757274543D000023E4C /* StreamChatStatic */;
-		};
-		82E66F2C2F291FE70082E9A7 /* Exceptions for "Sources" folder in "StreamChatUIStatic" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				StreamChatUI/Appearance.swift,
-				"StreamChatUI/Appearance+ColorPalette.swift",
-				"StreamChatUI/Appearance+Fonts.swift",
-				"StreamChatUI/Appearance+Formatters/Appearance+Formatters.swift",
-				"StreamChatUI/Appearance+Formatters/AudioPlaybackRateFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/AudioRecordingNameFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/Calendar+StreamCalendar.swift",
-				"StreamChatUI/Appearance+Formatters/ChannelListMessageTimestampFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/ChannelNameFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/GalleryHeaderViewDateFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/MarkdownFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/MessageDateSeparatorFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/MessageTimestampFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/PollTimestampFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/UploadingProgressFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/UserLastActivityFormatter.swift",
-				"StreamChatUI/Appearance+Formatters/VideoDurationFormatter.swift",
-				"StreamChatUI/Appearance+Images.swift",
-				"StreamChatUI/Appearance+SwiftUI.swift",
-				StreamChatUI/AppearanceProvider.swift,
-				StreamChatUI/ChatChannel/ChatChannelHeaderView.swift,
-				StreamChatUI/ChatChannel/ChatChannelVC.swift,
-				"StreamChatUI/ChatChannel/ChatChannelVC+SwiftUI.swift",
-				StreamChatUI/ChatChannel/StreamModalTransitioningDelegate.swift,
-				StreamChatUI/ChatChannelList/CellActionView.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListCollectionViewCell.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListCollectionViewDelegate.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListEmptyView.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListErrorView.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListItemView.swift,
-				"StreamChatUI/ChatChannelList/ChatChannelListItemView+SwiftUI.swift",
-				StreamChatUI/ChatChannelList/ChatChannelListLoadingView.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListLoadingViewCell.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListLoadingViewCellContentView.swift,
-				StreamChatUI/ChatChannelList/ChatChannelListVC.swift,
-				"StreamChatUI/ChatChannelList/ChatChannelListVC+SwiftUI.swift",
-				StreamChatUI/ChatChannelList/ChatChannelUnreadCountView.swift,
-				"StreamChatUI/ChatChannelList/ChatChannelUnreadCountView+SwiftUI.swift",
-				StreamChatUI/ChatChannelList/Search/ChannelListSearchStrategy.swift,
-				StreamChatUI/ChatChannelList/Search/ChatChannelListSearchVC.swift,
-				StreamChatUI/ChatChannelList/Search/ChatChannelSearchVC.swift,
-				StreamChatUI/ChatChannelList/Search/ChatMessageSearchVC.swift,
-				StreamChatUI/ChatChannelList/SwipeableView.swift,
-				StreamChatUI/ChatMessageList/Attachments/AttachmentViewCatalog.swift,
-				StreamChatUI/ChatMessageList/Attachments/AttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/ChatMessageAttachmentPreviewVC.swift,
-				"StreamChatUI/ChatMessageList/Attachments/File/ChatFileAttachmentListView+ItemView.swift",
-				StreamChatUI/ChatMessageList/Attachments/File/ChatMessageFileAttachmentListView.swift,
-				StreamChatUI/ChatMessageList/Attachments/File/FileAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/Gallery/ChatMessageGalleryView.swift,
-				"StreamChatUI/ChatMessageList/Attachments/Gallery/ChatMessageImageGallery+ImagePreview.swift",
-				StreamChatUI/ChatMessageList/Attachments/Gallery/GalleryAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/Gallery/VideoAttachmentGalleryPreview.swift,
-				StreamChatUI/ChatMessageList/Attachments/Giphy/ChatMessageGiphyView.swift,
-				"StreamChatUI/ChatMessageList/Attachments/Giphy/ChatMessageGiphyView+GiphyBadge.swift",
-				StreamChatUI/ChatMessageList/Attachments/Giphy/ChatMessageInteractiveAttachmentView.swift,
-				"StreamChatUI/ChatMessageList/Attachments/Giphy/ChatMessageInteractiveAttachmentView+ActionButton.swift",
-				StreamChatUI/ChatMessageList/Attachments/Giphy/GiphyAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/Link/ChatMessageLinkPreviewView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Link/LinkAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/MixedAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollAllOptionsListVC/PollAllOptionsListItemCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollAllOptionsListVC/PollAllOptionsListVC.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollAttachmentOptionListView/PollAttachmentOptionListItemView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollAttachmentOptionListView/PollAttachmentOptionListView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollAttachmentView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCommentListVC/PollCommentListItemCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCommentListVC/PollCommentListItemView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCommentListVC/PollCommentListSectionFooterView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCommentListVC/PollCommentListSectionHeaderView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCommentListVC/PollCommentListVC.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationFeatureCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationFeatureSwitchView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationMultipleVotesFeatureCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationNameCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationOptionCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationSectionHeaderView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationTextFieldView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollCreationVC.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollCreationVC/PollFeature.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsSectionFooterView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsSectionHeaderView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsTableHeaderView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsVC.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsVoteItem/PollResultsVoteItemCell.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsVoteItem/PollResultsVoteItemView.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollResultsVC/PollResultsVoteListVC/PollResultsVoteListVC.swift,
-				StreamChatUI/ChatMessageList/Attachments/Poll/PollsConfig.swift,
-				StreamChatUI/ChatMessageList/Attachments/Unsupported/UnsupportedAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/Attachments/UploadingOverlayView.swift,
-				StreamChatUI/ChatMessageList/Attachments/VoiceRecording/ChatMessageVoiceRecordingAttachmentListView.swift,
-				"StreamChatUI/ChatMessageList/Attachments/VoiceRecording/ChatMessageVoiceRecordingAttachmentListView+ItemView.swift",
-				"StreamChatUI/ChatMessageList/Attachments/VoiceRecording/ChatMessageVoiceRecordingAttachmentListView+ItemViewPresenter.swift",
-				StreamChatUI/ChatMessageList/Attachments/VoiceRecording/VoiceRecordingAttachmentViewInjector.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageBubbleView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageCell.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageContentView.swift,
-				"StreamChatUI/ChatMessageList/ChatMessage/ChatMessageContentView+SwiftUI.swift",
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageDeliveryStatusCheckmarkView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageDeliveryStatusView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageErrorIndicator.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptions.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatMessageLayoutOptionsResolver.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatReactionsBubbleView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/ChatThreadArrowView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/Decorators/ChatMessageDecorationView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/Decorators/ChatMessageHeaderDecoratorView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/Decorators/ChatMessagesCountDecorationView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/Decorators/ChatThreadRepliesCountDecorationView.swift,
-				StreamChatUI/ChatMessageList/ChatMessage/Decorators/ChatUnreadMessagesCountDecorationView.swift,
-				StreamChatUI/ChatMessageList/ChatMessageListDateSeparatorView.swift,
-				StreamChatUI/ChatMessageList/ChatMessageListScrollOverlayView.swift,
-				StreamChatUI/ChatMessageList/ChatMessageListUnreadCountView.swift,
-				StreamChatUI/ChatMessageList/ChatMessageListVC.swift,
-				"StreamChatUI/ChatMessageList/ChatMessageListVC+DiffKit.swift",
-				StreamChatUI/ChatMessageList/ChatMessageListVCDataSource.swift,
-				StreamChatUI/ChatMessageList/ChatMessageListVCDelegate.swift,
-				StreamChatUI/ChatMessageList/ChatMessageListView.swift,
-				"StreamChatUI/ChatMessageList/ChatMessageListView+DiffKit.swift",
-				StreamChatUI/ChatMessageList/JumpToUnreadMessagesButton.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageDefaultReactionsBubbleView.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAppearance.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorsFlowLayout.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorsVC.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionAuthorsVC/ChatMessageReactionAuthorViewCell.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionItemView.swift,
-				"StreamChatUI/ChatMessageList/Reactions/ChatMessageReactions+Types.swift",
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionsBubbleTail.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionsPickerVC.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatMessageReactionsView.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatReactionPickerBubbleView.swift,
-				StreamChatUI/ChatMessageList/Reactions/ChatReactionPickerReactionsView.swift,
-				StreamChatUI/ChatMessageList/ScrollToBottomButton.swift,
-				StreamChatUI/ChatMessageList/SwipeToReplyGestureHandler.swift,
-				StreamChatUI/ChatMessageList/TypingAnimationView.swift,
-				StreamChatUI/ChatMessageList/TypingIndicatorView.swift,
-				StreamChatUI/ChatThread/ChatThreadHeaderView.swift,
-				StreamChatUI/ChatThread/ChatThreadVC.swift,
-				"StreamChatUI/ChatThread/ChatThreadVC+SwiftUI.swift",
-				StreamChatUI/ChatThreadList/ChatThreadListEmptyView.swift,
-				StreamChatUI/ChatThreadList/ChatThreadListErrorView.swift,
-				StreamChatUI/ChatThreadList/ChatThreadListHeaderBannerView.swift,
-				StreamChatUI/ChatThreadList/ChatThreadListItemCell.swift,
-				StreamChatUI/ChatThreadList/ChatThreadListItemView.swift,
-				StreamChatUI/ChatThreadList/ChatThreadListLoadingView.swift,
-				StreamChatUI/ChatThreadList/ChatThreadListVC.swift,
-				StreamChatUI/ChatThreadList/ChatThreadUnreadCountView.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentPreviewContainer.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentPreviewProvider.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentsPreviewVC.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentViews/FileAttachmentView.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentViews/ImageAttachmentComposerPreview.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentViews/VideoAttachmentComposerPreview.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentViews/VoiceRecordingAttachmentComposerPreview.swift,
-				StreamChatUI/CommonViews/Attachments/AttachmentViews/VoiceRecordingAttachmentQuotedPreview.swift,
-				StreamChatUI/CommonViews/Attachments/DefaultAttachmentPreviewProvider.swift,
-				StreamChatUI/CommonViews/AvatarView/ChatAvatarView.swift,
-				StreamChatUI/CommonViews/AvatarView/ChatChannelAvatarView.swift,
-				"StreamChatUI/CommonViews/AvatarView/ChatChannelAvatarView+SwiftUI.swift",
-				StreamChatUI/CommonViews/AvatarView/ChatPresenceAvatarView/ChatPresenceAvatarView.swift,
-				StreamChatUI/CommonViews/AvatarView/ChatPresenceAvatarView/OnlineIndicatorView.swift,
-				StreamChatUI/CommonViews/AvatarView/ChatUserAvatarView.swift,
-				StreamChatUI/CommonViews/AvatarView/CurrentChatUserAvatarView.swift,
-				StreamChatUI/CommonViews/BadgeView.swift,
-				StreamChatUI/CommonViews/BannerView.swift,
-				StreamChatUI/CommonViews/BaseViews.swift,
-				StreamChatUI/CommonViews/Buttons/AttachmentActionButton.swift,
-				StreamChatUI/CommonViews/Buttons/AttachmentButton.swift,
-				StreamChatUI/CommonViews/Buttons/CheckboxButton.swift,
-				StreamChatUI/CommonViews/Buttons/CheckboxControl.swift,
-				StreamChatUI/CommonViews/Buttons/CircularCloseButton.swift,
-				StreamChatUI/CommonViews/Buttons/CloseButton.swift,
-				StreamChatUI/CommonViews/Buttons/CommandButton.swift,
-				StreamChatUI/CommonViews/Buttons/ConfirmButton.swift,
-				StreamChatUI/CommonViews/Buttons/MediaButton.swift,
-				StreamChatUI/CommonViews/Buttons/PillButton.swift,
-				StreamChatUI/CommonViews/Buttons/PlayPauseButton.swift,
-				StreamChatUI/CommonViews/Buttons/RecordButton.swift,
-				StreamChatUI/CommonViews/Buttons/SendButton.swift,
-				StreamChatUI/CommonViews/Buttons/ShareButton.swift,
-				StreamChatUI/CommonViews/Buttons/ShrinkInputButton.swift,
-				StreamChatUI/CommonViews/ChatLoadingIndicator.swift,
-				StreamChatUI/CommonViews/ChatNavigationBar.swift,
-				StreamChatUI/CommonViews/ClampedView.swift,
-				StreamChatUI/CommonViews/CommandLabelView.swift,
-				StreamChatUI/CommonViews/ContainerStackView.swift,
-				StreamChatUI/CommonViews/CooldownView.swift,
-				StreamChatUI/CommonViews/GradientView.swift,
-				StreamChatUI/CommonViews/GroupedSectionListStyling.swift,
-				StreamChatUI/CommonViews/InputChatMessageView/InputChatMessageView.swift,
-				StreamChatUI/CommonViews/InputTextView/InputTextView.swift,
-				StreamChatUI/CommonViews/ListCollectionViewLayout/CellSeparatorView.swift,
-				StreamChatUI/CommonViews/ListCollectionViewLayout/ListCollectionViewLayout.swift,
-				StreamChatUI/CommonViews/OnlyLinkTappableTextView.swift,
-				StreamChatUI/CommonViews/PlayerView.swift,
-				StreamChatUI/CommonViews/QuotedChatMessageView/QuotedChatMessageView.swift,
-				"StreamChatUI/CommonViews/QuotedChatMessageView/QuotedChatMessageView+SwiftUI.swift",
-				StreamChatUI/CommonViews/SkeletonLoadable.swift,
-				StreamChatUI/CommonViews/StackedUserAvatarsView.swift,
-				StreamChatUI/CommonViews/SwiftUIViewRepresentable.swift,
-				StreamChatUI/CommonViews/TextFieldView.swift,
-				StreamChatUI/CommonViews/TitleContainerView/TitleContainerView.swift,
-				StreamChatUI/Components.swift,
-				"StreamChatUI/Components+SwiftUI.swift",
-				StreamChatUI/ComponentsProvider.swift,
-				StreamChatUI/Composer/ComposerLinkPreviewView.swift,
-				StreamChatUI/Composer/ComposerVC.swift,
-				StreamChatUI/Composer/ComposerView.swift,
-				StreamChatUI/Composer/Suggestions/ChatCommandSuggestionView/ChatCommandSuggestionCollectionViewCell.swift,
-				StreamChatUI/Composer/Suggestions/ChatCommandSuggestionView/ChatCommandSuggestionView.swift,
-				StreamChatUI/Composer/Suggestions/ChatMentionSuggestionView/ChatMentionSuggestionCollectionViewCell.swift,
-				StreamChatUI/Composer/Suggestions/ChatMentionSuggestionView/ChatMentionSuggestionView.swift,
-				StreamChatUI/Composer/Suggestions/ChatSuggestionsCollectionReusableView.swift,
-				StreamChatUI/Composer/Suggestions/ChatSuggestionsCollectionView.swift,
-				StreamChatUI/Composer/Suggestions/ChatSuggestionsCollectionViewLayout.swift,
-				StreamChatUI/Composer/Suggestions/ChatSuggestionsHeaderView.swift,
-				StreamChatUI/Composer/Suggestions/ChatSuggestionsVC.swift,
-				StreamChatUI/Composer/TypingSuggester.swift,
-				StreamChatUI/Deprecations.swift,
-				StreamChatUI/Gallery/Cells/GalleryCollectionViewCell.swift,
-				StreamChatUI/Gallery/Cells/ImageAttachmentGalleryCell.swift,
-				StreamChatUI/Gallery/Cells/VideoAttachmentGalleryCell.swift,
-				StreamChatUI/Gallery/GalleryVC.swift,
-				StreamChatUI/Gallery/VideoPlaybackControlView.swift,
-				StreamChatUI/Gallery/ZoomAnimator.swift,
-				StreamChatUI/Gallery/ZoomDismissalInteractionController.swift,
-				StreamChatUI/Gallery/ZoomTransitionController.swift,
-				StreamChatUI/Generated/L10n.swift,
-				StreamChatUI/MessageActionsPopup/ChatMessageActionControl.swift,
-				StreamChatUI/MessageActionsPopup/ChatMessageActionItem.swift,
-				StreamChatUI/MessageActionsPopup/ChatMessageActionsVC.swift,
-				StreamChatUI/MessageActionsPopup/ChatMessagePopupVC.swift,
-				StreamChatUI/MessageActionsPopup/MessageActionsTransitionController.swift,
-				StreamChatUI/Navigation/AlertsRouter.swift,
-				StreamChatUI/Navigation/ChatChannelListRouter.swift,
-				StreamChatUI/Navigation/ChatMessageListRouter.swift,
-				StreamChatUI/Navigation/ChatThreadListRouter.swift,
-				StreamChatUI/Navigation/NavigationRouter.swift,
-				StreamChatUI/Navigation/NavigationVC.swift,
-				StreamChatUI/SDKIdentifier.swift,
-				StreamChatUI/StreamDifferenceKit/Algorithm.swift,
-				StreamChatUI/StreamDifferenceKit/AnyDifferentiable.swift,
-				StreamChatUI/StreamDifferenceKit/ArraySection.swift,
-				StreamChatUI/StreamDifferenceKit/Changeset.swift,
-				StreamChatUI/StreamDifferenceKit/ContentEquatable.swift,
-				StreamChatUI/StreamDifferenceKit/ContentIdentifiable.swift,
-				StreamChatUI/StreamDifferenceKit/Differentiable.swift,
-				StreamChatUI/StreamDifferenceKit/DifferentiableSection.swift,
-				StreamChatUI/StreamDifferenceKit/ElementPath.swift,
-				StreamChatUI/StreamDifferenceKit/Extensions/AppKitExtension.swift,
-				StreamChatUI/StreamDifferenceKit/StagedChangeset.swift,
-				StreamChatUI/StreamNuke/Combine/ImagePublisher.swift,
-				StreamChatUI/StreamNuke/Core/DataCache.swift,
-				StreamChatUI/StreamNuke/Core/DataLoader.swift,
-				StreamChatUI/StreamNuke/Core/ImageCache.swift,
-				StreamChatUI/StreamNuke/Core/ImageDecoding.swift,
-				StreamChatUI/StreamNuke/Core/ImageEncoding.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipeline.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipelineCache.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipelineConfiguration.swift,
-				StreamChatUI/StreamNuke/Core/ImagePipelineDelegate.swift,
-				StreamChatUI/StreamNuke/Core/ImagePrefetcher.swift,
-				StreamChatUI/StreamNuke/Core/ImageProcessing.swift,
-				StreamChatUI/StreamNuke/Core/ImageRequest.swift,
-				StreamChatUI/StreamNuke/Core/ImageResponse.swift,
-				StreamChatUI/StreamNuke/Core/ImageTask.swift,
-				StreamChatUI/StreamNuke/Internal/Allocations.swift,
-				StreamChatUI/StreamNuke/Internal/Combine.swift,
-				StreamChatUI/StreamNuke/Internal/Deprecated.swift,
-				StreamChatUI/StreamNuke/Internal/Extensions.swift,
-				StreamChatUI/StreamNuke/Internal/ImageRequestKeys.swift,
-				StreamChatUI/StreamNuke/Internal/LinkedList.swift,
-				StreamChatUI/StreamNuke/Internal/Log.swift,
-				StreamChatUI/StreamNuke/Internal/Operation.swift,
-				StreamChatUI/StreamNuke/Internal/RateLimiter.swift,
-				StreamChatUI/StreamNuke/Internal/ResumableData.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/ImagePipelineTask.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/OperationTask.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/Task.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskFetchDecodedImage.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskFetchOriginalImageData.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskFetchWithPublisher.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskLoadData.swift,
-				StreamChatUI/StreamNuke/Internal/Tasks/TaskLoadImage.swift,
-				StreamChatUI/StreamNuke/UI/FetchImage.swift,
-				StreamChatUI/StreamNuke/UI/ImageViewExtensions.swift,
-				"StreamChatUI/StreamSwiftyGif/NSImage+SwiftyGif.swift",
-				"StreamChatUI/StreamSwiftyGif/NSImageView+SwiftyGif.swift",
-				StreamChatUI/StreamSwiftyGif/ObjcAssociatedWeakObject.swift,
-				StreamChatUI/StreamSwiftyGif/SwiftyGifManager.swift,
-				"StreamChatUI/StreamSwiftyGif/UIImage+SwiftyGif.swift",
-				"StreamChatUI/StreamSwiftyGif/UIImageView+SwiftyGif.swift",
-				StreamChatUI/Utils/Animation.swift,
-				StreamChatUI/Utils/Cache.swift,
-				StreamChatUI/Utils/Cancellable.swift,
-				"StreamChatUI/Utils/ChatMessage+Extensions.swift",
-				StreamChatUI/Utils/DateUtils.swift,
-				"StreamChatUI/Utils/Extensions/Array+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/Array+SafeSubscript.swift",
-				"StreamChatUI/Utils/Extensions/Bundle+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/CACornerMask+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/CALayer+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/CGPoint+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/CGRect+Extensions.swift",
-				StreamChatUI/Utils/Extensions/ChatChannelNamer.swift,
-				"StreamChatUI/Utils/Extensions/DifferenceKit+Stream.swift",
-				"StreamChatUI/Utils/Extensions/NSLayoutConstraint+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/Reusable+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/String+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIColor+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIFont+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIImage+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UILabel+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIScrollView+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIStackView+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UITextView+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIView+Extensions.swift",
-				"StreamChatUI/Utils/Extensions/UIViewController+Extensions.swift",
-				StreamChatUI/Utils/ImageLoading/ImageCDN/ImageCDN.swift,
-				StreamChatUI/Utils/ImageLoading/ImageCDN/StreamCDN.swift,
-				StreamChatUI/Utils/ImageLoading/ImageDownloadOptions.swift,
-				StreamChatUI/Utils/ImageLoading/ImageDownloadRequest.swift,
-				StreamChatUI/Utils/ImageLoading/ImageLoaderOptions.swift,
-				StreamChatUI/Utils/ImageLoading/ImageLoading.swift,
-				StreamChatUI/Utils/ImageLoading/ImageMerger.swift,
-				StreamChatUI/Utils/ImageLoading/ImageResize.swift,
-				StreamChatUI/Utils/ImageLoading/ImageResultsMapper.swift,
-				StreamChatUI/Utils/ImageLoading/ImageSizeCalculator.swift,
-				StreamChatUI/Utils/ImageLoading/NukeImageLoader.swift,
-				StreamChatUI/Utils/ImageProcessor/NukeImageProcessor.swift,
-				StreamChatUI/Utils/KeyboardHandler/ComposerKeyboardHandler.swift,
-				StreamChatUI/Utils/KeyboardHandler/DefaultScrollViewKeyboardHandler.swift,
-				StreamChatUI/Utils/KeyboardHandler/KeyboardHandler.swift,
-				StreamChatUI/Utils/SystemEnvironment.swift,
-				StreamChatUI/Utils/TextViewMentionedUsersHandler.swift,
-				"StreamChatUI/Utils/UILabel+highlightText.swift",
-				StreamChatUI/Utils/VideoLoading/VideoLoading.swift,
-				StreamChatUI/Utils/ViewPaginationHandling/InvertedScrollViewPaginationHandler.swift,
-				StreamChatUI/Utils/ViewPaginationHandling/ScrollViewPaginationHandler.swift,
-				StreamChatUI/Utils/ViewPaginationHandling/StatefulScrollViewPaginationHandler.swift,
-				StreamChatUI/Utils/ViewPaginationHandling/ViewPaginationHandling.swift,
-				StreamChatUI/ViewContainerBuilder/ViewContainerBuilder.swift,
-				StreamChatUI/VoiceRecording/Views/AudioVisualizationView.swift,
-				StreamChatUI/VoiceRecording/Views/WaveformView.swift,
-			);
-			target = C121E9262746A19400023E4C /* StreamChatUIStatic */;
-		};
 		82E678562F2922160082E9A7 /* Exceptions for "Tests" folder in "StreamChatTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"/Localized: StreamChatUITests/TestLocalizable.strings",
 				Info.plist,
+				StreamChatCommonUITests/StreamChatCommonUI.xctestplan,
 				StreamChatTests/StreamChatFlakyTests.xctestplan,
-				"StreamChatUITests/Appearance+SwiftUI_Tests.swift",
 				StreamChatUITests/ChatMessage_Tests.swift,
 				"StreamChatUITests/Components+SwiftUI_Tests.swift",
 				"StreamChatUITests/Extensions/ChatMessage+Equatable_Tests.swift",
 				"StreamChatUITests/Extensions/UIView+SimulateViewAddedToHierarchy.swift",
 				StreamChatUITests/Helpers/CustomUIViewSubclasses.swift,
 				"StreamChatUITests/Helpers/UIView+Helpers.swift",
-				StreamChatUITests/Localization_Tests.swift,
 				StreamChatUITests/Mocks/ChatMessageList/ChatMessageCell_Mock.swift,
 				StreamChatUITests/Mocks/ChatMessageList/ChatMessageListVC_Mock.swift,
 				StreamChatUITests/Mocks/ChatMessageList/ChatMessageListVCDataSource_Mock.swift,
@@ -3455,16 +2614,10 @@
 				StreamChatUITests/SnapshotTests/VoiceRecording/Views/SlideToCancelView_Tests.swift,
 				StreamChatUITests/SnapshotTests/VoiceRecording/Views/WaveformView_Tests.swift,
 				StreamChatUITests/SnapshotTests/VoiceRecording/VoiceRecordingVC_Tests.swift,
-				StreamChatUITests/StreamChatUITestPlan.xctestplan,
+				StreamChatUITests/StreamChatUI.xctestplan,
 				StreamChatUITests/UITestsEnvironmentSetup.swift,
-				StreamChatUITests/Utils/AppearanceProvider_Tests.swift,
 				"StreamChatUITests/Utils/Array+SafeSubscript_Tests.swift",
-				StreamChatUITests/Utils/ChatChannelNamer_Tests.swift,
 				StreamChatUITests/Utils/ComponentsProvider_Tests.swift,
-				StreamChatUITests/Utils/DateUtils_Tests.swift,
-				StreamChatUITests/Utils/DefaultAudioPlaybackRateFormatter_Tests.swift,
-				StreamChatUITests/Utils/DefaultAudioRecordingNameFormatter_Tests.swift,
-				StreamChatUITests/Utils/DefaultMarkdownFormatter_Tests.swift,
 				"StreamChatUITests/Utils/DifferenceKit+Stream_Tests.swift",
 				StreamChatUITests/Utils/ImageLoading_Tests.swift,
 				StreamChatUITests/Utils/ImageResultsMapper_Tests.swift,
@@ -3508,21 +2661,6 @@
 				"UISDKdocumentationTests/__Snapshots__/ShrinkInputButton_Documentation_Tests/ShrinkInputButton_documentation.default-light.png",
 				"UISDKdocumentationTests/__Snapshots__/TitleContainerView_Documentation_Tests/TitleContainerView_documentation.default-dark.png",
 				"UISDKdocumentationTests/__Snapshots__/TitleContainerView_Documentation_Tests/TitleContainerView_documentation.default-light.png",
-				UISDKdocumentationTests/AttachmentButton_Documentation_Tests.swift,
-				UISDKdocumentationTests/AttachmentPlaceholderView_Documentation_Tests.swift,
-				UISDKdocumentationTests/ChatAvatarView_Documentation_Tests.swift,
-				UISDKdocumentationTests/ChatChannelListItemView_Documentation_Tests.swift,
-				UISDKdocumentationTests/ChatMessageContentView_Documentation_Tests.swift,
-				UISDKdocumentationTests/CommandButton_Documentation_Tests.swift,
-				UISDKdocumentationTests/CommandLabelView_Documentation_Tests.swift,
-				UISDKdocumentationTests/ComposerVC_Documentation_Tests.swift,
-				UISDKdocumentationTests/ConfirmButton_Documentation_Tests.swift,
-				UISDKdocumentationTests/OnlineIndicatorView_Documentation_Tests.swift,
-				UISDKdocumentationTests/SendButton_Documentation_Tests.swift,
-				UISDKdocumentationTests/ShrinkInputButton_Documentation_Tests.swift,
-				UISDKdocumentationTests/TitleContainerView_Documentation_Tests.swift,
-				"UISDKdocumentationTests/UISDKDocumentation-Info.plist",
-				"UISDKdocumentationTests/UIView+Annotations.swift",
 			);
 			target = 799C9450247D59B1001F1104 /* StreamChatTests */;
 		};
@@ -3530,14 +2668,12 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				"/Localized: StreamChatUITests/TestLocalizable.strings",
-				"StreamChatUITests/Appearance+SwiftUI_Tests.swift",
 				StreamChatUITests/ChatMessage_Tests.swift,
 				"StreamChatUITests/Components+SwiftUI_Tests.swift",
 				"StreamChatUITests/Extensions/ChatMessage+Equatable_Tests.swift",
 				"StreamChatUITests/Extensions/UIView+SimulateViewAddedToHierarchy.swift",
 				StreamChatUITests/Helpers/CustomUIViewSubclasses.swift,
 				"StreamChatUITests/Helpers/UIView+Helpers.swift",
-				StreamChatUITests/Localization_Tests.swift,
 				StreamChatUITests/Mocks/ChatMessageList/ChatMessageCell_Mock.swift,
 				StreamChatUITests/Mocks/ChatMessageList/ChatMessageListVC_Mock.swift,
 				StreamChatUITests/Mocks/ChatMessageList/ChatMessageListVCDataSource_Mock.swift,
@@ -3648,15 +2784,10 @@
 				StreamChatUITests/SnapshotTests/VoiceRecording/Views/SlideToCancelView_Tests.swift,
 				StreamChatUITests/SnapshotTests/VoiceRecording/Views/WaveformView_Tests.swift,
 				StreamChatUITests/SnapshotTests/VoiceRecording/VoiceRecordingVC_Tests.swift,
+				StreamChatUITests/StreamChatUI.xctestplan,
 				StreamChatUITests/UITestsEnvironmentSetup.swift,
-				StreamChatUITests/Utils/AppearanceProvider_Tests.swift,
 				"StreamChatUITests/Utils/Array+SafeSubscript_Tests.swift",
-				StreamChatUITests/Utils/ChatChannelNamer_Tests.swift,
 				StreamChatUITests/Utils/ComponentsProvider_Tests.swift,
-				StreamChatUITests/Utils/DateUtils_Tests.swift,
-				StreamChatUITests/Utils/DefaultAudioPlaybackRateFormatter_Tests.swift,
-				StreamChatUITests/Utils/DefaultAudioRecordingNameFormatter_Tests.swift,
-				StreamChatUITests/Utils/DefaultMarkdownFormatter_Tests.swift,
 				"StreamChatUITests/Utils/DifferenceKit+Stream_Tests.swift",
 				StreamChatUITests/Utils/ImageLoading_Tests.swift,
 				StreamChatUITests/Utils/ImageResultsMapper_Tests.swift,
@@ -3679,52 +2810,8 @@
 				"StreamChatUITests/Helpers/UIView+Helpers.swift",
 				StreamChatUITests/SnapshotTests/CommonViews/CommandLabelView/CommandLabelView_Tests.swift,
 				StreamChatUITests/UITestsEnvironmentSetup.swift,
-				UISDKdocumentationTests/AttachmentButton_Documentation_Tests.swift,
-				UISDKdocumentationTests/AttachmentPlaceholderView_Documentation_Tests.swift,
-				UISDKdocumentationTests/ChatAvatarView_Documentation_Tests.swift,
-				UISDKdocumentationTests/ChatChannelListItemView_Documentation_Tests.swift,
-				UISDKdocumentationTests/ChatMessageContentView_Documentation_Tests.swift,
-				UISDKdocumentationTests/CommandButton_Documentation_Tests.swift,
-				UISDKdocumentationTests/CommandLabelView_Documentation_Tests.swift,
-				UISDKdocumentationTests/ComposerVC_Documentation_Tests.swift,
-				UISDKdocumentationTests/ConfirmButton_Documentation_Tests.swift,
-				UISDKdocumentationTests/OnlineIndicatorView_Documentation_Tests.swift,
-				UISDKdocumentationTests/SendButton_Documentation_Tests.swift,
-				UISDKdocumentationTests/ShrinkInputButton_Documentation_Tests.swift,
-				UISDKdocumentationTests/TitleContainerView_Documentation_Tests.swift,
-				"UISDKdocumentationTests/UISDKDocumentation-Info.plist",
-				"UISDKdocumentationTests/UIView+Annotations.swift",
 			);
 			target = E74DB08A2656631700508D22 /* UISDKDocumentation */;
-		};
-		82E678592F2922160082E9A7 /* Exceptions for "Tests" folder in "StreamChatStatic" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				StreamChatTests/Audio/AudioAnalysisEngine_Tests.swift,
-				StreamChatTests/Audio/AudioRecordingState_Tests.swift,
-				StreamChatTests/Audio/AudioSamplesExtractor_Tests.swift,
-				StreamChatTests/Audio/AudioSamplesPercentageTransformer_Tests.swift,
-				StreamChatTests/Audio/AudioSamplesProcessor_Tests.swift,
-				StreamChatTests/Audio/StreamAppStateObserver_Tests.swift,
-				StreamChatTests/Audio/StreamAudioQueuePlayer_Tests.swift,
-				StreamChatTests/Audio/StreamAudioWaveformAnalyser_Tests.swift,
-				StreamChatTests/Models/Attachments/VoiceRecordingAttachmentPayload_Tests.swift,
-				StreamChatTests/Utils/Debouncer_Tests.swift,
-			);
-			target = C121E757274543D000023E4C /* StreamChatStatic */;
-		};
-		82E6785A2F2922160082E9A7 /* Exceptions for "Tests" folder in "StreamChatUIStatic" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				StreamChatUITests/SnapshotTests/CommonViews/Attachments/AttachmentViews/VoiceRecordingAttachmentComposerPreview_Tests.swift,
-				StreamChatUITests/SnapshotTests/CommonViews/ClampedView_Tests.swift,
-				StreamChatUITests/SnapshotTests/CommonViews/PillButton_Tests.swift,
-				StreamChatUITests/SnapshotTests/CommonViews/PlayPauseButton/PlayPauseButton_Tests.swift,
-				StreamChatUITests/SnapshotTests/CommonViews/RecordButton/RecordButton_Tests.swift,
-				StreamChatUITests/SnapshotTests/VoiceRecording/Views/AudioVisualizationView_Tests.swift,
-				StreamChatUITests/SnapshotTests/VoiceRecording/Views/WaveformView_Tests.swift,
-			);
-			target = C121E9262746A19400023E4C /* StreamChatUIStatic */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -3734,13 +2821,6 @@
 			buildPhase = 793060E225778896005CF846 /* Sources */;
 			membershipExceptions = (
 				StreamChatTestTools/Fixtures/JSONs/PartiallyFailingChannelListPayload.json,
-			);
-		};
-		82B0396E2F27D39400E360B4 /* Exceptions for "TestTools" folder in "Compile Sources" phase from "StreamChatStatic" target */ = {
-			isa = PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet;
-			buildPhase = C121E754274543D000023E4C /* Sources */;
-			membershipExceptions = (
-				StreamChatTestTools/Fixtures/JSONs/AppSettings.json,
 			);
 		};
 /* End PBXFileSystemSynchronizedGroupBuildPhaseMembershipExceptionSet section */
@@ -3810,7 +2890,6 @@
 				82B0396B2F27D39400E360B4 /* Exceptions for "TestTools" folder in "Compile Sources" phase from "StreamChatTestTools" target */,
 				82B0396C2F27D39400E360B4 /* Exceptions for "TestTools" folder in "StreamChatTestToolsTests" target */,
 				82B0396D2F27D39400E360B4 /* Exceptions for "TestTools" folder in "StreamChatTestMockServer" target */,
-				82B0396E2F27D39400E360B4 /* Exceptions for "TestTools" folder in "Compile Sources" phase from "StreamChatStatic" target */,
 				82B0396F2F27D39400E360B4 /* Exceptions for "TestTools" folder in "StreamChatUITestsAppUITests" target */,
 			);
 			path = TestTools;
@@ -3821,8 +2900,6 @@
 			exceptions = (
 				82E66F292F291FE70082E9A7 /* Exceptions for "Sources" folder in "StreamChat" target */,
 				82E66F2A2F291FE70082E9A7 /* Exceptions for "Sources" folder in "StreamChatUI" target */,
-				82E66F2B2F291FE70082E9A7 /* Exceptions for "Sources" folder in "StreamChatStatic" target */,
-				82E66F2C2F291FE70082E9A7 /* Exceptions for "Sources" folder in "StreamChatUIStatic" target */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -3833,8 +2910,6 @@
 				82E678562F2922160082E9A7 /* Exceptions for "Tests" folder in "StreamChatTests" target */,
 				82E678572F2922160082E9A7 /* Exceptions for "Tests" folder in "StreamChatUITests" target */,
 				82E678582F2922160082E9A7 /* Exceptions for "Tests" folder in "UISDKDocumentation" target */,
-				82E678592F2922160082E9A7 /* Exceptions for "Tests" folder in "StreamChatStatic" target */,
-				82E6785A2F2922160082E9A7 /* Exceptions for "Tests" folder in "StreamChatUIStatic" target */,
 			);
 			path = Tests;
 			sourceTree = "<group>";
@@ -3878,6 +2953,7 @@
 				C1BE72732732CA62006EB51E /* Nuke in Frameworks */,
 				C121EC612746AC8C00023E4C /* StreamChatUI.framework in Frameworks */,
 				ADCB576628A425D500B81AE8 /* Sentry in Frameworks */,
+				82AB56112F2B77C60033E55E /* StreamChatCommonUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3909,6 +2985,21 @@
 			files = (
 				F8788F81261DE9B0006019DD /* StreamChatTestTools.framework in Frameworks */,
 				799C9456247D59B1001F1104 /* StreamChat.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82AB56082F2B77C60033E55E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82AB56182F2B77E70033E55E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				82AB561F2F2B77E70033E55E /* StreamChatCommonUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4047,13 +3138,13 @@
 				E74DB0D32656631700508D22 /* UISDKDocumentation.xctest */,
 				AC908381268B115F00ACFB8E /* YouTube.app */,
 				437FCA0426D67BE40000223C /* DemoAppPush.appex */,
-				C121E758274543D000023E4C /* libStreamChat.a */,
-				C121EA2F2746A19400023E4C /* libStreamChatUI.a */,
 				A34407BA27D8C33F0044F150 /* StreamChatUITestsApp.app */,
 				A34407DC27D8C3400044F150 /* StreamChatUITestsAppUITests.xctest */,
 				A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */,
 				C11B575B29D43FD800D5A248 /* EdgeCases.app */,
 				84790E952AC1D346003AFF1C /* DemoShare.appex */,
+				82AB560B2F2B77C60033E55E /* StreamChatCommonUI.framework */,
+				82AB561B2F2B77E70033E55E /* StreamChatCommonUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -4085,6 +3176,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		799C9416247D2F80001F1104 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82AB56062F2B77C60033E55E /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4182,6 +3280,7 @@
 				C121EC602746AC8C00023E4C /* PBXTargetDependency */,
 				C121EC642746AC8C00023E4C /* PBXTargetDependency */,
 				84790E9E2AC1D346003AFF1C /* PBXTargetDependency */,
+				82AB56102F2B77C60033E55E /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				82B00B012F27C56F00E360B4 /* DemoApp */,
@@ -4286,6 +3385,46 @@
 			);
 			productName = StreamChatClientTests;
 			productReference = 799C9451247D59B1001F1104 /* StreamChatTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		82AB560A2F2B77C60033E55E /* StreamChatCommonUI */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 82AB56132F2B77C60033E55E /* Build configuration list for PBXNativeTarget "StreamChatCommonUI" */;
+			buildPhases = (
+				82AB56062F2B77C60033E55E /* Headers */,
+				82AB56072F2B77C60033E55E /* Sources */,
+				82AB56082F2B77C60033E55E /* Frameworks */,
+				82AB56092F2B77C60033E55E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = StreamChatCommonUI;
+			packageProductDependencies = (
+			);
+			productName = StreamChatCommonUI;
+			productReference = 82AB560B2F2B77C60033E55E /* StreamChatCommonUI.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		82AB561A2F2B77E70033E55E /* StreamChatCommonUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 82AB56222F2B77E70033E55E /* Build configuration list for PBXNativeTarget "StreamChatCommonUITests" */;
+			buildPhases = (
+				82AB56172F2B77E70033E55E /* Sources */,
+				82AB56182F2B77E70033E55E /* Frameworks */,
+				82AB56192F2B77E70033E55E /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				82AB56212F2B77E70033E55E /* PBXTargetDependency */,
+			);
+			name = StreamChatCommonUITests;
+			packageProductDependencies = (
+			);
+			productName = StreamChatCommonUITests;
+			productReference = 82AB561B2F2B77E70033E55E /* StreamChatCommonUITests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		84790E942AC1D346003AFF1C /* DemoShare */ = {
@@ -4429,44 +3568,6 @@
 			productReference = C11B575B29D43FD800D5A248 /* EdgeCases.app */;
 			productType = "com.apple.product-type.application";
 		};
-		C121E757274543D000023E4C /* StreamChatStatic */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C121E75F274543D000023E4C /* Build configuration list for PBXNativeTarget "StreamChatStatic" */;
-			buildPhases = (
-				C121E754274543D000023E4C /* Sources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-			);
-			fileSystemSynchronizedGroups = (
-				82E666002F291FE70082E9A7 /* Sources */,
-			);
-			name = StreamChatStatic;
-			packageProductDependencies = (
-			);
-			productName = "StreamChat-Static";
-			productReference = C121E758274543D000023E4C /* libStreamChat.a */;
-			productType = "com.apple.product-type.library.static";
-		};
-		C121E9262746A19400023E4C /* StreamChatUIStatic */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = C121EA2B2746A19400023E4C /* Build configuration list for PBXNativeTarget "StreamChatUIStatic" */;
-			buildPhases = (
-				C121E9272746A19400023E4C /* Sources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				AD78F9F328EC729D00BC0FCE /* PBXTargetDependency */,
-			);
-			name = StreamChatUIStatic;
-			packageProductDependencies = (
-			);
-			productName = "StreamChat-Static";
-			productReference = C121EA2F2746A19400023E4C /* libStreamChatUI.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 		E74DB08A2656631700508D22 /* UISDKDocumentation */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E74DB0CF2656631700508D22 /* Build configuration list for PBXNativeTarget "UISDKDocumentation" */;
@@ -4561,7 +3662,7 @@
 		8AD5EC8622E9A3E8005CFAC9 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1500;
+				LastSwiftUpdateCheck = 2610;
 				LastUpgradeCheck = 1340;
 				ORGANIZATIONNAME = "Stream.io Inc";
 				TargetAttributes = {
@@ -4592,6 +3693,12 @@
 					799C9450247D59B1001F1104 = {
 						CreatedOnToolsVersion = 11.4.1;
 					};
+					82AB560A2F2B77C60033E55E = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
+					82AB561A2F2B77E70033E55E = {
+						CreatedOnToolsVersion = 26.1.1;
+					};
 					84790E942AC1D346003AFF1C = {
 						CreatedOnToolsVersion = 15.0;
 					};
@@ -4610,9 +3717,6 @@
 					};
 					C11B575A29D43FD800D5A248 = {
 						CreatedOnToolsVersion = 14.2;
-					};
-					C121E757274543D000023E4C = {
-						CreatedOnToolsVersion = 13.0;
 					};
 					F86C87B125F906630000BCA9 = {
 						CreatedOnToolsVersion = 12.3;
@@ -4652,8 +3756,10 @@
 				793060E525778896005CF846 /* StreamChatTestTools */,
 				793060ED25778897005CF846 /* StreamChatTestToolsTests */,
 				790881FC25432B7200896F03 /* StreamChatUI */,
-				A3A0C998283E952900B18DA4 /* StreamChatTestMockServer */,
 				7908820425432B7200896F03 /* StreamChatUITests */,
+				82AB560A2F2B77C60033E55E /* StreamChatCommonUI */,
+				82AB561A2F2B77E70033E55E /* StreamChatCommonUITests */,
+				A3A0C998283E952900B18DA4 /* StreamChatTestMockServer */,
 				792DDA56256FB69E001DB91B /* DemoApp */,
 				437FCA0326D67BE40000223C /* DemoAppPush */,
 				E74DB08A2656631700508D22 /* UISDKDocumentation */,
@@ -4662,8 +3768,6 @@
 				F89C23A525E508DE0082CA5B /* iMessage */,
 				AC908380268B115F00ACFB8E /* YouTube */,
 				C11B575A29D43FD800D5A248 /* EdgeCases */,
-				C121E757274543D000023E4C /* StreamChatStatic */,
-				C121E9262746A19400023E4C /* StreamChatUIStatic */,
 				A34407B927D8C33F0044F150 /* StreamChatUITestsApp */,
 				A34407DB27D8C3400044F150 /* StreamChatUITestsAppUITests */,
 				84790E942AC1D346003AFF1C /* DemoShare */,
@@ -4724,6 +3828,20 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		799C944F247D59B1001F1104 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82AB56092F2B77C60033E55E /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82AB56192F2B77E70033E55E /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -4882,6 +4000,20 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		82AB56072F2B77C60033E55E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		82AB56172F2B77E70033E55E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		84790E912AC1D346003AFF1C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -4918,20 +4050,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		C11B575729D43FD800D5A248 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C121E754274543D000023E4C /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		C121E9272746A19400023E4C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -5004,6 +4122,16 @@
 			target = 790881FC25432B7200896F03 /* StreamChatUI */;
 			targetProxy = 82120C2A2B6AB39C00347A35 /* PBXContainerItemProxy */;
 		};
+		82AB56102F2B77C60033E55E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 82AB560A2F2B77C60033E55E /* StreamChatCommonUI */;
+			targetProxy = 82AB560F2F2B77C60033E55E /* PBXContainerItemProxy */;
+		};
+		82AB56212F2B77E70033E55E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 82AB560A2F2B77C60033E55E /* StreamChatCommonUI */;
+			targetProxy = 82AB56202F2B77E70033E55E /* PBXContainerItemProxy */;
+		};
 		82FF61EA2B6AB5E4007185B6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = A3A0C998283E952900B18DA4 /* StreamChatTestMockServer */;
@@ -5058,11 +4186,6 @@
 			isa = PBXTargetDependency;
 			target = 799C941A247D2F80001F1104 /* StreamChat */;
 			targetProxy = AC90839F268B120900ACFB8E /* PBXContainerItemProxy */;
-		};
-		AD78F9F328EC729D00BC0FCE /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 793060E525778896005CF846 /* StreamChatTestTools */;
-			targetProxy = AD78F9F228EC729D00BC0FCE /* PBXContainerItemProxy */;
 		};
 		C11B577529D4403800D5A248 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -5693,6 +4816,212 @@
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
+		};
+		82AB56142F2B77C60033E55E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatCommonUI;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		82AB56152F2B77C60033E55E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Distribution: Stream.io Inc (EHV7XZLAHA)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatCommonUI;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		82AB56162F2B77C60033E55E /* Profile */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_MODULE_VERIFIER = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Stream.io Inc. All rights reserved.";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				MODULE_VERIFIER_SUPPORTED_LANGUAGES = "objective-c objective-c++";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "gnu17 gnu++20";
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatCommonUI;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_INSTALL_MODULE = YES;
+				SWIFT_INSTALL_OBJC_HEADER = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Profile;
+		};
+		82AB56232F2B77E70033E55E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatCommonUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		82AB56242F2B77E70033E55E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatCommonUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		82AB56252F2B77E70033E55E /* Profile */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = EHV7XZLAHA;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.1;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.stream.StreamChatCommonUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				STRING_CATALOG_GENERATE_SYMBOLS = NO;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Profile;
 		};
 		84790EA02AC1D346003AFF1C /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -6543,108 +5872,6 @@
 			};
 			name = Profile;
 		};
-		C121E75C274543D000023E4C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = Sources/StreamChat/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = StreamChat;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG STATIC_LIBRARY";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		C121E75D274543D000023E4C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = Sources/StreamChat/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = StreamChat;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = STATIC_LIBRARY;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		C121E75E274543D000023E4C /* Profile */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = Sources/StreamChat/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = StreamChat;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "TESTS STATIC_LIBRARY";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Profile;
-		};
-		C121EA2C2746A19400023E4C /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = Sources/StreamChat/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = StreamChatUI;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG STATIC_LIBRARY";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Debug;
-		};
-		C121EA2D2746A19400023E4C /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = Sources/StreamChat/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = StreamChatUI;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = STATIC_LIBRARY;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Release;
-		};
-		C121EA2E2746A19400023E4C /* Profile */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = EHV7XZLAHA;
-				INFOPLIST_FILE = Sources/StreamChat/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
-				OTHER_LDFLAGS = "-ObjC";
-				PRODUCT_NAME = StreamChatUI;
-				SKIP_INSTALL = YES;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "TESTS STATIC_LIBRARY";
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-			};
-			name = Profile;
-		};
 		E74DB0D02656631700508D22 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -6993,6 +6220,26 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		82AB56132F2B77C60033E55E /* Build configuration list for PBXNativeTarget "StreamChatCommonUI" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				82AB56142F2B77C60033E55E /* Debug */,
+				82AB56152F2B77C60033E55E /* Release */,
+				82AB56162F2B77C60033E55E /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		82AB56222F2B77E70033E55E /* Build configuration list for PBXNativeTarget "StreamChatCommonUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				82AB56232F2B77E70033E55E /* Debug */,
+				82AB56242F2B77E70033E55E /* Release */,
+				82AB56252F2B77E70033E55E /* Profile */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		84790EA32AC1D346003AFF1C /* Build configuration list for PBXNativeTarget "DemoShare" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -7059,26 +6306,6 @@
 				C11B576C29D43FD900D5A248 /* Debug */,
 				C11B576D29D43FD900D5A248 /* Release */,
 				C11B576E29D43FD900D5A248 /* Profile */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C121E75F274543D000023E4C /* Build configuration list for PBXNativeTarget "StreamChatStatic" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C121E75C274543D000023E4C /* Debug */,
-				C121E75D274543D000023E4C /* Release */,
-				C121E75E274543D000023E4C /* Profile */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		C121EA2B2746A19400023E4C /* Build configuration list for PBXNativeTarget "StreamChatUIStatic" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				C121EA2C2746A19400023E4C /* Debug */,
-				C121EA2D2746A19400023E4C /* Release */,
-				C121EA2E2746A19400023E4C /* Profile */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
