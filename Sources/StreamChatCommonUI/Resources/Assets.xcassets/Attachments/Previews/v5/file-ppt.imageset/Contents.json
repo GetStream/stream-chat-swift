@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "file-ppt.pdf",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
