@@ -425,5 +425,123 @@ public extension Appearance {
         }
 
         private var _availableMessagesReactionEmojis: [MessageReactionType: String]?
+
+        // MARK: - V5 - Attachment Icons
+
+        public var attachmentPlayOverlayIcon: UIImage = loadSafely(
+            systemName: "play.fill",
+            config: UIImage.SymbolConfiguration(
+                pointSize: 12,
+                weight: .regular
+            )
+        )
+
+        public var overlayDismissIcon: UIImage = loadSafely(
+            systemName: "xmark",
+            config: UIImage.SymbolConfiguration(
+                pointSize: 10,
+                weight: .heavy
+            )
+        )
+
+        public var attachmentImageIcon: UIImage = loadSafely(
+            systemName: "camera",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var attachmentLinkIcon: UIImage = loadSafely(
+            systemName: "link",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var attachmentVideoIcon: UIImage = loadSafely(
+            systemName: "video",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var attachmentDocIcon: UIImage = loadSafely(
+            systemName: "document",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var attachmentVoiceIcon: UIImage = loadSafely(
+            systemName: "microphone",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var attachmentPollIcon: UIImage = loadSafely(
+            systemName: "chart.bar",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var attachmentPhotoIcon: UIImage = loadSafely(
+            systemName: "photo",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        // MARK: - V5 - File Type Preview Icons
+
+        public var iconPdf: UIImage = loadImageSafely(with: "file-pdf")
+        public var iconDoc: UIImage = loadImageSafely(with: "file-doc")
+        public var iconPpt: UIImage = loadImageSafely(with: "file-ppt")
+        public var iconXls: UIImage = loadImageSafely(with: "file-xls")
+        public var iconMp3: UIImage = loadImageSafely(with: "file-mp3")
+        public var iconMp4: UIImage = loadImageSafely(with: "file-mp4")
+        public var iconHtml: UIImage = loadImageSafely(with: "file-html")
+        public var iconZip: UIImage = loadImageSafely(with: "file-zip")
+        public var iconOther: UIImage = loadImageSafely(with: "file-other")
+
+        private var _fileIconPreviews: [String: UIImage]?
+
+        /// Mapping of file extensions to their v5 file type preview icons.
+        public var fileIconPreviews: [String: UIImage] {
+            get {
+                _fileIconPreviews ?? [
+                    // PDF
+                    "pdf": iconPdf,
+                    // Documents
+                    "doc": iconDoc,
+                    "docx": iconDoc,
+                    "txt": iconDoc,
+                    "rtf": iconDoc,
+                    "odt": iconDoc,
+                    "md": iconDoc,
+                    // Presentations
+                    "ppt": iconPpt,
+                    "pptx": iconPpt,
+                    // Spreadsheets
+                    "xls": iconXls,
+                    "xlsx": iconXls,
+                    "csv": iconXls,
+                    // Audio
+                    "mp3": iconMp3,
+                    "aac": iconMp3,
+                    "wav": iconMp3,
+                    "m4a": iconMp3,
+                    // Video
+                    "mp4": iconMp4,
+                    "mov": iconMp4,
+                    "avi": iconMp4,
+                    "mkv": iconMp4,
+                    "webm": iconMp4,
+                    // Code
+                    "html": iconHtml,
+                    "htm": iconHtml,
+                    "css": iconHtml,
+                    "js": iconHtml,
+                    "json": iconHtml,
+                    "xml": iconHtml,
+                    "swift": iconHtml,
+                    // Compression
+                    "zip": iconZip,
+                    "rar": iconZip,
+                    "7z": iconZip,
+                    "tar": iconZip,
+                    "gz": iconZip,
+                    "tar.gz": iconZip
+                ]
+            }
+            set { _fileIconPreviews = newValue }
+        }
     }
 }
