@@ -66,8 +66,7 @@ let package = Package(
             name: "StreamChatTestMockServer",
             dependencies: ["StreamChat"],
             path: "TestTools/StreamChatTestMockServer",
-            exclude: ["Info.plist"],
-            resources: [.process("Fixtures")]
+            exclude: ["Info.plist"]
         )
     ]
 )
