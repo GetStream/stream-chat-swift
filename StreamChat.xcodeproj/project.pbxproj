@@ -604,7 +604,6 @@
 		82B0396A2F27D39400E360B4 /* Exceptions for "TestTools" folder in "StreamChatTestTools" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				StreamChatTestMockServer/Fixtures/JSONs/http_giphy_link.json,
 				StreamChatTestMockServer/Info.plist,
 				StreamChatTestMockServer/MockServer/DataTypes.swift,
 				StreamChatTestMockServer/MockServer/LaunchArgument.swift,
