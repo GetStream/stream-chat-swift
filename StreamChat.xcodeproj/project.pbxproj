@@ -2117,7 +2117,6 @@
 		82E678562F2922160082E9A7 /* Exceptions for "Tests" folder in "StreamChatTests" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				Info.plist,
 				StreamChatTests/APIClient/APIClient_Tests.swift,
 				StreamChatTests/APIClient/ChatRemoteNotificationHandler_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/AppEndpoints_Tests.swift,
@@ -2353,7 +2352,6 @@
 				StreamChatTests/StateLayer/StateLayerDatabaseObserver_Tests.swift,
 				StreamChatTests/StateLayer/UserList_Tests.swift,
 				StreamChatTests/StateLayer/UserSearch_Tests.swift,
-				StreamChatTests/StreamChatFlakyTests.xctestplan,
 				StreamChatTests/StreamChatIntegrationTests/ChannelEvents_IntegrationTests.swift,
 				StreamChatTests/StreamChatIntegrationTests/MemberEvents_IntegrationTests.swift,
 				StreamChatTests/StreamChatIntegrationTests/MessageEvents_IntegrationTests.swift,
@@ -2361,9 +2359,7 @@
 				StreamChatTests/StreamChatIntegrationTests/ReactionEvents_IntegrationTests.swift,
 				StreamChatTests/StreamChatIntegrationTests/TypingEvents_IntegrationTests.swift,
 				StreamChatTests/StreamChatIntegrationTests/UserEvents_IntegrationTests.swift,
-				StreamChatTests/StreamChatStressTestPlan.xctestplan,
 				StreamChatTests/StreamChatStressTests/Atomic_StressTests.swift,
-				StreamChatTests/StreamChatTestPlan.xctestplan,
 				StreamChatTests/StreamChatTests.swift,
 				StreamChatTests/TestsEnvironmentSetup.swift,
 				StreamChatTests/Utils/ArraySampling_Tests.swift,
@@ -2617,7 +2613,6 @@
 				UISDKdocumentationTests/SendButton_Documentation_Tests.swift,
 				UISDKdocumentationTests/ShrinkInputButton_Documentation_Tests.swift,
 				UISDKdocumentationTests/TitleContainerView_Documentation_Tests.swift,
-				"UISDKdocumentationTests/UISDKDocumentation-Info.plist",
 				"UISDKdocumentationTests/UIView+Annotations.swift",
 			);
 			target = E74DB08A2656631700508D22 /* UISDKDocumentation */;
