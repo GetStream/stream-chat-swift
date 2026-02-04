@@ -27,6 +27,9 @@ Tests/
 
 Use the closest folder’s patterns and conventions when editing.
 
+### New files & target membership
+  • When creating new source or resource files, add them to the correct Xcode target(s). Update the project (e.g. project.pbxproj) so each new file is included in the appropriate target’s “Compile Sources” (or “Copy Bundle Resources” for assets). Match the target(s) used by sibling files in the same directory (e.g. Sources/StreamChat/ → StreamChat target; Sources/StreamChatUI/ → StreamChatUI; Tests/StreamChatTests/ → StreamChatTests). Omitting target membership will cause build failures or unused files.
+
 ### Local setup (SPM)
   1.  Open the repository root in Xcode (Package.swift is present), resolve packages.
   2.  Select the intended scheme (see Schemes below), pick an iOS Simulator (e.g., iPhone 15), then Build.
@@ -135,6 +138,7 @@ Quick agent checklist (per commit)
   • Run swiftlint --strict
   • Update CHANGELOG and docs if public API changed
   • Add/adjust tests
+  • Add correct target membership for any new files (project) when required
   • No new warnings
 
 End of machine guidance. Edit this file to refine agent behavior over time; keep human-facing details in README.md and docs.
