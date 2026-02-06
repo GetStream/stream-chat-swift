@@ -68,6 +68,34 @@ final class ChannelListQuery_Tests: XCTestCase {
         let runtimeSorting = query.runtimeSortingValues
         XCTAssertEqual(runtimeSorting.count, 3)
     }
+
+    func test_channelListQuery_encodedOmitsLimitsWhenNil() throws {
+        let cid = ChannelId.unique
+        let filter = Filter<ChannelListFilterScope>.equal(.cid, to: cid)
+        let sort = Sorting<ChannelListSortingKey>.init(key: .cid)
+        let pageSize = Int.channelsPageSize
+
+        var query = ChannelListQuery(
+            filter: filter,
+            sort: [sort],
+            pageSize: pageSize,
+            messagesLimit: nil,
+            membersLimit: nil
+        )
+        query.options = .watch
+
+        let expectedData: [String: Any] = [
+            "limit": pageSize,
+            "sort": [["field": "cid", "direction": -1] as [String: Any]],
+            "filter_conditions": ["cid": ["$eq": cid.rawValue]],
+            "watch": true
+        ]
+
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
+        let encodedJSON = try JSONEncoder.default.encode(query)
+
+        AssertJSONEqual(expectedJSON, encodedJSON)
+    }
 }
 
 private extension ChatChannel {
