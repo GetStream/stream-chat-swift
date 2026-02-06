@@ -31,7 +31,7 @@ public struct ChannelListQuery: Encodable, LocalConvertibleSortingQuery {
     public let membersLimit: Int?
     /// Query options.
     public var options: QueryOptions = [.watch]
-    
+
     /// Init a channels query.
     /// - Parameters:
     ///   - filter: a channels filter.
