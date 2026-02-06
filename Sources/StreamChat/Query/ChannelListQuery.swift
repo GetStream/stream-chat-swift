@@ -26,9 +26,9 @@ public struct ChannelListQuery: Encodable, LocalConvertibleSortingQuery {
     /// A pagination.
     public var pagination: Pagination
     /// A number of messages inside each channel.
-    public let messagesLimit: Int
+    public let messagesLimit: Int?
     /// Number of members inside each channel.
-    public let membersLimit: Int
+    public let membersLimit: Int?
     /// Query options.
     public var options: QueryOptions = [.watch]
 
@@ -37,13 +37,14 @@ public struct ChannelListQuery: Encodable, LocalConvertibleSortingQuery {
     ///   - filter: a channels filter.
     ///   - sort: a sorting list for channels.
     ///   - pageSize: a page size for pagination.
-    ///   - messagesLimit: a number of messages for the channel to be retrieved.
+    ///   - messagesLimit: a number of messages for the channel to be retrieved. Pass `nil` to omit the request value.
+    ///   - membersLimit: a number of members for the channel to be retrieved. Pass `nil` to omit the request value.
     public init(
         filter: Filter<ChannelListFilterScope>,
         sort: [Sorting<ChannelListSortingKey>] = [],
         pageSize: Int = .channelsPageSize,
-        messagesLimit: Int = .messagesPageSize,
-        membersLimit: Int = .channelMembersPageSize
+        messagesLimit: Int? = nil,
+        membersLimit: Int? = nil
     ) {
         self.filter = filter
         self.sort = sort
@@ -60,8 +61,13 @@ public struct ChannelListQuery: Encodable, LocalConvertibleSortingQuery {
             try container.encode(sort, forKey: .sort)
         }
 
-        try container.encode(messagesLimit, forKey: .messagesLimit)
-        try container.encode(membersLimit, forKey: .membersLimit)
+        if let messagesLimit {
+            try container.encode(messagesLimit, forKey: .messagesLimit)
+        }
+
+        if let membersLimit {
+            try container.encode(membersLimit, forKey: .membersLimit)
+        }
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
     }
