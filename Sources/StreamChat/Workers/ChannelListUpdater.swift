@@ -23,7 +23,7 @@ class ChannelListUpdater: Worker {
                 var initialActions: ((DatabaseSession) -> Void)?
                 if isInitialFetch {
                     initialActions = { session in
-                        let filterHash = channelListQuery.filter.filterHash
+                        let filterHash = channelListQuery.filterHash
                         guard let queryDTO = session.channelListQuery(filterHash: filterHash) else { return }
                         queryDTO.channels.removeAll()
                     }
@@ -170,7 +170,7 @@ class ChannelListUpdater: Worker {
 
 extension DatabaseSession {
     func getChannelWithQuery(cid: ChannelId, query: ChannelListQuery) -> (ChannelDTO, ChannelListQueryDTO)? {
-        guard let queryDTO = channelListQuery(filterHash: query.filter.filterHash) else {
+        guard let queryDTO = channelListQuery(filterHash: query.filterHash) else {
             log.debug("Channel list query has not yet created \(query)")
             return nil
         }

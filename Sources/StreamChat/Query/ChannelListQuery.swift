@@ -6,9 +6,13 @@ import Foundation
 
 /// A query is used for querying specific channels from backend.
 /// You can specify filter, sorting, pagination, limit for fetched messages in channel and other options.
+/// Alternatively, you can use a predefined filter with template values.
 public struct ChannelListQuery: Encodable, LocalConvertibleSortingQuery {
     private enum CodingKeys: String, CodingKey {
         case filter = "filter_conditions"
+        case predefinedFilter = "predefined_filter"
+        case filterValues = "filter_values"
+        case sortValues = "sort_values"
         case sort
         case user = "user_details"
         case state
@@ -23,6 +27,13 @@ public struct ChannelListQuery: Encodable, LocalConvertibleSortingQuery {
     public let filter: Filter<ChannelListFilterScope>
     /// A sorting for the query (see `Sorting`).
     public let sort: [Sorting<ChannelListSortingKey>]
+    /// A predefined filter name to use instead of `filter` and `sort`.
+    /// When set, `filter` and `sort` are not sent to the backend.
+    public var predefinedFilter: String? = nil
+    /// Values interpolated into the predefined filter template placeholders.
+    public var filterValues: [String: RawJSON]? = nil
+    /// Values interpolated into the predefined sort template placeholders.
+    public var sortValues: [String: RawJSON]? = nil
     /// A pagination.
     public var pagination: Pagination
     /// A number of messages inside each channel.
@@ -52,12 +63,50 @@ public struct ChannelListQuery: Encodable, LocalConvertibleSortingQuery {
         self.membersLimit = membersLimit
     }
 
+    /// Init a channels query with a predefined filter.
+    /// - Parameters:
+    ///   - predefinedFilter: A predefined filter name to use instead of `filter` and `sort`.
+    ///   - filterValues: Values interpolated into the predefined filter template placeholders.
+    ///   - sortValues: Values interpolated into the predefined sort template placeholders.
+    ///   - sort: Local sorting used when observing channels in the database.
+    ///   - pageSize: A page size for pagination.
+    ///   - messagesLimit: A number of messages for the channel to be retrieved.
+    ///   - membersLimit: A number of members for the channel to be retrieved.
+    public init(
+        predefinedFilter: String,
+        filterValues: [String: RawJSON]? = nil,
+        sortValues: [String: RawJSON]? = nil,
+        sort: [Sorting<ChannelListSortingKey>] = [],
+        pageSize: Int = .channelsPageSize,
+        messagesLimit: Int = .messagesPageSize,
+        membersLimit: Int = .channelMembersPageSize
+    ) {
+        filter = .and([])
+        self.sort = sort
+        pagination = Pagination(pageSize: pageSize)
+        self.messagesLimit = messagesLimit
+        self.membersLimit = membersLimit
+        self.predefinedFilter = predefinedFilter
+        self.filterValues = filterValues
+        self.sortValues = sortValues
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(filter, forKey: .filter)
+        if let predefinedFilter {
+            try container.encode(predefinedFilter, forKey: .predefinedFilter)
+            if let filterValues {
+                try container.encode(filterValues, forKey: .filterValues)
+            }
+            if let sortValues {
+                try container.encode(sortValues, forKey: .sortValues)
+            }
+        } else {
+            try container.encode(filter, forKey: .filter)
 
-        if !sort.isEmpty {
-            try container.encode(sort, forKey: .sort)
+            if !sort.isEmpty {
+                try container.encode(sort, forKey: .sort)
+            }
         }
 
         try container.encode(messagesLimit, forKey: .messagesLimit)
@@ -69,7 +118,29 @@ public struct ChannelListQuery: Encodable, LocalConvertibleSortingQuery {
 
 extension ChannelListQuery: CustomDebugStringConvertible {
     public var debugDescription: String {
-        "Filter: \(filter) | Sort: \(sort)"
+        if let predefinedFilter {
+            return "PredefinedFilter: \(predefinedFilter) | Sort: \(sort)"
+        }
+        return "Filter: \(filter) | Sort: \(sort)"
+    }
+}
+
+extension ChannelListQuery {
+    var filterHash: String {
+        guard let predefinedFilter else {
+            return filter.filterHash
+        }
+        let filterValuesHash = Self.sortedHash(from: filterValues)
+        let sortValuesHash = Self.sortedHash(from: sortValues)
+        return "predefined_filter:\(predefinedFilter)|filter_values:\(filterValuesHash)|sort_values:\(sortValuesHash)"
+    }
+
+    private static func sortedHash(from values: [String: RawJSON]?) -> String {
+        guard let values, !values.isEmpty else { return "nil" }
+        return values
+            .sorted { $0.key < $1.key }
+            .map { "\($0.key)=\($0.value)" }
+            .joined(separator: "|")
     }
 }
 

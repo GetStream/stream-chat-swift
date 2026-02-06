@@ -19,6 +19,12 @@ final class ChannelListLinker {
     private let query: ChannelListQuery
     private let worker: ChannelListUpdater
     private let channelWatcherHandler: ChannelWatcherHandling
+    private var canEvaluateChannelMembership: Bool {
+        if filter != nil {
+            return true
+        }
+        return query.predefinedFilter == nil
+    }
 
     init(
         query: ChannelListQuery,
@@ -91,6 +97,7 @@ final class ChannelListLinker {
     
     /// Handles if a channel should be linked to the current query or not.
     private func linkChannelIfNeeded(_ channel: ChatChannel) {
+        guard canEvaluateChannelMembership else { return }
         guard shouldChannelBelongToCurrentQuery(channel) else { return }
         isInChannelList(channel) { [worker, query, channelWatcherHandler] exists, belongsToOtherQuery in
             guard !exists else { return }
@@ -116,6 +123,7 @@ final class ChannelListLinker {
 
     /// Handles if a channel should be unlinked from the current query or not.
     private func unlinkChannelIfNeeded(_ channel: ChatChannel) {
+        guard canEvaluateChannelMembership else { return }
         guard !shouldChannelBelongToCurrentQuery(channel) else { return }
         isInChannelList(channel) { [worker, query] exists, _ in
             guard exists else { return }

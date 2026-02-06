@@ -51,7 +51,7 @@ final class ChannelListController_Tests: XCTestCase {
     func test_clientAndQueryAreCorrect() {
         let controller = client.channelListController(query: query)
         XCTAssert(controller.client === client)
-        XCTAssertEqual(controller.query.filter.filterHash, query.filter.filterHash)
+        XCTAssertEqual(controller.query.filterHash, query.filterHash)
     }
 
     // MARK: - Synchronize tests
@@ -158,7 +158,7 @@ final class ChannelListController_Tests: XCTestCase {
         controller = nil
 
         // Assert the updater is called with the query
-        XCTAssertEqual(env.channelListUpdater!.update_queries.first?.filter.filterHash, query.filter.filterHash)
+        XCTAssertEqual(env.channelListUpdater!.update_queries.first?.filterHash, query.filterHash)
 
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
@@ -220,7 +220,7 @@ final class ChannelListController_Tests: XCTestCase {
         controller = nil
 
         // Assert the updater is called with the query
-        XCTAssertEqual(env.channelListUpdater?.update_queries.first?.filter.filterHash, query.filter.filterHash)
+        XCTAssertEqual(env.channelListUpdater?.update_queries.first?.filterHash, query.filterHash)
 
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
@@ -398,6 +398,20 @@ final class ChannelListController_Tests: XCTestCase {
 
         XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
         XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
+    }
+
+    func test_didReceiveEvent_whenPredefinedFilterQuery_shouldNotLinkChannelToQuery() {
+        setupControllerWithPredefinedFilterQuery()
+
+        let event = makeAddedChannelEvent(with: .mock(cid: .unique))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
+        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 0)
     }
 
     func test_didReceiveEvent_whenNotificationAddedToChannelEvent_whenChannelAlreadyPresent_shouldNotLinkChannelToQuery() throws {
@@ -579,6 +593,32 @@ final class ChannelListController_Tests: XCTestCase {
         wait(for: [eventExpectation], timeout: defaultTimeout)
 
         AssertAsync.willBeEqual(env.channelListUpdater?.unlink_callCount, 1)
+    }
+
+    func test_didReceiveEvent_whenChannelUpdatedEvent_whenPredefinedFilterQuery_shouldNotUnlinkChannelFromQuery() throws {
+        setupControllerWithPredefinedFilterQuery()
+
+        // Save channel to the current query
+        let cid: ChannelId = .unique
+        writeAndWaitForChannelsUpdates { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        let event = makeChannelUpdatedEvent(with: .mock(cid: cid, memberCount: 4))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.channelListUpdater?.unlink_callCount, 0)
     }
 
     func test_didReceiveEvent_whenChannelUpdatedEvent__whenFilterMatches_shouldNotUnlinkChannelFromQuery() throws {
@@ -2073,6 +2113,21 @@ final class ChannelListController_Tests: XCTestCase {
             query: query,
             client: client,
             filter: filter,
+            environment: env.environment
+        )
+        controller.synchronize()
+        waitForInitialChannelsUpdate()
+    }
+
+    private func setupControllerWithPredefinedFilterQuery() {
+        query = ChannelListQuery(
+            predefinedFilter: "user_messaging",
+            filterValues: ["user_id": .string(memberId)],
+            sort: [.init(key: .lastMessageAt)]
+        )
+        controller = ChatChannelListController(
+            query: query,
+            client: client,
             environment: env.environment
         )
         controller.synchronize()

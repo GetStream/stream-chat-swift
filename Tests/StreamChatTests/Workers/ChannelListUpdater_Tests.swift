@@ -112,7 +112,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         // Assert the data is stored in the DB
         var queryDTO: ChannelListQueryDTO? {
-            database.viewContext.channelListQuery(filterHash: query.filter.filterHash)
+            database.viewContext.channelListQuery(filterHash: query.filterHash)
         }
         AssertAsync {
             Assert.willBeTrue(queryDTO != nil)
@@ -134,7 +134,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         var channelsFromQuery: [ChatChannel] {
             database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
+                filterHash: query.filterHash
             )?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
@@ -170,7 +170,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         var channelsFromQuery: [ChatChannel] {
             database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
+                filterHash: query.filterHash
             )?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
@@ -206,7 +206,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         var channelsFromQuery: [ChatChannel] {
             database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
+                filterHash: query.filterHash
             )?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
@@ -410,7 +410,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         var channelsInQuery: [ChatChannel] {
             database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
+                filterHash: query.filterHash
             )?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
@@ -432,7 +432,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         var channelsInQuery: [ChatChannel] {
             database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
+                filterHash: query.filterHash
             )?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
@@ -449,7 +449,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
     private func channels(for query: ChannelListQuery, database: DatabaseContainer) -> Set<ChannelDTO> {
         let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
-        request.predicate = NSPredicate(format: "filterHash == %@", query.filter.filterHash)
+        request.predicate = NSPredicate(format: "filterHash == %@", query.filterHash)
         return (try? database.viewContext.fetch(request).first)?.channels ?? Set()
     }
 }

@@ -109,6 +109,12 @@ final class DemoChatChannelListVC: ChatChannelListVC {
     )
     
     lazy var premiumTaggedChannelsQuery: ChannelListQuery = .init(filter: .in(.filterTags, values: ["premium"]))
+    
+    lazy var predefinedFilterChannelsQuery: ChannelListQuery = .init(
+        predefinedFilter: "user_messaging",
+        filterValues: ["user_id": .string(currentUserId)],
+        sort: [.init(key: .lastMessageAt)]
+    )
 
     var demoRouter: DemoChatChannelListRouter? {
         router as? DemoChatChannelListRouter
@@ -267,6 +273,15 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 self?.setPremiumTaggedChannelsQuery()
             }
         )
+        
+        let predefinedFilterChannelsAction = UIAlertAction(
+            title: "Predefined Filter Channels",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Predefined Filter Channels"
+                self?.setPredefinedFilterChannelsQuery()
+            }
+        )
 
         presentAlert(
             title: "Filter Channels",
@@ -283,7 +298,8 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 archivedChannelsAction,
                 equalMembersAction,
                 channelRoleChannelsAction,
-                taggedChannelsAction
+                taggedChannelsAction,
+                predefinedFilterChannelsAction
             ].sorted(by: { $0.title ?? "" < $1.title ?? "" }),
             preferredStyle: .actionSheet,
             sourceView: filterChannelsButton
@@ -342,6 +358,10 @@ final class DemoChatChannelListVC: ChatChannelListVC {
     
     func setPremiumTaggedChannelsQuery() {
         replaceQuery(premiumTaggedChannelsQuery)
+    }
+    
+    func setPredefinedFilterChannelsQuery() {
+        replaceQuery(predefinedFilterChannelsQuery)
     }
 
     func setInitialChannelsQuery() {

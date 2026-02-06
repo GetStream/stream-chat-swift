@@ -441,7 +441,7 @@ extension NSManagedObjectContext {
     }
 
     func delete(query: ChannelListQuery) {
-        guard let dto = channelListQuery(filterHash: query.filter.filterHash) else { return }
+        guard let dto = channelListQuery(filterHash: query.filterHash) else { return }
 
         delete(dto)
     }
@@ -474,23 +474,25 @@ extension ChannelDTO {
         
         request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
 
-        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
+        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filterHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 
         var subpredicates: [NSPredicate] = [
             matchingQuery, notDeleted
         ]
 
-        // If a hidden filter is not provided, we add a default hidden filter == 0.
-        // The backend appends a `hidden: false` filter when it's not specified, so we need to do the same.
-        // Additionally we also check for blocked filter. Only if blocked or hidden filters are not provider,
-        // we add default hidden filter.
-        if query.filter.hiddenFilterValue == nil && query.filter.blockedFilterValue == nil {
-            subpredicates.append(NSPredicate(format: "\(#keyPath(ChannelDTO.isHidden)) == 0"))
-        }
+        if query.predefinedFilter == nil {
+            // If a hidden filter is not provided, we add a default hidden filter == 0.
+            // The backend appends a `hidden: false` filter when it's not specified, so we need to do the same.
+            // Additionally we also check for blocked filter. Only if blocked or hidden filters are not provider,
+            // we add default hidden filter.
+            if query.filter.hiddenFilterValue == nil && query.filter.blockedFilterValue == nil {
+                subpredicates.append(NSPredicate(format: "\(#keyPath(ChannelDTO.isHidden)) == 0"))
+            }
 
-        if chatClientConfig.isChannelAutomaticFilteringEnabled, let filterPredicate = query.filter.predicate {
-            subpredicates.append(filterPredicate)
+            if chatClientConfig.isChannelAutomaticFilteringEnabled, let filterPredicate = query.filter.predicate {
+                subpredicates.append(filterPredicate)
+            }
         }
 
         request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)

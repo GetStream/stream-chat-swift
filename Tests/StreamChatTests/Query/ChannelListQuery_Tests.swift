@@ -41,6 +41,39 @@ final class ChannelListQuery_Tests: XCTestCase {
         AssertJSONEqual(expectedJSON, encodedJSON)
     }
 
+    func test_channelListQuery_encodedCorrectly_withPredefinedFilter() throws {
+        let pageSize = Int.channelsPageSize
+        let messagesLimit = Int.messagesPageSize
+        let membersLimit = Int.channelMembersPageSize
+        let filterValues: [String: RawJSON] = ["user_id": .string("user123")]
+        let sortValues: [String: RawJSON] = ["sort_field": .string("last_message_at")]
+
+        var query = ChannelListQuery(
+            predefinedFilter: "user_messaging",
+            filterValues: filterValues,
+            sortValues: sortValues,
+            pageSize: pageSize,
+            messagesLimit: messagesLimit,
+            membersLimit: membersLimit
+        )
+        query.options = .watch
+
+        let expectedData: [String: Any] = [
+            "limit": pageSize,
+            "message_limit": messagesLimit,
+            "member_limit": membersLimit,
+            "predefined_filter": "user_messaging",
+            "filter_values": ["user_id": "user123"],
+            "sort_values": ["sort_field": "last_message_at"],
+            "watch": true
+        ]
+
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
+        let encodedJSON = try JSONEncoder.default.encode(query)
+
+        AssertJSONEqual(expectedJSON, encodedJSON)
+    }
+
     func test_runtimeSortingValues_returnsEmptyIfNoCustomKey() {
         let sorting = [
             Sorting(key: ChannelListSortingKey.updatedAt),

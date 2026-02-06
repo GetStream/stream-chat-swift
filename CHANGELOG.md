@@ -3,7 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ✅ Added
+- Add support for predefined filters in `ChannelListQuery` for QueryChannels requests.
+
 ### 🔄 Changed
+- Skip automatic channel linking for predefined filter queries without a local filter.
 
 # [4.96.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.96.0)
 _January 13, 2026_
