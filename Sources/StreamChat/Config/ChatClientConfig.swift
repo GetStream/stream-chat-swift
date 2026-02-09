@@ -13,7 +13,7 @@ import Foundation
 ///     config.channel.keystrokeEventTimeout = 15
 ///   ```
 ///
-public struct ChatClientConfig {
+public final class ChatClientConfig {
     /// The `APIKey` unique for your chat app.
     ///
     /// The API key can be obtained by registering on [our website](https://getstream.io/chat/\).
@@ -31,7 +31,7 @@ public struct ChatClientConfig {
 
     /// The folder `ChatClient` uses to store its local cache files.
     public var localStorageFolderURL: URL? = {
-        Self.initLocalStorageFolderURL(groupIdentifier: nil)
+        initLocalStorageFolderURL(groupIdentifier: nil)
     }()
 
     static func initLocalStorageFolderURL(groupIdentifier: String?) -> URL? {
@@ -243,7 +243,7 @@ extension ChatClientConfig {
     ///
     /// - Parameter apiKeyString: The string with API key of the chat app the `ChatClient` connects to.
     ///
-    public init(apiKeyString: String) {
+    public convenience init(apiKeyString: String) {
         self.init(apiKey: APIKey(apiKeyString))
     }
 }

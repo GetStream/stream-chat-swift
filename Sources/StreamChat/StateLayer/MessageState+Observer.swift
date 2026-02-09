@@ -5,7 +5,7 @@
 import Foundation
 
 extension MessageState {
-    struct Observer {
+    final class Observer {
         private let messageId: MessageId
         private let messageObserver: StateLayerDatabaseObserver<EntityResult, ChatMessage, MessageDTO>
         private let reactionsObserver: StateLayerDatabaseObserver<ListResult, ChatMessageReaction, MessageReactionDTO>

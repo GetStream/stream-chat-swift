@@ -1205,7 +1205,7 @@ private struct Queue<Element> {
 }
 
 private extension ChatClientConfig {
-    init() {
-        self = .init(apiKey: APIKey(.unique))
+    convenience init() {
+        self.init(apiKey: APIKey(.unique))
     }
 }

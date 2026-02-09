@@ -5,7 +5,7 @@
 import Foundation
 
 /// The middleware listens for `MemberEvent`s and updates `ChannelDTO`s accordingly.
-struct MemberEventMiddleware: EventMiddleware {
+final class MemberEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         do {
             switch event {

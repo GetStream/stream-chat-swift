@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct DraftUpdaterMiddleware: EventMiddleware {
+final class DraftUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
         case let event as DraftUpdatedEventDTO:

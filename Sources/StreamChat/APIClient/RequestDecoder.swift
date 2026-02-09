@@ -18,7 +18,7 @@ protocol RequestDecoder {
 }
 
 /// The default implementation of `RequestDecoder`.
-struct DefaultRequestDecoder: RequestDecoder {
+final class DefaultRequestDecoder: RequestDecoder {
     func decodeRequestResponse<ResponseType: Decodable>(data: Data?, response: URLResponse?, error: Error?) throws -> ResponseType {
         // Handle the error case
         guard error == nil else {

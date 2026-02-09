@@ -6,7 +6,7 @@ import CoreServices
 import Foundation
 
 /// A type representing the app settings.
-public struct AppSettings {
+public final class AppSettings {
     /// The name of the app.
     public let name: String
     /// The the file uploading configuration.
@@ -17,8 +17,22 @@ public struct AppSettings {
     public let autoTranslationEnabled: Bool
     /// A boolean value determining if async url enrichment is enabled.
     public let asyncUrlEnrichEnabled: Bool
+    
+    init(
+        name: String,
+        fileUploadConfig: UploadConfig,
+        imageUploadConfig: UploadConfig,
+        autoTranslationEnabled: Bool,
+        asyncUrlEnrichEnabled: Bool
+    ) {
+        self.name = name
+        self.fileUploadConfig = fileUploadConfig
+        self.imageUploadConfig = imageUploadConfig
+        self.autoTranslationEnabled = autoTranslationEnabled
+        self.asyncUrlEnrichEnabled = asyncUrlEnrichEnabled
+    }
 
-    public struct UploadConfig {
+    public final class UploadConfig {
         /// The allowed file extensions.
         public let allowedFileExtensions: [String]
         /// The blocked file extensions.
@@ -30,6 +44,20 @@ public struct AppSettings {
         /// The file size limit allowed in Bytes.
         /// This value is configurable from Stream's Dashboard App Settings.
         public let sizeLimitInBytes: Int64?
+        
+        init(
+            allowedFileExtensions: [String],
+            blockedFileExtensions: [String],
+            allowedMimeTypes: [String],
+            blockedMimeTypes: [String],
+            sizeLimitInBytes: Int64?
+        ) {
+            self.allowedFileExtensions = allowedFileExtensions
+            self.blockedFileExtensions = blockedFileExtensions
+            self.allowedMimeTypes = allowedMimeTypes
+            self.blockedMimeTypes = blockedMimeTypes
+            self.sizeLimitInBytes = sizeLimitInBytes
+        }
     }
 }
 

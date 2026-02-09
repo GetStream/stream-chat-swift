@@ -99,7 +99,7 @@ public protocol AssetPropertyLoading {
 }
 
 /// A concrete implementation of `AssetPropertyLoading`
-public struct StreamAssetPropertyLoader: AssetPropertyLoading {
+public final class StreamAssetPropertyLoader: AssetPropertyLoading {
     public init() {}
 
     public func loadProperties<Asset: AVAsset>(
@@ -111,8 +111,8 @@ public struct StreamAssetPropertyLoader: AssetPropertyLoading {
         // handler will be invoked only once, regardless of the number of
         // properties we are loading.
         // https://developer.apple.com/documentation/avfoundation/avasynchronouskeyvalueloading/1387321-loadvaluesasynchronously
-        asset.loadValuesAsynchronously(forKeys: properties.map(\.name)) {
-            handlePropertiesLoadingResult(
+        asset.loadValuesAsynchronously(forKeys: properties.map(\.name)) { [weak self] in
+            self?.handlePropertiesLoadingResult(
                 properties,
                 of: asset,
                 completion: completion

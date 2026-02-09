@@ -5,7 +5,7 @@
 import Foundation
 
 extension ReactionListState {
-    struct Observer {
+    final class Observer {
         private let reactionListObserver: StateLayerDatabaseObserver<ListResult, ChatMessageReaction, MessageReactionDTO>
         
         init(query: ReactionListQuery, database: DatabaseContainer) {

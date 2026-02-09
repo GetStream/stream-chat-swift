@@ -593,11 +593,11 @@ final class MessageUpdater_Mock: MessageUpdater {
 }
 
 extension MessageUpdater.MessageSearchResults {
-    static func empty() -> Self {
+    static func empty() -> MessageUpdater.MessageSearchResults {
         .make(api: [], next: nil, models: [])
     }
     
-    static func make(api apiMessages: [MessagePayload.Boxed] = [], next: String? = nil, models: [ChatMessage] = []) -> Self {
+    static func make(api apiMessages: [MessagePayload.Boxed] = [], next: String? = nil, models: [ChatMessage] = []) -> MessageUpdater.MessageSearchResults {
         MessageUpdater.MessageSearchResults(payload: MessageSearchResultsPayload(results: apiMessages, next: next), models: models)
     }
 }

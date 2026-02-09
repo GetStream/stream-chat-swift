@@ -5,7 +5,7 @@
 import Foundation
 
 /// A middleware which updates a channel's read events as websocket events arrive.
-struct ChannelReadUpdaterMiddleware: EventMiddleware {
+final class ChannelReadUpdaterMiddleware: EventMiddleware {
     private var newProcessedMessageIds: () -> Set<MessageId>
 
     init(newProcessedMessageIds: @escaping () -> Set<MessageId>) {

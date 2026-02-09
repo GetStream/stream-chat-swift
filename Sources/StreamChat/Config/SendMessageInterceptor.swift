@@ -4,14 +4,19 @@
 
 import Foundation
 
-/// A struct that contains additional info when sending messages.
-public struct SendMessageOptions {
+/// Contains additional info when sending messages.
+public final class SendMessageOptions {
     public let skipPush: Bool
     public let skipEnrichUrl: Bool
+    
+    public init(skipPush: Bool = false, skipEnrichUrl: Bool = false) {
+        self.skipPush = skipPush
+        self.skipEnrichUrl = skipEnrichUrl
+    }
 }
 
-/// A struct that represents the response when sending a message.
-public struct SendMessageResponse {
+/// Represents the response when sending a message.
+public final class SendMessageResponse {
     public let message: ChatMessage
 
     public init(message: ChatMessage) {

@@ -5,7 +5,7 @@
 import Foundation
 
 extension MemberListState {
-    struct Observer {
+    final class Observer {
         private let memberListObserver: StateLayerDatabaseObserver<ListResult, ChatChannelMember, MemberDTO>
         
         init(query: ChannelMemberListQuery, database: DatabaseContainer) {

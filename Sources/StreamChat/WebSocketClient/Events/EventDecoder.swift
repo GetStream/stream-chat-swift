@@ -5,7 +5,7 @@
 import Foundation
 
 /// A lightweight object for decoding incoming events.
-struct EventDecoder {
+final class EventDecoder {
     func decode(from data: Data) throws -> Event {
         let decoder = JSONDecoder.default
         do {

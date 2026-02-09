@@ -268,7 +268,7 @@ public class PollController: DataController, DelegateCallable, DataStoreProvider
 }
 
 /// Represents the visibility of votes in a poll.
-public struct VotingVisibility: RawRepresentable, Equatable {
+public final class VotingVisibility: RawRepresentable, Equatable {
     public let rawValue: String
 
     public init(rawValue: String) {
@@ -276,9 +276,9 @@ public struct VotingVisibility: RawRepresentable, Equatable {
     }
     
     /// Votes are public and can be seen by everyone.
-    public static let `public` = Self(rawValue: "public")
+    public static let `public` = VotingVisibility(rawValue: "public")
     /// Votes are anonymous and cannot be attributed to individual users.
-    public static let anonymous = Self(rawValue: "anonymous")
+    public static let anonymous = VotingVisibility(rawValue: "anonymous")
 }
 
 extension PollController {

@@ -5,7 +5,7 @@
 import Foundation
 
 /// A middleware that automatically marks channels as delivered when new messages are received.
-class ChannelDeliveredMiddleware: EventMiddleware {
+final class ChannelDeliveredMiddleware: EventMiddleware {
     /// The delivery tracker that manages pending deliveries and throttling.
     private let deliveryTracker: ChannelDeliveryTracker
     

@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct ThreadUpdaterMiddleware: EventMiddleware {
+final class ThreadUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
         case let event as MessageReadEventDTO:

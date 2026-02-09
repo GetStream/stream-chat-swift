@@ -5,7 +5,7 @@
 import Foundation
 
 /// The middleware listens for `UserUpdatedEvent`s and updates the database accordingly.
-struct UserUpdateMiddleware: EventMiddleware {
+final class UserUpdateMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         guard let userUpdatedEvent = event as? UserUpdatedEventDTO else { return event }
         do {

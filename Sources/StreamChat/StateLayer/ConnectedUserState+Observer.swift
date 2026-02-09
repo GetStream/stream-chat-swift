@@ -5,7 +5,7 @@
 import Foundation
 
 extension ConnectedUserState {
-    struct Observer {
+    final class Observer {
         private let userObserver: StateLayerDatabaseObserver<EntityResult, CurrentChatUser, CurrentUserDTO>
         
         init(database: DatabaseContainer) {

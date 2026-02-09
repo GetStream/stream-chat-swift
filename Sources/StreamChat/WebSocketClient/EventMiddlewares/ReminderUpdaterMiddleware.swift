@@ -4,7 +4,7 @@
 
 import Foundation
 
-struct ReminderUpdaterMiddleware: EventMiddleware {
+final class ReminderUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
         case let event as ReminderCreatedEventDTO:

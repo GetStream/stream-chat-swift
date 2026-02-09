@@ -1100,11 +1100,16 @@ class MessageUpdater: Worker {
 }
 
 extension MessageUpdater {
-    struct MessageSearchResults {
+    final class MessageSearchResults {
         let payload: MessageSearchResultsPayload
         let models: [ChatMessage]
 
         var next: String? { payload.next }
+        
+        init(payload: MessageSearchResultsPayload, models: [ChatMessage]) {
+            self.payload = payload
+            self.models = models
+        }
     }
 }
 

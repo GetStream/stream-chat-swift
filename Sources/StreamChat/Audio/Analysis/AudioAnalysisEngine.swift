@@ -5,18 +5,18 @@
 import AVFoundation
 
 /// An object responsible to coordinate the audio analysis pipeline
-public struct AudioAnalysisEngine {
+public final class AudioAnalysisEngine {
     /// The loader that will be called to when loading asset properties is required
     private let assetPropertiesLoader: AssetPropertyLoading
 
     /// The analyser that will be used to analyse an audio file
     private let audioAnalyser: AudioAnalysing
 
-    public init() throws {
+    public convenience init() throws {
         try self.init(assetPropertiesLoader: StreamAssetPropertyLoader())
     }
 
-    public init(
+    public convenience init(
         assetPropertiesLoader: AssetPropertyLoading
     ) throws {
         self.init(
@@ -65,7 +65,8 @@ public struct AudioAnalysisEngine {
         assetPropertiesLoader.loadProperties(
             [.init(\.duration)],
             of: asset
-        ) { result in
+        ) { [weak self] result in
+            guard let self else { return }
             switch result {
             case let .success(loadedAsset):
                 do {

@@ -1288,7 +1288,7 @@ public extension LivestreamChannelControllerDelegate {
 }
 
 /// Configuration options for message limiting in LivestreamChannelController.
-public struct MaxMessageLimitOptions {
+public final class MaxMessageLimitOptions {
     /// The maximum number of messages to keep in memory.
     /// When this limit is reached, older messages will be discarded.
     public let maxLimit: Int

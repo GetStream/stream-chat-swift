@@ -56,7 +56,7 @@ protocol TimerControl {
 extension DispatchWorkItem: TimerControl {}
 
 /// Default real-world implementations of timers.
-struct DefaultTimer: Timer {
+class DefaultTimer: Timer {
     @discardableResult
     static func schedule(
         timeInterval: TimeInterval,

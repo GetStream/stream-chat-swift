@@ -39,7 +39,7 @@ public protocol AudioRecording {
 /// Definition of a class to handle audio recording
 open class StreamAudioRecorder: NSObject, AudioRecording, AVAudioRecorderDelegate, AppStateObserverDelegate {
     /// Contains the configuration properties required by the AudioRecorder
-    public struct Configuration {
+    public final class Configuration {
         /// The settings that will be used to create **internally** the AVAudioRecorder instances
         public var audioRecorderSettings: [String: Any]
 

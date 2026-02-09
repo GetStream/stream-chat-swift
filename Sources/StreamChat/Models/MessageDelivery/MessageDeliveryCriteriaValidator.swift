@@ -22,7 +22,7 @@ protocol MessageDeliveryCriteriaValidating {
 }
 
 /// Default implementation of message delivery criteria validation.
-struct MessageDeliveryCriteriaValidator: MessageDeliveryCriteriaValidating {
+final class MessageDeliveryCriteriaValidator: MessageDeliveryCriteriaValidating {
     init() {}
     
     /// Determines if a message can be marked as delivered for a specific user in a channel.

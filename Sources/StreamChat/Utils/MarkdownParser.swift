@@ -5,7 +5,7 @@
 import Foundation
 
 /// A parser for markdown which generates a styled attributed string.
-public struct MarkdownParser {
+public final class MarkdownParser {
     public init() {}
     
     /// Creates an attributed string from a Markdown-formatted string using the provided style attributes.
@@ -221,7 +221,7 @@ public struct MarkdownParser {
 @available(macOS 12, *)
 extension MarkdownParser {
     /// Options that affect how the Markdown string is parsed and styled.
-    public struct ParsingOptions {
+    public final class ParsingOptions {
         public init(layoutDirectionLeftToRight: Bool = true) {
             self.layoutDirectionLeftToRight = layoutDirectionLeftToRight
         }
@@ -286,7 +286,7 @@ private extension AttributedString {
 // Note: newlines are used instead of paragraph style because SwiftUI does render paragraph styles
 @available(iOS 15.0, *)
 @available(macOS 12, *)
-private struct PresentationIntentStyling {
+private final class PresentationIntentStyling {
     let range: Range<AttributedString.Index>
     let components: [PresentationIntent.IntentType]
     var paragraphId: Int?
@@ -302,5 +302,31 @@ private struct PresentationIntentStyling {
     var isOnlyParagraph: Bool {
         components.count == 1 &&
             components.allSatisfy { $0.kind == .paragraph }
+    }
+    
+    init(
+        range: Range<AttributedString.Index>,
+        components: [PresentationIntent.IntentType],
+        paragraphId: Int? = nil,
+        quoteBlockId: Int? = nil,
+        precedingNewlineCount: Int = 0,
+        succeedingNewlineCount: Int = 0,
+        mergedAttributes: AttributeContainer? = nil,
+        prependedString: String = "",
+        listItemOrdinal: Int? = nil,
+        listId: Int? = nil,
+        isOrdered: Bool? = nil
+    ) {
+        self.range = range
+        self.components = components
+        self.paragraphId = paragraphId
+        self.quoteBlockId = quoteBlockId
+        self.precedingNewlineCount = precedingNewlineCount
+        self.succeedingNewlineCount = succeedingNewlineCount
+        self.mergedAttributes = mergedAttributes
+        self.prependedString = prependedString
+        self.listItemOrdinal = listItemOrdinal
+        self.listId = listId
+        self.isOrdered = isOrdered
     }
 }

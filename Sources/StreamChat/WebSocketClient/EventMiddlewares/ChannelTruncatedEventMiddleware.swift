@@ -5,7 +5,7 @@
 import Foundation
 
 /// The middleware listens for `ChannelTruncatedEventMiddleware` events and updates `ChannelDTO` accordingly.
-struct ChannelTruncatedEventMiddleware: EventMiddleware {
+final class ChannelTruncatedEventMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         guard
             let truncatedEvent = event as? ChannelTruncatedEventDTO

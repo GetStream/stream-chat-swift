@@ -5,7 +5,7 @@
 import Foundation
 
 extension UserListState {
-    struct Observer {
+    final class Observer {
         private let query: UserListQuery
         private let usersObserver: StateLayerDatabaseObserver<ListResult, ChatUser, UserDTO>
         

@@ -257,12 +257,18 @@ private class MessageSendingQueue {
 }
 
 extension MessageSendingQueue {
-    struct SendRequest: Hashable {
+    final class SendRequest: Hashable {
         let messageId: MessageId
         let cid: ChannelId
         let createdLocallyAt: Date
+        
+        init(messageId: MessageId, cid: ChannelId, createdLocallyAt: Date) {
+            self.messageId = messageId
+            self.cid = cid
+            self.createdLocallyAt = createdLocallyAt
+        }
 
-        static func == (lhs: Self, rhs: Self) -> Bool {
+        static func == (lhs: SendRequest, rhs: SendRequest) -> Bool {
             lhs.messageId == rhs.messageId
         }
 
