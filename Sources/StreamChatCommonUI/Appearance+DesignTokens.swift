@@ -14,12 +14,15 @@ extension Appearance {
         public var buttonPaddingXIconOnlyLg: CGFloat { 14 }
         public var buttonPaddingXIconOnlyMd: CGFloat { 10 }
         public var buttonPaddingXIconOnlySm: CGFloat { 6 }
+        public var buttonPaddingXIconOnlyXs: CGFloat { 4 }
         public var buttonPaddingXWithLabelLg: CGFloat { 16 }
         public var buttonPaddingXWithLabelMd: CGFloat { 16 }
         public var buttonPaddingXWithLabelSm: CGFloat { 16 }
+        public var buttonPaddingXWithLabelXs: CGFloat { 12 }
         public var buttonPaddingYLg: CGFloat { 14 }
         public var buttonPaddingYMd: CGFloat { 10 }
         public var buttonPaddingYSm: CGFloat { 6 }
+        public var buttonPaddingYXs: CGFloat { 4 }
         public var buttonRadiusFull: CGFloat { radiusFull }
         public var buttonRadiusLg: CGFloat { radiusFull }
         public var buttonRadiusMd: CGFloat { radiusFull }
@@ -27,6 +30,7 @@ extension Appearance {
         public var buttonVisualHeightLg: CGFloat { size48 }
         public var buttonVisualHeightMd: CGFloat { size40 }
         public var buttonVisualHeightSm: CGFloat { size32 }
+        public var buttonVisualHeightXs: CGFloat { size24 }
         public var composerRadiusFixed: CGFloat { radius3xl }
         public var composerRadiusFloating: CGFloat { radius3xl }
         public var darkElevation0: BoxShadow { BoxShadow(x: 0, y: 0, blur: 0, spread: 0, color: UIColor(hex: 0x00000000)) }
@@ -154,7 +158,7 @@ public struct BoxShadow {
     public let blur: CGFloat
     public let spread: CGFloat
     public let color: UIColor
-
+    
     public init(x: CGFloat, y: CGFloat, blur: CGFloat, spread: CGFloat, color: UIColor) {
         self.x = x
         self.y = y
