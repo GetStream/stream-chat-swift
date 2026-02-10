@@ -647,6 +647,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 guard let error = result.error else { return }
 
                 if self?.canKeepReactionState(for: error) == true { return }
+                if error.isClientError { return }
 
                 repository?.undoReactionDeletion(on: messageId, type: type, score: reactionScore ?? 1)
             }

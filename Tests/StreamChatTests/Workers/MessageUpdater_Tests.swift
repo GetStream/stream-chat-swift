@@ -1911,6 +1911,110 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(reactionReloaded.localState, .deletingFailed)
     }
 
+    func test_deleteReaction_clientError_localStorageEnabled_doesNotUndoDeletion() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = try setupReactionData(userId: userId)
+        let reactionType: MessageReactionType = .init(rawValue: .unique)
+
+        try database.writeSynchronously { _ in
+            try self.database.writableContext
+                .saveReaction(payload: .dummy(
+                    type: reactionType,
+                    messageId: messageId,
+                    user: .dummy(userId: userId),
+                    extraData: [:]
+                ), query: nil, cache: nil)
+        }
+
+        recreateUpdater(isLocalStorageEnabled: true)
+
+        // Simulate `deleteReaction` call.
+        let dbCall = XCTestExpectation(description: "database call")
+        messageUpdater.deleteReaction(reactionType, messageId: messageId) { error in
+            XCTAssertNil(error)
+            dbCall.fulfill()
+        }
+
+        // wait for the db call to be done
+        wait(for: [dbCall], timeout: defaultTimeout)
+
+        guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(reaction.localState, .pendingDelete)
+
+        // Simulate API response with a 4xx client error.
+        let clientError = ClientError(with: ErrorPayload(code: 0, message: "Bad request", statusCode: 400))
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(clientError))
+        apiClient.waitForRequest()
+
+        try database.writeSynchronously { _ in
+            try self.database.writableContext.save()
+        }
+
+        guard let reactionReloaded = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
+            XCTFail()
+            return
+        }
+
+        // Should keep pendingDelete, not undo to deletingFailed
+        XCTAssertEqual(reactionReloaded.localState, .pendingDelete)
+    }
+
+    func test_deleteReaction_clientError_localStorageDisabled_doesNotUndoDeletion() throws {
+        let userId: UserId = .unique
+        let messageId: MessageId = try setupReactionData(userId: userId)
+        let reactionType: MessageReactionType = .init(rawValue: .unique)
+
+        try database.writeSynchronously { _ in
+            try self.database.writableContext
+                .saveReaction(payload: .dummy(
+                    type: reactionType,
+                    messageId: messageId,
+                    user: .dummy(userId: userId),
+                    extraData: [:]
+                ), query: nil, cache: nil)
+        }
+
+        recreateUpdater(isLocalStorageEnabled: false)
+
+        // Simulate `deleteReaction` call.
+        let dbCall = XCTestExpectation(description: "database call")
+        messageUpdater.deleteReaction(reactionType, messageId: messageId) { error in
+            XCTAssertNil(error)
+            dbCall.fulfill()
+        }
+
+        // wait for the db call to be done
+        wait(for: [dbCall], timeout: defaultTimeout)
+
+        guard let reaction = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
+            XCTFail()
+            return
+        }
+
+        XCTAssertEqual(reaction.localState, .pendingDelete)
+
+        // Simulate API response with a 4xx client error.
+        let clientError = ClientError(with: ErrorPayload(code: 0, message: "Not found", statusCode: 404))
+        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(clientError))
+        apiClient.waitForRequest()
+
+        try database.writeSynchronously { _ in
+            try self.database.writableContext.save()
+        }
+
+        guard let reactionReloaded = database.viewContext.reaction(messageId: messageId, userId: userId, type: reactionType) else {
+            XCTFail()
+            return
+        }
+
+        // Should keep pendingDelete even with local storage disabled
+        XCTAssertEqual(reactionReloaded.localState, .pendingDelete)
+    }
+
     // MARK: - Pinning message
 
     func test_pinMessage_propagates_MessageDoesNotExist_Error() throws {
