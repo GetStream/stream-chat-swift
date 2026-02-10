@@ -1946,7 +1946,11 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(reaction.localState, .pendingDelete)
 
         // Simulate API response with a 4xx client error.
-        let clientError = ClientError(with: ErrorPayload(code: 0, message: "Bad request", statusCode: 400))
+        let clientError = ClientError(with: APIError(
+            code: 400,
+            message: .unique,
+            statusCode: 400
+        ))
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(clientError))
         apiClient.waitForRequest()
 
@@ -1998,7 +2002,11 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(reaction.localState, .pendingDelete)
 
         // Simulate API response with a 4xx client error.
-        let clientError = ClientError(with: ErrorPayload(code: 0, message: "Not found", statusCode: 404))
+        let clientError = ClientError(with: APIError(
+            code: 404,
+            message: .unique,
+            statusCode: 404
+        ))
         apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(clientError))
         apiClient.waitForRequest()
 
