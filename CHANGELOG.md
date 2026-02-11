@@ -4,6 +4,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### 🔄 Changed
+
+# [4.97.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.97.1)
+_February 11, 2026_
+
+### 🔄 Changed
 - Messages and members limit in `ChannelListQuery` are now using server-side defaults [#3951](https://github.com/GetStream/stream-chat-swift/pull/3951)
 
 # [4.97.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.97.0)
