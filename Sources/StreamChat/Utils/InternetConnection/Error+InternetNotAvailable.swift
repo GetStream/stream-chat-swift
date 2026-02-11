@@ -41,6 +41,13 @@ extension Error {
         return false
     }
 
+    var isClientError: Bool {
+        if let error = (self as? ClientError)?.apiError {
+            return error.isClientError
+        }
+        return false
+    }
+
     var isSocketNotConnectedError: Bool {
         has(parameters: (NSPOSIXErrorDomain, 57))
     }
