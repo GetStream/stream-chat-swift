@@ -732,16 +732,22 @@ class ChannelUpdater: Worker {
                     completion(.failure(ClientError.ChannelDoesNotExist(cid: cid)))
                     return
                 }
-                self?.database.write {
-                    try $0.savePushPreference(
+                self?.database.write({
+                    let dto = try $0.savePushPreference(
                         id: cid.rawValue,
                         payload: .init(
                             chatLevel: channelPref.level.rawValue,
                             disabledUntil: channelPref.disabledUntil
                         )
                     )
-                }
-                completion(.success(channelPref))
+                    $0.channel(cid: cid)?.pushPreference = dto
+                }, completion: { error in
+                    if let error = error {
+                        completion(.failure(error))
+                    } else {
+                        completion(.success(channelPref))
+                    }
+                })
             case let .failure(error):
                 completion(.failure(error))
             }
