@@ -2402,4 +2402,129 @@ final class ChannelUpdater_Tests: XCTestCase {
         // THEN
         AssertAsync.willBeTrue(completionError is ClientError.ChannelDoesNotExist)
     }
+
+    func test_setPushPreference_firstTimeUpdate_associatesPushPreferenceWithChannel() throws {
+        // GIVEN
+        // Create a channel without any push preference
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
+        }
+
+        // Verify channel exists but has no push preference initially
+        XCTAssertNotNil(database.viewContext.channel(cid: cid))
+        XCTAssertNil(database.viewContext.channel(cid: cid)?.pushPreference)
+
+        let preference = PushPreferenceRequestPayload(
+            chatLevel: "mentions",
+            channelId: cid.rawValue,
+            disabledUntil: nil,
+            removeDisable: true
+        )
+
+        let response = PushPreferencesPayloadResponse(
+            userPreferences: [:],
+            channelPreferences: [
+                "userId": [
+                    cid.rawValue: PushPreferencePayload(
+                        chatLevel: "mentions",
+                        disabledUntil: nil
+                    )
+                ]
+            ]
+        )
+
+        // WHEN
+        let exp = expectation(description: "setPushPreference completion")
+        var receivedPreference: PushPreference?
+        channelUpdater.setPushPreference(preference, cid: cid) { result in
+            if case .success(let pref) = result {
+                receivedPreference = pref
+            }
+            exp.fulfill()
+        }
+
+        apiClient.test_simulateResponse(.success(response))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // THEN
+        // Verify the push preference was successfully set
+        XCTAssertEqual(receivedPreference?.level, .mentions)
+        XCTAssertNil(receivedPreference?.disabledUntil)
+
+        // Verify the channel now has the push preference associated
+        let channel: ChatChannel? = try database.readSynchronously { session in
+            try session.channel(cid: cid)?.asModel()
+        }
+        XCTAssertNotNil(channel?.pushPreference)
+        XCTAssertEqual(channel?.pushPreference?.level, .mentions)
+        XCTAssertNil(channel?.pushPreference?.disabledUntil)
+    }
+
+    func test_setPushPreference_subsequentUpdate_updatesPushPreferenceCorrectly() throws {
+        // GIVEN
+        // Create a channel with an existing push preference
+        let cid: ChannelId = .unique
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
+            let pushPreferenceDTO = try session.savePushPreference(
+                id: cid.rawValue,
+                payload: .init(
+                    chatLevel: "none",
+                    disabledUntil: nil
+                )
+            )
+            session.channel(cid: cid)?.pushPreference = pushPreferenceDTO
+        }
+
+        // Verify channel has the initial push preference
+        XCTAssertEqual(database.viewContext.channel(cid: cid)?.pushPreference?.chatLevel, "none")
+
+        let preference = PushPreferenceRequestPayload(
+            chatLevel: "all",
+            channelId: cid.rawValue,
+            disabledUntil: nil,
+            removeDisable: true
+        )
+
+        let response = PushPreferencesPayloadResponse(
+            userPreferences: [:],
+            channelPreferences: [
+                "userId": [
+                    cid.rawValue: PushPreferencePayload(
+                        chatLevel: "all",
+                        disabledUntil: nil
+                    )
+                ]
+            ]
+        )
+
+        // WHEN
+        let exp = expectation(description: "setPushPreference completion")
+        var receivedPreference: PushPreference?
+        channelUpdater.setPushPreference(preference, cid: cid) { result in
+            if case .success(let pref) = result {
+                receivedPreference = pref
+            }
+            exp.fulfill()
+        }
+
+        apiClient.test_simulateResponse(.success(response))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // THEN
+        // Verify the push preference was successfully updated
+        XCTAssertEqual(receivedPreference?.level, .all)
+        XCTAssertNil(receivedPreference?.disabledUntil)
+
+        // Verify the channel's push preference was updated
+        let channel: ChatChannel? = try database.readSynchronously { session in
+            try session.channel(cid: cid)?.asModel()
+        }
+        XCTAssertNotNil(channel?.pushPreference)
+        XCTAssertEqual(channel?.pushPreference?.level, .all)
+        XCTAssertNil(channel?.pushPreference?.disabledUntil)
+    }
 }
