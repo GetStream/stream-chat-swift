@@ -34,6 +34,7 @@ public extension Appearance {
         public var subheadlineBold: Font = .subheadline.bold()
         public var body: Font = .body
         public var bodyBold: Font = .body.bold()
+        public var bodySemibold: Font = .body.weight(.semibold)
         public var bodyItalic: Font = .body.italic()
         public var headline: Font = .headline
         public var headlineBold: Font = .headline.bold()
