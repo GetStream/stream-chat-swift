@@ -41,6 +41,13 @@ extension Error {
         return false
     }
 
+    var isClientError: Bool {
+        if let error = (self as? ClientError)?.underlyingError as? ErrorPayload {
+            return error.isClientError
+        }
+        return false
+    }
+
     var isRateLimitError: Bool {
         if let error = (self as? ClientError)?.underlyingError as? ErrorPayload,
            error.statusCode == 429 {
