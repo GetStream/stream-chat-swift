@@ -120,6 +120,8 @@ public extension Appearance {
         public var reactionThumgsDownBig: UIImage = loadImageSafely(with: "reaction_thumbsdown_big")
         public var reactionWutSmall: UIImage = loadImageSafely(with: "reaction_wut_small")
         public var reactionWutBig: UIImage = loadImageSafely(with: "reaction_wut_big")
+        
+        public var reactionDetailsShowPicker: UIImage = loadSafely(systemName: "face.smiling")
 
         /// The reactions appearance used to display reactions in the message list.
         public var availableReactions: [MessageReactionType: ChatMessageReactionAppearanceType] {
