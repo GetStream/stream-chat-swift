@@ -7,7 +7,7 @@ require 'net/http'
 import 'Sonarfile'
 import 'Allurefile'
 
-xcode_version = ENV['XCODE_VERSION'] || '26.1.1'
+xcode_version = ENV['XCODE_VERSION'] || '26.2'
 xcode_project = 'StreamChat.xcodeproj'
 sdk_names = ['StreamChat', 'StreamChatUI']
 github_repo = ENV['GITHUB_REPOSITORY'] || 'GetStream/stream-chat-swift'
@@ -842,15 +842,16 @@ end
 
 lane :sources_matrix do
   {
-    e2e: ['Sources', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', xcode_project],
-    llc: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', xcode_project],
-    ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', xcode_project],
-    sample_apps: ['Sources', 'Examples', 'DemoApp', xcode_project],
-    integration: ['Sources', 'Integration', xcode_project],
-    ruby: ['fastlane', 'Gemfile', 'Gemfile.lock'],
-    size: ['Sources', xcode_project],
-    xcmetrics: ['Sources'],
-    public_interface: ['Sources']
+    e2e: ['Sources', 'StreamChatUITestsAppUITests', 'StreamChatUITestsApp', 'TestTools/StreamChatTestMockServer', '.github/workflows/smoke-checks.yml', xcode_project],
+    llc: ['Sources/StreamChat', 'Tests/StreamChatTests', 'Tests/Shared', 'TestTools/StreamChatTestTools', '.github/workflows/smoke-checks.yml', xcode_project],
+    ui: ['Sources', 'Tests/StreamChatUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
+    common_ui: ['Sources', 'Tests/StreamChatCommonUITests', 'Tests/Shared', '.github/workflows/smoke-checks.yml', xcode_project],
+    sample_apps: ['Sources', 'Examples', 'DemoApp', '.github/workflows/smoke-checks.yml', xcode_project],
+    integration: ['Sources', 'Integration', '.github/workflows/smoke-checks.yml', xcode_project],
+    ruby: ['fastlane', 'Gemfile', 'Gemfile.lock', '.github/workflows/smoke-checks.yml'],
+    size: ['Sources', '.github/workflows/smoke-checks.yml', xcode_project],
+    xcmetrics: ['Sources', '.github/workflows/smoke-checks.yml'],
+    public_interface: ['Sources', '.github/workflows/smoke-checks.yml']
   }
 end
 
