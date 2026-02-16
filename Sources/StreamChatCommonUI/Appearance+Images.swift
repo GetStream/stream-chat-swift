@@ -481,6 +481,18 @@ public extension Appearance {
             config: UIImage.SymbolConfiguration(weight: .regular)
         )
 
+        // MARK: - V5 - Media Badge Icons
+
+        public var videoMediaIcon: UIImage = loadSafely(
+            systemName: "video.fill",
+            config: UIImage.SymbolConfiguration(pointSize: 10)
+        )
+
+        public var audioMediaIcon: UIImage = loadSafely(
+            systemName: "mic.fill",
+            config: UIImage.SymbolConfiguration(pointSize: 10)
+        )
+
         // MARK: - V5 - File Type Preview Icons
 
         public var iconPdf: UIImage = loadImageSafely(with: "file-pdf")
