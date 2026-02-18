@@ -33,7 +33,7 @@ open class ChatMessageReactionsPickerVC: _ViewController, ThemeProvider, ChatMes
 
             return .init(
                 style: message.isSentByCurrentUser ? .bigOutgoing : .bigIncoming,
-                reactions: appearance.images.availableReactions
+                reactions: appearance.images.defaultReactions
                     .keys
                     .sorted { $0.rawValue < $1.rawValue }
                     .map {

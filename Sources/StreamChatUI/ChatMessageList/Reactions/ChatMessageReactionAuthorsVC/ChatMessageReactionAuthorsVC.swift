@@ -43,7 +43,7 @@ open class ChatMessageReactionAuthorsVC: _ViewController,
 
     /// The reactions of the message.
     open var content: [ChatMessageReaction] {
-        messageController.reactions.filter { appearance.images.availableReactions[$0.type] != nil }
+        messageController.reactions.filter { appearance.images.defaultReactions[$0.type] != nil }
     }
 
     /// A Boolean indicating whether the reactions are currently loading.

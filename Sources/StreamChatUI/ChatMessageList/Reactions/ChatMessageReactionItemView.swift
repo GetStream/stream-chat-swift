@@ -35,7 +35,7 @@ open class ChatMessageReactionItemView: _Button, AppearanceProvider {
     open var reactionImage: UIImage? {
         guard let content = content else { return nil }
 
-        let reactions = appearance.images.availableReactions[content.reaction.type]
+        let reactions = appearance.images.defaultReactions[content.reaction.type]
 
         return content.useBigIcon ?
             reactions?.largeIcon :

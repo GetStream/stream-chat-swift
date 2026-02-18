@@ -124,9 +124,9 @@ public extension Appearance {
         public var reactionDetailsShowPicker: UIImage = loadSafely(systemName: "face.smiling")
 
         /// The reactions appearance used to display reactions in the message list.
-        public var availableReactions: [MessageReactionType: ChatMessageReactionAppearanceType] {
+        public var defaultReactions: [MessageReactionType: ChatMessageReactionAppearanceType] {
             get {
-                _availableReactions ??
+                _defaultReactions ??
                     [
                         "love": ChatMessageReactionAppearance(
                             smallIcon: reactionLoveSmall,
@@ -150,10 +150,10 @@ public extension Appearance {
                         )
                     ]
             }
-            set { _availableReactions = newValue }
+            set { _defaultReactions = newValue }
         }
 
-        private var _availableReactions: [MessageReactionType: ChatMessageReactionAppearanceType]?
+        private var _defaultReactions: [MessageReactionType: ChatMessageReactionAppearanceType]?
 
         /// The reactions emoji unicode rendered in the push notifications.
         public var availableReactionPushEmojis: [MessageReactionType: String] {

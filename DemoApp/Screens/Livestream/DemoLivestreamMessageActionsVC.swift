@@ -72,7 +72,7 @@ class DemoLivestreamMessageActionsVC: UIViewController {
         guard let channel = livestreamChannelController?.channel,
               channel.canSendReaction else { return }
 
-        let availableReactions = Appearance.default.images.availableReactions
+        let availableReactions = Appearance.default.images.defaultReactions
         
         let reactionButtons = availableReactions
             .sorted { $0.key.rawValue < $1.key.rawValue }

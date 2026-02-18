@@ -49,7 +49,7 @@ open class ChatMessageReactionsView: _View, ThemeProvider {
         guard let content = content else { return }
 
         content.reactions.sorted(by: reactionsSorting).forEach { reaction in
-            if appearance.images.availableReactions[reaction.type] == nil {
+            if appearance.images.defaultReactions[reaction.type] == nil {
                 logWarning(unavailableReaction: reaction)
                 return
             }

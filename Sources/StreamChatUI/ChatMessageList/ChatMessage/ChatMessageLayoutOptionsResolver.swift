@@ -238,14 +238,14 @@ private extension ChatMessageLayoutOptionsResolver {
             return false
         }
 
-        let unhandledReactionTypes = message.latestReactions.filter { appearance.images.availableReactions[$0.type] == nil }
+        let unhandledReactionTypes = message.latestReactions.filter { appearance.images.defaultReactions[$0.type] == nil }
             .map(\.type)
 
         if !unhandledReactionTypes.isEmpty {
             log.warning("message contains unhandled reaction types \(unhandledReactionTypes)")
         }
 
-        return !message.latestReactions.filter { appearance.images.availableReactions[$0.type] != nil }.isEmpty
+        return !message.latestReactions.filter { appearance.images.defaultReactions[$0.type] != nil }.isEmpty
     }
 
     func shouldRenderTranslation(message: ChatMessage, channel: ChatChannel) -> Bool {
