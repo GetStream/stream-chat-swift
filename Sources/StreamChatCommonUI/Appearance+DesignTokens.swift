@@ -40,7 +40,7 @@ extension Appearance {
         public var darkElevation4: BoxShadow { BoxShadow(x: 0, y: 8, blur: 24, spread: 0, color: UIColor(hex: 0x00000047)) }
         public var deviceRadius: CGFloat { 62 }
         public var deviceSafeAreaBottom: CGFloat { space32 }
-        public var deviceSafeAreaTop: CGFloat { 62 }
+        public var deviceSafeAreaTop: CGFloat { 50 }
         public var iconSizeLg: CGFloat { size32 }
         public var iconSizeMd: CGFloat { size20 }
         public var iconSizeSm: CGFloat { size16 }
@@ -85,6 +85,7 @@ extension Appearance {
 
         let lineHeightLineHeight10: CGFloat = 10
         let lineHeightLineHeight12: CGFloat = 12
+        let lineHeightLineHeight13: CGFloat = 13
         let lineHeightLineHeight14: CGFloat = 14
         let lineHeightLineHeight15: CGFloat = 15
         let lineHeightLineHeight16: CGFloat = 16
