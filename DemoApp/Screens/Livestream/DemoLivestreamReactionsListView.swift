@@ -143,7 +143,7 @@ private struct ReactionRowView: View {
 
             Spacer()
 
-            if let reactionAppearance = Appearance.default.images.availableReactions[reaction.type] {
+            if let reactionAppearance = Appearance.default.images.defaultReactions[reaction.type] {
                 if #available(iOS 15.0, *) {
                     Image(uiImage: reactionAppearance.largeIcon)
                         .frame(width: 24, height: 24)

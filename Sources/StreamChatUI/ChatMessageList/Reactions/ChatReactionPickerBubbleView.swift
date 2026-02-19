@@ -33,7 +33,7 @@ open class ChatReactionPickerBubbleView: _View, ThemeProvider {
 
     override open func updateContent() {
         // We check if we have available images for the given type of reaction, if not, we hide the reaction.
-        guard !(content?.reactions.compactMap { appearance.images.availableReactions[$0.type] }.isEmpty ?? false)
+        guard !(content?.reactions.compactMap { appearance.images.defaultReactions[$0.type] }.isEmpty ?? false)
         else {
             isHidden = true
             return
