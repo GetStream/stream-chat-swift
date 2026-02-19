@@ -580,19 +580,6 @@ public extension Appearance {
             )
         )
 
-        public var overlayDismissIcon: UIImage = loadSafely(
-            systemName: "xmark",
-            config: UIImage.SymbolConfiguration(
-                pointSize: 10,
-                weight: .heavy
-            )
-        )
-
-        public var attachmentImageIcon: UIImage = loadSafely(
-            systemName: "camera",
-            config: UIImage.SymbolConfiguration(weight: .regular)
-        )
-
         public var attachmentLinkIcon: UIImage = loadSafely(
             systemName: "link",
             config: UIImage.SymbolConfiguration(weight: .regular)
@@ -603,7 +590,7 @@ public extension Appearance {
             config: UIImage.SymbolConfiguration(weight: .regular)
         )
 
-        public var attachmentDocIcon: UIImage = loadSafely(
+        public var attachmentDocumentIcon: UIImage = loadSafely(
             systemName: "document",
             config: UIImage.SymbolConfiguration(weight: .regular)
         )
@@ -621,6 +608,31 @@ public extension Appearance {
         public var attachmentPhotoIcon: UIImage = loadSafely(
             systemName: "photo",
             config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var attachmentCameraIcon: UIImage = loadSafely(
+            systemName: "camera",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var attachmentCommandIcon: UIImage = loadSafely(
+            systemName: "chevron.left.forwardslash.chevron.right",
+            config: UIImage.SymbolConfiguration(weight: .regular)
+        )
+
+        public var overlayDismissIcon: UIImage = loadSafely(
+            systemName: "xmark",
+            config: UIImage.SymbolConfiguration(
+                pointSize: 10,
+                weight: .heavy
+            )
+        )
+
+        // MARK: - V5 - Media Picker View
+
+        public var selectionBadgeIcon: UIImage = loadSafely(
+            systemName: "checkmark",
+            config: UIImage.SymbolConfiguration(weight: .bold)
         )
 
         // MARK: - V5 - Media Badge Icons
