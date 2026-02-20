@@ -30,8 +30,8 @@ public extension Appearance {
         /// A formatter that converts the video duration to textual representation.
         public var videoDuration: VideoDurationFormatter = DefaultVideoDurationFormatter()
 
-        /// A formatter that converts a video duration to a short textual representation (e.g. "8s", "60s", "120s").
-        public var videoDurationShort: VideoDurationShortFormatter = DefaultVideoDurationShortFormatter()
+        /// A formatter that converts a media duration to compact textual representations for badges.
+        public var mediaBadgeDuration: MediaBadgeDurationFormatter = DefaultMediaBadgeDurationFormatter()
 
         /// A formatter that converts the progress percentage to textual representation.
         public var uploadingProgress: UploadingProgressFormatter = DefaultUploadingProgressFormatter()
