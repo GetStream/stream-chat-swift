@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### 🐞 Fixed
-- Fix "circular reference" compile error with newer Swift/Xcode by marking `WebSocketConnectionState` as `indirect` (cycle with `DisconnectionSource.timeout(from:)`)
+- Fix "circular reference" compile error with newer Swift/Xcode by marking `WebSocketConnectionState` as `indirect` (cycle with `DisconnectionSource.timeout(from:)`) [#3978](https://github.com/GetStream/stream-chat-swift/pull/3978)
 
 ### 🔄 Changed
 
