@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChat
+### 🐞 Fixed
+- Fix autocomplete filter predicate not matching diacritic variants (e.g. "Joao" now matches "João") [#3977](https://github.com/GetStream/stream-chat-swift/pull/3977)
 
 # [4.97.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.97.1)
 _February 11, 2026_
