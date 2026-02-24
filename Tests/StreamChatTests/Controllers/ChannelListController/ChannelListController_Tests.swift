@@ -625,6 +625,37 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(env.channelListUpdater?.unlink_callCount, 0)
     }
 
+    func test_didReceiveEvent_whenChannelUpdatedEvent_whenChannelNowMatchesFilter_shouldLinkChannelToQuery() throws {
+        // Filter: only channels with 4 members. List starts empty.
+        let filter: (ChatChannel) -> Bool = { channel in
+            channel.memberCount == 4
+        }
+        setupControllerWithFilter(filter)
+
+        // Channel exists in DB but is not in the list (saved without this query; has 1 member so doesn't match).
+        let cid: ChannelId = .unique
+        writeAndWaitForChannelsUpdates { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: self.memberId))]),
+                query: nil,
+                cache: nil
+            )
+        }
+
+        // Channel is updated (e.g. filter tags or member count) and now matches the query.
+        let event = makeChannelUpdatedEvent(with: .mock(cid: cid, memberCount: 4))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
+
+        AssertAsync.willBeTrue(env.channelListUpdater?.link_completion != nil)
+        env.channelListUpdater?.link_completion?(nil)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
+    }
+
     // MARK: - Delegate tests
 
     func test_settingDelegate_leadsToFetchingLocalData() {

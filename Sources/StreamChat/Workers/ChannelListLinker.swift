@@ -9,8 +9,10 @@ import Foundation
 /// - Channel created: We analyse if the channel should be added to the current query.
 /// - New message sent: This means the channel will reorder and appear on first position,
 ///   so we also analyse if it should be added to the current query.
-/// - Channel is updated: We only check if we should remove it from the current query.
-///   We don't try to add it to the current query to not mess with pagination.
+/// - Channel is updated: We check if we should remove it (e.g. no longer matches filter)
+///   or add it (e.g. filter tags were updated to match the query) to the current query.
+///   Linking on update does not affect pagination (cursor/offset); it only adds one more
+///   matching channel to the observed list.
 final class ChannelListLinker {
     private let clientConfig: ChatClientConfig
     private let databaseContainer: DatabaseContainer
@@ -56,7 +58,10 @@ final class ChannelListLinker {
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? ChannelUpdatedEvent },
-                callback: { [weak self] event in self?.unlinkChannelIfNeeded(event.channel) }
+                callback: { [weak self] event in
+                    self?.unlinkChannelIfNeeded(event.channel)
+                    self?.linkChannelIfNeeded(event.channel)
+                }
             ),
             EventObserver(
                 notificationCenter: nc,
