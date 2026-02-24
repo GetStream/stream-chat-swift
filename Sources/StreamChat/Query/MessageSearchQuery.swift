@@ -128,3 +128,28 @@ public struct MessageSearchQuery: Encodable {
         try pagination.map { try $0.encode(to: encoder) }
     }
 }
+
+// MARK: - Channel list sort mapping
+
+extension MessageSearchQuery {
+    /// Converts channel list sort order to message search sort order so that message search
+    /// can respect the same ordering as the channel list (e.g. when searching from the channel list UI).
+    ///
+    /// Mapped keys: `last_updated` / `last_message_at` → `createdAt`; `created_at` → `createdAt`; `updated_at` → `updatedAt`.
+    /// Other channel list keys fall back to `createdAt` descending.
+    public static func messageSearchSort(fromChannelListSort channelListSort: [Sorting<ChannelListSortingKey>]) -> [Sorting<MessageSearchSortingKey>] {
+        guard let first = channelListSort.first else {
+            return [.init(key: .createdAt, isAscending: false)]
+        }
+        let messageKey: MessageSearchSortingKey
+        switch first.key.remoteKey {
+        case "last_updated", "last_message_at", "created_at":
+            messageKey = .createdAt
+        case "updated_at":
+            messageKey = .updatedAt
+        default:
+            return [.init(key: .createdAt, isAscending: false)]
+        }
+        return [.init(key: messageKey, isAscending: first.isAscending)]
+    }
+}

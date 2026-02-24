@@ -4,8 +4,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- `ChatMessageSearchController.search(text:sort:completion:)` and `MessageSearch.search(text:sort:)` now accept an optional `sort` parameter so message search can respect a custom sort order (e.g. the channel list's sort when searching from the channel list).
+- `MessageSearchQuery.messageSearchSort(fromChannelListSort:)` to convert channel list sort order to message search sort for consistent ordering in the channel list search UI.
+
 ### 🐞 Fixed
 - Fix "circular reference" compile error with newer Swift/Xcode by marking `WebSocketConnectionState` as `indirect` (cycle with `DisconnectionSource.timeout(from:)`) [#3978](https://github.com/GetStream/stream-chat-swift/pull/3978)
+
+## StreamChatUI
+### ✅ Added
+- Channel list message search now uses the channel list's sort order: `ChatMessageSearchVC.messageSearchSort` is set from the channel list query in the default strategy, and is passed to the search API.
 
 ### 🔄 Changed
 

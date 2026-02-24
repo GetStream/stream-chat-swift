@@ -143,9 +143,14 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
     ///
     /// - Parameters:
     ///   - text: The message text.
+    ///   - sort: Optional sort order for search results. When `nil`, defaults to newest first (createdAt descending).
     ///   - completion: Called when the controller has finished fetching remote data.
     ///   If the data fetching fails, the error variable contains more details about the problem.
-    public func search(text: String, completion: ((_ error: Error?) -> Void)? = nil) {
+    public func search(
+        text: String,
+        sort: [Sorting<MessageSearchSortingKey>]? = nil,
+        completion: ((_ error: Error?) -> Void)? = nil
+    ) {
         startObserversIfNeeded()
 
         guard let currentUserId = client.currentUserId else {
@@ -161,12 +166,13 @@ public class ChatMessageSearchController: DataController, DelegateCallable, Data
             return
         }
 
+        let sortOrder = sort ?? [.init(key: .createdAt, isAscending: false)]
         let query = MessageSearchQuery(
             channelFilter: .containMembers(userIds: [currentUserId]),
             messageFilter: .autocomplete(.text, text: text),
-            sort: [.init(key: .createdAt, isAscending: false)]
+            sort: sortOrder
         )
-        
+
         search(query: query, completion: completion)
     }
 
