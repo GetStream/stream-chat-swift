@@ -5,8 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### ✅ Added
-- `ChatMessageSearchController.search(text:sort:completion:)` and `MessageSearch.search(text:sort:)` now accept an optional `sort` parameter so message search can respect a custom sort order (e.g. the channel list's sort when searching from the channel list).
-- `MessageSearchQuery.messageSearchSort(fromChannelListSort:)` to convert channel list sort order to message search sort for consistent ordering in the channel list search UI.
+- `ChatMessageSearchController.search(text:sort:completion:)` and `MessageSearch.search(text:sort:)` now accept an optional `sort` parameter so message search can respect a custom sort order (e.g. the channel list's sort when searching from the channel list) [#3980](https://github.com/GetStream/stream-chat-swift/pull/3980)
+- `MessageSearchQuery.messageSearchSort(fromChannelListSort:)` to convert channel list sort order to message search sort for consistent ordering in the channel list search UI [#3980](https://github.com/GetStream/stream-chat-swift/pull/3980)
 
 ### 🐞 Fixed
 - Fix autocomplete filter predicate not matching diacritic variants (e.g. "Joao" now matches "João") [#3977](https://github.com/GetStream/stream-chat-swift/pull/3977)
@@ -14,7 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### ✅ Added
-- Channel list message search now uses the channel list's sort order: `ChatMessageSearchVC.messageSearchSort` is set from the channel list query in the default strategy, and is passed to the search API.
+- Channel list message search now uses the channel list's sort order: `ChatMessageSearchVC.messageSearchSort` is set from the channel list query in the default strategy, and is passed to the search API [#3980](https://github.com/GetStream/stream-chat-swift/pull/3980)
 
 ### 🔄 Changed
 
