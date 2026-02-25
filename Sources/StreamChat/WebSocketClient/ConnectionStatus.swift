@@ -51,9 +51,9 @@ extension ConnectionStatus {
 typealias ConnectionId = String
 
 /// A web socket connection state.
-enum WebSocketConnectionState: Equatable {
+indirect enum WebSocketConnectionState: Equatable {
     /// Provides additional information about the source of disconnecting.
-    indirect enum DisconnectionSource: Equatable {
+    enum DisconnectionSource: Equatable {
         /// A user initiated web socket disconnecting.
         case userInitiated
 
