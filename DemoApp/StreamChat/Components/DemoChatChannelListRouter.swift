@@ -505,10 +505,11 @@ final class DemoChatChannelListRouter: ChatChannelListRouter {
                     }
                 }
             }),
-            .init(title: "Add Premium Tag", isEnabled: canUpdateChannel, handler: { [unowned self] _ in
-                channelController.partialChannelUpdate(filterTags: ["premium"]) { error in
+            .init(title: "Toggle Premium Tag", isEnabled: canUpdateChannel, handler: { [unowned self] _ in
+                let hasPremium = channelController.channel?.filterTags.contains("premium") ?? false
+                channelController.partialChannelUpdate(filterTags: hasPremium ? ["non-premium"] : ["premium"]) { error in
                     if let error = error {
-                        self.rootViewController.presentAlert(title: "Couldn't make the channel \(cid) premium", message: "\(error)")
+                        self.rootViewController.presentAlert(title: "Couldn't update the premium state of the channel \(cid)", message: "\(error)")
                     }
                 }
             }),
