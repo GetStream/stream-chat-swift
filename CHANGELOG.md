@@ -11,6 +11,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix autocomplete filter predicate not matching diacritic variants (e.g. "Joao" now matches "João") [#3977](https://github.com/GetStream/stream-chat-swift/pull/3977)
 - Fix "circular reference" compile error with newer Swift/Xcode by marking `WebSocketConnectionState` as `indirect` (cycle with `DisconnectionSource.timeout(from:)`) [#3978](https://github.com/GetStream/stream-chat-swift/pull/3978)
+- Fix adding and removing channels from channel list query when channel updated web-socket event is received [#3983](https://github.com/GetStream/stream-chat-swift/pull/3983)
 
 ## StreamChatUI
 ### ✅ Added

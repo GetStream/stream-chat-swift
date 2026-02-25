@@ -552,6 +552,26 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 0)
     }
 
+    func test_didReceiveEvent_whenChannelUpdatedEvent_whenFilterMatches_shouldLinkChannelToQuery() {
+        let filter: (ChatChannel) -> Bool = { channel in
+            channel.memberCount == 4
+        }
+        setupControllerWithFilter(filter)
+
+        let event = makeChannelUpdatedEvent(with: .mock(cid: .unique, memberCount: 4))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
+
+        AssertAsync.willBeTrue(env.channelListUpdater?.link_completion != nil)
+        env.channelListUpdater?.link_completion?(nil)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
+        XCTAssertEqual(env.channelWatcherHandler?.attemptToWatch_callCount, 1)
+    }
+
     func test_didReceiveEvent_whenChannelUpdatedEvent_whenFilterDoesNotMatch_shouldUnlinkChannelFromQuery() throws {
         let filter: (ChatChannel) -> Bool = { channel in
             channel.memberCount == 1
