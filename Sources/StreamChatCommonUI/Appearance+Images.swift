@@ -628,6 +628,31 @@ public extension Appearance {
             )
         )
 
+        // MARK: - V5 - Command Icons
+
+        public var commandGiphyIcon: UIImage = loadImageSafely(with: "GiphyIcon")
+            .withRenderingMode(.alwaysOriginal)
+
+        public var commandMuteIcon: UIImage = loadSafely(
+            systemName: "speaker.slash",
+            config: UIImage.SymbolConfiguration(pointSize: 16, weight: .medium)
+        ).withRenderingMode(.alwaysTemplate)
+
+        public var commandUnmuteIcon: UIImage = loadSafely(
+            systemName: "speaker.wave.2",
+            config: UIImage.SymbolConfiguration(pointSize: 16, weight: .medium)
+        ).withRenderingMode(.alwaysTemplate)
+
+        public var commandsBolt: UIImage = loadSafely(
+            systemName: "bolt.fill",
+            config: UIImage.SymbolConfiguration(weight: .black)
+        )
+
+        public var commandsDismissIcon: UIImage = loadSafely(
+            systemName: "xmark",
+            config: UIImage.SymbolConfiguration(weight: .bold)
+        )
+
         // MARK: - V5 - Media Picker View
 
         public var selectionBadgeIcon: UIImage = loadSafely(
