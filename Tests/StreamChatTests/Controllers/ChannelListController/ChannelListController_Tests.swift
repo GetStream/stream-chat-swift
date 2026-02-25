@@ -1267,6 +1267,35 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
+    func test_filterPredicate_autocomplete_matchesDiacriticVariants() throws {
+        let cidPlain = ChannelId.unique
+        let cidAccentA = ChannelId.unique
+        let cidTildeO = ChannelId.unique
+
+        let channelsInDB: [ChannelPayload] = [
+            .dummy(channel: .dummy(cid: cidPlain, name: "Joao Silva")),
+            .dummy(channel: .dummy(cid: cidAccentA, name: "João Silva")),
+            .dummy(channel: .dummy(cid: cidTildeO, name: "Jõao Silva")),
+            .dummy(channel: .dummy(name: "Random"))
+        ]
+        let allMatchingCids = [cidPlain, cidAccentA, cidTildeO]
+
+        // Autocomplete uses CONTAINS[cd] (case and diacritic insensitive),
+        // so "Joao" matches "João", "Jõao", and "Joao".
+        try assertFilterPredicate(
+            .autocomplete(.name, text: "Joao"),
+            channelsInDB: channelsInDB,
+            expectedResult: allMatchingCids
+        )
+
+        // "Jõao" also matches all variants thanks to diacritic insensitivity.
+        try assertFilterPredicate(
+            .autocomplete(.name, text: "Jõao"),
+            channelsInDB: channelsInDB,
+            expectedResult: allMatchingCids
+        )
+    }
+
     func test_filterPredicate_contains_containsExpectedItems() throws {
         let cid1 = ChannelId.unique
         let cid2 = ChannelId.unique
