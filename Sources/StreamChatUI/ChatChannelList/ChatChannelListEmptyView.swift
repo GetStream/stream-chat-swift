@@ -40,6 +40,11 @@ open class ChatChannelListEmptyView: _View, ThemeProvider {
         container.alignment = .center
         container.addArrangedSubviews([iconView, titleLabel, subtitleLabel])
 
+        NSLayoutConstraint.activate([
+            iconView.widthAnchor.pin(equalToConstant: 150),
+            iconView.heightAnchor.pin(equalToConstant: 150)
+        ])
+
         addSubview(actionButton)
         NSLayoutConstraint.activate([
             actionButton.centerXAnchor.pin(equalTo: container.centerXAnchor),
@@ -53,6 +58,8 @@ open class ChatChannelListEmptyView: _View, ThemeProvider {
         backgroundColor = appearance.colorPalette.background
 
         iconView.image = appearance.images.emptyChannelListMessageBubble
+        iconView.contentMode = .scaleAspectFit
+        iconView.tintColor = appearance.colorPalette.textLowEmphasis
 
         titleLabel.font = appearance.fonts.bodyBold
         titleLabel.textColor = appearance.colorPalette.text
