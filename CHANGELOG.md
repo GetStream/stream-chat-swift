@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.98.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.98.0)
+_February 26, 2026_
+
 ## StreamChat
 ### ✅ Added
 - `ChatMessageSearchController.search(text:sort:completion:)` and `MessageSearch.search(text:sort:)` now accept an optional `sort` parameter so message search can respect a custom sort order (e.g. the channel list's sort when searching from the channel list) [#3980](https://github.com/GetStream/stream-chat-swift/pull/3980)
