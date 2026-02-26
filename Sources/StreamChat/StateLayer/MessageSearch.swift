@@ -31,11 +31,13 @@ public class MessageSearch {
     
     /// Searches for messages with the specified full text search text and updates ``MessageSearchState/messages``.
     ///
-    /// - Parameter text: A string to search for (which is a full text search).
+    /// - Parameters:
+    ///   - text: A string to search for (which is a full text search).
+    ///   - sort: Optional sort order for search results. When `nil`, defaults to newest first (createdAt descending).
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of paginated chat messages matching to the search term.
-    @discardableResult public func search(text: String) async throws -> [ChatMessage] {
+    @discardableResult public func search(text: String, sort: [Sorting<MessageSearchSortingKey>]? = nil) async throws -> [ChatMessage] {
         // Clear results when there is no text
         if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
            let query = await state.query {
@@ -43,12 +45,13 @@ public class MessageSearch {
             await state.set(query: nil, cursor: nil)
             return []
         }
-        
+
         let currentUserId = try currentUserId()
+        let sortOrder = sort ?? [.init(key: .createdAt, isAscending: false)]
         let query = MessageSearchQuery(
             channelFilter: .containMembers(userIds: [currentUserId]),
             messageFilter: .autocomplete(.text, text: text),
-            sort: [.init(key: .createdAt, isAscending: false)]
+            sort: sortOrder
         )
         return try await search(query: query)
     }

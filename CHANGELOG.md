@@ -4,12 +4,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- `ChatMessageSearchController.search(text:sort:completion:)` and `MessageSearch.search(text:sort:)` now accept an optional `sort` parameter so message search can respect a custom sort order (e.g. the channel list's sort when searching from the channel list) [#3980](https://github.com/GetStream/stream-chat-swift/pull/3980)
+- `MessageSearchQuery.messageSearchSort(fromChannelListSort:)` to convert channel list sort order to message search sort for consistent ordering in the channel list search UI [#3980](https://github.com/GetStream/stream-chat-swift/pull/3980)
+
 ### 🐞 Fixed
 - Fix autocomplete filter predicate not matching diacritic variants (e.g. "Joao" now matches "João") [#3977](https://github.com/GetStream/stream-chat-swift/pull/3977)
 - Fix "circular reference" compile error with newer Swift/Xcode by marking `WebSocketConnectionState` as `indirect` (cycle with `DisconnectionSource.timeout(from:)`) [#3978](https://github.com/GetStream/stream-chat-swift/pull/3978)
 - Fix adding and removing channels from channel list query when channel updated web-socket event is received [#3983](https://github.com/GetStream/stream-chat-swift/pull/3983)
 
-### 🔄 Changed
+## StreamChatUI
+### ✅ Added
+- Add support for optional sort in channel list message search [#3980](https://github.com/GetStream/stream-chat-swift/pull/3980)
 
 # [4.97.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.97.1)
 _February 11, 2026_

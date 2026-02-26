@@ -178,6 +178,13 @@ final class MessageSearchController_Tests: XCTestCase {
         XCTAssert(controller.basePublishers.controller === controller)
     }
 
+    func test_searchWithText_withCustomSort_passesSortToUpdater() {
+        let customSort: [Sorting<MessageSearchSortingKey>] = [.init(key: .updatedAt, isAscending: true)]
+        controller.search(text: "test", sort: customSort)
+
+        XCTAssertEqual(env.messageUpdater?.search_query?.sort, customSort)
+    }
+
     /// This test simulates a bug where the `message` field was not updated if it wasn't
     /// touched before calling synchronize.
     func test_searchWithText_resultIsReported_evenAfterCallingSynchronize() throws {

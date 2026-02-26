@@ -15,6 +15,10 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
     /// The `ChatMessageSearchController` instance to perform the messages search.
     public var messageSearchController: ChatMessageSearchController!
 
+    /// Sort order for message search results. When set (e.g. from the channel list's sort), it is passed to the search API.
+    /// When `nil`, the controller uses its default (newest first).
+    public var messageSearchSort: [Sorting<MessageSearchSortingKey>]?
+
     /// The closure that is triggered whenever a message is selected from the search result.
     public var didSelectMessage: ((ChatChannel, ChatMessage) -> Void)?
 
@@ -35,7 +39,7 @@ open class ChatMessageSearchVC: ChatChannelListSearchVC, ChatMessageSearchContro
     }
 
     override open func loadSearchResults(with text: String) {
-        messageSearchController.search(text: text)
+        messageSearchController.search(text: text, sort: messageSearchSort)
     }
 
     override open func loadMoreSearchResults() {

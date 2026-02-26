@@ -37,7 +37,12 @@ class ChatMessageSearchController_Mock: ChatMessageSearchController {
         completion?(nil)
     }
 
-    override func search(text: String, completion: ((Error?) -> Void)? = nil) {
+    override func search(
+        text: String,
+        sort: [Sorting<MessageSearchSortingKey>]? = nil,
+        completion: ((Error?) -> Void)? = nil
+    ) {
         searchCallCount += 1
+        completion?(nil)
     }
 }
