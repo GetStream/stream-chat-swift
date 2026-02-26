@@ -15,7 +15,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatUI
 ### ✅ Added
-- Channel list message search now uses the channel list's sort order: `ChatMessageSearchVC.messageSearchSort` is set from the channel list query in the default strategy, and is passed to the search API [#3980](https://github.com/GetStream/stream-chat-swift/pull/3980)
+- Add support for optional sort in channel list message search [#3980](https://github.com/GetStream/stream-chat-swift/pull/3980)
 
 # [4.97.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.97.1)
 _February 11, 2026_

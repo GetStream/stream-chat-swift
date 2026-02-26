@@ -40,7 +40,6 @@ public struct ChannelListSearchStrategy {
         if let messageSearchVC = searchVC.init() as? ChatMessageSearchVC {
             let messageSearchController = channelListVC.controller.client.messageSearchController()
             messageSearchVC.messageSearchController = messageSearchController
-            messageSearchVC.messageSearchSort = MessageSearchQuery.messageSearchSort(fromChannelListSort: channelListVC.controller.query.sort)
             messageSearchVC.didSelectMessage = { [weak channelListVC] channel, message in
                 channelListVC?.router.showChannel(for: channel.cid, at: message.id)
             }
