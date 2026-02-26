@@ -60,7 +60,6 @@ public extension Appearance {
         public var openAttachments: UIImage = loadImageSafely(with: "clip")
         public var shrinkInputArrow: UIImage = loadImageSafely(with: "arrow_shrink_input")
         public var sendArrow: UIImage = loadImageSafely(with: "arrow_send").imageFlippedForRightToLeftLayoutDirection()
-        public var scrollDownArrow: UIImage = loadImageSafely(with: "arrow_down")
         public var whiteCheckmark: UIImage = loadImageSafely(with: "checkmark_white")
         public var confirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm")
         public var bigConfirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm_big")
@@ -550,6 +549,13 @@ public extension Appearance {
             systemName: "mic",
             config: UIImage.SymbolConfiguration(
                 weight: .regular
+            )
+        )
+
+        public var scrollDownArrow: UIImage = loadSafely(
+            systemName: "arrow.down",
+            config: UIImage.SymbolConfiguration(
+                weight: .medium
             )
         )
         
