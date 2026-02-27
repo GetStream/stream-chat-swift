@@ -676,17 +676,17 @@ public extension Appearance {
 
         public var annotationThread: UIImage = loadSafely(
             systemName: "arrow.up.right",
-            config: UIImage.SymbolConfiguration(weight: .regular)
+            config: UIImage.SymbolConfiguration(pointSize: 16)
         )
 
         public var annotationReminder: UIImage = loadSafely(
             systemName: "bell",
-            config: UIImage.SymbolConfiguration(weight: .regular)
+            config: UIImage.SymbolConfiguration(pointSize: 16)
         )
 
         public var annotationTranslation: UIImage = loadSafely(
-            systemName: "character.book.closed",
-            config: UIImage.SymbolConfiguration(weight: .regular)
+            systemName: "translate",
+            config: UIImage.SymbolConfiguration(pointSize: 16)
         )
 
         // MARK: - V5 - File Type Preview Icons
