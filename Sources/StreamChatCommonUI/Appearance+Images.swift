@@ -678,6 +678,23 @@ public extension Appearance {
             config: UIImage.SymbolConfiguration(pointSize: 10)
         )
 
+        // MARK: - V5 - Message Annotation Icons
+
+        public var annotationThread: UIImage = loadSafely(
+            systemName: "arrow.up.right",
+            config: UIImage.SymbolConfiguration(pointSize: 14)
+        )
+
+        public var annotationReminder: UIImage = loadSafely(
+            systemName: "bell",
+            config: UIImage.SymbolConfiguration(pointSize: 14)
+        )
+
+        public var annotationTranslation: UIImage = loadSafely(
+            systemName: "translate",
+            config: UIImage.SymbolConfiguration(pointSize: 13)
+        )
+
         // MARK: - V5 - File Type Preview Icons
 
         public var iconPdf: UIImage = loadImageSafely(with: "file-pdf")
