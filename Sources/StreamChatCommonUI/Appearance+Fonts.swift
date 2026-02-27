@@ -62,8 +62,5 @@ public extension Appearance {
         }
 
         public var emoji: Font = .system(size: 50)
-        
-        public var metadataDefault: Font = .footnote
-        public var metadataEmphasis: Font = .footnote.weight(.semibold)
     }
 }
