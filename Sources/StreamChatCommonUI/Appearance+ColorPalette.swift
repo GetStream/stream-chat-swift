@@ -266,6 +266,7 @@ public extension Appearance {
         public lazy var chatTextRead: UIColor = accentPrimary
         public lazy var chatTextSystem: UIColor = textSecondary
         public lazy var chatTextTimestamp: UIColor = textTertiary
+        public lazy var chatTextTypingIndicator: UIColor = chatTextIncoming
         public lazy var chatTextUsername: UIColor = textSecondary
         public lazy var chatThreadConnectorIncoming: UIColor = borderCoreDefault
         public lazy var chatThreadConnectorOutgoing: UIColor = brand150
