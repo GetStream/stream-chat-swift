@@ -33,7 +33,6 @@ extension Appearance {
         public var buttonVisualHeightXs: CGFloat { size24 }
         public var composerRadiusFixed: CGFloat { radius3xl }
         public var composerRadiusFloating: CGFloat { radius3xl }
-        public var darkElevation0: BoxShadow { BoxShadow(x: 0, y: 0, blur: 0, spread: 0, color: UIColor(hex: 0x00000000)) }
         public var darkElevation1: BoxShadow { BoxShadow(x: 0, y: 1, blur: 3, spread: 0, color: UIColor(hex: 0x00000033)) }
         public var darkElevation2: BoxShadow { BoxShadow(x: 0, y: 2, blur: 6, spread: 0, color: UIColor(hex: 0x00000038)) }
         public var darkElevation3: BoxShadow { BoxShadow(x: 0, y: 4, blur: 12, spread: 0, color: UIColor(hex: 0x0000003d)) }
@@ -48,7 +47,6 @@ extension Appearance {
         public var iconStrokeDefault: CGFloat { w150 }
         public var iconStrokeEmphasis: CGFloat { w200 }
         public var iconStrokeSubtle: CGFloat { w120 }
-        public var lightElevation0: BoxShadow { BoxShadow(x: 0, y: 0, blur: 0, spread: 0, color: UIColor(hex: 0x00000000)) }
         public var lightElevation1: BoxShadow { BoxShadow(x: 0, y: 1, blur: 3, spread: 0, color: UIColor(hex: 0x0000001f)) }
         public var lightElevation2: BoxShadow { BoxShadow(x: 0, y: 2, blur: 6, spread: 0, color: UIColor(hex: 0x00000024)) }
         public var lightElevation3: BoxShadow { BoxShadow(x: 0, y: 4, blur: 12, spread: 0, color: UIColor(hex: 0x00000029)) }
@@ -80,7 +78,7 @@ extension Appearance {
         public var spacingXs: CGFloat { space8 }
         public var spacingXxs: CGFloat { space4 }
         public var spacingXxxs: CGFloat { space2 }
-        
+
         // MARK: Foundations
 
         let lineHeightLineHeight10: CGFloat = 10
@@ -148,7 +146,7 @@ extension Appearance {
         let w200: CGFloat = 2
         let w300: CGFloat = 3
         let w400: CGFloat = 4
-        
+
         public init() {}
     }
 }
