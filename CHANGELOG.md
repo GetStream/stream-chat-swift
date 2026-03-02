@@ -3,6 +3,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- `VideoAttachmentPayload` now has `originalWidth`, `originalHeight`, and `duration`; passed from `localMetadata` when creating payloads from local files (for custom CDN).
+
+## StreamChatUI
+### ✅ Added
+- Video attachments from the image picker now get width, height, and duration on the payload (for custom CDN).
+
 ### 🔄 Changed
 
 # [4.98.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.98.0)

@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import AVFoundation
 import Foundation
 import StreamChat
 import UIKit
@@ -27,6 +28,8 @@ public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable {
     public static let originalImage: Self = .init(rawValue: "originalImage")
     public static let duration: Self = .init(rawValue: "duration")
     public static let waveformData: Self = .init(rawValue: "waveformData")
+    public static let originalWidth: Self = .init(rawValue: "originalWidth")
+    public static let originalHeight: Self = .init(rawValue: "originalHeight")
 }
 
 /// The possible composer states. An Enum is not used so it does not cause
@@ -1465,12 +1468,16 @@ open class ComposerVC: _ViewController,
                 width: Double(image.size.width).rounded(.down),
                 height: Double(image.size.height).rounded(.down)
             )
+        } else if let width = info[.originalWidth] as? Double, let height = info[.originalHeight] as? Double {
+            localMetadata.originalResolution = (width: width, height: height)
         }
 
         switch type {
         case .voiceRecording:
             localMetadata.duration = info[.duration] as? TimeInterval
             localMetadata.waveformData = info[.waveformData] as? [Float]
+        case .video:
+            localMetadata.duration = info[.duration] as? TimeInterval
         default:
             /* No-op */
             break
@@ -1603,6 +1610,28 @@ open class ComposerVC: _ViewController,
             var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
             if let originalImage = info[.originalImage] {
                 localAttachmentInfo[.originalImage] = originalImage
+            }
+            if urlAndType.1 == .video, let videoURL = info[.mediaURL] as? URL {
+                let asset = AVURLAsset(url: videoURL)
+                let durationSeconds = CMTimeGetSeconds(asset.duration)
+                if durationSeconds.isFinite && !durationSeconds.isNaN {
+                    localAttachmentInfo[.duration] = durationSeconds
+                }
+                if let track = asset.tracks(withMediaType: .video).first {
+                    let size = track.naturalSize
+                    let transform = track.preferredTransform
+                    let width: Double
+                    let height: Double
+                    if transform.a == 0 && abs(transform.b) == 1 && abs(transform.c) == 1 && transform.d == 0 {
+                        width = Double(size.height)
+                        height = Double(size.width)
+                    } else {
+                        width = Double(size.width)
+                        height = Double(size.height)
+                    }
+                    localAttachmentInfo[.originalWidth] = width
+                    localAttachmentInfo[.originalHeight] = height
+                }
             }
 
             do {

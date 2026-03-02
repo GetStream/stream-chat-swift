@@ -1062,6 +1062,47 @@ final class ComposerVC_Tests: XCTestCase {
         XCTAssertEqual(payload.duration, expectedDuration)
         XCTAssertEqual(payload.waveformData, expectedWaveformData)
     }
+
+    func test_addAttachmentToContent_withImageInfo_setsOriginalResolutionOnPayload() throws {
+        let image = UIImage(systemName: "person.fill")!
+        let imageURL = try XCTUnwrap(FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".jpg") as URL?)
+        try image.jpegData(compressionQuality: 0.8)?.write(to: imageURL)
+        defer { try? FileManager.default.removeItem(at: imageURL) }
+        composerVC.channelController = mockedChatChannelController
+
+        let info: [LocalAttachmentInfoKey: Any] = [.originalImage: image]
+        try composerVC.addAttachmentToContent(from: imageURL, type: .image, info: info)
+
+        XCTAssertEqual(composerVC.content.attachments.count, 1)
+        let payload = try XCTUnwrap(composerVC.content.attachments.first?.payload as? ImageAttachmentPayload)
+        XCTAssertEqual(payload.originalWidth, Double(image.size.width).rounded(.down))
+        XCTAssertEqual(payload.originalHeight, Double(image.size.height).rounded(.down))
+    }
+
+    func test_addAttachmentToContent_withVideoInfo_setsWidthHeightDurationOnPayload() throws {
+        let videoURL = URL(fileURLWithPath: "/tmp/\(UUID().uuidString).mp4")
+        try Data(count: 1024).write(to: videoURL)
+        defer { try? FileManager.default.removeItem(at: videoURL) }
+        composerVC.channelController = mockedChatChannelController
+
+        let duration: TimeInterval = 30.5
+        let width: Double = 1920
+        let height: Double = 1080
+        let info: [LocalAttachmentInfoKey: Any] = [
+            .duration: duration,
+            .originalWidth: width,
+            .originalHeight: height
+        ]
+
+        try composerVC.addAttachmentToContent(from: videoURL, type: .video, info: info)
+
+        XCTAssertEqual(composerVC.content.attachments.count, 1)
+        XCTAssertEqual(composerVC.content.attachments.first?.type, .video)
+        let payload = try XCTUnwrap(composerVC.content.attachments.first?.payload as? VideoAttachmentPayload)
+        XCTAssertEqual(payload.originalWidth, width)
+        XCTAssertEqual(payload.originalHeight, height)
+        XCTAssertEqual(payload.duration, duration)
+    }
     
     // MARK: - voiceRecordingPublishMessage
     
