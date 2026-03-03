@@ -1068,7 +1068,7 @@ final class ComposerVC_Tests: XCTestCase {
         let imageURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".jpg")
         defer { try? FileManager.default.removeItem(at: imageURL) }
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: 100, height: 100))
-        let imageData = try XCTUnwrap(renderer.jpegData(compressionQuality: 0.8) { context in
+        let imageData = try XCTUnwrap(renderer.jpegData(withCompressionQuality: 0.8) { context in
             image.draw(in: context.format.bounds)
         })
         try imageData.write(to: imageURL)
