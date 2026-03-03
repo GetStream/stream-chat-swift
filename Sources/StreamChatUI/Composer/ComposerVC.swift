@@ -1468,16 +1468,30 @@ open class ComposerVC: _ViewController,
                 width: Double(image.size.width).rounded(.down),
                 height: Double(image.size.height).rounded(.down)
             )
-        } else if let width = info[.originalWidth] as? Double, let height = info[.originalHeight] as? Double {
-            localMetadata.originalResolution = (width: width, height: height)
+        } else {
+            let width: Double? = (info[.originalWidth] as? NSNumber)?.doubleValue
+                ?? info[.originalWidth] as? Double
+                ?? (info[.originalWidth] as? Int).map { Double($0) }
+                ?? (info[.originalWidth] as? CGFloat).map { Double($0) }
+            let height: Double? = (info[.originalHeight] as? NSNumber)?.doubleValue
+                ?? info[.originalHeight] as? Double
+                ?? (info[.originalHeight] as? Int).map { Double($0) }
+                ?? (info[.originalHeight] as? CGFloat).map { Double($0) }
+            if let width = width, let height = height {
+                localMetadata.originalResolution = (width: width, height: height)
+            }
         }
 
         switch type {
         case .voiceRecording:
-            localMetadata.duration = info[.duration] as? TimeInterval
+            localMetadata.duration = (info[.duration] as? NSNumber)?.doubleValue
+                ?? info[.duration] as? TimeInterval
+                ?? (info[.duration] as? Int).map { TimeInterval($0) }
             localMetadata.waveformData = info[.waveformData] as? [Float]
         case .video:
-            localMetadata.duration = info[.duration] as? TimeInterval
+            localMetadata.duration = (info[.duration] as? NSNumber)?.doubleValue
+                ?? info[.duration] as? TimeInterval
+                ?? (info[.duration] as? Int).map { TimeInterval($0) }
         default:
             /* No-op */
             break

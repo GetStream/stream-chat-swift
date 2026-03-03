@@ -90,8 +90,10 @@ extension VideoAttachmentPayload: Encodable {
         thumbnailURL.map {
             values[AttachmentCodingKeys.thumbURL.rawValue] = .string($0.absoluteString)
         }
-        if let originalWidth = originalWidth, let originalHeight = originalHeight {
+        if let originalWidth = originalWidth {
             values[AttachmentCodingKeys.originalWidth.rawValue] = .double(originalWidth)
+        }
+        if let originalHeight = originalHeight {
             values[AttachmentCodingKeys.originalHeight.rawValue] = .double(originalHeight)
         }
         duration.map {

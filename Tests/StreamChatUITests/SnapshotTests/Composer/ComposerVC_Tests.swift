@@ -1065,9 +1065,13 @@ final class ComposerVC_Tests: XCTestCase {
 
     func test_addAttachmentToContent_withImageInfo_setsOriginalResolutionOnPayload() throws {
         let image = UIImage(systemName: "person.fill")!
-        let imageURL = try XCTUnwrap(FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".jpg") as URL?)
-        try image.jpegData(compressionQuality: 0.8)?.write(to: imageURL)
+        let imageURL = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString + ".jpg")
         defer { try? FileManager.default.removeItem(at: imageURL) }
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: 100, height: 100))
+        let imageData = try XCTUnwrap(renderer.jpegData(compressionQuality: 0.8) { context in
+            image.draw(in: context.format.bounds)
+        })
+        try imageData.write(to: imageURL)
         composerVC.channelController = mockedChatChannelController
 
         let info: [LocalAttachmentInfoKey: Any] = [.originalImage: image]
