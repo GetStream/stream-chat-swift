@@ -22,6 +22,12 @@ public struct VideoAttachmentPayload: AttachmentPayload {
     public var videoURL: URL
     /// A link to the video thumbnail.
     public var thumbnailURL: URL?
+    /// The original width of the video in pixels.
+    public var originalWidth: Double?
+    /// The original height of the video in pixels.
+    public var originalHeight: Double?
+    /// The duration of the video in seconds.
+    public var duration: TimeInterval?
     /// The video itself.
     public var file: AttachmentFile
     /// An extra data.
@@ -39,10 +45,22 @@ public struct VideoAttachmentPayload: AttachmentPayload {
     /// Creates `VideoAttachmentPayload` instance.
     ///
     /// Use this initializer if the attachment is already uploaded and you have the remote URLs.
-    public init(title: String?, videoRemoteURL: URL, thumbnailURL: URL? = nil, file: AttachmentFile, extraData: [String: RawJSON]?) {
+    public init(
+        title: String?,
+        videoRemoteURL: URL,
+        thumbnailURL: URL? = nil,
+        originalWidth: Double? = nil,
+        originalHeight: Double? = nil,
+        duration: TimeInterval? = nil,
+        file: AttachmentFile,
+        extraData: [String: RawJSON]?
+    ) {
         self.title = title
         videoURL = videoRemoteURL
         self.thumbnailURL = thumbnailURL
+        self.originalWidth = originalWidth
+        self.originalHeight = originalHeight
+        self.duration = duration
         self.file = file
         self.extraData = extraData
     }
@@ -72,6 +90,15 @@ extension VideoAttachmentPayload: Encodable {
         thumbnailURL.map {
             values[AttachmentCodingKeys.thumbURL.rawValue] = .string($0.absoluteString)
         }
+        if let originalWidth = originalWidth {
+            values[AttachmentCodingKeys.originalWidth.rawValue] = .double(originalWidth)
+        }
+        if let originalHeight = originalHeight {
+            values[AttachmentCodingKeys.originalHeight.rawValue] = .double(originalHeight)
+        }
+        duration.map {
+            values[AttachmentCodingKeys.duration.rawValue] = .number(Double($0))
+        }
         values[AttachmentFile.CodingKeys.size.rawValue] = .number(Double(Int(file.size)))
         values[AttachmentFile.CodingKeys.mimeType.rawValue] = file.mimeType.map { .string($0) }
         try values.encode(to: encoder)
@@ -88,6 +115,9 @@ extension VideoAttachmentPayload: Decodable {
             title: try container.decodeIfPresent(String.self, forKey: .title),
             videoRemoteURL: try container.decode(URL.self, forKey: .assetURL),
             thumbnailURL: try container.decodeIfPresent(URL.self, forKey: .thumbURL),
+            originalWidth: try container.decodeIfPresent(Double.self, forKey: .originalWidth),
+            originalHeight: try container.decodeIfPresent(Double.self, forKey: .originalHeight),
+            duration: try container.decodeIfPresent(TimeInterval.self, forKey: .duration),
             file: try AttachmentFile(from: decoder),
             extraData: try Self.decodeExtraData(from: decoder)
         )
