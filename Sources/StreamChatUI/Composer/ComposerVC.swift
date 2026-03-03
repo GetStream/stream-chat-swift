@@ -1469,14 +1469,8 @@ open class ComposerVC: _ViewController,
                 height: Double(image.size.height).rounded(.down)
             )
         } else {
-            let width: Double? = (info[.originalWidth] as? NSNumber)?.doubleValue
-                ?? info[.originalWidth] as? Double
-                ?? (info[.originalWidth] as? Int).map { Double($0) }
-                ?? (info[.originalWidth] as? CGFloat).map { Double($0) }
-            let height: Double? = (info[.originalHeight] as? NSNumber)?.doubleValue
-                ?? info[.originalHeight] as? Double
-                ?? (info[.originalHeight] as? Int).map { Double($0) }
-                ?? (info[.originalHeight] as? CGFloat).map { Double($0) }
+            let width = info[.originalWidth] as? Double
+            let height = info[.originalHeight] as? Double
             if let width = width, let height = height {
                 localMetadata.originalResolution = (width: width, height: height)
             }
@@ -1484,14 +1478,10 @@ open class ComposerVC: _ViewController,
 
         switch type {
         case .voiceRecording:
-            localMetadata.duration = (info[.duration] as? NSNumber)?.doubleValue
-                ?? info[.duration] as? TimeInterval
-                ?? (info[.duration] as? Int).map { TimeInterval($0) }
+            localMetadata.duration = info[.duration] as? TimeInterval
             localMetadata.waveformData = info[.waveformData] as? [Float]
         case .video:
-            localMetadata.duration = (info[.duration] as? NSNumber)?.doubleValue
-                ?? info[.duration] as? TimeInterval
-                ?? (info[.duration] as? Int).map { TimeInterval($0) }
+            localMetadata.duration = info[.duration] as? TimeInterval
         default:
             /* No-op */
             break
@@ -1627,7 +1617,7 @@ open class ComposerVC: _ViewController,
         }
 
         var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
-        if let originalImage = info[.originalImage] {
+        if urlAndType.1 == .image, let originalImage = info[.originalImage] {
             localAttachmentInfo[.originalImage] = originalImage
         }
         if urlAndType.1 == .video, let videoURL = info[.mediaURL] as? URL {
