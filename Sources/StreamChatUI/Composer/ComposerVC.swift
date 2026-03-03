@@ -1605,97 +1605,76 @@ open class ComposerVC: _ViewController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
         picker.dismiss(animated: true) { [weak self] in
-            let urlAndType: (URL, AttachmentType)
-            if let imageURL = info[.imageURL] as? URL {
-                urlAndType = (imageURL, .image)
-            } else if let videoURL = info[.mediaURL] as? URL {
-                urlAndType = (videoURL, .video)
-            } else if let editedImage = info[.editedImage] as? UIImage,
-                      let editedImageURL = try? editedImage.temporaryLocalFileUrl() {
-                urlAndType = (editedImageURL, .image)
-            } else if let originalImage = info[.originalImage] as? UIImage,
-                      let originalImageURL = try? originalImage.temporaryLocalFileUrl() {
-                urlAndType = (originalImageURL, .image)
-            } else {
-                log.error("Unexpected item selected in image picker")
-                return
-            }
+            self?.handleImagePickerMediaSelected(info: info)
+        }
+    }
 
-            var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
-            if let originalImage = info[.originalImage] {
-                localAttachmentInfo[.originalImage] = originalImage
-            }
-            if urlAndType.1 == .video, let videoURL = info[.mediaURL] as? URL {
-                let asset = AVURLAsset(url: videoURL)
-                let url = urlAndType.0
-                let type = urlAndType.1
-                let applyVideoMetadataAndAdd: ([LocalAttachmentInfoKey: Any]) -> Void = { [weak self] info in
-                    do {
-                        try self?.addAttachmentToContent(from: url, type: type, info: info)
-                    } catch {
-                        self?.handleAddAttachmentError(attachmentURL: url, attachmentType: type, error: error)
-                    }
-                }
-                if #available(iOS 16.0, *) {
-                    Task { [weak self] in
-                        do {
-                            try await asset.load(\.duration)
-                            let tracks = try await asset.load(\.tracks)
-                            let videoTrack = tracks.first { $0.mediaType == .video }
-                            var info = localAttachmentInfo
-                            let durationSeconds = CMTimeGetSeconds(asset.duration)
-                            if durationSeconds.isFinite && !durationSeconds.isNaN {
-                                info[.duration] = durationSeconds
-                            }
-                            if let track = videoTrack {
-                                let (width, height) = Self.videoDimensions(from: track)
-                                info[.originalWidth] = width
-                                info[.originalHeight] = height
-                            }
-                            await MainActor.run { applyVideoMetadataAndAdd(info) }
-                        } catch {
-                            await MainActor.run {
-                                self?.handleAddAttachmentError(attachmentURL: url, attachmentType: type, error: error)
-                            }
-                        }
-                    }
-                } else {
-                    StreamAssetPropertyLoader().loadProperties(
-                        [AssetProperty(\.duration), AssetProperty(\.tracks)],
-                        of: asset
-                    ) { [weak self] result in
-                        var info = localAttachmentInfo
-                        switch result {
-                        case .success(let loadedAsset):
-                            let durationSeconds = CMTimeGetSeconds(loadedAsset.duration)
-                            if durationSeconds.isFinite && !durationSeconds.isNaN {
-                                info[.duration] = durationSeconds
-                            }
-                            if let track = loadedAsset.tracks(withMediaType: .video).first {
-                                let (width, height) = Self.videoDimensions(from: track)
-                                info[.originalWidth] = width
-                                info[.originalHeight] = height
-                            }
-                        case .failure:
-                            break
-                        }
-                        DispatchQueue.main.async { applyVideoMetadataAndAdd(info) }
-                    }
-                }
-            } else {
+    private func handleImagePickerMediaSelected(info: [UIImagePickerController.InfoKey: Any]) {
+        let urlAndType: (URL, AttachmentType)
+        if let imageURL = info[.imageURL] as? URL {
+            urlAndType = (imageURL, .image)
+        } else if let videoURL = info[.mediaURL] as? URL {
+            urlAndType = (videoURL, .video)
+        } else if let editedImage = info[.editedImage] as? UIImage,
+                  let editedImageURL = try? editedImage.temporaryLocalFileUrl() {
+            urlAndType = (editedImageURL, .image)
+        } else if let originalImage = info[.originalImage] as? UIImage,
+                  let originalImageURL = try? originalImage.temporaryLocalFileUrl() {
+            urlAndType = (originalImageURL, .image)
+        } else {
+            log.error("Unexpected item selected in image picker")
+            return
+        }
+
+        var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
+        if let originalImage = info[.originalImage] {
+            localAttachmentInfo[.originalImage] = originalImage
+        }
+        if urlAndType.1 == .video, let videoURL = info[.mediaURL] as? URL {
+            let asset = AVURLAsset(url: videoURL)
+            let url = urlAndType.0
+            let type = urlAndType.1
+            let applyVideoMetadataAndAdd: ([LocalAttachmentInfoKey: Any]) -> Void = { [weak self] info in
                 do {
-                    try self?.addAttachmentToContent(
-                        from: urlAndType.0,
-                        type: urlAndType.1,
-                        info: localAttachmentInfo
-                    )
+                    try self?.addAttachmentToContent(from: url, type: type, info: info)
                 } catch {
-                    self?.handleAddAttachmentError(
-                        attachmentURL: urlAndType.0,
-                        attachmentType: urlAndType.1,
-                        error: error
-                    )
+                    self?.handleAddAttachmentError(attachmentURL: url, attachmentType: type, error: error)
                 }
+            }
+            StreamAssetPropertyLoader().loadProperties(
+                [AssetProperty(\.duration), AssetProperty(\.tracks)],
+                of: asset
+            ) { result in
+                var info = localAttachmentInfo
+                switch result {
+                case .success(let loadedAsset):
+                    let durationSeconds = CMTimeGetSeconds(loadedAsset.duration)
+                    if durationSeconds.isFinite && !durationSeconds.isNaN {
+                        info[.duration] = durationSeconds
+                    }
+                    if let track = loadedAsset.tracks(withMediaType: .video).first {
+                        let (width, height) = Self.videoDimensions(from: track)
+                        info[.originalWidth] = width
+                        info[.originalHeight] = height
+                    }
+                case .failure:
+                    break
+                }
+                DispatchQueue.main.async { applyVideoMetadataAndAdd(info) }
+            }
+        } else {
+            do {
+                try addAttachmentToContent(
+                    from: urlAndType.0,
+                    type: urlAndType.1,
+                    info: localAttachmentInfo
+                )
+            } catch {
+                handleAddAttachmentError(
+                    attachmentURL: urlAndType.0,
+                    attachmentType: urlAndType.1,
+                    error: error
+                )
             }
         }
     }
