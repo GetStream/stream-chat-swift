@@ -1627,41 +1627,86 @@ open class ComposerVC: _ViewController,
             }
             if urlAndType.1 == .video, let videoURL = info[.mediaURL] as? URL {
                 let asset = AVURLAsset(url: videoURL)
-                let durationSeconds = CMTimeGetSeconds(asset.duration)
-                if durationSeconds.isFinite && !durationSeconds.isNaN {
-                    localAttachmentInfo[.duration] = durationSeconds
-                }
-                if let track = asset.tracks(withMediaType: .video).first {
-                    let size = track.naturalSize
-                    let transform = track.preferredTransform
-                    let width: Double
-                    let height: Double
-                    if transform.a == 0 && abs(transform.b) == 1 && abs(transform.c) == 1 && transform.d == 0 {
-                        width = Double(size.height)
-                        height = Double(size.width)
-                    } else {
-                        width = Double(size.width)
-                        height = Double(size.height)
+                let url = urlAndType.0
+                let type = urlAndType.1
+                let applyVideoMetadataAndAdd: ([LocalAttachmentInfoKey: Any]) -> Void = { [weak self] info in
+                    do {
+                        try self?.addAttachmentToContent(from: url, type: type, info: info)
+                    } catch {
+                        self?.handleAddAttachmentError(attachmentURL: url, attachmentType: type, error: error)
                     }
-                    localAttachmentInfo[.originalWidth] = width
-                    localAttachmentInfo[.originalHeight] = height
                 }
-            }
-
-            do {
-                try self?.addAttachmentToContent(
-                    from: urlAndType.0,
-                    type: urlAndType.1,
-                    info: localAttachmentInfo
-                )
-            } catch {
-                self?.handleAddAttachmentError(
-                    attachmentURL: urlAndType.0,
-                    attachmentType: urlAndType.1,
-                    error: error
-                )
+                if #available(iOS 16.0, *) {
+                    Task { [weak self] in
+                        do {
+                            try await asset.load(\.duration)
+                            let tracks = try await asset.load(\.tracks)
+                            let videoTrack = tracks.first { $0.mediaType == .video }
+                            var info = localAttachmentInfo
+                            let durationSeconds = CMTimeGetSeconds(asset.duration)
+                            if durationSeconds.isFinite && !durationSeconds.isNaN {
+                                info[.duration] = durationSeconds
+                            }
+                            if let track = videoTrack {
+                                let (width, height) = Self.videoDimensions(from: track)
+                                info[.originalWidth] = width
+                                info[.originalHeight] = height
+                            }
+                            await MainActor.run { applyVideoMetadataAndAdd(info) }
+                        } catch {
+                            await MainActor.run {
+                                self?.handleAddAttachmentError(attachmentURL: url, attachmentType: type, error: error)
+                            }
+                        }
+                    }
+                } else {
+                    StreamAssetPropertyLoader().loadProperties(
+                        [AssetProperty(\.duration), AssetProperty(\.tracks)],
+                        of: asset
+                    ) { [weak self] result in
+                        var info = localAttachmentInfo
+                        switch result {
+                        case .success(let loadedAsset):
+                            let durationSeconds = CMTimeGetSeconds(loadedAsset.duration)
+                            if durationSeconds.isFinite && !durationSeconds.isNaN {
+                                info[.duration] = durationSeconds
+                            }
+                            if let track = loadedAsset.tracks(withMediaType: .video).first {
+                                let (width, height) = Self.videoDimensions(from: track)
+                                info[.originalWidth] = width
+                                info[.originalHeight] = height
+                            }
+                        case .failure:
+                            break
+                        }
+                        DispatchQueue.main.async { applyVideoMetadataAndAdd(info) }
+                    }
+                }
+            } else {
+                do {
+                    try self?.addAttachmentToContent(
+                        from: urlAndType.0,
+                        type: urlAndType.1,
+                        info: localAttachmentInfo
+                    )
+                } catch {
+                    self?.handleAddAttachmentError(
+                        attachmentURL: urlAndType.0,
+                        attachmentType: urlAndType.1,
+                        error: error
+                    )
+                }
             }
         }
+    }
+
+    private static func videoDimensions(from track: AVAssetTrack) -> (Double, Double) {
+        let size = track.naturalSize
+        let transform = track.preferredTransform
+        if transform.a == 0 && abs(transform.b) == 1 && abs(transform.c) == 1 && transform.d == 0 {
+            return (Double(size.height), Double(size.width))
+        }
+        return (Double(size.width), Double(size.height))
     }
 
     // MARK: - UIDocumentPickerViewControllerDelegate
