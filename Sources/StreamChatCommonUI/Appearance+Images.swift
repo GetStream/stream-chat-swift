@@ -634,6 +634,8 @@ public extension Appearance {
             )
         )
 
+        public var pollOptionDragIcon: UIImage = loadImageSafely(with: "poll_option_drag")
+
         // MARK: - V5 - Command Icons
 
         public var commandGiphyIcon: UIImage = loadImageSafely(with: "GiphyIcon")
