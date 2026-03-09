@@ -127,6 +127,9 @@ public extension AnyAttachmentPayload {
                 title: localFileURL.lastPathComponent,
                 videoRemoteURL: localFileURL,
                 thumbnailURL: nil,
+                originalWidth: localMetadata?.originalResolution?.width,
+                originalHeight: localMetadata?.originalResolution?.height,
+                duration: localMetadata?.duration,
                 file: file,
                 extraData: extraData
             )

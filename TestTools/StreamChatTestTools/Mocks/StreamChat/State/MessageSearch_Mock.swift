@@ -35,7 +35,7 @@ public class MessageSearch_Mock: MessageSearch, @unchecked Sendable {
         }
     }
 
-    override public func search(text: String) async throws -> [ChatMessage] {
+    override public func search(text: String, sort: [Sorting<MessageSearchSortingKey>]? = nil) async throws -> [ChatMessage] {
         searchCallCount += 1
         return await MainActor.run {
             state.messages = messages

@@ -56,7 +56,11 @@ final class ChannelListLinker: Sendable {
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? ChannelUpdatedEvent },
-                callback: { [weak self] event in self?.unlinkChannelIfNeeded(event.channel) }
+                callback: { [weak self] event in
+                    self?.unlinkChannelIfNeeded(event.channel) {
+                        self?.linkChannelIfNeeded(event.channel)
+                    }
+                }
             ),
             EventObserver(
                 notificationCenter: nc,
@@ -115,11 +119,19 @@ final class ChannelListLinker: Sendable {
     }
 
     /// Handles if a channel should be unlinked from the current query or not.
-    private func unlinkChannelIfNeeded(_ channel: ChatChannel) {
-        guard !shouldChannelBelongToCurrentQuery(channel) else { return }
+    private func unlinkChannelIfNeeded(_ channel: ChatChannel, completion: (() -> Void)? = nil) {
+        guard !shouldChannelBelongToCurrentQuery(channel) else {
+            completion?()
+            return
+        }
         isInChannelList(channel) { [worker, query] exists, _ in
-            guard exists else { return }
-            worker.unlink(channel: channel, with: query)
+            guard exists else {
+                completion?()
+                return
+            }
+            worker.unlink(channel: channel, with: query) { _ in
+                completion?()
+            }
         }
     }
 

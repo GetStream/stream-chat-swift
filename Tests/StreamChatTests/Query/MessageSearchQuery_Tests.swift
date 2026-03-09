@@ -33,3 +33,45 @@ final class MessageSearchFilterScope_Tests: StressTestCase {
         XCTAssertEqual(filter.value as! Bool, false)
     }
 }
+
+final class MessageSearchQuery_ChannelListSortMapping_Tests: XCTestCase {
+    func test_messageSearchSort_fromEmptyChannelListSort_returnsCreatedAtDesc() {
+        let result = MessageSearchQuery.messageSearchSort(fromChannelListSort: [])
+        XCTAssertEqual(result, [.init(key: .createdAt, isAscending: false)])
+    }
+
+    func test_messageSearchSort_fromLastMessageAt_returnsCreatedAtWithSameDirection() {
+        let result = MessageSearchQuery.messageSearchSort(fromChannelListSort: [
+            .init(key: .lastMessageAt, isAscending: false)
+        ])
+        XCTAssertEqual(result, [.init(key: .createdAt, isAscending: false)])
+    }
+
+    func test_messageSearchSort_fromLastMessageAtAscending_returnsCreatedAtAscending() {
+        let result = MessageSearchQuery.messageSearchSort(fromChannelListSort: [
+            .init(key: .lastMessageAt, isAscending: true)
+        ])
+        XCTAssertEqual(result, [.init(key: .createdAt, isAscending: true)])
+    }
+
+    func test_messageSearchSort_fromUpdatedAt_returnsUpdatedAtWithSameDirection() {
+        let result = MessageSearchQuery.messageSearchSort(fromChannelListSort: [
+            .init(key: .updatedAt, isAscending: true)
+        ])
+        XCTAssertEqual(result, [.init(key: .updatedAt, isAscending: true)])
+    }
+
+    func test_messageSearchSort_fromCreatedAt_returnsCreatedAtWithSameDirection() {
+        let result = MessageSearchQuery.messageSearchSort(fromChannelListSort: [
+            .init(key: .createdAt, isAscending: true)
+        ])
+        XCTAssertEqual(result, [.init(key: .createdAt, isAscending: true)])
+    }
+
+    func test_messageSearchSort_fromUnmappedKey_returnsCreatedAtDesc() {
+        let result = MessageSearchQuery.messageSearchSort(fromChannelListSort: [
+            .init(key: .memberCount, isAscending: true)
+        ])
+        XCTAssertEqual(result, [.init(key: .createdAt, isAscending: false)])
+    }
+}

@@ -45,6 +45,17 @@ final class MessageSearch_Tests: XCTestCase {
             XCTAssertEqual(Filter.autocomplete(.text, text: "text"), messageSearch.state.query?.messageFilter)
         }
     }
+
+    func test_searchText_withCustomSort_passesSortToMessageUpdater() async throws {
+        await setUpMessageSearch(usesMockedMessageUpdater: true)
+        env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        env.messageUpdaterMock.search_completion_result = .success(.empty())
+
+        let customSort: [Sorting<MessageSearchSortingKey>] = [.init(key: .createdAt, isAscending: true)]
+        _ = try await messageSearch.search(text: "text", sort: customSort)
+
+        XCTAssertEqual(env.messageUpdaterMock.search_query?.sort, customSort)
+    }
     
     func test_searchText_whenTextIsEmpty_thenResultsAndStateAreEmpty() async throws {
         await setUpMessageSearch(usesMockedMessageUpdater: false)

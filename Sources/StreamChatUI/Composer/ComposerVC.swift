@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import AVFoundation
 import Foundation
 import StreamChat
 import StreamChatCommonUI
@@ -28,6 +29,8 @@ public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable, Sen
     public static let originalImage: Self = .init(rawValue: "originalImage")
     public static let duration: Self = .init(rawValue: "duration")
     public static let waveformData: Self = .init(rawValue: "waveformData")
+    public static let originalWidth: Self = .init(rawValue: "originalWidth")
+    public static let originalHeight: Self = .init(rawValue: "originalHeight")
 }
 
 /// The possible composer states. An Enum is not used so it does not cause
@@ -1466,12 +1469,20 @@ open class ComposerVC: _ViewController,
                 width: Double(image.size.width).rounded(.down),
                 height: Double(image.size.height).rounded(.down)
             )
+        } else {
+            let width = info[.originalWidth] as? Double
+            let height = info[.originalHeight] as? Double
+            if let width = width, let height = height {
+                localMetadata.originalResolution = (width: width, height: height)
+            }
         }
 
         switch type {
         case .voiceRecording:
             localMetadata.duration = info[.duration] as? TimeInterval
             localMetadata.waveformData = info[.waveformData] as? [Float]
+        case .video:
+            localMetadata.duration = info[.duration] as? TimeInterval
         default:
             /* No-op */
             break
@@ -1589,41 +1600,87 @@ open class ComposerVC: _ViewController,
         didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]
     ) {
         picker.dismiss(animated: true) { [weak self] in
-            let urlAndType: (URL, AttachmentType)
-            if let imageURL = info[.imageURL] as? URL {
-                urlAndType = (imageURL, .image)
-            } else if let videoURL = info[.mediaURL] as? URL {
-                urlAndType = (videoURL, .video)
-            } else if let editedImage = info[.editedImage] as? UIImage,
-                      let editedImageURL = try? editedImage.temporaryLocalFileUrl() {
-                urlAndType = (editedImageURL, .image)
-            } else if let originalImage = info[.originalImage] as? UIImage,
-                      let originalImageURL = try? originalImage.temporaryLocalFileUrl() {
-                urlAndType = (originalImageURL, .image)
-            } else {
-                log.error("Unexpected item selected in image picker")
-                return
-            }
+            self?.handleImagePickerMediaSelected(info: info)
+        }
+    }
 
-            var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
-            if let originalImage = info[.originalImage] {
-                localAttachmentInfo[.originalImage] = originalImage
-            }
+    private func handleImagePickerMediaSelected(info: [UIImagePickerController.InfoKey: Any]) {
+        let urlAndType: (URL, AttachmentType)
+        if let imageURL = info[.imageURL] as? URL {
+            urlAndType = (imageURL, .image)
+        } else if let videoURL = info[.mediaURL] as? URL {
+            urlAndType = (videoURL, .video)
+        } else if let editedImage = info[.editedImage] as? UIImage,
+                  let editedImageURL = try? editedImage.temporaryLocalFileUrl() {
+            urlAndType = (editedImageURL, .image)
+        } else if let originalImage = info[.originalImage] as? UIImage,
+                  let originalImageURL = try? originalImage.temporaryLocalFileUrl() {
+            urlAndType = (originalImageURL, .image)
+        } else {
+            log.error("Unexpected item selected in image picker")
+            return
+        }
 
+        var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
+        if urlAndType.1 == .image, let originalImage = info[.originalImage] {
+            localAttachmentInfo[.originalImage] = originalImage
+        }
+        if urlAndType.1 == .video, let videoURL = info[.mediaURL] as? URL {
+            let asset = AVURLAsset(url: videoURL)
+            let url = urlAndType.0
+            let type = urlAndType.1
+            let applyVideoMetadataAndAdd: ([LocalAttachmentInfoKey: Any]) -> Void = { [weak self] info in
+                do {
+                    try self?.addAttachmentToContent(from: url, type: type, info: info)
+                } catch {
+                    self?.handleAddAttachmentError(attachmentURL: url, attachmentType: type, error: error)
+                }
+            }
+            StreamAssetPropertyLoader().loadProperties(
+                [AssetProperty(\.duration), AssetProperty(\.tracks)],
+                of: asset
+            ) { result in
+                var info = localAttachmentInfo
+                switch result {
+                case .success(let loadedAsset):
+                    let durationSeconds = CMTimeGetSeconds(loadedAsset.duration)
+                    if durationSeconds.isFinite && !durationSeconds.isNaN {
+                        info[.duration] = durationSeconds
+                    }
+                    if let track = loadedAsset.tracks(withMediaType: .video).first {
+                        let (width, height) = Self.videoDimensions(from: track)
+                        info[.originalWidth] = width
+                        info[.originalHeight] = height
+                    }
+                case .failure:
+                    break
+                }
+                DispatchQueue.main.async { applyVideoMetadataAndAdd(info) }
+            }
+        } else {
             do {
-                try self?.addAttachmentToContent(
+                try addAttachmentToContent(
                     from: urlAndType.0,
                     type: urlAndType.1,
                     info: localAttachmentInfo
                 )
             } catch {
-                self?.handleAddAttachmentError(
+                handleAddAttachmentError(
                     attachmentURL: urlAndType.0,
                     attachmentType: urlAndType.1,
                     error: error
                 )
             }
         }
+    }
+
+    private static func videoDimensions(from track: AVAssetTrack) -> (Double, Double) {
+        let size = track.naturalSize
+        let transform = track.preferredTransform
+        if transform.a == 0 && abs(transform.b) == 1 && abs(transform.c) == 1 && transform.d == 0 {
+            return (Double(size.height), Double(size.width))
+        }
+        return (Double(size.width), Double(size.height))
     }
 
     // MARK: - UIDocumentPickerViewControllerDelegate

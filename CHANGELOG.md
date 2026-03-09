@@ -3,8 +3,39 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- `VideoAttachmentPayload` now has `originalWidth`, `originalHeight`, and `duration`; passed from `localMetadata` when creating payloads from local files (for custom CDN) [#3991](https://github.com/GetStream/stream-chat-swift/pull/3991)
+
+## StreamChatUI
+### ✅ Added
+- Video attachments from the image picker now get width, height, and duration on the payload (for custom CDN) [#3991](https://github.com/GetStream/stream-chat-swift/pull/3991)
+
 ### 🔄 Changed
 - Messages and members limit in `ChannelListQuery` are now using server-side defaults [#3951](https://github.com/GetStream/stream-chat-swift/pull/3951)
+
+# [4.97.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.97.1)
+_February 11, 2026_
+
+### 🔄 Changed
+- Messages and members limit in `ChannelListQuery` are now using server-side defaults [#3951](https://github.com/GetStream/stream-chat-swift/pull/3951)
+
+# [4.98.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.98.0)
+_February 26, 2026_
+
+## StreamChat
+### ✅ Added
+- `ChatMessageSearchController.search(text:sort:completion:)` and `MessageSearch.search(text:sort:)` now accept an optional `sort` parameter so message search can respect a custom sort order (e.g. the channel list's sort when searching from the channel list) [#3980](https://github.com/GetStream/stream-chat-swift/pull/3980)
+- `MessageSearchQuery.messageSearchSort(fromChannelListSort:)` to convert channel list sort order to message search sort for consistent ordering in the channel list search UI [#3980](https://github.com/GetStream/stream-chat-swift/pull/3980)
+
+### 🐞 Fixed
+- Fix autocomplete filter predicate not matching diacritic variants (e.g. "Joao" now matches "João") [#3977](https://github.com/GetStream/stream-chat-swift/pull/3977)
+- Fix "circular reference" compile error with newer Swift/Xcode by marking `WebSocketConnectionState` as `indirect` (cycle with `DisconnectionSource.timeout(from:)`) [#3978](https://github.com/GetStream/stream-chat-swift/pull/3978)
+- Fix adding and removing channels from channel list query when channel updated web-socket event is received [#3983](https://github.com/GetStream/stream-chat-swift/pull/3983)
+
+## StreamChatUI
+### ✅ Added
+- Add support for optional sort in channel list message search [#3980](https://github.com/GetStream/stream-chat-swift/pull/3980)
 
 # [4.97.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.97.1)
 _February 11, 2026_

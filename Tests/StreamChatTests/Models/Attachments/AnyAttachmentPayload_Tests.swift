@@ -27,6 +27,22 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.extraData(), extraData)
     }
 
+    func test_whenInitWithImageAndLocalMetadata_payloadHasOriginalResolution() throws {
+        let url: URL = .localYodaImage
+        var localMetadata = AnyAttachmentLocalMetadata()
+        localMetadata.originalResolution = (width: 1920, height: 1080)
+
+        let anyPayload = try AnyAttachmentPayload(
+            localFileURL: url,
+            attachmentType: .image,
+            localMetadata: localMetadata
+        )
+
+        let payload = try XCTUnwrap(anyPayload.payload as? ImageAttachmentPayload)
+        XCTAssertEqual(payload.originalWidth, 1920)
+        XCTAssertEqual(payload.originalHeight, 1080)
+    }
+
     func test_whenInitWithVideoAttachmentType_payloadIsVideo() throws {
         // Create any video payload.
         let url: URL = .localYodaImage
@@ -46,6 +62,24 @@ final class AnyAttachmentPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.videoURL, url)
         XCTAssertEqual(payload.file, try AttachmentFile(url: url))
         XCTAssertEqual(payload.extraData(), extraData)
+    }
+
+    func test_whenInitWithVideoAndLocalMetadata_payloadHasResolutionAndDuration() throws {
+        let url: URL = .localYodaImage
+        var localMetadata = AnyAttachmentLocalMetadata()
+        localMetadata.originalResolution = (width: 1280, height: 720)
+        localMetadata.duration = 65.5
+
+        let anyPayload = try AnyAttachmentPayload(
+            localFileURL: url,
+            attachmentType: .video,
+            localMetadata: localMetadata
+        )
+
+        let payload = try XCTUnwrap(anyPayload.payload as? VideoAttachmentPayload)
+        XCTAssertEqual(payload.originalWidth, 1280)
+        XCTAssertEqual(payload.originalHeight, 720)
+        XCTAssertEqual(payload.duration, 65.5)
     }
 
     func test_whenInitWithFileAttachmentType_payloadIsFile() throws {
