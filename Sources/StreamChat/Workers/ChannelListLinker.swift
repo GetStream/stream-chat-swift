@@ -57,8 +57,9 @@ final class ChannelListLinker: Sendable {
                 notificationCenter: nc,
                 transform: { $0 as? ChannelUpdatedEvent },
                 callback: { [weak self] event in
-                    self?.unlinkChannelIfNeeded(event.channel) {
-                        self?.linkChannelIfNeeded(event.channel)
+                    guard let self else { return }
+                    self.unlinkChannelIfNeeded(event.channel) {
+                        self.linkChannelIfNeeded(event.channel)
                     }
                 }
             ),
@@ -119,7 +120,7 @@ final class ChannelListLinker: Sendable {
     }
 
     /// Handles if a channel should be unlinked from the current query or not.
-    private func unlinkChannelIfNeeded(_ channel: ChatChannel, completion: (() -> Void)? = nil) {
+    private func unlinkChannelIfNeeded(_ channel: ChatChannel, completion: (@Sendable () -> Void)? = nil) {
         guard !shouldChannelBelongToCurrentQuery(channel) else {
             completion?()
             return

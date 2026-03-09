@@ -1621,7 +1621,7 @@ open class ComposerVC: _ViewController,
             return
         }
 
-        var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
+        nonisolated(unsafe) var localAttachmentInfo: [LocalAttachmentInfoKey: Any] = [:]
         if urlAndType.1 == .image, let originalImage = info[.originalImage] {
             localAttachmentInfo[.originalImage] = originalImage
         }
@@ -1629,33 +1629,33 @@ open class ComposerVC: _ViewController,
             let asset = AVURLAsset(url: videoURL)
             let url = urlAndType.0
             let type = urlAndType.1
-            let applyVideoMetadataAndAdd: ([LocalAttachmentInfoKey: Any]) -> Void = { [weak self] info in
-                do {
-                    try self?.addAttachmentToContent(from: url, type: type, info: info)
-                } catch {
-                    self?.handleAddAttachmentError(attachmentURL: url, attachmentType: type, error: error)
-                }
-            }
             StreamAssetPropertyLoader().loadProperties(
                 [AssetProperty(\.duration), AssetProperty(\.tracks)],
                 of: asset
-            ) { result in
-                var info = localAttachmentInfo
-                switch result {
-                case .success(let loadedAsset):
-                    let durationSeconds = CMTimeGetSeconds(loadedAsset.duration)
-                    if durationSeconds.isFinite && !durationSeconds.isNaN {
-                        info[.duration] = durationSeconds
+            ) { [weak self] result in
+                guard let self else { return }
+                Task { @MainActor in
+                    var info = localAttachmentInfo
+                    switch result {
+                    case .success(let loadedAsset):
+                        let durationSeconds = CMTimeGetSeconds(loadedAsset.duration)
+                        if durationSeconds.isFinite && !durationSeconds.isNaN {
+                            info[.duration] = durationSeconds
+                        }
+                        if let track = loadedAsset.tracks(withMediaType: .video).first {
+                            let (width, height) = Self.videoDimensions(from: track)
+                            info[.originalWidth] = width
+                            info[.originalHeight] = height
+                        }
+                    case .failure:
+                        break
                     }
-                    if let track = loadedAsset.tracks(withMediaType: .video).first {
-                        let (width, height) = Self.videoDimensions(from: track)
-                        info[.originalWidth] = width
-                        info[.originalHeight] = height
+                    do {
+                        try self.addAttachmentToContent(from: url, type: type, info: info)
+                    } catch {
+                        self.handleAddAttachmentError(attachmentURL: url, attachmentType: type, error: error)
                     }
-                case .failure:
-                    break
                 }
-                DispatchQueue.main.async { applyVideoMetadataAndAdd(info) }
             }
         } else {
             do {
