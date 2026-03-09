@@ -11,7 +11,7 @@ on:
         description: 'Mock server branch'
         type: string
         required: true
-        default: feature/sync_channel_last_message_at # FIXME: main
+        default: main
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
