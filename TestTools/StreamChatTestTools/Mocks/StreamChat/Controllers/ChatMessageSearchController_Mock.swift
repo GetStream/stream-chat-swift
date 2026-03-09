@@ -47,6 +47,8 @@ class ChatMessageSearchController_Mock: ChatMessageSearchController, @unchecked 
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         searchCallCount += 1
-        completion?(nil)
+        callback {
+            completion?(nil)
+        }
     }
 }
