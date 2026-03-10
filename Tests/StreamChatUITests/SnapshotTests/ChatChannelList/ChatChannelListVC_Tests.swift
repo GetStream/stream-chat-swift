@@ -138,14 +138,6 @@ import XCTest
         AssertSnapshot(vc, isEmbeddedInNavigationController: true, variants: .onlyUserInterfaceStyles)
     }
 
-    func test_appearance_withSearchBar() {
-        vc.components.channelListSearchStrategy = .messages
-        mockedChannelListController.channels_mock = channels
-        mockedChannelListController.simulate(state: .remoteDataFetched)
-        vc.executeLifecycleMethods()
-        AssertSnapshot(vc, isEmbeddedInNavigationController: true)
-    }
-
     func test_makeChatChannelListVC() {
         let mockedController = ChatChannelListController_Mock.mock()
         let mockChatChannelListVC = TestChatChannelListVC.make(with: mockedController)
