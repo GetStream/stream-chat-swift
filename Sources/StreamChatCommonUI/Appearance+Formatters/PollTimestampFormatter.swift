@@ -11,8 +11,15 @@ public protocol PollTimestampFormatter {
 }
 
 /// The poll timestamp formatter used in poll votes and comments.
+///
+/// Formatting rules for `formatDay`:
+/// - Same day: "Today"
+/// - 1 day ago: "Yesterday"
+/// - 2–6 days ago: "Nd ago"
+/// - 1–3 weeks ago: "Nw ago"
+/// - 4+ weeks: DD/MM/YY
 open class DefaultPollTimestampFormatter: PollTimestampFormatter {
-    /// The formatter to show the day.
+    /// The formatter to show the day in DD/MM/YY format.
     public var dayFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = .autoupdatingCurrent
@@ -20,7 +27,7 @@ open class DefaultPollTimestampFormatter: PollTimestampFormatter {
         return formatter
     }()
 
-    /// The formatter to show the date and time.
+    /// The formatter to show the time.
     public var timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = .autoupdatingCurrent
@@ -28,21 +35,13 @@ open class DefaultPollTimestampFormatter: PollTimestampFormatter {
         return formatter
     }()
 
-    /// The formatter to show "Today" in case the message was sent the current day.
+    /// The formatter to show relative dates like "Today" or "Yesterday".
     public var relativeDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.locale = .autoupdatingCurrent
         formatter.dateStyle = .short
         formatter.timeStyle = .none
         formatter.doesRelativeDateFormatting = true
-        return formatter
-    }()
-
-    /// The formatter to show the week day.
-    public var weekDayDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.locale = .autoupdatingCurrent
-        formatter.setLocalizedDateFormatFromTemplate("EEEE")
         return formatter
     }()
 
@@ -55,8 +54,21 @@ open class DefaultPollTimestampFormatter: PollTimestampFormatter {
             return relativeDateFormatter.string(from: date)
         }
 
-        if calendar.isDateInLastWeek(date) {
-            return weekDayDateFormatter.string(from: date)
+        let days = Calendar.current.dateComponents(
+            [.day],
+            from: Calendar.current.startOfDay(for: date),
+            to: Calendar.current.startOfDay(for: Date())
+        ).day ?? 0
+
+        if days >= 2 && days <= 6 {
+            return L10n.Polls.Date.daysAgo(days)
+        }
+
+        if days >= 7 {
+            let weeks = days / 7
+            if weeks <= 3 {
+                return L10n.Polls.Date.weeksAgo(weeks)
+            }
         }
 
         return dayFormatter.string(from: date)
