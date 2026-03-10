@@ -257,6 +257,22 @@
 "polls.button.suggest-option" = "Suggest an Option";
 /// Shown to display the number of votes in an option.
 "polls.votes" = "%d votes";
+/// Shown to display 1 vote in an option.
+"polls.vote-singular" = "%d vote";
+/// Shown to display the total number of votes.
+"polls.votes-total" = "%d votes total";
+/// Shown in the poll results as a label for the question section.
+"polls.question" = "Question";
+/// Shown in the poll results for an option label.
+"polls.option" = "Option %d";
+/// Shown in the poll results when the vote author is unknown.
+"polls.unknown-vote-author" = "Unknown";
+/// Shown in the poll date formatter for relative days ago.
+"polls.date.days-ago" = "%dd ago";
+/// Shown in the poll date formatter for relative weeks ago.
+"polls.date.weeks-ago" = "%dw ago";
+/// Shown in the poll date formatter to combine day and time with "at".
+"polls.date.day-at-time" = "%@ at %@";
 /// Shown in the poll results navigation title.
 "polls.results-title" = "Poll Results";
 /// Shown in the poll comments navigation title.
