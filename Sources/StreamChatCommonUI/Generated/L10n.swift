@@ -377,13 +377,29 @@ public enum L10n {
     public static var anonymousAuthor: String { L10n.tr("Localizable", "polls.anonymous-author") }
     /// Poll Comments
     public static var commentsTitle: String { L10n.tr("Localizable", "polls.comments-title") }
+    /// Option %d
+    public static func option(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "polls.option", p1)
+    }
+    /// Question
+    public static var question: String { L10n.tr("Localizable", "polls.question") }
     /// Poll Results
     public static var resultsTitle: String { L10n.tr("Localizable", "polls.results-title") }
+    /// Unknown
+    public static var unknownVoteAuthor: String { L10n.tr("Localizable", "polls.unknown-vote-author") }
     /// Update your Comment
     public static var updateComment: String { L10n.tr("Localizable", "polls.update-comment") }
+    /// %d vote
+    public static func voteSingular(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "polls.vote-singular", p1)
+    }
     /// %d votes
     public static func votes(_ p1: Int) -> String {
       return L10n.tr("Localizable", "polls.votes", p1)
+    }
+    /// %d votes total
+    public static func votesTotal(_ p1: Int) -> String {
+      return L10n.tr("Localizable", "polls.votes-total", p1)
     }
     public enum Button {
       /// Add Comment
@@ -404,6 +420,20 @@ public enum L10n {
       }
       /// View Results
       public static var viewResults: String { L10n.tr("Localizable", "polls.button.viewResults") }
+    }
+    public enum Date {
+      /// %@ at %@
+      public static func dayAtTime(_ p1: Any, _ p2: Any) -> String {
+        return L10n.tr("Localizable", "polls.date.day-at-time", String(describing: p1), String(describing: p2))
+      }
+      /// %dd ago
+      public static func daysAgo(_ p1: Int) -> String {
+        return L10n.tr("Localizable", "polls.date.days-ago", p1)
+      }
+      /// %dw ago
+      public static func weeksAgo(_ p1: Int) -> String {
+        return L10n.tr("Localizable", "polls.date.weeks-ago", p1)
+      }
     }
     public enum Creation {
       /// Add a comment
