@@ -3321,6 +3321,100 @@ extension LivestreamChannelController_Tests {
     }
 }
 
+// MARK: - Freeze / Unfreeze Tests
+
+extension LivestreamChannelController_Tests {
+    func test_freezeChannel_makesCorrectAPICall() {
+        // Given
+        let apiClient = client.mockAPIClient
+        let expectation = self.expectation(description: "Freeze channel completes")
+        var freezeError: Error?
+
+        // When
+        controller.freezeChannel { error in
+            freezeError = error
+            expectation.fulfill()
+        }
+
+        // Simulate successful response
+        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // Then
+        let expectedEndpoint = Endpoint<EmptyResponse>.freezeChannel(true, cid: controller.cid!)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertNil(freezeError)
+    }
+
+    func test_freezeChannel_whenChannelNotCreated_returnsError() {
+        // Given
+        let controller = LivestreamChannelController(
+            channelQuery: ChannelQuery(channelPayload: .unique),
+            client: client
+        )
+        let expectation = self.expectation(description: "Freeze channel completes")
+        var freezeError: Error?
+
+        // When
+        controller.freezeChannel { error in
+            freezeError = error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // Then
+        XCTAssertNotNil(freezeError)
+        XCTAssertTrue(freezeError is ClientError.ChannelNotCreatedYet)
+    }
+
+    func test_unfreezeChannel_makesCorrectAPICall() {
+        // Given
+        let apiClient = client.mockAPIClient
+        let expectation = self.expectation(description: "Unfreeze channel completes")
+        var unfreezeError: Error?
+
+        // When
+        controller.unfreezeChannel { error in
+            unfreezeError = error
+            expectation.fulfill()
+        }
+
+        // Simulate successful response
+        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // Then
+        let expectedEndpoint = Endpoint<EmptyResponse>.freezeChannel(false, cid: controller.cid!)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertNil(unfreezeError)
+    }
+
+    func test_unfreezeChannel_whenChannelNotCreated_returnsError() {
+        // Given
+        let controller = LivestreamChannelController(
+            channelQuery: ChannelQuery(channelPayload: .unique),
+            client: client
+        )
+        let expectation = self.expectation(description: "Unfreeze channel completes")
+        var unfreezeError: Error?
+
+        // When
+        controller.unfreezeChannel { error in
+            unfreezeError = error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        // Then
+        XCTAssertNotNil(unfreezeError)
+        XCTAssertTrue(unfreezeError is ClientError.ChannelNotCreatedYet)
+    }
+}
+
 class MockPaginationStateHandler: MessagesPaginationStateHandling {
     init() {
         state = .initial
