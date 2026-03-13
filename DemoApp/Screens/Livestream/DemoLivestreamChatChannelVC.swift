@@ -510,7 +510,7 @@ class DemoLivestreamComposerVC: ComposerVC {
         if livestreamChannelController?.channel?.membership?.isBannedFromChannel == true {
             return false
         }
-        return super.isSendMessageEnabled
+        return livestreamChannelController?.channel?.canSendMessage ?? super.isSendMessageEnabled
     }
 }
 

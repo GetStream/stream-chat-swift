@@ -733,6 +733,48 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         }
     }
 
+    /// Freezes the channel.
+    ///
+    /// Freezing a channel will disallow sending new messages and sending / deleting reactions.
+    /// For more information, see https://getstream.io/chat/docs/ios-swift/freezing_channels/?language=swift
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    public func freezeChannel(completion: (@MainActor (Error?) -> Void)? = nil) {
+        guard let cid else {
+            callback {
+                completion?(ClientError.ChannelNotCreatedYet())
+            }
+            return
+        }
+
+        updater.freezeChannel(true, cid: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
+    /// Unfreezes the channel.
+    ///
+    /// Unfreezing a channel will allow sending new messages and sending / deleting reactions again.
+    /// For more information, see https://getstream.io/chat/docs/ios-swift/freezing_channels/?language=swift
+    ///
+    /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
+    public func unfreezeChannel(completion: (@MainActor (Error?) -> Void)? = nil) {
+        guard let cid else {
+            callback {
+                completion?(ClientError.ChannelNotCreatedYet())
+            }
+            return
+        }
+
+        updater.freezeChannel(false, cid: cid) { error in
+            self.callback {
+                completion?(error)
+            }
+        }
+    }
+
     /// Disables slow mode for the channel
     ///
     /// For more information, please check [documentation](https://getstream.io/chat/docs/javascript/slow_mode/?language=swift).
