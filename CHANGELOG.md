@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.99.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.99.0)
+_March 16, 2026_
+
 ## StreamChat
 ### ✅ Added
 - `VideoAttachmentPayload` now has `originalWidth`, `originalHeight`, and `duration`; passed from `localMetadata` when creating payloads from local files (for custom CDN) [#3991](https://github.com/GetStream/stream-chat-swift/pull/3991)
