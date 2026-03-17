@@ -23,7 +23,7 @@ public struct QuotedAvatarAlignment: RawRepresentable, Equatable, Sendable {
 }
 
 /// A view that displays a quoted message.
-open class QuotedChatMessageView: _View, ThemeProvider, SwiftUIRepresentable {
+open class QuotedChatMessageView: _View, ThemeProvider {
     /// The content of the view.
     public struct Content {
         /// The quoted message.

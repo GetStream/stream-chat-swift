@@ -325,34 +325,6 @@ import XCTest
 
         AssertSnapshot(view, variants: [.defaultLight])
     }
-
-    func test_wrappedInSwiftUI() {
-        struct CustomView: View {
-            @EnvironmentObject var components: Components.ObservableObject
-            let content: QuotedChatMessageView.Content
-
-            var body: some View {
-                components.quotedMessageView.asView(content)
-            }
-        }
-
-        // TODO: We have to replace default as the components are not injected in SwiftUI views.
-        Components.default = .mock
-        let view = CustomView(
-            content: .init(
-                message: .mock(
-                    id: .unique,
-                    cid: .unique,
-                    text: "Hello world!",
-                    author: .mock(id: .unique, imageURL: TestImages.yoda.url)
-                ),
-                avatarAlignment: .leading
-            )
-        )
-        .environmentObject(Components.mock.asObservableObject)
-
-        AssertSnapshot(view, variants: [.defaultLight])
-    }
 }
 
 private extension QuotedChatMessageView {

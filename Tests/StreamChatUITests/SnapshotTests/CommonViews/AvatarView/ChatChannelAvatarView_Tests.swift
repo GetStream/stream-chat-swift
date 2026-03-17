@@ -186,39 +186,6 @@ import XCTest
         view.content = (channel: channel, currentUserId: currentUserId)
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
-
-    func test_wrappedChatChannelAvatarViewInSwiftUI() {
-        struct CustomView: View {
-            @EnvironmentObject var components: Components.ObservableObject
-            let content: (channel: ChatChannel?, currentUserId: UserId?)
-
-            var body: some View {
-                components.channelAvatarView.asView(content)
-                    .frame(width: 50, height: 50)
-            }
-        }
-
-        final class CustomAvatarView: ChatChannelAvatarView {
-            override func setUpAppearance() {
-                super.setUpAppearance()
-
-                presenceAvatarView.avatarView.imageView.backgroundColor = .red
-            }
-        }
-
-        let channel = ChatChannel.mock(cid: .unique)
-
-        var components = Components.mock
-        components.channelAvatarView = CustomAvatarView.self
-
-        // TODO: We have to replace default as the components are not injected in SwiftUI views.
-        Components.default = components
-
-        let view = CustomView(content: (channel, .unique))
-            .environmentObject(components.asObservableObject)
-
-        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
-    }
 }
 
 private extension ChatChannelAvatarView {

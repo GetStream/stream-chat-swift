@@ -7,7 +7,7 @@ import StreamChatCommonUI
 import UIKit
 
 /// A view that displays a title label and subtitle in a container stack view.
-open class TitleContainerView: _View, AppearanceProvider, SwiftUIRepresentable {
+open class TitleContainerView: _View, AppearanceProvider {
     /// Content of the view that contains title (first line) and subtitle (second nil)
     open var content: (title: String?, subtitle: String?) = (nil, nil) {
         didSet {

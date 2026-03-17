@@ -7,7 +7,7 @@ import StreamChatCommonUI
 import UIKit
 
 /// The channel item view that displays information in a channel list cell.
-open class ChatChannelListItemView: _View, ThemeProvider, SwiftUIRepresentable {
+open class ChatChannelListItemView: _View, ThemeProvider {
     /// The content of this view.
     public struct Content {
         /// Channel for the current Item.

@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// A view that shows a channel avatar including an online indicator if any user is online.
-open class ChatChannelAvatarView: _View, ThemeProvider, SwiftUIRepresentable {
+open class ChatChannelAvatarView: _View, ThemeProvider {
     /// A view that shows the avatar image
     open private(set) lazy var presenceAvatarView: ChatPresenceAvatarView = components
         .presenceAvatarView.init()

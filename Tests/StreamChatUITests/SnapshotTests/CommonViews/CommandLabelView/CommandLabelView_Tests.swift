@@ -14,19 +14,10 @@ import XCTest
         let view = CommandLabelView().withoutAutoresizingMaskConstraints
         AssertSnapshot(view)
     }
-
+    
     func test_defaultAppearance() {
         let view = CommandLabelView().withoutAutoresizingMaskConstraints
         view.content = Command(name: "Giphy", description: "Send animated gifs", set: "", args: "")
         AssertSnapshot(view)
-    }
-}
-
-@MainActor final class CommandLabelView_SwiftUI_Tests: iOS13TestCase {
-    func test_defaultAppearance_SwiftUI() {
-        let view = CommandLabelView.asView(
-            Command(name: "Giphy", description: "Send animated gifs", set: "", args: "")
-        )
-        AssertSnapshot(SnapshotContainer(content: view))
     }
 }

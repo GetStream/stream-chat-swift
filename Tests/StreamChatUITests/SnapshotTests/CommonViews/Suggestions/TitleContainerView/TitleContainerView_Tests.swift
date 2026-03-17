@@ -67,13 +67,6 @@ import XCTest
     }
 }
 
-@MainActor final class TitleContainerView_Swift_Tests: iOS13TestCase {
-    func test_swiftUIWrapper() {
-        let view = TitleContainerView.asView((title: "Luke Skywalker", subtitle: "Last seen a long time ago..."))
-        AssertSnapshot(view.frame(width: 320, height: 44))
-    }
-}
-
 extension TitleContainerView {
     func addSizeConstraints() {
         NSLayoutConstraint.activate([
