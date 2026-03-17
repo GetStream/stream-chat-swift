@@ -4,53 +4,57 @@
 
 import StreamChat
 import StreamChatUI
-import SwiftUI
+import UIKit
 
-struct MessengerChatChannelListItem: ChatChannelListItemView.SwiftUIView {
-    @EnvironmentObject var components: Components.ObservableObject
-    @ObservedObject var dataSource: ChatChannelListItemView.ObservedObject<Self>
-    init(dataSource: ChatChannelListItemView.ObservedObject<MessengerChatChannelListItem>) {
-        self.dataSource = dataSource
+final class MessengerChatChannelListItem: ChatChannelListItemView {
+    private lazy var combinedSubtitleLabel: UILabel = {
+        let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        label.adjustsFontForContentSizeCategory = true
+        return label
+    }()
+
+    override func setUpAppearance() {
+        super.setUpAppearance()
+        combinedSubtitleLabel.font = appearance.fonts.footnote
+        combinedSubtitleLabel.textColor = appearance.colorPalette.subtitleText
     }
 
-    var body: some View {
-        HStack {
-            components
-                .channelAvatarView
-                .asView((dataSource.content?.channel, dataSource.content?.currentUserId))
-                .frame(width: 50, height: 50)
-            VStack(
-                alignment: .leading,
-                spacing: 3
-            ) {
-                Text(dataSource.titleText ?? "")
-                    .font(.system(.body))
-                Text(
-                    (dataSource.subtitleText ?? "")
-                        + " • "
-                        + (dataSource.timestampText ?? "")
-                )
-                .font(.system(.footnote))
-                .foregroundColor(Color.gray)
-            }
+    override func setUpLayout() {
+        NSLayoutConstraint.activate([
+            avatarView.heightAnchor.constraint(equalToConstant: 50),
+            avatarView.widthAnchor.constraint(equalTo: avatarView.heightAnchor)
+        ])
 
-            Spacer()
-        }
-        .padding()
+        let textStack = UIStackView(arrangedSubviews: [titleLabel, combinedSubtitleLabel])
+        textStack.axis = .vertical
+        textStack.alignment = .leading
+        textStack.spacing = 3
+        textStack.translatesAutoresizingMaskIntoConstraints = false
+
+        mainContainer.addArrangedSubviews([avatarView, textStack])
+        mainContainer.alignment = .center
+        mainContainer.isLayoutMarginsRelativeArrangement = true
+
+        mainContainer.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(mainContainer)
+        NSLayoutConstraint.activate([
+            mainContainer.topAnchor.constraint(equalTo: topAnchor),
+            mainContainer.leadingAnchor.constraint(equalTo: leadingAnchor),
+            mainContainer.trailingAnchor.constraint(equalTo: trailingAnchor),
+            mainContainer.bottomAnchor.constraint(equalTo: bottomAnchor)
+        ])
     }
 
-    private func imageURL() -> URL? {
-        guard let channel = dataSource.content?.channel else { return nil }
-
-        if let avatarURL = channel.imageURL {
-            return avatarURL
+    override func updateContent() {
+        titleLabel.text = titleText
+        let subtitle = subtitleText ?? ""
+        let timestamp = timestampText ?? ""
+        if subtitle.isEmpty || timestamp.isEmpty {
+            combinedSubtitleLabel.text = subtitle + timestamp
+        } else {
+            combinedSubtitleLabel.text = subtitle + " • " + timestamp
         }
-
-        let firstOtherMember = channel
-            .lastActiveMembers
-            .sorted { $0.memberCreatedAt < $1.memberCreatedAt }
-            .first { $0.id != channel.membership?.id }
-
-        return firstOtherMember?.imageURL
+        avatarView.content = (content?.channel, content?.currentUserId)
     }
 }

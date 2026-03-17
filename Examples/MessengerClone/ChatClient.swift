@@ -16,6 +16,8 @@ extension ChatClient {
 
         components.channelVC = MessengerChatChannelViewController.self
         components.channelHeaderView = MessengerChatChannelHeaderView.self
+        components.channelContentView = MessengerChatChannelListItem.self
+        components.messageContentView = MessengerChatMessageContentView.self
 
         Appearance.default = appearance
         Components.default = components
