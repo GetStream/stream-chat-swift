@@ -88,6 +88,7 @@ lane :release do |options|
   check_unsafe_flags
   match_me
   pod_lint
+
   release_ios_sdk(
     version: options[:version],
     bump_type: options[:type],
@@ -95,8 +96,9 @@ lane :release do |options|
     podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
     github_repo: github_repo,
     extra_changes: extra_changes,
-    create_pull_request: true
+    create_pull_request: false
   )
+  publish_release
 end
 
 lane :merge_release do |options|
@@ -118,7 +120,7 @@ lane :publish_release do |options|
   release_version = get_sdk_version_from_environment
   UI.user_error!("Release #{release_version} has already been published.") if git_tag_exists(tag: release_version, remote: true)
   UI.user_error!('Release version cannot be empty') if release_version.to_s.empty?
-  ensure_git_branch(branch: 'main')
+  ensure_git_branch(branch: 'v4')
 
   clean_products
   build_xcframeworks
@@ -126,7 +128,7 @@ lane :publish_release do |options|
   clean_products
 
   publish_ios_sdk(
-    skip_git_status_check: false,
+    skip_git_status_check: true,
     version: release_version,
     sdk_names: sdk_names,
     podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
