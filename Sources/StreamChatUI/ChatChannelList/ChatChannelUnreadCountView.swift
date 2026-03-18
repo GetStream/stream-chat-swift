@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// A view that shows a number of unread messages in channel.
-open class ChatChannelUnreadCountView: _View, ThemeProvider, SwiftUIRepresentable {
+open class ChatChannelUnreadCountView: _View, ThemeProvider {
     /// The badge view that displays the unread count.
     open private(set) lazy var badgeView = components.badgeView.init()
         .withoutAutoresizingMaskConstraints

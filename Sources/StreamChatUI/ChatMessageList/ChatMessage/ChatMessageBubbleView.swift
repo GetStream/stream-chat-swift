@@ -7,7 +7,7 @@ import StreamChatCommonUI
 import UIKit
 
 /// A view that displays a bubble around a message.
-open class ChatMessageBubbleView: _View, AppearanceProvider, SwiftUIRepresentable {
+open class ChatMessageBubbleView: _View, AppearanceProvider {
     /// A type describing the content of this view.
     public struct Content {
         /// The background color of the bubble.

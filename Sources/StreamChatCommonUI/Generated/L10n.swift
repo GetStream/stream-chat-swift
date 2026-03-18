@@ -421,20 +421,6 @@ public enum L10n {
       /// View Results
       public static var viewResults: String { L10n.tr("Localizable", "polls.button.viewResults") }
     }
-    public enum Date {
-      /// %@ at %@
-      public static func dayAtTime(_ p1: Any, _ p2: Any) -> String {
-        return L10n.tr("Localizable", "polls.date.day-at-time", String(describing: p1), String(describing: p2))
-      }
-      /// %dd ago
-      public static func daysAgo(_ p1: Int) -> String {
-        return L10n.tr("Localizable", "polls.date.days-ago", p1)
-      }
-      /// %dw ago
-      public static func weeksAgo(_ p1: Int) -> String {
-        return L10n.tr("Localizable", "polls.date.weeks-ago", p1)
-      }
-    }
     public enum Creation {
       /// Add a comment
       public static var addAComment: String { L10n.tr("Localizable", "polls.creation.add-a-comment") }
@@ -462,6 +448,20 @@ public enum L10n {
       public static var suggestAnOption: String { L10n.tr("Localizable", "polls.creation.suggest-an-option") }
       /// Create Poll
       public static var title: String { L10n.tr("Localizable", "polls.creation.title") }
+    }
+    public enum Date {
+      /// %@ at %@
+      public static func dayAtTime(_ p1: Any, _ p2: Any) -> String {
+        return L10n.tr("Localizable", "polls.date.day-at-time", String(describing: p1), String(describing: p2))
+      }
+      /// %dd ago
+      public static func daysAgo(_ p1: Int) -> String {
+        return L10n.tr("Localizable", "polls.date.days-ago", p1)
+      }
+      /// %dw ago
+      public static func weeksAgo(_ p1: Int) -> String {
+        return L10n.tr("Localizable", "polls.date.weeks-ago", p1)
+      }
     }
     public enum Subtitle {
       /// Select one

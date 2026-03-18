@@ -124,8 +124,9 @@ struct ShareChannelsView: View {
                         viewModel.channelTapped(channel)
                     } label: {
                         HStack {
-                            ChatChannelAvatarView.asView(
-                                (channel: channel, currentUserId: viewModel.currentUserId)
+                            ChatChannelAvatarViewRepresentable(
+                                channel: channel,
+                                currentUserId: viewModel.currentUserId
                             )
                             .frame(width: 64, height: 64)
                             
@@ -145,8 +146,15 @@ struct ShareChannelsView: View {
     }
 }
 
-extension ChatChannel: Identifiable {
-    public var id: String {
-        return cid.rawValue
+struct ChatChannelAvatarViewRepresentable: UIViewRepresentable {
+    var channel: ChatChannel
+    var currentUserId: UserId?
+
+    func makeUIView(context: Context) -> ChatChannelAvatarView {
+        ChatChannelAvatarView()
+    }
+
+    func updateUIView(_ uiView: ChatChannelAvatarView, context: Context) {
+        uiView.content = (channel: channel, currentUserId: currentUserId)
     }
 }
