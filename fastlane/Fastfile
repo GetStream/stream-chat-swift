@@ -20,6 +20,7 @@ testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/SystemEnvironment+Version.swift')
 is_localhost = !is_ci
 mock_server_driver_port = 4566
+size_analysis_base_branch = 'v4'
 @force_check = false
 
 before_all do |lane|
@@ -68,6 +69,8 @@ end
 
 desc 'Start a new release'
 lane :release do |options|
+  ensure_git_branch(branch: 'v4')
+
   artifacts_path = File.absolute_path('../StreamChatArtifacts.json')
   extra_changes = lambda do |release_version|
     # Set the framework version on the artifacts
@@ -88,6 +91,7 @@ lane :release do |options|
   check_unsafe_flags
   match_me
   pod_lint
+
   release_ios_sdk(
     version: options[:version],
     bump_type: options[:type],
@@ -95,22 +99,9 @@ lane :release do |options|
     podspec_names: ['StreamChat', 'StreamChat-XCFramework', 'StreamChatUI', 'StreamChatUI-XCFramework'],
     github_repo: github_repo,
     extra_changes: extra_changes,
-    create_pull_request: true
+    create_pull_request: false
   )
-end
-
-lane :merge_release do |options|
-  merge_release_to_main(author: options[:author])
-  sh('gh workflow run release-publish.yml --ref main')
-end
-
-lane :merge_main do
-  merge_main_to_develop
-  update_release_version_to_snapshot(file_path: swift_environment_path)
-  ensure_git_branch(branch: 'develop')
-  sh("git add #{swift_environment_path}")
-  sh("git commit -m 'Update release version to snapshot'")
-  sh('git push')
+  publish_release
 end
 
 desc 'Completes an SDK Release'
@@ -118,7 +109,7 @@ lane :publish_release do |options|
   release_version = get_sdk_version_from_environment
   UI.user_error!("Release #{release_version} has already been published.") if git_tag_exists(tag: release_version, remote: true)
   UI.user_error!('Release version cannot be empty') if release_version.to_s.empty?
-  ensure_git_branch(branch: 'main')
+  ensure_git_branch(branch: 'v4')
 
   clean_products
   build_xcframeworks
@@ -911,7 +902,7 @@ lane :show_frameworks_sizes do |options|
   next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
 
   sizes = options[:sizes] || frameworks_sizes
-  show_sdk_size(branch_sizes: sizes, github_repo: github_repo)
+  show_sdk_size(branch_sizes: sizes, github_repo: github_repo, base_branch: size_analysis_base_branch)
   update_img_shields_sdk_sizes(sizes: sizes, open_pr: options[:open_pr]) if options[:update_readme]
 end
 
@@ -976,5 +967,5 @@ lane :size_analyze do
     cloned_source_packages_path: source_packages_path
   )
 
-  show_detailed_sdk_size(sdk_names: sdk_names, threshold: 42)
+  show_detailed_sdk_size(sdk_names: sdk_names, threshold: 42, base_branch: size_analysis_base_branch)
 end
