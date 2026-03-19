@@ -21,7 +21,6 @@ testlab_bucket = 'gs://test-lab-af3rt9m4yh360-mqm1zzm767nhc'
 swift_environment_path = File.absolute_path('../Sources/StreamChat/Generated/SystemEnvironment+Version.swift')
 is_localhost = !is_ci
 mock_server_driver_port = 4566
-size_analysis_base_branch = 'v5' # use default when v5 is released
 @force_check = false
 
 before_all do |lane|
@@ -770,7 +769,7 @@ lane :show_frameworks_sizes do |options|
   next unless is_check_required(sources: sources_matrix[:size], force_check: @force_check)
 
   sizes = options[:sizes] || frameworks_sizes
-  show_sdk_size(branch_sizes: sizes, github_repo: github_repo, base_branch: size_analysis_base_branch)
+  show_sdk_size(branch_sizes: sizes, github_repo: github_repo)
   update_img_shields_sdk_sizes(sizes: sizes, open_pr: options[:open_pr]) if options[:update_readme]
 end
 
@@ -838,5 +837,5 @@ lane :size_analyze do
     cloned_source_packages_path: source_packages_path
   )
 
-  show_detailed_sdk_size(sdk_names: sdk_names, threshold: 42, base_branch: size_analysis_base_branch)
+  show_detailed_sdk_size(sdk_names: sdk_names, threshold: 42)
 end
