@@ -259,7 +259,8 @@ open class QuotedChatMessageView: _View, ThemeProvider {
     open func setAttachmentPreview(for message: ChatMessage) {
         if let filePayload = message.fileAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFit
-            attachmentPreviewView.image = appearance.images.fileIcons[filePayload.file.type] ?? appearance.images.iconOther
+            let fileKey = filePayload.file.type.rawValue
+            attachmentPreviewView.image = appearance.images.fileIconPreviews[fileKey] ?? appearance.images.iconOther
             textView.text = message.text.isEmpty ? filePayload.title : message.text
         } else if let imagePayload = message.imageAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill

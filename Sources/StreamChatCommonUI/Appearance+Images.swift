@@ -45,11 +45,11 @@ public extension Appearance {
 
         public var loadingIndicator: UIImage = loadImageSafely(with: "loading_indicator")
         public var close: UIImage = loadSafely(systemName: "xmark")
-        public var discard: UIImage = loadImageSafely(with: "close")
+        public var discard: UIImage = loadSafely(systemName: "xmark")
         public var link: UIImage = loadImageSafely(with: "link")
 
         public var closeCircleTransparent: UIImage = loadSafely(systemName: "xmark.circle")
-        public var discardAttachment: UIImage = loadSafely(systemName: "xmark.circle.fill")
+        public var discardAttachment: UIImage = loadImageSafely(with: "close_circle_filled")
         public var back: UIImage = loadSafely(systemName: "chevron.left")
         public var onlyVisibleToCurrentUser = loadSafely(systemName: "eye.fill")
         public var more = loadSafely(systemName: "ellipsis")
@@ -671,7 +671,10 @@ public extension Appearance {
                     "txt": iconDoc,
                     "rtf": iconDoc,
                     "odt": iconDoc,
+                    "ods": iconXls,
                     "md": iconDoc,
+                    "generic": iconOther,
+                    "unknown": iconOther,
                     // Presentations
                     "ppt": iconPpt,
                     "pptx": iconPpt,
@@ -684,12 +687,14 @@ public extension Appearance {
                     "aac": iconMp3,
                     "wav": iconMp3,
                     "m4a": iconMp3,
+                    "ogg": iconMp3,
                     // Video
                     "mp4": iconMp4,
                     "mov": iconMp4,
                     "avi": iconMp4,
                     "mkv": iconMp4,
                     "webm": iconMp4,
+                    "wmv": iconMp4,
                     // Code
                     "html": iconHtml,
                     "shtml": iconHtml,
@@ -703,8 +708,10 @@ public extension Appearance {
                     "zip": iconZip,
                     "rar": iconZip,
                     "7z": iconZip,
+                    "x7z": iconZip,
                     "tar": iconZip,
                     "gz": iconZip,
+                    "xz": iconZip,
                     "tar.gz": iconZip
                 ]
             }
