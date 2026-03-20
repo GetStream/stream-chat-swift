@@ -105,7 +105,7 @@ open class VoiceRecordingAttachmentComposerPreview: _View, AppearanceProvider, C
         layer.borderColor = appearance.colorPalette.border.cgColor
 
         fileIconImageView.contentMode = .center
-        fileIconImageView.image = appearance.images.fileAac
+        fileIconImageView.image = appearance.images.fileIconPreviews["aac"] ?? appearance.images.iconMp3
 
         durationLabel.textColor = appearance.colorPalette.textLowEmphasis
         durationLabel.font = .monospacedDigitSystemFont(ofSize: appearance.fonts.footnote.pointSize, weight: .regular)

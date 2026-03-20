@@ -191,7 +191,7 @@ extension ChatMessageFileAttachmentListView {
             /// to an `.mp3`.
             let fileType: AttachmentFileType = file.type == .aac ? .mp3 : file.type
 
-            return appearance.images.fileIcons[fileType] ?? appearance.images.fileFallback
+            return appearance.images.fileIcons[fileType] ?? appearance.images.iconOther
         }
     }
 }

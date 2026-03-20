@@ -127,7 +127,10 @@ import XCTest
 
     func test_setUpAppearance_fileIconImageViewWasConfiguredCorrectly() {
         XCTAssertEqual(subject.fileIconImageView.contentMode, .center)
-        XCTAssertEqual(subject.fileIconImageView.image, subject.appearance.images.fileAac)
+        XCTAssertEqual(
+            subject.fileIconImageView.image,
+            subject.appearance.images.fileIconPreviews["aac"] ?? subject.appearance.images.iconMp3
+        )
     }
 
     func test_setUpAppearance_durationLabelWasConfiguredCorrectly() {

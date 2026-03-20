@@ -336,58 +336,6 @@ public extension Appearance {
 
         public var messageListErrorIndicator: UIImage = loadSafely(systemName: "exclamationmark.circle.fill")
 
-        // MARK: - FileIcons
-
-        public var file7z: UIImage = loadImageSafely(with: "7z")
-        public var fileAac: UIImage = loadImageSafely(with: "aac")
-        public var fileCsv: UIImage = loadImageSafely(with: "csv")
-        public var fileDoc: UIImage = loadImageSafely(with: "doc")
-        public var fileDocx: UIImage = loadImageSafely(with: "docx")
-        public var fileHtml: UIImage = loadImageSafely(with: "html")
-        public var fileMd: UIImage = loadImageSafely(with: "md")
-        public var fileMp3: UIImage = loadImageSafely(with: "mp3")
-        public var fileOdt: UIImage = loadImageSafely(with: "odt")
-        public var filePdf: UIImage = loadImageSafely(with: "pdf")
-        public var filePpt: UIImage = loadImageSafely(with: "ppt")
-        public var filePptx: UIImage = loadImageSafely(with: "pptx")
-        public var fileRar: UIImage = loadImageSafely(with: "rar")
-        public var fileRtf: UIImage = loadImageSafely(with: "rtf")
-        public var fileTargz: UIImage = loadImageSafely(with: "tar.gz")
-        public var fileTxt: UIImage = loadImageSafely(with: "txt")
-        public var fileXls: UIImage = loadImageSafely(with: "xls")
-        public var fileXlsx: UIImage = loadImageSafely(with: "xlsx")
-        public var filezip: UIImage = loadImageSafely(with: "zip")
-        public var fileFallback: UIImage = loadImageSafely(with: "generic")
-
-        private var _documentPreviews: [String: UIImage]?
-
-        public var documentPreviews: [String: UIImage] {
-            get { _documentPreviews ??
-                [
-                    "7z": file7z,
-                    "aac": fileAac,
-                    "csv": fileCsv,
-                    "doc": fileDoc,
-                    "docx": fileDocx,
-                    "html": fileHtml,
-                    "md": fileMd,
-                    "mp3": fileMp3,
-                    "odt": fileOdt,
-                    "pdf": filePdf,
-                    "ppt": filePpt,
-                    "pptx": filePptx,
-                    "rar": fileRar,
-                    "rtf": fileRtf,
-                    "tar.gz": fileTargz,
-                    "txt": fileTxt,
-                    "xls": fileXls,
-                    "xlsx": fileXlsx,
-                    "zip": filezip
-                ]
-            }
-            set { _documentPreviews = newValue }
-        }
-
         private var _fileIcons: [AttachmentFileType: UIImage]?
         public var fileIcons: [AttachmentFileType: UIImage] {
             get { _fileIcons ??
@@ -744,6 +692,7 @@ public extension Appearance {
                     "webm": iconMp4,
                     // Code
                     "html": iconHtml,
+                    "shtml": iconHtml,
                     "htm": iconHtml,
                     "css": iconHtml,
                     "js": iconHtml,

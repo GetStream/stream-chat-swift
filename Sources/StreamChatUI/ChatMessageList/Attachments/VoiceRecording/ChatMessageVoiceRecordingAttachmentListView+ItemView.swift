@@ -168,7 +168,7 @@ extension ChatMessageVoiceRecordingAttachmentListView {
             fileNameLabel.lineBreakMode = .byTruncatingMiddle
 
             fileIconImageView.contentMode = .center
-            fileIconImageView.image = appearance.images.fileAac
+            fileIconImageView.image = appearance.images.fileIconPreviews["aac"] ?? appearance.images.iconMp3
 
             durationLabel.textColor = appearance.colorPalette.textLowEmphasis
             durationLabel.font = .monospacedDigitSystemFont(
@@ -209,7 +209,7 @@ extension ChatMessageVoiceRecordingAttachmentListView {
             case .uploadingFailed:
                 fileIconImageView.image = appearance.fileAttachmentActionIcon(uploadState: .uploadingFailed, downloadState: nil, downloadingEnabled: false)
             default:
-                fileIconImageView.image = appearance.images.fileAac
+                fileIconImageView.image = appearance.images.fileIconPreviews["aac"] ?? appearance.images.iconMp3
             }
 
             guard
