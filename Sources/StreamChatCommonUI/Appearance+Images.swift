@@ -44,16 +44,16 @@ public extension Appearance {
         // MARK: - General
 
         public var loadingIndicator: UIImage = loadImageSafely(with: "loading_indicator")
-        public var close: UIImage = loadSafely(systemName: "xmark", assetsFallback: "close")
+        public var close: UIImage = loadSafely(systemName: "xmark")
         public var discard: UIImage = loadImageSafely(with: "close")
         public var link: UIImage = loadImageSafely(with: "link")
 
-        public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
-        public var discardAttachment: UIImage = loadImageSafely(with: "close_circle_filled")
-        public var back: UIImage = loadImageSafely(with: "icn_back")
+        public var closeCircleTransparent: UIImage = loadSafely(systemName: "xmark.circle")
+        public var discardAttachment: UIImage = loadSafely(systemName: "xmark.circle.fill")
+        public var back: UIImage = loadSafely(systemName: "chevron.left")
         public var onlyVisibleToCurrentUser = loadSafely(systemName: "eye.fill")
-        public var more = loadImageSafely(with: "icn_more")
-        public var share: UIImage = loadSafely(systemName: "square.and.arrow.up", assetsFallback: "share")
+        public var more = loadSafely(systemName: "ellipsis")
+        public var share: UIImage = loadSafely(systemName: "square.and.arrow.up")
 
         public var commands: UIImage = loadImageSafely(with: "bolt")
         public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
@@ -63,25 +63,25 @@ public extension Appearance {
         public var whiteCheckmark: UIImage = loadImageSafely(with: "checkmark_white")
         public var confirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm")
         public var bigConfirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm_big")
-        public var folder: UIImage = loadImageSafely(with: "folder")
-        public var restart: UIImage = loadImageSafely(with: "restart")
-        public var emptyChannelListMessageBubble: UIImage = loadImageSafely(with: "empty_channel_list_message_bubble")
+        public var folder: UIImage = loadSafely(systemName: "folder")
+        public var restart: UIImage = loadSafely(systemName: "arrow.trianglehead.2.counterclockwise")
+        public var emptyChannelListMessageBubble: UIImage = loadSafely(systemName: "message")
         public var emptySearch: UIImage = loadSafely(systemName: "magnifyingglass")
-        public var download: UIImage = loadSafely(systemName: "icloud.and.arrow.down", assetsFallback: "download")
+        public var download: UIImage = loadSafely(systemName: "icloud.and.arrow.down")
         
         // MARK: - Recording
 
-        public var mic: UIImage = loadSafely(systemName: "mic", assetsFallback: "mic")
-        public var lock: UIImage = loadSafely(systemName: "lock", assetsFallback: "lock")
-        public var chevronLeft: UIImage = loadSafely(systemName: "chevron.left", assetsFallback: "chevron.left").imageFlippedForRightToLeftLayoutDirection()
-        public var chevronRight: UIImage = loadSafely(systemName: "chevron.right", assetsFallback: "chevron.right").imageFlippedForRightToLeftLayoutDirection()
-        public var chevronUp: UIImage = loadSafely(systemName: "chevron.up", assetsFallback: "chevron.up")
-        public var trash: UIImage = loadSafely(systemName: "trash", assetsFallback: "trash")
-        public var stop: UIImage = loadSafely(systemName: "stop.circle", assetsFallback: "")
-        public var playFill: UIImage = loadSafely(systemName: "play.fill", assetsFallback: "play.fill").imageFlippedForRightToLeftLayoutDirection()
-        public var pauseFill: UIImage = loadSafely(systemName: "pause.fill", assetsFallback: "pause.fill")
-        public var recordingPlay: UIImage = loadSafely(systemName: "play", assetsFallback: "play_big").imageFlippedForRightToLeftLayoutDirection()
-        public var recordingPause: UIImage = loadSafely(systemName: "pause", assetsFallback: "pause.fill")
+        public var mic: UIImage = loadSafely(systemName: "mic")
+        public var lock: UIImage = loadSafely(systemName: "lock")
+        public var chevronLeft: UIImage = loadSafely(systemName: "chevron.left").imageFlippedForRightToLeftLayoutDirection()
+        public var chevronRight: UIImage = loadSafely(systemName: "chevron.right").imageFlippedForRightToLeftLayoutDirection()
+        public var chevronUp: UIImage = loadSafely(systemName: "chevron.up")
+        public var trash: UIImage = loadSafely(systemName: "trash")
+        public var stop: UIImage = loadSafely(systemName: "stop.circle")
+        public var playFill: UIImage = loadSafely(systemName: "play.fill").imageFlippedForRightToLeftLayoutDirection()
+        public var pauseFill: UIImage = loadSafely(systemName: "pause.fill")
+        public var recordingPlay: UIImage = loadSafely(systemName: "play").imageFlippedForRightToLeftLayoutDirection()
+        public var recordingPause: UIImage = loadSafely(systemName: "pause")
         public var rateButtonPillBackground: UIImage = loadImageSafely(with: "pill")
         public var sliderThumb: UIImage = loadImageSafely(with: "sliderThumb")
 
@@ -334,7 +334,7 @@ public extension Appearance {
 
         // MARK: - MessageList
 
-        public var messageListErrorIndicator: UIImage = loadImageSafely(with: "error_indicator")
+        public var messageListErrorIndicator: UIImage = loadSafely(systemName: "exclamationmark.circle.fill")
 
         // MARK: - FileIcons
 
@@ -463,10 +463,10 @@ public extension Appearance {
         }
 
         public var camera: UIImage = loadImageSafely(with: "camera")
-        public var bigPlay: UIImage = loadImageSafely(with: "play_big").imageFlippedForRightToLeftLayoutDirection()
+        public var bigPlay: UIImage = loadSafely(systemName: "play.fill").imageFlippedForRightToLeftLayoutDirection()
 
-        public var play: UIImage = loadImageSafely(with: "play").imageFlippedForRightToLeftLayoutDirection()
-        public var pause: UIImage = loadImageSafely(with: "pause")
+        public var play: UIImage = loadSafely(systemName: "play.fill").imageFlippedForRightToLeftLayoutDirection()
+        public var pause: UIImage = loadSafely(systemName: "pause")
 
         // MARK: - CommandIcons
 
