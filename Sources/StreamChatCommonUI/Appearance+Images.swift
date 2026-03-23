@@ -64,7 +64,7 @@ public extension Appearance {
         public var confirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm")
         public var bigConfirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm_big")
         public var folder: UIImage = loadSafely(systemName: "folder")
-        public var restart: UIImage = loadSafely(systemName: "arrow.trianglehead.2.counterclockwise")
+        public var restart: UIImage = loadSafely(systemName: "arrow.2.counterclockwise")
         public var emptyChannelListMessageBubble: UIImage = loadSafely(systemName: "message")
         public var emptySearch: UIImage = loadSafely(systemName: "magnifyingglass")
         public var download: UIImage = loadSafely(systemName: "icloud.and.arrow.down")
@@ -120,7 +120,7 @@ public extension Appearance {
         public var reactionWutSmall: UIImage = loadImageSafely(with: "reaction_wut_small")
         public var reactionWutBig: UIImage = loadImageSafely(with: "reaction_wut_big")
         
-        public var reactionDetailsShowPicker: UIImage = loadSafely(systemName: "face.smiling")
+        public var reactionDetailsShowPicker: UIImage = loadImageSafely(with: "add_reaction")
 
         /// The reactions appearance used to display reactions in the message list.
         public var defaultReactions: [MessageReactionType: ChatMessageReactionAppearanceType] {
