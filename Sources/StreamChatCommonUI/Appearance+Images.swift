@@ -50,7 +50,7 @@ public extension Appearance {
 
         public var closeCircleTransparent: UIImage = loadSafely(systemName: "xmark.circle")
         public var discardAttachment: UIImage = loadImageSafely(with: "close_circle_filled")
-        public var back: UIImage = loadSafely(systemName: "chevron.left")
+        public var back: UIImage = loadSafely(systemName: "chevron.left").imageFlippedForRightToLeftLayoutDirection()
         public var onlyVisibleToCurrentUser = loadSafely(systemName: "eye.fill")
         public var more = loadSafely(systemName: "ellipsis")
         public var share: UIImage = loadSafely(systemName: "square.and.arrow.up")
@@ -78,9 +78,9 @@ public extension Appearance {
         public var chevronUp: UIImage = loadSafely(systemName: "chevron.up")
         public var trash: UIImage = loadSafely(systemName: "trash")
         public var stop: UIImage = loadSafely(systemName: "stop.circle")
-        public var playFill: UIImage = loadSafely(systemName: "play.fill").imageFlippedForRightToLeftLayoutDirection()
+        public var playFill: UIImage = loadSafely(systemName: "play.fill")
         public var pauseFill: UIImage = loadSafely(systemName: "pause.fill")
-        public var recordingPlay: UIImage = loadSafely(systemName: "play").imageFlippedForRightToLeftLayoutDirection()
+        public var recordingPlay: UIImage = loadSafely(systemName: "play")
         public var recordingPause: UIImage = loadSafely(systemName: "pause")
         public var rateButtonPillBackground: UIImage = loadImageSafely(with: "pill")
         public var sliderThumb: UIImage = loadImageSafely(with: "sliderThumb")
@@ -411,9 +411,9 @@ public extension Appearance {
         }
 
         public var camera: UIImage = loadImageSafely(with: "camera")
-        public var bigPlay: UIImage = loadSafely(systemName: "play.fill").imageFlippedForRightToLeftLayoutDirection()
+        public var bigPlay: UIImage = loadSafely(systemName: "play.fill")
 
-        public var play: UIImage = loadSafely(systemName: "play.fill").imageFlippedForRightToLeftLayoutDirection()
+        public var play: UIImage = loadSafely(systemName: "play.fill")
         public var pause: UIImage = loadSafely(systemName: "pause")
 
         // MARK: - CommandIcons

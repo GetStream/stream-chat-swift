@@ -104,7 +104,7 @@ open class VoiceRecordingAttachmentComposerPreview: _View, AppearanceProvider, C
         layer.borderWidth = 1
         layer.borderColor = appearance.colorPalette.border.cgColor
 
-        fileIconImageView.contentMode = .center
+        fileIconImageView.contentMode = .scaleAspectFit
         fileIconImageView.image = appearance.images.fileIconPreviews["aac"] ?? appearance.images.iconMp3
 
         durationLabel.textColor = appearance.colorPalette.textLowEmphasis
@@ -136,6 +136,8 @@ open class VoiceRecordingAttachmentComposerPreview: _View, AppearanceProvider, C
         container.addArrangedSubview(playPauseButton)
         container.addArrangedSubview(centerContainerStackView)
         container.addArrangedSubview(fileIconImageView)
+        fileIconImageView.widthAnchor.pin(equalToConstant: 36).isActive = true
+        fileIconImageView.heightAnchor.pin(equalToConstant: 36).isActive = true
     }
 
     override open func updateContent() {

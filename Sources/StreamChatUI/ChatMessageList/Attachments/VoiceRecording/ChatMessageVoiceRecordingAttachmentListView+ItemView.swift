@@ -150,6 +150,8 @@ extension ChatMessageVoiceRecordingAttachmentListView {
             durationLabel.setContentHuggingPriority(.streamRequire, for: .vertical)
             waveformView.setContentHuggingPriority(.streamLow, for: .vertical)
             fileIconImageView.setContentHuggingPriority(.streamRequire, for: .horizontal)
+            fileIconImageView.widthAnchor.pin(equalToConstant: 36).isActive = true
+            fileIconImageView.heightAnchor.pin(equalToConstant: 36).isActive = true
         }
 
         override open func setUpAppearance() {
@@ -167,7 +169,7 @@ extension ChatMessageVoiceRecordingAttachmentListView {
             fileNameLabel.font = appearance.fonts.bodyBold
             fileNameLabel.lineBreakMode = .byTruncatingMiddle
 
-            fileIconImageView.contentMode = .center
+            fileIconImageView.contentMode = .scaleAspectFit
             fileIconImageView.image = appearance.images.fileIconPreviews["aac"] ?? appearance.images.iconMp3
 
             durationLabel.textColor = appearance.colorPalette.textLowEmphasis
