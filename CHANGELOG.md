@@ -3,7 +3,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ✅ Added
+- First beta v5 release introduces the new `StreamChatCommonUI` module for shared appearance APIs, formatters, resources, and assets used across the SDK UI surface.
+- The UI layer has been refreshed with new design tokens, typography, colors, icons, reactions, media badges, and richer file / attachment previews.
+
 ### 🔄 Changed
+- StreamChat internals were modernized for v5 with Swift 6 complete concurrency checking, broader use of `StreamCore`, and cleanup of collection / controller change-handling internals.
+- The package and project structure were reorganized for v5, including buildable folders, updated target membership, and CI / release pipeline changes to match the new module layout.
+
+### ❌ Removed
+- Deprecated APIs scheduled for removal in v5 were dropped as part of the release cleanup.
+- This keeps the public surface smaller and reduces overlap with the newer APIs introduced and stabilized during the v4 cycle.
+- Legacy CocoaPods support and podspecs were removed.
+- v5 continues with Swift Package Manager as the supported distribution path for integrating the SDK.
+- Legacy SwiftUI wrappers around UIKit components and controller-specific SwiftUI additions were removed in favor of the new v5 UI modularization.
+- This simplifies the SDK structure and avoids maintaining parallel abstractions that no longer match the direction of the UI layer.
 
 # [4.99.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.99.0)
 _March 16, 2026_
