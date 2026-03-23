@@ -150,8 +150,8 @@ extension ChatMessageVoiceRecordingAttachmentListView {
             durationLabel.setContentHuggingPriority(.streamRequire, for: .vertical)
             waveformView.setContentHuggingPriority(.streamLow, for: .vertical)
             fileIconImageView.setContentHuggingPriority(.streamRequire, for: .horizontal)
-            fileIconImageView.widthAnchor.pin(equalToConstant: 36).isActive = true
-            fileIconImageView.heightAnchor.pin(equalToConstant: 36).isActive = true
+            fileIconImageView.widthAnchor.pin(equalToConstant: 30).isActive = true
+            fileIconImageView.heightAnchor.pin(equalToConstant: 30).isActive = true
         }
 
         override open func setUpAppearance() {

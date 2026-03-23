@@ -136,8 +136,8 @@ open class VoiceRecordingAttachmentComposerPreview: _View, AppearanceProvider, C
         container.addArrangedSubview(playPauseButton)
         container.addArrangedSubview(centerContainerStackView)
         container.addArrangedSubview(fileIconImageView)
-        fileIconImageView.widthAnchor.pin(equalToConstant: 36).isActive = true
-        fileIconImageView.heightAnchor.pin(equalToConstant: 36).isActive = true
+        fileIconImageView.widthAnchor.pin(equalToConstant: 30).isActive = true
+        fileIconImageView.heightAnchor.pin(equalToConstant: 30).isActive = true
     }
 
     override open func updateContent() {
