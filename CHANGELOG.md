@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.0.0-beta](https://github.com/GetStream/stream-chat-swift/releases/tag/5.0.0-beta)
+_March 23, 2026_
+
 ### ✅ Added
 - First beta v5 release introduces the new `StreamChatCommonUI` module for shared appearance APIs, formatters, resources, and assets used across the SDK UI surface.
 - The UI layer has been refreshed with new design tokens, typography, colors, icons, reactions, media badges, and richer file / attachment previews.
