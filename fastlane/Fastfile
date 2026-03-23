@@ -49,8 +49,9 @@ lane :release do |options|
   end
 
   check_unsafe_flags
-  match_me
+
   release_ios_sdk(
+    skip_git_status_check: false,
     version: options[:version],
     bump_type: options[:type],
     sdk_names: sdk_names,
@@ -87,12 +88,11 @@ lane :publish_release do |options|
     sdk_names: sdk_names,
     github_repo: github_repo
   )
-
-  update_spm(version: release_version)
 end
 
 lane :get_sdk_version_from_environment do
-  File.read(swift_environment_path).match(/String\s+=\s+"([\d.]+).*"/)[1]
+  version = File.read(swift_environment_path).match(/String\s+=\s+"([^"]+)"/)[1]
+  version.downcase.include?('beta') ? version : version.split('-').first
 end
 
 private_lane :appstore_api_key do

@@ -4,5 +4,5 @@
 
 gem 'fastlane-plugin-versioning'
 gem 'fastlane-plugin-sonarcloud_metric_kit'
-gem 'fastlane-plugin-stream_actions', '0.3.107'
+gem 'fastlane-plugin-stream_actions', '0.3.110'
 gem 'fastlane-plugin-xcsize', '1.2.0'
