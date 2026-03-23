@@ -91,6 +91,7 @@ open class ChatChannelVC: _ViewController,
         guard isLastMessageVisibleOrSeen else { return false }
         guard isFirstPageLoaded else { return false }
         guard !hasMarkedMessageAsUnread else { return false }
+        guard hasSeenFirstUnreadMessage else { return false }
         
         guard let channel = channelController.channel, let currentUserId = client.currentUserId else { return false }
         guard let read = channel.read(for: currentUserId), let lastMessage = messages.first else {

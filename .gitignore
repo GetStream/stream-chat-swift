@@ -116,3 +116,6 @@ Dependencies/
 # VSCode
 .vscode
 buildServer.json
+
+# Claude
+.claude/
