@@ -30,6 +30,8 @@ The **StreamChatUI SDK** is our UI SDK for UIKit components. If your application
 
 The **StreamChatSwiftUI SDK** is our UI SDK for SwiftUI components. If your application only needs to support iOS 14 and above, this is the right UI SDK for you. This SDK is available in another repository **[stream-chat-swiftui](https://github.com/GetStream/stream-chat-swiftui)**.
 
+Our SwiftUI SDK has a brand new design, please check our [docs](https://getstream.io/chat/docs/sdk/ios/v5/) for more details.
+
 ---
 
 ## Main Features
@@ -91,7 +93,7 @@ To find out more about this product, please check our [docs](https://getstream.i
 
 ## Feeds SDK
 
-In addition to our chat and video SDKs, we also have a [Feeds iOS SDK](https://github.com/GetStream/stream-feeds-swift) (currently available as alpha release), that integrates with our Feeds product client-side.
+In addition to our chat and video SDKs, we also have a [Feeds iOS SDK](https://github.com/GetStream/stream-feeds-swift), that integrates with our Feeds product client-side.
 
 To find out more about this product, please check our [docs](https://getstream.io/activity-feeds/docs/ios/).
 
