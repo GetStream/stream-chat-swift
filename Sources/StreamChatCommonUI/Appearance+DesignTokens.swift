@@ -40,6 +40,11 @@ extension Appearance {
         public var deviceRadius: CGFloat { 62 }
         public var deviceSafeAreaBottom: CGFloat { space32 }
         public var deviceSafeAreaTop: CGFloat { 50 }
+        public var emoji2xl: CGFloat { fontSizeSize64 }
+        public var emojiLg: CGFloat { fontSizeSize32 }
+        public var emojiMd: CGFloat { fontSizeSize24 }
+        public var emojiSm: CGFloat { typographyFontSizeMd }
+        public var emojiXl: CGFloat { fontSizeSize48 }
         public var iconSizeLg: CGFloat { size32 }
         public var iconSizeMd: CGFloat { size20 }
         public var iconSizeSm: CGFloat { size16 }
@@ -78,7 +83,7 @@ extension Appearance {
         public var spacingXs: CGFloat { space8 }
         public var spacingXxs: CGFloat { space4 }
         public var spacingXxxs: CGFloat { space2 }
-
+        
         // MARK: Foundations
 
         let lineHeightLineHeight10: CGFloat = 10
@@ -109,9 +114,11 @@ extension Appearance {
         let radiusFull: CGFloat = 9999
         let size12: CGFloat = 12
         let size128: CGFloat = 128
+        let size144: CGFloat = 144
         let size16: CGFloat = 16
         let size2: CGFloat = 2
         let size20: CGFloat = 20
+        let size208: CGFloat = 208
         let size24: CGFloat = 24
         let size240: CGFloat = 240
         let size28: CGFloat = 28
@@ -121,10 +128,12 @@ extension Appearance {
         let size40: CGFloat = 40
         let size48: CGFloat = 48
         let size480: CGFloat = 480
+        let size56: CGFloat = 56
         let size560: CGFloat = 560
         let size6: CGFloat = 6
         let size64: CGFloat = 64
         let size640: CGFloat = 640
+        let size760: CGFloat = 760
         let size8: CGFloat = 8
         let size80: CGFloat = 80
         let space0: CGFloat = 0
