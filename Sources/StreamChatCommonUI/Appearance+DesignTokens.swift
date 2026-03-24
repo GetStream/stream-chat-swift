@@ -40,11 +40,6 @@ extension Appearance {
         public var deviceRadius: CGFloat { 62 }
         public var deviceSafeAreaBottom: CGFloat { space32 }
         public var deviceSafeAreaTop: CGFloat { 50 }
-        public var emoji2xl: CGFloat { fontSizeSize64 }
-        public var emojiLg: CGFloat { fontSizeSize32 }
-        public var emojiMd: CGFloat { fontSizeSize24 }
-        public var emojiSm: CGFloat { typographyFontSizeMd }
-        public var emojiXl: CGFloat { fontSizeSize48 }
         public var iconSizeLg: CGFloat { size32 }
         public var iconSizeMd: CGFloat { size20 }
         public var iconSizeSm: CGFloat { size16 }
