@@ -101,8 +101,8 @@ open class FileAttachmentView: _View, AppearanceProvider {
         super.updateContent()
 
         guard let content = content else { return }
-        let icon = content.iconName.flatMap { appearance.images.documentPreviews[$0] }
-            ?? appearance.images.fileFallback
+        let iconName = content.iconName.map { $0.lowercased() }
+        let icon = iconName.flatMap { appearance.images.fileIconPreviews[$0] } ?? appearance.images.iconOther
         fileNameLabel.text = content.title
         fileIconImageView.image = icon
         fileSizeLabel.text = AttachmentFile.sizeFormatter.string(fromByteCount: content.size)

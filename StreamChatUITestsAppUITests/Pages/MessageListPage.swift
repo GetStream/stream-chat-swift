@@ -202,7 +202,7 @@ class MessageListPage {
         }
 
         static func errorButton(in messageCell: XCUIElement) -> XCUIElement {
-            messageCell.buttons["error indicator"]
+            messageCell.buttons["ChatMessageErrorIndicator"]
         }
 
         static func readCount(in messageCell: XCUIElement) -> XCUIElement {
