@@ -302,7 +302,7 @@ public extension Appearance {
         public lazy var controlPlaybackThumbBorderDefault: UIColor = borderCoreOpacityStrong
         public lazy var controlPlaybackToggleBorder: UIColor = borderCoreDefault
         public lazy var controlPlaybackToggleText: UIColor = textPrimary
-        public lazy var controlPlayButtonBackground: UIColor = chrome1000
+        public lazy var controlPlayButtonBackground: UIColor = UIColor(hex: 0x000000bf)
         public lazy var controlPlayButtonIcon: UIColor = textOnAccent
         public lazy var controlProgressBarFill: UIColor = accentNeutral
         public lazy var controlProgressBarTrack: UIColor = backgroundCoreSurfaceStrong
