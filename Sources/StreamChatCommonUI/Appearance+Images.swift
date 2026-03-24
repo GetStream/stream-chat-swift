@@ -64,7 +64,7 @@ public extension Appearance {
         public var confirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm")
         public var bigConfirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm_big")
         public var folder: UIImage = loadSafely(systemName: "folder")
-        public var restart: UIImage = loadSafely(systemName: "arrow.2.counterclockwise")
+        public var restart: UIImage = loadImageSafely(with: "restart")
         public var emptyChannelListMessageBubble: UIImage = loadSafely(systemName: "message")
         public var emptySearch: UIImage = loadSafely(systemName: "magnifyingglass")
         public var download: UIImage = loadSafely(systemName: "icloud.and.arrow.down")
