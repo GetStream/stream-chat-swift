@@ -44,16 +44,16 @@ public extension Appearance {
         // MARK: - General
 
         public var loadingIndicator: UIImage = loadImageSafely(with: "loading_indicator")
-        public var close: UIImage = loadSafely(systemName: "xmark", assetsFallback: "close")
+        public var close: UIImage = loadSafely(systemName: "xmark")
         public var discard: UIImage = loadImageSafely(with: "close")
         public var link: UIImage = loadImageSafely(with: "link")
 
-        public var closeCircleTransparent: UIImage = loadImageSafely(with: "close_circle_transparent")
+        public var closeCircleTransparent: UIImage = loadSafely(systemName: "xmark.circle")
         public var discardAttachment: UIImage = loadImageSafely(with: "close_circle_filled")
-        public var back: UIImage = loadImageSafely(with: "icn_back")
+        public var back: UIImage = loadSafely(systemName: "chevron.left").imageFlippedForRightToLeftLayoutDirection()
         public var onlyVisibleToCurrentUser = loadSafely(systemName: "eye.fill")
-        public var more = loadImageSafely(with: "icn_more")
-        public var share: UIImage = loadSafely(systemName: "square.and.arrow.up", assetsFallback: "share")
+        public var more = loadSafely(systemName: "ellipsis")
+        public var share: UIImage = loadSafely(systemName: "square.and.arrow.up")
 
         public var commands: UIImage = loadImageSafely(with: "bolt")
         public var smallBolt: UIImage = loadImageSafely(with: "bolt_small")
@@ -63,25 +63,25 @@ public extension Appearance {
         public var whiteCheckmark: UIImage = loadImageSafely(with: "checkmark_white")
         public var confirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm")
         public var bigConfirmCheckmark: UIImage = loadImageSafely(with: "checkmark_confirm_big")
-        public var folder: UIImage = loadImageSafely(with: "folder")
+        public var folder: UIImage = loadSafely(systemName: "folder")
         public var restart: UIImage = loadImageSafely(with: "restart")
-        public var emptyChannelListMessageBubble: UIImage = loadImageSafely(with: "empty_channel_list_message_bubble")
+        public var emptyChannelListMessageBubble: UIImage = loadSafely(systemName: "message")
         public var emptySearch: UIImage = loadSafely(systemName: "magnifyingglass")
-        public var download: UIImage = loadSafely(systemName: "icloud.and.arrow.down", assetsFallback: "download")
+        public var download: UIImage = loadSafely(systemName: "icloud.and.arrow.down")
         
         // MARK: - Recording
 
-        public var mic: UIImage = loadSafely(systemName: "mic", assetsFallback: "mic")
-        public var lock: UIImage = loadSafely(systemName: "lock", assetsFallback: "lock")
-        public var chevronLeft: UIImage = loadSafely(systemName: "chevron.left", assetsFallback: "chevron.left").imageFlippedForRightToLeftLayoutDirection()
-        public var chevronRight: UIImage = loadSafely(systemName: "chevron.right", assetsFallback: "chevron.right").imageFlippedForRightToLeftLayoutDirection()
-        public var chevronUp: UIImage = loadSafely(systemName: "chevron.up", assetsFallback: "chevron.up")
-        public var trash: UIImage = loadSafely(systemName: "trash", assetsFallback: "trash")
-        public var stop: UIImage = loadSafely(systemName: "stop.circle", assetsFallback: "")
-        public var playFill: UIImage = loadSafely(systemName: "play.fill", assetsFallback: "play.fill").imageFlippedForRightToLeftLayoutDirection()
-        public var pauseFill: UIImage = loadSafely(systemName: "pause.fill", assetsFallback: "pause.fill")
-        public var recordingPlay: UIImage = loadSafely(systemName: "play", assetsFallback: "play_big").imageFlippedForRightToLeftLayoutDirection()
-        public var recordingPause: UIImage = loadSafely(systemName: "pause", assetsFallback: "pause.fill")
+        public var mic: UIImage = loadSafely(systemName: "mic")
+        public var lock: UIImage = loadSafely(systemName: "lock")
+        public var chevronLeft: UIImage = loadSafely(systemName: "chevron.left").imageFlippedForRightToLeftLayoutDirection()
+        public var chevronRight: UIImage = loadSafely(systemName: "chevron.right").imageFlippedForRightToLeftLayoutDirection()
+        public var chevronUp: UIImage = loadSafely(systemName: "chevron.up")
+        public var trash: UIImage = loadSafely(systemName: "trash")
+        public var stop: UIImage = loadSafely(systemName: "stop.circle")
+        public var playFill: UIImage = loadSafely(systemName: "play.fill")
+        public var pauseFill: UIImage = loadSafely(systemName: "pause.fill")
+        public var recordingPlay: UIImage = loadSafely(systemName: "play")
+        public var recordingPause: UIImage = loadSafely(systemName: "pause")
         public var rateButtonPillBackground: UIImage = loadImageSafely(with: "pill")
         public var sliderThumb: UIImage = loadImageSafely(with: "sliderThumb")
 
@@ -120,7 +120,7 @@ public extension Appearance {
         public var reactionWutSmall: UIImage = loadImageSafely(with: "reaction_wut_small")
         public var reactionWutBig: UIImage = loadImageSafely(with: "reaction_wut_big")
         
-        public var reactionDetailsShowPicker: UIImage = loadSafely(systemName: "face.smiling")
+        public var reactionDetailsShowPicker: UIImage = loadImageSafely(with: "add_reaction")
 
         /// The reactions appearance used to display reactions in the message list.
         public var defaultReactions: [MessageReactionType: ChatMessageReactionAppearanceType] {
@@ -334,59 +334,7 @@ public extension Appearance {
 
         // MARK: - MessageList
 
-        public var messageListErrorIndicator: UIImage = loadImageSafely(with: "error_indicator")
-
-        // MARK: - FileIcons
-
-        public var file7z: UIImage = loadImageSafely(with: "7z")
-        public var fileAac: UIImage = loadImageSafely(with: "aac")
-        public var fileCsv: UIImage = loadImageSafely(with: "csv")
-        public var fileDoc: UIImage = loadImageSafely(with: "doc")
-        public var fileDocx: UIImage = loadImageSafely(with: "docx")
-        public var fileHtml: UIImage = loadImageSafely(with: "html")
-        public var fileMd: UIImage = loadImageSafely(with: "md")
-        public var fileMp3: UIImage = loadImageSafely(with: "mp3")
-        public var fileOdt: UIImage = loadImageSafely(with: "odt")
-        public var filePdf: UIImage = loadImageSafely(with: "pdf")
-        public var filePpt: UIImage = loadImageSafely(with: "ppt")
-        public var filePptx: UIImage = loadImageSafely(with: "pptx")
-        public var fileRar: UIImage = loadImageSafely(with: "rar")
-        public var fileRtf: UIImage = loadImageSafely(with: "rtf")
-        public var fileTargz: UIImage = loadImageSafely(with: "tar.gz")
-        public var fileTxt: UIImage = loadImageSafely(with: "txt")
-        public var fileXls: UIImage = loadImageSafely(with: "xls")
-        public var fileXlsx: UIImage = loadImageSafely(with: "xlsx")
-        public var filezip: UIImage = loadImageSafely(with: "zip")
-        public var fileFallback: UIImage = loadImageSafely(with: "generic")
-
-        private var _documentPreviews: [String: UIImage]?
-
-        public var documentPreviews: [String: UIImage] {
-            get { _documentPreviews ??
-                [
-                    "7z": file7z,
-                    "aac": fileAac,
-                    "csv": fileCsv,
-                    "doc": fileDoc,
-                    "docx": fileDocx,
-                    "html": fileHtml,
-                    "md": fileMd,
-                    "mp3": fileMp3,
-                    "odt": fileOdt,
-                    "pdf": filePdf,
-                    "ppt": filePpt,
-                    "pptx": filePptx,
-                    "rar": fileRar,
-                    "rtf": fileRtf,
-                    "tar.gz": fileTargz,
-                    "txt": fileTxt,
-                    "xls": fileXls,
-                    "xlsx": fileXlsx,
-                    "zip": filezip
-                ]
-            }
-            set { _documentPreviews = newValue }
-        }
+        public var messageListErrorIndicator: UIImage = loadSafely(systemName: "exclamationmark.circle.fill")
 
         private var _fileIcons: [AttachmentFileType: UIImage]?
         public var fileIcons: [AttachmentFileType: UIImage] {
@@ -463,10 +411,10 @@ public extension Appearance {
         }
 
         public var camera: UIImage = loadImageSafely(with: "camera")
-        public var bigPlay: UIImage = loadImageSafely(with: "play_big").imageFlippedForRightToLeftLayoutDirection()
+        public var bigPlay: UIImage = loadSafely(systemName: "play.fill")
 
-        public var play: UIImage = loadImageSafely(with: "play").imageFlippedForRightToLeftLayoutDirection()
-        public var pause: UIImage = loadImageSafely(with: "pause")
+        public var play: UIImage = loadSafely(systemName: "play.fill")
+        public var pause: UIImage = loadSafely(systemName: "pause")
 
         // MARK: - CommandIcons
 
@@ -723,7 +671,10 @@ public extension Appearance {
                     "txt": iconDoc,
                     "rtf": iconDoc,
                     "odt": iconDoc,
+                    "ods": iconXls,
                     "md": iconDoc,
+                    "generic": iconOther,
+                    "unknown": iconOther,
                     // Presentations
                     "ppt": iconPpt,
                     "pptx": iconPpt,
@@ -736,14 +687,17 @@ public extension Appearance {
                     "aac": iconMp3,
                     "wav": iconMp3,
                     "m4a": iconMp3,
+                    "ogg": iconMp3,
                     // Video
                     "mp4": iconMp4,
                     "mov": iconMp4,
                     "avi": iconMp4,
                     "mkv": iconMp4,
                     "webm": iconMp4,
+                    "wmv": iconMp4,
                     // Code
                     "html": iconHtml,
+                    "shtml": iconHtml,
                     "htm": iconHtml,
                     "css": iconHtml,
                     "js": iconHtml,
@@ -754,8 +708,10 @@ public extension Appearance {
                     "zip": iconZip,
                     "rar": iconZip,
                     "7z": iconZip,
+                    "x7z": iconZip,
                     "tar": iconZip,
                     "gz": iconZip,
+                    "xz": iconZip,
                     "tar.gz": iconZip
                 ]
             }
