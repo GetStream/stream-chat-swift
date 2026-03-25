@@ -1124,6 +1124,14 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
                 }
                 channel = channel?.changing(pinnedMessages: pinnedMessages)
             }
+        }  else {
+            var pinnedMessages = channel?.pinnedMessages ?? []
+            if updatedMessage.isPinned {
+                pinnedMessages.append(updatedMessage)
+            } else {
+                pinnedMessages.removeAll(where: { $0.id == updatedMessage.id })
+            }
+            channel = channel?.changing(pinnedMessages: pinnedMessages)
         }
     }
 
