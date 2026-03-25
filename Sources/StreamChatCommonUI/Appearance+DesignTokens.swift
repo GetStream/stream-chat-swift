@@ -78,7 +78,7 @@ extension Appearance {
         public var spacingXs: CGFloat { space8 }
         public var spacingXxs: CGFloat { space4 }
         public var spacingXxxs: CGFloat { space2 }
-        
+
         // MARK: Foundations
 
         let lineHeightLineHeight10: CGFloat = 10

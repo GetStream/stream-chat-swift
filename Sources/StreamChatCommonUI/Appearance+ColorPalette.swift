@@ -169,7 +169,7 @@ public extension Appearance {
         public lazy var avatarPresenceBorder: UIColor = borderCoreInverse
         public lazy var avatarTextDefault: UIColor = avatarPaletteText1
         public lazy var avatarTextPlaceholder: UIColor = chrome500
-        public lazy var backgroundCoreApp: UIColor = backgroundCoreElevation0
+        public lazy var backgroundCoreApp: UIColor = backgroundElevation0
         public lazy var backgroundCoreElevation0: UIColor = chrome0
         public lazy var backgroundCoreElevation1: UIColor = UIColor(light: chrome0, dark: chrome50)
         public lazy var backgroundCoreElevation2: UIColor = UIColor(light: chrome0, dark: chrome100)
@@ -185,11 +185,15 @@ public extension Appearance {
         public lazy var backgroundCoreSurfaceCard: UIColor = UIColor(light: chrome50, dark: chrome100)
         public lazy var backgroundCoreSurfaceStrong: UIColor = chrome150
         public lazy var backgroundCoreSurfaceSubtle: UIColor = chrome50
+        public lazy var backgroundElevation0: UIColor = chrome0
+        public lazy var backgroundElevation1: UIColor = UIColor(light: chrome0, dark: chrome50)
+        public lazy var backgroundElevation2: UIColor = UIColor(light: chrome0, dark: chrome100)
+        public lazy var backgroundElevation3: UIColor = UIColor(light: chrome0, dark: chrome200)
         public lazy var backgroundUtilityDisabled: UIColor = chrome100
         public lazy var backgroundUtilityHover: UIColor = UIColor(light: UIColor(hex: 0x1a1b251a), dark: UIColor(hex: 0xffffff26))
         public lazy var backgroundUtilityPressed: UIColor = UIColor(light: UIColor(hex: 0x1a1b2526), dark: UIColor(hex: 0xffffff33))
         public lazy var backgroundUtilitySelected: UIColor = UIColor(light: UIColor(hex: 0x1a1b2533), dark: UIColor(hex: 0xffffff40))
-        public lazy var badgeBackgroundDefault: UIColor = backgroundCoreElevation3
+        public lazy var badgeBackgroundDefault: UIColor = backgroundElevation3
         public lazy var badgeBackgroundError: UIColor = accentError
         public lazy var badgeBackgroundInverse: UIColor = chrome1000
         public lazy var badgeBackgroundNeutral: UIColor = accentNeutral
@@ -229,7 +233,7 @@ public extension Appearance {
         lazy var brand800: UIColor = UIColor(light: .blue800, dark: .blue100)
         lazy var brand900: UIColor = UIColor(light: .blue900, dark: .blue50)
         public lazy var buttonDestructiveBackground: UIColor = accentError
-        public lazy var buttonDestructiveBackgroundLiquidGlass: UIColor = backgroundCoreElevation0
+        public lazy var buttonDestructiveBackgroundLiquidGlass: UIColor = backgroundElevation0
         public lazy var buttonDestructiveBorder: UIColor = accentError
         public lazy var buttonDestructiveBorderOnDark: UIColor = textInverse
         public lazy var buttonDestructiveText: UIColor = accentError
@@ -243,7 +247,7 @@ public extension Appearance {
         public lazy var buttonPrimaryTextOnAccent: UIColor = textOnAccent
         public lazy var buttonPrimaryTextOnDark: UIColor = textInverse
         public lazy var buttonSecondaryBackground: UIColor = backgroundCoreSurface
-        public lazy var buttonSecondaryBackgroundLiquidGlass: UIColor = backgroundCoreElevation0
+        public lazy var buttonSecondaryBackgroundLiquidGlass: UIColor = backgroundElevation0
         public lazy var buttonSecondaryBorder: UIColor = borderCoreDefault
         public lazy var buttonSecondaryBorderOnDark: UIColor = borderCoreInverse
         public lazy var buttonSecondaryText: UIColor = textPrimary
@@ -320,7 +324,7 @@ public extension Appearance {
         public lazy var controlToggleSwitchBackground: UIColor = accentNeutral
         public lazy var controlToggleSwitchBackgroundDisabled: UIColor = backgroundUtilityDisabled
         public lazy var controlToggleSwitchBackgroundSelected: UIColor = accentPrimary
-        public lazy var controlToggleSwitchKnob: UIColor = backgroundCoreElevation4
+        public lazy var controlToggleSwitchKnob: UIColor = backgroundCoreOnAccent
         public lazy var inputSendIcon: UIColor = accentPrimary
         public lazy var inputSendIconDisabled: UIColor = textDisabled
         public lazy var inputTextDefault: UIColor = textPrimary
@@ -330,7 +334,7 @@ public extension Appearance {
         public lazy var presenceBackgroundOffline: UIColor = accentNeutral
         public lazy var presenceBackgroundOnline: UIColor = accentSuccess
         public lazy var presenceBorder: UIColor = borderCoreInverse
-        public lazy var reactionBackground: UIColor = backgroundCoreElevation3
+        public lazy var reactionBackground: UIColor = backgroundElevation3
         public lazy var reactionBorder: UIColor = borderCoreDefault
         public lazy var reactionEmoji: UIColor = textPrimary
         public lazy var reactionText: UIColor = textPrimary
