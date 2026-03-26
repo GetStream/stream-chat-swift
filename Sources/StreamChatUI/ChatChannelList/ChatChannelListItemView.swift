@@ -146,7 +146,7 @@ open class ChatChannelListItemView: _View, ThemeProvider {
     /// The preview message for the channel list item, derived from the channel's latest messages.
     open var previewMessage: ChatMessage? {
         content?.channel.latestMessages.first(where: {
-            $0.type != .ephemeral && $0.type != .error
+            $0.type != .ephemeral
         })
     }
 
