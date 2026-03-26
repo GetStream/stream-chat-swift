@@ -210,7 +210,7 @@ import XCTest
                     lastDeliveredMessageId: deliveredMessage.id
                 )
             ],
-            previewMessage: deliveredMessage
+            latestMessages: [deliveredMessage]
         )
 
         let view = channelItemView(
@@ -256,7 +256,7 @@ import XCTest
                     lastDeliveredMessageId: deliveredMessage.id
                 )
             ],
-            previewMessage: deliveredMessage
+            latestMessages: [deliveredMessage]
         )
 
         let view = channelItemView(
@@ -1071,8 +1071,7 @@ import XCTest
                     text: "Hey there",
                     author: currentUser,
                     isSentByCurrentUser: true
-                ),
-                readEventsEnabled: true
+                )
             ),
             currentUserId: currentUser.id
         )
@@ -1115,7 +1114,7 @@ import XCTest
 
         let channel: ChatChannel = .mock(
             cid: .unique,
-            previewMessage: previewMessage
+            latestMessages: [previewMessage]
         )
 
         let view = channelItemView(
@@ -1276,7 +1275,7 @@ import XCTest
 
         let channel: ChatChannel = .mock(
             cid: .unique,
-            previewMessage: previewMessage
+            latestMessages: [previewMessage]
         )
 
         let itemView = ChatChannelListItemView()
@@ -1302,7 +1301,7 @@ import XCTest
 
         let channel: ChatChannel = .mock(
             cid: .unique,
-            previewMessage: previewMessage
+            latestMessages: [previewMessage]
         )
 
         let itemView = ChatChannelListItemView()
@@ -1439,7 +1438,7 @@ import XCTest
 
         let channel: ChatChannel = .mock(
             cid: .unique,
-            previewMessage: previewMessage
+            latestMessages: [previewMessage]
         )
 
         let itemView = ChatChannelListItemView()
@@ -1452,7 +1451,7 @@ import XCTest
     func test_subtitleText_whenSearchingMessage() {
         let itemView = ChatChannelListItemView()
         itemView.content = .init(
-            channel: .mock(cid: .unique, previewMessage: nil),
+            channel: .mock(cid: .unique),
             currentUserId: nil,
             searchResult: .init(text: "Dummy", message: .mock(text: "Some text"))
         )
@@ -1464,8 +1463,7 @@ import XCTest
 
     func test_timestampText_whenPreviewMessageIsNil_thenTimestampIsNil() {
         let channel: ChatChannel = .mock(
-            cid: .unique,
-            previewMessage: nil
+            cid: .unique
         )
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
@@ -1476,9 +1474,9 @@ import XCTest
     func test_timestampText_whenPreviewMessageExists_thenUsesCreatedAtFromPreviewMessage() {
         let channel: ChatChannel = .mock(
             cid: .unique,
-            previewMessage: .mock(
+            latestMessages: [.mock(
                 createdAt: Date(timeIntervalSince1970: 1)
-            )
+            )]
         )
 
         let itemView = ChatChannelListItemView()
@@ -1495,7 +1493,7 @@ import XCTest
     func test_timestampText_whenSearchingMessage_thenUsesCreatedAtFromSearchResultMessage() {
         let itemView = ChatChannelListItemView()
         itemView.content = .init(
-            channel: .mockNonDMChannel(previewMessage: nil),
+            channel: .mockNonDMChannel(),
             currentUserId: nil,
             searchResult: .init(
                 text: "Dummy",
@@ -1514,9 +1512,9 @@ import XCTest
     func test_timestampText_whenCreatedAtIsToday_thenShowsTimeOnly() {
         let channel: ChatChannel = .mock(
             cid: .unique,
-            previewMessage: .mock(
+            latestMessages: [.mock(
                 createdAt: Date(timeIntervalSince1970: 1)
-            )
+            )]
         )
 
         let mockCalendar = Calendar_Mock()
@@ -1538,9 +1536,9 @@ import XCTest
     func test_timestampText_whenCreatedAtIsYesterday_thenShowsYesterday() {
         let channel: ChatChannel = .mock(
             cid: .unique,
-            previewMessage: .mock(
+            latestMessages: [.mock(
                 createdAt: Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date()
-            )
+            )]
         )
 
         let itemView = ChatChannelListItemView()
@@ -1555,9 +1553,9 @@ import XCTest
     func test_timestampText_whenCreatedAtInLastWeek_thenShowsWeekDay() {
         let channel: ChatChannel = .mock(
             cid: .unique,
-            previewMessage: .mock(
+            latestMessages: [.mock(
                 createdAt: Date(timeIntervalSince1970: 1_690_998_292)
-            )
+            )]
         )
 
         let mockCalendar = Calendar_Mock()
@@ -1578,9 +1576,9 @@ import XCTest
     func test_timestampText_whenCreatedAtBeforeLastWeek_thenShowsDate() {
         let channel: ChatChannel = .mock(
             cid: .unique,
-            previewMessage: .mock(
+            latestMessages: [.mock(
                 createdAt: Date(timeIntervalSince1970: 1_690_998_292)
-            )
+            )]
         )
 
         let itemView = ChatChannelListItemView()
@@ -1829,7 +1827,7 @@ import XCTest
             config: .mock(readEventsEnabled: readEventsEnabled),
             membership: membership,
             memberCount: memberCount,
-            previewMessage: previewMessage,
+            latestMessages: [previewMessage].compactMap { $0 },
             draftMessage: draftMessage
         )
     }
