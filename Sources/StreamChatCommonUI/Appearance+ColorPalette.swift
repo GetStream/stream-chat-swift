@@ -202,13 +202,14 @@ public extension Appearance {
         public lazy var borderCoreInverse: UIColor = chrome0
         public lazy var borderCoreOnAccent: UIColor = UIColor(light: chrome0, dark: chrome1000)
         public lazy var borderCoreOnInverse: UIColor = chrome0
-        public lazy var borderCoreOnSurface: UIColor = .slate200
+        public lazy var borderCoreOnSurface: UIColor = chrome300
         public lazy var borderCoreOpacityStrong: UIColor = UIColor(light: UIColor(hex: 0x1a1b2540), dark: UIColor(hex: 0xffffff40))
         public lazy var borderCoreOpacitySubtle: UIColor = UIColor(light: UIColor(hex: 0x1a1b251a), dark: UIColor(hex: 0xffffff33))
         public lazy var borderCoreStrong: UIColor = chrome300
         public lazy var borderCoreSubtle: UIColor = chrome100
         public lazy var borderUtilityActive: UIColor = accentPrimary
         public lazy var borderUtilityDisabled: UIColor = chrome100
+        public lazy var borderUtilityDisabledOnSurface: UIColor = chrome150
         public lazy var borderUtilityError: UIColor = accentError
         public lazy var borderUtilityFocus: UIColor = UIColor(hex: 0x78a8ff40)
         public lazy var borderUtilityFocused: UIColor = brand150
