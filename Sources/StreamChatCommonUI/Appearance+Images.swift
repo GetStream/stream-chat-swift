@@ -506,6 +506,13 @@ public extension Appearance {
                 weight: .medium
             )
         )
+
+        public var messageDeletedIndicator: UIImage = loadSafely(
+            systemName: "nosign",
+            config: UIImage.SymbolConfiguration(
+                weight: .regular
+            )
+        )
         
         /// The reactions emoji unicode rendered in the message list.
         public var availableMessagesReactionEmojis: [MessageReactionType: String] {
