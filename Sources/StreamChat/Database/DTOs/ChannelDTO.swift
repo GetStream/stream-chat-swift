@@ -77,7 +77,6 @@ class ChannelDTO: NSManagedObject {
 
     @NSManaged var watchers: Set<UserDTO>
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
-    @NSManaged var previewMessage: MessageDTO?
     @NSManaged var draftMessage: MessageDTO?
     @NSManaged var activeLiveLocations: Set<SharedLocationDTO>
 
@@ -373,10 +372,6 @@ extension NSManagedObjectContext {
             message.updateReadBy(withChannelReads: channelReadDTOs)
         }
         
-        if dto.needsPreviewUpdate(payload) {
-            dto.previewMessage = preview(for: payload.channel.cid)
-        }
-
         dto.updateOldestMessageAt(payload: payload)
 
         if let draftMessage = payload.draft {
@@ -638,7 +633,6 @@ extension ChatChannel {
         let membership = try dto.membership.map { try $0.asModel() }
         let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
         let pendingMessages = dto.pendingMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
-        let previewMessage = try? dto.previewMessage?.relationshipAsModel(depth: depth)
         let draftMessage = try? dto.draftMessage?.relationshipAsModel(depth: depth)
         let typingUsers = Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() })
         let activeLiveLocations = try dto.activeLiveLocations.map { try $0.asModel() }
@@ -679,7 +673,6 @@ extension ChatChannel {
             pinnedMessages: pinnedMessages,
             pendingMessages: pendingMessages,
             muteDetails: muteDetails,
-            previewMessage: previewMessage,
             draftMessage: draftMessage.map(DraftMessage.init),
             activeLiveLocations: activeLiveLocations,
             pushPreference: pushPreference
@@ -711,16 +704,4 @@ extension ChannelDTO {
         }
     }
 
-    /// Returns `true` if the payload holds messages sent after the current channel preview.
-    func needsPreviewUpdate(_ payload: ChannelPayload) -> Bool {
-        guard let preview = previewMessage else {
-            return true
-        }
-
-        guard let newestMessage = payload.newestMessage else {
-            return false
-        }
-
-        return newestMessage.createdAt > preview.createdAt.bridgeDate
-    }
 }

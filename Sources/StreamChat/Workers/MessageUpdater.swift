@@ -67,11 +67,6 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 // If a message is local only, it means it is not in the server, so we should
                 // not make any call to the server.
                 shouldDeleteOnBackend = false
-
-                // Ensures bounced message deletion updates the channel preview.
-                if let channelDTO = messageDTO.previewOfChannel, let channelId = try? ChannelId(cid: channelDTO.cid) {
-                    channelDTO.previewMessage = session.preview(for: channelId)
-                }
             } else {
                 messageDTO.localMessageState = .deleting
             }
@@ -931,7 +926,6 @@ class MessageUpdater: Worker, @unchecked Sendable {
             guard action.isCancel else { return }
             // For ephemeral messages we don't change `state` to `.deleted`
             messageDTO.deletedAt = DBDate()
-            messageDTO.previewOfChannel?.previewMessage = session.preview(for: cid)
         }, completion: { error in
             if let error {
                 completion?(error)

@@ -215,9 +215,6 @@ protocol MessageDatabaseSession {
     /// Checks if a message exists without fetching the object
     func messageExists(id: MessageId) -> Bool
 
-    /// Fetches preview message for channel  from the database.
-    func preview(for cid: ChannelId) -> MessageDTO?
-
     /// Deletes the provided dto from a database
     /// - Parameter message: The DTO to be deleted
     func delete(message: MessageDTO)
@@ -804,8 +801,6 @@ extension DatabaseSession {
             poll.fromEvent = true
             try savePoll(payload: poll, cache: nil)
         }
-
-        updateChannelPreview(from: payload)
     }
 
     func saveMessageIfNeeded(from payload: EventPayload) throws {
@@ -870,40 +865,6 @@ extension DatabaseSession {
         }
     }
 
-    func updateChannelPreview(from payload: EventPayload) {
-        guard let cid = payload.cid, let channelDTO = channel(cid: cid) else { return }
-
-        switch payload.eventType {
-        case .messageNew, .notificationMessageNew:
-            let newPreview = preview(for: cid)
-            let newPreviewCreatedAt = newPreview?.createdAt.bridgeDate ?? .distantFuture
-            let currentPreviewCreatedAt = channelDTO.previewMessage?.createdAt.bridgeDate ?? .distantPast
-            if newPreviewCreatedAt > currentPreviewCreatedAt {
-                channelDTO.previewMessage = newPreview
-            }
-
-        case .messageDeleted where channelDTO.previewMessage?.id == payload.message?.id:
-            let newPreview = preview(for: cid)
-            channelDTO.previewMessage = newPreview
-
-        case .channelHidden where payload.isChannelHistoryCleared == true:
-            let newPreview = preview(for: cid)
-            channelDTO.previewMessage = newPreview
-
-        case .channelTruncated:
-            // We're not using `preview(for: cid)` here because the channel
-            // with updated `truncatedAt` is not saved to persistent store yet.
-            //
-            // It leads to the fetch request taking the old value of `channel.truncatedAt`
-            // and returning the preview message which has been truncated and therefore can't longer
-            // be used as a preview.
-            channelDTO.previewMessage = payload.message.flatMap { message(id: $0.id) }
-
-        default:
-            break
-        }
-    }
-    
     func handlePollVoteChangedEvent(vote: PollVotePayload) throws {
         var voteUpdated = false
         let userId = vote.userId ?? "anon"
