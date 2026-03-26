@@ -23,55 +23,6 @@ final class MessageDTO_Tests: XCTestCase {
 
     // MARK: - saveMessage
 
-    func test_saveMessage_whenMessageStopsBeingValidPreview_updatesChannelPreview() throws {
-        // GIVEN
-        let cid: ChannelId = .unique
-
-        let previousPreviewMessage: MessagePayload = .dummy(
-            type: .regular,
-            messageId: .unique,
-            authorUserId: .unique,
-            createdAt: .init(),
-            cid: cid
-        )
-
-        let previewMessage: MessagePayload = .dummy(
-            type: .regular,
-            messageId: .unique,
-            authorUserId: .unique,
-            createdAt: previousPreviewMessage.createdAt.addingTimeInterval(1),
-            cid: cid
-        )
-
-        let channel: ChannelPayload = .dummy(
-            channel: .dummy(cid: cid),
-            messages: [
-                previousPreviewMessage,
-                previewMessage
-            ]
-        )
-
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: channel)
-        }
-
-        // WHEN
-        let updatedPreviewMessage: MessagePayload = .dummy(
-            type: .error,
-            messageId: previewMessage.id,
-            authorUserId: previewMessage.user.id,
-            cid: cid
-        )
-
-        try database.writeSynchronously { session in
-            try session.saveMessage(payload: updatedPreviewMessage, for: cid, syncOwnReactions: false, cache: nil)
-        }
-
-        // THEN
-        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        XCTAssertEqual(channelDTO.previewMessage?.id, previousPreviewMessage.id)
-    }
-
     func test_saveMessage_messageSentByAnotherUser_hasNoReads() throws {
         // GIVEN
         let anotherUser: UserPayload = .dummy(userId: .unique)
@@ -1602,7 +1553,7 @@ final class MessageDTO_Tests: XCTestCase {
             loadedMessage._attachments.map { $0.uploadingState?.localFileURL },
             newMessageAttachments.map(\.localFileURL)
         )
-        XCTAssertEqual(loadedChannel.previewMessage?.id, loadedMessage.id)
+        XCTAssertEqual(loadedChannel.latestMessages.first?.id, loadedMessage.id)
     }
 
     func test_createNewMessage_whenIsSystemMessage() throws {
@@ -1705,7 +1656,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // THEN
         let loadedChannel = try XCTUnwrap(database.viewContext.channel(cid: cid)).asModel()
-        XCTAssertEqual(loadedChannel.previewMessage?.id, messageId)
+        XCTAssertEqual(loadedChannel.latestMessages.first?.id, messageId)
     }
 
     func test_createNewMessage_whenThreadReplySentToChannelIsCreated_makesItChannelPreview() throws {
@@ -1754,7 +1705,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // THEN
         let loadedChannel = try XCTUnwrap(database.viewContext.channel(cid: cid)).asModel()
-        XCTAssertEqual(loadedChannel.previewMessage?.id, threadReplyId)
+        XCTAssertEqual(loadedChannel.latestMessages.first?.id, threadReplyId)
     }
 
     func test_createNewMessage_whenThreadReplyIsCreated_doesNotMakeItChannelPreview() throws {
@@ -1785,7 +1736,7 @@ final class MessageDTO_Tests: XCTestCase {
             try? database.viewContext.channel(cid: cid)?.asModel()
         }
 
-        XCTAssertEqual(loadedChannel?.previewMessage?.id, previewMessage.id)
+        XCTAssertEqual(loadedChannel?.latestMessages.first?.id, previewMessage.id)
 
         // WHEN
         try database.writeSynchronously { session in
@@ -1814,7 +1765,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         // THEN
-        XCTAssertEqual(loadedChannel?.previewMessage?.id, previewMessage.id)
+        XCTAssertEqual(loadedChannel?.latestMessages.first?.id, previewMessage.id)
     }
 
     func test_createNewMessage_withoutExistingCurrentUser_throwsError() throws {
@@ -3887,142 +3838,6 @@ final class MessageDTO_Tests: XCTestCase {
 
         // THEN
         XCTAssertEqual(Set(results), [deletedMessageFromCurrentUserDTO])
-    }
-
-    // MARK: - preview(for cid:)
-
-    func test_preview() throws {
-        // GIVEN
-        database = DatabaseContainer_Spy(
-            kind: .inMemory,
-            deletedMessagesVisibility: .alwaysVisible,
-            shouldShowShadowedMessages: false
-        )
-
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .admin)
-        let anotherUser: UserPayload = .dummy(userId: .unique)
-
-        let cid: ChannelId = .unique
-
-        let errorMessageFromCurrentUser: MessagePayload = .dummy(
-            type: .error,
-            messageId: .unique,
-            authorUserId: currentUser.id,
-            text: .unique,
-            createdAt: .init(),
-            cid: cid
-        )
-
-        let ephemeralMessageFromCurrentUser: MessagePayload = .dummy(
-            type: .ephemeral,
-            messageId: .unique,
-            authorUserId: currentUser.id,
-            text: .unique,
-            createdAt: errorMessageFromCurrentUser.createdAt.addingTimeInterval(-1),
-            cid: cid
-        )
-
-        let deletedMessageFromCurrentUser: MessagePayload = .dummy(
-            type: .deleted,
-            messageId: .unique,
-            authorUserId: currentUser.id,
-            text: .unique,
-            createdAt: ephemeralMessageFromCurrentUser.createdAt.addingTimeInterval(-1),
-            deletedAt: .init(),
-            cid: cid
-        )
-
-        let deletedMessageFromAnotherUser: MessagePayload = .dummy(
-            type: .deleted,
-            messageId: .unique,
-            authorUserId: anotherUser.id,
-            text: .unique,
-            createdAt: deletedMessageFromCurrentUser.createdAt.addingTimeInterval(-1),
-            deletedAt: .init(),
-            cid: cid
-        )
-
-        let shadowedMessageFromAnotherUser: MessagePayload = .dummy(
-            messageId: .unique,
-            authorUserId: anotherUser.id,
-            text: .unique,
-            createdAt: deletedMessageFromAnotherUser.createdAt.addingTimeInterval(-1),
-            cid: cid,
-            isShadowed: true
-        )
-
-        let validPreviewMessage: MessagePayload = .dummy(
-            messageId: .unique,
-            authorUserId: anotherUser.id,
-            text: .unique,
-            createdAt: shadowedMessageFromAnotherUser.createdAt.addingTimeInterval(-1),
-            cid: cid
-        )
-
-        let channel: ChannelPayload = .dummy(
-            channel: .dummy(cid: cid),
-            messages: [
-                errorMessageFromCurrentUser,
-                ephemeralMessageFromCurrentUser,
-                deletedMessageFromCurrentUser,
-                deletedMessageFromAnotherUser,
-                shadowedMessageFromAnotherUser,
-                validPreviewMessage
-            ]
-        )
-
-        try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: currentUser)
-            try session.saveChannel(payload: channel)
-        }
-
-        // WHEN
-        let previewMessageDTO = try XCTUnwrap(database.viewContext.preview(for: cid))
-
-        // THEN
-        XCTAssertEqual(previewMessageDTO.id, validPreviewMessage.id)
-    }
-
-    func test_previewMessage_whenUpdated_triggersChannelUpdate() throws {
-        // GIVEN
-        let messagePayload: MessagePayload = .dummy(
-            messageId: .unique,
-            authorUserId: .unique
-        )
-
-        let channelPayload: ChannelPayload = .dummy(
-            messages: [messagePayload]
-        )
-
-        let channelObserver = TestChannelObserver(
-            cid: channelPayload.channel.cid,
-            database: database
-        )
-
-        var channelUpdatesCount: Int {
-            channelObserver
-                .observedChanges
-                .filter {
-                    guard case .update = $0 else { return false }
-                    return true
-                }
-                .count
-        }
-
-        try database.writeSynchronously { session in
-            try session.saveChannel(payload: channelPayload)
-        }
-
-        XCTAssertEqual(channelUpdatesCount, 0)
-
-        // WHEN
-        try database.writeSynchronously { session in
-            let messageDTO = try XCTUnwrap(session.message(id: messagePayload.id))
-            messageDTO.text = "new text"
-        }
-
-        // THEN
-        XCTAssertEqual(channelUpdatesCount, 1)
     }
 
     // MARK: - fetchLimit and batchSzie
