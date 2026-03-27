@@ -575,7 +575,6 @@ open class ChatChannelListItemView: _View, ThemeProvider {
 
 extension ChatChannelListItemView {
     var isLastMessageVoiceRecording: Bool {
-        let previewMessage = previewMessage
         let previewHasVoiceRecording = previewMessage?.voiceRecordingAttachments.isEmpty == false
         let doesNotHaveDraft = content?.channel.draftMessage == nil
         let noTypingUsers = typingUserString == nil
