@@ -38,7 +38,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: pendingSendMessage,
+                    latestMessages: [pendingSendMessage],
                     readEventsEnabled: true
                 ),
                 currentUserId: currentUser.id
@@ -63,7 +63,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: pendingSendMessage,
+                    latestMessages: [pendingSendMessage],
                     readEventsEnabled: false
                 ),
                 currentUserId: currentUser.id
@@ -87,7 +87,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: sentMessage,
+                    latestMessages: [sentMessage],
                     readEventsEnabled: true
                 ),
                 currentUserId: currentUser.id
@@ -111,7 +111,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: sentMessage,
+                    latestMessages: [sentMessage],
                     readEventsEnabled: false
                 ),
                 currentUserId: currentUser.id
@@ -139,7 +139,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: readMessage,
+                    latestMessages: [readMessage],
                     readEventsEnabled: true
                 ),
                 currentUserId: currentUser.id
@@ -167,7 +167,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: readMessage,
+                    latestMessages: [readMessage],
                     readEventsEnabled: false
                 ),
                 currentUserId: currentUser.id
@@ -283,7 +283,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: readMessage,
+                    latestMessages: [readMessage],
                     readEventsEnabled: true
                 ),
                 currentUserId: currentUser.id
@@ -307,7 +307,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: readMessage,
+                    latestMessages: [readMessage],
                     readEventsEnabled: false
                 ),
                 currentUserId: currentUser.id
@@ -335,7 +335,55 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: readMessage,
+                    latestMessages: [readMessage],
+                    readEventsEnabled: true
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_deletedPreviewMessageFromCurrentUser() {
+        let deletedMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "This was the original message",
+            author: currentUser,
+            createdAt: Date(timeIntervalSince1970: 100),
+            deletedAt: Date(timeIntervalSince1970: 200),
+            isSentByCurrentUser: true
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    latestMessages: [deletedMessage],
+                    readEventsEnabled: true
+                ),
+                currentUserId: currentUser.id
+            )
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_deletedPreviewMessageFromAnotherUser() {
+        let deletedMessage: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "This was the original message",
+            author: .mock(id: "another-user", name: "Another user"),
+            createdAt: Date(timeIntervalSince1970: 100),
+            deletedAt: Date(timeIntervalSince1970: 200),
+            isSentByCurrentUser: false
+        )
+
+        let view = channelItemView(
+            content: .init(
+                channel: channel(
+                    latestMessages: [deletedMessage],
                     readEventsEnabled: true
                 ),
                 currentUserId: currentUser.id
@@ -360,7 +408,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: systemMessage,
+                    latestMessages: [systemMessage],
                     readEventsEnabled: true
                 ),
                 currentUserId: currentUser.id
@@ -379,7 +427,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -399,7 +447,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -419,7 +467,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -439,7 +487,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 4
                 ),
@@ -459,7 +507,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -479,7 +527,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -499,7 +547,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -519,7 +567,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 4
                 ),
@@ -539,7 +587,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -559,7 +607,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -579,7 +627,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -599,7 +647,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 4
                 ),
@@ -620,7 +668,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -641,7 +689,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -662,7 +710,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -683,7 +731,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 4
                 ),
@@ -703,7 +751,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -723,7 +771,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -743,7 +791,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 4
                 ),
@@ -801,7 +849,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: false,
                     membership: .mock(id: .unique, language: .portuguese)
                 ),
@@ -836,7 +884,7 @@ import XCTest
         let view = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: false,
                     membership: .mock(id: .unique, language: .portuguese)
                 ),
@@ -863,7 +911,7 @@ import XCTest
 
         let view = channelItemView(
             content: .init(
-                channel: channel(previewMessage: message),
+                channel: channel(latestMessages: [message]),
                 currentUserId: currentUser.id
             )
         )
@@ -887,7 +935,7 @@ import XCTest
 
         let view = channelItemView(
             content: .init(
-                channel: channel(previewMessage: message),
+                channel: channel(latestMessages: [message]),
                 currentUserId: currentUser.id
             )
         )
@@ -907,7 +955,7 @@ import XCTest
 
         let view = channelItemView(
             content: .init(
-                channel: channel(previewMessage: message),
+                channel: channel(latestMessages: [message]),
                 currentUserId: currentUser.id
             )
         )
@@ -927,7 +975,7 @@ import XCTest
 
         let view = channelItemView(
             content: .init(
-                channel: channel(previewMessage: message),
+                channel: channel(latestMessages: [message]),
                 currentUserId: currentUser.id
             )
         )
@@ -1061,17 +1109,18 @@ import XCTest
 
         view.addSizeConstraints()
         view.components = .mock
-        view.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
+        view.appearance.formatters.channelListMessageTimestamp = MockTimestampFormatter()
+        view.appearance.formatters.messageTimestamp = MockTimestampFormatter()
 
         view.content = .init(
             channel: channel(
-                previewMessage: .mock(
+                latestMessages: [.mock(
                     id: .unique,
                     cid: .unique,
                     text: "Hey there",
                     author: currentUser,
                     isSentByCurrentUser: true
-                )
+                )]
             ),
             currentUserId: currentUser.id
         )
@@ -1325,7 +1374,7 @@ import XCTest
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: ownMessage,
+                    latestMessages: [ownMessage],
                     readEventsEnabled: true
                 ),
                 currentUserId: .unique
@@ -1347,7 +1396,7 @@ import XCTest
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: ownMessage,
+                    latestMessages: [ownMessage],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -1370,7 +1419,7 @@ import XCTest
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: message,
+                    latestMessages: [message],
                     readEventsEnabled: true,
                     memberCount: 2
                 ),
@@ -1393,7 +1442,7 @@ import XCTest
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: systemMessage,
+                    latestMessages: [systemMessage],
                     readEventsEnabled: true
                 ),
                 currentUserId: .unique
@@ -1481,13 +1530,9 @@ import XCTest
 
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
-        itemView.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
+        itemView.appearance.formatters.channelListMessageTimestamp = MockTimestampFormatter()
 
-        // Workaround for iOS 17 spacing issue
-        XCTAssertTrue(
-            ["12:00 AM", "12:00 AM"].contains(itemView.timestampText),
-            "Actual result: \(itemView.timestampText ?? "")"
-        )
+        XCTAssertEqual(itemView.timestampText, "12:01 AM")
     }
 
     func test_timestampText_whenSearchingMessage_thenUsesCreatedAtFromSearchResultMessage() {
@@ -1500,13 +1545,9 @@ import XCTest
                 message: .mock(text: "Some text", createdAt: Date(timeIntervalSince1970: 1))
             )
         )
-        itemView.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
+        itemView.appearance.formatters.channelListMessageTimestamp = MockTimestampFormatter()
 
-        // Workaround for iOS 17 spacing issue
-        XCTAssertTrue(
-            ["12:00 AM", "12:00 AM"].contains(itemView.timestampText),
-            "Actual result: \(itemView.timestampText ?? "")"
-        )
+        XCTAssertEqual(itemView.timestampText, "12:01 AM")
     }
 
     func test_timestampText_whenCreatedAtIsToday_thenShowsTimeOnly() {
@@ -1517,20 +1558,11 @@ import XCTest
             )]
         )
 
-        let mockCalendar = Calendar_Mock()
-        mockCalendar.mockIsDateInToday = true
-        let formatter = ChannelListMessageTimestampFormatter()
-        formatter.calendar = mockCalendar
-
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
-        itemView.appearance.formatters.channelListMessageTimestamp = formatter
+        itemView.appearance.formatters.channelListMessageTimestamp = MockTimestampFormatter()
 
-        // Workaround for iOS 17 spacing issue
-        XCTAssertTrue(
-            ["12:00 AM", "12:00 AM"].contains(itemView.timestampText),
-            "Actual result: \(itemView.timestampText ?? "")"
-        )
+        XCTAssertEqual(itemView.timestampText, "12:01 AM")
     }
 
     func test_timestampText_whenCreatedAtIsYesterday_thenShowsYesterday() {
@@ -1583,11 +1615,9 @@ import XCTest
 
         let itemView = ChatChannelListItemView()
         itemView.content = .init(channel: channel, currentUserId: nil)
+        itemView.appearance.formatters.channelListMessageTimestamp = MockTimestampFormatter()
 
-        XCTAssertEqual(
-            itemView.timestampText,
-            "8/2/23"
-        )
+        XCTAssertEqual(itemView.timestampText, "12:01 AM")
     }
 
     // MARK: - Delivery status
@@ -1595,8 +1625,7 @@ import XCTest
     func test_previewMessageDeliveryStatus_whenPreviewMessageIsNil() {
         let itemView = channelItemView(
             content: .init(
-                channel: channel(
-                    previewMessage: nil,
+                channel:                 channel(
                     readEventsEnabled: true
                 ),
                 currentUserId: .unique
@@ -1619,7 +1648,7 @@ import XCTest
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: messageFromAnotherUser,
+                    latestMessages: [messageFromAnotherUser],
                     readEventsEnabled: true
                 ),
                 currentUserId: .unique
@@ -1642,7 +1671,7 @@ import XCTest
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: messageFromAnotherUser,
+                    latestMessages: [messageFromAnotherUser],
                     readEventsEnabled: false
                 ),
                 currentUserId: .unique
@@ -1665,7 +1694,7 @@ import XCTest
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: ownMessage,
+                    latestMessages: [ownMessage],
                     readEventsEnabled: false
                 ),
                 currentUserId: .unique
@@ -1689,7 +1718,7 @@ import XCTest
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: ownSentMessage,
+                    latestMessages: [ownSentMessage],
                     readEventsEnabled: true
                 ),
                 currentUserId: .unique
@@ -1712,7 +1741,7 @@ import XCTest
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: ownSentMessage,
+                    latestMessages: [ownSentMessage],
                     readEventsEnabled: false
                 ),
                 currentUserId: .unique
@@ -1736,7 +1765,7 @@ import XCTest
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: ownReadMessage,
+                    latestMessages: [ownReadMessage],
                     readEventsEnabled: true
                 ),
                 currentUserId: .unique
@@ -1760,7 +1789,7 @@ import XCTest
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: ownReadMessage,
+                    latestMessages: [ownReadMessage],
                     readEventsEnabled: false
                 ),
                 currentUserId: .unique
@@ -1784,7 +1813,7 @@ import XCTest
         let itemView = channelItemView(
             content: .init(
                 channel: channel(
-                    previewMessage: ownReadMessage,
+                    latestMessages: [ownReadMessage],
                     readEventsEnabled: true
                 ),
                 currentUserId: .unique,
@@ -1806,28 +1835,28 @@ import XCTest
         view.components = components
         view.components.isDraftMessagesEnabled = true
         view.appearance = appearance
-        view.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
+        view.appearance.formatters.channelListMessageTimestamp = MockTimestampFormatter()
         view.content = content
         view.addSizeConstraints()
         return view
     }
 
     private func channel(
-        previewMessage: ChatMessage? = nil,
+        latestMessages: [ChatMessage] = [],
         draftMessage: DraftMessage? = nil,
         readEventsEnabled: Bool = true,
         memberCount: Int = 0,
         membership: ChatChannelMember? = nil
     ) -> ChatChannel {
         .mock(
-            cid: previewMessage?.cid ?? .unique,
+            cid: latestMessages.first?.cid ?? .unique,
             name: "Channel 1",
             imageURL: TestImages.yoda.url,
             createdAt: Date(timeIntervalSince1970: 1),
             config: .mock(readEventsEnabled: readEventsEnabled),
             membership: membership,
             memberCount: memberCount,
-            latestMessages: [previewMessage].compactMap { $0 },
+            latestMessages: latestMessages,
             draftMessage: draftMessage
         )
     }
@@ -1970,5 +1999,11 @@ private extension ChatChannelListItemView {
         NSLayoutConstraint.activate([
             widthAnchor.constraint(equalToConstant: 400)
         ])
+    }
+}
+
+class MockTimestampFormatter: MessageTimestampFormatter {
+    func format(_ date: Date) -> String {
+        "12:01 AM"
     }
 }

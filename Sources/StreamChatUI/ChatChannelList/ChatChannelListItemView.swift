@@ -168,6 +168,9 @@ open class ChatChannelListItemView: _View, ThemeProvider {
         }
 
         if let previewMessage, previewMessage.isDeleted {
+            if previewMessage.isSentByCurrentUser {
+                return "\(L10n.you): \(L10n.Message.deletedMessagePlaceholder)"
+            }
             return L10n.Message.deletedMessagePlaceholder
         }
 
@@ -200,10 +203,7 @@ open class ChatChannelListItemView: _View, ThemeProvider {
     }
 
     open var subtitleIcon: UIImage? {
-        if previewMessage?.isDeleted == true {
-            return UIImage(systemName: "nosign")
-        }
-        return isLastMessageVoiceRecording ? appearance.images.mic : nil
+        isLastMessageVoiceRecording ? appearance.images.mic : nil
     }
 
     /// Text of `timestampLabel` which contains the time of the last sent message.
