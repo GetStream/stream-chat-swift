@@ -703,5 +703,4 @@ extension ChannelDTO {
             oldestMessageAt = payloadOldestMessageAt.bridgeDate
         }
     }
-
 }

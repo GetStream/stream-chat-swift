@@ -1625,7 +1625,7 @@ import XCTest
     func test_previewMessageDeliveryStatus_whenPreviewMessageIsNil() {
         let itemView = channelItemView(
             content: .init(
-                channel:                 channel(
+                channel: channel(
                     readEventsEnabled: true
                 ),
                 currentUserId: .unique
