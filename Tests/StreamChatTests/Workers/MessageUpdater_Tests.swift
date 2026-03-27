@@ -804,13 +804,15 @@ final class MessageUpdater_Tests: XCTestCase {
         let firstPreviewMessage: MessagePayload = .dummy(
             type: .regular,
             messageId: firstMessageId,
-            authorUserId: .unique
+            authorUserId: .unique,
+            createdAt: .init(timeIntervalSince1970: 1)
         )
 
         let secondPreviewMessage: MessagePayload = .dummy(
             type: .regular,
             messageId: secondMessageId,
-            authorUserId: .unique
+            authorUserId: .unique,
+            createdAt: .init(timeIntervalSince1970: 2)
         )
 
         let channelPayload: ChannelPayload = .dummy(

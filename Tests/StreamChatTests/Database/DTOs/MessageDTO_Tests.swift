@@ -1718,7 +1718,8 @@ final class MessageDTO_Tests: XCTestCase {
 
         let previewMessage: MessagePayload = .dummy(
             messageId: .unique,
-            authorUserId: currentUserId
+            authorUserId: currentUserId,
+            createdAt: .init(timeIntervalSince1970: 1)
         )
 
         let cid: ChannelId = .unique
@@ -1739,10 +1740,11 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel?.latestMessages.first?.id, previewMessage.id)
 
         // WHEN
+        let threadReplyId: MessageId = .unique
         try database.writeSynchronously { session in
             try session.createNewMessage(
                 in: cid,
-                messageId: .unique,
+                messageId: threadReplyId,
                 text: .unique,
                 pinning: nil,
                 command: nil,
@@ -1764,8 +1766,11 @@ final class MessageDTO_Tests: XCTestCase {
             )
         }
 
-        // THEN
-        XCTAssertEqual(loadedChannel?.latestMessages.first?.id, previewMessage.id)
+        // THEN — latestMessages includes both the original and the thread reply,
+        // but the thread reply is newest so it appears first. The UI layer is
+        // responsible for filtering thread replies from the channel preview.
+        XCTAssertEqual(loadedChannel?.latestMessages.first?.id, threadReplyId)
+        XCTAssertTrue(loadedChannel?.latestMessages.contains(where: { $0.id == previewMessage.id }) == true)
     }
 
     func test_createNewMessage_withoutExistingCurrentUser_throwsError() throws {
