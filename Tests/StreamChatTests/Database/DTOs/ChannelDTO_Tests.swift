@@ -86,6 +86,51 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertNotNil(channel.latestMessages.first?.deletedAt)
     }
 
+    func test_saveChannel_latestMessagesExcludesThreadReplies() throws {
+        // GIVEN
+        let channelMessage: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 1000)
+        )
+        let threadReply: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            parentId: .unique,
+            showReplyInChannel: false,
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 2000)
+        )
+        let replyShownInChannel: MessagePayload = .dummy(
+            type: .regular,
+            messageId: .unique,
+            parentId: .unique,
+            showReplyInChannel: true,
+            authorUserId: .unique,
+            createdAt: Date(timeIntervalSince1970: 3000)
+        )
+
+        let channelPayload: ChannelPayload = .dummy(
+            channel: .dummy(),
+            messages: [channelMessage, threadReply, replyShownInChannel]
+        )
+
+        // WHEN
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        // THEN
+        let channel = try XCTUnwrap(
+            database.viewContext.channel(cid: channelPayload.channel.cid)?.asModel()
+        )
+        XCTAssertEqual(channel.latestMessages.count, 2)
+        XCTAssertEqual(channel.latestMessages.first?.id, replyShownInChannel.id)
+        XCTAssertEqual(channel.latestMessages.last?.id, channelMessage.id)
+        XCTAssertFalse(channel.latestMessages.contains(where: { $0.id == threadReply.id }))
+    }
+
     func test_saveChannel_channelReadsAreSavedBeforeMessages() throws {
         // GIVEN
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
