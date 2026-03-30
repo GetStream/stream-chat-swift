@@ -27,7 +27,7 @@ final class DemoChatChannelListItemView: ChatChannelListItemView {
             return super.contentBackgroundColor
         }
         if content?.channel.isPinned == true {
-            return appearance.colorPalette.pinnedMessageBackground
+            return appearance.colorPalette.backgroundCoreHighlight
         }
         return super.contentBackgroundColor
     }
