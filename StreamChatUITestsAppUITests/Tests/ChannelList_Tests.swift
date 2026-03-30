@@ -134,7 +134,7 @@ extension ChannelList_Tests {
             userRobot.tapOnBackButton()
         }
         THEN("the channel preview shows deleted message") {
-            userRobot.assertLastMessageInChannelPreview("Deleted message")
+            userRobot.assertLastMessageInChannelPreview("You: Message deleted")
         }
     }
 
