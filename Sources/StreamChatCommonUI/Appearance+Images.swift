@@ -351,18 +351,18 @@ public extension Appearance {
 
         // MARK: - Message Actions
 
-        public var messageActionSwipeReply: UIImage = loadImageSafely(with: "icn_inline_reply").imageFlippedForRightToLeftLayoutDirection()
-        public var messageActionInlineReply: UIImage = loadImageSafely(with: "icn_inline_reply").imageFlippedForRightToLeftLayoutDirection()
-        public var messageActionThreadReply: UIImage = loadImageSafely(with: "icn_thread_reply")
-        public var messageActionMarkUnread: UIImage = loadSafely(systemName: "message.badge", assetsFallback: "mark_unread")
+        public var messageActionSwipeReply: UIImage = loadSafely(systemName: "arrowshape.turn.up.left").imageFlippedForRightToLeftLayoutDirection()
+        public var messageActionInlineReply: UIImage = loadSafely(systemName: "arrowshape.turn.up.left").imageFlippedForRightToLeftLayoutDirection()
+        public var messageActionThreadReply: UIImage = loadSafely(systemName: "text.bubble")
+        public var messageActionMarkUnread: UIImage = loadSafely(systemName: "app.badge")
 
         public var messageActionEdit: UIImage = loadImageSafely(with: "icn_edit")
         public var messageActionCopy: UIImage = loadImageSafely(with: "icn_copy")
-        public var messageActionBlockUser: UIImage = loadImageSafely(with: "icn_block_user")
-        public var messageActionMuteUser: UIImage = loadImageSafely(with: "icn_mute_user")
-        public var messageActionDelete: UIImage = loadImageSafely(with: "icn_delete")
+        public var messageActionBlockUser: UIImage = loadSafely(systemName: "nosign")
+        public var messageActionMuteUser: UIImage = loadSafely(systemName: "speaker.slash")
+        public var messageActionDelete: UIImage = loadSafely(systemName: "trash")
         public var messageActionResend: UIImage = loadImageSafely(with: "icn_resend")
-        public var messageActionFlag: UIImage = loadImageSafely(with: "icn_flag")
+        public var messageActionFlag: UIImage = loadSafely(systemName: "flag")
 
         // MARK: - Placeholders
 
