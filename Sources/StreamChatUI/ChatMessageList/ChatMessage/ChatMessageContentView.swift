@@ -144,14 +144,14 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
     /// The current text color used in the message text based on the content of the message.
     open var messageTextColor: UIColor {
         if content?.isDeleted == true {
-            return appearance.colorPalette.textLowEmphasis
+            return appearance.colorPalette.textTertiary
         }
 
         if content?.shouldRenderAsSystemMessage == true {
-            return appearance.colorPalette.textLowEmphasis
+            return appearance.colorPalette.textTertiary
         }
 
-        return appearance.colorPalette.text
+        return appearance.colorPalette.textPrimary
     }
 
     /// The character separator of the "Edited" label.
@@ -244,7 +244,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         let imageView = UIImageView().withoutAutoresizingMaskConstraints
         imageView.image = appearance.images
             .messageActionSwipeReply
-            .tinted(with: appearance.colorPalette.textLowEmphasis)
+            .tinted(with: appearance.colorPalette.textTertiary)
         return imageView
     }()
 
@@ -663,12 +663,12 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             let backgroundColor: UIColor = {
                 if message.isSentByCurrentUser {
                     if message.type == .ephemeral {
-                        return appearance.colorPalette.background8
+                        return appearance.colorPalette.backgroundCoreElevation1
                     } else {
-                        return appearance.colorPalette.background6
+                        return appearance.colorPalette.chatBackgroundIncoming
                     }
                 } else {
-                    return appearance.colorPalette.background8
+                    return appearance.colorPalette.chatBackgroundOutgoing
                 }
             }()
 
@@ -988,7 +988,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 .withoutAutoresizingMaskConstraints
                 .withAccessibilityIdentifier(identifier: "timestampLabel")
 
-            timestampLabel!.textColor = appearance.colorPalette.subtitleText
+            timestampLabel!.textColor = appearance.colorPalette.textSecondary
             timestampLabel!.font = appearance.fonts.footnote
         }
         return timestampLabel!
@@ -1002,7 +1002,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 .withoutAutoresizingMaskConstraints
                 .withAccessibilityIdentifier(identifier: "translationLabel")
 
-            translationLabel?.textColor = appearance.colorPalette.subtitleText
+            translationLabel?.textColor = appearance.colorPalette.textSecondary
             translationLabel?.font = appearance.fonts.footnote
         }
         return translationLabel!
@@ -1018,7 +1018,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 .withoutAutoresizingMaskConstraints
                 .withAccessibilityIdentifier(identifier: "authorNameLabel")
 
-            authorNameLabel!.textColor = appearance.colorPalette.subtitleText
+            authorNameLabel!.textColor = appearance.colorPalette.textSecondary
             authorNameLabel!.font = appearance.fonts.footnote
         }
         return authorNameLabel!
@@ -1031,7 +1031,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             onlyVisibleToYouImageView = UIImageView()
                 .withoutAutoresizingMaskConstraints
                 .withAccessibilityIdentifier(identifier: "onlyVisibleToYouImageView")
-            onlyVisibleToYouImageView!.tintColor = appearance.colorPalette.subtitleText
+            onlyVisibleToYouImageView!.tintColor = appearance.colorPalette.textSecondary
             onlyVisibleToYouImageView!.image = appearance.images.onlyVisibleToCurrentUser
             onlyVisibleToYouImageView!.contentMode = .scaleAspectFit
         }
@@ -1048,7 +1048,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 .withoutAutoresizingMaskConstraints
                 .withAccessibilityIdentifier(identifier: "onlyVisibleToYouLabel")
 
-            onlyVisibleToYouLabel!.textColor = appearance.colorPalette.subtitleText
+            onlyVisibleToYouLabel!.textColor = appearance.colorPalette.textSecondary
             onlyVisibleToYouLabel!.text = L10n.Message.onlyVisibleToYou
             onlyVisibleToYouLabel!.font = appearance.fonts.footnote
         }

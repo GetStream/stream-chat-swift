@@ -48,11 +48,11 @@ open class PollResultsSectionHeaderView: _TableHeaderFooterView, ThemeProvider {
 
         optionNameLabel.numberOfLines = 0
         optionNameLabel.font = appearance.fonts.headlineBold
-        optionNameLabel.textColor = appearance.colorPalette.text
+        optionNameLabel.textColor = appearance.colorPalette.textPrimary
         votesLabel.font = appearance.fonts.body.withSize(17)
-        votesLabel.textColor = appearance.colorPalette.text
+        votesLabel.textColor = appearance.colorPalette.textPrimary
         pollWinnerIconView.image = appearance.images.pollWinner
-        pollWinnerIconView.tintColor = appearance.colorPalette.textLowEmphasis
+        pollWinnerIconView.tintColor = appearance.colorPalette.textTertiary
     }
 
     override open func setUpLayout() {

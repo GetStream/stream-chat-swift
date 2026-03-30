@@ -46,16 +46,16 @@ open class CommandLabelView: _View, AppearanceProvider {
         super.setUpAppearance()
 
         layer.masksToBounds = true
-        backgroundColor = appearance.colorPalette.highlightedAccentBackground
+        backgroundColor = appearance.colorPalette.accentPrimary
 
-        nameLabel.textColor = appearance.colorPalette.staticColorText
+        nameLabel.textColor = appearance.colorPalette.textOnAccent
         nameLabel.font = appearance.fonts.subheadlineBold
 
         nameLabel.adjustsFontForContentSizeCategory = true
         nameLabel.textAlignment = .center
 
         iconView.image = appearance.images.commands
-            .tinted(with: appearance.colorPalette.staticColorText)
+            .tinted(with: appearance.colorPalette.textOnAccent)
     }
 
     override open func setUpLayout() {

@@ -56,9 +56,9 @@ open class ChatMessageDeliveryStatusCheckmarkView: _View, ThemeProvider {
             case .read:
                 return appearance.colorPalette.accentPrimary
             case .failed:
-                return appearance.colorPalette.alert
+                return appearance.colorPalette.accentError
             default:
-                return appearance.colorPalette.textLowEmphasis
+                return appearance.colorPalette.textTertiary
             }
         }
 

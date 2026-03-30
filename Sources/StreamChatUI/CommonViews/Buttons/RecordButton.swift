@@ -42,7 +42,7 @@ open class RecordButton: _Button, AppearanceProvider, ComponentsProvider {
         super.setUpAppearance()
 
         setImage(
-            appearance.images.mic.tinted(with: appearance.colorPalette.textLowEmphasis),
+            appearance.images.mic.tinted(with: appearance.colorPalette.textTertiary),
             for: .normal
         )
         setImage(

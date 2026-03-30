@@ -109,7 +109,7 @@ import XCTest
         )
         XCTAssertEqual(
             spySubject.stopRecordingButton.tintColor,
-            spySubject.appearance.colorPalette.alert
+            spySubject.appearance.colorPalette.accentError
         )
         XCTAssertEqual(
             spySubject.stopRecordingButton.actions(forTarget: spySubject, forControlEvent: .touchUpInside),

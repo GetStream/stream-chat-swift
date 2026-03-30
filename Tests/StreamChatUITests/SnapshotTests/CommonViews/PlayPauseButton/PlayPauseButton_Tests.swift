@@ -30,13 +30,13 @@ import XCTest
     func test_isHighlighted_isTrue_backgroundColorWasSetCorrectly() {
         subject.isHighlighted = true
 
-        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.highlightedBackground)
+        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.backgroundCoreSurfaceStrong)
     }
 
     func test_isHighlighted_isFalse_backgroundColorWasSetCorrectly() {
         subject.isHighlighted = false
 
-        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.staticColorText)
+        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.controlPlayButtonBackground)
     }
 
     // MARK: - setUpAppearance
@@ -46,9 +46,9 @@ import XCTest
 
         XCTAssertEqual(subject.image(for: .normal), subject.appearance.images.playFill)
         XCTAssertEqual(subject.image(for: .selected), subject.appearance.images.pauseFill)
-        XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.staticBlackColorText)
-        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.highlightedBackground)
-        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.staticBlackColorText.cgColor)
+        XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.controlPlayButtonIcon)
+        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.backgroundCoreSurfaceStrong)
+        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.controlPlayButtonIcon.cgColor)
     }
 
     func test_setUpAppearance_isNotHighlighted_wasConfiguredCorrectly() {
@@ -56,9 +56,9 @@ import XCTest
 
         XCTAssertEqual(subject.image(for: .normal), subject.appearance.images.playFill)
         XCTAssertEqual(subject.image(for: .selected), subject.appearance.images.pauseFill)
-        XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.staticBlackColorText)
-        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.staticColorText)
-        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.staticBlackColorText.cgColor)
+        XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.controlPlayButtonIcon)
+        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.controlPlayButtonBackground)
+        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.controlPlayButtonIcon.cgColor)
     }
 
     // MARK: - layoutSubviews

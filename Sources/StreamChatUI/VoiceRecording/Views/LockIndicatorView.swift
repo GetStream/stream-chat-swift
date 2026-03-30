@@ -85,12 +85,12 @@ open class LockIndicatorView: _View, ThemeProvider {
         super.setUpAppearance()
 
         backgroundColor = nil
-        lockView.backgroundColor = appearance.colorPalette.border
+        lockView.backgroundColor = appearance.colorPalette.borderCoreDefault
 
         lockImageView.image = appearance.images.lock
         chevronImageView.image = appearance.images.chevronUp
 
-        lockImageView.tintColor = content ? appearance.colorPalette.accentPrimary : appearance.colorPalette.textLowEmphasis
+        lockImageView.tintColor = content ? appearance.colorPalette.accentPrimary : appearance.colorPalette.textTertiary
         chevronImageView.tintColor = lockImageView.tintColor
     }
 
@@ -99,7 +99,7 @@ open class LockIndicatorView: _View, ThemeProvider {
 
         lockImageView.tintColor = content
             ? appearance.colorPalette.accentPrimary
-            : appearance.colorPalette.textLowEmphasis
+            : appearance.colorPalette.textTertiary
 
         chevronImageView.isHidden = content
         chevronImageView.alpha = chevronImageView.isHidden ? 0 : 1

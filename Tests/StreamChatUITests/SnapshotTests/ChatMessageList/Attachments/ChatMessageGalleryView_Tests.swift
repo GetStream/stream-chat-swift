@@ -91,7 +91,7 @@ import XCTest
 
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
-        appearance.colorPalette.background5 = UIColor.purple.withAlphaComponent(0.5)
+        appearance.colorPalette.backgroundCoreScrim = UIColor.purple.withAlphaComponent(0.5)
         galleryView = ChatMessageGalleryView()
             .withoutAutoresizingMaskConstraints
         galleryView.components = .mock

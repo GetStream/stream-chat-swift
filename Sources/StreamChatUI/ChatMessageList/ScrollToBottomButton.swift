@@ -30,8 +30,8 @@ open class ScrollToBottomButton: _Button, ThemeProvider {
         super.setUpAppearance()
 
         setImage(appearance.images.scrollDownArrow, for: .normal)
-        backgroundColor = appearance.colorPalette.background8
-        layer.addShadow(color: appearance.colorPalette.shadow)
+        backgroundColor = appearance.colorPalette.backgroundCoreElevation1
+        layer.addShadow(color: appearance.colorPalette.backgroundCoreOverlayDark)
     }
 
     override open func setUpLayout() {

@@ -4,6 +4,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChatUI
+### 🔄 Changed
+- Use the new color palette
+
+## StreamChatCommonUI
+### ❌ Removed
+- Remove existing color tokens in favor of new palette in `Appearance.ColorPalette`
+
+## StreamChatUI
 ### 🐞 Fixed
 - Fix clearing unread messages on channel open when the first unread message is not visible [#4013](https://github.com/GetStream/stream-chat-swift/pull/4013)
 

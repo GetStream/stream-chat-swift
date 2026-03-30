@@ -12,8 +12,8 @@ open class MediaButton: _Button, AppearanceProvider {
     override open var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-                ? appearance.colorPalette.highlightedBackground
-                : appearance.colorPalette.staticColorText
+                ? appearance.colorPalette.backgroundCoreSurfaceStrong
+                : appearance.colorPalette.controlPlayButtonBackground
         }
     }
 
@@ -22,11 +22,11 @@ open class MediaButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        tintColor = appearance.colorPalette.staticBlackColorText
-        setTitleColor(appearance.colorPalette.staticBlackColorText, for: .normal)
+        tintColor = appearance.colorPalette.controlPlayButtonIcon
+        setTitleColor(appearance.colorPalette.controlPlayButtonIcon, for: .normal)
         backgroundColor = isHighlighted
-            ? appearance.colorPalette.highlightedBackground
-            : appearance.colorPalette.staticColorText
+            ? appearance.colorPalette.backgroundCoreSurfaceStrong
+            : appearance.colorPalette.controlPlayButtonBackground
         layer.shadowColor = tintColor.cgColor
     }
 

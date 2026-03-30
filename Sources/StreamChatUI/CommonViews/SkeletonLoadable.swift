@@ -13,14 +13,14 @@ extension SkeletonLoadable where Self: AppearanceProvider {
     func makeAnimationGroup(previousGroup: CAAnimationGroup? = nil) -> CAAnimationGroup {
         let animDuration: CFTimeInterval = 1.5
         let animation1 = CABasicAnimation(keyPath: #keyPath(CAGradientLayer.backgroundColor))
-        animation1.fromValue = appearance.colorPalette.background2.cgColor
-        animation1.toValue = appearance.colorPalette.background7.cgColor
+        animation1.fromValue = appearance.colorPalette.skeletonLoadingBase.cgColor
+        animation1.toValue = appearance.colorPalette.skeletonLoadingHighlight.cgColor
         animation1.duration = animDuration
         animation1.beginTime = 0.0
 
         let animation2 = CABasicAnimation(keyPath: #keyPath(CAGradientLayer.backgroundColor))
-        animation2.fromValue = appearance.colorPalette.background7.cgColor
-        animation2.toValue = appearance.colorPalette.background2.cgColor
+        animation2.fromValue = appearance.colorPalette.skeletonLoadingHighlight.cgColor
+        animation2.toValue = appearance.colorPalette.skeletonLoadingBase.cgColor
         animation2.duration = animDuration
         animation2.beginTime = animation1.beginTime + animation1.duration
 

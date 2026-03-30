@@ -43,13 +43,13 @@ open class ChatMentionSuggestionView: _View, ThemeProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = appearance.colorPalette.popoverBackground
+        backgroundColor = appearance.colorPalette.backgroundCoreElevation1
         usernameLabel.font = appearance.fonts.headlineBold
 
         usernameTagLabel.font = appearance.fonts.subheadlineBold
-        usernameTagLabel.textColor = appearance.colorPalette.subtitleText
+        usernameTagLabel.textColor = appearance.colorPalette.textSecondary
 
-        usernameLabel.textColor = appearance.colorPalette.text
+        usernameLabel.textColor = appearance.colorPalette.textPrimary
 
         mentionSymbolImageView.image = appearance.images.commandMention
     }

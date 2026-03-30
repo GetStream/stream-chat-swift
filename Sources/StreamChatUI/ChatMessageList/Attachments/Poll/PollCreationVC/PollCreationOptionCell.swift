@@ -63,11 +63,11 @@ open class PollCreationOptionCell: _CollectionViewCell, ThemeProvider, UITextFie
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.background
-        container.backgroundColor = appearance.colorPalette.background1
+        backgroundColor = appearance.colorPalette.backgroundCoreApp
+        container.backgroundColor = appearance.colorPalette.backgroundCoreSurfaceSubtle
         container.layer.cornerRadius = 16
         reorderImageView.image = appearance.images.pollReorderIcon
-        reorderImageView.tintColor = appearance.colorPalette.textLowEmphasis
+        reorderImageView.tintColor = appearance.colorPalette.textTertiary
     }
 
     override open func setUpLayout() {

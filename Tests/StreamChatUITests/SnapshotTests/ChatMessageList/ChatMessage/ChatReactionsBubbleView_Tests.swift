@@ -38,7 +38,7 @@ import XCTest
 
         // Set custom appearance
         var appearance = Appearance()
-        appearance.colorPalette.border = Appearance.default.colorPalette.alert
+        appearance.colorPalette.borderCoreDefault = Appearance.default.colorPalette.accentError
         bubble.appearance = appearance
 
         // Assert the bubble is rendered correctly
@@ -49,11 +49,11 @@ import XCTest
         // Declare custom bubble type
         class TestBubble: ChatReactionsBubbleView {
             override var fillColor: UIColor? {
-                appearance.colorPalette.background2
+                appearance.colorPalette.backgroundCoreSurfaceStrong
             }
 
             override var strokeColor: UIColor? {
-                appearance.colorPalette.alternativeActiveTint
+                appearance.colorPalette.accentSuccess
             }
         }
 

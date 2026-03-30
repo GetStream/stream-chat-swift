@@ -341,7 +341,7 @@ open class PollCreationVC:
         super.setUpAppearance()
 
         title = L10n.Polls.Creation.title
-        collectionView.backgroundColor = appearance.colorPalette.background
+        collectionView.backgroundColor = appearance.colorPalette.backgroundCoreApp
         navigationItem.rightBarButtonItems = [createPollButton]
         navigationItem.leftBarButtonItems = [cancelButton]
     }

@@ -49,12 +49,12 @@ open class ChatThreadListItemView: _View, ThemeProvider {
 
     /// The item's view background color.
     open var contentBackgroundColor: UIColor {
-        appearance.colorPalette.background
+        appearance.colorPalette.backgroundCoreApp
     }
 
     /// The item's view background color when highlighted.
     open var contentHighlightedBackgroundColor: UIColor {
-        appearance.colorPalette.highlightedBackground
+        appearance.colorPalette.backgroundCoreSurfaceStrong
     }
 
     // MARK: - Views
@@ -158,22 +158,22 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         
         backgroundColor = contentBackgroundColor
 
-        threadTitleLabel.textColor = appearance.colorPalette.text
+        threadTitleLabel.textColor = appearance.colorPalette.textPrimary
         threadTitleLabel.font = appearance.fonts.subheadlineBold
 
-        replyTitleLabel.textColor = appearance.colorPalette.text
+        replyTitleLabel.textColor = appearance.colorPalette.textPrimary
         replyTitleLabel.font = appearance.fonts.subheadlineBold
 
-        threadDescriptionLabel.textColor = appearance.colorPalette.subtitleText
+        threadDescriptionLabel.textColor = appearance.colorPalette.textSecondary
         threadDescriptionLabel.font = appearance.fonts.footnote
 
-        replyDescriptionLabel.textColor = appearance.colorPalette.subtitleText
+        replyDescriptionLabel.textColor = appearance.colorPalette.textSecondary
         replyDescriptionLabel.font = appearance.fonts.footnote
 
-        replyTimestampLabel.textColor = appearance.colorPalette.subtitleText
+        replyTimestampLabel.textColor = appearance.colorPalette.textSecondary
         replyTimestampLabel.font = appearance.fonts.footnote
         
-        threadIconView.tintColor = appearance.colorPalette.text
+        threadIconView.tintColor = appearance.colorPalette.textPrimary
         threadIconView.image = appearance.images.threadIcon
 
         threadUnreadCountView.layoutMargins = .init(top: 3, left: 4, bottom: 3, right: 4)

@@ -41,10 +41,10 @@ open class ChatCommandSuggestionView: _View, AppearanceProvider {
         backgroundColor = .clear
 
         commandNameLabel.font = appearance.fonts.bodyBold
-        commandNameLabel.textColor = appearance.colorPalette.text
+        commandNameLabel.textColor = appearance.colorPalette.textPrimary
 
         commandNameSubtitleLabel.font = appearance.fonts.body
-        commandNameSubtitleLabel.textColor = appearance.colorPalette.subtitleText
+        commandNameSubtitleLabel.textColor = appearance.colorPalette.textSecondary
     }
 
     override open func setUpLayout() {

@@ -19,9 +19,9 @@ class ChatChannelListErrorView_Tests: XCTestCase {
     @MainActor func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
-        appearance.colorPalette.subtitleText = .blue
-        appearance.colorPalette.text = .green
-        appearance.colorPalette.background2 = .magenta
+        appearance.colorPalette.textSecondary = .blue
+        appearance.colorPalette.textPrimary = .green
+        appearance.colorPalette.backgroundCoreSurfaceStrong = .magenta
 
         let view = ChatChannelListErrorView().withoutAutoresizingMaskConstraints
         view.appearance = appearance

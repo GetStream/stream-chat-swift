@@ -56,7 +56,7 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
         authorBackground.layer.cornerRadius = 15
         authorBackground.layer.maskedCorners = [.layerMaxXMinYCorner]
         authorBackground.clipsToBounds = true
-        authorBackground.backgroundColor = appearance.colorPalette.highlightedAccentBackground1
+        authorBackground.backgroundColor = appearance.colorPalette.backgroundCoreSurfaceSubtle
 
         authorLabel.font = appearance.fonts.bodyBold
         authorLabel.adjustsFontForContentSizeCategory = true

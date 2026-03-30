@@ -29,7 +29,7 @@ open class ChatMessageBubbleView: _View, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        layer.borderColor = appearance.colorPalette.border3.cgColor
+        layer.borderColor = appearance.colorPalette.borderCoreSubtle.cgColor
         layer.cornerRadius = 18
         layer.borderWidth = 1
     }

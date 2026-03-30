@@ -28,7 +28,7 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
         backgroundColor = .clear
-        avatarView.imageView.backgroundColor = appearance.colorPalette.background
+        avatarView.imageView.backgroundColor = appearance.colorPalette.backgroundCoreApp
     }
 
     override open var isEnabled: Bool {

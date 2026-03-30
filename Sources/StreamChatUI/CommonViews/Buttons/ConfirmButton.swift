@@ -14,7 +14,7 @@ open class ConfirmButton: _Button, AppearanceProvider {
         let normalStateImage = appearance.images.confirmCheckmark
         setImage(normalStateImage, for: .normal)
 
-        let buttonColor: UIColor = appearance.colorPalette.inactiveTint
+        let buttonColor: UIColor = appearance.colorPalette.inputTextIcon
         let disabledStateImage = appearance.images.confirmCheckmark.tinted(with: buttonColor)
         setImage(disabledStateImage, for: .disabled)
     }

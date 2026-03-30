@@ -8,65 +8,11 @@ import UIKit
 
 public extension Appearance {
     final class ColorPalette: @unchecked Sendable {
-        // MARK: - Text
-
-        /// General textColor, should be something that contrasts great with your `background` Color
-        public lazy var text: UIColor = textPrimary
-        public lazy var textInverted: UIColor = textOnInverse
-        public lazy var textLowEmphasis: UIColor = textTertiary
-        public lazy var textLinkColor: UIColor = textLink
-
-        /// Static color which should stay the same in dark and light mode, because it's only used as text on small UI Elements
-        /// such as `ChatUnreadCountView`, `GiphyBadge` or Commands icon.
-        public lazy var staticColorText: UIColor = textOnAccent
-        public lazy var staticBlackColorText: UIColor = .baseBlack
-        public lazy var subtitleText: UIColor = textSecondary
-
-        // MARK: - Text interactions
-
         public var highlightedColorForColor: @Sendable (UIColor) -> UIColor = { $0.withAlphaComponent(0.5) }
-
-        // MARK: - Background
-
-        /// General background of the application. Should be something that is in constrast with `text` color.
-        public lazy var background: UIColor = backgroundCoreApp
-        public lazy var background1: UIColor = backgroundCoreSurfaceSubtle
-        public lazy var background2: UIColor = backgroundCoreSurfaceStrong
-        public lazy var background3: UIColor = backgroundCoreOverlayDark
-        public lazy var background4: UIColor = backgroundCoreScrim
-        public lazy var background5: UIColor = backgroundCoreScrim
-        public lazy var background6: UIColor = backgroundCoreSurfaceDefault
-        public lazy var background7: UIColor = accentNeutral
-        public lazy var background8: UIColor = backgroundCoreElevation1
-
-        public lazy var overlayBackground: UIColor = backgroundCoreOverlayLight
-        public lazy var popoverBackground: UIColor = backgroundCoreElevation1
-        public lazy var highlightedBackground: UIColor = backgroundCoreSurfaceStrong
-        public lazy var highlightedAccentBackground: UIColor = accentPrimary
-        public lazy var highlightedAccentBackground1: UIColor = brand50
-
-        public lazy var messageCellHighlightBackground: UIColor = backgroundCoreHighlight
-        public lazy var jumpToUnreadButtonBackground: UIColor = background7
-
-        // MARK: - Borders and shadows
-
-        public lazy var shadow: UIColor = backgroundCoreOverlayDark
-        public lazy var border: UIColor = borderCoreDefault
-        public lazy var border2: UIColor = borderCoreStrong
-        public lazy var border3: UIColor = borderCoreSubtle
-        public lazy var hoverButtonShadow: UIColor = backgroundCoreOverlayDark
-
-        // MARK: - Tint and alert
-
-        public lazy var validationError: UIColor = accentError
-        public lazy var alert: UIColor = accentError
-        public lazy var alternativeActiveTint: UIColor = accentSuccess
-        public lazy var inactiveTint: UIColor = accentNeutral
-        public lazy var alternativeInactiveTint: UIColor = backgroundUtilityDisabled
                 
         // MARK: - SwiftUI SDK
 
-        public lazy var navigationBarTitle: UIColor = text {
+        public lazy var navigationBarTitle: UIColor = textPrimary {
             didSet {
                 StreamConcurrency.onMain { [navigationBarTitle] in
                     let attributes: [NSAttributedString.Key: Any] = [.foregroundColor: navigationBarTitle]
@@ -76,7 +22,7 @@ public extension Appearance {
             }
         }
         
-        public lazy var navigationBarSubtitle: UIColor = textLowEmphasis
+        public lazy var navigationBarSubtitle: UIColor = textTertiary
         public var navigationBarBackground: UIColor?
         public lazy var navigationBarTintColor: UIColor = accentPrimary
         public lazy var navigationBarGlyph: UIColor = .baseWhite

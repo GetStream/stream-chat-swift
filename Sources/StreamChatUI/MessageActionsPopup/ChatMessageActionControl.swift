@@ -69,11 +69,11 @@ open class ChatMessageActionControl: _Control, AppearanceProvider {
         let titleTextColor: UIColor
 
         if content?.isDestructive == true {
-            imageTintСolor = appearance.colorPalette.alert
+            imageTintСolor = appearance.colorPalette.accentError
             titleTextColor = imageTintСolor
         } else {
-            imageTintСolor = content?.isPrimary == true ? tintColor : appearance.colorPalette.inactiveTint
-            titleTextColor = appearance.colorPalette.text
+            imageTintСolor = content?.isPrimary == true ? tintColor : appearance.colorPalette.accentNeutral
+            titleTextColor = appearance.colorPalette.textPrimary
         }
 
         titleLabel.text = content?.title
@@ -81,12 +81,12 @@ open class ChatMessageActionControl: _Control, AppearanceProvider {
             titleLabel.textColor = appearance.colorPalette.highlightedColorForColor(titleTextColor)
             imageView.image = content?.icon
                 .tinted(with: appearance.colorPalette.highlightedColorForColor(imageTintСolor))
-            backgroundColor = appearance.colorPalette.highlightedColorForColor(appearance.colorPalette.background)
+            backgroundColor = appearance.colorPalette.highlightedColorForColor(appearance.colorPalette.backgroundCoreApp)
         } else {
             titleLabel.textColor = titleTextColor
             imageView.image = content?.icon
                 .tinted(with: imageTintСolor)
-            backgroundColor = appearance.colorPalette.background
+            backgroundColor = appearance.colorPalette.backgroundCoreApp
         }
     }
 
