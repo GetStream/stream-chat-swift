@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix pin/unpin updates not propagated in `LivestreamChannelController` when the message is not in the local messages list [#4029](https://github.com/GetStream/stream-chat-swift/pull/4029)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix clearing unread messages on channel open when the first unread message is not visible [#4013](https://github.com/GetStream/stream-chat-swift/pull/4013)
