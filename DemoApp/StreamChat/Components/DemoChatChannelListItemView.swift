@@ -7,7 +7,7 @@ import UIKit
 
 final class DemoChatChannelListItemView: ChatChannelListItemView {
     override var subtitleText: String? {
-        guard let previewMessage = content?.channel.previewMessage else {
+        guard let previewMessage else {
             return super.subtitleText
         }
 

@@ -77,7 +77,6 @@ class ChannelDTO: NSManagedObject {
 
     @NSManaged var watchers: Set<UserDTO>
     @NSManaged var memberListQueries: Set<ChannelMemberListQueryDTO>
-    @NSManaged var previewMessage: MessageDTO?
     @NSManaged var draftMessage: MessageDTO?
     @NSManaged var activeLiveLocations: Set<SharedLocationDTO>
 
@@ -373,10 +372,6 @@ extension NSManagedObjectContext {
             message.updateReadBy(withChannelReads: channelReadDTOs)
         }
         
-        if dto.needsPreviewUpdate(payload) {
-            dto.previewMessage = preview(for: payload.channel.cid)
-        }
-
         dto.updateOldestMessageAt(payload: payload)
 
         if let draftMessage = payload.draft {
@@ -557,7 +552,9 @@ extension ChatChannel {
             extraData = [:]
         }
         
-        let sortedMessageDTOs = dto.messages.sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
+        let allSortedMessageDTOs = dto.messages.sorted(by: { $0.createdAt.bridgeDate > $1.createdAt.bridgeDate })
+        let channelMessageDTOs = allSortedMessageDTOs
+            .filter { $0.parentMessageId == nil || $0.showReplyInChannel }
         let reads: [ChatChannelRead] = try dto.reads.map { try $0.asModel() }
         let unreadCount: ChannelUnreadCount = {
             guard let currentUserDTO = context.currentUser else {
@@ -565,11 +562,10 @@ extension ChatChannel {
             }
             let currentUserRead = reads.first(where: { $0.user.id == currentUserDTO.user.id })
             let allUnreadMessages = currentUserRead?.unreadMessagesCount ?? 0
-            // Therefore, no unread messages with mentions and we can skip the fetch
             if allUnreadMessages == 0 {
                 return .noUnread
             }
-            let unreadMentionsCount = sortedMessageDTOs
+            let unreadMentionsCount = channelMessageDTOs
                 .prefix(allUnreadMessages)
                 .filter { $0.mentionedUsers.contains(currentUserDTO.user) }
                 .count
@@ -580,7 +576,7 @@ extension ChatChannel {
         }()
 
         let latestMessages: [ChatMessage] = {
-            var messages = sortedMessageDTOs
+            var messages = channelMessageDTOs
                 .prefix(clientConfig.localCaching.chatChannel.latestMessagesLimit)
                 .compactMap { try? $0.relationshipAsModel(depth: depth) }
             if let oldest = dto.oldestMessageAt?.bridgeDate {
@@ -594,7 +590,7 @@ extension ChatChannel {
 
         let latestMessageFromUser: ChatMessage? = {
             guard let currentUserId = context.currentUser?.user.id else { return nil }
-            return try? sortedMessageDTOs
+            return try? allSortedMessageDTOs
                 .first(where: { messageDTO in
                     guard messageDTO.user.id == currentUserId else { return false }
                     guard messageDTO.localMessageState == nil else { return false }
@@ -638,7 +634,6 @@ extension ChatChannel {
         let membership = try dto.membership.map { try $0.asModel() }
         let pinnedMessages = dto.pinnedMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
         let pendingMessages = dto.pendingMessages.compactMap { try? $0.relationshipAsModel(depth: depth) }
-        let previewMessage = try? dto.previewMessage?.relationshipAsModel(depth: depth)
         let draftMessage = try? dto.draftMessage?.relationshipAsModel(depth: depth)
         let typingUsers = Set(dto.currentlyTypingUsers.compactMap { try? $0.asModel() })
         let activeLiveLocations = try dto.activeLiveLocations.map { try $0.asModel() }
@@ -679,7 +674,6 @@ extension ChatChannel {
             pinnedMessages: pinnedMessages,
             pendingMessages: pendingMessages,
             muteDetails: muteDetails,
-            previewMessage: previewMessage,
             draftMessage: draftMessage.map(DraftMessage.init),
             activeLiveLocations: activeLiveLocations,
             pushPreference: pushPreference
@@ -709,18 +703,5 @@ extension ChannelDTO {
         if isOlderThanCurrentOldestMessage {
             oldestMessageAt = payloadOldestMessageAt.bridgeDate
         }
-    }
-
-    /// Returns `true` if the payload holds messages sent after the current channel preview.
-    func needsPreviewUpdate(_ payload: ChannelPayload) -> Bool {
-        guard let preview = previewMessage else {
-            return true
-        }
-
-        guard let newestMessage = payload.newestMessage else {
-            return false
-        }
-
-        return newestMessage.createdAt > preview.createdAt.bridgeDate
     }
 }
