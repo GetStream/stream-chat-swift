@@ -67,7 +67,7 @@ open class DefaultChatReactionPickerBubbleView: ChatReactionPickerBubbleView {
 
         switch content.style {
         case .bigIncoming, .bigOutgoing, .smallOutgoing:
-            return appearance.colorPalette.reactionBackground
+            return appearance.colorPalette.backgroundCoreElevation2
         case .smallIncoming:
             return appearance.colorPalette.backgroundCoreSurfaceStrong
         }
@@ -79,11 +79,11 @@ open class DefaultChatReactionPickerBubbleView: ChatReactionPickerBubbleView {
         let color: UIColor
         switch content.style {
         case .smallOutgoing:
-            color = appearance.colorPalette.reactionBorder
+            color = appearance.colorPalette.borderCoreDefault
         case .smallIncoming:
-            color = appearance.colorPalette.reactionBorder
+            color = appearance.colorPalette.borderCoreDefault
         default:
-            color = contentBackgroundColor
+            color = appearance.colorPalette.borderCoreDefault
         }
         return resolvedColor(color)
     }
