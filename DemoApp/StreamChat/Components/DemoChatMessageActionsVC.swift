@@ -252,7 +252,7 @@ final class DemoChatMessageActionsVC: ChatMessageActionsVC {
         ) {
             self.title = title
             self.action = action
-            icon = UIImage(systemName: "pin") ?? .init()
+            icon = UIImage(named: "icn_pin", in: .streamChatCommonUI) ?? .init()
         }
     }
 
