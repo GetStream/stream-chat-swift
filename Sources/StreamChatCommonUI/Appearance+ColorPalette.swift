@@ -42,6 +42,7 @@ public extension Appearance {
         public lazy var backgroundCoreApp: UIColor = chrome0
         public lazy var backgroundCoreElevation0: UIColor = chrome0
         public lazy var backgroundCoreElevation1: UIColor = UIColor(light: chrome0, dark: chrome50)
+        public lazy var backgroundCoreElevation2: UIColor = UIColor(light: chrome0, dark: chrome100)
         public lazy var backgroundCoreElevation3: UIColor = UIColor(light: chrome0, dark: chrome200)
         public lazy var backgroundCoreHighlight: UIColor = UIColor(light: .yellow50, dark: .yellow800)
         public lazy var backgroundCoreInverse: UIColor = chrome1000
