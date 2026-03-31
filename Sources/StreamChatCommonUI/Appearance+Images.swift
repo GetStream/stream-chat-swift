@@ -29,11 +29,16 @@ public extension Appearance {
 
         private static func loadSafely(
             systemName: String,
+            systemNameFallback: String? = nil,
             config: UIImage.SymbolConfiguration? = nil,
             assetsFallback: String? = nil
         ) -> UIImage {
             if let systemImage = UIImage(systemName: systemName, withConfiguration: config) {
                 return systemImage
+            }
+            if let systemNameFallback,
+               let fallbackImage = UIImage(systemName: systemNameFallback, withConfiguration: config) {
+                return fallbackImage
             }
             if let assetsFallback {
                 return loadImageSafely(with: assetsFallback)
@@ -452,15 +457,18 @@ public extension Appearance {
         public var attachmentPickerCamera: UIImage = UIImage(systemName: "camera")!
         public var attachmentPickerPolls: UIImage = loadImageSafely(with: "attachment_picker_polls")
         
-        public var muted: UIImage = UIImage(systemName: "speaker.slash")!
-        public var searchClose: UIImage = UIImage(systemName: "multiply.circle")!
+        public var muted: UIImage = loadSafely(systemName: "speaker.slash")
+        public var searchClose: UIImage = loadSafely(systemName: "multiply.circle")
         public var pin: UIImage = loadImageSafely(with: "icn_pin")
-        public var imagePlaceholder: UIImage = UIImage(systemName: "photo")!
-        public var personPlaceholder: UIImage = UIImage(systemName: "person.circle")!
-        public var checkmarkFilled: UIImage = UIImage(systemName: "checkmark.circle.fill")!
-        public var closeFill: UIImage = UIImage(systemName: "xmark.circle.fill")!
-        public var videoIndicator: UIImage = UIImage(systemName: "video.fill")!
-        public var gallery: UIImage = UIImage(systemName: "square.grid.3x3.fill")!
+        public var imagePlaceholder: UIImage = loadSafely(systemName: "photo")
+        public var personPlaceholder: UIImage = loadSafely(systemName: "person.circle")
+        public var checkmarkFilled: UIImage = loadSafely(systemName: "checkmark.circle.fill")
+        public var closeFill: UIImage = loadSafely(systemName: "xmark.circle.fill")
+        public var videoIndicator: UIImage = loadSafely(systemName: "video.fill")
+        public var gallery: UIImage = loadSafely(
+            systemName: "square.grid.3x3.fill",
+            systemNameFallback: "square.grid.2x2.fill"
+        )
         
         // MARK: - No Content Icons
         
@@ -546,11 +554,13 @@ public extension Appearance {
 
         public var attachmentDocumentIcon: UIImage = loadSafely(
             systemName: "document",
+            systemNameFallback: "doc",
             config: UIImage.SymbolConfiguration(weight: .regular)
         )
 
         public var attachmentVoiceIcon: UIImage = loadSafely(
             systemName: "microphone",
+            systemNameFallback: "mic",
             config: UIImage.SymbolConfiguration(weight: .regular)
         )
 
@@ -571,6 +581,7 @@ public extension Appearance {
 
         public var attachmentCommandIcon: UIImage = loadSafely(
             systemName: "chevron.left.forwardslash.chevron.right",
+            systemNameFallback: "chevron.left.slash.chevron.right",
             config: UIImage.SymbolConfiguration(weight: .regular)
         )
 
@@ -596,6 +607,7 @@ public extension Appearance {
 
         public var commandUnmuteIcon: UIImage = loadSafely(
             systemName: "speaker.wave.2",
+            systemNameFallback: "speaker.2",
             config: UIImage.SymbolConfiguration(pointSize: 16, weight: .medium)
         ).withRenderingMode(.alwaysTemplate)
 
@@ -642,6 +654,7 @@ public extension Appearance {
 
         public var annotationTranslation: UIImage = loadSafely(
             systemName: "translate",
+            systemNameFallback: "t.square",
             config: UIImage.SymbolConfiguration(pointSize: 13)
         )
 
