@@ -312,10 +312,6 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.deleteDraftMessage(in: cid, threadId: threadId)
     }
 
-    func preview(for cid: ChannelId) -> MessageDTO? {
-        underlyingSession.preview(for: cid)
-    }
-
     func rescueMessagesStuckInSending() {
         underlyingSession.rescueMessagesStuckInSending()
     }

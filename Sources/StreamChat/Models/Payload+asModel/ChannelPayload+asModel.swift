@@ -67,7 +67,6 @@ extension ChannelPayload {
                 $0.asModel(cid: channelPayload.cid, currentUserId: currentUserId, channelReads: reads)
             },
             muteDetails: nil,
-            previewMessage: latestMessages.first,
             draftMessage: nil,
             activeLiveLocations: [],
             pushPreference: pushPreference?.asModel()
