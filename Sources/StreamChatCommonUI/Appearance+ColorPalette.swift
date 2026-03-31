@@ -78,6 +78,8 @@ public extension Appearance {
         public lazy var chatBackgroundIncoming: UIColor = backgroundCoreSurfaceDefault
         public lazy var chatBackgroundOutgoing: UIColor = brand100
         public lazy var chatBorderIncoming: UIColor = borderCoreSubtle
+        public lazy var chatBorderOnChatIncoming: UIColor = borderCoreStrong
+        public lazy var chatBorderOnChatOutgoing: UIColor = brand300
         public lazy var chatBorderOutgoing: UIColor = brand100
         public lazy var chatPollProgressFillIncoming: UIColor = controlProgressBarFill
         public lazy var chatPollProgressFillOutgoing: UIColor = accentPrimary

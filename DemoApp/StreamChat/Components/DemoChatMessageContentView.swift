@@ -48,7 +48,7 @@ final class DemoChatMessageContentView: ChatMessageContentView {
         }
 
         if options.contains(.saveForLaterInfo) {
-            backgroundColor = appearance.colorPalette.backgroundCoreHighlight
+            backgroundColor = appearance.colorPalette.backgroundCoreElevation1
             bubbleThreadFootnoteContainer.insertArrangedSubview(saveForLaterView, at: 0)
             saveForLaterView.topAnchor.constraint(
                 equalTo: bubbleThreadFootnoteContainer.topAnchor,
