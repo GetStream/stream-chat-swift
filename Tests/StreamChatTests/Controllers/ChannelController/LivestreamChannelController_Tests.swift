@@ -1298,10 +1298,7 @@ extension LivestreamChannelController_Tests {
             message: pinnedMessage,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
 
         XCTAssertEqual(controller.messages.count, 0)
         XCTAssertEqual(controller.channel?.pinnedMessages.count, 1)
@@ -1338,10 +1335,7 @@ extension LivestreamChannelController_Tests {
             message: unpinnedMessage,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
 
         XCTAssertEqual(controller.messages.count, 0)
         XCTAssertEqual(controller.channel?.pinnedMessages.count, 0)
@@ -1375,10 +1369,7 @@ extension LivestreamChannelController_Tests {
             message: regularMessage,
             createdAt: .unique
         )
-        controller.eventsController(
-            EventsController(notificationCenter: client.eventNotificationCenter),
-            didReceiveEvent: event
-        )
+        controller.didReceiveEvent(event)
 
         XCTAssertEqual(controller.messages.count, 0)
         XCTAssertEqual(controller.channel?.pinnedMessages.count, 1)
