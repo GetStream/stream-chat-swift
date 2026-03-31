@@ -27,7 +27,7 @@ open class MediaButton: _Button, AppearanceProvider {
         backgroundColor = isHighlighted
             ? appearance.colorPalette.backgroundCoreSurfaceStrong
             : appearance.colorPalette.backgroundCoreElevation0
-        layer.shadowColor = tintColor.cgColor
+        layer.shadowColor = UIColor.black.cgColor
     }
 
     // MARK: - Interaction

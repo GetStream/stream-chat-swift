@@ -48,7 +48,7 @@ import XCTest
         XCTAssertEqual(subject.image(for: .selected), subject.appearance.images.pauseFill)
         XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.textPrimary)
         XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.backgroundCoreSurfaceStrong)
-        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.textPrimary.cgColor)
+        XCTAssertEqual(subject.layer.shadowColor, UIColor.black.cgColor)
     }
 
     func test_setUpAppearance_isNotHighlighted_wasConfiguredCorrectly() {
@@ -58,7 +58,7 @@ import XCTest
         XCTAssertEqual(subject.image(for: .selected), subject.appearance.images.pauseFill)
         XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.textPrimary)
         XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.backgroundCoreElevation0)
-        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.textPrimary.cgColor)
+        XCTAssertEqual(subject.layer.shadowColor, UIColor.black.cgColor)
     }
 
     // MARK: - layoutSubviews
