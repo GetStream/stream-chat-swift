@@ -1116,15 +1116,23 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             messages[index] = updatedMessage
 
             if existingMessage.isPinned != updatedMessage.isPinned {
-                var pinnedMessages = channel?.pinnedMessages ?? []
-                if updatedMessage.isPinned {
-                    pinnedMessages.append(updatedMessage)
-                } else {
-                    pinnedMessages.removeAll(where: { $0.id == existingMessage.id })
-                }
-                channel = channel?.changing(pinnedMessages: pinnedMessages)
+                updatePinnedMessages(for: updatedMessage)
             }
+        } else if updatedMessage.isPinned || channel?.pinnedMessages.contains(where: { $0.id == updatedMessage.id }) == true {
+            updatePinnedMessages(for: updatedMessage)
         }
+    }
+
+    private func updatePinnedMessages(for message: ChatMessage) {
+        var pinnedMessages = channel?.pinnedMessages ?? []
+        if message.isPinned {
+            if !pinnedMessages.contains(where: { $0.id == message.id }) {
+                pinnedMessages.append(message)
+            }
+        } else {
+            pinnedMessages.removeAll(where: { $0.id == message.id })
+        }
+        channel = channel?.changing(pinnedMessages: pinnedMessages)
     }
 
     private func handleDeletedMessage(_ deletedMessage: ChatMessage) {
