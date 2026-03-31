@@ -162,12 +162,6 @@ public struct ChatChannel: Sendable {
     /// Additional data associated with the channel.
     public let extraData: [String: RawJSON]
 
-    /// The channel message is supposed to be shown in channel preview.
-    ///
-    /// - Important: The `previewMessage` can differ from `latestMessages.first` (or even not be included into `latestMessages`)
-    /// because the preview message is the last `non-deleted` message sent to the channel.
-    public let previewMessage: ChatMessage?
-
     /// The draft message in the channel.
     public let draftMessage: DraftMessage?
 
@@ -217,7 +211,6 @@ public struct ChatChannel: Sendable {
         pinnedMessages: [ChatMessage],
         pendingMessages: [ChatMessage],
         muteDetails: MuteDetails?,
-        previewMessage: ChatMessage?,
         draftMessage: DraftMessage?,
         activeLiveLocations: [SharedLocation],
         pushPreference: PushPreference?
@@ -254,7 +247,6 @@ public struct ChatChannel: Sendable {
         self.lastActiveWatchers = lastActiveWatchers
         self.pinnedMessages = pinnedMessages
         self.muteDetails = muteDetails
-        self.previewMessage = previewMessage
         self.draftMessage = draftMessage
         self.activeLiveLocations = activeLiveLocations
         self.pendingMessages = pendingMessages
@@ -300,7 +292,6 @@ public struct ChatChannel: Sendable {
             pinnedMessages: pinnedMessages,
             pendingMessages: pendingMessages,
             muteDetails: muteDetails,
-            previewMessage: previewMessage,
             draftMessage: draftMessage,
             activeLiveLocations: activeLiveLocations,
             pushPreference: pushPreference
@@ -369,7 +360,6 @@ public struct ChatChannel: Sendable {
             pinnedMessages: pinnedMessages ?? self.pinnedMessages,
             pendingMessages: pendingMessages,
             muteDetails: muteDetails,
-            previewMessage: previewMessage,
             draftMessage: draftMessage,
             activeLiveLocations: activeLiveLocations,
             pushPreference: pushPreference
@@ -448,7 +438,7 @@ extension ChatChannel: Hashable {
         guard lhs.lastMessageAt == rhs.lastMessageAt else { return false }
         guard lhs.muteDetails == rhs.muteDetails else { return false }
         guard lhs.reads == rhs.reads else { return false }
-        guard lhs.previewMessage == rhs.previewMessage else { return false }
+        guard lhs.latestMessages == rhs.latestMessages else { return false }
         guard lhs.name == rhs.name else { return false }
         guard lhs.watcherCount == rhs.watcherCount else { return false }
         guard lhs.createdAt == rhs.createdAt else { return false }

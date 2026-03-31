@@ -61,17 +61,17 @@ import XCTest
             .mock(
                 cid: .unique,
                 name: "Cool",
-                previewMessage: .mock(text: "Message 1", author: author)
+                latestMessages: [.mock(text: "Message 1", author: author)]
             ),
             .mock(
                 cid: .unique,
                 name: "Cool 2",
-                previewMessage: .mock(text: "Message 2", author: author)
+                latestMessages: [.mock(text: "Message 2", author: author)]
             ),
             .mock(
                 cid: .unique,
                 name: "Cool 3",
-                previewMessage: .mock(text: "Message 3", author: author)
+                latestMessages: [.mock(text: "Message 3", author: author)]
             )
         ]
 

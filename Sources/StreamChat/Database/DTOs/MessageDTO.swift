@@ -81,8 +81,6 @@ class MessageDTO: NSManagedObject {
     @NSManaged var quotedMessage: MessageDTO?
     @NSManaged var quotedBy: Set<MessageDTO>
     @NSManaged var searches: Set<MessageSearchQueryDTO>
-    @NSManaged var previewOfChannel: ChannelDTO?
-
     @NSManaged var draftOfChannel: ChannelDTO?
     @NSManaged var draftOfThread: MessageDTO?
     @NSManaged var draftReply: MessageDTO?
@@ -136,13 +134,6 @@ class MessageDTO: NSManagedObject {
             if isActiveLiveLocation != self.isActiveLiveLocation {
                 self.isActiveLiveLocation = isActiveLiveLocation
             }
-        }
-
-        // Manually mark the channel as dirty to trigger the entity update and give the UI a chance
-        // to reload the channel cell to reflect the updated preview.
-        if let channel = previewOfChannel, !channel.hasChanges, !channel.isDeleted {
-            let cid = channel.cid
-            channel.cid = cid
         }
 
         // Refresh messages referencing the current message
@@ -283,20 +274,6 @@ class MessageDTO: NSManagedObject {
         .init(orPredicateWithSubpredicates: [
             .init(format: "channel.truncatedAt == nil"),
             .init(format: "createdAt >= channel.truncatedAt")
-        ])
-    }
-
-    /// Returns predicate for the channel preview message.
-    private static func previewMessagePredicate(cid: String, includeShadowedMessages: Bool) -> NSPredicate {
-        NSCompoundPredicate(andPredicateWithSubpredicates: [
-            channelMessagesPredicate(
-                for: cid,
-                deletedMessagesVisibility: .alwaysHidden,
-                shouldShowShadowedMessages: includeShadowedMessages,
-                filterNewerMessages: false
-            ),
-            .init(format: "type != %@", MessageType.ephemeral.rawValue),
-            .init(format: "type != %@", MessageType.error.rawValue)
         ])
     }
 
@@ -481,20 +458,6 @@ class MessageDTO: NSManagedObject {
         request.fetchLimit = limit
         request.fetchOffset = offset
         return load(by: request, context: context)
-    }
-
-    static func preview(for cid: String, context: NSManagedObjectContext) -> MessageDTO? {
-        let request = NSFetchRequest<MessageDTO>(entityName: entityName)
-        MessageDTO.applyPrefetchingState(to: request)
-        request.predicate = previewMessagePredicate(
-            cid: cid,
-            includeShadowedMessages: context.chatClientConfig?.shouldShowShadowedMessages ?? false
-        )
-        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
-        request.fetchOffset = 0
-        request.fetchLimit = 1
-
-        return load(by: request, context: context).first
     }
 
     static func load(id: String, context: NSManagedObjectContext) -> MessageDTO? {
@@ -871,12 +834,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             parentMessageDTO.replyCount += 1
         }
 
-        // When the current user submits the new message that will be shown
-        // in the channel for sending - make it a channel preview.
-        if parentMessageId == nil || showReplyInChannel {
-            channelDTO.previewMessage = message
-        }
-
         return message
     }
 
@@ -1171,14 +1128,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         } else if let reminderDTO = dto.reminder {
             delete(reminderDTO)
             dto.reminder = nil
-        }
-
-        // Refetch channel preview if the current preview has changed.
-        //
-        // The current message can stop being a valid preview e.g.
-        // if it didn't pass moderation and obtained `error` type.
-        if payload.id == channelDTO.previewMessage?.id {
-            channelDTO.previewMessage = preview(for: cid)
         }
 
         return dto
@@ -1558,10 +1507,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         return reaction
-    }
-
-    func preview(for cid: ChannelId) -> MessageDTO? {
-        MessageDTO.preview(for: cid.rawValue, context: self)
     }
 
     func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {

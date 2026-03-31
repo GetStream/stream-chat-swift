@@ -3,17 +3,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-## StreamChatUI
+## StreamChat
+### 🐞 Fixed
+- Fix `ChatChannel.latestMessages` including thread replies [#4024](https://github.com/GetStream/stream-chat-swift/pull/4024)
 ### 🔄 Changed
-- Use the new color palette
+- Remove `ChatChannel.previewMessage` in favour of computing preview from `latestMessages` [#4024](https://github.com/GetStream/stream-chat-swift/pull/4024)
+
+## StreamChatUI
+### ✅ Added
+- Show deleted messages in channel list preview [#4024](https://github.com/GetStream/stream-chat-swift/pull/4024)
+### 🐞 Fixed
+- Fix clearing unread messages on channel open when the first unread message is not visible [#4013](https://github.com/GetStream/stream-chat-swift/pull/4013)
+### 🔄 Changed
+- Use the new color palette [#4025](https://github.com/GetStream/stream-chat-swift/pull/4025)
 
 ## StreamChatCommonUI
 ### ❌ Removed
-- Remove existing color tokens in favor of new palette in `Appearance.ColorPalette`
-
-## StreamChatUI
-### 🐞 Fixed
-- Fix clearing unread messages on channel open when the first unread message is not visible [#4013](https://github.com/GetStream/stream-chat-swift/pull/4013)
+- Remove existing color tokens in favor of the new palette in `Appearance.ColorPalette` [#4025](https://github.com/GetStream/stream-chat-swift/pull/4025)
 
 # [5.0.0-beta](https://github.com/GetStream/stream-chat-swift/releases/tag/5.0.0-beta)
 _March 23, 2026_
