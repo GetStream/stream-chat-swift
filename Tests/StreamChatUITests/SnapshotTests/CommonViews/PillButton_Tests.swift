@@ -37,7 +37,7 @@ import XCTest
     func test_isHighlighted_isFalse_backgroundColorWasSetCorrectly() {
         subject.isHighlighted = false
 
-        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.controlPlayButtonBackground)
+        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.staticColorText)
     }
 
     // MARK: - setUpAppearance
@@ -45,17 +45,17 @@ import XCTest
     func test_setUpAppearance_isHighlighted_wasConfiguredCorrectly() {
         subject.isHighlighted = true
 
-        XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.controlPlayButtonIcon)
+        XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.staticBlackColorText)
         XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.backgroundCoreSurfaceStrong)
-        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.controlPlayButtonIcon.cgColor)
+        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.staticBlackColorText.cgColor)
     }
 
     func test_setUpAppearance_isNotHighlighted_wasConfiguredCorrectly() {
         subject.isHighlighted = false
 
-        XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.controlPlayButtonIcon)
-        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.controlPlayButtonBackground)
-        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.controlPlayButtonIcon.cgColor)
+        XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.staticBlackColorText)
+        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.staticColorText)
+        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.staticBlackColorText.cgColor)
     }
 
     // MARK: - layoutSubviews

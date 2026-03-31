@@ -177,7 +177,7 @@ extension ChatMessageVoiceRecordingAttachmentListView {
                 ofSize: appearance.fonts.caption1.pointSize, weight: .medium
             )
 
-            playbackRateButton.setTitleColor(appearance.colorPalette.controlPlayButtonIcon, for: .normal)
+            playbackRateButton.setTitleColor(appearance.colorPalette.staticBlackColorText, for: .normal)
             playbackRateButton.titleLabel?.font = appearance.fonts.footnote
         }
 

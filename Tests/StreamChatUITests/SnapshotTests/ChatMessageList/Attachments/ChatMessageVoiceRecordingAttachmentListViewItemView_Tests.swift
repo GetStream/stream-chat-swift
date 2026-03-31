@@ -141,7 +141,7 @@ import XCTest
     }
 
     func test_setUpAppearance_playbackRateButtonWasConfiguredCorrectly() {
-        XCTAssertEqual(subject.playbackRateButton.titleColor(for: .normal), subject.appearance.colorPalette.controlPlayButtonIcon)
+        XCTAssertEqual(subject.playbackRateButton.titleColor(for: .normal), subject.appearance.colorPalette.staticBlackColorText)
         XCTAssertEqual(subject.playbackRateButton.titleLabel?.font, subject.appearance.fonts.footnote)
     }
 

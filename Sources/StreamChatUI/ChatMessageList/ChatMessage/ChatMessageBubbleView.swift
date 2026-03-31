@@ -12,11 +12,14 @@ open class ChatMessageBubbleView: _View, AppearanceProvider {
     public struct Content {
         /// The background color of the bubble.
         public let backgroundColor: UIColor
+        /// The border color of the bubble.
+        public let borderColor: UIColor
         /// The mask saying which corners should be rounded.
         public let roundedCorners: CACornerMask
 
-        public init(backgroundColor: UIColor, roundedCorners: CACornerMask) {
+        public init(backgroundColor: UIColor, borderColor: UIColor, roundedCorners: CACornerMask) {
             self.backgroundColor = backgroundColor
+            self.borderColor = borderColor
             self.roundedCorners = roundedCorners
         }
     }
@@ -29,7 +32,6 @@ open class ChatMessageBubbleView: _View, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        layer.borderColor = appearance.colorPalette.borderCoreSubtle.cgColor
         layer.cornerRadius = 18
         layer.borderWidth = 1
     }
@@ -38,6 +40,7 @@ open class ChatMessageBubbleView: _View, AppearanceProvider {
         super.updateContent()
 
         layer.maskedCorners = content?.roundedCorners ?? .all
+        layer.borderColor = content?.borderColor.cgColor ?? nil
         backgroundColor = content?.backgroundColor ?? .clear
     }
 }

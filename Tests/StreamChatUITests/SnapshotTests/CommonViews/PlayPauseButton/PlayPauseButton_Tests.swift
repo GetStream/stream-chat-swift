@@ -36,7 +36,7 @@ import XCTest
     func test_isHighlighted_isFalse_backgroundColorWasSetCorrectly() {
         subject.isHighlighted = false
 
-        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.controlPlayButtonBackground)
+        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.staticColorText)
     }
 
     // MARK: - setUpAppearance
@@ -46,9 +46,9 @@ import XCTest
 
         XCTAssertEqual(subject.image(for: .normal), subject.appearance.images.playFill)
         XCTAssertEqual(subject.image(for: .selected), subject.appearance.images.pauseFill)
-        XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.controlPlayButtonIcon)
+        XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.staticBlackColorText)
         XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.backgroundCoreSurfaceStrong)
-        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.controlPlayButtonIcon.cgColor)
+        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.staticBlackColorText.cgColor)
     }
 
     func test_setUpAppearance_isNotHighlighted_wasConfiguredCorrectly() {
@@ -56,9 +56,9 @@ import XCTest
 
         XCTAssertEqual(subject.image(for: .normal), subject.appearance.images.playFill)
         XCTAssertEqual(subject.image(for: .selected), subject.appearance.images.pauseFill)
-        XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.controlPlayButtonIcon)
-        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.controlPlayButtonBackground)
-        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.controlPlayButtonIcon.cgColor)
+        XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.staticBlackColorText)
+        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.staticColorText)
+        XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.staticBlackColorText.cgColor)
     }
 
     // MARK: - layoutSubviews

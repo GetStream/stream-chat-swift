@@ -12,6 +12,7 @@ import XCTest
 @MainActor final class ChatMessageBubbleView_Tests: XCTestCase {
     private var bubbleContent = ChatMessageBubbleView.Content(
         backgroundColor: Appearance.default.colorPalette.backgroundCoreSurfaceStrong,
+        borderColor: Appearance.default.colorPalette.chatBorderOnChatIncoming,
         roundedCorners: CACornerMask.all.subtracting(.layerMaxXMinYCorner)
     )
 
@@ -49,7 +50,7 @@ import XCTest
 
         // Set custom appearance
         var appearance = Appearance()
-        appearance.colorPalette.borderCoreDefault = Appearance.default.colorPalette.backgroundCoreScrim
+        appearance.colorPalette.borderCoreSubtle = Appearance.default.colorPalette.backgroundCoreScrim
         bubble.appearance = appearance
 
         // Assert the bubble is rendered correctly

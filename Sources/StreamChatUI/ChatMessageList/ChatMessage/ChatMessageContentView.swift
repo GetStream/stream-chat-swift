@@ -660,20 +660,11 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
         // Bubble view
         bubbleView?.content = content.map { message in
-            let backgroundColor: UIColor = {
-                if message.isSentByCurrentUser {
-                    if message.type == .ephemeral {
-                        return appearance.colorPalette.backgroundCoreElevation1
-                    } else {
-                        return appearance.colorPalette.chatBackgroundIncoming
-                    }
-                } else {
-                    return appearance.colorPalette.chatBackgroundOutgoing
-                }
-            }()
-
+            let backgroundColor: UIColor = message.isSentByCurrentUser ? appearance.colorPalette.chatBackgroundOutgoing : appearance.colorPalette.chatBackgroundIncoming
+            let borderColor: UIColor = message.isSentByCurrentUser ? appearance.colorPalette.chatBorderOnChatOutgoing : appearance.colorPalette.chatBorderOnChatIncoming
             return .init(
                 backgroundColor: backgroundColor,
+                borderColor: borderColor,
                 roundedCorners: layoutOptions?.roundedCorners(for: effectiveUserInterfaceLayoutDirection) ?? .all
             )
         }
