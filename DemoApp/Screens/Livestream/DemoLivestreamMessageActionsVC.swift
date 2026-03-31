@@ -52,7 +52,7 @@ class DemoLivestreamMessageActionsVC: UIViewController {
     // MARK: - Setup
     
     private func setupUI() {
-        view.backgroundColor = Appearance.default.colorPalette.background
+        view.backgroundColor = Appearance.default.colorPalette.backgroundCoreApp
         
         view.addSubview(mainStackView)
         NSLayoutConstraint.activate([

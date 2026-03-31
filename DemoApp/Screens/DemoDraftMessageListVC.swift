@@ -38,7 +38,7 @@ class DemoDraftMessageListVC: UIViewController, ThemeProvider {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "No draft messages"
         label.textAlignment = .center
-        label.textColor = Appearance.default.colorPalette.subtitleText
+        label.textColor = Appearance.default.colorPalette.textSecondary
         label.isHidden = true
         return label
     }()
@@ -70,8 +70,8 @@ class DemoDraftMessageListVC: UIViewController, ThemeProvider {
     }
 
     private func setupViews() {
-        view.backgroundColor = Appearance.default.colorPalette.background
-        tableView.backgroundColor = Appearance.default.colorPalette.background
+        view.backgroundColor = Appearance.default.colorPalette.backgroundCoreApp
+        tableView.backgroundColor = Appearance.default.colorPalette.backgroundCoreApp
 
         view.addSubview(tableView)
         view.addSubview(loadingIndicator)
@@ -201,35 +201,35 @@ class DemoDraftMessageCell: UITableViewCell {
     private let channelNameLabel: UILabel = {
         let label = UILabel()
         label.font = Appearance.default.fonts.bodyBold
-        label.textColor = Appearance.default.colorPalette.text
+        label.textColor = Appearance.default.colorPalette.textPrimary
         return label
     }()
-    
+
     private let messageLabel: UILabel = {
         let label = UILabel()
         label.font = Appearance.default.fonts.footnote
         label.numberOfLines = 2
-        label.textColor = Appearance.default.colorPalette.subtitleText
+        label.textColor = Appearance.default.colorPalette.textSecondary
         return label
     }()
     
     private let dateLabel: UILabel = {
         let label = UILabel()
         label.font = Appearance.default.fonts.footnote
-        label.textColor = Appearance.default.colorPalette.subtitleText
+        label.textColor = Appearance.default.colorPalette.textSecondary
         return label
     }()
 
     private let pencilImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "bubble.and.pencil"))
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = Appearance.default.colorPalette.subtitleText
+        imageView.tintColor = Appearance.default.colorPalette.textSecondary
         return imageView
     }()
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        backgroundColor = Appearance.default.colorPalette.background
+        backgroundColor = Appearance.default.colorPalette.backgroundCoreApp
         setupViews()
     }
 

@@ -72,7 +72,7 @@ class DemoAppTabBarController: UITabBarController, CurrentChatUserControllerDele
             updateRemindersBadge()
         }
 
-        tabBar.backgroundColor = Appearance.default.colorPalette.background
+        tabBar.backgroundColor = Appearance.default.colorPalette.backgroundCoreApp
         tabBar.isTranslucent = true
 
         channelListVC.tabBarItem.title = "Channels"
