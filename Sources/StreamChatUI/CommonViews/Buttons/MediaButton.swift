@@ -13,7 +13,7 @@ open class MediaButton: _Button, AppearanceProvider {
         didSet {
             backgroundColor = isHighlighted
                 ? appearance.colorPalette.backgroundCoreSurfaceStrong
-                : .clear
+                : appearance.colorPalette.backgroundCoreElevation0
         }
     }
 
@@ -26,7 +26,7 @@ open class MediaButton: _Button, AppearanceProvider {
         setTitleColor(appearance.colorPalette.textPrimary, for: .normal)
         backgroundColor = isHighlighted
             ? appearance.colorPalette.backgroundCoreSurfaceStrong
-            : .clear
+            : appearance.colorPalette.backgroundCoreElevation0
         layer.shadowColor = tintColor.cgColor
     }
 

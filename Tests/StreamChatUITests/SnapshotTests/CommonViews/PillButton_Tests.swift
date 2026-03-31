@@ -37,7 +37,7 @@ import XCTest
     func test_isHighlighted_isFalse_backgroundColorWasSetCorrectly() {
         subject.isHighlighted = false
 
-        XCTAssertEqual(subject.backgroundColor, UIColor.clear)
+        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.backgroundCoreElevation0)
     }
 
     // MARK: - setUpAppearance
@@ -54,7 +54,7 @@ import XCTest
         subject.isHighlighted = false
 
         XCTAssertEqual(subject.tintColor, subject.appearance.colorPalette.textPrimary)
-        XCTAssertEqual(subject.backgroundColor, UIColor.clear)
+        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.backgroundCoreElevation0)
         XCTAssertEqual(subject.layer.shadowColor, subject.appearance.colorPalette.textPrimary.cgColor)
     }
 
