@@ -37,7 +37,7 @@ import XCTest
 
         content = TestChatMessageActionItem(
             title: "Action 1",
-            icon: UIImage(named: "icn_inline_reply", in: .streamChatCommonUI)!
+            icon: UIImage(systemName: "arrowshape.turn.up.left")!
         )
     }
 
@@ -56,7 +56,7 @@ import XCTest
     func test_defaultMultilineAppearance() {
         content = TestChatMessageActionItem(
             title: "Action that takes\n 2 lines of text",
-            icon: UIImage(named: "icn_inline_reply", in: .streamChatCommonUI)!
+            icon: UIImage(systemName: "arrowshape.turn.up.left")!
         )
         let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
         view.content = content
@@ -81,7 +81,7 @@ import XCTest
         let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
         view.content = TestChatMessageActionItem(
             title: "Action 1",
-            icon: UIImage(named: "icn_inline_reply", in: .streamChatCommonUI)!,
+            icon: UIImage(systemName: "arrowshape.turn.up.left")!,
             isDestructive: true
         )
 
@@ -92,7 +92,7 @@ import XCTest
         let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
         view.content = TestChatMessageActionItem(
             title: "Action 1",
-            icon: UIImage(named: "icn_inline_reply", in: .streamChatCommonUI)!,
+            icon: UIImage(systemName: "arrowshape.turn.up.left")!,
             isPrimary: true
         )
 
@@ -103,7 +103,7 @@ import XCTest
         let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
         view.content = TestChatMessageActionItem(
             title: "Action 1",
-            icon: UIImage(named: "icn_inline_reply", in: .streamChatCommonUI)!,
+            icon: UIImage(systemName: "arrowshape.turn.up.left")!,
             isDestructive: true,
             isPrimary: true
         )

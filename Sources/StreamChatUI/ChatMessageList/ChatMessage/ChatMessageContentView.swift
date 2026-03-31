@@ -245,6 +245,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         imageView.image = appearance.images
             .messageActionSwipeReply
             .tinted(with: appearance.colorPalette.textTertiary)
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
 
