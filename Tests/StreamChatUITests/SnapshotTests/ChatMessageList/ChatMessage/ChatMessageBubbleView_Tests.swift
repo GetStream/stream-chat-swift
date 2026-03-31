@@ -12,7 +12,7 @@ import XCTest
 @MainActor final class ChatMessageBubbleView_Tests: XCTestCase {
     private var bubbleContent = ChatMessageBubbleView.Content(
         backgroundColor: Appearance.default.colorPalette.backgroundCoreSurfaceStrong,
-        borderColor: Appearance.default.colorPalette.chatBorderOnChatIncoming,
+        borderColor: Appearance.default.colorPalette.chatBorderIncoming,
         roundedCorners: CACornerMask.all.subtracting(.layerMaxXMinYCorner)
     )
 

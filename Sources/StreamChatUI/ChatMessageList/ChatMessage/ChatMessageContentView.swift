@@ -661,7 +661,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         // Bubble view
         bubbleView?.content = content.map { message in
             let backgroundColor: UIColor = message.isSentByCurrentUser ? appearance.colorPalette.chatBackgroundOutgoing : appearance.colorPalette.chatBackgroundIncoming
-            let borderColor: UIColor = message.isSentByCurrentUser ? appearance.colorPalette.chatBorderOnChatOutgoing : appearance.colorPalette.chatBorderOnChatIncoming
+            let borderColor: UIColor = message.isSentByCurrentUser ? appearance.colorPalette.chatBorderOutgoing : appearance.colorPalette.chatBorderIncoming
             return .init(
                 backgroundColor: backgroundColor,
                 borderColor: borderColor,
