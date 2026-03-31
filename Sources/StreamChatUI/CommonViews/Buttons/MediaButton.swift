@@ -13,7 +13,7 @@ open class MediaButton: _Button, AppearanceProvider {
         didSet {
             backgroundColor = isHighlighted
                 ? appearance.colorPalette.backgroundCoreSurfaceStrong
-                : appearance.colorPalette.staticColorText
+                : .clear
         }
     }
 
@@ -22,11 +22,11 @@ open class MediaButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        tintColor = appearance.colorPalette.staticBlackColorText
-        setTitleColor(appearance.colorPalette.staticBlackColorText, for: .normal)
+        tintColor = appearance.colorPalette.textPrimary
+        setTitleColor(appearance.colorPalette.textPrimary, for: .normal)
         backgroundColor = isHighlighted
             ? appearance.colorPalette.backgroundCoreSurfaceStrong
-            : appearance.colorPalette.staticColorText
+            : .clear
         layer.shadowColor = tintColor.cgColor
     }
 

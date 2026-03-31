@@ -150,9 +150,6 @@ public extension Appearance {
         // MARK: - UIKit SDK
         
         public var highlightedColorForColor: @Sendable (UIColor) -> UIColor = { $0.withAlphaComponent(0.5) }
-        public lazy var staticColorText: UIColor = .baseWhite
-        public lazy var staticBlackColorText: UIColor = .baseBlack
-        
         lazy var brand100: UIColor = UIColor(light: .blue100, dark: .blue800)
         lazy var brand150: UIColor = UIColor(light: .blue150, dark: .blue700)
         lazy var brand200: UIColor = UIColor(light: .blue200, dark: .blue600)
