@@ -107,7 +107,6 @@ public extension ChatChannel {
         pinnedMessages: [ChatMessage] = [],
         pendingMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
-        previewMessage: ChatMessage? = nil,
         draftMessage: DraftMessage? = nil,
         activeLiveLocations: [SharedLocation] = [],
         pushPreference: PushPreference? = nil
@@ -145,7 +144,6 @@ public extension ChatChannel {
             pinnedMessages: pinnedMessages,
             pendingMessages: pendingMessages,
             muteDetails: muteDetails,
-            previewMessage: previewMessage,
             draftMessage: draftMessage,
             activeLiveLocations: activeLiveLocations,
             pushPreference: pushPreference
@@ -181,7 +179,6 @@ public extension ChatChannel {
         pinnedMessages: [ChatMessage] = [],
         pendingMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
-        previewMessage: ChatMessage? = nil,
         draftMessage: DraftMessage? = nil,
         activeLiveLocations: [SharedLocation] = []
     ) -> Self {
@@ -217,7 +214,6 @@ public extension ChatChannel {
             pinnedMessages: pinnedMessages,
             pendingMessages: pendingMessages,
             muteDetails: muteDetails,
-            previewMessage: previewMessage,
             draftMessage: draftMessage,
             activeLiveLocations: activeLiveLocations,
             pushPreference: nil
@@ -253,7 +249,6 @@ public extension ChatChannel {
         pinnedMessages: [ChatMessage] = [],
         pendingMessages: [ChatMessage] = [],
         muteDetails: MuteDetails? = nil,
-        previewMessage: ChatMessage? = nil,
         draftMessage: DraftMessage? = nil,
         activeLiveLocations: [SharedLocation] = []
     ) -> Self {
@@ -289,7 +284,6 @@ public extension ChatChannel {
             pinnedMessages: pinnedMessages,
             pendingMessages: pendingMessages,
             muteDetails: muteDetails,
-            previewMessage: previewMessage,
             draftMessage: draftMessage,
             activeLiveLocations: activeLiveLocations,
             pushPreference: nil

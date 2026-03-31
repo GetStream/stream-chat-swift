@@ -526,8 +526,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(chatChannel.pendingMessages.count, 1)
         XCTAssertEqual(chatChannel.pendingMessages.first?.id, "pending-message-id")
         XCTAssertNil(chatChannel.muteDetails)
-        XCTAssertNotNil(chatChannel.previewMessage)
-        XCTAssertEqual(chatChannel.previewMessage?.id, "message-id")
+        XCTAssertEqual(chatChannel.latestMessages.first?.id, "message-id")
         XCTAssertTrue(chatChannel.activeLiveLocations.isEmpty)
     }
     
@@ -615,7 +614,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertTrue(chatChannel.pinnedMessages.isEmpty)
         XCTAssertTrue(chatChannel.pendingMessages.isEmpty)
         XCTAssertNil(chatChannel.muteDetails)
-        XCTAssertNil(chatChannel.previewMessage)
+        XCTAssertTrue(chatChannel.latestMessages.isEmpty)
         XCTAssertNil(chatChannel.lastMessageFromCurrentUser)
         XCTAssertNil(chatChannel.draftMessage)
         XCTAssertTrue(chatChannel.activeLiveLocations.isEmpty)

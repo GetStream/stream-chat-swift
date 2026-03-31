@@ -143,6 +143,13 @@ open class ChatChannelListItemView: _View, ThemeProvider {
         return nil
     }
 
+    /// The preview message for the channel list item, derived from the channel's latest messages.
+    open var previewMessage: ChatMessage? {
+        content?.channel.latestMessages.first(where: {
+            $0.type != .ephemeral
+        })
+    }
+
     /// Text of `subtitleLabel` which contains current typing user or the last message in the channel.
     open var subtitleText: String? {
         guard let content = content else { return nil }
@@ -160,7 +167,14 @@ open class ChatChannelListItemView: _View, ThemeProvider {
             return previewMessageTextForDraft(messageText: previewText)
         }
 
-        if let previewMessage = content.channel.previewMessage {
+        if let previewMessage, previewMessage.isDeleted {
+            if previewMessage.isSentByCurrentUser {
+                return "\(L10n.you): \(L10n.Message.deletedMessagePlaceholder)"
+            }
+            return L10n.Message.deletedMessagePlaceholder
+        }
+
+        if let previewMessage {
             if previewMessage.type == .system {
                 return previewMessageTextForSystemMessage(messageText: previewMessage.text)
             }
@@ -198,7 +212,7 @@ open class ChatChannelListItemView: _View, ThemeProvider {
             return timestampFormatter.format(searchedMessage.createdAt)
         }
         
-        if let timestamp = content?.channel.previewMessage?.createdAt {
+        if let timestamp = previewMessage?.createdAt {
             return timestampFormatter.format(timestamp)
         }
 
@@ -212,9 +226,13 @@ open class ChatChannelListItemView: _View, ThemeProvider {
             return nil
         }
 
+        if previewMessage?.isDeleted == true {
+            return nil
+        }
+
         guard
             let content = content,
-            let deliveryStatus = content.channel.previewMessage?.deliveryStatus(for: content.channel)
+            let deliveryStatus = previewMessage?.deliveryStatus(for: content.channel)
         else { return nil }
 
         switch deliveryStatus {
@@ -557,7 +575,6 @@ open class ChatChannelListItemView: _View, ThemeProvider {
 
 extension ChatChannelListItemView {
     var isLastMessageVoiceRecording: Bool {
-        let previewMessage = content?.channel.previewMessage
         let previewHasVoiceRecording = previewMessage?.voiceRecordingAttachments.isEmpty == false
         let doesNotHaveDraft = content?.channel.draftMessage == nil
         let noTypingUsers = typingUserString == nil

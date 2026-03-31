@@ -3,7 +3,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix `ChatChannel.latestMessages` including thread replies [#4024](https://github.com/GetStream/stream-chat-swift/pull/4024)
+### 🔄 Changed
+- Remove `ChatChannel.previewMessage` in favour of computing preview from `latestMessages` [#4024](https://github.com/GetStream/stream-chat-swift/pull/4024)
+
 ## StreamChatUI
+### ✅ Added
+- Show deleted messages in channel list preview [#4024](https://github.com/GetStream/stream-chat-swift/pull/4024)
 ### 🐞 Fixed
 - Fix clearing unread messages on channel open when the first unread message is not visible [#4013](https://github.com/GetStream/stream-chat-swift/pull/4013)
 
