@@ -120,8 +120,6 @@ public extension Appearance {
         public lazy var reactionBackground: UIColor = backgroundCoreElevation3
         public lazy var reactionBorder: UIColor = borderCoreDefault
         public lazy var reactionText: UIColor = textPrimary
-        public lazy var skeletonLoadingBase: UIColor = .baseTransparent0
-        public lazy var skeletonLoadingHighlight: UIColor = backgroundCoreOverlayLight
         public lazy var textDisabled: UIColor = chrome300
         public lazy var textLink: UIColor = UIColor(light: brand500, dark: brand600)
         public lazy var textOnAccent: UIColor = UIColor(light: chrome0, dark: chrome1000)
