@@ -30,12 +30,17 @@ open class ChatUserAvatarView: _View, ThemeProvider {
     }
 
     override open func updateContent() {
+        let placeholder = UserAvatarInitialsImage.image(
+            name: content?.name ?? "",
+            size: components.avatarThumbnailSize,
+            appearance: appearance
+        )
         components.imageLoader.loadImage(
             into: presenceAvatarView.avatarView.imageView,
             from: content?.imageURL,
             with: ImageLoaderOptions(
                 resize: .init(components.avatarThumbnailSize),
-                placeholder: appearance.images.userAvatarPlaceholder1
+                placeholder: placeholder
             )
         )
 

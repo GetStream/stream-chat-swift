@@ -366,25 +366,9 @@ public extension Appearance {
 
         // MARK: - Placeholders
 
-        public var channelAvatarPlaceholder: UIImage = loadSafely(systemName: "person.3", assetsFallback: "pattern1")
-        public var userAvatarPlaceholder: UIImage = loadSafely(systemName: "person", assetsFallback: "pattern1")
+        public var channelAvatarPlaceholder: UIImage = loadSafely(systemName: "person.3")
+        public var userAvatarPlaceholder: UIImage = loadSafely(systemName: "person")
         
-        public var userAvatarPlaceholder1: UIImage = loadImageSafely(with: "pattern1")
-        public var userAvatarPlaceholder2: UIImage = loadImageSafely(with: "pattern2")
-        public var userAvatarPlaceholder3: UIImage = loadImageSafely(with: "pattern3")
-        public var userAvatarPlaceholder4: UIImage = loadImageSafely(with: "pattern4")
-        public var userAvatarPlaceholder5: UIImage = loadImageSafely(with: "pattern5")
-
-        public var avatarPlaceholders: [UIImage] {
-            [
-                userAvatarPlaceholder1,
-                userAvatarPlaceholder2,
-                userAvatarPlaceholder3,
-                userAvatarPlaceholder4,
-                userAvatarPlaceholder5
-            ]
-        }
-
         // MARK: - FileAttachmentIcons
 
         private var _fileAttachmentActionIcons: [LocalAttachmentState?: UIImage]?

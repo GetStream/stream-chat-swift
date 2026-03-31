@@ -33,7 +33,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
 
     override open func updateContent() {
         guard let channel = content.channel else {
-            loadIntoAvatarImageView(from: nil, placeholder: appearance.images.userAvatarPlaceholder3)
+            loadIntoAvatarImageView(from: nil, placeholder: initialsPlaceholder(name: ""))
             presenceAvatarView.isOnlineIndicatorVisible = false
             return
         }
@@ -59,7 +59,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
     /// Loads the avatar from the URL. This function is used when the channel has a non-nil `imageURL`
     /// - Parameter url: The `imageURL` of the channel
     open func loadChannelAvatar(from url: URL) {
-        loadIntoAvatarImageView(from: url, placeholder: appearance.images.userAvatarPlaceholder4)
+        loadIntoAvatarImageView(from: url, placeholder: initialsPlaceholder(name: ""))
     }
 
     /// Loads avatar for a directMessageChannel
@@ -70,11 +70,16 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
         // If there are no members other than the current user in the channel, load a placeholder
         guard !lastActiveMembers.isEmpty, let otherMember = lastActiveMembers.first else {
             presenceAvatarView.isOnlineIndicatorVisible = false
-            loadIntoAvatarImageView(from: nil, placeholder: appearance.images.userAvatarPlaceholder4)
+            loadIntoAvatarImageView(from: nil, placeholder: initialsPlaceholder(name: ""))
             return
         }
 
-        loadIntoAvatarImageView(from: otherMember.imageURL, placeholder: appearance.images.userAvatarPlaceholder3)
+        let placeholder = UserAvatarInitialsImage.image(
+            name: otherMember.name ?? "",
+            size: components.avatarThumbnailSize,
+            appearance: appearance
+        )
+        loadIntoAvatarImageView(from: otherMember.imageURL, placeholder: placeholder)
         presenceAvatarView.isOnlineIndicatorVisible = otherMember.isOnline
     }
 
@@ -88,25 +93,24 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
 
         // If there are no members other than the current user in the channel, load a placeholder
         guard !lastActiveMembers.isEmpty else {
-            loadIntoAvatarImageView(from: nil, placeholder: appearance.images.userAvatarPlaceholder4)
+            loadIntoAvatarImageView(from: nil, placeholder: initialsPlaceholder(name: ""))
             return
         }
 
-        var urls = lastActiveMembers.map(\.imageURL)
+        let members = Array(lastActiveMembers.prefix(maxNumberOfImagesInCombinedAvatar))
+        let urls = members.map(\.imageURL)
+        let names = members.map { $0.name ?? "" }
 
-        if urls.isEmpty {
-            loadIntoAvatarImageView(from: nil, placeholder: appearance.images.userAvatarPlaceholder3)
+        guard !urls.isEmpty else {
+            loadIntoAvatarImageView(from: nil, placeholder: initialsPlaceholder(name: ""))
             return
         }
 
-        // We show a combination of at max 4 images combined
-        urls = Array(urls.prefix(maxNumberOfImagesInCombinedAvatar))
-
-        loadAvatarsFrom(urls: urls, channelId: channel.cid) { [weak self] avatars, channelId in
+        loadAvatarsFrom(urls: urls, names: names, channelId: channel.cid) { [weak self] avatars, channelId in
             StreamConcurrency.onMain { [weak self] in
                 guard let self = self, channelId == self.content.channel?.cid else { return }
-                
-                let combinedImage = self.createMergedAvatar(from: avatars) ?? self.appearance.images.userAvatarPlaceholder2
+
+                let combinedImage = self.createMergedAvatar(from: avatars) ?? self.initialsPlaceholder(name: "")
                 self.loadIntoAvatarImageView(from: nil, placeholder: combinedImage)
             }
         }
@@ -115,22 +119,20 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
     /// Loads avatars for the given URLs
     /// - Parameters:
     ///   - urls: The avatar urls
+    ///   - names: The display names corresponding to each URL, used to generate initials placeholders.
     ///   - channelId: The channelId of the channel
     ///   - completion: Completion that gets called with an array of `UIImage`s when all the avatars are loaded
     open func loadAvatarsFrom(
         urls: [URL?],
+        names: [String] = [],
         channelId: ChannelId,
         completion: @escaping @Sendable ([UIImage], ChannelId)
             -> Void
     ) {
-        nonisolated(unsafe) var placeholderImages = [
-            appearance.images.userAvatarPlaceholder1,
-            appearance.images.userAvatarPlaceholder2,
-            appearance.images.userAvatarPlaceholder3,
-            appearance.images.userAvatarPlaceholder4
-        ]
         let avatarSize = components.avatarThumbnailSize
         let imageProcessor = components.imageProcessor
+        let currentAppearance = appearance
+        nonisolated(unsafe) var memberNames = names
         let requests = urls.prefix(maxNumberOfImagesInCombinedAvatar)
             .compactMap { $0 }
             .map { ImageDownloadRequest(url: $0, options: ImageDownloadOptions(resize: .init(avatarSize))) }
@@ -139,7 +141,13 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
             // Scale only placeholders since images already have a correct size
             let imagesMapper = ImageResultsMapper(results: results)
             let images = imagesMapper.mapErrors {
-                imageProcessor.scale(image: placeholderImages.removeFirst(), to: avatarSize)
+                let name = memberNames.isEmpty ? "" : memberNames.removeFirst()
+                let initialsImage = UserAvatarInitialsImage.image(
+                    name: name,
+                    size: avatarSize,
+                    appearance: currentAppearance
+                )
+                return imageProcessor.scale(image: initialsImage, to: avatarSize)
             }
             completion(images, channelId)
         }
@@ -164,10 +172,9 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
         if images.count == 1, let image = images.first {
             combinedImage = image
         } else if images.count == 2, let firstImage = images.first, let secondImage = images.last {
-            let leftImage = imageProcessor.crop(image: firstImage, to: halfContainerSize)
-                ?? appearance.images.userAvatarPlaceholder1
-            let rightImage = imageProcessor.crop(image: secondImage, to: halfContainerSize)
-                ?? appearance.images.userAvatarPlaceholder1
+            let fallback = initialsPlaceholder(name: "", size: halfContainerSize)
+            let leftImage = imageProcessor.crop(image: firstImage, to: halfContainerSize) ?? fallback
+            let rightImage = imageProcessor.crop(image: secondImage, to: halfContainerSize) ?? fallback
             combinedImage = imageMerger.merge(
                 images: [
                     leftImage,
@@ -179,6 +186,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
                   let firstImage = images[safe: 0],
                   let secondImage = images[safe: 1],
                   let thirdImage = images[safe: 2] {
+            let fallback = initialsPlaceholder(name: "", size: halfContainerSize)
             let leftImage = imageProcessor.crop(image: firstImage, to: halfContainerSize)
 
             let rightCollage = imageMerger.merge(
@@ -192,7 +200,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
             let rightImage = imageProcessor.crop(
                 image: imageProcessor
                     .scale(
-                        image: rightCollage ?? appearance.images.userAvatarPlaceholder3,
+                        image: rightCollage ?? fallback,
                         to: components.avatarThumbnailSize
                     ),
                 to: halfContainerSize
@@ -201,8 +209,8 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
             combinedImage = imageMerger.merge(
                 images:
                 [
-                    leftImage ?? appearance.images.userAvatarPlaceholder1,
-                    rightImage ?? appearance.images.userAvatarPlaceholder2
+                    leftImage ?? fallback,
+                    rightImage ?? fallback
                 ],
                 orientation: .horizontal
             )
@@ -211,6 +219,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
                   let secondImage = images[safe: 1],
                   let thirdImage = images[safe: 2],
                   let forthImage = images[safe: 3] {
+            let fallback = initialsPlaceholder(name: "", size: halfContainerSize)
             let leftCollage = imageMerger.merge(
                 images: [
                     firstImage,
@@ -222,7 +231,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
             let leftImage = imageProcessor.crop(
                 image: imageProcessor
                     .scale(
-                        image: leftCollage ?? appearance.images.userAvatarPlaceholder1,
+                        image: leftCollage ?? fallback,
                         to: components.avatarThumbnailSize
                     ),
                 to: halfContainerSize
@@ -239,7 +248,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
             let rightImage = imageProcessor.crop(
                 image: imageProcessor
                     .scale(
-                        image: rightCollage ?? appearance.images.userAvatarPlaceholder2,
+                        image: rightCollage ?? fallback,
                         to: components.avatarThumbnailSize
                     ),
                 to: halfContainerSize
@@ -247,8 +256,8 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
 
             combinedImage = imageMerger.merge(
                 images: [
-                    leftImage ?? appearance.images.userAvatarPlaceholder1,
-                    rightImage ?? appearance.images.userAvatarPlaceholder2
+                    leftImage ?? fallback,
+                    rightImage ?? fallback
                 ],
                 orientation: .horizontal
             )
@@ -262,6 +271,14 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
         return channel.lastActiveMembers
             .sorted { $0.memberCreatedAt < $1.memberCreatedAt }
             .filter { $0.id != content.currentUserId }
+    }
+
+    func initialsPlaceholder(name: String, size: CGSize? = nil) -> UIImage {
+        UserAvatarInitialsImage.image(
+            name: name,
+            size: size ?? components.avatarThumbnailSize,
+            appearance: appearance
+        )
     }
 
     open func loadIntoAvatarImageView(from url: URL?, placeholder: UIImage?) {

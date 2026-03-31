@@ -40,6 +40,26 @@ import XCTest
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
+    func test_defaultAppearance_withNoImageURL_showsInitials() {
+        let controller = CurrentChatUserController_Mock.mock()
+        controller.currentUser_mock = .mock(currentUserId: "luke", name: "Luke Skywalker", imageURL: nil)
+
+        let view = CurrentChatUserAvatarView().withoutAutoresizingMaskConstraints
+        view.components = .mock
+        view.controller = controller
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_defaultAppearance_withNoImageURLAndNoName_showsPersonIcon() {
+        let controller = CurrentChatUserController_Mock.mock()
+        controller.currentUser_mock = .mock(currentUserId: "unknown", name: nil, imageURL: nil)
+
+        let view = CurrentChatUserAvatarView().withoutAutoresizingMaskConstraints
+        view.components = .mock
+        view.controller = controller
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
     func test_customizationUsingSubclassing() {
         class TestView: CurrentChatUserAvatarView {
             override func setUpAppearance() {
