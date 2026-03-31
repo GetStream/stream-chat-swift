@@ -260,24 +260,6 @@ import XCTest
         XCTAssertTrue(vc.messageComposerVC.composerView is TestComposerView)
     }
 
-    func test_deletedMessagesVisibilityWhenAlwaysVisible() {
-        setUpDeletedMessagesVisibilityTest(with: .alwaysVisible)
-
-        AssertSnapshot(
-            vc,
-            variants: [.defaultLight]
-        )
-    }
-
-    func test_deletedMessagesVisibilityWhenOnlyVisibleToYou() {
-        setUpDeletedMessagesVisibilityTest(with: .visibleForCurrentUser)
-
-        AssertSnapshot(
-            vc,
-            variants: [.defaultLight]
-        )
-    }
-
     func test_whenReactionIsAddedByCurrentUserWithSameType_shouldUpdateReactionColor() {
         channelControllerMock.simulateInitial(
             channel: .mock(cid: .unique),
@@ -1716,45 +1698,6 @@ import XCTest
 }
 
 private extension ChatChannelVC_Tests {
-    func setUpDeletedMessagesVisibilityTest(with visibility: ChatClientConfig.DeletedMessageVisibility) {
-        // NOTE: The visibility is used by the database container to filter the messages.
-        // We can't mock the database in the StreamChatUI for now, so here we only test the
-        // difference in the "Only Visible to you" label which is controlled in the UI
-
-        var config = ChatClientConfig(apiKeyString: "MOCK")
-        config.deletedMessagesVisibility = visibility
-        channelControllerMock = .mock(chatClientConfig: config)
-        vc.channelController = channelControllerMock
-        let mockedComposer = vc.messageComposerVC as! ComposerVC_Mock
-        mockedComposer.mockChannelController = channelControllerMock
-
-        var mockedMessages: [ChatMessage] = [
-            makeMockedDeletedMessage(text: "My Text", isSentByCurrentUser: true)
-        ]
-
-        if visibility == .alwaysVisible {
-            mockedMessages.append(makeMockedDeletedMessage(text: "Other Text", isSentByCurrentUser: false))
-        }
-
-        channelControllerMock.simulateInitial(
-            channel: .mock(cid: .unique),
-            messages: mockedMessages,
-            state: .localDataFetched
-        )
-    }
-
-    func makeMockedDeletedMessage(text: String, isSentByCurrentUser: Bool) -> ChatMessage {
-        .mock(
-            id: .unique,
-            cid: .unique,
-            text: text,
-            type: .deleted,
-            author: .mock(id: .unique),
-            deletedAt: Date(),
-            isSentByCurrentUser: isSentByCurrentUser
-        )
-    }
-
     func makeMockMessageListView(channelVC: ChatChannelVC? = nil) -> ChatMessageListView_Mock {
         let vc = channelVC ?? self.vc!
         vc.messageListVC.components.messageListView = ChatMessageListView_Mock.self

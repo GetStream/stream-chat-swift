@@ -38,7 +38,6 @@ extension ChatState {
                     for: cid,
                     pageSize: channelQuery.pagination?.pageSize ?? .messagesPageSize,
                     sortAscending: messageOrder.isAscending,
-                    deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
                     shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages
                 ),
                 itemCreator: { try $0.asModel() },

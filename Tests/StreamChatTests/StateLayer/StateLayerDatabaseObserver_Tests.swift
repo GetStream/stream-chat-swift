@@ -428,7 +428,6 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
                 for: channelId,
                 pageSize: 25,
                 sortAscending: true,
-                deletedMessagesVisibility: .alwaysVisible,
                 shouldShowShadowedMessages: true
             ),
             itemCreator: { [weak self] in

@@ -416,7 +416,6 @@ final class UserDTO_Tests: XCTestCase {
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: channelId,
                 pageSize: 20,
-                deletedMessagesVisibility: .alwaysVisible,
                 shouldShowShadowedMessages: false
             )
         )
