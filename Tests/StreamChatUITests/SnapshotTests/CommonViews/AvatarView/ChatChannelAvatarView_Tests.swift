@@ -74,6 +74,43 @@ import XCTest
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 
+    func test_defaultAppearance_withNilChannel_showsPersonIcon() {
+        let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
+        view.addSizeConstraints()
+        view.components = .mock
+        view.content = (channel: nil, currentUserId: currentUserId)
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_defaultAppearance_dmChannel_memberHasNoImageURL_showsInitials() {
+        let dmChannel = ChatChannel.mockDMChannel(lastActiveMembers: [
+            .mock(id: currentUserId, imageURL: TestImages.vader.url),
+            .mock(id: .unique, name: "Leia Organa", imageURL: nil)
+        ])
+        let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
+        view.addSizeConstraints()
+        view.components = .mock
+        view.content = (channel: dmChannel, currentUserId: currentUserId)
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_defaultAppearance_groupChannel_membersHaveNoImageURLs_showsInitials() {
+        let groupChannel = ChatChannel.mockNonDMChannel(lastActiveMembers: [
+            .mock(id: currentUserId, imageURL: TestImages.vader.url),
+            .mock(id: .unique, name: "Luke Skywalker", imageURL: nil),
+            .mock(id: .unique, name: "Han Solo", imageURL: nil),
+            .mock(id: .unique, name: "Leia Organa", imageURL: nil)
+        ])
+        let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
+        view.addSizeConstraints()
+        view.components = .mock
+        view.content = (channel: groupChannel, currentUserId: currentUserId)
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
     func test_defaultAppearanceWithSingleMemberInNonDMChannel() {
         let singleMemberChannel = ChatChannel.mockNonDMChannel(lastActiveMembers: [
             .mock(id: currentUserId, imageURL: TestImages.vader.url),

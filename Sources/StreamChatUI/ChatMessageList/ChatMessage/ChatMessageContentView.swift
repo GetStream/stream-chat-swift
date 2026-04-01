@@ -645,7 +645,11 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         }
 
         // Avatar
-        let placeholder = appearance.images.userAvatarPlaceholder1
+        let placeholder = UserAvatarInitialsImage.image(
+            name: content?.author.name ?? "",
+            size: components.avatarThumbnailSize,
+            appearance: appearance
+        )
         if let imageURL = content?.author.imageURL, let imageView = authorAvatarView?.imageView {
             components.imageLoader.loadImage(
                 into: imageView,
@@ -718,12 +722,17 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         let threadAvatarUrl = content?.threadParticipants.last?.imageURL
 
         if let imageView = threadAvatarView?.imageView {
+            let threadAvatarPlaceholder = UserAvatarInitialsImage.image(
+                name: content?.threadParticipants.last?.name ?? "",
+                size: components.avatarThumbnailSize,
+                appearance: appearance
+            )
             components.imageLoader.loadImage(
                 into: imageView,
                 from: threadAvatarUrl,
                 with: ImageLoaderOptions(
                     resize: .init(components.avatarThumbnailSize),
-                    placeholder: appearance.images.userAvatarPlaceholder4
+                    placeholder: threadAvatarPlaceholder
                 )
             )
         }

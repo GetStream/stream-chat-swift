@@ -123,7 +123,11 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
             return
         }
 
-        let placeholder = appearance.images.userAvatarPlaceholder1
+        let placeholder = UserAvatarInitialsImage.image(
+            name: content.reaction.author.name ?? "",
+            size: authorAvatarSize,
+            appearance: appearance
+        )
         components.imageLoader.loadImage(
             into: authorAvatarView.imageView,
             from: content.reaction.author.imageURL,
