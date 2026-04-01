@@ -9,6 +9,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix `ChatChannel.latestMessages` including thread replies [#4024](https://github.com/GetStream/stream-chat-swift/pull/4024)
 ### 🔄 Changed
 - Remove `ChatChannel.previewMessage` in favour of computing preview from `latestMessages` [#4024](https://github.com/GetStream/stream-chat-swift/pull/4024)
+- Remove `ChatClientConfig.DeletedMessageVisibility` [#4040](https://github.com/GetStream/stream-chat-swift/pull/4040)
 
 ## StreamChatUI
 ### ✅ Added
