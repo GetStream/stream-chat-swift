@@ -211,7 +211,6 @@ class AppConfigViewController: UITableViewController {
         case staysConnectedInBackground
         case reconnectionTimeout
         case shouldShowShadowedMessages
-        case deletedMessagesVisibility
         case isChannelAutomaticFilteringEnabled
     }
 
@@ -386,10 +385,6 @@ class AppConfigViewController: UITableViewController {
             cell.accessoryView = makeSwitchButton(chatClientConfig.shouldShowShadowedMessages) { [weak self] newValue in
                 self?.chatClientConfig.shouldShowShadowedMessages = newValue
             }
-        case .deletedMessagesVisibility:
-            cell.detailTextLabel?.text = chatClientConfig.deletedMessagesVisibility.description
-            cell.accessoryType = .disclosureIndicator
-
         case .isChannelAutomaticFilteringEnabled:
             cell.accessoryView = makeSwitchButton(chatClientConfig.isChannelAutomaticFilteringEnabled) { [weak self] newValue in
                 self?.chatClientConfig.isChannelAutomaticFilteringEnabled = newValue
@@ -406,8 +401,6 @@ class AppConfigViewController: UITableViewController {
         switch option {
         case .baseURL:
             showBaseURLInputAlert()
-        case .deletedMessagesVisibility:
-            pushDeletedMessagesVisibilitySelectorVC()
         case .reconnectionTimeout:
             pushReconnectionTimeoutSelectorVC()
         default:
@@ -584,20 +577,6 @@ class AppConfigViewController: UITableViewController {
         switchButton.isOn = initialValue
         switchButton.didChangeValue = didChangeValue
         return switchButton
-    }
-
-    private func pushDeletedMessagesVisibilitySelectorVC() {
-        let selectorViewController = OptionsSelectorViewController(
-            options: [.alwaysHidden, .alwaysVisible, .visibleForCurrentUser],
-            initialSelectedOptions: [chatClientConfig.deletedMessagesVisibility],
-            allowsMultipleSelection: false
-        )
-        selectorViewController.didChangeSelectedOptions = { [weak self] options in
-            guard let selectedOption = options.first else { return }
-            self?.chatClientConfig.deletedMessagesVisibility = selectedOption
-        }
-
-        navigationController?.pushViewController(selectorViewController, animated: true)
     }
 
     private func pushChannelListSearchStrategySelectorVC() {

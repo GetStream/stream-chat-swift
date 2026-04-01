@@ -45,7 +45,6 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy, @unchecked Sen
         shouldFlushOnStart: Bool = false,
         shouldResetEphemeralValuesOnStart: Bool = true,
         localCachingSettings: ChatClientConfig.LocalCaching? = nil,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility? = nil,
         shouldShowShadowedMessages: Bool? = nil,
         modelName: String = "StreamChatModel",
         bundle: Bundle? = nil
@@ -53,9 +52,6 @@ public final class DatabaseContainer_Spy: DatabaseContainer, Spy, @unchecked Sen
         var config = ChatClientConfig(apiKeyString: .unique)
         if let localCachingSettings = localCachingSettings {
             config.localCaching = localCachingSettings
-        }
-        if let deletedMessagesVisibility = deletedMessagesVisibility {
-            config.deletedMessagesVisibility = deletedMessagesVisibility
         }
         if let shouldShowShadowedMessages = shouldShowShadowedMessages {
             config.shouldShowShadowedMessages = shouldShowShadowedMessages

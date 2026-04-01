@@ -419,17 +419,14 @@ final class MessageController_Tests: XCTestCase {
     /// This test was added because we forgot to exclude deleted messages when fetching replies.
     /// Valid message for a thread is defined as:
     /// - `parentId` correctly set,
-    /// - is not deleted, or current user owned non-ephemeral deleted,
+    /// - current user owned non-ephemeral deleted,
     /// - newer than channel's truncation date (if channel is truncated)
     func test_replies_onlyIncludeValidMessages() throws {
         // Create dummy channel
         let truncatedDate = Date.unique
         let channel = dummyPayload(with: cid, truncatedAt: truncatedDate)
 
-        // Set the deleted messages visibility to hide the message
-        var config = ChatClient.defaultMockedConfig
-        config.deletedMessagesVisibility = .alwaysHidden
-        client = ChatClient_Mock(config: config)
+        client = ChatClient_Mock(config: ChatClient.defaultMockedConfig)
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         let reply1: MessagePayload = .dummy(
@@ -463,140 +460,8 @@ final class MessageController_Tests: XCTestCase {
         try saveReplies(with: [reply1, reply2, reply3], channelPayload: channel)
 
         // Check if the replies are correct
-        let ids = [reply1].map(\.id)
-        XCTAssertEqual(controller.replies.map(\.id), ids)
-    }
-
-    func test_replies_withVisibleForCurrentUser_messageVisibility() throws {
-        let channel = dummyPayload(with: cid)
-        let truncatedDate = Date.unique
-
-        var config = ChatClientConfig(apiKeyString: .unique)
-        config.deletedMessagesVisibility = .visibleForCurrentUser
-        client = ChatClient.mock(config: config)
-        try client.databaseContainer.createCurrentUser(id: currentUserId)
-        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
-
-        // Insert own deleted reply
-        let ownReply: MessagePayload = .dummy(
-            messageId: .unique,
-            parentId: messageId,
-            showReplyInChannel: false,
-            authorUserId: currentUserId,
-            createdAt: .unique(after: truncatedDate),
-            deletedAt: .unique(after: truncatedDate)
-        )
-
-        // Insert deleted reply by another user
-        let createdAt = Date.unique(after: truncatedDate)
-        let otherReply: MessagePayload = .dummy(
-            messageId: .unique,
-            parentId: messageId,
-            showReplyInChannel: false,
-            authorUserId: .unique,
-            createdAt: createdAt,
-            deletedAt: .unique(after: createdAt)
-        )
-
-        try saveReplies(with: [ownReply, otherReply], channelPayload: channel)
-
-        // Only own reply should be visible
-        XCTAssertEqual(controller.replies.map(\.id), [ownReply.id])
-    }
-
-    func test_replies_withAlwaysHidden_messageVisibility() throws {
-        // Create dummy channel
-        let channel = dummyPayload(with: cid)
-        let truncatedDate = Date.unique
-
-        var config = ChatClientConfig(apiKeyString: .unique)
-        config.deletedMessagesVisibility = .alwaysHidden
-        client = ChatClient.mock(config: config)
-        try client.databaseContainer.createCurrentUser(id: currentUserId)
-        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
-
-        // Save channel
-        try client.databaseContainer.writeSynchronously {
-            let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate.bridgeDate
-        }
-
-        // Insert parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
-
-        // Insert own deleted reply
-        let ownReply: MessagePayload = .dummy(
-            messageId: .unique,
-            parentId: messageId,
-            showReplyInChannel: false,
-            authorUserId: currentUserId,
-            createdAt: .unique(after: truncatedDate),
-            deletedAt: .unique(after: truncatedDate)
-        )
-
-        // Insert deleted reply by another user
-        let createdAt = Date.unique(after: truncatedDate)
-        let otherReply: MessagePayload = .dummy(
-            messageId: .unique,
-            parentId: messageId,
-            showReplyInChannel: false,
-            authorUserId: .unique,
-            createdAt: createdAt,
-            deletedAt: .unique(after: createdAt)
-        )
-
-        try saveReplies(with: [ownReply, otherReply])
-
-        // both deleted replies should be hidden
-        XCTAssertTrue(controller.replies.isEmpty)
-    }
-
-    func test_replies_withAlwaysVisible_messageVisibility() throws {
-        // Create dummy channel
-        let channel = dummyPayload(with: cid)
-        let truncatedDate = Date.unique
-
-        var config = ChatClientConfig(apiKeyString: .unique)
-        config.deletedMessagesVisibility = .alwaysVisible
-        client = .mock(config: config)
-        try client.databaseContainer.createCurrentUser(id: currentUserId)
-        controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
-
-        // Save channel
-        try client.databaseContainer.writeSynchronously {
-            let dto = try $0.saveChannel(payload: channel)
-            dto.truncatedAt = truncatedDate.bridgeDate
-        }
-
-        // Insert parent message
-        try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
-
-        // Insert own deleted reply
-        let ownReply: MessagePayload = .dummy(
-            messageId: .unique,
-            parentId: messageId,
-            showReplyInChannel: false,
-            authorUserId: currentUserId,
-            createdAt: .unique(after: truncatedDate),
-            deletedAt: .unique(after: truncatedDate)
-        )
-
-        // Insert deleted reply by another user
-        let createdAt = Date.unique(after: truncatedDate)
-        let otherReply: MessagePayload = .dummy(
-            messageId: .unique,
-            parentId: messageId,
-            showReplyInChannel: false,
-            authorUserId: .unique,
-            createdAt: createdAt,
-            deletedAt: .unique(after: createdAt)
-        )
-
-        // Save messages
-        try saveReplies(with: [ownReply, otherReply])
-
-        // both deleted replies should be visible
-        XCTAssertEqual(Set(controller.replies.map(\.id)), Set([ownReply.id, otherReply.id]))
+        let ids = [reply1, reply2].map(\.id)
+        XCTAssertEqual(Set(controller.replies.map(\.id)), Set(ids))
     }
 
     func test_replies_whenShadowedMessagesVisible() throws {

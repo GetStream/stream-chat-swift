@@ -1157,7 +1157,6 @@ private extension ChatMessageController {
 
     func setRepliesObserver() {
         let sortAscending = listOrdering == .topToBottom ? false : true
-        let deletedMessageVisibility = client.config.deletedMessagesVisibility
         let shouldShowShadowedMessages = client.config.shouldShowShadowedMessages
 
         let pageSize: Int = repliesPageSize
@@ -1167,7 +1166,6 @@ private extension ChatMessageController {
                 for: messageId,
                 pageSize: pageSize,
                 sortAscending: sortAscending,
-                deletedMessagesVisibility: deletedMessageVisibility,
                 shouldShowShadowedMessages: shouldShowShadowedMessages
             ),
             { try $0.asModel() as ChatMessage },

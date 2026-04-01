@@ -209,38 +209,11 @@ class MessageDTO: NSManagedObject {
         ])
     }
 
-    /// Returns a predicate that filters out deleted message by other than the current user
-    private static func onlyOwnDeletedMessagesPredicate() -> NSCompoundPredicate {
-        .init(orPredicateWithSubpredicates: [
-            // Non-deleted messages.
+    private static func deletedMessagesPredicate() -> NSPredicate {
+        let deletedMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
             nonDeletedMessagesPredicate(),
-            // Deleted messages sent by current user excluding ephemeral ones.
-            NSCompoundPredicate(andPredicateWithSubpredicates: [
-                .init(format: "deletedAt != nil"),
-                .init(format: "user.currentUser != nil"),
-                .init(format: "type != %@", MessageType.ephemeral.rawValue)
-            ])
+            NSPredicate(format: "deletedAt != nil AND type != %@", MessageType.ephemeral.rawValue)
         ])
-    }
-
-    private static func deletedMessagesPredicate(
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility
-    ) -> NSPredicate {
-        let deletedMessagesPredicate: NSPredicate
-
-        switch deletedMessagesVisibility {
-        case .alwaysHidden:
-            deletedMessagesPredicate = nonDeletedMessagesPredicate()
-        case .visibleForCurrentUser:
-            deletedMessagesPredicate = onlyOwnDeletedMessagesPredicate()
-        case .alwaysVisible:
-            deletedMessagesPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [
-                // Non-deleted messages
-                nonDeletedMessagesPredicate(),
-                // Deleted messages excluding ephemeral ones
-                NSPredicate(format: "deletedAt != nil AND type != %@", MessageType.ephemeral.rawValue)
-            ])
-        }
 
         let ignoreHardDeletedMessagesPredicate = NSPredicate(
             format: "isHardDeleted == NO"
@@ -280,7 +253,6 @@ class MessageDTO: NSManagedObject {
     /// Returns predicate with channel messages and replies that should be shown in channel.
     static func channelMessagesPredicate(
         for cid: String,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool,
         filterNewerMessages: Bool = true
     ) -> NSCompoundPredicate {
@@ -312,7 +284,7 @@ class MessageDTO: NSManagedObject {
             messageTypePredicate,
             nonTruncatedMessagesPredicate(),
             ignoreOlderMessagesPredicate,
-            deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility),
+            deletedMessagesPredicate(),
             ignoreDraftMessagesPredicate()
         ]
 
@@ -337,7 +309,6 @@ class MessageDTO: NSManagedObject {
     /// Returns predicate with thread messages that should be shown in the thread.
     static func threadRepliesPredicate(
         for messageId: MessageId,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool
     ) -> NSCompoundPredicate {
         let replyMessage = NSPredicate(format: "parentMessageId == %@", messageId)
@@ -353,7 +324,7 @@ class MessageDTO: NSManagedObject {
             replyMessage,
             shouldShowInsideThread,
             ignoreNewerRepliesPredicate,
-            deletedMessagesPredicate(deletedMessagesVisibility: deletedMessagesVisibility),
+            deletedMessagesPredicate(),
             nonTruncatedMessagesPredicate()
         ]
 
@@ -380,7 +351,6 @@ class MessageDTO: NSManagedObject {
         for cid: ChannelId,
         pageSize: Int,
         sortAscending: Bool = false,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool
     ) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
@@ -388,7 +358,6 @@ class MessageDTO: NSManagedObject {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
         request.predicate = channelMessagesPredicate(
             for: cid.rawValue,
-            deletedMessagesVisibility: deletedMessagesVisibility,
             shouldShowShadowedMessages: shouldShowShadowedMessages
         )
         request.fetchLimit = pageSize
@@ -401,7 +370,6 @@ class MessageDTO: NSManagedObject {
         for messageId: MessageId,
         pageSize: Int,
         sortAscending: Bool = false,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool
     ) -> NSFetchRequest<MessageDTO> {
         let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
@@ -409,7 +377,6 @@ class MessageDTO: NSManagedObject {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: sortAscending)]
         request.predicate = threadRepliesPredicate(
             for: messageId,
-            deletedMessagesVisibility: deletedMessagesVisibility,
             shouldShowShadowedMessages: shouldShowShadowedMessages
         )
         request.fetchLimit = pageSize
@@ -443,7 +410,6 @@ class MessageDTO: NSManagedObject {
         for cid: String,
         limit: Int,
         offset: Int = 0,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool,
         context: NSManagedObjectContext
     ) -> [MessageDTO] {
@@ -451,7 +417,6 @@ class MessageDTO: NSManagedObject {
         MessageDTO.applyPrefetchingState(to: request)
         request.predicate = channelMessagesPredicate(
             for: cid,
-            deletedMessagesVisibility: deletedMessagesVisibility,
             shouldShowShadowedMessages: shouldShowShadowedMessages
         )
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
@@ -556,7 +521,6 @@ class MessageDTO: NSManagedObject {
     static func loadMessage(
         before id: MessageId,
         cid: String,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool,
         context: NSManagedObjectContext
     ) throws -> MessageDTO? {
@@ -565,7 +529,7 @@ class MessageDTO: NSManagedObject {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         MessageDTO.applyPrefetchingState(to: request)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
-            channelMessagesPredicate(for: cid, deletedMessagesVisibility: deletedMessagesVisibility, shouldShowShadowedMessages: shouldShowShadowedMessages),
+            channelMessagesPredicate(for: cid, shouldShowShadowedMessages: shouldShowShadowedMessages),
             .init(format: "id != %@", id),
             .init(format: "createdAt <= %@", message.createdAt)
         ])
@@ -577,14 +541,13 @@ class MessageDTO: NSManagedObject {
     static func loadMessage(
         beforeOrEqual timestamp: Date,
         cid: String,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool,
         context: NSManagedObjectContext
     ) throws -> MessageDTO? {
         let request = NSFetchRequest<MessageDTO>(entityName: entityName)
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             .init(format: "createdAt <= %@", timestamp.bridgeDate),
-            channelMessagesPredicate(for: cid, deletedMessagesVisibility: deletedMessagesVisibility, shouldShowShadowedMessages: shouldShowShadowedMessages)
+            channelMessagesPredicate(for: cid, shouldShowShadowedMessages: shouldShowShadowedMessages)
         ])
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
         request.fetchLimit = 1
@@ -596,7 +559,6 @@ class MessageDTO: NSManagedObject {
         to toIncludingDate: Date,
         in cid: ChannelId,
         sortAscending: Bool,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool,
         context: NSManagedObjectContext
     ) throws -> [MessageDTO] {
@@ -606,7 +568,6 @@ class MessageDTO: NSManagedObject {
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             channelMessagesPredicate(
                 for: cid.rawValue,
-                deletedMessagesVisibility: deletedMessagesVisibility,
                 shouldShowShadowedMessages: shouldShowShadowedMessages
             ),
             .init(format: "createdAt >= %@", fromIncludingDate.bridgeDate),
@@ -672,7 +633,6 @@ class MessageDTO: NSManagedObject {
         to toIncludingDate: Date,
         in messageId: MessageId,
         sortAscending: Bool,
-        deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility,
         shouldShowShadowedMessages: Bool,
         context: NSManagedObjectContext
     ) throws -> [MessageDTO] {
@@ -682,7 +642,6 @@ class MessageDTO: NSManagedObject {
         request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [
             threadRepliesPredicate(
                 for: messageId,
-                deletedMessagesVisibility: deletedMessagesVisibility,
                 shouldShowShadowedMessages: shouldShowShadowedMessages
             ),
             .init(format: "createdAt >= %@", fromIncludingDate.bridgeDate),
@@ -1541,7 +1500,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return try MessageDTO.loadMessage(
             before: id,
             cid: cid,
-            deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
             shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages,
             context: self
         )
@@ -1559,7 +1517,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             to: toIncludingDate,
             in: cid,
             sortAscending: sortAscending,
-            deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
             shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages,
             context: self
         )
@@ -1577,7 +1534,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             to: toIncludingDate,
             in: messageId,
             sortAscending: sortAscending,
-            deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
             shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages,
             context: self
         )

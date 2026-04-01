@@ -2091,7 +2091,6 @@ private extension ChatChannelController {
             }
             guard let cid = self.cid else { return nil }
             let sortAscending = self.messageOrdering == .topToBottom ? false : true
-            let deletedMessageVisibility = client.config.deletedMessagesVisibility
             let shouldShowShadowedMessages = client.config.shouldShowShadowedMessages
             let pageSize = channelQuery.pagination?.pageSize ?? .messagesPageSize
             let observer = BackgroundListDatabaseObserver(
@@ -2100,7 +2099,6 @@ private extension ChatChannelController {
                     for: cid,
                     pageSize: pageSize,
                     sortAscending: sortAscending,
-                    deletedMessagesVisibility: deletedMessageVisibility,
                     shouldShowShadowedMessages: shouldShowShadowedMessages
                 ),
                 itemCreator: {

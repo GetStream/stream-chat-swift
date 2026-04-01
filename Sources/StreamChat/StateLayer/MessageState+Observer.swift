@@ -38,7 +38,6 @@ extension MessageState {
                     for: messageId,
                     pageSize: .messagesPageSize,
                     sortAscending: messageOrder.isAscending,
-                    deletedMessagesVisibility: clientConfig.deletedMessagesVisibility,
                     shouldShowShadowedMessages: clientConfig.shouldShowShadowedMessages
                 ),
                 itemCreator: { try $0.asModel() },

@@ -3465,7 +3465,6 @@ final class MessageDTO_Tests: XCTestCase {
             for: channel.cid.rawValue,
             limit: 10,
             offset: 0,
-            deletedMessagesVisibility: .alwaysVisible,
             shouldShowShadowedMessages: true,
             context: database.viewContext
         )
@@ -3512,7 +3511,6 @@ final class MessageDTO_Tests: XCTestCase {
             for: channelMessage.channel!.cid.rawValue,
             limit: 10,
             offset: 0,
-            deletedMessagesVisibility: .alwaysVisible,
             shouldShowShadowedMessages: true,
             context: database.viewContext
         )
@@ -3546,7 +3544,6 @@ final class MessageDTO_Tests: XCTestCase {
             for: channel.cid.rawValue,
             limit: limit,
             offset: 0,
-            deletedMessagesVisibility: .alwaysVisible,
             shouldShowShadowedMessages: true,
             context: database.viewContext
         )
@@ -3597,7 +3594,6 @@ final class MessageDTO_Tests: XCTestCase {
             for: channel.cid.rawValue,
             limit: 10,
             offset: offset,
-            deletedMessagesVisibility: .alwaysVisible,
             shouldShowShadowedMessages: true,
             context: database.viewContext
         )
@@ -3634,7 +3630,6 @@ final class MessageDTO_Tests: XCTestCase {
             for: channel.cid.rawValue,
             limit: 10,
             offset: 0,
-            deletedMessagesVisibility: .alwaysVisible,
             shouldShowShadowedMessages: true,
             context: database.viewContext
         )
@@ -3669,7 +3664,6 @@ final class MessageDTO_Tests: XCTestCase {
             for: channel.cid.rawValue,
             limit: 10,
             offset: 0,
-            deletedMessagesVisibility: .alwaysVisible,
             shouldShowShadowedMessages: false,
             context: database.viewContext
         )
@@ -3678,176 +3672,12 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertTrue(results.isEmpty)
     }
 
-    func test_load_deletedMessagesAlwaysVisible() throws {
-        // GIVEN
-        let channel: ChannelDetailPayload = .dummy()
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .admin)
-
-        let deletedMessageFromCurrentUser: MessagePayload = .dummy(
-            type: .deleted,
-            messageId: .unique,
-            authorUserId: currentUser.id,
-            deletedAt: .unique,
-            channel: channel
-        )
-
-        let deletedMessageFromAnotherUser: MessagePayload = .dummy(
-            type: .deleted,
-            messageId: .unique,
-            authorUserId: .unique,
-            deletedAt: .unique,
-            channel: channel
-        )
-
-        let deletedEphemeralMessage: MessagePayload = .dummy(
-            type: .ephemeral,
-            messageId: .unique,
-            authorUserId: .unique,
-            deletedAt: .unique,
-            channel: channel
-        )
-
-        try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: currentUser)
-
-            for message in [deletedMessageFromCurrentUser, deletedMessageFromAnotherUser, deletedEphemeralMessage] {
-                try session.saveMessage(
-                    payload: message,
-                    for: channel.cid,
-                    syncOwnReactions: false,
-                    cache: nil
-                )
-            }
-        }
-
-        let deletedMessageFromCurrentUserDTO = try XCTUnwrap(
-            database.viewContext.message(id: deletedMessageFromCurrentUser.id)
-        )
-        let deletedMessageFromAnotherUserDTO = try XCTUnwrap(
-            database.viewContext.message(id: deletedMessageFromAnotherUser.id)
-        )
-
-        // WHEN
-        let results = MessageDTO.load(
-            for: channel.cid.rawValue,
-            limit: 10,
-            offset: 0,
-            deletedMessagesVisibility: .alwaysVisible,
-            shouldShowShadowedMessages: true,
-            context: database.viewContext
-        )
-
-        // THEN
-        XCTAssertEqual(Set(results), [deletedMessageFromCurrentUserDTO, deletedMessageFromAnotherUserDTO])
-    }
-
-    func test_load_deletedMessagesAlwaysHidden() throws {
-        // GIVEN
-        let channel: ChannelDetailPayload = .dummy()
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .admin)
-
-        let deletedMessageFromCurrentUser: MessagePayload = .dummy(
-            type: .deleted,
-            messageId: .unique,
-            authorUserId: currentUser.id,
-            deletedAt: .unique,
-            channel: channel
-        )
-
-        let deletedMessageFromAnotherUser: MessagePayload = .dummy(
-            type: .deleted,
-            messageId: .unique,
-            authorUserId: .unique,
-            deletedAt: .unique,
-            channel: channel
-        )
-
-        try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: currentUser)
-
-            for message in [deletedMessageFromCurrentUser, deletedMessageFromAnotherUser] {
-                try session.saveMessage(
-                    payload: message,
-                    for: channel.cid,
-                    syncOwnReactions: false,
-                    cache: nil
-                )
-            }
-        }
-
-        // WHEN
-        let results = MessageDTO.load(
-            for: channel.cid.rawValue,
-            limit: 10,
-            offset: 0,
-            deletedMessagesVisibility: .alwaysHidden,
-            shouldShowShadowedMessages: true,
-            context: database.viewContext
-        )
-
-        // THEN
-        XCTAssertTrue(results.isEmpty)
-    }
-
-    func test_load_deletedMessagesVisibleForCurrentUser() throws {
-        // GIVEN
-        let channel: ChannelDetailPayload = .dummy()
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .admin)
-
-        let deletedMessageFromCurrentUser: MessagePayload = .dummy(
-            type: .deleted,
-            messageId: .unique,
-            authorUserId: currentUser.id,
-            deletedAt: .unique,
-            channel: channel
-        )
-
-        let deletedMessageFromAnotherUser: MessagePayload = .dummy(
-            type: .deleted,
-            messageId: .unique,
-            authorUserId: .unique,
-            deletedAt: .unique,
-            channel: channel
-        )
-
-        try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: currentUser)
-
-            for message in [deletedMessageFromCurrentUser, deletedMessageFromAnotherUser] {
-                try session.saveMessage(
-                    payload: message,
-                    for: channel.cid,
-                    syncOwnReactions: false,
-                    cache: nil
-                )
-            }
-        }
-
-        let deletedMessageFromCurrentUserDTO = try XCTUnwrap(
-            database.viewContext.message(id: deletedMessageFromCurrentUser.id)
-        )
-
-        // WHEN
-        let results = MessageDTO.load(
-            for: channel.cid.rawValue,
-            limit: 10,
-            offset: 0,
-            deletedMessagesVisibility: .visibleForCurrentUser,
-            shouldShowShadowedMessages: true,
-            context: database.viewContext
-        )
-
-        // THEN
-        XCTAssertEqual(Set(results), [deletedMessageFromCurrentUserDTO])
-    }
-
     // MARK: - fetchLimit and batchSzie
 
     func test_messagesFetchRequest_shouldHaveFetchLimitAndBatchSize() {
         let fetchRequest = MessageDTO.messagesFetchRequest(
             for: .unique,
             pageSize: 20,
-            deletedMessagesVisibility: .alwaysHidden,
             shouldShowShadowedMessages: false
         )
 
@@ -3859,7 +3689,6 @@ final class MessageDTO_Tests: XCTestCase {
         let fetchRequest = MessageDTO.repliesFetchRequest(
             for: .unique,
             pageSize: 20,
-            deletedMessagesVisibility: .alwaysHidden,
             shouldShowShadowedMessages: false
         )
 
@@ -4480,7 +4309,6 @@ final class MessageDTO_Tests: XCTestCase {
         request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.defaultSortingKey, ascending: true)]
         request.predicate = MessageDTO.channelMessagesPredicate(
             for: channelId.rawValue,
-            deletedMessagesVisibility: .visibleForCurrentUser,
             shouldShowShadowedMessages: false,
             filterNewerMessages: filterNewerMessages
         )
@@ -4537,7 +4365,6 @@ final class MessageDTO_Tests: XCTestCase {
                 for: channelPayload.channel.cid,
                 pageSize: 25,
                 sortAscending: true,
-                deletedMessagesVisibility: .visibleForCurrentUser,
                 shouldShowShadowedMessages: false
             ),
             itemCreator: { try $0.asModel() as ChatMessage },
@@ -4557,7 +4384,6 @@ final class MessageDTO_Tests: XCTestCase {
             fetchRequest: MessageDTO.repliesFetchRequest(
                 for: payload.id,
                 pageSize: 25,
-                deletedMessagesVisibility: .alwaysHidden,
                 shouldShowShadowedMessages: false
             ),
             itemCreator: { try $0.asModel() as ChatMessage },

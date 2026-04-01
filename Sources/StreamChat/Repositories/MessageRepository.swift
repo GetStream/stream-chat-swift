@@ -346,7 +346,6 @@ class MessageRepository: @unchecked Sendable {
         let context = database.backgroundReadOnlyContext
         context.perform {
             let clientConfig = context.chatClientConfig
-            let deletedMessagesVisibility = clientConfig?.deletedMessagesVisibility ?? .alwaysVisible
             let shouldShowShadowedMessages = clientConfig?.shouldShowShadowedMessages ?? false
             do {
                 switch unreadCriteria {
@@ -354,7 +353,6 @@ class MessageRepository: @unchecked Sendable {
                     let resultId = try MessageDTO.loadMessage(
                         before: messageId,
                         cid: cid.rawValue,
-                        deletedMessagesVisibility: deletedMessagesVisibility,
                         shouldShowShadowedMessages: shouldShowShadowedMessages,
                         context: context
                     )?.id
@@ -363,7 +361,6 @@ class MessageRepository: @unchecked Sendable {
                     let resultId = try MessageDTO.loadMessage(
                         beforeOrEqual: messageTimestamp,
                         cid: cid.rawValue,
-                        deletedMessagesVisibility: deletedMessagesVisibility,
                         shouldShowShadowedMessages: shouldShowShadowedMessages,
                         context: context
                     )?.id
