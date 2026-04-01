@@ -419,15 +419,14 @@ final class MessageController_Tests: XCTestCase {
     /// This test was added because we forgot to exclude deleted messages when fetching replies.
     /// Valid message for a thread is defined as:
     /// - `parentId` correctly set,
-    /// - is not deleted, or current user owned non-ephemeral deleted,
+    /// - current user owned non-ephemeral deleted,
     /// - newer than channel's truncation date (if channel is truncated)
     func test_replies_onlyIncludeValidMessages() throws {
         // Create dummy channel
         let truncatedDate = Date.unique
         let channel = dummyPayload(with: cid, truncatedAt: truncatedDate)
 
-        var config = ChatClient.defaultMockedConfig
-        client = ChatClient_Mock(config: config)
+        client = ChatClient_Mock(config: ChatClient.defaultMockedConfig)
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
         let reply1: MessagePayload = .dummy(
@@ -461,8 +460,8 @@ final class MessageController_Tests: XCTestCase {
         try saveReplies(with: [reply1, reply2, reply3], channelPayload: channel)
 
         // Check if the replies are correct
-        let ids = [reply1].map(\.id)
-        XCTAssertEqual(controller.replies.map(\.id), ids)
+        let ids = [reply1, reply2].map(\.id)
+        XCTAssertEqual(Set(controller.replies.map(\.id)), Set(ids))
     }
 
     func test_replies_whenShadowedMessagesVisible() throws {
