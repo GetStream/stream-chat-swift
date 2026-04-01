@@ -98,15 +98,15 @@ final class MessengerChatMessageContentView: ChatMessageContentView {
 
         dateLabel.text = dateFormatter.string(from: message.createdAt)
         dateLabel.font = appearance.fonts.subheadline
-        dateLabel.textColor = appearance.colorPalette.subtitleText
+        dateLabel.textColor = appearance.colorPalette.textSecondary
         dateLabel.textAlignment = .center
 
         messageLabel.text = message.text
         messageLabel.font = appearance.fonts.body
 
         if message.isSentByCurrentUser {
-            messageBubbleView.backgroundColor = appearance.colorPalette.background2
-            messageLabel.textColor = appearance.colorPalette.text
+            messageBubbleView.backgroundColor = appearance.colorPalette.chatBackgroundOutgoing
+            messageLabel.textColor = appearance.colorPalette.chatTextOutgoing
             leadingSpacer.isHidden = false
             trailingSpacer.isHidden = true
             avatarView.isHidden = true
