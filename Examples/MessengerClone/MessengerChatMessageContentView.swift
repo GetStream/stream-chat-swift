@@ -118,11 +118,7 @@ final class MessengerChatMessageContentView: ChatMessageContentView {
             avatarView.isHidden = false
         }
 
-        let placeholder = UserAvatarInitialsImage.image(
-            name: message.author.name ?? "",
-            size: components.avatarThumbnailSize,
-            appearance: appearance
-        )
+        let placeholder = UIImage(systemName: "person.circle")
         if let imageURL = message.author.imageURL {
             components.imageLoader.loadImage(
                 into: avatarView.imageView,
