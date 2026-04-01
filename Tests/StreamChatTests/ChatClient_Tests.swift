@@ -80,7 +80,6 @@ final class ChatClient_Tests: XCTestCase {
         config.localCaching.chatChannel.lastActiveMembersLimit = .unique
         config.localCaching.chatChannel.lastActiveWatchersLimit = .unique
 
-        config.deletedMessagesVisibility = .alwaysVisible
         config.shouldShowShadowedMessages = .random()
 
         // Create env object with custom database builder
@@ -103,7 +102,6 @@ final class ChatClient_Tests: XCTestCase {
             XCTAssertEqual(clientConfig.shouldFlushLocalStorageOnStart, config.shouldFlushLocalStorageOnStart)
             XCTAssertEqual(clientConfig.isClientInActiveMode, config.isClientInActiveMode)
             XCTAssertEqual(clientConfig.localCaching, config.localCaching)
-            XCTAssertEqual(clientConfig.deletedMessagesVisibility, config.deletedMessagesVisibility)
             XCTAssertEqual(clientConfig.shouldShowShadowedMessages, config.shouldShowShadowedMessages)
             return DatabaseContainer_Spy()
         }
