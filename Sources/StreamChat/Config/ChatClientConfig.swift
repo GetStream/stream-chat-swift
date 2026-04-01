@@ -120,28 +120,6 @@ public struct ChatClientConfig: Sendable {
     /// The current limit on the backend is `30`. You can only configure a value below `30`.
     public var maxAttachmentCountPerMessage = 30
 
-    /// Specifies the visibility of deleted messages.
-    public enum DeletedMessageVisibility: String, CustomStringConvertible, CustomDebugStringConvertible, Sendable {
-        /// All deleted messages are always hidden.
-        case alwaysHidden
-        /// Deleted message by current user are visible, other deleted messages are hidden.
-        case visibleForCurrentUser
-        /// Deleted messages are always visible.
-        case alwaysVisible
-
-        public var description: String {
-            rawValue
-        }
-
-        public var debugDescription: String {
-            rawValue
-        }
-    }
-
-    /// Specifies the visibility of deleted messages.
-    /// By default, all deleted messages are visible with their content hidden.
-    public var deletedMessagesVisibility: DeletedMessageVisibility = .alwaysVisible
-
     /// Specifies whether `shadowed` messages should be shown in Message list.
     /// For more information, please check "Shadow Bans" docs.
     public var shouldShowShadowedMessages = false

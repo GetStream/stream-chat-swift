@@ -188,13 +188,6 @@ open class ChatMessageLayoutOptionsResolver {
         switch message.type {
         case .ephemeral:
             return true
-        case .deleted:
-            guard let config = config else {
-                log.assertionFailure("The `config` property must be assiged at this point.")
-                return false
-            }
-
-            return config.deletedMessagesVisibility == .visibleForCurrentUser
         default:
             return false
         }

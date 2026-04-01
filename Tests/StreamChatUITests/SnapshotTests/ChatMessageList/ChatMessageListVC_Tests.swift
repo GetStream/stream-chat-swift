@@ -22,8 +22,7 @@ import XCTest
     override func setUp() {
         super.setUp()
 
-        var config = ChatClientConfig(apiKey: .init(.unique))
-        config.deletedMessagesVisibility = .alwaysHidden
+        let config = ChatClientConfig(apiKey: .init(.unique))
         self.config = config
 
         sut = ChatMessageListVC()
@@ -44,27 +43,6 @@ import XCTest
         mockedDelegate = nil
         AttachmentViewCatalog_Mock.attachmentViewInjectorClassForCallCount = 0
         super.tearDown()
-    }
-
-    func test_setUp_propagatesDeletedMessagesVisabilityToResolver() {
-        // GIVEN
-        var config = ChatClientConfig(apiKey: .init(.unique))
-        config.deletedMessagesVisibility = .alwaysHidden
-
-        let sut = ChatMessageListVC()
-        sut.client = ChatClient(config: config)
-        sut.components = .mock
-
-        XCTAssertNil(sut.components.messageLayoutOptionsResolver.config)
-
-        // WHEN
-        sut.setUp()
-
-        // THEN
-        XCTAssertEqual(
-            sut.components.messageLayoutOptionsResolver.config?.deletedMessagesVisibility,
-            config.deletedMessagesVisibility
-        )
     }
 
     // MARK: - scrollViewDidScroll

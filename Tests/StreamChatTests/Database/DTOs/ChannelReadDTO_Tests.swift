@@ -756,7 +756,6 @@ private class MessageListObserver {
             fetchRequest: MessageDTO.messagesFetchRequest(
                 for: cid,
                 pageSize: pageSize,
-                deletedMessagesVisibility: .alwaysVisible,
                 shouldShowShadowedMessages: false
             )
         )

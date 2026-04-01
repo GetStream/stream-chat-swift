@@ -154,7 +154,6 @@ extension NSManagedObjectContext {
                 return try? MessageDTO.loadMessage(
                     beforeOrEqual: messageTimestamp,
                     cid: cid.rawValue,
-                    deletedMessagesVisibility: clientConfig?.deletedMessagesVisibility ?? .alwaysVisible,
                     shouldShowShadowedMessages: clientConfig?.shouldShowShadowedMessages ?? false,
                     context: self
                 )
