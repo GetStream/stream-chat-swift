@@ -23,11 +23,11 @@ jobs:
   performance:
     name: Metrics
     runs-on: macos-15
+    if: github.event_name != 'pull_request' || (!contains(github.event.pull_request.title, 'skip-ci') && github.event.pull_request.draft == false)
     env:
       GITHUB_TOKEN: '${{ secrets.CI_BOT_GITHUB_TOKEN }}'
     steps:
       - name: Connect Bot
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
@@ -37,18 +37,15 @@ jobs:
           python-version: 3.12 # gsutil requires Python version 3.8-3.12
 
       - uses: actions/checkout@v3.1.0
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
         with:
           fetch-depth: 0 # to fetch git tags
 
       - uses: ./.github/actions/bootstrap
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
           INSTALL_GCLOUD: true
 
       - name: Run XCMetrics
-        if: ${{ github.event_name != 'pull_request' || github.event.pull_request.draft == false }}
         run: bundle exec fastlane xcmetrics
         timeout-minutes: 120
         env:
