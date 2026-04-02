@@ -34,9 +34,9 @@ open class BannerView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.textLowEmphasis
-        textLabel.textColor = appearance.colorPalette.staticColorText
-        actionButton.tintColor = appearance.colorPalette.staticColorText
+        backgroundColor = appearance.colorPalette.textTertiary
+        textLabel.textColor = appearance.colorPalette.textOnAccent
+        actionButton.tintColor = appearance.colorPalette.textOnAccent
     }
 
     override open func setUpLayout() {

@@ -55,18 +55,18 @@ open class ChatChannelListEmptyView: _View, ThemeProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = appearance.colorPalette.background
+        backgroundColor = appearance.colorPalette.backgroundCoreApp
 
         iconView.image = appearance.images.emptyChannelListMessageBubble
         iconView.contentMode = .scaleAspectFit
-        iconView.tintColor = appearance.colorPalette.textLowEmphasis
+        iconView.tintColor = appearance.colorPalette.textTertiary
 
         titleLabel.font = appearance.fonts.bodyBold
-        titleLabel.textColor = appearance.colorPalette.text
+        titleLabel.textColor = appearance.colorPalette.textPrimary
         titleLabel.textAlignment = .center
 
         subtitleLabel.font = appearance.fonts.subheadline
-        subtitleLabel.textColor = appearance.colorPalette.subtitleText
+        subtitleLabel.textColor = appearance.colorPalette.textSecondary
         subtitleLabel.numberOfLines = 0
         subtitleLabel.textAlignment = .center
 

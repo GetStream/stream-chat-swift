@@ -58,18 +58,18 @@ open class FileAttachmentView: _View, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.background
+        backgroundColor = appearance.colorPalette.backgroundCoreApp
         layer.cornerRadius = 15
         layer.masksToBounds = true
         layer.borderWidth = 1
-        layer.borderColor = appearance.colorPalette.border.cgColor
+        layer.borderColor = appearance.colorPalette.borderCoreDefault.cgColor
 
         fileIconImageView.contentMode = .center
 
-        fileSizeLabel.textColor = appearance.colorPalette.subtitleText
+        fileSizeLabel.textColor = appearance.colorPalette.textSecondary
         fileSizeLabel.font = appearance.fonts.subheadlineBold
 
-        fileNameLabel.textColor = appearance.colorPalette.text
+        fileNameLabel.textColor = appearance.colorPalette.textPrimary
         fileNameLabel.font = appearance.fonts.bodyBold
         fileNameLabel.lineBreakMode = .byTruncatingMiddle
     }

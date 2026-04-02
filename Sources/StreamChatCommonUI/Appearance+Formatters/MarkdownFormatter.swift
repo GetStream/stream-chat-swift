@@ -55,7 +55,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     private func defaultAttributes(forTextAttributes attributes: [NSAttributedString.Key: Any]) -> AttributeContainer {
         // MarkdownStyles dictate which font and color to use.
         let defaultFont = (attributes[.font] as? UIFont) ?? fonts.body
-        let defaultColor = (attributes[.foregroundColor] as? UIColor) ?? colorPalette.text
+        let defaultColor = (attributes[.foregroundColor] as? UIColor) ?? colorPalette.textPrimary
         let font = UIFont.font(forMarkdownFont: styles.bodyFont, defaultFont: defaultFont)
         let color = styles.bodyFont.color ?? defaultColor
         let result = attributes.merging([.font: font, .foregroundColor: color], uniquingKeysWith: { _, new in new })
@@ -65,7 +65,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     private var defaultAttributes: [NSAttributedString.Key: Any] {
         [
             .font: UIFont.font(forMarkdownFont: styles.bodyFont, defaultFont: fonts.body),
-            .foregroundColor: styles.bodyFont.color ?? Appearance.default.colorPalette.text
+            .foregroundColor: styles.bodyFont.color ?? Appearance.default.colorPalette.textPrimary
         ]
     }
     
@@ -93,7 +93,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
         switch presentationKind {
         case .blockQuote:
             return AttributeContainer([
-                .foregroundColor: colorPalette.subtitleText
+                .foregroundColor: colorPalette.textSecondary
             ])
         case .codeBlock:
             let attributes: [NSAttributedString.Key: Any] = [
@@ -122,7 +122,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
                 foregroundColor = styles.h5Font.color
             default:
                 font = UIFont.font(forMarkdownFont: styles.h6Font, defaultFont: fonts.footnote, textStyle: .footnote)
-                foregroundColor = styles.h6Font.color ?? colorPalette.subtitleText
+                foregroundColor = styles.h6Font.color ?? colorPalette.textSecondary
             }
             if let foregroundColor {
                 return AttributeContainer([.font: font, .foregroundColor: foregroundColor])

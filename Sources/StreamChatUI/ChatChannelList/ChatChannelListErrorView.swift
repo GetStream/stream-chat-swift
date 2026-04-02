@@ -30,9 +30,9 @@ open class ChatChannelListErrorView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
         retryButton.setImage(appearance.images.restart, for: .normal)
-        backgroundColor = appearance.colorPalette.textLowEmphasis
-        titleLabel.textColor = appearance.colorPalette.staticColorText
-        retryButton.tintColor = appearance.colorPalette.staticColorText
+        backgroundColor = appearance.colorPalette.textTertiary
+        titleLabel.textColor = appearance.colorPalette.textOnAccent
+        retryButton.tintColor = appearance.colorPalette.textOnAccent
     }
 
     override open func setUpLayout() {

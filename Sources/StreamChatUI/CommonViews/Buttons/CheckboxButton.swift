@@ -17,6 +17,6 @@ open class CheckboxButton: _Button, AppearanceProvider {
     /// Sets the button has unchecked.
     open func setUncheckedState() {
         setImage(appearance.images.pollVoteCheckmarkInactive, for: .normal)
-        tintColor = appearance.colorPalette.inactiveTint
+        tintColor = appearance.colorPalette.accentNeutral
     }
 }

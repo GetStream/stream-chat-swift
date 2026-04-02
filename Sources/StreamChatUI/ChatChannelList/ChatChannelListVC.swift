@@ -211,7 +211,7 @@ open class ChatChannelListVC: _ViewController,
         navigationItem.backButtonTitle = ""
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: userAvatarView)
 
-        collectionView.backgroundColor = appearance.colorPalette.background
+        collectionView.backgroundColor = appearance.colorPalette.backgroundCoreApp
 
         if let flowLayout = collectionViewLayout as? ListCollectionViewLayout {
             flowLayout.itemSize = UICollectionViewFlowLayout.automaticSize
@@ -366,7 +366,7 @@ open class ChatChannelListVC: _ViewController,
             .withAccessibilityIdentifier(identifier: "deleteView")
         deleteView.actionButton.setImage(appearance.images.messageActionDelete, for: .normal)
 
-        deleteView.actionButton.backgroundColor = appearance.colorPalette.alert
+        deleteView.actionButton.backgroundColor = appearance.colorPalette.accentError
         deleteView.actionButton.tintColor = .white
 
         deleteView.action = { [weak self] in self?.deleteButtonPressedForCell(at: indexPath) }
@@ -376,8 +376,8 @@ open class ChatChannelListVC: _ViewController,
             .withAccessibilityIdentifier(identifier: "moreView")
         moreView.actionButton.setImage(appearance.images.more, for: .normal)
 
-        moreView.actionButton.backgroundColor = appearance.colorPalette.background1
-        moreView.actionButton.tintColor = appearance.colorPalette.text
+        moreView.actionButton.backgroundColor = appearance.colorPalette.backgroundCoreSurfaceSubtle
+        moreView.actionButton.tintColor = appearance.colorPalette.textPrimary
 
         moreView.action = { [weak self] in self?.moreButtonPressedForCell(at: indexPath) }
 

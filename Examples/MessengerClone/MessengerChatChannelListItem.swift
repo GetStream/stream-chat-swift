@@ -17,7 +17,7 @@ final class MessengerChatChannelListItem: ChatChannelListItemView {
     override func setUpAppearance() {
         super.setUpAppearance()
         combinedSubtitleLabel.font = appearance.fonts.footnote
-        combinedSubtitleLabel.textColor = appearance.colorPalette.subtitleText
+        combinedSubtitleLabel.textColor = appearance.colorPalette.textSecondary
     }
 
     override func setUpLayout() {

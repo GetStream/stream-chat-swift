@@ -27,7 +27,7 @@ import XCTest
         let view = CurrentChatUserAvatarView().withoutAutoresizingMaskConstraints
 
         var appearance = Appearance()
-        appearance.colorPalette.background = .yellow
+        appearance.colorPalette.backgroundCoreApp = .yellow
         view.appearance = appearance
 
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)

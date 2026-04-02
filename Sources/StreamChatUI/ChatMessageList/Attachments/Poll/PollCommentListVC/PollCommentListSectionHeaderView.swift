@@ -37,7 +37,7 @@ open class PollCommentListSectionHeaderView: _TableHeaderFooterView, ThemeProvid
 
         commentLabel.numberOfLines = 0
         commentLabel.font = appearance.fonts.headlineBold
-        commentLabel.textColor = appearance.colorPalette.text
+        commentLabel.textColor = appearance.colorPalette.textPrimary
     }
 
     override open func setUpLayout() {

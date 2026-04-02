@@ -43,7 +43,7 @@ open class ChatMessageInteractiveAttachmentView: _View, ThemeProvider {
         preview.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
         preview.clipsToBounds = true
 
-        separator.backgroundColor = appearance.colorPalette.border
+        separator.backgroundColor = appearance.colorPalette.borderCoreDefault
     }
 
     override open func setUpLayout() {

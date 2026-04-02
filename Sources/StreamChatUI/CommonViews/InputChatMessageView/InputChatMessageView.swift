@@ -69,13 +69,13 @@ open class InputChatMessageView: _View, ComponentsProvider, AppearanceProvider {
         super.setUpAppearance()
 
         let closeTransparentImage = appearance.images.closeCircleTransparent
-            .tinted(with: appearance.colorPalette.inactiveTint)
+            .tinted(with: appearance.colorPalette.inputTextIcon)
         clearButton.setImage(closeTransparentImage, for: .normal)
 
         container.clipsToBounds = true
         container.layer.cornerRadius = 19
         container.layer.borderWidth = 1
-        container.layer.borderColor = appearance.colorPalette.border.cgColor
+        container.layer.borderColor = appearance.colorPalette.borderCoreDefault.cgColor
     }
 
     override open func setUpLayout() {

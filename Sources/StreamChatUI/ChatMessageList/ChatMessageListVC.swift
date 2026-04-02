@@ -273,9 +273,9 @@ open class ChatMessageListVC: _ViewController,
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        view.backgroundColor = appearance.colorPalette.background
+        view.backgroundColor = appearance.colorPalette.backgroundCoreApp
 
-        listView.backgroundColor = appearance.colorPalette.background
+        listView.backgroundColor = appearance.colorPalette.backgroundCoreApp
     }
 
     override open func updateContent() {
@@ -722,7 +722,7 @@ open class ChatMessageListVC: _ViewController,
             return
         }
         let previousBackgroundColor = cell.messageContentView?.backgroundColor
-        let highlightColor = appearance.colorPalette.messageCellHighlightBackground
+        let highlightColor = appearance.colorPalette.backgroundCoreHighlight
         cell.messageContentView?.backgroundColor = highlightColor
         UIView.animate(withDuration: 0.2, delay: 0.6) {
             cell.messageContentView?.backgroundColor = previousBackgroundColor

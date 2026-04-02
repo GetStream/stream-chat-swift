@@ -30,7 +30,7 @@ class NameGroupViewController: UIViewController {
         }
 
         func setupUI() {
-            removeButton.tintColor = Appearance.default.colorPalette.text
+            removeButton.tintColor = Appearance.default.colorPalette.textPrimary
             removeButton.setImage(UIImage(systemName: "xmark")!, for: .normal)
             removeButton.imageView?.contentMode = .scaleAspectFit
             removeButton.isUserInteractionEnabled = true

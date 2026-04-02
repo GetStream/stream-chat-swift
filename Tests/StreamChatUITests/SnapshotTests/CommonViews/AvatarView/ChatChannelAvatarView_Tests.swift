@@ -188,7 +188,7 @@ import XCTest
 
         var appearance = Appearance()
         var components = Components.mock
-        appearance.colorPalette.alternativeActiveTint = .brown
+        appearance.colorPalette.accentSuccess = .brown
         components.onlineIndicatorView = RectIndicator.self
 
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints

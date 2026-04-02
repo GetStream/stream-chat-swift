@@ -46,13 +46,13 @@ open class ChatThreadListEmptyView: _View, ThemeProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = appearance.colorPalette.background
+        backgroundColor = appearance.colorPalette.backgroundCoreApp
 
         iconView.image = appearance.images.threadIcon
-        iconView.tintColor = appearance.colorPalette.alternativeInactiveTint
+        iconView.tintColor = appearance.colorPalette.backgroundUtilityDisabled
 
         descriptionLabel.font = appearance.fonts.subheadline
-        descriptionLabel.textColor = appearance.colorPalette.subtitleText
+        descriptionLabel.textColor = appearance.colorPalette.textSecondary
         descriptionLabel.numberOfLines = 0
         descriptionLabel.textAlignment = .center
     }

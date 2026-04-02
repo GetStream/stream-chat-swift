@@ -33,9 +33,9 @@ open class RecordingTipView: _View, ThemeProvider {
         super.setUpAppearance()
 
         backgroundColor = nil
-        container.backgroundColor = appearance.colorPalette.border
+        container.backgroundColor = appearance.colorPalette.borderCoreDefault
         titleLabel.font = appearance.fonts.caption1.bold
-        titleLabel.textColor = appearance.colorPalette.text
+        titleLabel.textColor = appearance.colorPalette.textPrimary
         titleLabel.textAlignment = .center
         titleLabel.text = L10n.Recording.tip
     }

@@ -26,9 +26,9 @@ class ChatChannelListEmptyView_Tests: XCTestCase {
     @MainActor func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
-        appearance.colorPalette.subtitleText = .cyan
-        appearance.colorPalette.text = .green
-        appearance.colorPalette.background2 = .magenta
+        appearance.colorPalette.textSecondary = .cyan
+        appearance.colorPalette.textPrimary = .green
+        appearance.colorPalette.backgroundCoreSurfaceStrong = .magenta
 
         let view = ChatChannelListEmptyView().withoutAutoresizingMaskConstraints
         view.appearance = appearance

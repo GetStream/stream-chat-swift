@@ -47,7 +47,7 @@ open class ChatMessageReactionItemView: _Button, AppearanceProvider {
 
         return content.reaction.isChosenByCurrentUser ?
             tintColor :
-            appearance.colorPalette.inactiveTint
+            appearance.colorPalette.accentNeutral
     }
 
     // MARK: - Overrides

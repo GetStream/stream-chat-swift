@@ -21,9 +21,9 @@ open class BadgeView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
         layer.masksToBounds = true
-        backgroundColor = appearance.colorPalette.alert
+        backgroundColor = appearance.colorPalette.accentError
 
-        textLabel.textColor = appearance.colorPalette.staticColorText
+        textLabel.textColor = appearance.colorPalette.textOnAccent
         textLabel.font = appearance.fonts.footnoteBold
         textLabel.textAlignment = .center
     }

@@ -32,7 +32,7 @@ import XCTest
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.images.confirmCheckmark = TestImages.vader.image.tinted(with: .systemPink)!
-        appearance.colorPalette.inactiveTint = .black
+        appearance.colorPalette.accentNeutral = .black
 
         let view = ConfirmButton().withoutAutoresizingMaskConstraints
         view.appearance = appearance

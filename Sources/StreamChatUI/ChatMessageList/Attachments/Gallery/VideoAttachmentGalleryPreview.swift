@@ -40,11 +40,12 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        imageView.backgroundColor = appearance.colorPalette.background1
+        imageView.backgroundColor = appearance.colorPalette.backgroundCoreSurfaceSubtle
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
 
         playButton.setImage(appearance.images.bigPlay, for: .normal)
+        playButton.tintColor = appearance.colorPalette.textPrimary
     }
 
     override open func setUp() {

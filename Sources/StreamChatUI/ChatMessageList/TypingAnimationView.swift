@@ -40,7 +40,7 @@ open class TypingAnimationView: _View, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
         backgroundColor = .clear
-        dotLayer.backgroundColor = appearance.colorPalette.text.cgColor
+        dotLayer.backgroundColor = appearance.colorPalette.chatTextTypingIndicator.cgColor
         replicatorLayer.frame = bounds
     }
 

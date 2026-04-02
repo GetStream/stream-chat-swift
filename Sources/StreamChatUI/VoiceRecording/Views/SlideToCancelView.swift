@@ -61,8 +61,8 @@ open class SlideToCancelView: _View, ThemeProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        chevronImageView.image = appearance.images.chevronLeft.tinted(with: appearance.colorPalette.textLowEmphasis)
-        titleLabel.textColor = appearance.colorPalette.textLowEmphasis
+        chevronImageView.image = appearance.images.chevronLeft.tinted(with: appearance.colorPalette.textTertiary)
+        titleLabel.textColor = appearance.colorPalette.textTertiary
         titleLabel.font = appearance.fonts.body
         titleLabel.text = L10n.Recording.slideToCancel
     }
