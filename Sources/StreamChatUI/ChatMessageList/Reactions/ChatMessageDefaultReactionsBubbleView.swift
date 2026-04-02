@@ -83,7 +83,7 @@ open class DefaultChatReactionPickerBubbleView: ChatReactionPickerBubbleView {
         case .smallIncoming:
             color = appearance.colorPalette.borderCoreDefault
         default:
-            color = appearance.colorPalette.borderCoreDefault
+            color = contentBackgroundColor
         }
         return resolvedColor(color)
     }
