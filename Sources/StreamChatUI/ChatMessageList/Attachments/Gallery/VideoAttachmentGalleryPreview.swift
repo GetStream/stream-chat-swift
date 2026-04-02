@@ -33,8 +33,8 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
         .uploadingOverlayView.init()
         .withoutAutoresizingMaskConstraints
 
-    /// A button displaying `play` icon.
-    open private(set) lazy var playButton = UIButton()
+    /// A button displaying the play icon over the video thumbnail.
+    open private(set) lazy var playButton: UIButton = VideoPlayIndicatorView()
         .withoutAutoresizingMaskConstraints
 
     override open func setUpAppearance() {
@@ -43,8 +43,6 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
         imageView.backgroundColor = appearance.colorPalette.background1
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
-
-        playButton.setImage(appearance.images.bigPlay, for: .normal)
     }
 
     override open func setUp() {
