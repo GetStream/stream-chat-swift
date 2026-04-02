@@ -103,7 +103,7 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
 
     private func showPreview(using thumbnailURL: URL) {
         components.imageLoader.downloadImage(with: .init(url: thumbnailURL, options: ImageDownloadOptions())) { [weak self] result in
-            Task { @MainActor in
+            StreamConcurrency.onMain {
                 self?.loadingIndicator.isHidden = true
                 guard case let .success(image) = result else { return }
                 self?.showPreview(using: image)
