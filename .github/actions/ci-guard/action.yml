@@ -1,0 +1,23 @@
+name: Guard
+description: >
+  Loads the current PR title (not the stale event payload) and cancels the workflow when it
+  contains skip-ci, case-insensitive. No-op when the event is not pull_request.
+inputs:
+  github_token:
+    description: Token with actions:write and pull-requests:read
+    required: true
+runs:
+  using: composite
+  steps:
+    - run: |
+        set -euo pipefail
+        if [ "${{ github.event_name }}" != "pull_request" ]; then
+          exit 0
+        fi
+        PR_TITLE=$(gh pr view ${{ github.event.pull_request.number }} --repo "${{ github.repository }}" --json title --jq .title)
+        if printf '%s' "$PR_TITLE" | grep -Fqi 'skip-ci'; then
+          gh run cancel "${{ github.run_id }}" --repo "${{ github.repository }}"
+        fi
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github_token }}
