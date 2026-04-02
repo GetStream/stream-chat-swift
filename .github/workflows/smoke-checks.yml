@@ -29,11 +29,21 @@ jobs:
   guard:
     name: Guard
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      pull-requests: read
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
-      - run: gh run cancel "${{ github.run_id }}" --repo "${{ github.repository }}"
-        if: github.event_name == 'pull_request' && contains(github.event.pull_request.title, 'skip-ci')
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check
+        run: |
+          if [ "${{ github.event_name }}" != "pull_request" ]; then
+            exit 0
+          fi
+          PR_TITLE=$(gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" --jq .title)
+          if printf '%s' "$PR_TITLE" | grep -Fqi 'skip-ci'; then
+            gh run cancel "${{ github.run_id }}" --repo "${{ github.repository }}"
+          fi
 
   build-test-app-and-frameworks:
     name: Build Test App and Frameworks
