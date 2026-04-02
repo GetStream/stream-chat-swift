@@ -43,8 +43,8 @@ open class PollCreationFeatureCell: _CollectionViewCell, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.background
-        container.backgroundColor = appearance.colorPalette.background1
+        backgroundColor = appearance.colorPalette.backgroundCoreApp
+        container.backgroundColor = appearance.colorPalette.backgroundCoreSurfaceSubtle
         container.layer.cornerRadius = 16
     }
 

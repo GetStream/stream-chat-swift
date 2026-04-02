@@ -98,7 +98,7 @@ import XCTest
         // Create custom Appearance.
         var appearance = Appearance.default
         // Inject custom `alert` colour.
-        appearance.colorPalette.alert = .systemYellow
+        appearance.colorPalette.accentError = .systemYellow
 
         // Create message content view with the provided `message`, `layout`, and `config`
         let view = contentView(

@@ -1051,8 +1051,8 @@ import XCTest
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.fonts.bodyBold = .italicSystemFont(ofSize: 20)
-        appearance.colorPalette.subtitleText = .cyan
-        appearance.colorPalette.text = .red
+        appearance.colorPalette.textSecondary = .cyan
+        appearance.colorPalette.textPrimary = .red
 
         let view = channelItemView(
             content: .init(

@@ -49,7 +49,7 @@ import XCTest
     func test_setUpAppearance_wasConfiguredCorrectly() {
         XCTAssertEqual(
             subject.image(for: .normal)?.pngData(),
-            subject.appearance.images.mic.tinted(with: subject.appearance.colorPalette.textLowEmphasis)?.pngData()
+            subject.appearance.images.mic.tinted(with: subject.appearance.colorPalette.textTertiary)?.pngData()
         )
 
         XCTAssertEqual(

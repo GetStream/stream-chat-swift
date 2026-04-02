@@ -30,7 +30,7 @@ open class PollCreationSectionHeaderView: _CollectionReusableView, ThemeProvider
 
         titleLabel.numberOfLines = 1
         titleLabel.font = appearance.fonts.body
-        titleLabel.textColor = appearance.colorPalette.text
+        titleLabel.textColor = appearance.colorPalette.textPrimary
     }
 
     override open func setUpLayout() {

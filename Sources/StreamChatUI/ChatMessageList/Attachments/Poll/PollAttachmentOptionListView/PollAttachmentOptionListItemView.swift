@@ -93,7 +93,8 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
         optionNameLabel.numberOfLines = 0
         optionNameLabel.font = appearance.fonts.subheadline
         votesCountLabel.font = appearance.fonts.body.withSize(14)
-        votesCountLabel.textColor = appearance.colorPalette.text
+        votesCountLabel.textColor = appearance.colorPalette.textPrimary
+        votesProgressView.trackTintColor = appearance.colorPalette.chatPollProgressTrackIncoming
         voteCheckboxButton.contentEdgeInsets = .zero
         voteCheckboxButton.imageEdgeInsets = .zero
         voteCheckboxButton.titleEdgeInsets = .zero
@@ -142,9 +143,9 @@ open class PollAttachmentOptionListItemView: _View, ThemeProvider {
         voteCheckboxButton.isHidden = content.poll.isClosed
 
         if content.poll.isOptionWinner(content.option) {
-            votesProgressView.tintColor = appearance.colorPalette.alternativeActiveTint
+            votesProgressView.progressTintColor = appearance.colorPalette.chatPollProgressFillIncoming
         } else {
-            votesProgressView.tintColor = appearance.colorPalette.accentPrimary
+            votesProgressView.progressTintColor = appearance.colorPalette.accentPrimary
         }
         votesProgressView.progress = content.voteRatio
     }

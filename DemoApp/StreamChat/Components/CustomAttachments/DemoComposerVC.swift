@@ -41,7 +41,7 @@ class DemoInputTextView: InputTextView {
         backgroundColor = .clear
         textContainer.lineFragmentPadding = 8
         font = appearance.fonts.body
-        textColor = appearance.colorPalette.text
+        textColor = appearance.colorPalette.textPrimary
         textAlignment = .natural
         adjustsFontForContentSizeCategory = true
 
@@ -53,7 +53,7 @@ class DemoInputTextView: InputTextView {
         }
 
         placeholderLabel.font = font
-        placeholderLabel.textColor = appearance.colorPalette.subtitleText
+        placeholderLabel.textColor = appearance.colorPalette.textSecondary
         placeholderLabel.adjustsFontSizeToFitWidth = true
     }
 }

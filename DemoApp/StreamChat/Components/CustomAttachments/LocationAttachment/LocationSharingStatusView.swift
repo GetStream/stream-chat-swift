@@ -11,7 +11,7 @@ class LocationSharingStatusView: _View, ThemeProvider {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = appearance.fonts.footnote
-        label.textColor = appearance.colorPalette.subtitleText
+        label.textColor = appearance.colorPalette.textSecondary
         return label
     }()
 
@@ -51,6 +51,6 @@ class LocationSharingStatusView: _View, ThemeProvider {
         iconImageView.image = location.isLiveSharingActive ? activeSharingImage : inactiveSharingImage
         iconImageView.tintColor = location.isLiveSharingActive
             ? appearance.colorPalette.accentPrimary
-            : appearance.colorPalette.subtitleText
+            : appearance.colorPalette.textSecondary
     }
 }

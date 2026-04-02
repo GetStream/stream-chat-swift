@@ -36,7 +36,7 @@ open class AttachmentPlaceholderView: _View, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        borderLayer.strokeColor = appearance.colorPalette.background4.cgColor
+        borderLayer.strokeColor = appearance.colorPalette.backgroundCoreScrim.cgColor
         borderLayer.lineDashPattern = [2, 2]
         borderLayer.fillColor = nil
         borderLayer.masksToBounds = true

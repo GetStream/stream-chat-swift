@@ -52,8 +52,8 @@ open class ChatReactionsBubbleView: ChatReactionBubbleBaseView {
     open var fillColor: UIColor? {
         tailDirection.map {
             $0 == .toTrailing ?
-                appearance.colorPalette.popoverBackground :
-                appearance.colorPalette.background2
+                appearance.colorPalette.reactionBackground :
+                appearance.colorPalette.backgroundCoreSurfaceStrong
         }
     }
 
@@ -61,8 +61,8 @@ open class ChatReactionsBubbleView: ChatReactionBubbleBaseView {
     open var strokeColor: UIColor? {
         tailDirection.map {
             $0 == .toTrailing ?
-                appearance.colorPalette.border :
-                appearance.colorPalette.background2
+                appearance.colorPalette.reactionBorder :
+                appearance.colorPalette.backgroundCoreSurfaceStrong
         }
     }
 

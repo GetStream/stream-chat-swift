@@ -41,12 +41,12 @@ open class PollResultsVC:
 
     /// The background color of the table view.
     open var listBackgroundColor: UIColor {
-        appearance.colorPalette.background
+        appearance.colorPalette.backgroundCoreApp
     }
 
     /// The background color for each poll option section.
     open var sectionBackgroundColor: UIColor {
-        appearance.colorPalette.background1
+        appearance.colorPalette.backgroundCoreSurfaceSubtle
     }
 
     /// The corner radius amount of each section group.
@@ -87,7 +87,7 @@ open class PollResultsVC:
             target: self,
             action: #selector(didTapCloseButton(sender:))
         )
-        navigationItem.leftBarButtonItem?.tintColor = appearance.colorPalette.background7
+        navigationItem.leftBarButtonItem?.tintColor = appearance.colorPalette.accentNeutral
 
         tableView.register(components.pollResultsVoteItemCell)
         tableView.register(components.pollResultsSectionHeaderView)

@@ -16,7 +16,7 @@ class LivestreamPauseBannerView: UIView {
     private lazy var label: UILabel = {
         let label = UILabel()
         label.font = appearance.fonts.footnote
-        label.textColor = appearance.colorPalette.text
+        label.textColor = appearance.colorPalette.textPrimary
         label.textAlignment = .center
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -40,7 +40,7 @@ class LivestreamPauseBannerView: UIView {
     }
     
     private func setupView() {
-        backgroundColor = appearance.colorPalette.background2
+        backgroundColor = appearance.colorPalette.backgroundCoreSurfaceStrong
         layer.cornerRadius = 12
         layer.shadowColor = UIColor.black.cgColor
         layer.shadowOffset = CGSize(width: 0, height: 2)

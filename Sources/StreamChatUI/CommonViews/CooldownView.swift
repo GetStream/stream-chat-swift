@@ -43,9 +43,9 @@ open class CooldownView: _View, AppearanceProvider {
         super.setUpAppearance()
 
         clipsToBounds = true
-        backgroundColor = appearance.colorPalette.alternativeInactiveTint
+        backgroundColor = appearance.colorPalette.backgroundUtilityDisabled
         cooldownLabel.font = appearance.fonts.bodyBold
-        cooldownLabel.textColor = appearance.colorPalette.textInverted
+        cooldownLabel.textColor = appearance.colorPalette.textOnInverse
         cooldownLabel.adjustsFontForContentSizeCategory = true
     }
 }

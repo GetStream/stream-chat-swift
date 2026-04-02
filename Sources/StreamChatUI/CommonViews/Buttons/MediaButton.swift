@@ -7,13 +7,12 @@ import StreamChatCommonUI
 import UIKit
 
 /// A button that is being used in the VoiceRecording flow and represents a functionality on the playback.
-/// - Note: As a MediaButton the appearance is common between light/dark mode.
 open class MediaButton: _Button, AppearanceProvider {
     override open var isHighlighted: Bool {
         didSet {
             backgroundColor = isHighlighted
-                ? appearance.colorPalette.highlightedBackground
-                : appearance.colorPalette.staticColorText
+                ? appearance.colorPalette.backgroundCoreSurfaceStrong
+                : appearance.colorPalette.backgroundCoreElevation2
         }
     }
 
@@ -22,12 +21,12 @@ open class MediaButton: _Button, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        tintColor = appearance.colorPalette.staticBlackColorText
-        setTitleColor(appearance.colorPalette.staticBlackColorText, for: .normal)
+        tintColor = appearance.colorPalette.textPrimary
+        setTitleColor(appearance.colorPalette.textPrimary, for: .normal)
         backgroundColor = isHighlighted
-            ? appearance.colorPalette.highlightedBackground
-            : appearance.colorPalette.staticColorText
-        layer.shadowColor = tintColor.cgColor
+            ? appearance.colorPalette.backgroundCoreSurfaceStrong
+            : appearance.colorPalette.backgroundCoreElevation2
+        layer.shadowColor = UIColor.black.cgColor
     }
 
     // MARK: - Interaction

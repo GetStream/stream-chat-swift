@@ -98,19 +98,19 @@ open class VoiceRecordingAttachmentComposerPreview: _View, AppearanceProvider, C
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.background
+        backgroundColor = appearance.colorPalette.backgroundCoreApp
         layer.cornerRadius = 15
         layer.masksToBounds = true
         layer.borderWidth = 1
-        layer.borderColor = appearance.colorPalette.border.cgColor
+        layer.borderColor = appearance.colorPalette.borderCoreDefault.cgColor
 
         fileIconImageView.contentMode = .scaleAspectFit
         fileIconImageView.image = appearance.images.fileIconPreviews["aac"] ?? appearance.images.iconMp3
 
-        durationLabel.textColor = appearance.colorPalette.textLowEmphasis
+        durationLabel.textColor = appearance.colorPalette.textTertiary
         durationLabel.font = .monospacedDigitSystemFont(ofSize: appearance.fonts.footnote.pointSize, weight: .regular)
 
-        fileNameLabel.textColor = appearance.colorPalette.text
+        fileNameLabel.textColor = appearance.colorPalette.textPrimary
         fileNameLabel.font = appearance.fonts.bodyBold
         fileNameLabel.lineBreakMode = .byTruncatingMiddle
     }

@@ -253,12 +253,12 @@ open class ChatChannelListItemView: _View, ThemeProvider {
 
     /// The item's view background color.
     open var contentBackgroundColor: UIColor {
-        appearance.colorPalette.background
+        appearance.colorPalette.backgroundCoreApp
     }
 
     /// The item's view background color when highlighted.
     open var contentHighlightedBackgroundColor: UIColor {
-        appearance.colorPalette.highlightedBackground
+        appearance.colorPalette.backgroundCoreSurfaceStrong
     }
 
     /// The indicator the delivery status of the channel preview message.
@@ -271,16 +271,16 @@ open class ChatChannelListItemView: _View, ThemeProvider {
         super.setUpAppearance()
         backgroundColor = contentBackgroundColor
 
-        titleLabel.textColor = appearance.colorPalette.text
+        titleLabel.textColor = appearance.colorPalette.textPrimary
         titleLabel.font = appearance.fonts.bodyBold
 
-        subtitleLabel.textColor = appearance.colorPalette.subtitleText
+        subtitleLabel.textColor = appearance.colorPalette.textSecondary
         subtitleLabel.font = appearance.fonts.footnote
 
         subtitleImageView.tintColor = subtitleLabel.textColor
         subtitleImageView.contentMode = .scaleAspectFit
 
-        timestampLabel.textColor = appearance.colorPalette.subtitleText
+        timestampLabel.textColor = appearance.colorPalette.textSecondary
         timestampLabel.font = appearance.fonts.footnote
     }
 

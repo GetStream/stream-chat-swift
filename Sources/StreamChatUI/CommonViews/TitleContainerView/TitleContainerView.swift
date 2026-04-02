@@ -35,11 +35,11 @@ open class TitleContainerView: _View, AppearanceProvider {
 
         titleLabel.textAlignment = .center
         titleLabel.font = appearance.fonts.headlineBold
-        titleLabel.textColor = appearance.colorPalette.text
+        titleLabel.textColor = appearance.colorPalette.textPrimary
 
         subtitleLabel.textAlignment = .center
         subtitleLabel.font = appearance.fonts.caption1
-        subtitleLabel.textColor = appearance.colorPalette.subtitleText
+        subtitleLabel.textColor = appearance.colorPalette.textSecondary
     }
 
     override open func setUp() {

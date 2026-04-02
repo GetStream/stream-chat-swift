@@ -140,28 +140,28 @@ open class GalleryVC: _ViewController,
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        view.backgroundColor = appearance.colorPalette.background
+        view.backgroundColor = appearance.colorPalette.backgroundCoreApp
 
         attachmentsCollectionView.backgroundColor = .clear
         attachmentsCollectionView.showsHorizontalScrollIndicator = false
         attachmentsCollectionView.showsVerticalScrollIndicator = false
 
-        topBarView.backgroundColor = appearance.colorPalette.popoverBackground
-        bottomBarView.backgroundColor = appearance.colorPalette.popoverBackground
-        videoPlaybackBar.backgroundColor = appearance.colorPalette.popoverBackground
+        topBarView.backgroundColor = appearance.colorPalette.backgroundCoreElevation1
+        bottomBarView.backgroundColor = appearance.colorPalette.backgroundCoreElevation1
+        videoPlaybackBar.backgroundColor = appearance.colorPalette.backgroundCoreElevation1
 
         userLabel.font = appearance.fonts.bodyBold
-        userLabel.textColor = appearance.colorPalette.text
+        userLabel.textColor = appearance.colorPalette.textPrimary
         userLabel.adjustsFontForContentSizeCategory = true
         userLabel.textAlignment = .center
 
         dateLabel.font = appearance.fonts.footnote
-        dateLabel.textColor = appearance.colorPalette.subtitleText
+        dateLabel.textColor = appearance.colorPalette.textSecondary
         dateLabel.adjustsFontForContentSizeCategory = true
         dateLabel.textAlignment = .center
 
         currentPhotoLabel.font = appearance.fonts.bodyBold
-        currentPhotoLabel.textColor = appearance.colorPalette.text
+        currentPhotoLabel.textColor = appearance.colorPalette.textPrimary
         currentPhotoLabel.adjustsFontForContentSizeCategory = true
         currentPhotoLabel.textAlignment = .center
     }

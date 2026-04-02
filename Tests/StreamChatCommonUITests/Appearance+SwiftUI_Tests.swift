@@ -13,7 +13,7 @@ final class Appearance_SwiftUI_Tests: iOS13TestCase {
         let testColor: UIColor? = UIColor(r: 4, g: 2, b: 0)
 
         var referenceAppearance = Appearance()
-        referenceAppearance.colorPalette.alert = testColor!
+        referenceAppearance.colorPalette.accentError = testColor!
 
         var usedAppearance: Appearance.ObservableObject?
 
@@ -33,7 +33,7 @@ final class Appearance_SwiftUI_Tests: iOS13TestCase {
 
         // Assert the correct Components is used
         AssertAsync.willBeEqual(
-            String(describing: usedAppearance?.colorPalette.alert),
+            String(describing: usedAppearance?.colorPalette.accentError),
             String(describing: testColor)
         )
     }

@@ -108,15 +108,15 @@ import XCTest
     // MARK: - setUpAppearance
 
     func test_setUpAppearance_viewWasConfiguredCorrectly() {
-        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.popoverBackground)
+        XCTAssertEqual(subject.backgroundColor, subject.appearance.colorPalette.backgroundCoreElevation1)
         XCTAssertEqual(subject.layer.cornerRadius, 12)
         XCTAssertEqual(subject.layer.masksToBounds, true)
         XCTAssertEqual(subject.layer.borderWidth, 1)
-        XCTAssertEqual(subject.layer.borderColor, subject.appearance.colorPalette.border.cgColor)
+        XCTAssertEqual(subject.layer.borderColor, subject.appearance.colorPalette.borderCoreDefault.cgColor)
     }
 
     func test_setUpAppearance_fileSizeLabelWasConfiguredCorrectly() {
-        XCTAssertEqual(subject.fileSizeLabel.textColor, subject.appearance.colorPalette.subtitleText)
+        XCTAssertEqual(subject.fileSizeLabel.textColor, subject.appearance.colorPalette.textSecondary)
         XCTAssertEqual(subject.fileSizeLabel.font, subject.appearance.fonts.subheadlineBold)
     }
 
@@ -134,14 +134,14 @@ import XCTest
     }
 
     func test_setUpAppearance_durationLabelWasConfiguredCorrectly() {
-        XCTAssertEqual(subject.durationLabel.textColor, subject.appearance.colorPalette.textLowEmphasis)
+        XCTAssertEqual(subject.durationLabel.textColor, subject.appearance.colorPalette.textTertiary)
         XCTAssertEqual(subject.durationLabel.font, .monospacedDigitSystemFont(
             ofSize: subject.appearance.fonts.caption1.pointSize, weight: .medium
         ))
     }
 
     func test_setUpAppearance_playbackRateButtonWasConfiguredCorrectly() {
-        XCTAssertEqual(subject.playbackRateButton.titleColor(for: .normal), subject.appearance.colorPalette.staticBlackColorText)
+        XCTAssertEqual(subject.playbackRateButton.titleColor(for: .normal), subject.appearance.colorPalette.textPrimary)
         XCTAssertEqual(subject.playbackRateButton.titleLabel?.font, subject.appearance.fonts.footnote)
     }
 

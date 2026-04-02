@@ -47,7 +47,7 @@ import XCTest
 
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
-        appearance.colorPalette.border = .cyan
+        appearance.colorPalette.borderCoreDefault = .cyan
 
         vc.appearance = appearance
 

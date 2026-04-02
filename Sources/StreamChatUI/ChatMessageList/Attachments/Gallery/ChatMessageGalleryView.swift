@@ -122,8 +122,8 @@ open class ChatMessageGalleryView: _View, ThemeProvider {
         moreItemsOverlay.font = appearance.fonts.title
         moreItemsOverlay.adjustsFontForContentSizeCategory = true
         moreItemsOverlay.textAlignment = .center
-        moreItemsOverlay.textColor = appearance.colorPalette.staticColorText
-        moreItemsOverlay.backgroundColor = appearance.colorPalette.background5
+        moreItemsOverlay.textColor = appearance.colorPalette.textOnAccent
+        moreItemsOverlay.backgroundColor = appearance.colorPalette.backgroundCoreScrim
     }
 
     override open func updateContent() {

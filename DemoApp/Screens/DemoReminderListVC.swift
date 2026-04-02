@@ -121,7 +121,7 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
     private var emptyStateLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
-        label.textColor = Appearance.default.colorPalette.subtitleText
+        label.textColor = Appearance.default.colorPalette.textSecondary
         label.font = Appearance.default.fonts.body
         return label
     }()
@@ -129,7 +129,7 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
     private lazy var emptyStateImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(systemName: "bell.slash"))
         imageView.contentMode = .scaleAspectFit
-        imageView.tintColor = Appearance.default.colorPalette.subtitleText
+        imageView.tintColor = Appearance.default.colorPalette.textSecondary
         return imageView
     }()
 
@@ -222,11 +222,11 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
     }
     
     private func setupViews() {
-        view.backgroundColor = Appearance.default.colorPalette.background
-        tableView.backgroundColor = Appearance.default.colorPalette.background
+        view.backgroundColor = Appearance.default.colorPalette.backgroundCoreApp
+        tableView.backgroundColor = Appearance.default.colorPalette.backgroundCoreApp
 
         let headerView = UIView(frame: CGRect(x: 0, y: 0, width: view.bounds.width, height: 50))
-        headerView.backgroundColor = Appearance.default.colorPalette.background
+        headerView.backgroundColor = Appearance.default.colorPalette.backgroundCoreApp
         headerView.addSubview(filtersScrollView)
         filtersScrollView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -312,8 +312,8 @@ class DemoReminderListVC: UIViewController, ThemeProvider {
                 button.backgroundColor = Appearance.default.colorPalette.accentPrimary
                 button.setTitleColor(.white, for: .normal)
             } else {
-                button.backgroundColor = Appearance.default.colorPalette.background2
-                button.setTitleColor(Appearance.default.colorPalette.text, for: .normal)
+                button.backgroundColor = Appearance.default.colorPalette.backgroundCoreSurfaceStrong
+                button.setTitleColor(Appearance.default.colorPalette.textPrimary, for: .normal)
             }
         }
         
@@ -588,15 +588,15 @@ class DemoReminderCell: UITableViewCell {
     private let channelNameLabel: UILabel = {
         let label = UILabel()
         label.font = Appearance.default.fonts.bodyBold
-        label.textColor = Appearance.default.colorPalette.text
+        label.textColor = Appearance.default.colorPalette.textPrimary
         return label
     }()
-    
+
     private let messageLabel: UILabel = {
         let label = UILabel()
         label.font = Appearance.default.fonts.footnote
         label.numberOfLines = 2
-        label.textColor = Appearance.default.colorPalette.subtitleText
+        label.textColor = Appearance.default.colorPalette.textSecondary
         return label
     }()
     
@@ -611,7 +611,7 @@ class DemoReminderCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = Appearance.default.fonts.footnoteBold
-        label.textColor = Appearance.default.colorPalette.staticColorText
+        label.textColor = Appearance.default.colorPalette.textOnAccent
         label.textAlignment = .center
         return label
     }()
@@ -625,7 +625,7 @@ class DemoReminderCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        backgroundColor = Appearance.default.colorPalette.background
+        backgroundColor = Appearance.default.colorPalette.backgroundCoreApp
         setupViews()
     }
 
@@ -688,7 +688,7 @@ class DemoReminderCell: UITableViewCell {
             if remindAt < now {
                 let timeInterval = now.timeIntervalSince(remindAt)
                 dueDateLabel.text = formatOverdueTime(timeInterval: timeInterval)
-                dueDateContainer.backgroundColor = Appearance.default.colorPalette.alert
+                dueDateContainer.backgroundColor = Appearance.default.colorPalette.accentError
             } else {
                 let timeInterval = remindAt.timeIntervalSince(now)
                 dueDateLabel.text = "Due in \(formatDueTime(timeInterval: timeInterval))"

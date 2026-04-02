@@ -125,14 +125,14 @@ open class ComposerView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.background
+        backgroundColor = appearance.colorPalette.backgroundCoreApp
         layer.shadowColor = UIColor.systemGray.cgColor
         layer.shadowOpacity = 1
         layer.shadowOffset = .zero
         layer.shadowRadius = 0.5
 
         titleLabel.textAlignment = .center
-        titleLabel.textColor = appearance.colorPalette.text
+        titleLabel.textColor = appearance.colorPalette.textPrimary
         titleLabel.font = appearance.fonts.bodyBold
         titleLabel.adjustsFontForContentSizeCategory = true
     }

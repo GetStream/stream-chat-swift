@@ -108,7 +108,7 @@ import XCTest
 
     func test_appearanceCustomization_usingUIConfig() {
         var appearance = Appearance()
-        appearance.colorPalette.popoverBackground = .cyan
+        appearance.colorPalette.backgroundCoreElevation1 = .cyan
 
         vc.appearance = appearance
 

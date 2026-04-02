@@ -63,10 +63,10 @@ open class UploadingOverlayView: _View, ThemeProvider {
         super.setUpAppearance()
 
         uploadingProgressLabel.numberOfLines = 0
-        uploadingProgressLabel.textColor = appearance.colorPalette.textInverted
+        uploadingProgressLabel.textColor = appearance.colorPalette.textOnInverse
         uploadingProgressLabel.font = appearance.fonts.footnote
 
-        bottomContainer.backgroundColor = appearance.colorPalette.background4
+        bottomContainer.backgroundColor = appearance.colorPalette.backgroundCoreScrim
     }
 
     override open func setUpLayout() {
@@ -101,7 +101,7 @@ open class UploadingOverlayView: _View, ThemeProvider {
             case .uploaded:
                 return nil
             default:
-                return appearance.colorPalette.background3
+                return appearance.colorPalette.backgroundCoreOverlayDark
             }
         }
 

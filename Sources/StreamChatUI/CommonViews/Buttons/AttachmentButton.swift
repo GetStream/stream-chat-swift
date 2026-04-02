@@ -14,7 +14,7 @@ open class AttachmentButton: _Button, AppearanceProvider {
         let clipIcon = appearance
             .images
             .openAttachments
-            .tinted(with: appearance.colorPalette.inactiveTint)
+            .tinted(with: appearance.colorPalette.inputTextIcon)
         setImage(clipIcon, for: .normal)
     }
 }

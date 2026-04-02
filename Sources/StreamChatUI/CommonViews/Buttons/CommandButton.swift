@@ -14,7 +14,7 @@ open class CommandButton: _Button, AppearanceProvider {
         let boltIcon = appearance
             .images
             .commands
-            .tinted(with: appearance.colorPalette.inactiveTint)
+            .tinted(with: appearance.colorPalette.inputTextIcon)
         setImage(boltIcon, for: .normal)
     }
 }

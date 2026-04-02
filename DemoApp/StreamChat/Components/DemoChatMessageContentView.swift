@@ -43,12 +43,12 @@ final class DemoChatMessageContentView: ChatMessageContentView {
             backgroundColor = UIColor(red: 0.984, green: 0.957, blue: 0.867, alpha: 1)
             pinInfoLabel = UILabel()
             pinInfoLabel?.font = appearance.fonts.footnote
-            pinInfoLabel?.textColor = appearance.colorPalette.textLowEmphasis
+            pinInfoLabel?.textColor = appearance.colorPalette.textTertiary
             bubbleThreadFootnoteContainer.insertArrangedSubview(pinInfoLabel!, at: 0)
         }
 
         if options.contains(.saveForLaterInfo) {
-            backgroundColor = appearance.colorPalette.highlightedAccentBackground1
+            backgroundColor = appearance.colorPalette.backgroundCoreElevation1
             bubbleThreadFootnoteContainer.insertArrangedSubview(saveForLaterView, at: 0)
             saveForLaterView.topAnchor.constraint(
                 equalTo: bubbleThreadFootnoteContainer.topAnchor,
@@ -61,7 +61,7 @@ final class DemoChatMessageContentView: ChatMessageContentView {
         super.updateContent()
 
         if content?.isShadowed == true {
-            textView?.textColor = appearance.colorPalette.textLowEmphasis
+            textView?.textColor = appearance.colorPalette.textTertiary
             textView?.text = "This message is from a shadow banned user"
         }
 
