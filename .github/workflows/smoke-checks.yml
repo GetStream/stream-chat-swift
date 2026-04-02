@@ -33,6 +33,7 @@ jobs:
       actions: write
       pull-requests: read
     steps:
+      - uses: actions/checkout@v4.1.1
       - uses: ./.github/actions/ci-guard
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}

@@ -27,6 +27,10 @@ jobs:
     env:
       GITHUB_TOKEN: '${{ secrets.CI_BOT_GITHUB_TOKEN }}'
     steps:
+      - uses: actions/checkout@v3.1.0
+        with:
+          fetch-depth: 0 # to fetch git tags
+
       - uses: ./.github/actions/ci-guard
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -39,10 +43,6 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: 3.12 # gsutil requires Python version 3.8-3.12
-
-      - uses: actions/checkout@v3.1.0
-        with:
-          fetch-depth: 0 # to fetch git tags
 
       - uses: ./.github/actions/bootstrap
         env:
