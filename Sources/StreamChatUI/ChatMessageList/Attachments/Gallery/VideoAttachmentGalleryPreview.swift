@@ -45,6 +45,7 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
         imageView.layer.masksToBounds = true
 
         playButton.setImage(appearance.images.bigPlay, for: .normal)
+        playButton.tintColor = appearance.colorPalette.textPrimary
     }
 
     override open func setUp() {

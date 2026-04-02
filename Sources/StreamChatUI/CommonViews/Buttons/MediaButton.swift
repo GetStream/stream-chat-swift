@@ -7,7 +7,6 @@ import StreamChatCommonUI
 import UIKit
 
 /// A button that is being used in the VoiceRecording flow and represents a functionality on the playback.
-/// - Note: As a MediaButton the appearance is common between light/dark mode.
 open class MediaButton: _Button, AppearanceProvider {
     override open var isHighlighted: Bool {
         didSet {
