@@ -172,7 +172,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
             : appearance.colorPalette.backgroundCoreSurfaceSubtle
         
         setText(message.textContent ?? "")
-        setAvatar(imageUrl: message.author.imageURL)
+        setAvatar(imageUrl: message.author.imageURL, authorName: message.author.name)
         setAvatarAlignment(avatarAlignment)
 
         if isAttachmentsEmpty {
@@ -213,10 +213,16 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         textView.attributedText = attributedText
     }
 
-    /// Sets the avatar image from a url or sets the placeholder image if the url is `nil`.
-    /// - Parameter imageUrl: The url of the image.
-    open func setAvatar(imageUrl: URL?) {
-        let placeholder = appearance.images.userAvatarPlaceholder1
+    /// Sets the avatar image from a url, falling back to an initials placeholder.
+    /// - Parameters:
+    ///   - imageUrl: The url of the avatar image.
+    ///   - authorName: The author's display name used to generate the initials placeholder.
+    open func setAvatar(imageUrl: URL?, authorName: String?) {
+        let placeholder = UserAvatarInitialsImage.image(
+            name: authorName ?? "",
+            size: components.avatarThumbnailSize,
+            appearance: appearance
+        )
         components.imageLoader.loadImage(
             into: authorAvatarView.imageView,
             from: imageUrl,

@@ -38,6 +38,22 @@ import XCTest
         AssertSnapshot(avatarViewOffline, variants: .onlyUserInterfaceStyles, suffix: "without online indicator")
     }
 
+    func test_defaultAppearance_withNoImageURL_showsInitials() {
+        let view = ChatUserAvatarView().withoutAutoresizingMaskConstraints
+        view.addSizeConstraints()
+        view.components = .mock
+        view.content = .mock(id: .unique, name: "Luke Skywalker", imageURL: nil, isOnline: false)
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_defaultAppearance_withNoImageURLAndNoName_showsPersonIcon() {
+        let view = ChatUserAvatarView().withoutAutoresizingMaskConstraints
+        view.addSizeConstraints()
+        view.components = .mock
+        view.content = .mock(id: .unique, name: nil, imageURL: nil, isOnline: false)
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
     func test_appearance_whenOnlineIndicatorDisabled() {
         let avatarViewOnline = ChatUserAvatarView().withoutAutoresizingMaskConstraints
         avatarViewOnline.addSizeConstraints()

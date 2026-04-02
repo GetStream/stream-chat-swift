@@ -239,22 +239,6 @@ final class DatabaseContainer_Tests: XCTestCase {
         }
     }
 
-    func test_deletedMessagesVisibility_isStoredInAllContexts() {
-        let visibility = ChatClientConfig.DeletedMessageVisibility.alwaysVisible
-
-        let database = DatabaseContainer_Spy(kind: .inMemory, deletedMessagesVisibility: visibility)
-
-        XCTAssertEqual(database.viewContext.deletedMessagesVisibility, visibility)
-
-        database.writableContext.performAndWait {
-            XCTAssertEqual(database.writableContext.deletedMessagesVisibility, visibility)
-        }
-
-        database.backgroundReadOnlyContext.performAndWait {
-            XCTAssertEqual(database.backgroundReadOnlyContext.deletedMessagesVisibility, visibility)
-        }
-    }
-
     func test_shouldShowShadowedMessages_isStoredInAllContexts() {
         let shouldShowShadowedMessages = Bool.random()
 
@@ -475,10 +459,6 @@ private extension DatabaseContainer {
 }
 
 private extension NSManagedObjectContext {
-    var deletedMessagesVisibility: ChatClientConfig.DeletedMessageVisibility {
-        chatClientConfig?.deletedMessagesVisibility ?? .alwaysVisible
-    }
-
     var shouldShowShadowedMessages: Bool {
         chatClientConfig?.shouldShowShadowedMessages ?? false
     }

@@ -1328,7 +1328,6 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_asModel_populatesLatestMessage_withoutFilteringDeletedMessages() throws {
         // GIVEN
         var config = ChatClientConfig(apiKeyString: .unique)
-        config.deletedMessagesVisibility = .visibleForCurrentUser
         config.shouldShowShadowedMessages = true
         config.localCaching = .init(
             chatChannel: .init(
