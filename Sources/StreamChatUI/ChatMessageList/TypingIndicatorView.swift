@@ -56,8 +56,8 @@ open class TypingIndicatorView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.overlayBackground
-        informationLabel.textColor = appearance.colorPalette.subtitleText
+        backgroundColor = appearance.colorPalette.chatBackgroundIncoming.withAlphaComponent(0.75)
+        informationLabel.textColor = appearance.colorPalette.chatTextTypingIndicator
         informationLabel.font = appearance.fonts.body
     }
 

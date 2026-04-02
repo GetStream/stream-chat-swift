@@ -60,7 +60,7 @@ class LocationSelectionViewController: UIViewController, ThemeProvider {
     private lazy var bottomContainer: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = appearance.colorPalette.background
+        view.backgroundColor = appearance.colorPalette.backgroundCoreApp
         view.layer.cornerRadius = 16
         view.clipsToBounds = true
         view.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
@@ -95,7 +95,7 @@ class LocationSelectionViewController: UIViewController, ThemeProvider {
     }
 
     private func setupView() {
-        view.backgroundColor = appearance.colorPalette.background
+        view.backgroundColor = appearance.colorPalette.backgroundCoreApp
         
         view.addSubview(mapView)
         view.addSubview(bottomContainer)
@@ -248,21 +248,21 @@ class LocationOptionButton: UIButton, ThemeProvider {
     }
 
     private func setupButton() {
-        backgroundColor = appearance.colorPalette.background
+        backgroundColor = appearance.colorPalette.backgroundCoreApp
         layer.cornerRadius = 12
         layer.borderWidth = 1
-        layer.borderColor = appearance.colorPalette.border.cgColor
+        layer.borderColor = appearance.colorPalette.borderCoreDefault.cgColor
         translatesAutoresizingMaskIntoConstraints = false
 
         iconImageView.contentMode = .scaleAspectFit
         iconImageView.tintColor = appearance.colorPalette.accentPrimary
 
         textLabel.font = appearance.fonts.bodyBold
-        textLabel.textColor = appearance.colorPalette.text
+        textLabel.textColor = appearance.colorPalette.textPrimary
         textLabel.numberOfLines = 1
 
         descriptionLabel.font = appearance.fonts.footnote
-        descriptionLabel.textColor = appearance.colorPalette.subtitleText
+        descriptionLabel.textColor = appearance.colorPalette.textSecondary
         descriptionLabel.numberOfLines = 1
 
         let container = HContainer(spacing: 16, alignment: .center) {
@@ -317,9 +317,9 @@ class LocationOptionButton: UIButton, ThemeProvider {
     private func updateBackgroundColor() {
         UIView.animate(withDuration: 0.1) {
             if self.isHighlighted {
-                self.backgroundColor = self.appearance.colorPalette.background6
+                self.backgroundColor = self.appearance.colorPalette.backgroundCoreSurfaceDefault
             } else {
-                self.backgroundColor = self.appearance.colorPalette.background
+                self.backgroundColor = self.appearance.colorPalette.backgroundCoreApp
             }
         }
     }

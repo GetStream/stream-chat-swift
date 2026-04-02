@@ -67,7 +67,7 @@ open class PollAllOptionsListVC:
             target: self,
             action: #selector(didTapCloseButton(sender:))
         )
-        navigationItem.leftBarButtonItem?.tintColor = appearance.colorPalette.background7
+        navigationItem.leftBarButtonItem?.tintColor = appearance.colorPalette.accentNeutral
 
         tableView.register(PollAllOptionsListItemCell.self)
 
@@ -85,7 +85,7 @@ open class PollAllOptionsListVC:
 
         title = L10n.Polls.allOptionsTitle
         tableView.allowsSelection = true
-        tableView.backgroundColor = appearance.colorPalette.background
+        tableView.backgroundColor = appearance.colorPalette.backgroundCoreApp
         tableView.sectionHeaderHeight = 0
         tableView.sectionFooterHeight = 24
         tableView.separatorStyle = .none
@@ -119,10 +119,10 @@ open class PollAllOptionsListVC:
         case .name:
             let cell = UITableViewCell()
             cell.selectionStyle = .none
-            cell.backgroundColor = appearance.colorPalette.background1
+            cell.backgroundColor = appearance.colorPalette.backgroundCoreSurfaceSubtle
             cell.textLabel?.numberOfLines = 0
             cell.textLabel?.text = pollController.poll?.name
-            cell.textLabel?.textColor = appearance.colorPalette.text
+            cell.textLabel?.textColor = appearance.colorPalette.textPrimary
             return cell
         case .options:
             let cell = tableView.dequeueReusableCell(with: PollAllOptionsListItemCell.self, for: indexPath)

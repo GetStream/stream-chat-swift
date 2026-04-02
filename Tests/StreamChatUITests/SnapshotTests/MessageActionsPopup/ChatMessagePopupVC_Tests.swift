@@ -107,7 +107,7 @@ extension ChatMessagePopupVC: AppearanceProvider {}
 
     func test_appearanceCustomization_usingAppearance() {
         var config = Appearance()
-        config.colorPalette.border = .cyan
+        config.colorPalette.borderCoreDefault = .cyan
 
         vc.appearance = config
 

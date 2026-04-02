@@ -42,9 +42,9 @@ final class DemoConnectionBannerView: UIView {
     }
 
     private func defaultAppearance() {
-        backgroundColor = Appearance.default.colorPalette.border2.withAlphaComponent(0.9)
+        backgroundColor = Appearance.default.colorPalette.borderCoreStrong.withAlphaComponent(0.9)
         label.textAlignment = .center
         label.font = Appearance.default.fonts.body
-        label.textColor = Appearance.default.colorPalette.popoverBackground
+        label.textColor = Appearance.default.colorPalette.backgroundCoreElevation1
     }
 }

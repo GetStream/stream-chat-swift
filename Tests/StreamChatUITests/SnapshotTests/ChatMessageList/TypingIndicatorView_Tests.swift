@@ -25,9 +25,9 @@ import XCTest
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
 
-        appearance.colorPalette.overlayBackground = .brown
+        appearance.colorPalette.backgroundCoreOverlayLight = .brown
         appearance.fonts.body = .italicSystemFont(ofSize: 20)
-        appearance.colorPalette.subtitleText = .green
+        appearance.colorPalette.textSecondary = .green
 
         let view = TypingIndicatorView().withoutAutoresizingMaskConstraints
         view.appearance = appearance

@@ -46,9 +46,9 @@ open class PollResultsVoteItemView: _View, ThemeProvider {
 
         authorAvatarView.shouldShowOnlineIndicator = false
         authorNameLabel.font = appearance.fonts.body
-        authorNameLabel.textColor = appearance.colorPalette.text
+        authorNameLabel.textColor = appearance.colorPalette.textPrimary
         voteTimestampLabel.font = appearance.fonts.body.withSize(14)
-        voteTimestampLabel.textColor = appearance.colorPalette.textLowEmphasis
+        voteTimestampLabel.textColor = appearance.colorPalette.textTertiary
     }
 
     override open func setUpLayout() {

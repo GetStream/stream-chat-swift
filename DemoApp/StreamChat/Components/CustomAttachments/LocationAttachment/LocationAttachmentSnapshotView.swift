@@ -80,7 +80,7 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
         button.translatesAutoresizingMaskIntoConstraints = false
         button.setTitle("Stop Sharing", for: .normal)
         button.titleLabel?.font = .preferredFont(forTextStyle: .footnote)
-        button.setTitleColor(appearance.colorPalette.alert, for: .normal)
+        button.setTitleColor(appearance.colorPalette.accentError, for: .normal)
         button.backgroundColor = .clear
         button.layer.cornerRadius = 16
         button.addTarget(self, action: #selector(handleStopButtonTap), for: .touchUpInside)
@@ -119,7 +119,7 @@ class LocationAttachmentSnapshotView: _View, ThemeProvider {
     override func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.background6
+        backgroundColor = appearance.colorPalette.backgroundCoreSurfaceDefault
     }
 
     override func setUpLayout() {

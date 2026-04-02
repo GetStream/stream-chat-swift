@@ -33,7 +33,6 @@ open class LinkAttachmentViewInjector: AttachmentViewInjector {
 
     override open func contentViewDidUpdateContent() {
         linkPreviewView.content = contentView.content?.linkAttachments.first
-        contentView.bubbleView?.backgroundColor = contentView.appearance.colorPalette.highlightedAccentBackground1
     }
 
     /// Triggered when `attachment` is tapped.

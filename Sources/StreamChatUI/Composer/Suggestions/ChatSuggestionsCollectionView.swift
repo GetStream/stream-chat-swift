@@ -34,7 +34,7 @@ open class ChatSuggestionsCollectionView: UICollectionView,
     public func setUp() {}
 
     public func setUpAppearance() {
-        backgroundColor = appearance.colorPalette.popoverBackground
+        backgroundColor = appearance.colorPalette.backgroundCoreElevation1
         showsVerticalScrollIndicator = false
         showsHorizontalScrollIndicator = false
         bounces = true

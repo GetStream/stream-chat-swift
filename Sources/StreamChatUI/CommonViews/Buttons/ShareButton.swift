@@ -25,10 +25,10 @@ open class ShareButton: _Button, AppearanceProvider {
 
         if isHighlighted {
             tintColor = appearance.colorPalette.highlightedColorForColor(
-                appearance.colorPalette.text
+                appearance.colorPalette.textPrimary
             )
         } else {
-            tintColor = appearance.colorPalette.text
+            tintColor = appearance.colorPalette.textPrimary
         }
     }
 }

@@ -31,10 +31,10 @@ open class ChatMessagesCountDecorationView: ChatMessageDecorationView, Appearanc
         super.setUpAppearance()
 
         backgroundColor = nil
-        container.backgroundColor = appearance.colorPalette.background6
+        container.backgroundColor = appearance.colorPalette.backgroundCoreSurfaceDefault
 
         textLabel.font = appearance.fonts.caption1.bold
-        textLabel.textColor = appearance.colorPalette.textLowEmphasis
+        textLabel.textColor = appearance.colorPalette.textTertiary
         textLabel.textAlignment = .center
     }
 }

@@ -118,13 +118,13 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         textView.backgroundColor = .clear
         textView.font = appearance.fonts.subheadline
         textView.textContainerInset = .zero
-        textView.textColor = appearance.colorPalette.text
+        textView.textColor = appearance.colorPalette.textPrimary
 
         authorAvatarView.contentMode = .scaleAspectFit
 
         contentContainerView.layer.cornerRadius = 16
         contentContainerView.layer.borderWidth = 1
-        contentContainerView.layer.borderColor = appearance.colorPalette.border.cgColor
+        contentContainerView.layer.borderColor = appearance.colorPalette.borderCoreDefault.cgColor
         contentContainerView.layer.masksToBounds = true
     }
 
@@ -168,8 +168,8 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         guard let avatarAlignment = content?.avatarAlignment else { return }
 
         contentContainerView.backgroundColor = message.linkAttachments.isEmpty
-            ? appearance.colorPalette.popoverBackground
-            : appearance.colorPalette.highlightedAccentBackground1
+            ? appearance.colorPalette.backgroundCoreElevation1
+            : appearance.colorPalette.backgroundCoreSurfaceSubtle
         
         setText(message.textContent ?? "")
         setAvatar(imageUrl: message.author.imageURL, authorName: message.author.name)
@@ -197,7 +197,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
     open func setText(_ text: String) {
         guard text != textView.text else { return }
         
-        let color = content?.message.isDeleted == true ? appearance.colorPalette.textLowEmphasis : appearance.colorPalette.text
+        let color = content?.message.isDeleted == true ? appearance.colorPalette.textTertiary : appearance.colorPalette.textPrimary
         let attributedText = NSMutableAttributedString(
             string: text,
             attributes: [

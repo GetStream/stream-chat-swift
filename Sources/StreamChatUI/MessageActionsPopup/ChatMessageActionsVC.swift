@@ -77,7 +77,7 @@ open class ChatMessageActionsVC: _ViewController, ThemeProvider {
         super.setUpAppearance()
         messageActionsContainerStackView.layer.cornerRadius = 16
         messageActionsContainerStackView.layer.masksToBounds = true
-        messageActionsContainerStackView.backgroundColor = appearance.colorPalette.border
+        messageActionsContainerStackView.backgroundColor = appearance.colorPalette.borderCoreDefault
     }
 
     override open func updateContent() {

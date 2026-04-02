@@ -71,7 +71,7 @@ import XCTest
         // Simulate background.
         let backgroundView = UIView()
             .withoutAutoresizingMaskConstraints
-        backgroundView.backgroundColor = view.appearance.colorPalette.background
+        backgroundView.backgroundColor = view.appearance.colorPalette.backgroundCoreApp
         backgroundView.embed(view)
 
         AssertSnapshot(backgroundView)
@@ -113,7 +113,7 @@ import XCTest
 
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
-        appearance.colorPalette.text = .blue
+        appearance.colorPalette.textPrimary = .blue
 
         let view = ChatMessageActionControl().withoutAutoresizingMaskConstraints
         view.content = content

@@ -33,9 +33,9 @@ import XCTest
         subject.setUpAppearance()
 
         XCTAssertNil(subject.backgroundColor)
-        XCTAssertEqual(subject.container.backgroundColor, subject.appearance.colorPalette.background7)
+        XCTAssertEqual(subject.container.backgroundColor, subject.appearance.colorPalette.backgroundCoreSurfaceSubtle)
         XCTAssertEqual(subject.textLabel.font, subject.appearance.fonts.footnote)
-        XCTAssertEqual(subject.textLabel.textColor, subject.appearance.colorPalette.staticColorText)
+        XCTAssertEqual(subject.textLabel.textColor, subject.appearance.colorPalette.chatTextSystem)
     }
 
     // MARK: - updateContent

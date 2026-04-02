@@ -23,13 +23,13 @@ open class AudioVisualizationView: _View, ComponentsProvider, AppearanceProvider
     // MARK: - Configuration Properties
 
     /// The colour of the waveform bar that isn't part of the "played" duration.
-    open var barColor: UIColor { appearance.colorPalette.textLowEmphasis }
+    open var barColor: UIColor { appearance.colorPalette.textTertiary }
 
     /// The colour of the waveform bar that is part of the "played" duration.
     open var highlightedBarColor: UIColor { appearance.colorPalette.accentPrimary }
 
     /// The colour of the waveform bar's background.
-    open var barBackgroundColor: UIColor { appearance.colorPalette.background }
+    open var barBackgroundColor: UIColor { appearance.colorPalette.backgroundCoreApp }
 
     /// The rendering mode of the waveform. On `.write` the view scrolls to accommodate new points
     /// while in `.read` it scales(up or down) all dataPoints to it's current size.

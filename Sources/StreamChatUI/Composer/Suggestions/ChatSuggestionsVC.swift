@@ -62,7 +62,7 @@ open class ChatSuggestionsVC: _ViewController,
     override open func setUpAppearance() {
         super.setUpAppearance()
         view.backgroundColor = .clear
-        view.layer.addShadow(color: appearance.colorPalette.shadow)
+        view.layer.addShadow(color: appearance.colorPalette.backgroundCoreOverlayDark)
     }
 
     override open func setUpLayout() {

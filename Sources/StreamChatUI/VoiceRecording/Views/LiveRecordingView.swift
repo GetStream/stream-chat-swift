@@ -102,16 +102,16 @@ open class LiveRecordingView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        backgroundColor = appearance.colorPalette.background
+        backgroundColor = appearance.colorPalette.backgroundCoreApp
 
         playbackButton.setImage(appearance.images.recordingPlay, for: .normal)
         playbackButton.setImage(appearance.images.recordingPause, for: .selected)
         playbackButton.tintColor = appearance.colorPalette.accentPrimary
 
         recordingIndicator.contentMode = .center
-        recordingIndicator.image = appearance.images.mic.tinted(with: appearance.colorPalette.alert)
+        recordingIndicator.image = appearance.images.mic.tinted(with: appearance.colorPalette.accentError)
 
-        durationLabel.textColor = appearance.colorPalette.textLowEmphasis
+        durationLabel.textColor = appearance.colorPalette.textTertiary
         durationLabel.font = .monospacedDigitSystemFont(ofSize: appearance.fonts.footnote.pointSize, weight: .medium)
     }
 

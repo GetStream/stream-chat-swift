@@ -196,7 +196,7 @@ open class ChatChannelVC: _ViewController,
     override open func setUpLayout() {
         super.setUpLayout()
 
-        view.backgroundColor = appearance.colorPalette.background
+        view.backgroundColor = appearance.colorPalette.backgroundCoreApp
 
         addChildViewController(messageListVC, targetView: view)
         messageListVC.view.pin(anchors: [.top, .leading, .trailing], to: view.safeAreaLayoutGuide)

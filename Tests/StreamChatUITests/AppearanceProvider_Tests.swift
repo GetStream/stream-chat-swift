@@ -14,15 +14,15 @@ import XCTest
         let subView = TestAppearanceView()
         var appearance = Appearance()
         // Set some random color to check if the appearance is passed down
-        appearance.colorPalette.alternativeActiveTint = testColor
+        appearance.colorPalette.accentSuccess = testColor
 
         parentView.addSubview(subView)
         parentView.appearance = appearance
 
         // We can only compare string descriptions, which should be good enough
         XCTAssertEqual(
-            String(describing: subView.appearance.colorPalette.alternativeActiveTint),
-            String(describing: appearance.colorPalette.alternativeActiveTint)
+            String(describing: subView.appearance.colorPalette.accentSuccess),
+            String(describing: appearance.colorPalette.accentSuccess)
         )
     }
 
@@ -32,7 +32,7 @@ import XCTest
         let subView = TestAppearanceView()
         var appearance = Appearance()
         // Set some random color to check if the appearance is passed down
-        appearance.colorPalette.alternativeActiveTint = testColor
+        appearance.colorPalette.accentSuccess = testColor
 
         parentView.addSubview(intermediateView)
         intermediateView.addSubview(subView)
@@ -40,8 +40,8 @@ import XCTest
 
         // We can only compare string descriptions, which should be good enough
         XCTAssertEqual(
-            String(describing: subView.appearance.colorPalette.alternativeActiveTint),
-            String(describing: appearance.colorPalette.alternativeActiveTint)
+            String(describing: subView.appearance.colorPalette.accentSuccess),
+            String(describing: appearance.colorPalette.accentSuccess)
         )
     }
 
@@ -54,8 +54,8 @@ import XCTest
 
         // We can only compare string descriptions, which should be good enough
         XCTAssertEqual(
-            String(describing: subView.appearance.colorPalette.alternativeActiveTint),
-            String(describing: defaultAppearance.colorPalette.alternativeActiveTint)
+            String(describing: subView.appearance.colorPalette.accentSuccess),
+            String(describing: defaultAppearance.colorPalette.accentSuccess)
         )
     }
 
@@ -63,7 +63,7 @@ import XCTest
         let vc = TestAppearanceViewController()
         var appearance = Appearance()
         // Set some random color to check if the appearance is passed down
-        appearance.colorPalette.alternativeActiveTint = testColor
+        appearance.colorPalette.accentSuccess = testColor
 
         vc.appearance = appearance
 
@@ -72,8 +72,8 @@ import XCTest
 
         // We can only compare string descriptions, which should be good enough
         XCTAssertEqual(
-            String(describing: vc.subView.appearance.colorPalette.alternativeActiveTint),
-            String(describing: appearance.colorPalette.alternativeActiveTint)
+            String(describing: vc.subView.appearance.colorPalette.accentSuccess),
+            String(describing: appearance.colorPalette.accentSuccess)
         )
     }
 }

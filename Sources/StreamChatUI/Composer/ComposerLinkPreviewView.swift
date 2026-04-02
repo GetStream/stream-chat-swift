@@ -84,9 +84,9 @@ open class ComposerLinkPreviewView: _View, ThemeProvider {
         titleLabel.font = appearance.fonts.footnoteBold
         descriptionLabel.font = appearance.fonts.footnote
 
-        backgroundColor = appearance.colorPalette.background
+        backgroundColor = appearance.colorPalette.backgroundCoreApp
         closeButton.setImage(appearance.images.discard, for: .normal)
-        closeButton.tintColor = appearance.colorPalette.textLowEmphasis
+        closeButton.tintColor = appearance.colorPalette.textTertiary
         divider.backgroundColor = appearance.colorPalette.accentPrimary
     }
 

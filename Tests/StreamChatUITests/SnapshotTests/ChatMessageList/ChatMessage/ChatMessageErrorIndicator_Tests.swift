@@ -13,7 +13,7 @@ import XCTest
     func test_appearanceCustomization_usingAppearance() {
         // Create custom appearance
         var appearance = Appearance()
-        appearance.colorPalette.alert = Appearance.default.colorPalette.highlightedAccentBackground1
+        appearance.colorPalette.accentError = Appearance.default.colorPalette.backgroundCoreSurfaceSubtle
 
         // Create an error indicator
         let errorIndicator = ChatMessageErrorIndicator().withoutAutoresizingMaskConstraints
@@ -30,7 +30,7 @@ import XCTest
         class TestErrorIndicator: ChatMessageErrorIndicator {
             override func setUpAppearance() {
                 setImage(appearance.images.close, for: .normal)
-                tintColor = appearance.colorPalette.highlightedAccentBackground1
+                tintColor = appearance.colorPalette.backgroundCoreSurfaceSubtle
             }
         }
 

@@ -76,16 +76,16 @@ extension ChatMessageFileAttachmentListView {
         override open func setUpAppearance() {
             super.setUpAppearance()
 
-            fileSizeLabel.textColor = appearance.colorPalette.subtitleText
+            fileSizeLabel.textColor = appearance.colorPalette.textSecondary
             fileSizeLabel.font = appearance.fonts.subheadlineBold
             fileNameLabel.font = appearance.fonts.bodyBold
             fileNameLabel.lineBreakMode = .byTruncatingMiddle
             fileIconImageView.contentMode = .center
-            backgroundColor = appearance.colorPalette.popoverBackground
+            backgroundColor = appearance.colorPalette.backgroundCoreElevation1
             layer.cornerRadius = 12
             layer.masksToBounds = true
             layer.borderWidth = 1
-            layer.borderColor = appearance.colorPalette.border.cgColor
+            layer.borderColor = appearance.colorPalette.borderCoreDefault.cgColor
         }
 
         override open func setUpLayout() {
