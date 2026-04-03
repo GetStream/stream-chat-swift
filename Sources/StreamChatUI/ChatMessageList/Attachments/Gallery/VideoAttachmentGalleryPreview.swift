@@ -33,8 +33,8 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
         .uploadingOverlayView.init()
         .withoutAutoresizingMaskConstraints
 
-    /// A button displaying `play` icon.
-    open private(set) lazy var playButton = UIButton()
+    /// A button displaying the play icon over the video thumbnail.
+    open private(set) lazy var playButton: UIButton = VideoPlayIndicatorView()
         .withoutAutoresizingMaskConstraints
 
     override open func setUpAppearance() {
@@ -43,9 +43,6 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
         imageView.backgroundColor = appearance.colorPalette.backgroundCoreSurfaceSubtle
         imageView.contentMode = .scaleAspectFill
         imageView.layer.masksToBounds = true
-
-        playButton.setImage(appearance.images.bigPlay, for: .normal)
-        playButton.tintColor = appearance.colorPalette.textPrimary
     }
 
     override open func setUp() {
@@ -106,7 +103,7 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
 
     private func showPreview(using thumbnailURL: URL) {
         components.imageLoader.downloadImage(with: .init(url: thumbnailURL, options: ImageDownloadOptions())) { [weak self] result in
-            Task { @MainActor in
+            StreamConcurrency.onMain {
                 self?.loadingIndicator.isHidden = true
                 guard case let .success(image) = result else { return }
                 self?.showPreview(using: image)

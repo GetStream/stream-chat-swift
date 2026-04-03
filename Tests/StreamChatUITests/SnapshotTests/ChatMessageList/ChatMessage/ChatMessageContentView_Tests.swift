@@ -1056,6 +1056,64 @@ import XCTest
     }
 }
 
+// MARK: - Video Attachment
+
+extension ChatMessageContentView_Tests {
+    func test_appearance_whenMessageWithVideoAttachment_incoming() {
+        let videoAttachment: ChatMessageVideoAttachment = .mock(
+            id: .unique,
+            thumbnailURL: TestImages.yoda.url,
+            localState: nil
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "",
+            author: myFriend,
+            createdAt: createdAt,
+            attachments: [videoAttachment.asAnyAttachment],
+            isSentByCurrentUser: false
+        )
+
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            components: .mock,
+            attachmentInjector: GalleryAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenMessageWithVideoAttachment_outgoing() {
+        let videoAttachment: ChatMessageVideoAttachment = .mock(
+            id: .unique,
+            thumbnailURL: TestImages.yoda.url,
+            localState: nil
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "",
+            author: me,
+            createdAt: createdAt,
+            attachments: [videoAttachment.asAnyAttachment],
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            components: .mock,
+            attachmentInjector: GalleryAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+}
+
 // MARK: - Helpers
 
 private extension ChatMessageContentView_Tests {
