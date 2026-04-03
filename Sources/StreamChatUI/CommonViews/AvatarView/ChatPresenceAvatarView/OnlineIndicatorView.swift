@@ -20,7 +20,7 @@ import UIKit
 open class OnlineIndicatorView: _View, AppearanceProvider, MaskProviding {
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = appearance.colorPalette.alternativeActiveTint
+        backgroundColor = appearance.colorPalette.accentSuccess
     }
 
     override open func setUpLayout() {

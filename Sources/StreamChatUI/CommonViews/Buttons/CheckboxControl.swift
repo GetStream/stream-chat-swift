@@ -45,7 +45,7 @@ open class CheckboxControl: _Control, AppearanceProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
         label.font = appearance.fonts.subheadline
-        label.textColor = appearance.colorPalette.subtitleText
+        label.textColor = appearance.colorPalette.textSecondary
 
         checkbox.layer.cornerRadius = 4
         checkbox.layer.borderWidth = 2
@@ -70,10 +70,10 @@ open class CheckboxControl: _Control, AppearanceProvider {
 
     override open func updateContent() {
         let isSelectedImage = appearance.images.whiteCheckmark
-            .tinted(with: appearance.colorPalette.background)
+            .tinted(with: appearance.colorPalette.backgroundCoreApp)
         checkbox.image = isSelected ? isSelectedImage : nil
         checkbox.backgroundColor = isSelected ? tintColor : .clear
-        checkbox.layer.borderColor = isSelected ? tintColor.cgColor : appearance.colorPalette.border2.cgColor
+        checkbox.layer.borderColor = isSelected ? tintColor.cgColor : appearance.colorPalette.controlCheckboxBorder.cgColor
     }
 
     // MARK: - Actions

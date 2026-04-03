@@ -37,7 +37,7 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
     private lazy var autoCenterButton: UIButton = {
         let button = UIButton(type: .system)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.backgroundColor = appearance.colorPalette.background
+        button.backgroundColor = appearance.colorPalette.backgroundCoreApp
         button.layer.cornerRadius = 22
         button.layer.shadowColor = UIColor.black.cgColor
         button.layer.shadowOffset = CGSize(width: 0, height: 2)
@@ -73,7 +73,7 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         messageController.delegate = self
 
         title = "Location"
-        navigationController?.navigationBar.backgroundColor = appearance.colorPalette.background
+        navigationController?.navigationBar.backgroundColor = appearance.colorPalette.backgroundCoreApp
 
         mapView.register(
             UserAnnotationView.self,
@@ -82,7 +82,7 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         mapView.showsUserLocation = !isFromCurrentUser
         mapView.delegate = self
 
-        view.backgroundColor = appearance.colorPalette.background
+        view.backgroundColor = appearance.colorPalette.backgroundCoreApp
         view.addSubview(mapView)
         view.addSubview(autoCenterButton)
 
@@ -202,7 +202,7 @@ class LocationDetailViewController: UIViewController, ThemeProvider {
         autoCenterButton.setImage(image, for: .normal)
         autoCenterButton.tintColor = isAutoCenteringEnabled
             ? appearance.colorPalette.accentPrimary
-            : appearance.colorPalette.subtitleText
+            : appearance.colorPalette.textSecondary
     }
 }
 
@@ -276,7 +276,7 @@ class LocationControlBannerView: UIView, ThemeProvider {
     private lazy var sharingButton: UIButton = {
         let button = UIButton()
         button.setTitle("Stop Sharing", for: .normal)
-        button.setTitleColor(appearance.colorPalette.alert, for: .normal)
+        button.setTitleColor(appearance.colorPalette.accentError, for: .normal)
         button.titleLabel?.font = appearance.fonts.body
         button.addTarget(self, action: #selector(stopSharingTapped), for: .touchUpInside)
         return button
@@ -285,12 +285,12 @@ class LocationControlBannerView: UIView, ThemeProvider {
     private lazy var locationUpdateLabel: UILabel = {
         let label = UILabel()
         label.font = appearance.fonts.footnote
-        label.textColor = appearance.colorPalette.subtitleText
+        label.textColor = appearance.colorPalette.textSecondary
         return label
     }()
-    
+
     private func setupView() {
-        backgroundColor = appearance.colorPalette.background
+        backgroundColor = appearance.colorPalette.backgroundCoreApp
         layer.cornerRadius = 16
         layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
 
@@ -322,17 +322,17 @@ class LocationControlBannerView: UIView, ThemeProvider {
         case .currentUserSharing(let endingAtText):
             sharingButton.isEnabled = true
             sharingButton.setTitle("Stop Sharing", for: .normal)
-            sharingButton.setTitleColor(appearance.colorPalette.alert, for: .normal)
+            sharingButton.setTitleColor(appearance.colorPalette.accentError, for: .normal)
             locationUpdateLabel.text = "Live until \(endingAtText)"
         case .anotherUserSharing(let endingAtText):
             sharingButton.isEnabled = false
             sharingButton.setTitle("Live Location", for: .normal)
-            sharingButton.setTitleColor(appearance.colorPalette.alert, for: .normal)
+            sharingButton.setTitleColor(appearance.colorPalette.accentError, for: .normal)
             locationUpdateLabel.text = "Live until \(endingAtText)"
         case .ended(let lastUpdatedAtText):
             sharingButton.isEnabled = false
             sharingButton.setTitle("Live location ended", for: .normal)
-            sharingButton.setTitleColor(appearance.colorPalette.alert.withAlphaComponent(0.6), for: .normal)
+            sharingButton.setTitleColor(appearance.colorPalette.accentError.withAlphaComponent(0.6), for: .normal)
             locationUpdateLabel.text = "Location last updated at \(lastUpdatedAtText)"
         }
     }

@@ -138,7 +138,7 @@ open class InputTextView: UITextView, ThemeProvider {
         backgroundColor = .clear
         textContainer.lineFragmentPadding = 8
         font = appearance.fonts.body
-        textColor = appearance.colorPalette.text
+        textColor = appearance.colorPalette.inputTextDefault
         textAlignment = .natural
         adjustsFontForContentSizeCategory = true
 
@@ -151,7 +151,7 @@ open class InputTextView: UITextView, ThemeProvider {
         layoutManager.allowsNonContiguousLayout = false
 
         placeholderLabel.font = font
-        placeholderLabel.textColor = appearance.colorPalette.subtitleText
+        placeholderLabel.textColor = appearance.colorPalette.inputTextPlaceholder
         placeholderLabel.adjustsFontSizeToFitWidth = true
     }
 
@@ -194,7 +194,7 @@ open class InputTextView: UITextView, ThemeProvider {
         placeholderLabel.isHidden = !text.isEmpty
        
         // Resets the text color before applying text highlights
-        textColor = appearance.colorPalette.text
+        textColor = appearance.colorPalette.inputTextDefault
 
         if components.isComposerLinkPreviewEnabled {
             links = linkDetector.links(in: text)
@@ -225,7 +225,7 @@ open class InputTextView: UITextView, ThemeProvider {
     /// Highlights the links in the input text view.
     open func highlightLinks(_ links: [TextLink]) {
         links.forEach { link in
-            let linkColor = appearance.colorPalette.textLinkColor
+            let linkColor = appearance.colorPalette.chatTextLink
             textStorage.addAttribute(.foregroundColor, value: linkColor, range: link.range)
         }
     }

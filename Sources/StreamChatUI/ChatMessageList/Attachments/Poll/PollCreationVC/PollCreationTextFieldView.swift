@@ -48,9 +48,9 @@ open class PollCreationTextFieldView: _View, ThemeProvider {
         super.setUpAppearance()
 
         inputTextField.font = appearance.fonts.body
-        inputTextField.textColor = appearance.colorPalette.text
+        inputTextField.textColor = appearance.colorPalette.textPrimary
         errorLabel.font = appearance.fonts.caption1
-        errorLabel.textColor = appearance.colorPalette.validationError
+        errorLabel.textColor = appearance.colorPalette.accentError
     }
 
     override open func setUpLayout() {

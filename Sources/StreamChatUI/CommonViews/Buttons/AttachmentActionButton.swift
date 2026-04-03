@@ -49,17 +49,17 @@ open class AttachmentActionButton: _Button, AppearanceProvider {
         super.updateContent()
 
         backgroundColor = content.map { _ in
-            appearance.colorPalette.background4.withAlphaComponent(0.6)
+            appearance.colorPalette.backgroundCoreScrim.withAlphaComponent(0.6)
         }
 
         let image: UIImage? = content.flatMap {
             switch $0 {
             case .uploaded:
-                return appearance.images.whiteCheckmark.tinted(with: appearance.colorPalette.textInverted)
+                return appearance.images.whiteCheckmark.tinted(with: appearance.colorPalette.textOnInverse)
             case .restart:
-                return appearance.images.restart.tinted(with: appearance.colorPalette.textInverted)
+                return appearance.images.restart.tinted(with: appearance.colorPalette.textOnInverse)
             case .cancel:
-                return appearance.images.close.tinted(with: appearance.colorPalette.textInverted)
+                return appearance.images.close.tinted(with: appearance.colorPalette.textOnInverse)
             }
         }
         setImage(image, for: .normal)

@@ -19,7 +19,7 @@ import XCTest
     // MARK: - appearance
 
     func test_appearance_nonSilence_snapshotsAreAsExpected() {
-        subject.backgroundColor = subject.appearance.colorPalette.background
+        subject.backgroundColor = subject.appearance.colorPalette.backgroundCoreApp
 
         subject.content = [
             0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1,
@@ -32,7 +32,7 @@ import XCTest
     }
 
     func test_appearance_silence_snapshotsAreAsExpected() {
-        subject.backgroundColor = subject.appearance.colorPalette.background
+        subject.backgroundColor = subject.appearance.colorPalette.backgroundCoreApp
         subject.content = .init(repeating: 0, count: 15)
 
         subject.widthAnchor.constraint(greaterThanOrEqualToConstant: 320).isActive = true

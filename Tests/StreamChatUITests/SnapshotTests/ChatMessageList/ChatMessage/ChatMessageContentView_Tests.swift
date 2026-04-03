@@ -98,7 +98,7 @@ import XCTest
         // Create custom Appearance.
         var appearance = Appearance.default
         // Inject custom `alert` colour.
-        appearance.colorPalette.alert = .systemYellow
+        appearance.colorPalette.accentError = .systemYellow
 
         // Create message content view with the provided `message`, `layout`, and `config`
         let view = contentView(
@@ -1053,6 +1053,64 @@ import XCTest
 
         XCTAssertEqual(chatMessageViewContentDelegate.tappedQuotedMessage, quotedMessage)
         XCTAssertEqual(chatMessageViewContentDelegate.messageContentViewDidTapOnQuotedMessageCallCount, 1)
+    }
+}
+
+// MARK: - Video Attachment
+
+extension ChatMessageContentView_Tests {
+    func test_appearance_whenMessageWithVideoAttachment_incoming() {
+        let videoAttachment: ChatMessageVideoAttachment = .mock(
+            id: .unique,
+            thumbnailURL: TestImages.yoda.url,
+            localState: nil
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "",
+            author: myFriend,
+            createdAt: createdAt,
+            attachments: [videoAttachment.asAnyAttachment],
+            isSentByCurrentUser: false
+        )
+
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            components: .mock,
+            attachmentInjector: GalleryAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenMessageWithVideoAttachment_outgoing() {
+        let videoAttachment: ChatMessageVideoAttachment = .mock(
+            id: .unique,
+            thumbnailURL: TestImages.yoda.url,
+            localState: nil
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "",
+            author: me,
+            createdAt: createdAt,
+            attachments: [videoAttachment.asAnyAttachment],
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            components: .mock,
+            attachmentInjector: GalleryAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
 }
 

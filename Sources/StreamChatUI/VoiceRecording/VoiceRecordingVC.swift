@@ -294,7 +294,7 @@ open class VoiceRecordingVC: _ViewController, ComponentsProvider, AppearanceProv
         )
 
         stopRecordingButton.setImage(appearance.images.stop, for: .normal)
-        stopRecordingButton.tintColor = appearance.colorPalette.alert
+        stopRecordingButton.tintColor = appearance.colorPalette.accentError
         stopRecordingButton.addTarget(
             self,
             action: #selector(didTapStop(_:)),

@@ -45,10 +45,10 @@ open class ChatMessageListDateSeparatorView: ChatMessageDecorationView, Appearan
         super.setUpAppearance()
 
         backgroundColor = nil
-        container.backgroundColor = appearance.colorPalette.background7
+        container.backgroundColor = appearance.colorPalette.backgroundCoreSurfaceSubtle
 
         textLabel.font = appearance.fonts.footnote
-        textLabel.textColor = appearance.colorPalette.staticColorText
+        textLabel.textColor = appearance.colorPalette.chatTextSystem
     }
 
     override open func updateContent() {

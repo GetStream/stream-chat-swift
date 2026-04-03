@@ -157,13 +157,13 @@ extension ChatMessageVoiceRecordingAttachmentListView {
         override open func setUpAppearance() {
             super.setUpAppearance()
 
-            backgroundColor = appearance.colorPalette.popoverBackground
+            backgroundColor = appearance.colorPalette.backgroundCoreElevation1
             layer.cornerRadius = 12
             layer.masksToBounds = true
             layer.borderWidth = 1
-            layer.borderColor = appearance.colorPalette.border.cgColor
+            layer.borderColor = appearance.colorPalette.borderCoreDefault.cgColor
 
-            fileSizeLabel.textColor = appearance.colorPalette.subtitleText
+            fileSizeLabel.textColor = appearance.colorPalette.textSecondary
             fileSizeLabel.font = appearance.fonts.subheadlineBold
 
             fileNameLabel.font = appearance.fonts.bodyBold
@@ -172,12 +172,12 @@ extension ChatMessageVoiceRecordingAttachmentListView {
             fileIconImageView.contentMode = .scaleAspectFit
             fileIconImageView.image = appearance.images.fileIconPreviews["aac"] ?? appearance.images.iconMp3
 
-            durationLabel.textColor = appearance.colorPalette.textLowEmphasis
+            durationLabel.textColor = appearance.colorPalette.textTertiary
             durationLabel.font = .monospacedDigitSystemFont(
                 ofSize: appearance.fonts.caption1.pointSize, weight: .medium
             )
 
-            playbackRateButton.setTitleColor(appearance.colorPalette.staticBlackColorText, for: .normal)
+            playbackRateButton.setTitleColor(appearance.colorPalette.textPrimary, for: .normal)
             playbackRateButton.titleLabel?.font = appearance.fonts.footnote
         }
 

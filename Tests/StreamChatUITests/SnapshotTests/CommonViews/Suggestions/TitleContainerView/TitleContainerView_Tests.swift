@@ -30,7 +30,7 @@ import XCTest
     func test_appearanceCustomization_usingAppearance() {
         var appearance = Appearance()
         appearance.fonts.headlineBold = .italicSystemFont(ofSize: 20)
-        appearance.colorPalette.subtitleText = .cyan
+        appearance.colorPalette.textSecondary = .cyan
 
         let view = TitleContainerView().withoutAutoresizingMaskConstraints
         view.appearance = appearance

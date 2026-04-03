@@ -42,11 +42,11 @@ open class PollAllOptionsListItemCell: _TableViewCell, ThemeProvider {
         super.setUpAppearance()
 
         selectionStyle = .none
-        backgroundColor = appearance.colorPalette.background1
+        backgroundColor = appearance.colorPalette.backgroundCoreSurfaceSubtle
         optionNameLabel.numberOfLines = 0
         optionNameLabel.font = appearance.fonts.subheadline
         votesCountLabel.font = appearance.fonts.body
-        votesCountLabel.textColor = appearance.colorPalette.text
+        votesCountLabel.textColor = appearance.colorPalette.textPrimary
         voteCheckboxButton.contentEdgeInsets = .zero
         voteCheckboxButton.imageEdgeInsets = .zero
         voteCheckboxButton.titleEdgeInsets = .zero

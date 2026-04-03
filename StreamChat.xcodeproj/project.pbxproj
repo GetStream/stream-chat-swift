@@ -1097,7 +1097,6 @@
 				"StreamChatUITests/Extensions/UIView+SimulateViewAddedToHierarchy.swift",
 				StreamChatUITests/Helpers/CustomUIViewSubclasses.swift,
 				"StreamChatUITests/Helpers/UIView+Helpers.swift",
-				StreamChatUITests/SnapshotTests/CommonViews/CommandLabelView/CommandLabelView_Tests.swift,
 				StreamChatUITests/UITestsEnvironmentSetup.swift,
 			);
 			target = AD5D7BC32EFA26FF004A63E2 /* StreamChatCommonUITests */;
@@ -1297,6 +1296,7 @@
 				StreamChatUI/CommonViews/Buttons/SendButton.swift,
 				StreamChatUI/CommonViews/Buttons/ShareButton.swift,
 				StreamChatUI/CommonViews/Buttons/ShrinkInputButton.swift,
+				StreamChatUI/CommonViews/Buttons/VideoPlayIndicatorView.swift,
 				StreamChatUI/CommonViews/ChatLoadingIndicator.swift,
 				StreamChatUI/CommonViews/ChatNavigationBar.swift,
 				StreamChatUI/CommonViews/ClampedView.swift,
@@ -1649,6 +1649,7 @@
 				StreamChatUI/CommonViews/Buttons/SendButton.swift,
 				StreamChatUI/CommonViews/Buttons/ShareButton.swift,
 				StreamChatUI/CommonViews/Buttons/ShrinkInputButton.swift,
+				StreamChatUI/CommonViews/Buttons/VideoPlayIndicatorView.swift,
 				StreamChatUI/CommonViews/ChatLoadingIndicator.swift,
 				StreamChatUI/CommonViews/ChatNavigationBar.swift,
 				StreamChatUI/CommonViews/ClampedView.swift,

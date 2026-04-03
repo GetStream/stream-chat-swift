@@ -35,7 +35,7 @@ extension ChatMessageInteractiveAttachmentView {
         override open func updateContent() {
             let titleColor = content?.style == .primary ?
                 tintColor :
-                appearance.colorPalette.subtitleText
+                appearance.colorPalette.textSecondary
 
             setTitle(content?.text, for: .normal)
             setTitleColor(titleColor, for: .normal)

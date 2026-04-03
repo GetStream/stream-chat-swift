@@ -53,7 +53,7 @@ class DemoLivestreamChatChannelVC: _ViewController,
     private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = appearance.fonts.subheadlineBold
-        label.textColor = appearance.colorPalette.text
+        label.textColor = appearance.colorPalette.textPrimary
         label.textAlignment = .center
         label.setContentHuggingPriority(.required, for: .vertical)
         return label
@@ -63,7 +63,7 @@ class DemoLivestreamChatChannelVC: _ViewController,
     private lazy var subtitleLabel: UILabel = {
         let label = UILabel()
         label.font = appearance.fonts.footnote
-        label.textColor = appearance.colorPalette.subtitleText
+        label.textColor = appearance.colorPalette.textSecondary
         label.textAlignment = .center
         label.setContentCompressionResistancePriority(.required, for: .vertical)
         return label
@@ -125,7 +125,7 @@ class DemoLivestreamChatChannelVC: _ViewController,
     override func setUpLayout() {
         super.setUpLayout()
 
-        view.backgroundColor = appearance.colorPalette.background
+        view.backgroundColor = appearance.colorPalette.backgroundCoreApp
 
         addChildViewController(messageListVC, targetView: view)
         NSLayoutConstraint.activate([

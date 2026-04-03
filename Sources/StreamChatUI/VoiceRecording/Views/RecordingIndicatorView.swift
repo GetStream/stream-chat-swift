@@ -45,8 +45,8 @@ open class RecordingIndicatorView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
         recordingIndicator.contentMode = .center
-        recordingIndicator.image = appearance.images.mic.tinted(with: appearance.colorPalette.alert)
-        durationLabel.textColor = appearance.colorPalette.textLowEmphasis
+        recordingIndicator.image = appearance.images.mic.tinted(with: appearance.colorPalette.accentError)
+        durationLabel.textColor = appearance.colorPalette.textTertiary
         durationLabel.font = .monospacedDigitSystemFont(ofSize: appearance.fonts.footnote.pointSize, weight: .medium)
     }
 

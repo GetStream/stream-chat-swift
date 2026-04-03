@@ -16,6 +16,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Show deleted messages in channel list preview [#4024](https://github.com/GetStream/stream-chat-swift/pull/4024)
 ### 🐞 Fixed
 - Fix clearing unread messages on channel open when the first unread message is not visible [#4013](https://github.com/GetStream/stream-chat-swift/pull/4013)
+### 🔄 Changed
+- Use the new color palette [#4025](https://github.com/GetStream/stream-chat-swift/pull/4025)
+
+## StreamChatCommonUI
+### ❌ Removed
+- Remove existing color tokens in favor of the new palette in `Appearance.ColorPalette` [#4025](https://github.com/GetStream/stream-chat-swift/pull/4025)
 
 # [4.99.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.99.1)
 _April 01, 2026_

@@ -63,12 +63,12 @@ open class PollCommentListVC:
 
     /// The background color of the table view.
     open var listBackgroundColor: UIColor {
-        appearance.colorPalette.background
+        appearance.colorPalette.backgroundCoreApp
     }
 
     /// The background color for each poll option section.
     open var sectionBackgroundColor: UIColor {
-        appearance.colorPalette.background1
+        appearance.colorPalette.backgroundCoreSurfaceSubtle
     }
 
     /// The corner radius amount of each section group.

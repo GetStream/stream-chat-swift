@@ -20,10 +20,10 @@ open class ChatSuggestionsHeaderView: _View, AppearanceProvider {
 
     override open func setUpAppearance() {
         super.setUpAppearance()
-        backgroundColor = appearance.colorPalette.popoverBackground
+        backgroundColor = appearance.colorPalette.backgroundCoreElevation1
 
         headerLabel.font = appearance.fonts.body
-        headerLabel.textColor = appearance.colorPalette.subtitleText
+        headerLabel.textColor = appearance.colorPalette.textSecondary
         commandImageView.contentMode = .scaleAspectFit
     }
 

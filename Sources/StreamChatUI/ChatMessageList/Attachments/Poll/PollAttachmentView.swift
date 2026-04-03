@@ -128,7 +128,7 @@ open class PollAttachmentView: _View, ThemeProvider {
         pollTitleLabel.font = appearance.fonts.headlineBold
         pollTitleLabel.numberOfLines = 0
         pollSubtitleLabel.font = appearance.fonts.caption1
-        pollSubtitleLabel.textColor = appearance.colorPalette.textLowEmphasis
+        pollSubtitleLabel.textColor = appearance.colorPalette.textTertiary
 
         let footerButtons = [
             allOptionsButton,

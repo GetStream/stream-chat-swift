@@ -36,7 +36,7 @@ open class ChatThreadArrowView: _View, AppearanceProvider {
         super.setUpAppearance()
 
         shape?.contentsScale = layer.contentsScale
-        shape?.strokeColor = appearance.colorPalette.border.cgColor
+        shape?.strokeColor = appearance.colorPalette.borderCoreDefault.cgColor
         shape?.fillColor = nil
         shape?.lineWidth = 1
     }

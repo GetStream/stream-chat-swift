@@ -12,6 +12,6 @@ open class ChatMessageErrorIndicator: _Button, AppearanceProvider {
         super.setUpAppearance()
 
         setImage(appearance.images.messageListErrorIndicator, for: .normal)
-        tintColor = appearance.colorPalette.alert
+        tintColor = appearance.colorPalette.accentError
     }
 }

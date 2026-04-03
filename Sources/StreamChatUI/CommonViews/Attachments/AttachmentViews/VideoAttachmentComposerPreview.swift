@@ -47,9 +47,9 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
 
         cameraIconView.image = appearance.images.camera
         cameraIconView.contentMode = .scaleAspectFit
-        cameraIconView.tintColor = appearance.colorPalette.staticColorText
+        cameraIconView.tintColor = appearance.colorPalette.textOnAccent
 
-        videoDurationLabel.textColor = appearance.colorPalette.staticColorText
+        videoDurationLabel.textColor = appearance.colorPalette.textOnAccent
         videoDurationLabel.font = appearance.fonts.footnoteBold
 
         gradientView.content = .init(

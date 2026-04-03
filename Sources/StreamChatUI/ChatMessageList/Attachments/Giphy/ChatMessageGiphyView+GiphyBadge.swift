@@ -12,7 +12,7 @@ extension ChatMessageGiphyView {
                 .withoutAutoresizingMaskConstraints
                 .withAccessibilityIdentifier(identifier: "title")
             label.text = "GIPHY"
-            label.textColor = appearance.colorPalette.staticColorText
+            label.textColor = appearance.colorPalette.textOnAccent
             label.font = appearance.fonts.bodyBold
             return label.withBidirectionalLanguagesSupport
         }()
@@ -44,7 +44,7 @@ extension ChatMessageGiphyView {
         override open func setUpAppearance() {
             super.setUpAppearance()
             backgroundColor = UIColor.black.withAlphaComponent(0.6)
-            lightning.tintColor = appearance.colorPalette.staticColorText
+            lightning.tintColor = appearance.colorPalette.textOnAccent
         }
 
         override open func layoutSubviews() {
