@@ -9,12 +9,10 @@ import StreamChat
 import UIKit
 
 @MainActor
-class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
+class DemoShareViewModel: ObservableObject {
     private let chatClient: ChatClient
     private let userCredentials: UserCredentials
-    private var channelListController: ChatChannelListController?
-    private var channelController: ChatChannelController?
-    private var messageId: MessageId?
+    private var channelList: ChannelList?
     private var extensionContext: NSExtensionContext?
     private var imageURLs = [URL]() {
         didSet {
@@ -27,78 +25,63 @@ class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
             }
         }
     }
-    
+
     var currentUserId: UserId? {
         chatClient.currentUserId
     }
-    
+
     @Published var channels: [ChatChannel] = []
     @Published var text = ""
     @Published var images = [UIImage]()
     @Published var selectedChannel: ChatChannel?
     @Published var loading = false
-    
+
     init(
         userCredentials: UserCredentials,
         extensionContext: NSExtensionContext?
     ) {
-        var config = ChatClientConfig(apiKey: .init(apiKeyString))
+        var config = ChatClientConfig(apiKeyString: apiKeyString)
         config.isClientInActiveMode = true
         config.applicationGroupIdentifier = applicationGroupIdentifier
-        
-        let client = ChatClient(config: config)
-        client.setToken(token: Token(stringLiteral: userCredentials.token.rawValue))
 
-        chatClient = client
+        chatClient = ChatClient(config: config)
         self.userCredentials = userCredentials
         self.extensionContext = extensionContext
         loadChannels()
         loadImages()
     }
-    
+
     func sendMessage() async throws {
         guard let cid = selectedChannel?.cid else {
             throw ClientError.Unexpected("No channel selected")
         }
-        self.channelController = chatClient.channelController(for: cid)
-        guard let channelController = channelController else {
-            throw ClientError.Unexpected("Can't upload attachment")
-        }
-        channelController.delegate = self
         loading = true
-        try await channelController.synchronize()
-        let attachmentPayloads = await withThrowingTaskGroup(of: AnyAttachmentPayload.self) { taskGroup in
+        let chat = chatClient.makeChat(for: cid)
+        try await chat.get(watch: false)
+
+        let attachmentPayloads = try await withThrowingTaskGroup(of: AnyAttachmentPayload.self) { group in
             for url in imageURLs {
-                taskGroup.addTask {
+                group.addTask {
+                    let uploaded = try await chat.uploadAttachment(with: url, type: .image)
                     let file = try AttachmentFile(url: url)
-                    let uploaded = try await channelController.uploadAttachment(
-                        localFileURL: url,
-                        type: .image
-                    )
-                    let attachment = ImageAttachmentPayload(
+                    return AnyAttachmentPayload(payload: ImageAttachmentPayload(
                         title: nil,
                         imageRemoteURL: uploaded.remoteURL,
                         file: file
-                    )
-                    return AnyAttachmentPayload(payload: attachment)
+                    ))
                 }
             }
-            
             var results = [AnyAttachmentPayload]()
-            while let result = await taskGroup.nextResult() {
-                if let attachment = try? result.get() {
-                    results.append(attachment)
-                }
+            for try await payload in group {
+                results.append(payload)
             }
             return results
         }
-        
-        messageId = try await channelController.createNewMessage(
-            text: text,
-            attachments: attachmentPayloads
-        )
+
+        try await chat.sendMessage(with: text, attachments: attachmentPayloads)
+        dismissShareSheet()
     }
-    
+
     func channelTapped(_ channel: ChatChannel) {
         if selectedChannel == channel {
             selectedChannel = nil
@@ -106,28 +89,14 @@ class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
             selectedChannel = channel
         }
     }
-    
+
     func dismissShareSheet() {
         loading = false
         extensionContext?.completeRequest(returningItems: [], completionHandler: nil)
     }
-    
-    func channelController(
-        _ channelController: ChatChannelController,
-        didUpdateMessages changes: [ListChange<ChatMessage>]
-    ) {
-        for change in changes {
-            if case .update(let item, _) = change {
-                if messageId == item.id, item.localState == nil {
-                    dismissShareSheet()
-                    return
-                }
-            }
-        }
-    }
-    
+
     // MARK: - private
-    
+
     private func loadItem(from itemProvider: NSItemProvider, type: String) async throws -> NSSecureCoding {
         try await withCheckedThrowingContinuation { continuation in
             itemProvider.loadItem(forTypeIdentifier: type) { item, error in
@@ -141,7 +110,7 @@ class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
             }
         }
     }
-    
+
     private func loadImages() {
         Task {
             let inputItems = extensionContext?.inputItems
@@ -161,21 +130,20 @@ class DemoShareViewModel: ObservableObject, ChatChannelControllerDelegate {
             self.imageURLs = urls
         }
     }
-    
+
     private func loadChannels() {
         Task {
-            try await chatClient.connect(
+            try await chatClient.connectUser(
                 userInfo: userCredentials.userInfo,
                 token: userCredentials.token
             )
-            let channelListQuery: ChannelListQuery = .init(
+            let query = ChannelListQuery(
                 filter: .containMembers(userIds: [chatClient.currentUserId ?? ""])
             )
-            self.channelListController = chatClient.channelListController(query: channelListQuery)
-            channelListController?.synchronize { [weak self] error in
-                guard let self, error == nil else { return }
-                channels = channelListController?.channels ?? []
-            }
+            let list = chatClient.makeChannelList(with: query)
+            self.channelList = list
+            try await list.get()
+            channels = list.state.channels
         }
     }
 }
