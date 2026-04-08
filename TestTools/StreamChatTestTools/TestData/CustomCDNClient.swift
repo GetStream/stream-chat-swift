@@ -6,24 +6,23 @@ import Foundation
 
 @testable import StreamChat
 
-public final class CustomCDNClient: CDNClient {
+public final class CustomCDNUploader: CDNUploader {
     public static var maxAttachmentSize: Int64 { 10 * 1000 * 1000 }
 
     public func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: ((Double) -> Void)?,
-        completion: @escaping (Result<URL, Error>) -> Void
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {}
 
-    public func uploadStandaloneAttachment<Payload>(
-        _ attachment: StreamChat.StreamAttachment<Payload>,
-        progress: ((Double) -> Void)?,
-        completion:
-        @escaping (Result<StreamChat.UploadedFile, any Error>) -> Void
+    public func uploadAttachment(
+        localUrl: URL,
+        progress: (@Sendable (Double) -> Void)?,
+        completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {}
 
     public func deleteAttachment(
         remoteUrl: URL,
-        completion: @escaping ((any Error)?) -> Void
+        completion: @escaping @Sendable (Error?) -> Void
     ) {}
 }

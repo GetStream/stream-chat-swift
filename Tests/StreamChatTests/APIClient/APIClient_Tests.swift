@@ -18,7 +18,7 @@ final class APIClient_Tests: XCTestCase {
     var encoder: RequestEncoder_Spy!
     var decoder: RequestDecoder_Spy!
     var attachmentDownloader: AttachmentDownloader_Spy!
-    var attachmentUploader: AttachmentUploader_Spy!
+    var cdnUploader: CDNUploader_Spy!
     var tokenRefresher: ((@escaping () -> Void) -> Void)!
     var queueOfflineRequest: QueueOfflineRequestBlock!
 
@@ -41,7 +41,7 @@ final class APIClient_Tests: XCTestCase {
         encoder = RequestEncoder_Spy(baseURL: baseURL, apiKey: apiKey)
         decoder = RequestDecoder_Spy()
         attachmentDownloader = AttachmentDownloader_Spy()
-        attachmentUploader = AttachmentUploader_Spy()
+        cdnUploader = CDNUploader_Spy()
         tokenRefresher = { _ in }
         queueOfflineRequest = { _ in }
 
@@ -50,8 +50,7 @@ final class APIClient_Tests: XCTestCase {
             requestEncoder: encoder,
             requestDecoder: decoder,
             attachmentDownloader: attachmentDownloader,
-            attachmentUploader: attachmentUploader,
-            cdnClient: CDNClient_Spy()
+            cdnUploader: cdnUploader
         )
         apiClient.tokenRefresher = tokenRefresher
         apiClient.queueOfflineRequest = queueOfflineRequest
@@ -715,8 +714,7 @@ extension APIClient_Tests {
             requestEncoder: encoder,
             requestDecoder: decoder,
             attachmentDownloader: attachmentDownloader,
-            attachmentUploader: attachmentUploader,
-            cdnClient: CDNClient_Spy()
+            cdnUploader: cdnUploader
         )
         apiClient.tokenRefresher = self.tokenRefresher
         apiClient.queueOfflineRequest = self.queueOfflineRequest

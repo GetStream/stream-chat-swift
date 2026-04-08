@@ -48,7 +48,7 @@ final class APIClient_Spy: APIClient, Spy, @unchecked Sendable {
     @Atomic var init_sessionConfiguration: URLSessionConfiguration
     @Atomic var init_requestEncoder: RequestEncoder
     @Atomic var init_requestDecoder: RequestDecoder
-    @Atomic var init_attachmentUploader: AttachmentUploader
+    @Atomic var init_cdnUploader: CDNUploader
     @Atomic var request_expectation: XCTestExpectation
     @Atomic var recoveryRequest_expectation: XCTestExpectation
     @Atomic var uploadRequest_expectation: XCTestExpectation
@@ -85,13 +85,12 @@ final class APIClient_Spy: APIClient, Spy, @unchecked Sendable {
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         attachmentDownloader: AttachmentDownloader,
-        attachmentUploader: AttachmentUploader,
-        cdnClient: CDNClient
+        cdnUploader: CDNUploader
     ) {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
         init_requestDecoder = requestDecoder
-        init_attachmentUploader = attachmentUploader
+        init_cdnUploader = cdnUploader
         downloadFile_expectation = .init()
         request_expectation = .init()
         recoveryRequest_expectation = .init()
@@ -102,8 +101,7 @@ final class APIClient_Spy: APIClient, Spy, @unchecked Sendable {
             requestEncoder: requestEncoder,
             requestDecoder: requestDecoder,
             attachmentDownloader: attachmentDownloader,
-            attachmentUploader: attachmentUploader,
-            cdnClient: CDNClient_Spy()
+            cdnUploader: cdnUploader
         )
     }
 
@@ -231,8 +229,7 @@ extension APIClient_Spy {
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
             attachmentDownloader: AttachmentDownloader_Spy(),
-            attachmentUploader: AttachmentUploader_Spy(),
-            cdnClient: CDNClient_Spy()
+            cdnUploader: CDNUploader_Spy()
         )
     }
 }

@@ -2,53 +2,44 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
+import StreamChatCommonUI
 @testable import StreamChatUI
 import UIKit
 
-/// A mock implementation of the image loader which loads images synchronusly
-final class ImageLoader_Mock: ImageLoading {
-    func loadImage(into imageView: UIImageView, from url: URL?, with options: ImageLoaderOptions, completion: (@MainActor (Result<UIImage, Error>) -> Void)?) -> Cancellable? {
-        if let url = url {
-            let image = UIImage(data: try! Data(contentsOf: url))!
-            imageView.image = image
-            completion?(.success(image))
-        } else {
-            imageView.image = options.placeholder
+/// A mock implementation of the image loader which loads images synchronously.
+final class ImageLoader_Mock: ImageLoader, @unchecked Sendable {
+    func loadImage(
+        url: URL?,
+        resize: ImageResize?,
+        completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
+    ) {
+        guard let url else {
+            Task { @MainActor in
+                completion(.failure(NSError(domain: "mock", code: 0)))
+            }
+            return
         }
 
-        return nil
-    }
-
-    func downloadImage(
-        with request: ImageDownloadRequest,
-        completion: @escaping (@MainActor (Result<UIImage, Error>) -> Void)
-    ) -> Cancellable? {
-        nonisolated(unsafe) var image = UIImage(data: try! Data(contentsOf: request.url))!
-        
-        if let resize = request.options.resize {
-            let cgSize = CGSize(width: resize.width, height: resize.height)
-            image = NukeImageProcessor().scale(image: image, to: cgSize)
-        }
-        StreamConcurrency.onMain {
+        let image = UIImage(data: try! Data(contentsOf: url))!
+        Task { @MainActor in
             completion(.success(image))
         }
-        return nil
     }
 
-    func downloadMultipleImages(
-        with requests: [ImageDownloadRequest],
-        completion: @escaping (@MainActor ([Result<UIImage, Error>]) -> Void)
+    func loadImages(
+        from urls: [URL],
+        placeholders: [UIImage],
+        loadThumbnails: Bool,
+        thumbnailSize: CGSize,
+        completion: @escaping @MainActor ([UIImage]) -> Void
     ) {
-        let results = requests
-            .map { request in
-                let image = UIImage(data: try! Data(contentsOf: request.url))!
-                guard let resize = request.options.resize else { return image }
-                let cgSize = CGSize(width: resize.width, height: resize.height)
-                return NukeImageProcessor().scale(image: image, to: cgSize)
-            }
-            .map { Result<UIImage, Error>.success($0) }
-        StreamConcurrency.onMain {
-            completion(results)
+        let images = urls.compactMap { url -> UIImage? in
+            guard let data = try? Data(contentsOf: url) else { return nil }
+            return UIImage(data: data)
+        }
+        Task { @MainActor in
+            completion(images)
         }
     }
 }

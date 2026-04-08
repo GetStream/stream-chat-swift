@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class StreamCDNClient_Tests: XCTestCase {
+final class StreamCDNUploader_Tests: XCTestCase {
     func test_uploadFileEncoderIsCalledWithEndpoint() throws {
         let builder = TestBuilder()
         let client = builder.make()
@@ -47,24 +47,13 @@ final class StreamCDNClient_Tests: XCTestCase {
         // Setup mock encoder response (it's not actually used, we just need to return something)
         let request = URLRequest(url: .unique())
         builder.encoder.encodeRequest = .success(request)
-        
-        let payload = try Data(contentsOf: .localYodaImage)
 
         // Create a test endpoint
         let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(type: .image)
-        
-        let uploadingState = AttachmentUploadingState(
-            localFileURL: .localYodaImage,
-            state: .pendingUpload,
-            file: .init(type: .png, size: 120, mimeType: "image/png")
-        )
 
         // Simulate file uploading
-        client.uploadStandaloneAttachment(
-            .mock(
-                payload: payload,
-                uploadingState: uploadingState
-            ),
+        client.uploadAttachment(
+            localUrl: .localYodaImage,
             progress: nil,
             completion: { (_: Result<UploadedFile, Error>) in }
         )
@@ -80,21 +69,10 @@ final class StreamCDNClient_Tests: XCTestCase {
         let testError = TestError()
         builder.encoder.encodeRequest = .failure(testError)
 
-        let payload = try Data(contentsOf: .localYodaImage)
-        
-        let uploadingState = AttachmentUploadingState(
-            localFileURL: .localYodaImage,
-            state: .pendingUpload,
-            file: .init(type: .png, size: 120, mimeType: "image/png")
-        )
-        
         // Create a request and assert the result is failure
         let result: Result<UploadedFile, Error> = try waitFor {
-            client.uploadStandaloneAttachment(
-                .mock(
-                    payload: payload,
-                    uploadingState: uploadingState
-                ),
+            client.uploadAttachment(
+                localUrl: .localYodaImage,
                 progress: nil,
                 completion: $0
             )
@@ -187,21 +165,10 @@ final class StreamCDNClient_Tests: XCTestCase {
         let response = FileUploadPayload(fileURL: .unique(), thumbURL: .unique())
         decoder.decodeRequestResponse = .success(response)
 
-        let payload = try Data(contentsOf: .localYodaImage)
-        
-        let uploadingState = AttachmentUploadingState(
-            localFileURL: .localYodaImage,
-            state: .pendingUpload,
-            file: .init(type: .png, size: 120, mimeType: "image/png")
-        )
-        
-        // Create a request and assert the result is failure
+        // Create a request and wait for the completion block
         let result: Result<UploadedFile, Error> = try waitFor {
-            client.uploadStandaloneAttachment(
-                .mock(
-                    payload: payload,
-                    uploadingState: uploadingState
-                ),
+            client.uploadAttachment(
+                localUrl: .localYodaImage,
                 progress: nil,
                 completion: $0
             )
@@ -277,22 +244,11 @@ final class StreamCDNClient_Tests: XCTestCase {
 
         // Set up a decoder response to return `encoderError`
         decoder.decodeRequestResponse = .failure(encoderError)
-        
-        let payload = try Data(contentsOf: .localYodaImage)
-        
-        let uploadingState = AttachmentUploadingState(
-            localFileURL: .localYodaImage,
-            state: .pendingUpload,
-            file: .init(type: .png, size: 120, mimeType: "image/png")
-        )
 
         // Create a request and wait for the completion block
         let result: Result<UploadedFile, Error> = try waitFor {
-            client.uploadStandaloneAttachment(
-                .mock(
-                    payload: payload,
-                    uploadingState: uploadingState
-                ),
+            client.uploadAttachment(
+                localUrl: .localYodaImage,
                 progress: nil,
                 completion: $0
             )

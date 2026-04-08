@@ -3,21 +3,17 @@
 //
 
 import AVKit
+import StreamChat
+import StreamChatCommonUI
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import UIKit
 
-/// A mock implementation of video loader
-final class VideoLoader_Mock: VideoLoading {
-    lazy var loadPreviewForVideoMockFunc = MockFunc.mock(for: loadPreviewForVideo)
-    lazy var videoAssetMockFunc = MockFunc.mock(for: videoAsset)
+/// A mock implementation of video loader.
+final class VideoLoader_Mock: VideoLoader, @unchecked Sendable {
+    lazy var loadPreviewMockFunc = MockFunc.mock(for: loadPreview(at:completion:))
 
-    func loadPreviewForVideo(at url: URL, completion: @escaping @MainActor (Result<UIImage, Error>) -> Void) {
-        loadPreviewForVideoMockFunc.call(with: (url, completion))
-    }
-
-    func videoAsset(at url: URL) -> AVURLAsset {
-        videoAssetMockFunc.call(with: url)
-        return .init(url: url)
+    func loadPreview(at url: URL, completion: @escaping @MainActor (Result<UIImage, Error>) -> Void) {
+        loadPreviewMockFunc.call(with: (url, completion))
     }
 }
