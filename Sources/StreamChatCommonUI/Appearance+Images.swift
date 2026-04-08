@@ -478,12 +478,8 @@ public extension Appearance {
             )
         )
 
-        public var composerSend: UIImage = loadSafely(
-            systemName: "paperplane",
-            config: UIImage.SymbolConfiguration(
-                weight: .regular
-            )
-        )
+        public var composerSend: UIImage = loadImageSafely(with: "composer_send")
+            .imageFlippedForRightToLeftLayoutDirection()
 
         public var composerMic: UIImage = loadSafely(
             systemName: "mic",
