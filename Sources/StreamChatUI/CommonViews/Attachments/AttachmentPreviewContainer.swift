@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-import StreamChatCommonUI
 import UIKit
 
 /// A view that wraps attachment preview and provides default controls (ie: remove button) for it.

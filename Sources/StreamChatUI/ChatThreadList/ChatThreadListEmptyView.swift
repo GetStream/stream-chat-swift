@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamChatCommonUI
 import UIKit
 
 /// The view shown when the thread list is empty.
