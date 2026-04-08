@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-import StreamChatCommonUI
 import UIKit
 
 /// A view controller that shows suggestions of commands or mentions.

@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-import StreamChatCommonUI
 import UIKit
 
 /// A view that display the command name and icon.

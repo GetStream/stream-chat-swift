@@ -2,7 +2,6 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import StreamChatCommonUI
 import UIKit
 
 /// Generates a `UIImage` placeholder for a user avatar using the user's initials,

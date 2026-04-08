@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamChatCommonUI
 import UIKit
 
 /// A component used to present the user with a tip on how to initiate the
