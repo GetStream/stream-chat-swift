@@ -1828,13 +1828,13 @@ import XCTest
 
     private func channelItemView(
         content: ChatChannelListItemView.Content?,
-        components: Components = .mock,
-        appearance: Appearance = .default
+        components: Components? = nil,
+        appearance: Appearance? = nil
     ) -> ChatChannelListItemView {
         let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
-        view.components = components
+        view.components = components ?? .mock
         view.components.isDraftMessagesEnabled = true
-        view.appearance = appearance
+        view.appearance = appearance ?? .default
         view.appearance.formatters.channelListMessageTimestamp = MockTimestampFormatter()
         view.content = content
         view.addSizeConstraints()
