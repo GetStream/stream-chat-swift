@@ -7,7 +7,7 @@ import StreamChat
 import StreamChatCommonUI
 
 /// Resolves layout options for the message at given `indexPath`.
-open class ChatMessageLayoutOptionsResolver {
+@MainActor open class ChatMessageLayoutOptionsResolver {
     /// The maximum time interval between 2 consecutive messages sent by the same user to treat them as a single message group.
     public let maxTimeIntervalBetweenMessagesInGroup: TimeInterval
 

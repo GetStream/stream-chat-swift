@@ -7,9 +7,7 @@ import SwiftUI
 import UIKit
 
 public extension Appearance {
-    final class ColorPalette: @unchecked Sendable {
-        public init() {}
-        
+    @MainActor final class ColorPalette {
         public lazy var accentError: UIColor = UIColor(light: .red500, dark: .red400)
         public lazy var accentNeutral: UIColor = chrome500
         public lazy var accentPrimary: UIColor = UIColor(light: brand500, dark: brand400)
@@ -173,6 +171,10 @@ public extension Appearance {
         var chrome700: UIColor { UIColor(light: .slate700, dark: .neutral150) }
         var chrome800: UIColor { UIColor(light: .slate800, dark: .neutral100) }
         var chrome900: UIColor { UIColor(light: .slate900, dark: .neutral50) }
+
+        public init() {
+            // Public init.
+        }
     }
 }
 

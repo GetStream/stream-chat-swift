@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// A protocol that provides a set of functions for loading images.
-public protocol ImageLoading: AnyObject {
+@MainActor public protocol ImageLoading: AnyObject {
     /// Load an image into an imageView from the given `URL`.
     /// - Parameters:
     ///   - imageView: The image view where the image will be loaded.
