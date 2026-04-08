@@ -652,56 +652,19 @@ public class ChatClient: @unchecked Sendable {
     // MARK: - Upload attachments
     
     /// Uploads an attachment to the specified CDN.
+    /// Uploads a file from a local URL to the CDN.
     ///
     /// - Parameters:
-    ///  - attachment: the attachment to be uploaded.
-    ///  - progress: the progress of the upload.
-    ///  - completion: called when the attachment is uploaded.
-    public func upload<Payload>(
-        _ attachment: StreamAttachment<Payload>,
-        progress: (@Sendable (Double) -> Void)?,
-        completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
-    ) {
-        apiClient.attachmentUploader.uploadStandaloneAttachment(
-            attachment,
-            progress: progress,
-            completion: completion
-        )
-    }
-
-    /// Uploads an attachment to the specified CDN.
-    ///
-    /// - Parameters:
-    ///  - localUrl: the local url of the file to be uploaded.
-    ///  - progress: the progress of the upload.
-    ///  - completion: called when the attachment is uploaded.
+    ///  - localUrl: The local file URL to be uploaded.
+    ///  - progress: A closure that broadcasts upload progress (0.0 to 1.0).
+    ///  - completion: Called when the upload completes with the uploaded file information.
     public func uploadAttachment(
         localUrl: URL,
         progress: (@Sendable (Double) -> Void)?,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
-        let uploadingState: AttachmentUploadingState
-
-        do {
-            uploadingState = AttachmentUploadingState(
-                localFileURL: localUrl,
-                state: .pendingUpload,
-                file: try .init(url: localUrl)
-            )
-        } catch {
-            completion(.failure(error))
-            return
-        }
-
-        let attachment = StreamAttachment(
-            type: uploadingState.file.type.isImage ? .image : .file,
-            payload: localUrl,
-            downloadingState: nil,
-            uploadingState: uploadingState
-        )
-
-        apiClient.attachmentUploader.uploadStandaloneAttachment(
-            attachment,
+        apiClient.cdnUploader.uploadAttachment(
+            localUrl: localUrl,
             progress: progress,
             completion: completion
         )
@@ -715,7 +678,7 @@ public class ChatClient: @unchecked Sendable {
         remoteUrl: URL,
         completion: @escaping @Sendable (Error?) -> Void
     ) {
-        apiClient.cdnClient.deleteAttachment(
+        apiClient.cdnUploader.deleteAttachment(
             remoteUrl: remoteUrl,
             completion: completion
         )

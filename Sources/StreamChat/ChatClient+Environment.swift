@@ -12,16 +12,14 @@ extension ChatClient {
             _ requestEncoder: RequestEncoder,
             _ requestDecoder: RequestDecoder,
             _ attachmentDownloader: AttachmentDownloader,
-            _ attachmentUploader: AttachmentUploader,
-            _ cdnClient: CDNClient
+            _ cdnUploader: CDNUploader
         ) -> APIClient = {
             APIClient(
                 sessionConfiguration: $0,
                 requestEncoder: $1,
                 requestDecoder: $2,
                 attachmentDownloader: $3,
-                attachmentUploader: $4,
-                cdnClient: $5
+                cdnUploader: $4
             )
         }
 

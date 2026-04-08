@@ -103,14 +103,9 @@ public struct ChatClientConfig: Sendable {
     /// - Parameter apiKey: The API key of the chat app the `ChatClient` connects to.
     ///
 
-    /// Allows to inject a custom API client for uploading attachments, if not specified, `StreamCDNClient` is used.
-    /// If a custom `AttachmentUploader` is provided, the custom `CDNClient` won't be used. You should use 1 of them only.
-    public var customCDNClient: CDNClient?
-
-    /// Allows to inject a custom attachment uploader. It can be used to have more
-    /// control than `CDNClient` to allow changing the attachment payload.
-    /// This overrides the custom `CDNClient`. You should use 1 of them only.
-    public var customAttachmentUploader: AttachmentUploader?
+    /// Allows injecting a custom CDN uploader for uploading and deleting attachments.
+    /// If not specified, Stream's default CDN uploader is used.
+    public var cdnUploader: CDNUploader?
 
     /// A component that can be used to change an attachment which was successfully uploaded.
     public var uploadedAttachmentPostProcessor: UploadedAttachmentPostProcessor?

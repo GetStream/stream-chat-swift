@@ -23,12 +23,9 @@ class APIClient: @unchecked Sendable {
 
     /// The attachment downloader.
     let attachmentDownloader: AttachmentDownloader
-    
-    /// The attachment uploader.
-    let attachmentUploader: AttachmentUploader
 
-    /// The CDN Client to store and delete attachments.
-    let cdnClient: CDNClient
+    /// The CDN uploader for storing and deleting attachments.
+    let cdnUploader: CDNUploader
 
     /// Queue in charge of handling incoming requests
     private let operationQueue: OperationQueue = {
@@ -66,15 +63,13 @@ class APIClient: @unchecked Sendable {
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         attachmentDownloader: AttachmentDownloader,
-        attachmentUploader: AttachmentUploader,
-        cdnClient: CDNClient
+        cdnUploader: CDNUploader
     ) {
         encoder = requestEncoder
         decoder = requestDecoder
         session = URLSession(configuration: sessionConfiguration)
         self.attachmentDownloader = attachmentDownloader
-        self.attachmentUploader = attachmentUploader
-        self.cdnClient = cdnClient
+        self.cdnUploader = cdnUploader
     }
 
     /// Performs a network request and retries in case of network failures
@@ -323,18 +318,24 @@ class APIClient: @unchecked Sendable {
         completion: @escaping @Sendable (Result<UploadedAttachment, Error>) -> Void
     ) {
         let uploadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
-            self?.attachmentUploader.upload(attachment, progress: progress) { [weak self] result in
-                switch result {
+            self?.cdnUploader.uploadAttachment(attachment, progress: progress) { [weak self] result in
+                let mappedResult = result.map { file in
+                    UploadedAttachment(
+                        attachment: attachment,
+                        remoteURL: file.fileURL,
+                        thumbnailURL: file.thumbnailURL
+                    )
+                }
+                switch mappedResult {
                 case let .failure(error) where self?.isConnectionError(error) == true:
-                    // Do not retry unless its a connection problem and we still have retries left
                     if operation.canRetry {
                         done(.retry)
                     } else {
-                        completion(result)
+                        completion(mappedResult)
                         done(.continue)
                     }
                 case .success, .failure:
-                    completion(result)
+                    completion(mappedResult)
                     done(.continue)
                 }
             }
