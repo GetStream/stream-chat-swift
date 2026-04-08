@@ -2,7 +2,6 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import StreamChatCommonUI
 import UIKit
 
 /// The thread list error view that is shown when loading threads fails.

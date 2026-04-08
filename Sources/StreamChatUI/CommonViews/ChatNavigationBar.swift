@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-import StreamChatCommonUI
 import UIKit
 
 open class ChatNavigationBar: _NavigationBar, AppearanceProvider {
