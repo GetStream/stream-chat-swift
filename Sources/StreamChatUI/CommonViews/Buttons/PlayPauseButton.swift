@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamChatCommonUI
 import UIKit
 
 /// A button that is being used to control the playback of a VoiceRecording. Its states are either `playing`

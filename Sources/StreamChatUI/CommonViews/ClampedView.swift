@@ -3,7 +3,6 @@
 //
 
 import Foundation
-import StreamChatCommonUI
 import UIKit
 
 /// A container view that clamps its size to the size of the bigger subview, even when this subview is hidden.

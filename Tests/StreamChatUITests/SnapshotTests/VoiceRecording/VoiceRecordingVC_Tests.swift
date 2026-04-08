@@ -4,7 +4,6 @@
 
 import AVFoundation
 @testable import StreamChat
-import StreamChatCommonUI
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
