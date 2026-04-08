@@ -60,7 +60,7 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
             if let thumbnailURL = videoAttachment?.thumbnailURL {
                 showPreview(using: thumbnailURL)
             } else if let url = newAssetURL {
-                components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
+                components.videoLoader.loadPreview(at: url) { [weak self] in
                     switch $0 {
                     case let .success(preview):
                         self?.showPreview(using: preview)

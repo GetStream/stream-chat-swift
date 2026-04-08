@@ -90,17 +90,16 @@ public struct Components: @unchecked Sendable {
     /// The view that shows a loading indicator.
     public var loadingIndicator: ChatLoadingIndicator.Type = ChatLoadingIndicator.self
 
-    /// Object with set of function for handling images from CDN
-    public var imageCDN: ImageCDN = StreamImageCDN()
-
-    /// Object which is responsible for loading images
-    public var imageLoader: ImageLoading = NukeImageLoader()
+    /// The object responsible for loading images.
+    public var imageLoader: ImageLoader = StreamImageLoader(downloader: NukeImageDownloader())
 
     /// Object responsible for providing resizing operations for `UIImage`
     public var imageProcessor: ImageProcessor = NukeImageProcessor()
 
-    /// The object responsible for loading video attachments.
-    public var videoLoader: VideoLoading = StreamVideoLoader()
+    /// The object responsible for loading video previews.
+    public var videoLoader: VideoLoader = StreamVideoLoader(
+        imageLoader: StreamImageLoader(downloader: NukeImageDownloader())
+    )
 
     /// The view that shows a gradient.
     public var gradientView: GradientView.Type = GradientView.self

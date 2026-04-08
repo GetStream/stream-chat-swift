@@ -86,7 +86,7 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
         if let thumbnailURL = content?.thumbnailURL {
             showPreview(using: thumbnailURL)
         } else if let url = content?.videoURL {
-            components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
+            components.videoLoader.loadPreview(at: url) { [weak self] in
                 self?.loadingIndicator.isHidden = true
                 switch $0 {
                 case let .success(preview):

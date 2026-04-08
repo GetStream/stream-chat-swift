@@ -328,7 +328,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
     open func setVideoAttachmentPreviewImage(url: URL?) {
         guard let url = url else { return }
 
-        components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
+        components.videoLoader.loadPreview(at: url) { [weak self] in
             switch $0 {
             case let .success(preview):
                 self?.attachmentPreviewView.image = preview

@@ -1499,7 +1499,6 @@ open class ComposerVC: _ViewController,
     /// The maximum upload file size depending on the attachment type.
     ///
     /// The max attachment size can be set from the Stream's Dashboard App Settings.
-    /// If it is not set, it fallbacks to the deprecated `ChatClientConfig.maxAttachmentSize`.
     /// - Parameter attachmentType: The attachment type that is being uploaded.
     /// - Returns: The file size limit in bytes. The default value is 100MB.
     open func maxAttachmentSize(for attachmentType: AttachmentType) -> Int64 {
@@ -1516,11 +1515,9 @@ open class ComposerVC: _ViewController,
             maxAttachmentSize = client.appSettings?.fileUploadConfig.sizeLimitInBytes
         }
 
-        // If no value is set in the dashboard, the size_limit will be nil or zero,
-        // so in this case we fallback to the default value.
         guard let maxSize = maxAttachmentSize, maxSize > 0 else {
-            if let customCDNClient = client.config.customCDNClient {
-                return type(of: customCDNClient).maxAttachmentSize
+            if let cdnUploader = client.config.cdnUploader {
+                return type(of: cdnUploader).maxAttachmentSize
             } else {
                 return AttachmentValidationError.fileSizeMaxLimitFallback
             }
