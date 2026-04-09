@@ -495,7 +495,7 @@ public extension Appearance {
         public var scrollDownArrow: UIImage = loadSafely(
             systemName: "arrow.down",
             config: UIImage.SymbolConfiguration(
-                weight: .medium
+                weight: .regular
             )
         )
 
