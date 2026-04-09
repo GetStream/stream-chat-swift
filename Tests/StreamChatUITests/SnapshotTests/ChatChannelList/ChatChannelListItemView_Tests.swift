@@ -10,6 +10,11 @@ import StreamSwiftTestHelpers
 import XCTest
 
 @MainActor final class ChatChannelListItemView_Tests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        Appearance.default = Appearance()
+    }
+
     let currentUser: ChatUser = .mock(
         id: "yoda",
         name: "Yoda"

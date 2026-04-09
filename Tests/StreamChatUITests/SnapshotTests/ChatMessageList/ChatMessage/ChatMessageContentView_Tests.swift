@@ -9,6 +9,11 @@ import StreamSwiftTestHelpers
 import XCTest
 
 @MainActor final class ChatMessageContentView_Tests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        Appearance.default = Appearance()
+    }
+
     /// Default content view width.
     private let contentViewWidth: CGFloat = 360
     /// The current user.

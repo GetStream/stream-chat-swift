@@ -16,6 +16,7 @@ import XCTest
 
     override func setUp() {
         super.setUp()
+        Appearance.default = Appearance()
 
         mockThread = .mock(
             parentMessage: .mock(text: "Parent Message", author: mockYoda),
