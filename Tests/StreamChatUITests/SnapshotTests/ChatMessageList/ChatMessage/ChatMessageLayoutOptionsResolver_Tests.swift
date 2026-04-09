@@ -7,7 +7,7 @@
 @testable import StreamChatUI
 import XCTest
 
-final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
+@MainActor final class ChatMessageLayoutOptionsResolver_Tests: XCTestCase {
     private var appearance: Appearance = Appearance()
 
     // MARK: - Flipped

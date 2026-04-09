@@ -6,7 +6,7 @@ import StreamChatTestTools
 @testable import StreamChatUI
 import XCTest
 
-final class NukeImageLoader_Tests: XCTestCase {
+@MainActor final class NukeImageLoader_Tests: XCTestCase {
     private var requests: [ImageDownloadRequest]!
     private var imageLoader: MockNukeImageLoader!
     private var imagePipeline: MockPipeline!

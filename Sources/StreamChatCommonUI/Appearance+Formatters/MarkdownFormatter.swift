@@ -6,7 +6,7 @@ import Foundation
 import StreamChat
 import UIKit
 
-public protocol MarkdownFormatter {
+@MainActor public protocol MarkdownFormatter {
     /// Returns an attributed string form the given Markdown-formatted string.
     /// - Parameters
     ///   - string: The string to be formatted
@@ -65,7 +65,7 @@ open class DefaultMarkdownFormatter: MarkdownFormatter {
     private var defaultAttributes: [NSAttributedString.Key: Any] {
         [
             .font: UIFont.font(forMarkdownFont: styles.bodyFont, defaultFont: fonts.body),
-            .foregroundColor: styles.bodyFont.color ?? Appearance.default.colorPalette.textPrimary
+            .foregroundColor: styles.bodyFont.color ?? colorPalette.textPrimary
         ]
     }
     

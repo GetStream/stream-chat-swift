@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 public extension Appearance {
-    struct Images {
+    @MainActor final class Images {
         /// A private internal function that will safely load an image from the bundle or return a circle image as backup
         /// - Parameter imageName: The required image name to load from the bundle
         /// - Returns: A UIImage that is either the correct image from the bundle or backup circular image
@@ -720,6 +720,10 @@ public extension Appearance {
                 ]
             }
             set { _fileIconPreviews = newValue }
+        }
+
+        public init() {
+            // Public init.
         }
     }
 }
