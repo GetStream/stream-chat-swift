@@ -449,11 +449,8 @@ public extension Appearance {
         public var checkmarkFilled: UIImage = loadSafely(systemName: "checkmark.circle.fill")
         public var closeFill: UIImage = loadSafely(systemName: "xmark.circle.fill")
         public var videoIndicator: UIImage = loadSafely(systemName: "video.fill")
-        public var gallery: UIImage = loadSafely(
-            systemName: "square.grid.3x3.fill",
-            systemNameFallback: "square.grid.2x2.fill"
-        )
-        
+        public var gallery: UIImage = loadSafely(systemName: "square.grid.2x2")
+
         // MARK: - No Content Icons
         
         public var noContent: UIImage = UIImage(
