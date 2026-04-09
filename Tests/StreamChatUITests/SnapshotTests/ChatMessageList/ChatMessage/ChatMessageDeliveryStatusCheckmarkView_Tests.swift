@@ -9,11 +9,6 @@ import StreamSwiftTestHelpers
 import XCTest
 
 @MainActor final class ChatMessageDeliveryStatusCheckmarkView_Tests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-        Appearance.default = Appearance()
-    }
-
     // MARK: - Pending
 
     func test_appearance_pending() {
