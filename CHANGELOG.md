@@ -21,6 +21,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatCommonUI
 ### 🔄 Changed
+- Update gallery and scroll-to-bottom SF Symbol icons [#4059](https://github.com/GetStream/stream-chat-swift/pull/4059)
 - Use MainActor for Appearance and its subtypes [#4052](https://github.com/GetStream/stream-chat-swift/pull/4052)
 ### ❌ Removed
 - Remove existing color tokens in favor of the new palette in `Appearance.ColorPalette` [#4025](https://github.com/GetStream/stream-chat-swift/pull/4025)
