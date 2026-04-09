@@ -9,6 +9,11 @@ import StreamSwiftTestHelpers
 import XCTest
 
 @MainActor final class ChatMessageMarkdown_Tests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        Appearance.default = Appearance()
+    }
+
     override func tearDownWithError() throws {
         Appearance.default = Appearance()
     }
