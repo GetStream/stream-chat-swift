@@ -297,7 +297,7 @@ public extension Appearance {
         /// Color for navigation bar glyph elements.
         public lazy var navigationBarGlyph: UIColor = .baseWhite
 
-        // MARK: - Utilities
+        // MARK: - Utilities (UIKit SDK only)
 
         /// Returns a highlighted variant of the given color. Used for tap/press states in UIKit views.
         public var highlightedColorForColor: @Sendable (UIColor) -> UIColor = { $0.withAlphaComponent(0.5) }
