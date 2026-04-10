@@ -24,7 +24,7 @@ public extension Appearance {
 
         /// The outermost application background. Sits behind all surfaces.
         public lazy var backgroundCoreApp: UIColor = chrome0
-        /// The base layer. Always white, used as the reference point for the elevation scale.
+        /// The base layer. Used as the reference point for the elevation scale.
         public lazy var backgroundCoreElevation0: UIColor = chrome0
         /// Slightly raised surfaces. Used for content containers like the message list and channel list.
         public lazy var backgroundCoreElevation1: UIColor = UIColor(light: chrome0, dark: chrome50)
