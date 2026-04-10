@@ -208,7 +208,7 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.assertDeletedMessage()
         }
     }
-    
+
     func test_originalQuoteIsDeletedByParticipant_deletedMessageIsShown() {
         linkToScenario(withId: 6643)
 
@@ -249,7 +249,7 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.assertDeletedMessage()
         }
     }
-    
+
     func test_originalQuoteIsDeletedByUser_deletedMessageIsShown() {
         linkToScenario(withId: 6644)
 
@@ -472,7 +472,7 @@ final class QuotedReply_Tests: StreamTestCase {
                 .assertScrollToBottomButton(isVisible: true)
         }
     }
-    
+
     // NOTE: There used to be a problem with tapping on a Send button on iOS > 16
     func test_quotedReplyNotInList_whenParticipantAddsQuotedReply_Giphy_InThread() throws {
         linkToScenario(withId: 1936)
@@ -545,7 +545,7 @@ final class QuotedReply_Tests: StreamTestCase {
 
     func test_threadRepliesCount() {
         linkToScenario(withId: 1938)
-        
+
         let repliesCount = 5
 
         GIVEN("user opens the channel") {
@@ -560,7 +560,7 @@ final class QuotedReply_Tests: StreamTestCase {
         THEN("user observes the number of replies in the channel") {
             userRobot.assertThreadReplyCountButton(replies: repliesCount)
         }
-        WHEN("user opens the tread") {
+        WHEN("user opens the thread") {
             userRobot.openThread()
         }
         AND("user observes the number of replies in the thread") {
@@ -620,7 +620,7 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.openThread().assertDeletedMessage()
         }
     }
-    
+
     func test_originalQuoteIsDeletedByParticipant_deletedMessageIsShown_InThread() {
         linkToScenario(withId: 6645)
 
@@ -671,7 +671,7 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.assertDeletedMessage()
         }
     }
-    
+
     func test_originalQuoteIsDeletedByUser_deletedMessageIsShown_InThread() {
         linkToScenario(withId: 6646)
 
@@ -725,7 +725,7 @@ final class QuotedReply_Tests: StreamTestCase {
         linkToScenario(withId: 1998)
 
         let pageSize = 25
-        
+
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(
                 channelsCount: 1,
@@ -748,12 +748,12 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.assertParentMessageInThread(withText: parentText, isLoaded: true)
         }
     }
-    
+
     func test_rootMessageShouldBeVisibleInThreadIfMessageCountLessThanPageSize() {
         linkToScenario(withId: 1999)
 
         let messageCount = 24
-        
+
         GIVEN("user opens the channel") {
             backendRobot.generateChannels(
                 channelsCount: 1,
@@ -770,7 +770,7 @@ final class QuotedReply_Tests: StreamTestCase {
             userRobot.assertParentMessageInThread(withText: parentText, isLoaded: true)
         }
     }
-    
+
     func test_quoteReplyRootMessageWhenNotInTheList() {
         linkToScenario(withId: 2000)
 

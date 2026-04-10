@@ -42,7 +42,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
         context.setChatClientConfig(chatClientConfig)
         return context
     }()
-    
+
     /// An immediately reacting NSManagedObjectContext for the chat state layer.
     ///
     /// Chat state layer requires that the context is refreshed when a write happens. Otherwise database observers are too slow to react.
@@ -200,7 +200,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                     log.debug("Context has no changes. Skipping save.", subsystems: .database)
                 }
 
-                log.debug("Database session succesfully saved.", subsystems: .database)
+                log.debug("Database session successfully saved.", subsystems: .database)
                 completion(nil)
             } catch {
                 log.error("Failed to save data to DB. Error: \(error)", subsystems: .database)
@@ -210,7 +210,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             }
         }
     }
-    
+
     func write(_ actions: @escaping @Sendable (DatabaseSession) throws -> Void) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             write(actions) { error in
@@ -222,7 +222,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             }
         }
     }
-    
+
     func write<T>(converting actions: @escaping @Sendable (DatabaseSession) throws -> T, completion: @escaping @Sendable (Result<T, Error>) -> Void) where T: Sendable {
         nonisolated(unsafe) var result: T?
         write { session in
@@ -238,7 +238,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             }
         }
     }
-        
+
     private func read<T>(
         from context: NSManagedObjectContext,
         _ actions: @escaping @Sendable (DatabaseSession) throws -> T,
@@ -257,11 +257,11 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             }
         }
     }
-    
+
     func read<T>(_ actions: @escaping @Sendable (DatabaseSession) throws -> T, completion: @escaping @Sendable (Result<T, Error>) -> Void) {
         read(from: backgroundReadOnlyContext, actions, completion: completion)
     }
-    
+
     func read<T>(_ actions: @escaping @Sendable (DatabaseSession) throws -> T) async throws -> T where T: Sendable {
         try await withCheckedThrowingContinuation { continuation in
             read(from: stateLayerContext, actions) { result in
@@ -269,7 +269,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             }
         }
     }
-    
+
     func readAndWait<T>(_ actions: @Sendable (DatabaseSession) throws -> T) throws -> T where T: Sendable {
         let context = backgroundReadOnlyContext
         nonisolated(unsafe) var result: T?
@@ -324,14 +324,14 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             if let writableContext = self?.writableContext, let allContext = self?.allContext {
                 writableContext.invalidateCurrentUserCache()
                 writableContext.reset()
-                
+
                 for context in allContext where context != writableContext {
                     context.performAndWait {
                         context.invalidateCurrentUserCache()
                         context.reset()
                     }
                 }
-                
+
                 if FileManager.default.fileExists(atPath: URL.streamAttachmentDownloadsDirectory.path) {
                     do {
                         try FileManager.default.removeItem(at: .streamAttachmentDownloadsDirectory)
@@ -429,12 +429,12 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
             let dtoClasses = managedObjectModel.entities
                 .compactMap(\.name)
                 .compactMap { NSClassFromString($0) }
-            
+
             // Reset relationships
             for dtoClass in dtoClasses {
                 dtoClass.resetEphemeralRelationshipValues?(in: writableContext)
             }
-            
+
             // Reset properties without relationships
             let allRequests: [NSBatchUpdateRequest] = dtoClasses
                 .compactMap { $0.resetEphemeralValuesBatchRequests?() }
@@ -477,7 +477,7 @@ extension NSManagedObjectContext {
             "deleted": deletedObjects.count
         ]
     }
-    
+
     func observeChanges(in otherContext: NSManagedObjectContext) -> NSObjectProtocol {
         assert(!automaticallyMergesChangesFromParent, "Duplicate change handling")
         return NotificationCenter.default

@@ -22,7 +22,7 @@ final class MemberModelDTO_Tests: XCTestCase {
 
     func test_memberPayload_isStoredAndLoadedFromDB() throws {
         let userId = UUID().uuidString
-        let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
+        let channelId = ChannelId(type: .init(rawValue: "messaging"), id: UUID().uuidString)
 
         let userPayload: UserPayload = .init(
             id: userId,
@@ -217,14 +217,14 @@ final class MemberModelDTO_Tests: XCTestCase {
             kind: .inMemory,
             chatClientConfig: config
         )
-        
+
         try database.writeSynchronously { session in
             try session.saveMember(payload: payload, channelId: channelId)
         }
-        
+
         // WHEN
         let member = try XCTUnwrap(database.viewContext.member(userId: userId, cid: channelId)?.asModel())
-        
+
         // THEN
         XCTAssertEqual(member.name, "transformed member")
     }

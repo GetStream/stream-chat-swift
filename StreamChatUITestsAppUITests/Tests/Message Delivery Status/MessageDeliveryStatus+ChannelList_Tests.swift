@@ -24,7 +24,7 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
             backendRobot.delayNewMessages(by: 10)
             userRobot.sendMessage(message, waitForAppearance: false)
         }
-        WHEN("user retuns to the channel list before the message is sent") {
+        WHEN("user returns to the channel list before the message is sent") {
             userRobot.tapOnBackButton()
         }
         THEN("last message delivery status in the channel preview shows clocks on the left") {
@@ -45,7 +45,7 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
         AND("user sends new message") {
             userRobot.sendMessage(message)
         }
-        WHEN("user retuns to the channel list") {
+        WHEN("user returns to the channel list") {
             userRobot.tapOnBackButton()
         }
         THEN("last message delivery status in the channel preview shows single checkmark on the right") {
@@ -69,7 +69,7 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
                 .sendMessage(failedMessage, waitForAppearance: false)
                 .assertMessageFailedToBeSent()
         }
-        WHEN("user retuns to the channel list") {
+        WHEN("user returns to the channel list") {
             userRobot.tapOnBackButton()
         }
         THEN("error indicator is shown for the failed message") {
@@ -87,10 +87,10 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends new message") {
+        AND("user successfully sends new message") {
             userRobot.sendMessage(message)
         }
-        AND("user retuns to the channel list") {
+        AND("user returns to the channel list") {
             userRobot.tapOnBackButton()
         }
         WHEN("participant reads the user's message") {
@@ -116,7 +116,7 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
         AND("user sends a new message") {
             userRobot.sendMessage(message)
         }
-        WHEN("user retuns to the channel list") {
+        WHEN("user returns to the channel list") {
             userRobot.tapOnBackButton()
         }
         THEN("delivery status is hidden") {
@@ -137,7 +137,7 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
         WHEN("participant sends a new message") {
             participantRobot.sendMessage(message)
         }
-        AND("user retuns to the channel list") {
+        AND("user returns to the channel list") {
             userRobot.tapOnBackButton()
         }
         THEN("delivery status is hidden") {
@@ -165,7 +165,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
         AND("user replies to the message in thread") {
             userRobot.sendMessageInThread(threadReply)
         }
-        WHEN("user retuns to the channel list") {
+        WHEN("user returns to the channel list") {
             userRobot.moveToChannelListFromThreadReplies()
         }
         THEN("delivery status is hidden") {
@@ -193,7 +193,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
         AND("user replies to message in thread") {
             userRobot.sendMessageInThread(failedThreadReply, waitForAppearance: false)
         }
-        WHEN("user retuns to the channel list") {
+        WHEN("user returns to the channel list") {
             userRobot.moveToChannelListFromThreadReplies()
         }
         THEN("delivery status shows error indicator") {
@@ -221,7 +221,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
         AND("participant reads the user's thread reply") {
             participantRobot.readMessage()
         }
-        WHEN("user retuns to the channel list") {
+        WHEN("user returns to the channel list") {
             userRobot.moveToChannelListFromThreadReplies()
         }
         THEN("user spots double checkmark next to the message") {
@@ -249,7 +249,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
         AND("user replies to message in thread") {
             userRobot.sendMessageInThread(threadReply)
         }
-        WHEN("user retuns to the channel list") {
+        WHEN("user returns to the channel list") {
             userRobot.moveToChannelListFromThreadReplies()
         }
         THEN("delivery status is hidden") {
@@ -274,7 +274,7 @@ extension MessageDeliveryStatus_ChannelList_Tests {
         AND("participant replies to message in thread") {
             participantRobot.sendMessageInThread(threadReply)
         }
-        WHEN("user retuns to the channel list") {
+        WHEN("user returns to the channel list") {
             userRobot.moveToChannelListFromThreadReplies()
         }
         THEN("delivery status is hidden") {

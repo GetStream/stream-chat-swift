@@ -47,7 +47,7 @@ final class Attachments_Tests: StreamTestCase {
             userRobot.assertVideo(isPresent: true)
         }
     }
-    
+
     func test_participantUploadsFile() throws {
         linkToScenario(withId: 33)
 
@@ -70,7 +70,7 @@ final class Attachments_Tests: StreamTestCase {
                 .login()
                 .openChannel()
         }
-        WHEN("user sends an image beeing offline") {
+        WHEN("user sends an image being offline") {
             userRobot
                 .setConnectivity(to: .off)
                 .uploadImage()
