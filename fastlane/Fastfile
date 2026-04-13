@@ -277,7 +277,7 @@ lane :xcmetrics do |options|
   Dir.chdir("../#{derived_data_path}/Build/Products") do
     begin
       sh("zip -r MyTests.zip .")
-      sh("gcloud firebase test ios run --test MyTests.zip --timeout 7m --results-dir test_output --device 'model=#{device_model},version=#{ios_version},orientation=portrait'")
+      sh("gcloud firebase test ios run --project #{github_repo.split('/').last} --test MyTests.zip --timeout 7m --results-dir test_output --device 'model=#{device_model},version=#{ios_version},orientation=portrait'")
     rescue StandardError => e
       UI.error("Test failed on Firebase:\n#{e}")
       firebase_error = e
