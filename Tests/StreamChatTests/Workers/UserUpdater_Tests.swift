@@ -216,7 +216,7 @@ final class UserUpdater_Tests: XCTestCase {
         let response = Result<UserListPayload, Error>.success(.init(users: [userPayload]))
         apiClient.test_simulateResponse(response)
 
-        // Assert the database error is propogated
+        // Assert the database error is propagated
         AssertAsync.willBeEqual(completionError as? TestError, databaseError)
     }
 
@@ -349,7 +349,7 @@ final class UserUpdater_Tests: XCTestCase {
         )
         apiClient.test_simulateResponse(.success(payload))
 
-        // Assert database error is propogated.
+        // Assert database error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
     }
     

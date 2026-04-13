@@ -80,7 +80,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends new message") {
+        AND("user successfully sends new message") {
             userRobot.sendMessage(message)
         }
         WHEN("participant reads the user's message") {
@@ -102,7 +102,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends new message") {
+        AND("user successfully sends new message") {
             userRobot.sendMessage(message)
         }
         AND("message is read by more than 1 participant") {
@@ -130,7 +130,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends new message") {
+        AND("user successfully sends new message") {
             userRobot.sendMessage(message)
         }
         AND("is read by participant") {
@@ -156,7 +156,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends new message") {
+        AND("user successfully sends new message") {
             userRobot.sendMessage(message)
         }
         AND("delivery status shows single checkmark") {
@@ -181,7 +181,7 @@ final class MessageDeliveryStatus_Tests: StreamTestCase {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends new message") {
+        AND("user successfully sends new message") {
             userRobot.sendMessage(message)
         }
         AND("delivery status shows single checkmark") {
@@ -211,7 +211,7 @@ extension MessageDeliveryStatus_Tests {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends a new message") {
+        AND("user successfully sends a new message") {
             userRobot.sendMessage(message)
         }
         WHEN("user previews thread for message: \(message)") {
@@ -462,7 +462,7 @@ extension MessageDeliveryStatus_Tests {
                 .login()
                 .openChannel()
         }
-        AND("succesfully sends a new message") {
+        AND("successfully sends a new message") {
             userRobot.sendMessage(message)
         }
         WHEN("user sends message with invalid command") {
@@ -554,7 +554,7 @@ extension MessageDeliveryStatus_Tests {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends new message") {
+        AND("user successfully sends new message") {
             userRobot.sendMessage(message)
         }
         WHEN("participant reads the user's message") {
@@ -576,7 +576,7 @@ extension MessageDeliveryStatus_Tests {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends new message") {
+        AND("user successfully sends new message") {
             userRobot.sendMessage(message)
         }
         AND("message is read by more than 1 participant") {
@@ -601,7 +601,7 @@ extension MessageDeliveryStatus_Tests {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends new message") {
+        AND("user successfully sends new message") {
             userRobot.sendMessage(message)
         }
         AND("is read by participant") {
@@ -628,7 +628,7 @@ extension MessageDeliveryStatus_Tests {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends new message") {
+        AND("user successfully sends new message") {
             userRobot.sendMessage(message)
         }
         AND("delivery status is hidden") {
@@ -654,7 +654,7 @@ extension MessageDeliveryStatus_Tests {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends new message") {
+        AND("user successfully sends new message") {
             userRobot.sendMessage(message)
         }
         AND("delivery status is hidden") {

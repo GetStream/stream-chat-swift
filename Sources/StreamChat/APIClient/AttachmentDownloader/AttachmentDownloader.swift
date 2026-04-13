@@ -12,7 +12,7 @@ protocol AttachmentDownloader {
     ///   - remoteURL: A remote URL of the file.
     ///   - localURL: The destination URL of the download.
     ///   - progress: The progress of the download.
-    ///   - completion: The callback with an error if a failure occured.
+    ///   - completion: The callback with an error if a failure occurred.
     func download(
         from remoteURL: URL,
         to localURL: URL,

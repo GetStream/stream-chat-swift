@@ -130,7 +130,7 @@ final class StreamImageCDN_Tests: XCTestCase {
             return
         }
 
-        // Because query paramters can be placed in a different order, we need to check it key by key.
+        // Because query parameters can be placed in a different order, we need to check it key by key.
         var lhsParameters: [String: String] = [:]
         lhsComponents.queryItems?.forEach {
             lhsParameters[$0.name] = $0.value
