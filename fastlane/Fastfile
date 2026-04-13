@@ -272,16 +272,18 @@ lane :xcmetrics do |options|
 
   firebase_error = ''
   xcodebuild_output = ''
+  ios_version = '18.3'
+  device_model = 'iphone16pro'
   Dir.chdir("../#{derived_data_path}/Build/Products") do
     begin
       sh("zip -r MyTests.zip .")
-      sh("gcloud firebase test ios run --test MyTests.zip --timeout 7m --results-dir test_output --device 'model=iphone14pro,version=16.6,orientation=portrait'")
+      sh("gcloud firebase test ios run --test MyTests.zip --timeout 7m --results-dir test_output --device 'model=#{device_model},version=#{ios_version},orientation=portrait'")
     rescue StandardError => e
       UI.error("Test failed on Firebase:\n#{e}")
       firebase_error = e
     end
 
-    sh("gsutil cp -r #{testlab_bucket}/test_output/iphone14pro-16.6-en-portrait/xcodebuild_output.log xcodebuild_output.log")
+    sh("gsutil cp -r #{testlab_bucket}/test_output/#{device_model}-#{ios_version}-en-portrait/xcodebuild_output.log xcodebuild_output.log")
     xcodebuild_output = File.read('xcodebuild_output.log')
   end
 
