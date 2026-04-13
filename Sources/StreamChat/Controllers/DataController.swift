@@ -51,7 +51,7 @@ public class DataController: Controller, @unchecked Sendable {
     ///
     // swiftlint:disable unavailable_function
     public func synchronize(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
-        fatalError("`synchronize` method must be overriden by the subclass.")
+        fatalError("`synchronize` method must be overridden by the subclass.")
     }
 
     // swiftlint:enable unavailable_function

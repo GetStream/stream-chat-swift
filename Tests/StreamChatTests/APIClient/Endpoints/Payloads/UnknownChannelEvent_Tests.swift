@@ -7,7 +7,7 @@
 import XCTest
 
 final class UnknownChannelEvent_Tests: XCTestCase {
-    func test_unkownEvent_decoding() throws {
+    func test_unknownEvent_decoding() throws {
         // Create event fields
         let userId: UserId = .unique
         let cid: ChannelId = .unique
@@ -42,7 +42,7 @@ final class UnknownChannelEvent_Tests: XCTestCase {
         }
         """.data(using: .utf8)!
 
-        // Decode unkown event from JSON.
+        // Decode unknown event from JSON.
         let unknownEvent = try JSONDecoder.default.decode(UnknownChannelEvent.self, from: json)
         let payload = try JSONDecoder.default.decode([String: RawJSON].self, from: json)
 
@@ -59,7 +59,7 @@ final class UnknownChannelEvent_Tests: XCTestCase {
         let payload = IdeaEventPayload.unique
 
         // Create event with `IdeaEventPayload` payload.
-        let unkownEvent = UnknownChannelEvent(
+        let unknownEvent = UnknownChannelEvent(
             type: IdeaEventPayload.eventType,
             cid: .unique,
             userId: .unique,
@@ -68,12 +68,12 @@ final class UnknownChannelEvent_Tests: XCTestCase {
         )
 
         // Assert payload is decoded.
-        XCTAssertEqual(unkownEvent.payload(ofType: IdeaEventPayload.self), payload)
+        XCTAssertEqual(unknownEvent.payload(ofType: IdeaEventPayload.self), payload)
     }
 
     func test_whenFieldsAreMissing_customPayloadIsNotDecoded() throws {
         // Create event with `IdeaEventPayload` fields missing.
-        let unkownEvent = UnknownChannelEvent(
+        let unknownEvent = UnknownChannelEvent(
             type: IdeaEventPayload.eventType,
             cid: .unique,
             userId: .unique,
@@ -82,7 +82,7 @@ final class UnknownChannelEvent_Tests: XCTestCase {
         )
 
         // Assert payload is not decoded because fields are missing.
-        XCTAssertNil(unkownEvent.payload(ofType: IdeaEventPayload.self))
+        XCTAssertNil(unknownEvent.payload(ofType: IdeaEventPayload.self))
     }
 
     func test_whenAllFieldsArePresentedButTypeDoesNotMatch_customPayloadIsNotDecoded() throws {
@@ -90,7 +90,7 @@ final class UnknownChannelEvent_Tests: XCTestCase {
         let randomEventType = EventType(rawValue: .unique)
 
         // Create event with `IdeaEventPayload` fields missing.
-        let unkownEvent = UnknownChannelEvent(
+        let unknownEvent = UnknownChannelEvent(
             type: randomEventType,
             cid: .unique,
             userId: .unique,
@@ -99,6 +99,6 @@ final class UnknownChannelEvent_Tests: XCTestCase {
         )
 
         // Assert payload is not decoded because the type does not match.
-        XCTAssertNil(unkownEvent.payload(ofType: IdeaEventPayload.self))
+        XCTAssertNil(unknownEvent.payload(ofType: IdeaEventPayload.self))
     }
 }

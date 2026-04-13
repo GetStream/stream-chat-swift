@@ -377,7 +377,7 @@ final class MemberListController_Tests: XCTestCase {
         let networkError = TestError()
         env.memberListUpdater!.load_completion!(.failure(networkError))
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 

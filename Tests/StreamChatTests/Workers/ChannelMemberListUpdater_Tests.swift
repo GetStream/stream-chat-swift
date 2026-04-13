@@ -148,7 +148,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         let networkError = TestError()
         apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(networkError))
 
-        // Assert the channel network error is propogated.
+        // Assert the channel network error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
     }
 
@@ -170,7 +170,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         // Simulate channel response with  success.
         apiClient.test_simulateResponse(.success(dummyPayload(with: query.cid)))
 
-        // Assert the channel database error is propogated.
+        // Assert the channel database error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
     }
 
@@ -192,7 +192,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         let networkError = TestError()
         apiClient.test_simulateResponse(Result<ChannelMemberListPayload, Error>.failure(networkError))
 
-        // Assert the members network call error is propogated.
+        // Assert the members network call error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
     }
 
@@ -222,7 +222,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         ])
         apiClient.test_simulateResponse(.success(payload))
 
-        // Assert the database error is propogated.
+        // Assert the database error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
     }
 }

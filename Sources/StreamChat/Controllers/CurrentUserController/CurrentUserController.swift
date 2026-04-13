@@ -433,7 +433,7 @@ public extension CurrentChatUserController {
     
     /// Deletes all the local downloads of file attachments.
     ///
-    /// - Parameter completion: Called when files have been deleted or when an error occured.
+    /// - Parameter completion: Called when files have been deleted or when an error occurred.
     func deleteAllLocalAttachmentDownloads(completion: (@MainActor (Error?) -> Void)? = nil) {
         currentUserUpdater.deleteAllLocalAttachmentDownloads { error in
             guard let completion else { return }
