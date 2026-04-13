@@ -91,14 +91,14 @@ public struct Components: @unchecked Sendable {
     public var loadingIndicator: ChatLoadingIndicator.Type = ChatLoadingIndicator.self
 
     /// The object responsible for loading images.
-    public var imageLoader: ImageLoader = StreamImageLoader(downloader: NukeImageDownloader())
+    public var imageLoader: ImageLoader = StreamImageLoader(downloader: StreamImageDownloader())
 
     /// Object responsible for providing resizing operations for `UIImage`
-    public var imageProcessor: ImageProcessor = NukeImageProcessor()
+    public var imageProcessor: ImageProcessor = StreamImageProcessor()
 
     /// The object responsible for loading video previews.
     public var videoLoader: VideoLoader = StreamVideoLoader(
-        imageLoader: StreamImageLoader(downloader: NukeImageDownloader())
+        imageLoader: StreamImageLoader(downloader: StreamImageDownloader())
     )
 
     /// The view that shows a gradient.

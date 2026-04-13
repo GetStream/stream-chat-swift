@@ -6,7 +6,7 @@ import StreamChatCommonUI
 import UIKit
 
 /// Nuke-backed implementation of ``ImageDownloading`` for the UIKit SDK.
-open class NukeImageDownloader: ImageDownloading, @unchecked Sendable {
+open class StreamImageDownloader: ImageDownloading, @unchecked Sendable {
     public init() {}
 
     open func downloadImage(

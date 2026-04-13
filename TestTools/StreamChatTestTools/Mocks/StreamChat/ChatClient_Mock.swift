@@ -146,8 +146,7 @@ extension ChatClient {
                         requestEncoder: $1,
                         requestDecoder: $2,
                         attachmentDownloader: $3,
-                        attachmentUploader: $4,
-                        cdnClient: $5
+                        cdnUploader: $4
                     )
                 },
                 webSocketClientBuilder: {
@@ -297,8 +296,7 @@ extension ChatClient.Environment {
                     requestEncoder: $1,
                     requestDecoder: $2,
                     attachmentDownloader: $3,
-                    attachmentUploader: $4,
-                    cdnClient: $5
+                    cdnUploader: $4
                 )
             },
             webSocketClientBuilder: {

@@ -14,12 +14,12 @@ final class TestBuilder {
     var sessionConfiguration = URLSessionConfiguration.ephemeral
     let uniqueHeaderValue = String.unique
 
-    func make() -> StreamCDNClient {
+    func make() -> StreamCDNUploader {
         sessionConfiguration.httpAdditionalHeaders?["unique_value"] = uniqueHeaderValue
         RequestRecorderURLProtocol_Mock.startTestSession(with: &sessionConfiguration)
         URLProtocol_Mock.startTestSession(with: &sessionConfiguration)
 
-        return StreamCDNClient(
+        return StreamCDNUploader(
             encoder: encoder,
             decoder: decoder,
             sessionConfiguration: sessionConfiguration
