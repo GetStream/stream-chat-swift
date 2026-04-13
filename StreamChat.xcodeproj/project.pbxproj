@@ -1106,8 +1106,11 @@
 			membershipExceptions = (
 				"/Localized: StreamChatCommonUI/Resources/Localizable.strings",
 				"/Localized: StreamChatCommonUI/Resources/Localizable.stringsdict",
+				"/Localized: StreamChatUI/Resources/Localizable.strings",
+				"/Localized: StreamChatUI/Resources/Localizable.stringsdict",
 				StreamChat/Info.plist,
 				StreamChatCommonUI/.swiftgen.yml,
+				StreamChatUI/.swiftgen.yml,
 				StreamChatCommonUI/Appearance.swift,
 				"StreamChatCommonUI/Appearance+ColorPalette.swift",
 				"StreamChatCommonUI/Appearance+DesignTokens.swift",
@@ -1339,6 +1342,8 @@
 				StreamChatUI/Gallery/ZoomAnimator.swift,
 				StreamChatUI/Gallery/ZoomDismissalInteractionController.swift,
 				StreamChatUI/Gallery/ZoomTransitionController.swift,
+				StreamChatUI/Generated/L10n.swift,
+				StreamChatUI/Generated/L10n_template.stencil,
 				StreamChatUI/Info.plist,
 				StreamChatUI/MessageActionsPopup/ChatMessageActionControl.swift,
 				StreamChatUI/MessageActionsPopup/ChatMessageActionItem.swift,
@@ -1428,6 +1433,7 @@
 				"StreamChatUI/StreamSwiftyGif/UIImage+SwiftyGif.swift",
 				"StreamChatUI/StreamSwiftyGif/UIImageView+SwiftyGif.swift",
 				StreamChatUI/Utils/Animation.swift,
+				"StreamChatUI/Utils/Bundle+Extensions.swift",
 				StreamChatUI/Utils/Cancellable.swift,
 				"StreamChatUI/Utils/ChatMessage+Extensions.swift",
 				StreamChatUI/Utils/ExportedModules.swift,
@@ -1493,6 +1499,8 @@
 		8242A4482F2CCB790040192C /* Exceptions for "Sources" folder in "StreamChatUI" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
+				"/Localized: StreamChatUI/Resources/Localizable.strings",
+				"/Localized: StreamChatUI/Resources/Localizable.stringsdict",
 				StreamChatUI/AppearanceProvider.swift,
 				StreamChatUI/ChatChannel/ChatChannelHeaderView.swift,
 				StreamChatUI/ChatChannel/ChatChannelVC.swift,
@@ -1692,6 +1700,8 @@
 				StreamChatUI/Gallery/ZoomAnimator.swift,
 				StreamChatUI/Gallery/ZoomDismissalInteractionController.swift,
 				StreamChatUI/Gallery/ZoomTransitionController.swift,
+				StreamChatUI/Generated/L10n.swift,
+				StreamChatUI/Generated/L10n_template.stencil,
 				StreamChatUI/MessageActionsPopup/ChatMessageActionControl.swift,
 				StreamChatUI/MessageActionsPopup/ChatMessageActionItem.swift,
 				StreamChatUI/MessageActionsPopup/ChatMessageActionsVC.swift,
@@ -1780,6 +1790,7 @@
 				"StreamChatUI/StreamSwiftyGif/UIImage+SwiftyGif.swift",
 				"StreamChatUI/StreamSwiftyGif/UIImageView+SwiftyGif.swift",
 				StreamChatUI/Utils/Animation.swift,
+				"StreamChatUI/Utils/Bundle+Extensions.swift",
 				StreamChatUI/Utils/Cancellable.swift,
 				"StreamChatUI/Utils/ChatMessage+Extensions.swift",
 				StreamChatUI/Utils/ExportedModules.swift,
@@ -2985,7 +2996,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which swiftgen; then\n  xcrun --sdk macosx swiftgen config run --config ./Sources/StreamChatCommonUI/.swiftgen.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
+			shellScript = "# Adds support for Apple Silicon brew directory\nexport PATH=\"$PATH:/opt/homebrew/bin\"\n\nif which swiftgen; then\n  xcrun --sdk macosx swiftgen config run --config ./Sources/StreamChatCommonUI/.swiftgen.yml\n  xcrun --sdk macosx swiftgen config run --config ./Sources/StreamChatUI/.swiftgen.yml\nelse\n  echo \"Warning: Bootstrap not run, please run ./bootstrap.sh\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

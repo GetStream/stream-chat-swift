@@ -37,9 +37,19 @@ import StreamChat
     public nonisolated(unsafe) static var bundle: Bundle?
 
     /// Provider for custom localization which is dependent on App Bundle.
+    ///
+    /// The default implementation looks up the key in `Bundle.streamChatCommonUI` first; if
+    /// the key is not found there it falls back to `Appearance.bundle` (when set) and finally
+    /// to `Bundle.main`. This lets each UI module ship its own `Localizable.strings` and
+    /// register its bundle via `Appearance.bundle` while CommonUI keeps owning the keys it
+    /// itself references.
     public var localizationProvider: @Sendable (_ key: String, _ table: String) -> String = { key, table in
-        let bundle = Appearance.bundle ?? Bundle.streamChatCommonUI
-        return bundle.localizedString(forKey: key, value: nil, table: table)
+        let commonBundle = Bundle.streamChatCommonUI
+        let value = commonBundle.localizedString(forKey: key, value: nil, table: table)
+        // `localizedString(forKey:value:table:)` returns the key itself when the lookup misses.
+        if value != key { return value }
+        let fallback = Appearance.bundle ?? .main
+        return fallback.localizedString(forKey: key, value: nil, table: table)
     }
 
     public init() {

@@ -679,7 +679,9 @@ import UIKit
     /// The router responsible for presenting alerts.
     public var alertsRouter: AlertsRouter.Type = AlertsRouter.self
 
-    public init() {}
+    public init() {
+        Appearance.bundle = .streamChatUI
+    }
 
     public static var `default` = Self()
 }

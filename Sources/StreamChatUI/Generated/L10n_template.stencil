@@ -3,6 +3,7 @@
 {% if tables.count > 0 %}
 {% set accessModifier %}internal{% endset %}
 import Foundation
+import StreamChatCommonUI
 import StreamCore
 
 
@@ -80,7 +81,7 @@ extension {{enumName}} {
 {% if not param.bundle and not param.lookupFunction %}
 
 private final class BundleToken {
-  static let bundle: Bundle = .streamChatCommonUI
+  static let bundle: Bundle = .streamChatUI
 }
 
 {% endif %}

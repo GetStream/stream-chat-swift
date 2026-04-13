@@ -1,0 +1,7 @@
+strings:
+  inputs:
+    - Resources/en.lproj/Localizable.strings
+    - Resources/en.lproj/Localizable.stringsdict
+  outputs:
+    - templatePath: Generated/L10n_template.stencil
+      output: Generated/L10n.swift
