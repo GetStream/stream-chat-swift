@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### ✅ Added
+- Add `ChatChannelListController.prefill(channels:completion:)` for priming controller-local channel data before the first synchronize call while preserving normal pagination, observation, and offline refresh behavior
+- Add `ChatClient.groupedQueryChannels(limit:watch:presence:)` to fetch grouped channel buckets as `[[ChatChannel]]` in `all`, `new`, `current`, `expired` order
+
 ### 🔄 Changed
 
 # [4.99.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.99.1)

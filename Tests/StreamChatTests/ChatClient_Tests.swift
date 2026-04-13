@@ -264,6 +264,65 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(testEnv.apiClient?.init_requestEncoder is RequestEncoder_Spy)
     }
 
+    func test_groupedQueryChannels_callsAPIClientAndReturnsGroupedChannels() {
+        let client = ChatClient.mock(config: inMemoryStorageConfig)
+        let allCid = ChannelId.unique
+        let newCid = ChannelId.unique
+        let currentCid = ChannelId.unique
+        let expiredCid = ChannelId.unique
+
+        let request = GroupedQueryChannelsRequestBody(limit: 4, watch: true, presence: false)
+        let expectedEndpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
+        let payload = GroupedQueryChannelsPayload(
+            all: .init(
+                channels: [dummyPayload(with: allCid)],
+                unreadCount: 1,
+                unreadChannels: 1
+            ),
+            new: .init(
+                channels: [dummyPayload(with: newCid)],
+                unreadCount: 2,
+                unreadChannels: 1
+            ),
+            current: .init(
+                channels: [dummyPayload(with: currentCid)],
+                unreadCount: 3,
+                unreadChannels: 1
+            ),
+            expired: .init(
+                channels: [dummyPayload(with: expiredCid)],
+                unreadCount: 4,
+                unreadChannels: 1
+            ),
+            duration: "12ms"
+        )
+
+        let expectation = self.expectation(description: "grouped query channels completes")
+        var receivedChannels: [[ChatChannel]]?
+        var receivedError: Error?
+
+        client.groupedQueryChannels(limit: 4, watch: true, presence: false) { result in
+            switch result {
+            case let .success(channels):
+                receivedChannels = channels
+            case let .failure(error):
+                receivedError = error
+            }
+            expectation.fulfill()
+        }
+
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        client.mockAPIClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNil(receivedError)
+        XCTAssertEqual(
+            receivedChannels?.map { $0.map(\.cid) },
+            [[allCid], [newCid], [currentCid], [expiredCid]]
+        )
+    }
+
     func test_disconnect_flushesRequestsQueue() throws {
         // Create a chat client
         let client = ChatClient(

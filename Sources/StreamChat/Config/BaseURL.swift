@@ -7,7 +7,7 @@ import Foundation
 /// A struct representing base URL for `ChatClient`.
 public struct BaseURL: CustomStringConvertible {
     /// The default base URL  for StreamChat service.
-    public static let `default` = BaseURL(urlString: "https://chat.stream-io-api.com/")!
+    public static let `default` = BaseURL(urlString: "https://chat-edge-dublin-ce2.stream-io-api.com/")!
 
     /// The base url for StreamChat data center located in the US East Cost.
     public static let usEast = BaseURL(urlString: "https://chat-proxy-us-east.stream-io-api.com/")!

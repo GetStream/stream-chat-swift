@@ -15,6 +15,18 @@ extension Endpoint {
         )
     }
 
+    static func groupedChannels(
+        request: GroupedQueryChannelsRequestBody
+    ) -> Endpoint<GroupedQueryChannelsPayload> {
+        .init(
+            path: .groupedChannels,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: request.watch || request.presence,
+            body: request
+        )
+    }
+
     static func createChannel(query: ChannelQuery) -> Endpoint<ChannelPayload> {
         createOrUpdateChannel(path: .createChannel(query.apiPath), query: query)
     }

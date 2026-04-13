@@ -867,6 +867,9 @@ extension DatabaseSession {
         
         if let messageCount = payload.channelMessageCount {
             channelDTO.messageCount = NSNumber(value: messageCount)
+        } else if isNewMessage, !messageExistsLocally {
+            let currentMessageCount = channelDTO.messageCount?.intValue ?? 0
+            channelDTO.messageCount = NSNumber(value: currentMessageCount + 1)
         }
     }
 

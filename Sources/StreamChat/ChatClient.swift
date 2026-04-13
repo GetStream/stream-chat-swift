@@ -487,6 +487,51 @@ public class ChatClient {
         authenticationRepository.setToken(token: token, completeTokenWaiters: true)
     }
 
+    /// Loads grouped channel buckets and returns them in the following order:
+    /// `all`, `new`, `current`, `expired`.
+    ///
+    /// The response is converted to `ChatChannel` models without persisting the data locally.
+    public func groupedQueryChannels(
+        limit: Int? = nil,
+        watch: Bool = false,
+        presence: Bool = false,
+        completion: @escaping (Result<[[ChatChannel]], Error>) -> Void
+    ) {
+        let request = GroupedQueryChannelsRequestBody(
+            limit: limit,
+            watch: watch,
+            presence: presence
+        )
+        let endpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
+
+        apiClient.request(endpoint: endpoint) { [databaseContainer] result in
+            switch result {
+            case let .success(payload):
+                databaseContainer.write(converting: { session in
+                    try Self.groupedChannels(from: payload, session: session)
+                }, completion: completion)
+            case let .failure(error):
+                completion(.failure(error))
+            }
+        }
+    }
+
+    /// Loads grouped channel buckets and returns them in the following order:
+    /// `all`, `new`, `current`, `expired`.
+    ///
+    /// The response is converted to `ChatChannel` models without persisting the data locally.
+    public func groupedQueryChannels(
+        limit: Int? = nil,
+        watch: Bool = false,
+        presence: Bool = false
+    ) async throws -> [[ChatChannel]] {
+        try await withCheckedThrowingContinuation { continuation in
+            groupedQueryChannels(limit: limit, watch: watch, presence: presence) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
     @available(*, deprecated, message: "Use the asynchronous version of `disconnect` for increased safety")
@@ -833,6 +878,28 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
 }
 
 extension ChatClient {
+    private static func groupedChannels(
+        from payload: GroupedQueryChannelsPayload,
+        session: DatabaseSession
+    ) throws -> [[ChatChannel]] {
+        let buckets = [
+            payload.all.channels,
+            payload.new.channels,
+            payload.current.channels,
+            payload.expired.channels
+        ]
+
+        let models = try buckets.map { channels in
+            try channels.map { channelPayload in
+                let dto = try session.saveChannel(payload: channelPayload)
+                return try dto.asModel()
+            }
+        }
+
+        (session as? NSManagedObjectContext)?.rollback()
+        return models
+    }
+
     func backgroundWorker<T>(of type: T.Type) throws -> T {
         if let worker = backgroundWorkers.compactMap({ $0 as? T }).first {
             return worker

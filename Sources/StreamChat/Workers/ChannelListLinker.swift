@@ -7,10 +7,9 @@ import Foundation
 /// When we receive events, we need to check if a channel should be added or removed from
 /// the current query depending on the following events:
 /// - Channel created: We analyse if the channel should be added to the current query.
-/// - New message sent: This means the channel will reorder and appear on first position,
-///   so we also analyse if it should be added to the current query.
-/// - Channel is updated: We only check if we should remove it from the current query.
-///   We don't try to add it to the current query to not mess with pagination.
+/// - New message sent: This means the channel can reorder and also move between query-backed
+///   lists, so we analyse if it should be removed from or added to the current query.
+/// - Channel is updated: We analyse if it should be removed from or added to the current query.
 final class ChannelListLinker {
     private let clientConfig: ChatClientConfig
     private let databaseContainer: DatabaseContainer
@@ -46,12 +45,20 @@ final class ChannelListLinker {
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? MessageNewEvent },
-                callback: { [weak self] event in self?.linkChannelIfNeeded(event.channel) }
+                callback: { [weak self] event in
+                    self?.unlinkChannelIfNeeded(event.channel) {
+                        self?.linkChannelIfNeeded(event.channel)
+                    }
+                }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? NotificationMessageNewEvent },
-                callback: { [weak self] event in self?.linkChannelIfNeeded(event.channel) }
+                callback: { [weak self] event in
+                    self?.unlinkChannelIfNeeded(event.channel) {
+                        self?.linkChannelIfNeeded(event.channel)
+                    }
+                }
             ),
             EventObserver(
                 notificationCenter: nc,

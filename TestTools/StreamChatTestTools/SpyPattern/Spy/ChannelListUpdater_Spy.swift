@@ -13,10 +13,14 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
     @Atomic var update_completion: ((Result<[ChatChannel], Error>) -> Void)?
     @Atomic var update_completion_result: Result<[ChatChannel], Error>?
 
+    @Atomic var prefill_queries: [ChannelListQuery] = []
+    @Atomic var prefill_channels: [[ChatChannel]] = []
+
     @Atomic var fetch_queries: [ChannelListQuery] = []
     @Atomic var fetch_completion: ((Result<ChannelListPayload, Error>) -> Void)?
 
     @Atomic var refreshLoadedChannelsResult: Result<Set<ChannelId>, Error>?
+    @Atomic var refreshLoadedChannels_channelCounts: [Int] = []
 
     @Atomic var markAllRead_completion: ((Error?) -> Void)?
 
@@ -35,9 +39,13 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         update_completion = nil
         update_completion_result = nil
 
+        prefill_queries.removeAll()
+        prefill_channels.removeAll()
+
         fetch_queries.removeAll()
         fetch_completion = nil
 
+        refreshLoadedChannels_channelCounts.removeAll()
         markAllRead_completion = nil
 
         startWatchingChannels_cids.removeAll()
@@ -52,6 +60,16 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         _update_queries.mutate { $0.append(channelListQuery) }
         update_completion = completion
         update_completion_result?.invoke(with: completion)
+    }
+
+    override func prefill(
+        channels: [ChatChannel],
+        for query: ChannelListQuery,
+        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
+    ) {
+        _prefill_queries.mutate { $0.append(query) }
+        _prefill_channels.mutate { $0.append(channels) }
+        super.prefill(channels: channels, for: query, completion: completion)
     }
 
     override func markAllRead(completion: ((Error?) -> Void)? = nil) {
@@ -72,6 +90,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         completion: @escaping (Result<Set<ChannelId>, any Error>) -> Void
     ) {
         record()
+        _refreshLoadedChannels_channelCounts.mutate { $0.append(channelCount) }
         refreshLoadedChannelsResult?.invoke(with: completion)
     }
 

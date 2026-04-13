@@ -25,6 +25,66 @@ extension ChannelListPayload: Decodable {
     }
 }
 
+struct GroupedQueryChannelsRequestBody: Encodable {
+    let limit: Int?
+    let watch: Bool
+    let presence: Bool
+}
+
+struct GroupedQueryChannelsPayload {
+    let all: GroupedQueryChannelsBucketPayload
+    let new: GroupedQueryChannelsBucketPayload
+    let current: GroupedQueryChannelsBucketPayload
+    let expired: GroupedQueryChannelsBucketPayload
+    let duration: String
+}
+
+extension GroupedQueryChannelsPayload: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case all
+        case new
+        case current
+        case expired
+        case duration
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.init(
+            all: try container.decode(GroupedQueryChannelsBucketPayload.self, forKey: .all),
+            new: try container.decode(GroupedQueryChannelsBucketPayload.self, forKey: .new),
+            current: try container.decode(GroupedQueryChannelsBucketPayload.self, forKey: .current),
+            expired: try container.decode(GroupedQueryChannelsBucketPayload.self, forKey: .expired),
+            duration: try container.decode(String.self, forKey: .duration)
+        )
+    }
+}
+
+struct GroupedQueryChannelsBucketPayload {
+    let channels: [ChannelPayload]
+    let unreadCount: Int
+    let unreadChannels: Int
+}
+
+extension GroupedQueryChannelsBucketPayload: Decodable {
+    enum CodingKeys: String, CodingKey {
+        case channels
+        case unreadCount = "unread_count"
+        case unreadChannels = "unread_channels"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+
+        self.init(
+            channels: try container.decodeArrayIgnoringFailures([ChannelPayload].self, forKey: .channels),
+            unreadCount: try container.decode(Int.self, forKey: .unreadCount),
+            unreadChannels: try container.decode(Int.self, forKey: .unreadChannels)
+        )
+    }
+}
+
 struct ChannelPayload {
     let channel: ChannelDetailPayload
 

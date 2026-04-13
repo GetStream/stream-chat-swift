@@ -24,6 +24,7 @@ enum EndpointPath: Codable {
     case markThreadUnread(cid: ChannelId)
 
     case channels
+    case groupedChannels
     case createChannel(String)
     case updateChannel(String)
     case deleteChannel(String)
@@ -116,6 +117,7 @@ enum EndpointPath: Codable {
         case .liveLocations: return "users/live_locations"
 
         case .channels: return "channels"
+        case .groupedChannels: return "channels/grouped"
         case let .createChannel(queryString): return "channels/\(queryString)/query"
         case let .updateChannel(queryString): return "channels/\(queryString)/query"
         case let .deleteChannel(payloadPath): return "channels/\(payloadPath)"
