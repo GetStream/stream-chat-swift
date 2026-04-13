@@ -38,18 +38,21 @@ import StreamChat
 
     /// Provider for custom localization which is dependent on App Bundle.
     ///
-    /// The default implementation looks up the key in `Bundle.streamChatCommonUI` first; if
-    /// the key is not found there it falls back to `Appearance.bundle` (when set) and finally
-    /// to `Bundle.main`. This lets each UI module ship its own `Localizable.strings` and
-    /// register its bundle via `Appearance.bundle` while CommonUI keeps owning the keys it
-    /// itself references.
+    /// The default implementation looks up the key in `Appearance.bundle` first (when set) so
+    /// integrators can override any string — including keys owned by `StreamChatCommonUI` — via
+    /// that hook. If the injected bundle does not contain the key, the lookup falls back to
+    /// `Bundle.streamChatCommonUI` (which owns the keys referenced from inside CommonUI) and
+    /// finally to `Bundle.main`.
     public var localizationProvider: @Sendable (_ key: String, _ table: String) -> String = { key, table in
-        let commonBundle = Bundle.streamChatCommonUI
-        let value = commonBundle.localizedString(forKey: key, value: nil, table: table)
-        // `localizedString(forKey:value:table:)` returns the key itself when the lookup misses.
-        if value != key { return value }
-        let fallback = Appearance.bundle ?? .main
-        return fallback.localizedString(forKey: key, value: nil, table: table)
+        // `localizedString(forKey:value:table:)` returns the key itself when the lookup misses
+        // (because we pass `value: nil`). We use that to detect misses and continue the cascade.
+        if let injected = Appearance.bundle {
+            let value = injected.localizedString(forKey: key, value: nil, table: table)
+            if value != key { return value }
+        }
+        let commonValue = Bundle.streamChatCommonUI.localizedString(forKey: key, value: nil, table: table)
+        if commonValue != key { return commonValue }
+        return Bundle.main.localizedString(forKey: key, value: nil, table: table)
     }
 
     public init() {

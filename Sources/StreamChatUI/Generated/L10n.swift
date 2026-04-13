@@ -56,7 +56,7 @@ internal enum L10n {
     internal static func maxCountExceeded(_ p1: Int) -> String {
       return L10n.tr("Localizable", "attachment.max-count-exceeded", p1)
     }
-    /// Attachment size exceed the limit.
+    /// Attachment size exceeds the limit.
     internal static var maxSizeExceeded: String { L10n.tr("Localizable", "attachment.max-size-exceeded") }
   }
 
@@ -390,7 +390,7 @@ internal enum L10n {
       internal static var askAQuestionPlaceholder: String { L10n.tr("Localizable", "polls.creation.ask-a-question-placeholder") }
       /// Cancel
       internal static var cancel: String { L10n.tr("Localizable", "polls.creation.cancel") }
-      /// Type a number from 2 and 10
+      /// Type a number between 2 and 10
       internal static var maximumVotesError: String { L10n.tr("Localizable", "polls.creation.maximum-votes-error") }
       /// Maximum votes per person
       internal static var maximumVotesPlaceholder: String { L10n.tr("Localizable", "polls.creation.maximum-votes-placeholder") }
