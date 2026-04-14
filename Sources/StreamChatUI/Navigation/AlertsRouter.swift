@@ -84,11 +84,11 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
 
         let alert = UIAlertController(
             title: nil,
-            message: currentUserHasAnswer ? L10n.Alert.Poll.updateComment : L10n.Alert.Poll.addComment,
+            message: currentUserHasAnswer ? L10n.Message.Polls.Button.updateComment : L10n.Alert.Title.addComment,
             preferredStyle: .alert
         )
         alert.addTextField()
-        alert.addAction(.init(title: L10n.Alert.Poll.send, style: .default, handler: { _ in
+        alert.addAction(.init(title: L10n.Alert.Actions.send, style: .default, handler: { _ in
             guard let textFieldValue = alert.textFields?.first?.text else { return }
             guard !textFieldValue.isEmpty else { return }
             handler(textFieldValue)
@@ -110,11 +110,11 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
     ) {
         let alert = UIAlertController(
             title: nil,
-            message: L10n.Alert.Poll.suggestOption,
+            message: L10n.Alert.Title.suggestAnOption,
             preferredStyle: .alert
         )
         alert.addTextField()
-        alert.addAction(.init(title: L10n.Alert.Poll.send, style: .default, handler: { _ in
+        alert.addAction(.init(title: L10n.Alert.Actions.send, style: .default, handler: { _ in
             guard let textFieldValue = alert.textFields?.first?.text else { return }
             guard !textFieldValue.isEmpty else { return }
             handler(textFieldValue)
@@ -135,10 +135,10 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
     ) {
         let alert = UIAlertController(
             title: nil,
-            message: L10n.Alert.Poll.endTitle,
+            message: L10n.Alert.Message.endPoll,
             preferredStyle: .actionSheet
         )
-        alert.addAction(.init(title: L10n.Alert.Poll.end, style: .destructive, handler: { _ in
+        alert.addAction(.init(title: L10n.Alert.Actions.endPoll, style: .destructive, handler: { _ in
             handler()
         }))
         alert.addAction(.init(title: L10n.Alert.Actions.cancel, style: .cancel))
@@ -149,14 +149,14 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
     open func showPollDiscardChangesAlert(handler: @escaping () -> Void) {
         let alert = UIAlertController(
             title: nil,
-            message: L10n.Alert.Poll.discardChangesMessage,
+            message: L10n.Composer.Polls.actionSheetDiscardTitle,
             preferredStyle: .actionSheet
         )
 
-        alert.addAction(UIAlertAction(title: L10n.Alert.Poll.discardChanges, style: .destructive, handler: { _ in
+        alert.addAction(UIAlertAction(title: L10n.Alert.Actions.discardChanges, style: .destructive, handler: { _ in
             handler()
         }))
-        alert.addAction(UIAlertAction(title: L10n.Alert.Poll.keepEditing, style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: L10n.Alert.Actions.keepEditing, style: .cancel, handler: nil))
 
         rootViewController.present(alert, animated: true)
     }
@@ -164,7 +164,7 @@ open class AlertsRouter: NavigationRouter<UIViewController> {
     /// Shows a generic error alert if it was not possible to create the poll from the backend.
     open func showPollCreationErrorAlert() {
         let alert = UIAlertController(
-            title: L10n.Alert.Poll.genericErrorTitle,
+            title: L10n.Alert.Error.title,
             message: L10n.Alert.Poll.createErrorMessage,
             preferredStyle: .alert
         )

@@ -270,7 +270,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         } else if let imagePayload = message.imageAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: imagePayload.imageURL)
-            textView.text = message.text.isEmpty ? L10n.Composer.QuotedMessage.photo : message.text
+            textView.text = message.text.isEmpty ? L10n.Composer.Quoted.photo : message.text
         } else if let linkPayload = message.linkAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: linkPayload.previewURL)
@@ -278,7 +278,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         } else if let giphyPayload = message.giphyAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: giphyPayload.previewURL)
-            textView.text = message.text.isEmpty ? L10n.Composer.QuotedMessage.giphy : message.text
+            textView.text = message.text.isEmpty ? L10n.Composer.Quoted.giphy : message.text
         } else if let videoPayload = message.videoAttachments.first?.payload {
             attachmentPreviewView.contentMode = .scaleAspectFill
             textView.text = message.text.isEmpty ? videoPayload.title : message.text

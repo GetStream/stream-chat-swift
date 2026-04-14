@@ -83,9 +83,9 @@ open class PollCommentListTableFooterView: _View, ThemeProvider {
             .contains(where: { $0.user?.id == content.currentUserId })
 
         if currentUserHasAnswer {
-            actionButton.setTitle(L10n.Polls.updateComment, for: .normal)
+            actionButton.setTitle(L10n.Message.Polls.Button.updateComment, for: .normal)
         } else {
-            actionButton.setTitle(L10n.Polls.addComment, for: .normal)
+            actionButton.setTitle(L10n.Message.Polls.Button.addComment, for: .normal)
         }
     }
 

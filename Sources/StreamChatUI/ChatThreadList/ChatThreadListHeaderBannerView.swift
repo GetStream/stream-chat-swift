@@ -53,6 +53,6 @@ open class ChatThreadListHeaderBannerView: _View, ThemeProvider {
 
         guard let content = self.content else { return }
 
-        bannerView.textLabel.text = L10n.ThreadList.newThreads(content.newThreadsCount)
+        bannerView.textLabel.text = L10n.Thread.newThreads(content.newThreadsCount)
     }
 }

@@ -36,6 +36,6 @@ open class RecordingTipView: _View, ThemeProvider {
         titleLabel.font = appearance.fonts.caption1.bold
         titleLabel.textColor = appearance.colorPalette.textPrimary
         titleLabel.textAlignment = .center
-        titleLabel.text = L10n.Recording.tip
+        titleLabel.text = L10n.Composer.Recording.tip
     }
 }

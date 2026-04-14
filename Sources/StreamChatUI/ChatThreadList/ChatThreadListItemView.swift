@@ -246,7 +246,7 @@ open class ChatThreadListItemView: _View, ThemeProvider {
         let unreadReplies = thread.reads.first(where: { $0.user.id == content.currentUserId })?.unreadMessagesCount ?? 0
 
         threadTitleLabel.text = channelNameText
-        threadDescriptionLabel.text = parentMessagePreviewText.map { L10n.ThreadListItem.repliedTo($0) }
+        threadDescriptionLabel.text = parentMessagePreviewText.map { L10n.Thread.Item.repliedTo($0) }
         replyDescriptionLabel.text = replyPreviewText
         replyTimestampLabel.text = replyTimestampLabelText
         replyAuthorAvatarView.content = latestReply?.author

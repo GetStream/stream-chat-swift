@@ -82,7 +82,7 @@ open class PollAllOptionsListVC:
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        title = L10n.Polls.allOptionsTitle
+        title = L10n.Message.Polls.Toolbar.optionsTitle
         tableView.allowsSelection = true
         tableView.backgroundColor = appearance.colorPalette.backgroundCoreApp
         tableView.sectionHeaderHeight = 0

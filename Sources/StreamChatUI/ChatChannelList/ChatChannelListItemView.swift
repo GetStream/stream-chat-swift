@@ -168,7 +168,7 @@ open class ChatChannelListItemView: _View, ThemeProvider {
 
         if let previewMessage, previewMessage.isDeleted {
             if previewMessage.isSentByCurrentUser {
-                return "\(L10n.you): \(L10n.Message.deletedMessagePlaceholder)"
+                return "\(L10n.Channel.Item.you): \(L10n.Message.deletedMessagePlaceholder)"
             }
             return L10n.Message.deletedMessagePlaceholder
         }
@@ -436,7 +436,7 @@ open class ChatChannelListItemView: _View, ThemeProvider {
     /// - Parameter messageText: The current text of the message.
     /// - Returns:  A string representing the message preview text.
     open func previewMessageForAudioRecordingMessage(messageText: String) -> String {
-        L10n.ChannelList.Preview.Voice.recording
+        L10n.Channel.Item.voiceMessage
     }
 
     /// The message preview text in case the message is a system message.
@@ -457,7 +457,7 @@ open class ChatChannelListItemView: _View, ThemeProvider {
     /// - Parameter messageText: The current text of the message.
     /// - Returns:  A string representing the message preview text.
     open func previewMessageTextForCurrentUser(messageText: String) -> String {
-        "\(L10n.you): \(messageText)"
+        "\(L10n.Channel.Item.you): \(messageText)"
     }
 
     /// The message preview text in case the message is a 1on1 channel.
@@ -535,15 +535,15 @@ open class ChatChannelListItemView: _View, ThemeProvider {
         var components = ["📊"]
         if let latestVoter = poll.latestVotes.first?.user {
             if latestVoter.id == content?.currentUserId {
-                components.append(L10n.Message.Preview.pollYouVoted)
+                components.append(L10n.Channel.Item.pollYouVoted)
             } else {
-                components.append(L10n.Message.Preview.pollSomeoneVoted(latestVoter.name ?? latestVoter.id))
+                components.append(L10n.Channel.Item.pollSomeoneVoted(latestVoter.name ?? latestVoter.id))
             }
         } else if let creator = poll.createdBy {
             if previewMessage.isSentByCurrentUser {
-                components.append(L10n.Message.Preview.pollYouCreated)
+                components.append(L10n.Channel.Item.pollYouCreated)
             } else {
-                components.append(L10n.Message.Preview.pollSomeoneCreated(creator.name ?? creator.id))
+                components.append(L10n.Channel.Item.pollSomeoneCreated(creator.name ?? creator.id))
             }
         }
         if !poll.name.isEmpty {

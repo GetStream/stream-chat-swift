@@ -2,351 +2,324 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-/// Text used in the channel name before the last participant.
 "channel.name.and" = "and";
-/// Text used in the channel name after the last displayed participant.
-/// The text shows the remaining number of participants (the ones not displayed).
-/// E.g. John, Steve and 5 more.
 "channel.name.andXMore" = "and %@ more";
-/// Shown when the channel name is missing.
 "channel.name.missing" = "NoChannel";
-/// Shown in the channel list preview, when the channel doesn't contain any messages.
-"channel.item.empty-messages" = "No messages";
-/// Shown when a single person is typing.
+"channel.name.direct-message" = "user";
+"channel.name.group" = "group";
+"channel.item.empty-messages" = "No messages yet";
+"channel.item.message-failed-to-send" = "Message failed to send";
+"channel.item.poll-someone-voted" = "%@ voted:";
+"channel.item.poll-you-voted" = "You voted:";
+"channel.item.poll-someone-created" = "%@ created:";
+"channel.item.poll-you-created" = "You created:";
 "channel.item.typing-singular" = "is typing ...";
-/// Shown when multiple people are typing.
 "channel.item.typing-plural" = "are typing ...";
-/// Shown when searching messages, the placeholder is filled with the channel name.
-"channel.item.search.in" = " in %@";
-/// Shown in the channel list preview when the last message is an audio attachment.
+"channel.item.typing" = "Typing";
+"channel.item.you" = "You";
+"channel.item.muted" = "Channel is muted";
+"channel.item.mute" = "Mute";
+"channel.item.unmute" = "Unmute";
 "channel.item.audio" = "Audio";
-/// Shown in the channel list preview when the last message is an image attachment.
+"channel.item.giphy" = "Giphy";
 "channel.item.photo" = "Photo";
-/// Shown in the channel list preview when the last message is a video attachment.
 "channel.item.video" = "Video";
+"channel.item.poll" = "Poll";
+"channel.item.voice-message" = "Voice Message";
+"channel.item.remove-user" = "Remove User";
+"channel.item.remove-user-confirmation-title" = "Remove User";
+"channel.item.remove-user-confirmation-message" = "Are you sure you want to remove %@ from %@?";
+"channel.item.send-direct-message" = "Send Direct Message";
+"channel.item.search.in" = " in %@";
 
-/// Shown when the channel list is empty as a title text.
-"channelList.empty.title" = "Let's start chatting!";
-/// Shown when the channel list is empty as a subtitle text.
-"channelList.empty.subtitle" = "How about sending your first message to a friend?";
-/// Shown when the channel list is empty as a an action button.
-"channelList.empty.button" = "Start a chat";
-/// Shown in the channel list search bar.
+"channel.list.scroll-to-bottom.title" = "Scroll to bottom";
+
+"channel.no-content.title" = "Let's start chatting";
+"channel.no-content.message" = "How about sending your first message to a friend?";
+"channel.no-content.start" = "Start a chat";
+
+"channel.header.info.title" = "Channel info";
+
 "channelList.search" = "Search";
-/// Shown when there are no search results.
 "channelList.search.empty.subtitle" = "No results for %@";
-
-/// Shown when there's an error when loading the channels.
 "channelList.error.message" = "Error loading channels";
-/// Shown in the channel list preview when the last message is a voice recording.
-"channelList.preview.voice.recording" = "Voice message";
-/// Shown when the name of the person who is typing can't be determined.
+
+"message.attachment.accessibility-label" = "Attachment %d";
+"message.read-status.seen-by-others" = "Seen by others";
+"message.read-status.seen-by-no-one" = "Seen by no one";
+
+"message.actions.inline-reply" = "Reply";
+"message.actions.thread-reply" = "Thread Reply";
+"message.actions.edit" = "Edit Message";
+"message.actions.copy" = "Copy Message";
+"message.actions.delete" = "Delete Message";
+"message.actions.pin" = "Pin to conversation";
+"message.actions.unpin" = "Unpin from conversation";
+"message.actions.delete.confirmation-title" = "Delete Message";
+"message.actions.delete.confirmation-message" = "Are you sure you want to permanently delete this message?";
+"message.actions.user-unblock" = "Unblock User";
+"message.actions.user-block" = "Block User";
+"message.actions.user-unmute" = "Unmute User";
+"message.actions.user-mute" = "Mute User";
+"message.actions.resend" = "Resend";
+"message.actions.flag" = "Flag Message";
+"message.actions.mark-unread" = "Mark Unread";
+"message.actions.flag.confirmation-title" = "Flag Message";
+"message.actions.flag.confirmation-message" = "Do you want to send a copy of this message to a moderator for further investigation?";
+"message.actions.user-block.confirmation-message" = "Are you sure you want to block this user?";
+"message.actions.user-unblock.confirmation-message" = "Are you sure you want to unblock this user?";
+
+"message.moderation.alert.title" = "Are you sure?";
+"message.moderation.alert.message" = "Consider how your comment might make others feel and be sure to follow our Community Guidelines.";
+"message.moderation.alert.resend" = "Send Anyway";
+"message.moderation.alert.edit" = "Edit Message";
+"message.moderation.alert.delete" = "Delete Message";
+"message.moderation.alert.cancel" = "Cancel";
+
 "messageList.typingIndicator.typing-unknown" = "Someone is typing";
 
-/// Shown in the message actions popup for the reply (quote) action.
-"message.actions.inline-reply" = "Reply";
-/// Shown in the message actions popup for the thread reply action.
-"message.actions.thread-reply" = "Thread Reply";
-/// Shown in the message actions popup for the edit message action.
-"message.actions.edit" = "Edit Message";
-/// Shown in the message actions popup for the copy message action.
-"message.actions.copy" = "Copy Message";
-/// Shown in the message actions popup for the delete message action.
-"message.actions.delete" = "Delete Message";
-/// Shown as a title in the confirmation popup when deleting a message.
-"message.actions.delete.confirmation-title" = "Delete Message";
-/// Shown as a text in the confirmation popup when deleting a message.
-"message.actions.delete.confirmation-message" = "Are you sure you want to permanently delete this message?";
-/// Shown in the message actions popup for the unblock user action.
-"message.actions.user-unblock" = "Unblock User";
-/// Shown in the message actions popup for the block user action.
-"message.actions.user-block" = "Block User";
-/// Shown in the message actions popup for the unmute user action.
-"message.actions.user-unmute" = "Unmute User";
-/// Shown in the message actions popup for the mute user action.
-"message.actions.user-mute" = "Mute User";
-/// Shown in the message actions popup for the resend message action.
-/// Displayed only when the message was not sent successfully.
-"message.actions.resend" = "Resend";
-/// Shown in the message actions popup for the flag message action.
-"message.actions.flag" = "Flag Message";
-/// Shown as a text in the confirmation popup when flagging a message.
-"message.actions.flag.confirmation-title" = "Flag Message";
-/// Shown as a text in the confirmation popup when flagging a message.
-"message.actions.flag.confirmation-message" = "Do you want to send a copy of this message to a moderator for further investigation?";
-/// Shown in the message actions popup for marking message as unread.
-"message.actions.mark-unread" = "Mark as unread";
-
-/// Shown as a title in the popup shown when a message was bounced due to moderation.
-"message.moderation.title" = "Are you sure?";
-/// Shown as a text in the popup shown when a message was bounced due to moderation.
-"message.moderation.message" = "Consider how your comment might make others feel and be sure to follow our Community Guidelines.";
-/// Shown as a button text in the popup shown when a message was bounced due to moderation.
-"message.moderation.resend" = "Send Anyway";
-/// Shown as an edit message action in the popup shown when a message was bounced due to moderation.
-"message.moderation.edit" = "Edit Message";
-/// Shown as a delete message action in the popup shown when a message was bounced due to moderation.
-"message.moderation.delete" = "Delete Message";
-/// Shown as a label below the message, to notify that a message has been edited.
-"message.edited" = "Edited";
-
-/// Shown when a user is online.
-"message.title.online" = "Online";
-/// Shown when a user is offline.
-"message.title.offline" = "Offline";
-/// Shown in a group chat title.
-/// The first placeholder is the number of members, while the second one shows how many are online.
-"message.title.group" = "%d members, %d online";
-/// Shown in the message list, when a message contains thread replies.
 "message.threads.reply" = "Thread Reply";
-/// Shown as a subtitle in the navigation bar in the message thread screen.
-/// The placeholder contains the channel name.
+"message.threads.replies" = "Thread Replies";
 "message.threads.replyWith" = "with %@";
-/// Shown when a message was translated to another language.
-"message.translatedTo" = "Translated to %@";
-/// Shown when a message is visible only to the current user.
-/// Usually applies to deleted messages that can be visible to current users.
-"message.only-visible-to-you" = "Only visible to you";
-/// Shown when a message was deleted in the message list.
-"message.deleted-message-placeholder" = "Message deleted";
-/// Shown when a message was deleted in the Channel List or Thread List.
-"message.item.deleted"= "This message was deleted.";
-/// Shown when uploading of an attachment failed.
-"message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
-/// Shown when the message list contains an unknown attachment.
-/// Can appear if you haven't properly configured your custom attachments.
-"message.unsupported-attachment" = "Unsupported Attachment";
+"message.threads.subtitle" = "with messages";
 
-/// Shown when an attachment can't be uploaded because it's bigger than the allowed limit.
+"message.gallery.photos" = "Photos";
+"message.gallery.pageCount" = "%d of %d";
+"message.cell.pinnedBy" = "Pinned by";
+"message.cell.pinnedByYou" = "Pinned by you";
+"message.cell.unknownPin" = "unknown";
+"message.cell.edited" = "Edited";
+"message.cell.sent-at" = "Sent at %@";
+"message.reactions.currentUser" = "You";
+"message.reactions.tap-to-remove" = "Tap to remove";
+
+"message.polls.button.addComment" = "Add a Comment";
+"message.polls.button.updateComment" = "Update Your Comment";
+"message.polls.button.endVote" = "End Poll";
+"message.polls.button.seeMoreOptions" = "See %d More Options";
+"message.polls.button.show-all" = "View all";
+"message.polls.button.suggestAnOption" = "Suggest an Option";
+"message.polls.button.viewResults" = "View Results";
+"message.polls.subtitle.selectOne" = "Select one";
+"message.polls.subtitle.selectOneOrMore" = "Select one or more";
+"message.polls.subtitle.selectUpTo" = "Select up to %d";
+"message.polls.subtitle.voteEnded" = "Vote ended";
+"message.polls.toolbar.comments-title" = "Poll Comments";
+"message.polls.toolbar.options-title" = "Poll Options";
+"message.polls.toolbar.results-title" = "Poll Results";
+"message.polls.unknown-vote-author" = "Anonymous";
+"message.polls.date.day-at-time" = "%@ at %@";
+"message.polls.date.days-ago" = "%dd ago";
+"message.polls.date.weeks-ago" = "%dw ago";
+"message.polls.option" = "Option %d";
+"message.polls.question" = "Question";
+"message.polls.vote-singular" = "%d vote";
+"message.polls.votes" = "%d votes";
+"message.polls.votes-total" = "%d votes total";
+"message.polls.snackbar.poll-ended" = "Poll ended";
+
+"message.translatedTo" = "Translated to %@";
+"message.showOriginal" = "Show Original";
+"message.showTranslation" = "Show Translation";
+"message.only-visible-to-you" = "Only visible to you";
+"message.deleted-message-placeholder" = "Message deleted";
+"message.item.deleted" = "This message was deleted.";
+"message.sending.attachment-uploading-failed" = "UPLOADING FAILED";
+"message.sending.attachment-upload-failed" = "Upload failed";
+"message.sending.attachment-retry-upload" = "Retry upload";
+"message.unsupported-attachment" = "Unsupported Attachment";
+"message.file-attachment.error-preview" = "Error occured while previewing the file.";
+"message.giphy-attachment.title" = "GIPHY";
+"message.search.title" = "Search";
+"message.search.cancel" = "Cancel";
+"message.bounce.title" = "Message was bounced";
+"message.preview.draft" = "Draft";
+"message.title.online" = "Online";
+"message.title.offline" = "Offline";
+"message.title.group" = "%d members, %d online";
+
+"alert.actions.cancel" = "Cancel";
+"alert.actions.delete" = "Delete";
+"alert.actions.endPoll" = "End Poll";
+"alert.actions.ok" = "OK";
+"alert.actions.flag" = "Flag";
+"alert.actions.discard-changes" = "Discard Changes";
+"alert.actions.delete-channel-title" = "Delete conversation";
+"alert.actions.delete-channel-message" = "Are you sure you want to delete this conversation?";
+"alert.actions.keep-editing" = "Keep Editing";
+"alert.actions.send" = "Send";
+"alert.actions.update" = "Update";
+"alert.error.title" = "Something went wrong.";
+"alert.error.message" = "The operation couldn't be completed.";
+"alert.actions.mute-channel-title" = "Are you sure you want to mute this";
+"alert.actions.unmute-channel-title" = "Are you sure you want to unmute this";
+"alert.actions.leave-group-title" = "Leave group";
+"alert.actions.leave-group-message" = "Are you sure you want to leave this group?";
+"alert.actions.leave-group-button" = "Leave";
+"alert.actions.view-info-title" = "View info";
+"alert.actions.mute-user" = "Mute User";
+"alert.actions.unmute-user" = "Unmute User";
+"alert.actions.mute-channel" = "Mute Channel";
+"alert.actions.unmute-channel" = "Unmute Channel";
+"alert.actions.archive-conversation" = "Archive Conversation";
+"alert.actions.unarchive-conversation" = "Unarchive Conversation";
+"alert.actions.archive-channel" = "Archive Channel";
+"alert.actions.unarchive-channel" = "Unarchive Channel";
+"alert.actions.leave-conversation" = "Leave Conversation";
+"alert.actions.block-user" = "Block User";
+"alert.actions.unblock-user" = "Unblock User";
+"alert.text-field.polls-new-option" = "Enter a new option";
+"alert.text-field.poll-add-comment" = "Your comment";
+"alert.title.add-comment" = "Add a Comment";
+"alert.title.end-poll" = "End this poll?";
+"alert.message.end-poll" = "Do you want to end this poll now? Nobody will be able to vote in this poll anymore.";
+"alert.title.suggest-an-option" = "Suggest an option";
+"alert.poll.create-error-message" = "It was not possible to create the poll.";
+
+"composer.title.edit" = "Edit Message";
+"composer.title.reply" = "Reply to Message";
+"composer.placeholder.message" = "Message";
+"composer.placeholder.messageDisabled" = "You can't send messages in this channel";
+"composer.placeholder.slow-mode" = "Slow mode, wait %ds...";
+"composer.placeholder.giphy" = "Search GIFs";
+"composer.checkmark.direct-message-reply" = "Also send as direct message";
+"composer.checkmark.channel-reply" = "Also send in channel";
+"composer.picker.title" = "Choose attachment type: ";
+"composer.picker.file" = "File";
+"composer.picker.media" = "Photo or Video";
+"composer.picker.camera" = "Camera";
+"composer.picker.cancel" = "Cancel";
+"composer.picker.show-all" = "Attachment pickers";
+"composer.links-disabled.title" = "Links are disabled";
+"composer.links-disabled.subtitle" = "Sending links is not allowed in this conversation.";
+"composer.files.add-more" = "Add more files";
+"composer.images.no-access-library" = "You have not granted access to the photo library.";
+"composer.images.access-settings" = "Change in Settings";
+"composer.camera.take-photo" = "Take a photo and share";
+"composer.camera.open-camera" = "Open Camera";
+"composer.camera.access-settings" = "Change in Settings";
+"composer.camera.no-access" = "You have not granted access to your camera";
+"composer.files.select-files" = "Select files to share";
+"composer.files.open-files" = "Open Files";
+"composer.polls.create-poll-description" = "Create a poll and share";
+"composer.quoted.dismiss" = "Dismiss quote";
+"composer.quoted.replyTo" = "Reply to %@";
+"composer.quoted.photo" = "Photo";
+"composer.quoted.photos" = "%d photos";
+"composer.quoted.video" = "Video";
+"composer.quoted.videos" = "%d videos";
+"composer.quoted.giphy" = "Giphy";
+"composer.quoted.voiceMessage" = "Voice message";
+"composer.quoted.voiceMessageWithDuration" = "Voice message (%@)";
+"composer.quoted.file" = "File";
+"composer.quoted.files" = "%d files";
+"composer.quoted.audio" = "Audio";
+"composer.polls.action-sheet-discard-title" = "Are you sure you want to discard your poll?";
+"composer.polls.add-comment" = "Add a comment";
+"composer.polls.add-option" = "Add an option";
+"composer.polls.anonymous-poll" = "Anonymous poll";
+"composer.polls.askQuestion" = "Ask a question";
+"composer.polls.create-poll" = "Create Poll";
+"composer.polls.options" = "Options";
+"composer.polls.question" = "Question";
+"composer.polls.maximum-votes-per-person" = "Limit votes per person";
+"composer.polls.duplicate-option" = "Option already exists";
+"composer.polls.multiple-answers" = "Multiple votes";
+"composer.polls.suggest-option" = "Suggest an option";
+"composer.polls.type-number-min-max-range" = "Choose between 2–10 options";
+"composer.polls.select-more-than-one-option" = "Select more than one option";
+"composer.polls.hide-who-voted" = "Hide who voted";
+"composer.polls.let-others-add-options" = "Let others add options";
+"composer.polls.allow-others-to-add-comments" = "Allow others to add comments";
+"composer.audio-recording.start" = "Start recording audio message";
+"composer.audio-recording.stop" = "Stop recording audio message";
+"composer.commands.giphy" = "Giphy";
+"composer.commands.giphy.description" = "Post a random gif to the channel";
+"composer.commands.mute" = "Mute";
+"composer.commands.mute.description" = "Mute a user";
+"composer.commands.unmute" = "Unmute";
+"composer.commands.unmute.description" = "Unmute a user";
+"composer.commands.format.text" = "text";
+"composer.commands.format.username" = "@username";
+"composer.commands.mute.confirmation" = "Muted %@";
+"composer.commands.unmute.confirmation" = "Unmuted %@";
+"composer.suggestions.commands.header" = "Instant Commands";
+"composer.recording.tip" = "Hold to record. Release to send.";
+"composer.recording.tipSave" = "Hold to record. Release to save.";
+"composer.recording.slide-to-cancel" = "Slide to cancel";
+"composer.recording.recordingStopped" = "Recording stopped";
+"composer.recording.voiceMessageDeleted" = "Voice message deleted";
+
+"attachment.max-size.title" = "Attachment size exceed the limit";
+"attachment.max-size.message" = "Please select a smaller attachment.";
 "attachment.max-size-exceeded" = "Attachment size exceed the limit.";
-/// Shown when the number of attachments in a message is bigger than the allowed limit.
 "attachment.max-count-exceeded" = "The max number of attachments per message is %d.";
 
-/// Generic cancel text in the popups.
-"alert.actions.cancel" = "Cancel";
-/// Generic delete text in the popups.
-"alert.actions.delete" = "Delete";
-/// Generic flag text in the popups.
-"alert.actions.flag" = "Flag";
-/// Generic ok text in the popups.
-"alert.actions.ok" = "Ok";
-
-/// Shown as title in the composer when editing a message.
-"composer.title.edit" = "Edit Message";
-/// Shown as title in the composer when replying to a message.
-"composer.title.reply" = "Reply to Message";
-/// Shown as a placeholder in the composer input text view.
-"composer.placeholder.message" = "Send a message";
-/// Shown in the placeholder in the composer input text view, when sending messages is disabled for the channel.
-"composer.placeholder.messageDisabled" = "You can't send messages in this channel";
-/// Shown in the placeholder in the composer input text view, when the channel is in slow mode.
-"composer.placeholder.slowMode" = "Slow mode ON";
-/// Not used at the moment.
-"composer.placeholder.giphy" = "Search GIFs";
-/// Shown after the checkbox that allows users to send a thread reply also as a direct message in a DM.
-"composer.checkmark.direct-message-reply" = "Also send as direct message";
-/// Shown after the checkbox that allows users to send a thread reply also as a direct message in a group.
-"composer.checkmark.channel-reply" = "Also send in channel";
-/// Shown as a title in the composer attachment picker.
-"composer.picker.title" = "Choose attachment type: ";
-/// Shown as an option to select a file attachment in the attachment picker.
-/// Invokes the native file picker on tap.
-"composer.picker.file" = "File";
-/// Shown as an option to select a photo or video attachment in the attachment picker.
-/// Invokes the native gallery picker on tap.
-"composer.picker.media" = "Photo or Video";
-/// Shown as an option to select the camera in the attachment picker.
-/// Invokes the native camera picker on tap.
-"composer.picker.camera" = "Camera";
-/// Text for the cancel button in the attachment picker in the composer.
-"composer.picker.cancel" = "Cancel";
-/// Shown as title in the popup shown when links are disabled in the chat.
-"composer.links-disabled.title" = "Links are disabled";
-/// Shown as message in the popup shown when links are disabled in the chat.
-"composer.links-disabled.subtitle" = "Sending links is not allowed in this conversation.";
-/// Shown while quoting a message that contains a photo attachment.
-"composer.quoted-message.photo" = "Photo";
-/// Shown while quoting a message that contains a giphy attachment.
-"composer.quoted-message.giphy" = "Giphy";
-/// Shown as a title in the commands suggestions header.
-"composer.suggestions.commands.header" = "Instant Commands";
-
-/// Shown in the gallery preview, indicating which image is currently presented.
-/// The first placeholder is the number of the selected image.
-/// The second placeholder is the total number of images in the attachment.
 "current-selection" = "%d of %d";
 
-/// Text shown when the user was last seen seconds ago.
 "dates.time-ago-seconds-plural" = "last seen %d seconds ago";
-/// Text shown when the user was last seen a second ago.
 "dates.time-ago-seconds-singular" = "last seen just one second ago";
-/// Text shown when the user was last seen a minute ago.
 "dates.time-ago-minutes-singular" = "last seen one minute ago";
-/// Text shown when the user was last seen few minutes ago.
-/// The number of minutes is provided as a placeholder.
 "dates.time-ago-minutes-plural" = "last seen %d minutes ago";
-/// Text shown when the user was last seen an hour ago.
 "dates.time-ago-hours-singular" = "last seen one hour ago";
-/// Text shown when the user was last seen few hours ago.
-/// The number of hours is provided as a placeholder.
 "dates.time-ago-hours-plural" = "last seen %d hours ago";
-/// Text shown when the user was last seen a day ago.
 "dates.time-ago-days-singular" = "last seen one day ago";
-/// Text shown when the user was last seen few days ago.
-/// The number of days is provided as a placeholder.
 "dates.time-ago-days-plural" = "last seen %d days ago";
-/// Text shown when the user was last seen a week ago.
 "dates.time-ago-weeks-singular" = "last seen one week ago";
-/// Text shown when the user was last seen few weeks ago.
-/// The number of weeks is provided as a placeholder.
 "dates.time-ago-weeks-plural" = "last seen %d weeks ago";
-/// Text shown when the user was last seen a month ago.
 "dates.time-ago-months-singular" = "last seen one month ago";
-/// Text shown when the user was last seen few months ago.
-/// The number of months is provided as a placeholder.
 "dates.time-ago-months-plural" = "last seen %d months ago";
+"dates.today" = "Today";
 
-/// Text for the current user.
-/// For example, used in the channel preview when the last message was sent by the current user.
-"you" = "You";
-
-/// Tip shown when pressing on the recording attachments button in the composer.
-"recording.tip" = "Hold to record, release to send";
-/// Text shown when the voice recording is started.
-/// Provides the ability to cancel the current recording.
-"recording.slideToCancel" = "Slide to cancel";
-
-/// The rate of the player, where the placeholder is the actual rate (e.g. x2).
 "audio.player.rate" = "x%@";
+
+"polls.anonymous-author" = "Anonymous";
+
+"chat-info.pinned-messages.title" = "Pinned Messages";
+"chat-info.pinned-messages.empty-title" = "No pinned messages";
+"chat-info.pinned-messages.empty-desc" = "Long-press an important message and choose Pin to conversation.";
+"chat-info.files.title" = "Files";
+"chat-info.files.empty-title" = "No files";
+"chat-info.files.empty-desc" = "Files sent in this chat will appear here.";
+"chat-info.media.title" = "Photos & Videos";
+"chat-info.media.empty-title" = "No media";
+"chat-info.media.empty-desc" = "Photos or videos sent in this chat will appear here.";
+"chat-info.mute.user" = "Mute User";
+"chat-info.mute.group" = "Mute Group";
+"chat-info.users.loadMore" = "%@ more";
+"chat-info.users.view-all" = "View all";
+"chat-info.rename.name" = "NAME";
+"chat-info.rename.placeholder" = "Add a group name";
+"chat-info.group.title" = "Group Info";
+"chat-info.contact.title" = "Contact Info";
+"chat-info.edit" = "Edit";
+"chat-info.edit.save" = "Save";
+"chat-info.edit.upload" = "Upload";
+"chat-info.edit.group-name" = "Group name";
+"chat-info.edit.picture.title" = "Edit Group Picture";
+"chat-info.edit.picture.camera" = "Take Photo";
+"chat-info.edit.picture.library" = "Choose Image";
+"chat-info.edit.picture.reset" = "Reset Picture";
+"chat-info.member.admin" = "Admin";
+"chat-info.members.add" = "Add";
+"chat-info.members.add-members-title" = "Add Members";
+"chat-info.members.already-member" = "Already a member";
+"chat-info.members.title" = "Members";
 
 // MARK: - Threads
 
-/// The prefix text when showing which parent message was the reply to.
-"threadListItem.replied-to" = "replied to: %@";
-/// Description shown when the thread list is empty.
-"threadList.empty.description" = "No threads here yet...";
-/// Text shown when new threads banner is shown.
-"threadList.new-threads" = "%d new threads";
-/// Shown when there's an error when loading the threads.
-"threadList.error.message" = "Error loading threads";
+"thread.title" = "Threads";
+"thread.new-threads" = "%d new threads";
+"thread.error.message" = "Couldn't load new threads. Tap to retry.";
+"thread.no-content.message" = "No threads here yet...";
+"thread.item.replied-to" = "replied to: %@";
+"thread.item.reply" = "reply";
+"thread.item.replies" = "replies";
 
-// MARK: - Polls
+// MARK: - Message Annotations
 
-/// Shown in the message poll view to describe that only one option is selectable.
-"polls.subtitle.selectOne" = "Select one";
-/// Shown in the message poll view to describe that multiple options are selectable.
-"polls.subtitle.selectOneOrMore" = "Select one or more";
-/// Shown in the message poll view to describe that multiple options are selectable up until a limit.
-"polls.subtitle.selectUpTo" = "Select up to %d";
-/// Shown in the message poll view to describe that the poll has ended.
-"polls.subtitle.voteEnded" = "Vote ended";
-/// Shown in the message poll view on the button to end the poll.
-"polls.button.endVote" = "End Vote";
-/// Shown in the message poll view on the button to view the poll results.
-"polls.button.viewResults" = "View Results";
-
-/// Shown in the message poll view on the button to add a poll comment.
-"polls.button.add-comment" = "Add Comment";
-/// Shown in the message poll view on the button to view the poll comments.
-"polls.button.view-comments" = "View %d Comments";
-/// Shown in the message poll view on the button to to show all options.
-"polls.button.all-options" = "See %d More Options";
-/// Shown in the message poll results on the button to show more votes.
-"polls.button.show-all" = "Show all";
-/// Shown in the message poll results on the button to add a new suggestion.
-"polls.button.suggest-option" = "Suggest an Option";
-/// Shown to display the number of votes in an option.
-"polls.votes" = "%d votes";
-/// Shown to display 1 vote in an option.
-"polls.vote-singular" = "%d vote";
-/// Shown to display the total number of votes.
-"polls.votes-total" = "%d votes total";
-/// Shown in the poll results as a label for the question section.
-"polls.question" = "Question";
-/// Shown in the poll results for an option label.
-"polls.option" = "Option %d";
-/// Shown in the poll results when the vote author is unknown.
-"polls.unknown-vote-author" = "Unknown";
-/// Shown in the poll date formatter for relative days ago.
-"polls.date.days-ago" = "%dd ago";
-/// Shown in the poll date formatter for relative weeks ago.
-"polls.date.weeks-ago" = "%dw ago";
-/// Shown in the poll date formatter to combine day and time with "at".
-"polls.date.day-at-time" = "%@ at %@";
-/// Shown in the poll results navigation title.
-"polls.results-title" = "Poll Results";
-/// Shown in the poll comments navigation title.
-"polls.comments-title" = "Poll Comments";
-/// Shown in the poll all options navigation title.
-"polls.all-options-title" = "Poll Options";
-/// Shown in the poll comments table footer view in the button to add a comment.
-"polls.add-comment" = "Add a Comment";
-/// Shown in the poll comments table footer view in the button to update the comment.
-"polls.update-comment" = "Update your Comment";
-/// The name of the author in case it is anonymous.
-"polls.anonymous-author" = "Anonymous";
-
-/// The title for the poll creation view.
-"polls.creation.title" = "Create Poll";
-/// The multiple votes name feature shown in the poll creation view.
-"polls.creation.multiple-votes" = "Multiple votes";
-/// The anonymous poll feature name shown in the poll creation view.
-"polls.creation.anonymous-poll" = "Anonymous poll";
-/// The suggestions feature name shown in the poll creation view.
-"polls.creation.suggest-an-option" = "Suggest an option";
-/// The comments feature name shown in the poll creation view.
-"polls.creation.add-a-comment" = "Add a comment";
-/// The cancel button text to close the poll creation view.
-"polls.creation.cancel" = "Cancel";
-/// The question section title for the poll creation view.
-"polls.creation.question-title" = "Question";
-/// The question section title for the poll creation view.
-"polls.creation.options-title" = "Options";
-/// The placeholder for the poll name input field.
-"polls.creation.ask-a-question-placeholder" = "Ask a question";
-/// The placeholder for the adding an option input field.
-"polls.creation.add-an-option-placeholder" = "Add an option";
-/// The error in case the poll option already exists.
-"polls.creation.already-an-option-error" = "This is already an option";
-/// The text for the maximum votes input placeholder.
-"polls.creation.maximum-votes-placeholder" = "Maximum votes per person";
-/// The error text for the maximum votes input.
-"polls.creation.maximum-votes-error" = "Type a number from 2 and 10";
-
-/// Shown in the channel list or thread list message preview in case someone voted a poll.
-"message.preview.poll-someone-voted" = "%@ voted:";
-/// Shown in the channel list or thread list message preview in case the current user voted a poll.
-"message.preview.poll-you-voted" = "You voted:";
-/// Shown in the channel list or thread list message preview in case someone created a poll.
-"message.preview.poll-someone-created" = "%@ created:";
-/// Shown in the channel list or thread list message preview in case the current user created a poll.
-"message.preview.poll-you-created" = "You created:";
-
-/// Shown in the channel list or thread list message preview in case there is a draft.
-"message.preview.draft" = "Draft";
-
-/// Alert title when closing a poll.
-"alert.poll.end-title" = "Nobody will be able to vote in this poll anymore.";
-/// Alert title when adding a comment to a poll.
-"alert.poll.add-comment" = "Add a comment.";
-/// Alert title when adding a new poll suggestion.
-"alert.poll.suggest-option" = "Suggest an option.";
-/// Alert title when updating a comment to a poll.
-"alert.poll.update-comment" = "Update your comment.";
-/// Alert send action when confirm an action on a poll.
-"alert.poll.send" = "Send";
-/// Alert end action when closing a poll.
-"alert.poll.end" = "End";
-/// The alert message when discarding poll changes.
-"alert.poll.discard-changes-message" = "Are you sure you want to discard your poll?";
-/// The text shown on poll alerts to discard the current changes.
-"alert.poll.discard-changes" = "Discard Changes";
-/// The text shown pol alerts to keep editing the current changes.
-"alert.poll.keep-editing" = "Keep Editing";
-/// A generic error title for when poll actions fail.
-"alert.poll.generic-error-title" = "Something went wrong!";
-/// An error message displayed when creating a poll fails.
-"alert.poll.create-error-message" = "It was not possible to create the poll.";
-
-/// Shown in the composer's picker view to create a poll.
-"composer.picker.poll" = "Create Poll";
+"message.annotation.sentInChannel" = "Also sent in channel";
+"message.annotation.repliedToThread" = "Replied to a thread";
+"message.annotation.reminderSet" = "Reminder set";
+"message.annotation.view" = "View";
+"message.annotation.translated" = "Translated";

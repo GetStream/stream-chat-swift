@@ -185,19 +185,19 @@ open class PollAttachmentView: _View, ThemeProvider {
         pollTitleLabel.text = content.poll.name
         pollSubtitleLabel.text = subtitleText
 
-        pollResultsButton.setTitle(L10n.Polls.Button.viewResults, for: .normal)
-        endPollButton.setTitle(L10n.Polls.Button.endVote, for: .normal)
+        pollResultsButton.setTitle(L10n.Message.Polls.Button.viewResults, for: .normal)
+        endPollButton.setTitle(L10n.Message.Polls.Button.endVote, for: .normal)
         endPollButton.isHidden = !shouldShowEndPollButton
 
         addCommentButton.isHidden = !shouldShowAddCommentButton
-        addCommentButton.setTitle(L10n.Polls.Button.addComment, for: .normal)
+        addCommentButton.setTitle(L10n.Message.Polls.Button.addComment, for: .normal)
 
         let commentsCount = content.poll.answersCount
         pollCommentsButton.isHidden = !shouldShowViewCommentsButton
-        pollCommentsButton.setTitle(L10n.Polls.Button.viewComments(commentsCount), for: .normal)
+        pollCommentsButton.setTitle(L10n.Message.Polls.Button.viewNumberOfComments(commentsCount), for: .normal)
 
         suggestOptionButton.isHidden = !shouldShowSuggestOptionButton
-        suggestOptionButton.setTitle(L10n.Polls.Button.suggestOption, for: .normal)
+        suggestOptionButton.setTitle(L10n.Message.Polls.Button.suggestAnOption, for: .normal)
 
         optionListView.onOptionTap = onOptionTap
         optionListView.content = .init(
@@ -208,7 +208,7 @@ open class PollAttachmentView: _View, ThemeProvider {
         let numberOfOptions = content.poll.options.count
         if let maxNumberOfVisibleOptions, numberOfOptions > maxNumberOfVisibleOptions {
             let numberOfHiddenOptions = numberOfOptions - maxNumberOfVisibleOptions
-            allOptionsButton.setTitle(L10n.Polls.Button.allOptions(numberOfHiddenOptions), for: .normal)
+            allOptionsButton.setTitle(L10n.Message.Polls.Button.seeMoreOptions(numberOfHiddenOptions), for: .normal)
             allOptionsButton.isHidden = false
         } else {
             allOptionsButton.isHidden = true
@@ -250,13 +250,13 @@ open class PollAttachmentView: _View, ThemeProvider {
         guard let content = self.content else { return "" }
         let poll = content.poll
         if poll.isClosed == true {
-            return L10n.Polls.Subtitle.voteEnded
+            return L10n.Message.Polls.Subtitle.voteEnded
         } else if poll.enforceUniqueVote == true {
-            return L10n.Polls.Subtitle.selectOne
+            return L10n.Message.Polls.Subtitle.selectOne
         } else if let maxVotes = poll.maxVotesAllowed, maxVotes > 0 {
-            return L10n.Polls.Subtitle.selectUpTo(min(maxVotes, poll.options.count))
+            return L10n.Message.Polls.Subtitle.selectUpTo(min(maxVotes, poll.options.count))
         } else {
-            return L10n.Polls.Subtitle.selectOneOrMore
+            return L10n.Message.Polls.Subtitle.selectOneOrMore
         }
     }
 

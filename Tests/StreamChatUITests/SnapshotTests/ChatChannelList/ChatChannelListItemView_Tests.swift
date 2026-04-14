@@ -1386,7 +1386,7 @@ import XCTest
             )
         )
 
-        XCTAssertEqual(itemView.subtitleText, "\(L10n.you): \(ownMessage.text)")
+        XCTAssertEqual(itemView.subtitleText, "\(L10n.Channel.Item.you): \(ownMessage.text)")
     }
 
     func test_subtitleText_whenPreviewMessageIsSentByCurrentUser_andChannelMemberCountIs2() {
@@ -1409,7 +1409,7 @@ import XCTest
             )
         )
 
-        XCTAssertEqual(itemView.subtitleText, "\(L10n.you): \(ownMessage.text)")
+        XCTAssertEqual(itemView.subtitleText, "\(L10n.Channel.Item.you): \(ownMessage.text)")
     }
 
     func test_subtitleText_whenPreviewMessageIsSentByAnothertUser_andChannelMemberCountIs2() {

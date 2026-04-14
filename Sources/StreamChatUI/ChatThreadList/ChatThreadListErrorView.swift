@@ -28,7 +28,7 @@ open class ChatThreadListErrorView: _View, ThemeProvider {
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        bannerView.textLabel.text = L10n.ThreadList.Error.message
+        bannerView.textLabel.text = L10n.Thread.Error.message
         bannerView.actionButton.setImage(appearance.images.restart, for: .normal)
     }
 

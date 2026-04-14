@@ -21,9 +21,9 @@ open class ChatChannelListEmptyView: _View, ThemeProvider {
     override open func setUp() {
         super.setUp()
 
-        titleLabel.text = L10n.ChannelList.Empty.title
-        subtitleLabel.text = L10n.ChannelList.Empty.subtitle
-        actionButton.setTitle(L10n.ChannelList.Empty.button, for: .normal)
+        titleLabel.text = L10n.Channel.NoContent.title
+        subtitleLabel.text = L10n.Channel.NoContent.message
+        actionButton.setTitle(L10n.Channel.NoContent.start, for: .normal)
         actionButton.addTarget(self, action: #selector(didTapActionButton), for: .touchUpInside)
     }
 

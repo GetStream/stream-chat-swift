@@ -58,12 +58,12 @@ open class PollCreationMultipleVotesFeatureCell: _CollectionViewCell, ThemeProvi
 
     /// The text for the maximum votes input placeholder.
     open var maximumVotesPlaceholderText: String {
-        L10n.Polls.Creation.maximumVotesPlaceholder
+        L10n.Composer.Polls.maximumVotesPerPerson
     }
 
     /// The error text for the maximum votes input.
     open var maximumVotesErrorText: String {
-        L10n.Polls.Creation.maximumVotesError
+        L10n.Composer.Polls.typeNumberMinMaxRange
     }
 
     override open func setUp() {

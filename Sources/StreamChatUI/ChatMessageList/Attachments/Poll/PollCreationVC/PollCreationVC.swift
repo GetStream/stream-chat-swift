@@ -112,26 +112,26 @@ open class PollCreationVC:
 
     /// The multiple votes feature configuration.
     public var multipleVotesFeature = MultipleVotesPollFeature(
-        name: L10n.Polls.Creation.multipleVotes,
+        name: L10n.Composer.Polls.multipleAnswers,
         isEnabled: false,
         maxVotesConfig: .init(isEnabled: false, maxVotes: nil)
     )
 
     /// The anonymous feature configuration.
     public var anonymousFeature = BasicPollFeature(
-        name: L10n.Polls.Creation.anonymousPoll,
+        name: L10n.Composer.Polls.anonymousPoll,
         isEnabled: false
     )
 
     /// The allow suggestions feature configuration.
     public var suggestionsFeature = BasicPollFeature(
-        name: L10n.Polls.Creation.suggestAnOption,
+        name: L10n.Composer.Polls.suggestOption,
         isEnabled: false
     )
 
     /// The allow comments feature configuration.
     public var commentsFeature = BasicPollFeature(
-        name: L10n.Polls.Creation.addAComment,
+        name: L10n.Composer.Polls.addComment,
         isEnabled: false
     )
 
@@ -286,7 +286,7 @@ open class PollCreationVC:
 
     /// The button to cancel the poll creation.
     open private(set) lazy var cancelButton = UIBarButtonItem(
-        title: L10n.Polls.Creation.cancel,
+        title: L10n.Alert.Actions.cancel,
         style: .plain,
         target: self,
         action: #selector(cancelPoll)
@@ -339,7 +339,7 @@ open class PollCreationVC:
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        title = L10n.Polls.Creation.title
+        title = L10n.Composer.Polls.createPoll
         collectionView.backgroundColor = appearance.colorPalette.backgroundCoreApp
         navigationItem.rightBarButtonItems = [createPollButton]
         navigationItem.leftBarButtonItems = [cancelButton]
@@ -427,9 +427,9 @@ open class PollCreationVC:
         let section = sections[indexPath.section]
         switch section {
         case .name:
-            view.content = .init(title: L10n.Polls.Creation.questionTitle)
+            view.content = .init(title: L10n.Composer.Polls.question)
         case .options:
-            view.content = .init(title: L10n.Polls.Creation.optionsTitle)
+            view.content = .init(title: L10n.Composer.Polls.options)
         default:
             view.content = nil
         }
@@ -477,7 +477,7 @@ open class PollCreationVC:
     open func pollNameCell(at indexPath: IndexPath) -> PollCreationNameCell {
         let cell = collectionView.dequeueReusableCell(with: components.pollCreationNameCell, for: indexPath)
         cell.content = .init(
-            placeholder: L10n.Polls.Creation.askAQuestionPlaceholder,
+            placeholder: L10n.Composer.Polls.askQuestion,
             errorText: nil
         )
         cell.setText(name)
@@ -500,7 +500,7 @@ open class PollCreationVC:
         let cell = collectionView.dequeueReusableCell(with: components.pollCreationOptionCell, for: indexPath)
         let option = options[indexPath.item]
         cell.content = .init(
-            placeholder: L10n.Polls.Creation.addAnOptionPlaceholder,
+            placeholder: L10n.Composer.Polls.addOption,
             errorText: optionsErrorIndices[indexPath.item]
         )
         cell.reorderImageView.isHidden = option.isEmpty && isLastItem
@@ -614,7 +614,7 @@ open class PollCreationVC:
             var otherOptions = options
             otherOptions.remove(at: offset)
             if !option.isEmpty && otherOptions.contains(where: { $0 == option }) {
-                optionsErrorIndices[offset] = L10n.Polls.Creation.alreadyAnOptionError
+                optionsErrorIndices[offset] = L10n.Composer.Polls.duplicateOption
             }
             cell?.content?.errorText = optionsErrorIndices[offset]
         }

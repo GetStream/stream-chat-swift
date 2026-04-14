@@ -61,13 +61,13 @@ open class DefaultPollTimestampFormatter: PollTimestampFormatter {
         ).day ?? 0
 
         if days >= 2 && days <= 6 {
-            return L10n.Polls.Date.daysAgo(days)
+            return L10n.Message.Polls.Date.daysAgo(days)
         }
 
         if days >= 7 {
             let weeks = days / 7
             if weeks <= 3 {
-                return L10n.Polls.Date.weeksAgo(weeks)
+                return L10n.Message.Polls.Date.weeksAgo(weeks)
             }
         }
 

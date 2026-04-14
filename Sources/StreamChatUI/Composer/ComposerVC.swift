@@ -776,7 +776,7 @@ open class ComposerVC: _ViewController,
         }
 
         composerView.inputMessageView.textView.placeholderLabel.text = content.isSlowModeOn
-            ? L10n.Composer.Placeholder.slowMode
+            ? L10n.Composer.Placeholder.slowMode(content.cooldownTime)
             : L10n.Composer.Placeholder.message
     }
 
@@ -900,7 +900,7 @@ open class ComposerVC: _ViewController,
         ) : nil
 
         let showPollCreationAction = isPollCreationEnabled && !content.isInsideThread ? UIAlertAction(
-            title: L10n.Composer.Picker.poll,
+            title: L10n.Composer.Polls.createPoll,
             style: .default,
             handler: { [weak self] _ in self?.showPollCreation() }
         ) : nil

@@ -104,7 +104,7 @@ open class PollResultsVC:
     override open func setUpAppearance() {
         super.setUpAppearance()
 
-        title = L10n.Polls.resultsTitle
+        title = L10n.Message.Polls.Toolbar.resultsTitle
         tableView.allowsSelection = false
         tableView.backgroundColor = listBackgroundColor
         tableView.separatorStyle = .none

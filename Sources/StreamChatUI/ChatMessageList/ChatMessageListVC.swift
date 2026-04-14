@@ -588,8 +588,8 @@ open class ChatMessageListVC: _ViewController,
         let messageActions = messageActions(forDebouncedMessage: message)
 
         let alert = UIAlertController(
-            title: L10n.Message.Moderation.title,
-            message: L10n.Message.Moderation.message,
+            title: L10n.Message.Moderation.Alert.title,
+            message: L10n.Message.Moderation.Alert.message,
             preferredStyle: .alert
         )
 
@@ -616,20 +616,20 @@ open class ChatMessageListVC: _ViewController,
         let messageController = client.messageController(cid: cid, messageId: message.id)
         return [
             ResendActionItem(
-                title: L10n.Message.Moderation.resend,
+                title: L10n.Message.Moderation.Alert.resend,
                 action: { _ in
                     messageController.resendMessage()
                 }
             ),
             EditActionItem(
-                title: L10n.Message.Moderation.edit,
+                title: L10n.Message.Moderation.Alert.edit,
                 action: { [weak self] item in
                     guard let self = self else { return }
                     self.delegate?.chatMessageListVC(self, didTapOnAction: item, for: message)
                 }
             ),
             DeleteActionItem(
-                title: L10n.Message.Moderation.delete,
+                title: L10n.Message.Moderation.Alert.delete,
                 action: { _ in
                     messageController.deleteMessage()
                 }

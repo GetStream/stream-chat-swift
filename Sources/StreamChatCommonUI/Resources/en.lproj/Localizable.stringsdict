@@ -2,6 +2,56 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>chat-info.members.count</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@members@</string>
+		<key>members</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>%d Member</string>
+			<key>other</key>
+			<string>%d Members</string>
+		</dict>
+	</dict>
+	<key>message.polls.button.view-number-of-comments</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@comments@</string>
+		<key>comments</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>one</key>
+			<string>View %d Comment</string>
+			<key>other</key>
+			<string>View %d Comments</string>
+		</dict>
+	</dict>
+	<key>message.search.number-of-results</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@results@</string>
+		<key>results</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>%d results</string>
+			<key>one</key>
+			<string>%d result</string>
+			<key>other</key>
+			<string>%d results</string>
+		</dict>
+	</dict>
 	<key>messageList.jump-to-unread-button</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -18,6 +68,24 @@
 			<string>%d unread</string>
 		</dict>
 	</dict>
+	<key>messageList.newMessages</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@messages@</string>
+		<key>messages</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>Unread messages</string>
+			<key>one</key>
+			<string>Unread messages</string>
+			<key>other</key>
+			<string>Unread messages</string>
+		</dict>
+	</dict>
 	<key>messageList.typingIndicator.users</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -31,27 +99,9 @@
 			<key>zero</key>
 			<string> is typing</string>
 			<key>one</key>
-			<string> and %2$d more is typing</string>
+			<string> and %2$d more are typing</string>
 			<key>other</key>
 			<string> and %2$d more are typing</string>
-		</dict>
-	</dict>
-	<key>message.threads.count</key>
-	<dict>
-		<key>NSStringLocalizedFormatKey</key>
-		<string>%#@replies@</string>
-		<key>replies</key>
-		<dict>
-			<key>NSStringFormatSpecTypeKey</key>
-			<string>NSStringPluralRuleType</string>
-			<key>NSStringFormatValueTypeKey</key>
-			<string>d</string>
-			<key>zero</key>
-			<string>No Thread Replies</string>
-			<key>one</key>
-			<string>%d Thread Reply</string>
-			<key>other</key>
-			<string>%d Thread Replies</string>
 		</dict>
 	</dict>
 	<key>message.thread.replies.count</key>
@@ -72,6 +122,24 @@
 			<string>%d REPLIES</string>
 		</dict>
 	</dict>
+	<key>message.threads.count</key>
+	<dict>
+		<key>NSStringLocalizedFormatKey</key>
+		<string>%#@replies@</string>
+		<key>replies</key>
+		<dict>
+			<key>NSStringFormatSpecTypeKey</key>
+			<string>NSStringPluralRuleType</string>
+			<key>NSStringFormatValueTypeKey</key>
+			<string>d</string>
+			<key>zero</key>
+			<string>0 replies</string>
+			<key>one</key>
+			<string>%d reply</string>
+			<key>other</key>
+			<string>%d replies</string>
+		</dict>
+	</dict>
 	<key>message.unread.count</key>
 	<dict>
 		<key>NSStringLocalizedFormatKey</key>
@@ -83,11 +151,11 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>UNREAD MESSAGES</string>
+			<string>%d unread</string>
 			<key>one</key>
-			<string>%d UNREAD MESSAGE</string>
+			<string>%d unread</string>
 			<key>other</key>
-			<string>%d UNREAD MESSAGES</string>
+			<string>%d unread</string>
 		</dict>
 	</dict>
 	<key>reaction.authors.number-of-reactions</key>
@@ -101,11 +169,11 @@
 			<key>NSStringFormatValueTypeKey</key>
 			<string>d</string>
 			<key>zero</key>
-			<string>%d Message Reactions</string>
+			<string>%d Reactions</string>
 			<key>one</key>
-			<string>%d Message Reaction</string>
+			<string>%d Reaction</string>
 			<key>other</key>
-			<string>%d Message Reactions</string>
+			<string>%d Reactions</string>
 		</dict>
 	</dict>
 	<key>recording.presentation.name</key>

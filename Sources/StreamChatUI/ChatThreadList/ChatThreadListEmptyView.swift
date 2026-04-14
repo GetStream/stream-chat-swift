@@ -20,7 +20,7 @@ open class ChatThreadListEmptyView: _View, ThemeProvider {
     override open func setUp() {
         super.setUp()
 
-        descriptionLabel.text = L10n.ThreadList.Empty.description
+        descriptionLabel.text = L10n.Thread.NoContent.message
     }
 
     override open func setUpLayout() {
