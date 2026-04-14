@@ -23,14 +23,8 @@ import XCTest
     /// The `createdAt` for all test messages
     private let createdAt = "2019-12-12T15:33:46.488935Z".toDate()
 
-    /// Static setUp() is only run once. Which is what we want in this case to preload the images.
     override class func setUp() {
-        /// Dummy snapshot to preload the TestImages.r2.url image
-        /// This was the only workaround to make sure the image always appears in the snapshots.
-        let view = UIImageView(frame: .init(center: .zero, size: .init(width: 100, height: 100)))
-        Components.default.imageLoader.loadImage(into: view, from: TestImages.yoda.url)
-        Components.default.imageLoader.loadImage(into: view, from: TestImages.r2.url)
-        AssertSnapshot(view, variants: [.defaultLight])
+        // no-op: the mock image loader loads images synchronously from file URLs
     }
 
     func test_appearance() {
@@ -620,7 +614,7 @@ import XCTest
             }
         }
 
-        var components = Components.default
+        var components = Components.mock
         components.messageBubbleView = CustomBubbleView.self
 
         let message: ChatMessage = .mock(
@@ -1338,7 +1332,7 @@ private extension ChatMessageContentView_Tests {
         attachmentInjector: AttachmentViewInjector.Type? = nil
     ) -> ChatMessageContentView {
         let appearance = appearance ?? .default
-        let components = components ?? .default
+        let components = components ?? .mock
         let layoutOptions = layout ?? components.messageLayoutOptionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channel,
