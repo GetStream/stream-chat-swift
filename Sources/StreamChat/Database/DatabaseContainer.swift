@@ -200,7 +200,7 @@ class DatabaseContainer: NSPersistentContainer, @unchecked Sendable {
                     log.debug("Context has no changes. Skipping save.", subsystems: .database)
                 }
 
-                log.debug("Database session succesfully saved.", subsystems: .database)
+                log.debug("Database session successfully saved.", subsystems: .database)
                 completion(nil)
             } catch {
                 log.error("Failed to save data to DB. Error: \(error)", subsystems: .database)

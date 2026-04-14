@@ -877,7 +877,7 @@ final class Chat_Tests: XCTestCase {
         
         try await setUpChat(usesMockedUpdaters: false, loadState: false)
         
-        // Accessing the state triggers loading the inital states
+        // Accessing the state triggers loading the initial states
         await XCTAssertEqual(initialChannelPayload.messages.map(\.id), chat.state.messages.map(\.id))
     }
     
@@ -890,7 +890,7 @@ final class Chat_Tests: XCTestCase {
         
         try await setUpChat(usesMockedUpdaters: false, loadState: false)
         
-        // Accessing the state triggers loading the inital states
+        // Accessing the state triggers loading the initial states
         let allMessages = initialChannelPayload.messages + (initialChannelPayload.pendingMessages ?? [])
         await XCTAssertEqual(allMessages.map(\.id), chat.state.messages.map(\.id))
     }

@@ -330,7 +330,7 @@ public class ChatClient: @unchecked Sendable {
     ///
     /// - Parameters:
     ///   - userInfo: The user info passed to `connect` endpoint.
-    ///   - tokenProvider: The closure used to retreive a token. Token provider will be used to establish the initial connection and also to obtain the new token when the previous one expires.
+    ///   - tokenProvider: The closure used to retrieve a token. Token provider will be used to establish the initial connection and also to obtain the new token when the previous one expires.
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     ///
     /// - Note: Connect endpoint uses an upsert mechanism. If the user does not exist, it will be created with the given `userInfo`. If user already exists, it will get updated with non-nil fields from the `userInfo`.
@@ -359,7 +359,7 @@ public class ChatClient: @unchecked Sendable {
     ///
     /// - Parameters:
     ///   - userInfo: The user info passed to `connect` endpoint.
-    ///   - tokenProvider: The closure used to retreive a token. Token provider will be used to establish the initial connection and also to obtain the new token when the previous one expires.
+    ///   - tokenProvider: The closure used to retrieve a token. Token provider will be used to establish the initial connection and also to obtain the new token when the previous one expires.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: A type representing the connected user and its state.

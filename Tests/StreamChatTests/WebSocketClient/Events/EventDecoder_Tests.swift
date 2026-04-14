@@ -86,13 +86,13 @@ final class EventDecoder_Tests: XCTestCase {
         // Assert event is decoded.
         let event = try eventDecoder.decode(from: json)
         // Assert `UnknownChannelEvent` event with expected payload is decoded
-        let unkownEvent = try XCTUnwrap(event as? UnknownChannelEvent)
+        let unknownEvent = try XCTUnwrap(event as? UnknownChannelEvent)
 
         // Assert event has correct fields.
-        XCTAssertEqual(unkownEvent.cid, cid)
-        XCTAssertEqual(unkownEvent.userId, userId)
-        XCTAssertEqual(unkownEvent.createdAt, createdAt.toDate())
-        XCTAssertEqual(unkownEvent.payload(ofType: IdeaEventPayload.self), ideaPayload)
+        XCTAssertEqual(unknownEvent.cid, cid)
+        XCTAssertEqual(unknownEvent.userId, userId)
+        XCTAssertEqual(unknownEvent.createdAt, createdAt.toDate())
+        XCTAssertEqual(unknownEvent.payload(ofType: IdeaEventPayload.self), ideaPayload)
     }
 
     func test_decode_whenValidCustomEventPayloadComes_returnsUnknownUserEvent() throws {
@@ -128,12 +128,12 @@ final class EventDecoder_Tests: XCTestCase {
         // Assert event is decoded.
         let event = try eventDecoder.decode(from: json)
         // Assert `UnknownUserEvent` event with expected payload is decoded
-        let unkownEvent = try XCTUnwrap(event as? UnknownUserEvent)
+        let unknownEvent = try XCTUnwrap(event as? UnknownUserEvent)
 
         // Assert event has correct fields.
-        XCTAssertEqual(unkownEvent.userId, userId)
-        XCTAssertEqual(unkownEvent.createdAt, createdAt.toDate())
-        XCTAssertEqual(unkownEvent.payload(ofType: IdeaEventPayload.self), ideaPayload)
+        XCTAssertEqual(unknownEvent.userId, userId)
+        XCTAssertEqual(unknownEvent.createdAt, createdAt.toDate())
+        XCTAssertEqual(unknownEvent.payload(ofType: IdeaEventPayload.self), ideaPayload)
     }
 
     func test_decode_whenInvalidCustomEventPayloadComes_throwsDecodingError() {
