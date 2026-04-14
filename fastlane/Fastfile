@@ -272,8 +272,8 @@ lane :xcmetrics do |options|
 
   firebase_error = ''
   xcodebuild_output = ''
-  ios_version = '18.3'
-  device_model = 'iphone16pro'
+  ios_version = '16.6'
+  device_model = 'iphone14pro'
   Dir.chdir("../#{derived_data_path}/Build/Products") do
     begin
       sh("zip -r MyTests.zip .")
