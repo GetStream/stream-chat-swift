@@ -26,7 +26,7 @@ final class StreamCDNRequester_Tests: XCTestCase {
         let url = URL(string: "https://www.google.com/image.jpg?someStuff=20")!
         let expectation = expectation(description: "Completion called")
 
-        sut.imageRequest(for: url, options: .init(resize: ImageResize(CGSize(width: 40, height: 40)))) { result in
+        sut.imageRequest(for: url, options: .init(resize: CDNImageResize(width: 40, height: 40, resizeMode: "clip"))) { result in
             let request = try! result.get()
             XCTAssertEqual(request.url, url)
             expectation.fulfill()
@@ -52,7 +52,7 @@ final class StreamCDNRequester_Tests: XCTestCase {
         let url = URL(string: "\(baseUrl)/image.jpg")!
         let expectation = expectation(description: "Completion called")
 
-        sut.imageRequest(for: url, options: .init(resize: ImageResize(CGSize(width: 40, height: 60), mode: .crop(.center)))) { result in
+        sut.imageRequest(for: url, options: .init(resize: CDNImageResize(width: 40, height: 60, resizeMode: "crop", crop: "center"))) { result in
             let request = try! result.get()
             let components = URLComponents(url: request.url, resolvingAgainstBaseURL: true)!
             let queryItems = components.queryItems ?? []
@@ -73,7 +73,7 @@ final class StreamCDNRequester_Tests: XCTestCase {
         let url = URL(string: "\(baseUrl)/image.jpg")!
         let expectation = expectation(description: "Completion called")
 
-        sut.imageRequest(for: url, options: .init(resize: ImageResize(CGSize(width: 40, height: 60), mode: .fill))) { result in
+        sut.imageRequest(for: url, options: .init(resize: CDNImageResize(width: 40, height: 60, resizeMode: "fill"))) { result in
             let request = try! result.get()
             let components = URLComponents(url: request.url, resolvingAgainstBaseURL: true)!
             let queryItems = components.queryItems ?? []

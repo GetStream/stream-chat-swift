@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 extension ImageLoader {
@@ -120,7 +121,7 @@ final class ImageBatchResult: @unchecked Sendable {
 }
 
 /// A cancellable image loading task.
-public class ImageLoadingTask: @unchecked Sendable {
+public class ImageLoadingTask: Cancellable, @unchecked Sendable {
     public private(set) var isCancelled = false
 
     public func cancel() {

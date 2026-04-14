@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// A view that shows a user avatar including an indicator of the user presence (online/offline).

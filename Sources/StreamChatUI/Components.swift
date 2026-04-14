@@ -691,5 +691,5 @@ import UIKit
         self.videoLoader = StreamVideoLoader(cdnRequester: cdnRequester, imageLoader: imageLoader)
     }
     
-    public nonisolated(unsafe) static var `default` = Self()
+    public static var `default` = Self()
 }

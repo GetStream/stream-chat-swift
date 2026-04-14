@@ -42,7 +42,7 @@ open class StreamCDNRequester: CDNRequester, @unchecked Sendable {
     // MARK: - URL Building
 
     /// Builds an image URL with resize query parameters for Stream CDN URLs.
-    open func buildImageURL(from url: URL, resize: ImageResize?) -> URL {
+    open func buildImageURL(from url: URL, resize: CDNImageResize?) -> URL {
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true),
               let host = components.host, host.contains(StreamCDNRequester.streamCDNURL) else {
             return url
@@ -56,11 +56,11 @@ open class StreamCDNRequester: CDNRequester, @unchecked Sendable {
         var queryItems: [String: String] = [
             "w": resize.width == 0 ? "*" : String(format: "%.0f", resize.width * scale),
             "h": resize.height == 0 ? "*" : String(format: "%.0f", resize.height * scale),
-            "resize": resize.mode.value,
+            "resize": resize.resizeMode,
             "ro": "0"
         ]
-        if let cropValue = resize.mode.cropValue {
-            queryItems["crop"] = cropValue
+        if let crop = resize.crop {
+            queryItems["crop"] = crop
         }
 
         var items = components.queryItems ?? []

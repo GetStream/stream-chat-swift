@@ -33,7 +33,7 @@ open class StreamImageLoader: ImageLoader, @unchecked Sendable {
             return
         }
 
-        cdnRequester.imageRequest(for: url, options: .init(resize: resize)) { [weak self] result in
+        cdnRequester.imageRequest(for: url, options: ImageRequestOptions(imageResize: resize)) { [weak self] result in
             switch result {
             case let .success(cdnRequest):
                 let resizeSize: CGSize? = resize.map { CGSize(width: $0.width, height: $0.height) }

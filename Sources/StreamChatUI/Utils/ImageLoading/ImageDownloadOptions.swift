@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import StreamChatCommonUI
 
 /// The options for downloading an image.
 public struct ImageDownloadOptions {

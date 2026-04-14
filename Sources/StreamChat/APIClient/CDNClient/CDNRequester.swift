@@ -68,9 +68,9 @@ extension CDNRequester {
 /// Options for an image request through the CDN.
 public struct ImageRequestOptions: Sendable {
     /// Optional resize parameters for server-side resizing.
-    public var resize: ImageResize?
+    public var resize: CDNImageResize?
 
-    public init(resize: ImageResize? = nil) {
+    public init(resize: CDNImageResize? = nil) {
         self.resize = resize
     }
 }
