@@ -266,7 +266,6 @@ lane :xcmetrics do |options|
     cloned_source_packages_path: source_packages_path,
     clean: is_localhost,
     sdk: 'iphoneos',
-    destination: 'generic/platform=iOS',
     skip_detect_devices: true,
     build_for_testing: true
   )
