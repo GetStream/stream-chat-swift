@@ -6,7 +6,7 @@ import Foundation
 import UIKit
 
 extension Appearance {
-    public struct DesignSystemTokens {
+    @MainActor public final class DesignSystemTokens {
         // MARK: Chat
 
         public var buttonHitTargetMinHeight: CGFloat { size48 }

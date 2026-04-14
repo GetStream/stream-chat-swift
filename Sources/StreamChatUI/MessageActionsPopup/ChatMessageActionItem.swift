@@ -8,7 +8,7 @@ import UIKit
 /// Protocol for action item.
 /// Action items are then showed in `ChatMessageActionsView`.
 /// Setup individual item by creating new instance that conforms to this protocol.
-public protocol ChatMessageActionItem {
+@MainActor public protocol ChatMessageActionItem {
     /// Title of `ChatMessageActionItem`.
     var title: String { get }
     /// Icon of `ChatMessageActionItem`.

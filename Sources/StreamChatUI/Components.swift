@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 /// An object containing types of UI Components that are used through the UI SDK.
-public struct Components: @unchecked Sendable {
+@MainActor public struct Components {
     /// A view that displays a title label and subtitle in a container stack view.
     public var titleContainerView: TitleContainerView.Type = TitleContainerView.self
 

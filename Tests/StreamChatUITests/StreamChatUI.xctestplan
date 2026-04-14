@@ -4,7 +4,8 @@
       "id" : "FFB61C0B-5B74-421B-BFB6-C1FC63FEF62F",
       "name" : "Configuration 1",
       "options" : {
-
+        "language" : "en",
+        "region" : "US"
       }
     }
   ],

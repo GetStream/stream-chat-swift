@@ -193,7 +193,7 @@ public final class ConnectedUser: Sendable {
     
     /// Deletes all the local downloads of file attachments.
     ///
-    /// - Parameter completion: Called when files have been deleted or when an error occured.
+    /// - Parameter completion: Called when files have been deleted or when an error occurred.
     ///
     /// - Throws: An error while deleting local downloads.
     public func deleteAllLocalAttachmentDownloads() async throws {

@@ -163,9 +163,12 @@ import XCTest
         AssertSnapshot(vc, variants: [.defaultLight])
     }
 
-    private func makeGalleryVC(content: GalleryVC.Content, components: Components = .mock) -> GalleryVC {
+    private func makeGalleryVC(
+        content: GalleryVC.Content,
+        components: Components? = nil
+    ) -> GalleryVC {
         let vc = GalleryVC()
-        vc.components = components
+        vc.components = components ?? .mock
         vc.content = content
         vc.attachmentsCollectionView.reloadData()
         return vc

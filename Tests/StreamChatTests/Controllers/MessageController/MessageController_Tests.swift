@@ -344,7 +344,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(message.id, messageId)
         XCTAssertEqual(message.text, messageLocalText)
 
-        // Simulate response from the backend with updated `text`, update the local message in the databse
+        // Simulate response from the backend with updated `text`, update the local message in the database
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: currentUserId,

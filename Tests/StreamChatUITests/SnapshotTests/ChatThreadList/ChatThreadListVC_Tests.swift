@@ -18,6 +18,7 @@ import XCTest
 
     override func setUp() {
         super.setUp()
+        Appearance.default = Appearance()
 
         mockThreads = [
             .mock(

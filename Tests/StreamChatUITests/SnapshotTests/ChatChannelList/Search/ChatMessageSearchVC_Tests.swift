@@ -25,6 +25,7 @@ import XCTest
 
     override func setUpWithError() throws {
         super.setUp()
+        Appearance.default = Appearance()
 
         mockedClient = ChatClient_Mock.mock
         try mockedClient.databaseContainer.writeSynchronously { session in

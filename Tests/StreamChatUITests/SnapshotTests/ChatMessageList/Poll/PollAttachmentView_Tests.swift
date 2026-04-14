@@ -131,9 +131,11 @@ import XCTest
 extension PollAttachmentView_Tests {
     private func makeMessageView(
         for poll: Poll,
-        appearance: Appearance = .default,
-        components: Components = .default
+        appearance: Appearance? = nil,
+        components: Components? = nil
     ) -> ChatMessageContentView {
+        let appearance = appearance ?? .default
+        let components = components ?? .default
         let channel = ChatChannel.mock(cid: .unique)
         let message = ChatMessage.mock(text: "", poll: poll)
         let layoutOptions = components.messageLayoutOptionsResolver.optionsForMessage(

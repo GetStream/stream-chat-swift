@@ -9,6 +9,11 @@ import StreamSwiftTestHelpers
 import XCTest
 
 @MainActor final class ChatMessageContentView_Tests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        Appearance.default = Appearance()
+    }
+
     /// Default content view width.
     private let contentViewWidth: CGFloat = 360
     /// The current user.
@@ -1328,10 +1333,12 @@ private extension ChatMessageContentView_Tests {
         message: ChatMessage,
         channel: ChatChannel = .mock(cid: .unique),
         layout: ChatMessageLayoutOptions? = nil,
-        appearance: Appearance = .default,
-        components: Components = .default,
+        appearance: Appearance? = nil,
+        components: Components? = nil,
         attachmentInjector: AttachmentViewInjector.Type? = nil
     ) -> ChatMessageContentView {
+        let appearance = appearance ?? .default
+        let components = components ?? .default
         let layoutOptions = layout ?? components.messageLayoutOptionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channel,

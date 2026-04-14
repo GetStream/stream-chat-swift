@@ -41,7 +41,7 @@ final class MessageActionsVC: ChatMessageActionsVC {
 
         init(
             action: @escaping (ChatMessageActionItem) -> Void,
-            appearance: Appearance = .default
+            appearance: Appearance
         ) {
             self.action = action
             icon = appearance.images.messageActionDelete

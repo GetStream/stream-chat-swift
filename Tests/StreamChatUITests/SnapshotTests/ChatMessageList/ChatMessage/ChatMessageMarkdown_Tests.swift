@@ -9,6 +9,11 @@ import StreamSwiftTestHelpers
 import XCTest
 
 @MainActor final class ChatMessageMarkdown_Tests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        Appearance.default = Appearance()
+    }
+
     override func tearDownWithError() throws {
         Appearance.default = Appearance()
     }
@@ -84,12 +89,15 @@ import XCTest
     }
     
     func test_headers_appearance_scaled_font() {
-        Appearance.default.fonts.title = UIFontMetrics.default.scaledFont(for: Appearance.default.fonts.title)
-        Appearance.default.fonts.title2 = UIFontMetrics.default.scaledFont(for: Appearance.default.fonts.title2)
-        Appearance.default.fonts.title3 = UIFontMetrics.default.scaledFont(for: Appearance.default.fonts.title3)
-        Appearance.default.fonts.headline = UIFontMetrics.default.scaledFont(for: Appearance.default.fonts.headline)
-        Appearance.default.fonts.subheadline = UIFontMetrics.default.scaledFont(for: Appearance.default.fonts.subheadline)
-        Appearance.default.fonts.footnote = UIFontMetrics.default.scaledFont(for: Appearance.default.fonts.footnote)
+        let appearance = Appearance()
+        let fonts = appearance.fonts
+        fonts.title = UIFontMetrics.default.scaledFont(for: fonts.title)
+        fonts.title2 = UIFontMetrics.default.scaledFont(for: fonts.title2)
+        fonts.title3 = UIFontMetrics.default.scaledFont(for: fonts.title3)
+        fonts.headline = UIFontMetrics.default.scaledFont(for: fonts.headline)
+        fonts.subheadline = UIFontMetrics.default.scaledFont(for: fonts.subheadline)
+        fonts.footnote = UIFontMetrics.default.scaledFont(for: fonts.footnote)
+        Appearance.default = appearance
         let view = contentView(
             """
             # A first level heading
@@ -366,7 +374,7 @@ import XCTest
     func contentView(styles: MarkdownStyles = MarkdownStyles(), _ markdown: String) -> ChatMessageContentView {
         let formatter = DefaultMarkdownFormatter()
         formatter.styles = styles
-        var appearance = Appearance.default
+        let appearance = Appearance()
         appearance.formatters.markdownFormatter = formatter
         let channel = ChatChannel.mock(cid: .unique)
         let message = ChatMessage.mock(text: markdown)

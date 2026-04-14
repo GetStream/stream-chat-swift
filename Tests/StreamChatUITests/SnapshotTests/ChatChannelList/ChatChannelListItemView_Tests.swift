@@ -10,6 +10,11 @@ import StreamSwiftTestHelpers
 import XCTest
 
 @MainActor final class ChatChannelListItemView_Tests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        Appearance.default = Appearance()
+    }
+
     let currentUser: ChatUser = .mock(
         id: "yoda",
         name: "Yoda"
@@ -1828,14 +1833,16 @@ import XCTest
 
     private func channelItemView(
         content: ChatChannelListItemView.Content?,
-        components: Components = .mock,
-        appearance: Appearance = .default
+        components: Components? = nil,
+        appearance: Appearance? = nil
     ) -> ChatChannelListItemView {
         let view = ChatChannelListItemView().withoutAutoresizingMaskConstraints
-        view.components = components
+        view.components = components ?? .mock
         view.components.isDraftMessagesEnabled = true
-        view.appearance = appearance
-        view.appearance.formatters.channelListMessageTimestamp = MockTimestampFormatter()
+        var viewAppearance = appearance ?? Appearance()
+        viewAppearance.formatters = Appearance.Formatters()
+        viewAppearance.formatters.channelListMessageTimestamp = MockTimestampFormatter()
+        view.appearance = viewAppearance
         view.content = content
         view.addSizeConstraints()
         return view
