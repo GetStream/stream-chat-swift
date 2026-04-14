@@ -32,7 +32,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
                     file: .init(type: .jpeg, size: 0, mimeType: nil)
                 )
             ),
-            progress: nil,
+            options: .init(),
             completion: { (_: Result<UploadedFile, Error>) in }
         )
 
@@ -54,7 +54,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         // Simulate file uploading
         client.uploadAttachment(
             localUrl: .localYodaImage,
-            progress: nil,
+            options: .init(),
             completion: { (_: Result<UploadedFile, Error>) in }
         )
 
@@ -73,7 +73,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let result: Result<UploadedFile, Error> = try waitFor {
             client.uploadAttachment(
                 localUrl: .localYodaImage,
-                progress: nil,
+                options: .init(),
                 completion: $0
             )
         }
@@ -98,7 +98,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
                         file: .init(type: .jpeg, size: 0, mimeType: nil)
                     )
                 ),
-                progress: nil,
+                options: .init(),
                 completion: $0
             )
         }
@@ -135,7 +135,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
                         file: .init(type: .jpeg, size: 0, mimeType: nil)
                     )
                 ),
-                progress: nil,
+                options: .init(),
                 completion: $0
             )
         }
@@ -169,7 +169,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let result: Result<UploadedFile, Error> = try waitFor {
             client.uploadAttachment(
                 localUrl: .localYodaImage,
-                progress: nil,
+                options: .init(),
                 completion: $0
             )
         }
@@ -210,7 +210,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
                         file: .init(type: .jpeg, size: 0, mimeType: nil)
                     )
                 ),
-                progress: nil,
+                options: .init(),
                 completion: $0
             )
         }
@@ -249,7 +249,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let result: Result<UploadedFile, Error> = try waitFor {
             client.uploadAttachment(
                 localUrl: .localYodaImage,
-                progress: nil,
+                options: .init(),
                 completion: $0
             )
         }
@@ -300,7 +300,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
                     file: .init(type: .jpeg, size: 0, mimeType: nil)
                 )
             ),
-            progress: nil,
+            options: .init(),
             completion: { (_: Result<UploadedFile, Error>) in }
         )
 
@@ -333,6 +333,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         // Simulate file deletion
         client.deleteAttachment(
             remoteUrl: remoteURL,
+            options: .init(),
             completion: { _ in }
         )
 
@@ -354,6 +355,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let result: Error? = try waitFor {
             client.deleteAttachment(
                 remoteUrl: remoteURL,
+                options: .init(),
                 completion: $0
             )
         }
@@ -378,6 +380,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let result: Error? = try waitFor {
             client.deleteAttachment(
                 remoteUrl: remoteURL,
+                options: .init(),
                 completion: $0
             )
         }
@@ -406,6 +409,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let result: Error? = try waitFor {
             client.deleteAttachment(
                 remoteUrl: remoteURL,
+                options: .init(),
                 completion: $0
             )
         }

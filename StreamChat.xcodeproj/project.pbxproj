@@ -713,7 +713,6 @@
 				StreamChatTests/APIClient/HTTPHeader_Tests.swift,
 				StreamChatTests/APIClient/RequestDecoder_Tests.swift,
 				StreamChatTests/APIClient/RequestEncoder_Tests.swift,
-				StreamChatTests/APIClient/StreamAttachmentUploader_Tests.swift,
 				StreamChatTests/APIClient/StreamCDNClient_Tests.swift,
 				StreamChatTests/Audio/AudioAnalysisEngine_Tests.swift,
 				StreamChatTests/Audio/AudioPlaybackContext_Tests.swift,

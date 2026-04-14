@@ -68,7 +68,7 @@ final class APIClient_Tests: XCTestCase {
         encoder = nil
         decoder = nil
         attachmentDownloader = nil
-        attachmentUploader = nil
+        cdnStorage = nil
         tokenRefresher = nil
         queueOfflineRequest = nil
 
@@ -348,13 +348,9 @@ final class APIClient_Tests: XCTestCase {
         let attachment = AnyChatMessageAttachment.dummy()
         let mockedProgress: Double = 42
         let mockedURL = URL(string: "https://hello.com")!
-        attachmentUploader.uploadAttachmentProgress = mockedProgress
-        attachmentUploader.uploadAttachmentResult = .success(
-            UploadedAttachment(
-                attachment: attachment,
-                remoteURL: mockedURL,
-                thumbnailURL: nil
-            )
+        cdnStorage.uploadAttachmentProgress = mockedProgress
+        cdnStorage.uploadAttachmentResult = .success(
+            UploadedFile(fileURL: mockedURL)
         )
 
         nonisolated(unsafe) var receivedProgress: Double?
@@ -367,7 +363,7 @@ final class APIClient_Tests: XCTestCase {
             )
         }
 
-        XCTAssertCall("upload(_:progress:completion:)", on: attachmentUploader, times: 1)
+        XCTAssertCall("uploadAttachment(_:options:completion:)", on: cdnStorage, times: 1)
         XCTAssertEqual(receivedProgress, mockedProgress)
         XCTAssertEqual(receivedResult?.value?.remoteURL, receivedResult?.value?.remoteURL)
     }
@@ -375,9 +371,9 @@ final class APIClient_Tests: XCTestCase {
     func test_uploadAttachment_connectionError() throws {
         let attachment = AnyChatMessageAttachment.dummy()
         let mockedProgress: Double = 42
-        attachmentUploader.uploadAttachmentProgress = mockedProgress
+        cdnStorage.uploadAttachmentProgress = mockedProgress
         let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
-        attachmentUploader.uploadAttachmentResult = .failure(networkError)
+        cdnStorage.uploadAttachmentResult = .failure(networkError)
 
         nonisolated(unsafe) var receivedProgress: Double?
         nonisolated(unsafe) var receivedResult: Result<UploadedAttachment, Error>?
@@ -390,7 +386,7 @@ final class APIClient_Tests: XCTestCase {
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
         // Should retry up to 3 times
-        XCTAssertCall("upload(_:progress:completion:)", on: attachmentUploader, times: 4)
+        XCTAssertCall("uploadAttachment(_:options:completion:)", on: cdnStorage, times: 4)
         XCTAssertEqual(receivedProgress, mockedProgress)
         XCTAssertEqual(receivedResult?.error as NSError?, networkError)
     }
@@ -398,9 +394,9 @@ final class APIClient_Tests: XCTestCase {
     func test_uploadAttachment_randomError() throws {
         let attachment = AnyChatMessageAttachment.dummy()
         let mockedProgress: Double = 42
-        attachmentUploader.uploadAttachmentProgress = mockedProgress
+        cdnStorage.uploadAttachmentProgress = mockedProgress
         let error = NSError(domain: "", code: 1, userInfo: nil)
-        attachmentUploader.uploadAttachmentResult = .failure(error)
+        cdnStorage.uploadAttachmentResult = .failure(error)
 
         nonisolated(unsafe) var receivedProgress: Double?
         nonisolated(unsafe) var receivedResult: Result<UploadedAttachment, Error>?
@@ -413,7 +409,7 @@ final class APIClient_Tests: XCTestCase {
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
         // Should only try 1
-        XCTAssertCall("upload(_:progress:completion:)", on: attachmentUploader, times: 1)
+        XCTAssertCall("uploadAttachment(_:options:completion:)", on: cdnStorage, times: 1)
         XCTAssertEqual(receivedProgress, mockedProgress)
         XCTAssertEqual(receivedResult?.error as NSError?, error)
     }
