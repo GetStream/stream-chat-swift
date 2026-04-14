@@ -18,6 +18,8 @@
 		82120C312B6AB3B400347A35 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		82120C342B6AB41100347A35 /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		82120C352B6AB41100347A35 /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		AD4C2CB02EF1D000000E4FC1 /* StreamChatCommonUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; };
+		AD4C2CB12EF1D000000E4FC1 /* StreamChatCommonUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		823F5B1A2A8D0294000C3081 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */; };
 		823F5B1B2A8D0294000C3081 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */; };
 		827414272ACDE941009CD13C /* StreamChatTestMockServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */; };
@@ -330,6 +332,7 @@
 				82FF61E82B6AB5B3007185B6 /* StreamChatTestMockServer.framework in Embed Frameworks */,
 				82120C342B6AB41100347A35 /* StreamChat.framework in Embed Frameworks */,
 				82120C352B6AB41100347A35 /* StreamChatUI.framework in Embed Frameworks */,
+				AD4C2CB12EF1D000000E4FC1 /* StreamChatCommonUI.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -2110,6 +2113,7 @@
 			files = (
 				82120C302B6AB3B400347A35 /* StreamChat.framework in Frameworks */,
 				82120C312B6AB3B400347A35 /* StreamChatUI.framework in Frameworks */,
+				AD4C2CB02EF1D000000E4FC1 /* StreamChatCommonUI.framework in Frameworks */,
 				827414272ACDE941009CD13C /* StreamChatTestMockServer.framework in Frameworks */,
 				827418212ACDE86F004A23DA /* StreamSwiftTestHelpers in Frameworks */,
 			);
