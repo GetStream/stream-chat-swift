@@ -62,6 +62,72 @@ final class ChannelListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.channels.count, 2)
     }
 
+    func test_groupedQueryChannelsPayload_decodesDynamicBuckets() throws {
+        let channelId = ChannelId(type: .messaging, id: "bucket-channel")
+        let json = """
+        {
+          "family": "support",
+          "buckets": [
+            {
+              "key": "all-open",
+              "channels": [
+                {
+                  "channel": {
+                    "cid": "\(channelId.rawValue)",
+                    "id": "\(channelId.id)",
+                    "type": "\(channelId.type.rawValue)",
+                    "name": "Support",
+                    "image": "https://getstream.imgix.net/images/random_svg/stream_logo.svg",
+                    "created_at": "2024-01-01T00:00:00.000Z",
+                    "updated_at": "2024-01-02T00:00:00.000Z",
+                    "frozen": false,
+                    "disabled": false,
+                    "config": {
+                      "typing_events": true,
+                      "read_events": true,
+                      "connect_events": true,
+                      "search": true,
+                      "reactions": true,
+                      "replies": true,
+                      "quotes": true,
+                      "uploads": true,
+                      "url_enrichment": true,
+                      "mutes": true,
+                      "message_retention": "infinite",
+                      "max_message_length": 5000,
+                      "created_at": "2024-01-01T00:00:00.000Z",
+                      "updated_at": "2024-01-02T00:00:00.000Z",
+                      "commands": []
+                    },
+                    "own_capabilities": [],
+                    "member_count": 0
+                  },
+                  "members": [],
+                  "messages": [],
+                  "pinned_messages": [],
+                  "watchers": [],
+                  "watcher_count": 0,
+                  "read": []
+                }
+              ],
+              "unread_count": 3,
+              "unread_channels": 1
+            }
+          ],
+          "duration": "12ms"
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
+
+        XCTAssertEqual(payload.family, "support")
+        XCTAssertEqual(payload.buckets.map(\.key), ["all-open"])
+        XCTAssertEqual(payload.buckets.first?.channels.map(\.channel.cid), [channelId])
+        XCTAssertEqual(payload.buckets.first?.unreadCount, 3)
+        XCTAssertEqual(payload.buckets.first?.unreadChannels, 1)
+        XCTAssertEqual(payload.duration, "12ms")
+    }
+
     func saveChannelListPayload(_ payload: ChannelListPayload, database: DatabaseContainer_Spy, timeout: TimeInterval = 20) {
         let writeCompleted = expectation(description: "DB write complete")
         database.write({ session in
