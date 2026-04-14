@@ -3,7 +3,6 @@
 //
 
 import AVKit
-import StreamChat
 import UIKit
 
 /// The default video loader implementation using AVFoundation.

@@ -102,6 +102,10 @@ public struct Components: @unchecked Sendable {
     /// The object responsible for loading video previews.
     public var videoLoader: VideoLoader
 
+    /// The fallback maximum attachment size in bytes when the server does not provide one.
+    /// The default value is 100 MB.
+    public var maxAttachmentSize: Int64 = 100 * 1024 * 1024
+
     /// The view that shows a gradient.
     public var gradientView: GradientView.Type = GradientView.self
 

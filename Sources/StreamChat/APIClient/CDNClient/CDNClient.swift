@@ -17,8 +17,6 @@ public struct UploadedFile: Decodable {
 
 /// Default implementation of CDNStorage that uses Stream's API.
 final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
-    static var maxAttachmentSize: Int64 { 100 * 1024 * 1024 }
-
     private let decoder: RequestDecoder
     private let encoder: RequestEncoder
     private let session: URLSession

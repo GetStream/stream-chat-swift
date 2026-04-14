@@ -956,7 +956,7 @@ import XCTest
 
     func test_maxAttachmentSize_whenChannelControllerNotSet_thenReturnsDefaultFallbackLimit() {
         composerVC.channelController = nil
-        XCTAssertEqual(composerVC.maxAttachmentSize(for: .file), AttachmentValidationError.fileSizeMaxLimitFallback)
+        XCTAssertEqual(composerVC.maxAttachmentSize(for: .file), Components.default.maxAttachmentSize)
     }
 
     func test_maxAttachmentSize_whenImageType_thenReturnsLimitFromImageUploadConfig() {

@@ -8,7 +8,6 @@ import StreamChat
 final class CDNStorage_Spy: CDNStorage, Spy, @unchecked Sendable {
     let spyState = SpyState()
 
-    static var maxAttachmentSize: Int64 { .max }
     var uploadAttachmentProgress: Double?
     var uploadAttachmentResult: Result<UploadedFile, Error>?
 

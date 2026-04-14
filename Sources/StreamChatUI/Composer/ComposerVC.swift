@@ -14,8 +14,6 @@ public enum AttachmentValidationError: Error {
 
     /// The number of attachments reached the limit.
     case maxAttachmentsCountPerMessageExceeded(limit: Int)
-
-    internal static let fileSizeMaxLimitFallback: Int64 = 100 * 1024 * 1024
 }
 
 public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable, Sendable {
@@ -1504,7 +1502,7 @@ open class ComposerVC: _ViewController,
     open func maxAttachmentSize(for attachmentType: AttachmentType) -> Int64 {
         guard let client = channelController?.client else {
             log.assertionFailure("Channel controller must be set at this point")
-            return AttachmentValidationError.fileSizeMaxLimitFallback
+            return Components.default.maxAttachmentSize
         }
 
         let maxAttachmentSize: Int64?
@@ -1516,11 +1514,7 @@ open class ComposerVC: _ViewController,
         }
 
         guard let maxSize = maxAttachmentSize, maxSize > 0 else {
-            if let cdnStorage = client.config.cdnStorage {
-                return type(of: cdnStorage).maxAttachmentSize
-            } else {
-                return AttachmentValidationError.fileSizeMaxLimitFallback
-            }
+            return Components.default.maxAttachmentSize
         }
 
         return maxSize

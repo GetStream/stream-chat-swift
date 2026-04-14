@@ -9,9 +9,6 @@ import Foundation
 /// Implement this protocol to use a custom CDN or storage service
 /// (such as AWS S3, Firebase Storage, or your own backend) for file uploads.
 public protocol CDNStorage: Sendable {
-    /// The maximum allowed attachment size in bytes.
-    static var maxAttachmentSize: Int64 { get }
-
     /// Uploads an attachment tied to a message and returns the uploaded file information.
     ///
     /// - Parameters:

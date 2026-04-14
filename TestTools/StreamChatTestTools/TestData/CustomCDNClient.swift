@@ -7,8 +7,6 @@ import Foundation
 @testable import StreamChat
 
 public final class CustomCDNStorage: CDNStorage {
-    public static var maxAttachmentSize: Int64 { 10 * 1000 * 1000 }
-
     public func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
         progress: (@Sendable (Double) -> Void)?,
