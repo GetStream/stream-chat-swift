@@ -17,7 +17,7 @@ public enum ImageMergeOrientation {
     case vertical
 }
 
-public protocol ImageMerging {
+public protocol ImageMerging: Sendable {
     /// Merges the images provided in the array
     /// - Parameters:
     ///   - images: The images to combine
@@ -29,7 +29,7 @@ public protocol ImageMerging {
     ) -> UIImage?
 }
 
-open class DefaultImageMerger: ImageMerging {
+open class DefaultImageMerger: ImageMerging, @unchecked Sendable {
     // Initializer required for subclasses
     public init() {}
 
@@ -50,18 +50,16 @@ open class DefaultImageMerger: ImageMerging {
             dimensions.height += image.size.height
         }
 
-        UIGraphicsBeginImageContextWithOptions(dimensions, true, Screen.scale)
-
-        var lastY: CGFloat = 0
-        for image in images {
-            image.draw(in: CGRect(x: 0, y: lastY, width: dimensions.width, height: image.size.height))
-            lastY += image.size.height
+        let format = UIGraphicsImageRendererFormat()
+        format.opaque = true
+        let renderer = UIGraphicsImageRenderer(size: dimensions, format: format)
+        return renderer.image { _ in
+            var lastY: CGFloat = 0
+            for image in images {
+                image.draw(in: CGRect(x: 0, y: lastY, width: dimensions.width, height: image.size.height))
+                lastY += image.size.height
+            }
         }
-
-        let finalImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return finalImage
     }
 
     /// Merges images in top to side to side order (left -> right)
@@ -75,17 +73,15 @@ open class DefaultImageMerger: ImageMerging {
             dimensions.height = max(dimensions.height, image.size.height)
         }
 
-        UIGraphicsBeginImageContextWithOptions(dimensions, true, Screen.scale)
-
-        var lastX: CGFloat = 0
-        for image in images {
-            image.draw(in: CGRect(x: lastX, y: 0, width: image.size.width, height: image.size.height))
-            lastX += image.size.width
+        let format = UIGraphicsImageRendererFormat()
+        format.opaque = true
+        let renderer = UIGraphicsImageRenderer(size: dimensions, format: format)
+        return renderer.image { _ in
+            var lastX: CGFloat = 0
+            for image in images {
+                image.draw(in: CGRect(x: lastX, y: 0, width: image.size.width, height: image.size.height))
+                lastX += image.size.width
+            }
         }
-
-        let finalImage = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-
-        return finalImage
     }
 }
