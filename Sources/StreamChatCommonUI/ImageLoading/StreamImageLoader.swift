@@ -7,17 +7,17 @@ import UIKit
 
 /// The default image loader implementation.
 ///
-/// Uses the provided ``CDN`` to transform image URLs before loading,
+/// Uses the provided ``CDNRequester`` to transform image URLs before loading,
 /// and delegates actual downloading to an ``ImageDownloading`` backend
 /// (typically Nuke, supplied by each UI SDK).
 open class StreamImageLoader: ImageLoader, @unchecked Sendable {
-    /// The CDN used for URL transformation before image loading.
-    public let cdn: CDN
+    /// The CDN requester used for URL transformation before image loading.
+    public let cdnRequester: CDNRequester
     /// The backend that performs the actual image download and caching.
     public let downloader: ImageDownloading
 
-    public init(cdn: CDN = StreamCDN(), downloader: ImageDownloading) {
-        self.cdn = cdn
+    public init(cdnRequester: CDNRequester = StreamCDNRequester(), downloader: ImageDownloading) {
+        self.cdnRequester = cdnRequester
         self.downloader = downloader
     }
 
@@ -33,7 +33,7 @@ open class StreamImageLoader: ImageLoader, @unchecked Sendable {
             return
         }
 
-        cdn.imageRequest(for: url, resize: resize) { [weak self] result in
+        cdnRequester.imageRequest(for: url, resize: resize) { [weak self] result in
             switch result {
             case let .success(cdnRequest):
                 let resizeSize: CGSize? = resize.map { CGSize(width: $0.width, height: $0.height) }

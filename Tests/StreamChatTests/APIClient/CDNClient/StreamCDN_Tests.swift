@@ -6,13 +6,13 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-final class StreamCDN_Tests: XCTestCase {
-    let baseUrl = "https://www.\(StreamCDN.streamCDNURL)"
-    var sut: StreamCDN!
+final class StreamCDNRequester_Tests: XCTestCase {
+    let baseUrl = "https://www.\(StreamCDNRequester.streamCDNURL)"
+    var sut: StreamCDNRequester!
 
     override func setUp() {
         super.setUp()
-        sut = StreamCDN()
+        sut = StreamCDNRequester()
     }
 
     override func tearDown() {
@@ -22,7 +22,7 @@ final class StreamCDN_Tests: XCTestCase {
 
     // MARK: - Image Request
 
-    func test_imageRequest_whenHostIsNotStreamCDN_returnsUnchangedURL() {
+    func test_imageRequest_whenHostIsNotStreamCDNRequester_returnsUnchangedURL() {
         let url = URL(string: "https://www.google.com/image.jpg?someStuff=20")!
         let expectation = expectation(description: "Completion called")
 
@@ -110,7 +110,7 @@ final class StreamCDN_Tests: XCTestCase {
         waitForExpectations(timeout: 1)
     }
 
-    func test_imageRequest_cachingKey_nonStreamCDN_returnsFullURL() {
+    func test_imageRequest_cachingKey_nonStreamCDNRequester_returnsFullURL() {
         let url = URL(string: "https://www.google.com/image.jpg?token=abc")!
         let expectation = expectation(description: "Completion called")
 

@@ -7,22 +7,22 @@ import StreamChat
 import XCTest
 
 final class StreamVideoLoader_Tests: XCTestCase {
-    func test_init_defaultCDN() {
+    func test_init_defaultCDNRequester() {
         let imageLoader = StreamImageLoader()
         let videoLoader = StreamVideoLoader(imageLoader: imageLoader)
-        XCTAssertTrue(videoLoader.cdn is StreamCDN)
+        XCTAssertTrue(videoLoader.cdnRequester is StreamCDNRequester)
         XCTAssertTrue(videoLoader.imageLoader is StreamImageLoader)
     }
 
-    func test_init_customCDN() {
-        let cdn = MockCDN()
-        let imageLoader = StreamImageLoader(cdn: cdn)
-        let videoLoader = StreamVideoLoader(cdn: cdn, imageLoader: imageLoader)
-        XCTAssertTrue(videoLoader.cdn is MockCDN)
+    func test_init_customCDNRequester() {
+        let cdnRequester = MockCDNRequester()
+        let imageLoader = StreamImageLoader(cdnRequester: cdnRequester)
+        let videoLoader = StreamVideoLoader(cdnRequester: cdnRequester, imageLoader: imageLoader)
+        XCTAssertTrue(videoLoader.cdnRequester is MockCDNRequester)
     }
 }
 
-private final class MockCDN: CDN, @unchecked Sendable {
+private final class MockCDNRequester: CDNRequester, @unchecked Sendable {
     func imageRequest(for url: URL, resize: ImageResize?, completion: @escaping (Result<CDNRequest, Error>) -> Void) {
         completion(.success(CDNRequest(url: url)))
     }

@@ -7,7 +7,7 @@ import UIKit
 
 /// A protocol for loading and caching images.
 ///
-/// The `CDN` dependency is injected into the concrete implementation at init time,
+/// The `CDNRequester` dependency is injected into the concrete implementation at init time,
 /// not passed as a parameter to protocol methods.
 public protocol ImageLoader: AnyObject, Sendable {
     /// Loads a single image from the given URL.

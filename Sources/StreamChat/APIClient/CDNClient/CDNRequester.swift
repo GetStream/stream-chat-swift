@@ -11,7 +11,7 @@ import Foundation
 ///
 /// All methods use completion handlers to support asynchronous operations
 /// such as fetching pre-signed URLs from a server.
-public protocol CDN: Sendable {
+public protocol CDNRequester: Sendable {
     /// Transforms an image URL for loading.
     ///
     /// Called before every image load. Use this to add signing,
@@ -43,7 +43,7 @@ public protocol CDN: Sendable {
 
 // MARK: - Async/Await Extensions
 
-extension CDN {
+extension CDNRequester {
     /// Transforms an image URL for loading.
     public func imageRequest(for url: URL, resize: ImageResize? = nil) async throws -> CDNRequest {
         try await withCheckedThrowingContinuation { continuation in

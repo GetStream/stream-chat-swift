@@ -103,9 +103,9 @@ public struct ChatClientConfig: Sendable {
     /// - Parameter apiKey: The API key of the chat app the `ChatClient` connects to.
     ///
 
-    /// The CDN used for URL transformation (signing, headers, resizing) when loading images and files.
-    /// If not specified, Stream's default CDN is used.
-    public var cdn: CDN = StreamCDN()
+    /// The CDN requester used for URL transformation (signing, headers, resizing) when loading images and files.
+    /// If not specified, Stream's default CDN requester is used.
+    public var cdnRequester: CDNRequester = StreamCDNRequester()
 
     /// Allows injecting a custom CDN storage for uploading and deleting attachments.
     /// If not specified, Stream's default CDN storage is used.

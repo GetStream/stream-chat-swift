@@ -7,7 +7,7 @@ import UIKit
 
 /// A protocol for loading video preview thumbnails.
 ///
-/// The `CDN` dependency is injected into the concrete implementation at init time,
+/// The `CDNRequester` dependency is injected into the concrete implementation at init time,
 /// not passed as a parameter to protocol methods.
 public protocol VideoLoader: AnyObject, Sendable {
     /// Loads a video preview thumbnail from a URL.

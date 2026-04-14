@@ -90,8 +90,8 @@ public struct Components: @unchecked Sendable {
     /// The view that shows a loading indicator.
     public var loadingIndicator: ChatLoadingIndicator.Type = ChatLoadingIndicator.self
 
-    /// The CDN used for URL transformation (signing, headers, resizing).
-    public var cdn: CDN
+    /// The CDN requester used for URL transformation (signing, headers, resizing).
+    public var cdnRequester: CDNRequester
 
     /// The object responsible for loading images.
     public var imageLoader: ImageLoader
@@ -684,11 +684,11 @@ public struct Components: @unchecked Sendable {
     public var alertsRouter: AlertsRouter.Type = AlertsRouter.self
 
     public init() {
-        let cdn = StreamCDN()
-        self.cdn = cdn
-        let imageLoader = StreamImageLoader(cdn: cdn, downloader: StreamImageDownloader())
+        let cdnRequester = StreamCDNRequester()
+        self.cdnRequester = cdnRequester
+        let imageLoader = StreamImageLoader(cdnRequester: cdnRequester, downloader: StreamImageDownloader())
         self.imageLoader = imageLoader
-        self.videoLoader = StreamVideoLoader(cdn: cdn, imageLoader: imageLoader)
+        self.videoLoader = StreamVideoLoader(cdnRequester: cdnRequester, imageLoader: imageLoader)
     }
     
     public nonisolated(unsafe) static var `default` = Self()

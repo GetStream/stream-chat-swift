@@ -16,7 +16,7 @@ import UIKit
 ///
 /// For file/video requests, returns the URL unchanged.
 /// Subclass to add signing, custom headers, or different CDN behavior.
-open class StreamCDN: CDN, @unchecked Sendable {
+open class StreamCDNRequester: CDNRequester, @unchecked Sendable {
     public nonisolated(unsafe) static var streamCDNURL = "stream-io-cdn.com"
 
     public init() {}
@@ -43,7 +43,7 @@ open class StreamCDN: CDN, @unchecked Sendable {
     /// Builds an image URL with resize query parameters for Stream CDN URLs.
     open func buildImageURL(from url: URL, resize: ImageResize?) -> URL {
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-              let host = components.host, host.contains(StreamCDN.streamCDNURL) else {
+              let host = components.host, host.contains(StreamCDNRequester.streamCDNURL) else {
             return url
         }
 
@@ -81,7 +81,7 @@ open class StreamCDN: CDN, @unchecked Sendable {
         let key = url.absoluteString
 
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-              let host = components.host, host.contains(StreamCDN.streamCDNURL) else {
+              let host = components.host, host.contains(StreamCDNRequester.streamCDNURL) else {
             return key
         }
 

@@ -3,22 +3,23 @@
 //
 
 import AVKit
+import StreamChat
 import UIKit
 
 /// The default video loader implementation using AVFoundation.
 ///
-/// Uses the provided `CDN` to sign video URLs before generating previews,
+/// Uses the provided `CDNRequester` to sign video URLs before generating previews,
 /// and falls back to the `ImageLoader` for loading thumbnail URLs.
 open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
-    /// The CDN used for URL transformation before video access.
-    public let cdn: CDN
+    /// The CDN requester used for URL transformation before video access.
+    public let cdnRequester: CDNRequester
     /// The image loader used for loading video thumbnail URLs.
     public let imageLoader: ImageLoader
 
     private let cache: NSCache<NSURL, UIImage>
 
-    public init(cdn: CDN = StreamCDN(), imageLoader: ImageLoader, countLimit: Int = 50) {
-        self.cdn = cdn
+    public init(cdnRequester: CDNRequester = StreamCDNRequester(), imageLoader: ImageLoader, countLimit: Int = 50) {
+        self.cdnRequester = cdnRequester
         self.imageLoader = imageLoader
         self.cache = NSCache<NSURL, UIImage>()
         self.cache.countLimit = countLimit
@@ -85,7 +86,7 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
         for url: URL,
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
-        cdn.fileRequest(for: url) { [weak self] result in
+        cdnRequester.fileRequest(for: url) { [weak self] result in
             guard let self else { return }
 
             let adjustedUrl: URL
