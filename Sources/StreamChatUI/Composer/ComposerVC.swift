@@ -1516,8 +1516,8 @@ open class ComposerVC: _ViewController,
         }
 
         guard let maxSize = maxAttachmentSize, maxSize > 0 else {
-            if let cdnUploader = client.config.cdnUploader {
-                return type(of: cdnUploader).maxAttachmentSize
+            if let cdnStorage = client.config.cdnStorage {
+                return type(of: cdnStorage).maxAttachmentSize
             } else {
                 return AttachmentValidationError.fileSizeMaxLimitFallback
             }

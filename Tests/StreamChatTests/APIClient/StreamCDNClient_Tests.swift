@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class StreamCDNUploader_Tests: XCTestCase {
+final class StreamCDNStorage_Tests: XCTestCase {
     func test_uploadFileEncoderIsCalledWithEndpoint() throws {
         let builder = TestBuilder()
         let client = builder.make()

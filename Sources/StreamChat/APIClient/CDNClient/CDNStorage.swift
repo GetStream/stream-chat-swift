@@ -8,7 +8,7 @@ import Foundation
 ///
 /// Implement this protocol to use a custom CDN or storage service
 /// (such as AWS S3, Firebase Storage, or your own backend) for file uploads.
-public protocol CDNUploader: Sendable {
+public protocol CDNStorage: Sendable {
     /// The maximum allowed attachment size in bytes.
     static var maxAttachmentSize: Int64 { get }
 
@@ -49,7 +49,7 @@ public protocol CDNUploader: Sendable {
 
 // MARK: - Async/Await Extensions
 
-extension CDNUploader {
+extension CDNStorage {
     /// Uploads a message attachment and returns the uploaded file information.
     public func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,

@@ -24,8 +24,8 @@ class APIClient: @unchecked Sendable {
     /// The attachment downloader.
     let attachmentDownloader: AttachmentDownloader
 
-    /// The CDN uploader for storing and deleting attachments.
-    let cdnUploader: CDNUploader
+    /// The CDN storage for uploading and deleting attachments.
+    let cdnStorage: CDNStorage
 
     /// Queue in charge of handling incoming requests
     private let operationQueue: OperationQueue = {
@@ -63,13 +63,13 @@ class APIClient: @unchecked Sendable {
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         attachmentDownloader: AttachmentDownloader,
-        cdnUploader: CDNUploader
+        cdnStorage: CDNStorage
     ) {
         encoder = requestEncoder
         decoder = requestDecoder
         session = URLSession(configuration: sessionConfiguration)
         self.attachmentDownloader = attachmentDownloader
-        self.cdnUploader = cdnUploader
+        self.cdnStorage = cdnStorage
     }
 
     /// Performs a network request and retries in case of network failures
@@ -318,7 +318,7 @@ class APIClient: @unchecked Sendable {
         completion: @escaping @Sendable (Result<UploadedAttachment, Error>) -> Void
     ) {
         let uploadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
-            self?.cdnUploader.uploadAttachment(attachment, progress: progress) { [weak self] result in
+            self?.cdnStorage.uploadAttachment(attachment, progress: progress) { [weak self] result in
                 let mappedResult = result.map { file in
                     UploadedAttachment(
                         attachment: attachment,

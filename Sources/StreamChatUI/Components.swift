@@ -90,16 +90,17 @@ public struct Components: @unchecked Sendable {
     /// The view that shows a loading indicator.
     public var loadingIndicator: ChatLoadingIndicator.Type = ChatLoadingIndicator.self
 
+    /// The CDN used for URL transformation (signing, headers, resizing).
+    public var cdn: CDN
+
     /// The object responsible for loading images.
-    public var imageLoader: ImageLoader = StreamImageLoader(downloader: StreamImageDownloader())
+    public var imageLoader: ImageLoader
 
     /// Object responsible for providing resizing operations for `UIImage`
     public var imageProcessor: ImageProcessor = StreamImageProcessor()
 
     /// The object responsible for loading video previews.
-    public var videoLoader: VideoLoader = StreamVideoLoader(
-        imageLoader: StreamImageLoader(downloader: StreamImageDownloader())
-    )
+    public var videoLoader: VideoLoader
 
     /// The view that shows a gradient.
     public var gradientView: GradientView.Type = GradientView.self
@@ -678,7 +679,13 @@ public struct Components: @unchecked Sendable {
     /// The router responsible for presenting alerts.
     public var alertsRouter: AlertsRouter.Type = AlertsRouter.self
 
-    public init() {}
+    public init() {
+        let cdn = StreamCDN()
+        self.cdn = cdn
+        let imageLoader = StreamImageLoader(cdn: cdn, downloader: StreamImageDownloader())
+        self.imageLoader = imageLoader
+        self.videoLoader = StreamVideoLoader(cdn: cdn, imageLoader: imageLoader)
+    }
     
     public nonisolated(unsafe) static var `default` = Self()
 }

@@ -5,7 +5,7 @@
 import Foundation
 import StreamChat
 
-final class CDNUploader_Spy: CDNUploader, Spy, @unchecked Sendable {
+final class CDNStorage_Spy: CDNStorage, Spy, @unchecked Sendable {
     let spyState = SpyState()
 
     static var maxAttachmentSize: Int64 { .max }

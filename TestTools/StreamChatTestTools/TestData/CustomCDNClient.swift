@@ -6,7 +6,7 @@ import Foundation
 
 @testable import StreamChat
 
-public final class CustomCDNUploader: CDNUploader {
+public final class CustomCDNStorage: CDNStorage {
     public static var maxAttachmentSize: Int64 { 10 * 1000 * 1000 }
 
     public func uploadAttachment(

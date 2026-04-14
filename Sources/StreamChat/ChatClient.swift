@@ -663,7 +663,7 @@ public class ChatClient: @unchecked Sendable {
         progress: (@Sendable (Double) -> Void)?,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
-        apiClient.cdnUploader.uploadAttachment(
+        apiClient.cdnStorage.uploadAttachment(
             localUrl: localUrl,
             progress: progress,
             completion: completion
@@ -678,7 +678,7 @@ public class ChatClient: @unchecked Sendable {
         remoteUrl: URL,
         completion: @escaping @Sendable (Error?) -> Void
     ) {
-        apiClient.cdnUploader.deleteAttachment(
+        apiClient.cdnStorage.deleteAttachment(
             remoteUrl: remoteUrl,
             completion: completion
         )

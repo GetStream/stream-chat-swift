@@ -248,7 +248,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
     }
 
     /// Update the remote url for each attachment payload type. Every other payload
-    /// update should be handled by the ``CDNUploader``.
+    /// update should be handled by the ``CDNStorage``.
     private func updateRemoteUrl(of uploadedAttachment: inout UploadedAttachment) {
         var attachment = uploadedAttachment.attachment
 

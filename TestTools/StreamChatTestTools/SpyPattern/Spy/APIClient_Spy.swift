@@ -48,7 +48,7 @@ final class APIClient_Spy: APIClient, Spy, @unchecked Sendable {
     @Atomic var init_sessionConfiguration: URLSessionConfiguration
     @Atomic var init_requestEncoder: RequestEncoder
     @Atomic var init_requestDecoder: RequestDecoder
-    @Atomic var init_cdnUploader: CDNUploader
+    @Atomic var init_cdnStorage: CDNStorage
     @Atomic var request_expectation: XCTestExpectation
     @Atomic var recoveryRequest_expectation: XCTestExpectation
     @Atomic var uploadRequest_expectation: XCTestExpectation
@@ -85,12 +85,12 @@ final class APIClient_Spy: APIClient, Spy, @unchecked Sendable {
         requestEncoder: RequestEncoder,
         requestDecoder: RequestDecoder,
         attachmentDownloader: AttachmentDownloader,
-        cdnUploader: CDNUploader
+        cdnStorage: CDNStorage
     ) {
         init_sessionConfiguration = sessionConfiguration
         init_requestEncoder = requestEncoder
         init_requestDecoder = requestDecoder
-        init_cdnUploader = cdnUploader
+        init_cdnStorage = cdnStorage
         downloadFile_expectation = .init()
         request_expectation = .init()
         recoveryRequest_expectation = .init()
@@ -101,7 +101,7 @@ final class APIClient_Spy: APIClient, Spy, @unchecked Sendable {
             requestEncoder: requestEncoder,
             requestDecoder: requestDecoder,
             attachmentDownloader: attachmentDownloader,
-            cdnUploader: cdnUploader
+            cdnStorage: cdnStorage
         )
     }
 
@@ -229,7 +229,7 @@ extension APIClient_Spy {
             requestEncoder: DefaultRequestEncoder(baseURL: .unique(), apiKey: .init(.unique)),
             requestDecoder: DefaultRequestDecoder(),
             attachmentDownloader: AttachmentDownloader_Spy(),
-            cdnUploader: CDNUploader_Spy()
+            cdnStorage: CDNStorage_Spy()
         )
     }
 }
