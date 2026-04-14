@@ -1131,6 +1131,11 @@
 				"StreamChatCommonUI/Appearance+SwiftUI.swift",
 				StreamChatCommonUI/Generated/L10n_template.stencil,
 				StreamChatCommonUI/Generated/L10n.swift,
+				StreamChatCommonUI/ImageLoading/ImageDownloading.swift,
+				StreamChatCommonUI/ImageLoading/ImageLoader.swift,
+				StreamChatCommonUI/ImageLoading/StreamImageLoader.swift,
+				StreamChatCommonUI/ImageLoading/StreamVideoLoader.swift,
+				StreamChatCommonUI/ImageLoading/VideoLoader.swift,
 				StreamChatCommonUI/Info.plist,
 				StreamChatCommonUI/Reactions/ChatMessageReactionAppearance.swift,
 				StreamChatCommonUI/Resources/Assets.xcassets,
@@ -1451,14 +1456,10 @@
 				StreamChatUI/Utils/ImageLoading/ImageDownloadRequest.swift,
 				"StreamChatUI/Utils/ImageLoading/ImageLoader+UIKit.swift",
 				StreamChatUI/Utils/ImageLoading/ImageLoaderOptions.swift,
-
 				StreamChatUI/Utils/ImageLoading/ImageMerger.swift,
-
 				StreamChatUI/Utils/ImageLoading/ImageResultsMapper.swift,
 				StreamChatUI/Utils/ImageLoading/ImageSizeCalculator.swift,
-
 				StreamChatUI/Utils/ImageLoading/StreamImageDownloader.swift,
-
 				StreamChatUI/Utils/ImageProcessor/StreamImageProcessor.swift,
 				StreamChatUI/Utils/KeyboardHandler/ComposerKeyboardHandler.swift,
 				StreamChatUI/Utils/KeyboardHandler/DefaultScrollViewKeyboardHandler.swift,
@@ -1468,7 +1469,6 @@
 				StreamChatUI/Utils/TextViewMentionedUsersHandler.swift,
 				"StreamChatUI/Utils/UILabel+highlightText.swift",
 				"StreamChatUI/Utils/VideoLoading/VideoLoader+UIKit.swift",
-
 				StreamChatUI/Utils/ViewPaginationHandling/InvertedScrollViewPaginationHandler.swift,
 				StreamChatUI/Utils/ViewPaginationHandling/ScrollViewPaginationHandler.swift,
 				StreamChatUI/Utils/ViewPaginationHandling/StatefulScrollViewPaginationHandler.swift,
@@ -1805,14 +1805,10 @@
 				StreamChatUI/Utils/ImageLoading/ImageDownloadRequest.swift,
 				"StreamChatUI/Utils/ImageLoading/ImageLoader+UIKit.swift",
 				StreamChatUI/Utils/ImageLoading/ImageLoaderOptions.swift,
-
 				StreamChatUI/Utils/ImageLoading/ImageMerger.swift,
-
 				StreamChatUI/Utils/ImageLoading/ImageResultsMapper.swift,
 				StreamChatUI/Utils/ImageLoading/ImageSizeCalculator.swift,
-
 				StreamChatUI/Utils/ImageLoading/StreamImageDownloader.swift,
-
 				StreamChatUI/Utils/ImageProcessor/StreamImageProcessor.swift,
 				StreamChatUI/Utils/KeyboardHandler/ComposerKeyboardHandler.swift,
 				StreamChatUI/Utils/KeyboardHandler/DefaultScrollViewKeyboardHandler.swift,
@@ -1822,7 +1818,6 @@
 				StreamChatUI/Utils/TextViewMentionedUsersHandler.swift,
 				"StreamChatUI/Utils/UILabel+highlightText.swift",
 				"StreamChatUI/Utils/VideoLoading/VideoLoader+UIKit.swift",
-
 				StreamChatUI/Utils/ViewPaginationHandling/InvertedScrollViewPaginationHandler.swift,
 				StreamChatUI/Utils/ViewPaginationHandling/ScrollViewPaginationHandler.swift,
 				StreamChatUI/Utils/ViewPaginationHandling/StatefulScrollViewPaginationHandler.swift,
@@ -1874,6 +1869,11 @@
 				"StreamChatCommonUI/Appearance+SwiftUI.swift",
 				StreamChatCommonUI/Generated/L10n_template.stencil,
 				StreamChatCommonUI/Generated/L10n.swift,
+				StreamChatCommonUI/ImageLoading/ImageDownloading.swift,
+				StreamChatCommonUI/ImageLoading/ImageLoader.swift,
+				StreamChatCommonUI/ImageLoading/StreamImageLoader.swift,
+				StreamChatCommonUI/ImageLoading/StreamVideoLoader.swift,
+				StreamChatCommonUI/ImageLoading/VideoLoader.swift,
 				StreamChatCommonUI/Reactions/ChatMessageReactionAppearance.swift,
 				StreamChatCommonUI/Resources/Assets.xcassets,
 				StreamChatCommonUI/StreamChatCommonUI.h,
