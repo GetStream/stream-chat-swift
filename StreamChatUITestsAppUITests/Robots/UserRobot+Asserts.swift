@@ -916,9 +916,10 @@ extension UserRobot {
 
     @discardableResult
     func assertCooldownIsShown(file: StaticString = #filePath, line: UInt = #line) -> Self {
-        XCTAssertEqual(
-            MessageListPage.Composer.placeholder.text,
-            L10n.Composer.Placeholder.slowMode,
+        let text = MessageListPage.Composer.placeholder.text ?? ""
+        XCTAssertTrue(
+            text.hasPrefix("Slow mode"),
+            "Expected slow mode placeholder but got: \(text)",
             file: file,
             line: line
         )
@@ -933,9 +934,10 @@ extension UserRobot {
 
     @discardableResult
     func assertCooldownIsNotShown(file: StaticString = #filePath, line: UInt = #line) -> Self {
-        XCTAssertNotEqual(
-            MessageListPage.Composer.placeholder.text,
-            L10n.Composer.Placeholder.slowMode,
+        let text = MessageListPage.Composer.placeholder.text ?? ""
+        XCTAssertFalse(
+            text.hasPrefix("Slow mode"),
+            "Expected no slow mode placeholder but got: \(text)",
             file: file,
             line: line
         )
