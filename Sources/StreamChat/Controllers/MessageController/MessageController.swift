@@ -789,14 +789,17 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     ///
     /// - Parameters:
     ///   - attachment: The attachment to download.
+    ///   - remoteURL: An optional URL to download from instead of the attachment's original URL.
+    ///     Use this to provide a CDN-signed or transformed URL.
     ///   - completion: A completion block with the attachment containing the downloading state.
     ///
     /// - Note: The local storage URL (`attachment.downloadingState?.localFileURL`) can change between app launches.
     public func downloadAttachment<Payload>(
         _ attachment: ChatMessageAttachment<Payload>,
+        remoteURL: URL? = nil,
         completion: @escaping @MainActor (Result<ChatMessageAttachment<Payload>, Error>) -> Void
     ) where Payload: DownloadableAttachmentPayload {
-        messageUpdater.downloadAttachment(attachment) { result in
+        messageUpdater.downloadAttachment(attachment, remoteURL: remoteURL) { result in
             self.callback {
                 completion(result)
             }
