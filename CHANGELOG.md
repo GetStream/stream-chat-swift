@@ -18,6 +18,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix clearing unread messages on channel open when the first unread message is not visible [#4013](https://github.com/GetStream/stream-chat-swift/pull/4013)
 ### 🔄 Changed
 - Use the new color palette [#4025](https://github.com/GetStream/stream-chat-swift/pull/4025)
+### ⚡ Performance
+- Create merged avatars on a background thread in `ChatChannelAvatarView` [#4068](https://github.com/GetStream/stream-chat-swift/pull/4068)
 
 ## StreamChatCommonUI
 ### 🔄 Changed

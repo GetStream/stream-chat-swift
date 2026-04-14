@@ -27,6 +27,10 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
         DefaultImageMerger()
     }()
 
+    /// The queue used for merged avatar image processing.
+    /// Set to `nil` to perform processing synchronously on the calling thread.
+    open var imageProcessingQueue: DispatchQueue? = .global(qos: .userInitiated)
+
     override open func setUpLayout() {
         super.setUpLayout()
         embed(presenceAvatarView)
@@ -107,12 +111,35 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
             return
         }
 
-        loadAvatarsFrom(urls: urls, names: names, channelId: channel.cid) { [weak self] avatars, channelId in
-            StreamConcurrency.onMain { [weak self] in
-                guard let self = self, channelId == self.content.channel?.cid else { return }
+        // Capture @MainActor-isolated dependencies before dispatching to background
+        let imageProcessor = components.imageProcessor
+        let imageMerger = self.imageMerger
+        let avatarThumbnailSize = components.avatarThumbnailSize
+        let fallbackPlaceholder = initialsPlaceholder(name: "")
+        let halfContainerSize = CGSize(width: avatarThumbnailSize.width / 2, height: avatarThumbnailSize.height)
+        let halfFallback = initialsPlaceholder(name: "", size: halfContainerSize)
 
-                let combinedImage = self.createMergedAvatar(from: avatars) ?? self.initialsPlaceholder(name: "")
-                self.loadIntoAvatarImageView(from: nil, placeholder: combinedImage)
+        let queue = imageProcessingQueue
+        loadAvatarsFrom(urls: urls, names: names, channelId: channel.cid) { [weak self] avatars, channelId in
+            let mergeAndApply: @Sendable () -> Void = { [weak self] in
+                let combinedImage = MergedChannelAvatarRenderer.createMergedAvatarImage(
+                    from: avatars,
+                    imageProcessor: imageProcessor,
+                    imageMerger: imageMerger,
+                    avatarThumbnailSize: avatarThumbnailSize,
+                    fallbackImage: halfFallback
+                ) ?? fallbackPlaceholder
+
+                StreamConcurrency.onMain {
+                    guard let self, channelId == self.content.channel?.cid else { return }
+                    self.loadIntoAvatarImageView(from: nil, placeholder: combinedImage)
+                }
+            }
+
+            if let queue {
+                queue.async(execute: mergeAndApply)
+            } else {
+                mergeAndApply()
             }
         }
     }
@@ -158,113 +185,15 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
     /// - Parameter avatars: The individual avatars
     /// - Returns: The merged avatar
     open func createMergedAvatar(from avatars: [UIImage]) -> UIImage? {
-        guard !avatars.isEmpty else {
-            return nil
-        }
-
-        var combinedImage: UIImage?
-        let images = avatars
-        let imageProcessor = components.imageProcessor
-
-        // The half of the width of the avatar
         let size = components.avatarThumbnailSize
         let halfContainerSize = CGSize(width: size.width / 2, height: size.height)
-
-        if images.count == 1, let image = images.first {
-            combinedImage = image
-        } else if images.count == 2, let firstImage = images.first, let secondImage = images.last {
-            let fallback = initialsPlaceholder(name: "", size: halfContainerSize)
-            let leftImage = imageProcessor.crop(image: firstImage, to: halfContainerSize) ?? fallback
-            let rightImage = imageProcessor.crop(image: secondImage, to: halfContainerSize) ?? fallback
-            combinedImage = imageMerger.merge(
-                images: [
-                    leftImage,
-                    rightImage
-                ],
-                orientation: .horizontal
-            )
-        } else if images.count == 3,
-                  let firstImage = images[safe: 0],
-                  let secondImage = images[safe: 1],
-                  let thirdImage = images[safe: 2] {
-            let fallback = initialsPlaceholder(name: "", size: halfContainerSize)
-            let leftImage = imageProcessor.crop(image: firstImage, to: halfContainerSize)
-
-            let rightCollage = imageMerger.merge(
-                images: [
-                    secondImage,
-                    thirdImage
-                ],
-                orientation: .vertical
-            )
-
-            let rightImage = imageProcessor.crop(
-                image: imageProcessor
-                    .scale(
-                        image: rightCollage ?? fallback,
-                        to: components.avatarThumbnailSize
-                    ),
-                to: halfContainerSize
-            )
-
-            combinedImage = imageMerger.merge(
-                images:
-                [
-                    leftImage ?? fallback,
-                    rightImage ?? fallback
-                ],
-                orientation: .horizontal
-            )
-        } else if images.count == 4,
-                  let firstImage = images[safe: 0],
-                  let secondImage = images[safe: 1],
-                  let thirdImage = images[safe: 2],
-                  let forthImage = images[safe: 3] {
-            let fallback = initialsPlaceholder(name: "", size: halfContainerSize)
-            let leftCollage = imageMerger.merge(
-                images: [
-                    firstImage,
-                    thirdImage
-                ],
-                orientation: .vertical
-            )
-
-            let leftImage = imageProcessor.crop(
-                image: imageProcessor
-                    .scale(
-                        image: leftCollage ?? fallback,
-                        to: components.avatarThumbnailSize
-                    ),
-                to: halfContainerSize
-            )
-
-            let rightCollage = imageMerger.merge(
-                images: [
-                    secondImage,
-                    forthImage
-                ],
-                orientation: .vertical
-            )
-
-            let rightImage = imageProcessor.crop(
-                image: imageProcessor
-                    .scale(
-                        image: rightCollage ?? fallback,
-                        to: components.avatarThumbnailSize
-                    ),
-                to: halfContainerSize
-            )
-
-            combinedImage = imageMerger.merge(
-                images: [
-                    leftImage ?? fallback,
-                    rightImage ?? fallback
-                ],
-                orientation: .horizontal
-            )
-        }
-
-        return combinedImage
+        return MergedChannelAvatarRenderer.createMergedAvatarImage(
+            from: avatars,
+            imageProcessor: components.imageProcessor,
+            imageMerger: imageMerger,
+            avatarThumbnailSize: size,
+            fallbackImage: initialsPlaceholder(name: "", size: halfContainerSize)
+        )
     }
 
     open func lastActiveMembers() -> [ChatChannelMember] {
@@ -291,5 +220,94 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
                 placeholder: placeholder
             )
         )
+    }
+}
+
+private enum MergedChannelAvatarRenderer {
+    /// Creates a merged avatar image from individual avatars. Thread-safe — can be called from any queue.
+    static func createMergedAvatarImage(
+        from avatars: [UIImage],
+        imageProcessor: ImageProcessor,
+        imageMerger: ImageMerging,
+        avatarThumbnailSize: CGSize,
+        fallbackImage: UIImage
+    ) -> UIImage? {
+        guard !avatars.isEmpty else {
+            return nil
+        }
+        
+        let images = avatars
+        let halfContainerSize = CGSize(width: avatarThumbnailSize.width / 2, height: avatarThumbnailSize.height)
+        
+        if images.count == 1, let image = images.first {
+            return image
+        } else if images.count == 2, let firstImage = images.first, let secondImage = images.last {
+            let leftImage = imageProcessor.crop(image: firstImage, to: halfContainerSize) ?? fallbackImage
+            let rightImage = imageProcessor.crop(image: secondImage, to: halfContainerSize) ?? fallbackImage
+            return imageMerger.merge(
+                images: [leftImage, rightImage],
+                orientation: .horizontal
+            )
+        } else if images.count == 3,
+                  let firstImage = images[safe: 0],
+                  let secondImage = images[safe: 1],
+                  let thirdImage = images[safe: 2] {
+            let leftImage = imageProcessor.crop(image: firstImage, to: halfContainerSize)
+            
+            let rightCollage = imageMerger.merge(
+                images: [secondImage, thirdImage],
+                orientation: .vertical
+            )
+            
+            let rightImage = imageProcessor.crop(
+                image: imageProcessor.scale(
+                    image: rightCollage ?? fallbackImage,
+                    to: avatarThumbnailSize
+                ),
+                to: halfContainerSize
+            )
+            
+            return imageMerger.merge(
+                images: [leftImage ?? fallbackImage, rightImage ?? fallbackImage],
+                orientation: .horizontal
+            )
+        } else if images.count == 4,
+                  let firstImage = images[safe: 0],
+                  let secondImage = images[safe: 1],
+                  let thirdImage = images[safe: 2],
+                  let forthImage = images[safe: 3] {
+            let leftCollage = imageMerger.merge(
+                images: [firstImage, thirdImage],
+                orientation: .vertical
+            )
+            
+            let leftImage = imageProcessor.crop(
+                image: imageProcessor.scale(
+                    image: leftCollage ?? fallbackImage,
+                    to: avatarThumbnailSize
+                ),
+                to: halfContainerSize
+            )
+            
+            let rightCollage = imageMerger.merge(
+                images: [secondImage, forthImage],
+                orientation: .vertical
+            )
+            
+            let rightImage = imageProcessor.crop(
+                image: imageProcessor.scale(
+                    image: rightCollage ?? fallbackImage,
+                    to: avatarThumbnailSize
+                ),
+                to: halfContainerSize
+            )
+            
+            return imageMerger.merge(
+                images: [leftImage ?? fallbackImage, rightImage ?? fallbackImage],
+                orientation: .horizontal
+            )
+        }
+        
+        return nil
     }
 }
