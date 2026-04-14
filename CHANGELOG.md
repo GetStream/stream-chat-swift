@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### ✅ Added
 - Add `ChatChannelListController.prefill(channels:completion:)` for priming controller-local channel data before the first synchronize call while preserving normal pagination, observation, and offline refresh behavior
-- Add `ChatClient.groupedQueryChannels(limit:watch:presence:)` to fetch grouped channel buckets as `[[ChatChannel]]` in `all`, `new`, `current`, `expired` order
+- Add `ChatClient.groupedQueryChannels(limit:watch:presence:)` to fetch grouped channel families as `GroupedChannels`, preserving backend bucket keys and response order
 
 ### 🔄 Changed
 

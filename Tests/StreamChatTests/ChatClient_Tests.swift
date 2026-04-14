@@ -266,45 +266,45 @@ final class ChatClient_Tests: XCTestCase {
 
     func test_groupedQueryChannels_callsAPIClientAndReturnsGroupedChannels() {
         let client = ChatClient.mock(config: inMemoryStorageConfig)
-        let allCid = ChannelId.unique
-        let newCid = ChannelId.unique
-        let currentCid = ChannelId.unique
-        let expiredCid = ChannelId.unique
+        let firstCid = ChannelId.unique
+        let secondCid = ChannelId.unique
+        let thirdCid = ChannelId.unique
 
         let request = GroupedQueryChannelsRequestBody(limit: 4, watch: true, presence: false)
         let expectedEndpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
         let payload = GroupedQueryChannelsPayload(
-            all: .init(
-                channels: [dummyPayload(with: allCid)],
-                unreadCount: 1,
-                unreadChannels: 1
-            ),
-            new: .init(
-                channels: [dummyPayload(with: newCid)],
-                unreadCount: 2,
-                unreadChannels: 1
-            ),
-            current: .init(
-                channels: [dummyPayload(with: currentCid)],
-                unreadCount: 3,
-                unreadChannels: 1
-            ),
-            expired: .init(
-                channels: [dummyPayload(with: expiredCid)],
-                unreadCount: 4,
-                unreadChannels: 1
-            ),
+            family: "support",
+            buckets: [
+                .init(
+                    key: "all-open",
+                    channels: [dummyPayload(with: firstCid)],
+                    unreadCount: 1,
+                    unreadChannels: 1
+                ),
+                .init(
+                    key: "assigned",
+                    channels: [dummyPayload(with: secondCid)],
+                    unreadCount: 2,
+                    unreadChannels: 1
+                ),
+                .init(
+                    key: "escalated",
+                    channels: [dummyPayload(with: thirdCid)],
+                    unreadCount: 4,
+                    unreadChannels: 2
+                )
+            ],
             duration: "12ms"
         )
 
         let expectation = self.expectation(description: "grouped query channels completes")
-        var receivedChannels: [[ChatChannel]]?
+        var receivedGroupedChannels: GroupedChannels?
         var receivedError: Error?
 
         client.groupedQueryChannels(limit: 4, watch: true, presence: false) { result in
             switch result {
-            case let .success(channels):
-                receivedChannels = channels
+            case let .success(groupedChannels):
+                receivedGroupedChannels = groupedChannels
             case let .failure(error):
                 receivedError = error
             }
@@ -317,10 +317,9 @@ final class ChatClient_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
-        XCTAssertEqual(
-            receivedChannels?.map { $0.map(\.cid) },
-            [[allCid], [newCid], [currentCid], [expiredCid]]
-        )
+        XCTAssertEqual(receivedGroupedChannels?.family, "support")
+        XCTAssertEqual(receivedGroupedChannels?.buckets.map(\.key), ["all-open", "assigned", "escalated"])
+        XCTAssertEqual(receivedGroupedChannels?.channels.map { $0.map(\.cid) }, [[firstCid], [secondCid], [thirdCid]])
     }
 
     func test_disconnect_flushesRequestsQueue() throws {

@@ -487,15 +487,15 @@ public class ChatClient {
         authenticationRepository.setToken(token: token, completeTokenWaiters: true)
     }
 
-    /// Loads grouped channel buckets and returns them in the following order:
-    /// `all`, `new`, `current`, `expired`.
+    /// Loads grouped channel buckets for the app's configured family.
     ///
-    /// The response is converted to `ChatChannel` models without persisting the data locally.
+    /// The response preserves the backend-provided family and bucket keys and is converted to `ChatChannel`
+    /// models without persisting the data locally.
     public func groupedQueryChannels(
         limit: Int? = nil,
         watch: Bool = false,
         presence: Bool = false,
-        completion: @escaping (Result<[[ChatChannel]], Error>) -> Void
+        completion: @escaping (Result<GroupedChannels, Error>) -> Void
     ) {
         let request = GroupedQueryChannelsRequestBody(
             limit: limit,
@@ -516,15 +516,15 @@ public class ChatClient {
         }
     }
 
-    /// Loads grouped channel buckets and returns them in the following order:
-    /// `all`, `new`, `current`, `expired`.
+    /// Loads grouped channel buckets for the app's configured family.
     ///
-    /// The response is converted to `ChatChannel` models without persisting the data locally.
+    /// The response preserves the backend-provided family and bucket keys and is converted to `ChatChannel`
+    /// models without persisting the data locally.
     public func groupedQueryChannels(
         limit: Int? = nil,
         watch: Bool = false,
         presence: Bool = false
-    ) async throws -> [[ChatChannel]] {
+    ) async throws -> GroupedChannels {
         try await withCheckedThrowingContinuation { continuation in
             groupedQueryChannels(limit: limit, watch: watch, presence: presence) { result in
                 continuation.resume(with: result)
@@ -881,23 +881,26 @@ extension ChatClient {
     private static func groupedChannels(
         from payload: GroupedQueryChannelsPayload,
         session: DatabaseSession
-    ) throws -> [[ChatChannel]] {
-        let buckets = [
-            payload.all.channels,
-            payload.new.channels,
-            payload.current.channels,
-            payload.expired.channels
-        ]
-
-        let models = try buckets.map { channels in
-            try channels.map { channelPayload in
+    ) throws -> GroupedChannels {
+        let buckets = try payload.buckets.map { bucketPayload in
+            let channels = try bucketPayload.channels.map { channelPayload in
                 let dto = try session.saveChannel(payload: channelPayload)
                 return try dto.asModel()
             }
+
+            return GroupedChannelsBucket(
+                key: bucketPayload.key,
+                channels: channels,
+                unreadCount: bucketPayload.unreadCount,
+                unreadChannels: bucketPayload.unreadChannels
+            )
         }
 
         (session as? NSManagedObjectContext)?.rollback()
-        return models
+        return GroupedChannels(
+            family: payload.family,
+            buckets: buckets
+        )
     }
 
     func backgroundWorker<T>(of type: T.Type) throws -> T {
@@ -911,6 +914,53 @@ extension ChatClient {
             throw ClientError.ClientIsNotInActiveMode()
         }
         throw ClientError("Background worker of type \(T.self) is not set up")
+    }
+}
+
+/// A grouped channels response returned by `ChatClient.groupedQueryChannels`.
+public struct GroupedChannels: Equatable {
+    /// The grouped channel family configured for the current app.
+    public let family: String
+
+    /// The grouped channel buckets returned by the backend in response order.
+    public let buckets: [GroupedChannelsBucket]
+
+    /// Convenience access to the grouped channels without bucket metadata.
+    public var channels: [[ChatChannel]] { buckets.map(\.channels) }
+
+    public init(
+        family: String,
+        buckets: [GroupedChannelsBucket]
+    ) {
+        self.family = family
+        self.buckets = buckets
+    }
+}
+
+/// A grouped channels bucket returned by `ChatClient.groupedQueryChannels`.
+public struct GroupedChannelsBucket: Equatable {
+    /// The backend-defined key for this bucket within the family.
+    public let key: String
+
+    /// The channels that belong to this bucket.
+    public let channels: [ChatChannel]
+
+    /// The total unread message count across the bucket.
+    public let unreadCount: Int
+
+    /// The total unread channel count in the bucket.
+    public let unreadChannels: Int
+
+    public init(
+        key: String,
+        channels: [ChatChannel],
+        unreadCount: Int,
+        unreadChannels: Int
+    ) {
+        self.key = key
+        self.channels = channels
+        self.unreadCount = unreadCount
+        self.unreadChannels = unreadChannels
     }
 }
 
