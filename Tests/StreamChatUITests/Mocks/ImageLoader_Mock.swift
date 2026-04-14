@@ -7,6 +7,10 @@ import StreamChatCommonUI
 import UIKit
 
 /// A mock implementation of the image loader which loads images synchronously.
+///
+/// Completions are invoked inline (synchronously) so that snapshot tests
+/// capture the final view state without needing an extra run-loop tick.
+/// This works because snapshot tests always run on the main thread.
 final class ImageLoader_Mock: ImageLoader, @unchecked Sendable {
     func loadImage(
         url: URL?,
@@ -14,14 +18,14 @@ final class ImageLoader_Mock: ImageLoader, @unchecked Sendable {
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
         guard let url else {
-            Task { @MainActor in
+            MainActor.assumeIsolated {
                 completion(.failure(NSError(domain: "mock", code: 0)))
             }
             return
         }
 
         let image = UIImage(data: try! Data(contentsOf: url))!
-        Task { @MainActor in
+        MainActor.assumeIsolated {
             completion(.success(image))
         }
     }
@@ -37,7 +41,7 @@ final class ImageLoader_Mock: ImageLoader, @unchecked Sendable {
             guard let data = try? Data(contentsOf: url) else { return nil }
             return UIImage(data: data)
         }
-        Task { @MainActor in
+        MainActor.assumeIsolated {
             completion(images)
         }
     }

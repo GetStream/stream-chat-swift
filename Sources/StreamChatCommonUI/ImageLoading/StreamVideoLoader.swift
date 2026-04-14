@@ -36,6 +36,10 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
         NotificationCenter.default.removeObserver(self)
     }
 
+    open func videoAsset(at url: URL) -> AVURLAsset {
+        AVURLAsset(url: url)
+    }
+
     open func loadPreview(
         at url: URL,
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void

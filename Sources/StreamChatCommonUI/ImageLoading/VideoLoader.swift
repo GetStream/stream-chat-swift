@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import AVKit
 import StreamChat
 import UIKit
 
@@ -10,6 +11,12 @@ import UIKit
 /// The `CDNRequester` dependency is injected into the concrete implementation at init time,
 /// not passed as a parameter to protocol methods.
 public protocol VideoLoader: AnyObject, Sendable {
+    /// Returns a video asset for the given URL.
+    ///
+    /// Implementers can override this to apply CDN-requester adjusted URLs
+    /// before the asset is created.
+    func videoAsset(at url: URL) -> AVURLAsset
+
     /// Loads a video preview thumbnail from a URL.
     ///
     /// - Parameters:
