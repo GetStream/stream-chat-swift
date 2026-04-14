@@ -109,7 +109,9 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
             let frameTime = CMTime(seconds: 0.1, preferredTimescale: 600)
 
             imageGenerator.appliesPreferredTrackTransform = true
-            imageGenerator.generateCGImagesAsynchronously(forTimes: [.init(time: frameTime)]) { [cache = self.cache] _, image, _, _, error in
+            imageGenerator.generateCGImagesAsynchronously(forTimes: [.init(time: frameTime)]) { [weak self] _, image, _, _, error in
+                guard let self else { return }
+
                 let result: Result<UIImage, Error>
                 if let thumbnail = image {
                     result = .success(UIImage(cgImage: thumbnail))
@@ -121,7 +123,7 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
                 }
 
                 if let image = try? result.get() {
-                    cache.setObject(image, forKey: url as NSURL)
+                    self.cache.setObject(image, forKey: url as NSURL)
                 }
                 StreamConcurrency.onMain {
                     completion(result)
@@ -134,3 +136,4 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
         cache.removeAllObjects()
     }
 }
+
