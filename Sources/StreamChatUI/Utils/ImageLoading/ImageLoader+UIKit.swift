@@ -62,14 +62,7 @@ extension ImageLoader {
         completion: @escaping @MainActor ([Result<UIImage, Error>]) -> Void
     ) {
         let group = DispatchGroup()
-
-        final class BatchResult: @unchecked Sendable {
-            var results: [Result<UIImage, Error>]
-            init(count: Int) {
-                results = Array(repeating: .failure(NSError(domain: NSURLErrorDomain, code: URLError.Code.unknown.rawValue)), count: count)
-            }
-        }
-        let batchResult = BatchResult(count: requests.count)
+        let batchResult = ImageBatchResult(count: requests.count)
 
         for (index, request) in requests.enumerated() {
             group.enter()
@@ -80,7 +73,7 @@ extension ImageLoader {
         }
 
         group.notify(queue: .main) {
-            Task { @MainActor in
+            StreamConcurrency.onMain {
                 completion(batchResult.results)
             }
         }
@@ -117,6 +110,13 @@ extension ImageLoader {
             with: ImageLoaderOptions(resize: ImageResize(newSize)),
             completion: completion
         )
+    }
+}
+
+final class ImageBatchResult: @unchecked Sendable {
+    var results: [Result<UIImage, Error>]
+    init(count: Int) {
+        results = Array(repeating: .failure(NSError(domain: NSURLErrorDomain, code: URLError.Code.unknown.rawValue)), count: count)
     }
 }
 

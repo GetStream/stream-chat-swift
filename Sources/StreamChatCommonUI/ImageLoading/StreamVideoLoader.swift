@@ -41,7 +41,7 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
         if let cached = cache.object(forKey: url as NSURL) {
-            Task { @MainActor in
+            StreamConcurrency.onMain {
                 completion(.success(cached))
             }
             return
@@ -56,7 +56,7 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
     ) {
         let videoURL = attachment.videoURL
         if let cached = cache.object(forKey: videoURL as NSURL) {
-            Task { @MainActor in
+            StreamConcurrency.onMain {
                 completion(.success(cached))
             }
             return
@@ -68,7 +68,7 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
                 switch result {
                 case let .success(image):
                     self.cache.setObject(image, forKey: videoURL as NSURL)
-                    Task { @MainActor in
+                    StreamConcurrency.onMain {
                         completion(.success(image))
                     }
                 case .failure:
@@ -94,7 +94,7 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
             case let .success(cdnRequest):
                 adjustedUrl = cdnRequest.url
             case let .failure(error):
-                Task { @MainActor in
+                StreamConcurrency.onMain {
                     completion(.failure(error))
                 }
                 return
@@ -119,7 +119,7 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
                 if let image = try? result.get() {
                     cache.setObject(image, forKey: url as NSURL)
                 }
-                Task { @MainActor in
+                StreamConcurrency.onMain {
                     completion(result)
                 }
             }

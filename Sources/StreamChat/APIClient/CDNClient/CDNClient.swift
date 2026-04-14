@@ -39,7 +39,7 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
     ) {
         guard
             let uploadingState = attachment.uploadingState,
-            let fileData = try? Data(contentsOf: uploadingState.localFileURL) else {
+            let fileData = try? Data(contentsOf: uploadingState.localFileURL, options: .mappedIfSafe) else {
             return completion(.failure(ClientError.AttachmentUploading(id: attachment.id)))
         }
         let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(with: attachment.id.cid, type: attachment.type)
@@ -70,7 +70,7 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
             return
         }
 
-        guard let fileData = try? Data(contentsOf: localUrl) else {
+        guard let fileData = try? Data(contentsOf: localUrl, options: .mappedIfSafe) else {
             return completion(.failure(ClientError.Unknown()))
         }
 

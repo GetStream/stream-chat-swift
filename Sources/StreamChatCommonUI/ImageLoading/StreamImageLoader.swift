@@ -27,7 +27,7 @@ open class StreamImageLoader: ImageLoader, @unchecked Sendable {
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
         guard let url else {
-            Task { @MainActor in
+            StreamConcurrency.onMain {
                 completion(.failure(ClientError.Unknown()))
             }
             return
@@ -45,7 +45,7 @@ open class StreamImageLoader: ImageLoader, @unchecked Sendable {
                     completion: completion
                 )
             case let .failure(error):
-                Task { @MainActor in
+                StreamConcurrency.onMain {
                     completion(.failure(error))
                 }
             }
@@ -60,10 +60,7 @@ open class StreamImageLoader: ImageLoader, @unchecked Sendable {
         completion: @escaping @MainActor ([UIImage]) -> Void
     ) {
         let group = DispatchGroup()
-        final class BatchLoadingResult: @unchecked Sendable {
-            var images: [UIImage] = []
-        }
-        let batchLoadingResult = BatchLoadingResult()
+        let batchLoadingResult = ImageBatchLoadingResult()
 
         for (index, avatarUrl) in urls.enumerated() {
             group.enter()
@@ -84,9 +81,13 @@ open class StreamImageLoader: ImageLoader, @unchecked Sendable {
         }
 
         group.notify(queue: .main) {
-            Task { @MainActor in
+            StreamConcurrency.onMain {
                 completion(batchLoadingResult.images)
             }
         }
     }
+}
+
+private final class ImageBatchLoadingResult: @unchecked Sendable {
+    var images: [UIImage] = []
 }
