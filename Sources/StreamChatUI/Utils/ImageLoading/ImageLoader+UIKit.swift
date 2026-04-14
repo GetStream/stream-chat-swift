@@ -72,9 +72,15 @@ extension ImageLoader {
             }
         }
 
-        group.notify(queue: .main) {
+        if group.wait(timeout: .now()) == .success {
             StreamConcurrency.onMain {
                 completion(batchResult.results)
+            }
+        } else {
+            group.notify(queue: .main) {
+                StreamConcurrency.onMain {
+                    completion(batchResult.results)
+                }
             }
         }
     }

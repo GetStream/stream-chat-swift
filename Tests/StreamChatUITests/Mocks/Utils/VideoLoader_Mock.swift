@@ -16,7 +16,7 @@ final class VideoLoader_Mock: VideoLoader, @unchecked Sendable {
 
     func loadPreview(at url: URL, completion: @escaping @MainActor (Result<UIImage, Error>) -> Void) {
         loadPreviewForVideoMockFunc.call(with: (url, completion))
-        guard let image = UIImage(data: try! Data(contentsOf: url)) else {
+        guard let data = try? Data(contentsOf: url), let image = UIImage(data: data) else {
             MainActor.assumeIsolated {
                 completion(.failure(NSError(domain: "VideoLoader_Mock", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to load image from url: \(url)"])))
             }

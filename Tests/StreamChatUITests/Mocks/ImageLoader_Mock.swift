@@ -12,6 +12,8 @@ import UIKit
 /// capture the final view state without needing an extra run-loop tick.
 /// This works because snapshot tests always run on the main thread.
 final class ImageLoader_Mock: ImageLoader, @unchecked Sendable {
+    private let imageProcessor = StreamImageProcessor()
+
     func loadImage(
         url: URL?,
         resize: ImageResize?,
@@ -24,7 +26,17 @@ final class ImageLoader_Mock: ImageLoader, @unchecked Sendable {
             return
         }
 
-        let image = UIImage(data: try! Data(contentsOf: url))!
+        guard let data = try? Data(contentsOf: url), var image = UIImage(data: data) else {
+            MainActor.assumeIsolated {
+                completion(.failure(NSError(domain: "mock", code: 0)))
+            }
+            return
+        }
+
+        if let resize {
+            let size = CGSize(width: resize.width, height: resize.height)
+            image = imageProcessor.scale(image: image, to: size)
+        }
         MainActor.assumeIsolated {
             completion(.success(image))
         }
