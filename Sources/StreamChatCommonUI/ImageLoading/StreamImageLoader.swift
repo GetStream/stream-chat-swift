@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import UIKit
 
 /// The default image loader implementation.
