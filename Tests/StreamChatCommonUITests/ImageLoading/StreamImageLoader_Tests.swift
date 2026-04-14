@@ -37,11 +37,11 @@ final class StreamImageLoader_Tests: XCTestCase {
 }
 
 private final class MockCDNRequester: CDNRequester, @unchecked Sendable {
-    func imageRequest(for url: URL, resize: ImageResize?, completion: @escaping (Result<CDNRequest, Error>) -> Void) {
+    func imageRequest(for url: URL, options: ImageRequestOptions, completion: @escaping (Result<CDNRequest, Error>) -> Void) {
         completion(.success(CDNRequest(url: url)))
     }
 
-    func fileRequest(for url: URL, completion: @escaping (Result<CDNRequest, Error>) -> Void) {
+    func fileRequest(for url: URL, options: FileRequestOptions, completion: @escaping (Result<CDNRequest, Error>) -> Void) {
         completion(.success(CDNRequest(url: url)))
     }
 }

@@ -16,12 +16,12 @@ final class CDNStorage_Spy: CDNStorage, Spy, @unchecked Sendable {
 
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable (Double) -> Void)?,
+        options: AttachmentUploadOptions,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
         record()
         if let uploadAttachmentProgress = uploadAttachmentProgress {
-            progress?(uploadAttachmentProgress)
+            options.progress?(uploadAttachmentProgress)
         }
 
         if let uploadAttachmentResult = uploadAttachmentResult {
@@ -33,12 +33,12 @@ final class CDNStorage_Spy: CDNStorage, Spy, @unchecked Sendable {
 
     func uploadAttachment(
         localUrl: URL,
-        progress: (@Sendable (Double) -> Void)?,
+        options: AttachmentUploadOptions,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
         record()
         if let uploadAttachmentProgress = uploadAttachmentProgress {
-            progress?(uploadAttachmentProgress)
+            options.progress?(uploadAttachmentProgress)
         }
 
         if let uploadAttachmentResult = uploadAttachmentResult {
@@ -50,6 +50,7 @@ final class CDNStorage_Spy: CDNStorage, Spy, @unchecked Sendable {
 
     func deleteAttachment(
         remoteUrl: URL,
+        options: AttachmentDeleteOptions,
         completion: @escaping @Sendable (Error?) -> Void
     ) {
         record()

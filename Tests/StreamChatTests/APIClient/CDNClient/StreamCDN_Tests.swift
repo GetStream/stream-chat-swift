@@ -26,7 +26,7 @@ final class StreamCDNRequester_Tests: XCTestCase {
         let url = URL(string: "https://www.google.com/image.jpg?someStuff=20")!
         let expectation = expectation(description: "Completion called")
 
-        sut.imageRequest(for: url, resize: ImageResize(CGSize(width: 40, height: 40))) { result in
+        sut.imageRequest(for: url, options: .init(resize: ImageResize(CGSize(width: 40, height: 40)))) { result in
             let request = try! result.get()
             XCTAssertEqual(request.url, url)
             expectation.fulfill()
@@ -39,7 +39,7 @@ final class StreamCDNRequester_Tests: XCTestCase {
         let url = URL(string: "\(baseUrl)/image.jpg")!
         let expectation = expectation(description: "Completion called")
 
-        sut.imageRequest(for: url, resize: nil) { result in
+        sut.imageRequest(for: url, options: .init()) { result in
             let request = try! result.get()
             XCTAssertEqual(request.url, url)
             expectation.fulfill()
@@ -52,7 +52,7 @@ final class StreamCDNRequester_Tests: XCTestCase {
         let url = URL(string: "\(baseUrl)/image.jpg")!
         let expectation = expectation(description: "Completion called")
 
-        sut.imageRequest(for: url, resize: ImageResize(CGSize(width: 40, height: 60), mode: .crop(.center))) { result in
+        sut.imageRequest(for: url, options: .init(resize: ImageResize(CGSize(width: 40, height: 60), mode: .crop(.center)))) { result in
             let request = try! result.get()
             let components = URLComponents(url: request.url, resolvingAgainstBaseURL: true)!
             let queryItems = components.queryItems ?? []
@@ -73,7 +73,7 @@ final class StreamCDNRequester_Tests: XCTestCase {
         let url = URL(string: "\(baseUrl)/image.jpg")!
         let expectation = expectation(description: "Completion called")
 
-        sut.imageRequest(for: url, resize: ImageResize(CGSize(width: 40, height: 60), mode: .fill)) { result in
+        sut.imageRequest(for: url, options: .init(resize: ImageResize(CGSize(width: 40, height: 60), mode: .fill))) { result in
             let request = try! result.get()
             let components = URLComponents(url: request.url, resolvingAgainstBaseURL: true)!
             let queryItems = components.queryItems ?? []
@@ -93,7 +93,7 @@ final class StreamCDNRequester_Tests: XCTestCase {
         let url = URL(string: "\(baseUrl)/image.jpg?name=Luke&w=128&h=128&crop=center&resize=crop&ro=0")!
         let expectation = expectation(description: "Completion called")
 
-        sut.imageRequest(for: url, resize: nil) { result in
+        sut.imageRequest(for: url, options: .init()) { result in
             let request = try! result.get()
             XCTAssertNotNil(request.cachingKey)
             let key = request.cachingKey!
@@ -114,7 +114,7 @@ final class StreamCDNRequester_Tests: XCTestCase {
         let url = URL(string: "https://www.google.com/image.jpg?token=abc")!
         let expectation = expectation(description: "Completion called")
 
-        sut.imageRequest(for: url, resize: nil) { result in
+        sut.imageRequest(for: url, options: .init()) { result in
             let request = try! result.get()
             XCTAssertEqual(request.cachingKey, url.absoluteString)
             expectation.fulfill()
@@ -129,7 +129,7 @@ final class StreamCDNRequester_Tests: XCTestCase {
         let url = URL(string: "https://example.com/video.mp4")!
         let expectation = expectation(description: "Completion called")
 
-        sut.fileRequest(for: url) { result in
+        sut.fileRequest(for: url, options: .init()) { result in
             let request = try! result.get()
             XCTAssertEqual(request.url, url)
             XCTAssertNil(request.headers)
@@ -143,7 +143,7 @@ final class StreamCDNRequester_Tests: XCTestCase {
 
     func test_imageRequest_asyncWrapper() async throws {
         let url = URL(string: "\(baseUrl)/image.jpg")!
-        let request = try await sut.imageRequest(for: url, resize: nil)
+        let request = try await sut.imageRequest(for: url)
         XCTAssertEqual(request.url, url)
     }
 

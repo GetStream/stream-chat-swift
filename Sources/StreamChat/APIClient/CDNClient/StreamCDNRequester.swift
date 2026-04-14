@@ -23,16 +23,17 @@ open class StreamCDNRequester: CDNRequester, @unchecked Sendable {
 
     open func imageRequest(
         for url: URL,
-        resize: ImageResize?,
+        options: ImageRequestOptions,
         completion: @escaping (Result<CDNRequest, Error>) -> Void
     ) {
-        let finalURL = buildImageURL(from: url, resize: resize)
+        let finalURL = buildImageURL(from: url, resize: options.resize)
         let cachingKey = buildCachingKey(for: url)
         completion(.success(CDNRequest(url: finalURL, cachingKey: cachingKey)))
     }
 
     open func fileRequest(
         for url: URL,
+        options: FileRequestOptions,
         completion: @escaping (Result<CDNRequest, Error>) -> Void
     ) {
         completion(.success(CDNRequest(url: url)))

@@ -318,7 +318,7 @@ class APIClient: @unchecked Sendable {
         completion: @escaping @Sendable (Result<UploadedAttachment, Error>) -> Void
     ) {
         let uploadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
-            self?.cdnStorage.uploadAttachment(attachment, progress: progress) { [weak self] result in
+            self?.cdnStorage.uploadAttachment(attachment, options: .init(progress: progress)) { [weak self] result in
                 let mappedResult = result.map { file in
                     UploadedAttachment(
                         attachment: attachment,

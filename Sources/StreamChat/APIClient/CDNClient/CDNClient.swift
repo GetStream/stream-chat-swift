@@ -34,7 +34,7 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
 
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable (Double) -> Void)? = nil,
+        options: AttachmentUploadOptions,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
         guard
@@ -48,14 +48,14 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
             endpoint: endpoint,
             fileData: fileData,
             uploadingState: uploadingState,
-            progress: progress,
+            progress: options.progress,
             completion: completion
         )
     }
 
     func uploadAttachment(
         localUrl: URL,
-        progress: (@Sendable (Double) -> Void)? = nil,
+        options: AttachmentUploadOptions,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
         let uploadingState: AttachmentUploadingState
@@ -81,13 +81,14 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
             endpoint: endpoint,
             fileData: fileData,
             uploadingState: uploadingState,
-            progress: progress,
+            progress: options.progress,
             completion: completion
         )
     }
 
     func deleteAttachment(
         remoteUrl: URL,
+        options: AttachmentDeleteOptions,
         completion: @escaping @Sendable (Error?) -> Void
     ) {
         let isImage = AttachmentFileType(ext: remoteUrl.pathExtension).isImage

@@ -13,11 +13,11 @@ public protocol CDNStorage: Sendable {
     ///
     /// - Parameters:
     ///   - attachment: The message attachment to upload.
-    ///   - progress: A closure that broadcasts upload progress (0.0 to 1.0).
+    ///   - options: Options for the upload, such as progress reporting.
     ///   - completion: A completion handler with the uploaded file result.
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable (Double) -> Void)?,
+        options: AttachmentUploadOptions,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     )
 
@@ -25,11 +25,11 @@ public protocol CDNStorage: Sendable {
     ///
     /// - Parameters:
     ///   - localUrl: The local file URL to upload.
-    ///   - progress: A closure that broadcasts upload progress (0.0 to 1.0).
+    ///   - options: Options for the upload, such as progress reporting.
     ///   - completion: A completion handler with the uploaded file result.
     func uploadAttachment(
         localUrl: URL,
-        progress: (@Sendable (Double) -> Void)?,
+        options: AttachmentUploadOptions,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     )
 
@@ -37,9 +37,11 @@ public protocol CDNStorage: Sendable {
     ///
     /// - Parameters:
     ///   - remoteUrl: The remote URL of the attachment to delete.
+    ///   - options: Options for the delete operation.
     ///   - completion: A completion handler called with an error if the delete fails.
     func deleteAttachment(
         remoteUrl: URL,
+        options: AttachmentDeleteOptions,
         completion: @escaping @Sendable (Error?) -> Void
     )
 }
@@ -50,10 +52,10 @@ extension CDNStorage {
     /// Uploads a message attachment and returns the uploaded file information.
     public func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable (Double) -> Void)? = nil
+        options: AttachmentUploadOptions = .init()
     ) async throws -> UploadedFile {
         try await withCheckedThrowingContinuation { continuation in
-            uploadAttachment(attachment, progress: progress) { @Sendable result in
+            uploadAttachment(attachment, options: options) { @Sendable result in
                 nonisolated(unsafe) let unsafeResult = result
                 continuation.resume(with: unsafeResult)
             }
@@ -63,10 +65,10 @@ extension CDNStorage {
     /// Uploads a file from a local URL and returns the uploaded file information.
     public func uploadAttachment(
         localUrl: URL,
-        progress: (@Sendable (Double) -> Void)? = nil
+        options: AttachmentUploadOptions = .init()
     ) async throws -> UploadedFile {
         try await withCheckedThrowingContinuation { continuation in
-            uploadAttachment(localUrl: localUrl, progress: progress) { @Sendable result in
+            uploadAttachment(localUrl: localUrl, options: options) { @Sendable result in
                 nonisolated(unsafe) let unsafeResult = result
                 continuation.resume(with: unsafeResult)
             }
@@ -74,12 +76,27 @@ extension CDNStorage {
     }
 
     /// Deletes a previously uploaded attachment.
-    public func deleteAttachment(remoteUrl: URL) async throws {
+    public func deleteAttachment(remoteUrl: URL, options: AttachmentDeleteOptions = .init()) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            deleteAttachment(remoteUrl: remoteUrl) { @Sendable error in
+            deleteAttachment(remoteUrl: remoteUrl, options: options) { @Sendable error in
                 if let error { continuation.resume(throwing: error) }
                 else { continuation.resume() }
             }
         }
     }
+}
+
+/// Options for uploading an attachment to the CDN.
+public struct AttachmentUploadOptions: Sendable {
+    /// A closure that broadcasts upload progress (0.0 to 1.0).
+    public var progress: (@Sendable (Double) -> Void)?
+
+    public init(progress: (@Sendable (Double) -> Void)? = nil) {
+        self.progress = progress
+    }
+}
+
+/// Options for deleting an attachment from the CDN.
+public struct AttachmentDeleteOptions: Sendable {
+    public init() {}
 }

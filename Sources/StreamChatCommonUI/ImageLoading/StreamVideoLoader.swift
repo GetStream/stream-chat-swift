@@ -86,7 +86,7 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
         for url: URL,
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
-        cdnRequester.fileRequest(for: url) { [weak self] result in
+        cdnRequester.fileRequest(for: url, options: .init()) { [weak self] result in
             guard let self else { return }
 
             let adjustedUrl: URL

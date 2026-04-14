@@ -665,7 +665,7 @@ public class ChatClient: @unchecked Sendable {
     ) {
         apiClient.cdnStorage.uploadAttachment(
             localUrl: localUrl,
-            progress: progress,
+            options: .init(progress: progress),
             completion: completion
         )
     }
@@ -680,6 +680,7 @@ public class ChatClient: @unchecked Sendable {
     ) {
         apiClient.cdnStorage.deleteAttachment(
             remoteUrl: remoteUrl,
+            options: .init(),
             completion: completion
         )
     }
