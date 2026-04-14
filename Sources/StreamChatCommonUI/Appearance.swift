@@ -38,8 +38,13 @@ import StreamChat
 
     /// Provider for custom localization which is dependent on App Bundle.
     public var localizationProvider: @Sendable (_ key: String, _ table: String) -> String = { key, table in
-        let bundle = Appearance.bundle ?? Bundle.streamChatCommonUI
-        return bundle.localizedString(forKey: key, value: nil, table: table)
+        if let bundle = Appearance.bundle {
+            let value = bundle.localizedString(forKey: key, value: nil, table: table)
+            if value != key {
+                return value
+            }
+        }
+        return Bundle.streamChatCommonUI.localizedString(forKey: key, value: nil, table: table)
     }
 
     public init() {
