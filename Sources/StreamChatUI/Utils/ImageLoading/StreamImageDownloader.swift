@@ -2,7 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import StreamChatCommonUI
+import StreamChat
 import UIKit
 
 /// Nuke-backed implementation of ``ImageDownloading`` for the UIKit SDK.

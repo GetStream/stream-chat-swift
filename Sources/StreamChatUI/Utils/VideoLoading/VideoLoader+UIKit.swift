@@ -2,9 +2,8 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import AVKit
 import StreamChat
-import StreamChatCommonUI
+import AVKit
 
 extension VideoLoader {
     /// Returns a video asset for the given URL.
