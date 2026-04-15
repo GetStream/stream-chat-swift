@@ -64,29 +64,17 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
                 player.replaceCurrentItem(with: nil)
             }
 
-            if let thumbnailURL = videoAttachment?.thumbnailURL {
-                showPreview(using: thumbnailURL)
-            } else if let url = newAssetURL {
-                components.mediaLoader.loadVideoPreview(at: url, options: VideoLoadOptions(cdnRequester: components.cdnRequester)) { [weak self] in
+            if let videoAttachment {
+                components.mediaLoader.loadVideoPreview(
+                    with: videoAttachment,
+                    options: VideoLoadOptions(cdnRequester: components.cdnRequester)
+                ) { [weak self] in
                     switch $0 {
                     case let .success(preview):
                         self?.showPreview(using: preview.image)
                     case .failure:
                         self?.showPreview(using: nil)
                     }
-                }
-            }
-        }
-    }
-
-    private func showPreview(using thumbnailURL: URL) {
-        components.mediaLoader.downloadImage(with: .init(url: thumbnailURL, options: ImageDownloadOptions(cdnRequester: components.cdnRequester))) { [weak self] result in
-            StreamConcurrency.onMain { [weak self] in
-                switch result {
-                case let .success(preview):
-                    self?.showPreview(using: preview)
-                case .failure:
-                    self?.showPreview(using: nil)
                 }
             }
         }

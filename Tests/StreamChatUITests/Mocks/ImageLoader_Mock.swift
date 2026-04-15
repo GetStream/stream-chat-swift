@@ -17,7 +17,7 @@ import UIKit
 final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
     private let imageProcessor = StreamImageProcessor()
 
-    lazy var loadVideoPreviewForVideoMockFunc = MockFunc.mock(for: loadVideoPreview(at:options:completion:))
+    lazy var loadVideoPreviewMockFunc = MockFunc.mock(for: loadVideoPreview(with:options:completion:))
     lazy var videoAssetMockFunc = MockFunc.mock(for: loadVideoAsset(at:options:completion:))
 
     func loadImage(
@@ -60,11 +60,12 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
     }
 
     func loadVideoPreview(
-        at url: URL,
+        with attachment: ChatMessageVideoAttachment,
         options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
-        loadVideoPreviewForVideoMockFunc.call(with: (url, options, completion))
+        loadVideoPreviewMockFunc.call(with: (attachment, options, completion))
+        let url = attachment.videoURL
         guard let data = try? Data(contentsOf: url), let image = UIImage(data: data) else {
             MainActor.assumeIsolated {
                 completion(.failure(NSError(domain: "ImageLoader_Mock", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to load image from url: \(url)"])))

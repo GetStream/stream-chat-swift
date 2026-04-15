@@ -83,32 +83,20 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
         imageView.image = nil
         playButton.isVisible = false
 
-        if let thumbnailURL = content?.thumbnailURL {
-            showPreview(using: thumbnailURL)
-        } else if let url = content?.videoURL {
-            components.mediaLoader.loadVideoPreview(at: url, options: VideoLoadOptions(cdnRequester: components.cdnRequester)) { [weak self] in
+        if let content {
+            components.mediaLoader.loadVideoPreview(
+                with: content,
+                options: VideoLoadOptions(cdnRequester: components.cdnRequester)
+            ) { [weak self] in
                 self?.loadingIndicator.isHidden = true
-                switch $0 {
-                case let .success(preview):
+                if case let .success(preview) = $0 {
                     self?.showPreview(using: preview.image)
-                case .failure:
-                    break
                 }
             }
         }
 
         uploadingOverlay.content = content?.uploadingState
         uploadingOverlay.isVisible = uploadingOverlay.content != nil
-    }
-
-    private func showPreview(using thumbnailURL: URL) {
-        components.mediaLoader.downloadImage(with: .init(url: thumbnailURL, options: ImageDownloadOptions(cdnRequester: components.cdnRequester))) { [weak self] result in
-            StreamConcurrency.onMain {
-                self?.loadingIndicator.isHidden = true
-                guard case let .success(image) = result else { return }
-                self?.showPreview(using: image)
-            }
-        }
     }
 
     private func showPreview(using thumbnail: UIImage) {

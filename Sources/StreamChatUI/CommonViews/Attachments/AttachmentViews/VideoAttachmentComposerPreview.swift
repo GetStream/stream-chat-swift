@@ -94,7 +94,19 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
 
         if let url = content {
             let options = VideoLoadOptions(cdnRequester: components.cdnRequester)
-            components.mediaLoader.loadVideoPreview(at: url, options: options) { [weak self] in
+            let attachment = ChatMessageVideoAttachment(
+                id: .init(cid: .init(type: .messaging, id: "local"), messageId: "local", index: 0),
+                type: .video,
+                payload: VideoAttachmentPayload(
+                    title: nil,
+                    videoRemoteURL: url,
+                    file: .init(type: .mp4, size: 0, mimeType: nil),
+                    extraData: nil
+                ),
+                downloadingState: nil,
+                uploadingState: nil
+            )
+            components.mediaLoader.loadVideoPreview(with: attachment, options: options) { [weak self] in
                 self?.loadingIndicator.isHidden = true
                 switch $0 {
                 case let .success(preview):

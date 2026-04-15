@@ -96,21 +96,6 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     }
 
     open func loadVideoPreview(
-        at url: URL,
-        options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
-    ) {
-        if let cached = videoPreviewCache.object(forKey: url as NSURL) {
-            StreamConcurrency.onMain {
-                completion(.success(MediaLoaderVideoPreview(image: cached)))
-            }
-            return
-        }
-
-        generateVideoPreview(for: url, options: options, completion: completion)
-    }
-
-    open func loadVideoPreview(
         with attachment: ChatMessageVideoAttachment,
         options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void

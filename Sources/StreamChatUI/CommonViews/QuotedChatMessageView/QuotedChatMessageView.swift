@@ -261,14 +261,10 @@ open class QuotedChatMessageView: _View, ThemeProvider {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: giphyPayload.previewURL)
             textView.text = message.text.isEmpty ? L10n.Composer.QuotedMessage.giphy : message.text
-        } else if let videoPayload = message.videoAttachments.first?.payload {
+        } else if let videoAttachment = message.videoAttachments.first {
             attachmentPreviewView.contentMode = .scaleAspectFill
-            textView.text = message.text.isEmpty ? videoPayload.title : message.text
-            if let thumbnailURL = videoPayload.thumbnailURL {
-                setVideoAttachmentThumbnail(url: thumbnailURL)
-            } else {
-                setVideoAttachmentPreviewImage(url: videoPayload.videoURL)
-            }
+            textView.text = message.text.isEmpty ? videoAttachment.payload.title : message.text
+            setVideoAttachmentPreviewImage(attachment: videoAttachment)
         } else if let voiceRecordingPayload = message.voiceRecordingAttachments.first?.payload {
             voiceRecordingAttachmentQuotedPreview.content = .init(
                 title: voiceRecordingPayload.title ?? message.text,
@@ -292,25 +288,16 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         )
     }
 
-    /// Set the image from the given URL into `attachmentPreviewImage.image`
-    /// - Parameter url: The URL of the thumbnail
-    open func setVideoAttachmentThumbnail(url: URL) {
-        components.mediaLoader.downloadImage(with: .init(url: url, options: ImageDownloadOptions(cdnRequester: components.cdnRequester))) { [weak self] result in
-            switch result {
-            case let .success(preview):
-                self?.attachmentPreviewView.image = preview
-            case .failure:
-                self?.attachmentPreviewView.image = nil
-            }
-        }
-    }
-
-    /// Set the image from the given URL into `attachmentPreviewImage.image`
-    /// - Parameter url: The URL from which to generate the image on the video
-    open func setVideoAttachmentPreviewImage(url: URL?) {
-        guard let url = url else { return }
-
-        components.mediaLoader.loadVideoPreview(at: url, options: VideoLoadOptions(cdnRequester: components.cdnRequester)) { [weak self] in
+    /// Set the image from the given video attachment into `attachmentPreviewImage.image`.
+    ///
+    /// Uses the attachment's thumbnail URL when available, falling back to
+    /// generating a preview frame from the video.
+    /// - Parameter attachment: The video attachment to load the preview for.
+    open func setVideoAttachmentPreviewImage(attachment: ChatMessageVideoAttachment) {
+        components.mediaLoader.loadVideoPreview(
+            with: attachment,
+            options: VideoLoadOptions(cdnRequester: components.cdnRequester)
+        ) { [weak self] in
             switch $0 {
             case let .success(preview):
                 self?.attachmentPreviewView.image = preview.image

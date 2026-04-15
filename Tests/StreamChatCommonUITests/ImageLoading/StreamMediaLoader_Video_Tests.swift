@@ -121,41 +121,6 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         waitForExpectations(timeout: 2)
     }
 
-    // MARK: - loadVideoPreview (URL variant)
-
-    func test_loadVideoPreview_callsCDNRequesterFileRequest() {
-        let url = URL(string: "https://example.com/video.mp4")!
-        cdnRequester.fileRequestResult = .failure(NSError(domain: "test", code: 0))
-        let expectation = expectation(description: "Completion called")
-
-        sut.loadVideoPreview(at: url, options: VideoLoadOptions(cdnRequester: cdnRequester)) { _ in
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: 2)
-        XCTAssertEqual(cdnRequester.fileRequestCallCount, 1)
-        XCTAssertEqual(cdnRequester.lastFileRequestURL, url)
-    }
-
-    func test_loadVideoPreview_cdnFailure_propagatesError() {
-        let expectedError = NSError(domain: "CDN", code: 404)
-        cdnRequester.fileRequestResult = .failure(expectedError)
-        let url = URL(string: "https://example.com/video.mp4")!
-        let expectation = expectation(description: "Completion called")
-
-        sut.loadVideoPreview(at: url, options: VideoLoadOptions(cdnRequester: cdnRequester)) { result in
-            switch result {
-            case .success:
-                XCTFail("Should have failed")
-            case let .failure(error):
-                XCTAssertEqual((error as NSError).code, 404)
-            }
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: 2)
-    }
-
     // MARK: - Video preview caching
 
     func test_loadVideoPreview_secondCall_usesCacheAndSkipsCDN() {
@@ -196,37 +161,6 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
 
         XCTAssertEqual(cdnRequester.fileRequestCallCount, 0, "Should not call CDN requester when cached")
         XCTAssertEqual(cdnRequester.imageRequestCallCount, 0, "Should not call CDN requester when cached")
-    }
-
-    func test_loadVideoPreview_cachedDirectURL_returnsFromCache() {
-        let url = URL(string: "https://example.com/video.mp4")!
-        let cachedImage = UIImage.make(withColor: .orange)
-
-        // First, populate cache via attachment with thumbnail
-        let thumbnailURL = URL(string: "https://example.com/thumb.jpg")!
-        downloader.result = .success(DownloadedImage(image: cachedImage))
-        let attachment = makeVideoAttachment(videoURL: url, thumbnailURL: thumbnailURL)
-
-        let firstExpectation = expectation(description: "First load")
-        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions(cdnRequester: cdnRequester)) { _ in
-            firstExpectation.fulfill()
-        }
-        waitForExpectations(timeout: 2)
-
-        // Now call the direct URL variant — should hit the same cache
-        cdnRequester.fileRequestCallCount = 0
-        let secondExpectation = expectation(description: "Direct URL cache hit")
-        sut.loadVideoPreview(at: url, options: VideoLoadOptions(cdnRequester: cdnRequester)) { result in
-            if case let .success(preview) = result {
-                XCTAssertEqual(preview.image.pngData(), cachedImage.pngData())
-            } else {
-                XCTFail("Should return cached preview")
-            }
-            secondExpectation.fulfill()
-        }
-        waitForExpectations(timeout: 2)
-
-        XCTAssertEqual(cdnRequester.fileRequestCallCount, 0, "Should not call CDN when cached")
     }
 
     // MARK: - loadVideoPreview (attachment variant)
@@ -289,26 +223,6 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
     }
 
     // MARK: - Completion always called
-
-    func test_loadVideoPreview_deallocatedLoader_callsCompletionWithError() {
-        var loader: StreamMediaLoader? = StreamMediaLoader(downloader: MockImageDownloader())
-        let asyncCDN = AsyncMockCDNRequester()
-        let url = URL(string: "https://example.com/video.mp4")!
-        let expectation = expectation(description: "Completion called")
-
-        loader?.loadVideoPreview(at: url, options: VideoLoadOptions(cdnRequester: asyncCDN)) { result in
-            if case .failure = result {
-                expectation.fulfill()
-            } else {
-                XCTFail("Should have failed when loader was deallocated")
-            }
-        }
-
-        loader = nil
-        asyncCDN.triggerFileCompletion(.success(CDNRequest(url: url)))
-
-        waitForExpectations(timeout: 2)
-    }
 
     func test_loadVideoPreview_attachment_deallocatedLoader_callsCompletionWithError() {
         let mockDownloader = AsyncMockImageDownloader()

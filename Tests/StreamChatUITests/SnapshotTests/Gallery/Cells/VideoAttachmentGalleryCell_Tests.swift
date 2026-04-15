@@ -35,6 +35,6 @@ import XCTest
         UIView().addSubview(cell)
 
         // Assert injected loader is invoked with correct values
-        XCTAssertEqual(components.mockMediaLoader.loadVideoPreviewForVideoMockFunc.calls.map(\.0), [url])
+        XCTAssertEqual(components.mockMediaLoader.loadVideoPreviewMockFunc.calls.map(\.0.videoURL), [url])
     }
 }

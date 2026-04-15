@@ -43,23 +43,11 @@ public protocol MediaLoader: AnyObject, Sendable {
         completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
     )
 
-    /// Loads a video preview thumbnail from a URL.
-    ///
-    /// - Parameters:
-    ///   - url: The video URL.
-    ///   - options: Options controlling CDN behavior.
-    ///   - completion: A completion handler called on the main actor with the preview image.
-    func loadVideoPreview(
-        at url: URL,
-        options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
-    )
-
     /// Loads a video preview from a video attachment.
     ///
-    /// The default implementation calls ``loadVideoPreview(at:options:completion:)``
-    /// with the video URL. Override this method to use the attachment's thumbnail
-    /// URL for preview generation.
+    /// When the attachment has a ``VideoAttachmentPayload/thumbnailURL``,
+    /// implementations should prefer loading the remote thumbnail and fall back
+    /// to generating a preview frame from the video URL.
     ///
     /// - Parameters:
     ///   - attachment: A video attachment containing the video URL and optional thumbnail URL.
@@ -83,14 +71,6 @@ extension MediaLoader {
         StreamConcurrency.onMain {
             completion(.success(MediaLoaderVideoAsset(asset: AVURLAsset(url: url))))
         }
-    }
-
-    public func loadVideoPreview(
-        with attachment: ChatMessageVideoAttachment,
-        options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
-    ) {
-        loadVideoPreview(at: attachment.videoURL, options: options, completion: completion)
     }
 }
 
