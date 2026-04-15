@@ -62,7 +62,7 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
         }
     }
 
-    func videoAsset(
+    func loadVideoAsset(
         at url: URL,
         options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void

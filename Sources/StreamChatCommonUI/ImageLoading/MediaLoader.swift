@@ -49,7 +49,7 @@ public protocol MediaLoader: AnyObject, Sendable {
     ///
     /// Implementers should use the CDN requester in options to adjust the URL
     /// before creating the asset.
-    func videoAsset(
+    func loadVideoAsset(
         at url: URL,
         options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
@@ -87,7 +87,7 @@ public protocol MediaLoader: AnyObject, Sendable {
 // MARK: - Default Implementations
 
 extension MediaLoader {
-    public func videoAsset(
+    public func loadVideoAsset(
         at url: URL,
         options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
@@ -134,12 +134,12 @@ extension MediaLoader {
     }
 
     /// Returns a video asset for the given URL.
-    public func videoAsset(
+    public func loadVideoAsset(
         at url: URL,
         options: VideoLoadOptions
     ) async throws -> MediaLoaderVideoAsset {
         try await withCheckedThrowingContinuation { continuation in
-            videoAsset(at: url, options: options) { result in
+            loadVideoAsset(at: url, options: options) { result in
                 continuation.resume(with: result)
             }
         }

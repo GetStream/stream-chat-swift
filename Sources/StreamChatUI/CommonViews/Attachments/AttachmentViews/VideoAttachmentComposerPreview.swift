@@ -103,7 +103,7 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
                     self?.previewImageView.image = nil
                 }
             }
-            components.mediaLoader.videoAsset(at: url, options: options) { [weak self] result in
+            components.mediaLoader.loadVideoAsset(at: url, options: options) { [weak self] result in
                 if case let .success(loaded) = result {
                     self?.videoDurationLabel.text = self?.appearance.formatters.videoDuration.format(
                         loaded.asset.duration.seconds

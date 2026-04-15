@@ -104,7 +104,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
 
     // MARK: - Video Loading
 
-    open func videoAsset(
+    open func loadVideoAsset(
         at url: URL,
         options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
@@ -112,7 +112,11 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         options.cdnRequester.fileRequest(for: url, options: .init()) { result in
             switch result {
             case let .success(cdnRequest):
-                let asset = AVURLAsset(url: cdnRequest.url)
+                var assetOptions: [String: Any] = [:]
+                if let headers = cdnRequest.headers, !headers.isEmpty {
+                    assetOptions["AVURLAssetHTTPHeaderFieldsKey"] = headers
+                }
+                let asset = AVURLAsset(url: cdnRequest.url, options: assetOptions.isEmpty ? nil : assetOptions)
                 StreamConcurrency.onMain {
                     completion(.success(MediaLoaderVideoAsset(asset: asset)))
                 }
