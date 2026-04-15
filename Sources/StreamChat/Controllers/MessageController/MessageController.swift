@@ -787,7 +787,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     
     /// Downloads the specified attachment and stores it locally on the device.
     ///
-    /// The URL is automatically resolved through the client's ``ChatClient/cdnRequester``
+    /// The URL is automatically resolved through ``ChatClientConfig/cdnRequester``
     /// for signing, authentication headers, or host rewriting before downloading.
     ///
     /// - Parameters:
@@ -799,7 +799,7 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         _ attachment: ChatMessageAttachment<Payload>,
         completion: @escaping @MainActor (Result<ChatMessageAttachment<Payload>, Error>) -> Void
     ) where Payload: DownloadableAttachmentPayload {
-        client.cdnRequester.fileRequest(for: attachment.remoteURL, options: .init()) { [weak self] result in
+        client.config.cdnRequester.fileRequest(for: attachment.remoteURL, options: .init()) { [weak self] result in
             guard let self else { return }
             switch result {
             case let .success(cdnRequest):
