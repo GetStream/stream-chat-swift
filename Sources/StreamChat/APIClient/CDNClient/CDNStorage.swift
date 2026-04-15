@@ -55,9 +55,8 @@ extension CDNStorage {
         options: AttachmentUploadOptions = .init()
     ) async throws -> UploadedFile {
         try await withCheckedThrowingContinuation { continuation in
-            uploadAttachment(attachment, options: options) { @Sendable result in
-                nonisolated(unsafe) let unsafeResult = result
-                continuation.resume(with: unsafeResult)
+            uploadAttachment(attachment, options: options) { result in
+                continuation.resume(with: result)
             }
         }
     }
@@ -68,9 +67,8 @@ extension CDNStorage {
         options: AttachmentUploadOptions = .init()
     ) async throws -> UploadedFile {
         try await withCheckedThrowingContinuation { continuation in
-            uploadAttachment(localUrl: localUrl, options: options) { @Sendable result in
-                nonisolated(unsafe) let unsafeResult = result
-                continuation.resume(with: unsafeResult)
+            uploadAttachment(localUrl: localUrl, options: options) { result in
+                continuation.resume(with: result)
             }
         }
     }

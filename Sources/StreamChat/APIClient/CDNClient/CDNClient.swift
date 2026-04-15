@@ -5,7 +5,7 @@
 import Foundation
 
 /// An uploaded file.
-public struct UploadedFile: Decodable {
+public struct UploadedFile: Sendable, Decodable {
     public let fileURL: URL
     public let thumbnailURL: URL?
 
