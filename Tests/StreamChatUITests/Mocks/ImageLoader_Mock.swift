@@ -46,7 +46,6 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
         MainActor.assumeIsolated {
             completion(.success(MediaLoaderImage(image: image)))
         }
-        return nil
     }
 
     func loadVideoAsset(

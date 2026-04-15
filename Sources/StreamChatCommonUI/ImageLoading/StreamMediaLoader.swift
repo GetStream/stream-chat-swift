@@ -69,39 +69,6 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         }
     }
 
-    open func loadImages(
-        from urls: [URL],
-        options: ImageBatchLoadOptions,
-        completion: @escaping @MainActor ([MediaLoaderImage]) -> Void
-    ) {
-        let group = DispatchGroup()
-        let batchResult = BatchLoadingResult(count: urls.count)
-
-        for (index, avatarUrl) in urls.enumerated() {
-            group.enter()
-
-            let resize: ImageResize? = options.loadThumbnails ? ImageResize(options.thumbnailSize) : nil
-            let imageOptions = ImageLoadOptions(resize: resize, cdnRequester: options.cdnRequester)
-            loadImage(url: avatarUrl, options: imageOptions) { result in
-                switch result {
-                case let .success(loaded):
-                    batchResult.images[index] = loaded
-                case .failure:
-                    if index < options.placeholders.count {
-                        batchResult.images[index] = MediaLoaderImage(image: options.placeholders[index])
-                    }
-                }
-                group.leave()
-            }
-        }
-
-        group.notify(queue: .main) {
-            StreamConcurrency.onMain {
-                completion(batchResult.images.compactMap { $0 })
-            }
-        }
-    }
-
     // MARK: - Video Loading
 
     open func loadVideoAsset(
@@ -226,13 +193,5 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
 
     @objc private func handleMemoryWarning(_ notification: NSNotification) {
         videoPreviewCache.removeAllObjects()
-    }
-}
-
-private final class BatchLoadingResult: @unchecked Sendable {
-    var images: [MediaLoaderImage?]
-
-    init(count: Int) {
-        images = Array(repeating: nil, count: count)
     }
 }

@@ -29,6 +29,7 @@ public protocol MediaLoader: AnyObject, Sendable {
         url: URL?,
         options: ImageLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+    )
 
     // MARK: - Video Loading
 
