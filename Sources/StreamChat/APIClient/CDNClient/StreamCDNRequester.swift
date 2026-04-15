@@ -27,7 +27,7 @@ open class StreamCDNRequester: CDNRequester, @unchecked Sendable {
         completion: @escaping (Result<CDNRequest, Error>) -> Void
     ) {
         let finalURL = buildImageURL(from: url, resize: options.resize)
-        let cachingKey = buildCachingKey(for: url)
+        let cachingKey = buildCachingKey(for: finalURL)
         completion(.success(CDNRequest(url: finalURL, cachingKey: cachingKey)))
     }
 

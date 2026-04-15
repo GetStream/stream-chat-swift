@@ -110,6 +110,61 @@ final class StreamCDNRequester_Tests: XCTestCase {
         waitForExpectations(timeout: 1)
     }
 
+    func test_imageRequest_cachingKey_includesResizeParamsFromOptions() {
+        let url = URL(string: "\(baseUrl)/image.jpg")!
+        let expectation = expectation(description: "Completion called")
+
+        sut.imageRequest(for: url, options: .init(resize: CDNImageResize(width: 40, height: 60, resizeMode: "clip"))) { result in
+            let request = try! result.get()
+            let key = request.cachingKey!
+
+            XCTAssertTrue(key.contains("w="), "Caching key should contain width from resize options")
+            XCTAssertTrue(key.contains("h="), "Caching key should contain height from resize options")
+            XCTAssertTrue(key.contains("resize=clip"), "Caching key should contain resize mode")
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 1)
+    }
+
+    func test_imageRequest_cachingKey_differentResizeProducesDifferentKeys() {
+        let url = URL(string: "\(baseUrl)/image.jpg")!
+        let smallResize = CDNImageResize(width: 40, height: 40, resizeMode: "clip")
+        let largeResize = CDNImageResize(width: 200, height: 200, resizeMode: "clip")
+
+        let expectation1 = expectation(description: "Small resize")
+        let expectation2 = expectation(description: "Large resize")
+        var smallKey: String?
+        var largeKey: String?
+
+        sut.imageRequest(for: url, options: .init(resize: smallResize)) { result in
+            smallKey = try! result.get().cachingKey
+            expectation1.fulfill()
+        }
+        sut.imageRequest(for: url, options: .init(resize: largeResize)) { result in
+            largeKey = try! result.get().cachingKey
+            expectation2.fulfill()
+        }
+
+        waitForExpectations(timeout: 1)
+        XCTAssertNotEqual(smallKey, largeKey, "Different resize dimensions must produce different caching keys")
+    }
+
+    func test_imageRequest_cachingKey_noResize_hasNoResizeParams() {
+        let url = URL(string: "\(baseUrl)/image.jpg")!
+        let expectation = expectation(description: "Completion called")
+
+        sut.imageRequest(for: url, options: .init()) { result in
+            let request = try! result.get()
+            let key = request.cachingKey!
+            XCTAssertFalse(key.contains("w="), "Caching key without resize should not contain width")
+            XCTAssertFalse(key.contains("h="), "Caching key without resize should not contain height")
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 1)
+    }
+
     func test_imageRequest_cachingKey_nonStreamCDNRequester_returnsFullURL() {
         let url = URL(string: "https://www.google.com/image.jpg?token=abc")!
         let expectation = expectation(description: "Completion called")
