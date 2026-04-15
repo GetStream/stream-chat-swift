@@ -93,7 +93,8 @@ extension ChatMessageGalleryView {
             imageTask = components.imageLoader.loadImage(
                 into: imageView,
                 from: attachment?.payload,
-                maxResolutionInPixels: components.imageAttachmentMaxPixels
+                maxResolutionInPixels: components.imageAttachmentMaxPixels,
+                cdnRequester: components.cdnRequester
             ) { [weak self] _ in
                 self?.loadingIndicator.isVisible = false
                 self?.imageTask = nil

@@ -77,7 +77,8 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
             with: ImageLoaderOptions(
                 resize: ImageResize(components.avatarThumbnailSize),
                 placeholder: placeholderImage
-            )
+            ),
+            cdnRequester: components.cdnRequester
         )
 
         alpha = state == .normal ? 1 : 0.5

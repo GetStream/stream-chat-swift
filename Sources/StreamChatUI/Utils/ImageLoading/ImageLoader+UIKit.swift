@@ -13,6 +13,7 @@ extension ImageLoader {
         into imageView: UIImageView,
         from url: URL?,
         with options: ImageLoaderOptions = ImageLoaderOptions(),
+        cdnRequester: CDNRequester,
         completion: (@MainActor (Result<UIImage, Error>) -> Void)? = nil
     ) -> ImageLoadingTask {
         let task = ImageLoadingTask()
@@ -25,7 +26,7 @@ extension ImageLoader {
 
         imageView.currentImageLoadingTask = task
 
-        loadImage(url: url, resize: options.resize) { result in
+        loadImage(url: url, resize: options.resize, cdnRequester: cdnRequester) { result in
             guard !task.isCancelled else { return }
             switch result {
             case let .success(image):
@@ -43,22 +44,25 @@ extension ImageLoader {
     @discardableResult
     @MainActor public func loadImage(
         into imageView: UIImageView,
-        from url: URL?
+        from url: URL?,
+        cdnRequester: CDNRequester
     ) -> ImageLoadingTask {
-        loadImage(into: imageView, from: url, with: ImageLoaderOptions(), completion: nil)
+        loadImage(into: imageView, from: url, with: ImageLoaderOptions(), cdnRequester: cdnRequester, completion: nil)
     }
 
     /// Downloads an image with the given request options.
     public func downloadImage(
         with request: ImageDownloadRequest,
+        cdnRequester: CDNRequester,
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
-        loadImage(url: request.url, resize: request.options.resize, completion: completion)
+        loadImage(url: request.url, resize: request.options.resize, cdnRequester: cdnRequester, completion: completion)
     }
 
     /// Downloads multiple images and returns all results.
     public func downloadMultipleImages(
         with requests: [ImageDownloadRequest],
+        cdnRequester: CDNRequester,
         completion: @escaping @MainActor ([Result<UIImage, Error>]) -> Void
     ) {
         let group = DispatchGroup()
@@ -66,7 +70,7 @@ extension ImageLoader {
 
         for (index, request) in requests.enumerated() {
             group.enter()
-            downloadImage(with: request) { result in
+            downloadImage(with: request, cdnRequester: cdnRequester) { result in
                 batchResult.results[index] = result
                 group.leave()
             }
@@ -91,6 +95,7 @@ extension ImageLoader {
         into imageView: UIImageView,
         from attachmentPayload: ImageAttachmentPayload?,
         maxResolutionInPixels: Double,
+        cdnRequester: CDNRequester,
         completion: (@MainActor (Result<UIImage, Error>) -> Void)? = nil
     ) -> ImageLoadingTask {
         guard let originalWidth = attachmentPayload?.originalWidth,
@@ -99,6 +104,7 @@ extension ImageLoader {
                 into: imageView,
                 from: attachmentPayload?.imageURL,
                 with: ImageLoaderOptions(),
+                cdnRequester: cdnRequester,
                 completion: completion
             )
         }
@@ -114,6 +120,7 @@ extension ImageLoader {
             into: imageView,
             from: attachmentPayload?.imageURL,
             with: ImageLoaderOptions(resize: ImageResize(newSize)),
+            cdnRequester: cdnRequester,
             completion: completion
         )
     }

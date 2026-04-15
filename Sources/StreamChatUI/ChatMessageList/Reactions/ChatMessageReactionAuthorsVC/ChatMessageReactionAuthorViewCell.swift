@@ -133,7 +133,8 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
             with: ImageLoaderOptions(
                 resize: .init(authorAvatarSize),
                 placeholder: placeholder
-            )
+            ),
+            cdnRequester: components.cdnRequester
         )
 
         let reactionAuthor = content.reaction.author

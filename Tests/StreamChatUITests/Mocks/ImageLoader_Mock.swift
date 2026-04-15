@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import StreamChatCommonUI
 @testable import StreamChatUI
 import UIKit
@@ -17,6 +18,7 @@ final class ImageLoader_Mock: ImageLoader, @unchecked Sendable {
     func loadImage(
         url: URL?,
         resize: ImageResize?,
+        cdnRequester: CDNRequester,
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
         guard let url else {
@@ -47,6 +49,7 @@ final class ImageLoader_Mock: ImageLoader, @unchecked Sendable {
         placeholders: [UIImage],
         loadThumbnails: Bool,
         thumbnailSize: CGSize,
+        cdnRequester: CDNRequester,
         completion: @escaping @MainActor ([UIImage]) -> Void
     ) {
         let images = urls.compactMap { url -> UIImage? in

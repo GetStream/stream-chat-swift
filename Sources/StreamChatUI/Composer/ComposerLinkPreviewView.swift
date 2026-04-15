@@ -140,7 +140,8 @@ open class ComposerLinkPreviewView: _View, ThemeProvider {
             imagePreviewView.contentMode = .scaleAspectFill
             components.imageLoader.loadImage(
                 into: imagePreviewView,
-                from: imageUrl
+                from: imageUrl,
+                cdnRequester: components.cdnRequester
             )
         } else {
             imagePreviewView.contentMode = .center

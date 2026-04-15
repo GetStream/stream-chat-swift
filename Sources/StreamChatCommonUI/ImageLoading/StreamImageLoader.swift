@@ -7,23 +7,21 @@ import UIKit
 
 /// The default image loader implementation.
 ///
-/// Uses the provided ``CDNRequester`` to transform image URLs before loading,
-/// and delegates actual downloading to an ``ImageDownloading`` backend
+/// Delegates URL transformation to the ``CDNRequester`` passed on each call,
+/// and actual downloading to an ``ImageDownloading`` backend
 /// (typically Nuke, supplied by each UI SDK).
 open class StreamImageLoader: ImageLoader, @unchecked Sendable {
-    /// The CDN requester used for URL transformation before image loading.
-    public let cdnRequester: CDNRequester
     /// The backend that performs the actual image download and caching.
     public let downloader: ImageDownloading
 
-    public init(cdnRequester: CDNRequester = StreamCDNRequester(), downloader: ImageDownloading) {
-        self.cdnRequester = cdnRequester
+    public init(downloader: ImageDownloading) {
         self.downloader = downloader
     }
 
     open func loadImage(
         url: URL?,
         resize: ImageResize?,
+        cdnRequester: CDNRequester,
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
         guard let url else {
@@ -57,6 +55,7 @@ open class StreamImageLoader: ImageLoader, @unchecked Sendable {
         placeholders: [UIImage],
         loadThumbnails: Bool,
         thumbnailSize: CGSize,
+        cdnRequester: CDNRequester,
         completion: @escaping @MainActor ([UIImage]) -> Void
     ) {
         let group = DispatchGroup()
@@ -66,7 +65,7 @@ open class StreamImageLoader: ImageLoader, @unchecked Sendable {
             group.enter()
 
             let resize: ImageResize? = loadThumbnails ? ImageResize(thumbnailSize) : nil
-            loadImage(url: avatarUrl, resize: resize) { result in
+            loadImage(url: avatarUrl, resize: resize, cdnRequester: cdnRequester) { result in
                 switch result {
                 case let .success(image):
                     batchLoadingResult.images.append(image)

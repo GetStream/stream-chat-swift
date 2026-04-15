@@ -93,7 +93,7 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
         videoDurationLabel.text = nil
 
         if let url = content {
-            components.videoLoader.loadPreview(at: url) { [weak self] in
+            components.videoLoader.loadPreview(at: url, cdnRequester: components.cdnRequester) { [weak self] in
                 self?.loadingIndicator.isHidden = true
                 switch $0 {
                 case let .success(preview):
@@ -103,7 +103,7 @@ open class VideoAttachmentComposerPreview: _View, ThemeProvider {
                 }
             }
             videoDurationLabel.text = appearance.formatters.videoDuration.format(
-                components.videoLoader.videoAsset(at: url).duration.seconds
+                components.videoLoader.videoAsset(at: url, cdnRequester: components.cdnRequester).duration.seconds
             )
         }
     }

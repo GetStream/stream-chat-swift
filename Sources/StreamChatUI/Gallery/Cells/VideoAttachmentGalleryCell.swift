@@ -53,14 +53,14 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
 
         if newAssetURL != currentAssetURL {
             let playerItem = newAssetURL.map {
-                AVPlayerItem(asset: components.videoLoader.videoAsset(at: $0))
+                AVPlayerItem(asset: components.videoLoader.videoAsset(at: $0, cdnRequester: components.cdnRequester))
             }
             player.replaceCurrentItem(with: playerItem)
 
             if let thumbnailURL = videoAttachment?.thumbnailURL {
                 showPreview(using: thumbnailURL)
             } else if let url = newAssetURL {
-                components.videoLoader.loadPreview(at: url) { [weak self] in
+                components.videoLoader.loadPreview(at: url, cdnRequester: components.cdnRequester) { [weak self] in
                     switch $0 {
                     case let .success(preview):
                         self?.showPreview(using: preview)
@@ -73,7 +73,7 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
     }
 
     private func showPreview(using thumbnailURL: URL) {
-        components.imageLoader.downloadImage(with: .init(url: thumbnailURL, options: ImageDownloadOptions())) { [weak self] result in
+        components.imageLoader.downloadImage(with: .init(url: thumbnailURL, options: ImageDownloadOptions()), cdnRequester: components.cdnRequester) { [weak self] result in
             StreamConcurrency.onMain { [weak self] in
                 switch result {
                 case let .success(preview):

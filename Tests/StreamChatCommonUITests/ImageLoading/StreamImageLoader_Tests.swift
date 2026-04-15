@@ -7,22 +7,13 @@ import StreamChat
 import XCTest
 
 final class StreamImageLoader_Tests: XCTestCase {
-    func test_init_defaultCDNRequester() {
-        let loader = StreamImageLoader()
-        XCTAssertTrue(loader.cdnRequester is StreamCDNRequester)
-    }
-
-    func test_init_customCDNRequester() {
-        let cdnRequester = MockCDNRequester()
-        let loader = StreamImageLoader(cdnRequester: cdnRequester)
-        XCTAssertTrue(loader.cdnRequester is MockCDNRequester)
-    }
-
     func test_loadImage_nilURL_callsCompletionWithFailure() {
-        let loader = StreamImageLoader()
+        let downloader = MockImageDownloader()
+        let loader = StreamImageLoader(downloader: downloader)
+        let cdnRequester = MockCDNRequester()
         let expectation = expectation(description: "Completion called")
 
-        loader.loadImage(url: nil, resize: nil) { result in
+        loader.loadImage(url: nil, resize: nil, cdnRequester: cdnRequester) { result in
             switch result {
             case .failure:
                 break
@@ -43,5 +34,19 @@ private final class MockCDNRequester: CDNRequester, @unchecked Sendable {
 
     func fileRequest(for url: URL, options: FileRequestOptions, completion: @escaping (Result<CDNRequest, Error>) -> Void) {
         completion(.success(CDNRequest(url: url)))
+    }
+}
+
+private final class MockImageDownloader: ImageDownloading, @unchecked Sendable {
+    func downloadImage(
+        url: URL,
+        headers: [String: String]?,
+        cachingKey: String?,
+        resize: CGSize?,
+        completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
+    ) {
+        DispatchQueue.main.async {
+            completion(.failure(NSError(domain: "MockImageDownloader", code: 0)))
+        }
     }
 }

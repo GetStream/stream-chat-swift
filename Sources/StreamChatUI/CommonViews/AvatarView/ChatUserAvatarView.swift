@@ -42,7 +42,8 @@ open class ChatUserAvatarView: _View, ThemeProvider {
             with: ImageLoaderOptions(
                 resize: .init(components.avatarThumbnailSize),
                 placeholder: placeholder
-            )
+            ),
+            cdnRequester: components.cdnRequester
         )
 
         if shouldShowOnlineIndicator {

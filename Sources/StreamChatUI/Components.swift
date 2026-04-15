@@ -684,11 +684,10 @@ import UIKit
     public var alertsRouter: AlertsRouter.Type = AlertsRouter.self
 
     public init() {
-        let cdnRequester = StreamCDNRequester()
-        self.cdnRequester = cdnRequester
-        let imageLoader = StreamImageLoader(cdnRequester: cdnRequester, downloader: StreamImageDownloader())
+        self.cdnRequester = StreamCDNRequester()
+        let imageLoader = StreamImageLoader(downloader: StreamImageDownloader())
         self.imageLoader = imageLoader
-        self.videoLoader = StreamVideoLoader(cdnRequester: cdnRequester, imageLoader: imageLoader)
+        self.videoLoader = StreamVideoLoader(imageLoader: imageLoader)
     }
     
     public static var `default` = Self()

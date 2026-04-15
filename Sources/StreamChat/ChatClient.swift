@@ -42,6 +42,18 @@ public class ChatClient: @unchecked Sendable {
     ///
     public let config: ChatClientConfig
 
+    /// The CDN requester used for URL transformation (signing, headers, resizing)
+    /// when loading images, videos, and downloading files.
+    ///
+    /// Initialized from ``ChatClientConfig/cdnRequester``.
+    /// Change this property at runtime to affect all subsequent media loads and downloads.
+    public var cdnRequester: CDNRequester
+
+    /// The CDN storage used for uploading and deleting attachments.
+    ///
+    /// Initialized from ``ChatClientConfig/cdnStorage``.
+    public var cdnStorage: CDNStorage?
+
     /// A `Worker` represents a single atomic piece of functionality.
     ///
     /// `ChatClient` initializes a set of background workers that keep observing the current state of the system and perform
@@ -155,6 +167,8 @@ public class ChatClient: @unchecked Sendable {
         factory: ChatClientFactory
     ) {
         self.config = config
+        self.cdnRequester = config.cdnRequester
+        self.cdnStorage = config.cdnStorage
         self.environment = environment
         
         urlSessionConfiguration = factory.makeUrlSessionConfiguration()

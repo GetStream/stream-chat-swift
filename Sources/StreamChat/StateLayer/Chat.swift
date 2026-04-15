@@ -419,6 +419,9 @@ public class Chat: @unchecked Sendable {
     
     /// Downloads the specified attachment and stores it locally on the device.
     ///
+    /// The URL is automatically resolved through the client's ``ChatClient/cdnRequester``
+    /// for signing, authentication headers, or host rewriting before downloading.
+    ///
     /// The local URL of the downloaded file:
     /// ```swift
     /// let downloadedAttachment = try await chat.downloadAttachment(attachment)
@@ -427,18 +430,16 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Parameters:
     ///   - attachment: The attachment to download.
-    ///   - remoteURL: An optional URL to download from instead of the attachment's original URL.
-    ///     Use this to provide a CDN-signed or transformed URL.
     ///
     /// - Note: The local storage URL can change between app launches.
     ///
     /// - Throws: An error while downloading the attachment.
     /// - Returns: An instance of the downloaded attachment which includes the local URL.
     @discardableResult public func downloadAttachment<Payload>(
-        _ attachment: ChatMessageAttachment<Payload>,
-        remoteURL: URL? = nil
+        _ attachment: ChatMessageAttachment<Payload>
     ) async throws -> ChatMessageAttachment<Payload> where Payload: DownloadableAttachmentPayload {
-        try await messageUpdater.downloadAttachment(attachment, remoteURL: remoteURL)
+        let cdnRequest = try await client.cdnRequester.fileRequest(for: attachment.remoteURL)
+        return try await messageUpdater.downloadAttachment(attachment, remoteURL: cdnRequest.url)
     }
     
     /// Deletes the locally downloaded file.

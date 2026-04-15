@@ -656,7 +656,8 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 with: ImageLoaderOptions(
                     resize: .init(components.avatarThumbnailSize),
                     placeholder: placeholder
-                )
+                ),
+                cdnRequester: components.cdnRequester
             )
         } else {
             authorAvatarView?.imageView.image = placeholder
@@ -723,7 +724,8 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 with: ImageLoaderOptions(
                     resize: .init(components.avatarThumbnailSize),
                     placeholder: threadAvatarPlaceholder
-                )
+                ),
+                cdnRequester: components.cdnRequester
             )
         }
 
