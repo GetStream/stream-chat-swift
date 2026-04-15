@@ -6,10 +6,10 @@ import StreamChat
 import UIKit
 
 /// Nuke-backed implementation of ``ImageDownloading`` for the UIKit SDK.
-open class StreamImageDownloader: ImageDownloading, @unchecked Sendable {
+public final class StreamImageDownloader: ImageDownloading, Sendable {
     public init() {}
 
-    open func downloadImage(
+    public func downloadImage(
         url: URL,
         options: ImageDownloadingOptions,
         completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
