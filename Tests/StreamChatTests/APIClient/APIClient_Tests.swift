@@ -342,9 +342,9 @@ final class APIClient_Tests: XCTestCase {
         XCTEnsureRequestsWereExecuted(times: 2)
     }
 
-    // MARK: - CDN Client
+    // MARK: - CDN Storage
 
-    func test_uploadAttachment_calls_CDNClient() throws {
+    func test_uploadAttachment_calls_CDNStorage() throws {
         let attachment = AnyChatMessageAttachment.dummy()
         let mockedProgress: Double = 42
         let mockedURL = URL(string: "https://hello.com")!

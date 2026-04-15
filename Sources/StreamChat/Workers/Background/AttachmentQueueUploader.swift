@@ -65,7 +65,7 @@ class AttachmentQueueUploader: Worker, @unchecked Sendable {
             let changes = items.map { ListChange.insert($0, index: .init(item: 0, section: 0)) }
             handleChanges(changes: changes)
         } catch {
-            log.error("Failed to start AttachmentUploader worker. \(error)")
+            log.error("Failed to start AttachmentQueueUploader. \(error)")
         }
     }
 
