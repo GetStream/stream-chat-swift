@@ -75,7 +75,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         completion: @escaping @MainActor ([MediaLoaderImage]) -> Void
     ) {
         let group = DispatchGroup()
-        let batchResult = BatchLoadingResult()
+        let batchResult = BatchLoadingResult(count: urls.count)
 
         for (index, avatarUrl) in urls.enumerated() {
             group.enter()
@@ -85,11 +85,11 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
             loadImage(url: avatarUrl, options: imageOptions) { result in
                 switch result {
                 case let .success(loaded):
-                    batchResult.images.append(loaded)
+                    batchResult.images[index] = loaded
                 case .failure:
                     if !options.placeholders.isEmpty {
                         let placeholderIndex = index % options.placeholders.count
-                        batchResult.images.append(MediaLoaderImage(image: options.placeholders[placeholderIndex]))
+                        batchResult.images[index] = MediaLoaderImage(image: options.placeholders[placeholderIndex])
                     }
                 }
                 group.leave()
@@ -98,7 +98,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
 
         group.notify(queue: .main) {
             StreamConcurrency.onMain {
-                completion(batchResult.images)
+                completion(batchResult.images.compactMap { $0 })
             }
         }
     }
@@ -231,5 +231,9 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
 }
 
 private final class BatchLoadingResult: @unchecked Sendable {
-    var images: [MediaLoaderImage] = []
+    var images: [MediaLoaderImage?]
+
+    init(count: Int) {
+        images = Array(repeating: nil, count: count)
+    }
 }
