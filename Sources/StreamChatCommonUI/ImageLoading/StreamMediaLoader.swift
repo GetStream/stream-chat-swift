@@ -48,7 +48,8 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
             return
         }
 
-        options.cdnRequester.imageRequest(for: url, options: ImageRequestOptions(imageResize: options.resize)) { [weak self] result in
+        let downloader = self.downloader
+        options.cdnRequester.imageRequest(for: url, options: ImageRequestOptions(imageResize: options.resize)) { result in
             switch result {
             case let .success(cdnRequest):
                 let resizeSize: CGSize? = options.resize.map { CGSize(width: $0.width, height: $0.height) }
@@ -57,7 +58,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
                     cachingKey: cdnRequest.cachingKey,
                     resize: resizeSize
                 )
-                self?.downloader.downloadImage(url: cdnRequest.url, options: downloadOptions) { imageResult in
+                downloader.downloadImage(url: cdnRequest.url, options: downloadOptions) { imageResult in
                     completion(imageResult.map { MediaLoaderImage(image: $0.image) })
                 }
             case let .failure(error):
