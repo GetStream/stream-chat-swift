@@ -60,20 +60,6 @@ public protocol MediaLoader: AnyObject, Sendable {
     )
 }
 
-// MARK: - Default Implementations
-
-extension MediaLoader {
-    public func loadVideoAsset(
-        at url: URL,
-        options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
-    ) {
-        StreamConcurrency.onMain {
-            completion(.success(MediaLoaderVideoAsset(asset: AVURLAsset(url: url))))
-        }
-    }
-}
-
 // MARK: - Async/Await Extensions
 
 extension MediaLoader {
