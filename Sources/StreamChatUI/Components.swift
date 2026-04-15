@@ -91,10 +91,10 @@ import UIKit
     public var loadingIndicator: ChatLoadingIndicator.Type = ChatLoadingIndicator.self
 
     /// The CDN requester used for URL transformation (signing, headers, resizing).
-    public var cdnRequester: CDNRequester
+    public var cdnRequester: CDNRequester = StreamCDNRequester()
 
     /// The object responsible for loading images and video previews.
-    public var mediaLoader: MediaLoader
+    public var mediaLoader: MediaLoader = StreamMediaLoader(downloader: StreamImageDownloader())
 
     /// Object responsible for providing resizing operations for `UIImage`
     public var imageProcessor: ImageProcessor = StreamImageProcessor()
@@ -680,10 +680,7 @@ import UIKit
     /// The router responsible for presenting alerts.
     public var alertsRouter: AlertsRouter.Type = AlertsRouter.self
 
-    public init() {
-        self.cdnRequester = StreamCDNRequester()
-        self.mediaLoader = StreamMediaLoader(downloader: StreamImageDownloader())
-    }
+    public init() {}
     
     public static var `default` = Self()
 }
