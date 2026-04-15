@@ -2,6 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
+import StreamChat
 import StreamChatCommonUI
 import UIKit
 
@@ -15,8 +16,12 @@ public struct ImageLoaderOptions: Sendable {
     /// The placeholder to be used while the image is finishing loading.
     public var placeholder: UIImage?
 
-    public init(resize: ImageResize? = nil, placeholder: UIImage? = nil) {
+    /// The CDN requester for URL transformation (signing, headers, resizing).
+    public var cdnRequester: CDNRequester
+
+    public init(resize: ImageResize? = nil, placeholder: UIImage? = nil, cdnRequester: CDNRequester) {
         self.placeholder = placeholder
         self.resize = resize
+        self.cdnRequester = cdnRequester
     }
 }

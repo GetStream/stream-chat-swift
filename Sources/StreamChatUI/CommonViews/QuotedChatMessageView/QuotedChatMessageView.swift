@@ -227,9 +227,9 @@ open class QuotedChatMessageView: _View, ThemeProvider {
             from: imageUrl,
             with: ImageLoaderOptions(
                 resize: .init(components.avatarThumbnailSize),
-                placeholder: placeholder
-            ),
-            cdnRequester: components.cdnRequester
+                placeholder: placeholder,
+                cdnRequester: components.cdnRequester
+            )
         )
     }
 
@@ -307,15 +307,14 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         components.imageLoader.loadImage(
             into: attachmentPreviewView,
             from: url,
-            with: ImageLoaderOptions(resize: .init(attachmentPreviewSize)),
-            cdnRequester: components.cdnRequester
+            with: ImageLoaderOptions(resize: .init(attachmentPreviewSize), cdnRequester: components.cdnRequester)
         )
     }
 
     /// Set the image from the given URL into `attachmentPreviewImage.image`
     /// - Parameter url: The URL of the thumbnail
     open func setVideoAttachmentThumbnail(url: URL) {
-        components.imageLoader.downloadImage(with: .init(url: url, options: ImageDownloadOptions()), cdnRequester: components.cdnRequester) { [weak self] result in
+        components.imageLoader.downloadImage(with: .init(url: url, options: ImageDownloadOptions(cdnRequester: components.cdnRequester))) { [weak self] result in
             switch result {
             case let .success(preview):
                 self?.attachmentPreviewView.image = preview
@@ -330,7 +329,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
     open func setVideoAttachmentPreviewImage(url: URL?) {
         guard let url = url else { return }
 
-        components.videoLoader.loadPreview(at: url, cdnRequester: components.cdnRequester) { [weak self] in
+        components.videoLoader.loadPreview(at: url, options: VideoLoadOptions(cdnRequester: components.cdnRequester)) { [weak self] in
             switch $0 {
             case let .success(preview):
                 self?.attachmentPreviewView.image = preview

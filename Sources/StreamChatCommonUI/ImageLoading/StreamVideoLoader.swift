@@ -8,9 +8,9 @@ import UIKit
 
 /// The default video loader implementation using AVFoundation.
 ///
-/// Uses the ``CDNRequester`` passed on each call to sign video URLs before
-/// generating previews, and falls back to the ``ImageLoader`` for loading
-/// thumbnail URLs.
+/// Uses the ``CDNRequester`` from ``VideoLoadOptions`` to sign video URLs
+/// before generating previews, and falls back to the ``ImageLoader`` for
+/// loading thumbnail URLs.
 open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
     /// The image loader used for loading video thumbnail URLs.
     public let imageLoader: ImageLoader
@@ -34,13 +34,13 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
         NotificationCenter.default.removeObserver(self)
     }
 
-    open func videoAsset(at url: URL, cdnRequester: CDNRequester) -> AVURLAsset {
+    open func videoAsset(at url: URL, options: VideoLoadOptions) -> AVURLAsset {
         AVURLAsset(url: url)
     }
 
     open func loadPreview(
         at url: URL,
-        cdnRequester: CDNRequester,
+        options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
         if let cached = cache.object(forKey: url as NSURL) {
@@ -50,12 +50,12 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
             return
         }
 
-        generateVideoPreview(for: url, cdnRequester: cdnRequester, completion: completion)
+        generateVideoPreview(for: url, options: options, completion: completion)
     }
 
     open func loadPreview(
         with attachment: ChatMessageVideoAttachment,
-        cdnRequester: CDNRequester,
+        options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
         let videoURL = attachment.videoURL
@@ -67,7 +67,8 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
         }
 
         if let thumbnailURL = attachment.payload.thumbnailURL {
-            imageLoader.loadImage(url: thumbnailURL, resize: nil, cdnRequester: cdnRequester) { [weak self] result in
+            let imageOptions = ImageLoadOptions(cdnRequester: options.cdnRequester)
+            imageLoader.loadImage(url: thumbnailURL, options: imageOptions) { [weak self] result in
                 guard let self else { return }
                 switch result {
                 case let .success(image):
@@ -76,11 +77,11 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
                         completion(.success(image))
                     }
                 case .failure:
-                    self.generateVideoPreview(for: videoURL, cdnRequester: cdnRequester, completion: completion)
+                    self.generateVideoPreview(for: videoURL, options: options, completion: completion)
                 }
             }
         } else {
-            generateVideoPreview(for: videoURL, cdnRequester: cdnRequester, completion: completion)
+            generateVideoPreview(for: videoURL, options: options, completion: completion)
         }
     }
 
@@ -88,10 +89,10 @@ open class StreamVideoLoader: VideoLoader, @unchecked Sendable {
 
     private func generateVideoPreview(
         for url: URL,
-        cdnRequester: CDNRequester,
+        options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
-        cdnRequester.fileRequest(for: url, options: .init()) { [weak self] result in
+        options.cdnRequester.fileRequest(for: url, options: .init()) { [weak self] result in
             guard let self else { return }
 
             let adjustedUrl: URL

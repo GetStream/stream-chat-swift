@@ -141,7 +141,7 @@ open class ComposerLinkPreviewView: _View, ThemeProvider {
             components.imageLoader.loadImage(
                 into: imagePreviewView,
                 from: imageUrl,
-                cdnRequester: components.cdnRequester
+                with: ImageLoaderOptions(cdnRequester: components.cdnRequester)
             )
         } else {
             imagePreviewView.contentMode = .center

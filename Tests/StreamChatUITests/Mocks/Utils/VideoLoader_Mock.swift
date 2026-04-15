@@ -11,11 +11,11 @@ import UIKit
 
 /// A mock implementation of video loader.
 final class VideoLoader_Mock: VideoLoader, @unchecked Sendable {
-    lazy var loadPreviewForVideoMockFunc = MockFunc.mock(for: loadPreview(at:cdnRequester:completion:))
+    lazy var loadPreviewForVideoMockFunc = MockFunc.mock(for: loadPreview(at:options:completion:))
     lazy var videoAssetMockFunc = MockFunc<URL, AVURLAsset>(result: { AVURLAsset(url: $0) })
 
-    func loadPreview(at url: URL, cdnRequester: CDNRequester, completion: @escaping @MainActor (Result<UIImage, Error>) -> Void) {
-        loadPreviewForVideoMockFunc.call(with: (url, cdnRequester, completion))
+    func loadPreview(at url: URL, options: VideoLoadOptions, completion: @escaping @MainActor (Result<UIImage, Error>) -> Void) {
+        loadPreviewForVideoMockFunc.call(with: (url, options, completion))
         guard let data = try? Data(contentsOf: url), let image = UIImage(data: data) else {
             MainActor.assumeIsolated {
                 completion(.failure(NSError(domain: "VideoLoader_Mock", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to load image from url: \(url)"])))
@@ -33,7 +33,7 @@ final class VideoLoader_Mock: VideoLoader, @unchecked Sendable {
         }
     }
 
-    func videoAsset(at url: URL, cdnRequester: CDNRequester) -> AVURLAsset {
+    func videoAsset(at url: URL, options: VideoLoadOptions) -> AVURLAsset {
         videoAssetMockFunc.callAndReturn(url)
     }
 }

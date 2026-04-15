@@ -17,8 +17,7 @@ final class ImageLoader_Mock: ImageLoader, @unchecked Sendable {
 
     func loadImage(
         url: URL?,
-        resize: ImageResize?,
-        cdnRequester: CDNRequester,
+        options: ImageLoadOptions,
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
         guard let url else {
@@ -35,7 +34,7 @@ final class ImageLoader_Mock: ImageLoader, @unchecked Sendable {
             return
         }
 
-        if let resize {
+        if let resize = options.resize {
             let size = CGSize(width: resize.width, height: resize.height)
             image = imageProcessor.scale(image: image, to: size)
         }
@@ -46,10 +45,7 @@ final class ImageLoader_Mock: ImageLoader, @unchecked Sendable {
 
     func loadImages(
         from urls: [URL],
-        placeholders: [UIImage],
-        loadThumbnails: Bool,
-        thumbnailSize: CGSize,
-        cdnRequester: CDNRequester,
+        options: ImageBatchLoadOptions,
         completion: @escaping @MainActor ([UIImage]) -> Void
     ) {
         let images = urls.compactMap { url -> UIImage? in

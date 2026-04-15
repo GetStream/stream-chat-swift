@@ -3,14 +3,19 @@
 //
 
 import Foundation
+import StreamChat
 import StreamChatCommonUI
 
 /// The options for downloading an image.
-public struct ImageDownloadOptions {
+public struct ImageDownloadOptions: Sendable {
     /// The resize information when loading an image. `Nil` if you want the full resolution of the image.
     public var resize: ImageResize?
 
-    public init(resize: ImageResize? = nil) {
+    /// The CDN requester for URL transformation (signing, headers, resizing).
+    public var cdnRequester: CDNRequester
+
+    public init(resize: ImageResize? = nil, cdnRequester: CDNRequester) {
         self.resize = resize
+        self.cdnRequester = cdnRequester
     }
 }

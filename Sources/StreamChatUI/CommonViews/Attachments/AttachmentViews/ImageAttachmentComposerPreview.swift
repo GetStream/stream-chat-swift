@@ -47,8 +47,7 @@ open class ImageAttachmentComposerPreview: _View, ThemeProvider {
         components.imageLoader.loadImage(
             into: imageView,
             from: content,
-            with: ImageLoaderOptions(resize: ImageResize(size)),
-            cdnRequester: components.cdnRequester
+            with: ImageLoaderOptions(resize: ImageResize(size), cdnRequester: components.cdnRequester)
         )
     }
 }

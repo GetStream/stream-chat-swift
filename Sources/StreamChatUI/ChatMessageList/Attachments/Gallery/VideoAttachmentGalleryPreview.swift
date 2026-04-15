@@ -86,7 +86,7 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
         if let thumbnailURL = content?.thumbnailURL {
             showPreview(using: thumbnailURL)
         } else if let url = content?.videoURL {
-            components.videoLoader.loadPreview(at: url, cdnRequester: components.cdnRequester) { [weak self] in
+            components.videoLoader.loadPreview(at: url, options: VideoLoadOptions(cdnRequester: components.cdnRequester)) { [weak self] in
                 self?.loadingIndicator.isHidden = true
                 switch $0 {
                 case let .success(preview):
@@ -102,7 +102,7 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
     }
 
     private func showPreview(using thumbnailURL: URL) {
-        components.imageLoader.downloadImage(with: .init(url: thumbnailURL, options: ImageDownloadOptions()), cdnRequester: components.cdnRequester) { [weak self] result in
+        components.imageLoader.downloadImage(with: .init(url: thumbnailURL, options: ImageDownloadOptions(cdnRequester: components.cdnRequester))) { [weak self] result in
             StreamConcurrency.onMain {
                 self?.loadingIndicator.isHidden = true
                 guard case let .success(image) = result else { return }

@@ -13,7 +13,7 @@ final class StreamImageLoader_Tests: XCTestCase {
         let cdnRequester = MockCDNRequester()
         let expectation = expectation(description: "Completion called")
 
-        loader.loadImage(url: nil, resize: nil, cdnRequester: cdnRequester) { result in
+        loader.loadImage(url: nil, options: ImageLoadOptions(cdnRequester: cdnRequester)) { result in
             switch result {
             case .failure:
                 break
