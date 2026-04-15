@@ -273,22 +273,18 @@ final class ChatClient_Tests: XCTestCase {
         let request = GroupedQueryChannelsRequestBody(limit: 4, watch: true, presence: false)
         let expectedEndpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
         let payload = GroupedQueryChannelsPayload(
-            family: "support",
-            buckets: [
-                .init(
-                    key: "all-open",
+            groups: [
+                "all": .init(
                     channels: [dummyPayload(with: firstCid)],
                     unreadCount: 1,
                     unreadChannels: 1
                 ),
-                .init(
-                    key: "assigned",
+                "new": .init(
                     channels: [dummyPayload(with: secondCid)],
                     unreadCount: 2,
                     unreadChannels: 1
                 ),
-                .init(
-                    key: "escalated",
+                "current": .init(
                     channels: [dummyPayload(with: thirdCid)],
                     unreadCount: 4,
                     unreadChannels: 2
@@ -317,9 +313,10 @@ final class ChatClient_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
-        XCTAssertEqual(receivedGroupedChannels?.family, "support")
-        XCTAssertEqual(receivedGroupedChannels?.buckets.map(\.key), ["all-open", "assigned", "escalated"])
-        XCTAssertEqual(receivedGroupedChannels?.channels.map { $0.map(\.cid) }, [[firstCid], [secondCid], [thirdCid]])
+        XCTAssertEqual(receivedGroupedChannels?.groups.keys.sorted(), ["all", "current", "new"])
+        XCTAssertEqual(receivedGroupedChannels?.groups["all"]?.channels.map(\.cid), [firstCid])
+        XCTAssertEqual(receivedGroupedChannels?.groups["new"]?.channels.map(\.cid), [secondCid])
+        XCTAssertEqual(receivedGroupedChannels?.groups["current"]?.channels.map(\.cid), [thirdCid])
     }
 
     func test_disconnect_flushesRequestsQueue() throws {

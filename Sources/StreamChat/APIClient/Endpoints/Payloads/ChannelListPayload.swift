@@ -32,15 +32,13 @@ struct GroupedQueryChannelsRequestBody: Encodable {
 }
 
 struct GroupedQueryChannelsPayload {
-    let family: String
-    let buckets: [GroupedQueryChannelsBucketPayload]
+    let groups: [String: GroupedQueryChannelsGroupPayload]
     let duration: String
 }
 
 extension GroupedQueryChannelsPayload: Decodable {
     enum CodingKeys: String, CodingKey {
-        case family
-        case buckets
+        case groups
         case duration
     }
 
@@ -48,23 +46,20 @@ extension GroupedQueryChannelsPayload: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.init(
-            family: try container.decode(String.self, forKey: .family),
-            buckets: try container.decodeArrayIgnoringFailures([GroupedQueryChannelsBucketPayload].self, forKey: .buckets),
+            groups: try container.decode([String: GroupedQueryChannelsGroupPayload].self, forKey: .groups),
             duration: try container.decode(String.self, forKey: .duration)
         )
     }
 }
 
-struct GroupedQueryChannelsBucketPayload {
-    let key: String
+struct GroupedQueryChannelsGroupPayload {
     let channels: [ChannelPayload]
     let unreadCount: Int
     let unreadChannels: Int
 }
 
-extension GroupedQueryChannelsBucketPayload: Decodable {
+extension GroupedQueryChannelsGroupPayload: Decodable {
     enum CodingKeys: String, CodingKey {
-        case key
         case channels
         case unreadCount = "unread_count"
         case unreadChannels = "unread_channels"
@@ -74,7 +69,6 @@ extension GroupedQueryChannelsBucketPayload: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.init(
-            key: try container.decode(String.self, forKey: .key),
             channels: try container.decodeArrayIgnoringFailures([ChannelPayload].self, forKey: .channels),
             unreadCount: try container.decode(Int.self, forKey: .unreadCount),
             unreadChannels: try container.decode(Int.self, forKey: .unreadChannels)

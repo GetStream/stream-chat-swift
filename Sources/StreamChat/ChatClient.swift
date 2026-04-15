@@ -487,9 +487,9 @@ public class ChatClient {
         authenticationRepository.setToken(token: token, completeTokenWaiters: true)
     }
 
-    /// Loads grouped channel buckets for the app's configured family.
+    /// Loads grouped channel groups for the app.
     ///
-    /// The response preserves the backend-provided family and bucket keys and is converted to `ChatChannel`
+    /// The response preserves the backend-provided group keys and is converted to `ChatChannel`
     /// models without persisting the data locally.
     public func groupedQueryChannels(
         limit: Int? = nil,
@@ -516,9 +516,9 @@ public class ChatClient {
         }
     }
 
-    /// Loads grouped channel buckets for the app's configured family.
+    /// Loads grouped channel groups for the app.
     ///
-    /// The response preserves the backend-provided family and bucket keys and is converted to `ChatChannel`
+    /// The response preserves the backend-provided group keys and is converted to `ChatChannel`
     /// models without persisting the data locally.
     public func groupedQueryChannels(
         limit: Int? = nil,
@@ -882,24 +882,22 @@ extension ChatClient {
         from payload: GroupedQueryChannelsPayload,
         session: DatabaseSession
     ) throws -> GroupedChannels {
-        let buckets = try payload.buckets.map { bucketPayload in
-            let channels = try bucketPayload.channels.map { channelPayload in
+        let groups = try payload.groups.mapValues { groupPayload in
+            let channels = try groupPayload.channels.map { channelPayload in
                 let dto = try session.saveChannel(payload: channelPayload)
                 return try dto.asModel()
             }
 
-            return GroupedChannelsBucket(
-                key: bucketPayload.key,
+            return GroupedChannelsGroup(
                 channels: channels,
-                unreadCount: bucketPayload.unreadCount,
-                unreadChannels: bucketPayload.unreadChannels
+                unreadCount: groupPayload.unreadCount,
+                unreadChannels: groupPayload.unreadChannels
             )
         }
 
         (session as? NSManagedObjectContext)?.rollback()
         return GroupedChannels(
-            family: payload.family,
-            buckets: buckets
+            groups: groups
         )
     }
 
@@ -919,45 +917,35 @@ extension ChatClient {
 
 /// A grouped channels response returned by `ChatClient.groupedQueryChannels`.
 public struct GroupedChannels: Equatable {
-    /// The grouped channel family configured for the current app.
-    public let family: String
+    /// The grouped channel groups returned by the backend, keyed by group name.
+    public let groups: [String: GroupedChannelsGroup]
 
-    /// The grouped channel buckets returned by the backend in response order.
-    public let buckets: [GroupedChannelsBucket]
-
-    /// Convenience access to the grouped channels without bucket metadata.
-    public var channels: [[ChatChannel]] { buckets.map(\.channels) }
+    /// Convenience access to the grouped channels without per-group metadata.
+    public var channels: [String: [ChatChannel]] { groups.mapValues(\.channels) }
 
     public init(
-        family: String,
-        buckets: [GroupedChannelsBucket]
+        groups: [String: GroupedChannelsGroup]
     ) {
-        self.family = family
-        self.buckets = buckets
+        self.groups = groups
     }
 }
 
-/// A grouped channels bucket returned by `ChatClient.groupedQueryChannels`.
-public struct GroupedChannelsBucket: Equatable {
-    /// The backend-defined key for this bucket within the family.
-    public let key: String
-
-    /// The channels that belong to this bucket.
+/// A grouped channels group returned by `ChatClient.groupedQueryChannels`.
+public struct GroupedChannelsGroup: Equatable {
+    /// The channels that belong to this group.
     public let channels: [ChatChannel]
 
-    /// The total unread message count across the bucket.
+    /// The total unread message count across the group.
     public let unreadCount: Int
 
-    /// The total unread channel count in the bucket.
+    /// The total unread channel count in the group.
     public let unreadChannels: Int
 
     public init(
-        key: String,
         channels: [ChatChannel],
         unreadCount: Int,
         unreadChannels: Int
     ) {
-        self.key = key
         self.channels = channels
         self.unreadCount = unreadCount
         self.unreadChannels = unreadChannels
