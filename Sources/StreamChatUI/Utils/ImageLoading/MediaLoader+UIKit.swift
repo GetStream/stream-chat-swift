@@ -29,9 +29,9 @@ extension MediaLoader {
         loadImage(url: url, options: loadOptions) { result in
             guard !task.isCancelled else { return }
             switch result {
-            case let .success(image):
-                imageView.image = image
-                completion?(.success(image))
+            case let .success(loaded):
+                imageView.image = loaded.image
+                completion?(.success(loaded.image))
             case let .failure(error):
                 completion?(.failure(error))
             }
@@ -46,7 +46,9 @@ extension MediaLoader {
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
         let loadOptions = ImageLoadOptions(resize: request.options.resize, cdnRequester: request.options.cdnRequester)
-        loadImage(url: request.url, options: loadOptions, completion: completion)
+        loadImage(url: request.url, options: loadOptions) { result in
+            completion(result.map(\.image))
+        }
     }
 
     /// Downloads multiple images and returns all results.

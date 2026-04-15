@@ -6,6 +6,8 @@ import AVKit
 import StreamChat
 import UIKit
 
+// MARK: - Options
+
 /// Options for loading a single image through a ``MediaLoader``.
 public struct ImageLoadOptions: Sendable {
     /// Optional resize parameters for server-side resizing.
@@ -53,6 +55,38 @@ public struct VideoLoadOptions: Sendable {
     }
 }
 
+// MARK: - Result Types
+
+/// The result of loading a single image through a ``MediaLoader``.
+public struct MediaLoaderImage: Sendable {
+    /// The loaded image.
+    public var image: UIImage
+
+    public init(image: UIImage) {
+        self.image = image
+    }
+}
+
+/// The result of loading a video asset through a ``MediaLoader``.
+public struct MediaLoaderVideoAsset: Sendable {
+    /// The video asset.
+    public var asset: AVURLAsset
+
+    public init(asset: AVURLAsset) {
+        self.asset = asset
+    }
+}
+
+/// The result of loading a video preview through a ``MediaLoader``.
+public struct MediaLoaderVideoPreview: Sendable {
+    /// The preview thumbnail image.
+    public var image: UIImage
+
+    public init(image: UIImage) {
+        self.image = image
+    }
+}
+
 /// A unified protocol for loading images and video previews.
 ///
 /// Merges the responsibilities of image loading and video preview generation
@@ -75,7 +109,7 @@ public protocol MediaLoader: AnyObject, Sendable {
     func loadImage(
         url: URL?,
         options: ImageLoadOptions,
-        completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
+        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
     )
 
     /// Loads multiple images from the given URLs.
@@ -87,7 +121,7 @@ public protocol MediaLoader: AnyObject, Sendable {
     func loadImages(
         from urls: [URL],
         options: ImageBatchLoadOptions,
-        completion: @escaping @MainActor ([UIImage]) -> Void
+        completion: @escaping @MainActor ([MediaLoaderImage]) -> Void
     )
 
     // MARK: - Video Loading
@@ -96,7 +130,11 @@ public protocol MediaLoader: AnyObject, Sendable {
     ///
     /// Implementers should use the CDN requester in options to adjust the URL
     /// before creating the asset.
-    func videoAsset(at url: URL, options: VideoLoadOptions) -> AVURLAsset
+    func videoAsset(
+        at url: URL,
+        options: VideoLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
+    )
 
     /// Loads a video preview thumbnail from a URL.
     ///
@@ -107,7 +145,7 @@ public protocol MediaLoader: AnyObject, Sendable {
     func loadVideoPreview(
         at url: URL,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
+        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     )
 
     /// Loads a video preview from a video attachment.
@@ -123,21 +161,27 @@ public protocol MediaLoader: AnyObject, Sendable {
     func loadVideoPreview(
         with attachment: ChatMessageVideoAttachment,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
+        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     )
 }
 
 // MARK: - Default Implementations
 
 extension MediaLoader {
-    public func videoAsset(at url: URL, options: VideoLoadOptions) -> AVURLAsset {
-        AVURLAsset(url: url)
+    public func videoAsset(
+        at url: URL,
+        options: VideoLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
+    ) {
+        StreamConcurrency.onMain {
+            completion(.success(MediaLoaderVideoAsset(asset: AVURLAsset(url: url))))
+        }
     }
 
     public func loadVideoPreview(
         with attachment: ChatMessageVideoAttachment,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
+        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
         loadVideoPreview(at: attachment.videoURL, options: options, completion: completion)
     }
@@ -150,7 +194,7 @@ extension MediaLoader {
     public func loadImage(
         url: URL?,
         options: ImageLoadOptions
-    ) async throws -> UIImage {
+    ) async throws -> MediaLoaderImage {
         try await withCheckedThrowingContinuation { continuation in
             loadImage(url: url, options: options) { result in
                 continuation.resume(with: result)
@@ -162,10 +206,22 @@ extension MediaLoader {
     public func loadImages(
         from urls: [URL],
         options: ImageBatchLoadOptions
-    ) async -> [UIImage] {
+    ) async -> [MediaLoaderImage] {
         await withCheckedContinuation { continuation in
             loadImages(from: urls, options: options) { images in
                 continuation.resume(returning: images)
+            }
+        }
+    }
+
+    /// Returns a video asset for the given URL.
+    public func videoAsset(
+        at url: URL,
+        options: VideoLoadOptions
+    ) async throws -> MediaLoaderVideoAsset {
+        try await withCheckedThrowingContinuation { continuation in
+            videoAsset(at: url, options: options) { result in
+                continuation.resume(with: result)
             }
         }
     }

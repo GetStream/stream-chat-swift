@@ -332,7 +332,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         components.mediaLoader.loadVideoPreview(at: url, options: VideoLoadOptions(cdnRequester: components.cdnRequester)) { [weak self] in
             switch $0 {
             case let .success(preview):
-                self?.attachmentPreviewView.image = preview
+                self?.attachmentPreviewView.image = preview.image
             case let .failure(error):
                 self?.attachmentPreviewView.image = nil
                 log.error("This \(error) received for processing Video Preview image.")

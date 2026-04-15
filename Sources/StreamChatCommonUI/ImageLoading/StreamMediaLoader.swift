@@ -39,7 +39,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     open func loadImage(
         url: URL?,
         options: ImageLoadOptions,
-        completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
+        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
     ) {
         guard let url else {
             StreamConcurrency.onMain {
@@ -56,9 +56,10 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
                     url: cdnRequest.url,
                     headers: cdnRequest.headers,
                     cachingKey: cdnRequest.cachingKey,
-                    resize: resizeSize,
-                    completion: completion
-                )
+                    resize: resizeSize
+                ) { imageResult in
+                    completion(imageResult.map { MediaLoaderImage(image: $0) })
+                }
             case let .failure(error):
                 StreamConcurrency.onMain {
                     completion(.failure(error))
@@ -70,7 +71,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     open func loadImages(
         from urls: [URL],
         options: ImageBatchLoadOptions,
-        completion: @escaping @MainActor ([UIImage]) -> Void
+        completion: @escaping @MainActor ([MediaLoaderImage]) -> Void
     ) {
         let group = DispatchGroup()
         let batchResult = BatchLoadingResult()
@@ -82,12 +83,12 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
             let imageOptions = ImageLoadOptions(resize: resize, cdnRequester: options.cdnRequester)
             loadImage(url: avatarUrl, options: imageOptions) { result in
                 switch result {
-                case let .success(image):
-                    batchResult.images.append(image)
+                case let .success(loaded):
+                    batchResult.images.append(loaded)
                 case .failure:
                     if !options.placeholders.isEmpty {
                         let placeholderIndex = index % options.placeholders.count
-                        batchResult.images.append(options.placeholders[placeholderIndex])
+                        batchResult.images.append(MediaLoaderImage(image: options.placeholders[placeholderIndex]))
                     }
                 }
                 group.leave()
@@ -103,18 +104,34 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
 
     // MARK: - Video Loading
 
-    open func videoAsset(at url: URL, options: VideoLoadOptions) -> AVURLAsset {
-        AVURLAsset(url: url)
+    open func videoAsset(
+        at url: URL,
+        options: VideoLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
+    ) {
+        options.cdnRequester.fileRequest(for: url, options: .init()) { result in
+            switch result {
+            case let .success(cdnRequest):
+                let asset = AVURLAsset(url: cdnRequest.url)
+                StreamConcurrency.onMain {
+                    completion(.success(MediaLoaderVideoAsset(asset: asset)))
+                }
+            case let .failure(error):
+                StreamConcurrency.onMain {
+                    completion(.failure(error))
+                }
+            }
+        }
     }
 
     open func loadVideoPreview(
         at url: URL,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
+        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
         if let cached = videoPreviewCache.object(forKey: url as NSURL) {
             StreamConcurrency.onMain {
-                completion(.success(cached))
+                completion(.success(MediaLoaderVideoPreview(image: cached)))
             }
             return
         }
@@ -125,12 +142,12 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     open func loadVideoPreview(
         with attachment: ChatMessageVideoAttachment,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
+        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
         let videoURL = attachment.videoURL
         if let cached = videoPreviewCache.object(forKey: videoURL as NSURL) {
             StreamConcurrency.onMain {
-                completion(.success(cached))
+                completion(.success(MediaLoaderVideoPreview(image: cached)))
             }
             return
         }
@@ -140,10 +157,10 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
             loadImage(url: thumbnailURL, options: imageOptions) { [weak self] result in
                 guard let self else { return }
                 switch result {
-                case let .success(image):
-                    self.videoPreviewCache.setObject(image, forKey: videoURL as NSURL)
+                case let .success(loaded):
+                    self.videoPreviewCache.setObject(loaded.image, forKey: videoURL as NSURL)
                     StreamConcurrency.onMain {
-                        completion(.success(image))
+                        completion(.success(MediaLoaderVideoPreview(image: loaded.image)))
                     }
                 case .failure:
                     self.generateVideoPreview(for: videoURL, options: options, completion: completion)
@@ -159,7 +176,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     private func generateVideoPreview(
         for url: URL,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
+        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
         options.cdnRequester.fileRequest(for: url, options: .init()) { [weak self] result in
             guard let self else { return }
@@ -183,9 +200,9 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
             imageGenerator.generateCGImagesAsynchronously(forTimes: [.init(time: frameTime)]) { [weak self] _, image, _, _, error in
                 guard let self else { return }
 
-                let result: Result<UIImage, Error>
+                let result: Result<MediaLoaderVideoPreview, Error>
                 if let thumbnail = image {
-                    result = .success(UIImage(cgImage: thumbnail))
+                    result = .success(MediaLoaderVideoPreview(image: UIImage(cgImage: thumbnail)))
                 } else if let error {
                     result = .failure(error)
                 } else {
@@ -193,8 +210,8 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
                     return
                 }
 
-                if let image = try? result.get() {
-                    self.videoPreviewCache.setObject(image, forKey: url as NSURL)
+                if let preview = try? result.get() {
+                    self.videoPreviewCache.setObject(preview.image, forKey: url as NSURL)
                 }
                 StreamConcurrency.onMain {
                     completion(result)
@@ -209,5 +226,5 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
 }
 
 private final class BatchLoadingResult: @unchecked Sendable {
-    var images: [UIImage] = []
+    var images: [MediaLoaderImage] = []
 }

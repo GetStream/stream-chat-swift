@@ -90,7 +90,7 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
                 self?.loadingIndicator.isHidden = true
                 switch $0 {
                 case let .success(preview):
-                    self?.showPreview(using: preview)
+                    self?.showPreview(using: preview.image)
                 case .failure:
                     break
                 }

@@ -52,10 +52,17 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
         let currentAssetURL = (player.currentItem?.asset as? AVURLAsset)?.url
 
         if newAssetURL != currentAssetURL {
-            let playerItem = newAssetURL.map {
-                AVPlayerItem(asset: components.mediaLoader.videoAsset(at: $0, options: VideoLoadOptions(cdnRequester: components.cdnRequester)))
+            if let url = newAssetURL {
+                let options = VideoLoadOptions(cdnRequester: components.cdnRequester)
+                components.mediaLoader.videoAsset(at: url, options: options) { [weak self] result in
+                    if case let .success(loaded) = result {
+                        let playerItem = AVPlayerItem(asset: loaded.asset)
+                        self?.player.replaceCurrentItem(with: playerItem)
+                    }
+                }
+            } else {
+                player.replaceCurrentItem(with: nil)
             }
-            player.replaceCurrentItem(with: playerItem)
 
             if let thumbnailURL = videoAttachment?.thumbnailURL {
                 showPreview(using: thumbnailURL)
@@ -63,7 +70,7 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
                 components.mediaLoader.loadVideoPreview(at: url, options: VideoLoadOptions(cdnRequester: components.cdnRequester)) { [weak self] in
                     switch $0 {
                     case let .success(preview):
-                        self?.showPreview(using: preview)
+                        self?.showPreview(using: preview.image)
                     case .failure:
                         self?.showPreview(using: nil)
                     }

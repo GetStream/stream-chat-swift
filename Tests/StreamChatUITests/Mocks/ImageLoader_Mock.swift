@@ -18,12 +18,12 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
     private let imageProcessor = StreamImageProcessor()
 
     lazy var loadVideoPreviewForVideoMockFunc = MockFunc.mock(for: loadVideoPreview(at:options:completion:))
-    lazy var videoAssetMockFunc = MockFunc<URL, AVURLAsset>(result: { AVURLAsset(url: $0) })
+    lazy var videoAssetMockFunc = MockFunc.mock(for: videoAsset(at:options:completion:))
 
     func loadImage(
         url: URL?,
         options: ImageLoadOptions,
-        completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
+        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
     ) {
         guard let url else {
             MainActor.assumeIsolated {
@@ -44,32 +44,39 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
             image = imageProcessor.scale(image: image, to: size)
         }
         MainActor.assumeIsolated {
-            completion(.success(image))
+            completion(.success(MediaLoaderImage(image: image)))
         }
     }
 
     func loadImages(
         from urls: [URL],
         options: ImageBatchLoadOptions,
-        completion: @escaping @MainActor ([UIImage]) -> Void
+        completion: @escaping @MainActor ([MediaLoaderImage]) -> Void
     ) {
-        let images = urls.compactMap { url -> UIImage? in
-            guard let data = try? Data(contentsOf: url) else { return nil }
-            return UIImage(data: data)
+        let images = urls.compactMap { url -> MediaLoaderImage? in
+            guard let data = try? Data(contentsOf: url), let image = UIImage(data: data) else { return nil }
+            return MediaLoaderImage(image: image)
         }
         MainActor.assumeIsolated {
             completion(images)
         }
     }
 
-    func videoAsset(at url: URL, options: VideoLoadOptions) -> AVURLAsset {
-        videoAssetMockFunc.callAndReturn(url)
+    func videoAsset(
+        at url: URL,
+        options: VideoLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
+    ) {
+        videoAssetMockFunc.call(with: (url, options, completion))
+        MainActor.assumeIsolated {
+            completion(.success(MediaLoaderVideoAsset(asset: AVURLAsset(url: url))))
+        }
     }
 
     func loadVideoPreview(
         at url: URL,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
+        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
         loadVideoPreviewForVideoMockFunc.call(with: (url, options, completion))
         guard let data = try? Data(contentsOf: url), let image = UIImage(data: data) else {
@@ -80,11 +87,11 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
         }
         if Thread.isMainThread {
             MainActor.assumeIsolated {
-                completion(.success(image))
+                completion(.success(MediaLoaderVideoPreview(image: image)))
             }
         } else {
             DispatchQueue.main.async {
-                completion(.success(image))
+                completion(.success(MediaLoaderVideoPreview(image: image)))
             }
         }
     }
