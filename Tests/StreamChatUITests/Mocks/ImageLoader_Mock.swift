@@ -46,20 +46,7 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
         MainActor.assumeIsolated {
             completion(.success(MediaLoaderImage(image: image)))
         }
-    }
-
-    func loadImages(
-        from urls: [URL],
-        options: ImageBatchLoadOptions,
-        completion: @escaping @MainActor ([MediaLoaderImage]) -> Void
-    ) {
-        let images = urls.compactMap { url -> MediaLoaderImage? in
-            guard let data = try? Data(contentsOf: url), let image = UIImage(data: data) else { return nil }
-            return MediaLoaderImage(image: image)
-        }
-        MainActor.assumeIsolated {
-            completion(images)
-        }
+        return nil
     }
 
     func loadVideoAsset(

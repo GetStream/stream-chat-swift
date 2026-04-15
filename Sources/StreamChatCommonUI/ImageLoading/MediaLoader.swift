@@ -29,19 +29,6 @@ public protocol MediaLoader: AnyObject, Sendable {
         url: URL?,
         options: ImageLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
-    )
-
-    /// Loads multiple images from the given URLs.
-    ///
-    /// - Parameters:
-    ///   - urls: The image URLs to load.
-    ///   - options: Options controlling placeholders, thumbnails, and CDN behavior.
-    ///   - completion: A completion handler called on the main actor with all loaded images.
-    func loadImages(
-        from urls: [URL],
-        options: ImageBatchLoadOptions,
-        completion: @escaping @MainActor ([MediaLoaderImage]) -> Void
-    )
 
     // MARK: - Video Loading
 
@@ -121,18 +108,6 @@ extension MediaLoader {
         }
     }
 
-    /// Loads multiple images from the given URLs.
-    public func loadImages(
-        from urls: [URL],
-        options: ImageBatchLoadOptions
-    ) async -> [MediaLoaderImage] {
-        await withCheckedContinuation { continuation in
-            loadImages(from: urls, options: options) { images in
-                continuation.resume(returning: images)
-            }
-        }
-    }
-
     /// Returns a video asset for the given URL.
     public func loadVideoAsset(
         at url: URL,
@@ -157,30 +132,6 @@ public struct ImageLoadOptions: Sendable {
 
     public init(resize: ImageResize? = nil, cdnRequester: CDNRequester) {
         self.resize = resize
-        self.cdnRequester = cdnRequester
-    }
-}
-
-/// Options for loading multiple images through a ``MediaLoader``.
-public struct ImageBatchLoadOptions: Sendable {
-    /// Placeholder images used rotationally when a URL fails to load.
-    public var placeholders: [UIImage]
-    /// Whether to load thumbnail-sized versions of the images.
-    public var loadThumbnails: Bool
-    /// The desired thumbnail size in points.
-    public var thumbnailSize: CGSize
-    /// The CDN requester for URL transformation (signing, headers, resizing).
-    public var cdnRequester: CDNRequester
-
-    public init(
-        placeholders: [UIImage] = [],
-        loadThumbnails: Bool = true,
-        thumbnailSize: CGSize = CGSize(width: 40, height: 40),
-        cdnRequester: CDNRequester
-    ) {
-        self.placeholders = placeholders
-        self.loadThumbnails = loadThumbnails
-        self.thumbnailSize = thumbnailSize
         self.cdnRequester = cdnRequester
     }
 }
