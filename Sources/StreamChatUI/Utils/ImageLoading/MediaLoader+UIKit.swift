@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatCommonUI
 import UIKit
 
-extension ImageLoader {
+extension MediaLoader {
     /// Loads an image into a UIImageView with the given options.
     @discardableResult
     @MainActor public func loadImage(

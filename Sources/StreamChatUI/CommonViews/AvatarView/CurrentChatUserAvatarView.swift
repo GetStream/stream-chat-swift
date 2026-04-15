@@ -71,7 +71,7 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
             appearance: appearance
         )
 
-        components.imageLoader.loadImage(
+        components.mediaLoader.loadImage(
             into: avatarView.imageView,
             from: currentUserImageUrl,
             with: ImageLoaderOptions(

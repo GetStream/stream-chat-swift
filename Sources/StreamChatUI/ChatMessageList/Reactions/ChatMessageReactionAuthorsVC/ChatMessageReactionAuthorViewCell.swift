@@ -127,7 +127,7 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
             size: authorAvatarSize,
             appearance: appearance
         )
-        components.imageLoader.loadImage(
+        components.mediaLoader.loadImage(
             into: authorAvatarView.imageView,
             from: content.reaction.author.imageURL,
             with: ImageLoaderOptions(

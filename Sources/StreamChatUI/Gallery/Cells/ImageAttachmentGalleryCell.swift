@@ -32,7 +32,7 @@ open class ImageAttachmentGalleryCell: GalleryCollectionViewCell {
 
         let imageAttachment = content?.attachment(payloadType: ImageAttachmentPayload.self)
 
-        components.imageLoader.loadImage(
+        components.mediaLoader.loadImage(
             into: imageView,
             from: imageAttachment?.payload,
             maxResolutionInPixels: components.imageAttachmentMaxPixels,

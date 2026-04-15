@@ -6,10 +6,10 @@ import StreamChat
 @testable import StreamChatCommonUI
 import XCTest
 
-final class StreamImageLoader_Tests: XCTestCase {
+final class StreamMediaLoader_ImageTests: XCTestCase {
     func test_loadImage_nilURL_callsCompletionWithFailure() {
         let downloader = MockImageDownloader()
-        let loader = StreamImageLoader(downloader: downloader)
+        let loader = StreamMediaLoader(downloader: downloader)
         let cdnRequester = MockCDNRequester()
         let expectation = expectation(description: "Completion called")
 

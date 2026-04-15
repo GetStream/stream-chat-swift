@@ -141,7 +141,7 @@ open class ChatMessageLinkPreviewView: _Control, ThemeProvider {
 
         authorLabel.textColor = tintColor
 
-        components.imageLoader.loadImage(
+        components.mediaLoader.loadImage(
             into: imagePreview,
             from: payload?.previewURL,
             with: ImageLoaderOptions(cdnRequester: components.cdnRequester)

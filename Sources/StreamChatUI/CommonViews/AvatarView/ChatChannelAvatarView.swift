@@ -165,7 +165,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
             .compactMap { $0 }
             .map { ImageDownloadRequest(url: $0, options: ImageDownloadOptions(resize: .init(avatarSize), cdnRequester: components.cdnRequester)) }
 
-        components.imageLoader.downloadMultipleImages(with: requests) { results in
+        components.mediaLoader.downloadMultipleImages(with: requests) { results in
             // Scale only placeholders since images already have a correct size
             let imagesMapper = ImageResultsMapper(results: results)
             let images = imagesMapper.mapErrors {
@@ -212,7 +212,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
     }
 
     open func loadIntoAvatarImageView(from url: URL?, placeholder: UIImage?) {
-        components.imageLoader.loadImage(
+        components.mediaLoader.loadImage(
             into: presenceAvatarView.avatarView.imageView,
             from: url,
             with: ImageLoaderOptions(

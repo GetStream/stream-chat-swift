@@ -90,7 +90,7 @@ extension ChatMessageGalleryView {
             let attachment = content
 
             loadingIndicator.isVisible = true
-            imageTask = components.imageLoader.loadImage(
+            imageTask = components.mediaLoader.loadImage(
                 into: imageView,
                 from: attachment?.payload,
                 maxResolutionInPixels: components.imageAttachmentMaxPixels,

@@ -138,7 +138,7 @@ open class ComposerLinkPreviewView: _View, ThemeProvider {
 
         if let imageUrl = content.linkAttachmentPayload.previewURL {
             imagePreviewView.contentMode = .scaleAspectFill
-            components.imageLoader.loadImage(
+            components.mediaLoader.loadImage(
                 into: imagePreviewView,
                 from: imageUrl,
                 with: ImageLoaderOptions(cdnRequester: components.cdnRequester)

@@ -36,7 +36,7 @@ open class ChatUserAvatarView: _View, ThemeProvider {
             size: components.avatarThumbnailSize,
             appearance: appearance
         )
-        components.imageLoader.loadImage(
+        components.mediaLoader.loadImage(
             into: presenceAvatarView.avatarView.imageView,
             from: content?.imageURL,
             with: ImageLoaderOptions(

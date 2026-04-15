@@ -650,7 +650,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
             appearance: appearance
         )
         if let imageURL = content?.author.imageURL, let imageView = authorAvatarView?.imageView {
-            components.imageLoader.loadImage(
+            components.mediaLoader.loadImage(
                 into: imageView,
                 from: imageURL,
                 with: ImageLoaderOptions(
@@ -718,7 +718,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
                 size: components.avatarThumbnailSize,
                 appearance: appearance
             )
-            components.imageLoader.loadImage(
+            components.mediaLoader.loadImage(
                 into: imageView,
                 from: threadAvatarUrl,
                 with: ImageLoaderOptions(

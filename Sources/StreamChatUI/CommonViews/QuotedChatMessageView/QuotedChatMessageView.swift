@@ -222,7 +222,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
             size: components.avatarThumbnailSize,
             appearance: appearance
         )
-        components.imageLoader.loadImage(
+        components.mediaLoader.loadImage(
             into: authorAvatarView.imageView,
             from: imageUrl,
             with: ImageLoaderOptions(
@@ -304,7 +304,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
     /// Sets the image from the given URL into `attachmentPreviewView.image`
     /// - Parameter url: The URL from which the image is to be loaded
     open func setAttachmentPreviewImage(url: URL?) {
-        components.imageLoader.loadImage(
+        components.mediaLoader.loadImage(
             into: attachmentPreviewView,
             from: url,
             with: ImageLoaderOptions(resize: .init(attachmentPreviewSize), cdnRequester: components.cdnRequester)
@@ -314,7 +314,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
     /// Set the image from the given URL into `attachmentPreviewImage.image`
     /// - Parameter url: The URL of the thumbnail
     open func setVideoAttachmentThumbnail(url: URL) {
-        components.imageLoader.downloadImage(with: .init(url: url, options: ImageDownloadOptions(cdnRequester: components.cdnRequester))) { [weak self] result in
+        components.mediaLoader.downloadImage(with: .init(url: url, options: ImageDownloadOptions(cdnRequester: components.cdnRequester))) { [weak self] result in
             switch result {
             case let .success(preview):
                 self?.attachmentPreviewView.image = preview
@@ -329,7 +329,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
     open func setVideoAttachmentPreviewImage(url: URL?) {
         guard let url = url else { return }
 
-        components.videoLoader.loadPreview(at: url, options: VideoLoadOptions(cdnRequester: components.cdnRequester)) { [weak self] in
+        components.mediaLoader.loadVideoPreview(at: url, options: VideoLoadOptions(cdnRequester: components.cdnRequester)) { [weak self] in
             switch $0 {
             case let .success(preview):
                 self?.attachmentPreviewView.image = preview

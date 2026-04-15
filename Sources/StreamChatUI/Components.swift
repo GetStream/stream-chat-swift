@@ -93,14 +93,11 @@ import UIKit
     /// The CDN requester used for URL transformation (signing, headers, resizing).
     public var cdnRequester: CDNRequester
 
-    /// The object responsible for loading images.
-    public var imageLoader: ImageLoader
+    /// The object responsible for loading images and video previews.
+    public var mediaLoader: MediaLoader
 
     /// Object responsible for providing resizing operations for `UIImage`
     public var imageProcessor: ImageProcessor = StreamImageProcessor()
-
-    /// The object responsible for loading video previews.
-    public var videoLoader: VideoLoader
 
     /// The fallback maximum attachment size in bytes when the server does not provide one.
     /// The default value is 100 MB.
@@ -685,9 +682,7 @@ import UIKit
 
     public init() {
         self.cdnRequester = StreamCDNRequester()
-        let imageLoader = StreamImageLoader(downloader: StreamImageDownloader())
-        self.imageLoader = imageLoader
-        self.videoLoader = StreamVideoLoader(imageLoader: imageLoader)
+        self.mediaLoader = StreamMediaLoader(downloader: StreamImageDownloader())
     }
     
     public static var `default` = Self()
