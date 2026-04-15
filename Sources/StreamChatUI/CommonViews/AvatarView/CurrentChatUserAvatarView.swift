@@ -22,14 +22,18 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
     }
 
     /// The view that shows the current user's avatar.
-    open private(set) lazy var avatarView: ChatAvatarView = components
-        .avatarView.init()
-        .withoutAutoresizingMaskConstraints
+    open private(set) lazy var avatarView: ChatUserAvatarView = {
+        let view = components
+            .userAvatarView.init()
+            .withoutAutoresizingMaskConstraints
+        view.shouldShowOnlineIndicator = false
+        return view
+    }()
 
     override open func setUpAppearance() {
         super.setUpAppearance()
         backgroundColor = .clear
-        avatarView.imageView.backgroundColor = appearance.colorPalette.backgroundCoreApp
+        avatarView.presenceAvatarView.avatarView.imageView.backgroundColor = appearance.colorPalette.backgroundCoreApp
     }
 
     override open var isEnabled: Bool {
@@ -64,22 +68,11 @@ open class CurrentChatUserAvatarView: _Control, ThemeProvider {
     }
 
     @objc override open func updateContent() {
-        let currentUserImageUrl = controller?.currentUser?.imageURL
-        let placeholderImage = UserAvatarInitialsImage.image(
-            name: controller?.currentUser?.name ?? "",
-            size: components.avatarThumbnailSize,
-            appearance: appearance
-        )
-
-        components.mediaLoader.loadImage(
-            into: avatarView.imageView,
-            from: currentUserImageUrl,
-            with: ImageLoaderOptions(
-                resize: ImageResize(components.avatarThumbnailSize),
-                placeholder: placeholderImage,
-                cdnRequester: components.cdnRequester
-            )
-        )
+        if let currentUser = controller?.currentUser {
+            avatarView.content = currentUser
+        } else {
+            avatarView.content = nil
+        }
 
         alpha = state == .normal ? 1 : 0.5
     }

@@ -154,10 +154,11 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
 
     private func updateUserData() {
         Components.default
-            .imageLoader
+            .mediaLoader
             .loadImage(
                 into: imageView,
-                from: currentUserController.currentUser?.imageURL
+                from: currentUserController.currentUser?.imageURL,
+                with: ImageLoaderOptions(cdnRequester: Components.default.cdnRequester)
             )
 
         if let typingIndicatorsEnabled = currentUserController.currentUser?.privacySettings.typingIndicators?.enabled {

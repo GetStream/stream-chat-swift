@@ -62,10 +62,14 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         .withAccessibilityIdentifier(identifier: "containerView")
 
     /// The avatar view of the author's quoted message.
-    open private(set) lazy var authorAvatarView: ChatAvatarView = components
-        .avatarView.init()
-        .withoutAutoresizingMaskConstraints
-        .withAccessibilityIdentifier(identifier: "authorAvatarView")
+    open private(set) lazy var authorAvatarView: ChatUserAvatarView = {
+        let view = components
+            .userAvatarView.init()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "authorAvatarView")
+        view.shouldShowOnlineIndicator = false
+        return view
+    }()
 
     /// The container view that holds the `textView` and the `attachmentPreview`.
     open private(set) lazy var contentContainerView: ContainerStackView = ContainerStackView()
@@ -119,8 +123,6 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         textView.textContainerInset = .zero
         textView.textColor = appearance.colorPalette.textPrimary
 
-        authorAvatarView.contentMode = .scaleAspectFit
-
         contentContainerView.layer.cornerRadius = 16
         contentContainerView.layer.borderWidth = 1
         contentContainerView.layer.borderColor = appearance.colorPalette.borderCoreDefault.cgColor
@@ -171,7 +173,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
             : appearance.colorPalette.backgroundCoreSurfaceSubtle
         
         setText(message.textContent ?? "")
-        setAvatar(imageUrl: message.author.imageURL, authorName: message.author.name)
+        authorAvatarView.content = message.author
         setAvatarAlignment(avatarAlignment)
 
         if isAttachmentsEmpty {
@@ -210,27 +212,6 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         }
 
         textView.attributedText = attributedText
-    }
-
-    /// Sets the avatar image from a url, falling back to an initials placeholder.
-    /// - Parameters:
-    ///   - imageUrl: The url of the avatar image.
-    ///   - authorName: The author's display name used to generate the initials placeholder.
-    open func setAvatar(imageUrl: URL?, authorName: String?) {
-        let placeholder = UserAvatarInitialsImage.image(
-            name: authorName ?? "",
-            size: components.avatarThumbnailSize,
-            appearance: appearance
-        )
-        components.mediaLoader.loadImage(
-            into: authorAvatarView.imageView,
-            from: imageUrl,
-            with: ImageLoaderOptions(
-                resize: .init(components.avatarThumbnailSize),
-                placeholder: placeholder,
-                cdnRequester: components.cdnRequester
-            )
-        )
     }
 
     /// Sets the avatar position in relation of the text bubble.
