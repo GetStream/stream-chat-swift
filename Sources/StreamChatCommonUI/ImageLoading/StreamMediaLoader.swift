@@ -15,9 +15,13 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     /// The backend that performs the actual image download and caching.
     public let downloader: ImageDownloading
 
+    /// The video preview thumbnails local cache used for videos that
+    /// don't have remote thumbnails available.
     private let videoPreviewCache: NSCache<NSURL, UIImage>
+    /// The limit of the local  video preview thumbnails cache.
+    private let videoPreviewCacheCountLimit: Int = 50
 
-    public init(downloader: ImageDownloading, videoPreviewCacheCountLimit: Int = 50) {
+    public init(downloader: ImageDownloading) {
         self.downloader = downloader
         self.videoPreviewCache = NSCache<NSURL, UIImage>()
         self.videoPreviewCache.countLimit = videoPreviewCacheCountLimit
@@ -94,6 +98,8 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
             }
         }
     }
+
+    // MARK: - Video Preview Thumbnail Loading
 
     open func loadVideoPreview(
         with attachment: ChatMessageVideoAttachment,
