@@ -389,6 +389,58 @@ final class StreamCDNStorage_Tests: XCTestCase {
         XCTAssertNil(result)
     }
     
+    func test_deleteAttachment_deallocatedStorage_callsCompletionWithError() throws {
+        let builder = TestBuilder()
+        builder.encoder.encodeRequest = nil
+        var client: StreamCDNStorage? = builder.make()
+
+        let expectation = XCTestExpectation(description: "Completion called")
+        var receivedError: Error?
+
+        client?.deleteAttachment(
+            remoteUrl: .unique(),
+            options: .init()
+        ) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        client = nil
+        builder.encoder.encodeRequest_completion?(.success(URLRequest(url: .unique())))
+
+        wait(for: [expectation], timeout: 2)
+        XCTAssertNotNil(receivedError)
+    }
+
+    func test_uploadAttachment_deallocatedStorage_callsCompletionWithError() throws {
+        let builder = TestBuilder()
+        builder.encoder.encodeRequest = nil
+        var client: StreamCDNStorage? = builder.make()
+
+        let expectation = XCTestExpectation(description: "Completion called")
+        var receivedResult: Result<UploadedFile, Error>?
+
+        client?.uploadAttachment(
+            .dummy(
+                uploadingState: .init(
+                    localFileURL: .localYodaImage,
+                    state: .pendingUpload,
+                    file: .init(type: .jpeg, size: 0, mimeType: nil)
+                )
+            ),
+            options: .init()
+        ) { result in
+            receivedResult = result
+            expectation.fulfill()
+        }
+
+        client = nil
+        builder.encoder.encodeRequest_completion?(.success(URLRequest(url: .unique())))
+
+        wait(for: [expectation], timeout: 2)
+        XCTAssertNotNil(receivedResult?.error)
+    }
+
     func test_deleteAttachmentFailure() throws {
         let builder = TestBuilder()
         let client = builder.make()

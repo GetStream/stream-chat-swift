@@ -110,6 +110,7 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
             }
 
             guard let self = self else {
+                completion(ClientError.Unknown("StreamCDNStorage was deallocated"))
                 return
             }
 
@@ -148,6 +149,7 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
 
             guard let self = self else {
                 log.warning("Callback called while self is nil", subsystems: .httpRequests)
+                completion(.failure(ClientError.Unknown("StreamCDNStorage was deallocated")))
                 return
             }
 
