@@ -52,13 +52,13 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
             switch result {
             case let .success(cdnRequest):
                 let resizeSize: CGSize? = options.resize.map { CGSize(width: $0.width, height: $0.height) }
-                self?.downloader.downloadImage(
-                    url: cdnRequest.url,
+                let downloadOptions = ImageDownloadingOptions(
                     headers: cdnRequest.headers,
                     cachingKey: cdnRequest.cachingKey,
                     resize: resizeSize
-                ) { imageResult in
-                    completion(imageResult.map { MediaLoaderImage(image: $0) })
+                )
+                self?.downloader.downloadImage(url: cdnRequest.url, options: downloadOptions) { imageResult in
+                    completion(imageResult.map { MediaLoaderImage(image: $0.image) })
                 }
             case let .failure(error):
                 StreamConcurrency.onMain {

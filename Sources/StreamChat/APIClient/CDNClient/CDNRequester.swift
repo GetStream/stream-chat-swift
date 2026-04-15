@@ -65,6 +65,8 @@ extension CDNRequester {
     }
 }
 
+// MARK: - Options
+
 /// Options for an image request through the CDN.
 public struct ImageRequestOptions: Sendable {
     /// Optional resize parameters for server-side resizing.
@@ -79,6 +81,8 @@ public struct ImageRequestOptions: Sendable {
 public struct FileRequestOptions: Sendable {
     public init() {}
 }
+
+// MARK: - Result Types
 
 /// The result of a CDN URL transformation, containing the final URL,
 /// optional HTTP headers, and an optional caching key.

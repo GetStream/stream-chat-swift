@@ -40,10 +40,8 @@ private final class MockCDNRequester: CDNRequester, @unchecked Sendable {
 private final class MockImageDownloader: ImageDownloading, @unchecked Sendable {
     func downloadImage(
         url: URL,
-        headers: [String: String]?,
-        cachingKey: String?,
-        resize: CGSize?,
-        completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
+        options: ImageDownloadingOptions,
+        completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
     ) {
         DispatchQueue.main.async {
             completion(.failure(NSError(domain: "MockImageDownloader", code: 0)))

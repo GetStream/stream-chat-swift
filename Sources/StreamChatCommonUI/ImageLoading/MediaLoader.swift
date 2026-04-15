@@ -6,87 +6,6 @@ import AVKit
 import StreamChat
 import UIKit
 
-// MARK: - Options
-
-/// Options for loading a single image through a ``MediaLoader``.
-public struct ImageLoadOptions: Sendable {
-    /// Optional resize parameters for server-side resizing.
-    public var resize: ImageResize?
-    /// The CDN requester for URL transformation (signing, headers, resizing).
-    public var cdnRequester: CDNRequester
-
-    public init(resize: ImageResize? = nil, cdnRequester: CDNRequester) {
-        self.resize = resize
-        self.cdnRequester = cdnRequester
-    }
-}
-
-/// Options for loading multiple images through a ``MediaLoader``.
-public struct ImageBatchLoadOptions: Sendable {
-    /// Placeholder images used rotationally when a URL fails to load.
-    public var placeholders: [UIImage]
-    /// Whether to load thumbnail-sized versions of the images.
-    public var loadThumbnails: Bool
-    /// The desired thumbnail size in points.
-    public var thumbnailSize: CGSize
-    /// The CDN requester for URL transformation (signing, headers, resizing).
-    public var cdnRequester: CDNRequester
-
-    public init(
-        placeholders: [UIImage] = [],
-        loadThumbnails: Bool = true,
-        thumbnailSize: CGSize = CGSize(width: 40, height: 40),
-        cdnRequester: CDNRequester
-    ) {
-        self.placeholders = placeholders
-        self.loadThumbnails = loadThumbnails
-        self.thumbnailSize = thumbnailSize
-        self.cdnRequester = cdnRequester
-    }
-}
-
-/// Options for loading video content through a ``MediaLoader``.
-public struct VideoLoadOptions: Sendable {
-    /// The CDN requester for URL transformation (signing, headers).
-    public var cdnRequester: CDNRequester
-
-    public init(cdnRequester: CDNRequester) {
-        self.cdnRequester = cdnRequester
-    }
-}
-
-// MARK: - Result Types
-
-/// The result of loading a single image through a ``MediaLoader``.
-public struct MediaLoaderImage: Sendable {
-    /// The loaded image.
-    public var image: UIImage
-
-    public init(image: UIImage) {
-        self.image = image
-    }
-}
-
-/// The result of loading a video asset through a ``MediaLoader``.
-public struct MediaLoaderVideoAsset: Sendable {
-    /// The video asset.
-    public var asset: AVURLAsset
-
-    public init(asset: AVURLAsset) {
-        self.asset = asset
-    }
-}
-
-/// The result of loading a video preview through a ``MediaLoader``.
-public struct MediaLoaderVideoPreview: Sendable {
-    /// The preview thumbnail image.
-    public var image: UIImage
-
-    public init(image: UIImage) {
-        self.image = image
-    }
-}
-
 /// A unified protocol for loading images and video previews.
 ///
 /// Merges the responsibilities of image loading and video preview generation
@@ -95,7 +14,7 @@ public struct MediaLoaderVideoPreview: Sendable {
 ///
 /// Configuration is passed via options structs on every call, so concrete
 /// implementations remain stateless with respect to CDN configuration.
-/// Changing the requester on `ChatClient` takes effect immediately without
+/// Changing the requester on `ChatClientConfig` takes effect immediately without
 /// recreating the loader.
 public protocol MediaLoader: AnyObject, Sendable {
     // MARK: - Image Loading
@@ -224,5 +143,86 @@ extension MediaLoader {
                 continuation.resume(with: result)
             }
         }
+    }
+}
+
+// MARK: - Options
+
+/// Options for loading a single image through a ``MediaLoader``.
+public struct ImageLoadOptions: Sendable {
+    /// Optional resize parameters for server-side resizing.
+    public var resize: ImageResize?
+    /// The CDN requester for URL transformation (signing, headers, resizing).
+    public var cdnRequester: CDNRequester
+
+    public init(resize: ImageResize? = nil, cdnRequester: CDNRequester) {
+        self.resize = resize
+        self.cdnRequester = cdnRequester
+    }
+}
+
+/// Options for loading multiple images through a ``MediaLoader``.
+public struct ImageBatchLoadOptions: Sendable {
+    /// Placeholder images used rotationally when a URL fails to load.
+    public var placeholders: [UIImage]
+    /// Whether to load thumbnail-sized versions of the images.
+    public var loadThumbnails: Bool
+    /// The desired thumbnail size in points.
+    public var thumbnailSize: CGSize
+    /// The CDN requester for URL transformation (signing, headers, resizing).
+    public var cdnRequester: CDNRequester
+
+    public init(
+        placeholders: [UIImage] = [],
+        loadThumbnails: Bool = true,
+        thumbnailSize: CGSize = CGSize(width: 40, height: 40),
+        cdnRequester: CDNRequester
+    ) {
+        self.placeholders = placeholders
+        self.loadThumbnails = loadThumbnails
+        self.thumbnailSize = thumbnailSize
+        self.cdnRequester = cdnRequester
+    }
+}
+
+/// Options for loading video content through a ``MediaLoader``.
+public struct VideoLoadOptions: Sendable {
+    /// The CDN requester for URL transformation (signing, headers).
+    public var cdnRequester: CDNRequester
+
+    public init(cdnRequester: CDNRequester) {
+        self.cdnRequester = cdnRequester
+    }
+}
+
+// MARK: - Result Types
+
+/// The result of loading a single image through a ``MediaLoader``.
+public struct MediaLoaderImage: Sendable {
+    /// The loaded image.
+    public var image: UIImage
+
+    public init(image: UIImage) {
+        self.image = image
+    }
+}
+
+/// The result of loading a video asset through a ``MediaLoader``.
+public struct MediaLoaderVideoAsset: Sendable {
+    /// The video asset.
+    public var asset: AVURLAsset
+
+    public init(asset: AVURLAsset) {
+        self.asset = asset
+    }
+}
+
+/// The result of loading a video preview through a ``MediaLoader``.
+public struct MediaLoaderVideoPreview: Sendable {
+    /// The preview thumbnail image.
+    public var image: UIImage
+
+    public init(image: UIImage) {
+        self.image = image
     }
 }

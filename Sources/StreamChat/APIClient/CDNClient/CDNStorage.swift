@@ -86,6 +86,8 @@ extension CDNStorage {
     }
 }
 
+// MARK: - Options
+
 /// Options for uploading an attachment to the CDN.
 public struct AttachmentUploadOptions: Sendable {
     /// A closure that broadcasts upload progress (0.0 to 1.0).
