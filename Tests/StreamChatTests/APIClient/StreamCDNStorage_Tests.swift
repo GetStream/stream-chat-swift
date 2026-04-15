@@ -441,6 +441,135 @@ final class StreamCDNStorage_Tests: XCTestCase {
         XCTAssertNotNil(receivedResult?.error)
     }
 
+    // MARK: - Edge Cases
+
+    func test_uploadAttachment_withoutUploadingState_fails() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+        builder.encoder.encodeRequest = .success(URLRequest(url: .unique()))
+
+        let result: Result<UploadedFile, Error> = try waitFor {
+            client.uploadAttachment(
+                .dummy(),
+                options: .init(),
+                completion: $0
+            )
+        }
+
+        XCTAssertNotNil(result.error)
+    }
+
+    func test_uploadAttachmentLocalUrl_invalidURL_fails() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+        builder.encoder.encodeRequest = .success(URLRequest(url: .unique()))
+
+        let result: Result<UploadedFile, Error> = try waitFor {
+            client.uploadAttachment(
+                localUrl: URL(string: "file:///nonexistent/path/file.txt")!,
+                options: .init(),
+                completion: $0
+            )
+        }
+
+        XCTAssertNotNil(result.error)
+    }
+
+    func test_deleteAttachment_imageExtension_usesImageType() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+
+        let request = URLRequest(url: .unique())
+        builder.encoder.encodeRequest = .success(request)
+
+        let remoteURL = URL(string: "https://cdn.example.com/photo.jpg")!
+        let testEndpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: .image)
+
+        client.deleteAttachment(
+            remoteUrl: remoteURL,
+            options: .init(),
+            completion: { _ in }
+        )
+
+        XCTAssertEqual(builder.encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
+    }
+
+    func test_uploadAttachment_withProgress_reportsProgress() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+
+        let testRequest = URLRequest(url: .unique())
+        builder.encoder.encodeRequest = .success(testRequest)
+
+        let mockResponseData = try JSONEncoder.stream.encode(["file": URL.unique()])
+        URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 200, responseBody: mockResponseData)
+        let payload = FileUploadPayload(fileURL: .unique(), thumbURL: nil)
+        builder.decoder.decodeRequestResponse = .success(payload)
+
+        let progressExpectation = expectation(description: "Progress reported")
+        progressExpectation.assertForOverFulfill = false
+        let completionExpectation = expectation(description: "Upload completed")
+
+        client.uploadAttachment(
+            .dummy(
+                uploadingState: .init(
+                    localFileURL: .localYodaImage,
+                    state: .pendingUpload,
+                    file: .init(type: .jpeg, size: 0, mimeType: nil)
+                )
+            ),
+            options: .init(progress: { _ in
+                progressExpectation.fulfill()
+            }),
+            completion: { (_: Result<UploadedFile, Error>) in
+                completionExpectation.fulfill()
+            }
+        )
+
+        wait(for: [completionExpectation], timeout: 5)
+    }
+
+    func test_uploadAttachmentLocalUrl_imageFile_usesImageEndpoint() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+
+        let request = URLRequest(url: .unique())
+        builder.encoder.encodeRequest = .success(request)
+
+        let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(type: .image)
+
+        client.uploadAttachment(
+            localUrl: .localYodaImage,
+            options: .init(),
+            completion: { (_: Result<UploadedFile, Error>) in }
+        )
+
+        XCTAssertEqual(builder.encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
+    }
+
+    func test_uploadAttachmentLocalUrl_nonImageFile_usesFileEndpoint() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+
+        let request = URLRequest(url: .unique())
+        builder.encoder.encodeRequest = .success(request)
+
+        let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(type: .file)
+
+        let tempDir = NSTemporaryDirectory()
+        let tempFile = URL(fileURLWithPath: tempDir).appendingPathComponent("test-\(UUID().uuidString).pdf")
+        try Data("test".utf8).write(to: tempFile)
+        defer { try? FileManager.default.removeItem(at: tempFile) }
+
+        client.uploadAttachment(
+            localUrl: tempFile,
+            options: .init(),
+            completion: { (_: Result<UploadedFile, Error>) in }
+        )
+
+        XCTAssertEqual(builder.encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
+    }
+
     func test_deleteAttachmentFailure() throws {
         let builder = TestBuilder()
         let client = builder.make()
