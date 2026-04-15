@@ -62,14 +62,12 @@ final class ChannelListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.channels.count, 2)
     }
 
-    func test_groupedQueryChannelsPayload_decodesDynamicBuckets() throws {
+    func test_groupedQueryChannelsPayload_decodesGroupsMap() throws {
         let channelId = ChannelId(type: .messaging, id: "bucket-channel")
         let json = """
         {
-          "family": "support",
-          "buckets": [
-            {
-              "key": "all-open",
+          "groups": {
+            "all": {
               "channels": [
                 {
                   "channel": {
@@ -113,18 +111,17 @@ final class ChannelListPayload_Tests: XCTestCase {
               "unread_count": 3,
               "unread_channels": 1
             }
-          ],
+          },
           "duration": "12ms"
         }
         """.data(using: .utf8)!
 
         let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
 
-        XCTAssertEqual(payload.family, "support")
-        XCTAssertEqual(payload.buckets.map(\.key), ["all-open"])
-        XCTAssertEqual(payload.buckets.first?.channels.map(\.channel.cid), [channelId])
-        XCTAssertEqual(payload.buckets.first?.unreadCount, 3)
-        XCTAssertEqual(payload.buckets.first?.unreadChannels, 1)
+        XCTAssertEqual(payload.groups.keys.sorted(), ["all"])
+        XCTAssertEqual(payload.groups["all"]?.channels.map(\.channel.cid), [channelId])
+        XCTAssertEqual(payload.groups["all"]?.unreadCount, 3)
+        XCTAssertEqual(payload.groups["all"]?.unreadChannels, 1)
         XCTAssertEqual(payload.duration, "12ms")
     }
 
