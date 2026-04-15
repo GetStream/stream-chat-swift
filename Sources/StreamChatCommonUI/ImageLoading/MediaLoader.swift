@@ -8,10 +8,6 @@ import UIKit
 
 /// A unified protocol for loading images and video previews.
 ///
-/// Merges the responsibilities of image loading and video preview generation
-/// into a single protocol, eliminating stale-reference problems when customers
-/// replace just one of the two loaders.
-///
 /// Configuration is passed via options structs on every call, so concrete
 /// implementations remain stateless with respect to CDN configuration.
 /// Changing the requester on `ChatClientConfig` takes effect immediately without
