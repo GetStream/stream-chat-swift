@@ -126,7 +126,12 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         if let thumbnailURL = attachment.payload.thumbnailURL {
             let imageOptions = ImageLoadOptions(cdnRequester: options.cdnRequester)
             loadImage(url: thumbnailURL, options: imageOptions) { [weak self] result in
-                guard let self else { return }
+                guard let self else {
+                    StreamConcurrency.onMain {
+                        completion(.failure(ClientError.Unknown("MediaLoader was deallocated")))
+                    }
+                    return
+                }
                 switch result {
                 case let .success(loaded):
                     self.videoPreviewCache.setObject(loaded.image, forKey: videoURL as NSURL)
@@ -150,7 +155,12 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
         options.cdnRequester.fileRequest(for: url, options: .init()) { [weak self] result in
-            guard let self else { return }
+            guard let self else {
+                StreamConcurrency.onMain {
+                    completion(.failure(ClientError.Unknown("MediaLoader was deallocated")))
+                }
+                return
+            }
 
             let adjustedUrl: URL
             switch result {
@@ -169,7 +179,12 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
 
             imageGenerator.appliesPreferredTrackTransform = true
             imageGenerator.generateCGImagesAsynchronously(forTimes: [.init(time: frameTime)]) { [weak self] _, image, _, _, error in
-                guard let self else { return }
+                guard let self else {
+                    StreamConcurrency.onMain {
+                        completion(.failure(ClientError.Unknown("MediaLoader was deallocated")))
+                    }
+                    return
+                }
 
                 let result: Result<MediaLoaderVideoPreview, Error>
                 if let thumbnail = image {
@@ -178,7 +193,6 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
                     result = .failure(error)
                 } else {
                     result = .failure(ClientError.Unknown("Both error and image are nil"))
-                    return
                 }
 
                 if let preview = try? result.get() {

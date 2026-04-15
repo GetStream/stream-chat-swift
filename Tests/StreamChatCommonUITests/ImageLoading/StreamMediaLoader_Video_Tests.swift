@@ -288,6 +288,51 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         XCTAssertEqual(cdnRequester.fileRequestCallCount, 1, "Should call CDN for video preview generation")
     }
 
+    // MARK: - Completion always called
+
+    func test_loadVideoPreview_deallocatedLoader_callsCompletionWithError() {
+        var loader: StreamMediaLoader? = StreamMediaLoader(downloader: MockImageDownloader())
+        let asyncCDN = AsyncMockCDNRequester()
+        let url = URL(string: "https://example.com/video.mp4")!
+        let expectation = expectation(description: "Completion called")
+
+        loader?.loadVideoPreview(at: url, options: VideoLoadOptions(cdnRequester: asyncCDN)) { result in
+            if case .failure = result {
+                expectation.fulfill()
+            } else {
+                XCTFail("Should have failed when loader was deallocated")
+            }
+        }
+
+        loader = nil
+        asyncCDN.triggerFileCompletion(.success(CDNRequest(url: url)))
+
+        waitForExpectations(timeout: 2)
+    }
+
+    func test_loadVideoPreview_attachment_deallocatedLoader_callsCompletionWithError() {
+        let mockDownloader = AsyncMockImageDownloader()
+        var loader: StreamMediaLoader? = StreamMediaLoader(downloader: mockDownloader)
+        let attachment = makeVideoAttachment(
+            videoURL: URL(string: "https://example.com/video.mp4")!,
+            thumbnailURL: URL(string: "https://example.com/thumb.jpg")!
+        )
+        let expectation = expectation(description: "Completion called")
+
+        loader?.loadVideoPreview(with: attachment, options: VideoLoadOptions(cdnRequester: cdnRequester)) { result in
+            if case .failure = result {
+                expectation.fulfill()
+            } else {
+                XCTFail("Should have failed when loader was deallocated")
+            }
+        }
+
+        loader = nil
+        mockDownloader.triggerCompletion(.success(DownloadedImage(image: UIImage())))
+
+        waitForExpectations(timeout: 2)
+    }
+
     // MARK: - Memory Warning
 
     func test_memoryWarning_clearsCache_subsequentLoadCallsCDN() {
@@ -381,6 +426,41 @@ private final class MockImageDownloader: ImageDownloading, @unchecked Sendable {
         let result = self.result
         DispatchQueue.main.async {
             completion(result)
+        }
+    }
+}
+
+private final class AsyncMockCDNRequester: CDNRequester, @unchecked Sendable {
+    private var fileCompletion: ((Result<CDNRequest, Error>) -> Void)?
+
+    func imageRequest(for url: URL, options: ImageRequestOptions, completion: @escaping (Result<CDNRequest, Error>) -> Void) {
+        completion(.success(CDNRequest(url: url)))
+    }
+
+    func fileRequest(for url: URL, options: FileRequestOptions, completion: @escaping (Result<CDNRequest, Error>) -> Void) {
+        fileCompletion = completion
+    }
+
+    func triggerFileCompletion(_ result: Result<CDNRequest, Error>) {
+        fileCompletion?(result)
+    }
+}
+
+private final class AsyncMockImageDownloader: ImageDownloading, @unchecked Sendable {
+    private var storedCompletion: (@MainActor (Result<DownloadedImage, Error>) -> Void)?
+
+    func downloadImage(
+        url: URL,
+        options: ImageDownloadingOptions,
+        completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
+    ) {
+        storedCompletion = completion
+    }
+
+    func triggerCompletion(_ result: Result<DownloadedImage, Error>) {
+        let completion = storedCompletion
+        DispatchQueue.main.async {
+            completion?(result)
         }
     }
 }
