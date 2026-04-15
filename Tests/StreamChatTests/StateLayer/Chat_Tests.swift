@@ -548,6 +548,27 @@ final class Chat_Tests: XCTestCase {
         )
         XCTAssertEqual(attachmentId, env.messageUpdaterMock.downloadAttachment_attachmentId)
     }
+
+    func test_downloadAttachment_withCustomRemoteURL_propagatesURLToUpdater() async throws {
+        let attachmentId = AttachmentId.unique
+        let expected = ChatMessageFileAttachment.mock(id: attachmentId)
+        let customRemoteURL = URL(string: "https://cdn.example.com/signed?token=abc123")!
+        env.messageUpdaterMock.downloadAttachment_completion_result = .success(expected.asAnyAttachment)
+        let result = try await chat.downloadAttachment(expected, remoteURL: customRemoteURL)
+        XCTAssertEqual(expected, result)
+        XCTAssertEqual(attachmentId, env.messageUpdaterMock.downloadAttachment_attachmentId)
+        XCTAssertEqual(customRemoteURL, env.messageUpdaterMock.downloadAttachment_remoteURL)
+    }
+
+    func test_downloadAttachment_withoutRemoteURL_propagatesNilToUpdater() async throws {
+        let attachmentId = AttachmentId.unique
+        let expected = ChatMessageFileAttachment.mock(id: attachmentId)
+        env.messageUpdaterMock.downloadAttachment_completion_result = .success(expected.asAnyAttachment)
+        let result = try await chat.downloadAttachment(expected)
+        XCTAssertEqual(expected, result)
+        XCTAssertEqual(attachmentId, env.messageUpdaterMock.downloadAttachment_attachmentId)
+        XCTAssertNil(env.messageUpdaterMock.downloadAttachment_remoteURL)
+    }
     
     func test_deleteLocalAttachmentDownload_whenMessageUpdaterSucceeds_thenSucceess() async throws {
         let attachmentId = AttachmentId.unique
