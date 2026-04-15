@@ -48,15 +48,16 @@ final class CDNStorage_Spy: CDNStorage, Spy, @unchecked Sendable {
         }
     }
 
+    var deleteAttachmentCalled = false
+
     func deleteAttachment(
         remoteUrl: URL,
         options: AttachmentDeleteOptions,
         completion: @escaping @Sendable (Error?) -> Void
     ) {
         record()
+        deleteAttachmentCalled = true
         deleteAttachmentRemoteUrl = remoteUrl
-        if let result = deleteAttachmentResult {
-            completion(result)
-        }
+        completion(deleteAttachmentResult)
     }
 }

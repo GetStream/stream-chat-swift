@@ -657,6 +657,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				StreamChatTests/APIClient/APIClient_Tests.swift,
+				StreamChatTests/APIClient/CDNClient/CDNStorage_Tests.swift,
 				StreamChatTests/APIClient/CDNClient/StreamCDN_Tests.swift,
 				StreamChatTests/APIClient/ChatRemoteNotificationHandler_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/AppEndpoints_Tests.swift,
