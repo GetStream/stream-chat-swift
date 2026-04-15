@@ -18,8 +18,6 @@
 		82120C312B6AB3B400347A35 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		82120C342B6AB41100347A35 /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		82120C352B6AB41100347A35 /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		AD4C2CB02EF1D000000E4FC1 /* StreamChatCommonUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; };
-		AD4C2CB12EF1D000000E4FC1 /* StreamChatCommonUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		823F5B1A2A8D0294000C3081 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */; };
 		823F5B1B2A8D0294000C3081 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */; };
 		827414272ACDE941009CD13C /* StreamChatTestMockServer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */; };
@@ -31,8 +29,6 @@
 		82DCB3AA2A4AE8FB00738933 /* StreamChat.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		82DCB3AD2A4AE8FB00738933 /* StreamChatUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; };
 		82DCB3AE2A4AE8FB00738933 /* StreamChatUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 790881FD25432B7200896F03 /* StreamChatUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		AD4C2CA02EF1C200000E4FC1 /* StreamChatCommonUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; };
-		AD4C2CA12EF1C200000E4FC1 /* StreamChatCommonUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		82E6553C2B06785700D64906 /* StreamChatTestTools.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 793060E625778896005CF846 /* StreamChatTestTools.framework */; };
 		82F714AB2B078AE800442A74 /* StreamSwiftTestHelpers in Frameworks */ = {isa = PBXBuildFile; productRef = 82F714AA2B078AE800442A74 /* StreamSwiftTestHelpers */; };
 		82FF61E82B6AB5B3007185B6 /* StreamChatTestMockServer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A3A0C999283E952900B18DA4 /* StreamChatTestMockServer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -44,9 +40,13 @@
 		AC90839D268B120900ACFB8E /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		AD4C2C8B2EF1BF58000E4FC1 /* StreamChat.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 799C941B247D2F80001F1104 /* StreamChat.framework */; };
 		AD4C2C8F2EF1BF58000E4FC1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 823F5B192A8D0294000C3081 /* PrivacyInfo.xcprivacy */; };
+		AD4C2CA02EF1C200000E4FC1 /* StreamChatCommonUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; };
 		AD4C2CA12EF1C18F000E4FC1 /* StreamChatCommonUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; };
+		AD4C2CA12EF1C200000E4FC1 /* StreamChatCommonUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AD4C2CA62EF1C1A4000E4FC1 /* StreamChatCommonUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; };
 		AD4C2CA72EF1C1A4000E4FC1 /* StreamChatCommonUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		AD4C2CB02EF1D000000E4FC1 /* StreamChatCommonUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; };
+		AD4C2CB12EF1D000000E4FC1 /* StreamChatCommonUI.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		AD5D7BC82EFA26FF004A63E2 /* StreamChatCommonUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AD4C2C952EF1BF58000E4FC1 /* StreamChatCommonUI.framework */; platformFilter = ios; };
 		ADCB576628A425D500B81AE8 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = ADCB576528A425D500B81AE8 /* Sentry */; };
 		ADDFDE2B2779EC8A003B3B07 /* Atlantis in Frameworks */ = {isa = PBXBuildFile; productRef = ADDFDE2A2779EC8A003B3B07 /* Atlantis */; };
@@ -657,6 +657,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				StreamChatTests/APIClient/APIClient_Tests.swift,
+				StreamChatTests/APIClient/CDNClient/StreamCDN_Tests.swift,
 				StreamChatTests/APIClient/ChatRemoteNotificationHandler_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/AppEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/AttachmentEndpoints_Tests.swift,
@@ -719,7 +720,6 @@
 				StreamChatTests/APIClient/HTTPHeader_Tests.swift,
 				StreamChatTests/APIClient/RequestDecoder_Tests.swift,
 				StreamChatTests/APIClient/RequestEncoder_Tests.swift,
-				StreamChatTests/APIClient/CDNClient/StreamCDN_Tests.swift,
 				StreamChatTests/Audio/AudioAnalysisEngine_Tests.swift,
 				StreamChatTests/Audio/AudioPlaybackContext_Tests.swift,
 				StreamChatTests/Audio/AudioPlaybackRate_Tests.swift,
@@ -1075,6 +1075,7 @@
 				"StreamChatUITests/Utils/DifferenceKit+Stream_Tests.swift",
 				StreamChatUITests/Utils/ImageResultsMapper_Tests.swift,
 				StreamChatUITests/Utils/ImageSizeCalculator_Tests.swift,
+				StreamChatUITests/Utils/StreamMediaLoader_UIKit_Tests.swift,
 				"StreamChatUITests/Utils/String+Extensions_Tests.swift",
 				StreamChatUITests/Utils/TextViewMentionedUsersHandler_Tests.swift,
 				"StreamChatUITests/Utils/UIViewController+Extensions_Tests.swift",
@@ -1093,6 +1094,8 @@
 				StreamChatCommonUITests/Formatters/DefaultAudioRecordingNameFormatter_Tests.swift,
 				StreamChatCommonUITests/Formatters/DefaultMarkdownFormatter_Tests.swift,
 				StreamChatCommonUITests/Formatters/DefaultMediaBadgeDurationFormatter_Tests.swift,
+				StreamChatCommonUITests/ImageLoading/StreamMediaLoader_Image_Tests.swift,
+				StreamChatCommonUITests/ImageLoading/StreamMediaLoader_Video_Tests.swift,
 				StreamChatCommonUITests/Localization_Tests.swift,
 				StreamChatCommonUITests/Utils/DateUtils_Tests.swift,
 				"StreamChatUITests/Extensions/UIView+SimulateViewAddedToHierarchy.swift",
@@ -1456,11 +1459,11 @@
 				"StreamChatUI/Utils/Extensions/UIViewController+Extensions.swift",
 				StreamChatUI/Utils/ImageLoading/ImageDownloadOptions.swift,
 				StreamChatUI/Utils/ImageLoading/ImageDownloadRequest.swift,
-				"StreamChatUI/Utils/ImageLoading/MediaLoader+UIKit.swift",
 				StreamChatUI/Utils/ImageLoading/ImageLoaderOptions.swift,
 				StreamChatUI/Utils/ImageLoading/ImageMerger.swift,
 				StreamChatUI/Utils/ImageLoading/ImageResultsMapper.swift,
 				StreamChatUI/Utils/ImageLoading/ImageSizeCalculator.swift,
+				"StreamChatUI/Utils/ImageLoading/MediaLoader+UIKit.swift",
 				StreamChatUI/Utils/ImageLoading/StreamImageDownloader.swift,
 				StreamChatUI/Utils/ImageProcessor/StreamImageProcessor.swift,
 				StreamChatUI/Utils/KeyboardHandler/ComposerKeyboardHandler.swift,
@@ -1804,11 +1807,11 @@
 				"StreamChatUI/Utils/Extensions/UIViewController+Extensions.swift",
 				StreamChatUI/Utils/ImageLoading/ImageDownloadOptions.swift,
 				StreamChatUI/Utils/ImageLoading/ImageDownloadRequest.swift,
-				"StreamChatUI/Utils/ImageLoading/MediaLoader+UIKit.swift",
 				StreamChatUI/Utils/ImageLoading/ImageLoaderOptions.swift,
 				StreamChatUI/Utils/ImageLoading/ImageMerger.swift,
 				StreamChatUI/Utils/ImageLoading/ImageResultsMapper.swift,
 				StreamChatUI/Utils/ImageLoading/ImageSizeCalculator.swift,
+				"StreamChatUI/Utils/ImageLoading/MediaLoader+UIKit.swift",
 				StreamChatUI/Utils/ImageLoading/StreamImageDownloader.swift,
 				StreamChatUI/Utils/ImageProcessor/StreamImageProcessor.swift,
 				StreamChatUI/Utils/KeyboardHandler/ComposerKeyboardHandler.swift,

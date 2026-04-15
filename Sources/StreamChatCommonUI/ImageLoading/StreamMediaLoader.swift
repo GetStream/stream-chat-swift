@@ -87,9 +87,8 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
                 case let .success(loaded):
                     batchResult.images[index] = loaded
                 case .failure:
-                    if !options.placeholders.isEmpty {
-                        let placeholderIndex = index % options.placeholders.count
-                        batchResult.images[index] = MediaLoaderImage(image: options.placeholders[placeholderIndex])
+                    if index < options.placeholders.count {
+                        batchResult.images[index] = MediaLoaderImage(image: options.placeholders[index])
                     }
                 }
                 group.leave()

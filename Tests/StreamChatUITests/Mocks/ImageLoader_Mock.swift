@@ -18,7 +18,7 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
     private let imageProcessor = StreamImageProcessor()
 
     lazy var loadVideoPreviewForVideoMockFunc = MockFunc.mock(for: loadVideoPreview(at:options:completion:))
-    lazy var videoAssetMockFunc = MockFunc.mock(for: videoAsset(at:options:completion:))
+    lazy var videoAssetMockFunc = MockFunc.mock(for: loadVideoAsset(at:options:completion:))
 
     func loadImage(
         url: URL?,
