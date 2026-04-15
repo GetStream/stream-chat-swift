@@ -787,31 +787,21 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
     
     /// Downloads the specified attachment and stores it locally on the device.
     ///
-    /// The URL is automatically resolved through ``ChatClientConfig/cdnRequester``
-    /// for signing, authentication headers, or host rewriting before downloading.
-    ///
     /// - Parameters:
     ///   - attachment: The attachment to download.
+    ///   - remoteURL: An optional pre-resolved URL to download from (e.g. after CDN signing).
+    ///     If `nil`, the attachment's original `remoteURL` is used.
     ///   - completion: A completion block with the attachment containing the downloading state.
     ///
     /// - Note: The local storage URL (`attachment.downloadingState?.localFileURL`) can change between app launches.
     public func downloadAttachment<Payload>(
         _ attachment: ChatMessageAttachment<Payload>,
+        remoteURL: URL? = nil,
         completion: @escaping @MainActor (Result<ChatMessageAttachment<Payload>, Error>) -> Void
     ) where Payload: DownloadableAttachmentPayload {
-        client.config.cdnRequester.fileRequest(for: attachment.remoteURL, options: .init()) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case let .success(cdnRequest):
-                self.messageUpdater.downloadAttachment(attachment, remoteURL: cdnRequest.url) { result in
-                    self.callback {
-                        completion(result)
-                    }
-                }
-            case let .failure(error):
-                self.callback {
-                    completion(.failure(error))
-                }
+        messageUpdater.downloadAttachment(attachment, remoteURL: remoteURL) { [weak self] result in
+            self?.callback {
+                completion(result)
             }
         }
     }

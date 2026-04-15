@@ -430,16 +430,18 @@ public class Chat: @unchecked Sendable {
     ///
     /// - Parameters:
     ///   - attachment: The attachment to download.
+    ///   - remoteURL: An optional pre-resolved URL to download from (e.g. after CDN signing).
+    ///     If `nil`, the attachment's original `remoteURL` is used.
     ///
     /// - Note: The local storage URL can change between app launches.
     ///
     /// - Throws: An error while downloading the attachment.
     /// - Returns: An instance of the downloaded attachment which includes the local URL.
     @discardableResult public func downloadAttachment<Payload>(
-        _ attachment: ChatMessageAttachment<Payload>
+        _ attachment: ChatMessageAttachment<Payload>,
+        remoteURL: URL? = nil
     ) async throws -> ChatMessageAttachment<Payload> where Payload: DownloadableAttachmentPayload {
-        let cdnRequest = try await client.config.cdnRequester.fileRequest(for: attachment.remoteURL)
-        return try await messageUpdater.downloadAttachment(attachment, remoteURL: cdnRequest.url)
+        try await messageUpdater.downloadAttachment(attachment, remoteURL: remoteURL)
     }
     
     /// Deletes the locally downloaded file.
