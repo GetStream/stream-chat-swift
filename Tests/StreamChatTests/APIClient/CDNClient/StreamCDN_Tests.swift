@@ -7,8 +7,8 @@ import Foundation
 import XCTest
 
 final class StreamCDNRequester_Tests: XCTestCase {
-    let baseUrl = "https://www.\(StreamCDNRequester.streamCDNURL)"
     var sut: StreamCDNRequester!
+    var baseUrl: String { "https://www.\(sut.cdnHost)" }
 
     override func setUp() {
         super.setUp()

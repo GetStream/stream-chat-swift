@@ -10,18 +10,23 @@ import UIKit
 
 /// The default Stream CDN implementation.
 ///
-/// Handles image resize query parameters for `stream-io-cdn.com` URLs
+/// Handles image resize query parameters for the configured CDN host
 /// and provides cache keys that strip dynamic parameters while
 /// preserving resize-related ones.
 ///
 /// For file/video requests, returns the URL unchanged.
-/// Subclass to add signing, custom headers, or different CDN behavior.
-open class StreamCDNRequester: CDNRequester, @unchecked Sendable {
-    public nonisolated(unsafe) static var streamCDNURL = "stream-io-cdn.com"
+/// To add signing, custom headers, or different CDN behavior,
+/// implement ``CDNRequester`` directly. You can delegate to a
+/// `StreamCDNRequester` instance for default resize and caching logic.
+public final class StreamCDNRequester: CDNRequester, Sendable {
+    /// The CDN host used to match URLs for resize and caching logic.
+    public let cdnHost: String
 
-    public init() {}
+    public init(cdnHost: String = "stream-io-cdn.com") {
+        self.cdnHost = cdnHost
+    }
 
-    open func imageRequest(
+    public func imageRequest(
         for url: URL,
         options: ImageRequestOptions,
         completion: @escaping (Result<CDNRequest, Error>) -> Void
@@ -31,7 +36,7 @@ open class StreamCDNRequester: CDNRequester, @unchecked Sendable {
         completion(.success(CDNRequest(url: finalURL, cachingKey: cachingKey)))
     }
 
-    open func fileRequest(
+    public func fileRequest(
         for url: URL,
         options: FileRequestOptions,
         completion: @escaping (Result<CDNRequest, Error>) -> Void
@@ -41,10 +46,9 @@ open class StreamCDNRequester: CDNRequester, @unchecked Sendable {
 
     // MARK: - URL Building
 
-    /// Builds an image URL with resize query parameters for Stream CDN URLs.
-    open func buildImageURL(from url: URL, resize: CDNImageResize?) -> URL {
+    private func buildImageURL(from url: URL, resize: CDNImageResize?) -> URL {
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-              let host = components.host, host.contains(StreamCDNRequester.streamCDNURL) else {
+              let host = components.host, host.contains(cdnHost) else {
             return url
         }
 
@@ -76,13 +80,11 @@ open class StreamCDNRequester: CDNRequester, @unchecked Sendable {
         return components.url ?? url
     }
 
-    /// Builds a caching key for the given URL, stripping dynamic parameters
-    /// but preserving resize-related query parameters.
-    open func buildCachingKey(for url: URL) -> String {
+    private func buildCachingKey(for url: URL) -> String {
         let key = url.absoluteString
 
         guard var components = URLComponents(url: url, resolvingAgainstBaseURL: true),
-              let host = components.host, host.contains(StreamCDNRequester.streamCDNURL) else {
+              let host = components.host, host.contains(cdnHost) else {
             return key
         }
 
