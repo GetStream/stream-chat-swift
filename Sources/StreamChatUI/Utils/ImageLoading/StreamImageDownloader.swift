@@ -36,7 +36,11 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
             StreamConcurrency.onMain {
                 switch result {
                 case let .success(imageResponse):
-                    completion(.success(DownloadedImage(image: imageResponse.image)))
+                    completion(.success(DownloadedImage(
+                        image: imageResponse.image,
+                        isAnimated: imageResponse.container.type == .gif,
+                        animatedImageData: imageResponse.container.data
+                    )))
                 case let .failure(error):
                     completion(.failure(error))
                 }

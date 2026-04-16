@@ -171,9 +171,15 @@ public struct VideoLoadOptions: Sendable {
 public struct MediaLoaderImage: Sendable {
     /// The loaded image.
     public var image: UIImage
+    /// Whether the image is an animated format (e.g. GIF).
+    public var isAnimated: Bool
+    /// The raw image data for animated rendering. `nil` for static images.
+    public var animatedImageData: Data?
 
-    public init(image: UIImage) {
+    public init(image: UIImage, isAnimated: Bool = false, animatedImageData: Data? = nil) {
         self.image = image
+        self.isAnimated = isAnimated
+        self.animatedImageData = animatedImageData
     }
 }
 

@@ -75,7 +75,13 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
                     resize: resizeSize
                 )
                 downloader.downloadImage(url: cdnRequest.url, options: downloadOptions) { imageResult in
-                    completion(imageResult.map { MediaLoaderImage(image: $0.image) })
+                    completion(imageResult.map {
+                        MediaLoaderImage(
+                            image: $0.image,
+                            isAnimated: $0.isAnimated,
+                            animatedImageData: $0.animatedImageData
+                        )
+                    })
                 }
             case let .failure(error):
                 StreamConcurrency.onMain {
