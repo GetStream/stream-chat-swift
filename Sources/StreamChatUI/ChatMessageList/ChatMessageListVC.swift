@@ -1034,7 +1034,7 @@ open class ChatMessageListVC: _ViewController,
                         let cdnRequest = try await cdnRequester.fileRequest(for: attachment.remoteURL)
                         try await chat.downloadAttachment(attachment, remoteURL: cdnRequest.url)
                     } catch {
-                        log.debug("Downloaded attachment for id \(attachment.id)")
+                        log.error("Failed to download attachment \(attachment.id): \(error)")
                     }
                 }
             }
