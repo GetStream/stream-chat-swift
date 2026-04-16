@@ -659,6 +659,7 @@
 				StreamChatTests/APIClient/APIClient_Tests.swift,
 				StreamChatTests/APIClient/CDNClient/CDNStorage_Tests.swift,
 				StreamChatTests/APIClient/CDNClient/StreamCDNRequester_Tests.swift,
+				StreamChatTests/APIClient/StreamCDNStorage_Tests.swift,
 				StreamChatTests/APIClient/ChatRemoteNotificationHandler_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/AppEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/AttachmentEndpoints_Tests.swift,

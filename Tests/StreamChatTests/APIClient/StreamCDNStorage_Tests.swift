@@ -506,8 +506,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         let payload = FileUploadPayload(fileURL: .unique(), thumbURL: nil)
         builder.decoder.decodeRequestResponse = .success(payload)
 
-        let progressExpectation = expectation(description: "Progress reported")
-        progressExpectation.assertForOverFulfill = false
+        var progressCalled = false
         let completionExpectation = expectation(description: "Upload completed")
 
         client.uploadAttachment(
@@ -519,7 +518,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
                 )
             ),
             options: .init(progress: { _ in
-                progressExpectation.fulfill()
+                progressCalled = true
             }),
             completion: { (_: Result<UploadedFile, Error>) in
                 completionExpectation.fulfill()
@@ -527,6 +526,7 @@ final class StreamCDNStorage_Tests: XCTestCase {
         )
 
         wait(for: [completionExpectation], timeout: 5)
+        XCTAssertTrue(progressCalled)
     }
 
     func test_uploadAttachmentLocalUrl_imageFile_usesImageEndpoint() throws {
