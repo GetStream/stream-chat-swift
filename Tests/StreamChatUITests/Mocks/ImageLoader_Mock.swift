@@ -18,6 +18,7 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
     private let imageProcessor = StreamImageProcessor()
 
     lazy var loadVideoPreviewMockFunc = MockFunc.mock(for: loadVideoPreview(with:options:completion:))
+    lazy var loadVideoPreviewAtURLMockFunc = MockFunc.mock(for: loadVideoPreview(at:options:completion:))
     lazy var videoAssetMockFunc = MockFunc.mock(for: loadVideoAsset(at:options:completion:))
 
     func loadImage(
@@ -74,6 +75,7 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
         options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
+        loadVideoPreviewAtURLMockFunc.call(with: (url, options, completion))
         guard let data = try? Data(contentsOf: url), let image = UIImage(data: data) else {
             MainActor.assumeIsolated {
                 completion(.failure(NSError(domain: "ImageLoader_Mock", code: 0, userInfo: [NSLocalizedDescriptionKey: "Failed to load image from url: \(url)"])))
