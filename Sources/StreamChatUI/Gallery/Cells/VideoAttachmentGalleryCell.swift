@@ -52,34 +52,29 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
         let currentAssetURL = (player.currentItem?.asset as? AVURLAsset)?.url
 
         if newAssetURL != currentAssetURL {
-            let playerItem = newAssetURL.map {
-                AVPlayerItem(asset: components.videoLoader.videoAsset(at: $0))
+            if let url = newAssetURL {
+                let options = VideoLoadOptions(cdnRequester: components.cdnRequester)
+                components.mediaLoader.loadVideoAsset(at: url, options: options) { [weak self] result in
+                    if case let .success(loaded) = result {
+                        let playerItem = AVPlayerItem(asset: loaded.asset)
+                        self?.player.replaceCurrentItem(with: playerItem)
+                    }
+                }
+            } else {
+                player.replaceCurrentItem(with: nil)
             }
-            player.replaceCurrentItem(with: playerItem)
 
-            if let thumbnailURL = videoAttachment?.thumbnailURL {
-                showPreview(using: thumbnailURL)
-            } else if let url = newAssetURL {
-                components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
+            if let videoAttachment {
+                components.mediaLoader.loadVideoPreview(
+                    with: videoAttachment,
+                    options: VideoLoadOptions(cdnRequester: components.cdnRequester)
+                ) { [weak self] in
                     switch $0 {
                     case let .success(preview):
-                        self?.showPreview(using: preview)
+                        self?.showPreview(using: preview.image)
                     case .failure:
                         self?.showPreview(using: nil)
                     }
-                }
-            }
-        }
-    }
-
-    private func showPreview(using thumbnailURL: URL) {
-        components.imageLoader.downloadImage(with: .init(url: thumbnailURL, options: ImageDownloadOptions())) { [weak self] result in
-            StreamConcurrency.onMain { [weak self] in
-                switch result {
-                case let .success(preview):
-                    self?.showPreview(using: preview)
-                case .failure:
-                    self?.showPreview(using: nil)
                 }
             }
         }

@@ -1022,8 +1022,7 @@ private class TestEnvironment {
                     requestEncoder: $1,
                     requestDecoder: $2,
                     attachmentDownloader: $3,
-                    attachmentUploader: $4,
-                    cdnClient: $5
+                    cdnStorage: $4
                 )
                 return self.apiClient!
             },

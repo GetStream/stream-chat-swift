@@ -14,8 +14,6 @@ public enum AttachmentValidationError: Error {
 
     /// The number of attachments reached the limit.
     case maxAttachmentsCountPerMessageExceeded(limit: Int)
-
-    internal static let fileSizeMaxLimitFallback: Int64 = 100 * 1024 * 1024
 }
 
 public struct LocalAttachmentInfoKey: Hashable, Equatable, RawRepresentable, Sendable {
@@ -1499,13 +1497,12 @@ open class ComposerVC: _ViewController,
     /// The maximum upload file size depending on the attachment type.
     ///
     /// The max attachment size can be set from the Stream's Dashboard App Settings.
-    /// If it is not set, it fallbacks to the deprecated `ChatClientConfig.maxAttachmentSize`.
     /// - Parameter attachmentType: The attachment type that is being uploaded.
     /// - Returns: The file size limit in bytes. The default value is 100MB.
     open func maxAttachmentSize(for attachmentType: AttachmentType) -> Int64 {
         guard let client = channelController?.client else {
             log.assertionFailure("Channel controller must be set at this point")
-            return AttachmentValidationError.fileSizeMaxLimitFallback
+            return Components.default.maxAttachmentSize
         }
 
         let maxAttachmentSize: Int64?
@@ -1516,14 +1513,8 @@ open class ComposerVC: _ViewController,
             maxAttachmentSize = client.appSettings?.fileUploadConfig.sizeLimitInBytes
         }
 
-        // If no value is set in the dashboard, the size_limit will be nil or zero,
-        // so in this case we fallback to the default value.
         guard let maxSize = maxAttachmentSize, maxSize > 0 else {
-            if let customCDNClient = client.config.customCDNClient {
-                return type(of: customCDNClient).maxAttachmentSize
-            } else {
-                return AttachmentValidationError.fileSizeMaxLimitFallback
-            }
+            return Components.default.maxAttachmentSize
         }
 
         return maxSize

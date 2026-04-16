@@ -10,15 +10,6 @@ import UIKit
 import XCTest
 
 @MainActor final class PollAttachmentView_Tests: XCTestCase {
-    /// Static setUp() is only run once. Which is what we want in this case to preload the images.
-    override class func setUp() {
-        /// Dummy snapshot to preload the TestImages.yoda.url image
-        /// This was the only workaround to make sure the image always appears in the snapshots.
-        let view = UIImageView(frame: .init(center: .zero, size: .init(width: 100, height: 100)))
-        Components.default.imageLoader.loadImage(into: view, from: TestImages.yoda.url)
-        AssertSnapshot(view, variants: [.defaultLight])
-    }
-
     let currentUser = ChatUser.mock(
         id: .unique,
         imageURL: TestImages.yoda.url
@@ -135,7 +126,7 @@ extension PollAttachmentView_Tests {
         components: Components? = nil
     ) -> ChatMessageContentView {
         let appearance = appearance ?? .default
-        let components = components ?? .default
+        let components = components ?? .mock
         let channel = ChatChannel.mock(cid: .unique)
         let message = ChatMessage.mock(text: "", poll: poll)
         let layoutOptions = components.messageLayoutOptionsResolver.optionsForMessage(

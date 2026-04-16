@@ -170,7 +170,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
     /// Shows message author avatar.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.author`.
-    public private(set) var authorAvatarView: ChatAvatarView?
+    public private(set) var authorAvatarView: ChatUserAvatarView?
 
     /// Shows a spacer where the author avatar should be.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.avatarSizePadding`.
@@ -224,7 +224,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
     /// Shows the avatar of the user who left the latest thread reply.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.threadInfo`.
-    public private(set) var threadAvatarView: ChatAvatarView?
+    public private(set) var threadAvatarView: ChatUserAvatarView?
 
     /// Shows the arrow from message bubble to `threadAvatarView` view.
     /// Exists if `layout(options: MessageLayoutOptions)` was invoked with the options containing `.threadInfo`.
@@ -644,23 +644,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         }
 
         // Avatar
-        let placeholder = UserAvatarInitialsImage.image(
-            name: content?.author.name ?? "",
-            size: components.avatarThumbnailSize,
-            appearance: appearance
-        )
-        if let imageURL = content?.author.imageURL, let imageView = authorAvatarView?.imageView {
-            components.imageLoader.loadImage(
-                into: imageView,
-                from: imageURL,
-                with: ImageLoaderOptions(
-                    resize: .init(components.avatarThumbnailSize),
-                    placeholder: placeholder
-                )
-            )
-        } else {
-            authorAvatarView?.imageView.image = placeholder
-        }
+        authorAvatarView?.content = content?.author
 
         // Bubble view
         bubbleView?.content = content.map { message in
@@ -709,23 +693,7 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
         }
 
         // The last thread participant is the author of the most recent reply.
-        let threadAvatarUrl = content?.threadParticipants.last?.imageURL
-
-        if let imageView = threadAvatarView?.imageView {
-            let threadAvatarPlaceholder = UserAvatarInitialsImage.image(
-                name: content?.threadParticipants.last?.name ?? "",
-                size: components.avatarThumbnailSize,
-                appearance: appearance
-            )
-            components.imageLoader.loadImage(
-                into: imageView,
-                from: threadAvatarUrl,
-                with: ImageLoaderOptions(
-                    resize: .init(components.avatarThumbnailSize),
-                    placeholder: threadAvatarPlaceholder
-                )
-            )
-        }
+        threadAvatarView?.content = content?.threadParticipants.last
 
         // Reactions view
         reactionsBubbleView?.tailDirection = content
@@ -837,14 +805,16 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
     /// Instantiates, configures and assigns `authorAvatarView` when called for the first time.
     /// - Returns: The `authorAvatarView` subview.
-    open func createAvatarView() -> ChatAvatarView {
+    open func createAvatarView() -> ChatUserAvatarView {
         if authorAvatarView == nil {
-            authorAvatarView = components
-                .avatarView
+            let avatarView = components
+                .userAvatarView
                 .init()
                 .withoutAutoresizingMaskConstraints
+            avatarView.shouldShowOnlineIndicator = false
+            authorAvatarView = avatarView
         }
-        authorAvatarView?.addTarget(self, action: #selector(handleTapOnAvatarView), for: .touchUpInside)
+        authorAvatarView?.presenceAvatarView.avatarView.addTarget(self, action: #selector(handleTapOnAvatarView), for: .touchUpInside)
         return authorAvatarView!
     }
 
@@ -861,12 +831,14 @@ open class ChatMessageContentView: _View, ThemeProvider, UITextViewDelegate {
 
     /// Instantiates, configures and assigns `threadAvatarView` when called for the first time.
     /// - Returns: The `threadAvatarView` subview.
-    open func createThreadAvatarView() -> ChatAvatarView {
+    open func createThreadAvatarView() -> ChatUserAvatarView {
         if threadAvatarView == nil {
-            threadAvatarView = components
-                .avatarView
+            let avatarView = components
+                .userAvatarView
                 .init()
                 .withoutAutoresizingMaskConstraints
+            avatarView.shouldShowOnlineIndicator = false
+            threadAvatarView = avatarView
         }
         return threadAvatarView!
     }

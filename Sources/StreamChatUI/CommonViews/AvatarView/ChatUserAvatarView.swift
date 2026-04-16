@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// A view that shows a user avatar including an indicator of the user presence (online/offline).
@@ -35,12 +36,13 @@ open class ChatUserAvatarView: _View, ThemeProvider {
             size: components.avatarThumbnailSize,
             appearance: appearance
         )
-        components.imageLoader.loadImage(
+        components.mediaLoader.loadImage(
             into: presenceAvatarView.avatarView.imageView,
             from: content?.imageURL,
             with: ImageLoaderOptions(
                 resize: .init(components.avatarThumbnailSize),
-                placeholder: placeholder
+                placeholder: placeholder,
+                cdnRequester: components.cdnRequester
             )
         )
 

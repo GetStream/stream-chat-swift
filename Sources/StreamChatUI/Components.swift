@@ -90,17 +90,18 @@ import UIKit
     /// The view that shows a loading indicator.
     public var loadingIndicator: ChatLoadingIndicator.Type = ChatLoadingIndicator.self
 
-    /// Object with set of function for handling images from CDN
-    public var imageCDN: ImageCDN = StreamImageCDN()
+    /// The CDN requester used for URL transformation (signing, headers, resizing).
+    public var cdnRequester: CDNRequester = StreamCDNRequester()
 
-    /// Object which is responsible for loading images
-    public var imageLoader: ImageLoading = NukeImageLoader()
+    /// The object responsible for loading images and video previews.
+    public var mediaLoader: MediaLoader = StreamMediaLoader(downloader: StreamImageDownloader())
 
     /// Object responsible for providing resizing operations for `UIImage`
-    public var imageProcessor: ImageProcessor = NukeImageProcessor()
+    public var imageProcessor: ImageProcessor = StreamImageProcessor()
 
-    /// The object responsible for loading video attachments.
-    public var videoLoader: VideoLoading = StreamVideoLoader()
+    /// The fallback maximum attachment size in bytes when the server does not provide one.
+    /// The default value is 100 MB.
+    public var maxAttachmentSize: Int64 = 100 * 1024 * 1024
 
     /// The view that shows a gradient.
     public var gradientView: GradientView.Type = GradientView.self
@@ -680,6 +681,6 @@ import UIKit
     public var alertsRouter: AlertsRouter.Type = AlertsRouter.self
 
     public init() {}
-
+    
     public static var `default` = Self()
 }

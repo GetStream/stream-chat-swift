@@ -120,12 +120,13 @@ final class MessengerChatMessageContentView: ChatMessageContentView {
 
         let placeholder = UIImage(systemName: "person.circle")
         if let imageURL = message.author.imageURL {
-            components.imageLoader.loadImage(
+            components.mediaLoader.loadImage(
                 into: avatarView.imageView,
                 from: imageURL,
                 with: ImageLoaderOptions(
                     resize: .init(components.avatarThumbnailSize),
-                    placeholder: placeholder
+                    placeholder: placeholder,
+                    cdnRequester: components.cdnRequester
                 )
             )
         } else {

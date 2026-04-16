@@ -2,7 +2,7 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import UIKit
+import CoreGraphics
 
 /// The resize information when loading an image.
 public struct ImageResize: Sendable {

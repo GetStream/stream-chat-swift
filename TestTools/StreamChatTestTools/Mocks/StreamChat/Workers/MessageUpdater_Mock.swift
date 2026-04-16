@@ -18,6 +18,7 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     @Atomic var deleteMessage_deleteForMe: Bool?
 
     @Atomic var downloadAttachment_attachmentId: AttachmentId?
+    @Atomic var downloadAttachment_remoteURL: URL?
     @Atomic var downloadAttachment_completion_result: Result<AnyChatMessageAttachment, Error>?
     
     @Atomic var deleteLocalAttachmentDownload_attachmentId: AttachmentId?
@@ -166,6 +167,7 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         deleteLocalAttachmentDownload_completion_result = nil
         
         downloadAttachment_attachmentId = nil
+        downloadAttachment_remoteURL = nil
         downloadAttachment_completion_result = nil
         
         editMessage_messageId = nil
@@ -302,9 +304,11 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     
     override func downloadAttachment<Payload>(
         _ attachment: ChatMessageAttachment<Payload>,
+        remoteURL: URL? = nil,
         completion: @escaping (Result<ChatMessageAttachment<Payload>, any Error>) -> Void
     ) where Payload: DownloadableAttachmentPayload {
         downloadAttachment_attachmentId = attachment.id
+        downloadAttachment_remoteURL = remoteURL
         switch downloadAttachment_completion_result {
         case .success(let anyAttachment):
             if let result = anyAttachment.attachment(payloadType: Payload.self) {

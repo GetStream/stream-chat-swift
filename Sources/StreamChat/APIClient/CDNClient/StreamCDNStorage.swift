@@ -5,7 +5,7 @@
 import Foundation
 
 /// An uploaded file.
-public struct UploadedFile: Decodable {
+public struct UploadedFile: Sendable, Decodable {
     public let fileURL: URL
     public let thumbnailURL: URL?
 
@@ -15,78 +15,11 @@ public struct UploadedFile: Decodable {
     }
 }
 
-/// The CDN client is responsible to upload files to a CDN.
-public protocol CDNClient: Sendable {
-    static var maxAttachmentSize: Int64 { get }
-
-    /// Uploads attachment as a multipart/form-data and returns only the uploaded remote file.
-    /// - Parameters:
-    ///   - attachment: An attachment to upload.
-    ///   - progress: A closure that broadcasts upload progress.
-    ///   - completion: Returns the uploaded file's information.
-    func uploadAttachment(
-        _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable (Double) -> Void)?,
-        completion: @escaping @Sendable (Result<URL, Error>) -> Void
-    )
-
-    /// Uploads attachment as a multipart/form-data and returns the uploaded remote file and its thumbnail.
-    /// - Parameters:
-    ///   - attachment: An attachment to upload.
-    ///   - progress: A closure that broadcasts upload progress.
-    ///   - completion: Returns the uploaded file's information.
-    func uploadAttachment(
-        _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable (Double) -> Void)?,
-        completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
-    )
-    
-    /// Uploads standalone attachment as a multipart/form-data and returns the uploaded remote file and its thumbnail.
-    /// - Parameters:
-    ///   - attachment: An attachment to upload.
-    ///   - progress: A closure that broadcasts upload progress.
-    ///   - completion: Returns the uploaded file's information.
-    func uploadStandaloneAttachment<Payload>(
-        _ attachment: StreamAttachment<Payload>,
-        progress: (@Sendable (Double) -> Void)?,
-        completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
-    )
-
-    /// Deletes the attachment from the CDN, given the remote URL.
-    /// - Parameters:
-    ///   - remoteUrl: The remote url of the attachment.
-    ///   - completion: Returns an error in case the delete operation fails.
-    func deleteAttachment(
-        remoteUrl: URL,
-        completion: @escaping @Sendable (Error?) -> Void
-    )
-}
-
-public extension CDNClient {
-    func uploadAttachment(
-        _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable (Double) -> Void)?,
-        completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
-    ) {
-        uploadAttachment(attachment, progress: progress, completion: { (result: Result<URL, Error>) in
-            switch result {
-            case let .success(url):
-                completion(.success(UploadedFile(fileURL: url, thumbnailURL: nil)))
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        })
-    }
-}
-
-/// Default implementation of CDNClient that uses Stream CDN
-final class StreamCDNClient: CDNClient, @unchecked Sendable {
-    static var maxAttachmentSize: Int64 { 100 * 1024 * 1024 }
-
+/// Default implementation of CDNStorage that uses Stream's API.
+final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
     private let decoder: RequestDecoder
     private let encoder: RequestEncoder
     private let session: URLSession
-    /// Keeps track of uploading tasks progress
     @Atomic private var taskProgressObservers: [Int: NSKeyValueObservation] = [:]
 
     init(
@@ -101,64 +34,61 @@ final class StreamCDNClient: CDNClient, @unchecked Sendable {
 
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable (Double) -> Void)? = nil,
-        completion: @escaping @Sendable (Result<URL, Error>) -> Void
-    ) {
-        uploadAttachment(attachment, progress: progress, completion: { (result: Result<UploadedFile, Error>) in
-            switch result {
-            case let .success(file):
-                completion(.success(file.fileURL))
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        })
-    }
-
-    func uploadAttachment(
-        _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable (Double) -> Void)? = nil,
+        options: AttachmentUploadOptions,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
         guard
             let uploadingState = attachment.uploadingState,
-            let fileData = try? Data(contentsOf: uploadingState.localFileURL) else {
+            let fileData = try? Data(contentsOf: uploadingState.localFileURL, options: .mappedIfSafe) else {
             return completion(.failure(ClientError.AttachmentUploading(id: attachment.id)))
         }
         let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(with: attachment.id.cid, type: attachment.type)
-        
+
         uploadAttachment(
             endpoint: endpoint,
             fileData: fileData,
             uploadingState: uploadingState,
-            progress: progress,
+            progress: options.progress,
             completion: completion
         )
     }
-    
-    func uploadStandaloneAttachment<Payload>(
-        _ attachment: StreamAttachment<Payload>,
-        progress: (@Sendable (Double) -> Void)? = nil,
+
+    func uploadAttachment(
+        localUrl: URL,
+        options: AttachmentUploadOptions,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
-        guard
-            let uploadingState = attachment.uploadingState,
-            let fileData = try? Data(contentsOf: uploadingState.localFileURL) else {
+        let uploadingState: AttachmentUploadingState
+        do {
+            uploadingState = AttachmentUploadingState(
+                localFileURL: localUrl,
+                state: .pendingUpload,
+                file: try .init(url: localUrl)
+            )
+        } catch {
+            completion(.failure(error))
+            return
+        }
+
+        guard let fileData = try? Data(contentsOf: localUrl, options: .mappedIfSafe) else {
             return completion(.failure(ClientError.Unknown()))
         }
 
-        let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(type: attachment.type)
-        
+        let isImage = uploadingState.file.type.isImage
+        let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(type: isImage ? .image : .file)
+
         uploadAttachment(
             endpoint: endpoint,
             fileData: fileData,
             uploadingState: uploadingState,
-            progress: progress,
+            progress: options.progress,
             completion: completion
         )
     }
 
     func deleteAttachment(
         remoteUrl: URL,
+        options: AttachmentDeleteOptions,
         completion: @escaping @Sendable (Error?) -> Void
     ) {
         let isImage = AttachmentFileType(ext: remoteUrl.pathExtension).isImage
@@ -180,6 +110,7 @@ final class StreamCDNClient: CDNClient, @unchecked Sendable {
             }
 
             guard let self = self else {
+                completion(ClientError.Unknown("StreamCDNStorage was deallocated"))
                 return
             }
 
@@ -196,7 +127,6 @@ final class StreamCDNClient: CDNClient, @unchecked Sendable {
         progress: (@Sendable (Double) -> Void)? = nil,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
-        // Encode locally stored attachment into multipart form data
         let multipartFormData = MultipartFormData(
             fileData,
             fileName: uploadingState.localFileURL.lastPathComponent,
@@ -219,6 +149,7 @@ final class StreamCDNClient: CDNClient, @unchecked Sendable {
 
             guard let self = self else {
                 log.warning("Callback called while self is nil", subsystems: .httpRequests)
+                completion(.failure(ClientError.Unknown("StreamCDNStorage was deallocated")))
                 return
             }
 

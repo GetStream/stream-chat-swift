@@ -8,6 +8,11 @@ import XCTest
 final class DefaultAudioPlaybackRateFormatter_Tests: XCTestCase {
     private lazy var subject: DefaultAudioPlaybackRateFormatter! = .init()
 
+    override func setUp() {
+        super.setUp()
+        subject.numberFormatter.locale = Locale(identifier: "en_US_POSIX")
+    }
+
     override func tearDown() {
         subject = nil
         super.tearDown()

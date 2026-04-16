@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class StreamCDNClient_Tests: XCTestCase {
+final class StreamCDNStorage_Tests: XCTestCase {
     func test_uploadFileEncoderIsCalledWithEndpoint() throws {
         let builder = TestBuilder()
         let client = builder.make()
@@ -32,7 +32,7 @@ final class StreamCDNClient_Tests: XCTestCase {
                     file: .init(type: .jpeg, size: 0, mimeType: nil)
                 )
             ),
-            progress: nil,
+            options: .init(),
             completion: { (_: Result<UploadedFile, Error>) in }
         )
 
@@ -47,25 +47,14 @@ final class StreamCDNClient_Tests: XCTestCase {
         // Setup mock encoder response (it's not actually used, we just need to return something)
         let request = URLRequest(url: .unique())
         builder.encoder.encodeRequest = .success(request)
-        
-        let payload = try Data(contentsOf: .localYodaImage)
 
         // Create a test endpoint
         let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(type: .image)
-        
-        let uploadingState = AttachmentUploadingState(
-            localFileURL: .localYodaImage,
-            state: .pendingUpload,
-            file: .init(type: .png, size: 120, mimeType: "image/png")
-        )
 
         // Simulate file uploading
-        client.uploadStandaloneAttachment(
-            .mock(
-                payload: payload,
-                uploadingState: uploadingState
-            ),
-            progress: nil,
+        client.uploadAttachment(
+            localUrl: .localYodaImage,
+            options: .init(),
             completion: { (_: Result<UploadedFile, Error>) in }
         )
 
@@ -80,22 +69,11 @@ final class StreamCDNClient_Tests: XCTestCase {
         let testError = TestError()
         builder.encoder.encodeRequest = .failure(testError)
 
-        let payload = try Data(contentsOf: .localYodaImage)
-        
-        let uploadingState = AttachmentUploadingState(
-            localFileURL: .localYodaImage,
-            state: .pendingUpload,
-            file: .init(type: .png, size: 120, mimeType: "image/png")
-        )
-        
         // Create a request and assert the result is failure
         let result: Result<UploadedFile, Error> = try waitFor {
-            client.uploadStandaloneAttachment(
-                .mock(
-                    payload: payload,
-                    uploadingState: uploadingState
-                ),
-                progress: nil,
+            client.uploadAttachment(
+                localUrl: .localYodaImage,
+                options: .init(),
                 completion: $0
             )
         }
@@ -120,7 +98,7 @@ final class StreamCDNClient_Tests: XCTestCase {
                         file: .init(type: .jpeg, size: 0, mimeType: nil)
                     )
                 ),
-                progress: nil,
+                options: .init(),
                 completion: $0
             )
         }
@@ -157,7 +135,7 @@ final class StreamCDNClient_Tests: XCTestCase {
                         file: .init(type: .jpeg, size: 0, mimeType: nil)
                     )
                 ),
-                progress: nil,
+                options: .init(),
                 completion: $0
             )
         }
@@ -187,22 +165,11 @@ final class StreamCDNClient_Tests: XCTestCase {
         let response = FileUploadPayload(fileURL: .unique(), thumbURL: .unique())
         decoder.decodeRequestResponse = .success(response)
 
-        let payload = try Data(contentsOf: .localYodaImage)
-        
-        let uploadingState = AttachmentUploadingState(
-            localFileURL: .localYodaImage,
-            state: .pendingUpload,
-            file: .init(type: .png, size: 120, mimeType: "image/png")
-        )
-        
-        // Create a request and assert the result is failure
+        // Create a request and wait for the completion block
         let result: Result<UploadedFile, Error> = try waitFor {
-            client.uploadStandaloneAttachment(
-                .mock(
-                    payload: payload,
-                    uploadingState: uploadingState
-                ),
-                progress: nil,
+            client.uploadAttachment(
+                localUrl: .localYodaImage,
+                options: .init(),
                 completion: $0
             )
         }
@@ -243,7 +210,7 @@ final class StreamCDNClient_Tests: XCTestCase {
                         file: .init(type: .jpeg, size: 0, mimeType: nil)
                     )
                 ),
-                progress: nil,
+                options: .init(),
                 completion: $0
             )
         }
@@ -277,23 +244,12 @@ final class StreamCDNClient_Tests: XCTestCase {
 
         // Set up a decoder response to return `encoderError`
         decoder.decodeRequestResponse = .failure(encoderError)
-        
-        let payload = try Data(contentsOf: .localYodaImage)
-        
-        let uploadingState = AttachmentUploadingState(
-            localFileURL: .localYodaImage,
-            state: .pendingUpload,
-            file: .init(type: .png, size: 120, mimeType: "image/png")
-        )
 
         // Create a request and wait for the completion block
         let result: Result<UploadedFile, Error> = try waitFor {
-            client.uploadStandaloneAttachment(
-                .mock(
-                    payload: payload,
-                    uploadingState: uploadingState
-                ),
-                progress: nil,
+            client.uploadAttachment(
+                localUrl: .localYodaImage,
+                options: .init(),
                 completion: $0
             )
         }
@@ -344,7 +300,7 @@ final class StreamCDNClient_Tests: XCTestCase {
                     file: .init(type: .jpeg, size: 0, mimeType: nil)
                 )
             ),
-            progress: nil,
+            options: .init(),
             completion: { (_: Result<UploadedFile, Error>) in }
         )
 
@@ -377,6 +333,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         // Simulate file deletion
         client.deleteAttachment(
             remoteUrl: remoteURL,
+            options: .init(),
             completion: { _ in }
         )
 
@@ -398,6 +355,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         let result: Error? = try waitFor {
             client.deleteAttachment(
                 remoteUrl: remoteURL,
+                options: .init(),
                 completion: $0
             )
         }
@@ -422,6 +380,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         let result: Error? = try waitFor {
             client.deleteAttachment(
                 remoteUrl: remoteURL,
+                options: .init(),
                 completion: $0
             )
         }
@@ -430,6 +389,187 @@ final class StreamCDNClient_Tests: XCTestCase {
         XCTAssertNil(result)
     }
     
+    func test_deleteAttachment_deallocatedStorage_callsCompletionWithError() throws {
+        let builder = TestBuilder()
+        builder.encoder.encodeRequest = nil
+        var client: StreamCDNStorage? = builder.make()
+
+        let expectation = XCTestExpectation(description: "Completion called")
+        var receivedError: Error?
+
+        client?.deleteAttachment(
+            remoteUrl: .unique(),
+            options: .init()
+        ) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        client = nil
+        builder.encoder.encodeRequest_completion?(.success(URLRequest(url: .unique())))
+
+        wait(for: [expectation], timeout: 2)
+        XCTAssertNotNil(receivedError)
+    }
+
+    func test_uploadAttachment_deallocatedStorage_callsCompletionWithError() throws {
+        let builder = TestBuilder()
+        builder.encoder.encodeRequest = nil
+        var client: StreamCDNStorage? = builder.make()
+
+        let expectation = XCTestExpectation(description: "Completion called")
+        var receivedResult: Result<UploadedFile, Error>?
+
+        client?.uploadAttachment(
+            .dummy(
+                uploadingState: .init(
+                    localFileURL: .localYodaImage,
+                    state: .pendingUpload,
+                    file: .init(type: .jpeg, size: 0, mimeType: nil)
+                )
+            ),
+            options: .init()
+        ) { result in
+            receivedResult = result
+            expectation.fulfill()
+        }
+
+        client = nil
+        builder.encoder.encodeRequest_completion?(.success(URLRequest(url: .unique())))
+
+        wait(for: [expectation], timeout: 2)
+        XCTAssertNotNil(receivedResult?.error)
+    }
+
+    // MARK: - Edge Cases
+
+    func test_uploadAttachment_withoutUploadingState_fails() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+        builder.encoder.encodeRequest = .success(URLRequest(url: .unique()))
+
+        let result: Result<UploadedFile, Error> = try waitFor {
+            client.uploadAttachment(
+                .dummy(),
+                options: .init(),
+                completion: $0
+            )
+        }
+
+        XCTAssertNotNil(result.error)
+    }
+
+    func test_uploadAttachmentLocalUrl_invalidURL_fails() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+        builder.encoder.encodeRequest = .success(URLRequest(url: .unique()))
+
+        let result: Result<UploadedFile, Error> = try waitFor {
+            client.uploadAttachment(
+                localUrl: URL(string: "file:///nonexistent/path/file.txt")!,
+                options: .init(),
+                completion: $0
+            )
+        }
+
+        XCTAssertNotNil(result.error)
+    }
+
+    func test_deleteAttachment_imageExtension_usesImageType() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+
+        let request = URLRequest(url: .unique())
+        builder.encoder.encodeRequest = .success(request)
+
+        let remoteURL = URL(string: "https://cdn.example.com/photo.jpg")!
+        let testEndpoint: Endpoint<EmptyResponse> = .deleteAttachment(url: remoteURL, type: .image)
+
+        client.deleteAttachment(
+            remoteUrl: remoteURL,
+            options: .init(),
+            completion: { _ in }
+        )
+
+        XCTAssertEqual(builder.encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
+    }
+
+    func test_uploadAttachment_withProgress_reportsProgress() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+
+        let testRequest = URLRequest(url: .unique())
+        builder.encoder.encodeRequest = .success(testRequest)
+
+        let mockResponseData = try JSONEncoder.stream.encode(["file": URL.unique()])
+        URLProtocol_Mock.mockResponse(request: testRequest, statusCode: 200, responseBody: mockResponseData)
+        let payload = FileUploadPayload(fileURL: .unique(), thumbURL: nil)
+        builder.decoder.decodeRequestResponse = .success(payload)
+
+        var progressCalled = false
+        let completionExpectation = expectation(description: "Upload completed")
+
+        client.uploadAttachment(
+            .dummy(
+                uploadingState: .init(
+                    localFileURL: .localYodaImage,
+                    state: .pendingUpload,
+                    file: .init(type: .jpeg, size: 0, mimeType: nil)
+                )
+            ),
+            options: .init(progress: { _ in
+                progressCalled = true
+            }),
+            completion: { (_: Result<UploadedFile, Error>) in
+                completionExpectation.fulfill()
+            }
+        )
+
+        wait(for: [completionExpectation], timeout: 5)
+        XCTAssertTrue(progressCalled)
+    }
+
+    func test_uploadAttachmentLocalUrl_imageFile_usesImageEndpoint() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+
+        let request = URLRequest(url: .unique())
+        builder.encoder.encodeRequest = .success(request)
+
+        let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(type: .image)
+
+        client.uploadAttachment(
+            localUrl: .localYodaImage,
+            options: .init(),
+            completion: { (_: Result<UploadedFile, Error>) in }
+        )
+
+        XCTAssertEqual(builder.encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
+    }
+
+    func test_uploadAttachmentLocalUrl_nonImageFile_usesFileEndpoint() throws {
+        let builder = TestBuilder()
+        let client = builder.make()
+
+        let request = URLRequest(url: .unique())
+        builder.encoder.encodeRequest = .success(request)
+
+        let testEndpoint: Endpoint<FileUploadPayload> = .uploadAttachment(type: .file)
+
+        let tempDir = NSTemporaryDirectory()
+        let tempFile = URL(fileURLWithPath: tempDir).appendingPathComponent("test-\(UUID().uuidString).pdf")
+        try Data("test".utf8).write(to: tempFile)
+        defer { try? FileManager.default.removeItem(at: tempFile) }
+
+        client.uploadAttachment(
+            localUrl: tempFile,
+            options: .init(),
+            completion: { (_: Result<UploadedFile, Error>) in }
+        )
+
+        XCTAssertEqual(builder.encoder.encodeRequest_endpoints.first, AnyEndpoint(testEndpoint))
+    }
+
     func test_deleteAttachmentFailure() throws {
         let builder = TestBuilder()
         let client = builder.make()
@@ -450,6 +590,7 @@ final class StreamCDNClient_Tests: XCTestCase {
         let result: Error? = try waitFor {
             client.deleteAttachment(
                 remoteUrl: remoteURL,
+                options: .init(),
                 completion: $0
             )
         }

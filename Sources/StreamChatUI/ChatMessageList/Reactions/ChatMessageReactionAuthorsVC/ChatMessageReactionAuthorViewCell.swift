@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// `UICollectionViewCell` for the reaction's author view.
@@ -38,9 +39,13 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
         .withAccessibilityIdentifier(identifier: "containerStack")
 
     /// The author's avatar view.
-    open lazy var authorAvatarView: ChatAvatarView = components
-        .avatarView.init()
-        .withoutAutoresizingMaskConstraints
+    open lazy var authorAvatarView: ChatUserAvatarView = {
+        let view = components
+            .userAvatarView.init()
+            .withoutAutoresizingMaskConstraints
+        view.shouldShowOnlineIndicator = false
+        return view
+    }()
 
     /// The author's name label.
     open lazy var authorNameLabel = UILabel()
@@ -118,23 +123,11 @@ open class ChatMessageReactionAuthorViewCell: _CollectionViewCell, ThemeProvider
         guard let content = self.content else {
             reactionItemView.content = nil
             authorNameLabel.text = nil
-            authorAvatarView.imageView.image = nil
+            authorAvatarView.content = nil
             return
         }
 
-        let placeholder = UserAvatarInitialsImage.image(
-            name: content.reaction.author.name ?? "",
-            size: authorAvatarSize,
-            appearance: appearance
-        )
-        components.imageLoader.loadImage(
-            into: authorAvatarView.imageView,
-            from: content.reaction.author.imageURL,
-            with: ImageLoaderOptions(
-                resize: .init(authorAvatarSize),
-                placeholder: placeholder
-            )
-        )
+        authorAvatarView.content = content.reaction.author
 
         let reactionAuthor = content.reaction.author
         let isCurrentUser = content.currentUserId == reactionAuthor.id

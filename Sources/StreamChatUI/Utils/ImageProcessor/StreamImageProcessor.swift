@@ -21,7 +21,7 @@ public protocol ImageProcessor: Sendable {
 }
 
 /// This class provides resizing operations for `UIImage`. It internally uses `Nuke` porcessors to implement operations on images.
-open class NukeImageProcessor: ImageProcessor, @unchecked Sendable {
+open class StreamImageProcessor: ImageProcessor, @unchecked Sendable {
     open func crop(image: UIImage, to size: CGSize) -> UIImage? {
         let imageProccessor = ImageProcessors.Resize(size: size, crop: true)
         return imageProccessor.process(image)
