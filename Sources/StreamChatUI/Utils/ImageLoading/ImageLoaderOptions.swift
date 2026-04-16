@@ -2,7 +2,6 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import StreamChat
 import StreamChatCommonUI
 import UIKit
 
@@ -17,12 +16,6 @@ public struct ImageLoaderOptions: Sendable {
     public var placeholder: UIImage?
 
     public init(resize: ImageResize? = nil, placeholder: UIImage? = nil) {
-        self.placeholder = placeholder
-        self.resize = resize
-    }
-
-    @available(*, deprecated, message: "CDNRequester is now a dependency of StreamMediaLoader. Pass it when creating the loader instead.")
-    public init(resize: ImageResize? = nil, placeholder: UIImage? = nil, cdnRequester: CDNRequester) {
         self.placeholder = placeholder
         self.resize = resize
     }

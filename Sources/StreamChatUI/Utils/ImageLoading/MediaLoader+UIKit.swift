@@ -113,22 +113,6 @@ extension MediaLoader {
         )
     }
 
-    @available(*, deprecated, message: "CDNRequester is now a dependency of StreamMediaLoader.")
-    @discardableResult
-    @MainActor public func loadImage(
-        into imageView: UIImageView,
-        from attachmentPayload: ImageAttachmentPayload?,
-        maxResolutionInPixels: Double,
-        cdnRequester: CDNRequester,
-        completion: (@MainActor (Result<UIImage, Error>) -> Void)? = nil
-    ) -> ImageLoadingTask {
-        loadImage(
-            into: imageView,
-            from: attachmentPayload,
-            maxResolutionInPixels: maxResolutionInPixels,
-            completion: completion
-        )
-    }
 }
 
 final class ImageBatchResult: @unchecked Sendable {
