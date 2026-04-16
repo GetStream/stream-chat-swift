@@ -65,7 +65,8 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
         completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
         loadVideoPreviewMockFunc.call(with: (attachment, options, completion))
-        loadVideoPreview(at: attachment.videoURL, options: options, completion: completion)
+        let url = attachment.payload.thumbnailURL ?? attachment.videoURL
+        loadVideoPreview(at: url, options: options, completion: completion)
     }
 
     func loadVideoPreview(
