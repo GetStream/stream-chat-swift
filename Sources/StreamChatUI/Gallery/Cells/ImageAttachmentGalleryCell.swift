@@ -35,8 +35,7 @@ open class ImageAttachmentGalleryCell: GalleryCollectionViewCell {
         components.mediaLoader.loadImage(
             into: imageView,
             from: imageAttachment?.payload,
-            maxResolutionInPixels: components.imageAttachmentMaxPixels,
-            cdnRequester: components.cdnRequester
+            maxResolutionInPixels: components.imageAttachmentMaxPixels
         )
     }
 

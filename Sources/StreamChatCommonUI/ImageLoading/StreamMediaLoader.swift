@@ -8,10 +8,13 @@ import UIKit
 
 /// The default ``MediaLoader`` implementation.
 ///
-/// Delegates URL transformation to the ``CDNRequester`` provided via options,
+/// Delegates URL transformation to its ``CDNRequester`` dependency,
 /// image downloading to an ``ImageDownloading`` backend (typically Nuke),
 /// and video preview generation to AVFoundation.
 open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
+    /// The CDN requester used for URL transformation (signing, headers, resizing).
+    public let cdnRequester: CDNRequester
+
     /// The backend that performs the actual image download and caching.
     public let downloader: ImageDownloading
 
@@ -21,7 +24,11 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     /// The limit of the local  video preview thumbnails cache.
     private let videoPreviewCacheCountLimit: Int = 50
 
-    public init(downloader: ImageDownloading) {
+    public init(
+        cdnRequester: CDNRequester = StreamCDNRequester(),
+        downloader: ImageDownloading
+    ) {
+        self.cdnRequester = cdnRequester
         self.downloader = downloader
         self.videoPreviewCache = NSCache<NSURL, UIImage>()
         self.videoPreviewCache.countLimit = videoPreviewCacheCountLimit
@@ -32,6 +39,11 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
             name: UIApplication.didReceiveMemoryWarningNotification,
             object: nil
         )
+    }
+
+    @available(*, deprecated, message: "Use init(cdnRequester:downloader:) instead.")
+    public convenience init(downloader: ImageDownloading) {
+        self.init(cdnRequester: StreamCDNRequester(), downloader: downloader)
     }
 
     deinit {
@@ -53,7 +65,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         }
 
         let downloader = self.downloader
-        options.cdnRequester.imageRequest(for: url, options: ImageRequestOptions(imageResize: options.resize)) { result in
+        cdnRequester.imageRequest(for: url, options: ImageRequestOptions(imageResize: options.resize)) { result in
             switch result {
             case let .success(cdnRequest):
                 let resizeSize: CGSize? = options.resize.map { CGSize(width: $0.width, height: $0.height) }
@@ -80,7 +92,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
     ) {
-        options.cdnRequester.fileRequest(for: url, options: .init()) { result in
+        cdnRequester.fileRequest(for: url, options: .init()) { result in
             switch result {
             case let .success(cdnRequest):
                 var assetOptions: [String: Any] = [:]
@@ -115,8 +127,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         }
 
         if let thumbnailURL = attachment.payload.thumbnailURL {
-            let imageOptions = ImageLoadOptions(cdnRequester: options.cdnRequester)
-            loadImage(url: thumbnailURL, options: imageOptions) { [weak self] result in
+            loadImage(url: thumbnailURL, options: ImageLoadOptions()) { [weak self] result in
                 guard let self else {
                     StreamConcurrency.onMain {
                         completion(.failure(ClientError.Unknown("MediaLoader was deallocated")))
@@ -161,7 +172,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
-        options.cdnRequester.fileRequest(for: url, options: .init()) { [weak self] result in
+        cdnRequester.fileRequest(for: url, options: .init()) { [weak self] result in
             guard let self else {
                 StreamConcurrency.onMain {
                     completion(.failure(ClientError.Unknown("MediaLoader was deallocated")))
@@ -208,6 +219,19 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
                 StreamConcurrency.onMain {
                     completion(result)
                 }
+            }
+        }
+    }
+
+    // MARK: - File URL Resolution
+
+    open func resolveFileURL(
+        _ url: URL,
+        completion: @escaping @MainActor (Result<CDNRequest, Error>) -> Void
+    ) {
+        cdnRequester.fileRequest(for: url, options: .init()) { result in
+            StreamConcurrency.onMain {
+                completion(result)
             }
         }
     }

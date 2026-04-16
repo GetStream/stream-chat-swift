@@ -163,7 +163,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
         nonisolated(unsafe) var memberNames = names
         let requests = urls.prefix(maxNumberOfImagesInCombinedAvatar)
             .compactMap { $0 }
-            .map { ImageDownloadRequest(url: $0, options: ImageDownloadOptions(resize: .init(avatarSize), cdnRequester: components.cdnRequester)) }
+            .map { ImageDownloadRequest(url: $0, options: ImageDownloadOptions(resize: .init(avatarSize))) }
 
         components.mediaLoader.downloadMultipleImages(with: requests) { results in
             // Scale only placeholders since images already have a correct size
@@ -217,8 +217,7 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
             from: url,
             with: ImageLoaderOptions(
                 resize: .init(components.avatarThumbnailSize),
-                placeholder: placeholder,
-                cdnRequester: components.cdnRequester
+                placeholder: placeholder
             )
         )
     }

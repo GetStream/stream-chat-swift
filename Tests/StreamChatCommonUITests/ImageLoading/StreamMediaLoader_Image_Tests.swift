@@ -15,7 +15,7 @@ final class StreamMediaLoader_Image_Tests: XCTestCase {
         super.setUp()
         downloader = MockImageDownloader()
         cdnRequester = MockCDNRequester()
-        sut = StreamMediaLoader(downloader: downloader)
+        sut = StreamMediaLoader(cdnRequester: cdnRequester, downloader: downloader)
     }
 
     override func tearDown() {
@@ -30,7 +30,7 @@ final class StreamMediaLoader_Image_Tests: XCTestCase {
     func test_loadImage_nilURL_callsCompletionWithFailure() {
         let expectation = expectation(description: "Completion called")
 
-        sut.loadImage(url: nil, options: ImageLoadOptions(cdnRequester: cdnRequester)) { result in
+        sut.loadImage(url: nil, options: ImageLoadOptions()) { result in
             switch result {
             case .failure:
                 break
@@ -49,7 +49,7 @@ final class StreamMediaLoader_Image_Tests: XCTestCase {
         let url = URL(string: "https://example.com/image.jpg")!
         let expectation = expectation(description: "Completion called")
 
-        sut.loadImage(url: url, options: ImageLoadOptions(cdnRequester: cdnRequester)) { result in
+        sut.loadImage(url: url, options: ImageLoadOptions()) { result in
             switch result {
             case let .success(loaded):
                 XCTAssertEqual(loaded.image.pngData(), testImage.pngData())
@@ -68,7 +68,7 @@ final class StreamMediaLoader_Image_Tests: XCTestCase {
         let url = URL(string: "https://example.com/image.jpg")!
         let expectation = expectation(description: "Completion called")
 
-        sut.loadImage(url: url, options: ImageLoadOptions(cdnRequester: cdnRequester)) { result in
+        sut.loadImage(url: url, options: ImageLoadOptions()) { result in
             switch result {
             case .success:
                 XCTFail("Should have failed")
@@ -87,7 +87,7 @@ final class StreamMediaLoader_Image_Tests: XCTestCase {
         let url = URL(string: "https://example.com/image.jpg")!
         let expectation = expectation(description: "Completion called")
 
-        sut.loadImage(url: url, options: ImageLoadOptions(cdnRequester: cdnRequester)) { result in
+        sut.loadImage(url: url, options: ImageLoadOptions()) { result in
             switch result {
             case .success:
                 XCTFail("Should have failed")
@@ -107,7 +107,7 @@ final class StreamMediaLoader_Image_Tests: XCTestCase {
         let resize = ImageResize(CGSize(width: 100, height: 200))
         let expectation = expectation(description: "Completion called")
 
-        sut.loadImage(url: url, options: ImageLoadOptions(resize: resize, cdnRequester: cdnRequester)) { _ in
+        sut.loadImage(url: url, options: ImageLoadOptions(resize: resize)) { _ in
             expectation.fulfill()
         }
 
@@ -126,7 +126,7 @@ final class StreamMediaLoader_Image_Tests: XCTestCase {
         let url = URL(string: "https://example.com/image.jpg")!
         let expectation = expectation(description: "Completion called")
 
-        sut.loadImage(url: url, options: ImageLoadOptions(cdnRequester: cdnRequester)) { _ in
+        sut.loadImage(url: url, options: ImageLoadOptions()) { _ in
             expectation.fulfill()
         }
 
@@ -144,7 +144,7 @@ final class StreamMediaLoader_Image_Tests: XCTestCase {
         let url = URL(string: "https://example.com/image.jpg")!
         let expectation = expectation(description: "Completion called")
 
-        sut.loadImage(url: url, options: ImageLoadOptions(cdnRequester: cdnRequester)) { _ in
+        sut.loadImage(url: url, options: ImageLoadOptions()) { _ in
             expectation.fulfill()
         }
 
@@ -160,7 +160,7 @@ final class StreamMediaLoader_Image_Tests: XCTestCase {
         let originalURL = URL(string: "https://example.com/original.jpg")!
         let expectation = expectation(description: "Completion called")
 
-        sut.loadImage(url: originalURL, options: ImageLoadOptions(cdnRequester: cdnRequester)) { _ in
+        sut.loadImage(url: originalURL, options: ImageLoadOptions()) { _ in
             expectation.fulfill()
         }
 
