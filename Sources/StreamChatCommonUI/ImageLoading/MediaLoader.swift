@@ -6,12 +6,12 @@ import AVKit
 import StreamChat
 import UIKit
 
-/// A unified protocol for loading images and video previews.
+/// A unified protocol for loading images, video previews, and resolving file URLs.
 ///
-/// Configuration is passed via options structs on every call, so concrete
-/// implementations remain stateless with respect to CDN configuration.
-/// Changing the requester on `ChatClientConfig` takes effect immediately without
-/// recreating the loader.
+/// The ``CDNRequester`` is provided as a constructor dependency of the concrete
+/// implementation (e.g. ``StreamMediaLoader``), so callers don't need to pass
+/// it on every call. Configuring the CDN requester in one place ensures all
+/// content loading automatically picks it up.
 public protocol MediaLoader: AnyObject, Sendable {
     // MARK: - Image Loading
 
@@ -19,7 +19,7 @@ public protocol MediaLoader: AnyObject, Sendable {
     ///
     /// - Parameters:
     ///   - url: The image URL. If nil, the completion is called with a failure.
-    ///   - options: Options controlling resize and CDN behavior.
+    ///   - options: Options controlling resize behavior.
     ///   - completion: A completion handler called on the main actor with the loaded image.
     func loadImage(
         url: URL?,
@@ -31,8 +31,8 @@ public protocol MediaLoader: AnyObject, Sendable {
 
     /// Returns a video asset for the given URL.
     ///
-    /// Implementers should use the CDN requester in options to adjust the URL
-    /// before creating the asset.
+    /// The implementation resolves the URL through its CDN requester before
+    /// creating the asset.
     func loadVideoAsset(
         at url: URL,
         options: VideoLoadOptions,
@@ -47,7 +47,7 @@ public protocol MediaLoader: AnyObject, Sendable {
     ///
     /// - Parameters:
     ///   - attachment: A video attachment containing the video URL and optional thumbnail URL.
-    ///   - options: Options controlling CDN behavior.
+    ///   - options: Options controlling video load behavior.
     ///   - completion: A completion handler called on the main actor with the preview image.
     func loadVideoPreview(
         with attachment: ChatMessageVideoAttachment,
@@ -67,12 +67,27 @@ public protocol MediaLoader: AnyObject, Sendable {
     ///
     /// - Parameters:
     ///   - url: The video URL (typically a local `file://` URL).
-    ///   - options: Options controlling CDN behavior.
+    ///   - options: Options controlling video load behavior.
     ///   - completion: A completion handler called on the main actor with the preview image.
     func loadVideoPreview(
         at url: URL,
         options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+    )
+
+    // MARK: - File URL Resolution
+
+    /// Resolves a file URL through the CDN (signing, headers, etc.).
+    ///
+    /// Use this before passing a URL to `downloadAttachment` or displaying
+    /// content in a web view that requires CDN-signed URLs.
+    ///
+    /// - Parameters:
+    ///   - url: The original file URL to resolve.
+    ///   - completion: A completion handler called on the main actor with the resolved CDN request.
+    func resolveFileURL(
+        _ url: URL,
+        completion: @escaping @MainActor (Result<CDNRequest, Error>) -> Void
     )
 }
 
@@ -114,6 +129,15 @@ extension MediaLoader {
             }
         }
     }
+
+    /// Resolves a file URL through the CDN.
+    public func resolveFileURL(_ url: URL) async throws -> CDNRequest {
+        try await withCheckedThrowingContinuation { continuation in
+            resolveFileURL(url) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
 }
 
 // MARK: - Options
@@ -122,23 +146,23 @@ extension MediaLoader {
 public struct ImageLoadOptions: Sendable {
     /// Optional resize parameters for server-side resizing.
     public var resize: ImageResize?
-    /// The CDN requester for URL transformation (signing, headers, resizing).
-    public var cdnRequester: CDNRequester
 
+    public init(resize: ImageResize? = nil) {
+        self.resize = resize
+    }
+
+    @available(*, deprecated, message: "CDNRequester is now a dependency of StreamMediaLoader. Pass it when creating the loader instead.")
     public init(resize: ImageResize? = nil, cdnRequester: CDNRequester) {
         self.resize = resize
-        self.cdnRequester = cdnRequester
     }
 }
 
 /// Options for loading video content through a ``MediaLoader``.
 public struct VideoLoadOptions: Sendable {
-    /// The CDN requester for URL transformation (signing, headers).
-    public var cdnRequester: CDNRequester
+    public init() {}
 
-    public init(cdnRequester: CDNRequester) {
-        self.cdnRequester = cdnRequester
-    }
+    @available(*, deprecated, message: "CDNRequester is now a dependency of StreamMediaLoader. Pass it when creating the loader instead.")
+    public init(cdnRequester: CDNRequester) {}
 }
 
 // MARK: - Result Types

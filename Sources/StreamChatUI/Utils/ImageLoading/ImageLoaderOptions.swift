@@ -16,12 +16,14 @@ public struct ImageLoaderOptions: Sendable {
     /// The placeholder to be used while the image is finishing loading.
     public var placeholder: UIImage?
 
-    /// The CDN requester for URL transformation (signing, headers, resizing).
-    public var cdnRequester: CDNRequester
+    public init(resize: ImageResize? = nil, placeholder: UIImage? = nil) {
+        self.placeholder = placeholder
+        self.resize = resize
+    }
 
+    @available(*, deprecated, message: "CDNRequester is now a dependency of StreamMediaLoader. Pass it when creating the loader instead.")
     public init(resize: ImageResize? = nil, placeholder: UIImage? = nil, cdnRequester: CDNRequester) {
         self.placeholder = placeholder
         self.resize = resize
-        self.cdnRequester = cdnRequester
     }
 }

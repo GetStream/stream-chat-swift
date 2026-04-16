@@ -125,8 +125,7 @@ final class MessengerChatMessageContentView: ChatMessageContentView {
                 from: imageURL,
                 with: ImageLoaderOptions(
                     resize: .init(components.avatarThumbnailSize),
-                    placeholder: placeholder,
-                    cdnRequester: components.cdnRequester
+                    placeholder: placeholder
                 )
             )
         } else {

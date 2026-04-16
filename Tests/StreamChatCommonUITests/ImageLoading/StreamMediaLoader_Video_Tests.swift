@@ -16,7 +16,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         super.setUp()
         downloader = MockImageDownloader()
         cdnRequester = MockCDNRequester()
-        sut = StreamMediaLoader(downloader: downloader)
+        sut = StreamMediaLoader(cdnRequester: cdnRequester, downloader: downloader)
     }
 
     override func tearDown() {
@@ -34,7 +34,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         let originalURL = URL(string: "https://example.com/video.mp4")!
         let expectation = expectation(description: "Completion called")
 
-        sut.loadVideoAsset(at: originalURL, options: VideoLoadOptions(cdnRequester: cdnRequester)) { result in
+        sut.loadVideoAsset(at: originalURL, options: VideoLoadOptions()) { result in
             switch result {
             case let .success(videoAsset):
                 XCTAssertEqual(videoAsset.asset.url, transformedURL)
@@ -53,7 +53,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         cdnRequester.fileRequestResult = .success(CDNRequest(url: url, headers: headers))
         let expectation = expectation(description: "Completion called")
 
-        sut.loadVideoAsset(at: url, options: VideoLoadOptions(cdnRequester: cdnRequester)) { result in
+        sut.loadVideoAsset(at: url, options: VideoLoadOptions()) { result in
             switch result {
             case let .success(videoAsset):
                 XCTAssertEqual(videoAsset.asset.url, url)
@@ -71,7 +71,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         cdnRequester.fileRequestResult = .success(CDNRequest(url: url, headers: [:]))
         let expectation = expectation(description: "Completion called")
 
-        sut.loadVideoAsset(at: url, options: VideoLoadOptions(cdnRequester: cdnRequester)) { result in
+        sut.loadVideoAsset(at: url, options: VideoLoadOptions()) { result in
             switch result {
             case let .success(videoAsset):
                 XCTAssertEqual(videoAsset.asset.url, url)
@@ -89,7 +89,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         cdnRequester.fileRequestResult = .success(CDNRequest(url: url))
         let expectation = expectation(description: "Completion called")
 
-        sut.loadVideoAsset(at: url, options: VideoLoadOptions(cdnRequester: cdnRequester)) { result in
+        sut.loadVideoAsset(at: url, options: VideoLoadOptions()) { result in
             switch result {
             case let .success(videoAsset):
                 XCTAssertEqual(videoAsset.asset.url, url)
@@ -108,7 +108,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         let url = URL(string: "https://example.com/video.mp4")!
         let expectation = expectation(description: "Completion called")
 
-        sut.loadVideoAsset(at: url, options: VideoLoadOptions(cdnRequester: cdnRequester)) { result in
+        sut.loadVideoAsset(at: url, options: VideoLoadOptions()) { result in
             switch result {
             case .success:
                 XCTFail("Should have failed")
@@ -133,7 +133,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         let attachment = makeVideoAttachment(videoURL: url, thumbnailURL: thumbnailURL)
 
         let firstExpectation = expectation(description: "First load")
-        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions(cdnRequester: cdnRequester)) { result in
+        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions()) { result in
             if case let .success(preview) = result {
                 XCTAssertEqual(preview.image.pngData(), cachedImage.pngData())
             } else {
@@ -149,7 +149,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
 
         // Second load should hit cache and NOT call CDN requester
         let secondExpectation = expectation(description: "Second load from cache")
-        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions(cdnRequester: cdnRequester)) { result in
+        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions()) { result in
             if case let .success(preview) = result {
                 XCTAssertEqual(preview.image.pngData(), cachedImage.pngData())
             } else {
@@ -173,7 +173,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         let attachment = makeVideoAttachment(videoURL: videoURL, thumbnailURL: thumbnailURL)
         let expectation = expectation(description: "Completion called")
 
-        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions(cdnRequester: cdnRequester)) { result in
+        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions()) { result in
             switch result {
             case let .success(preview):
                 XCTAssertEqual(preview.image.pngData(), thumbnailImage.pngData())
@@ -194,7 +194,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         let attachment = makeVideoAttachment(videoURL: videoURL, thumbnailURL: thumbnailURL)
         let expectation = expectation(description: "Completion called")
 
-        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions(cdnRequester: cdnRequester)) { result in
+        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions()) { result in
             switch result {
             case .success:
                 XCTFail("Should have failed since both thumbnail and video preview fail")
@@ -214,7 +214,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         let attachment = makeVideoAttachment(videoURL: videoURL, thumbnailURL: nil)
         let expectation = expectation(description: "Completion called")
 
-        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions(cdnRequester: cdnRequester)) { _ in
+        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions()) { _ in
             expectation.fulfill()
         }
 
@@ -233,7 +233,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         )
         let expectation = expectation(description: "Completion called")
 
-        loader?.loadVideoPreview(with: attachment, options: VideoLoadOptions(cdnRequester: cdnRequester)) { result in
+        loader?.loadVideoPreview(with: attachment, options: VideoLoadOptions()) { result in
             if case .failure = result {
                 expectation.fulfill()
             } else {
@@ -259,7 +259,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         let attachment = makeVideoAttachment(videoURL: url, thumbnailURL: thumbnailURL)
 
         let firstExpectation = expectation(description: "First load")
-        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions(cdnRequester: cdnRequester)) { _ in
+        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions()) { _ in
             firstExpectation.fulfill()
         }
         waitForExpectations(timeout: 2)
@@ -275,7 +275,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
 
         // Load again — should NOT hit cache (it was cleared)
         let secondExpectation = expectation(description: "Second load after memory warning")
-        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions(cdnRequester: cdnRequester)) { _ in
+        sut.loadVideoPreview(with: attachment, options: VideoLoadOptions()) { _ in
             secondExpectation.fulfill()
         }
         waitForExpectations(timeout: 2)

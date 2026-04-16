@@ -11,11 +11,12 @@ public struct ImageDownloadOptions: Sendable {
     /// The resize information when loading an image. `Nil` if you want the full resolution of the image.
     public var resize: ImageResize?
 
-    /// The CDN requester for URL transformation (signing, headers, resizing).
-    public var cdnRequester: CDNRequester
+    public init(resize: ImageResize? = nil) {
+        self.resize = resize
+    }
 
+    @available(*, deprecated, message: "CDNRequester is now a dependency of StreamMediaLoader. Pass it when creating the loader instead.")
     public init(resize: ImageResize? = nil, cdnRequester: CDNRequester) {
         self.resize = resize
-        self.cdnRequester = cdnRequester
     }
 }
