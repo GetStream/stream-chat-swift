@@ -93,12 +93,13 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
         }
     }
 
-    func resolveFileURL(
-        _ url: URL,
-        completion: @escaping @MainActor (Result<CDNRequest, Error>) -> Void
+    func loadFile(
+        at url: URL,
+        options: FileLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderFile, Error>) -> Void
     ) {
         MainActor.assumeIsolated {
-            completion(.success(CDNRequest(url: url)))
+            completion(.success(MediaLoaderFile(url: url)))
         }
     }
 }

@@ -75,7 +75,7 @@ public protocol MediaLoader: AnyObject, Sendable {
         completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     )
 
-    // MARK: - File URL Resolution
+    // MARK: - File Loading
 
     /// Resolves a file URL through the CDN (signing, headers, etc.).
     ///
@@ -84,10 +84,12 @@ public protocol MediaLoader: AnyObject, Sendable {
     ///
     /// - Parameters:
     ///   - url: The original file URL to resolve.
-    ///   - completion: A completion handler called on the main actor with the resolved CDN request.
-    func resolveFileURL(
-        _ url: URL,
-        completion: @escaping @MainActor (Result<CDNRequest, Error>) -> Void
+    ///   - options: Options controlling file load behavior.
+    ///   - completion: A completion handler called on the main actor with the resolved file.
+    func loadFile(
+        at url: URL,
+        options: FileLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderFile, Error>) -> Void
     )
 }
 
@@ -131,9 +133,12 @@ extension MediaLoader {
     }
 
     /// Resolves a file URL through the CDN.
-    public func resolveFileURL(_ url: URL) async throws -> CDNRequest {
+    public func loadFile(
+        at url: URL,
+        options: FileLoadOptions = FileLoadOptions()
+    ) async throws -> MediaLoaderFile {
         try await withCheckedThrowingContinuation { continuation in
-            resolveFileURL(url) { result in
+            loadFile(at: url, options: options) { result in
                 continuation.resume(with: result)
             }
         }
@@ -163,6 +168,11 @@ public struct VideoLoadOptions: Sendable {
 
     @available(*, deprecated, message: "CDNRequester is now a dependency of StreamMediaLoader. Pass it when creating the loader instead.")
     public init(cdnRequester: CDNRequester) {}
+}
+
+/// Options for loading file content through a ``MediaLoader``.
+public struct FileLoadOptions: Sendable {
+    public init() {}
 }
 
 // MARK: - Result Types
@@ -204,5 +214,18 @@ public struct MediaLoaderVideoPreview: Sendable {
 
     public init(image: UIImage) {
         self.image = image
+    }
+}
+
+/// The result of loading a file through a ``MediaLoader``.
+public struct MediaLoaderFile: Sendable {
+    /// The resolved URL (potentially signed or rewritten by the CDN).
+    public var url: URL
+    /// Optional HTTP headers required to access the file.
+    public var headers: [String: String]?
+
+    public init(url: URL, headers: [String: String]? = nil) {
+        self.url = url
+        self.headers = headers
     }
 }
