@@ -138,6 +138,22 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         }
     }
 
+    // MARK: - URL-Based Video Preview
+
+    open func loadVideoPreview(
+        at url: URL,
+        options: VideoLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+    ) {
+        if let cached = videoPreviewCache.object(forKey: url as NSURL) {
+            StreamConcurrency.onMain {
+                completion(.success(MediaLoaderVideoPreview(image: cached)))
+            }
+            return
+        }
+        generateVideoPreview(for: url, options: options, completion: completion)
+    }
+
     // MARK: - Private
 
     private func generateVideoPreview(

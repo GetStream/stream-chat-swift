@@ -54,6 +54,26 @@ public protocol MediaLoader: AnyObject, Sendable {
         options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     )
+
+    /// Generates a video preview thumbnail from a URL.
+    ///
+    /// This is primarily intended for **local videos** (e.g., files picked from the
+    /// photo library or camera) that don't have a remote attachment or thumbnail URL.
+    /// It generates a preview frame directly from the video using AVFoundation.
+    ///
+    /// For remote videos that have an associated ``ChatMessageVideoAttachment``,
+    /// prefer ``loadVideoPreview(with:options:completion:)`` instead, as it can
+    /// take advantage of remote thumbnail URLs when available.
+    ///
+    /// - Parameters:
+    ///   - url: The video URL (typically a local `file://` URL).
+    ///   - options: Options controlling CDN behavior.
+    ///   - completion: A completion handler called on the main actor with the preview image.
+    func loadVideoPreview(
+        at url: URL,
+        options: VideoLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+    )
 }
 
 // MARK: - Async/Await Extensions
@@ -78,6 +98,18 @@ extension MediaLoader {
     ) async throws -> MediaLoaderVideoAsset {
         try await withCheckedThrowingContinuation { continuation in
             loadVideoAsset(at: url, options: options) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+
+    /// Generates a video preview thumbnail from a URL.
+    public func loadVideoPreview(
+        at url: URL,
+        options: VideoLoadOptions
+    ) async throws -> MediaLoaderVideoPreview {
+        try await withCheckedThrowingContinuation { continuation in
+            loadVideoPreview(at: url, options: options) { result in
                 continuation.resume(with: result)
             }
         }
