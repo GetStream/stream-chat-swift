@@ -41,11 +41,6 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         )
     }
 
-    @available(*, deprecated, message: "Use init(cdnRequester:downloader:) instead.")
-    public convenience init(downloader: ImageDownloading) {
-        self.init(cdnRequester: StreamCDNRequester(), downloader: downloader)
-    }
-
     deinit {
         NotificationCenter.default.removeObserver(self)
     }

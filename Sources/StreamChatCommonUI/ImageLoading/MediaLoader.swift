@@ -155,19 +155,11 @@ public struct ImageLoadOptions: Sendable {
     public init(resize: ImageResize? = nil) {
         self.resize = resize
     }
-
-    @available(*, deprecated, message: "CDNRequester is now a dependency of StreamMediaLoader. Pass it when creating the loader instead.")
-    public init(resize: ImageResize? = nil, cdnRequester: CDNRequester) {
-        self.resize = resize
-    }
 }
 
 /// Options for loading video content through a ``MediaLoader``.
 public struct VideoLoadOptions: Sendable {
     public init() {}
-
-    @available(*, deprecated, message: "CDNRequester is now a dependency of StreamMediaLoader. Pass it when creating the loader instead.")
-    public init(cdnRequester: CDNRequester) {}
 }
 
 /// Options for loading file content through a ``MediaLoader``.
