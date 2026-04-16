@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.0.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.0.0)
+_April 16, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Add `remoteURL` parameter to `downloadAttachment` to support CDN-signed URLs [#4056](https://github.com/GetStream/stream-chat-swift/pull/4056)
