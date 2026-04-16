@@ -175,11 +175,15 @@ public struct MediaLoaderImage: Sendable {
     public var isAnimated: Bool
     /// The raw image data for animated rendering. `nil` for static images.
     public var animatedImageData: Data?
+    /// The caching key used by the CDN requester, if any.
+    /// UI layers can use this to maintain a synchronous cache lookup table.
+    public var cachingKey: String?
 
-    public init(image: UIImage, isAnimated: Bool = false, animatedImageData: Data? = nil) {
+    public init(image: UIImage, isAnimated: Bool = false, animatedImageData: Data? = nil, cachingKey: String? = nil) {
         self.image = image
         self.isAnimated = isAnimated
         self.animatedImageData = animatedImageData
+        self.cachingKey = cachingKey
     }
 }
 

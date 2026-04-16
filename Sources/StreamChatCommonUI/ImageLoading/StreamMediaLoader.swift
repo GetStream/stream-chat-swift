@@ -74,12 +74,14 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
                     cachingKey: cdnRequest.cachingKey,
                     resize: resizeSize
                 )
+                let cachingKey = cdnRequest.cachingKey
                 downloader.downloadImage(url: cdnRequest.url, options: downloadOptions) { imageResult in
                     completion(imageResult.map {
                         MediaLoaderImage(
                             image: $0.image,
                             isAnimated: $0.isAnimated,
-                            animatedImageData: $0.animatedImageData
+                            animatedImageData: $0.animatedImageData,
+                            cachingKey: cachingKey
                         )
                     })
                 }
