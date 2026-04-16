@@ -1031,8 +1031,8 @@ open class ChatMessageListVC: _ViewController,
                 let mediaLoader = components.mediaLoader
                 _Concurrency.Task {
                     do {
-                        let cdnRequest = try await mediaLoader.resolveFileURL(attachment.remoteURL)
-                        try await chat.downloadAttachment(attachment, remoteURL: cdnRequest.url)
+                        let file = try await mediaLoader.loadFile(at: attachment.remoteURL)
+                        try await chat.downloadAttachment(attachment, remoteURL: file.url)
                     } catch {
                         log.error("Failed to download attachment \(attachment.id): \(error)")
                     }

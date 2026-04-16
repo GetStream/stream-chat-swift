@@ -231,15 +231,16 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         }
     }
 
-    // MARK: - File URL Resolution
+    // MARK: - File Loading
 
-    open func resolveFileURL(
-        _ url: URL,
-        completion: @escaping @MainActor (Result<CDNRequest, Error>) -> Void
+    open func loadFile(
+        at url: URL,
+        options: FileLoadOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderFile, Error>) -> Void
     ) {
         cdnRequester.fileRequest(for: url, options: .init()) { result in
             StreamConcurrency.onMain {
-                completion(result)
+                completion(result.map { MediaLoaderFile(url: $0.url, headers: $0.headers) })
             }
         }
     }
