@@ -321,6 +321,30 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(receivedGroupedChannels?.unreadChannels, ["all": 1, "new": 1, "current": 2])
     }
 
+    func test_groupedChannelsGroup_normalizesUnreadTotalsFromChannels() {
+        let firstChannel = ChatChannel.mock(
+            cid: .unique,
+            unreadCount: .init(messages: 3, mentions: 0)
+        )
+        let secondChannel = ChatChannel.mock(
+            cid: .unique,
+            unreadCount: .init(messages: 1, mentions: 0)
+        )
+        let thirdChannel = ChatChannel.mock(
+            cid: .unique,
+            unreadCount: .noUnread
+        )
+
+        let group = GroupedChannelsGroup(
+            channels: [firstChannel, secondChannel, thirdChannel],
+            unreadCount: 0,
+            unreadChannels: 0
+        )
+
+        XCTAssertEqual(group.unreadCount, 4)
+        XCTAssertEqual(group.unreadChannels, 2)
+    }
+
     func test_disconnect_flushesRequestsQueue() throws {
         // Create a chat client
         let client = ChatClient(
