@@ -264,6 +264,7 @@ final class ChatClient_Tests: XCTestCase {
 
     func test_groupedQueryChannels_callsAPIClientAndReturnsGroupedChannels() {
         let client = ChatClient.mock(config: inMemoryStorageConfig)
+        client.setToken(token: try! .init(rawValue: "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoiZHVtbXlDdXJyZW50VXNlciJ9.signature"))
         let firstCid = ChannelId.unique
         let secondCid = ChannelId.unique
         let thirdCid = ChannelId.unique
@@ -315,7 +316,8 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(receivedGroupedChannels?.channels["all"]?.map(\.cid), [firstCid])
         XCTAssertEqual(receivedGroupedChannels?.channels["new"]?.map(\.cid), [secondCid])
         XCTAssertEqual(receivedGroupedChannels?.channels["current"]?.map(\.cid), [thirdCid])
-        XCTAssertEqual(receivedGroupedChannels?.unreadCounts, ["all": 1, "new": 2, "current": 4])
+        XCTAssertEqual(receivedGroupedChannels?.channels["all"]?.first?.unreadCount.messages, 10)
+        XCTAssertEqual(receivedGroupedChannels?.unreadCounts, ["all": 10, "new": 10, "current": 10])
         XCTAssertEqual(receivedGroupedChannels?.unreadChannels, ["all": 1, "new": 1, "current": 2])
     }
 
