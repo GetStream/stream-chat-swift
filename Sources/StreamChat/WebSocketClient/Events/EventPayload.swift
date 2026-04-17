@@ -36,6 +36,7 @@ final class EventPayload: Decodable, Sendable {
         case lastDeliveredAt = "last_delivered_at"
         case lastDeliveredMessageId = "last_delivered_message_id"
         case unreadMessagesCount = "unread_messages"
+        case groupedUnreadChannels = "grouped_unread_channels"
         case shadow
         case thread
         case vote = "poll_vote"
@@ -76,6 +77,7 @@ final class EventPayload: Decodable, Sendable {
     let lastDeliveredAt: Date?
     let lastDeliveredMessageId: MessageId?
     let unreadMessagesCount: Int?
+    let groupedUnreadChannels: GroupedUnreadChannels?
     let poll: PollPayload?
     let vote: PollVotePayload?
 
@@ -105,6 +107,7 @@ final class EventPayload: Decodable, Sendable {
         reaction: MessageReactionPayload? = nil,
         watcherCount: Int? = nil,
         unreadCount: UnreadCountPayload? = nil,
+        groupedUnreadChannels: GroupedUnreadChannels? = nil,
         createdAt: Date? = nil,
         isChannelHistoryCleared: Bool? = nil,
         banReason: String? = nil,
@@ -155,6 +158,7 @@ final class EventPayload: Decodable, Sendable {
         self.lastReadAt = lastReadAt
         self.lastReadMessageId = lastReadMessageId
         self.unreadMessagesCount = unreadMessagesCount
+        self.groupedUnreadChannels = groupedUnreadChannels
         self.threadPartial = threadPartial
         self.threadDetails = threadDetails
         self.poll = poll
@@ -199,6 +203,7 @@ final class EventPayload: Decodable, Sendable {
         lastReadAt = try container.decodeIfPresent(Date.self, forKey: .lastReadAt)
         lastReadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastReadMessageId)
         unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
+        groupedUnreadChannels = try container.decodeIfPresent(GroupedUnreadChannels.self, forKey: .groupedUnreadChannels)
         threadDetails = container.decodeAsResultIfPresent(ThreadDetailsPayload.self, forKey: .thread)
         threadPartial = container.decodeAsResultIfPresent(ThreadPartialPayload.self, forKey: .thread)
         vote = try container.decodeIfPresent(PollVotePayload.self, forKey: .vote)
@@ -244,6 +249,7 @@ private extension PartialKeyPath where Root == EventPayload {
         case \EventPayload.reaction: return "reaction"
         case \EventPayload.watcherCount: return "watcherCount"
         case \EventPayload.unreadCount: return "unreadCount"
+        case \EventPayload.groupedUnreadChannels: return "groupedUnreadChannels"
         case \EventPayload.createdAt: return "createdAt"
         case \EventPayload.isChannelHistoryCleared: return "isChannelHistoryCleared"
         case \EventPayload.banReason: return "banReason"

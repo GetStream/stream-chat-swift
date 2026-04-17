@@ -517,15 +517,11 @@ public class ChatClient: @unchecked Sendable {
         )
         let endpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
 
-        apiClient.request(endpoint: endpoint) { [databaseContainer, currentUserId] result in
+        apiClient.request(endpoint: endpoint) { [databaseContainer] result in
             switch result {
             case let .success(payload):
                 databaseContainer.write(converting: { session in
-                    try Self.groupedChannels(
-                        from: payload,
-                        session: session,
-                        currentUserId: currentUserId
-                    )
+                    try Self.groupedChannels(from: payload, session: session)
                 }, completion: completion)
             case let .failure(error):
                 completion(.failure(error))
@@ -852,23 +848,12 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
 extension ChatClient {
     private static func groupedChannels(
         from payload: GroupedQueryChannelsPayload,
-        session: DatabaseSession,
-        currentUserId: UserId?
+        session: DatabaseSession
     ) throws -> GroupedChannels {
         let groups = try payload.groups.mapValues { groupPayload in
             let channels = try groupPayload.channels.map { channelPayload in
-                _ = try session.saveChannel(payload: channelPayload)
-
-                let unreadCount = groupedChannelUnreadCount(
-                    from: channelPayload,
-                    currentUserId: currentUserId
-                )
-
-                return channelPayload.asModel(
-                    currentUserId: currentUserId,
-                    currentlyTypingUsers: nil,
-                    unreadCount: unreadCount
-                )
+                let dto = try session.saveChannel(payload: channelPayload)
+                return try dto.asModel()
             }
 
             return GroupedChannelsGroup(
@@ -881,33 +866,6 @@ extension ChatClient {
         (session as? NSManagedObjectContext)?.rollback()
         return GroupedChannels(
             groups: groups
-        )
-    }
-
-    private static func groupedChannelUnreadCount(
-        from payload: ChannelPayload,
-        currentUserId: UserId?
-    ) -> ChannelUnreadCount? {
-        guard let currentUserId,
-              let currentUserRead = payload.channelReads.first(where: { $0.user.id == currentUserId })
-        else {
-            return nil
-        }
-
-        let unreadMessagesCount = currentUserRead.unreadMessagesCount
-        guard unreadMessagesCount > 0 else { return .noUnread }
-
-        let unreadMentionsCount = payload.messages
-            .sorted { $0.createdAt > $1.createdAt }
-            .prefix(unreadMessagesCount)
-            .filter { messagePayload in
-                messagePayload.mentionedUsers.contains { $0.id == currentUserId }
-            }
-            .count
-
-        return ChannelUnreadCount(
-            messages: unreadMessagesCount,
-            mentions: unreadMentionsCount
         )
     }
 

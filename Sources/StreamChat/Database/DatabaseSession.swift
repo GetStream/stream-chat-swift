@@ -58,6 +58,10 @@ protocol CurrentUserDatabaseSession {
     /// If there is no current user, the error will be thrown.
     func saveCurrentUserUnreadCount(count: UnreadCountPayload) throws
 
+    /// Updates the `CurrentUserDTO` with grouped unread channel counts.
+    /// If there is no current user, the error will be thrown.
+    func saveCurrentUserGroupedUnreadChannels(_ groupedUnreadChannels: GroupedUnreadChannels) throws
+
     /// Updates the `CurrentUserDTO.devices` with the provided `DevicesPayload`
     /// If there's no current user set, an error will be thrown.
     @discardableResult
@@ -744,6 +748,10 @@ extension DatabaseSession {
 
         if let unreadCount = payload.unreadCount {
             try saveCurrentUserUnreadCount(count: unreadCount)
+        }
+
+        if let groupedUnreadChannels = payload.groupedUnreadChannels {
+            try saveCurrentUserGroupedUnreadChannels(groupedUnreadChannels)
         }
 
         if let threadDetailsPayload = payload.threadDetails?.value {

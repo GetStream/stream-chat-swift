@@ -46,7 +46,7 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveCurrentDevice(_ deviceId: String) throws {
         try throwErrorIfNeeded()
-        return try saveCurrentDevice(deviceId)
+        return try underlyingSession.saveCurrentDevice(deviceId)
     }
 
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
@@ -111,12 +111,17 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
         try throwErrorIfNeeded()
-        return try saveCurrentUser(payload: payload)
+        return try underlyingSession.saveCurrentUser(payload: payload)
     }
 
     func saveCurrentUserUnreadCount(count: UnreadCountPayload) throws {
         try throwErrorIfNeeded()
-        try saveCurrentUserUnreadCount(count: count)
+        try underlyingSession.saveCurrentUserUnreadCount(count: count)
+    }
+
+    func saveCurrentUserGroupedUnreadChannels(_ groupedUnreadChannels: GroupedUnreadChannels) throws {
+        try throwErrorIfNeeded()
+        try underlyingSession.saveCurrentUserGroupedUnreadChannels(groupedUnreadChannels)
     }
 
     func deleteDevice(id: DeviceId) {
