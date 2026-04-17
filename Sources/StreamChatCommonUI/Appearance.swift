@@ -34,7 +34,15 @@ import StreamChat
     /// A set of tokens defining the rules for layout.
     public var tokens = DesignSystemTokens()
     
-    public nonisolated(unsafe) static var bundle: Bundle?
+    /// Override bundle used when resolving localized resources.
+    ///
+    /// Storage lives on a non-`@MainActor` holder (see ``AppearanceBundleOverride``)
+    /// so the property can be read from non-main contexts such as the
+    /// ``localizationProvider`` closure without requiring a main-actor hop.
+    public nonisolated static var bundle: Bundle? {
+        get { AppearanceBundleOverride.value }
+        set { AppearanceBundleOverride.value = newValue }
+    }
 
     /// Provider for custom localization which is dependent on App Bundle.
     public var localizationProvider: @Sendable (_ key: String, _ table: String) -> String = { key, table in
@@ -45,6 +53,19 @@ import StreamChat
     public init() {
         // Public init.
     }
+}
+
+// MARK: - Bundle Override Storage
+
+/// Non-`@MainActor` storage for ``Appearance/bundle``.
+///
+/// Keeping the `nonisolated(unsafe)` static outside of the main-actor-isolated
+/// ``Appearance`` class avoids combining `@MainActor` and `nonisolated(unsafe)`
+/// on the same declaration, which trips known Swift 6.0.x diagnostics when the
+/// type is re-exported across module boundaries.
+public enum AppearanceBundleOverride {
+    /// The override bundle, or `nil` to fall back to the SDK's own bundle.
+    public nonisolated(unsafe) static var value: Bundle?
 }
 
 // MARK: - Appearance + Default

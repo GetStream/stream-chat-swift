@@ -43,7 +43,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     open func loadImage(
         url: URL?,
         options: ImageLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+        completion: @escaping @Sendable (Result<MediaLoaderImage, Error>) -> Void
     ) {
         guard let url else {
             StreamConcurrency.onMain {
@@ -78,7 +78,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     open func loadVideoAsset(
         at url: URL,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
+        completion: @escaping @Sendable (Result<MediaLoaderVideoAsset, Error>) -> Void
     ) {
         options.cdnRequester.fileRequest(for: url, options: .init()) { result in
             switch result {
@@ -104,7 +104,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     open func loadVideoPreview(
         with attachment: ChatMessageVideoAttachment,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+        completion: @escaping @Sendable (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
         let videoURL = attachment.videoURL
         if let cached = videoPreviewCache.object(forKey: videoURL as NSURL) {
@@ -143,7 +143,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     open func loadVideoPreview(
         at url: URL,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+        completion: @escaping @Sendable (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
         if let cached = videoPreviewCache.object(forKey: url as NSURL) {
             StreamConcurrency.onMain {
@@ -159,7 +159,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     private func generateVideoPreview(
         for url: URL,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+        completion: @escaping @Sendable (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
         options.cdnRequester.fileRequest(for: url, options: .init()) { [weak self] result in
             guard let self else {

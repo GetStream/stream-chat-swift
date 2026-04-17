@@ -12,7 +12,11 @@ import UIKit
 /// implementations remain stateless with respect to CDN configuration.
 /// Changing the requester on `ChatClientConfig` takes effect immediately without
 /// recreating the loader.
-public protocol MediaLoader: AnyObject, Sendable {
+///
+/// Completion handlers are invoked on the main thread by the default
+/// implementation; callers that need to be on the main actor can re-enter it
+/// with `StreamConcurrency.onMain { ... }`.
+public protocol MediaLoader: AnyObject {
     // MARK: - Image Loading
 
     /// Loads a single image from the given URL.
@@ -20,11 +24,11 @@ public protocol MediaLoader: AnyObject, Sendable {
     /// - Parameters:
     ///   - url: The image URL. If nil, the completion is called with a failure.
     ///   - options: Options controlling resize and CDN behavior.
-    ///   - completion: A completion handler called on the main actor with the loaded image.
+    ///   - completion: A completion handler called on the main thread with the loaded image.
     func loadImage(
         url: URL?,
         options: ImageLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+        completion: @escaping @Sendable (Result<MediaLoaderImage, Error>) -> Void
     )
 
     // MARK: - Video Loading
@@ -36,7 +40,7 @@ public protocol MediaLoader: AnyObject, Sendable {
     func loadVideoAsset(
         at url: URL,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
+        completion: @escaping @Sendable (Result<MediaLoaderVideoAsset, Error>) -> Void
     )
 
     /// Loads a video preview from a video attachment.
@@ -48,11 +52,11 @@ public protocol MediaLoader: AnyObject, Sendable {
     /// - Parameters:
     ///   - attachment: A video attachment containing the video URL and optional thumbnail URL.
     ///   - options: Options controlling CDN behavior.
-    ///   - completion: A completion handler called on the main actor with the preview image.
+    ///   - completion: A completion handler called on the main thread with the preview image.
     func loadVideoPreview(
         with attachment: ChatMessageVideoAttachment,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+        completion: @escaping @Sendable (Result<MediaLoaderVideoPreview, Error>) -> Void
     )
 
     /// Generates a video preview thumbnail from a URL.
@@ -68,11 +72,11 @@ public protocol MediaLoader: AnyObject, Sendable {
     /// - Parameters:
     ///   - url: The video URL (typically a local `file://` URL).
     ///   - options: Options controlling CDN behavior.
-    ///   - completion: A completion handler called on the main actor with the preview image.
+    ///   - completion: A completion handler called on the main thread with the preview image.
     func loadVideoPreview(
         at url: URL,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+        completion: @escaping @Sendable (Result<MediaLoaderVideoPreview, Error>) -> Void
     )
 }
 

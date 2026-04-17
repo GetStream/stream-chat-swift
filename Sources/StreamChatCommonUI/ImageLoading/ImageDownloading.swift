@@ -15,11 +15,11 @@ public protocol ImageDownloading: Sendable {
     /// - Parameters:
     ///   - url: The image URL to download.
     ///   - options: Options controlling headers, caching, and resizing.
-    ///   - completion: Called on the main actor with the downloaded image.
+    ///   - completion: Called on the main thread with the downloaded image.
     func downloadImage(
         url: URL,
         options: ImageDownloadingOptions,
-        completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
+        completion: @escaping @Sendable (Result<DownloadedImage, Error>) -> Void
     )
 }
 

@@ -335,7 +335,7 @@ private final class MockImageDownloader: ImageDownloading, @unchecked Sendable {
     func downloadImage(
         url: URL,
         options: ImageDownloadingOptions,
-        completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
+        completion: @escaping @Sendable (Result<DownloadedImage, Error>) -> Void
     ) {
         let result = self.result
         DispatchQueue.main.async {
@@ -361,12 +361,12 @@ private final class AsyncMockCDNRequester: CDNRequester, @unchecked Sendable {
 }
 
 private final class AsyncMockImageDownloader: ImageDownloading, @unchecked Sendable {
-    private var storedCompletion: (@MainActor (Result<DownloadedImage, Error>) -> Void)?
+    private var storedCompletion: (@Sendable (Result<DownloadedImage, Error>) -> Void)?
 
     func downloadImage(
         url: URL,
         options: ImageDownloadingOptions,
-        completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
+        completion: @escaping @Sendable (Result<DownloadedImage, Error>) -> Void
     ) {
         storedCompletion = completion
     }

@@ -23,7 +23,7 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
     func loadImage(
         url: URL?,
         options: ImageLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+        completion: @escaping @Sendable (Result<MediaLoaderImage, Error>) -> Void
     ) {
         guard let url else {
             MainActor.assumeIsolated {
@@ -51,7 +51,7 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
     func loadVideoAsset(
         at url: URL,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
+        completion: @escaping @Sendable (Result<MediaLoaderVideoAsset, Error>) -> Void
     ) {
         videoAssetMockFunc.call(with: (url, options, completion))
         MainActor.assumeIsolated {
@@ -62,7 +62,7 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
     func loadVideoPreview(
         with attachment: ChatMessageVideoAttachment,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+        completion: @escaping @Sendable (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
         loadVideoPreviewMockFunc.call(with: (attachment, options, completion))
         let url = attachment.payload.thumbnailURL ?? attachment.videoURL
@@ -72,7 +72,7 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
     func loadVideoPreview(
         at url: URL,
         options: VideoLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+        completion: @escaping @Sendable (Result<MediaLoaderVideoPreview, Error>) -> Void
     ) {
         loadVideoPreviewAtURLMockFunc.call(with: (url, options, completion))
         guard let data = try? Data(contentsOf: url), let image = UIImage(data: data) else {

@@ -25,14 +25,20 @@ extension MediaLoader {
         imageView.currentImageLoadingTask = task
 
         let loadOptions = ImageLoadOptions(resize: options.resize, cdnRequester: options.cdnRequester)
+        // The protocol-level callback is @Sendable. Hop to the main actor so we
+        // can safely access the captured UIKit state. Wrap the UIImageView in a
+        // sendable box since UIImageView itself is not Sendable.
+        let imageViewBox = UnsafeSendableBox(imageView)
         loadImage(url: url, options: loadOptions) { result in
-            guard !task.isCancelled else { return }
-            switch result {
-            case let .success(loaded):
-                imageView.image = loaded.image
-                completion?(.success(loaded.image))
-            case let .failure(error):
-                completion?(.failure(error))
+            Task { @MainActor in
+                guard !task.isCancelled else { return }
+                switch result {
+                case let .success(loaded):
+                    imageViewBox.value.image = loaded.image
+                    completion?(.success(loaded.image))
+                case let .failure(error):
+                    completion?(.failure(error))
+                }
             }
         }
 
@@ -46,7 +52,9 @@ extension MediaLoader {
     ) {
         let loadOptions = ImageLoadOptions(resize: request.options.resize, cdnRequester: request.options.cdnRequester)
         loadImage(url: request.url, options: loadOptions) { result in
-            completion(result.map(\.image))
+            Task { @MainActor in
+                completion(result.map(\.image))
+            }
         }
     }
 
@@ -119,6 +127,13 @@ final class ImageBatchResult: @unchecked Sendable {
     init(count: Int) {
         results = Array(repeating: .failure(NSError(domain: NSURLErrorDomain, code: URLError.Code.unknown.rawValue)), count: count)
     }
+}
+
+/// A minimal sendable wrapper for non-`Sendable` reference types that are
+/// known to only be accessed on the main actor at runtime. Use sparingly.
+private final class UnsafeSendableBox<Value>: @unchecked Sendable {
+    let value: Value
+    init(_ value: Value) { self.value = value }
 }
 
 /// A cancellable image loading task.

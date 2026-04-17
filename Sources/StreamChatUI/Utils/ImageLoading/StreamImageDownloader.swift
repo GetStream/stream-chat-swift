@@ -12,7 +12,7 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
     public func downloadImage(
         url: URL,
         options: ImageDownloadingOptions,
-        completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
+        completion: @escaping @Sendable (Result<DownloadedImage, Error>) -> Void
     ) {
         var urlRequest = URLRequest(url: url)
         if let headers = options.headers {

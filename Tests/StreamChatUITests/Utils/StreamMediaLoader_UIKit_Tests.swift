@@ -392,7 +392,7 @@ private final class MockImageDownloader: ImageDownloading, @unchecked Sendable {
     func downloadImage(
         url: URL,
         options: ImageDownloadingOptions,
-        completion: @escaping @MainActor (Result<DownloadedImage, Error>) -> Void
+        completion: @escaping @Sendable (Result<DownloadedImage, Error>) -> Void
     ) {
         let resolvedResult = resultsByURL[url] ?? result
         if completionDelay > 0 {
