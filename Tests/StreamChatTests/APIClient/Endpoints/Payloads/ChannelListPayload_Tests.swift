@@ -108,7 +108,6 @@ final class ChannelListPayload_Tests: XCTestCase {
                   "read": []
                 }
               ],
-              "unread_count": 3,
               "unread_channels": 1
             }
           },
@@ -120,9 +119,66 @@ final class ChannelListPayload_Tests: XCTestCase {
 
         XCTAssertEqual(payload.groups.keys.sorted(), ["all"])
         XCTAssertEqual(payload.groups["all"]?.channels.map(\.channel.cid), [channelId])
-        XCTAssertEqual(payload.groups["all"]?.unreadCount, 3)
+        XCTAssertEqual(payload.groups["all"]?.unreadCount, 0)
         XCTAssertEqual(payload.groups["all"]?.unreadChannels, 1)
         XCTAssertEqual(payload.duration, "12ms")
+    }
+
+    func test_groupedQueryChannelsPayload_defaultsUnreadCountersWhenMissing() throws {
+        let channelId = ChannelId(type: .messaging, id: "bucket-channel")
+        let json = """
+        {
+          "groups": {
+            "expired": {
+              "channels": [
+                {
+                  "channel": {
+                    "cid": "\(channelId.rawValue)",
+                    "id": "\(channelId.id)",
+                    "type": "\(channelId.type.rawValue)",
+                    "created_at": "2024-01-01T00:00:00.000Z",
+                    "updated_at": "2024-01-02T00:00:00.000Z",
+                    "frozen": false,
+                    "disabled": false,
+                    "config": {
+                      "typing_events": true,
+                      "read_events": true,
+                      "connect_events": true,
+                      "search": true,
+                      "reactions": true,
+                      "replies": true,
+                      "quotes": true,
+                      "uploads": true,
+                      "url_enrichment": true,
+                      "mutes": true,
+                      "message_retention": "infinite",
+                      "max_message_length": 5000,
+                      "created_at": "2024-01-01T00:00:00.000Z",
+                      "updated_at": "2024-01-02T00:00:00.000Z",
+                      "commands": []
+                    },
+                    "own_capabilities": [],
+                    "member_count": 0
+                  },
+                  "members": [],
+                  "messages": [],
+                  "pinned_messages": [],
+                  "watchers": [],
+                  "watcher_count": 0,
+                  "read": []
+                }
+              ]
+            }
+          },
+          "duration": "12ms"
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
+
+        XCTAssertEqual(payload.groups["expired"]?.channels.map(\.channel.cid), [channelId])
+        XCTAssertEqual(payload.groups["expired"]?.unreadCount, 0)
+        XCTAssertEqual(payload.groups["expired"]?.unreadChannels, 0)
     }
 
     func saveChannelListPayload(_ payload: ChannelListPayload, database: DatabaseContainer_Spy, timeout: TimeInterval = 20) {

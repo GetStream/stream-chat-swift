@@ -143,6 +143,28 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel.messageCount, 5)
     }
 
+    func test_eventPayloadGroupedUnreadChannels_isSavedToDatabase() throws {
+        let currentUserPayload = CurrentUserPayload.dummy(userPayload: .dummy(userId: .unique, role: .admin))
+        let groupedUnreadChannels: GroupedUnreadChannels = [
+            "direct": 1,
+            "team": 4
+        ]
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUserPayload)
+            try session.saveEvent(payload: EventPayload(
+                eventType: .messageNew,
+                cid: .unique,
+                user: .dummy(userId: .unique),
+                message: .dummy(messageId: .unique, authorUserId: .unique),
+                groupedUnreadChannels: groupedUnreadChannels,
+                createdAt: .unique
+            ))
+        }
+
+        XCTAssertEqual(database.viewContext.currentUser?.groupedUnreadChannels, groupedUnreadChannels)
+    }
+
     func test_deleteMessage() throws {
         let channelId: ChannelId = .unique
         let messageId: MessageId = .unique

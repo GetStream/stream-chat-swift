@@ -164,6 +164,7 @@
     </entity>
     <entity name="CurrentUserDTO" representedClassName="CurrentUserDTO" syncable="YES">
         <attribute name="blockedUserIds" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromDataTransformer"/>
+        <attribute name="groupedUnreadChannelsData" optional="YES" attributeType="Binary"/>
         <attribute name="isDeliveryReceiptsEnabled" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>
         <attribute name="isInvisible" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <attribute name="isReadReceiptsEnabled" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="YES"/>

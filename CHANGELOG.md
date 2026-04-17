@@ -6,8 +6,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### ✅ Added
 - Add `ChatChannelListController.prefill(channels:completion:)` for priming controller-local channel data before the first synchronize call while preserving normal pagination, observation, and offline refresh behavior
 - Add `ChatClient.groupedQueryChannels(limit:watch:presence:)` to fetch grouped channel groups as `GroupedChannels`, preserving backend group keys and exposing normalized per-group channels and unread counts for integrators
+- Add optional `groupedUnreadChannels` data to grouped unread websocket events and persist it on `CurrentChatUser` for integrators
 
 ### 🔄 Changed
+- Make grouped channels decoding tolerate missing `unread_count` and `unread_channels` fields in group buckets, matching the current OpenAPI schema
 
 # [4.99.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.99.1)
 _April 01, 2026_
