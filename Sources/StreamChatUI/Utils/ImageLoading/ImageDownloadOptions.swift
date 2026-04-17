@@ -4,7 +4,6 @@
 
 import Foundation
 import StreamChat
-import StreamChatCommonUI
 
 /// The options for downloading an image.
 public struct ImageDownloadOptions: Sendable {

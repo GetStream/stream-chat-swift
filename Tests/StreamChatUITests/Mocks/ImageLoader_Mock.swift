@@ -4,7 +4,6 @@
 
 import AVKit
 import StreamChat
-import StreamChatCommonUI
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import UIKit

@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-import StreamChatCommonUI
 import UIKit
 
 /// A UIControl subclass that is designed to show the avatar of the currently logged in user.
