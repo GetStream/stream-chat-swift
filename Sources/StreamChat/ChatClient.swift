@@ -921,8 +921,17 @@ public struct GroupedChannelsGroup: Equatable {
         unreadChannels: Int
     ) {
         self.channels = channels
-        self.unreadCount = unreadCount
-        self.unreadChannels = unreadChannels
+        let derivedUnreadCount = channels.reduce(into: 0) { partialResult, channel in
+            partialResult += channel.unreadCount.messages
+        }
+        let derivedUnreadChannels = channels.reduce(into: 0) { partialResult, channel in
+            if channel.unreadCount.messages > 0 {
+                partialResult += 1
+            }
+        }
+
+        self.unreadCount = max(unreadCount, derivedUnreadCount)
+        self.unreadChannels = max(unreadChannels, derivedUnreadChannels)
     }
 }
 
