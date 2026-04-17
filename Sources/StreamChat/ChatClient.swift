@@ -520,6 +520,10 @@ public class ChatClient: @unchecked Sendable {
         apiClient.request(endpoint: endpoint) { [databaseContainer] result in
             switch result {
             case let .success(payload):
+                databaseContainer.write { session in
+                    let groupedUnreadChannels = payload.groups.mapValues(\.unreadChannels)
+                    try session.saveCurrentUserGroupedUnreadChannels(groupedUnreadChannels)
+                }
                 databaseContainer.write(converting: { session in
                     try Self.groupedChannels(from: payload, session: session)
                 }, completion: completion)
