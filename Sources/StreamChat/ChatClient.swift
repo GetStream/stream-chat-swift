@@ -920,8 +920,14 @@ public struct GroupedChannels: Equatable {
     /// The grouped channel groups returned by the backend, keyed by group name.
     public let groups: [String: GroupedChannelsGroup]
 
-    /// Convenience access to the grouped channels without per-group metadata.
+    /// Convenience access to each group's channels, keyed by group name.
     public var channels: [String: [ChatChannel]] { groups.mapValues(\.channels) }
+
+    /// Convenience access to each group's unread message count, keyed by group name.
+    public var unreadCounts: [String: Int] { groups.mapValues(\.unreadCount) }
+
+    /// Convenience access to each group's unread channel count, keyed by group name.
+    public var unreadChannels: [String: Int] { groups.mapValues(\.unreadChannels) }
 
     public init(
         groups: [String: GroupedChannelsGroup]
