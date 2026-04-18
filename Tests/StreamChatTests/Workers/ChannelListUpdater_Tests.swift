@@ -155,6 +155,42 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertEqual(channelsFromQuery.count, 1)
     }
 
+    func test_update_whenSuccess_whenFirstFetchWithoutReset_shouldContinueChannelsFromQuery() throws {
+        var query = ChannelListQuery(
+            filter: .in(.members, values: [.unique])
+        )
+        query.pagination = .init(pageSize: 25, offset: 0)
+
+        try database.writeSynchronously { session in
+            let queryDTO = session.saveQuery(query: query)
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy()))
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy()))
+            queryDTO.channels.insert(try session.saveChannel(payload: .dummy()))
+        }
+
+        var channelsFromQuery: [ChatChannel] {
+            database.viewContext.channelListQuery(
+                filterHash: query.filter.filterHash
+            )?.channels.compactMap { try? $0.asModel() } ?? []
+        }
+
+        XCTAssertEqual(channelsFromQuery.count, 3)
+
+        let exp = expectation(description: "update completes")
+        listUpdater.update(channelListQuery: query, resetQueryOnFirstPage: false, completion: { result in
+            XCTAssertNil(result.error)
+            exp.fulfill()
+        })
+
+        let cid = ChannelId(type: .messaging, id: .unique)
+        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
+        apiClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(channelsFromQuery.count, 4)
+    }
+
     func test_update_whenSuccess_whenNotFirstFetch_shouldContinueChannelsFromQuery() throws {
         var query = ChannelListQuery(
             filter: .in(.members, values: [.unique])

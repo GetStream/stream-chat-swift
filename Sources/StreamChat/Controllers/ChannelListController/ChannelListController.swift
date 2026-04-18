@@ -84,7 +84,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     private(set) lazy var channelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
-        let request = ChannelDTO.channelListFetchRequest(query: self.query, chatClientConfig: client.config)
+        let request = ChannelDTO.channelListFetchRequest(
+            query: self.query,
+            chatClientConfig: client.config,
+            applyLocalFilterPredicate: filter == nil
+        )
         let observer = self.environment.createChannelListDatabaseObserver(
             client.databaseContainer,
             request,
@@ -230,6 +234,13 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 // Prefill can come from a differently sized grouped endpoint page, so we can
                 // only conclude pagination is exhausted when no channels were provided at all.
                 self?.hasLoadedAllPreviousChannels = savedChannels.isEmpty
+                // Start the observer and linker immediately so real-time WS events are
+                // processed for all prefilled controllers, even if synchronize() hasn't
+                // been called yet (e.g. user hasn't visited that tab yet).
+                self?.startChannelListObserverIfNeeded()
+                if let self {
+                    self.channelListLinker.start(with: self.client.eventNotificationCenter)
+                }
                 self?.callback {
                     completion?(nil)
                 }
@@ -263,7 +274,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     ) {
         let limit = query.pagination.pageSize
         worker.update(
-            channelListQuery: query
+            channelListQuery: query,
+            resetQueryOnFirstPage: filter == nil
         ) { [weak self] result in
             switch result {
             case let .success(channels):

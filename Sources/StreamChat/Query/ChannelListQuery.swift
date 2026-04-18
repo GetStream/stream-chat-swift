@@ -32,6 +32,13 @@ public struct ChannelListQuery: Encodable, LocalConvertibleSortingQuery {
     /// Query options.
     public var options: QueryOptions = [.watch]
 
+    /// Local identity used for offline persistence and query/channel linking.
+    ///
+    /// By default this matches `filter.filterHash`. Override it when the remote filter contains
+    /// unstable values, such as time windows derived from `Date()`, but the local query identity
+    /// should stay stable across app launches.
+    public var filterHash: String
+
     /// Init a channels query.
     /// - Parameters:
     ///   - filter: a channels filter.
@@ -51,6 +58,7 @@ public struct ChannelListQuery: Encodable, LocalConvertibleSortingQuery {
         pagination = Pagination(pageSize: pageSize)
         self.messagesLimit = messagesLimit
         self.membersLimit = membersLimit
+        filterHash = filter.filterHash
     }
 
     public func encode(to encoder: Encoder) throws {

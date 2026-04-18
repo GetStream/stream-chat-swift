@@ -40,16 +40,22 @@ extension NSManagedObjectContext {
     }
 
     func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
-        if let existingDTO = channelListQuery(filterHash: query.filter.filterHash) {
+        if let existingDTO = channelListQuery(filterHash: query.filterHash) {
+            do {
+                existingDTO.filterJSONData = try JSONEncoder.default.encode(query.filter)
+            } catch {
+                log.error("Failed encoding query Filter data with error: \(error).")
+                existingDTO.filterJSONData = Data()
+            }
             return existingDTO
         }
 
         let request = ChannelListQueryDTO.fetchRequest(
             keyPath: #keyPath(ChannelListQueryDTO.filterHash),
-            equalTo: query.filter.filterHash
+            equalTo: query.filterHash
         )
         let newDTO = NSEntityDescription.insertNewObject(into: self, for: request)
-        newDTO.filterHash = query.filter.filterHash
+        newDTO.filterHash = query.filterHash
 
         let jsonData: Data
         do {

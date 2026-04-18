@@ -14,6 +14,7 @@ class ChannelListUpdater: Worker {
     ///
     func update(
         channelListQuery: ChannelListQuery,
+        resetQueryOnFirstPage: Bool = true,
         completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
         fetch(channelListQuery: channelListQuery) { [weak self] in
@@ -21,9 +22,9 @@ class ChannelListUpdater: Worker {
             case let .success(channelListPayload):
                 let isInitialFetch = channelListQuery.pagination.cursor == nil && channelListQuery.pagination.offset == 0
                 var initialActions: ((DatabaseSession) -> Void)?
-                if isInitialFetch {
+                if isInitialFetch, resetQueryOnFirstPage {
                     initialActions = { session in
-                        let filterHash = channelListQuery.filter.filterHash
+                        let filterHash = channelListQuery.filterHash
                         guard let queryDTO = session.channelListQuery(filterHash: filterHash) else { return }
                         queryDTO.channels.removeAll()
                     }
@@ -171,9 +172,8 @@ class ChannelListUpdater: Worker {
     /// Links a channel to the given query.
     func link(channel: ChatChannel, with query: ChannelListQuery, completion: ((Error?) -> Void)? = nil) {
         database.write { session in
-            guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: channel.cid, query: query) else {
-                return
-            }
+            guard let channelDTO = session.channel(cid: channel.cid) else { return }
+            let queryDTO = session.saveQuery(query: query)
             queryDTO.channels.insert(channelDTO)
         } completion: { error in
             completion?(error)
@@ -195,7 +195,7 @@ class ChannelListUpdater: Worker {
 
 extension DatabaseSession {
     func getChannelWithQuery(cid: ChannelId, query: ChannelListQuery) -> (ChannelDTO, ChannelListQueryDTO)? {
-        guard let queryDTO = channelListQuery(filterHash: query.filter.filterHash) else {
+        guard let queryDTO = channelListQuery(filterHash: query.filterHash) else {
             log.debug("Channel list query has not yet created \(query)")
             return nil
         }
@@ -239,11 +239,33 @@ extension ChannelListUpdater {
             }
         }
     }
+
+    @discardableResult func update(
+        channelListQuery: ChannelListQuery,
+        resetQueryOnFirstPage: Bool
+    ) async throws -> [ChatChannel] {
+        try await withCheckedThrowingContinuation { continuation in
+            update(channelListQuery: channelListQuery, resetQueryOnFirstPage: resetQueryOnFirstPage) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
     
     // MARK: -
     
     func loadChannels(query: ChannelListQuery, pagination: Pagination) async throws -> [ChatChannel] {
         try await update(channelListQuery: query.withPagination(pagination))
+    }
+
+    func loadChannels(
+        query: ChannelListQuery,
+        pagination: Pagination,
+        resetQueryOnFirstPage: Bool
+    ) async throws -> [ChatChannel] {
+        try await update(
+            channelListQuery: query.withPagination(pagination),
+            resetQueryOnFirstPage: resetQueryOnFirstPage
+        )
     }
     
     func loadNextChannels(

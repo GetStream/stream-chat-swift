@@ -115,11 +115,17 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         guard !isInitialized else { return }
         isInitialized = true
 
-        do {
-            try frc.performFetch()
-        } catch {
-            log.error("Failed to start observing database: \(error). This is an internal error.")
-            throw error
+        var fetchError: Error?
+        frc.managedObjectContext.performAndWait {
+            do {
+                try frc.performFetch()
+            } catch {
+                fetchError = error
+            }
+        }
+        if let fetchError {
+            log.error("Failed to start observing database: \(fetchError). This is an internal error.")
+            throw fetchError
         }
 
         frc.delegate = changeAggregator
@@ -149,11 +155,11 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         }
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
-            self.queue.async {
+            self.queue.sync {
                 self._notifyingWillChange = true
             }
             onWillChange()
-            self.queue.async {
+            self.queue.sync {
                 self._willChangeItems = nil
                 self._notifyingWillChange = false
             }

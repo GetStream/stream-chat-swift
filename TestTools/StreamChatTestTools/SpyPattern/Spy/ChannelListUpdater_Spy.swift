@@ -10,6 +10,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
     let spyState = SpyState()
 
     @Atomic var update_queries: [ChannelListQuery] = []
+    @Atomic var update_resetQueryOnFirstPage: [Bool] = []
     @Atomic var update_completion: ((Result<[ChatChannel], Error>) -> Void)?
     @Atomic var update_completion_result: Result<[ChatChannel], Error>?
 
@@ -36,6 +37,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
 
     func cleanUp() {
         update_queries.removeAll()
+        update_resetQueryOnFirstPage.removeAll()
         update_completion = nil
         update_completion_result = nil
 
@@ -55,9 +57,11 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
 
     override func update(
         channelListQuery: ChannelListQuery,
+        resetQueryOnFirstPage: Bool = true,
         completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
         _update_queries.mutate { $0.append(channelListQuery) }
+        _update_resetQueryOnFirstPage.mutate { $0.append(resetQueryOnFirstPage) }
         update_completion = completion
         update_completion_result?.invoke(with: completion)
     }

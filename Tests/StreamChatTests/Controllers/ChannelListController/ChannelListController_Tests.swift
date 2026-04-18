@@ -133,6 +133,55 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(controller.channels.map(\.cid), [cidMatchingQuery])
     }
 
+    func test_channelsAreFetched_beforeCallingSynchronize_withRuntimeFilter_whenRawPredicateDoesNotMatch() throws {
+        let cid = ChannelId.unique
+        let member = MemberPayload.dummy(user: .dummy(userId: memberId))
+        let firstMessage = MessagePayload.dummy(messageId: .unique, authorUserId: memberId)
+        let secondMessage = MessagePayload.dummy(
+            messageId: .unique,
+            authorUserId: memberId,
+            createdAt: firstMessage.createdAt.addingTimeInterval(1)
+        )
+        let query = ChannelListQuery(
+            filter: .and([
+                .in(.members, values: [memberId]),
+                .greaterOrEqual(.memberCount, than: 2)
+            ])
+        )
+
+        controller = ChatChannelListController(
+            query: query,
+            client: client,
+            filter: { $0.latestMessages.count >= 2 },
+            environment: env.environment
+        )
+        controller.callbackQueue = .testQueue(withId: controllerCallbackQueueID)
+
+        controller.synchronize()
+        waitForInitialChannelsUpdate()
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(
+                payload: .dummy(
+                    channel: .dummy(
+                        cid: cid,
+                        lastMessageAt: secondMessage.createdAt,
+                        members: [member],
+                        memberCount: 1,
+                        messageCount: 0
+                    ),
+                    members: [member],
+                    membership: member,
+                    messages: [firstMessage, secondMessage]
+                ),
+                query: query,
+                cache: nil
+            )
+        }
+
+        AssertAsync.willBeEqual(controller.channels.map(\.cid), [cid])
+    }
+
     func test_synchronize_callsChannelQueryUpdater() {
         let queueId = UUID()
         controller.callbackQueue = .testQueue(withId: queueId)
@@ -162,6 +211,31 @@ final class ChannelListController_Tests: XCTestCase {
 
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_synchronize_withRuntimeFilter_doesNotResetFirstPageQuery() {
+        controller = ChatChannelListController(
+            query: query,
+            client: client,
+            filter: { _ in true },
+            environment: env.environment
+        )
+
+        let queueId = UUID()
+        controller.callbackQueue = .testQueue(withId: queueId)
+
+        let exp = expectation(description: "sync call should complete")
+        controller.synchronize { error in
+            XCTAssertNil(error)
+            AssertTestQueue(withId: queueId)
+            exp.fulfill()
+        }
+
+        env.channelListUpdater?.update_completion?(.success([]))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.channelListUpdater?.update_resetQueryOnFirstPage.first, false)
     }
 
     func test_synchronize_initialPageSize_isCorrect() {

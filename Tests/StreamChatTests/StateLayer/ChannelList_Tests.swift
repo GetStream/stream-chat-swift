@@ -53,6 +53,52 @@ final class ChannelList_Tests: XCTestCase {
         await setUpChannelList(usesMockedChannelUpdater: true)
         XCTAssertEqual(matchingChannelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
     }
+
+    func test_restoringState_whenDynamicFilterExistsAndRawPredicateDoesNotMatch_thenStateIncludesLinkedChannels() async throws {
+        let cid = ChannelId.unique
+        let member = MemberPayload.dummy(user: .dummy(userId: memberId))
+        let firstMessage = MessagePayload.dummy(messageId: .unique, authorUserId: memberId)
+        let secondMessage = MessagePayload.dummy(
+            messageId: .unique,
+            authorUserId: memberId,
+            createdAt: firstMessage.createdAt.addingTimeInterval(1)
+        )
+        let query = ChannelListQuery(
+            filter: .and([
+                .in(.members, values: [memberId]),
+                .greaterOrEqual(.memberCount, than: 2)
+            ]),
+            sort: [.init(key: .createdAt, isAscending: true)]
+        )
+
+        try await env.client.mockDatabaseContainer.write { session in
+            try session.saveChannel(
+                payload: .dummy(
+                    channel: .dummy(
+                        cid: cid,
+                        lastMessageAt: secondMessage.createdAt,
+                        members: [member],
+                        memberCount: 1,
+                        messageCount: 0
+                    ),
+                    members: [member],
+                    membership: member,
+                    messages: [firstMessage, secondMessage]
+                ),
+                query: query,
+                cache: nil
+            )
+        }
+
+        await setUpChannelList(
+            usesMockedChannelUpdater: true,
+            filter: query.filter,
+            sort: query.sort,
+            dynamicFilter: { $0.latestMessages.count >= 2 }
+        )
+
+        await XCTAssertEqual([cid], channelList.state.channels.map(\.cid))
+    }
     
     // MARK: - Get
     
@@ -85,7 +131,58 @@ final class ChannelList_Tests: XCTestCase {
         await XCTAssertEqual(3, channelList.state.channels.count)
         await XCTAssertEqual(nextChannelListPayload.channels.map(\.channel.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
     }
-    
+
+    func test_get_whenDynamicFilterExists_thenFirstPageSyncPreservesExistingLinkedChannelsMissingFromResponse() async throws {
+        let cid = ChannelId.unique
+        let member = MemberPayload.dummy(user: .dummy(userId: memberId))
+        let firstMessage = MessagePayload.dummy(messageId: .unique, authorUserId: memberId)
+        let secondMessage = MessagePayload.dummy(
+            messageId: .unique,
+            authorUserId: memberId,
+            createdAt: firstMessage.createdAt.addingTimeInterval(1)
+        )
+        let query = ChannelListQuery(
+            filter: .and([
+                .in(.members, values: [memberId]),
+                .greaterOrEqual(.memberCount, than: 2)
+            ]),
+            sort: [.init(key: .createdAt, isAscending: true)]
+        )
+
+        try await env.client.mockDatabaseContainer.write { session in
+            try session.saveChannel(
+                payload: .dummy(
+                    channel: .dummy(
+                        cid: cid,
+                        lastMessageAt: secondMessage.createdAt,
+                        members: [member],
+                        memberCount: 1,
+                        messageCount: 0
+                    ),
+                    members: [member],
+                    membership: member,
+                    messages: [firstMessage, secondMessage]
+                ),
+                query: query,
+                cache: nil
+            )
+        }
+
+        await setUpChannelList(
+            usesMockedChannelUpdater: false,
+            filter: query.filter,
+            sort: query.sort,
+            dynamicFilter: { $0.latestMessages.count >= 2 }
+        )
+
+        await XCTAssertEqual([cid], channelList.state.channels.map(\.cid))
+
+        env.client.mockAPIClient.test_mockResponseResult(.success(ChannelListPayload(channels: [])))
+        try await channelList.get()
+
+        await XCTAssertEqual([cid], channelList.state.channels.map(\.cid))
+    }
+
     // MARK: - Pagination and Channel Updater Arguments
     
     func test_loadChannels_whenChannelUpdaterSucceeds_thenLoadSucceeds() async throws {

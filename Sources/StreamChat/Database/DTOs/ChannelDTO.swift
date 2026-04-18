@@ -413,9 +413,9 @@ extension NSManagedObjectContext {
         if let membership = payload.membership {
             let membershipDTO = try saveMember(payload: membership, channelId: payload.channel.cid, query: nil, cache: cache)
             dto.membership = membershipDTO
-        } else {
-            dto.membership = nil
         }
+        // When membership is absent from the payload (e.g. message.new WS events omit it),
+        // preserve the existing membership. Removal is handled by dedicated member events.
         
         // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
         try payload.members.forEach {
@@ -455,7 +455,7 @@ extension NSManagedObjectContext {
     }
 
     func delete(query: ChannelListQuery) {
-        guard let dto = channelListQuery(filterHash: query.filter.filterHash) else { return }
+        guard let dto = channelListQuery(filterHash: query.filterHash) else { return }
 
         delete(dto)
     }
@@ -471,7 +471,8 @@ extension NSManagedObjectContext {
 extension ChannelDTO {
     static func channelListFetchRequest(
         query: ChannelListQuery,
-        chatClientConfig: ChatClientConfig
+        chatClientConfig: ChatClientConfig,
+        applyLocalFilterPredicate: Bool = true
     ) -> NSFetchRequest<ChannelDTO> {
         let request = NSFetchRequest<ChannelDTO>(entityName: ChannelDTO.entityName)
         ChannelDTO.applyPrefetchingState(to: request)
@@ -488,7 +489,7 @@ extension ChannelDTO {
         
         request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
 
-        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
+        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filterHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 
         var subpredicates: [NSPredicate] = [
@@ -503,7 +504,10 @@ extension ChannelDTO {
             subpredicates.append(NSPredicate(format: "\(#keyPath(ChannelDTO.isHidden)) == 0"))
         }
 
-        if chatClientConfig.isChannelAutomaticFilteringEnabled, let filterPredicate = query.filter.predicate {
+        if applyLocalFilterPredicate,
+           chatClientConfig.isChannelAutomaticFilteringEnabled,
+           let filterPredicate = query.filter.predicate
+        {
             subpredicates.append(filterPredicate)
         }
 

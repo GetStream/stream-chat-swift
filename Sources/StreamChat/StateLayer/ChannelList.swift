@@ -8,6 +8,7 @@ import Foundation
 public class ChannelList {
     private let channelListUpdater: ChannelListUpdater
     private let client: ChatClient
+    private let dynamicFilter: ((ChatChannel) -> Bool)?
     private let stateBuilder: StateBuilder<ChannelListState>
     let query: ChannelListQuery
     
@@ -18,6 +19,7 @@ public class ChannelList {
         environment: Environment = .init()
     ) {
         self.client = client
+        self.dynamicFilter = dynamicFilter
         self.query = query
         let channelListUpdater = environment.channelListUpdater(
             client.databaseContainer,
@@ -44,7 +46,8 @@ public class ChannelList {
     
     /// Fetches the most recent state from the server and updates the local store.
     ///
-    /// - Important: Loaded channels in ``ChannelListState/channels`` are reset.
+    /// - Important: Loaded channels in ``ChannelListState/channels`` are reset unless the list uses
+    ///   a `dynamicFilter`, in which case existing linked channels are preserved.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
@@ -57,14 +60,19 @@ public class ChannelList {
     
     /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.
     ///
-    /// - Important: If the pagination offset is 0 and cursor is nil, then loaded channels are reset.
+    /// - Important: If the pagination offset is 0 and cursor is nil, then loaded channels are reset
+    ///   unless the list uses a `dynamicFilter`.
     ///
     /// - Parameter pagination: The pagination configuration which includes a limit and a cursor or an offset.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channels for the pagination.
     @discardableResult public func loadChannels(with pagination: Pagination) async throws -> [ChatChannel] {
-        try await channelListUpdater.loadChannels(query: query, pagination: pagination)
+        try await channelListUpdater.loadChannels(
+            query: query,
+            pagination: pagination,
+            resetQueryOnFirstPage: dynamicFilter == nil
+        )
     }
     
     /// Loads more channels and updates ``ChannelListState/channels``.

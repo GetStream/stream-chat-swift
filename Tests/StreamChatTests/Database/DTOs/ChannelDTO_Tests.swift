@@ -964,6 +964,58 @@ final class ChannelDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedChannels.first?.cid, channel1Id.rawValue)
     }
 
+    func test_channelWithChannelListQuery_isSavedAndLoaded_whenFilterHashIsOverridden() throws {
+        let createdAt = Date.unique
+        var persistedQuery = ChannelListQuery(
+            filter: .and([
+                .less(.createdAt, than: createdAt),
+                .exists(.deletedAt, exists: false)
+            ])
+        )
+        persistedQuery.filterHash = "grouped.current"
+
+        let channelId: ChannelId = .unique
+        let payload = dummyPayload(with: channelId, createdAt: Date.unique(before: createdAt))
+
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: payload, query: persistedQuery, cache: nil)
+        }
+
+        var restoredQuery = ChannelListQuery(
+            filter: .and([
+                .less(.createdAt, than: Date.unique(after: createdAt)),
+                .exists(.deletedAt, exists: false)
+            ])
+        )
+        restoredQuery.filterHash = persistedQuery.filterHash
+
+        let fetchRequest = ChannelDTO.channelListFetchRequest(
+            query: restoredQuery,
+            chatClientConfig: .init(apiKeyString: .unique)
+        )
+        let loadedChannels = try database.viewContext.fetch(fetchRequest)
+
+        XCTAssertEqual(loadedChannels.map(\.cid), [channelId.rawValue])
+    }
+
+    func test_saveQuery_updatesStoredFilterData_whenFilterHashIsOverridden() throws {
+        var initialQuery = ChannelListQuery(filter: .less(.createdAt, than: Date(timeIntervalSince1970: 10)))
+        initialQuery.filterHash = "grouped.current"
+
+        var updatedQuery = ChannelListQuery(filter: .less(.createdAt, than: Date(timeIntervalSince1970: 20)))
+        updatedQuery.filterHash = initialQuery.filterHash
+
+        try database.writeSynchronously { session in
+            _ = session.saveQuery(query: initialQuery)
+            _ = session.saveQuery(query: updatedQuery)
+        }
+
+        let queryDTO = try XCTUnwrap(database.viewContext.channelListQuery(filterHash: updatedQuery.filterHash))
+        let expectedFilterData = try JSONEncoder.default.encode(updatedQuery.filter)
+
+        XCTAssertEqual(queryDTO.filterJSONData, expectedFilterData)
+    }
+
     func test_channelWithChannelListQuery_shouldUseLimitAndBatchSize() {
         let query = ChannelListQuery(
             filter: .and([.less(.createdAt, than: .unique), .exists(.deletedAt, exists: false)]),

@@ -96,6 +96,25 @@ final class ChannelListQuery_Tests: XCTestCase {
 
         AssertJSONEqual(expectedJSON, encodedJSON)
     }
+
+    func test_filterHash_defaultsToFilterHash() {
+        let filter: Filter<ChannelListFilterScope> = .containMembers(userIds: [.unique])
+        let query = ChannelListQuery(filter: filter)
+
+        XCTAssertEqual(query.filterHash, filter.filterHash)
+    }
+
+    func test_filterHash_override_doesNotAffectEncoding() throws {
+        let filter = Filter<ChannelListFilterScope>.equal(.cid, to: .unique)
+        var query = ChannelListQuery(filter: filter)
+        query.filterHash = "grouped.current"
+
+        let encodedJSON = try JSONEncoder.default.encode(query)
+        let decodedJSONObject = try XCTUnwrap(JSONSerialization.jsonObject(with: encodedJSON) as? [String: Any])
+
+        XCTAssertNil(decodedJSONObject["filterHash"])
+        XCTAssertEqual(query.filterHash, "grouped.current")
+    }
 }
 
 private extension ChatChannel {

@@ -35,7 +35,8 @@ extension ChannelListState {
                 database: database,
                 fetchRequest: ChannelDTO.channelListFetchRequest(
                     query: query,
-                    chatClientConfig: clientConfig
+                    chatClientConfig: clientConfig,
+                    applyLocalFilterPredicate: dynamicFilter == nil
                 ),
                 itemCreator: { try $0.asModel() },
                 itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid),

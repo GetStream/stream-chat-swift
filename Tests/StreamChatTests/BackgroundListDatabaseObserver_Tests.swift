@@ -219,6 +219,57 @@ final class BackgroundListDatabaseObserver_Tests: XCTestCase {
         wait(for: [initialFinishedExpectation], timeout: defaultTimeout)
         XCTAssertEqual(["1"], observer.items.map { $0 })
     }
+
+    func test_itemsReturnPreviousStateOnlyDuringWillChangeCallback() throws {
+        observer = BackgroundListDatabaseObserver<String, TestManagedObject>(
+            database: database,
+            fetchRequest: fetchRequest,
+            itemCreator: { $0.testId }
+        )
+
+        try startObservingAndWaitForInitialResults()
+
+        let willChangeExpectation = expectation(description: "will change")
+        let postWillChangeExpectation = expectation(description: "post will change")
+        let didChangeExpectation = expectation(description: "did change")
+
+        var itemsDuringWillChange = [String]()
+        var itemsAfterWillChange = [String]()
+        var itemsDuringDidChange = [String]()
+
+        observer.onWillChange = { [weak self] in
+            guard let self else { return }
+
+            itemsDuringWillChange = Array(self.observer.items)
+
+            DispatchQueue.main.async {
+                itemsAfterWillChange = Array(self.observer.items)
+                postWillChangeExpectation.fulfill()
+            }
+
+            willChangeExpectation.fulfill()
+        }
+
+        observer.onDidChange = { [weak self] _ in
+            guard let self else { return }
+
+            itemsDuringDidChange = Array(self.observer.items)
+            didChangeExpectation.fulfill()
+        }
+
+        try database.writeSynchronously { session in
+            let context = try XCTUnwrap(session as? NSManagedObjectContext)
+            let item = try XCTUnwrap(NSEntityDescription.insertNewObject(forEntityName: "TestManagedObject", into: context) as? TestManagedObject)
+            item.testId = "1"
+            item.testValue = "testValue1"
+        }
+
+        wait(for: [willChangeExpectation, postWillChangeExpectation, didChangeExpectation], timeout: defaultTimeout)
+
+        XCTAssertEqual(itemsDuringWillChange, [])
+        XCTAssertEqual(itemsAfterWillChange, ["1"])
+        XCTAssertEqual(itemsDuringDidChange, ["1"])
+    }
     
     // MARK: -
 
