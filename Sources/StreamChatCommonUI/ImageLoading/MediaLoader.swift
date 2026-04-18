@@ -94,13 +94,51 @@ public protocol MediaLoader: AnyObject, Sendable {
     )
 }
 
+// MARK: - Convenience Extensions
+
+extension MediaLoader {
+    public func loadImage(
+        url: URL?,
+        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+    ) {
+        loadImage(url: url, options: ImageLoadOptions(), completion: completion)
+    }
+
+    public func loadVideoAsset(
+        at url: URL,
+        completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
+    ) {
+        loadVideoAsset(at: url, options: VideoLoadOptions(), completion: completion)
+    }
+
+    public func loadVideoPreview(
+        with attachment: ChatMessageVideoAttachment,
+        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+    ) {
+        loadVideoPreview(with: attachment, options: VideoLoadOptions(), completion: completion)
+    }
+
+    public func loadVideoPreview(
+        at url: URL,
+        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+    ) {
+        loadVideoPreview(at: url, options: VideoLoadOptions(), completion: completion)
+    }
+
+    public func loadFileRequest(
+        for url: URL,
+        completion: @escaping @MainActor (Result<MediaLoaderFileRequest, Error>) -> Void
+    ) {
+        loadFileRequest(for: url, options: DownloadFileRequestOptions(), completion: completion)
+    }
+}
+
 // MARK: - Async/Await Extensions
 
 extension MediaLoader {
-    /// Loads a single image from the given URL.
     public func loadImage(
         url: URL?,
-        options: ImageLoadOptions
+        options: ImageLoadOptions = ImageLoadOptions()
     ) async throws -> MediaLoaderImage {
         try await withCheckedThrowingContinuation { continuation in
             loadImage(url: url, options: options) { result in
@@ -109,10 +147,9 @@ extension MediaLoader {
         }
     }
 
-    /// Returns a video asset for the given URL.
     public func loadVideoAsset(
         at url: URL,
-        options: VideoLoadOptions
+        options: VideoLoadOptions = VideoLoadOptions()
     ) async throws -> MediaLoaderVideoAsset {
         try await withCheckedThrowingContinuation { continuation in
             loadVideoAsset(at: url, options: options) { result in
@@ -121,10 +158,9 @@ extension MediaLoader {
         }
     }
 
-    /// Generates a video preview thumbnail from a URL.
     public func loadVideoPreview(
         at url: URL,
-        options: VideoLoadOptions
+        options: VideoLoadOptions = VideoLoadOptions()
     ) async throws -> MediaLoaderVideoPreview {
         try await withCheckedThrowingContinuation { continuation in
             loadVideoPreview(at: url, options: options) { result in
@@ -133,7 +169,6 @@ extension MediaLoader {
         }
     }
 
-    /// Creates a request for downloading or previewing a file.
     public func loadFileRequest(
         for url: URL,
         options: DownloadFileRequestOptions = DownloadFileRequestOptions()
