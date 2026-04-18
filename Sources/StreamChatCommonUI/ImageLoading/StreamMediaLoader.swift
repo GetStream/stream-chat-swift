@@ -130,7 +130,7 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         }
 
         if let thumbnailURL = attachment.payload.thumbnailURL {
-            loadImage(url: thumbnailURL, options: ImageLoadOptions()) { [weak self] result in
+            loadImage(url: thumbnailURL) { [weak self] result in
                 guard let self else {
                     StreamConcurrency.onMain {
                         completion(.failure(ClientError.Unknown("MediaLoader was deallocated")))
