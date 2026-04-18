@@ -75,21 +75,22 @@ public protocol MediaLoader: AnyObject, Sendable {
         completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     )
 
-    // MARK: - File Loading
+    // MARK: - File Request
 
-    /// Resolves a file URL through the CDN (signing, headers, etc.).
+    /// Creates a request for downloading or previewing a file.
     ///
-    /// Use this before passing a URL to `downloadAttachment` or displaying
-    /// content in a web view that requires CDN-signed URLs.
+    /// Resolves the URL through the CDN (signing, rewriting) and packages the
+    /// result into a ready-to-use request with any required HTTP headers.
+    /// Pass the returned request to `downloadAttachment` or load it in a web view.
     ///
     /// - Parameters:
     ///   - url: The original file URL to resolve.
-    ///   - options: Options controlling file load behavior.
-    ///   - completion: A completion handler called on the main actor with the resolved file.
-    func loadFile(
-        at url: URL,
-        options: FileLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderFile, Error>) -> Void
+    ///   - options: Options controlling file request behavior.
+    ///   - completion: A completion handler called on the main actor with the resolved request.
+    func loadFileRequest(
+        for url: URL,
+        options: DownloadFileRequestOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderFileRequest, Error>) -> Void
     )
 }
 
@@ -132,13 +133,13 @@ extension MediaLoader {
         }
     }
 
-    /// Resolves a file URL through the CDN.
-    public func loadFile(
-        at url: URL,
-        options: FileLoadOptions = FileLoadOptions()
-    ) async throws -> MediaLoaderFile {
+    /// Creates a request for downloading or previewing a file.
+    public func loadFileRequest(
+        for url: URL,
+        options: DownloadFileRequestOptions = DownloadFileRequestOptions()
+    ) async throws -> MediaLoaderFileRequest {
         try await withCheckedThrowingContinuation { continuation in
-            loadFile(at: url, options: options) { result in
+            loadFileRequest(for: url, options: options) { result in
                 continuation.resume(with: result)
             }
         }
@@ -162,8 +163,8 @@ public struct VideoLoadOptions: Sendable {
     public init() {}
 }
 
-/// Options for loading file content through a ``MediaLoader``.
-public struct FileLoadOptions: Sendable {
+/// Options for creating a file download request through a ``MediaLoader``.
+public struct DownloadFileRequestOptions: Sendable {
     public init() {}
 }
 
@@ -209,15 +210,13 @@ public struct MediaLoaderVideoPreview: Sendable {
     }
 }
 
-/// The result of loading a file through a ``MediaLoader``.
-public struct MediaLoaderFile: Sendable {
-    /// The resolved URL (potentially signed or rewritten by the CDN).
-    public var url: URL
-    /// Optional HTTP headers required to access the file.
-    public var headers: [String: String]?
+/// The result of resolving a file download request through a ``MediaLoader``.
+public struct MediaLoaderFileRequest: Sendable {
+    /// A ready-to-use URL request with CDN-resolved URL and any required HTTP headers.
+    public var urlRequest: URLRequest
 
-    public init(url: URL, headers: [String: String]? = nil) {
-        self.url = url
-        self.headers = headers
+    public init(urlRequest: URLRequest) {
+        self.urlRequest = urlRequest
     }
 }
+

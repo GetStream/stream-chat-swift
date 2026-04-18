@@ -549,25 +549,26 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(attachmentId, env.messageUpdaterMock.downloadAttachment_attachmentId)
     }
 
-    func test_downloadAttachment_withCustomRemoteURL_propagatesURLToUpdater() async throws {
+    func test_downloadAttachment_withCustomRequest_propagatesRequestToUpdater() async throws {
         let attachmentId = AttachmentId.unique
         let expected = ChatMessageFileAttachment.mock(id: attachmentId)
-        let customRemoteURL = URL(string: "https://cdn.example.com/signed?token=abc123")!
+        let customURL = URL(string: "https://cdn.example.com/signed?token=abc123")!
+        let customRequest = URLRequest(url: customURL)
         env.messageUpdaterMock.downloadAttachment_completion_result = .success(expected.asAnyAttachment)
-        let result = try await chat.downloadAttachment(expected, remoteURL: customRemoteURL)
+        let result = try await chat.downloadAttachment(expected, request: customRequest)
         XCTAssertEqual(expected, result)
         XCTAssertEqual(attachmentId, env.messageUpdaterMock.downloadAttachment_attachmentId)
-        XCTAssertEqual(customRemoteURL, env.messageUpdaterMock.downloadAttachment_remoteURL)
+        XCTAssertEqual(customURL, env.messageUpdaterMock.downloadAttachment_request?.url)
     }
 
-    func test_downloadAttachment_withoutRemoteURL_propagatesNilToUpdater() async throws {
+    func test_downloadAttachment_withoutRequest_propagatesNilToUpdater() async throws {
         let attachmentId = AttachmentId.unique
         let expected = ChatMessageFileAttachment.mock(id: attachmentId)
         env.messageUpdaterMock.downloadAttachment_completion_result = .success(expected.asAnyAttachment)
         let result = try await chat.downloadAttachment(expected)
         XCTAssertEqual(expected, result)
         XCTAssertEqual(attachmentId, env.messageUpdaterMock.downloadAttachment_attachmentId)
-        XCTAssertNil(env.messageUpdaterMock.downloadAttachment_remoteURL)
+        XCTAssertNil(env.messageUpdaterMock.downloadAttachment_request)
     }
     
     func test_deleteLocalAttachmentDownload_whenMessageUpdaterSucceeds_thenSucceess() async throws {

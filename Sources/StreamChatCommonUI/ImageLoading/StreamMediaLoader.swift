@@ -226,16 +226,20 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         }
     }
 
-    // MARK: - File Loading
+    // MARK: - File Request
 
-    open func loadFile(
-        at url: URL,
-        options: FileLoadOptions,
-        completion: @escaping @MainActor (Result<MediaLoaderFile, Error>) -> Void
+    open func loadFileRequest(
+        for url: URL,
+        options: DownloadFileRequestOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderFileRequest, Error>) -> Void
     ) {
         cdnRequester.fileRequest(for: url, options: .init()) { result in
             StreamConcurrency.onMain {
-                completion(result.map { MediaLoaderFile(url: $0.url, headers: $0.headers) })
+                completion(result.map { cdnRequest in
+                    var request = URLRequest(url: cdnRequest.url)
+                    cdnRequest.headers?.forEach { request.setValue($1, forHTTPHeaderField: $0) }
+                    return MediaLoaderFileRequest(urlRequest: request)
+                })
             }
         }
     }

@@ -761,13 +761,14 @@ class MessageUpdater: Worker, @unchecked Sendable {
 
     func downloadAttachment<Payload>(
         _ attachment: ChatMessageAttachment<Payload>,
-        remoteURL: URL? = nil,
+        request: URLRequest? = nil,
         completion: @escaping @Sendable (Result<ChatMessageAttachment<Payload>, Error>) -> Void
     ) where Payload: DownloadableAttachmentPayload {
         let attachmentId = attachment.id
         let localURL = URL.streamAttachmentLocalStorageURL(forRelativePath: attachment.relativeStoragePath)
+        let downloadRequest = request ?? URLRequest(url: attachment.remoteURL)
         apiClient.downloadFile(
-            from: remoteURL ?? attachment.remoteURL,
+            downloadRequest,
             to: localURL,
             progress: { [weak self] progress in
                 self?.updateDownloadProgress(
@@ -1270,10 +1271,10 @@ extension MessageUpdater {
 
     func downloadAttachment<Payload>(
         _ attachment: ChatMessageAttachment<Payload>,
-        remoteURL: URL? = nil
+        request: URLRequest? = nil
     ) async throws -> ChatMessageAttachment<Payload> where Payload: DownloadableAttachmentPayload {
         try await withCheckedThrowingContinuation { continuation in
-            downloadAttachment(attachment, remoteURL: remoteURL) { result in
+            downloadAttachment(attachment, request: request) { result in
                 continuation.resume(with: result)
             }
         }
