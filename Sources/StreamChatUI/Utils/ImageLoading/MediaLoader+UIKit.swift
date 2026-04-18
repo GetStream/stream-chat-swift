@@ -112,7 +112,6 @@ extension MediaLoader {
             completion: completion
         )
     }
-
 }
 
 final class ImageBatchResult: @unchecked Sendable {
