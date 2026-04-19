@@ -274,7 +274,9 @@ extension NSManagedObjectContext {
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
-        dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
+        if let lastMessageAt = payload.lastMessageAt {
+            dto.lastMessageAt = lastMessageAt.bridgeDate
+        }
         dto.memberCount = Int64(clamping: payload.memberCount)
         
         if let messageCount = payload.messageCount {
