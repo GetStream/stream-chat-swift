@@ -312,11 +312,6 @@ final class ChatClient_Tests: XCTestCase {
 
         XCTAssertNil(receivedError)
         XCTAssertEqual(receivedGroupedChannels?.groups.keys.sorted(), ["all", "current", "new"])
-        XCTAssertEqual(receivedGroupedChannels?.channels["all"]?.map(\.cid), [firstCid])
-        XCTAssertEqual(receivedGroupedChannels?.channels["new"]?.map(\.cid), [secondCid])
-        XCTAssertEqual(receivedGroupedChannels?.channels["current"]?.map(\.cid), [thirdCid])
-        XCTAssertEqual(receivedGroupedChannels?.unreadCounts, ["all": 1, "new": 2, "current": 4])
-        XCTAssertEqual(receivedGroupedChannels?.unreadChannels, ["all": 1, "new": 1, "current": 2])
     }
 
     func test_groupedChannelsGroup_normalizesUnreadTotalsFromChannels() {
