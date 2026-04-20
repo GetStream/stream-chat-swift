@@ -20,16 +20,21 @@ jobs:
   sdk_size:
     name: Metrics
     runs-on: macos-15
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     env:
       GITHUB_TOKEN: '${{ secrets.CI_BOT_GITHUB_TOKEN }}'
       GITHUB_PR_NUM: ${{ github.event.pull_request.number }}
     steps:
+      - uses: actions/checkout@v3.1.0
+
+      - uses: ./.github/actions/ci-guard
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Connect Bot
         uses: webfactory/ssh-agent@v0.7.0
         with:
           ssh-private-key: ${{ secrets.BOT_SSH_PRIVATE_KEY }}
-
-      - uses: actions/checkout@v3.1.0
 
       - uses: ./.github/actions/bootstrap
 
