@@ -209,17 +209,14 @@ public struct DownloadFileRequestOptions: Sendable {
 public struct MediaLoaderImage: Sendable {
     /// The loaded image.
     public var image: UIImage
-    /// Whether the image is an animated format (e.g. GIF).
-    public var isAnimated: Bool
     /// The raw image data for animated rendering. `nil` for static images.
     public var animatedImageData: Data?
     /// The caching key used by the CDN requester, if any.
     /// UI layers can use this to maintain a synchronous cache lookup table.
     public var cachingKey: String?
 
-    public init(image: UIImage, isAnimated: Bool = false, animatedImageData: Data? = nil, cachingKey: String? = nil) {
+    public init(image: UIImage, animatedImageData: Data? = nil, cachingKey: String? = nil) {
         self.image = image
-        self.isAnimated = isAnimated
         self.animatedImageData = animatedImageData
         self.cachingKey = cachingKey
     }

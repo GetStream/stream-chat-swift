@@ -74,7 +74,6 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
                     completion(imageResult.map {
                         MediaLoaderImage(
                             image: $0.image,
-                            isAnimated: $0.isAnimated,
                             animatedImageData: $0.animatedImageData,
                             cachingKey: cachingKey
                         )
