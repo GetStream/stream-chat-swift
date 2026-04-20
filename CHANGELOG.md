@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChatUI
 ### 🔄 Changed
+- `CDNRequester` is now passed in the constructor of `StreamMediaLoader` instead of `Components` [#4070](https://github.com/GetStream/stream-chat-swift/pull/4070)
 
 # [5.0.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.0.0)
 _April 16, 2026_
