@@ -2338,7 +2338,17 @@ final class ChannelListController_Tests: XCTestCase {
     }
 
     private func makePrefilledChannel(cid: ChannelId) -> ChatChannel {
-        .mock(
+        try! client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: nil,
+                cache: nil
+            )
+        }
+        return .mock(
             cid: cid,
             lastActiveMembers: [.mock(id: memberId)],
             membership: .mock(id: memberId),
