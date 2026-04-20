@@ -488,9 +488,6 @@ public class ChatClient {
     }
 
     /// Loads grouped channel groups for the app.
-    ///
-    /// The response preserves the backend-provided group keys and is converted to `ChatChannel`
-    /// models without persisting the data locally.
     public func groupedQueryChannels(
         limit: Int? = nil,
         watch: Bool = false,
@@ -521,9 +518,6 @@ public class ChatClient {
     }
 
     /// Loads grouped channel groups for the app.
-    ///
-    /// The response preserves the backend-provided group keys and is converted to `ChatChannel`
-    /// models without persisting the data locally.
     public func groupedQueryChannels(
         limit: Int? = nil,
         watch: Bool = false,
@@ -899,7 +893,6 @@ extension ChatClient {
             )
         }
 
-        (session as? NSManagedObjectContext)?.rollback()
         return GroupedChannels(
             groups: groups
         )
