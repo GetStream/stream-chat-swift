@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-import StreamChatCommonUI
 import UIKit
 
 /// A view that displays an error indicator inside the message content view.

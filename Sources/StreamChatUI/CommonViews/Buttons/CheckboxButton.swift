@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-import StreamChatCommonUI
 import UIKit
 
 /// A button for checking or unchecking an option.

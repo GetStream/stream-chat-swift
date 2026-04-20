@@ -344,7 +344,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(message.id, messageId)
         XCTAssertEqual(message.text, messageLocalText)
 
-        // Simulate response from the backend with updated `text`, update the local message in the databse
+        // Simulate response from the backend with updated `text`, update the local message in the database
         let messagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: currentUserId,
@@ -710,6 +710,63 @@ final class MessageController_Tests: XCTestCase {
             delegate.didChangeReactions_reactions.map(\.type),
             [ChatMessageReaction.mock(type: "like").type]
         )
+    }
+
+    // MARK: - Download Attachment
+
+    func test_downloadAttachment_propagatesSuccess() {
+        let attachmentId = AttachmentId.unique
+        let expected = ChatMessageFileAttachment.mock(id: attachmentId)
+        env.messageUpdater.downloadAttachment_completion_result = .success(expected.asAnyAttachment)
+
+        nonisolated(unsafe) var completionResult: Result<ChatMessageFileAttachment, Error>?
+        controller.downloadAttachment(expected) { completionResult = $0 }
+
+        AssertAsync.willBeTrue(completionResult != nil)
+        let result = try? completionResult?.get()
+        XCTAssertEqual(result, expected)
+        XCTAssertEqual(env.messageUpdater.downloadAttachment_attachmentId, attachmentId)
+    }
+
+    func test_downloadAttachment_propagatesError() {
+        let attachmentId = AttachmentId.unique
+        let attachment = ChatMessageFileAttachment.mock(id: attachmentId)
+        let expectedError = TestError()
+        env.messageUpdater.downloadAttachment_completion_result = .failure(expectedError)
+
+        nonisolated(unsafe) var completionResult: Result<ChatMessageFileAttachment, Error>?
+        controller.downloadAttachment(attachment) { completionResult = $0 }
+
+        AssertAsync.willBeTrue(completionResult != nil)
+        if case let .failure(error) = completionResult {
+            XCTAssertEqual(error as? TestError, expectedError)
+        } else {
+            XCTFail("Expected failure")
+        }
+        XCTAssertEqual(env.messageUpdater.downloadAttachment_attachmentId, attachmentId)
+    }
+
+    func test_downloadAttachment_withCustomRemoteURL_propagatesURLToUpdater() {
+        let attachmentId = AttachmentId.unique
+        let attachment = ChatMessageFileAttachment.mock(id: attachmentId)
+        let customRemoteURL = URL(string: "https://cdn.example.com/signed?token=abc123")!
+        env.messageUpdater.downloadAttachment_completion_result = .success(attachment.asAnyAttachment)
+
+        controller.downloadAttachment(attachment, remoteURL: customRemoteURL) { _ in }
+
+        AssertAsync.willBeEqual(env.messageUpdater.downloadAttachment_attachmentId, attachmentId)
+        XCTAssertEqual(env.messageUpdater.downloadAttachment_remoteURL, customRemoteURL)
+    }
+
+    func test_downloadAttachment_withoutRemoteURL_propagatesNilURLToUpdater() {
+        let attachmentId = AttachmentId.unique
+        let attachment = ChatMessageFileAttachment.mock(id: attachmentId)
+        env.messageUpdater.downloadAttachment_completion_result = .success(attachment.asAnyAttachment)
+
+        controller.downloadAttachment(attachment) { _ in }
+
+        AssertAsync.willBeEqual(env.messageUpdater.downloadAttachment_attachmentId, attachmentId)
+        XCTAssertNil(env.messageUpdater.downloadAttachment_remoteURL)
     }
 
     // MARK: - Delete message

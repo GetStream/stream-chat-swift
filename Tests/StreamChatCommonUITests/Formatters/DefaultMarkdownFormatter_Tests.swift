@@ -8,7 +8,7 @@ import XCTest
 
 // Note: Snapshot tests are in ChatMessageMarkdown_Tests
 
-final class DefaultMarkdownFormatter_Tests: XCTestCase {
+@MainActor final class DefaultMarkdownFormatter_Tests: XCTestCase {
     var sut: DefaultMarkdownFormatter!
 
     override func setUpWithError() throws {

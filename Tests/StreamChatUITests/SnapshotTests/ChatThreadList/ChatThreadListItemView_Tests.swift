@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-@testable import StreamChatCommonUI
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
@@ -17,6 +16,7 @@ import XCTest
 
     override func setUp() {
         super.setUp()
+        Appearance.default = Appearance()
 
         mockThread = .mock(
             parentMessage: .mock(text: "Parent Message", author: mockYoda),
@@ -181,13 +181,13 @@ import XCTest
 
     private func threadItemView(
         content: ChatThreadListItemView.Content?,
-        components: Components = .mock,
-        appearance: Appearance = .default
+        components: Components? = nil,
+        appearance: Appearance? = nil
     ) -> ChatThreadListItemView {
         let view = ChatThreadListItemView().withoutAutoresizingMaskConstraints
-        view.components = components
+        view.components = components ?? .mock
         view.components.isDraftMessagesEnabled = true
-        view.appearance = appearance
+        view.appearance = appearance ?? .default
         view.appearance.formatters.threadListMessageTimestamp = DefaultMessageTimestampFormatter()
         view.content = content
         view.addSizeConstraints()

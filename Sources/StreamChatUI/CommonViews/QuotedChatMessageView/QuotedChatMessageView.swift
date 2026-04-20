@@ -4,7 +4,6 @@
 
 import AVKit
 import StreamChat
-import StreamChatCommonUI
 import UIKit
 
 /// The quoted author's avatar position in relation with the text message.
@@ -63,10 +62,14 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         .withAccessibilityIdentifier(identifier: "containerView")
 
     /// The avatar view of the author's quoted message.
-    open private(set) lazy var authorAvatarView: ChatAvatarView = components
-        .avatarView.init()
-        .withoutAutoresizingMaskConstraints
-        .withAccessibilityIdentifier(identifier: "authorAvatarView")
+    open private(set) lazy var authorAvatarView: ChatUserAvatarView = {
+        let view = components
+            .userAvatarView.init()
+            .withoutAutoresizingMaskConstraints
+            .withAccessibilityIdentifier(identifier: "authorAvatarView")
+        view.shouldShowOnlineIndicator = false
+        return view
+    }()
 
     /// The container view that holds the `textView` and the `attachmentPreview`.
     open private(set) lazy var contentContainerView: ContainerStackView = ContainerStackView()
@@ -120,8 +123,6 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         textView.textContainerInset = .zero
         textView.textColor = appearance.colorPalette.textPrimary
 
-        authorAvatarView.contentMode = .scaleAspectFit
-
         contentContainerView.layer.cornerRadius = 16
         contentContainerView.layer.borderWidth = 1
         contentContainerView.layer.borderColor = appearance.colorPalette.borderCoreDefault.cgColor
@@ -172,7 +173,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
             : appearance.colorPalette.backgroundCoreSurfaceSubtle
         
         setText(message.textContent ?? "")
-        setAvatar(imageUrl: message.author.imageURL, authorName: message.author.name)
+        authorAvatarView.content = message.author
         setAvatarAlignment(avatarAlignment)
 
         if isAttachmentsEmpty {
@@ -211,26 +212,6 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         }
 
         textView.attributedText = attributedText
-    }
-
-    /// Sets the avatar image from a url, falling back to an initials placeholder.
-    /// - Parameters:
-    ///   - imageUrl: The url of the avatar image.
-    ///   - authorName: The author's display name used to generate the initials placeholder.
-    open func setAvatar(imageUrl: URL?, authorName: String?) {
-        let placeholder = UserAvatarInitialsImage.image(
-            name: authorName ?? "",
-            size: components.avatarThumbnailSize,
-            appearance: appearance
-        )
-        components.imageLoader.loadImage(
-            into: authorAvatarView.imageView,
-            from: imageUrl,
-            with: ImageLoaderOptions(
-                resize: .init(components.avatarThumbnailSize),
-                placeholder: placeholder
-            )
-        )
     }
 
     /// Sets the avatar position in relation of the text bubble.
@@ -280,14 +261,10 @@ open class QuotedChatMessageView: _View, ThemeProvider {
             attachmentPreviewView.contentMode = .scaleAspectFill
             setAttachmentPreviewImage(url: giphyPayload.previewURL)
             textView.text = message.text.isEmpty ? L10n.Composer.QuotedMessage.giphy : message.text
-        } else if let videoPayload = message.videoAttachments.first?.payload {
+        } else if let videoAttachment = message.videoAttachments.first {
             attachmentPreviewView.contentMode = .scaleAspectFill
-            textView.text = message.text.isEmpty ? videoPayload.title : message.text
-            if let thumbnailURL = videoPayload.thumbnailURL {
-                setVideoAttachmentThumbnail(url: thumbnailURL)
-            } else {
-                setVideoAttachmentPreviewImage(url: videoPayload.videoURL)
-            }
+            textView.text = message.text.isEmpty ? videoAttachment.payload.title : message.text
+            setVideoAttachmentPreviewImage(attachment: videoAttachment)
         } else if let voiceRecordingPayload = message.voiceRecordingAttachments.first?.payload {
             voiceRecordingAttachmentQuotedPreview.content = .init(
                 title: voiceRecordingPayload.title ?? message.text,
@@ -304,35 +281,26 @@ open class QuotedChatMessageView: _View, ThemeProvider {
     /// Sets the image from the given URL into `attachmentPreviewView.image`
     /// - Parameter url: The URL from which the image is to be loaded
     open func setAttachmentPreviewImage(url: URL?) {
-        components.imageLoader.loadImage(
+        components.mediaLoader.loadImage(
             into: attachmentPreviewView,
             from: url,
-            with: ImageLoaderOptions(resize: .init(attachmentPreviewSize))
+            with: ImageLoaderOptions(resize: .init(attachmentPreviewSize), cdnRequester: components.cdnRequester)
         )
     }
 
-    /// Set the image from the given URL into `attachmentPreviewImage.image`
-    /// - Parameter url: The URL of the thumbnail
-    open func setVideoAttachmentThumbnail(url: URL) {
-        components.imageLoader.downloadImage(with: .init(url: url, options: ImageDownloadOptions())) { [weak self] result in
-            switch result {
-            case let .success(preview):
-                self?.attachmentPreviewView.image = preview
-            case .failure:
-                self?.attachmentPreviewView.image = nil
-            }
-        }
-    }
-
-    /// Set the image from the given URL into `attachmentPreviewImage.image`
-    /// - Parameter url: The URL from which to generate the image on the video
-    open func setVideoAttachmentPreviewImage(url: URL?) {
-        guard let url = url else { return }
-
-        components.videoLoader.loadPreviewForVideo(at: url) { [weak self] in
+    /// Set the image from the given video attachment into `attachmentPreviewImage.image`.
+    ///
+    /// Uses the attachment's thumbnail URL when available, falling back to
+    /// generating a preview frame from the video.
+    /// - Parameter attachment: The video attachment to load the preview for.
+    open func setVideoAttachmentPreviewImage(attachment: ChatMessageVideoAttachment) {
+        components.mediaLoader.loadVideoPreview(
+            with: attachment,
+            options: VideoLoadOptions(cdnRequester: components.cdnRequester)
+        ) { [weak self] in
             switch $0 {
             case let .success(preview):
-                self?.attachmentPreviewView.image = preview
+                self?.attachmentPreviewView.image = preview.image
             case let .failure(error):
                 self?.attachmentPreviewView.image = nil
                 log.error("This \(error) received for processing Video Preview image.")

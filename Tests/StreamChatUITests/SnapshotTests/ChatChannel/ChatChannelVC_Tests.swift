@@ -16,6 +16,7 @@ import XCTest
 
     override func setUp() {
         super.setUp()
+        Appearance.default = Appearance()
         var components = Components.mock
         components.channelHeaderView = ChatChannelHeaderViewMock.self
         components.messageComposerVC = ComposerVC_Mock.self

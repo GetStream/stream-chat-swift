@@ -132,10 +132,10 @@ final class ChannelReadDTO_Tests: XCTestCase {
         }
 
         // WHEN
-        let unkownMemberId: UserId = .unique
+        let unknownMemberId: UserId = .unique
         database.viewContext.markChannelAsRead(
             cid: channel.channel.cid,
-            userId: unkownMemberId,
+            userId: unknownMemberId,
             at: .init()
         )
 

@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-@testable import StreamChatCommonUI
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
@@ -65,7 +64,7 @@ import XCTest
             override func setUpAppearance() {
                 super.setUpAppearance()
                 avatarView.backgroundColor = .blue
-                avatarView.imageView.backgroundColor = .brown
+                avatarView.presenceAvatarView.avatarView.imageView.backgroundColor = .brown
                 layer.borderWidth = 1
                 layer.borderColor = UIColor.green.cgColor
             }

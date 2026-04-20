@@ -80,7 +80,7 @@ public func XCTAssertEqual<T: Error>(
     line: UInt = #line
 ) where T: Equatable {
     if error == error1 {
-        /// This covers the case, when `Equatable` conformance of the `Error` was overriden by the custom implementation
+        /// This covers the case, when `Equatable` conformance of the `Error` was overridden by the custom implementation
         XCTAssertTrue(true, message())
         return
     }
@@ -107,7 +107,7 @@ public func XCTAssertEqual<T: Error>(
 ) where T: Equatable {
     if let equalError = error1,
        equalError == error {
-        /// This covers the case, when `Equatable` conformance of the `Error` was overriden by the custom implementation
+        /// This covers the case, when `Equatable` conformance of the `Error` was overridden by the custom implementation
         XCTAssertTrue(true, message())
         return
     }

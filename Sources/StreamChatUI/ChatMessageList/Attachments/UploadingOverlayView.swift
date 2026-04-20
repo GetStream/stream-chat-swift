@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-import StreamChatCommonUI
 import UIKit
 
 open class UploadingOverlayView: _View, ThemeProvider {

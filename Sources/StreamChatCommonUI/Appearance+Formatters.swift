@@ -6,7 +6,7 @@ import Foundation
 import StreamChat
 
 public extension Appearance {
-    struct Formatters {
+    @MainActor final class Formatters {
         /// A formatter that converts the message to textual representation in the message list.
         public var messageTimestamp: MessageTimestampFormatter = DefaultMessageTimestampFormatter()
 
@@ -53,5 +53,9 @@ public extension Appearance {
 
         /// A boolean value that determines whether Markdown is active for messages to be formatted.
         public var isMarkdownEnabled = true
+
+        public init() {
+            // Public init.
+        }
     }
 }

@@ -310,7 +310,7 @@ final class MemberController_Tests: XCTestCase {
         let networkError = TestError()
         env.memberUpdater!.banMember_completion!(networkError)
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
@@ -368,7 +368,7 @@ final class MemberController_Tests: XCTestCase {
         let networkError = TestError()
         env.memberUpdater!.banMember_completion!(networkError)
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
@@ -426,7 +426,7 @@ final class MemberController_Tests: XCTestCase {
         let networkError = TestError()
         env.memberUpdater!.unbanMember_completion!(networkError)
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 

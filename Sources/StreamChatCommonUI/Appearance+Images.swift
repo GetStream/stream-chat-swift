@@ -6,7 +6,7 @@ import StreamChat
 import UIKit
 
 public extension Appearance {
-    struct Images {
+    @MainActor final class Images {
         /// A private internal function that will safely load an image from the bundle or return a circle image as backup
         /// - Parameter imageName: The required image name to load from the bundle
         /// - Returns: A UIImage that is either the correct image from the bundle or backup circular image
@@ -449,11 +449,8 @@ public extension Appearance {
         public var checkmarkFilled: UIImage = loadSafely(systemName: "checkmark.circle.fill")
         public var closeFill: UIImage = loadSafely(systemName: "xmark.circle.fill")
         public var videoIndicator: UIImage = loadSafely(systemName: "video.fill")
-        public var gallery: UIImage = loadSafely(
-            systemName: "square.grid.3x3.fill",
-            systemNameFallback: "square.grid.2x2.fill"
-        )
-        
+        public var gallery: UIImage = loadSafely(systemName: "square.grid.2x2")
+
         // MARK: - No Content Icons
         
         public var noContent: UIImage = UIImage(
@@ -495,7 +492,7 @@ public extension Appearance {
         public var scrollDownArrow: UIImage = loadSafely(
             systemName: "arrow.down",
             config: UIImage.SymbolConfiguration(
-                weight: .medium
+                weight: .regular
             )
         )
 
@@ -720,6 +717,10 @@ public extension Appearance {
                 ]
             }
             set { _fileIconPreviews = newValue }
+        }
+
+        public init() {
+            // Public init.
         }
     }
 }

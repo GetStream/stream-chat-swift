@@ -147,7 +147,7 @@ final class ChannelEventsController_Tests: XCTestCase {
         let networkError = TestError()
         eventSender.sendEvent_completion?(networkError)
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
@@ -169,7 +169,7 @@ final class ChannelEventsController_Tests: XCTestCase {
         // Simulate sucessful API response.
         eventSender.sendEvent_completion?(nil)
 
-        // Assert nil error is propogated.
+        // Assert nil error is propagated.
         AssertAsync.willBeTrue(completionCalled)
     }
 

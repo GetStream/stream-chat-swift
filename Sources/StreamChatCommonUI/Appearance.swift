@@ -6,7 +6,7 @@ import Foundation
 import StreamChat
 
 /// An object containing visual configuration for whole application.
-public struct Appearance: @unchecked Sendable {
+@MainActor public final class Appearance {
     /// A color palette to provide basic set of colors for the Views.
     ///
     /// By providing different object or changing individual colors, you can change the look of the views.
@@ -38,7 +38,7 @@ public struct Appearance: @unchecked Sendable {
 
     /// Provider for custom localization which is dependent on App Bundle.
     public var localizationProvider: @Sendable (_ key: String, _ table: String) -> String = { key, table in
-        let bundle = Self.bundle ?? Bundle.streamChatCommonUI
+        let bundle = Appearance.bundle ?? Bundle.streamChatCommonUI
         return bundle.localizedString(forKey: key, value: nil, table: table)
     }
 
@@ -50,5 +50,5 @@ public struct Appearance: @unchecked Sendable {
 // MARK: - Appearance + Default
 
 public extension Appearance {
-    nonisolated(unsafe) static var `default`: Appearance = .init()
+    static var `default`: Appearance = .init()
 }

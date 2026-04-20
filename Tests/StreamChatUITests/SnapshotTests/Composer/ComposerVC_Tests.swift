@@ -3,7 +3,6 @@
 //
 
 @testable import StreamChat
-@testable import StreamChatCommonUI
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
@@ -14,15 +13,6 @@ import XCTest
     var mockedChatChannelController: ChatChannelController_Mock!
     
     // MARK: - Lifecycle
-
-    /// Static setUp() is only run once. Which is what we want in this case to preload the images.
-    override class func setUp() {
-        /// Dummy snapshot to preload the TestImages.yoda.url image
-        /// This was the only workaround to make sure the image always appears in the snapshots.
-        let view = UIImageView(frame: .init(center: .zero, size: .init(width: 100, height: 100)))
-        Components.default.imageLoader.loadImage(into: view, from: TestImages.yoda.url)
-        AssertSnapshot(view, variants: [.defaultLight])
-    }
 
     override func setUp() {
         super.setUp()
@@ -957,7 +947,7 @@ import XCTest
 
     func test_maxAttachmentSize_whenChannelControllerNotSet_thenReturnsDefaultFallbackLimit() {
         composerVC.channelController = nil
-        XCTAssertEqual(composerVC.maxAttachmentSize(for: .file), AttachmentValidationError.fileSizeMaxLimitFallback)
+        XCTAssertEqual(composerVC.maxAttachmentSize(for: .file), Components.default.maxAttachmentSize)
     }
 
     func test_maxAttachmentSize_whenImageType_thenReturnsLimitFromImageUploadConfig() {

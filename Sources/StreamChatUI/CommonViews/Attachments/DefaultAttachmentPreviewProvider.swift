@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-import StreamChatCommonUI
 import UIKit
 
 /// Default provider that is used when AttachmentPreviewProvider is not implemented for custom attachment payload. This

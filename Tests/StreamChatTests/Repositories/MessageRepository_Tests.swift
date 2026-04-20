@@ -355,7 +355,7 @@ final class MessageRepositoryTests: XCTestCase {
         // Simulate API response with success
         apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
 
-        // Assert database error is propogated
+        // Assert database error is propagated
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 

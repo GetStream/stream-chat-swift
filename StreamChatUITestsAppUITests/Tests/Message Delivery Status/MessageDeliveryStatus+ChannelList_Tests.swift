@@ -87,7 +87,7 @@ final class MessageDeliveryStatus_ChannelList_Tests: StreamTestCase {
                 .login()
                 .openChannel()
         }
-        AND("user succesfully sends new message") {
+        AND("user successfully sends new message") {
             userRobot.sendMessage(message)
         }
         AND("user retuns to the channel list") {

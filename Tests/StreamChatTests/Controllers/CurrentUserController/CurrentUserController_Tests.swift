@@ -319,7 +319,7 @@ final class CurrentUserController_Tests: XCTestCase {
         let networkError = TestError()
         env.currentUserUpdater.updateUserData_completion?(networkError)
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
@@ -418,7 +418,7 @@ final class CurrentUserController_Tests: XCTestCase {
         let networkError = TestError()
         env.currentUserUpdater.fetchDevices_completion?(.failure(networkError))
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
@@ -493,7 +493,7 @@ final class CurrentUserController_Tests: XCTestCase {
         let networkError = TestError()
         env.currentUserUpdater.addDevice_completion?(networkError)
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
@@ -586,7 +586,7 @@ final class CurrentUserController_Tests: XCTestCase {
         let networkError = TestError()
         env.currentUserUpdater.removeDevice_completion?(networkError)
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 

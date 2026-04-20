@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-@testable import StreamChatCommonUI
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
@@ -124,7 +123,9 @@ import XCTest
 
         let vc = TestView()
         vc.controller = mockedChannelListController
-        vc.appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
+        let appearance = Appearance()
+        appearance.formatters.channelListMessageTimestamp = DefaultMessageTimestampFormatter()
+        vc.appearance = appearance
 
         var components = Components.mock
         components.channelCellSeparator = TestSeparatorView.self

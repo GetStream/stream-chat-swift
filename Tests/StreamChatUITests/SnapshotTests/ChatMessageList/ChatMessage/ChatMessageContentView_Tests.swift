@@ -3,13 +3,17 @@
 //
 
 @testable import StreamChat
-@testable import StreamChatCommonUI
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
 import XCTest
 
 @MainActor final class ChatMessageContentView_Tests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        Appearance.default = Appearance()
+    }
+
     /// Default content view width.
     private let contentViewWidth: CGFloat = 360
     /// The current user.
@@ -19,14 +23,8 @@ import XCTest
     /// The `createdAt` for all test messages
     private let createdAt = "2019-12-12T15:33:46.488935Z".toDate()
 
-    /// Static setUp() is only run once. Which is what we want in this case to preload the images.
     override class func setUp() {
-        /// Dummy snapshot to preload the TestImages.r2.url image
-        /// This was the only workaround to make sure the image always appears in the snapshots.
-        let view = UIImageView(frame: .init(center: .zero, size: .init(width: 100, height: 100)))
-        Components.default.imageLoader.loadImage(into: view, from: TestImages.yoda.url)
-        Components.default.imageLoader.loadImage(into: view, from: TestImages.r2.url)
-        AssertSnapshot(view, variants: [.defaultLight])
+        // no-op: the mock image loader loads images synchronously from file URLs
     }
 
     func test_appearance() {
@@ -616,7 +614,7 @@ import XCTest
             }
         }
 
-        var components = Components.default
+        var components = Components.mock
         components.messageBubbleView = CustomBubbleView.self
 
         let message: ChatMessage = .mock(
@@ -1056,6 +1054,64 @@ import XCTest
     }
 }
 
+// MARK: - Video Attachment
+
+extension ChatMessageContentView_Tests {
+    func test_appearance_whenMessageWithVideoAttachment_incoming() {
+        let videoAttachment: ChatMessageVideoAttachment = .mock(
+            id: .unique,
+            thumbnailURL: TestImages.yoda.url,
+            localState: nil
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "",
+            author: myFriend,
+            createdAt: createdAt,
+            attachments: [videoAttachment.asAnyAttachment],
+            isSentByCurrentUser: false
+        )
+
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            components: .mock,
+            attachmentInjector: GalleryAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+
+    func test_appearance_whenMessageWithVideoAttachment_outgoing() {
+        let videoAttachment: ChatMessageVideoAttachment = .mock(
+            id: .unique,
+            thumbnailURL: TestImages.yoda.url,
+            localState: nil
+        )
+
+        let message: ChatMessage = .mock(
+            id: .unique,
+            cid: .unique,
+            text: "",
+            author: me,
+            createdAt: createdAt,
+            attachments: [videoAttachment.asAnyAttachment],
+            isSentByCurrentUser: true
+        )
+
+        let view = contentView(
+            message: message,
+            layout: message.layout(isLastInGroup: true),
+            components: .mock,
+            attachmentInjector: GalleryAttachmentViewInjector.self
+        )
+
+        AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
+    }
+}
+
 // MARK: - Helpers
 
 private extension ChatMessageContentView_Tests {
@@ -1271,10 +1327,12 @@ private extension ChatMessageContentView_Tests {
         message: ChatMessage,
         channel: ChatChannel = .mock(cid: .unique),
         layout: ChatMessageLayoutOptions? = nil,
-        appearance: Appearance = .default,
-        components: Components = .default,
+        appearance: Appearance? = nil,
+        components: Components? = nil,
         attachmentInjector: AttachmentViewInjector.Type? = nil
     ) -> ChatMessageContentView {
+        let appearance = appearance ?? .default
+        let components = components ?? .mock
         let layoutOptions = layout ?? components.messageLayoutOptionsResolver.optionsForMessage(
             at: .init(item: 0, section: 0),
             in: channel,

@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-import StreamChatCommonUI
 import UIKit
 
 /// Controller that shows list of messages and composer together in the selected channel.
@@ -330,7 +329,7 @@ open class ChatMessageListVC: _ViewController,
         updateJumpToUnreadButtonVisibility(animated: animated)
     }
 
-    /// Set the visibility of `scrollToLatestMessageButton`.
+    /// Set the visibility of `scrollToBottomButton`.
     open func updateScrollToBottomButtonVisibility(animated: Bool = true) {
         updateVisibility(
             for: scrollToBottomButton,
@@ -1029,11 +1028,13 @@ open class ChatMessageListVC: _ViewController,
                 present(activityViewController, animated: true)
             } else {
                 let chat = client.makeChat(for: attachment.id.cid)
+                let cdnRequester = components.cdnRequester
                 _Concurrency.Task {
                     do {
-                        try await chat.downloadAttachment(attachment)
+                        let cdnRequest = try await cdnRequester.fileRequest(for: attachment.remoteURL)
+                        try await chat.downloadAttachment(attachment, remoteURL: cdnRequest.url)
                     } catch {
-                        log.debug("Downloaded attachment for id \(attachment.id)")
+                        log.error("Failed to download attachment \(attachment.id): \(error)")
                     }
                 }
             }

@@ -330,7 +330,7 @@ public class ChatClient: @unchecked Sendable {
     ///
     /// - Parameters:
     ///   - userInfo: The user info passed to `connect` endpoint.
-    ///   - tokenProvider: The closure used to retreive a token. Token provider will be used to establish the initial connection and also to obtain the new token when the previous one expires.
+    ///   - tokenProvider: The closure used to retrieve a token. Token provider will be used to establish the initial connection and also to obtain the new token when the previous one expires.
     ///   - completion: The completion that will be called once the **first** user session for the given token is setup.
     ///
     /// - Note: Connect endpoint uses an upsert mechanism. If the user does not exist, it will be created with the given `userInfo`. If user already exists, it will get updated with non-nil fields from the `userInfo`.
@@ -359,7 +359,7 @@ public class ChatClient: @unchecked Sendable {
     ///
     /// - Parameters:
     ///   - userInfo: The user info passed to `connect` endpoint.
-    ///   - tokenProvider: The closure used to retreive a token. Token provider will be used to establish the initial connection and also to obtain the new token when the previous one expires.
+    ///   - tokenProvider: The closure used to retrieve a token. Token provider will be used to establish the initial connection and also to obtain the new token when the previous one expires.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: A type representing the connected user and its state.
@@ -652,57 +652,20 @@ public class ChatClient: @unchecked Sendable {
     // MARK: - Upload attachments
     
     /// Uploads an attachment to the specified CDN.
+    /// Uploads a file from a local URL to the CDN.
     ///
     /// - Parameters:
-    ///  - attachment: the attachment to be uploaded.
-    ///  - progress: the progress of the upload.
-    ///  - completion: called when the attachment is uploaded.
-    public func upload<Payload>(
-        _ attachment: StreamAttachment<Payload>,
-        progress: (@Sendable (Double) -> Void)?,
-        completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
-    ) {
-        apiClient.attachmentUploader.uploadStandaloneAttachment(
-            attachment,
-            progress: progress,
-            completion: completion
-        )
-    }
-
-    /// Uploads an attachment to the specified CDN.
-    ///
-    /// - Parameters:
-    ///  - localUrl: the local url of the file to be uploaded.
-    ///  - progress: the progress of the upload.
-    ///  - completion: called when the attachment is uploaded.
+    ///  - localUrl: The local file URL to be uploaded.
+    ///  - progress: A closure that broadcasts upload progress (0.0 to 1.0).
+    ///  - completion: Called when the upload completes with the uploaded file information.
     public func uploadAttachment(
         localUrl: URL,
         progress: (@Sendable (Double) -> Void)?,
         completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
-        let uploadingState: AttachmentUploadingState
-
-        do {
-            uploadingState = AttachmentUploadingState(
-                localFileURL: localUrl,
-                state: .pendingUpload,
-                file: try .init(url: localUrl)
-            )
-        } catch {
-            completion(.failure(error))
-            return
-        }
-
-        let attachment = StreamAttachment(
-            type: uploadingState.file.type.isImage ? .image : .file,
-            payload: localUrl,
-            downloadingState: nil,
-            uploadingState: uploadingState
-        )
-
-        apiClient.attachmentUploader.uploadStandaloneAttachment(
-            attachment,
-            progress: progress,
+        apiClient.cdnStorage.uploadAttachment(
+            localUrl: localUrl,
+            options: .init(progress: progress),
             completion: completion
         )
     }
@@ -715,8 +678,9 @@ public class ChatClient: @unchecked Sendable {
         remoteUrl: URL,
         completion: @escaping @Sendable (Error?) -> Void
     ) {
-        apiClient.cdnClient.deleteAttachment(
+        apiClient.cdnStorage.deleteAttachment(
             remoteUrl: remoteUrl,
+            options: .init(),
             completion: completion
         )
     }

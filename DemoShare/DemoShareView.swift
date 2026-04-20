@@ -21,9 +21,7 @@ struct DemoShareView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            TopView(viewModel: viewModel)
-            
+        NavigationView {
             VStack(alignment: .center) {
                 if viewModel.images.count == 1 {
                     ImageToShareView(image: viewModel.images[0])
@@ -36,65 +34,48 @@ struct DemoShareView: View {
                         }
                     }
                 }
-                
+
                 TextField("Write a message...", text: $viewModel.text)
                     .padding(.vertical)
-                
+
                 HStack {
                     if viewModel.channels.isEmpty {
                         ProgressView()
                     } else {
                         Text("Select a channel")
                             .font(.subheadline)
-                        
                         Spacer()
                     }
                 }
-                
+
                 ShareChannelsView(viewModel: viewModel)
             }
             .padding()
-        }
-        .allowsHitTesting(!viewModel.loading)
-    }
-}
-
-struct TopView: View {
-    @ObservedObject var viewModel: DemoShareViewModel
-    
-    var body: some View {
-        HStack {
-            Button(action: {
-                viewModel.dismissShareSheet()
-            }, label: {
-                Text("Cancel")
-            })
-            Spacer()
-            Button(action: {
-                Task {
-                    do {
-                        try await viewModel.sendMessage()
-                    } catch {
-                        viewModel.dismissShareSheet()
+            .navigationTitle("Send to")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel", action: viewModel.dismissShareSheet)
+                }
+                ToolbarItem(placement: .confirmationAction) {
+                    if viewModel.loading {
+                        ProgressView()
+                    } else {
+                        Button("Send") {
+                            Task {
+                                do {
+                                    try await viewModel.sendMessage()
+                                } catch {
+                                    viewModel.dismissShareSheet()
+                                }
+                            }
+                        }
+                        .disabled(viewModel.selectedChannel == nil)
                     }
                 }
-            }, label: {
-                if viewModel.loading {
-                    ProgressView()
-                } else {
-                    Text("Send")
-                        .bold()
-                }
-            })
-            .disabled(viewModel.selectedChannel == nil)
+            }
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 16)
-        .frame(height: 44)
-        .overlay(
-            Text("Send to")
-                .bold()
-        )
+        .allowsHitTesting(!viewModel.loading)
     }
 }
 
@@ -109,7 +90,7 @@ struct ImageToShareView: View {
             .resizable()
             .aspectRatio(contentMode: contentMode)
             .frame(height: imageHeight)
-            .cornerRadius(8)
+            .clipShape(.rect(cornerRadius: 8))
     }
 }
 

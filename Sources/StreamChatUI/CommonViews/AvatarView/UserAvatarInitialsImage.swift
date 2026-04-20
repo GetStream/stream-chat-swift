@@ -2,7 +2,6 @@
 // Copyright © 2026 Stream.io Inc. All rights reserved.
 //
 
-import StreamChatCommonUI
 import UIKit
 
 /// Generates a `UIImage` placeholder for a user avatar using the user's initials,
@@ -87,7 +86,7 @@ enum UserAvatarInitialsImage {
     }
 
     /// Convenience that derives font size from the rendered image dimensions.
-    static func image(name: String, size: CGSize, appearance: Appearance) -> UIImage {
+    @MainActor static func image(name: String, size: CGSize, appearance: Appearance) -> UIImage {
         let initials = String(self.initials(from: name).prefix(size.width >= 28 ? 2 : 1))
         let font = scaledFont(for: size, appearance: appearance)
         return image(
@@ -102,7 +101,7 @@ enum UserAvatarInitialsImage {
 
     // MARK: - Private
 
-    private static func scaledFont(for size: CGSize, appearance: Appearance) -> UIFont {
+    @MainActor private static func scaledFont(for size: CGSize, appearance: Appearance) -> UIFont {
         let fonts = appearance.fonts
         switch size.width {
         case 56...: return fonts.title2.bold

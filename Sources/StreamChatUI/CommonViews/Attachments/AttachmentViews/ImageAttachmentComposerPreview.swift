@@ -3,6 +3,7 @@
 //
 
 import StreamChat
+import StreamChatCommonUI
 import UIKit
 
 /// A view that displays image attachment preview in composer.
@@ -43,10 +44,10 @@ open class ImageAttachmentComposerPreview: _View, ThemeProvider {
         super.updateContent()
 
         let size = CGSize(width: width, height: height)
-        components.imageLoader.loadImage(
+        components.mediaLoader.loadImage(
             into: imageView,
             from: content,
-            with: ImageLoaderOptions(resize: ImageResize(size))
+            with: ImageLoaderOptions(resize: ImageResize(size), cdnRequester: components.cdnRequester)
         )
     }
 }

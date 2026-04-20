@@ -3,6 +3,7 @@
 {% if tables.count > 0 %}
 {% set accessModifier %}public{% endset %}
 import Foundation
+import StreamCore
 
 
 // MARK: - Strings
@@ -70,7 +71,9 @@ import Foundation
 extension {{enumName}} {
   private static func tr(_ table: String, _ key: String, _ args: CVarArg...) -> String {
      // TODO: Using using Appearance.default prohibits using Appearance injection
-     let format = Appearance.default.localizationProvider(key, table)
+     let format = StreamConcurrency.onMain {
+       Appearance.default.localizationProvider(key, table)
+     }
      return String(format: format, locale: Locale.current, arguments: args)
   }
 }

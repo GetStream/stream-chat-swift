@@ -49,7 +49,7 @@ final class EventPayload_Tests: XCTestCase {
     }
 
     func test_asEvents_decodesAndReturnsEventsInCorrectOrderWithoutFailedToBeDecoded() throws {
-        // Create known and unkown events payloads
+        // Create known and unknown events payloads
         let knownEventPayload1 = EventPayload(
             eventType: .healthCheck,
             connectionId: .unique

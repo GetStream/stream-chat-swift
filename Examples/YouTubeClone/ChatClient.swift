@@ -11,7 +11,7 @@ extension ChatClient {
     static let livestreamChannelName = "ytlivestream"
 
     /// The singleton instance of `ChatClient`
-    static let shared: ChatClient = {
+    @MainActor static let shared: ChatClient = {
         var components = Components()
 
         components.channelVC = YTLiveChatViewController.self

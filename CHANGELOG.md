@@ -3,7 +3,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.0.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.0.0)
+_April 16, 2026_
+
 ## StreamChat
+### ✅ Added
+- Add `remoteURL` parameter to `downloadAttachment` to support CDN-signed URLs [#4056](https://github.com/GetStream/stream-chat-swift/pull/4056)
 ### 🐞 Fixed
 - Fix pin/unpin updates not propagated in `LivestreamChannelController` when the message is not in the local messages list [#4032](https://github.com/GetStream/stream-chat-swift/pull/4032)
 - Fix `ChatChannel.latestMessages` including thread replies [#4024](https://github.com/GetStream/stream-chat-swift/pull/4024)
@@ -18,10 +25,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix clearing unread messages on channel open when the first unread message is not visible [#4013](https://github.com/GetStream/stream-chat-swift/pull/4013)
 ### 🔄 Changed
 - Use the new color palette [#4025](https://github.com/GetStream/stream-chat-swift/pull/4025)
+### ⚡ Performance
+- Create merged avatars on a background thread in `ChatChannelAvatarView` [#4068](https://github.com/GetStream/stream-chat-swift/pull/4068)
 
 ## StreamChatCommonUI
+### 🔄 Changed
+- Update gallery and scroll-to-bottom SF Symbol icons [#4059](https://github.com/GetStream/stream-chat-swift/pull/4059)
+- Use MainActor for Appearance and its subtypes [#4052](https://github.com/GetStream/stream-chat-swift/pull/4052)
 ### ❌ Removed
 - Remove existing color tokens in favor of the new palette in `Appearance.ColorPalette` [#4025](https://github.com/GetStream/stream-chat-swift/pull/4025)
+
+# [4.99.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.99.1)
+_April 01, 2026_
+
+## StreamChat
+### 🐞 Fixed
+- Fix pin/unpin updates not propagated in `LivestreamChannelController` when the message is not in the local messages list [#4029](https://github.com/GetStream/stream-chat-swift/pull/4029)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix clearing unread messages on channel open when the first unread message is not visible [#4013](https://github.com/GetStream/stream-chat-swift/pull/4013)
 
 # [5.0.0-beta](https://github.com/GetStream/stream-chat-swift/releases/tag/5.0.0-beta)
 _March 23, 2026_

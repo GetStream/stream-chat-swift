@@ -3,13 +3,12 @@
 //
 
 import StreamChat
-@testable import StreamChatCommonUI
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
 import XCTest
 
-final class SwipeableView_Tests: XCTestCase {
+@MainActor final class SwipeableView_Tests: XCTestCase {
     func test_defaultAppearance() {
         // Create SwipeableView
         let view = SwipeableView().withoutAutoresizingMaskConstraints

@@ -3,13 +3,12 @@
 //
 
 import StreamChat
-import StreamChatCommonUI
 import StreamChatUI
 import UIKit
 
 extension ChatClient {
     /// The singleton instance of `ChatClient`
-    static let shared: ChatClient = {
+    @MainActor static let shared: ChatClient = {
         // Register custom UI elements
         var appearance = Appearance()
         var components = Components()

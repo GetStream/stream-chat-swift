@@ -3,7 +3,6 @@
 //
 
 @testable import StreamChat
-@testable import StreamChatCommonUI
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
@@ -18,6 +17,7 @@ import XCTest
 
     override func setUpWithError() throws {
         super.setUp()
+        Appearance.default = Appearance()
 
         mockedClient = ChatClient_Mock.mock
         mockedClient.currentUserId_mock = currentUserId

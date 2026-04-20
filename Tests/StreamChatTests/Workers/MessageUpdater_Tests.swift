@@ -487,7 +487,7 @@ final class MessageUpdater_Tests: XCTestCase {
             messageUpdater.deleteMessage(messageId: .unique, hard: false, completion: $0)
         }
 
-        // Assert database error is propogated
+        // Assert database error is propagated
         XCTAssertEqual(completionError as? TestError, databaseError)
     }
 
@@ -519,7 +519,7 @@ final class MessageUpdater_Tests: XCTestCase {
         apiClient.test_simulateResponse(response)
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
-        // Assert database error is propogated
+        // Assert database error is propagated
         XCTAssertEqual(completionCalledError as? TestError, databaseError)
     }
 
@@ -1332,7 +1332,7 @@ final class MessageUpdater_Tests: XCTestCase {
             completionCalledError = $0
         }
 
-        // Assert the message network error is propogated.
+        // Assert the message network error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
     }
 
@@ -1358,7 +1358,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let networkError = TestError()
         apiClient.test_simulateResponse(Result<FlagMessagePayload, Error>.failure(networkError))
 
-        // Assert the flag database error is propogated.
+        // Assert the flag database error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
     }
 
@@ -1392,7 +1392,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
         apiClient.test_simulateResponse(.success(payload))
 
-        // Assert the flag database error is propogated.
+        // Assert the flag database error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)
     }
 
@@ -1429,7 +1429,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
         apiClient.test_simulateResponse(.success(payload))
 
-        // Assert `MessageDoesNotExist` error is propogated.
+        // Assert `MessageDoesNotExist` error is propagated.
         AssertAsync.willBeTrue(completionCalledError is ClientError.MessageDoesNotExist)
     }
 
@@ -2179,6 +2179,31 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
     }
     
+    func test_downloadAttachment_usesRemoteURLWhenProvided() throws {
+        let attachment = try setUpAttachment(
+            attachment: ChatMessageFileAttachment.mock(id: .unique)
+        )
+        let signedURL = URL(string: "https://cdn.example.com/signed?token=abc123")!
+        apiClient.downloadFile_completion_result = .success(())
+        let result = try waitFor { messageUpdater.downloadAttachment(attachment, remoteURL: signedURL, completion: $0) }
+        let value = try XCTUnwrap(result.value)
+        XCTAssertEqual(signedURL, apiClient.downloadFile_remoteURL)
+        XCTAssertEqual(attachment.id, value.id)
+        XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
+    }
+
+    func test_downloadAttachment_usesOriginalURLWhenRemoteURLIsNil() throws {
+        let attachment = try setUpAttachment(
+            attachment: ChatMessageFileAttachment.mock(id: .unique)
+        )
+        apiClient.downloadFile_completion_result = .success(())
+        let result = try waitFor { messageUpdater.downloadAttachment(attachment, remoteURL: nil, completion: $0) }
+        let value = try XCTUnwrap(result.value)
+        XCTAssertEqual("http://asset.url", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual(attachment.id, value.id)
+        XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
+    }
+
     // MARK: - Delete Attachments
     
     func test_deleteLocalAttachmentDownload_propagatesAttachmentDoesNotExistError() throws {

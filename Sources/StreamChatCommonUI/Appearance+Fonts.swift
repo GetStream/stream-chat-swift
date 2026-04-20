@@ -6,7 +6,7 @@ import SwiftUI
 import UIKit.UIFont
 
 public extension Appearance {
-    struct Fonts {
+    @MainActor final class Fonts {
         public var caption1 = UIFont.preferredFont(forTextStyle: .caption1)
         public var footnoteBold = UIFont.preferredFont(forTextStyle: .footnote).bold
         public var footnote = UIFont.preferredFont(forTextStyle: .footnote)
@@ -22,11 +22,13 @@ public extension Appearance {
         public var title3 = UIFont.preferredFont(forTextStyle: .title3).bold
         /// A font used to render emojis as "Jumbomoji".
         public var emoji = UIFont.preferredFont(forTextStyle: .body).withSize(50)
+
+        public init() {
+            // Public init.
+        }
     }
     
-    struct FontsSwiftUI {
-        public init() {}
-
+    @MainActor final class FontsSwiftUI {
         public var caption1: Font = .caption
         public var footnoteBold: Font = .footnote.bold()
         public var footnote: Font = .footnote
@@ -62,5 +64,9 @@ public extension Appearance {
         }
 
         public var emoji: Font = .system(size: 50)
+
+        public init() {
+            // Public init.
+        }
     }
 }

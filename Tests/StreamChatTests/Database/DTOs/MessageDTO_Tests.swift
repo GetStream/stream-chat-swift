@@ -2998,7 +2998,7 @@ final class MessageDTO_Tests: XCTestCase {
         let userId = "user_id"
         let messageId = "message_id"
         let reactionType: MessageReactionType = "reaction-type"
-        // We create user and messsage
+        // We create user and message
         prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
 
         // We add the reaction to the message so that it already contains it
@@ -3021,7 +3021,7 @@ final class MessageDTO_Tests: XCTestCase {
         let userId = "user_id"
         let messageId = "message_id"
         let reactionType: MessageReactionType = "reaction-type"
-        // We create user and messsage
+        // We create user and message
         prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
 
         let result = runAddReaction(messageId: messageId, type: reactionType)
@@ -3052,7 +3052,7 @@ final class MessageDTO_Tests: XCTestCase {
         let userId = "user_id"
         let messageId = "message_id"
         let reactionType: MessageReactionType = "reaction-type"
-        // We create user and messsage
+        // We create user and message
         prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
 
         let result = runAddReaction(messageId: messageId, type: reactionType, localState: .pendingDelete)
@@ -3073,7 +3073,7 @@ final class MessageDTO_Tests: XCTestCase {
         let userId = "user_id"
         let messageId = "message_id"
         let reactionType: MessageReactionType = "reaction-type"
-        // We create user and messsage
+        // We create user and message
         prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
 
         let result = runAddReaction(messageId: messageId, type: reactionType, localState: .sending)
@@ -3185,7 +3185,7 @@ final class MessageDTO_Tests: XCTestCase {
         let userId = "user_id"
         let messageId = "message_id"
         let reactionType: MessageReactionType = "reaction-type"
-        // We create user and messsage
+        // We create user and message
         prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
 
         // We add the reaction to the message so that it already contains it
@@ -3221,7 +3221,7 @@ final class MessageDTO_Tests: XCTestCase {
         let userId = "user_id"
         let messageId = "message_id"
         let reactionType: MessageReactionType = "reaction-type"
-        // We create user and messsage
+        // We create user and message
         prepareEnvironment(createdUserId: userId, createdMessageId: messageId)
 
         // We add the reaction to the message so that it already contains it

@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-import StreamChatCommonUI
 import UIKit
 
 /// A button that is being used to enter the recording a new VoiceRecording flow.

@@ -3,7 +3,6 @@
 //
 
 import StreamChat
-@testable import StreamChatCommonUI
 @testable import StreamChatTestTools
 @testable import StreamChatUI
 import StreamSwiftTestHelpers
@@ -52,6 +51,7 @@ import XCTest
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
         view.components = .mock
+        view.imageProcessingQueue = nil
 
         channel = ChatChannel.mockDMChannel(lastActiveMembers: [
             .mock(id: currentUserId, imageURL: TestImages.vader.url),
@@ -106,6 +106,7 @@ import XCTest
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
         view.components = .mock
+        view.imageProcessingQueue = nil
         view.content = (channel: groupChannel, currentUserId: currentUserId)
 
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
@@ -120,6 +121,7 @@ import XCTest
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
         view.components = .mock
+        view.imageProcessingQueue = nil
         view.content = (channel: singleMemberChannel, currentUserId: currentUserId)
 
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
@@ -135,6 +137,7 @@ import XCTest
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
         view.components = .mock
+        view.imageProcessingQueue = nil
         view.content = (channel: twoMemberChannel, currentUserId: currentUserId)
 
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
@@ -150,8 +153,9 @@ import XCTest
 
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
-        view.content = (channel: threeMemberChannel, currentUserId: currentUserId)
         view.components = .mock
+        view.imageProcessingQueue = nil
+        view.content = (channel: threeMemberChannel, currentUserId: currentUserId)
 
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)
     }
@@ -168,6 +172,7 @@ import XCTest
         let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
         view.addSizeConstraints()
         view.components = .mock
+        view.imageProcessingQueue = nil
         view.content = (channel: fourMemberChannel, currentUserId: currentUserId)
 
         AssertSnapshot(view, variants: .onlyUserInterfaceStyles)

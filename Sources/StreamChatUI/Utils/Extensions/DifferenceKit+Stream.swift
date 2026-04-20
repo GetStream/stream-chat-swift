@@ -8,7 +8,7 @@ import UIKit
 //
 // These are customized reload functions from DiffereceKit which use reconfigureItems and reconfigureRows.
 // We can remove this file when DifferenceKit switches to reconfigure instead of reload.
-// Reconfiguring gives a noticable performance boost since cells are not recreated.
+// Reconfiguring gives a noticeable performance boost since cells are not recreated.
 //
 
 extension UITableView {

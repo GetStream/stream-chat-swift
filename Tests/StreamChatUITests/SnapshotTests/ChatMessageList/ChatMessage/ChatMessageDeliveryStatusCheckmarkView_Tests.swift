@@ -8,7 +8,7 @@
 import StreamSwiftTestHelpers
 import XCTest
 
-final class ChatMessageDeliveryStatusCheckmarkView_Tests: XCTestCase {
+@MainActor final class ChatMessageDeliveryStatusCheckmarkView_Tests: XCTestCase {
     // MARK: - Pending
 
     func test_appearance_pending() {

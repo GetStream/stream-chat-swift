@@ -5,24 +5,23 @@
 import Foundation
 import StreamChat
 
-final class CDNClient_Spy: CDNClient, Spy, @unchecked Sendable {
+final class CDNStorage_Spy: CDNStorage, Spy, @unchecked Sendable {
     let spyState = SpyState()
 
-    static var maxAttachmentSize: Int64 { .max }
     var uploadAttachmentProgress: Double?
-    var uploadAttachmentResult: Result<URL, Error>?
-    
+    var uploadAttachmentResult: Result<UploadedFile, Error>?
+
     var deleteAttachmentRemoteUrl: URL?
     var deleteAttachmentResult: Error?
 
     func uploadAttachment(
         _ attachment: AnyChatMessageAttachment,
-        progress: (@Sendable (Double) -> Void)?,
-        completion: @escaping @Sendable (Result<URL, Error>) -> Void
+        options: AttachmentUploadOptions,
+        completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
         record()
         if let uploadAttachmentProgress = uploadAttachmentProgress {
-            progress?(uploadAttachmentProgress)
+            options.progress?(uploadAttachmentProgress)
         }
 
         if let uploadAttachmentResult = uploadAttachmentResult {
@@ -31,32 +30,34 @@ final class CDNClient_Spy: CDNClient, Spy, @unchecked Sendable {
             }
         }
     }
-    
-    func uploadStandaloneAttachment<Payload>(
-        _ attachment: StreamAttachment<Payload>,
-        progress: (@Sendable (Double) -> Void)?,
-        completion: @escaping @Sendable (Result<UploadedFile, any Error>) -> Void
+
+    func uploadAttachment(
+        localUrl: URL,
+        options: AttachmentUploadOptions,
+        completion: @escaping @Sendable (Result<UploadedFile, Error>) -> Void
     ) {
         record()
         if let uploadAttachmentProgress = uploadAttachmentProgress {
-            progress?(uploadAttachmentProgress)
+            options.progress?(uploadAttachmentProgress)
         }
 
         if let uploadAttachmentResult = uploadAttachmentResult {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                completion(uploadAttachmentResult.map { UploadedFile(fileURL: $0) })
+                completion(uploadAttachmentResult)
             }
         }
     }
-    
+
+    var deleteAttachmentCalled = false
+
     func deleteAttachment(
         remoteUrl: URL,
-        completion: @escaping (Error?) -> Void
+        options: AttachmentDeleteOptions,
+        completion: @escaping @Sendable (Error?) -> Void
     ) {
         record()
+        deleteAttachmentCalled = true
         deleteAttachmentRemoteUrl = remoteUrl
-        if let result = deleteAttachmentResult {
-            completion(result)
-        }
+        completion(deleteAttachmentResult)
     }
 }

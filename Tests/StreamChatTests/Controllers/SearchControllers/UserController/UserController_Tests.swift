@@ -183,7 +183,7 @@ final class UserController_Tests: XCTestCase {
         let networkError = TestError()
         env.userUpdater!.muteUser_completion?(networkError)
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
@@ -368,7 +368,7 @@ final class UserController_Tests: XCTestCase {
         let networkError = TestError()
         env.userUpdater!.unmuteUser_completion?(networkError)
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
@@ -419,7 +419,7 @@ final class UserController_Tests: XCTestCase {
         let networkError = TestError()
         env.userUpdater!.flagUser_completion!(networkError)
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
@@ -484,7 +484,7 @@ final class UserController_Tests: XCTestCase {
         let networkError = TestError()
         env.userUpdater!.flagUser_completion!(networkError)
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
@@ -549,7 +549,7 @@ final class UserController_Tests: XCTestCase {
         let networkError = TestError()
         env.userUpdater!.blockUser_completion!(networkError)
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
@@ -612,7 +612,7 @@ final class UserController_Tests: XCTestCase {
         let networkError = TestError()
         env.userUpdater!.unblockUser_completion!(networkError)
 
-        // Assert error is propogated.
+        // Assert error is propagated.
         AssertAsync.willBeEqual(completionError as? TestError, networkError)
     }
 
