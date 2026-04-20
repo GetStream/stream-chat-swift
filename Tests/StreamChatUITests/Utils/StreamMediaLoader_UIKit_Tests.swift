@@ -17,7 +17,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         super.setUp()
         cdnRequester = MockCDNRequester()
         downloader = MockImageDownloader()
-        sut = StreamMediaLoader(cdnRequester: cdnRequester, downloader: downloader)
+        sut = StreamMediaLoader(downloader: downloader, cdnRequester: cdnRequester)
     }
 
     override func tearDown() {

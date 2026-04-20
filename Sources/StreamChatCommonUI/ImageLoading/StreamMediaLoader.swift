@@ -12,11 +12,11 @@ import UIKit
 /// image downloading to an ``ImageDownloading`` backend (typically Nuke),
 /// and video preview generation to AVFoundation.
 open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
-    /// The CDN requester used for URL transformation (signing, headers, resizing).
-    public let cdnRequester: CDNRequester
-
     /// The backend that performs the actual image download and caching.
     public let downloader: ImageDownloading
+
+    /// The CDN requester used for URL transformation (signing, headers, resizing).
+    public let cdnRequester: CDNRequester
 
     /// The video preview thumbnails local cache used for videos that
     /// don't have remote thumbnails available.
@@ -25,11 +25,11 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     private let videoPreviewCacheCountLimit: Int = 50
 
     public init(
-        cdnRequester: CDNRequester = StreamCDNRequester(),
-        downloader: ImageDownloading
+        downloader: ImageDownloading,
+        cdnRequester: CDNRequester = StreamCDNRequester()
     ) {
-        self.cdnRequester = cdnRequester
         self.downloader = downloader
+        self.cdnRequester = cdnRequester
         self.videoPreviewCache = NSCache<NSURL, UIImage>()
         self.videoPreviewCache.countLimit = videoPreviewCacheCountLimit
 

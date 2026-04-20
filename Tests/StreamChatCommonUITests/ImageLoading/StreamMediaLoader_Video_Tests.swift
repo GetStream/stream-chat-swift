@@ -16,7 +16,7 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         super.setUp()
         downloader = MockImageDownloader()
         cdnRequester = MockCDNRequester()
-        sut = StreamMediaLoader(cdnRequester: cdnRequester, downloader: downloader)
+        sut = StreamMediaLoader(downloader: downloader, cdnRequester: cdnRequester)
     }
 
     override func tearDown() {
