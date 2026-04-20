@@ -25,7 +25,7 @@ extension MediaLoader {
 
         imageView.currentImageLoadingTask = task
 
-        let loadOptions = ImageLoadOptions(resize: options.resize, cdnRequester: options.cdnRequester)
+        let loadOptions = ImageLoadOptions(resize: options.resize)
         loadImage(url: url, options: loadOptions) { result in
             guard !task.isCancelled else { return }
             switch result {
@@ -45,7 +45,7 @@ extension MediaLoader {
         with request: ImageDownloadRequest,
         completion: @escaping @MainActor (Result<UIImage, Error>) -> Void
     ) {
-        let loadOptions = ImageLoadOptions(resize: request.options.resize, cdnRequester: request.options.cdnRequester)
+        let loadOptions = ImageLoadOptions(resize: request.options.resize)
         loadImage(url: request.url, options: loadOptions) { result in
             completion(result.map(\.image))
         }
@@ -86,7 +86,6 @@ extension MediaLoader {
         into imageView: UIImageView,
         from attachmentPayload: ImageAttachmentPayload?,
         maxResolutionInPixels: Double,
-        cdnRequester: CDNRequester,
         completion: (@MainActor (Result<UIImage, Error>) -> Void)? = nil
     ) -> ImageLoadingTask {
         guard let originalWidth = attachmentPayload?.originalWidth,
@@ -94,7 +93,7 @@ extension MediaLoader {
             return loadImage(
                 into: imageView,
                 from: attachmentPayload?.imageURL,
-                with: ImageLoaderOptions(cdnRequester: cdnRequester),
+                with: ImageLoaderOptions(),
                 completion: completion
             )
         }
@@ -109,7 +108,7 @@ extension MediaLoader {
         return loadImage(
             into: imageView,
             from: attachmentPayload?.imageURL,
-            with: ImageLoaderOptions(resize: ImageResize(newSize), cdnRequester: cdnRequester),
+            with: ImageLoaderOptions(resize: ImageResize(newSize)),
             completion: completion
         )
     }

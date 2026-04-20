@@ -51,8 +51,11 @@ public struct ImageDownloadingOptions: Sendable {
 public struct DownloadedImage: Sendable {
     /// The downloaded image.
     public var image: UIImage
+    /// The raw image data for animated rendering. `nil` for static images.
+    public var animatedImageData: Data?
 
-    public init(image: UIImage) {
+    public init(image: UIImage, animatedImageData: Data? = nil) {
         self.image = image
+        self.animatedImageData = animatedImageData
     }
 }

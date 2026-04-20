@@ -284,7 +284,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
         components.mediaLoader.loadImage(
             into: attachmentPreviewView,
             from: url,
-            with: ImageLoaderOptions(resize: .init(attachmentPreviewSize), cdnRequester: components.cdnRequester)
+            with: ImageLoaderOptions(resize: .init(attachmentPreviewSize))
         )
     }
 
@@ -295,8 +295,7 @@ open class QuotedChatMessageView: _View, ThemeProvider {
     /// - Parameter attachment: The video attachment to load the preview for.
     open func setVideoAttachmentPreviewImage(attachment: ChatMessageVideoAttachment) {
         components.mediaLoader.loadVideoPreview(
-            with: attachment,
-            options: VideoLoadOptions(cdnRequester: components.cdnRequester)
+            with: attachment
         ) { [weak self] in
             switch $0 {
             case let .success(preview):

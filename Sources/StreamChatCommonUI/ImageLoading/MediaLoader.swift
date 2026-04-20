@@ -6,12 +6,12 @@ import AVKit
 import StreamChat
 import UIKit
 
-/// A unified protocol for loading images and video previews.
+/// A unified protocol for loading images, video previews, and resolving file URLs.
 ///
-/// Configuration is passed via options structs on every call, so concrete
-/// implementations remain stateless with respect to CDN configuration.
-/// Changing the requester on `ChatClientConfig` takes effect immediately without
-/// recreating the loader.
+/// The ``CDNRequester`` is provided as a constructor dependency of the concrete
+/// implementation (e.g. ``StreamMediaLoader``), so callers don't need to pass
+/// it on every call. Configuring the CDN requester in one place ensures all
+/// content loading automatically picks it up.
 public protocol MediaLoader: AnyObject, Sendable {
     // MARK: - Image Loading
 
@@ -19,7 +19,7 @@ public protocol MediaLoader: AnyObject, Sendable {
     ///
     /// - Parameters:
     ///   - url: The image URL. If nil, the completion is called with a failure.
-    ///   - options: Options controlling resize and CDN behavior.
+    ///   - options: Options controlling resize behavior.
     ///   - completion: A completion handler called on the main actor with the loaded image.
     func loadImage(
         url: URL?,
@@ -31,8 +31,8 @@ public protocol MediaLoader: AnyObject, Sendable {
 
     /// Returns a video asset for the given URL.
     ///
-    /// Implementers should use the CDN requester in options to adjust the URL
-    /// before creating the asset.
+    /// The implementation resolves the URL through its CDN requester before
+    /// creating the asset.
     func loadVideoAsset(
         at url: URL,
         options: VideoLoadOptions,
@@ -47,7 +47,7 @@ public protocol MediaLoader: AnyObject, Sendable {
     ///
     /// - Parameters:
     ///   - attachment: A video attachment containing the video URL and optional thumbnail URL.
-    ///   - options: Options controlling CDN behavior.
+    ///   - options: Options controlling video load behavior.
     ///   - completion: A completion handler called on the main actor with the preview image.
     func loadVideoPreview(
         with attachment: ChatMessageVideoAttachment,
@@ -67,22 +67,78 @@ public protocol MediaLoader: AnyObject, Sendable {
     ///
     /// - Parameters:
     ///   - url: The video URL (typically a local `file://` URL).
-    ///   - options: Options controlling CDN behavior.
+    ///   - options: Options controlling video load behavior.
     ///   - completion: A completion handler called on the main actor with the preview image.
     func loadVideoPreview(
         at url: URL,
         options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
     )
+
+    // MARK: - File Request
+
+    /// Creates a request for downloading or previewing a file.
+    ///
+    /// Resolves the URL through the CDN (signing, rewriting) and packages the
+    /// result into a ready-to-use request with any required HTTP headers.
+    /// Pass the returned request to `downloadAttachment` or load it in a web view.
+    ///
+    /// - Parameters:
+    ///   - url: The original file URL to resolve.
+    ///   - options: Options controlling file request behavior.
+    ///   - completion: A completion handler called on the main actor with the resolved request.
+    func loadFileRequest(
+        for url: URL,
+        options: DownloadFileRequestOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderFileRequest, Error>) -> Void
+    )
+}
+
+// MARK: - Convenience Extensions
+
+extension MediaLoader {
+    public func loadImage(
+        url: URL?,
+        completion: @escaping @MainActor (Result<MediaLoaderImage, Error>) -> Void
+    ) {
+        loadImage(url: url, options: ImageLoadOptions(), completion: completion)
+    }
+
+    public func loadVideoAsset(
+        at url: URL,
+        completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
+    ) {
+        loadVideoAsset(at: url, options: VideoLoadOptions(), completion: completion)
+    }
+
+    public func loadVideoPreview(
+        with attachment: ChatMessageVideoAttachment,
+        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+    ) {
+        loadVideoPreview(with: attachment, options: VideoLoadOptions(), completion: completion)
+    }
+
+    public func loadVideoPreview(
+        at url: URL,
+        completion: @escaping @MainActor (Result<MediaLoaderVideoPreview, Error>) -> Void
+    ) {
+        loadVideoPreview(at: url, options: VideoLoadOptions(), completion: completion)
+    }
+
+    public func loadFileRequest(
+        for url: URL,
+        completion: @escaping @MainActor (Result<MediaLoaderFileRequest, Error>) -> Void
+    ) {
+        loadFileRequest(for: url, options: DownloadFileRequestOptions(), completion: completion)
+    }
 }
 
 // MARK: - Async/Await Extensions
 
 extension MediaLoader {
-    /// Loads a single image from the given URL.
     public func loadImage(
         url: URL?,
-        options: ImageLoadOptions
+        options: ImageLoadOptions = ImageLoadOptions()
     ) async throws -> MediaLoaderImage {
         try await withCheckedThrowingContinuation { continuation in
             loadImage(url: url, options: options) { result in
@@ -91,10 +147,9 @@ extension MediaLoader {
         }
     }
 
-    /// Returns a video asset for the given URL.
     public func loadVideoAsset(
         at url: URL,
-        options: VideoLoadOptions
+        options: VideoLoadOptions = VideoLoadOptions()
     ) async throws -> MediaLoaderVideoAsset {
         try await withCheckedThrowingContinuation { continuation in
             loadVideoAsset(at: url, options: options) { result in
@@ -103,13 +158,23 @@ extension MediaLoader {
         }
     }
 
-    /// Generates a video preview thumbnail from a URL.
     public func loadVideoPreview(
         at url: URL,
-        options: VideoLoadOptions
+        options: VideoLoadOptions = VideoLoadOptions()
     ) async throws -> MediaLoaderVideoPreview {
         try await withCheckedThrowingContinuation { continuation in
             loadVideoPreview(at: url, options: options) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+
+    public func loadFileRequest(
+        for url: URL,
+        options: DownloadFileRequestOptions = DownloadFileRequestOptions()
+    ) async throws -> MediaLoaderFileRequest {
+        try await withCheckedThrowingContinuation { continuation in
+            loadFileRequest(for: url, options: options) { result in
                 continuation.resume(with: result)
             }
         }
@@ -122,23 +187,20 @@ extension MediaLoader {
 public struct ImageLoadOptions: Sendable {
     /// Optional resize parameters for server-side resizing.
     public var resize: ImageResize?
-    /// The CDN requester for URL transformation (signing, headers, resizing).
-    public var cdnRequester: CDNRequester
 
-    public init(resize: ImageResize? = nil, cdnRequester: CDNRequester) {
+    public init(resize: ImageResize? = nil) {
         self.resize = resize
-        self.cdnRequester = cdnRequester
     }
 }
 
 /// Options for loading video content through a ``MediaLoader``.
 public struct VideoLoadOptions: Sendable {
-    /// The CDN requester for URL transformation (signing, headers).
-    public var cdnRequester: CDNRequester
+    public init() {}
+}
 
-    public init(cdnRequester: CDNRequester) {
-        self.cdnRequester = cdnRequester
-    }
+/// Options for creating a file download request through a ``MediaLoader``.
+public struct DownloadFileRequestOptions: Sendable {
+    public init() {}
 }
 
 // MARK: - Result Types
@@ -147,9 +209,16 @@ public struct VideoLoadOptions: Sendable {
 public struct MediaLoaderImage: Sendable {
     /// The loaded image.
     public var image: UIImage
+    /// The raw image data for animated rendering. `nil` for static images.
+    public var animatedImageData: Data?
+    /// The caching key used by the CDN requester, if any.
+    /// UI layers can use this to maintain a synchronous cache lookup table.
+    public var cachingKey: String?
 
-    public init(image: UIImage) {
+    public init(image: UIImage, animatedImageData: Data? = nil, cachingKey: String? = nil) {
         self.image = image
+        self.animatedImageData = animatedImageData
+        self.cachingKey = cachingKey
     }
 }
 
@@ -170,5 +239,15 @@ public struct MediaLoaderVideoPreview: Sendable {
 
     public init(image: UIImage) {
         self.image = image
+    }
+}
+
+/// The result of resolving a file download request through a ``MediaLoader``.
+public struct MediaLoaderFileRequest: Sendable {
+    /// A ready-to-use URL request with CDN-resolved URL and any required HTTP headers.
+    public var urlRequest: URLRequest
+
+    public init(urlRequest: URLRequest) {
+        self.urlRequest = urlRequest
     }
 }

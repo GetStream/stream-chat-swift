@@ -9,12 +9,12 @@ protocol AttachmentDownloader {
     /// Downloads a file attachment to the specified local URL.
     ///
     /// - Parameters:
-    ///   - remoteURL: A remote URL of the file.
+    ///   - request: The URL request for the remote file.
     ///   - localURL: The destination URL of the download.
     ///   - progress: The progress of the download.
     ///   - completion: The callback with an error if a failure occurred.
     func download(
-        from remoteURL: URL,
+        _ request: URLRequest,
         to localURL: URL,
         progress: (@Sendable (Double) -> Void)?,
         completion: @escaping @Sendable (Error?) -> Void
@@ -30,12 +30,11 @@ final class StreamAttachmentDownloader: AttachmentDownloader, @unchecked Sendabl
     }
     
     func download(
-        from remoteURL: URL,
+        _ request: URLRequest,
         to localURL: URL,
         progress: (@Sendable (Double) -> Void)?,
         completion: @escaping @Sendable (Error?) -> Void
     ) {
-        let request = URLRequest(url: remoteURL)
         let task = session.downloadTask(with: request) { temporaryURL, _, downloadError in
             if let downloadError {
                 completion(downloadError)

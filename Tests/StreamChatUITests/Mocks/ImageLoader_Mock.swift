@@ -92,4 +92,14 @@ final class ImageLoader_Mock: MediaLoader, @unchecked Sendable {
             }
         }
     }
+
+    func loadFileRequest(
+        for url: URL,
+        options: DownloadFileRequestOptions,
+        completion: @escaping @MainActor (Result<MediaLoaderFileRequest, Error>) -> Void
+    ) {
+        MainActor.assumeIsolated {
+            completion(.success(MediaLoaderFileRequest(urlRequest: URLRequest(url: url))))
+        }
+    }
 }

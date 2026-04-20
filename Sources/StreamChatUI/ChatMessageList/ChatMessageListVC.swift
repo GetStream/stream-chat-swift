@@ -1028,11 +1028,11 @@ open class ChatMessageListVC: _ViewController,
                 present(activityViewController, animated: true)
             } else {
                 let chat = client.makeChat(for: attachment.id.cid)
-                let cdnRequester = components.cdnRequester
+                let mediaLoader = components.mediaLoader
                 _Concurrency.Task {
                     do {
-                        let cdnRequest = try await cdnRequester.fileRequest(for: attachment.remoteURL)
-                        try await chat.downloadAttachment(attachment, remoteURL: cdnRequest.url)
+                        let fileRequest = try await mediaLoader.loadFileRequest(for: attachment.remoteURL)
+                        try await chat.downloadAttachment(attachment, request: fileRequest.urlRequest)
                     } catch {
                         log.error("Failed to download attachment \(attachment.id): \(error)")
                     }

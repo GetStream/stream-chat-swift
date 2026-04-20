@@ -746,19 +746,20 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(env.messageUpdater.downloadAttachment_attachmentId, attachmentId)
     }
 
-    func test_downloadAttachment_withCustomRemoteURL_propagatesURLToUpdater() {
+    func test_downloadAttachment_withCustomRequest_propagatesRequestToUpdater() {
         let attachmentId = AttachmentId.unique
         let attachment = ChatMessageFileAttachment.mock(id: attachmentId)
-        let customRemoteURL = URL(string: "https://cdn.example.com/signed?token=abc123")!
+        let customURL = URL(string: "https://cdn.example.com/signed?token=abc123")!
+        let customRequest = URLRequest(url: customURL)
         env.messageUpdater.downloadAttachment_completion_result = .success(attachment.asAnyAttachment)
 
-        controller.downloadAttachment(attachment, remoteURL: customRemoteURL) { _ in }
+        controller.downloadAttachment(attachment, request: customRequest) { _ in }
 
         AssertAsync.willBeEqual(env.messageUpdater.downloadAttachment_attachmentId, attachmentId)
-        XCTAssertEqual(env.messageUpdater.downloadAttachment_remoteURL, customRemoteURL)
+        XCTAssertEqual(env.messageUpdater.downloadAttachment_request?.url, customURL)
     }
 
-    func test_downloadAttachment_withoutRemoteURL_propagatesNilURLToUpdater() {
+    func test_downloadAttachment_withoutRequest_propagatesNilRequestToUpdater() {
         let attachmentId = AttachmentId.unique
         let attachment = ChatMessageFileAttachment.mock(id: attachmentId)
         env.messageUpdater.downloadAttachment_completion_result = .success(attachment.asAnyAttachment)
@@ -766,7 +767,7 @@ final class MessageController_Tests: XCTestCase {
         controller.downloadAttachment(attachment) { _ in }
 
         AssertAsync.willBeEqual(env.messageUpdater.downloadAttachment_attachmentId, attachmentId)
-        XCTAssertNil(env.messageUpdater.downloadAttachment_remoteURL)
+        XCTAssertNil(env.messageUpdater.downloadAttachment_request)
     }
 
     // MARK: - Delete message

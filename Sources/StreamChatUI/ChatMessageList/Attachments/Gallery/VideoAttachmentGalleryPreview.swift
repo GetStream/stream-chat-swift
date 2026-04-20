@@ -85,8 +85,7 @@ open class VideoAttachmentGalleryPreview: _View, ThemeProvider {
 
         if let content {
             components.mediaLoader.loadVideoPreview(
-                with: content,
-                options: VideoLoadOptions(cdnRequester: components.cdnRequester)
+                with: content
             ) { [weak self] in
                 self?.loadingIndicator.isHidden = true
                 if case let .success(preview) = $0 {

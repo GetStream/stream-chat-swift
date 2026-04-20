@@ -33,7 +33,7 @@ final class APIClient_Spy: APIClient, Spy, @unchecked Sendable {
     @Atomic var unmanagedRequest_completion: Any?
     @Atomic var unmanagedRequest_allRecordedCalls: [(endpoint: AnyEndpoint, completion: Any?)] = []
 
-    @Atomic var downloadFile_remoteURL: URL?
+    @Atomic var downloadFile_request: URLRequest?
     @Atomic var downloadFile_localURL: URL?
     @Atomic var downloadFile_completion_result: Result<Void, Error>?
     @Atomic var downloadFile_expectation: XCTestExpectation
@@ -68,7 +68,7 @@ final class APIClient_Spy: APIClient, Spy, @unchecked Sendable {
         recoveryRequest_allRecordedCalls = []
         recoveryRequest_completion = nil
 
-        downloadFile_remoteURL = nil
+        downloadFile_request = nil
         downloadFile_localURL = nil
         downloadFile_completion_result = nil
         
@@ -169,12 +169,12 @@ final class APIClient_Spy: APIClient, Spy, @unchecked Sendable {
     }
 
     override func downloadFile(
-        from remoteURL: URL,
+        _ request: URLRequest,
         to localURL: URL,
         progress: ((Double) -> Void)?,
         completion: @escaping ((any Error)?) -> Void
     ) {
-        downloadFile_remoteURL = remoteURL
+        downloadFile_request = request
         downloadFile_localURL = localURL
         downloadFile_completion_result?.invoke(with: completion)
         downloadFile_expectation.fulfill()

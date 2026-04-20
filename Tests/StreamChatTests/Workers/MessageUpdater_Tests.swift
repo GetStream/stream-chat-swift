@@ -2087,7 +2087,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
         let value = try XCTUnwrap(result.value)
         XCTAssertEqual("Sample.wav", apiClient.downloadFile_localURL?.lastPathComponent)
-        XCTAssertEqual("http://asset.url/file.wav", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual("http://asset.url/file.wav", apiClient.downloadFile_request?.url?.absoluteString)
         XCTAssertEqual(attachment.id, value.id)
         XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
         XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
@@ -2101,7 +2101,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
         let value = try XCTUnwrap(result.value)
         XCTAssertEqual("Sample.pdf", apiClient.downloadFile_localURL?.lastPathComponent)
-        XCTAssertEqual("http://asset.url", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual("http://asset.url", apiClient.downloadFile_request?.url?.absoluteString)
         XCTAssertEqual(attachment.id, value.id)
         XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
         XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
@@ -2119,7 +2119,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
         let value = try XCTUnwrap(result.value)
         XCTAssertEqual("yoda.jpg", apiClient.downloadFile_localURL?.lastPathComponent)
-        XCTAssertEqual(URL.localYodaImage, apiClient.downloadFile_remoteURL)
+        XCTAssertEqual(URL.localYodaImage, apiClient.downloadFile_request?.url)
         XCTAssertEqual(attachment.id, value.id)
         XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
         XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
@@ -2133,7 +2133,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
         let value = try XCTUnwrap(result.value)
         XCTAssertEqual("Sample.mp4", apiClient.downloadFile_localURL?.lastPathComponent)
-        XCTAssertEqual("http://asset.url/video.mp4", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual("http://asset.url/video.mp4", apiClient.downloadFile_request?.url?.absoluteString)
         XCTAssertEqual(attachment.id, value.id)
         XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
         XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
@@ -2150,7 +2150,7 @@ final class MessageUpdater_Tests: XCTestCase {
         let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
         let value = try XCTUnwrap(result.value)
         XCTAssertEqual("recording.aac", apiClient.downloadFile_localURL?.lastPathComponent)
-        XCTAssertEqual("http://asset.url/myrecording.aac", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual("http://asset.url/myrecording.aac", apiClient.downloadFile_request?.url?.absoluteString)
         XCTAssertEqual(attachment.id, value.id)
         XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
         XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
@@ -2173,33 +2173,34 @@ final class MessageUpdater_Tests: XCTestCase {
         let result = try waitFor { messageUpdater.downloadAttachment(attachment, completion: $0) }
         let value = try XCTUnwrap(result.value)
         XCTAssertEqual("52.3676-4.9041", apiClient.downloadFile_localURL?.lastPathComponent)
-        XCTAssertEqual("https://asset.url/map_preview", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual("https://asset.url/map_preview", apiClient.downloadFile_request?.url?.absoluteString)
         XCTAssertEqual(attachment.id, value.id)
         XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
         XCTAssertEqual(URL.streamAttachmentLocalStorageURL(forRelativePath: value.relativeStoragePath), value.downloadingState?.localFileURL)
     }
     
-    func test_downloadAttachment_usesRemoteURLWhenProvided() throws {
+    func test_downloadAttachment_usesRequestWhenProvided() throws {
         let attachment = try setUpAttachment(
             attachment: ChatMessageFileAttachment.mock(id: .unique)
         )
         let signedURL = URL(string: "https://cdn.example.com/signed?token=abc123")!
+        let signedRequest = URLRequest(url: signedURL)
         apiClient.downloadFile_completion_result = .success(())
-        let result = try waitFor { messageUpdater.downloadAttachment(attachment, remoteURL: signedURL, completion: $0) }
+        let result = try waitFor { messageUpdater.downloadAttachment(attachment, request: signedRequest, completion: $0) }
         let value = try XCTUnwrap(result.value)
-        XCTAssertEqual(signedURL, apiClient.downloadFile_remoteURL)
+        XCTAssertEqual(signedURL, apiClient.downloadFile_request?.url)
         XCTAssertEqual(attachment.id, value.id)
         XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
     }
 
-    func test_downloadAttachment_usesOriginalURLWhenRemoteURLIsNil() throws {
+    func test_downloadAttachment_usesOriginalURLWhenRequestIsNil() throws {
         let attachment = try setUpAttachment(
             attachment: ChatMessageFileAttachment.mock(id: .unique)
         )
         apiClient.downloadFile_completion_result = .success(())
-        let result = try waitFor { messageUpdater.downloadAttachment(attachment, remoteURL: nil, completion: $0) }
+        let result = try waitFor { messageUpdater.downloadAttachment(attachment, request: nil, completion: $0) }
         let value = try XCTUnwrap(result.value)
-        XCTAssertEqual("http://asset.url", apiClient.downloadFile_remoteURL?.absoluteString)
+        XCTAssertEqual("http://asset.url", apiClient.downloadFile_request?.url?.absoluteString)
         XCTAssertEqual(attachment.id, value.id)
         XCTAssertEqual(LocalAttachmentDownloadState.downloaded, value.downloadingState?.state)
     }

@@ -288,13 +288,13 @@ class APIClient: @unchecked Sendable {
     }
     
     func downloadFile(
-        from remoteURL: URL,
+        _ request: URLRequest,
         to localURL: URL,
         progress: (@Sendable (Double) -> Void)?,
         completion: @escaping @Sendable (Error?) -> Void
     ) {
         let downloadOperation = AsyncOperation(maxRetries: maximumRequestRetries) { [weak self] operation, done in
-            self?.attachmentDownloader.download(from: remoteURL, to: localURL, progress: progress) { [weak self] error in
+            self?.attachmentDownloader.download(request, to: localURL, progress: progress) { [weak self] error in
                 if let error, self?.isConnectionError(error) == true {
                     // Do not retry unless its a connection problem and we still have retries left
                     if operation.canRetry {

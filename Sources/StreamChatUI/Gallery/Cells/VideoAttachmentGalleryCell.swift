@@ -53,8 +53,7 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
 
         if newAssetURL != currentAssetURL {
             if let url = newAssetURL {
-                let options = VideoLoadOptions(cdnRequester: components.cdnRequester)
-                components.mediaLoader.loadVideoAsset(at: url, options: options) { [weak self] result in
+                components.mediaLoader.loadVideoAsset(at: url) { [weak self] result in
                     if case let .success(loaded) = result {
                         let playerItem = AVPlayerItem(asset: loaded.asset)
                         self?.player.replaceCurrentItem(with: playerItem)
@@ -66,8 +65,7 @@ open class VideoAttachmentGalleryCell: GalleryCollectionViewCell {
 
             if let videoAttachment {
                 components.mediaLoader.loadVideoPreview(
-                    with: videoAttachment,
-                    options: VideoLoadOptions(cdnRequester: components.cdnRequester)
+                    with: videoAttachment
                 ) { [weak self] in
                     switch $0 {
                     case let .success(preview):

@@ -17,7 +17,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         super.setUp()
         cdnRequester = MockCDNRequester()
         downloader = MockImageDownloader()
-        sut = StreamMediaLoader(downloader: downloader)
+        sut = StreamMediaLoader(downloader: downloader, cdnRequester: cdnRequester)
     }
 
     override func tearDown() {
@@ -33,7 +33,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
     func test_loadImageInto_nilURL_setsPlaceholder() {
         let imageView = UIImageView()
         let placeholder = UIImage.make(withColor: .gray)
-        let options = ImageLoaderOptions(placeholder: placeholder, cdnRequester: cdnRequester)
+        let options = ImageLoaderOptions(placeholder: placeholder)
 
         sut.loadImage(into: imageView, from: nil, with: options)
 
@@ -43,7 +43,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
     @MainActor
     func test_loadImageInto_nilURL_noPlaceholder_setsNilImage() {
         let imageView = UIImageView()
-        let options = ImageLoaderOptions(cdnRequester: cdnRequester)
+        let options = ImageLoaderOptions()
 
         sut.loadImage(into: imageView, from: nil, with: options)
 
@@ -56,7 +56,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         downloader.result = .success(DownloadedImage(image: testImage))
         let imageView = UIImageView()
         let url = URL(string: "https://example.com/image.jpg")!
-        let options = ImageLoaderOptions(cdnRequester: cdnRequester)
+        let options = ImageLoaderOptions()
         let expectation = expectation(description: "Completion called")
 
         sut.loadImage(into: imageView, from: url, with: options) { result in
@@ -79,7 +79,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         downloader.result = .failure(expectedError)
         let imageView = UIImageView()
         let url = URL(string: "https://example.com/image.jpg")!
-        let options = ImageLoaderOptions(cdnRequester: cdnRequester)
+        let options = ImageLoaderOptions()
         let expectation = expectation(description: "Completion called")
 
         sut.loadImage(into: imageView, from: url, with: options) { result in
@@ -101,7 +101,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         downloader.result = .success(DownloadedImage(image: testImage))
         let imageView = UIImageView()
         let url = URL(string: "https://example.com/image.jpg")!
-        let options = ImageLoaderOptions(cdnRequester: cdnRequester)
+        let options = ImageLoaderOptions()
 
         let task = sut.loadImage(into: imageView, from: url, with: options)
 
@@ -115,7 +115,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         downloader.result = .success(DownloadedImage(image: testImage))
         let imageView = UIImageView()
         let url = URL(string: "https://example.com/image.jpg")!
-        let options = ImageLoaderOptions(cdnRequester: cdnRequester)
+        let options = ImageLoaderOptions()
         let expectation = expectation(description: "Wait for delayed completion")
         expectation.isInverted = true
 
@@ -133,7 +133,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         let imageView = UIImageView()
         let url1 = URL(string: "https://example.com/1.jpg")!
         let url2 = URL(string: "https://example.com/2.jpg")!
-        let options = ImageLoaderOptions(cdnRequester: cdnRequester)
+        let options = ImageLoaderOptions()
         downloader.completionDelay = 0.1
         downloader.result = .success(DownloadedImage(image: UIImage.make(withColor: .red)))
 
@@ -150,7 +150,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         downloader.result = .success(DownloadedImage(image: testImage))
         let request = ImageDownloadRequest(
             url: URL(string: "https://example.com/image.jpg")!,
-            options: ImageDownloadOptions(cdnRequester: cdnRequester)
+            options: ImageDownloadOptions()
         )
         let expectation = expectation(description: "Completion called")
 
@@ -172,7 +172,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         downloader.result = .failure(expectedError)
         let request = ImageDownloadRequest(
             url: URL(string: "https://example.com/image.jpg")!,
-            options: ImageDownloadOptions(cdnRequester: cdnRequester)
+            options: ImageDownloadOptions()
         )
         let expectation = expectation(description: "Completion called")
 
@@ -195,7 +195,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         let resize = ImageResize(CGSize(width: 200, height: 300))
         let request = ImageDownloadRequest(
             url: URL(string: "https://example.com/image.jpg")!,
-            options: ImageDownloadOptions(resize: resize, cdnRequester: cdnRequester)
+            options: ImageDownloadOptions(resize: resize)
         )
         let expectation = expectation(description: "Completion called")
 
@@ -219,9 +219,9 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
             URL(string: "https://example.com/3.jpg")!: .success(DownloadedImage(image: image3))
         ]
         let requests = [
-            ImageDownloadRequest(url: URL(string: "https://example.com/1.jpg")!, options: ImageDownloadOptions(cdnRequester: cdnRequester)),
-            ImageDownloadRequest(url: URL(string: "https://example.com/2.jpg")!, options: ImageDownloadOptions(cdnRequester: cdnRequester)),
-            ImageDownloadRequest(url: URL(string: "https://example.com/3.jpg")!, options: ImageDownloadOptions(cdnRequester: cdnRequester))
+            ImageDownloadRequest(url: URL(string: "https://example.com/1.jpg")!, options: ImageDownloadOptions()),
+            ImageDownloadRequest(url: URL(string: "https://example.com/2.jpg")!, options: ImageDownloadOptions()),
+            ImageDownloadRequest(url: URL(string: "https://example.com/3.jpg")!, options: ImageDownloadOptions())
         ]
         let expectation = expectation(description: "Completion called")
 
@@ -258,9 +258,9 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
             URL(string: "https://example.com/3.jpg")!: .success(DownloadedImage(image: image3))
         ]
         let requests = [
-            ImageDownloadRequest(url: URL(string: "https://example.com/1.jpg")!, options: ImageDownloadOptions(cdnRequester: cdnRequester)),
-            ImageDownloadRequest(url: URL(string: "https://example.com/2.jpg")!, options: ImageDownloadOptions(cdnRequester: cdnRequester)),
-            ImageDownloadRequest(url: URL(string: "https://example.com/3.jpg")!, options: ImageDownloadOptions(cdnRequester: cdnRequester))
+            ImageDownloadRequest(url: URL(string: "https://example.com/1.jpg")!, options: ImageDownloadOptions()),
+            ImageDownloadRequest(url: URL(string: "https://example.com/2.jpg")!, options: ImageDownloadOptions()),
+            ImageDownloadRequest(url: URL(string: "https://example.com/3.jpg")!, options: ImageDownloadOptions())
         ]
         let expectation = expectation(description: "Completion called")
 
@@ -305,8 +305,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         sut.loadImage(
             into: imageView,
             from: payload,
-            maxResolutionInPixels: 1_000_000,
-            cdnRequester: cdnRequester
+            maxResolutionInPixels: 1_000_000
         ) { _ in
             expectation.fulfill()
         }
@@ -330,8 +329,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         sut.loadImage(
             into: imageView,
             from: payload,
-            maxResolutionInPixels: 1_000_000,
-            cdnRequester: cdnRequester
+            maxResolutionInPixels: 1_000_000
         ) { _ in
             expectation.fulfill()
         }
@@ -347,8 +345,7 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         sut.loadImage(
             into: imageView,
             from: nil,
-            maxResolutionInPixels: 1_000_000,
-            cdnRequester: cdnRequester
+            maxResolutionInPixels: 1_000_000
         )
 
         XCTAssertNil(imageView.image)
