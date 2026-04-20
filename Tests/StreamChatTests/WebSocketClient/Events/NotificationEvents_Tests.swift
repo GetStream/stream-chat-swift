@@ -59,6 +59,34 @@ final class NotificationsEvents_Tests: XCTestCase {
         {
           "type": "notification.mark_read",
           "cid": "messaging:general",
+          "channel_type": "messaging",
+          "channel_id": "general",
+          "channel": {
+            "id": "general",
+            "type": "messaging",
+            "cid": "messaging:general",
+            "created_at": "2020-07-21T14:47:57Z",
+            "updated_at": "2020-07-21T14:47:57Z",
+            "frozen": false,
+            "disabled": false,
+            "config": {
+              "created_at": "2020-07-21T14:47:57Z",
+              "updated_at": "2020-07-21T14:47:57Z",
+              "reactions": true,
+              "typing_events": true,
+              "read_events": true,
+              "connect_events": true,
+              "uploads": true,
+              "replies": true,
+              "quotes": true,
+              "search": false,
+              "mutes": true,
+              "url_enrichment": true,
+              "message_retention": "infinite",
+              "max_message_length": 5000,
+              "commands": []
+            }
+          },
           "user": {
             "id": "steep-moon-9",
             "role": "user",
