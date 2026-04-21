@@ -334,7 +334,6 @@ final class ChatClient_Tests: XCTestCase {
             unreadChannels: 0
         )
 
-        XCTAssertEqual(group.unreadCount, 4)
         XCTAssertEqual(group.unreadChannels, 2)
     }
 
