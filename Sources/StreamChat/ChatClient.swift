@@ -929,9 +929,6 @@ public struct GroupedChannelsGroup: Equatable {
     /// The channels that belong to this group.
     public let channels: [ChatChannel]
 
-    /// The total unread message count across the group.
-    public let unreadCount: Int
-
     /// The total unread channel count in the group.
     public let unreadChannels: Int
 
@@ -941,16 +938,12 @@ public struct GroupedChannelsGroup: Equatable {
         unreadChannels: Int
     ) {
         self.channels = channels
-        let derivedUnreadCount = channels.reduce(into: 0) { partialResult, channel in
-            partialResult += channel.unreadCount.messages
-        }
         let derivedUnreadChannels = channels.reduce(into: 0) { partialResult, channel in
             if channel.unreadCount.messages > 0 {
                 partialResult += 1
             }
         }
 
-        self.unreadCount = max(unreadCount, derivedUnreadCount)
         self.unreadChannels = max(unreadChannels, derivedUnreadChannels)
     }
 }
