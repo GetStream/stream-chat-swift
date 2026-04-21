@@ -119,7 +119,6 @@ final class ChannelListPayload_Tests: XCTestCase {
 
         XCTAssertEqual(payload.groups.keys.sorted(), ["all"])
         XCTAssertEqual(payload.groups["all"]?.channels.map(\.channel.cid), [channelId])
-        XCTAssertEqual(payload.groups["all"]?.unreadCount, 0)
         XCTAssertEqual(payload.groups["all"]?.unreadChannels, 1)
         XCTAssertEqual(payload.duration, "12ms")
     }
@@ -177,7 +176,6 @@ final class ChannelListPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
 
         XCTAssertEqual(payload.groups["expired"]?.channels.map(\.channel.cid), [channelId])
-        XCTAssertEqual(payload.groups["expired"]?.unreadCount, 0)
         XCTAssertEqual(payload.groups["expired"]?.unreadChannels, 0)
     }
 

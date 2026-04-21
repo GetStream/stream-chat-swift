@@ -274,17 +274,14 @@ final class ChatClient_Tests: XCTestCase {
             groups: [
                 "all": .init(
                     channels: [dummyPayload(with: firstCid)],
-                    unreadCount: 1,
                     unreadChannels: 1
                 ),
                 "new": .init(
                     channels: [dummyPayload(with: secondCid)],
-                    unreadCount: 2,
                     unreadChannels: 1
                 ),
                 "current": .init(
                     channels: [dummyPayload(with: thirdCid)],
-                    unreadCount: 4,
                     unreadChannels: 2
                 )
             ],
@@ -330,7 +327,6 @@ final class ChatClient_Tests: XCTestCase {
 
         let group = GroupedChannelsGroup(
             channels: [firstChannel, secondChannel, thirdChannel],
-            unreadCount: 0,
             unreadChannels: 0
         )
 
