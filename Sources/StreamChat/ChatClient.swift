@@ -888,7 +888,6 @@ extension ChatClient {
 
             return GroupedChannelsGroup(
                 channels: channels,
-                unreadCount: groupPayload.unreadCount,
                 unreadChannels: groupPayload.unreadChannels
             )
         }
@@ -934,7 +933,6 @@ public struct GroupedChannelsGroup: Equatable {
 
     public init(
         channels: [ChatChannel],
-        unreadCount: Int,
         unreadChannels: Int
     ) {
         self.channels = channels

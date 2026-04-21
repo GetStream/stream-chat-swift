@@ -54,14 +54,12 @@ extension GroupedQueryChannelsPayload: Decodable {
 
 struct GroupedQueryChannelsGroupPayload {
     let channels: [ChannelPayload]
-    let unreadCount: Int
     let unreadChannels: Int
 }
 
 extension GroupedQueryChannelsGroupPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case channels
-        case unreadCount = "unread_count"
         case unreadChannels = "unread_channels"
     }
 
@@ -70,7 +68,6 @@ extension GroupedQueryChannelsGroupPayload: Decodable {
 
         self.init(
             channels: try container.decodeArrayIgnoringFailures([ChannelPayload].self, forKey: .channels),
-            unreadCount: try container.decodeIfPresent(Int.self, forKey: .unreadCount) ?? 0,
             unreadChannels: try container.decodeIfPresent(Int.self, forKey: .unreadChannels) ?? 0
         )
     }
