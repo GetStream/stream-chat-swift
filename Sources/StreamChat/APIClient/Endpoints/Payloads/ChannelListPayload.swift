@@ -25,51 +25,57 @@ extension ChannelListPayload: Decodable {
     }
 }
 
-struct GroupedQueryChannelsRequestBody: Encodable {
+final class GroupedQueryChannelsRequestBody: Encodable {
     let limit: Int?
     let watch: Bool
     let presence: Bool
+
+    init(limit: Int?, watch: Bool, presence: Bool) {
+        self.limit = limit
+        self.watch = watch
+        self.presence = presence
+    }
 }
 
-struct GroupedQueryChannelsPayload {
+final class GroupedQueryChannelsPayload: Decodable {
     let groups: [String: GroupedQueryChannelsGroupPayload]
     let duration: String
-}
 
-extension GroupedQueryChannelsPayload: Decodable {
+    init(groups: [String: GroupedQueryChannelsGroupPayload], duration: String) {
+        self.groups = groups
+        self.duration = duration
+    }
+
     enum CodingKeys: String, CodingKey {
         case groups
         case duration
     }
 
-    init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        self.init(
-            groups: try container.decode([String: GroupedQueryChannelsGroupPayload].self, forKey: .groups),
-            duration: try container.decode(String.self, forKey: .duration)
-        )
+        groups = try container.decode([String: GroupedQueryChannelsGroupPayload].self, forKey: .groups)
+        duration = try container.decode(String.self, forKey: .duration)
     }
 }
 
-struct GroupedQueryChannelsGroupPayload {
+final class GroupedQueryChannelsGroupPayload: Decodable {
     let channels: [ChannelPayload]
     let unreadChannels: Int
-}
 
-extension GroupedQueryChannelsGroupPayload: Decodable {
+    init(channels: [ChannelPayload], unreadChannels: Int) {
+        self.channels = channels
+        self.unreadChannels = unreadChannels
+    }
+
     enum CodingKeys: String, CodingKey {
         case channels
         case unreadChannels = "unread_channels"
     }
 
-    init(from decoder: Decoder) throws {
+    required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-
-        self.init(
-            channels: try container.decodeArrayIgnoringFailures([ChannelPayload].self, forKey: .channels),
-            unreadChannels: try container.decodeIfPresent(Int.self, forKey: .unreadChannels) ?? 0
-        )
+        channels = try container.decodeArrayIgnoringFailures([ChannelPayload].self, forKey: .channels)
+        unreadChannels = try container.decodeIfPresent(Int.self, forKey: .unreadChannels) ?? 0
     }
 }
 
