@@ -245,6 +245,10 @@ public extension FilterKey where Scope == ChannelListFilterScope {
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
     static var memberCount: FilterKey<Scope, Int> { .init(rawValue: "member_count", keyPathString: #keyPath(ChannelDTO.memberCount)) }
 
+    /// A filter key for matching the `messageCount` value.
+    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
+    static var messageCount: FilterKey<Scope, Int> { .init(rawValue: "message_count", keyPathString: #keyPath(ChannelDTO.messageCount)) }
+
     /// A filter key for matching the `team` value.
     /// Supported operators: `equal`
     static var team: FilterKey<Scope, TeamId?> { .init(rawValue: "team", keyPathString: #keyPath(ChannelDTO.team)) }
