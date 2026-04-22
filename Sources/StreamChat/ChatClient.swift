@@ -487,49 +487,6 @@ public class ChatClient {
         authenticationRepository.setToken(token: token, completeTokenWaiters: true)
     }
 
-    /// Loads grouped channel groups for the app.
-    public func groupedQueryChannels(
-        limit: Int? = nil,
-        watch: Bool = false,
-        presence: Bool = false,
-        completion: @escaping (Result<GroupedChannels, Error>) -> Void
-    ) {
-        let request = GroupedQueryChannelsRequestBody(
-            limit: limit,
-            watch: watch,
-            presence: presence
-        )
-        let endpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
-
-        apiClient.request(endpoint: endpoint) { [databaseContainer] result in
-            switch result {
-            case let .success(payload):
-                databaseContainer.write { session in
-                    let groupedUnreadChannels = payload.groups.mapValues(\.unreadChannels)
-                    try session.saveCurrentUserGroupedUnreadChannels(groupedUnreadChannels)
-                }
-                databaseContainer.write(converting: { session in
-                    try Self.groupedChannels(from: payload, session: session)
-                }, completion: completion)
-            case let .failure(error):
-                completion(.failure(error))
-            }
-        }
-    }
-
-    /// Loads grouped channel groups for the app.
-    public func groupedQueryChannels(
-        limit: Int? = nil,
-        watch: Bool = false,
-        presence: Bool = false
-    ) async throws -> GroupedChannels {
-        try await withCheckedThrowingContinuation { continuation in
-            groupedQueryChannels(limit: limit, watch: watch, presence: presence) { result in
-                continuation.resume(with: result)
-            }
-        }
-    }
-
     /// Disconnects the chat client from the chat servers. No further updates from the servers
     /// are received.
     @available(*, deprecated, message: "Use the asynchronous version of `disconnect` for increased safety")
@@ -658,7 +615,7 @@ public class ChatClient {
         eventNotificationCenter.subscribe(handler: handler)
     }
     
-    // MARK: -
+    // MARK: - App Settings
 
     /// Fetches the app settings and updates the ``ChatClient/appSettings``.
     /// - Parameter completion: The completion block once the app settings has finished fetching.
@@ -685,6 +642,36 @@ public class ChatClient {
     public func loadAppSettings() async throws -> AppSettings {
         try await withCheckedThrowingContinuation { continuation in
             loadAppSettings { continuation.resume(with: $0) }
+        }
+    }
+    
+    // MARK: - Grouped Channels
+    
+    /// Queries grouped channel groups for the app.
+    public func queryGroupedChannels(
+        limit: Int? = nil,
+        watch: Bool = false,
+        presence: Bool = false,
+        completion: @escaping @MainActor (Result<GroupedChannels, Error>) -> Void
+    ) {
+        channelListUpdater.queryGroupedChannels(
+            limit: limit,
+            watch: watch,
+            presence: presence,
+            completion: completion
+        )
+    }
+
+    /// Queries grouped channel groups for the app.
+    public func queryGroupedChannels(
+        limit: Int? = nil,
+        watch: Bool = false,
+        presence: Bool = false
+    ) async throws -> GroupedChannels {
+        try await withCheckedThrowingContinuation { continuation in
+            queryGroupedChannels(limit: limit, watch: watch, presence: presence) { result in
+                continuation.resume(with: result)
+            }
         }
     }
     
@@ -876,27 +863,6 @@ extension ChatClient: ConnectionDetailsProviderDelegate {
 }
 
 extension ChatClient {
-    private static func groupedChannels(
-        from payload: GroupedQueryChannelsPayload,
-        session: DatabaseSession
-    ) throws -> GroupedChannels {
-        let groups = try payload.groups.mapValues { groupPayload in
-            let channels = try groupPayload.channels.map { channelPayload in
-                let dto = try session.saveChannel(payload: channelPayload)
-                return try dto.asModel()
-            }
-
-            return GroupedChannelsGroup(
-                channels: channels,
-                unreadChannels: groupPayload.unreadChannels
-            )
-        }
-
-        return GroupedChannels(
-            groups: groups
-        )
-    }
-
     func backgroundWorker<T>(of type: T.Type) throws -> T {
         if let worker = backgroundWorkers.compactMap({ $0 as? T }).first {
             return worker
@@ -908,41 +874,6 @@ extension ChatClient {
             throw ClientError.ClientIsNotInActiveMode()
         }
         throw ClientError("Background worker of type \(T.self) is not set up")
-    }
-}
-
-/// A grouped channels response returned by `ChatClient.groupedQueryChannels`.
-public struct GroupedChannels: Equatable {
-    /// The grouped channel groups returned by the backend, keyed by group name.
-    public let groups: [String: GroupedChannelsGroup]
-
-    public init(
-        groups: [String: GroupedChannelsGroup]
-    ) {
-        self.groups = groups
-    }
-}
-
-/// A grouped channels group returned by `ChatClient.groupedQueryChannels`.
-public struct GroupedChannelsGroup: Equatable {
-    /// The channels that belong to this group.
-    public let channels: [ChatChannel]
-
-    /// The total unread channel count in the group.
-    public let unreadChannels: Int
-
-    public init(
-        channels: [ChatChannel],
-        unreadChannels: Int
-    ) {
-        self.channels = channels
-        let derivedUnreadChannels = channels.reduce(into: 0) { partialResult, channel in
-            if channel.unreadCount.messages > 0 {
-                partialResult += 1
-            }
-        }
-
-        self.unreadChannels = max(unreadChannels, derivedUnreadChannels)
     }
 }
 

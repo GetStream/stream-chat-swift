@@ -264,8 +264,9 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(testEnv.apiClient?.init_requestEncoder is RequestEncoder_Spy)
     }
 
-    func test_groupedQueryChannels_callsAPIClientAndReturnsGroupedChannels() {
+    func test_queryGroupedChannels_callsAPIClientAndReturnsGroupedChannels() throws {
         let client = ChatClient.mock(config: inMemoryStorageConfig)
+        try client.databaseContainer.createCurrentUser()
         let firstCid = ChannelId.unique
         let secondCid = ChannelId.unique
         let thirdCid = ChannelId.unique
@@ -294,7 +295,7 @@ final class ChatClient_Tests: XCTestCase {
         var receivedGroupedChannels: GroupedChannels?
         var receivedError: Error?
 
-        client.groupedQueryChannels(limit: 4, watch: true, presence: false) { result in
+        client.queryGroupedChannels(limit: 4, watch: true, presence: false) { result in
             switch result {
             case let .success(groupedChannels):
                 receivedGroupedChannels = groupedChannels

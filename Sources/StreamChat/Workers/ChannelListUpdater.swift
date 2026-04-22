@@ -193,6 +193,51 @@ class ChannelListUpdater: Worker {
             completion?(error)
         }
     }
+
+    /// Queries grouped channel groups for the app.
+    func queryGroupedChannels(
+        limit: Int? = nil,
+        watch: Bool = false,
+        presence: Bool = false,
+        completion: @escaping @MainActor (Result<GroupedChannels, Error>) -> Void
+    ) {
+        let request = GroupedQueryChannelsRequestBody(
+            limit: limit,
+            watch: watch,
+            presence: presence
+        )
+        let endpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
+
+        apiClient.request(endpoint: endpoint) { [database] result in
+            switch result {
+            case let .success(payload):
+                database.write(converting: { session in
+                    let groupedUnreadChannels = payload.groups.mapValues(\.unreadChannels)
+                    try session.saveCurrentUserGroupedUnreadChannels(groupedUnreadChannels)
+
+                    let groups = try payload.groups.mapValues { groupPayload in
+                        let channels = try groupPayload.channels.map { channelPayload in
+                            let dto = try session.saveChannel(payload: channelPayload)
+                            return try dto.asModel()
+                        }
+                        return GroupedChannelsGroup(
+                            channels: channels,
+                            unreadChannels: groupPayload.unreadChannels
+                        )
+                    }
+                    return GroupedChannels(groups: groups)
+                }, completion: { result in
+                    DispatchQueue.main.async {
+                        completion(result)
+                    }
+                })
+            case let .failure(error):
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
 }
 
 extension DatabaseSession {
@@ -241,7 +286,19 @@ extension ChannelListUpdater {
             }
         }
     }
-    
+
+    func queryGroupedChannels(
+        limit: Int? = nil,
+        watch: Bool = false,
+        presence: Bool = false
+    ) async throws -> GroupedChannels {
+        try await withCheckedThrowingContinuation { continuation in
+            queryGroupedChannels(limit: limit, watch: watch, presence: presence) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+
     // MARK: -
     
     func loadChannels(query: ChannelListQuery, pagination: Pagination) async throws -> [ChatChannel] {
