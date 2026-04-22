@@ -350,11 +350,7 @@ extension NSManagedObjectContext {
         dto.reads.formUnion(reads)
         
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
-        if payload.channel.messageCount == nil,
-           let inferredMessageCount = inferredMessageCount(for: payload, existingMessageCount: dto.messageCount?.intValue) {
-            dto.messageCount = NSNumber(value: inferredMessageCount)
-        }
-        
+
         var pendingMessages = Set<MessageDTO>()
         try payload.pendingMessages?.forEach {
             let pending = try saveMessage(
@@ -435,16 +431,6 @@ extension NSManagedObjectContext {
         // This is done in `ChannelUpdater.channelWatchers` func
 
         return dto
-    }
-
-    private func inferredMessageCount(for payload: ChannelPayload, existingMessageCount: Int?) -> Int? {
-        let minimumMessageCountFromPayload = max(
-            payload.messages.count,
-            payload.channel.lastMessageAt == nil ? 0 : 1
-        )
-        let inferredMessageCount = max(existingMessageCount ?? 0, minimumMessageCountFromPayload)
-        guard inferredMessageCount > 0 || existingMessageCount != nil else { return nil }
-        return inferredMessageCount
     }
 
     func channel(cid: ChannelId) -> ChannelDTO? {

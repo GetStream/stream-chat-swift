@@ -247,7 +247,35 @@ public extension FilterKey where Scope == ChannelListFilterScope {
 
     /// A filter key for matching the `messageCount` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
-    static var messageCount: FilterKey<Scope, Int> { .init(rawValue: "message_count", keyPathString: #keyPath(ChannelDTO.messageCount)) }
+    ///
+    /// Only returns value if `count_messages` is configured for your app.
+    ///
+    /// For local filtering, the stored `ChannelDTO.messageCount` is used when the
+    /// backend delivered an accurate total. When the backend omits it, the filter
+    /// falls back to the count of the cached `messages` relationship so predicates
+    /// still behave sensibly.
+    static var messageCount: FilterKey<Scope, Int> {
+        .init(
+            rawValue: "message_count",
+            keyPathString: #keyPath(ChannelDTO.messageCount),
+            predicateMapper: { op, value in
+                let operatorString: String
+                switch op {
+                case .equal: operatorString = "=="
+                case .greater: operatorString = ">"
+                case .greaterOrEqual: operatorString = ">="
+                case .less: operatorString = "<"
+                case .lessOrEqual: operatorString = "<="
+                default: return nil
+                }
+                let storedKey = #keyPath(ChannelDTO.messageCount)
+                let format = "(\(storedKey) != nil AND \(storedKey) \(operatorString) %@)"
+                    + " OR (\(storedKey) == nil AND messages.@count \(operatorString) %@)"
+                let predicateValue = NSNumber(value: value)
+                return NSPredicate(format: format, predicateValue, predicateValue)
+            }
+        )
+    }
 
     /// A filter key for matching the `team` value.
     /// Supported operators: `equal`
