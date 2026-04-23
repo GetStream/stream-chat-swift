@@ -384,8 +384,8 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.saveQuery(query: query)
     }
 
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO? {
-        underlyingSession.channelListQuery(filterHash: filterHash)
+    func channelListQuery(_ query: ChannelListQuery) -> ChannelListQueryDTO? {
+        underlyingSession.channelListQuery(query)
     }
 
     func loadAllChannelListQueries() -> [ChannelListQueryDTO] {

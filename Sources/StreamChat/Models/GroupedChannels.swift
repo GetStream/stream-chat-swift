@@ -18,6 +18,9 @@ public struct GroupedChannels: Equatable {
 
 /// A grouped channels group returned by `ChatClient.queryGroupedChannels`.
 public struct GroupedChannelsGroup: Equatable {
+    /// The group key as returned by the backend (e.g. `"all"`, `"new"`, `"current"`).
+    public let groupKey: String
+
     /// The channels that belong to this group.
     public let channels: [ChatChannel]
 
@@ -25,9 +28,11 @@ public struct GroupedChannelsGroup: Equatable {
     public let unreadChannels: Int
 
     public init(
+        groupKey: String,
         channels: [ChatChannel],
         unreadChannels: Int
     ) {
+        self.groupKey = groupKey
         self.channels = channels
         let derivedUnreadChannels = channels.reduce(into: 0) { partialResult, channel in
             if channel.unreadCount.messages > 0 {

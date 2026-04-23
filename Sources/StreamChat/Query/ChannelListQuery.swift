@@ -71,6 +71,15 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
     }
+    
+    var groupKey: String?
+
+    /// The stable identity used for locating / linking the corresponding `ChannelListQueryDTO`.
+    /// Uses `groupKey` when set (stable across date-bearing filters from the grouped endpoint);
+    /// otherwise falls back to `filter.filterHash`.
+    var queryHash: String {
+        groupKey ?? filter.filterHash
+    }
 }
 
 extension ChannelListQuery: CustomDebugStringConvertible {

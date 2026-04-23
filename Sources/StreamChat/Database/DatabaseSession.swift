@@ -350,9 +350,10 @@ protocol ChannelDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> ChannelDTO
 
-    /// Loads channel list query with the given filter hash from the database.
-    /// - Parameter filterHash: The filter hash.
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO?
+    /// Loads the `ChannelListQueryDTO` corresponding to the given `ChannelListQuery`.
+    /// Lookup uses `query.queryHash` — `groupKey` when set, otherwise `filter.filterHash`.
+    /// - Parameter query: The channel list query.
+    func channelListQuery(_ query: ChannelListQuery) -> ChannelListQueryDTO?
 
     /// Loads all channel list queries from the database.
     /// - Returns: The array of channel list queries.
