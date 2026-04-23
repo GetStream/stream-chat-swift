@@ -22,6 +22,9 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
     @Atomic var refreshLoadedChannelsResult: Result<Set<ChannelId>, Error>?
     @Atomic var refreshLoadedChannels_channelCounts: [Int] = []
 
+    @Atomic var queryGroupedChannels_callCount = 0
+    @Atomic var queryGroupedChannels_result: Result<GroupedChannels, Error>?
+
     @Atomic var markAllRead_completion: ((Error?) -> Void)?
 
     var startWatchingChannels_callCount = 0
@@ -46,6 +49,8 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         fetch_completion = nil
 
         refreshLoadedChannels_channelCounts.removeAll()
+        queryGroupedChannels_callCount = 0
+        queryGroupedChannels_result = nil
         markAllRead_completion = nil
 
         startWatchingChannels_cids.removeAll()
@@ -92,6 +97,22 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy {
         record()
         _refreshLoadedChannels_channelCounts.mutate { $0.append(channelCount) }
         refreshLoadedChannelsResult?.invoke(with: completion)
+    }
+
+    override func queryGroupedChannels(
+        limit: Int? = nil,
+        watch: Bool = false,
+        presence: Bool = false,
+        completion: @escaping @MainActor (Result<GroupedChannels, Error>) -> Void
+    ) {
+        _queryGroupedChannels_callCount.mutate { $0 += 1 }
+        if let result = queryGroupedChannels_result {
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        } else {
+            super.queryGroupedChannels(limit: limit, watch: watch, presence: presence, completion: completion)
+        }
     }
 
     override func link(

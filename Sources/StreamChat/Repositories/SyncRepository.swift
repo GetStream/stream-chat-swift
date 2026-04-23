@@ -160,7 +160,8 @@ class SyncRepository {
     ///
     /// Background mode (other regular API requests are allowed to run at the same time)
     /// 1. Collect all the **active** channel ids (from instances of `Chat`, `ChannelList`, `ChatChannelController`, `ChatChannelListController`)
-    /// 2. Refresh channel lists (channels for current pages in `ChannelList`, `ChatChannelListController`)
+    /// 2. Refresh channel lists (channels for current pages in `ChannelList`, non-prefilled `ChatChannelListController`)
+    /// 2.5 Refresh the shared grouped channels response when any prefilled `ChatChannelListController` is active
     /// 3. Apply updates from the /sync endpoint for channels not in active channel lists (max 2000 events is supported)
     ///      * channel controllers targeting other channels
     ///      * no channel lists active, but channel controllers are
@@ -192,8 +193,20 @@ class SyncRepository {
             
             // 2. Refresh channel lists
             operations.append(contentsOf: activeChannelLists.allObjects.map { RefreshChannelListOperation(channelList: $0, context: context) })
-            operations.append(contentsOf: activeChannelListControllers.allObjects.map { RefreshChannelListOperation(controller: $0, context: context) })
-            
+            let allControllers = activeChannelListControllers.allObjects
+            let prefilledControllers = allControllers.filter { $0.usesGroupedChannelsForSync }
+            let standardControllers = allControllers.filter { !$0.usesGroupedChannelsForSync }
+            operations.append(contentsOf: standardControllers.map { RefreshChannelListOperation(controller: $0, context: context) })
+
+            // 2.5 Refresh grouped channels (for controllers populated via `prefill(...)`)
+            if !prefilledControllers.isEmpty {
+                operations.append(SyncGroupedChannelsOperation(
+                    channelListUpdater: channelListUpdater,
+                    controllers: prefilledControllers,
+                    context: context
+                ))
+            }
+
             // 3. /sync (for channels what not part of active channel lists)
             operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
             
