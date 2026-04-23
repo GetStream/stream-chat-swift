@@ -360,6 +360,51 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
+    func test_prefill_whenPrefilledCountExceedsPageSize_observerExposesAllPrefilledChannels() {
+        query = .init(filter: .in(.members, values: [memberId]), pageSize: 2)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+
+        let prefilledChannels: [ChatChannel] = [
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique)
+        ]
+
+        let prefillExpectation = expectation(description: "Prefill completes")
+        controller.prefill(channels: prefilledChannels) { error in
+            XCTAssertNil(error)
+            prefillExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        controller.synchronize()
+
+        // Without the fetchLimit bump this would be capped at 2 (pageSize).
+        AssertAsync.willBeEqual(controller.channels.count, prefilledChannels.count)
+    }
+
+    func test_prefill_whenPrefilledCountIsBelowPageSize_observerStillReflectsPrefilledChannels() {
+        query = .init(filter: .in(.members, values: [memberId]), pageSize: 10)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+
+        let prefilledChannels: [ChatChannel] = [
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique)
+        ]
+
+        let prefillExpectation = expectation(description: "Prefill completes")
+        controller.prefill(channels: prefilledChannels) { error in
+            XCTAssertNil(error)
+            prefillExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        controller.synchronize()
+
+        AssertAsync.willBeEqual(controller.channels.count, prefilledChannels.count)
+    }
+
     func test_prefill_replacesOnlyCurrentQueryLinks() throws {
         let sharedCid = ChannelId.unique
         let currentOnlyCid = ChannelId.unique

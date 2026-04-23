@@ -109,6 +109,23 @@ class BackgroundDatabaseObserver<Item, DTO: NSManagedObject> {
         }
     }
 
+    /// Updates the underlying fetch request's `fetchLimit` and re-runs `performFetch`
+    /// on the FRC's managed object context. Use this to grow (or shrink) the set of
+    /// items the observer exposes without tearing it down and losing delegate wiring.
+    func updateFetchLimit(_ newLimit: Int) {
+        frc.fetchRequest.fetchLimit = newLimit
+        frc.managedObjectContext.perform { [weak self] in
+            guard let self else { return }
+            do {
+                try self.frc.performFetch()
+            } catch {
+                log.error("Failed to re-fetch after updating fetchLimit to \(newLimit): \(error)")
+                return
+            }
+            self.updateItems(nil)
+        }
+    }
+
     /// Starts observing the changes in the database.
     /// - Throws: An error if the fetch  fails.
     func startObserving() throws {

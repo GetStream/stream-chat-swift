@@ -69,12 +69,12 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     /// A Boolean value that returns whether pagination is finished
     public private(set) var hasLoadedAllPreviousChannels: Bool = false
-    private var loadedChannelsCount = 0
     @Atomic private var shouldSkipInitialRemoteUpdate = false
     /// `true` once `prefill(...)` has successfully populated this controller. Stays `true`
     /// for the controller's lifetime so `SyncRepository` can route its reconnect-refresh
     /// through `queryGroupedChannels` instead of the standard `/channels` query.
     @Atomic var usesGroupedChannelsForSync = false
+    @Atomic private var prefilledChannelCount: Int = 0
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelListControllerDelegate> = .init() {
@@ -168,7 +168,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         if shouldSkipInitialRemoteUpdate {
             shouldSkipInitialRemoteUpdate = false
             state = .remoteDataFetched
-            hasLoadedAllPreviousChannels = loadedChannelsCount == 0
+            hasLoadedAllPreviousChannels = channels.isEmpty
             markChannelsAsDeliveredIfNeeded(channels: Array(channels))
             callback {
                 completion?(nil)
@@ -199,11 +199,10 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
         let limit = limit ?? query.pagination.pageSize
         var updatedQuery = query
-        updatedQuery.pagination = Pagination(pageSize: limit, offset: loadedChannelsCount)
+        updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
         worker.update(channelListQuery: updatedQuery) { result in
             switch result {
             case let .success(channels):
-                self.loadedChannelsCount += channels.count
                 self.markChannelsAsDeliveredIfNeeded(channels: channels)
                 self.hasLoadedAllPreviousChannels = channels.count < limit
                 self.callback { completion?(nil) }
@@ -227,19 +226,24 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         } ?? channels
 
         worker.prefill(channels: prefilledChannels, for: query) { [weak self] result in
+            guard let self else { return }
             switch result {
             case let .success(savedChannels):
-                self?.loadedChannelsCount = savedChannels.count
-                self?.shouldSkipInitialRemoteUpdate = true
-                self?.usesGroupedChannelsForSync = true
+                self.shouldSkipInitialRemoteUpdate = true
+                self.usesGroupedChannelsForSync = true
                 // Prefill can come from a differently sized grouped endpoint page, so we can
                 // only conclude pagination is exhausted when no channels were provided at all.
-                self?.hasLoadedAllPreviousChannels = savedChannels.isEmpty
-                self?.callback {
+                self.hasLoadedAllPreviousChannels = savedChannels.isEmpty
+                // When prefilling with a lot of channels, make the `channels` property to reflect it
+                // This makes channels.count to reflect the currently loaded channels count
+                if prefilledChannels.count > self.query.pagination.pageSize {
+                    self.channelListObserver.updateFetchLimit(prefilledChannels.count)
+                }
+                self.callback {
                     completion?(nil)
                 }
             case let .failure(error):
-                self?.callback {
+                self.callback {
                     completion?(error)
                 }
             }
@@ -258,7 +262,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     // MARK: - Internal
 
     func refreshLoadedChannels(completion: @escaping (Result<Set<ChannelId>, Error>) -> Void) {
-        worker.refreshLoadedChannels(for: query, channelCount: loadedChannelsCount, completion: completion)
+        worker.refreshLoadedChannels(for: query, channelCount: channels.count, completion: completion)
     }
 
     // MARK: - Helpers
@@ -273,7 +277,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             switch result {
             case let .success(channels):
                 self?.state = .remoteDataFetched
-                self?.loadedChannelsCount = channels.count
                 self?.hasLoadedAllPreviousChannels = channels.count < limit
                 
                 // Mark channels as delivered if synchronization was successful
