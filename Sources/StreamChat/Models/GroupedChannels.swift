@@ -9,7 +9,7 @@ public struct GroupedChannels: Equatable {
     /// The grouped channel groups returned by the backend, keyed by group name.
     public let groups: [String: GroupedChannelsGroup]
 
-    public init(
+    init(
         groups: [String: GroupedChannelsGroup]
     ) {
         self.groups = groups
@@ -27,7 +27,7 @@ public struct GroupedChannelsGroup: Equatable {
     /// The total unread channel count in the group.
     public let unreadChannels: Int
 
-    public init(
+    init(
         groupKey: String,
         channels: [ChatChannel],
         unreadChannels: Int
