@@ -70,7 +70,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// A Boolean value that returns whether pagination is finished
     public private(set) var hasLoadedAllPreviousChannels: Bool = false
     private var loadedChannelsCount = 0
-    private var shouldSkipInitialRemoteUpdate = false
+    @Atomic private var shouldSkipInitialRemoteUpdate = false
+    /// `true` once `prefill(...)` has successfully populated this controller. Stays `true`
+    /// for the controller's lifetime so `SyncRepository` can route its reconnect-refresh
+    /// through `queryGroupedChannels` instead of the standard `/channels` query.
+    @Atomic var usesGroupedChannelsForSync = false
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelListControllerDelegate> = .init() {
@@ -217,6 +221,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             case let .success(savedChannels):
                 self?.loadedChannelsCount = savedChannels.count
                 self?.shouldSkipInitialRemoteUpdate = true
+                self?.usesGroupedChannelsForSync = true
                 // Prefill can come from a differently sized grouped endpoint page, so we can
                 // only conclude pagination is exhausted when no channels were provided at all.
                 self?.hasLoadedAllPreviousChannels = savedChannels.isEmpty

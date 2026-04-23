@@ -227,6 +227,82 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertCall("runQueuedRequests(completion:)", on: offlineRequestsRepository, times: 1)
     }
 
+    func test_syncLocalState_prefilledController_callsQueryGroupedChannelsAndSkipsRefresh() throws {
+        let cid = ChannelId.unique
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-3600),
+            createChannel: true,
+            cid: cid
+        )
+
+        let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
+        chatListController.state_mock = .remoteDataFetched
+        chatListController.channels_mock = [.mock(cid: cid)]
+        chatListController.usesGroupedChannelsForSync = true
+        repository.startTrackingChannelListController(chatListController)
+        channelListUpdater.queryGroupedChannels_result = .success(.init(groups: [:]))
+
+        waitForSyncLocalStateRun()
+
+        XCTAssertEqual(channelListUpdater.queryGroupedChannels_callCount, 1)
+        XCTAssertNotCall("refreshLoadedChannels(completion:)", on: chatListController)
+        // The controller's cid was marked as synched by the grouped op, so /sync is skipped.
+        XCTAssertEqual(apiClient.request_allRecordedCalls.count, 0)
+    }
+
+    func test_syncLocalState_mixedControllers_callsGroupedOnceAndRefreshesOnlyStandard() throws {
+        let prefilledCid = ChannelId.unique
+        let standardCid = ChannelId.unique
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-3600),
+            createChannel: true,
+            cid: prefilledCid
+        )
+
+        let prefilledController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
+        prefilledController.state_mock = .remoteDataFetched
+        prefilledController.channels_mock = [.mock(cid: prefilledCid)]
+        prefilledController.usesGroupedChannelsForSync = true
+        repository.startTrackingChannelListController(prefilledController)
+
+        let standardController = ChatChannelListController_Mock(query: .init(filter: .in(.cid, values: [standardCid])), client: client)
+        standardController.state_mock = .remoteDataFetched
+        standardController.channels_mock = [.mock(cid: standardCid)]
+        standardController.refreshLoadedChannelsResult = .success(Set([standardCid]))
+        repository.startTrackingChannelListController(standardController)
+
+        channelListUpdater.queryGroupedChannels_result = .success(.init(groups: [:]))
+
+        waitForSyncLocalStateRun()
+
+        XCTAssertEqual(channelListUpdater.queryGroupedChannels_callCount, 1)
+        XCTAssertNotCall("refreshLoadedChannels(completion:)", on: prefilledController)
+        XCTAssertCall("refreshLoadedChannels(completion:)", on: standardController, times: 1)
+    }
+
+    func test_syncLocalState_noPrefilledControllers_doesNotCallQueryGroupedChannels() throws {
+        let cid = ChannelId.unique
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-3600),
+            createChannel: true,
+            cid: cid
+        )
+
+        let chatListController = ChatChannelListController_Mock(query: .init(filter: .exists(.cid)), client: client)
+        chatListController.state_mock = .remoteDataFetched
+        chatListController.channels_mock = [.mock(cid: cid)]
+        chatListController.refreshLoadedChannelsResult = .success(Set([cid]))
+        repository.startTrackingChannelListController(chatListController)
+
+        waitForSyncLocalStateRun()
+
+        XCTAssertEqual(channelListUpdater.queryGroupedChannels_callCount, 0)
+        XCTAssertCall("refreshLoadedChannels(completion:)", on: chatListController, times: 1)
+    }
+
     func test_syncLocalState_ignoresTheCooldown() throws {
         let lastSyncDate = Date()
         let cid = ChannelId.unique

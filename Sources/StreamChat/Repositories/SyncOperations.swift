@@ -109,6 +109,40 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
     }
 }
 
+final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
+    init(
+        channelListUpdater: ChannelListUpdater,
+        controllers: [ChatChannelListController],
+        context: SyncContext
+    ) {
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelListUpdater] _, done in
+            guard let channelListUpdater else {
+                done(.continue)
+                return
+            }
+            channelListUpdater.queryGroupedChannels { result in
+                switch result {
+                case let .success(groupedChannels):
+                    let returnedChannelIds = groupedChannels.groups.values
+                        .flatMap(\.channels)
+                        .map(\.cid)
+                    let controllerChannelIds = controllers.flatMap { $0.channels.map(\.cid) }
+                    context.synchedChannelIds.formUnion(returnedChannelIds)
+                    context.synchedChannelIds.formUnion(controllerChannelIds)
+                    log.debug(
+                        "Synced \(returnedChannelIds.count) grouped channels across \(groupedChannels.groups.count) group(s)",
+                        subsystems: .offlineSupport
+                    )
+                    done(.continue)
+                case let .failure(error):
+                    log.error("Failed to refresh grouped channels during sync: \(error)", subsystems: .offlineSupport)
+                    done(.retry)
+                }
+            }
+        }
+    }
+}
+
 final class SyncEventsOperation: AsyncOperation, @unchecked Sendable {
     init(syncRepository: SyncRepository, context: SyncContext, recovery: Bool) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak syncRepository] _, done in
