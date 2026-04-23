@@ -4,7 +4,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### ✅ Added
-- Add `ChatChannelListController.prefill(channels:completion:)` for priming controller-local channel data [#4071](https://github.com/GetStream/stream-chat-swift/pull/4071)
+- Add `ChatChannelListController.prefill(group:completion:)` for priming controller-local channel data [#4071](https://github.com/GetStream/stream-chat-swift/pull/4071)
 - Add `ChatClient.queryGroupedChannels(limit:watch:presence:)` to fetch grouped channels with per group unread counts [#4071](https://github.com/GetStream/stream-chat-swift/pull/4071)
 - Add optional `groupedUnreadChannels` data to relevant web-socket events and to `CurrentChatUser` [#4071](https://github.com/GetStream/stream-chat-swift/pull/4071)
 

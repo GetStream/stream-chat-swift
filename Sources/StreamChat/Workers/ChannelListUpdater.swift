@@ -23,8 +23,7 @@ class ChannelListUpdater: Worker {
                 var initialActions: ((DatabaseSession) -> Void)?
                 if isInitialFetch {
                     initialActions = { session in
-                        let filterHash = channelListQuery.filter.filterHash
-                        guard let queryDTO = session.channelListQuery(filterHash: filterHash) else { return }
+                        guard let queryDTO = session.channelListQuery(channelListQuery) else { return }
                         queryDTO.channels.removeAll()
                     }
                 }
@@ -42,7 +41,7 @@ class ChannelListUpdater: Worker {
     }
 
     func prefill(
-        channels: [ChatChannel],
+        group: GroupedChannelsGroup,
         for query: ChannelListQuery,
         completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
@@ -51,7 +50,7 @@ class ChannelListUpdater: Worker {
             let queryDTO = session.saveQuery(query: query)
             queryDTO.channels.removeAll()
 
-            savedChannels = channels.compactMapLoggingError { channel in
+            savedChannels = group.channels.compactMapLoggingError { channel in
                 guard let channelDTO = session.channel(cid: channel.cid) else {
                     log.warning("Prefill skipped channel \(channel.cid): not found in the database.")
                     return nil
@@ -215,12 +214,14 @@ class ChannelListUpdater: Worker {
                     let groupedUnreadChannels = payload.groups.mapValues(\.unreadChannels)
                     try session.saveCurrentUserGroupedUnreadChannels(groupedUnreadChannels)
 
-                    let groups = try payload.groups.mapValues { groupPayload in
+                    var groups: [String: GroupedChannelsGroup] = [:]
+                    for (name, groupPayload) in payload.groups {
                         let channels = try groupPayload.channels.map { channelPayload in
                             let dto = try session.saveChannel(payload: channelPayload)
                             return try dto.asModel()
                         }
-                        return GroupedChannelsGroup(
+                        groups[name] = GroupedChannelsGroup(
+                            groupKey: name,
                             channels: channels,
                             unreadChannels: groupPayload.unreadChannels
                         )
@@ -242,7 +243,7 @@ class ChannelListUpdater: Worker {
 
 extension DatabaseSession {
     func getChannelWithQuery(cid: ChannelId, query: ChannelListQuery) -> (ChannelDTO, ChannelListQueryDTO)? {
-        guard let queryDTO = channelListQuery(filterHash: query.filter.filterHash) else {
+        guard let queryDTO = channelListQuery(query) else {
             log.debug("Channel list query has not yet created \(query)")
             return nil
         }

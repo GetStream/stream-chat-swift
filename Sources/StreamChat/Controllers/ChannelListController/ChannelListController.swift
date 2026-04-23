@@ -35,7 +35,7 @@ extension ChatClient {
 /// - Note: For an async-await alternative of the `ChatChannelListController`, please check ``ChannelList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatChannelListController: DataController, DelegateCallable, DataStoreProvider {
     /// The query specifying and filtering the list of channels.
-    public let query: ChannelListQuery
+    public private(set) var query: ChannelListQuery
 
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
@@ -70,11 +70,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// A Boolean value that returns whether pagination is finished
     public private(set) var hasLoadedAllPreviousChannels: Bool = false
     @Atomic private var shouldSkipInitialRemoteUpdate = false
-    /// `true` once `prefill(...)` has successfully populated this controller. Stays `true`
-    /// for the controller's lifetime so `SyncRepository` can route its reconnect-refresh
-    /// through `queryGroupedChannels` instead of the standard `/channels` query.
-    @Atomic var usesGroupedChannelsForSync = false
-    @Atomic private var prefilledChannelCount: Int = 0
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelListControllerDelegate> = .init() {
@@ -218,19 +213,25 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     /// The prefetched channels are persisted in the local storage and linked only to this
     /// controller query, so pagination, local observation and offline refresh keep working.
     public func prefill(
-        channels: [ChatChannel],
+        group: GroupedChannelsGroup,
         completion: ((Error?) -> Void)? = nil
     ) {
         let prefilledChannels = filter.map { runtimeFilter in
-            channels.filter(runtimeFilter)
-        } ?? channels
+            group.channels.filter(runtimeFilter)
+        } ?? group.channels
+        let prefilledGroup = GroupedChannelsGroup(
+            groupKey: group.groupKey,
+            channels: prefilledChannels,
+            unreadChannels: group.unreadChannels
+        )
+        // This changes filter hash to use static group key
+        query.groupKey = group.groupKey
 
-        worker.prefill(channels: prefilledChannels, for: query) { [weak self] result in
+        worker.prefill(group: prefilledGroup, for: query) { [weak self] result in
             guard let self else { return }
             switch result {
             case let .success(savedChannels):
                 self.shouldSkipInitialRemoteUpdate = true
-                self.usesGroupedChannelsForSync = true
                 // Prefill can come from a differently sized grouped endpoint page, so we can
                 // only conclude pagination is exhausted when no channels were provided at all.
                 self.hasLoadedAllPreviousChannels = savedChannels.isEmpty

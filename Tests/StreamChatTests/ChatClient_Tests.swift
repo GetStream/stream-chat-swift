@@ -329,11 +329,13 @@ final class ChatClient_Tests: XCTestCase {
         )
 
         let group = GroupedChannelsGroup(
+            groupKey: "all",
             channels: [firstChannel, secondChannel, thirdChannel],
             unreadChannels: 0
         )
 
         XCTAssertEqual(group.unreadChannels, 2)
+        XCTAssertEqual(group.groupKey, "all")
     }
 
     func test_disconnect_flushesRequestsQueue() throws {

@@ -443,7 +443,7 @@ extension NSManagedObjectContext {
     }
 
     func delete(query: ChannelListQuery) {
-        guard let dto = channelListQuery(filterHash: query.filter.filterHash) else { return }
+        guard let dto = channelListQuery(query) else { return }
 
         delete(dto)
     }
@@ -476,7 +476,7 @@ extension ChannelDTO {
         
         request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
 
-        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
+        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.queryHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 
         var subpredicates: [NSPredicate] = [

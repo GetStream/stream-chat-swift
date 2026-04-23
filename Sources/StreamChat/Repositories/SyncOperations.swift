@@ -124,14 +124,34 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                     let returnedChannelIds = groupedChannels.groups.values
                         .flatMap(\.channels)
                         .map(\.cid)
-                    let controllerChannelIds = controllers.flatMap { $0.channels.map(\.cid) }
                     context.synchedChannelIds.formUnion(returnedChannelIds)
-                    context.synchedChannelIds.formUnion(controllerChannelIds)
                     log.debug(
                         "Synced \(returnedChannelIds.count) grouped channels across \(groupedChannels.groups.count) group(s)",
                         subsystems: .offlineSupport
                     )
-                    done(.continue)
+
+                    // Forward each returned group to the matching prefilled controller so the
+                    // controller's local query-DTO links and observer state get refreshed.
+                    let dispatchGroup = DispatchGroup()
+                    for controller in controllers {
+                        guard
+                            let key = controller.query.groupKey,
+                            let group = groupedChannels.groups[key]
+                        else { continue }
+                        dispatchGroup.enter()
+                        controller.prefill(group: group) { error in
+                            if let error {
+                                log.error(
+                                    "Failed to prefill controller for group \(key): \(error)",
+                                    subsystems: .offlineSupport
+                                )
+                            }
+                            dispatchGroup.leave()
+                        }
+                    }
+                    dispatchGroup.notify(queue: .global(qos: .utility)) {
+                        done(.continue)
+                    }
                 case let .failure(error):
                     log.error("Failed to refresh grouped channels during sync: \(error)", subsystems: .offlineSupport)
                     done(.retry)
