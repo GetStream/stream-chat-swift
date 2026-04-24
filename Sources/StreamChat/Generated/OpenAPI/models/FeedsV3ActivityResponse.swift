@@ -20,13 +20,13 @@ final class FeedsV3ActivityResponse: @unchecked Sendable, Codable, JSONEncodable
     var hidden: Bool
     var id: String
     var interestTags: [String]
-    var latestReactions: Array
+    var latestReactions: [RawJSON]
     var mentionedUsers: [UserResponse]
     var metrics: [String: Int]?
     var moderation: ModerationV2Response?
     var moderationAction: String?
-    var ownBookmarks: Array
-    var ownReactions: Array
+    var ownBookmarks: [RawJSON]
+    var ownReactions: [RawJSON]
     var popularity: Int
     var preview: Bool
     var reactionCount: Int
@@ -42,7 +42,7 @@ final class FeedsV3ActivityResponse: @unchecked Sendable, Codable, JSONEncodable
     var visibility: String
     var visibilityTag: String?
 
-    init(attachments: [Attachment], bookmarkCount: Int, collections: [String: EnrichedCollection], commentCount: Int, comments: [FeedsV3CommentResponse], createdAt: Date, custom: [String: RawJSON], deletedAt: Date? = nil, editedAt: Date? = nil, expiresAt: Date? = nil, feeds: [String], filterTags: [String], hidden: Bool, id: String, interestTags: [String], latestReactions: Array, mentionedUsers: [UserResponse], metrics: [String: Int]? = nil, moderation: ModerationV2Response? = nil, moderationAction: String? = nil, ownBookmarks: Array, ownReactions: Array, popularity: Int, preview: Bool, reactionCount: Int, reactionGroups: [String: FeedsReactionGroup], restrictReplies: String, score: Float, searchData: [String: RawJSON], shareCount: Int, text: String? = nil, type: String, updatedAt: Date, user: UserResponse, visibility: String, visibilityTag: String? = nil) {
+    init(attachments: [Attachment], bookmarkCount: Int, collections: [String: EnrichedCollection], commentCount: Int, comments: [FeedsV3CommentResponse], createdAt: Date, custom: [String: RawJSON], deletedAt: Date? = nil, editedAt: Date? = nil, expiresAt: Date? = nil, feeds: [String], filterTags: [String], hidden: Bool, id: String, interestTags: [String], latestReactions: [RawJSON], mentionedUsers: [UserResponse], metrics: [String: Int]? = nil, moderation: ModerationV2Response? = nil, moderationAction: String? = nil, ownBookmarks: [RawJSON], ownReactions: [RawJSON], popularity: Int, preview: Bool, reactionCount: Int, reactionGroups: [String: FeedsReactionGroup], restrictReplies: String, score: Float, searchData: [String: RawJSON], shareCount: Int, text: String? = nil, type: String, updatedAt: Date, user: UserResponse, visibility: String, visibilityTag: String? = nil) {
         self.attachments = attachments
         self.bookmarkCount = bookmarkCount
         self.collections = collections

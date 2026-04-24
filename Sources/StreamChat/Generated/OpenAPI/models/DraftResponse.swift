@@ -8,12 +8,12 @@ final class DraftResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable
     var channel: ChannelResponse?
     var channelCid: String
     var createdAt: Date
-    var message: DraftPayloadResponse
+    var message: DraftPayloadResponseModel
     var parentId: String?
     var parentMessage: MessageResponse?
     var quotedMessage: MessageResponse?
 
-    init(channel: ChannelResponse? = nil, channelCid: String, createdAt: Date, message: DraftPayloadResponse, parentId: String? = nil, parentMessage: MessageResponse? = nil, quotedMessage: MessageResponse? = nil) {
+    init(channel: ChannelResponse? = nil, channelCid: String, createdAt: Date, message: DraftPayloadResponseModel, parentId: String? = nil, parentMessage: MessageResponse? = nil, quotedMessage: MessageResponse? = nil) {
         self.channel = channel
         self.channelCid = channelCid
         self.createdAt = createdAt

@@ -18,7 +18,7 @@ final class FeedsV3CommentResponse: @unchecked Sendable, Codable, JSONEncodable,
     var moderation: ModerationV2Response?
     var objectId: String
     var objectType: String
-    var ownReactions: Array
+    var ownReactions: [RawJSON]
     var parentId: String?
     var reactionCount: Int
     var replyCount: Int
@@ -29,7 +29,7 @@ final class FeedsV3CommentResponse: @unchecked Sendable, Codable, JSONEncodable,
     var upvoteCount: Int
     var user: UserResponse
 
-    init(attachments: [Attachment]? = nil, confidenceScore: Float, controversyScore: Float? = nil, createdAt: Date, custom: [String: RawJSON]? = nil, deletedAt: Date? = nil, downvoteCount: Int, editedAt: Date? = nil, id: String, mentionedUsers: [UserResponse], moderation: ModerationV2Response? = nil, objectId: String, objectType: String, ownReactions: Array, parentId: String? = nil, reactionCount: Int, replyCount: Int, score: Int, status: String, text: String? = nil, updatedAt: Date, upvoteCount: Int, user: UserResponse) {
+    init(attachments: [Attachment]? = nil, confidenceScore: Float, controversyScore: Float? = nil, createdAt: Date, custom: [String: RawJSON]? = nil, deletedAt: Date? = nil, downvoteCount: Int, editedAt: Date? = nil, id: String, mentionedUsers: [UserResponse], moderation: ModerationV2Response? = nil, objectId: String, objectType: String, ownReactions: [RawJSON], parentId: String? = nil, reactionCount: Int, replyCount: Int, score: Int, status: String, text: String? = nil, updatedAt: Date, upvoteCount: Int, user: UserResponse) {
         self.attachments = attachments
         self.confidenceScore = confidenceScore
         self.controversyScore = controversyScore

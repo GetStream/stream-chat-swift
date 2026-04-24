@@ -7,7 +7,7 @@ import Foundation
 final class AppealRequest: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     /// Explanation for why the content is being appealed
     var appealReason: String
-    /// Array of Attachment URLs(e.g., images)
+    /// [RawJSON] of Attachment URLs(e.g., images)
     var attachments: [String]?
     /// Unique identifier of the entity being appealed
     var entityId: String

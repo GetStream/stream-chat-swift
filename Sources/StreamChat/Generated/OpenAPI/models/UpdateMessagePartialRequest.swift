@@ -10,7 +10,7 @@ final class UpdateMessagePartialRequest: @unchecked Sendable, Codable, JSONEncod
     /// Skip enriching the URL in the message
     var skipEnrichUrl: Bool?
     var skipPush: Bool?
-    /// Array of field names to unset
+    /// [RawJSON] of field names to unset
     var unset: [String]?
 
     init(set: [String: RawJSON]? = nil, skipEnrichUrl: Bool? = nil, skipPush: Bool? = nil, unset: [String]? = nil) {

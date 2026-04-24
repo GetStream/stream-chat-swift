@@ -9,7 +9,7 @@ final class ImageUploadResponse: @unchecked Sendable, Codable, JSONEncodable, Ha
     var duration: String
     var file: String?
     var thumbUrl: String?
-    /// Array of image size configurations
+    /// [RawJSON] of image size configurations
     var uploadSizes: [ImageSize]?
 
     init(duration: String, file: String? = nil, thumbUrl: String? = nil, uploadSizes: [ImageSize]? = nil) {

@@ -10,7 +10,7 @@ final class UploadChannelResponse: @unchecked Sendable, Codable, JSONEncodable, 
     var file: String?
     var moderationAction: String?
     var thumbUrl: String?
-    /// Array of image size configurations
+    /// [RawJSON] of image size configurations
     var uploadSizes: [ImageSize]?
 
     init(duration: String, file: String? = nil, moderationAction: String? = nil, thumbUrl: String? = nil, uploadSizes: [ImageSize]? = nil) {

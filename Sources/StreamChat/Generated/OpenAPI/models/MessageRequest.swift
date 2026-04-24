@@ -22,7 +22,7 @@ final class MessageRequest: @unchecked Sendable, Codable, JSONEncodable, Hashabl
         }
     }
 
-    /// Array of message attachments
+    /// [RawJSON] of message attachments
     var attachments: [Attachment]?
     var custom: [String: RawJSON]?
     /// Message ID is unique string identifier of the message
@@ -32,7 +32,7 @@ final class MessageRequest: @unchecked Sendable, Codable, JSONEncodable, Hashabl
     var mentionedGroupIds: [String]?
     var mentionedHere: Bool?
     var mentionedRoles: [String]?
-    /// Array of user IDs to mention
+    /// [RawJSON] of user IDs to mention
     var mentionedUsers: [String]?
     /// Should be empty if `text` is provided. Can only be set when using server-side API
     var mml: String?

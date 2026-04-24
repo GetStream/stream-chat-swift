@@ -7,7 +7,7 @@ import Foundation
 final class UpdateThreadPartialRequest: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     /// Sets new field values
     var set: [String: RawJSON]?
-    /// Array of field names to unset
+    /// [RawJSON] of field names to unset
     var unset: [String]?
 
     init(set: [String: RawJSON]? = nil, unset: [String]? = nil) {
