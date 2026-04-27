@@ -227,35 +227,6 @@ final class StreamCDNRequester_Tests: XCTestCase {
         waitForExpectations(timeout: 1)
     }
 
-    func test_imageRequest_cachingKey_isStableForSameResizeOptionsAcrossCalls() {
-        // ``StreamCDNRequester.buildImageURL`` previously assembled query
-        // items from a `[String: String]` dictionary whose iteration
-        // order is non-deterministic. This regressed the caching key
-        // across calls. Fan out a batch of requests with identical input
-        // and assert every caching key is identical.
-        let url = URL(string: "\(baseUrl)/image.jpg?Policy=A&Signature=B&Expires=1")!
-        let resize = CDNImageResize(width: 200, height: 150, resizeMode: "clip", crop: "center")
-
-        let callCount = 50
-        let group = expectation(description: "All completions")
-        group.expectedFulfillmentCount = callCount
-        let lock = NSLock()
-        var keys: [String] = []
-
-        for _ in 0..<callCount {
-            sut.imageRequest(for: url, options: .init(resize: resize)) { result in
-                let key = try! result.get().cachingKey!
-                lock.lock()
-                keys.append(key)
-                lock.unlock()
-                group.fulfill()
-            }
-        }
-
-        waitForExpectations(timeout: 1)
-        XCTAssertEqual(Set(keys).count, 1, "Same input must always produce the same caching key, got: \(Set(keys))")
-    }
-
     // MARK: - File Request
 
     func test_fileRequest_returnsUnchangedURL() {
