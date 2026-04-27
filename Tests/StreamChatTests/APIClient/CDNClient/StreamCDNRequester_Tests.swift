@@ -178,6 +178,84 @@ final class StreamCDNRequester_Tests: XCTestCase {
         waitForExpectations(timeout: 1)
     }
 
+    func test_imageRequest_cachingKey_isStableAcrossQueryItemOrders() {
+        // Two URLs that describe the same image at the same size, but with
+        // the persisted resize parameters laid out in different orders.
+        // The caching key must collapse them onto the same value so the
+        // image cache hits regardless of upstream insertion order.
+        let url1 = URL(string: "\(baseUrl)/image.jpg?h=576&w=768&resize=clip")!
+        let url2 = URL(string: "\(baseUrl)/image.jpg?w=768&resize=clip&h=576")!
+        let url3 = URL(string: "\(baseUrl)/image.jpg?resize=clip&h=576&w=768")!
+
+        let expectations = (1...3).map { expectation(description: "Completion \($0)") }
+        var keys: [String?] = [nil, nil, nil]
+
+        sut.imageRequest(for: url1, options: .init()) { result in
+            keys[0] = try! result.get().cachingKey
+            expectations[0].fulfill()
+        }
+        sut.imageRequest(for: url2, options: .init()) { result in
+            keys[1] = try! result.get().cachingKey
+            expectations[1].fulfill()
+        }
+        sut.imageRequest(for: url3, options: .init()) { result in
+            keys[2] = try! result.get().cachingKey
+            expectations[2].fulfill()
+        }
+
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(keys[0], keys[1])
+        XCTAssertEqual(keys[1], keys[2])
+    }
+
+    func test_imageRequest_cachingKey_paramsAreSortedAlphabetically() {
+        let url = URL(string: "\(baseUrl)/image.jpg?w=128&h=128&resize=crop&crop=center")!
+        let expectation = expectation(description: "Completion called")
+
+        sut.imageRequest(for: url, options: .init()) { result in
+            let key = try! result.get().cachingKey!
+            // Pull out the query portion of the caching key and verify
+            // that the persisted parameters are emitted in alphabetical
+            // order — guaranteeing a single canonical caching key per
+            // (image, size) pair.
+            let queryPart = key.components(separatedBy: "?").last ?? ""
+            let names = queryPart.split(separator: "&").map { $0.split(separator: "=").first.map(String.init) ?? "" }
+            XCTAssertEqual(names, ["crop", "h", "resize", "w"])
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: 1)
+    }
+
+    func test_imageRequest_cachingKey_isStableForSameResizeOptionsAcrossCalls() {
+        // ``StreamCDNRequester.buildImageURL`` previously assembled query
+        // items from a `[String: String]` dictionary whose iteration
+        // order is non-deterministic. This regressed the caching key
+        // across calls. Fan out a batch of requests with identical input
+        // and assert every caching key is identical.
+        let url = URL(string: "\(baseUrl)/image.jpg?Policy=A&Signature=B&Expires=1")!
+        let resize = CDNImageResize(width: 200, height: 150, resizeMode: "clip", crop: "center")
+
+        let callCount = 50
+        let group = expectation(description: "All completions")
+        group.expectedFulfillmentCount = callCount
+        let lock = NSLock()
+        var keys: [String] = []
+
+        for _ in 0..<callCount {
+            sut.imageRequest(for: url, options: .init(resize: resize)) { result in
+                let key = try! result.get().cachingKey!
+                lock.lock()
+                keys.append(key)
+                lock.unlock()
+                group.fulfill()
+            }
+        }
+
+        waitForExpectations(timeout: 1)
+        XCTAssertEqual(Set(keys).count, 1, "Same input must always produce the same caching key, got: \(Set(keys))")
+    }
+
     // MARK: - File Request
 
     func test_fileRequest_returnsUnchangedURL() {
