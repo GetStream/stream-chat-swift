@@ -89,12 +89,6 @@ public final class StreamCDNRequester: CDNRequester, Sendable {
         }
 
         let persistedParameters = ["w", "h", "resize", "crop"]
-        // Sort the persisted parameters so the caching key is independent
-        // of the upstream query-item insertion order. Without sorting, two
-        // URLs that describe the same image at the same size but were
-        // assembled in different orders would hash to different cache
-        // entries — `buildImageURL` builds them from a `[String: String]`
-        // dictionary whose iteration order is not stable across calls.
         let newParameters = (components.queryItems ?? [])
             .filter { persistedParameters.contains($0.name) }
             .sorted { $0.name < $1.name }
