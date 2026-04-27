@@ -659,7 +659,6 @@
 				StreamChatTests/APIClient/APIClient_Tests.swift,
 				StreamChatTests/APIClient/CDNClient/CDNStorage_Tests.swift,
 				StreamChatTests/APIClient/CDNClient/StreamCDNRequester_Tests.swift,
-				StreamChatTests/APIClient/StreamCDNStorage_Tests.swift,
 				StreamChatTests/APIClient/ChatRemoteNotificationHandler_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/AppEndpoints_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/AttachmentEndpoints_Tests.swift,
@@ -722,6 +721,7 @@
 				StreamChatTests/APIClient/HTTPHeader_Tests.swift,
 				StreamChatTests/APIClient/RequestDecoder_Tests.swift,
 				StreamChatTests/APIClient/RequestEncoder_Tests.swift,
+				StreamChatTests/APIClient/StreamCDNStorage_Tests.swift,
 				StreamChatTests/Audio/AudioAnalysisEngine_Tests.swift,
 				StreamChatTests/Audio/AudioPlaybackContext_Tests.swift,
 				StreamChatTests/Audio/AudioPlaybackRate_Tests.swift,
@@ -5301,7 +5301,7 @@
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
 				kind = exactVersion;
-				version = 0.6.2;
+				version = 0.6.3;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
