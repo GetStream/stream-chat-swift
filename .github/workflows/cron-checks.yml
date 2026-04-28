@@ -36,9 +36,6 @@ jobs:
           - ios: "17.5"
             device: "iPhone 15 Pro"
             setup_runtime: true
-          - ios: "15.4"
-            device: "iPhone 13 Pro"
-            setup_runtime: true
       fail-fast: false
     runs-on: macos-15
     env:
@@ -105,9 +102,6 @@ jobs:
           - ios: "16.4"
             device: "iPhone 14 Pro"
             setup_runtime: true
-          - ios: "15.4"
-            device: "iPhone 13 Pro"
-            setup_runtime: true
       fail-fast: false
     runs-on: macos-15
     env:
@@ -157,9 +151,6 @@ jobs:
             setup_runtime: true
           - ios: "16.4"
             device: "iPhone 14 Pro"
-            setup_runtime: true
-          - ios: "15.5"
-            device: "iPhone 13 Pro"
             setup_runtime: true
       fail-fast: false
     runs-on: macos-15
