@@ -10,14 +10,14 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     let spyState = SpyState()
 
     @Atomic var update_queries: [ChannelListQuery] = []
-    @Atomic var update_completion: ((Result<[ChatChannel], Error>) -> Void)?
+    @Atomic var update_completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)?
     @Atomic var update_completion_result: Result<[ChatChannel], Error>?
 
     @Atomic var prefill_queries: [ChannelListQuery] = []
     @Atomic var prefill_channels: [[ChatChannel]] = []
 
     @Atomic var fetch_queries: [ChannelListQuery] = []
-    @Atomic var fetch_completion: ((Result<ChannelListPayload, Error>) -> Void)?
+    @Atomic var fetch_completion: (@Sendable (Result<ChannelListPayload, Error>) -> Void)?
 
     @Atomic var refreshLoadedChannelsResult: Result<Set<ChannelId>, Error>?
     @Atomic var refreshLoadedChannels_channelCounts: [Int] = []
@@ -25,15 +25,15 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     @Atomic var queryGroupedChannels_callCount = 0
     @Atomic var queryGroupedChannels_result: Result<GroupedChannels, Error>?
 
-    @Atomic var markAllRead_completion: ((Error?) -> Void)?
+    @Atomic var markAllRead_completion: (@Sendable (Error?) -> Void)?
 
     var startWatchingChannels_callCount = 0
     @Atomic var startWatchingChannels_cids: [ChannelId] = []
-    @Atomic var startWatchingChannels_completion: ((Error?) -> Void)?
+    @Atomic var startWatchingChannels_completion: (@Sendable (Error?) -> Void)?
     var startWatchingChannels_completion_success = false
 
     var link_callCount = 0
-    var link_completion: ((Error?) -> Void)?
+    var link_completion: (@Sendable (Error?) -> Void)?
 
     var unlink_callCount = 0
 
@@ -60,7 +60,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
 
     override func update(
         channelListQuery: ChannelListQuery,
-        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
+        completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
         _update_queries.mutate { $0.append(channelListQuery) }
         update_completion = completion
@@ -70,29 +70,29 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     override func prefill(
         group: GroupedChannelsGroup,
         for query: ChannelListQuery,
-        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
+        completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
         _prefill_queries.mutate { $0.append(query) }
         _prefill_channels.mutate { $0.append(group.channels) }
         super.prefill(group: group, for: query, completion: completion)
     }
 
-    override func markAllRead(completion: ((Error?) -> Void)? = nil) {
+    override func markAllRead(completion: (@Sendable (Error?) -> Void)? = nil) {
         markAllRead_completion = completion
     }
 
     override func fetch(
         channelListQuery: ChannelListQuery,
-        completion: @escaping (Result<ChannelListPayload, Error>) -> Void
+        completion: @escaping @Sendable (Result<ChannelListPayload, Error>) -> Void
     ) {
         _fetch_queries.mutate { $0.append(channelListQuery) }
         fetch_completion = completion
     }
-    
+
     override func refreshLoadedChannels(
         for query: ChannelListQuery,
         channelCount: Int,
-        completion: @escaping (Result<Set<ChannelId>, any Error>) -> Void
+        completion: @escaping @Sendable (Result<Set<ChannelId>, any Error>) -> Void
     ) {
         record()
         _refreshLoadedChannels_channelCounts.mutate { $0.append(channelCount) }
@@ -118,7 +118,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     override func link(
         channel: ChatChannel,
         with query: ChannelListQuery,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         link_callCount += 1
         link_completion = completion
@@ -127,12 +127,12 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     override func unlink(
         channel: ChatChannel,
         with query: ChannelListQuery,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         unlink_callCount += 1
     }
 
-    override func startWatchingChannels(withIds ids: [ChannelId], completion: ((Error?) -> Void)?) {
+    override func startWatchingChannels(withIds ids: [ChannelId], completion: (@Sendable (Error?) -> Void)?) {
         startWatchingChannels_callCount += 1
         startWatchingChannels_cids = ids
         if startWatchingChannels_completion_success {

@@ -141,7 +141,7 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                             let group = groupedChannels.groups[key]
                         else { continue }
                         dispatchGroup.enter()
-                        controller.prefill(group: group) { error in
+                        controller.prefill(group: group) { @Sendable error in
                             if let error {
                                 log.error(
                                     "Failed to prefill controller for group \(key): \(error)",
@@ -151,7 +151,7 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                             dispatchGroup.leave()
                         }
                     }
-                    dispatchGroup.notify(queue: .global(qos: .utility)) {
+                    dispatchGroup.notify(queue: .global(qos: .utility)) { @Sendable in
                         done(.continue)
                     }
                 case let .failure(error):

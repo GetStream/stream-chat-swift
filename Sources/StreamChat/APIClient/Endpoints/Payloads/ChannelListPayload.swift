@@ -25,7 +25,7 @@ extension ChannelListPayload: Decodable {
     }
 }
 
-final class GroupedQueryChannelsRequestBody: Encodable {
+final class GroupedQueryChannelsRequestBody: Encodable, Sendable {
     let limit: Int?
     let watch: Bool
     let presence: Bool
@@ -37,7 +37,7 @@ final class GroupedQueryChannelsRequestBody: Encodable {
     }
 }
 
-final class GroupedQueryChannelsPayload: Decodable {
+final class GroupedQueryChannelsPayload: Decodable, Sendable {
     let groups: [String: GroupedQueryChannelsGroupPayload]
     let duration: String
 
@@ -58,7 +58,7 @@ final class GroupedQueryChannelsPayload: Decodable {
     }
 }
 
-final class GroupedQueryChannelsGroupPayload: Decodable {
+final class GroupedQueryChannelsGroupPayload: Decodable, Sendable {
     let channels: [ChannelPayload]
     let unreadChannels: Int
 

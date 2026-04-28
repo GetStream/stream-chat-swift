@@ -5,7 +5,7 @@
 import Foundation
 
 /// A grouped channels response returned by `ChatClient.queryGroupedChannels`.
-public struct GroupedChannels: Equatable {
+public struct GroupedChannels: Equatable, Sendable {
     /// The grouped channel groups returned by the backend, keyed by group name.
     public let groups: [String: GroupedChannelsGroup]
 
@@ -17,7 +17,7 @@ public struct GroupedChannels: Equatable {
 }
 
 /// A grouped channels group returned by `ChatClient.queryGroupedChannels`.
-public struct GroupedChannelsGroup: Equatable {
+public struct GroupedChannelsGroup: Equatable, Sendable {
     /// The group key as returned by the backend (e.g. `"all"`, `"new"`, `"current"`).
     public let groupKey: String
 

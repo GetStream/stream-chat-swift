@@ -46,8 +46,9 @@ final class ChannelListLinker: Sendable {
                 notificationCenter: nc,
                 transform: { $0 as? MessageNewEvent },
                 callback: { [weak self] event in
-                    self?.unlinkChannelIfNeeded(event.channel) {
-                        self?.linkChannelIfNeeded(event.channel)
+                    guard let self else { return }
+                    self.unlinkChannelIfNeeded(event.channel) {
+                        self.linkChannelIfNeeded(event.channel)
                     }
                 }
             ),
@@ -55,8 +56,9 @@ final class ChannelListLinker: Sendable {
                 notificationCenter: nc,
                 transform: { $0 as? NotificationMessageNewEvent },
                 callback: { [weak self] event in
-                    self?.unlinkChannelIfNeeded(event.channel) {
-                        self?.linkChannelIfNeeded(event.channel)
+                    guard let self else { return }
+                    self.unlinkChannelIfNeeded(event.channel) {
+                        self.linkChannelIfNeeded(event.channel)
                     }
                 }
             ),
