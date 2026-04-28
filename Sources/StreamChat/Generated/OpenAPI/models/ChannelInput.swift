@@ -9,7 +9,7 @@ final class ChannelInput: @unchecked Sendable, Codable, JSONEncodable, Hashable 
     var autoTranslationEnabled: Bool?
     /// Switch auto translation language
     var autoTranslationLanguage: String?
-    var configOverrides: ChannelConfigModel?
+    var configOverrides: ChannelConfigOpenAPI?
     var createdBy: UserRequest?
     var createdById: String?
     var custom: [String: RawJSON]?
@@ -23,7 +23,7 @@ final class ChannelInput: @unchecked Sendable, Codable, JSONEncodable, Hashable 
     var team: String?
     var truncatedById: String?
 
-    init(autoTranslationEnabled: Bool? = nil, autoTranslationLanguage: String? = nil, configOverrides: ChannelConfigModel? = nil, createdBy: UserRequest? = nil, createdById: String? = nil, custom: [String: RawJSON]? = nil, disabled: Bool? = nil, filterTags: [String]? = nil, frozen: Bool? = nil, invites: [ChannelMemberRequest]? = nil, members: [ChannelMemberRequest]? = nil, team: String? = nil, truncatedById: String? = nil) {
+    init(autoTranslationEnabled: Bool? = nil, autoTranslationLanguage: String? = nil, configOverrides: ChannelConfigOpenAPI? = nil, createdBy: UserRequest? = nil, createdById: String? = nil, custom: [String: RawJSON]? = nil, disabled: Bool? = nil, filterTags: [String]? = nil, frozen: Bool? = nil, invites: [ChannelMemberRequest]? = nil, members: [ChannelMemberRequest]? = nil, team: String? = nil, truncatedById: String? = nil) {
         self.autoTranslationEnabled = autoTranslationEnabled
         self.autoTranslationLanguage = autoTranslationLanguage
         self.configOverrides = configOverrides

@@ -21,9 +21,9 @@ final class SearchPayload: @unchecked Sendable, Codable, JSONEncodable, Hashable
     /// Search phrase
     var query: String?
     /// Sort parameters. Cannot be used with non-zero offset
-    var sort: [SortParamRequestModel]?
+    var sort: [SortParamRequestOpenAPI]?
 
-    init(filterConditions: [String: RawJSON], forceDefaultSearch: Bool? = nil, forceSqlV2Backend: Bool? = nil, limit: Int? = nil, messageFilterConditions: [String: RawJSON]? = nil, messageOptions: MessageOptions? = nil, next: String? = nil, offset: Int? = nil, query: String? = nil, sort: [SortParamRequestModel]? = nil) {
+    init(filterConditions: [String: RawJSON], forceDefaultSearch: Bool? = nil, forceSqlV2Backend: Bool? = nil, limit: Int? = nil, messageFilterConditions: [String: RawJSON]? = nil, messageOptions: MessageOptions? = nil, next: String? = nil, offset: Int? = nil, query: String? = nil, sort: [SortParamRequestOpenAPI]? = nil) {
         self.filterConditions = filterConditions
         self.forceDefaultSearch = forceDefaultSearch
         self.forceSqlV2Backend = forceSqlV2Backend

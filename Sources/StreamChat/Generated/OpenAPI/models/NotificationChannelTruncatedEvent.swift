@@ -19,6 +19,7 @@ final class NotificationChannelTruncatedEvent: @unchecked Sendable, Event, Codab
     /// Date/time of creation
     var createdAt: Date
     var custom: [String: RawJSON]
+    var groupedUnreadChannels: [String: Int]?
     var message: MessageResponse?
     var messageId: String?
     var receivedAt: Date?
@@ -33,7 +34,7 @@ final class NotificationChannelTruncatedEvent: @unchecked Sendable, Event, Codab
     /// The number of unread messages in the channel
     var unreadCount: Int?
 
-    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], message: MessageResponse? = nil, messageId: String? = nil, receivedAt: Date? = nil, team: String? = nil, totalUnreadCount: Int? = nil, unreadChannels: Int? = nil, unreadCount: Int? = nil) {
+    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], groupedUnreadChannels: [String: Int]? = nil, message: MessageResponse? = nil, messageId: String? = nil, receivedAt: Date? = nil, team: String? = nil, totalUnreadCount: Int? = nil, unreadChannels: Int? = nil, unreadCount: Int? = nil) {
         self.channel = channel
         self.channelCustom = channelCustom
         self.channelId = channelId
@@ -43,6 +44,7 @@ final class NotificationChannelTruncatedEvent: @unchecked Sendable, Event, Codab
         self.cid = cid
         self.createdAt = createdAt
         self.custom = custom
+        self.groupedUnreadChannels = groupedUnreadChannels
         self.message = message
         self.messageId = messageId
         self.receivedAt = receivedAt
@@ -62,6 +64,7 @@ final class NotificationChannelTruncatedEvent: @unchecked Sendable, Event, Codab
         case cid
         case createdAt = "created_at"
         case custom
+        case groupedUnreadChannels = "grouped_unread_channels"
         case message
         case messageId = "message_id"
         case receivedAt = "received_at"
@@ -82,6 +85,7 @@ final class NotificationChannelTruncatedEvent: @unchecked Sendable, Event, Codab
             lhs.cid == rhs.cid &&
             lhs.createdAt == rhs.createdAt &&
             lhs.custom == rhs.custom &&
+            lhs.groupedUnreadChannels == rhs.groupedUnreadChannels &&
             lhs.message == rhs.message &&
             lhs.messageId == rhs.messageId &&
             lhs.receivedAt == rhs.receivedAt &&
@@ -102,6 +106,7 @@ final class NotificationChannelTruncatedEvent: @unchecked Sendable, Event, Codab
         hasher.combine(cid)
         hasher.combine(createdAt)
         hasher.combine(custom)
+        hasher.combine(groupedUnreadChannels)
         hasher.combine(message)
         hasher.combine(messageId)
         hasher.combine(receivedAt)

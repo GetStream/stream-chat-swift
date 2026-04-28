@@ -7,9 +7,9 @@ import Foundation
 final class ParsedPredefinedFilterResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     var filter: [String: RawJSON]
     var name: String
-    var sort: [SortParamRequestModel]?
+    var sort: [SortParamRequestOpenAPI]?
 
-    init(filter: [String: RawJSON], name: String, sort: [SortParamRequestModel]? = nil) {
+    init(filter: [String: RawJSON], name: String, sort: [SortParamRequestOpenAPI]? = nil) {
         self.filter = filter
         self.name = name
         self.sort = sort

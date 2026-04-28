@@ -18,6 +18,7 @@ final class NotificationNewMessageEvent: @unchecked Sendable, Event, Codable, JS
     /// Date/time of creation
     var createdAt: Date
     var custom: [String: RawJSON]
+    var groupedUnreadChannels: [String: Int]?
     var message: MessageResponse
     var messageId: String
     var parentAuthor: String?
@@ -34,7 +35,7 @@ final class NotificationNewMessageEvent: @unchecked Sendable, Event, Codable, JS
     /// The number of watchers
     var watcherCount: Int
 
-    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], message: MessageResponse, messageId: String, parentAuthor: String? = nil, receivedAt: Date? = nil, team: String? = nil, threadParticipants: [UserResponseCommonFields]? = nil, totalUnreadCount: Int? = nil, unreadChannels: Int? = nil, unreadCount: Int? = nil, watcherCount: Int) {
+    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], groupedUnreadChannels: [String: Int]? = nil, message: MessageResponse, messageId: String, parentAuthor: String? = nil, receivedAt: Date? = nil, team: String? = nil, threadParticipants: [UserResponseCommonFields]? = nil, totalUnreadCount: Int? = nil, unreadChannels: Int? = nil, unreadCount: Int? = nil, watcherCount: Int) {
         self.channel = channel
         self.channelCustom = channelCustom
         self.channelId = channelId
@@ -44,6 +45,7 @@ final class NotificationNewMessageEvent: @unchecked Sendable, Event, Codable, JS
         self.cid = cid
         self.createdAt = createdAt
         self.custom = custom
+        self.groupedUnreadChannels = groupedUnreadChannels
         self.message = message
         self.messageId = messageId
         self.parentAuthor = parentAuthor
@@ -66,6 +68,7 @@ final class NotificationNewMessageEvent: @unchecked Sendable, Event, Codable, JS
         case cid
         case createdAt = "created_at"
         case custom
+        case groupedUnreadChannels = "grouped_unread_channels"
         case message
         case messageId = "message_id"
         case parentAuthor = "parent_author"
@@ -89,6 +92,7 @@ final class NotificationNewMessageEvent: @unchecked Sendable, Event, Codable, JS
             lhs.cid == rhs.cid &&
             lhs.createdAt == rhs.createdAt &&
             lhs.custom == rhs.custom &&
+            lhs.groupedUnreadChannels == rhs.groupedUnreadChannels &&
             lhs.message == rhs.message &&
             lhs.messageId == rhs.messageId &&
             lhs.parentAuthor == rhs.parentAuthor &&
@@ -112,6 +116,7 @@ final class NotificationNewMessageEvent: @unchecked Sendable, Event, Codable, JS
         hasher.combine(cid)
         hasher.combine(createdAt)
         hasher.combine(custom)
+        hasher.combine(groupedUnreadChannels)
         hasher.combine(message)
         hasher.combine(messageId)
         hasher.combine(parentAuthor)

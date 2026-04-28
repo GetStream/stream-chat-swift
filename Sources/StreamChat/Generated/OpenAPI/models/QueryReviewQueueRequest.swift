@@ -17,11 +17,11 @@ final class QueryReviewQueueRequest: @unchecked Sendable, Codable, JSONEncodable
     var next: String?
     var prev: String?
     /// Sorting parameters for the results
-    var sort: [SortParamRequestModel]?
+    var sort: [SortParamRequestOpenAPI]?
     /// Whether to return only statistics
     var statsOnly: Bool?
 
-    init(filter: [String: RawJSON]? = nil, limit: Int? = nil, lockCount: Int? = nil, lockDuration: Int? = nil, lockItems: Bool? = nil, next: String? = nil, prev: String? = nil, sort: [SortParamRequestModel]? = nil, statsOnly: Bool? = nil) {
+    init(filter: [String: RawJSON]? = nil, limit: Int? = nil, lockCount: Int? = nil, lockDuration: Int? = nil, lockItems: Bool? = nil, next: String? = nil, prev: String? = nil, sort: [SortParamRequestOpenAPI]? = nil, statsOnly: Bool? = nil) {
         self.filter = filter
         self.limit = limit
         self.lockCount = lockCount

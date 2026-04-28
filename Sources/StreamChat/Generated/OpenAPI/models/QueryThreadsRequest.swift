@@ -16,11 +16,11 @@ final class QueryThreadsRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
     /// Limit the number of replies returned per each thread
     var replyLimit: Int?
     /// [RawJSON] of sort parameters
-    var sort: [SortParamRequestModel]?
+    var sort: [SortParamRequestOpenAPI]?
     /// Start watching the channel this thread belongs to
     var watch: Bool?
 
-    init(filter: [String: RawJSON]? = nil, limit: Int? = nil, memberLimit: Int? = nil, next: String? = nil, participantLimit: Int? = nil, prev: String? = nil, replyLimit: Int? = nil, sort: [SortParamRequestModel]? = nil, watch: Bool? = nil) {
+    init(filter: [String: RawJSON]? = nil, limit: Int? = nil, memberLimit: Int? = nil, next: String? = nil, participantLimit: Int? = nil, prev: String? = nil, replyLimit: Int? = nil, sort: [SortParamRequestOpenAPI]? = nil, watch: Bool? = nil) {
         self.filter = filter
         self.limit = limit
         self.memberLimit = memberLimit

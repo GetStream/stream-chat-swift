@@ -21,14 +21,14 @@ final class QueryChannelsRequest: @unchecked Sendable, Codable, JSONEncodable, H
     var predefinedFilter: String?
     var presence: Bool?
     /// List of sort parameters
-    var sort: [SortParamRequestModel]?
+    var sort: [SortParamRequestOpenAPI]?
     var sortValues: [String: RawJSON]?
     /// Whether to update channel state or not
     var state: Bool?
     /// Whether to start watching found channels or not
     var watch: Bool?
 
-    init(filterConditions: [String: RawJSON]? = nil, filterValues: [String: RawJSON]? = nil, limit: Int? = nil, memberLimit: Int? = nil, messageLimit: Int? = nil, offset: Int? = nil, predefinedFilter: String? = nil, presence: Bool? = nil, sort: [SortParamRequestModel]? = nil, sortValues: [String: RawJSON]? = nil, state: Bool? = nil, watch: Bool? = nil) {
+    init(filterConditions: [String: RawJSON]? = nil, filterValues: [String: RawJSON]? = nil, limit: Int? = nil, memberLimit: Int? = nil, messageLimit: Int? = nil, offset: Int? = nil, predefinedFilter: String? = nil, presence: Bool? = nil, sort: [SortParamRequestOpenAPI]? = nil, sortValues: [String: RawJSON]? = nil, state: Bool? = nil, watch: Bool? = nil) {
         self.filterConditions = filterConditions
         self.filterValues = filterValues
         self.limit = limit

@@ -12,9 +12,9 @@ final class QueryUsersPayload: @unchecked Sendable, Codable, JSONEncodable, Hash
     var offset: Int?
     var presence: Bool?
     /// [RawJSON] of sort parameters
-    var sort: [SortParamRequestModel]?
+    var sort: [SortParamRequestOpenAPI]?
 
-    init(filterConditions: [String: RawJSON], includeDeactivatedUsers: Bool? = nil, limit: Int? = nil, offset: Int? = nil, presence: Bool? = nil, sort: [SortParamRequestModel]? = nil) {
+    init(filterConditions: [String: RawJSON], includeDeactivatedUsers: Bool? = nil, limit: Int? = nil, offset: Int? = nil, presence: Bool? = nil, sort: [SortParamRequestOpenAPI]? = nil) {
         self.filterConditions = filterConditions
         self.includeDeactivatedUsers = includeDeactivatedUsers
         self.limit = limit

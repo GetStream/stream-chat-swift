@@ -11,9 +11,9 @@ final class QueryReactionsRequest: @unchecked Sendable, Codable, JSONEncodable, 
     var next: String?
     var prev: String?
     /// [RawJSON] of sort parameters
-    var sort: [SortParamRequestModel]?
+    var sort: [SortParamRequestOpenAPI]?
 
-    init(filter: [String: RawJSON]? = nil, limit: Int? = nil, next: String? = nil, prev: String? = nil, sort: [SortParamRequestModel]? = nil) {
+    init(filter: [String: RawJSON]? = nil, limit: Int? = nil, next: String? = nil, prev: String? = nil, sort: [SortParamRequestOpenAPI]? = nil) {
         self.filter = filter
         self.limit = limit
         self.next = next

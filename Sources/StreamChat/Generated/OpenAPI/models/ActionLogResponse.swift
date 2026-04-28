@@ -14,6 +14,8 @@ final class ActionLogResponse: @unchecked Sendable, Codable, JSONEncodable, Hash
     var id: String
     /// Reason for the moderation action
     var reason: String
+    /// Classification of who triggered the action (e.g. user, moderator, automod, api_integration)
+    var reporterType: String
     var reviewQueueItem: ReviewQueueItemResponse?
     var targetUser: UserResponse?
     /// ID of the user who was the target of the action
@@ -24,12 +26,13 @@ final class ActionLogResponse: @unchecked Sendable, Codable, JSONEncodable, Hash
     /// ID of the user who performed the action
     var userId: String
 
-    init(aiProviders: [String], createdAt: Date, custom: [String: RawJSON], id: String, reason: String, reviewQueueItem: ReviewQueueItemResponse? = nil, targetUser: UserResponse? = nil, targetUserId: String, type: String, user: UserResponse? = nil, userId: String) {
+    init(aiProviders: [String], createdAt: Date, custom: [String: RawJSON], id: String, reason: String, reporterType: String, reviewQueueItem: ReviewQueueItemResponse? = nil, targetUser: UserResponse? = nil, targetUserId: String, type: String, user: UserResponse? = nil, userId: String) {
         self.aiProviders = aiProviders
         self.createdAt = createdAt
         self.custom = custom
         self.id = id
         self.reason = reason
+        self.reporterType = reporterType
         self.reviewQueueItem = reviewQueueItem
         self.targetUser = targetUser
         self.targetUserId = targetUserId
@@ -44,6 +47,7 @@ final class ActionLogResponse: @unchecked Sendable, Codable, JSONEncodable, Hash
         case custom
         case id
         case reason
+        case reporterType = "reporter_type"
         case reviewQueueItem = "review_queue_item"
         case targetUser = "target_user"
         case targetUserId = "target_user_id"
@@ -58,6 +62,7 @@ final class ActionLogResponse: @unchecked Sendable, Codable, JSONEncodable, Hash
             lhs.custom == rhs.custom &&
             lhs.id == rhs.id &&
             lhs.reason == rhs.reason &&
+            lhs.reporterType == rhs.reporterType &&
             lhs.reviewQueueItem == rhs.reviewQueueItem &&
             lhs.targetUser == rhs.targetUser &&
             lhs.targetUserId == rhs.targetUserId &&
@@ -72,6 +77,7 @@ final class ActionLogResponse: @unchecked Sendable, Codable, JSONEncodable, Hash
         hasher.combine(custom)
         hasher.combine(id)
         hasher.combine(reason)
+        hasher.combine(reporterType)
         hasher.combine(reviewQueueItem)
         hasher.combine(targetUser)
         hasher.combine(targetUserId)

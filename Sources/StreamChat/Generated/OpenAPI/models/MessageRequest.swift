@@ -49,7 +49,7 @@ final class MessageRequest: @unchecked Sendable, Codable, JSONEncodable, Hashabl
     var quotedMessageId: String?
     /// A list of user ids that have restricted visibility to the message
     var restrictedVisibility: [String]?
-    var sharedLocation: SharedLocationModel?
+    var sharedLocation: SharedLocationOpenAPI?
     /// Whether thread reply should be shown in the channel as well
     var showInChannel: Bool?
     /// Whether message is silent or not
@@ -59,7 +59,7 @@ final class MessageRequest: @unchecked Sendable, Codable, JSONEncodable, Hashabl
     /// Contains type of the message. One of: regular, system
     var type: MessageRequestType?
 
-    init(attachments: [Attachment]? = nil, custom: [String: RawJSON]? = nil, id: String? = nil, mentionedChannel: Bool? = nil, mentionedGroupIds: [String]? = nil, mentionedHere: Bool? = nil, mentionedRoles: [String]? = nil, mentionedUsers: [String]? = nil, mml: String? = nil, parentId: String? = nil, pinExpires: Date? = nil, pinned: Bool? = nil, pinnedAt: Date? = nil, pollId: String? = nil, quotedMessageId: String? = nil, restrictedVisibility: [String]? = nil, sharedLocation: SharedLocationModel? = nil, showInChannel: Bool? = nil, silent: Bool? = nil, text: String? = nil) {
+    init(attachments: [Attachment]? = nil, custom: [String: RawJSON]? = nil, id: String? = nil, mentionedChannel: Bool? = nil, mentionedGroupIds: [String]? = nil, mentionedHere: Bool? = nil, mentionedRoles: [String]? = nil, mentionedUsers: [String]? = nil, mml: String? = nil, parentId: String? = nil, pinExpires: Date? = nil, pinned: Bool? = nil, pinnedAt: Date? = nil, pollId: String? = nil, quotedMessageId: String? = nil, restrictedVisibility: [String]? = nil, sharedLocation: SharedLocationOpenAPI? = nil, showInChannel: Bool? = nil, silent: Bool? = nil, text: String? = nil) {
         self.attachments = attachments
         self.custom = custom
         self.id = id

@@ -12,9 +12,9 @@ final class QueryMessageFlagsPayload: @unchecked Sendable, Codable, JSONEncodabl
     /// Whether to include deleted messages in the results
     var showDeletedMessages: Bool?
     /// [RawJSON] of sort parameters
-    var sort: [SortParamRequestModel]?
+    var sort: [SortParamRequestOpenAPI]?
 
-    init(filterConditions: [String: RawJSON]? = nil, limit: Int? = nil, offset: Int? = nil, showDeletedMessages: Bool? = nil, sort: [SortParamRequestModel]? = nil) {
+    init(filterConditions: [String: RawJSON]? = nil, limit: Int? = nil, offset: Int? = nil, showDeletedMessages: Bool? = nil, sort: [SortParamRequestOpenAPI]? = nil) {
         self.filterConditions = filterConditions
         self.limit = limit
         self.offset = offset

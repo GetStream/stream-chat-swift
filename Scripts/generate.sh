@@ -5,11 +5,29 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 OUTPUT_DIR_CHAT="$REPO_ROOT/Sources/StreamChat/Generated/OpenAPI"
 CHAT_DIR="$REPO_ROOT/../chat"
+STRIP_ACCESS_MODIFIERS_EXCLUDED_FILES=(
+  "$OUTPUT_DIR_CHAT/models/Command.swift"
+)
 rm -rf "$OUTPUT_DIR_CHAT"
 ( cd "$CHAT_DIR" ; make openapi ; go run ./cmd/chat-manager openapi generate-client --language swift --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
-# Strip public/open so generated types default to internal.
-find "$OUTPUT_DIR_CHAT" -name '*.swift' -exec sed -i '' -E 's/^([[:space:]]*)(public|open) /\1/' {} +
+is_access_modifier_stripping_excluded() {
+  local file="$1"
+  local excluded_file
+
+  for excluded_file in "${STRIP_ACCESS_MODIFIERS_EXCLUDED_FILES[@]}"; do
+    [[ "$file" == "$excluded_file" ]] && return 0
+  done
+
+  return 1
+}
+
+strip_public_open_access_modifiers() {
+  find "$OUTPUT_DIR_CHAT" -name '*.swift' -print0 | while IFS= read -r -d '' file; do
+    is_access_modifier_stripping_excluded "$file" && continue
+    sed -i '' -E 's/^([[:space:]]*)(public|open) /\1/' "$file"
+  done
+}
 
 rename_generated_filename() {
   local old="$1"
@@ -18,6 +36,13 @@ rename_generated_filename() {
   local new_path="$OUTPUT_DIR_CHAT/models/${new}.swift"
 
   [[ -f "$old_path" ]] && mv "$old_path" "$new_path"
+}
+
+delete_generated_filename() {
+  local name="$1"
+  local path="$OUTPUT_DIR_CHAT/models/${name}.swift"
+
+  rm -f "$path"
 }
 
 rename_generated_type() {
@@ -66,67 +91,68 @@ qualify_stream_core_types() {
 
 # Hardcoded clashes while StreamChat source models remain the default.
 # Model collisions.
-rename_generated APIError APIErrorModel
-rename_generated SharedLocation SharedLocationModel
-rename_generated ThreadParticipant ThreadParticipantModel
-rename_generated SortParamRequest SortParamRequestModel
-rename_generated ChannelConfig ChannelConfigModel
-rename_generated Command CommandModel
-rename_generated DeliveredMessagePayload DeliveredMessagePayloadModel
-rename_generated DraftPayloadResponse DraftPayloadResponseModel
-rename_generated PollOptionResponse PollOptionResponseModel
-rename_generated SendMessageResponse SendMessageResponseModel
-rename_generated UpdatePollOptionRequest UpdatePollOptionRequestModel
+delete_generated_filename APIError
+rename_generated SharedLocation SharedLocationOpenAPI
+rename_generated Command CommandOpenAPI
+rename_generated ThreadParticipant ThreadParticipantOpenAPI
+rename_generated SortParamRequest SortParamRequestOpenAPI
+rename_generated ChannelConfig ChannelConfigOpenAPI
+rename_generated DeliveredMessagePayload DeliveredMessagePayloadOpenAPI
+rename_generated DraftPayloadResponse DraftPayloadResponseOpenAPI
+rename_generated PollOptionResponse PollOptionResponseOpenAPI
+rename_generated SendMessageResponse SendMessageResponseOpenAPI
+rename_generated UpdatePollOptionRequest UpdatePollOptionRequestOpenAPI
 
 # Event collisions with public event types in WebSocketClient/Events.
-rename_generated AIIndicatorClearEvent AIIndicatorClearEventModel
-rename_generated AIIndicatorStopEvent AIIndicatorStopEventModel
-rename_generated AIIndicatorUpdateEvent AIIndicatorUpdateEventModel
-rename_generated ChannelDeletedEvent ChannelDeletedEventModel
-rename_generated ChannelHiddenEvent ChannelHiddenEventModel
-rename_generated ChannelTruncatedEvent ChannelTruncatedEventModel
-rename_generated ChannelUpdatedEvent ChannelUpdatedEventModel
-rename_generated ChannelVisibleEvent ChannelVisibleEventModel
-rename_generated DraftDeletedEvent DraftDeletedEventModel
-rename_generated DraftUpdatedEvent DraftUpdatedEventModel
-rename_generated HealthCheckEvent HealthCheckEventModel
-rename_generated MemberAddedEvent MemberAddedEventModel
-rename_generated MemberRemovedEvent MemberRemovedEventModel
-rename_generated MemberUpdatedEvent MemberUpdatedEventModel
-rename_generated MessageDeletedEvent MessageDeletedEventModel
-rename_generated MessageDeliveredEvent MessageDeliveredEventModel
-rename_generated MessageNewEvent MessageNewEventModel
-rename_generated MessageReadEvent MessageReadEventModel
-rename_generated MessageUpdatedEvent MessageUpdatedEventModel
-rename_generated NotificationAddedToChannelEvent NotificationAddedToChannelEventModel
-rename_generated NotificationChannelDeletedEvent NotificationChannelDeletedEventModel
-rename_generated NotificationChannelMutesUpdatedEvent NotificationChannelMutesUpdatedEventModel
-rename_generated NotificationInviteAcceptedEvent NotificationInviteAcceptedEventModel
-rename_generated NotificationInvitedEvent NotificationInvitedEventModel
-rename_generated NotificationInviteRejectedEvent NotificationInviteRejectedEventModel
-rename_generated NotificationMarkReadEvent NotificationMarkReadEventModel
-rename_generated NotificationMarkUnreadEvent NotificationMarkUnreadEventModel
-rename_generated NotificationMutesUpdatedEvent NotificationMutesUpdatedEventModel
-rename_generated NotificationRemovedFromChannelEvent NotificationRemovedFromChannelEventModel
-rename_generated PollClosedEvent PollClosedEventModel
-rename_generated PollDeletedEvent PollDeletedEventModel
-rename_generated PollUpdatedEvent PollUpdatedEventModel
-rename_generated PollVoteCastedEvent PollVoteCastedEventModel
-rename_generated PollVoteChangedEvent PollVoteChangedEventModel
-rename_generated PollVoteRemovedEvent PollVoteRemovedEventModel
-rename_generated ReactionDeletedEvent ReactionDeletedEventModel
-rename_generated ReactionNewEvent ReactionNewEventModel
-rename_generated ReactionUpdatedEvent ReactionUpdatedEventModel
-rename_generated ThreadUpdatedEvent ThreadUpdatedEventModel
-rename_generated UserBannedEvent UserBannedEventModel
-rename_generated UserMessagesDeletedEvent UserMessagesDeletedEventModel
-rename_generated UserPresenceChangedEvent UserPresenceChangedEventModel
-rename_generated UserUnbannedEvent UserUnbannedEventModel
-rename_generated UserUpdatedEvent UserUpdatedEventModel
+rename_generated AIIndicatorClearEvent AIIndicatorClearEventOpenAPI
+rename_generated AIIndicatorStopEvent AIIndicatorStopEventOpenAPI
+rename_generated AIIndicatorUpdateEvent AIIndicatorUpdateEventOpenAPI
+rename_generated ChannelDeletedEvent ChannelDeletedEventOpenAPI
+rename_generated ChannelHiddenEvent ChannelHiddenEventOpenAPI
+rename_generated ChannelTruncatedEvent ChannelTruncatedEventOpenAPI
+rename_generated ChannelUpdatedEvent ChannelUpdatedEventOpenAPI
+rename_generated ChannelVisibleEvent ChannelVisibleEventOpenAPI
+rename_generated DraftDeletedEvent DraftDeletedEventOpenAPI
+rename_generated DraftUpdatedEvent DraftUpdatedEventOpenAPI
+rename_generated HealthCheckEvent HealthCheckEventOpenAPI
+rename_generated MemberAddedEvent MemberAddedEventOpenAPI
+rename_generated MemberRemovedEvent MemberRemovedEventOpenAPI
+rename_generated MemberUpdatedEvent MemberUpdatedEventOpenAPI
+rename_generated MessageDeletedEvent MessageDeletedEventOpenAPI
+rename_generated MessageDeliveredEvent MessageDeliveredEventOpenAPI
+rename_generated MessageNewEvent MessageNewEventOpenAPI
+rename_generated MessageReadEvent MessageReadEventOpenAPI
+rename_generated MessageUpdatedEvent MessageUpdatedEventOpenAPI
+rename_generated NotificationAddedToChannelEvent NotificationAddedToChannelEventOpenAPI
+rename_generated NotificationChannelDeletedEvent NotificationChannelDeletedEventOpenAPI
+rename_generated NotificationChannelMutesUpdatedEvent NotificationChannelMutesUpdatedEventOpenAPI
+rename_generated NotificationInviteAcceptedEvent NotificationInviteAcceptedEventOpenAPI
+rename_generated NotificationInvitedEvent NotificationInvitedEventOpenAPI
+rename_generated NotificationInviteRejectedEvent NotificationInviteRejectedEventOpenAPI
+rename_generated NotificationMarkReadEvent NotificationMarkReadEventOpenAPI
+rename_generated NotificationMarkUnreadEvent NotificationMarkUnreadEventOpenAPI
+rename_generated NotificationMutesUpdatedEvent NotificationMutesUpdatedEventOpenAPI
+rename_generated NotificationRemovedFromChannelEvent NotificationRemovedFromChannelEventOpenAPI
+rename_generated PollClosedEvent PollClosedEventOpenAPI
+rename_generated PollDeletedEvent PollDeletedEventOpenAPI
+rename_generated PollUpdatedEvent PollUpdatedEventOpenAPI
+rename_generated PollVoteCastedEvent PollVoteCastedEventOpenAPI
+rename_generated PollVoteChangedEvent PollVoteChangedEventOpenAPI
+rename_generated PollVoteRemovedEvent PollVoteRemovedEventOpenAPI
+rename_generated ReactionDeletedEvent ReactionDeletedEventOpenAPI
+rename_generated ReactionNewEvent ReactionNewEventOpenAPI
+rename_generated ReactionUpdatedEvent ReactionUpdatedEventOpenAPI
+rename_generated ThreadUpdatedEvent ThreadUpdatedEventOpenAPI
+rename_generated UserBannedEvent UserBannedEventOpenAPI
+rename_generated UserMessagesDeletedEvent UserMessagesDeletedEventOpenAPI
+rename_generated UserPresenceChangedEvent UserPresenceChangedEventOpenAPI
+rename_generated UserUnbannedEvent UserUnbannedEventOpenAPI
+rename_generated UserUpdatedEvent UserUpdatedEventOpenAPI
 
 escape_swift_keywords_in_cases
 fix_invalid_empty_enum_cases
 fix_untyped_arrays
 qualify_stream_core_types
+strip_public_open_access_modifiers
 
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"

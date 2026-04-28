@@ -29,13 +29,13 @@ final class ThreadResponse: @unchecked Sendable, Codable, JSONEncodable, Hashabl
     /// Reply Count
     var replyCount: Int?
     /// Thread Participants
-    var threadParticipants: [ThreadParticipantModel]?
+    var threadParticipants: [ThreadParticipantOpenAPI]?
     /// Title
     var title: String
     /// Date/time of the last update
     var updatedAt: Date
 
-    init(activeParticipantCount: Int, channel: ChannelResponse? = nil, channelCid: String, createdAt: Date, createdBy: UserResponse? = nil, createdByUserId: String, custom: [String: RawJSON], deletedAt: Date? = nil, lastMessageAt: Date? = nil, parentMessage: MessageResponse? = nil, parentMessageId: String, participantCount: Int, replyCount: Int? = nil, threadParticipants: [ThreadParticipantModel]? = nil, title: String, updatedAt: Date) {
+    init(activeParticipantCount: Int, channel: ChannelResponse? = nil, channelCid: String, createdAt: Date, createdBy: UserResponse? = nil, createdByUserId: String, custom: [String: RawJSON], deletedAt: Date? = nil, lastMessageAt: Date? = nil, parentMessage: MessageResponse? = nil, parentMessageId: String, participantCount: Int, replyCount: Int? = nil, threadParticipants: [ThreadParticipantOpenAPI]? = nil, title: String, updatedAt: Date) {
         self.activeParticipantCount = activeParticipantCount
         self.channel = channel
         self.channelCid = channelCid

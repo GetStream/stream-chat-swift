@@ -11,9 +11,9 @@ final class QueryModerationConfigsRequest: @unchecked Sendable, Codable, JSONEnc
     var next: String?
     var prev: String?
     /// Sorting parameters for the results
-    var sort: [SortParamRequestModel]?
+    var sort: [SortParamRequestOpenAPI]?
 
-    init(filter: [String: RawJSON]? = nil, limit: Int? = nil, next: String? = nil, prev: String? = nil, sort: [SortParamRequestModel]? = nil) {
+    init(filter: [String: RawJSON]? = nil, limit: Int? = nil, next: String? = nil, prev: String? = nil, sort: [SortParamRequestOpenAPI]? = nil) {
         self.filter = filter
         self.limit = limit
         self.next = next
