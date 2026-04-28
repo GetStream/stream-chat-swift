@@ -4,12 +4,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ### ✅ Added
-- Add `ChatChannelListController.prefill(group:completion:)` for priming controller-local channel data [#4071](https://github.com/GetStream/stream-chat-swift/pull/4071)
-- Add `ChatClient.queryGroupedChannels(limit:watch:presence:)` to fetch grouped channels with per group unread counts [#4071](https://github.com/GetStream/stream-chat-swift/pull/4071)
-- Add optional `groupedUnreadChannels` data to relevant web-socket events and to `CurrentChatUser` [#4071](https://github.com/GetStream/stream-chat-swift/pull/4071)
+- Add `ChatChannelListController.prefill(group:completion:)` for priming controller-local channel data [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
+- Add `ChatClient.queryGroupedChannels(limit:watch:presence:)` to fetch grouped channels with per group unread counts [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
+- Add optional `groupedUnreadChannels` data to relevant web-socket events and to `CurrentChatUser` [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 
 ### 🔄 Changed
-- Make grouped channels decoding tolerate missing `unread_count` and `unread_channels` fields in group buckets, matching the current OpenAPI schema [#4071](https://github.com/GetStream/stream-chat-swift/pull/4071)
+- Make grouped channels decoding tolerate missing `unread_count` and `unread_channels` fields in group buckets, matching the current OpenAPI schema [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 
 # [5.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.1.0)
 _April 23, 2026_
