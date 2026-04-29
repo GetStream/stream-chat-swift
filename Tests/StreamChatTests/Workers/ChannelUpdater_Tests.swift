@@ -608,6 +608,94 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(channel.messages.count, previousMessagesCount)
     }
 
+    // MARK: - cleanStaleMidPageStateIfNeeded
+
+    func test_cleanStaleMidPageStateIfNeeded_whenChannelHasStaleMidPageState_clearsCache() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        try database.writeSynchronously { session in
+            let payload = self.dummyPayload(with: cid, numberOfMessages: 5)
+            let channelDTO = try session.saveChannel(payload: payload)
+            channelDTO.oldestMessageAt = .init(timeIntervalSinceNow: -200)
+            channelDTO.newestMessageAt = .init(timeIntervalSinceNow: -100)
+        }
+
+        let query = ChannelQuery(cid: cid)
+
+        let expectation = self.expectation(description: "Cleanup completes")
+        channelUpdater.cleanStaleMidPageStateIfNeeded(for: query, isInRecoveryMode: false) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channel.messages.count, 0)
+        XCTAssertNil(channel.oldestMessageAt)
+        XCTAssertNil(channel.newestMessageAt)
+    }
+
+    func test_cleanStaleMidPageStateIfNeeded_whenChannelHasNoStaleMidPageState_skipsCleanup() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        try database.writeSynchronously { session in
+            let payload = self.dummyPayload(with: cid, numberOfMessages: 5)
+            let channelDTO = try session.saveChannel(payload: payload)
+            channelDTO.newestMessageAt = nil
+        }
+
+        let query = ChannelQuery(cid: cid)
+
+        let expectation = self.expectation(description: "Cleanup completes")
+        channelUpdater.cleanStaleMidPageStateIfNeeded(for: query, isInRecoveryMode: false) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channel.messages.count, 5)
+    }
+
+    func test_cleanStaleMidPageStateIfNeeded_whenInRecoveryMode_skipsCleanup() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        try database.writeSynchronously { session in
+            let payload = self.dummyPayload(with: cid, numberOfMessages: 5)
+            let channelDTO = try session.saveChannel(payload: payload)
+            channelDTO.newestMessageAt = .init(timeIntervalSinceNow: -100)
+        }
+
+        let query = ChannelQuery(cid: cid)
+
+        let expectation = self.expectation(description: "Cleanup completes")
+        channelUpdater.cleanStaleMidPageStateIfNeeded(for: query, isInRecoveryMode: true) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channel.messages.count, 5)
+        XCTAssertNotNil(channel.newestMessageAt)
+    }
+
+    func test_cleanStaleMidPageStateIfNeeded_whenPaginationParameterIsSet_skipsCleanup() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        try database.writeSynchronously { session in
+            let payload = self.dummyPayload(with: cid, numberOfMessages: 5)
+            let channelDTO = try session.saveChannel(payload: payload)
+            channelDTO.newestMessageAt = .init(timeIntervalSinceNow: -100)
+        }
+
+        // A query with a pagination parameter is NOT a fresh first-page fetch.
+        let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
+
+        let expectation = self.expectation(description: "Cleanup completes")
+        channelUpdater.cleanStaleMidPageStateIfNeeded(for: query, isInRecoveryMode: false) {
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channel.messages.count, 5)
+        XCTAssertNotNil(channel.newestMessageAt)
+    }
+
     // MARK: - Messages
 
     func test_createNewMessage() throws {
