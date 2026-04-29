@@ -752,6 +752,54 @@ final class ChannelController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
+    func test_synchronize_whenChannelLeftInMidPageState_clearsLocalCacheBeforeFetching() throws {
+        // GIVEN: A channel that was previously left in a mid-page state, so the local
+        // cache contains the mid-page slice and non-nil pagination bounds.
+        try client.databaseContainer.writeSynchronously { session in
+            let payload = self.dummyPayload(with: self.channelId, numberOfMessages: 5)
+            let channelDTO = try session.saveChannel(payload: payload)
+            channelDTO.oldestMessageAt = .init(timeIntervalSinceNow: -200)
+            channelDTO.newestMessageAt = .init(timeIntervalSinceNow: -100)
+        }
+
+        try client.databaseContainer.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: self.channelId))
+            XCTAssertEqual(dto.messages.count, 5)
+            XCTAssertNotNil(dto.newestMessageAt)
+        }
+
+        // WHEN: synchronize is called for a fresh first-page load
+        controller.synchronize()
+
+        // THEN: cached messages and bounds are cleared so the database observers
+        // don't briefly emit the stale mid-page slice before the API responds.
+        AssertAsync {
+            Assert.willBeEqual(self.client.databaseContainer.viewContext.channel(cid: self.channelId)?.messages.count, 0)
+            Assert.willBeNil(self.client.databaseContainer.viewContext.channel(cid: self.channelId)?.newestMessageAt)
+            Assert.willBeNil(self.client.databaseContainer.viewContext.channel(cid: self.channelId)?.oldestMessageAt)
+        }
+    }
+
+    func test_synchronize_whenChannelNotInMidPageState_keepsLocalCache() throws {
+        // GIVEN: A channel with cached messages and no mid-page state.
+        try client.databaseContainer.writeSynchronously { session in
+            let payload = self.dummyPayload(with: self.channelId, numberOfMessages: 5)
+            let channelDTO = try session.saveChannel(payload: payload)
+            channelDTO.newestMessageAt = nil
+        }
+
+        // WHEN: synchronize is called
+        controller.synchronize()
+
+        // THEN: existing messages remain available so the message list can render
+        // them instantly while the API call is in flight.
+        XCTAssertEqual(env.channelUpdater?.update_callCount, 1)
+        try client.databaseContainer.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: self.channelId))
+            XCTAssertEqual(dto.messages.count, 5)
+        }
+    }
+
     // MARK: - Creating `ChannelController` tests
 
     func test_channelControllerForNewChannel_createdCorrectly() throws {

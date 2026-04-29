@@ -1926,30 +1926,85 @@ public enum MessageOrdering: Sendable {
 // MARK: - Helpers
 
 private extension ChatChannelController {
-    func synchronize(isInRecoveryMode: Bool, _ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
-        let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
-        updater.update(
-            channelQuery: channelQuery,
-            isInRecoveryMode: isInRecoveryMode,
-            onChannelCreated: channelCreatedCallback,
-            completion: { result in
-                switch result {
-                case .success:
-                    self.state = .remoteDataFetched
-                    self.callback { completion?(nil) }
-                case let .failure(error):
-                    self.state = .remoteDataFetchFailed(ClientError(with: error))
-                    self.callback { completion?(error) }
+    func synchronize(
+        isInRecoveryMode: Bool,
+        _ completion: (@MainActor (_ error: Error?) -> Void)? = nil
+    ) {
+        clearStaleMidPageStateIfNeeded(isInRecoveryMode: isInRecoveryMode) { [weak self] in
+            guard let self else { return }
+            let channelCreatedCallback = self.isChannelAlreadyCreated ? nil : self.channelCreated(forwardErrorTo: self.setLocalStateBasedOnError)
+            self.updater.update(
+                channelQuery: self.channelQuery,
+                isInRecoveryMode: isInRecoveryMode,
+                onChannelCreated: channelCreatedCallback,
+                completion: { result in
+                    switch result {
+                    case .success:
+                        self.state = .remoteDataFetched
+                        self.callback { completion?(nil) }
+                    case let .failure(error):
+                        self.state = .remoteDataFetchFailed(ClientError(with: error))
+                        self.callback { completion?(error) }
+                    }
                 }
-            }
-        )
+            )
 
-        /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
-        /// Otherwise they will be set up after channel creation, in `set(cid:)`.
-        if let cid = cid {
-            setupEventObservers(for: cid)
-            setLocalStateBasedOnError(startDatabaseObservers())
+            /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
+            /// Otherwise they will be set up after channel creation, in `set(cid:)`.
+            if let cid = self.cid {
+                self.setupEventObservers(for: cid)
+                self.setLocalStateBasedOnError(self.startDatabaseObservers())
+            }
         }
+    }
+
+    /// When the channel was last left in a mid-page state (the user jumped to a message and
+    /// navigated away before scrolling back to the bottom), the local cache still holds the
+    /// mid-page slice and the corresponding `oldestMessageAt`/`newestMessageAt` bounds.
+    ///
+    /// On a fresh first-page synchronize we want the message list to start empty and only get
+    /// populated by the incoming first-page response, instead of briefly rendering the stale
+    /// mid-page slice that the database observer would otherwise pick up. We achieve that by
+    /// dropping the cached messages and resetting the bounds before the observers start.
+    ///
+    /// The pre-check is performed synchronously so that the common path (no stale state) is
+    /// kept fully synchronous and consumers continue to observe the controller calling the
+    /// updater inline with `synchronize`.
+    func clearStaleMidPageStateIfNeeded(
+        isInRecoveryMode: Bool,
+        _ completion: @escaping @Sendable () -> Void
+    ) {
+        let isFirstPageFetch = channelQuery.pagination?.parameter == nil
+        guard !isInRecoveryMode,
+              isFirstPageFetch,
+              let cid = cid,
+              channelHasStaleMidPageState(cid: cid) else {
+            completion()
+            return
+        }
+
+        client.databaseContainer.write({ session in
+            guard let channelDTO = session.channel(cid: cid),
+                  channelDTO.newestMessageAt != nil else { return }
+            channelDTO.cleanAllMessagesExcludingLocalOnly()
+            channelDTO.oldestMessageAt = nil
+            channelDTO.newestMessageAt = nil
+        }, completion: { _ in
+            DispatchQueue.main.async { completion() }
+        })
+    }
+
+    /// Returns true when the channel cache has been left paginated to a mid-page (i.e. the user
+    /// jumped to a message and there are still newer messages on the server that haven't been
+    /// loaded). Read happens on the background read-only context so it is safe to call from any
+    /// thread.
+    func channelHasStaleMidPageState(cid: ChannelId) -> Bool {
+        let context = client.databaseContainer.backgroundReadOnlyContext
+        nonisolated(unsafe) var hasStaleMidPageState = false
+        context.performAndWait {
+            hasStaleMidPageState = context.channel(cid: cid)?.newestMessageAt != nil
+        }
+        return hasStaleMidPageState
     }
 
     /// Sets new cid of the query if necessary, and resets event and database observers.
