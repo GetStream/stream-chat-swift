@@ -584,6 +584,77 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertTrue(channel.latestMessages.allSatisfy { $0.id.hasPrefix("latest-") })
     }
 
+    func test_updateChannelQuery_whenIsJumpingToMessage_thenMessageObserverDropsOutOfBoundsMessages() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+
+        // Cache the channel's newest 5 messages (the channel has been previously
+        // synchronized from the latest page). After the mid-page jump these will be
+        // newer than the new `newestMessageAt`, i.e. outside the active page.
+        let latestMessages: [MessagePayload] = (0..<5).map { offset in
+            .dummy(
+                messageId: "latest-\(offset)",
+                createdAt: Date().addingTimeInterval(-Double(offset))
+            )
+        }
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(
+                with: cid,
+                messages: latestMessages
+            ))
+        }
+
+        // Same observer the UIKit `ChatChannelController` and the state-layer `Chat`
+        // use for the active page. Wiring it here lets us assert the FRC actually
+        // drops out-of-bounds messages after a mid-page jump.
+        let observer = BackgroundListDatabaseObserver<ChatMessage, MessageDTO>(
+            database: database,
+            fetchRequest: MessageDTO.messagesFetchRequest(
+                for: cid,
+                pageSize: .messagesPageSize,
+                sortAscending: false,
+                shouldShowShadowedMessages: false
+            ),
+            itemCreator: { try $0.asModel() }
+        )
+        try observer.startObserving()
+        AssertAsync.willBeEqual(observer.items.count, 5)
+
+        // Simulate a mid-page jump that lands on messages much older than the cached
+        // newest slice, so the new `(oldestMessageAt, newestMessageAt)` window does
+        // not contain any of the previously-cached messages.
+        let midPageBaseDate = Date().addingTimeInterval(-3600)
+        let midPageMessages: [MessagePayload] = (0..<5).map { offset in
+            .dummy(
+                messageId: "mid-\(offset)",
+                createdAt: midPageBaseDate.addingTimeInterval(-Double(offset))
+            )
+        }
+        // The mock pagination handler's `end` is a no-op; pre-set the state so the
+        // updater writes the mid-page bounds onto the channel.
+        paginationStateHandler.mockState.oldestFetchedMessage = midPageMessages.last
+        paginationStateHandler.mockState.newestFetchedMessage = midPageMessages.first
+
+        let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
+        let expectation = self.expectation(description: "Update completes")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { _ in
+            expectation.fulfill()
+        })
+        apiClient.test_simulateResponse(.success(dummyPayload(with: cid, messages: midPageMessages)))
+        waitForExpectations(timeout: defaultTimeout)
+
+        // The cached newest 5 messages remain linked to the channel — that is what
+        // keeps `channel.latestMessages` correct for the channel-list preview.
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channelDTO.messages.count, latestMessages.count + midPageMessages.count)
+
+        // But the active-page observer must only see the mid-page slice. Without the
+        // bounds-change nudge in `ChannelUpdater.update`, the FRC would still hold the
+        // 5 previously-cached messages (FRC does not re-evaluate cached rows when
+        // only the parent channel's `oldestMessageAt`/`newestMessageAt` change).
+        AssertAsync.willBeEqual(observer.items.count, midPageMessages.count)
+        XCTAssertTrue(observer.items.allSatisfy { $0.id.hasPrefix("mid-") })
+    }
+
     func test_updateChannelQuery_whenIsJumpingToMessage_whenRequestFails_thenDoesNotDeleteMessages() throws {
         let cid = ChannelId(type: .messaging, id: .unique)
         let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
