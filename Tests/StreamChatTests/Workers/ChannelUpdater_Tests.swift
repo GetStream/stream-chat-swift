@@ -512,7 +512,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(channel?.messages.count, 4)
     }
 
-    func test_updateChannelQuery_whenIsJumpingToMessage_thenDeleteAllPreviousMessagesFromChannel() throws {
+    func test_updateChannelQuery_whenIsJumpingToMessage_thenPreservesPreviouslyCachedMessages() throws {
         let cid = ChannelId(type: .messaging, id: .unique)
         let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
 
@@ -528,14 +528,60 @@ final class ChannelUpdater_Tests: XCTestCase {
             expectation.fulfill()
         })
 
-        let expectedMessagesCount = 5
-        let payload = dummyPayload(with: cid, numberOfMessages: expectedMessagesCount)
+        let midPageMessagesCount = 5
+        let payload = dummyPayload(with: cid, numberOfMessages: midPageMessagesCount)
         apiClient.test_simulateResponse(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
 
         let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        XCTAssertEqual(channel.messages.count, expectedMessagesCount)
+        // Mid-page jump must not wipe the cached messages, otherwise the channel's
+        // `latestMessages` (used for the channel list preview) would be lost.
+        XCTAssertEqual(channel.messages.count, previousMessagesCount + midPageMessagesCount)
+    }
+
+    func test_updateChannelQuery_whenIsJumpingToMessage_thenChannelLatestMessagesArePreserved() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+
+        // Start from the channel's actual newest 5 messages (newest is `latest-0`).
+        let latestMessages: [MessagePayload] = (0..<5).map { offset in
+            .dummy(
+                messageId: "latest-\(offset)",
+                createdAt: Date().addingTimeInterval(-Double(offset))
+            )
+        }
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(
+                with: cid,
+                messages: latestMessages
+            ))
+        }
+
+        // Jump to a mid-page far older than the cached messages.
+        let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
+        let midPageBaseDate = Date().addingTimeInterval(-3600)
+        let midPageMessages: [MessagePayload] = (0..<5).map { offset in
+            .dummy(
+                messageId: "mid-\(offset)",
+                createdAt: midPageBaseDate.addingTimeInterval(-Double(offset))
+            )
+        }
+
+        let expectation = self.expectation(description: "Update completes")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { _ in
+            expectation.fulfill()
+        })
+        apiClient.test_simulateResponse(.success(dummyPayload(with: cid, messages: midPageMessages)))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        let channel = try XCTUnwrap(
+            try database.viewContext.channel(cid: cid)?.asModel()
+        )
+        // The channel preview must still surface the actually latest messages,
+        // not the mid-page slice that the active controller is paginating.
+        XCTAssertEqual(channel.latestMessages.first?.id, "latest-0")
+        XCTAssertTrue(channel.latestMessages.allSatisfy { $0.id.hasPrefix("latest-") })
     }
 
     func test_updateChannelQuery_whenIsJumpingToMessage_whenRequestFails_thenDoesNotDeleteMessages() throws {
@@ -554,14 +600,12 @@ final class ChannelUpdater_Tests: XCTestCase {
             expectation.fulfill()
         })
 
-        let expectedMessagesCount = previousMessagesCount
-        let payload = dummyPayload(with: cid, numberOfMessages: expectedMessagesCount)
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(ClientError("fake")))
 
         waitForExpectations(timeout: defaultTimeout)
 
         let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        XCTAssertEqual(channel.messages.count, expectedMessagesCount)
+        XCTAssertEqual(channel.messages.count, previousMessagesCount)
     }
 
     // MARK: - Messages

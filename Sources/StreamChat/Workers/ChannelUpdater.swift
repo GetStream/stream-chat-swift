@@ -51,9 +51,8 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         paginationStateHandler.begin(pagination: pagination)
 
         let didLoadFirstPage = channelQuery.pagination?.parameter == nil
-        let didJumpToMessage: Bool = channelQuery.pagination?.parameter?.isJumpingToMessage == true
         let resetMembersAndReads = didLoadFirstPage
-        let resetMessages = didLoadFirstPage || didJumpToMessage
+        let resetMessages = didLoadFirstPage
         let resetWatchers = didLoadFirstPage
         let isChannelCreate = onChannelCreated != nil
 
