@@ -512,7 +512,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(channel?.messages.count, 4)
     }
 
-    func test_updateChannelQuery_whenIsJumpingToMessage_thenDeleteAllPreviousMessagesFromChannel() throws {
+    func test_updateChannelQuery_whenIsJumpingToMessage_thenPreservesPreviouslyCachedMessages() throws {
         let cid = ChannelId(type: .messaging, id: .unique)
         let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
 
@@ -528,14 +528,131 @@ final class ChannelUpdater_Tests: XCTestCase {
             expectation.fulfill()
         })
 
-        let expectedMessagesCount = 5
-        let payload = dummyPayload(with: cid, numberOfMessages: expectedMessagesCount)
+        let midPageMessagesCount = 5
+        let payload = dummyPayload(with: cid, numberOfMessages: midPageMessagesCount)
         apiClient.test_simulateResponse(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
 
         let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        XCTAssertEqual(channel.messages.count, expectedMessagesCount)
+        // Mid-page jump must not wipe the cached messages, otherwise the channel's
+        // `latestMessages` (used for the channel list preview) would be lost.
+        XCTAssertEqual(channel.messages.count, previousMessagesCount + midPageMessagesCount)
+    }
+
+    func test_updateChannelQuery_whenIsJumpingToMessage_thenChannelLatestMessagesArePreserved() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+
+        // Start from the channel's actual newest 5 messages (newest is `latest-0`).
+        let latestMessages: [MessagePayload] = (0..<5).map { offset in
+            .dummy(
+                messageId: "latest-\(offset)",
+                createdAt: Date().addingTimeInterval(-Double(offset))
+            )
+        }
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(
+                with: cid,
+                messages: latestMessages
+            ))
+        }
+
+        // Jump to a mid-page far older than the cached messages.
+        let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
+        let midPageBaseDate = Date().addingTimeInterval(-3600)
+        let midPageMessages: [MessagePayload] = (0..<5).map { offset in
+            .dummy(
+                messageId: "mid-\(offset)",
+                createdAt: midPageBaseDate.addingTimeInterval(-Double(offset))
+            )
+        }
+
+        let expectation = self.expectation(description: "Update completes")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { _ in
+            expectation.fulfill()
+        })
+        apiClient.test_simulateResponse(.success(dummyPayload(with: cid, messages: midPageMessages)))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        let channel = try XCTUnwrap(
+            try database.viewContext.channel(cid: cid)?.asModel()
+        )
+        // The channel preview must still surface the actually latest messages,
+        // not the mid-page slice that the active controller is paginating.
+        let expectedLatestIds = (0..<channel.latestMessages.count).map { "latest-\($0)" }
+        XCTAssertEqual(channel.latestMessages.map(\.id), expectedLatestIds)
+    }
+
+    func test_updateChannelQuery_whenIsJumpingToMessage_thenMessageObserverDropsOutOfBoundsMessages() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+
+        // Cache the channel's newest 5 messages (the channel has been previously
+        // synchronized from the latest page). After the mid-page jump these will be
+        // newer than the new `newestMessageAt`, i.e. outside the active page.
+        let latestMessages: [MessagePayload] = (0..<5).map { offset in
+            .dummy(
+                messageId: "latest-\(offset)",
+                createdAt: Date().addingTimeInterval(-Double(offset))
+            )
+        }
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: self.dummyPayload(
+                with: cid,
+                messages: latestMessages
+            ))
+        }
+
+        // Same observer the UIKit `ChatChannelController` and the state-layer `Chat`
+        // use for the active page. Wiring it here lets us assert the FRC actually
+        // drops out-of-bounds messages after a mid-page jump.
+        let observer = BackgroundListDatabaseObserver<ChatMessage, MessageDTO>(
+            database: database,
+            fetchRequest: MessageDTO.messagesFetchRequest(
+                for: cid,
+                pageSize: .messagesPageSize,
+                sortAscending: false,
+                shouldShowShadowedMessages: false
+            ),
+            itemCreator: { try $0.asModel() }
+        )
+        try observer.startObserving()
+        AssertAsync.willBeEqual(observer.items.count, 5)
+
+        // Simulate a mid-page jump that lands on messages much older than the cached
+        // newest slice, so the new `(oldestMessageAt, newestMessageAt)` window does
+        // not contain any of the previously-cached messages.
+        let midPageBaseDate = Date().addingTimeInterval(-3600)
+        let midPageMessages: [MessagePayload] = (0..<5).map { offset in
+            .dummy(
+                messageId: "mid-\(offset)",
+                createdAt: midPageBaseDate.addingTimeInterval(-Double(offset))
+            )
+        }
+        // The mock pagination handler's `end` is a no-op; pre-set the state so the
+        // updater writes the mid-page bounds onto the channel.
+        paginationStateHandler.mockState.oldestFetchedMessage = midPageMessages.last
+        paginationStateHandler.mockState.newestFetchedMessage = midPageMessages.first
+
+        let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
+        let expectation = self.expectation(description: "Update completes")
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { _ in
+            expectation.fulfill()
+        })
+        apiClient.test_simulateResponse(.success(dummyPayload(with: cid, messages: midPageMessages)))
+        waitForExpectations(timeout: defaultTimeout)
+
+        // The cached newest 5 messages remain linked to the channel — that is what
+        // keeps `channel.latestMessages` correct for the channel-list preview.
+        let channelDTO = try XCTUnwrap(database.viewContext.channel(cid: cid))
+        XCTAssertEqual(channelDTO.messages.count, latestMessages.count + midPageMessages.count)
+
+        // But the active-page observer must only see the mid-page slice. Without the
+        // bounds-change nudge in `ChannelUpdater.update`, the FRC would still hold the
+        // 5 previously-cached messages (FRC does not re-evaluate cached rows when
+        // only the parent channel's `oldestMessageAt`/`newestMessageAt` change).
+        AssertAsync.willBeEqual(observer.items.count, midPageMessages.count)
+        XCTAssertTrue(observer.items.allSatisfy { $0.id.hasPrefix("mid-") })
     }
 
     func test_updateChannelQuery_whenIsJumpingToMessage_whenRequestFails_thenDoesNotDeleteMessages() throws {
@@ -554,14 +671,89 @@ final class ChannelUpdater_Tests: XCTestCase {
             expectation.fulfill()
         })
 
-        let expectedMessagesCount = previousMessagesCount
-        let payload = dummyPayload(with: cid, numberOfMessages: expectedMessagesCount)
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(ClientError("fake")))
 
         waitForExpectations(timeout: defaultTimeout)
 
         let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        XCTAssertEqual(channel.messages.count, expectedMessagesCount)
+        XCTAssertEqual(channel.messages.count, previousMessagesCount)
+    }
+
+    // MARK: - Stale mid-page state cleanup
+
+    // Verified by driving the public `update(channelQuery:isInRecoveryMode:)` entry point: the
+    // cleanup runs synchronously at the top of `update` before the network request is dispatched
+    // to the API spy, so we can assert immediately after the call without simulating a response.
+
+    func test_updateChannelQuery_whenChannelHasStaleMidPageState_clearsCacheBeforeFetching() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        try database.writeSynchronously { session in
+            let payload = self.dummyPayload(with: cid, numberOfMessages: 5)
+            let channelDTO = try session.saveChannel(payload: payload)
+            channelDTO.oldestMessageAt = .init(timeIntervalSinceNow: -200)
+            channelDTO.newestMessageAt = .init(timeIntervalSinceNow: -100)
+        }
+
+        channelUpdater.update(channelQuery: ChannelQuery(cid: cid), isInRecoveryMode: false)
+
+        try database.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: cid))
+            XCTAssertEqual(dto.messages.count, 0)
+            XCTAssertNil(dto.oldestMessageAt)
+            XCTAssertNil(dto.newestMessageAt)
+        }
+    }
+
+    func test_updateChannelQuery_whenChannelHasNoStaleMidPageState_keepsLocalCache() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        try database.writeSynchronously { session in
+            let payload = self.dummyPayload(with: cid, numberOfMessages: 5)
+            let channelDTO = try session.saveChannel(payload: payload)
+            channelDTO.newestMessageAt = nil
+        }
+
+        channelUpdater.update(channelQuery: ChannelQuery(cid: cid), isInRecoveryMode: false)
+
+        try database.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: cid))
+            XCTAssertEqual(dto.messages.count, 5)
+        }
+    }
+
+    func test_updateChannelQuery_whenInRecoveryMode_keepsLocalCacheEvenIfMidPageStateIsStale() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        try database.writeSynchronously { session in
+            let payload = self.dummyPayload(with: cid, numberOfMessages: 5)
+            let channelDTO = try session.saveChannel(payload: payload)
+            channelDTO.newestMessageAt = .init(timeIntervalSinceNow: -100)
+        }
+
+        channelUpdater.update(channelQuery: ChannelQuery(cid: cid), isInRecoveryMode: true)
+
+        try database.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: cid))
+            XCTAssertEqual(dto.messages.count, 5)
+            XCTAssertNotNil(dto.newestMessageAt)
+        }
+    }
+
+    func test_updateChannelQuery_whenPaginationParameterIsSet_keepsLocalCacheEvenIfMidPageStateIsStale() throws {
+        let cid = ChannelId(type: .messaging, id: .unique)
+        try database.writeSynchronously { session in
+            let payload = self.dummyPayload(with: cid, numberOfMessages: 5)
+            let channelDTO = try session.saveChannel(payload: payload)
+            channelDTO.newestMessageAt = .init(timeIntervalSinceNow: -100)
+        }
+
+        // A query with a pagination parameter is NOT a fresh first-page fetch.
+        let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false)
+
+        try database.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: cid))
+            XCTAssertEqual(dto.messages.count, 5)
+            XCTAssertNotNil(dto.newestMessageAt)
+        }
     }
 
     // MARK: - Messages

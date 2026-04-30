@@ -101,9 +101,17 @@ class ChannelDTO: NSManagedObject {
             }
         }
 
-        // Change to the `truncatedAt` value have effect on messages, we need to mark them dirty manually
-        // to triggers related FRC updates
-        if changedValues().keys.contains("truncatedAt") {
+        // Changes to `truncatedAt` or to the message-page bounds (`oldestMessageAt` /
+        // `newestMessageAt`) affect which linked messages belong to the channel's
+        // active page (see `MessageDTO.channelMessagesPredicate`). NSFetchedResultsController
+        // does not re-evaluate cached rows when only the parent ChannelDTO changes,
+        // so mark linked messages as dirty to nudge any active FRC into re-running
+        // its predicate against them.
+        let changedKeys = changedValues().keys
+        let pageBoundsDidChange = changedKeys.contains("truncatedAt")
+            || changedKeys.contains("oldestMessageAt")
+            || changedKeys.contains("newestMessageAt")
+        if pageBoundsDidChange {
             messages
                 .filter { !$0.hasChanges }
                 .forEach {
@@ -111,12 +119,12 @@ class ChannelDTO: NSManagedObject {
                     $0.willChangeValue(for: \.id)
                     $0.didChangeValue(for: \.id)
                 }
+        }
 
-            // When truncating the channel, we need to reset the newestMessageAt so that
-            // the channel can render newer messages in the UI.
-            if newestMessageAt != nil {
-                newestMessageAt = nil
-            }
+        // When truncating the channel, we need to reset the newestMessageAt so that
+        // the channel can render newer messages in the UI.
+        if changedKeys.contains("truncatedAt"), newestMessageAt != nil {
+            newestMessageAt = nil
         }
         
         // Update the date for sorting every time new message in this channel arrive.
