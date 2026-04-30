@@ -47,6 +47,12 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         actions: ChannelUpdateActions? = nil,
         completion: (@Sendable (Result<ChannelPayload, Error>) -> Void)? = nil
     ) {
+        // Drop any stale mid-page slice (and its bounds) synchronously before issuing
+        // the request, so any database observers the caller starts in parallel with
+        // `update` see a clean cache rather than briefly emitting the previous
+        // mid-page snapshot.
+        cleanStaleMidPageStateIfNeeded(for: channelQuery, isInRecoveryMode: isInRecoveryMode)
+
         let pagination = channelQuery.pagination
         paginationStateHandler.begin(pagination: pagination)
 
@@ -130,50 +136,39 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// mid-page slice that the database observers would otherwise pick up. We achieve that
     /// by dropping the cached messages and resetting the bounds before the observers fire.
     ///
-    /// The pre-check is performed synchronously (cheap DB read) so that the common path —
-    /// no stale state — stays fully synchronous and consumers can keep calling the updater
-    /// inline with `synchronize` / `get`.
+    /// The pre-check (`channelHasStaleMidPageState`) reads from the background read-only
+    /// context, so the no-op common path is fast and never touches the writable context.
+    /// When stale state is detected, the cleanup runs synchronously on the writable context
+    /// so that observers started by the caller in parallel with `update` see a clean cache.
     ///
-    /// Caller responsibility:
-    /// - Only call when about to issue a fresh first-page request (i.e. `channelQuery.pagination?.parameter == nil`).
-    /// - Skip in recovery mode: the recovery flow re-fetches state with different semantics
-    ///   and shouldn't disturb the local cache.
+    /// Marked internal (not private) so the cleanup behavior can be unit-tested directly
+    /// without driving a full `update` round-trip.
     func cleanStaleMidPageStateIfNeeded(
         for channelQuery: ChannelQuery,
-        isInRecoveryMode: Bool,
-        completion: @escaping @Sendable () -> Void
+        isInRecoveryMode: Bool
     ) {
         let isFirstPageFetch = channelQuery.pagination?.parameter == nil
         guard !isInRecoveryMode,
               isFirstPageFetch,
               let cid = channelQuery.cid,
               channelHasStaleMidPageState(cid: cid) else {
-            completion()
             return
         }
 
-        database.write({ session in
-            guard let channelDTO = session.channel(cid: cid),
+        let writableContext = database.writableContext
+        writableContext.performAndWait {
+            guard let channelDTO = writableContext.channel(cid: cid),
                   channelDTO.newestMessageAt != nil else { return }
             channelDTO.cleanAllMessagesExcludingLocalOnly()
             channelDTO.oldestMessageAt = nil
             channelDTO.newestMessageAt = nil
-        }, completion: { _ in
-            DispatchQueue.main.async { completion() }
-        })
-    }
-
-    /// Async variant of ``cleanStaleMidPageStateIfNeeded(for:isInRecoveryMode:completion:)``.
-    func cleanStaleMidPageStateIfNeeded(
-        for channelQuery: ChannelQuery,
-        isInRecoveryMode: Bool
-    ) async {
-        await withCheckedContinuation { continuation in
-            cleanStaleMidPageStateIfNeeded(
-                for: channelQuery,
-                isInRecoveryMode: isInRecoveryMode
-            ) {
-                continuation.resume()
+            do {
+                if writableContext.hasChanges {
+                    try writableContext.save()
+                }
+            } catch {
+                log.error("Failed to clean stale mid-page state: \(error)", subsystems: .database)
+                writableContext.reset()
             }
         }
     }

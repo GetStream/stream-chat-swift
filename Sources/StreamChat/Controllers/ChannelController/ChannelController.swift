@@ -1930,34 +1930,31 @@ private extension ChatChannelController {
         isInRecoveryMode: Bool,
         _ completion: (@MainActor (_ error: Error?) -> Void)? = nil
     ) {
-        updater.cleanStaleMidPageStateIfNeeded(
-            for: channelQuery,
-            isInRecoveryMode: isInRecoveryMode
-        ) { [weak self] in
-            guard let self else { return }
-            let channelCreatedCallback = self.isChannelAlreadyCreated ? nil : self.channelCreated(forwardErrorTo: self.setLocalStateBasedOnError)
-            self.updater.update(
-                channelQuery: self.channelQuery,
-                isInRecoveryMode: isInRecoveryMode,
-                onChannelCreated: channelCreatedCallback,
-                completion: { result in
-                    switch result {
-                    case .success:
-                        self.state = .remoteDataFetched
-                        self.callback { completion?(nil) }
-                    case let .failure(error):
-                        self.state = .remoteDataFetchFailed(ClientError(with: error))
-                        self.callback { completion?(error) }
-                    }
+        let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
+        // `update` performs any required stale mid-page cleanup synchronously before
+        // dispatching the network request, so observers we start below in parallel
+        // with the API call see a clean cache.
+        updater.update(
+            channelQuery: channelQuery,
+            isInRecoveryMode: isInRecoveryMode,
+            onChannelCreated: channelCreatedCallback,
+            completion: { result in
+                switch result {
+                case .success:
+                    self.state = .remoteDataFetched
+                    self.callback { completion?(nil) }
+                case let .failure(error):
+                    self.state = .remoteDataFetchFailed(ClientError(with: error))
+                    self.callback { completion?(error) }
                 }
-            )
-
-            /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
-            /// Otherwise they will be set up after channel creation, in `set(cid:)`.
-            if let cid = self.cid {
-                self.setupEventObservers(for: cid)
-                self.setLocalStateBasedOnError(self.startDatabaseObservers())
             }
+        )
+
+        /// Setup observers if we know the channel `cid` (if it's missing, it'll be set in `set(cid:)`
+        /// Otherwise they will be set up after channel creation, in `set(cid:)`.
+        if let cid = cid {
+            setupEventObservers(for: cid)
+            setLocalStateBasedOnError(startDatabaseObservers())
         }
     }
 

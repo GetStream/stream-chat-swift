@@ -690,18 +690,15 @@ final class ChannelUpdater_Tests: XCTestCase {
             channelDTO.newestMessageAt = .init(timeIntervalSinceNow: -100)
         }
 
-        let query = ChannelQuery(cid: cid)
+        // Sync helper — no completion to wait on.
+        channelUpdater.cleanStaleMidPageStateIfNeeded(for: ChannelQuery(cid: cid), isInRecoveryMode: false)
 
-        let expectation = self.expectation(description: "Cleanup completes")
-        channelUpdater.cleanStaleMidPageStateIfNeeded(for: query, isInRecoveryMode: false) {
-            expectation.fulfill()
+        try database.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: cid))
+            XCTAssertEqual(dto.messages.count, 0)
+            XCTAssertNil(dto.oldestMessageAt)
+            XCTAssertNil(dto.newestMessageAt)
         }
-        waitForExpectations(timeout: defaultTimeout)
-
-        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        XCTAssertEqual(channel.messages.count, 0)
-        XCTAssertNil(channel.oldestMessageAt)
-        XCTAssertNil(channel.newestMessageAt)
     }
 
     func test_cleanStaleMidPageStateIfNeeded_whenChannelHasNoStaleMidPageState_skipsCleanup() throws {
@@ -712,16 +709,12 @@ final class ChannelUpdater_Tests: XCTestCase {
             channelDTO.newestMessageAt = nil
         }
 
-        let query = ChannelQuery(cid: cid)
+        channelUpdater.cleanStaleMidPageStateIfNeeded(for: ChannelQuery(cid: cid), isInRecoveryMode: false)
 
-        let expectation = self.expectation(description: "Cleanup completes")
-        channelUpdater.cleanStaleMidPageStateIfNeeded(for: query, isInRecoveryMode: false) {
-            expectation.fulfill()
+        try database.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: cid))
+            XCTAssertEqual(dto.messages.count, 5)
         }
-        waitForExpectations(timeout: defaultTimeout)
-
-        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        XCTAssertEqual(channel.messages.count, 5)
     }
 
     func test_cleanStaleMidPageStateIfNeeded_whenInRecoveryMode_skipsCleanup() throws {
@@ -732,17 +725,13 @@ final class ChannelUpdater_Tests: XCTestCase {
             channelDTO.newestMessageAt = .init(timeIntervalSinceNow: -100)
         }
 
-        let query = ChannelQuery(cid: cid)
+        channelUpdater.cleanStaleMidPageStateIfNeeded(for: ChannelQuery(cid: cid), isInRecoveryMode: true)
 
-        let expectation = self.expectation(description: "Cleanup completes")
-        channelUpdater.cleanStaleMidPageStateIfNeeded(for: query, isInRecoveryMode: true) {
-            expectation.fulfill()
+        try database.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: cid))
+            XCTAssertEqual(dto.messages.count, 5)
+            XCTAssertNotNil(dto.newestMessageAt)
         }
-        waitForExpectations(timeout: defaultTimeout)
-
-        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        XCTAssertEqual(channel.messages.count, 5)
-        XCTAssertNotNil(channel.newestMessageAt)
     }
 
     func test_cleanStaleMidPageStateIfNeeded_whenPaginationParameterIsSet_skipsCleanup() throws {
@@ -755,16 +744,13 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // A query with a pagination parameter is NOT a fresh first-page fetch.
         let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
+        channelUpdater.cleanStaleMidPageStateIfNeeded(for: query, isInRecoveryMode: false)
 
-        let expectation = self.expectation(description: "Cleanup completes")
-        channelUpdater.cleanStaleMidPageStateIfNeeded(for: query, isInRecoveryMode: false) {
-            expectation.fulfill()
+        try database.readSynchronously { session in
+            let dto = try XCTUnwrap(session.channel(cid: cid))
+            XCTAssertEqual(dto.messages.count, 5)
+            XCTAssertNotNil(dto.newestMessageAt)
         }
-        waitForExpectations(timeout: defaultTimeout)
-
-        let channel = try XCTUnwrap(database.viewContext.channel(cid: cid))
-        XCTAssertEqual(channel.messages.count, 5)
-        XCTAssertNotNil(channel.newestMessageAt)
     }
 
     // MARK: - Messages
