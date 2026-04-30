@@ -679,9 +679,13 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(channel.messages.count, previousMessagesCount)
     }
 
-    // MARK: - cleanStaleMidPageStateIfNeeded
+    // MARK: - Stale mid-page state cleanup
 
-    func test_cleanStaleMidPageStateIfNeeded_whenChannelHasStaleMidPageState_clearsCache() throws {
+    // Verified by driving the public `update(channelQuery:isInRecoveryMode:)` entry point: the
+    // cleanup runs synchronously at the top of `update` before the network request is dispatched
+    // to the API spy, so we can assert immediately after the call without simulating a response.
+
+    func test_updateChannelQuery_whenChannelHasStaleMidPageState_clearsCacheBeforeFetching() throws {
         let cid = ChannelId(type: .messaging, id: .unique)
         try database.writeSynchronously { session in
             let payload = self.dummyPayload(with: cid, numberOfMessages: 5)
@@ -690,8 +694,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             channelDTO.newestMessageAt = .init(timeIntervalSinceNow: -100)
         }
 
-        // Sync helper — no completion to wait on.
-        channelUpdater.cleanStaleMidPageStateIfNeeded(for: ChannelQuery(cid: cid), isInRecoveryMode: false)
+        channelUpdater.update(channelQuery: ChannelQuery(cid: cid), isInRecoveryMode: false)
 
         try database.readSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: cid))
@@ -701,7 +704,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
     }
 
-    func test_cleanStaleMidPageStateIfNeeded_whenChannelHasNoStaleMidPageState_skipsCleanup() throws {
+    func test_updateChannelQuery_whenChannelHasNoStaleMidPageState_keepsLocalCache() throws {
         let cid = ChannelId(type: .messaging, id: .unique)
         try database.writeSynchronously { session in
             let payload = self.dummyPayload(with: cid, numberOfMessages: 5)
@@ -709,7 +712,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             channelDTO.newestMessageAt = nil
         }
 
-        channelUpdater.cleanStaleMidPageStateIfNeeded(for: ChannelQuery(cid: cid), isInRecoveryMode: false)
+        channelUpdater.update(channelQuery: ChannelQuery(cid: cid), isInRecoveryMode: false)
 
         try database.readSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: cid))
@@ -717,7 +720,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
     }
 
-    func test_cleanStaleMidPageStateIfNeeded_whenInRecoveryMode_skipsCleanup() throws {
+    func test_updateChannelQuery_whenInRecoveryMode_keepsLocalCacheEvenIfMidPageStateIsStale() throws {
         let cid = ChannelId(type: .messaging, id: .unique)
         try database.writeSynchronously { session in
             let payload = self.dummyPayload(with: cid, numberOfMessages: 5)
@@ -725,7 +728,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             channelDTO.newestMessageAt = .init(timeIntervalSinceNow: -100)
         }
 
-        channelUpdater.cleanStaleMidPageStateIfNeeded(for: ChannelQuery(cid: cid), isInRecoveryMode: true)
+        channelUpdater.update(channelQuery: ChannelQuery(cid: cid), isInRecoveryMode: true)
 
         try database.readSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: cid))
@@ -734,7 +737,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         }
     }
 
-    func test_cleanStaleMidPageStateIfNeeded_whenPaginationParameterIsSet_skipsCleanup() throws {
+    func test_updateChannelQuery_whenPaginationParameterIsSet_keepsLocalCacheEvenIfMidPageStateIsStale() throws {
         let cid = ChannelId(type: .messaging, id: .unique)
         try database.writeSynchronously { session in
             let payload = self.dummyPayload(with: cid, numberOfMessages: 5)
@@ -744,7 +747,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // A query with a pagination parameter is NOT a fresh first-page fetch.
         let query = ChannelQuery(cid: cid, paginationParameter: .around(.unique))
-        channelUpdater.cleanStaleMidPageStateIfNeeded(for: query, isInRecoveryMode: false)
+        channelUpdater.update(channelQuery: query, isInRecoveryMode: false)
 
         try database.readSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: cid))
