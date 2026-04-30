@@ -1931,9 +1931,6 @@ private extension ChatChannelController {
         _ completion: (@MainActor (_ error: Error?) -> Void)? = nil
     ) {
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
-        // `update` performs any required stale mid-page cleanup synchronously before
-        // dispatching the network request, so observers we start below in parallel
-        // with the API call see a clean cache.
         updater.update(
             channelQuery: channelQuery,
             isInRecoveryMode: isInRecoveryMode,

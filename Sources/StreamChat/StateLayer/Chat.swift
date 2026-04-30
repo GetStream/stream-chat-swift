@@ -83,9 +83,6 @@ public class Chat: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func get(watch: Bool) async throws {
         let query = await state.channelQuery.withOptions(forWatching: watch)
-        // `update` performs any required stale mid-page cleanup synchronously before
-        // dispatching the request, so the message observer doesn't briefly emit the
-        // previous mid-page slice ahead of the API response.
         let payload = try await channelUpdater.update(
             channelQuery: query,
             memberSorting: state.memberSorting
