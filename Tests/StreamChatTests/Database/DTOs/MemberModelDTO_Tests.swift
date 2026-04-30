@@ -64,9 +64,10 @@ final class MemberModelDTO_Tests: XCTestCase {
         var loadedMember: ChatChannelMember? {
             try? database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         }
+        let payloadUser = try XCTUnwrap(payload.userPayload)
 
         AssertAsync {
-            Assert.willBeEqual(payload.role, loadedMember?.memberRole)
+            Assert.willBeEqual(payload.memberRole, loadedMember?.memberRole)
             Assert.willBeEqual(payload.createdAt, loadedMember?.memberCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedMember?.memberUpdatedAt)
             Assert.willBeEqual(payload.isBanned, loadedMember?.isBannedFromChannel)
@@ -74,18 +75,18 @@ final class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.isShadowBanned, loadedMember?.isShadowBannedFromChannel)
             Assert.willBeEqual(payload.notificationsMuted, loadedMember?.notificationsMuted)
 
-            Assert.willBeEqual(payload.user!.id, loadedMember?.id)
-            Assert.willBeEqual(payload.user!.isOnline, loadedMember?.isOnline)
-            Assert.willBeEqual(payload.user!.isBanned, loadedMember?.isBanned)
-            Assert.willBeEqual(payload.user!.role, loadedMember?.userRole)
-            Assert.willBeEqual(payload.user!.createdAt, loadedMember?.userCreatedAt)
-            Assert.willBeEqual(payload.user!.updatedAt, loadedMember?.userUpdatedAt)
-            Assert.willBeEqual(payload.user!.lastActiveAt, loadedMember?.lastActiveAt)
-            Assert.willBeEqual(payload.user!.extraData, loadedMember?.extraData)
-            Assert.willBeEqual(Set(payload.user!.teams), loadedMember?.teams)
-            Assert.willBeEqual(payload.user!.language!, loadedMember?.language?.languageCode)
+            Assert.willBeEqual(payloadUser.id, loadedMember?.id)
+            Assert.willBeEqual(payloadUser.isOnline, loadedMember?.isOnline)
+            Assert.willBeEqual(payloadUser.isBanned, loadedMember?.isBanned)
+            Assert.willBeEqual(payloadUser.userRole, loadedMember?.userRole)
+            Assert.willBeEqual(payloadUser.createdAt, loadedMember?.userCreatedAt)
+            Assert.willBeEqual(payloadUser.updatedAt, loadedMember?.userUpdatedAt)
+            Assert.willBeEqual(payloadUser.lastActiveAt, loadedMember?.lastActiveAt)
+            Assert.willBeEqual(payloadUser.extraData, loadedMember?.extraData)
+            Assert.willBeEqual(Set(payloadUser.teams), loadedMember?.teams)
+            Assert.willBeEqual(payloadUser.language, loadedMember?.language?.languageCode)
             Assert.willBeEqual(true, loadedMember?.memberExtraData["is_premium"]?.boolValue)
-            Assert.willBeEqual(payload.user!.teamsRole, loadedMember?.teamsRole)
+            Assert.willBeEqual(payloadUser.teamsRolePayload, loadedMember?.teamsRole)
         }
     }
 
@@ -208,7 +209,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         // GIVEN
         let userId = UserId.unique
         let channelId = ChannelId(type: .messaging, id: .unique)
-        let payload: MemberPayload = MemberPayload.dummy(user: .dummy(userId: userId))
+        let payload: MemberPayload = MemberPayload.dummy(user: UserPayload.dummy(userId: userId))
 
         let transformer = CustomMemberTransformer()
         var config = ChatClientConfig(apiKeyString: .unique)

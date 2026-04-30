@@ -13,9 +13,11 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var update_callCount = 0
 
     @Atomic var updateChannel_payload: ChannelEditDetailPayload?
+    @Atomic var updateChannel_cid: ChannelId?
     @Atomic var updateChannel_completion: ((Error?) -> Void)?
     @Atomic var updateChannel_completion_result: Result<Void, Error>?
 
+    @Atomic var partialChannelUpdate_cid: ChannelId?
     @Atomic var partialChannelUpdate_updates: ChannelEditDetailPayload?
     @Atomic var partialChannelUpdate_unsetProperties: [String]?
     @Atomic var partialChannelUpdate_completion: ((Error?) -> Void)?
@@ -337,13 +339,15 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         update_callCount += 1
     }
 
-    override func updateChannel(channelPayload: ChannelEditDetailPayload, completion: ((Error?) -> Void)? = nil) {
+    override func updateChannel(cid: ChannelId, channelPayload: ChannelEditDetailPayload, completion: ((Error?) -> Void)? = nil) {
+        updateChannel_cid = cid
         updateChannel_payload = channelPayload
         updateChannel_completion = completion
         updateChannel_completion_result?.invoke(with: completion)
     }
 
-    override func partialChannelUpdate(updates: ChannelEditDetailPayload, unsetProperties: [String], completion: ((Error?) -> Void)? = nil) {
+    override func partialChannelUpdate(cid: ChannelId, updates: ChannelEditDetailPayload, unsetProperties: [String], completion: ((Error?) -> Void)? = nil) {
+        partialChannelUpdate_cid = cid
         partialChannelUpdate_updates = updates
         partialChannelUpdate_unsetProperties = unsetProperties
         partialChannelUpdate_completion = completion

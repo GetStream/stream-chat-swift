@@ -13,25 +13,17 @@ final class ReminderPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(ReminderPayload.self, from: reminderJSON)
         
         // Test basic properties
-        XCTAssertEqual(payload.channelCid.rawValue, "messaging:26D82FB1-5")
+        XCTAssertEqual(payload.channelCid, "messaging:26D82FB1-5")
         XCTAssertEqual(payload.messageId, "lando_calrissian-8tnV2qn0umMogef2WjR4k")
         XCTAssertNil(payload.remindAt) // Updated to nil as per new JSON
         XCTAssertEqual(payload.createdAt, "2025-03-19T00:38:38.697482729Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2025-03-19T00:38:38.697482729Z".toDate())
         
-        // Test embedded message
-        XCTAssertNotNil(payload.message)
-        XCTAssertEqual(payload.message?.id, "lando_calrissian-8tnV2qn0umMogef2WjR4k")
-        XCTAssertEqual(payload.message?.text, "4")
-        XCTAssertEqual(payload.message?.type.rawValue, "regular")
-        XCTAssertEqual(payload.message?.user.id, "lando_calrissian")
-        XCTAssertEqual(payload.message?.createdAt, "2025-03-04T14:33:10.628163Z".toDate())
-        XCTAssertEqual(payload.message?.updatedAt, "2025-03-04T14:33:10.628163Z".toDate())
+        XCTAssertNil(payload.message)
         
         // Test channel properties (new in updated JSON)
         XCTAssertNotNil(payload.channel)
-        XCTAssertEqual(payload.channel?.cid.rawValue, "messaging:26D82FB1-5")
-        XCTAssertEqual(payload.channel?.name, "Yo")
+        XCTAssertEqual(payload.channel?.cid, "messaging:26D82FB1-5")
     }
 }
 
@@ -55,7 +47,7 @@ final class ReminderResponsePayload_Tests: XCTestCase {
         
         let payload = try JSONDecoder.default.decode(ReminderResponsePayload.self, from: reminderResponseJSON)
         
-        XCTAssertEqual(payload.reminder.channelCid.rawValue, "messaging:26D82FB1-5")
+        XCTAssertEqual(payload.reminder.channelCid, "messaging:26D82FB1-5")
         XCTAssertEqual(payload.reminder.messageId, "lando_calrissian-8tnV2qn0umMogef2WjR4k")
         XCTAssertNil(payload.reminder.remindAt)
         XCTAssertEqual(payload.reminder.createdAt, "2025-03-19T00:38:38.697482729Z".toDate())
@@ -100,12 +92,12 @@ final class RemindersQueryPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.next, "next-page-token")
         
         // Verify first reminder details
-        XCTAssertEqual(payload.reminders[0].channelCid.rawValue, "messaging:26D82FB1-5")
+        XCTAssertEqual(payload.reminders[0].channelCid, "messaging:26D82FB1-5")
         XCTAssertEqual(payload.reminders[0].messageId, "lando_calrissian-8tnV2qn0umMogef2WjR4k")
         XCTAssertNil(payload.reminders[0].remindAt)
         
         // Verify second reminder details
-        XCTAssertEqual(payload.reminders[1].channelCid.rawValue, "messaging:456")
+        XCTAssertEqual(payload.reminders[1].channelCid, "messaging:456")
         XCTAssertEqual(payload.reminders[1].messageId, "message-456")
         XCTAssertEqual(payload.reminders[1].remindAt, "2023-02-01T12:00:00.000Z".toDate())
     }

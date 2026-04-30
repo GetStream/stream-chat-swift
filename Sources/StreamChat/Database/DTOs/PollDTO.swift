@@ -143,7 +143,7 @@ extension PollDTO {
 
 extension NSManagedObjectContext {
     @discardableResult
-    func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO {
+    func savePoll(payload: PollPayload, cache: PreWarmedCache?, fromEvent: Bool = false) throws -> PollDTO {
         let pollDto = PollDTO.loadOrCreate(pollId: payload.id, context: self, cache: cache)
         
         pollDto.allowAnswers = payload.allowAnswers
@@ -162,34 +162,30 @@ extension NSManagedObjectContext {
         }
         pollDto.votingVisibility = payload.votingVisibility
         
-        if let custom = payload.custom, !custom.isEmpty {
-            pollDto.custom = try JSONEncoder.default.encode(custom)
+        if !payload.custom.isEmpty {
+            pollDto.custom = try JSONEncoder.default.encode(payload.custom)
         } else {
             pollDto.custom = nil
         }
         
         if let userPayload = payload.createdBy {
-            pollDto.createdBy = try saveUser(payload: userPayload, query: nil, cache: cache)
+            pollDto.createdBy = try saveUser(payload: userPayload.asUserPayload, query: nil, cache: cache)
         } else {
             pollDto.createdBy = UserDTO.loadOrCreate(id: payload.createdById, context: self, cache: cache)
         }
         pollDto.options = try NSOrderedSet(
-            array: payload.options.compactMap { payload in
-                if let payload {
-                    let optionDto = try savePollOption(
-                        payload: payload,
-                        pollId: payload.id,
-                        cache: cache
-                    )
-                    optionDto.poll = pollDto
-                    return optionDto
-                } else {
-                    return nil
-                }
+            array: try payload.options.map { payload in
+                let optionDto = try savePollOption(
+                    payload: payload,
+                    pollId: payload.id,
+                    cache: cache
+                )
+                optionDto.poll = pollDto
+                return optionDto
             }
         )
         pollDto.latestVotesByOption = try Set(
-            payload.latestVotesByOption?.compactMap { optionId, votesByOption in
+            payload.latestVotesByOption.compactMap { optionId, votesByOption in
                 let optionDto = PollOptionDTO.loadOrCreate(
                     pollId: payload.id,
                     optionId: optionId,
@@ -207,36 +203,30 @@ extension NSManagedObjectContext {
                 )
                 
                 return optionDto
-            } ?? []
+            }
         )
 
-        if let latestAnswers = payload.latestAnswers {
-            pollDto.latestVotes
-                .filter { $0.isAnswer }
-                .forEach {
-                    pollDto.latestVotes.remove($0)
-                }
-
-            try latestAnswers.forEach { payload in
-                if let payload {
-                    let answerDto = try savePollVote(payload: payload, query: nil, cache: cache)
-                    answerDto.poll = pollDto
-                }
+        pollDto.latestVotes
+            .filter { $0.isAnswer }
+            .forEach {
+                pollDto.latestVotes.remove($0)
             }
+
+        try payload.latestAnswers.forEach { payload in
+            let answerDto = try savePollVote(payload: payload, query: nil, cache: cache)
+            answerDto.poll = pollDto
         }
 
-        if let payloadOwnVotes = payload.ownVotes, !payload.fromEvent {
+        if !fromEvent {
             pollDto.latestVotes
                 .filter { !$0.isAnswer }
                 .forEach {
                     pollDto.latestVotes.remove($0)
                 }
 
-            try payloadOwnVotes.forEach { payload in
-                if let payload {
-                    let voteDto = try savePollVote(payload: payload, query: nil, cache: cache)
-                    voteDto.poll = pollDto
-                }
+            try payload.ownVotes.forEach { payload in
+                let voteDto = try savePollVote(payload: payload, query: nil, cache: cache)
+                voteDto.poll = pollDto
             }
         }
 

@@ -5,7 +5,9 @@
     "user_id" : "broken-waterfall-5",
     "type" : "love",
     "updated_at" : "2020-08-17T13:15:39.892884Z",
-    "mood" : "good one",
+    "custom" : {
+        "mood" : "good one"
+    },
     "user" : {
         "id" : "broken-waterfall-5",
         "banned" : false,
@@ -21,6 +23,9 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "John Doe"
-    }
+        "name" : "John Doe",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []}
 }

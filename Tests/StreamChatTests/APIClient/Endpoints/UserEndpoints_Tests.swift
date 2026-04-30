@@ -44,14 +44,15 @@ final class UserEndpoints_Tests: XCTestCase {
         )
         let unset = ["image", "name"]
 
-        let users: [String: AnyEncodable] = [
-            "id": AnyEncodable(userId),
-            "set": AnyEncodable(payload),
-            "unset": AnyEncodable(unset)
-        ]
-        let body: [String: AnyEncodable] = [
-            "users": AnyEncodable([users])
-        ]
+        let body = UpdateUsersPartialRequest(
+            users: [
+                UpdateUserPartialRequest(
+                    id: userId,
+                    set: payload.set,
+                    unset: unset
+                )
+            ]
+        )
 
         let expectedEndpoint = Endpoint<CurrentUserUpdateResponse>(
             path: .users,

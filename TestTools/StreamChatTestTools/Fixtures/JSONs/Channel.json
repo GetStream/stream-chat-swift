@@ -40,8 +40,11 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "broken-waterfall-5"
-      },
+        "name" : "broken-waterfall-5",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -83,8 +86,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
         "updated_at" : "2020-06-09T08:11:50.464738Z",
         "last_active" : "2020-06-09T08:11:50.456971Z",
-        "name" : "Jolly base"
-      },
+        "name" : "Jolly base",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -126,8 +132,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
         "updated_at" : "2020-06-09T08:11:50.464738Z",
         "last_active" : "2020-06-09T08:11:50.456971Z",
-        "name" : "Jolly base"
-      },
+        "name" : "Jolly base",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -169,8 +178,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
         "updated_at" : "2020-06-09T08:11:50.464738Z",
         "last_active" : "2020-06-09T08:11:50.456971Z",
-        "name" : "Jolly base"
-      },
+        "name" : "Jolly base",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -224,8 +236,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Jolly+base",
         "updated_at" : "2020-06-09T08:11:50.464738Z",
         "last_active" : "2020-06-09T08:11:50.456971Z",
-        "name" : "Jolly base"
-      },
+        "name" : "Jolly base",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "updated_at" : "2020-06-09T08:16:06.295414Z",
       "html" : "",
       "pinned": false,
@@ -265,8 +280,11 @@
         "image" : "https:\/\/getstream.io\/random_svg\/?id=frosty-dew-4&name=Frosty+dew",
         "updated_at" : "2020-06-10T10:07:34.639668Z",
         "last_active" : "2020-06-10T10:07:34.635668Z",
-        "name" : "Frosty dew"
-      },
+        "name" : "Frosty dew",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -312,8 +330,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Hidden+lake",
         "updated_at" : "2020-06-09T15:32:39.035257Z",
         "last_active" : "2020-06-09T15:32:39.028596Z",
-        "name" : "Hidden lake"
-      },
+        "name" : "Hidden lake",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -360,8 +381,11 @@
         "role" : "user",
         "total_unread_count" : 21,
         "online" : true,
-        "name" : "steep-moon-9"
-      },
+        "name" : "steep-moon-9",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -408,8 +432,11 @@
         "role" : "user",
         "total_unread_count" : 21,
         "online" : true,
-        "name" : "steep-moon-9"
-      },
+        "name" : "steep-moon-9",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -460,8 +487,11 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "broken-waterfall-5"
-      },
+        "name" : "broken-waterfall-5",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -515,8 +545,11 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "broken-waterfall-5"
-      },
+        "name" : "broken-waterfall-5",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -570,8 +603,11 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "broken-waterfall-5"
-      },
+        "name" : "broken-waterfall-5",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -630,8 +666,11 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "broken-waterfall-5"
-      },
+        "name" : "broken-waterfall-5",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -673,8 +712,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Bitter+cloud",
         "updated_at" : "2020-06-09T18:33:04.078929Z",
         "last_active" : "2020-06-09T18:33:04.075114Z",
-        "name" : "Bitter cloud"
-      },
+        "name" : "Bitter cloud",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -720,8 +762,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Bitter+cloud",
         "updated_at" : "2020-06-09T18:33:04.078929Z",
         "last_active" : "2020-06-09T18:33:04.075114Z",
-        "name" : "Bitter cloud"
-      },
+        "name" : "Bitter cloud",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -772,8 +817,11 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "broken-waterfall-5"
-      },
+        "name" : "broken-waterfall-5",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -827,8 +875,11 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "broken-waterfall-5"
-      },
+        "name" : "broken-waterfall-5",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -870,8 +921,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Wispy+bird",
         "updated_at" : "2020-06-09T20:43:42.376502Z",
         "last_active" : "2020-06-09T20:43:42.372121Z",
-        "name" : "Wispy bird"
-      },
+        "name" : "Wispy bird",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -913,8 +967,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Wispy+bird",
         "updated_at" : "2020-06-09T20:43:42.376502Z",
         "last_active" : "2020-06-09T20:43:42.372121Z",
-        "name" : "Wispy bird"
-      },
+        "name" : "Wispy bird",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -956,8 +1013,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Wispy+bird",
         "updated_at" : "2020-06-09T20:43:42.376502Z",
         "last_active" : "2020-06-09T20:43:42.372121Z",
-        "name" : "Wispy bird"
-      },
+        "name" : "Wispy bird",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -999,8 +1059,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Throbbing+salad",
         "updated_at" : "2020-06-09T22:28:36.392629Z",
         "last_active" : "2020-06-09T22:28:36.389057Z",
-        "name" : "Throbbing salad"
-      },
+        "name" : "Throbbing salad",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -1046,8 +1109,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Throbbing+salad",
         "updated_at" : "2020-06-09T22:28:36.392629Z",
         "last_active" : "2020-06-09T22:28:36.389057Z",
-        "name" : "Throbbing salad"
-      },
+        "name" : "Throbbing salad",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -1089,8 +1155,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Aged+moon",
         "updated_at" : "2020-06-09T23:01:32.113984Z",
         "last_active" : "2020-06-09T23:01:32.110521Z",
-        "name" : "Aged moon"
-      },
+        "name" : "Aged moon",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -1136,8 +1205,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=Bitter+cloud",
         "updated_at" : "2020-06-10T00:26:00.259529Z",
         "last_active" : "2020-06-10T00:26:00.255531Z",
-        "name" : "Bitter cloud"
-      },
+        "name" : "Bitter cloud",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -1179,8 +1251,11 @@
         "image" : "https:\/\/getstream.io\/random_png\/?name=White+boat",
         "updated_at" : "2020-06-10T13:11:28.955545Z",
         "last_active" : "2020-06-10T13:11:28.9457Z",
-        "name" : "White boat"
-      },
+        "name" : "White boat",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       "mentioned_users" : [
         
       ],
@@ -1214,8 +1289,11 @@
           "role" : "user",
           "total_unread_count" : 0,
           "online" : true,
-          "name" : "broken-waterfall-5"
-        },
+          "name" : "broken-waterfall-5",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
         "attachments": [],
         "latest_reactions": [],
         "own_reactions": [],
@@ -1275,8 +1353,11 @@
           "role" : "user",
           "total_unread_count" : 0,
           "online" : true,
-          "name" : "broken-waterfall-5"
-        },
+          "name" : "broken-waterfall-5",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
         "mentioned_users" : [
 
         ],
@@ -1301,8 +1382,11 @@
       "image" : "",
       "updated_at" : "2019-07-03T15:10:37.793155Z",
       "last_active" : "2019-07-03T15:10:37.767306Z",
-      "name" : "abc"
-    },
+      "name" : "abc",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []},
     "type" : "messaging",
     "cid" : "messaging:general",
     "frozen" : true,
@@ -1390,9 +1474,13 @@
       "user" : {
         "id" : "broken-waterfall-5",
         "banned" : false,
+        "blocked_user_ids" : [],
+        "custom" : {},
         "extraData" : {
           "name" : "Tester"
         },
+        "language" : "",
+        "teams" : [],
         "totalUnreadCount" : 0,
         "unread_channels" : 0,
         "last_active" : "2020-06-10T13:24:00.501797Z",
@@ -1412,6 +1500,10 @@
       "unread_messages" : 123,
       "user" : {
         "banned" : false,
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : [],
         "online" : false,
         "id" : "test-user-1",
         "role" : "user",
@@ -1426,6 +1518,10 @@
       "unread_messages" : 122,
       "user" : {
         "banned" : false,
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : [],
         "online" : false,
         "id" : "test-user-2",
         "role" : "user",
@@ -1441,6 +1537,10 @@
       "user" : {
         "id" : "steep-moon-9",
         "banned" : false,
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : [],
         "unread_channels" : 3,
         "totalUnreadCount" : 0,
         "last_active" : "2020-06-10T13:14:31.20324Z",
@@ -1461,10 +1561,22 @@
     {
       "created_at" : "2020-01-20T19:15:03.911517Z",
       "updated_at" : "2020-01-20T19:15:03.911517Z",
+      "banned" : false,
+      "channel_role" : "channel_member",
+      "custom" : {},
+      "notifications_muted" : false,
       "role" : "member",
+      "shadow_banned" : false,
+      "user_id" : "broken-waterfall-5",
       "user" : {
         "id" : "broken-waterfall-5",
         "banned" : false,
+        "blocked_user_ids" : [],
+        "custom" : {
+          "name" : "Tester"
+        },
+        "language" : "",
+        "teams" : [],
         "unread_channels" : 0,
         "totalUnreadCount" : 0,
         "extraData" : {
@@ -1485,9 +1597,19 @@
     {
       "created_at" : "2020-06-04T13:36:37.96589Z",
       "updated_at" : "2020-06-04T13:36:37.96589Z",
+      "banned" : false,
+      "channel_role" : "channel_member",
+      "custom" : {},
+      "notifications_muted" : false,
       "role" : "member",
+      "shadow_banned" : false,
+      "user_id" : "test-user-1",
       "user" : {
         "banned" : false,
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : [],
         "online" : false,
         "id" : "test-user-1",
         "role" : "user",
@@ -1500,9 +1622,19 @@
     {
       "created_at" : "2020-06-04T13:36:44.793348Z",
       "updated_at" : "2020-06-04T13:36:44.793348Z",
+      "banned" : false,
+      "channel_role" : "channel_member",
+      "custom" : {},
+      "notifications_muted" : false,
       "role" : "member",
+      "shadow_banned" : false,
+      "user_id" : "test-user-2",
       "user" : {
         "banned" : false,
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : [],
         "online" : false,
         "id" : "test-user-2",
         "role" : "user",
@@ -1515,10 +1647,20 @@
     {
       "created_at" : "2020-06-05T12:55:48.581959Z",
       "updated_at" : "2020-06-05T12:55:48.581959Z",
+      "banned" : false,
+      "channel_role" : "channel_member",
+      "custom" : {},
+      "notifications_muted" : false,
       "role" : "member",
+      "shadow_banned" : false,
+      "user_id" : "steep-moon-9",
       "user" : {
         "id" : "steep-moon-9",
         "banned" : false,
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : [],
         "unread_channels" : 3,
         "totalUnreadCount" : 0,
         "last_active" : "2020-06-10T13:14:31.20324Z",
@@ -1537,10 +1679,22 @@
   "membership" : {
     "created_at" : "2020-01-20T19:15:03.911517Z",
     "updated_at" : "2020-01-20T19:15:03.911517Z",
+    "banned" : false,
+    "channel_role" : "channel_member",
+    "custom" : {},
+    "notifications_muted" : false,
     "role" : "channel_member",
+    "shadow_banned" : false,
+    "user_id" : "broken-waterfall-5",
     "user" : {
       "id" : "broken-waterfall-5",
       "banned" : false,
+      "blocked_user_ids" : [],
+      "custom" : {
+        "name" : "Tester"
+      },
+      "language" : "",
+      "teams" : [],
       "unread_channels" : 0,
       "extraData" : {
         "name" : "Tester"
@@ -1569,8 +1723,11 @@
           "value" : "cilvia",
           "updated_at" : "2021-03-04T15:36:15.179644Z",
           "last_active" : "2021-03-04T15:21:48.667941Z",
-          "name" : "Neil Hannah"
-      },
+          "name" : "Neil Hannah",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       {
           "banned" : false,
           "online" : true,
@@ -1581,8 +1738,11 @@
           "value" : "josh",
           "updated_at" : "2021-03-04T15:32:29.26725Z",
           "last_active" : "2021-03-04T15:25:40.183096Z",
-          "name" : "Joshua"
-      },
+          "name" : "Joshua",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []},
       {
           "banned" : false,
           "online" : true,
@@ -1593,8 +1753,11 @@
           "value" : "vishal",
           "updated_at" : "2021-03-04T15:32:36.509639Z",
           "last_active" : "2021-03-04T15:32:36.509639Z",
-          "name" : "Vishal"
-      }
+          "name" : "Vishal",
+        "blocked_user_ids" : [],
+        "custom" : {},
+        "language" : "",
+        "teams" : []}
   ],
   "active_live_locations": [
       {
@@ -1606,8 +1769,12 @@
           "longitude": 15,
           "message_id": "9596f6bd-c322-407e-b9e1-8fd10ee824e2",
           "updated_at": "2025-06-06T17:08:57.37039Z",
-          "user_id": "leia_organa"
-      }
+          "user_id": "leia_organa",
+        "banned" : false,
+        "shadow_banned" : false,
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}}
   ],
   "push_preferences": {
     "chat_level": "all",

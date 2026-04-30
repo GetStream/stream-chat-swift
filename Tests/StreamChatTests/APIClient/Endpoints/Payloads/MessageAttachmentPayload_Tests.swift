@@ -12,10 +12,11 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)
 
         let expectedRawJSON = try JSONDecoder.default.decode(RawJSON.self, from: json)
-            .dictionary(with: nil, forKey: "type")
+            .dictionary(with: nil, forKey: "type")?
+            .dictionary(with: nil, forKey: "custom")
 
         // Assert `MessageAttachmentPayload` is deserialized correctly.
-        XCTAssertEqual(payload.type, .linkPreview)
+        XCTAssertEqual(payload.attachmentType, .linkPreview)
         XCTAssertEqual(payload.payload, expectedRawJSON)
     }
 
@@ -24,10 +25,11 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)
 
         let expectedRawJSON = try JSONDecoder.default.decode(RawJSON.self, from: json)
-            .dictionary(with: nil, forKey: "type")
+            .dictionary(with: nil, forKey: "type")?
+            .dictionary(with: nil, forKey: "custom")
 
         // Assert `MessageAttachmentPayload` is deserialized correctly.
-        XCTAssertEqual(payload.type, .linkPreview)
+        XCTAssertEqual(payload.attachmentType, .linkPreview)
         XCTAssertEqual(payload.payload, expectedRawJSON)
     }
 
@@ -37,10 +39,11 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
 
         let expectedRawJSON = try JSONDecoder.default
             .decode(RawJSON.self, from: json)
-            .dictionary(with: nil, forKey: "type")
+            .dictionary(with: nil, forKey: "type")?
+            .dictionary(with: nil, forKey: "custom")
 
         // Assert `MessageAttachmentPayload` is deserialized correctly.
-        XCTAssertEqual(payload.type, .image)
+        XCTAssertEqual(payload.attachmentType, .image)
         XCTAssertEqual(payload.payload, expectedRawJSON)
     }
 
@@ -50,7 +53,8 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
 
         let expectedRawJSON = try JSONDecoder.default
             .decode(RawJSON.self, from: json)
-            .dictionary(with: nil, forKey: "type")
+            .dictionary(with: nil, forKey: "type")?
+            .dictionary(with: nil, forKey: "custom")
 
         // Assert `MessageAttachmentPayload` is deserialized correctly.
         XCTAssertEqual(payload.type, "party_invite")
@@ -60,7 +64,7 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
     func test_unknownIsUsed_ifTypeIsMissing() throws {
         let json = XCTestCase.mockData(fromJSONFile: "AttachmentPayload+NoType")
         let payload = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)
-        XCTAssertEqual(payload.type, .unknown)
+        XCTAssertEqual(payload.attachmentType, .unknown)
     }
 }
 

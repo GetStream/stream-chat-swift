@@ -98,6 +98,7 @@ final class PushPreferencePayload_Tests: XCTestCase {
         // GIVEN
         let json = """
         {
+            "duration": "",
             "user_preferences": {
                 "user1": {
                     "chat_level": "all",
@@ -123,9 +124,9 @@ final class PushPreferencePayload_Tests: XCTestCase {
         XCTAssertEqual(response.channelPreferences.count, 1)
         
         // Test user preferences
-        let user1Preference = try XCTUnwrap(response.userPreferences["user1"])
-        XCTAssertEqual(user1Preference?.chatLevel, "all")
-        XCTAssertNil(user1Preference?.disabledUntil)
+        let user1Preference = try XCTUnwrap(try XCTUnwrap(response.userPreferences["user1"]))
+        XCTAssertEqual(user1Preference.chatLevel, "all")
+        XCTAssertNil(user1Preference.disabledUntil)
         
         // Test channel preferences
         let channelPreferences = try XCTUnwrap(response.channelPreferences["messaging:channel1"])
@@ -138,6 +139,7 @@ final class PushPreferencePayload_Tests: XCTestCase {
         // GIVEN
         let json = """
         {
+            "duration": "",
             "user_preferences": {},
             "user_channel_preferences": {}
         }
@@ -172,10 +174,10 @@ final class PushPreferencePayload_Tests: XCTestCase {
         // GIVEN
         let channelPreferences: ChannelPushPreferencesPayload = [
             "user1": [
-                "messaging:channel1": PushPreferencePayload(chatLevel: "all", disabledUntil: nil)
+                "messaging:channel1": ChannelPushPreferencesResponse(chatLevel: "all", disabledUntil: nil)
             ],
             "user2": [
-                "messaging:channel2": PushPreferencePayload(chatLevel: "mentions", disabledUntil: "2024-12-31T23:59:59.999Z".toDate())
+                "messaging:channel2": ChannelPushPreferencesResponse(chatLevel: "mentions", disabledUntil: "2024-12-31T23:59:59.999Z".toDate())
             ]
         ]
         

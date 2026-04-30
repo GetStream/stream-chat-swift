@@ -44,7 +44,7 @@ extension MessagePayload {
                 }
                 return AnyChatMessageAttachment(
                     id: .init(cid: cid, messageId: id, index: offset),
-                    type: attachmentPayload.type,
+                    type: attachmentPayload.attachmentType,
                     payload: payloadData,
                     downloadingState: nil,
                     uploadingState: nil
@@ -131,8 +131,8 @@ extension MessagePayload {
                     channelId: cid,
                     userId: $0.userId,
                     createdByDeviceId: $0.createdByDeviceId,
-                    latitude: $0.latitude,
-                    longitude: $0.longitude,
+                    latitude: Double($0.latitude),
+                    longitude: Double($0.longitude),
                     updatedAt: $0.updatedAt,
                     createdAt: $0.createdAt,
                     endAt: $0.endAt
@@ -148,12 +148,12 @@ extension MessageReactionPayload {
     /// - Returns: A ChatMessageReaction instance.
     func asModel(messageId: MessageId) -> ChatMessageReaction {
         ChatMessageReaction(
-            id: [user.id, messageId, type.rawValue].joined(separator: "/"),
-            type: type,
+            id: [userPayload.id, messageId, reactionType.rawValue].joined(separator: "/"),
+            type: reactionType,
             score: score,
             createdAt: createdAt,
             updatedAt: updatedAt,
-            author: user.asModel(),
+            author: userPayload.asModel(),
             extraData: extraData
         )
     }

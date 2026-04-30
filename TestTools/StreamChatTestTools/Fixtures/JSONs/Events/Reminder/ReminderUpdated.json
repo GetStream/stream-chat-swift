@@ -7,8 +7,16 @@
     "message_id": "477172a9-a59b-48dc-94a3-9aec4dc181bb",
     "remind_at": "2025-03-20T15:50:58.1Z",
     "updated_at": "2025-03-20T15:48:58.664435Z",
-    "user_id": "han_solo"
-  },
+    "user_id": "han_solo",
+    "banned" : false,
+    "shadow_banned" : false,
+    "channel_role" : "channel_member",
+    "notifications_muted" : false,
+    "custom" : {}},
   "type": "reminder.updated",
-  "user_id": "han_solo"
-}
+  "user_id": "han_solo",
+  "banned" : false,
+  "shadow_banned" : false,
+  "channel_role" : "channel_member",
+  "notifications_muted" : false,
+  "custom" : {}}

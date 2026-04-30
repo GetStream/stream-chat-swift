@@ -168,7 +168,7 @@ private extension ChatUserSearchController {
     func save(page: UserListPayload, completion: @escaping @Sendable ([ChatUser]) -> Void) {
         client.databaseContainer.write(converting: { session in
             page
-                .users
+                .userPayloads
                 .compactMap { try? session.saveUser(payload: $0).asModel() }
         }, completion: { result in
             completion(result.value ?? [])

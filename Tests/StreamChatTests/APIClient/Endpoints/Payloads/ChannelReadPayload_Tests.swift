@@ -44,6 +44,10 @@ final class ChannelReadPayload_Tests: XCTestCase {
             "user": [
                 "id": "broken-waterfall-5",
                 "banned": false,
+                "blocked_user_ids": [],
+                "custom": [
+                    "name": "Tester"
+                ],
                 "unread_channels": 0,
                 "extraData": [
                     "name": "Tester"
@@ -56,6 +60,8 @@ final class ChannelReadPayload_Tests: XCTestCase {
                 "image": "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall",
                 "updated_at": "2020-06-10T14:11:29.946106Z",
                 "role": "user",
+                "language": "",
+                "teams": [],
                 "total_unread_count": 0,
                 "online": true,
                 "name": "broken-waterfall-5"

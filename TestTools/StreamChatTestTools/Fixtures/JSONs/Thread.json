@@ -20,7 +20,10 @@
       "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
       "birthland": "Naboo",
       "extraData": {},
-      "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
+      "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+      "blocked_user_ids": [],
+      "custom": {},
+      "teams": []
     },
     "frozen": false,
     "disabled": false,
@@ -40,7 +43,10 @@
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
           "name": "Han Solo",
           "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-          "birthland": "Corellia"
+          "birthland": "Corellia",
+          "blocked_user_ids": [],
+          "custom": {},
+          "teams": []
         },
         "status": "member",
         "created_at": "2024-03-26T11:13:35.162494Z",
@@ -49,7 +55,8 @@
         "shadow_banned": false,
         "role": "member",
         "channel_role": "channel_member",
-        "notifications_muted": false
+        "notifications_muted": false,
+        "custom": {}
       },
       {
         "user_id": "r2-d2",
@@ -66,7 +73,10 @@
           "name": "R2-D2",
           "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
           "birthland": "Naboo",
-          "extraData": {}
+          "extraData": {},
+          "blocked_user_ids": [],
+          "custom": {},
+          "teams": []
         },
         "status": "member",
         "created_at": "2024-03-26T11:13:35.162494Z",
@@ -75,7 +85,8 @@
         "shadow_banned": false,
         "role": "owner",
         "channel_role": "channel_member",
-        "notifications_muted": false
+        "notifications_muted": false,
+        "custom": {}
       }
     ],
     "member_count": 101,
@@ -124,7 +135,13 @@
           "args": "[text]",
           "set": "fun_set"
         }
-      ]
+      ],
+      "count_messages": false,
+      "delivery_events": false,
+      "polls": false,
+      "shared_locations": false,
+      "skip_last_msg_update_for_system_msgs": false,
+      "user_message_reminders": false
     },
     "truncated_at": "2024-03-26T12:02:37.66035Z",
     "truncated_by": {
@@ -140,9 +157,13 @@
       "name": "R2-D2",
       "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
       "birthland": "Naboo",
-      "extraData": {}
+      "extraData": {},
+      "blocked_user_ids": [],
+      "custom": {},
+      "teams": []
     },
-    "name": "Release 4.51.0"
+    "name": "Release 4.51.0",
+    "custom": {}
   },
   "parent_message_id": "488bba2a-193d-48d2-95ae-3aa4b8e34960",
   "parent_message": {
@@ -157,7 +178,11 @@
       "updated_at": "2023-09-27T13:21:25.781323Z",
       "last_active": "2024-03-26T12:03:39.847771Z",
       "banned": false,
-      "online": false
+      "online": false,
+      "blocked_user_ids": [],
+      "custom": {},
+      "language": "",
+      "teams": []
     },
     "attachments": [],
     "latest_reactions": [],
@@ -180,7 +205,10 @@
         "birthland": "Naboo",
         "extraData": {},
         "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
-        "name": "R2-D2"
+        "name": "R2-D2",
+        "blocked_user_ids": [],
+        "custom": {},
+        "teams": []
       },
       {
         "id": "han_solo",
@@ -195,7 +223,10 @@
         "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
         "birthland": "Corellia",
         "extraData": {},
-        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+        "blocked_user_ids": [],
+        "custom": {},
+        "teams": []
       }
     ],
     "cid": "messaging:4AB11F2F-4",
@@ -212,7 +243,11 @@
     "pinned": false,
     "pinned_at": null,
     "pinned_by": null,
-    "pin_expires": null
+    "pin_expires": null,
+    "custom": {},
+    "mentioned_channel": false,
+    "mentioned_here": false,
+    "restricted_visibility": []
   },
   "created_by_user_id": "han_solo",
   "created_by": {
@@ -228,7 +263,10 @@
     "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
     "birthland": "Corellia",
     "extraData": {},
-    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+    "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+    "blocked_user_ids": [],
+    "custom": {},
+    "teams": []
   },
   "reply_count": 60,
   "participant_count": 3,
@@ -252,12 +290,18 @@
         "birthland": "Naboo",
         "extraData": {},
         "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
-        "name": "R2-D2"
+        "name": "R2-D2",
+        "blocked_user_ids": [],
+        "custom": {},
+        "teams": []
       },
       "created_at": "2024-03-26T12:20:20.285487Z",
       "last_read_at": "0001-01-01T00:00:00Z",
-      "Custom": null
-    },
+      "custom": {},
+      "banned" : false,
+      "shadow_banned" : false,
+      "channel_role" : "channel_member",
+      "notifications_muted" : false},
     {
       "app_pk": 0,
       "channel_cid": "",
@@ -270,12 +314,19 @@
         "updated_at": "2023-09-27T13:21:25.781323Z",
         "last_active": "2024-03-26T12:03:39.847771Z",
         "banned": false,
-        "online": false
+        "online": false,
+        "blocked_user_ids": [],
+        "custom": {},
+        "language": "",
+        "teams": []
       },
       "created_at": "2024-03-26T12:14:10.87779Z",
       "last_read_at": "0001-01-01T00:00:00Z",
-      "Custom": null
-    },
+      "custom": {},
+      "banned" : false,
+      "shadow_banned" : false,
+      "channel_role" : "channel_member",
+      "notifications_muted" : false},
     {
       "app_pk": 0,
       "channel_cid": "",
@@ -294,12 +345,18 @@
         "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
         "name": "Han Solo",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-        "birthland": "Corellia"
+        "birthland": "Corellia",
+        "blocked_user_ids": [],
+        "custom": {},
+        "teams": []
       },
       "created_at": "2024-03-26T12:14:10.87779Z",
       "last_read_at": "0001-01-01T00:00:00Z",
-      "Custom": null
-    }
+      "custom": {},
+      "banned" : false,
+      "shadow_banned" : false,
+      "channel_role" : "channel_member",
+      "notifications_muted" : false}
   ],
   "last_message_at": "2024-03-26T12:25:07.25741Z",
   "created_at": "2024-03-26T12:14:10.87779Z",
@@ -324,7 +381,10 @@
         "name": "R2-D2",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
         "birthland": "Naboo",
-        "extraData": {}
+        "extraData": {},
+        "blocked_user_ids": [],
+        "custom": {},
+        "teams": []
       },
       "attachments": [],
       "latest_reactions": [],
@@ -343,7 +403,11 @@
       "pinned": false,
       "pinned_at": null,
       "pinned_by": null,
-      "pin_expires": null
+      "pin_expires": null,
+      "custom": {},
+      "mentioned_channel": false,
+      "mentioned_here": false,
+      "restricted_visibility": []
     },
     {
       "id": "64add738-a860-47fd-a587-7187b6a0c289",
@@ -363,7 +427,10 @@
         "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
         "birthland": "Corellia",
         "extraData": {},
-        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+        "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+        "blocked_user_ids": [],
+        "custom": {},
+        "teams": []
       },
       "attachments": [],
       "latest_reactions": [],
@@ -382,7 +449,11 @@
       "pinned": false,
       "pinned_at": null,
       "pinned_by": null,
-      "pin_expires": null
+      "pin_expires": null,
+      "custom": {},
+      "mentioned_channel": false,
+      "mentioned_here": false,
+      "restricted_visibility": []
     }
   ],
   "read": [
@@ -400,7 +471,10 @@
         "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
         "name": "R2-D2",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
-        "birthland": "Naboo"
+        "birthland": "Naboo",
+        "blocked_user_ids": [],
+        "custom": {},
+        "teams": []
       },
       "last_read": "0001-01-01T00:00:00Z",
       "unread_messages": 8
@@ -413,7 +487,11 @@
         "updated_at": "2023-09-27T13:21:25.781323Z",
         "last_active": "2024-03-26T12:03:39.847771Z",
         "banned": false,
-        "online": false
+        "online": false,
+        "blocked_user_ids": [],
+        "custom": {},
+        "language": "",
+        "teams": []
       },
       "last_read": "0001-01-01T00:00:00Z",
       "unread_messages": 60
@@ -432,11 +510,16 @@
         "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
         "name": "Han Solo",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-        "birthland": "Corellia"
+        "birthland": "Corellia",
+        "blocked_user_ids": [],
+        "custom": {},
+        "teams": []
       },
       "last_read": "0001-01-01T00:00:00Z",
       "unread_messages": 6
     }
   ],
-  "custom_test": 10
+  "custom": {
+    "custom_test": 10
+  }
 }

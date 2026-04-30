@@ -303,7 +303,7 @@ final class PollsRepository_Tests: XCTestCase {
             vote: .init(pollId: pollId, vote: .init(answerText: answer))
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
-        XCTAssertEqual(payload.optionId, nil)
+        XCTAssertEqual(payload.optionalOptionId, nil)
         XCTAssertEqual(payload.answerText, answer)
     }
     
@@ -489,7 +489,7 @@ final class PollsRepository_Tests: XCTestCase {
         
         wait(for: [completionCalled], timeout: defaultTimeout)
         let referenceEndpoint: Endpoint<PollVoteListResponse> = .queryPollVotes(
-            pollId: pollId, queryPollVotesRequest: .init(pollId: pollId, sort: [nil])
+            pollId: pollId, queryPollVotesRequest: .init()
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
         XCTAssertEqual(response.votes.count, 1)
@@ -516,7 +516,7 @@ final class PollsRepository_Tests: XCTestCase {
         
         wait(for: [completionCalled], timeout: defaultTimeout)
         let referenceEndpoint: Endpoint<PollVoteListResponse> = .queryPollVotes(
-            pollId: pollId, queryPollVotesRequest: .init(pollId: pollId, sort: [nil])
+            pollId: pollId, queryPollVotesRequest: .init()
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }

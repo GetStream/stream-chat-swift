@@ -53,7 +53,7 @@ extension NSManagedObjectContext {
     func savePushPreference(id: String, payload: PushPreferencePayload) throws -> PushPreferenceDTO {
         let dto = PushPreferenceDTO.loadOrCreate(id: id, context: self)
         dto.id = id
-        dto.chatLevel = payload.chatLevel
+        dto.chatLevel = payload.chatLevel ?? PushPreferenceLevel.all.rawValue
         dto.disabledUntil = payload.disabledUntil?.bridgeDate
         return dto
     }

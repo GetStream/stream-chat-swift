@@ -108,20 +108,21 @@ extension NSManagedObjectContext: ReminderDatabaseSession {
         payload: ReminderPayload,
         cache: PreWarmedCache?
     ) throws -> MessageReminderDTO {
+        let cid = try ChannelId(cid: payload.channelCid)
         let channelDTO: ChannelDTO
-        if let existingChannel = ChannelDTO.load(cid: payload.channelCid, context: self) {
+        if let existingChannel = ChannelDTO.load(cid: cid, context: self) {
             channelDTO = existingChannel
-        } else if let channelPayload = payload.channel {
+        } else if let channelPayload = payload.channel?.asChannelDetailPayload {
             channelDTO = try saveChannel(payload: channelPayload, query: nil, cache: nil)
         } else {
-            throw ClientError.ChannelDoesNotExist(cid: payload.channelCid)
+            throw ClientError.ChannelDoesNotExist(cid: cid)
         }
 
         let messageDTO: MessageDTO
         if let existingMessage = MessageDTO.load(id: payload.messageId, context: self) {
             messageDTO = existingMessage
-        } else if let messagePayload = payload.message {
-            messageDTO = try saveMessage(payload: messagePayload, for: payload.channelCid, cache: cache)
+        } else if let messagePayload = payload.message?.asMessagePayload {
+            messageDTO = try saveMessage(payload: messagePayload, for: cid, cache: cache)
         } else {
             throw ClientError.MessageDoesNotExist(messageId: payload.messageId)
         }

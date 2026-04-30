@@ -21,6 +21,10 @@
           "updated_at": "2022-08-09T14:55:13.310023Z",
           "last_active": "2022-08-30T15:16:00.095532653Z",
           "banned": false,
+          "blocked_user_ids": [],
+          "custom": {},
+          "language": "",
+          "teams": [],
           "online": true,
           "birthland": "Polis Massa",
           "AdditionalProperties": {},
@@ -31,7 +35,9 @@
         "updated_at": "2022-08-30T15:16:00.650720097Z",
         "banned": false,
         "shadow_banned": false,
-        "channel_role": ""
+        "channel_role": "",
+        "notifications_muted": false,
+        "custom": {}
       }
     ],
     "config": {}
@@ -42,7 +48,9 @@
     "updated_at": "0001-01-01T00:00:00Z",
     "banned": false,
     "shadow_banned": false,
-    "channel_role": ""
+    "channel_role": "",
+    "notifications_muted": false,
+    "custom": {}
   },
   "user": {
     "id": "leia_organa",
@@ -51,6 +59,10 @@
     "updated_at": "2022-08-09T14:55:13.310023Z",
     "last_active": "2022-08-30T15:16:00.095532653Z",
     "banned": false,
+    "blocked_user_ids": [],
+    "custom": {},
+    "language": "",
+    "teams": [],
     "online": true,
     "birthland": "Polis Massa",
     "AdditionalProperties": {},

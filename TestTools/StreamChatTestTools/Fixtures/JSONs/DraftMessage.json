@@ -14,8 +14,10 @@
           }
         ],
         "connect_events": true,
+        "count_messages": true,
         "created_at": "2025-02-06T09:58:57.737862823Z",
         "custom_events": true,
+        "delivery_events": true,
         "mark_messages_pending": false,
         "max_message_length": 5000,
         "message_retention": "infinite",
@@ -29,17 +31,23 @@
         "reminders": false,
         "replies": true,
         "search": true,
+        "shared_locations": false,
         "skip_last_msg_update_for_system_msgs": false,
         "typing_events": true,
         "updated_at": "2025-02-06T09:58:57.737862946Z",
         "uploads": true,
-        "url_enrichment": true
+        "url_enrichment": true,
+        "user_message_reminders": false
       },
       "created_at": "2024-07-10T11:47:43.591964Z",
+      "custom": {},
       "created_by": {
         "banned": false,
         "birthland": "Corellia",
         "blocked_user_ids": [],
+        "custom": {
+          "birthland": "Corellia"
+        },
         "created_at": "2024-07-09T10:25:12.255599Z",
         "id": "han_solo",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
@@ -67,13 +75,18 @@
         {
             "id": "leia_organa",
             "role": "user",
+            "blocked_user_ids": [],
+            "custom": {},
             "created_at": "2023-09-27T13:21:25.781323Z",
+            "language": "",
             "updated_at": "2023-09-27T13:21:25.781323Z",
             "last_active": "2024-03-26T12:03:39.847771Z",
             "banned": false,
-            "online": false
+            "online": false,
+            "teams": []
         }
       ],
+      "custom": {},
       "show_in_channel": false,
       "silent": false,
       "text": "Hi @Leia Organa ahah"

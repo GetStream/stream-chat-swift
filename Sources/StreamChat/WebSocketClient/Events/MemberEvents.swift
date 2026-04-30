@@ -44,7 +44,7 @@ final class MemberAddedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
-            let memberDTO = session.member(userId: member.userId, cid: cid)
+            let memberDTO = session.member(userId: member.resolvedUserId, cid: cid)
         else { return nil }
 
         return try? MemberAddedEvent(
@@ -96,7 +96,7 @@ final class MemberUpdatedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
-            let memberDTO = session.member(userId: member.userId, cid: cid)
+            let memberDTO = session.member(userId: member.resolvedUserId, cid: cid)
         else { return nil }
 
         return try? MemberUpdatedEvent(

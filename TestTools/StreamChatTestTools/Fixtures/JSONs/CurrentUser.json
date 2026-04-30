@@ -13,7 +13,6 @@
   "language": "pt",
   "invisible": true,
   "name" : "Broken Waterfall",
-  "secret_note" : "Anaking is Vader!",
   "teams" : [
       "RED",
       "GREEN",
@@ -28,6 +27,10 @@
               "online" : false,
               "id" : "dawn-grass-7",
               "role" : "user",
+              "blocked_user_ids" : [],
+              "custom" : {},
+              "language" : "",
+              "teams" : [],
               "created_at" : "2020-07-08T08:58:23.863966Z",
               "image" : "https:\/\/getstream.io\/random_png\/?name=Dawn+grass",
               "updated_at" : "2020-07-08T08:58:23.869165Z",
@@ -36,9 +39,13 @@
           "user" : {
               "id" : "broken-waterfall-5",
               "banned" : false,
+              "blocked_user_ids" : [],
+              "custom" : {},
               "extraData" : {
                   "name" : "Tester"
               },
+              "language" : "",
+              "teams" : [],
               "totalUnreadCount" : 0,
               "unread_channels" : 0,
               "created_at" : "2019-12-12T15:33:46.488935Z",
@@ -59,14 +66,22 @@
           "id" : "cjqZTUHaQIykfH-706Xefw:APA91bF0Ig0gi4ro6w3iPfmE8",
           "push_provider" : "firebase",
           "user_id" : "broken-waterfall-5",
-          "created_at" : "2020-08-10T14:12:55.891096Z"
-      },
+          "created_at" : "2020-08-10T14:12:55.891096Z",
+        "banned" : false,
+        "shadow_banned" : false,
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
           "id" : "e25wfsxcnyA:APA91bFgZR_hfd6GvR42OqCUgIhvpBajjxw7",
           "push_provider" : "firebase",
           "user_id" : "broken-waterfall-5",
-          "created_at" : "2020-08-07T03:36:37.271234Z"
-      },
+          "created_at" : "2020-08-07T03:36:37.271234Z",
+        "banned" : false,
+        "shadow_banned" : false,
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
   ],
   "push_preferences": {
     "chat_level": "mentions",
@@ -85,7 +100,10 @@
               "name" : "Broken Waterfall",
               "image" : "https:\/\/getstream.io\/random_svg\/?id=broken-waterfall-5&amp;name=Broken+waterfall",
               "secret_note" : "Anaking is Vader!",
-          },
+            "blocked_user_ids" : [],
+            "custom" : {},
+            "language" : "",
+            "teams" : []},
           "channel": {
               "id": "B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF",
               "created_at": "2021-03-22T10:23:52.516225Z",
@@ -144,5 +162,6 @@
           "updated_at": "2021-04-22T10:23:52.516225Z"
       }
   ],
-  "avg_response_time": 20
-}
+  "avg_response_time": 20,
+  "blocked_user_ids" : [],
+  "custom" : { "secret_note" : "Anaking is Vader!" }}

@@ -129,7 +129,7 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
         XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21, threads: 10))
-        XCTAssertEqual(event?.payload.threadDetails?.value?.cid.rawValue, "messaging:general")
+        XCTAssertEqual(event?.payload.threadDetails?.value?.cid?.rawValue, "messaging:general")
         XCTAssertEqual(event?.payload.threadDetails?.value?.parentMessageId, "5b444e0d-a132-41a0-bf99-72dfdba0a053")
         XCTAssertEqual(event?.payload.threadDetails?.value?.replyCount, 4)
         XCTAssertEqual(event?.payload.threadDetails?.value?.participantCount, 2)

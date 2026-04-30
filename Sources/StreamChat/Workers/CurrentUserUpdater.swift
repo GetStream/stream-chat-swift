@@ -208,7 +208,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
         _ preference: PushPreferenceRequestPayload,
         completion: @escaping @Sendable (Result<PushPreference, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] result in
+        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] (result: Result<PushPreferencesPayloadResponse, Error>) in
             switch result {
             case let .success(response):
                 guard let currentUserPushPref = response.userPreferences.asModel().first else {

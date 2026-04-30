@@ -54,7 +54,7 @@ final class ReactionNewEventDTO: EventDTO {
             let reactionDTO = session.reaction(
                 messageId: message.id,
                 userId: user.id,
-                type: reaction.type
+                type: reaction.reactionType
             )
         else { return nil }
 
@@ -118,7 +118,7 @@ final class ReactionUpdatedEventDTO: EventDTO {
             let reactionDTO = session.reaction(
                 messageId: message.id,
                 userId: user.id,
-                type: reaction.type
+                type: reaction.reactionType
             )
         else { return nil }
 
@@ -182,7 +182,7 @@ final class ReactionDeletedEventDTO: EventDTO {
             let reactionDTO = session.reaction(
                 messageId: message.id,
                 userId: user.id,
-                type: reaction.type
+                type: reaction.reactionType
             )
         else { return nil }
 

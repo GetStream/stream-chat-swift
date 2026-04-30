@@ -23,20 +23,12 @@ extension Endpoint {
         updates: MemberUpdatePayload?,
         unset: [String]?
     ) -> Endpoint<PartialMemberUpdateResponse> {
-        var body: [String: AnyEncodable] = [:]
-        if let updates {
-            body["set"] = AnyEncodable(updates)
-        }
-        if let unset {
-            body["unset"] = AnyEncodable(unset)
-        }
-
-        return .init(
+        .init(
             path: .partialMemberUpdate(userId: userId, cid: cid),
             method: .patch,
             queryItems: nil,
             requiresConnectionId: false,
-            body: body
+            body: UpdateMemberPartialRequest(set: updates?.set, unset: unset)
         )
     }
 }

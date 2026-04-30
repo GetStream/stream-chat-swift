@@ -88,7 +88,6 @@ public extension ChatClient {
         }
 
         let payload = ChannelEditDetailPayload(
-            cid: cid,
             name: name,
             imageURL: imageURL,
             team: team,
@@ -99,7 +98,7 @@ public extension ChatClient {
         )
 
         return .init(
-            channelQuery: .init(channelPayload: payload),
+            channelQuery: .init(id: cid.id, type: cid.type, channelPayload: payload),
             channelListQuery: channelListQuery,
             client: self,
             isChannelAlreadyCreated: false,
@@ -146,7 +145,6 @@ public extension ChatClient {
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
 
         let payload = ChannelEditDetailPayload(
-            type: type,
             name: name,
             imageURL: imageURL,
             team: team,
@@ -156,7 +154,7 @@ public extension ChatClient {
             extraData: extraData
         )
         return .init(
-            channelQuery: .init(channelPayload: payload),
+            channelQuery: .init(id: nil, type: type, channelPayload: payload),
             channelListQuery: channelListQuery,
             client: self,
             isChannelAlreadyCreated: false,

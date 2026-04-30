@@ -91,7 +91,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         invalidateCurrentUserCache()
         
         let dto = CurrentUserDTO.loadOrCreate(context: self)
-        dto.user = try saveUser(payload: payload)
+        dto.user = try saveUser(payload: payload.asUserPayload)
         dto.isInvisible = payload.isInvisible
 
         // If not privacy setting is provided by the backend then we treat as enabled by default.
@@ -109,7 +109,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }
         dto.mutedUsers = Set(mutedUsers)
         
-        dto.blockedUserIds = payload.blockedUserIds
+        dto.blockedUserIds = payload.blockedUserIdsSet
 
         let channelMutes = Set(
             try payload.mutedChannels.map { try saveChannelMute(payload: $0) }
@@ -117,7 +117,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         dto.channelMutes.subtracting(channelMutes).forEach { delete($0) }
         dto.channelMutes = channelMutes
 
-        if let unreadCount = payload.unreadCount {
+        if let unreadCount = payload.unreadCountPayload {
             try saveCurrentUserUnreadCount(count: unreadCount)
         }
 
@@ -160,7 +160,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         let deviceDTOs = devices.map { device -> DeviceDTO in
             let dto = DeviceDTO.loadOrCreate(id: device.id, context: self)
-            dto.createdAt = device.createdAt?.bridgeDate
+            dto.createdAt = device.createdAt.bridgeDate
             dto.user = currentUser
             return dto
         }

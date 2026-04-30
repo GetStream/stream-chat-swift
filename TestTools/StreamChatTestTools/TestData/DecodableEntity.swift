@@ -12,4 +12,5 @@ protocol DecodableEntity: Decodable {
 extension MessagePayload: DecodableEntity {}
 extension MessageReactionPayload: DecodableEntity {}
 extension UserPayload: DecodableEntity {}
+extension OwnUserResponse: DecodableEntity {}
 extension ChannelDetailPayload: DecodableEntity {}

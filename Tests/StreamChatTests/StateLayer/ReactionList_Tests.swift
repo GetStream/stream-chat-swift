@@ -43,7 +43,7 @@ final class ReactionList_Tests: XCTestCase {
         }
         try await setUpReactionList()
         await XCTAssertEqual(
-            initialPayload.reactions.map(\.type.rawValue),
+            initialPayload.reactions.map(\.reactionType.rawValue),
             reactionList.state.reactions.map(\.type.rawValue)
         )
     }
@@ -96,7 +96,7 @@ final class ReactionList_Tests: XCTestCase {
         
         await XCTAssertEqual(3, reactionList.state.reactions.count)
         await XCTAssertEqual(
-            nextPayload.reactions.map(\.type.rawValue),
+            nextPayload.reactions.map(\.reactionType.rawValue),
             reactionList.state.reactions.map(\.type.rawValue)
         )
     }
@@ -116,11 +116,11 @@ final class ReactionList_Tests: XCTestCase {
         let pagination = Pagination(pageSize: 10)
         let result = try await reactionList.loadReactions(with: pagination)
         XCTAssertEqual(
-            apiResult.reactions.map(\.type.rawValue),
+            apiResult.reactions.map(\.reactionType.rawValue),
             result.map(\.type.rawValue)
         )
         await XCTAssertEqual(
-            apiResult.reactions.map(\.type.rawValue),
+            apiResult.reactions.map(\.reactionType.rawValue),
             reactionList.state.reactions.map(\.type.rawValue)
         )
     }
@@ -145,9 +145,9 @@ final class ReactionList_Tests: XCTestCase {
         )
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
         let result = try await reactionList.loadMoreReactions(limit: 3)
-        XCTAssertEqual(apiResult.reactions.map(\.type.rawValue), result.map(\.type.rawValue))
+        XCTAssertEqual(apiResult.reactions.map(\.reactionType.rawValue), result.map(\.type.rawValue))
         
-        let allExpectedIds = (initialPayload.reactions + apiResult.reactions).map(\.type.rawValue)
+        let allExpectedIds = (initialPayload.reactions + apiResult.reactions).map(\.reactionType.rawValue)
         await XCTAssertEqual(allExpectedIds, reactionList.state.reactions.map(\.type.rawValue))
     }
 

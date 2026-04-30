@@ -20,6 +20,9 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "John Doe"
-    }
+        "name" : "John Doe",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []}
 }

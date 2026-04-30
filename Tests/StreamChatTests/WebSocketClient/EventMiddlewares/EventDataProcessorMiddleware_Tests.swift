@@ -79,10 +79,10 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .reactionDeleted,
             cid: cid,
-            user: reactionPayload.user,
+            user: reactionPayload.userPayload,
             message: .dummy(
                 messageId: messageId,
-                authorUserId: reactionPayload.user.id
+                authorUserId: reactionPayload.userPayload.id
             ),
             reaction: reactionPayload,
             createdAt: .unique
@@ -144,8 +144,8 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let reaction = try XCTUnwrap(
             database.viewContext.reaction(
                 messageId: reactionPayload.messageId,
-                userId: reactionPayload.user.id,
-                type: reactionPayload.type
+                userId: reactionPayload.userPayload.id,
+                type: reactionPayload.reactionType
             )?.asModel()
         )
 
@@ -195,8 +195,8 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let reaction = try XCTUnwrap(
             database.viewContext.reaction(
                 messageId: messageId,
-                userId: reactionPayload.user.id,
-                type: reactionPayload.type
+                userId: reactionPayload.userPayload.id,
+                type: reactionPayload.reactionType
             )?.asModel()
         )
 

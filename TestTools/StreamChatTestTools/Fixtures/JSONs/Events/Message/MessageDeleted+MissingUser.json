@@ -42,8 +42,11 @@
             "role" : "user",
             "total_unread_count" : 0,
             "online" : true,
-            "name" : "broken-waterfall-5"
-        },
+            "name" : "broken-waterfall-5",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
         "mentioned_users" : [
             
         ],

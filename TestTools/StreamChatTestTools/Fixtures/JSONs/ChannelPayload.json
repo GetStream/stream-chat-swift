@@ -10,8 +10,11 @@
       "image":"",
       "updated_at":"2019-07-03T15:10:37.793155Z",
       "last_active":"2019-07-03T15:10:37.767306Z",
-      "name":"abc"
-   },
+      "name":"abc",
+     "blocked_user_ids" : [],
+     "custom" : {},
+     "language" : "",
+     "teams" : []},
    "type":"messaging",
    "cid":"messaging:general",
    "disabled" : false,

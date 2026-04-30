@@ -17,7 +17,8 @@
                 "sum_scores": 1,
                 "count": 1,
                 "first_reaction_at": "2024-04-17T13:14:53.643826Z",
-                "last_reaction_at": "2024-04-17T13:15:53.643826Z"
+                "last_reaction_at": "2024-04-17T13:15:53.643826Z",
+                "latest_reactions_by": []
             }
         },
         "type" : "regular",
@@ -52,9 +53,16 @@
                     "role" : "user",
                     "total_unread_count" : 0,
                     "online" : true,
-                    "name" : "John Doe"
-                }
-            }
+                    "name" : "John Doe",
+                  "blocked_user_ids" : [],
+                  "custom" : {},
+                  "language" : "",
+                  "teams" : []},
+              "banned" : false,
+              "shadow_banned" : false,
+              "channel_role" : "channel_member",
+              "notifications_muted" : false,
+              "custom" : {}}
         ],
         "text" : "No, I am your father!",
         "show_in_channel": true,
@@ -161,9 +169,16 @@
                     "role" : "user",
                     "total_unread_count" : 0,
                     "online" : true,
-                    "name" : "John Doe"
-                }
-            }
+                    "name" : "John Doe",
+                  "blocked_user_ids" : [],
+                  "custom" : {},
+                  "language" : "",
+                  "teams" : []},
+              "banned" : false,
+              "shadow_banned" : false,
+              "channel_role" : "channel_member",
+              "notifications_muted" : false,
+              "custom" : {}}
         ],
         "updated_at" : "2020-08-17T13:15:39.895109Z",
         "message_text_updated_at": "2023-08-17T13:15:39.895109Z",
@@ -186,8 +201,11 @@
             "role" : "user",
             "total_unread_count" : 0,
             "online" : true,
-            "name" : "John Doe"
-        },
+            "name" : "John Doe",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
         "mentioned_users" : [
             
         ],
@@ -212,8 +230,11 @@
                 "value" : "cilvia",
                 "updated_at" : "2021-01-12T16:43:25.726221Z",
                 "last_active" : "2021-01-12T16:38:26.444716Z",
-                "name" : "Neil Hannah"
-            },
+                "name" : "Neil Hannah",
+              "blocked_user_ids" : [],
+              "custom" : {},
+              "language" : "",
+              "teams" : []},
             "shadowed" : false,
             "pin_expires" : null,
             "attachments" : [
@@ -249,8 +270,11 @@
                 "online" : false,
                 "name" : "Joshua",
                 "value" : "josh",
-                "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U0JNN4BFE-52b2c5f7e1f6-512"
-            },
+                "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U0JNN4BFE-52b2c5f7e1f6-512",
+              "blocked_user_ids" : [],
+              "custom" : {},
+              "language" : "",
+              "teams" : []},
             {
                 "id" : "vader",
                 "role" : "user",
@@ -261,8 +285,11 @@
                 "online" : false,
                 "name" : "Vader",
                 "value" : "vader",
-                "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U0JNN4BFE-52b2c5f7e1f6-512"
-            }
+                "image" : "https:\/\/ca.slack-edge.com\/T02RM6X6B-U0JNN4BFE-52b2c5f7e1f6-512",
+              "blocked_user_ids" : [],
+              "custom" : {},
+              "language" : "",
+              "teams" : []}
         ],
         "html" : "<p>Hi<\/p>\n",
         "pinned": true,
@@ -286,8 +313,11 @@
             "role" : "user",
             "total_unread_count" : 0,
             "online" : true,
-            "name" : "John Doe"
-        },
+            "name" : "John Doe",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
         "moderation": {
             "action": "bounce",
             "original_text": "The message original text",

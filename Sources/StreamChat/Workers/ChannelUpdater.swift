@@ -126,8 +126,8 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// - Parameters:
     ///   - channelPayload: New channel data.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func updateChannel(channelPayload: ChannelEditDetailPayload, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .updateChannel(channelPayload: channelPayload)) {
+    func updateChannel(cid: ChannelId, channelPayload: ChannelEditDetailPayload, completion: (@Sendable (Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: .updateChannel(cid: cid, channelPayload: channelPayload)) {
             completion?($0.error)
         }
     }
@@ -138,11 +138,12 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - unsetProperties: Properties from the channel that are going to be cleared/unset.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func partialChannelUpdate(
+        cid: ChannelId,
         updates: ChannelEditDetailPayload,
         unsetProperties: [String],
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .partialChannelUpdate(updates: updates, unsetProperties: unsetProperties)) {
+        apiClient.request(endpoint: .partialChannelUpdate(cid: cid, updates: updates, unsetProperties: unsetProperties)) {
             completion?($0.error)
         }
     }
@@ -190,7 +191,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                     let memberListQueryDTO = try session.saveQuery(memberListQuery)
                     memberListQueryDTO.members.formUnion(updatedChannel.members)
 
-                    paginatedMembers = payload.members.compactMapLoggingError { try session.member(userId: $0.userId, cid: cid)?.asModel() }
+                    paginatedMembers = payload.members.compactMapLoggingError { try session.member(userId: $0.resolvedUserId, cid: cid)?.asModel() }
                 } completion: { error in
                     if let paginatedMembers {
                         completion(.success(paginatedMembers))
@@ -215,8 +216,12 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         ) { [weak self] (result: Result<MutedChannelPayloadResponse, Error>) in
             switch result {
             case .success(let payload):
+                guard let channelMute = payload.primaryChannelMute else {
+                    completion?(ClientError.Unknown("Mute channel response is missing channel mute data."))
+                    return
+                }
                 self?.database.write({ session in
-                    try session.saveChannelMute(payload: payload.channelMute)
+                    try session.saveChannelMute(payload: channelMute)
                 }) { _ in
                     completion?(nil)
                 }
@@ -725,7 +730,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         cid: ChannelId,
         completion: @escaping @Sendable (Result<PushPreference, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] result in
+        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] (result: Result<PushPreferencesPayloadResponse, Error>) in
             switch result {
             case let .success(response):
                 guard let channelPref = response.channelPreferences.asModel()[cid] else {
@@ -1107,17 +1112,17 @@ extension ChannelUpdater {
         }
     }
 
-    func update(channelPayload: ChannelEditDetailPayload) async throws {
+    func update(cid: ChannelId, channelPayload: ChannelEditDetailPayload) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            updateChannel(channelPayload: channelPayload) { error in
+            updateChannel(cid: cid, channelPayload: channelPayload) { error in
                 continuation.resume(with: error)
             }
         }
     }
 
-    func updatePartial(channelPayload: ChannelEditDetailPayload, unsetProperties: [String]) async throws {
+    func updatePartial(cid: ChannelId, channelPayload: ChannelEditDetailPayload, unsetProperties: [String]) async throws {
         try await withCheckedThrowingContinuation { continuation in
-            partialChannelUpdate(updates: channelPayload, unsetProperties: unsetProperties) { error in
+            partialChannelUpdate(cid: cid, updates: channelPayload, unsetProperties: unsetProperties) { error in
                 continuation.resume(with: error)
             }
         }

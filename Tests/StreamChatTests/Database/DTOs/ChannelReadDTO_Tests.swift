@@ -58,7 +58,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
     func test_markChannelAsRead_whenReadExists_isIsUpdated() throws {
         // GIVEN
         let read = ChannelReadPayload(
-            user: .dummy(userId: .unique),
+            user: UserPayload.dummy(userId: .unique),
             lastReadAt: .init(),
             lastReadMessageId: .unique,
             unreadMessagesCount: 10,
@@ -107,13 +107,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let readAt = Date()
         database.viewContext.markChannelAsRead(
             cid: channel.channel.cid,
-            userId: member.userId,
+            userId: member.resolvedUserId,
             at: readAt
         )
 
         // THEN
         let createdReadDTO = try XCTUnwrap(
-            ChannelReadDTO.load(cid: channel.channel.cid, userId: member.userId, context: database.viewContext)
+            ChannelReadDTO.load(cid: channel.channel.cid, userId: member.resolvedUserId, context: database.viewContext)
         )
         XCTAssertNearlySameDate(createdReadDTO.lastReadAt.bridgeDate, readAt)
         XCTAssertEqual(createdReadDTO.unreadMessageCount, 0)
@@ -140,7 +140,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         )
 
         // THEN
-        let readDTO = ChannelReadDTO.load(cid: channel.channel.cid, userId: member.userId, context: database.viewContext)
+        let readDTO = ChannelReadDTO.load(cid: channel.channel.cid, userId: member.resolvedUserId, context: database.viewContext)
         XCTAssertNil(readDTO)
     }
 
@@ -163,7 +163,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         )
 
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let currentUserMember: MemberPayload = .dummy(user: currentUser)
+        let currentUserMember: MemberPayload = .dummy(user: currentUser.asUserPayload)
         let ownMessageReadByAnotherUser: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
@@ -213,7 +213,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let anotherUserMember: MemberPayload = .dummy(user: anotherUser)
 
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let currentUserMember: MemberPayload = .dummy(user: currentUser)
+        let currentUserMember: MemberPayload = .dummy(user: currentUser.asUserPayload)
 
         let messageFromAnotherUser: MessagePayload = .dummy(
             messageId: .unique,
@@ -265,7 +265,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let anotherUserMember: MemberPayload = .dummy(user: anotherUser)
 
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let currentUserMember: MemberPayload = .dummy(user: currentUser)
+        let currentUserMember: MemberPayload = .dummy(user: currentUser.asUserPayload)
 
         let messageFromAnotherUser: MessagePayload = .dummy(
             messageId: .unique,
@@ -659,7 +659,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(cid: channel.channel.cid, by: member.userId)
+            session.markChannelAsUnread(cid: channel.channel.cid, by: member.resolvedUserId)
         }
 
         // THEN
@@ -676,7 +676,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         // GIVEN
         let lastReadAt = Date.unique
         let read = ChannelReadPayload(
-            user: .dummy(userId: .unique),
+            user: UserPayload.dummy(userId: .unique),
             lastReadAt: lastReadAt,
             lastReadMessageId: .unique,
             unreadMessagesCount: 10,

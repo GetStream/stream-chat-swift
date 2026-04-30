@@ -19,8 +19,11 @@
             "channel_mutes" : null,
             "updated_at" : "2020-10-21T14:43:22.80866Z",
             "role" : "user",
-            "online" : true
-        }
+            "online" : true,
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []}
     },
     "duration" : "9.32ms"
 }

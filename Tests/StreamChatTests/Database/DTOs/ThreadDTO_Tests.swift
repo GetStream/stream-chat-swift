@@ -71,12 +71,12 @@ final class ThreadDTO_Tests: XCTestCase {
         XCTAssertEqual(dto.latestReplies.count, 2)
         XCTAssertEqual(dto.read.count, 1)
         XCTAssertEqual(dto.parentMessageId, payload.parentMessageId)
-        XCTAssertEqual(dto.parentMessage.id, payload.parentMessage.id)
-        XCTAssertEqual(dto.channel.cid, payload.channel.cid.rawValue)
-        XCTAssertEqual(dto.createdBy.id, payload.createdBy.id)
+        XCTAssertEqual(dto.parentMessage.id, payload.parentMessage?.id)
+        XCTAssertEqual(dto.channel.cid, payload.channelCid)
+        XCTAssertEqual(dto.createdBy.id, payload.createdBy?.id)
         XCTAssertEqual(dto.lastMessageAt, payload.lastMessageAt?.bridgeDate)
         XCTAssertEqual(dto.createdAt, payload.createdAt.bridgeDate)
-        XCTAssertEqual(dto.updatedAt, payload.updatedAt?.bridgeDate)
+        XCTAssertEqual(dto.updatedAt, payload.updatedAt.bridgeDate)
     }
 
     func test_asModel() throws {
@@ -114,9 +114,9 @@ final class ThreadDTO_Tests: XCTestCase {
         XCTAssertEqual(model.latestReplies.count, 2)
         XCTAssertEqual(model.reads.count, 1)
         XCTAssertEqual(model.parentMessageId, payload.parentMessageId)
-        XCTAssertEqual(model.parentMessage.id, payload.parentMessage.id)
-        XCTAssertEqual(model.channel.cid, payload.channel.cid)
-        XCTAssertEqual(model.createdBy.id, payload.createdBy.id)
+        XCTAssertEqual(model.parentMessage.id, payload.parentMessage?.id)
+        XCTAssertEqual(model.channel.cid, payload.channelDetailPayload?.cid)
+        XCTAssertEqual(model.createdBy.id, payload.createdBy?.id)
         XCTAssertEqual(model.lastMessageAt, payload.lastMessageAt)
         XCTAssertEqual(model.createdAt, payload.createdAt)
         XCTAssertEqual(model.updatedAt, payload.updatedAt)
@@ -265,19 +265,19 @@ final class ThreadDTO_Tests: XCTestCase {
         // Save the same thread without a draft
         let payloadWithoutDraft = ThreadPayload(
             parentMessageId: payloadWithDraft.parentMessageId,
-            parentMessage: payloadWithDraft.parentMessage,
-            channel: payloadWithDraft.channel,
-            createdBy: payloadWithDraft.createdBy,
-            replyCount: payloadWithDraft.replyCount,
+            parentMessage: payloadWithDraft.parentMessagePayload!,
+            channel: payloadWithDraft.channelDetailPayload!,
+            createdBy: payloadWithDraft.createdByPayload,
+            replyCount: payloadWithDraft.replyCount ?? 0,
             participantCount: payloadWithDraft.participantCount,
             activeParticipantCount: 2,
-            threadParticipants: payloadWithDraft.threadParticipants,
+            threadParticipants: payloadWithDraft.threadParticipantPayloads,
             lastMessageAt: payloadWithDraft.lastMessageAt,
             createdAt: payloadWithDraft.createdAt,
             updatedAt: payloadWithDraft.updatedAt,
             title: payloadWithDraft.title,
-            latestReplies: payloadWithDraft.latestReplies,
-            read: payloadWithDraft.read,
+            latestReplies: payloadWithDraft.latestRepliesPayload,
+            read: payloadWithDraft.readPayload,
             draft: nil,
             extraData: payloadWithDraft.extraData
         )

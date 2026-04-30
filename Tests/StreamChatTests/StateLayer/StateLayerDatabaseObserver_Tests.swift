@@ -402,7 +402,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         
         // Change 1 existing
         try await client.mockDatabaseContainer.write { session in
-            try session.saveUser(payload: makePayload(1).users[0])
+            try session.saveUser(payload: makePayload(1).userPayloads[0])
         }
         
         await fulfillment(of: [expectation], timeout: defaultTimeout)

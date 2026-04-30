@@ -9,8 +9,11 @@
         "value" : "cilvia",
         "updated_at" : "2021-03-04T10:09:51.834025Z",
         "last_active" : "2021-03-04T10:02:01.668566Z",
-        "name" : "Neil Hannah"
-    },
+        "name" : "Neil Hannah",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []},
     "channel" : {
         "created_by" : null,
         "truncated_at" : "2022-02-16T08:20:13.862494Z",
@@ -96,9 +99,14 @@
                     "value" : "cilvia",
                     "updated_at" : "2021-03-04T10:09:51.834025Z",
                     "last_active" : "2021-03-04T10:02:01.668566Z",
-                    "name" : "Neil Hannah"
-                }
-            },
+                    "name" : "Neil Hannah",
+                  "blocked_user_ids" : [],
+                  "custom" : {},
+                  "language" : "",
+                  "teams" : []},
+              "channel_role" : "channel_member",
+              "notifications_muted" : false,
+              "custom" : {}},
             {
                 "created_at" : "2020-11-13T08:55:55.473852Z",
                 "banned" : false,
@@ -113,9 +121,14 @@
                     "created_at" : "2020-06-17T09:23:42.875544Z",
                     "image" : "https:\/\/picsum.photos\/seed\/630\/100\/100",
                     "updated_at" : "2021-01-27T13:24:09.490174Z",
-                    "name" : "Abbie O'Reilly"
-                }
-            }
+                    "name" : "Abbie O'Reilly",
+                  "blocked_user_ids" : [],
+                  "custom" : {},
+                  "language" : "",
+                  "teams" : []},
+              "channel_role" : "channel_member",
+              "notifications_muted" : false,
+              "custom" : {}}
         ],
         "member_count" : 2,
         "type" : "messaging",

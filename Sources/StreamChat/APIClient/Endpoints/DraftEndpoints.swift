@@ -20,15 +20,12 @@ extension Endpoint {
         channelId: ChannelId,
         requestBody: DraftMessageRequestBody
     ) -> Endpoint<DraftPayloadResponse> {
-        let body: [String: AnyEncodable] = [
-            "message": AnyEncodable(requestBody)
-        ]
-        return .init(
+        .init(
             path: .draftMessage(channelId),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: body
+            body: requestBody
         )
     }
 

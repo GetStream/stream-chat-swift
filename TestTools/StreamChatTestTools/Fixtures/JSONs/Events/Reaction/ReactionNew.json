@@ -17,8 +17,11 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "broken-waterfall-5"
-    },
+        "name" : "broken-waterfall-5",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []},
     "channel_type" : "messaging",
     "channel_id" : "general",
     "reaction" : {
@@ -46,9 +49,16 @@
             "role" : "user",
             "total_unread_count" : 0,
             "online" : true,
-            "name" : "broken-waterfall-5"
-        }
-    },
+            "name" : "broken-waterfall-5",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+      "banned" : false,
+      "shadow_banned" : false,
+      "channel_role" : "channel_member",
+      "notifications_muted" : false,
+      "custom" : {}},
     "created_at" : "2020-07-20T17:09:56.717804443Z",
     "message" : {
         "id" : "0e042a9c-d648-4a28-8ed6-dbdb2b7b4779",
@@ -65,7 +75,8 @@
                 "sum_scores": 1,
                 "count": 1,
                 "first_reaction_at": "2024-04-17T13:14:53.643826Z",
-                "last_reaction_at": "2024-04-17T13:15:53.643826Z"
+                "last_reaction_at": "2024-04-17T13:15:53.643826Z",
+                "latest_reactions_by": []
             }
         },
         "type" : "regular",
@@ -95,9 +106,16 @@
                     "role" : "user",
                     "total_unread_count" : 0,
                     "online" : true,
-                    "name" : "broken-waterfall-5"
-                }
-            }
+                    "name" : "broken-waterfall-5",
+                  "blocked_user_ids" : [],
+                  "custom" : {},
+                  "language" : "",
+                  "teams" : []},
+              "banned" : false,
+              "shadow_banned" : false,
+              "channel_role" : "channel_member",
+              "notifications_muted" : false,
+              "custom" : {}}
         ],
         "text" : "One",
         "attachments" : [
@@ -126,8 +144,11 @@
             "role" : "user",
             "total_unread_count" : 0,
             "online" : true,
-            "name" : "broken-waterfall-5"
-        },
+            "name" : "broken-waterfall-5",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
         "mentioned_users" : [
             
         ],

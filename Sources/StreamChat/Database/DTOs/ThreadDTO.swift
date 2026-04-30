@@ -218,24 +218,30 @@ extension NSManagedObjectContext {
         payload: ThreadPayload,
         cache: PreWarmedCache?
     ) throws -> ThreadDTO {
+        guard let channelPayload = payload.channelDetailPayload else {
+            throw ClientError("Thread payload is missing channel")
+        }
+        guard let parentMessagePayload = payload.parentMessagePayload else {
+            throw ClientError("Thread payload is missing parent message")
+        }
         let threadDTO = ThreadDTO.loadOrCreate(
             parentMessageId: payload.parentMessageId,
             context: self,
             cache: cache
         )
         let channelDTO = try saveChannel(
-            payload: payload.channel,
+            payload: channelPayload,
             query: nil,
             cache: cache
         )
         let parentMessageDTO = try saveMessage(
-            payload: payload.parentMessage,
+            payload: parentMessagePayload,
             channelDTO: channelDTO,
             syncOwnReactions: false,
             cache: cache
         )
 
-        let latestRepliesDTO: [MessageDTO] = try payload.latestReplies.map { replyPayload in
+        let latestRepliesDTO: [MessageDTO] = try payload.latestRepliesPayload.map { replyPayload in
             let replyDTO = try saveMessage(
                 payload: replyPayload,
                 channelDTO: channelDTO,
@@ -245,7 +251,7 @@ extension NSManagedObjectContext {
             return replyDTO
         }
 
-        let threadParticipantsDTO: [ThreadParticipantDTO] = try payload.threadParticipants.map { participantPayload in
+        let threadParticipantsDTO: [ThreadParticipantDTO] = try payload.threadParticipantPayloads.map { participantPayload in
             let participantDTO = try saveThreadParticipant(
                 payload: participantPayload,
                 threadId: payload.parentMessageId,
@@ -254,7 +260,7 @@ extension NSManagedObjectContext {
             return participantDTO
         }
 
-        let readsDTO: [ThreadReadDTO] = try payload.read.map { readPayload in
+        let readsDTO: [ThreadReadDTO] = try payload.readPayload.map { readPayload in
             let readDTO = try saveThreadRead(
                 payload: readPayload,
                 parentMessageId: payload.parentMessageId,
@@ -263,7 +269,7 @@ extension NSManagedObjectContext {
             return readDTO
         }
 
-        let createdByUserDTO = try saveUser(payload: payload.createdBy)
+        let createdByUserDTO = try saveUser(payload: payload.createdByPayload)
 
         let extraData: Data
         do {
@@ -274,17 +280,17 @@ extension NSManagedObjectContext {
 
         var currentUserUnreadCount = 0
         if let currentUserId = currentUser?.user.id {
-            let currentUserRead = payload.read.first(where: { $0.user.id == currentUserId })
+            let currentUserRead = payload.readPayload.first(where: { $0.user.id == currentUserId })
             currentUserUnreadCount = currentUserRead?.unreadMessagesCount ?? 0
         }
 
         if let draft = payload.draft {
-            parentMessageDTO.draftReply = try saveDraftMessage(payload: draft, for: payload.channel.cid, cache: cache)
+            parentMessageDTO.draftReply = try saveDraftMessage(payload: draft, for: channelPayload.cid, cache: cache)
         } else {
             /// If the payload does not contain a draft reply, we should
             /// delete the existing draft reply if it exists.
             if let draft = parentMessageDTO.draftReply {
-                deleteDraftMessage(in: payload.channel.cid, threadId: draft.parentMessageId)
+                deleteDraftMessage(in: channelPayload.cid, threadId: draft.parentMessageId)
                 parentMessageDTO.draftReply = nil
             }
         }
@@ -292,12 +298,12 @@ extension NSManagedObjectContext {
         threadDTO.fill(
             parentMessage: parentMessageDTO,
             title: payload.title,
-            replyCount: Int64(payload.replyCount),
+            replyCount: Int64(payload.replyCount ?? 0),
             participantCount: Int64(payload.participantCount),
             activeParticipantCount: Int64(payload.activeParticipantCount),
             createdAt: payload.createdAt.bridgeDate,
             lastMessageAt: payload.lastMessageAt?.bridgeDate,
-            updatedAt: payload.updatedAt?.bridgeDate,
+            updatedAt: payload.updatedAt.bridgeDate,
             latestReplies: Set(latestRepliesDTO),
             threadParticipants: Set(threadParticipantsDTO),
             read: Set(readsDTO),
@@ -312,24 +318,30 @@ extension NSManagedObjectContext {
 
     @discardableResult
     func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO {
+        guard let channelPayload = partialPayload.channelDetailPayload else {
+            throw ClientError("Thread partial payload is missing channel")
+        }
+        guard let parentMessagePayload = partialPayload.parentMessagePayload else {
+            throw ClientError("Thread partial payload is missing parent message")
+        }
         let threadDTO = ThreadDTO.loadOrCreate(
             parentMessageId: partialPayload.parentMessageId,
             context: self,
             cache: nil
         )
         let channelDTO = try saveChannel(
-            payload: partialPayload.channel,
+            payload: channelPayload,
             query: nil,
             cache: nil
         )
         let parentMessageDTO = try saveMessage(
-            payload: partialPayload.parentMessage,
+            payload: parentMessagePayload,
             channelDTO: channelDTO,
             syncOwnReactions: false,
             cache: nil
         )
 
-        let createdByUserDTO = try saveUser(payload: partialPayload.createdBy)
+        let createdByUserDTO = try saveUser(payload: partialPayload.createdByPayload)
 
         let extraData: Data
         do {
@@ -341,12 +353,12 @@ extension NSManagedObjectContext {
         threadDTO.fill(
             parentMessage: parentMessageDTO,
             title: partialPayload.title,
-            replyCount: Int64(partialPayload.replyCount),
+            replyCount: Int64(partialPayload.replyCount ?? 0),
             participantCount: Int64(partialPayload.participantCount),
-            activeParticipantCount: partialPayload.activeParticipantCount.map(Int64.init),
+            activeParticipantCount: Int64(partialPayload.activeParticipantCount),
             createdAt: partialPayload.createdAt.bridgeDate,
             lastMessageAt: partialPayload.lastMessageAt?.bridgeDate,
-            updatedAt: partialPayload.updatedAt?.bridgeDate,
+            updatedAt: partialPayload.updatedAt.bridgeDate,
             latestReplies: nil,
             threadParticipants: nil,
             read: nil,
@@ -366,12 +378,10 @@ extension NSManagedObjectContext {
             context: self,
             cache: nil
         )
-        
-        threadDTO.replyCount = Int64(detailsPayload.replyCount)
+
+        threadDTO.replyCount = Int64(detailsPayload.replyCount ?? 0)
         threadDTO.participantCount = Int64(detailsPayload.participantCount)
-        if let activeParticipantCount = detailsPayload.activeParticipantCount {
-            threadDTO.activeParticipantCount = Int64(activeParticipantCount)
-        }
+        threadDTO.activeParticipantCount = Int64(detailsPayload.activeParticipantCount)
         threadDTO.lastMessageAt = detailsPayload.lastMessageAt?.bridgeDate
         threadDTO.updatedAt = detailsPayload.updatedAt.bridgeDate
         threadDTO.title = detailsPayload.title

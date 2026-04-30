@@ -40,9 +40,9 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let currentUserMember: MemberPayload = .dummy(user: currentUser)
+        let currentUserMember: MemberPayload = .dummy(user: currentUser.asUserPayload)
         let currentUserRead: ChannelReadPayload = .init(
-            user: currentUser,
+            user: currentUser.asUserPayload,
             lastReadAt: anotherUserMessage.createdAt.addingTimeInterval(10),
             lastReadMessageId: .unique,
             unreadMessagesCount: 0
@@ -89,14 +89,14 @@ final class MessageDTO_Tests: XCTestCase {
     func test_saveMessage_messageSentByCurrentUser_hasReadsFromOtherMembers() throws {
         // GIVEN
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let currentUserMember: MemberPayload = .dummy(user: currentUser)
+        let currentUserMember: MemberPayload = .dummy(user: currentUser.asUserPayload)
         let currentUserMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
             createdAt: .init()
         )
         let currentUserRead: ChannelReadPayload = .init(
-            user: currentUser,
+            user: currentUser.asUserPayload,
             lastReadAt: currentUserMessage.createdAt,
             lastReadMessageId: .unique,
             unreadMessagesCount: 0
@@ -536,7 +536,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelPayload.createdBy!.lastActiveAt, loadedChannel?.createdBy?.lastActiveAt)
         XCTAssertEqual(channelPayload.createdBy!.isOnline, loadedChannel?.createdBy?.isOnline)
         XCTAssertEqual(channelPayload.createdBy!.isBanned, loadedChannel?.createdBy?.isBanned)
-        XCTAssertEqual(channelPayload.createdBy!.role, loadedChannel?.createdBy?.userRole)
+        XCTAssertEqual(channelPayload.createdBy!.userRole, loadedChannel?.createdBy?.userRole)
         XCTAssertEqual(channelPayload.createdBy!.extraData, loadedChannel?.createdBy?.extraData)
 
         // Assert the message was saved correctly
@@ -1074,7 +1074,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
         XCTAssertEqual(
             loadedMessage._attachments.map(\.type),
-            messagePayload.attachments.map(\.type)
+            messagePayload.attachments.map(\.attachmentType)
         )
         XCTAssertEqual(loadedMessage.imageAttachments.map(\.payload), [imageAttachmentPayload.decodedImagePayload])
         XCTAssertEqual(loadedMessage.fileAttachments.map(\.payload), [fileAttachmentPayload.decodedFilePayload])
@@ -1091,7 +1091,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(
             loadedMessage.attachmentCounts,
             messagePayload.attachments.reduce(into: [:]) { scores, attachment in
-                scores[attachment.type, default: 0] += 1
+                scores[attachment.attachmentType, default: 0] += 1
             }
         )
         // Reaction Groups
@@ -1205,7 +1205,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.extraData, ["k": .string("v")])
         XCTAssertEqual(requestBody.pinned, true)
         XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
-        XCTAssertEqual(requestBody.attachments.map(\.type), [.image, .video])
+        XCTAssertEqual(requestBody.attachments.map(\.attachmentType), [.image, .video])
         XCTAssertEqual(requestBody.attachments.count, 2)
         XCTAssertEqual(requestBody.mentionedUserIds, mentionedUserIds)
         XCTAssertEqual(requestBody.type, nil)

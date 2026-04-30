@@ -22,7 +22,10 @@
           "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
           "birthland": "Naboo",
           "extraData": {},
-          "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
+          "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+          "blocked_user_ids": [],
+          "custom": {},
+          "teams": []
         },
         "frozen": false,
         "disabled": false,
@@ -42,7 +45,10 @@
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
               "name": "Han Solo",
               "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-              "birthland": "Corellia"
+              "birthland": "Corellia",
+              "blocked_user_ids": [],
+              "custom": {},
+              "teams": []
             },
             "status": "member",
             "created_at": "2024-03-26T11:13:35.162494Z",
@@ -51,7 +57,8 @@
             "shadow_banned": false,
             "role": "member",
             "channel_role": "channel_member",
-            "notifications_muted": false
+            "notifications_muted": false,
+            "custom": {}
           },
           {
             "user_id": "r2-d2",
@@ -68,7 +75,10 @@
               "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
               "birthland": "Naboo",
               "extraData": {},
-              "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
+              "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+              "blocked_user_ids": [],
+              "custom": {},
+              "teams": []
             },
             "status": "member",
             "created_at": "2024-03-26T11:13:35.162494Z",
@@ -77,7 +87,8 @@
             "shadow_banned": false,
             "role": "owner",
             "channel_role": "channel_member",
-            "notifications_muted": false
+            "notifications_muted": false,
+            "custom": {}
           },
           {
             "user_id": "tommaso-0",
@@ -88,7 +99,11 @@
               "updated_at": "2023-09-27T13:09:36.590043Z",
               "last_active": "2024-03-26T12:03:38.841054Z",
               "banned": false,
-              "online": false
+              "online": false,
+              "blocked_user_ids": [],
+              "custom": {},
+              "language": "",
+              "teams": []
             },
             "status": "member",
             "created_at": "2024-03-26T11:43:49.56034Z",
@@ -97,8 +112,9 @@
             "shadow_banned": false,
             "role": "member",
             "channel_role": "channel_member",
-            "notifications_muted": false
-          },
+            "notifications_muted": false,
+            "custom": {}
+          }
         ],
         "member_count": 101,
         "config": {
@@ -146,7 +162,13 @@
               "args": "[text]",
               "set": "fun_set"
             }
-          ]
+          ],
+          "count_messages": false,
+          "delivery_events": false,
+          "polls": false,
+          "shared_locations": false,
+          "skip_last_msg_update_for_system_msgs": false,
+          "user_message_reminders": false
         },
         "truncated_at": "2024-03-26T12:02:37.66035Z",
         "truncated_by": {
@@ -162,9 +184,13 @@
           "birthland": "Naboo",
           "extraData": {},
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
-          "name": "R2-D2"
+          "name": "R2-D2",
+          "blocked_user_ids": [],
+          "custom": {},
+          "teams": []
         },
-        "name": "Release 4.51.0"
+        "name": "Release 4.51.0",
+        "custom": {}
       },
       "parent_message_id": "eafa39f5-9ace-457c-ad4a-f5142647a9e6",
       "created_by_user_id": "han_solo",
@@ -181,7 +207,10 @@
         "extraData": {},
         "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
         "name": "Han Solo",
-        "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+        "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+        "blocked_user_ids": [],
+        "custom": {},
+        "teams": []
       },
       "reply_count": 3,
       "participant_count": 2,
@@ -204,12 +233,18 @@
             "birthland": "Naboo",
             "extraData": {},
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
-            "name": "R2-D2"
+            "name": "R2-D2",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "created_at": "2024-03-26T11:48:05.142083Z",
           "last_read_at": "0001-01-01T00:00:00Z",
-          "Custom": null
-        },
+          "custom": {},
+          "banned" : false,
+          "shadow_banned" : false,
+          "channel_role" : "channel_member",
+          "notifications_muted" : false},
         {
           "app_pk": 0,
           "channel_cid": "",
@@ -228,12 +263,18 @@
             "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
             "birthland": "Corellia",
             "extraData": {},
-            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "created_at": "2024-03-26T11:48:05.142083Z",
           "last_read_at": "0001-01-01T00:00:00Z",
-          "Custom": null
-        }
+          "custom": {},
+          "banned" : false,
+          "shadow_banned" : false,
+          "channel_role" : "channel_member",
+          "notifications_muted" : false}
       ],
       "last_message_at": "2024-03-26T11:54:12.92052Z",
       "created_at": "2024-03-26T11:48:05.142083Z",
@@ -255,12 +296,17 @@
             "extraData": {},
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
             "name": "R2-D2",
-            "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "last_read": "0001-01-01T00:00:00Z",
           "unread_messages": 1
         }
-      ]
+      ],
+      "active_participant_count": 0,
+      "custom": {}
     },
     {
       "channel_cid": "messaging:06E2B480-F",
@@ -284,7 +330,10 @@
           "extraData": {},
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
           "name": "Han Solo",
-          "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+          "blocked_user_ids": [],
+          "custom": {},
+          "teams": []
         },
         "frozen": false,
         "disabled": false,
@@ -304,7 +353,10 @@
               "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
               "birthland": "Corellia",
               "extraData": {},
-              "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+              "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+              "blocked_user_ids": [],
+              "custom": {},
+              "teams": []
             },
             "status": "member",
             "created_at": "2024-03-01T16:44:07.251545Z",
@@ -313,7 +365,8 @@
             "shadow_banned": false,
             "role": "owner",
             "channel_role": "channel_member",
-            "notifications_muted": false
+            "notifications_muted": false,
+            "custom": {}
           },
           {
             "user_id": "luke_skywalker",
@@ -330,7 +383,10 @@
               "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
               "birthland": "Tatooine",
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-              "dashboard_user": true
+              "dashboard_user": true,
+              "blocked_user_ids": [],
+              "custom": {},
+              "teams": []
             },
             "status": "member",
             "created_at": "2024-03-01T16:44:07.251545Z",
@@ -339,7 +395,8 @@
             "shadow_banned": false,
             "role": "member",
             "channel_role": "channel_member",
-            "notifications_muted": false
+            "notifications_muted": false,
+            "custom": {}
           },
           {
             "user_id": "luke_skywalker2",
@@ -350,7 +407,11 @@
               "updated_at": "2023-01-25T15:46:02.391012Z",
               "banned": false,
               "online": false,
-              "name": "Luke Skywalker2"
+              "name": "Luke Skywalker2",
+              "blocked_user_ids": [],
+              "custom": {},
+              "language": "",
+              "teams": []
             },
             "status": "member",
             "created_at": "2024-03-01T16:44:07.251545Z",
@@ -359,7 +420,8 @@
             "shadow_banned": false,
             "role": "member",
             "channel_role": "channel_member",
-            "notifications_muted": false
+            "notifications_muted": false,
+            "custom": {}
           }
         ],
         "member_count": 3,
@@ -408,11 +470,18 @@
               "args": "[text]",
               "set": "fun_set"
             }
-          ]
+          ],
+          "count_messages": false,
+          "delivery_events": false,
+          "polls": false,
+          "shared_locations": false,
+          "skip_last_msg_update_for_system_msgs": false,
+          "user_message_reminders": false
         },
         "is_pinned_by_luke_skywalker": true,
         "name": "Luke",
-        "is_cool": false
+        "is_cool": false,
+        "custom": {}
       },
       "parent_message_id": "670b0d17-e2e4-4b2f-a0d9-9d80560ff949",
       "parent_message": {
@@ -433,7 +502,10 @@
           "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
           "birthland": "Corellia",
           "extraData": {},
-          "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+          "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+          "blocked_user_ids": [],
+          "custom": {},
+          "teams": []
         },
         "attachments": [],
         "latest_reactions": [],
@@ -456,7 +528,10 @@
             "birthland": "Tatooine",
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "dashboard_user": true,
-            "name": "Luke Skywalker"
+            "name": "Luke Skywalker",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           {
             "id": "han_solo",
@@ -471,7 +546,10 @@
             "name": "Han Solo",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
             "birthland": "Corellia",
-            "extraData": {}
+            "extraData": {},
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           }
         ],
         "cid": "messaging:06E2B480-F",
@@ -487,7 +565,11 @@
         "pinned": false,
         "pinned_at": null,
         "pinned_by": null,
-        "pin_expires": null
+        "pin_expires": null,
+        "custom": {},
+        "mentioned_channel": false,
+        "mentioned_here": false,
+        "restricted_visibility": []
       },
       "created_by_user_id": "luke_skywalker",
       "created_by": {
@@ -503,7 +585,10 @@
         "birthland": "Tatooine",
         "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
         "dashboard_user": true,
-        "name": "Luke Skywalker"
+        "name": "Luke Skywalker",
+        "blocked_user_ids": [],
+        "custom": {},
+        "teams": []
       },
       "reply_count": 2,
       "participant_count": 2,
@@ -526,12 +611,18 @@
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "dashboard_user": true,
             "name": "Luke Skywalker",
-            "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "created_at": "2024-03-12T17:42:25.970003Z",
           "last_read_at": "0001-01-01T00:00:00Z",
-          "Custom": null
-        },
+          "custom": {},
+          "banned" : false,
+          "shadow_banned" : false,
+          "channel_role" : "channel_member",
+          "notifications_muted" : false},
         {
           "app_pk": 0,
           "channel_cid": "",
@@ -550,12 +641,18 @@
             "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
             "birthland": "Corellia",
             "extraData": {},
-            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "created_at": "2024-03-12T17:42:25.970003Z",
           "last_read_at": "0001-01-01T00:00:00Z",
-          "Custom": null
-        }
+          "custom": {},
+          "banned" : false,
+          "shadow_banned" : false,
+          "channel_role" : "channel_member",
+          "notifications_muted" : false}
       ],
       "last_message_at": "2024-03-12T17:48:57.459639Z",
       "created_at": "2024-03-12T17:42:25.970003Z",
@@ -580,7 +677,10 @@
             "name": "Luke Skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "birthland": "Tatooine",
-            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
+            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "attachments": [],
           "latest_reactions": [],
@@ -599,7 +699,11 @@
           "pinned": false,
           "pinned_at": null,
           "pinned_by": null,
-          "pin_expires": null
+          "pin_expires": null,
+          "custom": {},
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": []
         },
         {
           "id": "03bd0b2e-6ddd-4396-9a4e-4a28d655b12d",
@@ -619,7 +723,10 @@
             "birthland": "Corellia",
             "extraData": {},
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-            "name": "Han Solo"
+            "name": "Han Solo",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "attachments": [],
           "latest_reactions": [],
@@ -647,7 +754,10 @@
               "name": "Luke Skywalker",
               "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
               "birthland": "Tatooine",
-              "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
+              "image_url": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
+              "blocked_user_ids": [],
+              "custom": {},
+              "teams": []
             }
           ],
           "i18n": {
@@ -658,7 +768,11 @@
           "pinned": false,
           "pinned_at": null,
           "pinned_by": null,
-          "pin_expires": null
+          "pin_expires": null,
+          "custom": {},
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": []
         }
       ],
       "read": [
@@ -676,7 +790,10 @@
             "dashboard_user": true,
             "name": "Luke Skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-            "birthland": "Tatooine"
+            "birthland": "Tatooine",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "last_read": "0001-01-01T00:00:00Z",
           "unread_messages": 1
@@ -695,12 +812,17 @@
             "name": "Han Solo",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
             "birthland": "Corellia",
-            "extraData": {}
+            "extraData": {},
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "last_read": "0001-01-01T00:00:00Z",
           "unread_messages": 1
         }
-      ]
+      ],
+      "active_participant_count": 0,
+      "custom": {}
     },
     {
       "channel_cid": "messaging:C272E452-0",
@@ -724,7 +846,10 @@
           "birthland": "Corellia",
           "extraData": {},
           "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-          "name": "Han Solo"
+          "name": "Han Solo",
+          "blocked_user_ids": [],
+          "custom": {},
+          "teams": []
         },
         "frozen": false,
         "disabled": false,
@@ -744,7 +869,10 @@
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
               "name": "Han Solo",
               "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-              "birthland": "Corellia"
+              "birthland": "Corellia",
+              "blocked_user_ids": [],
+              "custom": {},
+              "teams": []
             },
             "status": "member",
             "created_at": "2023-12-21T14:09:34.858716Z",
@@ -753,7 +881,8 @@
             "shadow_banned": false,
             "role": "owner",
             "channel_role": "channel_member",
-            "notifications_muted": false
+            "notifications_muted": false,
+            "custom": {}
           },
           {
             "user_id": "leia_organa",
@@ -768,7 +897,10 @@
               "language": "zh",
               "birthland": "Polis Massa",
               "name": "Leia Organa",
-              "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
+              "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+              "blocked_user_ids": [],
+              "custom": {},
+              "teams": []
             },
             "status": "member",
             "created_at": "2023-12-21T14:09:34.858716Z",
@@ -777,7 +909,8 @@
             "shadow_banned": false,
             "role": "admin",
             "channel_role": "channel_member",
-            "notifications_muted": true
+            "notifications_muted": true,
+            "custom": {}
           },
           {
             "user_id": "leia_orgz",
@@ -788,7 +921,11 @@
               "updated_at": "2023-12-07T18:17:14.310699Z",
               "banned": false,
               "online": false,
-              "name": "Lei@ Organa"
+              "name": "Lei@ Organa",
+              "blocked_user_ids": [],
+              "custom": {},
+              "language": "",
+              "teams": []
             },
             "status": "member",
             "created_at": "2023-12-21T14:09:34.858716Z",
@@ -797,7 +934,8 @@
             "shadow_banned": false,
             "role": "member",
             "channel_role": "channel_member",
-            "notifications_muted": false
+            "notifications_muted": false,
+            "custom": {}
           }
         ],
         "member_count": 102,
@@ -846,7 +984,13 @@
               "args": "[text]",
               "set": "fun_set"
             }
-          ]
+          ],
+          "count_messages": false,
+          "delivery_events": false,
+          "polls": false,
+          "shared_locations": false,
+          "skip_last_msg_update_for_system_msgs": false,
+          "user_message_reminders": false
         },
         "truncated_at": "2024-01-09T16:25:28.881745Z",
         "truncated_by": {
@@ -862,11 +1006,15 @@
           "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
           "birthland": "Corellia",
           "extraData": {},
-          "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+          "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+          "blocked_user_ids": [],
+          "custom": {},
+          "teams": []
         },
         "name": "Release 4.46.0",
         "is_cool": true,
-        "is_pinned_by_han_solo": true
+        "is_pinned_by_han_solo": true,
+        "custom": {}
       },
       "parent_message_id": "1fd621a3-8e0b-4887-b326-f90e2ea60d72",
       "parent_message": {
@@ -885,7 +1033,10 @@
           "language": "zh",
           "birthland": "Polis Massa",
           "name": "Leia Organa",
-          "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
+          "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+          "blocked_user_ids": [],
+          "custom": {},
+          "teams": []
         },
         "attachments": [],
         "latest_reactions": [],
@@ -908,7 +1059,10 @@
             "extraData": {},
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
             "name": "Han Solo",
-            "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           {
             "id": "leia_organa",
@@ -921,7 +1075,10 @@
             "language": "zh",
             "birthland": "Polis Massa",
             "name": "Leia Organa",
-            "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           }
         ],
         "cid": "messaging:C272E452-0",
@@ -940,14 +1097,21 @@
             "language": "zh",
             "birthland": "Polis Massa",
             "name": "Leia Organa",
-            "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           }
         ],
         "silent": false,
         "pinned": false,
         "pinned_at": null,
         "pinned_by": null,
-        "pin_expires": null
+        "pin_expires": null,
+        "custom": {},
+        "mentioned_channel": false,
+        "mentioned_here": false,
+        "restricted_visibility": []
       },
       "created_by_user_id": "han_solo",
       "created_by": {
@@ -963,7 +1127,10 @@
         "name": "Han Solo",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
         "birthland": "Corellia",
-        "extraData": {}
+        "extraData": {},
+        "blocked_user_ids": [],
+        "custom": {},
+        "teams": []
       },
       "reply_count": 4,
       "participant_count": 2,
@@ -984,12 +1151,18 @@
             "language": "zh",
             "birthland": "Polis Massa",
             "name": "Leia Organa",
-            "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "created_at": "2024-03-12T10:36:12.724176Z",
           "last_read_at": "0001-01-01T00:00:00Z",
-          "Custom": null
-        },
+          "custom": {},
+          "banned" : false,
+          "shadow_banned" : false,
+          "channel_role" : "channel_member",
+          "notifications_muted" : false},
         {
           "app_pk": 0,
           "channel_cid": "",
@@ -1008,12 +1181,18 @@
             "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
             "birthland": "Corellia",
             "extraData": {},
-            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+            "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "created_at": "2024-03-12T10:36:12.724176Z",
           "last_read_at": "0001-01-01T00:00:00Z",
-          "Custom": null
-        }
+          "custom": {},
+          "banned" : false,
+          "shadow_banned" : false,
+          "channel_role" : "channel_member",
+          "notifications_muted" : false}
       ],
       "last_message_at": "2024-03-12T10:37:14.870068Z",
       "created_at": "2024-03-12T10:36:12.724176Z",
@@ -1038,7 +1217,10 @@
             "extraData": {},
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
             "name": "Han Solo",
-            "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png"
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "attachments": [],
           "latest_reactions": [],
@@ -1068,7 +1250,10 @@
               "birthland": "Corellia",
               "extraData": {},
               "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-              "name": "Han Solo"
+              "name": "Han Solo",
+              "blocked_user_ids": [],
+              "custom": {},
+              "teams": []
             },
             "attachments": [],
             "latest_reactions": [],
@@ -1092,7 +1277,11 @@
             "pinned": false,
             "pinned_at": null,
             "pinned_by": null,
-            "pin_expires": null
+            "pin_expires": null,
+            "custom": {},
+            "mentioned_channel": false,
+            "mentioned_here": false,
+            "restricted_visibility": []
           },
           "cid": "messaging:C272E452-0",
           "created_at": "2024-03-12T10:36:37.154846Z",
@@ -1107,7 +1296,11 @@
           "pinned": false,
           "pinned_at": null,
           "pinned_by": null,
-          "pin_expires": null
+          "pin_expires": null,
+          "custom": {},
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": []
         },
         {
           "id": "47e9a195-765c-4878-ba97-2c2d832c837b",
@@ -1125,7 +1318,10 @@
             "language": "zh",
             "birthland": "Polis Massa",
             "name": "Leia Organa",
-            "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "attachments": [],
           "latest_reactions": [],
@@ -1144,7 +1340,11 @@
           "pinned": false,
           "pinned_at": null,
           "pinned_by": null,
-          "pin_expires": null
+          "pin_expires": null,
+          "custom": {},
+          "mentioned_channel": false,
+          "mentioned_here": false,
+          "restricted_visibility": []
         }
       ],
       "read": [
@@ -1160,7 +1360,10 @@
             "language": "zh",
             "birthland": "Polis Massa",
             "name": "Leia Organa",
-            "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "last_read": "0001-01-01T00:00:00Z",
           "unread_messages": 3
@@ -1179,12 +1382,17 @@
             "image_url": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
             "name": "Han Solo",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-            "birthland": "Corellia"
+            "birthland": "Corellia",
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
           },
           "last_read": "0001-01-01T00:00:00Z",
           "unread_messages": 1
         }
-      ]
+      ],
+      "active_participant_count": 0,
+      "custom": {}
     }
   ],
   "next": "W3sibmFtZSI6Imhhc191bnJlYWQiLCJ2YWx1ZSI6dHJ1ZSwiZGlyZWN0aW9uIjotMX0seyJuYW1lIjoibGFzdF9tZXNzYWdlX2F0IiwidmFsdWUiOiIyMDI0LTAzLTEyVDEwOjM3OjE0Ljg3MDA2OFoiLCJkaXJlY3Rpb24iOi0xfSx7Im5hbWUiOiJwYXJlbnRfbWVzc2FnZV9pZCIsInZhbHVlIjoiMWZkNjIxYTMtOGUwYi00ODg3LWIzMjYtZjkwZTJlYTYwZDcyIiwiZGlyZWN0aW9uIjotMX1d",

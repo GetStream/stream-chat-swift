@@ -10,9 +10,19 @@
       "online": false,
       "name": "Luke",
       "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
-      "secret_note" : "Anaking is Vader!",
-      "teams" : ["RED", "GREEN", "BLUE"]
-    }
+      "teams" : ["RED", "GREEN", "BLUE"],
+      "blocked_user_ids" : [],
+      "custom" : { "secret_note" : "Anaking is Vader!" },
+      "language" : "",
+      "channel_mutes" : [],
+      "devices" : [],
+      "invisible" : false,
+      "mutes" : [],
+      "shadow_banned" : false,
+      "total_unread_count" : 0,
+      "unread_channels" : 0,
+      "unread_count" : 0,
+      "unread_threads" : 0}
   },
-  "duration": "16.74ms"
-}
+  "duration": "16.74ms",
+  "membership_deletion_task_id" : ""}

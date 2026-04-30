@@ -350,7 +350,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let eventPayload: EventPayload = .init(
             eventType: .memberRemoved,
             cid: channelPayload.channel.cid,
-            user: member.user,
+            user: member.userPayload,
             createdAt: .unique
         )
         let event = try MemberRemovedEventDTO(from: eventPayload)

@@ -1199,7 +1199,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             threadDTO?.parentMessageId = threadId
         }
 
-        if let parentMessage = payload.parentMessage {
+        if let parentMessage = payload.parentMessage?.asMessagePayload {
             dto.parentMessage = try saveMessage(
                 payload: parentMessage,
                 channelDTO: channelDTO,
@@ -1218,7 +1218,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             channelDTO.draftMessage = dto
         }
 
-        if let quotedMessage = payload.quotedMessage {
+        if let quotedMessage = payload.quotedMessage?.asMessagePayload {
             dto.quotedMessage = try saveMessage(
                 payload: quotedMessage,
                 channelDTO: channelDTO,
@@ -1230,12 +1230,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.quotedMessage = nil
         }
 
-        if let mentionedUsers = draftDetailsPayload.mentionedUsers {
+        if let mentionedUsers = draftDetailsPayload.mentionedUsersPayload {
             dto.mentionedUsers = try Set(mentionedUsers.map { try saveUser(payload: $0) })
             dto.mentionedUserIds = mentionedUsers.map(\.id)
         }
 
-        if let attachments = draftDetailsPayload.attachments {
+        if let attachments = draftDetailsPayload.attachmentPayloads {
             dto.attachments = Set(
                 try attachments.enumerated().map { index, attachment in
                     let id = AttachmentId(cid: cid, messageId: draftDetailsPayload.id, index: index)

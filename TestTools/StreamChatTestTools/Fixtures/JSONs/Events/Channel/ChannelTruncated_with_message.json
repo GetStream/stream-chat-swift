@@ -19,8 +19,11 @@
     },
     "testing" : false,
     "online" : false,
-    "name" : "Luke Skywalker"
-  },
+    "name" : "Luke Skywalker",
+    "blocked_user_ids" : [],
+    "custom" : {},
+    "language" : "",
+    "teams" : []},
   "channel" : {
     "id" : "8372DE11-E",
     "truncated_at" : "2022-02-16T08:20:13.862494Z",
@@ -45,9 +48,13 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/f\/fc\/Leia_Organa_TLJ.png",
           "updated_at" : "2022-02-15T00:56:45.316975Z",
           "last_active" : "2022-02-16T08:17:06.043704722Z",
-          "name" : "Leia Organa"
-        }
-      },
+          "name" : "Leia Organa",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "banned" : false,
         "shadow_banned" : false,
@@ -76,9 +83,13 @@
           },
           "testing" : false,
           "online" : false,
-          "name" : "Luke Skywalker"
-        }
-      }
+          "name" : "Luke Skywalker",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "notifications_muted" : false,
+        "custom" : {}}
     ],
     "created_at" : "2022-02-16T00:16:47.556896Z",
     "created_by" : {
@@ -101,8 +112,11 @@
       },
       "testing" : false,
       "online" : false,
-      "name" : "Luke Skywalker"
-    },
+      "name" : "Luke Skywalker",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []},
     "disabled" : false,
     "type" : "messaging",
     "cid" : "messaging:8372DE11-E",
@@ -192,8 +206,11 @@
       },
       "testing" : false,
       "online" : false,
-      "name" : "Luke Skywalker"
-    },
+      "name" : "Luke Skywalker",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []},
     "shadowed" : false,
     "pinned_at" : null,
     "pin_expires" : null,

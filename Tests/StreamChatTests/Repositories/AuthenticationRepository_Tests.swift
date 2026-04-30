@@ -674,7 +674,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         repository.delegate = delegate
 
         // Token Provider Success
-        let apiToken = Token.unique()
+        let apiToken = Token.development(userId: .unique)
 
         // Simulate Failure on Connection Repository
         let testError = TestError()
@@ -718,7 +718,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         repository.delegate = delegate
 
         // Token Provider Success
-        let apiToken = Token.unique()
+        let apiToken = Token.development(userId: .unique)
 
         // Simulate Success on Connection Repository
         connectionRepository.connectResult = .success(())

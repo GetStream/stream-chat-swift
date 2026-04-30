@@ -23,7 +23,7 @@ final class ThreadEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "ThreadUpdated")
         let event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ThreadUpdatedEventDTO)
         XCTAssertEqual(event.thread.parentMessageId, "8873fa5a-ddc2-4361-a2c6-137af90fb53e")
-        XCTAssertEqual(event.thread.parentMessage.text, "Test")
+        XCTAssertEqual(event.thread.parentMessage?.text, "Test")
         XCTAssertEqual(event.thread.replyCount, 29)
         XCTAssertEqual(event.thread.participantCount, 2)
         XCTAssertEqual(event.thread.title, "New Title!!!")

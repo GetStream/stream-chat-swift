@@ -111,7 +111,7 @@ class UserUpdater: Worker, @unchecked Sendable {
                         return
                     }
 
-                    guard let user = payload.users.first else {
+                    guard let user = payload.userPayloads.first else {
                         completion?(ClientError.UserDoesNotExist(userId: userId))
                         return
                     }
@@ -154,7 +154,24 @@ class UserUpdater: Worker, @unchecked Sendable {
             switch $0 {
             case let .success(payload):
                 self.database.write({ session in
-                    let userDTO = try session.saveUser(payload: payload.flaggedUser)
+                    let userDTO = try session.saveUser(payload: payload.flaggedUser.id.isEmpty
+                        ? UserPayload(
+                            id: userId,
+                            name: nil,
+                            imageURL: nil,
+                            role: .user,
+                            teamsRole: nil,
+                            createdAt: Date(timeIntervalSince1970: 0),
+                            updatedAt: Date(timeIntervalSince1970: 0),
+                            deactivatedAt: nil,
+                            lastActiveAt: nil,
+                            isOnline: false,
+                            isInvisible: false,
+                            isBanned: false,
+                            language: nil,
+                            extraData: [:]
+                        )
+                        : payload.flaggedUser)
 
                     let currentUserDTO = session.currentUser
                     if flag {

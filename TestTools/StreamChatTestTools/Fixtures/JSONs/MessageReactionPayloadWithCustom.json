@@ -21,14 +21,19 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "John Doe"
-    },
-    "secret_note": "Anakin is Vader!",
-    "good_movies_count": 3,
-    "awesome": true,
-    "nested_stuff": {
-        "how_many_times": 42,
-        "small": 0.001,
-        "colors": ["blue", "yellow", 42]
+        "name" : "John Doe",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []},
+    "custom": {
+        "secret_note": "Anakin is Vader!",
+        "good_movies_count": 3,
+        "awesome": true,
+        "nested_stuff": {
+            "how_many_times": 42,
+            "small": 0.001,
+            "colors": ["blue", "yellow", 42]
+        }
     }
 }

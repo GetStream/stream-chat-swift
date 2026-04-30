@@ -18,7 +18,6 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
 
         // Create ChannelEditDetailPayload
         let payload = ChannelEditDetailPayload(
-            cid: cid,
             name: name,
             imageURL: imageURL,
             team: team,
@@ -29,11 +28,13 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
         )
 
         let expectedData: [String: Any] = [
-            "name": name,
-            "image": imageURL.absoluteString,
+            "custom": [
+                "name": name,
+                "image": imageURL.absoluteString
+            ],
             "team": team,
-            "members": [invite],
-            "invites": [invite],
+            "members": [["user_id": invite]],
+            "invites": [["user_id": invite]],
             "filter_tags": [filterTag]
         ]
 
@@ -44,10 +45,9 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
         AssertJSONEqual(encodedJSON, expectedJSON)
     }
 
-    func test_apiPath() {
+    func test_channelQueryCarriesAPIPath() {
         // Create payload without id specified
         let payload1: ChannelEditDetailPayload = .init(
-            type: .messaging,
             name: .unique,
             imageURL: .unique(),
             team: nil,
@@ -58,12 +58,11 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
         )
 
         // Assert only type is part of path
-        XCTAssertEqual(payload1.apiPath, "\(payload1.type)")
+        XCTAssertEqual(ChannelQuery(id: nil, type: .messaging, channelPayload: payload1).apiPath, "messaging")
 
         // Create payload with id and type specified
         let cid: ChannelId = .unique
         let payload2: ChannelEditDetailPayload = .init(
-            cid: cid,
             name: .unique,
             imageURL: .unique(),
             team: nil,
@@ -74,6 +73,6 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
         )
 
         // Assert type and id are part of path
-        XCTAssertEqual(payload2.apiPath, "\(payload2.type.rawValue)/\(payload2.id!)")
+        XCTAssertEqual(ChannelQuery(id: cid.id, type: cid.type, channelPayload: payload2).apiPath, cid.apiPath)
     }
 }

@@ -175,7 +175,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.message.id, eventPayload.message?.id)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.reaction.type, eventPayload.reaction?.type)
+        XCTAssertEqual(event.reaction.type, eventPayload.reaction?.reactionType)
         XCTAssertEqual(event.reaction.score, eventPayload.reaction?.score)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
@@ -217,7 +217,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.message.id, eventPayload.message?.id)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.reaction.type, eventPayload.reaction?.type)
+        XCTAssertEqual(event.reaction.type, eventPayload.reaction?.reactionType)
         XCTAssertEqual(event.reaction.score, eventPayload.reaction?.score)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
@@ -259,7 +259,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.message.id, eventPayload.message?.id)
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.reaction.type, eventPayload.reaction?.type)
+        XCTAssertEqual(event.reaction.type, eventPayload.reaction?.reactionType)
         XCTAssertEqual(event.reaction.score, eventPayload.reaction?.score)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }

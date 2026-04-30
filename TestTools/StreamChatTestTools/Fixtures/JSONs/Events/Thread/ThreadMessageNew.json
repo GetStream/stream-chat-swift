@@ -27,8 +27,10 @@
                     "enabled": false
                 }
             },
-            "name": "Leia Organa"
-        },
+            "name": "Leia Organa",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "teams" : []},
         "attachments": [],
         "latest_reactions": [],
         "own_reactions": [],
@@ -53,13 +55,16 @@
                 "online": true,
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
                 "birthland": "Corellia",
-                "name": "Han Solo"
-            }
+                "name": "Han Solo",
+              "blocked_user_ids" : [],
+              "custom" : {},
+              "language" : "",
+              "teams" : []}
         ],
         "i18n": {
             "de_text": "@Han Solo Ahahah",
             "language": "de",
-            "zh_text": "@Han Solo 啊哈哈"
+            "zh_text": "@Han Solo \u554a\u54c8\u54c8"
         },
         "silent": false,
         "before_message_send_failed": true,
@@ -86,8 +91,10 @@
             "language": "zh",
             "birthland": "Naboo",
             "name": "R2-D2",
-            "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png"
-        },
+            "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "teams" : []},
         "frozen": false,
         "disabled": false,
         "members": [
@@ -101,6 +108,10 @@
                     "last_active": "2024-07-08T16:59:20.759383311Z",
                     "banned": false,
                     "online": true,
+                    "blocked_user_ids": [],
+                    "custom": {},
+                    "language": "",
+                    "teams": [],
                     "name": "Han Solo",
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
                     "birthland": "Corellia"
@@ -112,7 +123,8 @@
                 "shadow_banned": false,
                 "role": "member",
                 "channel_role": "channel_member",
-                "notifications_muted": false
+                "notifications_muted": false,
+                "custom": {}
             },
             {
                 "user_id": "lando_calrissian",
@@ -124,6 +136,10 @@
                     "last_active": "2024-07-07T22:25:29.082165Z",
                     "banned": false,
                     "online": false,
+                    "blocked_user_ids": [],
+                    "custom": {},
+                    "language": "",
+                    "teams": [],
                     "birthland": "Socorro",
                     "name": "Lando Calrissian",
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/8/8f/Lando_ROTJ.png"
@@ -135,7 +151,8 @@
                 "shadow_banned": false,
                 "role": "member",
                 "channel_role": "channel_member",
-                "notifications_muted": true
+                "notifications_muted": true,
+                "custom": {}
             }
         ],
         "member_count": 2,

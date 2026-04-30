@@ -24,7 +24,7 @@ final class UserPayload_Tests: XCTestCase {
             payload.imageURL,
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
         )
-        XCTAssertEqual(payload.role, .user)
+        XCTAssertEqual(payload.userRole, .user)
         XCTAssertEqual(payload.isOnline, true)
         XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.language, "pt")
@@ -38,7 +38,7 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertNil(payload.deactivatedAt)
-        XCTAssertEqual(payload.role, .user)
+        XCTAssertEqual(payload.userRole, .user)
         XCTAssertEqual(payload.isOnline, true)
         XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.language, "pt")
@@ -63,9 +63,37 @@ final class UserPayload_Tests: XCTestCase {
         )
         XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.language, "pt")
-        XCTAssertEqual(payload.role, .guest)
+        XCTAssertEqual(payload.userRole, .guest)
         XCTAssertEqual(payload.isOnline, true)
-        XCTAssertEqual(payload.teamsRole, ["ios": "guest"])
+        XCTAssertEqual(payload.teamsRolePayload, ["ios": "guest"])
+    }
+
+    func test_openAPIUserJSON_customData_isExposedAsExtraData() throws {
+        let json = Data(
+            """
+            {
+              "id": "open-api-user",
+              "role": "user",
+              "created_at": "2020-06-09T18:33:04.070518Z",
+              "updated_at": "2020-06-09T18:33:04.078929Z",
+              "banned": false,
+              "blocked_user_ids": [],
+              "custom": {
+                "secret_note": "Anakin is Vader!"
+              },
+              "language": "pt",
+              "online": true,
+              "teams": ["RED", "GREEN"]
+            }
+            """.utf8
+        )
+
+        let payload = try JSONDecoder.default.decode(UserPayload.self, from: json)
+
+        XCTAssertEqual(payload.id, "open-api-user")
+        XCTAssertEqual(payload.extraData, ["secret_note": .string("Anakin is Vader!")])
+        XCTAssertEqual(payload.language, "pt")
+        XCTAssertEqual(payload.teams, ["RED", "GREEN"])
     }
 
     func test_deactivatedUserJSON_isSerialized() throws {
@@ -84,7 +112,7 @@ final class UserPayload_Tests: XCTestCase {
             URL(string: "https://getstream.io/random_svg/?id=deactivated-waterfall-5&amp;name=Deactivated+waterfall")!
         )
         XCTAssertEqual(payload.teams.count, 3)
-        XCTAssertEqual(payload.role, .user)
+        XCTAssertEqual(payload.userRole, .user)
         XCTAssertEqual(payload.isOnline, true)
     }
 
@@ -93,10 +121,10 @@ final class UserPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(CurrentUserUnreadsPayload.self, from: json)
         XCTAssertEqual(payload.totalUnreadCount, 1)
         XCTAssertEqual(payload.totalUnreadThreadsCount, 1)
-        XCTAssertEqual(payload.channels[0].channelId.rawValue, "messaging:898be601-5f8b-40cc-919a-3f44e6b4fe64")
+        XCTAssertEqual(payload.channels[0].channelId, "messaging:898be601-5f8b-40cc-919a-3f44e6b4fe64")
         XCTAssertEqual(payload.channels[0].unreadCount, 1)
         XCTAssertEqual(payload.channels[0].lastRead, "2024-03-11T23:00:55.941654Z".toDate())
-        XCTAssertEqual(payload.channelType[0].channelType.rawValue, "messaging")
+        XCTAssertEqual(payload.channelType[0].channelType, "messaging")
         XCTAssertEqual(payload.channelType[0].channelCount, 2)
         XCTAssertEqual(payload.channelType[0].unreadCount, 3)
         XCTAssertEqual(payload.threads[0].unreadCount, 5)
@@ -227,6 +255,7 @@ final class UserRequestBody_Tests: XCTestCase {
 
         let serialized = try JSONEncoder.stream.encode(payload)
         let expected: [String: Any] = [
+            "custom": [:],
             "id": payload.id,
             "name": payload.name!,
             "image": payload.imageURL!.absoluteString
@@ -254,17 +283,20 @@ final class UserUpdateRequestBody_Tests: XCTestCase {
         )
 
         let expected: [String: Any] = [
-            "name": payload.name!,
-            "image": payload.imageURL!.absoluteString,
-            "privacy_settings": [
-                "typing_indicators": ["enabled": true],
-                "read_receipts": ["enabled": true],
-                "delivery_receipts": ["enabled": false]
-            ],
-            "role": UserRole.admin.rawValue,
-            "secret_note": value,
-            "teams_role": [
-                "ios": "guest"
+            "id": "",
+            "set": [
+                "name": payload.name!,
+                "image": payload.imageURL!.absoluteString,
+                "privacy_settings": [
+                    "typing_indicators": ["enabled": true],
+                    "read_receipts": ["enabled": true],
+                    "delivery_receipts": ["enabled": false]
+                ],
+                "role": UserRole.admin.rawValue,
+                "secret_note": value,
+                "teams_role": [
+                    "ios": "guest"
+                ]
             ]
         ]
 
@@ -283,7 +315,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
         )
         let user = payload.user
         XCTAssertEqual(user.id, "luke_skywalker")
-        XCTAssertEqual(user.role, .user)
+        XCTAssertEqual(user.userRole, .user)
         XCTAssertEqual(user.createdAt, "2020-12-07T11:36:47.059906Z".toDate())
         XCTAssertEqual(user.updatedAt, "2021-01-11T10:36:24.488391Z".toDate())
         XCTAssertEqual(user.lastActiveAt, "2021-01-08T19:16:54.380686Z".toDate())
@@ -300,6 +332,6 @@ final class UserUpdateResponse_Tests: XCTestCase {
         let currentUserUpdateResponseJSON = XCTestCase.mockData(fromJSONFile: "UserUpdateResponse+MissingUser")
         XCTAssertThrowsError(try JSONDecoder.default.decode(
             CurrentUserUpdateResponse.self, from: currentUserUpdateResponseJSON
-        ))
+        ).validatedUser())
     }
 }

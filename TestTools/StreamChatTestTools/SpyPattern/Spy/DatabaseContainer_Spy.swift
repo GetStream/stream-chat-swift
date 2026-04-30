@@ -426,7 +426,7 @@ extension DatabaseContainer {
         try writeSynchronously { session in
             try session.saveMember(
                 payload: .dummy(
-                    user: .dummy(
+                    user: UserPayload.dummy(
                         userId: userId,
                         isBanned: isGloballyBanned
                     ),

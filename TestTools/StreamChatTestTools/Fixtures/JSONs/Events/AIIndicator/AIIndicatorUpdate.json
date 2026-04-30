@@ -13,7 +13,10 @@
     "updated_at": "2024-11-27T15:51:55.649597Z",
     "last_active": "2024-11-27T15:51:55.668787Z",
     "banned": false,
-    "online": true
-  },
+    "online": true,
+    "blocked_user_ids" : [],
+    "custom" : {},
+    "language" : "",
+    "teams" : []},
   "created_at": "2024-11-27T15:51:55.757904Z"
 }

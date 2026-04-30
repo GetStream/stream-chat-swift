@@ -270,7 +270,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Add 2 channels to the DB
         let cid: ChannelId = .unique
         writeAndWaitForChannelsUpdates { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: UserPayload.dummy(userId: self.memberId))]), query: self.query, cache: nil)
             let dto = try session.saveChannel(payload: self.dummyPayload(with: .unique, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
             dto.isHidden = true
         }
@@ -669,7 +669,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Simulate DB update
         let cid: ChannelId = .unique
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: UserPayload.dummy(userId: self.memberId))]), query: self.query, cache: nil)
         }
 
         let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: cid)).asModel()
@@ -707,7 +707,11 @@ final class ChannelListController_Tests: XCTestCase {
         controller.delegate = delegate
 
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
+            try session.saveChannel(
+                payload: self.dummyPayload(with: cid, members: [.dummy(user: UserPayload.dummy(userId: self.memberId))]),
+                query: self.query,
+                cache: nil
+            )
         }
 
         AssertAsync {
@@ -945,11 +949,11 @@ final class ChannelListController_Tests: XCTestCase {
 
     func test_inits_propagate_desiredMessageOrdering() {
         XCTAssertEqual(
-            client.channelController(for: .unique).messageOrdering,
+            client.channelController(for: ChannelId.unique).messageOrdering,
             .topToBottom
         )
         XCTAssertEqual(
-            client.channelController(for: .unique, messageOrdering: .bottomToTop).messageOrdering,
+            client.channelController(for: ChannelId.unique, messageOrdering: .bottomToTop).messageOrdering,
             .bottomToTop
         )
 
@@ -1702,7 +1706,7 @@ final class ChannelListController_Tests: XCTestCase {
                     channel: .dummy(cid: cid1),
                     channelReads: [
                         .init(
-                            user: .dummy(userId: currentUserId),
+                            user: UserPayload.dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
                             unreadMessagesCount: 3,
@@ -1713,7 +1717,7 @@ final class ChannelListController_Tests: XCTestCase {
                 ),
                 .dummy(channel: .dummy(team: .unique), channelReads: [
                     .init(
-                        user: .dummy(userId: .unique),
+                        user: UserPayload.dummy(userId: .unique),
                         lastReadAt: .unique,
                         lastReadMessageId: nil,
                         unreadMessagesCount: 10,
@@ -1727,7 +1731,7 @@ final class ChannelListController_Tests: XCTestCase {
                     channel: .dummy(cid: cid2),
                     channelReads: [
                         .init(
-                            user: .dummy(userId: currentUserId),
+                            user: UserPayload.dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
                             unreadMessagesCount: 20,
@@ -1761,7 +1765,7 @@ final class ChannelListController_Tests: XCTestCase {
                     channel: .dummy(cid: cid1, createdAt: createdAt.addingTimeInterval(100)),
                     channelReads: [
                         .init(
-                            user: .dummy(userId: currentUserId),
+                            user: UserPayload.dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
                             unreadMessagesCount: 3,
@@ -1776,7 +1780,7 @@ final class ChannelListController_Tests: XCTestCase {
                     channel: .dummy(cid: cid2, createdAt: createdAt),
                     channelReads: [
                         .init(
-                            user: .dummy(userId: currentUserId),
+                            user: UserPayload.dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
                             unreadMessagesCount: 20,
@@ -1806,7 +1810,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Save Mute
         let mutedChannel: ChannelDetailPayload = .dummy(
             cid: cid1,
-            members: [.dummy(user: .dummy(userId: userId))]
+            members: [.dummy(user: UserPayload.dummy(userId: userId))]
         )
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(channel: mutedChannel), query: query, cache: nil)
@@ -1816,7 +1820,7 @@ final class ChannelListController_Tests: XCTestCase {
             ))
             try session.saveChannelMute(payload: .init(
                 mutedChannel: mutedChannel,
-                user: .dummy(userId: userId),
+                user: UserPayload.dummy(userId: userId),
                 createdAt: .unique,
                 updatedAt: .unique
             ))

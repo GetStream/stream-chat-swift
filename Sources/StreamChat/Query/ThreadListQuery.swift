@@ -133,49 +133,49 @@ extension ThreadListSortingKey {
     public static let createdAt = Self(
         keyPath: \.createdAt,
         localKey: #keyPath(ThreadDTO.createdAt),
-        remoteKey: ThreadCodingKeys.createdAt.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.createdAt.rawValue
     )
 
     /// Sort threads by date they were updated.
     public static let updatedAt = Self(
         keyPath: \.updatedAt,
         localKey: #keyPath(ThreadDTO.updatedAt),
-        remoteKey: ThreadCodingKeys.updatedAt.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.updatedAt.rawValue
     )
 
     /// Sort threads by the last message date.
     public static let lastMessageAt = Self(
         keyPath: \.lastMessageAt,
         localKey: #keyPath(ThreadDTO.lastMessageAt),
-        remoteKey: ThreadCodingKeys.lastMessageAt.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.lastMessageAt.rawValue
     )
 
     /// Sort threads by number of participants.
     public static let participantCount = Self(
         keyPath: \.participantCount,
         localKey: #keyPath(ThreadDTO.participantCount),
-        remoteKey: ThreadCodingKeys.participantCount.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.participantCount.rawValue
     )
 
     /// Sort threads by number of active participants.
     public static let activeParticipantCount = Self(
         keyPath: \.activeParticipantCount,
         localKey: #keyPath(ThreadDTO.activeParticipantCount),
-        remoteKey: ThreadCodingKeys.activeParticipantCount.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.activeParticipantCount.rawValue
     )
 
     /// Sort threads by number of replies.
     public static let replyCount = Self(
         keyPath: \.replyCount,
         localKey: #keyPath(ThreadDTO.replyCount),
-        remoteKey: ThreadCodingKeys.replyCount.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.replyCount.rawValue
     )
 
     /// Sort threads by `parentMessageId`.
     public static let parentMessageId = Self(
         keyPath: \.parentMessageId,
         localKey: #keyPath(ThreadDTO.parentMessageId),
-        remoteKey: ThreadCodingKeys.parentMessageId.rawValue
+        remoteKey: ThreadStateResponse.CodingKeys.parentMessageId.rawValue
     )
 
     /// Sort threads by unread state.

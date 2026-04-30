@@ -44,10 +44,10 @@ extension Endpoint {
         )
     }
 
-    static func updateChannel(channelPayload: ChannelEditDetailPayload)
+    static func updateChannel(cid: ChannelId, channelPayload: ChannelEditDetailPayload)
         -> Endpoint<EmptyResponse> {
         .init(
-            path: .channelUpdate(channelPayload.apiPath),
+            path: .channelUpdate(cid.apiPath),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -55,14 +55,14 @@ extension Endpoint {
         )
     }
 
-    static func partialChannelUpdate(updates: ChannelEditDetailPayload, unsetProperties: [String]) -> Endpoint<EmptyResponse> {
+    static func partialChannelUpdate(cid: ChannelId, updates: ChannelEditDetailPayload, unsetProperties: [String]) -> Endpoint<EmptyResponse> {
         let body: [String: AnyEncodable] = [
             "set": AnyEncodable(updates),
             "unset": AnyEncodable(unsetProperties)
         ]
 
         return .init(
-            path: .channelUpdate(updates.apiPath),
+            path: .channelUpdate(cid.apiPath),
             method: .patch,
             queryItems: nil,
             requiresConnectionId: false,
@@ -320,7 +320,7 @@ extension Endpoint {
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: ["event": CustomEventRequestBody(payload: payload)]
+            body: CustomEventRequestBody(payload: payload)
         )
     }
 

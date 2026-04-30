@@ -70,7 +70,7 @@ final class ReactionListUpdater_Tests: XCTestCase {
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
 
         let loadedReactions = try payload.reactions.compactMap {
-            try database.viewContext.reaction(messageId: messageId, userId: $0.user.id, type: $0.type)?.asModel()
+            try database.viewContext.reaction(messageId: messageId, userId: $0.userPayload.id, type: $0.reactionType)?.asModel()
         }
         XCTAssertEqual(loadedReactions.count, 3)
     }

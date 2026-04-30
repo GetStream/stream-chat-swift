@@ -30,7 +30,11 @@ final class UnknownUserEvent_Tests: XCTestCase {
                 "role" : "user",
                 "total_unread_count" : 0,
                 "online" : true,
-                "name" : "broken-waterfall-5"
+                "name" : "broken-waterfall-5",
+                "blocked_user_ids" : [],
+                "custom" : {},
+                "language" : "",
+                "teams" : []
             },
             "created_at" : "\(createdAt)",
             "type" : "\(IdeaEventPayload.eventType.rawValue)",

@@ -32,7 +32,7 @@ extension MemberPayload {
 extension MemberContainerPayload {
     static func dummy(userId: UserId = .unique) -> MemberContainerPayload {
         .init(
-            member: .dummy(user: .dummy(userId: userId)),
+            member: .dummy(user: UserPayload.dummy(userId: userId)),
             invite: nil,
             memberRole: nil
         )

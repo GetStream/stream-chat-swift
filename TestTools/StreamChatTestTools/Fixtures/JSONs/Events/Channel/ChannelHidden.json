@@ -8,8 +8,11 @@
     "image" : ".\/static\/media\/photo-1541271696563-3be2f555fc4e.4e84f363.jpeg",
     "updated_at" : "2021-04-22T18:57:47.14206Z",
     "last_active" : "2021-04-23T07:03:10.963697Z",
-    "name" : "luke_skywalker"
-  },
+    "name" : "luke_skywalker",
+    "blocked_user_ids" : [],
+    "custom" : {},
+    "language" : "",
+    "teams" : []},
   "channel" : {
     "id" : "default-channel-6",
     "members" : [
@@ -28,9 +31,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/f\/fc\/Leia_Organa_TLJ.png",
           "updated_at" : "2021-04-15T11:50:48.4157Z",
           "last_active" : "2021-04-23T07:01:38.053167553Z",
-          "name" : "Leia Organa"
-        }
-      },
+          "name" : "Leia Organa",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.188158Z",
         "banned" : false,
@@ -46,9 +54,14 @@
           "image" : ".\/static\/media\/photo-1541271696563-3be2f555fc4e.4e84f363.jpeg",
           "updated_at" : "2021-04-22T18:57:47.14206Z",
           "last_active" : "2021-04-23T07:03:10.963697Z",
-          "name" : "luke_skywalker"
-        }
-      },
+          "name" : "luke_skywalker",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.188159Z",
         "banned" : false,
@@ -64,9 +77,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/e\/e2\/TFAHanSolo.png",
           "updated_at" : "2021-04-15T11:58:11.078864Z",
           "last_active" : "2021-04-23T03:18:43.941092581Z",
-          "name" : "Han Solo"
-        }
-      },
+          "name" : "Han Solo",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.188159Z",
         "banned" : false,
@@ -82,9 +100,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/8\/8f\/Lando_ROTJ.png",
           "updated_at" : "2021-04-15T12:04:53.870967Z",
           "last_active" : "2021-04-23T00:01:37.331476715Z",
-          "name" : "Lando Calrissian"
-        }
-      },
+          "name" : "Lando Calrissian",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.18816Z",
         "banned" : false,
@@ -100,9 +123,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/6\/6f\/Anakin_Skywalker_RotS.png",
           "updated_at" : "2021-04-15T12:25:51.702406Z",
           "last_active" : "2021-04-19T11:00:18.816669Z",
-          "name" : "Anakin Skywalker"
-        }
-      },
+          "name" : "Anakin Skywalker",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.18816Z",
         "banned" : false,
@@ -118,9 +146,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/3\/3f\/C-3PO_TLJ_Card_Trader_Award_Card.png",
           "updated_at" : "2021-04-15T12:16:26.99681Z",
           "last_active" : "2021-04-22T04:50:56.973457489Z",
-          "name" : "C-3PO"
-        }
-      },
+          "name" : "C-3PO",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.18816Z",
         "banned" : false,
@@ -136,9 +169,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/4\/48\/Chewbacca_TLJ.png",
           "updated_at" : "2021-04-15T12:10:55.005849Z",
           "last_active" : "2021-04-22T23:36:01.398318683Z",
-          "name" : "Chewbacca"
-        }
-      },
+          "name" : "Chewbacca",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.18816Z",
         "banned" : false,
@@ -154,9 +192,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/e\/eb\/ArtooTFA2-Fathead.png",
           "updated_at" : "2021-04-15T12:21:26.713041Z",
           "last_active" : "2021-04-23T05:59:55.497672433Z",
-          "name" : "R2-D2"
-        }
-      },
+          "name" : "R2-D2",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.188161Z",
         "banned" : false,
@@ -172,9 +215,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/5\/58\/Mace_ROTS.png",
           "updated_at" : "2021-04-15T12:38:02.869966Z",
           "last_active" : "2021-04-19T11:42:58.252388Z",
-          "name" : "Mace Windu"
-        }
-      },
+          "name" : "Mace Windu",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.188161Z",
         "banned" : false,
@@ -190,9 +238,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/4\/4e\/ObiWanHS-SWE.jpg",
           "updated_at" : "2021-04-15T12:29:42.499282Z",
           "last_active" : "2021-04-22T13:08:46.201728609Z",
-          "name" : "Obi-Wan Kenobi"
-        }
-      },
+          "name" : "Obi-Wan Kenobi",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.188161Z",
         "banned" : false,
@@ -208,9 +261,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/b\/b2\/Padmegreenscrshot.jpg",
           "updated_at" : "2021-04-15T12:32:58.458303Z",
           "last_active" : "2021-04-15T11:02:39.696768Z",
-          "name" : "Padme Amidala"
-        }
-      },
+          "name" : "Padme Amidala",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.188161Z",
         "banned" : false,
@@ -226,9 +284,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/f\/f6\/Qui-Gon_Jinn_Headshot_TPM.jpg",
           "updated_at" : "2021-04-15T12:35:47.719542Z",
           "last_active" : "2021-04-15T11:02:40.284944Z",
-          "name" : "Qui-Gon Jinn"
-        }
-      },
+          "name" : "Qui-Gon Jinn",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.188162Z",
         "banned" : false,
@@ -244,9 +307,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/b\/b8\/Dooku_Headshot.jpg",
           "updated_at" : "2021-04-15T12:41:22.065746Z",
           "last_active" : "2021-04-15T11:02:42.641941Z",
-          "name" : "Count Dooku"
-        }
-      },
+          "name" : "Count Dooku",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.188162Z",
         "banned" : false,
@@ -262,9 +330,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/5\/50\/Darth_Maul_profile.png",
           "updated_at" : "2021-04-15T12:40:49.017911Z",
           "last_active" : "2021-04-15T11:02:42.040611Z",
-          "name" : "Darth Maul"
-        }
-      },
+          "name" : "Darth Maul",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.188162Z",
         "banned" : false,
@@ -280,9 +353,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/d\/de\/Grievoushead.jpg",
           "updated_at" : "2021-04-15T12:41:21.895316Z",
           "last_active" : "2021-04-15T11:02:43.235767Z",
-          "name" : "General Grievous"
-        }
-      },
+          "name" : "General Grievous",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}},
       {
         "created_at" : "2021-04-15T11:26:37.188162Z",
         "banned" : false,
@@ -298,9 +376,14 @@
           "image" : "https:\/\/vignette.wikia.nocookie.net\/starwars\/images\/d\/d2\/Jar_Jar_aotc.jpg",
           "updated_at" : "2021-04-15T12:39:39.395107Z",
           "last_active" : "2021-04-17T18:20:07.78624Z",
-          "name" : "Jar Jar Binks"
-        }
-      }
+          "name" : "Jar Jar Binks",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
+        "channel_role" : "channel_member",
+        "notifications_muted" : false,
+        "custom" : {}}
     ],
     "created_at" : "2021-04-15T11:26:37.184658Z",
     "created_by" : null,

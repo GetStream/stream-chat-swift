@@ -21,14 +21,15 @@ extension Endpoint {
         payload: UserUpdateRequestBody,
         unset: [String]
     ) -> Endpoint<CurrentUserUpdateResponse> {
-        let users: [String: AnyEncodable] = [
-            "id": AnyEncodable(id),
-            "set": AnyEncodable(payload),
-            "unset": AnyEncodable(unset)
-        ]
-        let body: [String: AnyEncodable] = [
-            "users": AnyEncodable([users])
-        ]
+        let body = UpdateUsersPartialRequest(
+            users: [
+                UpdateUserPartialRequest(
+                    id: id,
+                    set: payload.set,
+                    unset: unset
+                )
+            ]
+        )
         return Endpoint<CurrentUserUpdateResponse>(
             path: .users,
             method: .patch,
@@ -52,9 +53,7 @@ extension Endpoint {
         .init(
             path: .pushPreferences,
             method: .post,
-            body: [
-                "preferences": AnyEncodable(preferences)
-            ]
+            body: UpsertPushPreferencesRequest(preferences: preferences)
         )
     }
 }

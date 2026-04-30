@@ -98,7 +98,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_updateChannelQuery_whenNoPagination_thenCallsPaginationStateHandlerWithNil() {
         // Simulate `update(channelQuery:)` call with no pagination
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery.unique
         let expectation = self.expectation(description: "Update completes")
         nonisolated(unsafe) var updateResult: Result<ChannelPayload, Error>!
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { result in
@@ -282,7 +282,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_updateChannelQuery_completionForCreatedChannelCalled() {
         // Simulate `update(channelQuery:)` call
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery.unique
         nonisolated(unsafe) var cid: ChannelId = .unique
 
         var channel: ChatChannel? {
@@ -316,7 +316,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_updateChannelQueryRecovery_completionForCreatedChannelCalled() {
         // Simulate `update(channelQuery:)` call
-        let query = ChannelQuery(channelPayload: .unique)
+        let query = ChannelQuery.unique
         nonisolated(unsafe) var cid: ChannelId = .unique
 
         var channel: ChatChannel? {
@@ -709,20 +709,21 @@ final class ChannelUpdater_Tests: XCTestCase {
     // MARK: - Update channel
 
     func test_updateChannel_makesCorrectAPICall() {
+        let cid = ChannelId.unique
         let channelPayload: ChannelEditDetailPayload = .unique
 
         // Simulate `updateChannel(channelPayload:, completion:)` call
-        channelUpdater.updateChannel(channelPayload: channelPayload)
+        channelUpdater.updateChannel(cid: cid, channelPayload: channelPayload)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .updateChannel(channelPayload: channelPayload)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .updateChannel(cid: cid, channelPayload: channelPayload)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
     func test_updateChannel_successfulResponse_isPropagatedToCompletion() {
         // Simulate `updateChannel(channelPayload:, completion:)` call
         nonisolated(unsafe) var completionCalled = false
-        channelUpdater.updateChannel(channelPayload: .unique) { error in
+        channelUpdater.updateChannel(cid: .unique, channelPayload: .unique) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -740,7 +741,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_updateChannel_errorResponse_isPropagatedToCompletion() {
         // Simulate `updateChannel(channelPayload:, completion:)` call
         nonisolated(unsafe) var completionCalledError: Error?
-        channelUpdater.updateChannel(channelPayload: .unique) { completionCalledError = $0 }
+        channelUpdater.updateChannel(cid: .unique, channelPayload: .unique) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()
@@ -791,14 +792,15 @@ final class ChannelUpdater_Tests: XCTestCase {
     // MARK: - Partial channel update
 
     func test_partialChannelUpdate_makesCorrectAPICall() {
+        let cid = ChannelId.unique
         let updates: ChannelEditDetailPayload = .unique
         let unsetProperties: [String] = ["user.id", "channel_store"]
 
         // Simulate `partialChannelUpdate(updates:unsetProperties:completion:)` call
-        channelUpdater.partialChannelUpdate(updates: updates, unsetProperties: unsetProperties)
+        channelUpdater.partialChannelUpdate(cid: cid, updates: updates, unsetProperties: unsetProperties)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .partialChannelUpdate(updates: updates, unsetProperties: unsetProperties)
+        let referenceEndpoint: Endpoint<EmptyResponse> = .partialChannelUpdate(cid: cid, updates: updates, unsetProperties: unsetProperties)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -806,7 +808,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate `partialChannelUpdate(updates:unsetProperties:completion:)` call
         nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "partialChannelUpdate completion")
-        channelUpdater.partialChannelUpdate(updates: .unique, unsetProperties: []) { error in
+        channelUpdater.partialChannelUpdate(cid: .unique, updates: .unique, unsetProperties: []) { error in
             receivedError = error
             expectation.fulfill()
         }
@@ -822,7 +824,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate `partialChannelUpdate(updates:unsetProperties:completion:)` call
         nonisolated(unsafe) var receivedError: Error?
         let expectation = self.expectation(description: "partialChannelUpdate completion")
-        channelUpdater.partialChannelUpdate(updates: .unique, unsetProperties: []) { error in
+        channelUpdater.partialChannelUpdate(cid: .unique, updates: .unique, unsetProperties: []) { error in
             receivedError = error
             expectation.fulfill()
         }
@@ -881,7 +883,7 @@ final class ChannelUpdater_Tests: XCTestCase {
                 .init(
                     channelMute: .init(
                         mutedChannel: .dummy(cid: cid),
-                        user: .dummy(userId: .unique),
+                        user: UserPayload.dummy(userId: .unique),
                         createdAt: .unique,
                         updatedAt: .unique
                     )
@@ -912,7 +914,7 @@ final class ChannelUpdater_Tests: XCTestCase {
                 .init(
                     channelMute: .init(
                         mutedChannel: .dummy(),
-                        user: .dummy(userId: .unique),
+                        user: UserPayload.dummy(userId: .unique),
                         createdAt: .unique,
                         updatedAt: .unique
                     )
@@ -975,7 +977,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             try session.saveChannelMute(
                 payload: .init(
                     mutedChannel: .dummy(cid: cid),
-                    user: .dummy(userId: userId),
+                    user: UserPayload.dummy(userId: userId),
                     createdAt: .unique,
                     updatedAt: .unique
                 )
@@ -2328,7 +2330,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             userPreferences: [:],
             channelPreferences: [
                 "userId": [
-                    cid.rawValue: PushPreferencePayload(
+                    cid.rawValue: ChannelPushPreferencesResponse(
                         chatLevel: "all",
                         disabledUntil: nil
                     )
@@ -2426,7 +2428,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             userPreferences: [:],
             channelPreferences: [
                 "userId": [
-                    cid.rawValue: PushPreferencePayload(
+                    cid.rawValue: ChannelPushPreferencesResponse(
                         chatLevel: "mentions",
                         disabledUntil: nil
                     )
@@ -2492,7 +2494,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             userPreferences: [:],
             channelPreferences: [
                 "userId": [
-                    cid.rawValue: PushPreferencePayload(
+                    cid.rawValue: ChannelPushPreferencesResponse(
                         chatLevel: "all",
                         disabledUntil: nil
                     )

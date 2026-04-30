@@ -42,7 +42,7 @@ extension ChannelPayload {
 }
 
 extension ChannelReadPayload {
-    init(
+    convenience init(
         user: UserPayload,
         lastReadAt: Date,
         lastReadMessageId: MessageId? = nil,

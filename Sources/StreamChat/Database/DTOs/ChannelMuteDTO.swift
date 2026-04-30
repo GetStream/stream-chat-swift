@@ -53,9 +53,12 @@ extension NSManagedObjectContext {
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
+        guard let channelPayload = payload.channelPayload else {
+            throw ClientError.Unknown("Channel mute payload is missing channel data.")
+        }
 
-        let channel = try saveChannel(payload: payload.mutedChannel, query: nil, cache: nil)
-        let dto = ChannelMuteDTO.loadOrCreate(cid: payload.mutedChannel.cid, context: self)
+        let channel = try saveChannel(payload: channelPayload, query: nil, cache: nil)
+        let dto = ChannelMuteDTO.loadOrCreate(cid: channelPayload.cid, context: self)
         dto.channel = channel
         dto.currentUser = currentUser
         dto.createdAt = payload.createdAt.bridgeDate

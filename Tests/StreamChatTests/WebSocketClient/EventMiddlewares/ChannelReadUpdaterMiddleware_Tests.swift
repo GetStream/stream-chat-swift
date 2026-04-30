@@ -35,7 +35,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         anotherUserPayload = .dummy(userId: .unique)
 
         currentUserReadPayload = .init(
-            user: currentUserPayload,
+            user: currentUserPayload.asUserPayload,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
             unreadMessagesCount: 5,
@@ -47,8 +47,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: .unique),
             watcherCount: 0,
             watchers: [],
-            members: [.dummy(user: currentUserPayload), .dummy(user: anotherUserPayload)],
-            membership: .dummy(user: currentUserPayload),
+            members: [.dummy(user: currentUserPayload.asUserPayload), .dummy(user: anotherUserPayload)],
+            membership: .dummy(user: currentUserPayload.asUserPayload),
             messages: [],
             pendingMessages: nil,
             pinnedMessages: [],
@@ -82,7 +82,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // GIVEN
         let channelMute = MutedChannelPayload(
             mutedChannel: channelPayload.channel,
-            user: currentUserPayload,
+            user: currentUserPayload.asUserPayload,
             createdAt: .init(),
             updatedAt: .init()
         )
@@ -136,7 +136,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             from: .init(
                 eventType: .messageDeleted,
                 cid: channelPayload.channel.cid,
-                user: currentUserPayload,
+                user: currentUserPayload.asUserPayload,
                 message: messageFromCurrentUser,
                 createdAt: messageFromCurrentUser.deletedAt!,
                 hardDelete: true
@@ -408,7 +408,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // GIVEN
         let channelMute = MutedChannelPayload(
             mutedChannel: channelPayload.channel,
-            user: currentUserPayload,
+            user: currentUserPayload.asUserPayload,
             createdAt: .init(),
             updatedAt: .init()
         )
@@ -459,7 +459,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             from: .init(
                 eventType: .messageNew,
                 cid: channelPayload.channel.cid,
-                user: currentUserPayload,
+                user: currentUserPayload.asUserPayload,
                 message: messageFromCurrentUser,
                 createdAt: messageFromCurrentUser.createdAt
             )
@@ -742,7 +742,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         try [
             // 1. The current user message shouldn't increase the unread count
-            (user: dummyCurrentUser, expectedCount: 10),
+            (user: dummyCurrentUser.asUserPayload, expectedCount: 10),
             // 2. Other user's message should increase the unread count
             (user: dummyUser(id: .unique), expectedCount: 11)
 
@@ -867,7 +867,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let eventPayload = EventPayload(
             eventType: .messageRead,
             cid: channelId,
-            user: dummyCurrentUser,
+            user: dummyCurrentUser.asUserPayload,
             unreadCount: .init(channels: 0, messages: 0, threads: 0),
             createdAt: newReadDate
         )
@@ -961,7 +961,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let threadEventPayload = EventPayload(
             eventType: .messageRead,
             cid: channelId,
-            user: dummyCurrentUser,
+            user: dummyCurrentUser.asUserPayload,
             unreadCount: .init(channels: 0, messages: 0, threads: 5),
             createdAt: newReadDate,
             threadDetails: .success(.dummy(parentMessageId: .unique))
@@ -1033,7 +1033,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
             cid: channelDetailPayload.cid,
-            user: dummyCurrentUser,
+            user: dummyCurrentUser.asUserPayload,
             channel: channelDetailPayload,
             unreadCount: .init(channels: 0, messages: 0, threads: 0),
             createdAt: newReadDate
@@ -1079,7 +1079,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let threadEventPayload = EventPayload(
             eventType: .notificationMarkRead,
             cid: channelDetailPayload.cid,
-            user: dummyCurrentUser,
+            user: dummyCurrentUser.asUserPayload,
             channel: channelDetailPayload,
             unreadCount: .init(channels: 0, messages: 0, threads: 0),
             createdAt: newReadDate,
@@ -1176,7 +1176,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Create EventPayload for NotificationMarkAllReadEvent
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
-            user: dummyCurrentUser,
+            user: dummyCurrentUser.asUserPayload,
             unreadCount: .init(channels: 19, messages: 124, threads: 20),
             createdAt: newReadDate
         )

@@ -19,5 +19,8 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-    }
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []}
 }

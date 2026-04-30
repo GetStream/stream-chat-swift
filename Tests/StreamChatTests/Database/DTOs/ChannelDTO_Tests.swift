@@ -134,11 +134,11 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_saveChannel_channelReadsAreSavedBeforeMessages() throws {
         // GIVEN
         let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let currentUserMember: MemberPayload = .dummy(user: currentUser)
+        let currentUserMember: MemberPayload = .dummy(user: currentUser.asUserPayload)
 
         let anotherMember: MemberPayload = .dummy(user: .dummy(userId: .unique))
         let anotherMemberRead: ChannelReadPayload = .init(
-            user: anotherMember.user!,
+            user: anotherMember.userPayload!,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
             unreadMessagesCount: 0
@@ -415,25 +415,25 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.channel.createdBy!.lastActiveAt, loadedChannel.createdBy?.lastActiveAt)
             Assert.willBeEqual(payload.channel.createdBy!.isOnline, loadedChannel.createdBy?.isOnline)
             Assert.willBeEqual(payload.channel.createdBy!.isBanned, loadedChannel.createdBy?.isBanned)
-            Assert.willBeEqual(payload.channel.createdBy!.role, loadedChannel.createdBy?.userRole)
+            Assert.willBeEqual(payload.channel.createdBy!.userRole, loadedChannel.createdBy?.userRole)
             Assert.willBeEqual(payload.channel.createdBy!.extraData, loadedChannel.createdBy?.extraData)
 
             // Members
-            Assert.willBeEqual(payload.members[0].role, loadedChannel.lastActiveMembers.first?.memberRole)
+            Assert.willBeEqual(payload.members[0].memberRole, loadedChannel.lastActiveMembers.first?.memberRole)
             Assert.willBeEqual(payload.members[0].createdAt, loadedChannel.lastActiveMembers.first?.memberCreatedAt)
             Assert.willBeEqual(payload.members[0].updatedAt, loadedChannel.lastActiveMembers.first?.memberUpdatedAt)
 
-            Assert.willBeEqual(payload.members[0].user!.id, loadedChannel.lastActiveMembers.first?.id)
-            Assert.willBeEqual(payload.members[0].user!.createdAt, loadedChannel.lastActiveMembers.first?.userCreatedAt)
-            Assert.willBeEqual(payload.members[0].user!.updatedAt, loadedChannel.lastActiveMembers.first?.userUpdatedAt)
-            Assert.willBeEqual(payload.members[0].user!.lastActiveAt, loadedChannel.lastActiveMembers.first?.lastActiveAt)
-            Assert.willBeEqual(payload.members[0].user!.isOnline, loadedChannel.lastActiveMembers.first?.isOnline)
-            Assert.willBeEqual(payload.members[0].user!.isBanned, loadedChannel.lastActiveMembers.first?.isBanned)
-            Assert.willBeEqual(payload.members[0].user!.role, loadedChannel.lastActiveMembers.first?.userRole)
-            Assert.willBeEqual(payload.members[0].user!.extraData, loadedChannel.lastActiveMembers.first?.extraData)
+            Assert.willBeEqual(payload.members[0].userPayload!.id, loadedChannel.lastActiveMembers.first?.id)
+            Assert.willBeEqual(payload.members[0].userPayload!.createdAt, loadedChannel.lastActiveMembers.first?.userCreatedAt)
+            Assert.willBeEqual(payload.members[0].userPayload!.updatedAt, loadedChannel.lastActiveMembers.first?.userUpdatedAt)
+            Assert.willBeEqual(payload.members[0].userPayload!.lastActiveAt, loadedChannel.lastActiveMembers.first?.lastActiveAt)
+            Assert.willBeEqual(payload.members[0].userPayload!.isOnline, loadedChannel.lastActiveMembers.first?.isOnline)
+            Assert.willBeEqual(payload.members[0].userPayload!.isBanned, loadedChannel.lastActiveMembers.first?.isBanned)
+            Assert.willBeEqual(payload.members[0].userPayload!.userRole, loadedChannel.lastActiveMembers.first?.userRole)
+            Assert.willBeEqual(payload.members[0].userPayload!.extraData, loadedChannel.lastActiveMembers.first?.extraData)
 
             // Membership
-            Assert.willBeEqual(payload.membership!.user!.id, loadedChannel.membership?.id)
+            Assert.willBeEqual(payload.membership!.userPayload!.id, loadedChannel.membership?.id)
 
             // Messages
             Assert.willBeEqual(payload.messages[0].id, loadedChannel.latestMessages.first?.id)
@@ -470,7 +470,7 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].user.lastActiveAt, loadedChannel.latestMessages.first?.author.lastActiveAt)
             Assert.willBeEqual(payload.messages[0].user.isOnline, loadedChannel.latestMessages.first?.author.isOnline)
             Assert.willBeEqual(payload.messages[0].user.isBanned, loadedChannel.latestMessages.first?.author.isBanned)
-            Assert.willBeEqual(payload.messages[0].user.role, loadedChannel.latestMessages.first?.author.userRole)
+            Assert.willBeEqual(payload.messages[0].user.userRole, loadedChannel.latestMessages.first?.author.userRole)
             Assert.willBeEqual(payload.messages[0].user.extraData, loadedChannel.latestMessages.first?.author.extraData)
 
             // Read
@@ -685,7 +685,7 @@ final class ChannelDTO_Tests: XCTestCase {
             args: nil,
             parentId: nil,
             showReplyInChannel: false,
-            mentionedUsers: [dummyCurrentUser],
+            mentionedUsers: [dummyCurrentUser.asUserPayload],
             replyCount: 0,
             extraData: [:],
             reactionScores: ["like": 1],
@@ -719,7 +719,7 @@ final class ChannelDTO_Tests: XCTestCase {
             args: nil,
             parentId: nil,
             showReplyInChannel: false,
-            mentionedUsers: [dummyCurrentUser],
+            mentionedUsers: [dummyCurrentUser.asUserPayload],
             replyCount: 0,
             extraData: [:],
             reactionScores: ["like": 1],
@@ -785,14 +785,14 @@ final class ChannelDTO_Tests: XCTestCase {
 
         XCTAssertEqual(
             channel.lastActiveMembers.map(\.id),
-            allMembers.sorted { $0.user!.lastActiveAt! > $1.user!.lastActiveAt! }
+            allMembers.sorted { $0.userPayload!.lastActiveAt! > $1.userPayload!.lastActiveAt! }
                 .prefix(memberLimit)
-                .map(\.user!.id)
+                .map(\.userPayload!.id)
         )
     }
 
     func test_lastMessageFromCurrentUser() throws {
-        let user: UserPayload = dummyCurrentUser
+        let user: UserPayload = dummyCurrentUser.asUserPayload
         let channelId: ChannelId = .unique
         let message1: MessagePayload = .dummy(
             type: .regular,
@@ -833,7 +833,7 @@ final class ChannelDTO_Tests: XCTestCase {
     }
 
     func test_lastMessageFromCurrentUser_whenLastMessageIsThreadReply() throws {
-        let user: UserPayload = dummyCurrentUser
+        let user: UserPayload = dummyCurrentUser.asUserPayload
         let channelId: ChannelId = .unique
         let mainMessageId: String = .unique
         let mainMessage = MessagePayload(
@@ -848,7 +848,7 @@ final class ChannelDTO_Tests: XCTestCase {
             args: nil,
             parentId: nil,
             showReplyInChannel: true,
-            mentionedUsers: [dummyCurrentUser],
+            mentionedUsers: [dummyCurrentUser.asUserPayload],
             replyCount: 1,
             extraData: [:],
             reactionScores: ["like": 1],
@@ -871,7 +871,7 @@ final class ChannelDTO_Tests: XCTestCase {
             args: nil,
             parentId: mainMessageId,
             showReplyInChannel: false,
-            mentionedUsers: [dummyCurrentUser],
+            mentionedUsers: [dummyCurrentUser.asUserPayload],
             replyCount: 0,
             extraData: [:],
             reactionScores: ["like": 1],
@@ -1107,7 +1107,7 @@ final class ChannelDTO_Tests: XCTestCase {
         let currentUserPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
 
         let currentUserChannelReadPayload: ChannelReadPayload = .init(
-            user: currentUserPayload,
+            user: currentUserPayload.asUserPayload,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
             unreadMessagesCount: 0
@@ -1117,15 +1117,15 @@ final class ChannelDTO_Tests: XCTestCase {
             messageId: .unique,
             authorUserId: .unique,
             createdAt: currentUserChannelReadPayload.lastReadAt.addingTimeInterval(5),
-            mentionedUsers: [currentUserPayload]
+            mentionedUsers: [currentUserPayload.asUserPayload]
         )
 
         let channelPayload = ChannelPayload(
             channel: .dummy(cid: .unique),
             watcherCount: 0,
             watchers: [],
-            members: [.dummy(user: currentUserPayload)],
-            membership: .dummy(user: currentUserPayload),
+            members: [.dummy(user: currentUserPayload.asUserPayload)],
+            membership: .dummy(user: currentUserPayload.asUserPayload),
             messages: [messageMentioningCurrentUser],
             pendingMessages: nil,
             pinnedMessages: [],

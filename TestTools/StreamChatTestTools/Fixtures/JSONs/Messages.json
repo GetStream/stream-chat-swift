@@ -38,9 +38,16 @@
                 "role" : "user",
                 "total_unread_count" : 0,
                 "online" : true,
-                "name" : "John Doe"
-            }
-        }
+                "name" : "John Doe",
+              "blocked_user_ids" : [],
+              "custom" : {},
+              "language" : "",
+              "teams" : []},
+          "banned" : false,
+          "shadow_banned" : false,
+          "channel_role" : "channel_member",
+          "notifications_muted" : false,
+          "custom" : {}}
     ],
     "text" : "No, I am your father!",
     "show_in_channel": true,
@@ -79,9 +86,16 @@
                 "role" : "user",
                 "total_unread_count" : 0,
                 "online" : true,
-                "name" : "John Doe"
-            }
-        }
+                "name" : "John Doe",
+              "blocked_user_ids" : [],
+              "custom" : {},
+              "language" : "",
+              "teams" : []},
+          "banned" : false,
+          "shadow_banned" : false,
+          "channel_role" : "channel_member",
+          "notifications_muted" : false,
+          "custom" : {}}
     ],
     "updated_at" : "2020-08-17T13:15:39.895109Z",
     "reply_count" : 0,
@@ -103,8 +117,11 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "John Doe"
-    },
+        "name" : "John Doe",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []},
     "mentioned_users" : [
         
     ],
@@ -152,9 +169,16 @@
                 "role" : "user",
                 "total_unread_count" : 0,
                 "online" : true,
-                "name" : "John Doe"
-            }
-        }
+                "name" : "John Doe",
+              "blocked_user_ids" : [],
+              "custom" : {},
+              "language" : "",
+              "teams" : []},
+          "banned" : false,
+          "shadow_banned" : false,
+          "channel_role" : "channel_member",
+          "notifications_muted" : false,
+          "custom" : {}}
     ],
     "text" : "No, I am your father!",
     "show_in_channel": true,
@@ -193,9 +217,16 @@
                 "role" : "user",
                 "total_unread_count" : 0,
                 "online" : true,
-                "name" : "John Doe"
-            }
-        }
+                "name" : "John Doe",
+              "blocked_user_ids" : [],
+              "custom" : {},
+              "language" : "",
+              "teams" : []},
+          "banned" : false,
+          "shadow_banned" : false,
+          "channel_role" : "channel_member",
+          "notifications_muted" : false,
+          "custom" : {}}
     ],
     "updated_at" : "2020-08-17T13:15:39.895109Z",
     "reply_count" : 0,
@@ -217,8 +248,11 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "John Doe"
-    },
+        "name" : "John Doe",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []},
     "mentioned_users" : [
         
     ],
@@ -244,8 +278,11 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "John Doe"
-    }
+        "name" : "John Doe",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []}
     }
 ],
     "duration" : 2.3

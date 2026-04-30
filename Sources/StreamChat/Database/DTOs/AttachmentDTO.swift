@@ -172,7 +172,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
 
         let dto = AttachmentDTO.loadOrCreate(id: id, context: self)
 
-        dto.attachmentType = payload.type
+        dto.attachmentType = payload.attachmentType
         dto.data = try JSONEncoder.default.encode(payload.payload)
         dto.message = messageDTO
 

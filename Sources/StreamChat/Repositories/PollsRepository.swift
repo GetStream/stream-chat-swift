@@ -26,15 +26,15 @@ class PollsRepository: @unchecked Sendable {
         completion: @escaping @Sendable (Result<PollPayload, Error>) -> Void
     ) {
         let request = CreatePollRequestBody(
-            name: name,
             allowAnswers: allowAnswers,
             allowUserSuggestedOptions: allowUserSuggestedOptions,
+            custom: custom,
             description: description,
             enforceUniqueVote: enforceUniqueVote,
             maxVotesAllowed: maxVotesAllowed,
-            votingVisibility: votingVisibility,
+            name: name,
             options: options?.compactMap { PollOptionRequestBody(text: $0.text, custom: $0.extraData) },
-            custom: custom
+            votingVisibility: votingVisibility.flatMap { CreatePollRequest.CreatePollRequestVotingVisibility(rawValue: $0) }
         )
         apiClient.request(endpoint: .createPoll(createPollRequest: request)) { (result: Result<PollPayloadResponse, Error>) in
             switch result {
@@ -270,13 +270,13 @@ class PollsRepository: @unchecked Sendable {
         filter: [String: RawJSON]?,
         completion: (@Sendable (Result<PollVoteListResponse, Error>) -> Void)? = nil
     ) {
+        let sort = sort.compactMap { $0 }
         let request = QueryPollVotesRequestBody(
-            pollId: pollId,
+            filter: filter,
             limit: limit,
             next: next,
             prev: prev,
-            sort: sort,
-            filter: filter
+            sort: sort.isEmpty ? nil : sort
         )
         apiClient.request(
             endpoint: .queryPollVotes(pollId: pollId, queryPollVotesRequest: request),
@@ -286,9 +286,7 @@ class PollsRepository: @unchecked Sendable {
                 case let .success(response):
                     self.database.write { session in
                         for payload in response.votes {
-                            if let payload {
-                                try session.savePollVote(payload: payload, query: nil, cache: nil)
-                            }
+                            try session.savePollVote(payload: payload, query: nil, cache: nil)
                         }
                     } completion: { _ in
                         completion?(result)

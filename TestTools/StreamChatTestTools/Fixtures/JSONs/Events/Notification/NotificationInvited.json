@@ -21,8 +21,11 @@
             "role" : "user",
             "total_unread_count" : 21,
             "online" : true,
-            "name" : "steep-moon-9"
-        },
+            "name" : "steep-moon-9",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
         "disabled" : false,
         "frozen" : false,
         "config" : {
@@ -74,9 +77,16 @@
                     "role" : "user",
                     "total_unread_count" : 21,
                     "online" : true,
-                    "name" : "steep-moon-9"
-                }
-            },
+                    "name" : "steep-moon-9",
+                  "blocked_user_ids" : [],
+                  "custom" : {},
+                  "language" : "",
+                  "teams" : []},
+              "banned" : false,
+              "shadow_banned" : false,
+              "channel_role" : "channel_member",
+              "notifications_muted" : false,
+              "custom" : {}},
             {
                 "created_at" : "2020-07-21T15:35:56.509459Z",
                 "user_id" : "broken-waterfall-5",
@@ -100,9 +110,16 @@
                     "role" : "user",
                     "total_unread_count" : 0,
                     "online" : true,
-                    "name" : "Broken waterfall"
-                }
-            }
+                    "name" : "Broken waterfall",
+                  "blocked_user_ids" : [],
+                  "custom" : {},
+                  "language" : "",
+                  "teams" : []},
+              "banned" : false,
+              "shadow_banned" : false,
+              "channel_role" : "channel_member",
+              "notifications_muted" : false,
+              "custom" : {}}
         ],
         "member_count" : 2,
         "type" : "messaging",
@@ -130,8 +147,11 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "Broken waterfall"
-    },
+        "name" : "Broken waterfall",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []},
     "created_at" : "2020-07-21T15:35:56.518744883Z",
     "type" : "notification.invited",
     "cid" : "messaging:new_channel_1394"

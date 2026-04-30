@@ -49,7 +49,7 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
             userId: userId,
             in: cid,
             updates: isPinned ? MemberUpdatePayload(pinned: true) : nil,
-            unset: isPinned ? nil : [MemberUpdatePayload.CodingKeys.pinned.rawValue],
+            unset: isPinned ? nil : [MemberUpdatePayload.MemberUpdateField.pinned.rawValue],
             completion: { completion($0.error) }
         )
     }
@@ -76,7 +76,7 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
             userId: userId,
             in: cid,
             updates: isArchived ? MemberUpdatePayload(archived: true) : nil,
-            unset: isArchived ? nil : [MemberUpdatePayload.CodingKeys.archived.rawValue],
+            unset: isArchived ? nil : [MemberUpdatePayload.MemberUpdateField.archived.rawValue],
             completion: { completion($0.error) }
         )
     }

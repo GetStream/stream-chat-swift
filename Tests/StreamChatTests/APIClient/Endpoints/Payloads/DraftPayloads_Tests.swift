@@ -26,7 +26,7 @@ final class DraftPayloads_Tests: XCTestCase {
         XCTAssertFalse(json.draft.message.isSilent)
         XCTAssertNil(json.draft.parentMessage)
         XCTAssertNil(json.draft.quotedMessage)
-        XCTAssertNotNil(json.draft.channelPayload)
+        XCTAssertNotNil(json.draft.channel)
     }
     
     func test_draftListPayloadResponse_decodingFromJSON() throws {
@@ -37,9 +37,11 @@ final class DraftPayloads_Tests: XCTestCase {
                 "created_at": "2025-02-11T12:27:04.780633395Z",
                 "message": {
                     "id": "draft-1",
-                    "text": "Hello world"
+                    "text": "Hello world",
+                    "custom": {}
                 }
             }],
+            "duration": "0.1ms",
             "next": "next-page-token"
         }
         """
@@ -75,17 +77,18 @@ final class DraftPayloads_Tests: XCTestCase {
         // When
         let encodedData = try JSONEncoder.default.encode(requestBody)
         let decodedJSON = try JSONDecoder.default.decode([String: RawJSON].self, from: encodedData)
+        let message = try XCTUnwrap(decodedJSON["message"]?.dictionaryValue)
 
         // Then
-        XCTAssertEqual(decodedJSON["id"]?.stringValue, "draft-id")
-        XCTAssertEqual(decodedJSON["text"]?.stringValue, "Hello @user1")
-        XCTAssertEqual(decodedJSON["command"]?.stringValue, "/giphy")
-        XCTAssertEqual(decodedJSON["args"]?.stringValue, "hello")
-        XCTAssertEqual(decodedJSON["parent_id"]?.stringValue, "parent-123")
-        XCTAssertEqual(decodedJSON["show_in_channel"]?.boolValue, true)
-        XCTAssertEqual(decodedJSON["silent"]?.boolValue, false)
-        XCTAssertEqual(decodedJSON["quoted_message_id"]?.stringValue, "quoted-123")
-        XCTAssertEqual(decodedJSON["mentioned_users"]?.stringArrayValue, ["user1"])
-        XCTAssertEqual(decodedJSON["custom_field"]?.stringValue, "value")
+        XCTAssertEqual(message["id"]?.stringValue, "draft-id")
+        XCTAssertEqual(message["text"]?.stringValue, "Hello @user1")
+        XCTAssertEqual(message["parent_id"]?.stringValue, "parent-123")
+        XCTAssertEqual(message["show_in_channel"]?.boolValue, true)
+        XCTAssertEqual(message["silent"]?.boolValue, false)
+        XCTAssertEqual(message["quoted_message_id"]?.stringValue, "quoted-123")
+        XCTAssertEqual(message["mentioned_users"]?.stringArrayValue, ["user1"])
+        XCTAssertEqual(message["custom"]?.dictionaryValue?["custom_field"]?.stringValue, "value")
+        XCTAssertEqual(message["custom"]?.dictionaryValue?["command"]?.stringValue, "/giphy")
+        XCTAssertEqual(message["custom"]?.dictionaryValue?["args"]?.stringValue, "hello")
     }
 }

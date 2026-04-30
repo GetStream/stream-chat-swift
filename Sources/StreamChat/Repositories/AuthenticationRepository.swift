@@ -416,8 +416,12 @@ class AuthenticationRepository: @unchecked Sendable {
         apiClient.unmanagedRequest(endpoint: endpoint) {
             switch $0 {
             case let .success(payload):
-                let token = payload.token
-                completion(.success(token))
+                do {
+                    let token = try payload.validatedToken()
+                    completion(.success(token))
+                } catch {
+                    completion(.failure(error))
+                }
             case let .failure(error):
                 log.error(error)
                 completion(.failure(error))

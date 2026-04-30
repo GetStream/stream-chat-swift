@@ -434,7 +434,7 @@ final class ChannelPayload_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
         
-        let membershipPayload = MemberPayload.dummy(user: .dummy(userId: currentUserId), role: .admin)
+        let membershipPayload = MemberPayload.dummy(user: UserPayload.dummy(userId: currentUserId), role: .admin)
 
         let channel = ChannelDetailPayload(
             cid: cid,

@@ -1396,8 +1396,8 @@ public class Chat: @unchecked Sendable {
         extraData: [String: RawJSON] = [:]
     ) async throws {
         try await channelUpdater.update(
+            cid: cid,
             channelPayload: .init(
-                cid: cid,
                 name: name,
                 imageURL: imageURL,
                 team: team,
@@ -1436,8 +1436,8 @@ public class Chat: @unchecked Sendable {
         unsetProperties: [String] = []
     ) async throws {
         try await channelUpdater.updatePartial(
+            cid: cid,
             channelPayload: .init(
-                cid: cid,
                 name: name,
                 imageURL: imageURL,
                 team: team,

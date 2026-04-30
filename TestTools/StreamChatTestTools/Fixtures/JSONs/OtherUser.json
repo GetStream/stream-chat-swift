@@ -11,5 +11,6 @@
   "language": "pt",
   "name" : "Bitter cloud",
   "avg_response_time": 5,
-  "teams_role" : { "ios" : "guest" }
-}
+  "teams_role" : { "ios" : "guest" },
+  "blocked_user_ids" : [],
+  "custom" : {}}

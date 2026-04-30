@@ -64,12 +64,12 @@ extension NSManagedObjectContext {
     ) throws -> ThreadParticipantDTO {
         let dto = ThreadParticipantDTO.loadOrCreate(
             threadId: threadId,
-            userId: payload.user.id,
+            userId: payload.user?.id ?? payload.userId ?? "",
             context: self,
             cache: cache
         )
-        dto.user = try saveUser(payload: payload.user)
-        dto.lastReadAt = payload.lastReadAt?.bridgeDate
+        dto.user = try saveUser(payload: payload.userPayload)
+        dto.lastReadAt = payload.lastReadAt.bridgeDate
         dto.createdAt = payload.createdAt.bridgeDate
         dto.threadId = threadId
         return dto

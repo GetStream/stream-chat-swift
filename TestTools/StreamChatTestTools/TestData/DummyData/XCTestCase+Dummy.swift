@@ -73,7 +73,7 @@ extension XCTestCase {
             args: nil,
             parentId: nil,
             showReplyInChannel: false,
-            mentionedUsers: [dummyCurrentUser],
+            mentionedUsers: [dummyCurrentUser.asUserPayload],
             replyCount: 0,
             extraData: [:],
             reactionScores: ["like": 1],
@@ -100,7 +100,7 @@ extension XCTestCase {
             args: nil,
             parentId: nil,
             showReplyInChannel: false,
-            mentionedUsers: [dummyCurrentUser],
+            mentionedUsers: [dummyCurrentUser.asUserPayload],
             replyCount: 0,
             extraData: [:],
             reactionScores: ["like": 1],
@@ -116,7 +116,7 @@ extension XCTestCase {
     }
 
     var dummyChannelRead: ChannelReadPayload {
-        ChannelReadPayload(user: dummyCurrentUser, lastReadAt: Date(timeIntervalSince1970: 1), lastReadMessageId: .unique, unreadMessagesCount: 10, lastDeliveredAt: nil, lastDeliveredMessageId: nil)
+        ChannelReadPayload(user: dummyCurrentUser.asUserPayload, lastReadAt: Date(timeIntervalSince1970: 1), lastReadMessageId: .unique, unreadMessagesCount: 10, lastDeliveredAt: nil, lastDeliveredMessageId: nil)
     }
 
     func dummyPayload(
@@ -386,7 +386,7 @@ extension XCTestCase {
     ) -> ThreadReadPayload {
         .init(
             user: user,
-            lastReadAt: lastReadAt,
+            lastReadAt: lastReadAt ?? Date(timeIntervalSince1970: 0),
             unreadMessagesCount: unreadMessagesCount
         )
     }

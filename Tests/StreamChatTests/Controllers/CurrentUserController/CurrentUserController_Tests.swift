@@ -233,7 +233,7 @@ final class CurrentUserController_Tests: XCTestCase {
         extraData = [:]
         currentUserPayload = .dummy(
             userId: currentUserPayload.id,
-            role: currentUserPayload.role,
+            role: currentUserPayload.userRole,
             extraData: extraData
         )
 

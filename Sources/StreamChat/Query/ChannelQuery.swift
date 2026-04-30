@@ -82,10 +82,10 @@ public struct ChannelQuery: Encodable, Sendable {
 
     /// Init a channel query.
     /// - Parameters:
-    ///   - channelPayload: a payload that has data needed for channel creation.
-    init(channelPayload: ChannelEditDetailPayload) {
-        id = channelPayload.id
-        type = channelPayload.type
+    ///   - channelPayload: a payload that has data needed for channel creation or update.
+    init(id: String?, type: ChannelType, channelPayload: ChannelEditDetailPayload) {
+        self.id = id
+        self.type = type
         self.channelPayload = channelPayload
         pagination = nil
         membersPagination = nil

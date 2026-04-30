@@ -37,7 +37,7 @@ final class ThreadReadDTO_Tests: XCTestCase {
 
         XCTAssertEqual(dto.unreadMessagesCount, Int64(payload.unreadMessagesCount))
         XCTAssertEqual(dto.user.id, payload.user.id)
-        XCTAssertEqual(dto.lastReadAt, payload.lastReadAt?.bridgeDate)
+        XCTAssertEqual(dto.lastReadAt, payload.lastReadAt.bridgeDate)
     }
     
     func test_asModel() throws {

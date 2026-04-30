@@ -145,7 +145,6 @@ extension ChatClient {
     ) throws -> Chat {
         guard let currentUserId = currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         let payload = ChannelEditDetailPayload(
-            cid: cid,
             name: name,
             imageURL: imageURL,
             team: team,
@@ -154,7 +153,7 @@ extension ChatClient {
             filterTags: filterTags,
             extraData: extraData
         )
-        let channelQuery = ChannelQuery(channelPayload: payload)
+        let channelQuery = ChannelQuery(id: cid.id, type: cid.type, channelPayload: payload)
         return makeChat(
             with: channelQuery,
             messageOrdering: messageOrdering,
@@ -202,7 +201,6 @@ extension ChatClient {
         guard let currentUserId = authenticationRepository.currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
         let payload = ChannelEditDetailPayload(
-            type: type,
             name: name,
             imageURL: imageURL,
             team: team,
@@ -211,7 +209,7 @@ extension ChatClient {
             filterTags: filterTags,
             extraData: extraData
         )
-        let channelQuery = ChannelQuery(channelPayload: payload)
+        let channelQuery = ChannelQuery(id: nil, type: type, channelPayload: payload)
         return makeChat(
             with: channelQuery,
             messageOrdering: messageOrdering,

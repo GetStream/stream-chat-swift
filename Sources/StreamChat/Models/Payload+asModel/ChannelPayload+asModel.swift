@@ -79,7 +79,7 @@ extension MemberPayload {
     /// - Parameter channelId: The channel ID the member belongs to
     /// - Returns: A ChatChannelMember instance, or nil if user is missing
     func asModel(channelId: ChannelId) -> ChatChannelMember? {
-        guard let userPayload = user else { return nil }
+        guard let userPayload = userPayload else { return nil }
         let user = userPayload.asModel()
 
         return ChatChannelMember(
@@ -98,7 +98,7 @@ extension MemberPayload {
             teams: user.teams,
             language: user.language,
             extraData: user.extraData,
-            memberRole: MemberRole(rawValue: role?.rawValue ?? "member"),
+            memberRole: memberRole ?? .member,
             memberCreatedAt: createdAt,
             memberUpdatedAt: updatedAt,
             isInvited: isInvited ?? false,
@@ -124,7 +124,7 @@ extension ChannelReadPayload {
             lastReadAt: lastReadAt,
             lastReadMessageId: lastReadMessageId,
             unreadMessagesCount: unreadMessagesCount,
-            user: user.asModel(),
+            user: user.asUserPayload.asModel(),
             lastDeliveredAt: lastDeliveredAt,
             lastDeliveredMessageId: lastDeliveredMessageId
         )

@@ -554,8 +554,8 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.markThreadAsUnread(for: parentMessageId, userId: userId)
     }
     
-    func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO {
-        try underlyingSession.savePoll(payload: payload, cache: cache)
+    func savePoll(payload: PollPayload, cache: PreWarmedCache?, fromEvent: Bool) throws -> PollDTO {
+        try underlyingSession.savePoll(payload: payload, cache: cache, fromEvent: fromEvent)
     }
     
     func savePollVotes(

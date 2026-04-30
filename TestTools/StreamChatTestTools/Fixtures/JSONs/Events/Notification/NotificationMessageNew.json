@@ -24,9 +24,16 @@
                     "role" : "user",
                     "total_unread_count" : 0,
                     "online" : true,
-                    "name" : "broken-waterfall-5"
-                }
-            },
+                    "name" : "broken-waterfall-5",
+                  "blocked_user_ids" : [],
+                  "custom" : {},
+                  "language" : "",
+                  "teams" : []},
+              "banned" : false,
+              "shadow_banned" : false,
+              "channel_role" : "channel_member",
+              "notifications_muted" : false,
+              "custom" : {}},
             {
                 "created_at" : "2020-06-04T13:36:44.793348Z",
                 "user_id" : "test-user-2",
@@ -39,9 +46,16 @@
                     "created_at" : "2020-06-04T13:25:46.731547Z",
                     "updated_at" : "2020-06-04T13:25:46.740591Z",
                     "last_active" : "2020-06-04T13:25:46.735697Z",
-                    "name" : "test-user-2"
-                }
-            },
+                    "name" : "test-user-2",
+                  "blocked_user_ids" : [],
+                  "custom" : {},
+                  "language" : "",
+                  "teams" : []},
+              "banned" : false,
+              "shadow_banned" : false,
+              "channel_role" : "channel_member",
+              "notifications_muted" : false,
+              "custom" : {}},
             {
                 "created_at" : "2020-06-05T12:55:48.581959Z",
                 "user_id" : "steep-moon-9",
@@ -61,9 +75,16 @@
                     "role" : "user",
                     "total_unread_count" : 21,
                     "online" : true,
-                    "name" : "steep-moon-9"
-                }
-            }
+                    "name" : "steep-moon-9",
+                  "blocked_user_ids" : [],
+                  "custom" : {},
+                  "language" : "",
+                  "teams" : []},
+              "banned" : false,
+              "shadow_banned" : false,
+              "channel_role" : "channel_member",
+              "notifications_muted" : false,
+              "custom" : {}}
         ],
         "created_at" : "2019-05-10T14:03:49.505006Z",
         "created_by" : null,
@@ -145,8 +166,11 @@
             "role" : "user",
             "total_unread_count" : 21,
             "online" : true,
-            "name" : "steep-moon-9"
-        },
+            "name" : "steep-moon-9",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
         "mentioned_users" : [
             
         ],

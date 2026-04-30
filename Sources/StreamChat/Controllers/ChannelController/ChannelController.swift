@@ -275,7 +275,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         let payload: ChannelEditDetailPayload = .init(
-            cid: cid,
             name: name,
             imageURL: imageURL,
             team: team,
@@ -285,7 +284,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         )
 
-        updater.updateChannel(channelPayload: payload) { error in
+        updater.updateChannel(cid: cid, channelPayload: payload) { error in
             self.callback {
                 completion?(error)
             }
@@ -322,7 +321,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         let payload: ChannelEditDetailPayload = .init(
-            cid: cid,
             name: name,
             imageURL: imageURL,
             team: team,
@@ -332,7 +330,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             extraData: extraData
         )
 
-        updater.partialChannelUpdate(updates: payload, unsetProperties: unsetProperties) { error in
+        updater.partialChannelUpdate(cid: cid, updates: payload, unsetProperties: unsetProperties) { error in
             self.callback {
                 completion?(error)
             }

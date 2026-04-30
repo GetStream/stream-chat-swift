@@ -179,14 +179,14 @@ final class IdentifiablePayload_Tests: XCTestCase {
     }
 
     func test_MemberPayload_isIdentifiablePayload() {
-        let payload = MemberPayload.dummy(user: .dummy(userId: "u2"))
+        let payload = MemberPayload.dummy(user: UserPayload.dummy(userId: "u2"))
         XCTAssertNil(payload.databaseId)
         XCTAssertTrue(MemberPayload.modelClass == MemberDTO.self)
     }
 
     func test_ChannelReadPayload_isIdentifiablePayload() {
         let payload = ChannelReadPayload(
-            user: .dummy(userId: "u3"),
+            user: UserPayload.dummy(userId: "u3"),
             lastReadAt: Date(),
             lastReadMessageId: .unique,
             unreadMessagesCount: 2,

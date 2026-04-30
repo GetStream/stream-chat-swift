@@ -8,10 +8,13 @@ import XCTest
 
 final class GuestEndpoints_Tests: XCTestCase {
     func test_token_buildsCorrectly_withDefaultExtraData() {
+        let userId: UserId = .unique
+        let name: String = .unique
+        let imageURL: URL = .unique()
         let payload = GuestUserTokenRequestPayload(
-            userId: .unique,
-            name: .unique,
-            imageURL: .unique(),
+            userId: userId,
+            name: name,
+            imageURL: imageURL,
             extraData: [:]
         )
         let expectedEndpoint = Endpoint<GuestUserTokenPayload>(
@@ -23,9 +26,9 @@ final class GuestEndpoints_Tests: XCTestCase {
         )
 
         let actualEndpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
-            userId: payload.userId,
-            name: payload.name,
-            imageURL: payload.imageURL,
+            userId: userId,
+            name: name,
+            imageURL: imageURL,
             extraData: [:]
         )
 
@@ -38,11 +41,15 @@ final class GuestEndpoints_Tests: XCTestCase {
     }
 
     func test_token_buildsCorrectly_withCustomExtraData() {
+        let userId: UserId = .unique
+        let name: String = .unique
+        let imageURL: URL = .unique()
+        let extraData: [String: RawJSON] = ["company": .string("getstream.io")]
         let payload = GuestUserTokenRequestPayload(
-            userId: .unique,
-            name: .unique,
-            imageURL: .unique(),
-            extraData: [:]
+            userId: userId,
+            name: name,
+            imageURL: imageURL,
+            extraData: extraData
         )
         let expectedEndpoint = Endpoint<GuestUserTokenPayload>(
             path: .guest,
@@ -53,10 +60,10 @@ final class GuestEndpoints_Tests: XCTestCase {
         )
 
         let actualEndpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
-            userId: payload.userId,
-            name: payload.name,
-            imageURL: payload.imageURL,
-            extraData: [:]
+            userId: userId,
+            name: name,
+            imageURL: imageURL,
+            extraData: extraData
         )
 
         // Assert endpoint is built correctly

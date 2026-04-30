@@ -34,13 +34,14 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             updatedAt: .unique,
             expiresAt: .unique
         )
+        let mutedChannel = try XCTUnwrap(mutePayload.channelPayload)
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUserPayload)
             try session.saveChannelMute(payload: mutePayload)
         }
 
-        let channel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: mutePayload.mutedChannel.cid)?.asModel())
+        let channel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: mutedChannel.cid)?.asModel())
         XCTAssertEqual(channel.muteDetails?.createdAt, mutePayload.createdAt)
         XCTAssertEqual(channel.muteDetails?.updatedAt, mutePayload.updatedAt)
         XCTAssertEqual(channel.muteDetails?.expiresAt, mutePayload.expiresAt)
@@ -53,7 +54,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         // GIVEN
         let mute: MutedChannelPayload = .init(
             mutedChannel: .dummy(cid: .unique),
-            user: .dummy(userId: .unique),
+            user: UserPayload.dummy(userId: .unique),
             createdAt: .unique,
             updatedAt: .unique,
             expiresAt: .unique
@@ -79,7 +80,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         )
 
         var loadedMuteDTO: ChannelMuteDTO? {
-            ChannelMuteDTO.load(cid: mute.mutedChannel.cid, context: database.viewContext)
+            ChannelMuteDTO.load(cid: channel.cid, context: database.viewContext)
         }
         XCTAssertNil(loadedMuteDTO)
 
@@ -129,7 +130,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
 
         // THEN
         let muteDTO = try XCTUnwrap(
-            ChannelMuteDTO.load(cid: initialMute.mutedChannel.cid, context: database.viewContext)
+            ChannelMuteDTO.load(cid: channel.cid, context: database.viewContext)
         )
         XCTAssertEqual(muteDTO.createdAt.bridgeDate, updatedMute.createdAt)
         XCTAssertEqual(muteDTO.updatedAt.bridgeDate, updatedMute.updatedAt)

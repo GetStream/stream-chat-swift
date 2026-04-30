@@ -9,14 +9,17 @@
         "allow_user_suggested_options": false,
         "allow_answers": false,
         "vote_count": 0,
+        "custom": {},
         "options": [
             {
                 "id": "option1",
-                "text": "option1 text"
+                "text": "option1 text",
+                "custom": {}
             }
         ],
         "answers_count": 0,
-        "vote_counts_by_option": null,
+        "vote_counts_by_option": {},
+        "latest_answers": [],
         "latest_votes_by_option": {},
         "own_votes": [
             {
@@ -35,7 +38,11 @@
             "updated_at": "2024-03-18T16:44:45.749718Z",
             "last_active": "2024-04-17T14:46:22.723731831Z",
             "banned": false,
+            "blocked_user_ids": [],
+            "custom": {},
             "online": true,
+            "language": "en",
+            "teams": [],
             "name": "Luke Skywalker",
             "image": "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg",
             "birthland": "Tatooine"

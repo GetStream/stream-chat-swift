@@ -17,8 +17,11 @@
         "role" : "user",
         "total_unread_count" : 0,
         "online" : true,
-        "name" : "broken-waterfall-5"
-    },
+        "name" : "broken-waterfall-5",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []},
     "watcher_count" : 7,
     "channel_type" : "messaging",
     "channel_id" : "general",
@@ -63,8 +66,11 @@
             "role" : "user",
             "total_unread_count" : 0,
             "online" : true,
-            "name" : "broken-waterfall-5"
-        },
+            "name" : "broken-waterfall-5",
+          "blocked_user_ids" : [],
+          "custom" : {},
+          "language" : "",
+          "teams" : []},
         "mentioned_users" : [
             
         ],

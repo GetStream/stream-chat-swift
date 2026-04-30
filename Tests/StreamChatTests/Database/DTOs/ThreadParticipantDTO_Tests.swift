@@ -32,13 +32,13 @@ final class ThreadParticipantDTO_Tests: XCTestCase {
 
         let dto = try database.viewContext.saveThreadParticipant(
             payload: payload,
-            threadId: payload.threadId,
+            threadId: payload.threadId ?? "",
             cache: nil
         )
 
         XCTAssertEqual(dto.createdAt, payload.createdAt.bridgeDate)
-        XCTAssertEqual(dto.user.id, payload.user.id)
-        XCTAssertEqual(dto.lastReadAt, payload.lastReadAt?.bridgeDate)
+        XCTAssertEqual(dto.user.id, payload.user?.id)
+        XCTAssertEqual(dto.lastReadAt, payload.lastReadAt.bridgeDate)
         XCTAssertEqual(dto.threadId, payload.threadId)
         XCTAssertEqual(dto.thread.parentMessageId, payload.threadId)
     }

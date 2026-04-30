@@ -14,8 +14,11 @@
         "role" : "user",
         "total_unread_count" : 21,
         "online" : true,
-        "name" : "steep-moon-9"
-    },
+        "name" : "steep-moon-9",
+      "blocked_user_ids" : [],
+      "custom" : {},
+      "language" : "",
+      "teams" : []},
     "channel" : {
         "id" : "general",
         "created_at" : "2019-05-10T14:03:49.505006Z",

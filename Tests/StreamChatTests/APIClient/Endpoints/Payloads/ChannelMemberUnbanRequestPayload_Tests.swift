@@ -23,8 +23,7 @@ final class ChannelMemberUnbanRequestPayload_Tests: XCTestCase {
         // Assert encoding is correct.
         AssertJSONEqual(json, [
             "target_user_id": userId,
-            "type": cid.type.rawValue,
-            "id": cid.id
+            "channel_cid": cid.rawValue
         ])
     }
 }

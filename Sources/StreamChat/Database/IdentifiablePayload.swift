@@ -95,7 +95,7 @@ extension Array where Element: IdentifiablePayload {
 
 extension UserListPayload: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        users.fillIds(cache: &cache)
+        userPayloads.fillIds(cache: &cache)
     }
 }
 
@@ -168,26 +168,19 @@ extension ThreadListPayload: IdentifiablePayloadProxy {
 extension ThreadPayload: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        parentMessage.fillIds(cache: &cache)
-        channel.fillIds(cache: &cache)
-        createdBy.fillIds(cache: &cache)
-        latestReplies.fillIds(cache: &cache)
-        threadParticipants.fillIds(cache: &cache)
-        read.fillIds(cache: &cache)
-    }
-}
-
-extension ThreadReadPayload: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        addId(cache: &cache)
-        user.fillIds(cache: &cache)
+        parentMessagePayload?.fillIds(cache: &cache)
+        channelDetailPayload?.fillIds(cache: &cache)
+        createdByPayload.fillIds(cache: &cache)
+        latestRepliesPayload.fillIds(cache: &cache)
+        threadParticipantPayloads.fillIds(cache: &cache)
+        readPayload.fillIds(cache: &cache)
     }
 }
 
 extension ThreadParticipantPayload: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        user.fillIds(cache: &cache)
+        userPayload.fillIds(cache: &cache)
     }
 }
 
@@ -219,14 +212,14 @@ extension MessagePayload: IdentifiablePayload {
 
 extension MessageReactionPayload: IdentifiablePayload {
     var databaseId: DatabaseId? {
-        MessageReactionDTO.createId(userId: user.id, messageId: messageId, type: type)
+        MessageReactionDTO.createId(userId: userPayload.id, messageId: messageId, type: reactionType)
     }
 
     static let modelClass: (IdentifiableDatabaseObject).Type? = MessageReactionDTO.self
 
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        user.fillIds(cache: &cache)
+        userPayload.fillIds(cache: &cache)
     }
 }
 
@@ -236,7 +229,7 @@ extension MemberPayload: IdentifiablePayload {
 
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        user?.fillIds(cache: &cache)
+        userPayload?.fillIds(cache: &cache)
     }
 }
 
@@ -246,7 +239,7 @@ extension ChannelReadPayload: IdentifiablePayload {
 
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        user.fillIds(cache: &cache)
+        user.asUserPayload.fillIds(cache: &cache)
     }
 }
 

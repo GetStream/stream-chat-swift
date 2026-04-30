@@ -40,8 +40,7 @@ final class ChannelQuery_Tests: XCTestCase {
 
     func test_apiPath() {
         // Create query without id specified
-        let query1: ChannelQuery = .init(channelPayload: .init(
-            type: .messaging,
+        let query1: ChannelQuery = .init(id: nil, type: .messaging, channelPayload: .init(
             name: .unique,
             imageURL: .unique(),
             team: nil,
@@ -63,8 +62,7 @@ final class ChannelQuery_Tests: XCTestCase {
     }
 
     func test_apiPath_customType() {
-        let query: ChannelQuery = .init(channelPayload: .init(
-            type: .custom("custom_type"),
+        let query: ChannelQuery = .init(id: nil, type: .custom("custom_type"), channelPayload: .init(
             name: .unique,
             imageURL: .unique(),
             team: nil,
@@ -77,8 +75,8 @@ final class ChannelQuery_Tests: XCTestCase {
     }
 
     func test_apiPath_customTypeAndId() {
-        let query: ChannelQuery = .init(channelPayload: .init(
-            cid: .init(type: .custom("custom_type"), id: "id"),
+        let cid = ChannelId(type: .custom("custom_type"), id: "id")
+        let query: ChannelQuery = .init(id: cid.id, type: cid.type, channelPayload: .init(
             name: .unique,
             imageURL: .unique(),
             team: nil,

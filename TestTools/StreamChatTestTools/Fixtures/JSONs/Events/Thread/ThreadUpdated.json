@@ -11,6 +11,9 @@
         "banned": false,
         "online": false,
         "language": "de",
+        "blocked_user_ids": [],
+        "custom": {},
+        "teams": [],
         "private_settings": {
             "readReceipts": {
                 "enabled": false
@@ -43,7 +46,10 @@
                 "language": "zh",
                 "name": "R2-D2",
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
-                "birthland": "Naboo"
+                "birthland": "Naboo",
+                "blocked_user_ids": [],
+                "custom": {},
+                "teams": []
             },
             "frozen": false,
             "disabled": false,
@@ -94,10 +100,16 @@
                         "args": "[text]",
                         "set": "fun_set"
                     }
-                ]
+                ],
+                "count_messages": false,
+                "delivery_events": false,
+                "shared_locations": false,
+                "skip_last_msg_update_for_system_msgs": false,
+                "user_message_reminders": false
             },
             "name": "Cult meetup",
-            "is_cool": true
+            "is_cool": true,
+            "custom": {}
         },
         "parent_message_id": "8873fa5a-ddc2-4361-a2c6-137af90fb53e",
         "parent_message": {
@@ -115,7 +127,11 @@
                 "online": false,
                 "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
                 "birthland": "Corellia",
-                "name": "Han Solo"
+                "name": "Han Solo",
+                "blocked_user_ids": [],
+                "custom": {},
+                "language": "",
+                "teams": []
             },
             "attachments": [],
             "latest_reactions": [],
@@ -145,7 +161,10 @@
                         }
                     },
                     "name": "Leia Organa",
-                    "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
+                    "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png",
+                    "blocked_user_ids": [],
+                    "custom": {},
+                    "teams": []
                 },
                 {
                     "id": "han_solo",
@@ -157,7 +176,11 @@
                     "online": false,
                     "name": "Han Solo",
                     "image": "https://vignette.wikia.nocookie.net/starwars/images/e/e2/TFAHanSolo.png",
-                    "birthland": "Corellia"
+                    "birthland": "Corellia",
+                    "blocked_user_ids": [],
+                    "custom": {},
+                    "language": "",
+                    "teams": []
                 }
             ],
             "cid": "messaging:456F834D-1",
@@ -174,7 +197,11 @@
             "pinned": false,
             "pinned_at": null,
             "pinned_by": null,
-            "pin_expires": null
+            "pin_expires": null,
+            "custom": {},
+            "mentioned_channel": false,
+            "mentioned_here": false,
+            "restricted_visibility": []
         },
         "created_by_user_id": "leia_organa",
         "created_by": {
@@ -196,7 +223,10 @@
                 "typingIndicators": {
                     "enabled": false
                 }
-            }
+            },
+            "blocked_user_ids": [],
+            "custom": {},
+            "teams": []
         },
         "reply_count": 29,
         "participant_count": 2,
@@ -210,8 +240,11 @@
                 "user_id": "leia_organa",
                 "created_at": "2024-07-03T14:27:35.737529Z",
                 "last_read_at": "2024-07-03T17:31:51.209329Z",
-                "custom": null
-            },
+                "custom": {},
+              "banned" : false,
+              "shadow_banned" : false,
+              "channel_role" : "channel_member",
+              "notifications_muted" : false},
             {
                 "app_pk": 0,
                 "channel_cid": "messaging:456F834D-1",
@@ -220,13 +253,17 @@
                 "user_id": "han_solo",
                 "created_at": "2024-07-03T14:27:35.737529Z",
                 "last_read_at": "2024-07-03T17:32:08.799903Z",
-                "custom": null
-            }
+                "custom": {},
+              "banned" : false,
+              "shadow_banned" : false,
+              "channel_role" : "channel_member",
+              "notifications_muted" : false}
         ],
         "last_message_at": "2024-07-03T17:34:14.600702Z",
         "created_at": "2024-07-03T14:27:35.737529Z",
         "updated_at": "2024-07-08T17:59:20.172547Z",
-        "title": "New Title!!!"
+        "title": "New Title!!!",
+        "custom": {}
     },
     "type": "thread.updated",
     "created_at": "2024-07-08T17:59:20.17915422Z"

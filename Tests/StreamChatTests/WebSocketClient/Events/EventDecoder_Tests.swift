@@ -72,7 +72,11 @@ final class EventDecoder_Tests: XCTestCase {
                 "role" : "user",
                 "total_unread_count" : 0,
                 "online" : true,
-                "name" : "broken-waterfall-5"
+                "name" : "broken-waterfall-5",
+                "blocked_user_ids" : [],
+                "custom" : {},
+                "language" : "",
+                "teams" : []
             },
             "channel_type" : "\(cid.type.rawValue)",
             "channel_id" : "\(cid.id)",
@@ -117,7 +121,11 @@ final class EventDecoder_Tests: XCTestCase {
                 "role" : "user",
                 "total_unread_count" : 0,
                 "online" : true,
-                "name" : "broken-waterfall-5"
+                "name" : "broken-waterfall-5",
+                "blocked_user_ids" : [],
+                "custom" : {},
+                "language" : "",
+                "teams" : []
             },
             "created_at" : "\(createdAt)",
             "type" : "\(IdeaEventPayload.eventType.rawValue)",

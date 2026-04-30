@@ -24,10 +24,15 @@
      "officia consequat",
      "elit cupidatat occaecat"
     ],
-    "updated_at": "1945-07-29T22:17:54.355Z"
-   },
-   "user_id": "ut laboris id"
-  },
+    "updated_at": "1945-07-29T22:17:54.355Z",
+     "blocked_user_ids" : [],
+     "custom" : {}},
+   "user_id": "ut laboris id",
+    "banned" : false,
+    "shadow_banned" : false,
+    "channel_role" : "channel_member",
+    "notifications_muted" : false,
+    "custom" : {}},
   {
    "type": "deserun",
    "created_at": "2001-08-01T20:43:36.999Z",
@@ -51,9 +56,14 @@
      "dolor do dolor Excepteur",
      "in cupidatat Duis"
     ],
-    "updated_at": "2012-01-18T21:18:30.905Z"
-   },
-   "user_id": "Lore"
-  }
+    "updated_at": "2012-01-18T21:18:30.905Z",
+     "blocked_user_ids" : [],
+     "custom" : {}},
+   "user_id": "Lore",
+    "banned" : false,
+    "shadow_banned" : false,
+    "channel_role" : "channel_member",
+    "notifications_muted" : false,
+    "custom" : {}}
  ]
 }

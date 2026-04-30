@@ -576,7 +576,7 @@ protocol PollDatabaseSession {
     /// - Returns: A `PollDTO` representing the saved poll.
     /// - Throws: An error if the save operation fails.
     @discardableResult
-    func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO
+    func savePoll(payload: PollPayload, cache: PreWarmedCache?, fromEvent: Bool) throws -> PollDTO
     
     /// Saves a list of poll votes with the provided payload.
     /// - Parameters:
@@ -682,6 +682,13 @@ protocol PollDatabaseSession {
     func delete(pollVote: PollVoteDTO)
 }
 
+extension PollDatabaseSession {
+    @discardableResult
+    func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO {
+        try savePoll(payload: payload, cache: cache, fromEvent: false)
+    }
+}
+
 protocol LocationDatabaseSession {
     /// Saves the provided location payload to the DB.
     @discardableResult
@@ -772,7 +779,7 @@ extension DatabaseSession {
                     if let dto = reaction(
                         messageId: event.message.id,
                         userId: event.user.id,
-                        type: event.reaction.type
+                        type: event.reaction.reactionType
                     ) {
                         dto.message.ownReactions.removeAll(where: { $0 == dto.id })
                         delete(reaction: dto)
@@ -797,9 +804,8 @@ extension DatabaseSession {
             }
         }
         
-        if var poll = payload.poll {
-            poll.fromEvent = true
-            try savePoll(payload: poll, cache: nil)
+        if let poll = payload.poll {
+            try savePoll(payload: poll, cache: nil, fromEvent: true)
         }
     }
 
@@ -868,7 +874,8 @@ extension DatabaseSession {
     func handlePollVoteChangedEvent(vote: PollVotePayload) throws {
         var voteUpdated = false
         let userId = vote.userId ?? "anon"
-        if let optionId = vote.optionId, !optionId.isEmpty {
+        if !vote.optionId.isEmpty {
+            let optionId = vote.optionId
             let id = PollVoteDTO.localVoteId(
                 optionId: optionId,
                 pollId: vote.pollId,
@@ -910,7 +917,8 @@ extension DatabaseSession {
                     }
                 }
             } else {
-                if let optionId = vote.optionId, !optionId.isEmpty {
+                if !vote.optionId.isEmpty {
+                    let optionId = vote.optionId
                     let id = PollVoteDTO.localVoteId(
                         optionId: optionId,
                         pollId: vote.pollId,

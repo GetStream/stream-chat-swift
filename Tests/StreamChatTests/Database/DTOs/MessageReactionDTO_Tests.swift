@@ -87,18 +87,18 @@ final class MessageReactionDTO_Tests: XCTestCase {
         let model: ChatMessageReaction = try XCTUnwrap(
             database.viewContext.reaction(
                 messageId: payload.messageId,
-                userId: payload.user.id,
-                type: payload.type
+                userId: payload.userPayload.id,
+                type: payload.reactionType
             )
         ).asModel()
 
         // Assert model is built up correctly.
         XCTAssertEqual(model.createdAt, payload.createdAt)
         XCTAssertEqual(model.updatedAt, payload.updatedAt)
-        XCTAssertEqual(model.type, payload.type)
+        XCTAssertEqual(model.type, payload.reactionType)
         XCTAssertEqual(model.score, payload.score)
         XCTAssertEqual(model.extraData, payload.extraData)
-        XCTAssertEqual(model.author.id, payload.user.id)
+        XCTAssertEqual(model.author.id, payload.userPayload.id)
     }
 
     func test_asModel_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
@@ -122,8 +122,8 @@ final class MessageReactionDTO_Tests: XCTestCase {
         let model: ChatMessageReaction = try XCTUnwrap(
             database.viewContext.reaction(
                 messageId: payload.messageId,
-                userId: payload.user.id,
-                type: payload.type
+                userId: payload.userPayload.id,
+                type: payload.reactionType
             )
         ).asModel()
 
@@ -132,9 +132,9 @@ final class MessageReactionDTO_Tests: XCTestCase {
         // Assert other fields have correct values.
         XCTAssertEqual(model.createdAt, payload.createdAt)
         XCTAssertEqual(model.updatedAt, payload.updatedAt)
-        XCTAssertEqual(model.type, payload.type)
+        XCTAssertEqual(model.type, payload.reactionType)
         XCTAssertEqual(model.score, payload.score)
-        XCTAssertEqual(model.author.id, payload.user.id)
+        XCTAssertEqual(model.author.id, payload.userPayload.id)
     }
 
     // MARK: - Delete
@@ -160,8 +160,8 @@ final class MessageReactionDTO_Tests: XCTestCase {
             let dto = try XCTUnwrap(
                 session.reaction(
                     messageId: payload.messageId,
-                    userId: payload.user.id,
-                    type: payload.type
+                    userId: payload.userPayload.id,
+                    type: payload.reactionType
                 )
             )
 
@@ -172,8 +172,8 @@ final class MessageReactionDTO_Tests: XCTestCase {
         // Load reaction.
         let dto = database.viewContext.reaction(
             messageId: payload.messageId,
-            userId: payload.user.id,
-            type: payload.type
+            userId: payload.userPayload.id,
+            type: payload.reactionType
         )
 
         // Assert dto is `nil`.
@@ -275,26 +275,26 @@ final class MessageReactionDTO_Tests: XCTestCase {
         let dto = try XCTUnwrap(
             database.viewContext.reaction(
                 messageId: payload.messageId,
-                userId: payload.user.id,
-                type: payload.type
+                userId: payload.userPayload.id,
+                type: payload.reactionType
             )
         )
 
         // Encode extra data.
         let encoder = JSONEncoder.default
         let reactionExtraData = try encoder.encode(payload.extraData)
-        let userExtraData = try encoder.encode(payload.user.extraData)
+        let userExtraData = try encoder.encode(payload.userPayload.extraData)
 
         // Assert loaded message reaction has valid fields.
         XCTAssertEqual(dto.createdAt?.bridgeDate, payload.createdAt)
         XCTAssertEqual(dto.updatedAt?.bridgeDate, payload.updatedAt)
-        XCTAssertEqual(dto.type, payload.type.rawValue)
+        XCTAssertEqual(dto.type, payload.reactionType.rawValue)
         XCTAssertEqual(dto.score, Int64(payload.score))
         XCTAssertEqual(dto.extraData, reactionExtraData)
         XCTAssertEqual(dto.message.id, payload.messageId)
 
         // Assert reaction author has valid fields.
-        XCTAssertEqual(dto.user.id, payload.user.id)
+        XCTAssertEqual(dto.user.id, payload.userPayload.id)
         XCTAssertEqual(dto.user.extraData, userExtraData)
     }
 }

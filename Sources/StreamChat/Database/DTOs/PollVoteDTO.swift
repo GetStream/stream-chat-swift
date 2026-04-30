@@ -102,12 +102,8 @@ extension NSManagedObjectContext {
             queryDTO?.votes = []
         }
 
-        return payload.votes.compactMapLoggingError {
-            if let payload = $0 {
-                return try savePollVote(payload: payload, query: query, cache: cache)
-            } else {
-                return nil
-            }
+        return payload.votes.compactMapLoggingError { payload in
+            try savePollVote(payload: payload, query: query, cache: cache)
         }
     }
     
@@ -122,13 +118,14 @@ extension NSManagedObjectContext {
         }
         
         var option: PollOptionDTO?
-        if let optionId = payload.optionId, !optionId.isEmpty {
+        if !payload.optionId.isEmpty {
+            let optionId = payload.optionId
             option = try? self.option(id: optionId, pollId: payload.pollId)
         }
         
         var user: UserDTO?
         if let payloadUser = payload.user {
-            user = try saveUser(payload: payloadUser, query: nil, cache: cache)
+            user = try saveUser(payload: payloadUser.asUserPayload, query: nil, cache: cache)
         }
         let dto = PollVoteDTO.loadOrCreate(
             voteId: payload.id,
@@ -146,7 +143,7 @@ extension NSManagedObjectContext {
         dto.pollId = payload.pollId
         dto.isAnswer = payload.isAnswer ?? false
         dto.answerText = payload.answerText
-        dto.optionId = option?.id
+        dto.optionId = payload.optionalOptionId
         
         if let query = query {
             let queryDTO = try saveQuery(query: query)

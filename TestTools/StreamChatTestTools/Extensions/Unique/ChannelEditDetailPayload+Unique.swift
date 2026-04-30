@@ -8,7 +8,6 @@ import Foundation
 extension ChannelEditDetailPayload {
     static var unique: Self {
         Self(
-            cid: .unique,
             name: .unique,
             imageURL: .unique(),
             team: .unique,

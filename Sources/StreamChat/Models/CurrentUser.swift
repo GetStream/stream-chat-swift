@@ -178,7 +178,7 @@ public struct UnreadThread: Sendable {
 extension CurrentUserUnreadsPayload {
     func asModel() -> CurrentUserUnreads {
         let unreadChannels: [UnreadChannel] = channels.map { .init(
-            channelId: $0.channelId,
+            channelId: $0.channelIdValue,
             unreadMessagesCount: $0.unreadCount,
             lastRead: $0.lastRead
         ) }
@@ -196,7 +196,7 @@ extension CurrentUserUnreadsPayload {
             ) },
             unreadChannelsByType: channelType.map {
                 .init(
-                    channelType: $0.channelType,
+                    channelType: $0.channelTypeValue,
                     unreadChannelCount: $0.channelCount,
                     unreadMessagesCount: $0.unreadCount
                 )

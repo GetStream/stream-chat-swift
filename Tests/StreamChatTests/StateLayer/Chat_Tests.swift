@@ -1309,7 +1309,7 @@ final class Chat_Tests: XCTestCase {
                 ),
                 channelReads: [
                     ChannelReadPayload(
-                        user: .dummy(userId: self.currentUserId),
+                        user: UserPayload.dummy(userId: self.currentUserId),
                         lastReadAt: messages.first?.createdAt ?? .distantPast,
                         lastReadMessageId: nil,
                         unreadMessagesCount: 2,
@@ -1349,7 +1349,7 @@ final class Chat_Tests: XCTestCase {
                 ),
                 channelReads: [
                     ChannelReadPayload(
-                        user: .dummy(userId: self.currentUserId),
+                        user: UserPayload.dummy(userId: self.currentUserId),
                         lastReadAt: lastMessage.createdAt,
                         lastReadMessageId: nil,
                         unreadMessagesCount: 0,
@@ -1387,7 +1387,7 @@ final class Chat_Tests: XCTestCase {
                 ),
                 channelReads: [
                     ChannelReadPayload(
-                        user: .dummy(userId: self.currentUserId),
+                        user: UserPayload.dummy(userId: self.currentUserId),
                         lastReadAt: lastMessage.createdAt,
                         lastReadMessageId: nil,
                         unreadMessagesCount: 0,
@@ -1433,9 +1433,9 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(payload.name, name)
         XCTAssertEqual(payload.imageURL, imageURL)
         XCTAssertEqual(payload.team, team)
-        XCTAssertEqual(payload.members, members)
-        XCTAssertEqual(payload.invites, invites)
-        XCTAssertEqual(payload.filterTags, filterTags)
+        XCTAssertEqual(Set(payload.members?.map(\.userId) ?? []), members.union(invites))
+        XCTAssertEqual(Set(payload.invites?.map(\.userId) ?? []), invites)
+        XCTAssertEqual(Set(payload.filterTags ?? []), filterTags)
         XCTAssertEqual(payload.extraData, extraData)
     }
     
@@ -1482,9 +1482,9 @@ final class Chat_Tests: XCTestCase {
         XCTAssertEqual(payload.name, name)
         XCTAssertEqual(payload.imageURL, imageURL)
         XCTAssertEqual(payload.team, team)
-        XCTAssertEqual(payload.members, Set(members))
-        XCTAssertEqual(payload.invites, Set(invites))
-        XCTAssertEqual(payload.filterTags, filterTags)
+        XCTAssertEqual(Set(payload.members?.map(\.userId) ?? []), Set(members).union(invites))
+        XCTAssertEqual(Set(payload.invites?.map(\.userId) ?? []), Set(invites))
+        XCTAssertEqual(Set(payload.filterTags ?? []), filterTags)
         XCTAssertEqual(payload.extraData, extraData)
         XCTAssertEqual(env.channelUpdaterMock.partialChannelUpdate_unsetProperties, unsetProperties)
     }

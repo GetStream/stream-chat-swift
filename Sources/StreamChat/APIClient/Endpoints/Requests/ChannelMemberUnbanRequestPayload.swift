@@ -8,20 +8,29 @@ import Foundation
 struct ChannelMemberUnbanRequestPayload: Encodable {
     private enum CodingKeys: String, CodingKey {
         case userId = "target_user_id"
-        case channelType = "type"
-        case channelId = "id"
+        case channelCid = "channel_cid"
+        case createdBy = "created_by"
+        case removeFutureChannelsBan = "remove_future_channels_ban"
+        case reason
     }
 
     let userId: String
-    let channelType: ChannelType
-    let channelId: String
+    let channelCid: String
+    let createdBy: String?
+    let removeFutureChannelsBan: Bool?
+    let reason: String?
 
     init(
         userId: UserId,
-        cid: ChannelId
+        cid: ChannelId,
+        createdBy: UserId? = nil,
+        removeFutureChannelsBan: Bool? = nil,
+        reason: String? = nil
     ) {
         self.userId = userId
-        channelType = cid.type
-        channelId = cid.id
+        channelCid = cid.rawValue
+        self.createdBy = createdBy
+        self.removeFutureChannelsBan = removeFutureChannelsBan
+        self.reason = reason
     }
 }

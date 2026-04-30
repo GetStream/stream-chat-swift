@@ -371,7 +371,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             try session.saveCurrentDevice("123")
             try session.saveChannelMute(payload: .init(
                 mutedChannel: .dummy(cid: cid),
-                user: .dummy(userId: currentUserId),
+                user: UserPayload.dummy(userId: currentUserId),
                 createdAt: .unique,
                 updatedAt: .unique
             ))

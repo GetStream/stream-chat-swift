@@ -40,7 +40,7 @@ final class ChannelControllerSpy: ChatChannelController, @unchecked Sendable {
         set { super.state = newValue }
     }
 
-    init(channelQuery: ChannelQuery = .init(channelPayload: .unique)) {
+    init(channelQuery: ChannelQuery = .unique) {
         super.init(
             channelQuery: channelQuery,
             channelListQuery: nil,

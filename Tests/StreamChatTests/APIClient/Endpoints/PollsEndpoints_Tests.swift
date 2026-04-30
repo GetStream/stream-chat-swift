@@ -10,14 +10,14 @@ import XCTest
 final class PollsEndpoints_Tests: XCTestCase {
     func test_createPoll() throws {
         let request = CreatePollRequestBody(
-            name: "test",
             allowAnswers: true,
             allowUserSuggestedOptions: true,
             description: "Desc",
             enforceUniqueVote: false,
             id: "test",
             isClosed: false,
-            maxVotesAllowed: 1
+            maxVotesAllowed: 1,
+            name: "test"
         )
         let endpoint = Endpoint<PollPayloadResponse>.createPoll(createPollRequest: request)
         
@@ -117,7 +117,6 @@ final class PollsEndpoints_Tests: XCTestCase {
         )
         
         let expectedBody: [String: Any] = [
-            "poll_id": "test",
             "set": [
                 "name": "test_updated"
             ]
@@ -139,10 +138,7 @@ final class PollsEndpoints_Tests: XCTestCase {
             createPollOptionRequest: request
         )
         
-        let expectedBody: [String: Any] = [
-            "poll_id": "test",
-            "text": "sample"
-        ]
+        let expectedBody: [String: Any] = ["text": "sample"]
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
 
         XCTAssertEqual(endpoint.method, .post)
@@ -162,7 +158,6 @@ final class PollsEndpoints_Tests: XCTestCase {
         
         let expectedBody: [String: Any] = [
             "id": "option_id",
-            "poll_id": "test",
             "text": "sample"
         ]
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
@@ -196,10 +191,10 @@ final class PollsEndpoints_Tests: XCTestCase {
     }
     
     func test_queryPollVotes() throws {
-        let request = QueryPollVotesRequestBody(pollId: "test", limit: 30, prev: "10")
+        let request = QueryPollVotesRequestBody(limit: 30, prev: "10")
         let endpoint = Endpoint<PollVoteListResponse>.queryPollVotes(pollId: "test", queryPollVotesRequest: request)
         
-        let expectedBody: [String: Any] = ["poll_id": "test", "limit": 30, "prev": "10"]
+        let expectedBody: [String: Any] = ["limit": 30, "prev": "10"]
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()
 
         XCTAssertEqual(endpoint.method, .post)
@@ -222,7 +217,6 @@ final class PollsEndpoints_Tests: XCTestCase {
         )
         
         let expectedBody: [String: Any] = [
-            "poll_id": "test",
             "vote": ["answer_text": "test", "option_id": "option"]
         ]
         let body = try AnyEndpoint(endpoint).bodyAsDictionary()

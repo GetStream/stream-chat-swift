@@ -39,7 +39,7 @@ final class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.imageURL, loadedUserDTO.imageURL)
             Assert.willBeEqual(payload.isOnline, loadedUserDTO.isOnline)
             Assert.willBeEqual(payload.isBanned, loadedUserDTO.isBanned)
-            Assert.willBeEqual(payload.role.rawValue, loadedUserDTO.userRoleRaw)
+            Assert.willBeEqual(payload.userRole.rawValue, loadedUserDTO.userRoleRaw)
             Assert.willBeEqual(payload.createdAt, loadedUserDTO.userCreatedAt.bridgeDate)
             Assert.willBeEqual(payload.updatedAt, loadedUserDTO.userUpdatedAt.bridgeDate)
             Assert.willBeEqual(payload.lastActiveAt, loadedUserDTO.lastActivityAt?.bridgeDate)
@@ -103,7 +103,7 @@ final class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.imageURL, loadedUserModel.imageURL)
             Assert.willBeEqual(payload.isOnline, loadedUserModel.isOnline)
             Assert.willBeEqual(payload.isBanned, loadedUserModel.isBanned)
-            Assert.willBeEqual(payload.role, loadedUserModel.userRole)
+            Assert.willBeEqual(payload.userRole, loadedUserModel.userRole)
             Assert.willBeEqual(payload.createdAt, loadedUserModel.userCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedUserModel.userUpdatedAt)
             Assert.willBeEqual(payload.lastActiveAt, loadedUserModel.lastActiveAt)
@@ -359,7 +359,7 @@ final class UserDTO_Tests: XCTestCase {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique
 
-        let memberPayload: MemberPayload = .dummy(user: .dummy(userId: userId))
+        let memberPayload: MemberPayload = .dummy(user: UserPayload.dummy(userId: userId))
         let channelPayload: ChannelPayload = .dummy(channel: .dummy(cid: channelId))
         let payload: MessagePayload = .dummy(
             showReplyInChannel: false,

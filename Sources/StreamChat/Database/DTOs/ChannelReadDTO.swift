@@ -84,7 +84,7 @@ extension NSManagedObjectContext {
     ) throws -> ChannelReadDTO {
         let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: payload.user.id, context: self, cache: cache)
 
-        dto.user = try saveUser(payload: payload.user)
+        dto.user = try saveUser(payload: payload.user.asUserPayload)
 
         dto.lastReadAt = payload.lastReadAt.bridgeDate
         dto.lastReadMessageId = payload.lastReadMessageId

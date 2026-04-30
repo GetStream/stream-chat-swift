@@ -4,6 +4,13 @@
 
 import Foundation
 
+enum MarkUnreadCriteria: Sendable, Equatable {
+    /// The ID of the message from where the channel is marked unread.
+    case messageId(String)
+    /// The timestamp of the message from where the channel is marked unread.
+    case messageTimestamp(Date)
+}
+
 /// A handler which enables marking channels read and unread.
 ///
 /// Only one mark read or unread request is allowed to be active.

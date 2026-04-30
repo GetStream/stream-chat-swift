@@ -54,7 +54,7 @@ extension AppSettingsPayload.UploadConfigPayload {
             blockedFileExtensions: blockedFileExtensions,
             allowedMimeTypes: allowedMimeTypes,
             blockedMimeTypes: blockedMimeTypes,
-            sizeLimitInBytes: sizeLimit
+            sizeLimitInBytes: Int64(sizeLimit)
         )
     }
 }
