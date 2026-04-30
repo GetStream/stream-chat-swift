@@ -580,8 +580,8 @@ final class ChannelUpdater_Tests: XCTestCase {
         )
         // The channel preview must still surface the actually latest messages,
         // not the mid-page slice that the active controller is paginating.
-        XCTAssertEqual(channel.latestMessages.first?.id, "latest-0")
-        XCTAssertTrue(channel.latestMessages.allSatisfy { $0.id.hasPrefix("latest-") })
+        let expectedLatestIds = (0..<channel.latestMessages.count).map { "latest-\($0)" }
+        XCTAssertEqual(channel.latestMessages.map(\.id), expectedLatestIds)
     }
 
     func test_updateChannelQuery_whenIsJumpingToMessage_thenMessageObserverDropsOutOfBoundsMessages() throws {
