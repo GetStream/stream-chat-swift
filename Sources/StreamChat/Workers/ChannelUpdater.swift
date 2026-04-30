@@ -127,65 +127,6 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         }
     }
 
-    /// When the channel was last left in a mid-page state (the user jumped to a message and
-    /// navigated away before scrolling back to the bottom), the local cache still holds the
-    /// mid-page slice and the corresponding `oldestMessageAt`/`newestMessageAt` bounds.
-    ///
-    /// On a fresh first-page fetch we want the message list to start empty and only get
-    /// populated by the incoming first-page response, instead of briefly rendering the stale
-    /// mid-page slice that the database observers would otherwise pick up. We achieve that
-    /// by dropping the cached messages and resetting the bounds before the observers fire.
-    ///
-    /// The pre-check (`channelHasStaleMidPageState`) reads from the background read-only
-    /// context, so the no-op common path is fast and never touches the writable context.
-    /// When stale state is detected, the cleanup runs synchronously on the writable context
-    /// so that observers started by the caller in parallel with `update` see a clean cache.
-    ///
-    /// Marked internal (not private) so the cleanup behavior can be unit-tested directly
-    /// without driving a full `update` round-trip.
-    func cleanStaleMidPageStateIfNeeded(
-        for channelQuery: ChannelQuery,
-        isInRecoveryMode: Bool
-    ) {
-        let isFirstPageFetch = channelQuery.pagination?.parameter == nil
-        guard !isInRecoveryMode,
-              isFirstPageFetch,
-              let cid = channelQuery.cid,
-              channelHasStaleMidPageState(cid: cid) else {
-            return
-        }
-
-        let writableContext = database.writableContext
-        writableContext.performAndWait {
-            guard let channelDTO = writableContext.channel(cid: cid),
-                  channelDTO.newestMessageAt != nil else { return }
-            channelDTO.cleanAllMessagesExcludingLocalOnly()
-            channelDTO.oldestMessageAt = nil
-            channelDTO.newestMessageAt = nil
-            do {
-                if writableContext.hasChanges {
-                    try writableContext.save()
-                }
-            } catch {
-                log.error("Failed to clean stale mid-page state: \(error)", subsystems: .database)
-                writableContext.reset()
-            }
-        }
-    }
-
-    /// Returns true when the channel cache has been left paginated to a mid-page (i.e. the user
-    /// jumped to a message and there are still newer messages on the server that haven't been
-    /// loaded). Read happens on the background read-only context so it is safe to call from any
-    /// thread.
-    private func channelHasStaleMidPageState(cid: ChannelId) -> Bool {
-        let context = database.backgroundReadOnlyContext
-        nonisolated(unsafe) var hasStaleMidPageState = false
-        context.performAndWait {
-            hasStaleMidPageState = context.channel(cid: cid)?.newestMessageAt != nil
-        }
-        return hasStaleMidPageState
-    }
-
     /// Updates specific channel with new data.
     /// - Parameters:
     ///   - channelPayload: New channel data.
@@ -387,21 +328,6 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                 requestBody: requestBody,
                 completion: completion
             )
-        }
-    }
-
-    private func truncate(
-        cid: ChannelId,
-        skipPush: Bool = false,
-        hardDelete: Bool = true,
-        requestBody: MessageRequestBody? = nil,
-        completion: (@Sendable (Error?) -> Void)? = nil
-    ) {
-        apiClient.request(endpoint: .truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, message: requestBody)) {
-            if let error = $0.error {
-                log.error(error)
-            }
-            completion?($0.error)
         }
     }
 
@@ -876,6 +802,21 @@ class ChannelUpdater: Worker, @unchecked Sendable {
 
     // MARK: - private
 
+    private func truncate(
+        cid: ChannelId,
+        skipPush: Bool = false,
+        hardDelete: Bool = true,
+        requestBody: MessageRequestBody? = nil,
+        completion: (@Sendable (Error?) -> Void)? = nil
+    ) {
+        apiClient.request(endpoint: .truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, message: requestBody)) {
+            if let error = $0.error {
+                log.error(error)
+            }
+            completion?($0.error)
+        }
+    }
+
     private func messagePayload(text: String?, currentUserId: UserId?) -> MessageRequestBody? {
         var messagePayload: MessageRequestBody?
         if let text = text, let currentUserId = currentUserId {
@@ -895,6 +836,65 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             return messagePayload
         }
         return nil
+    }
+
+    /// When the channel was last left in a mid-page state (the user jumped to a message and
+    /// navigated away before scrolling back to the bottom), the local cache still holds the
+    /// mid-page slice and the corresponding `oldestMessageAt`/`newestMessageAt` bounds.
+    ///
+    /// On a fresh first-page fetch we want the message list to start empty and only get
+    /// populated by the incoming first-page response, instead of briefly rendering the stale
+    /// mid-page slice that the database observers would otherwise pick up. We achieve that
+    /// by dropping the cached messages and resetting the bounds before the observers fire.
+    ///
+    /// The pre-check (`channelHasStaleMidPageState`) reads from the background read-only
+    /// context, so the no-op common path is fast and never touches the writable context.
+    /// When stale state is detected, the cleanup runs synchronously on the writable context
+    /// so that observers started by the caller in parallel with `update` see a clean cache.
+    ///
+    /// Marked internal (not private) so the cleanup behavior can be unit-tested directly
+    /// without driving a full `update` round-trip.
+    private func cleanStaleMidPageStateIfNeeded(
+        for channelQuery: ChannelQuery,
+        isInRecoveryMode: Bool
+    ) {
+        let isFirstPageFetch = channelQuery.pagination?.parameter == nil
+        guard !isInRecoveryMode,
+              isFirstPageFetch,
+              let cid = channelQuery.cid,
+              channelHasStaleMidPageState(cid: cid) else {
+            return
+        }
+
+        let writableContext = database.writableContext
+        writableContext.performAndWait {
+            guard let channelDTO = writableContext.channel(cid: cid),
+                  channelDTO.newestMessageAt != nil else { return }
+            channelDTO.cleanAllMessagesExcludingLocalOnly()
+            channelDTO.oldestMessageAt = nil
+            channelDTO.newestMessageAt = nil
+            do {
+                if writableContext.hasChanges {
+                    try writableContext.save()
+                }
+            } catch {
+                log.error("Failed to clean stale mid-page state: \(error)", subsystems: .database)
+                writableContext.reset()
+            }
+        }
+    }
+
+    /// Returns true when the channel cache has been left paginated to a mid-page (i.e. the user
+    /// jumped to a message and there are still newer messages on the server that haven't been
+    /// loaded). Read happens on the background read-only context so it is safe to call from any
+    /// thread.
+    private func channelHasStaleMidPageState(cid: ChannelId) -> Bool {
+        let context = database.backgroundReadOnlyContext
+        nonisolated(unsafe) var hasStaleMidPageState = false
+        context.performAndWait {
+            hasStaleMidPageState = context.channel(cid: cid)?.newestMessageAt != nil
+        }
+        return hasStaleMidPageState
     }
 }
 
