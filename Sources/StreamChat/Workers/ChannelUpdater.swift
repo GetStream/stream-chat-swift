@@ -847,13 +847,10 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// mid-page slice that the database observers would otherwise pick up. We achieve that
     /// by dropping the cached messages and resetting the bounds before the observers fire.
     ///
-    /// The pre-check (`channelHasStaleMidPageState`) reads from the background read-only
-    /// context, so the no-op common path is fast and never touches the writable context.
-    /// When stale state is detected, the cleanup runs synchronously on the writable context
-    /// so that observers started by the caller in parallel with `update` see a clean cache.
-    ///
-    /// Marked internal (not private) so the cleanup behavior can be unit-tested directly
-    /// without driving a full `update` round-trip.
+    /// The cleanup runs synchronously on the writable context so that observers started by the
+    /// caller in parallel with `update` see a clean cache. The closure short-circuits when the
+    /// channel is not in a mid-page state, so the common path is a single uncontested
+    /// `performAndWait` followed by an early return.
     private func cleanStaleMidPageStateIfNeeded(
         for channelQuery: ChannelQuery,
         isInRecoveryMode: Bool
@@ -861,8 +858,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         let isFirstPageFetch = channelQuery.pagination?.parameter == nil
         guard !isInRecoveryMode,
               isFirstPageFetch,
-              let cid = channelQuery.cid,
-              channelHasStaleMidPageState(cid: cid) else {
+              let cid = channelQuery.cid else {
             return
         }
 
@@ -882,19 +878,6 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                 writableContext.reset()
             }
         }
-    }
-
-    /// Returns true when the channel cache has been left paginated to a mid-page (i.e. the user
-    /// jumped to a message and there are still newer messages on the server that haven't been
-    /// loaded). Read happens on the background read-only context so it is safe to call from any
-    /// thread.
-    private func channelHasStaleMidPageState(cid: ChannelId) -> Bool {
-        let context = database.backgroundReadOnlyContext
-        nonisolated(unsafe) var hasStaleMidPageState = false
-        context.performAndWait {
-            hasStaleMidPageState = context.channel(cid: cid)?.newestMessageAt != nil
-        }
-        return hasStaleMidPageState
     }
 }
 
