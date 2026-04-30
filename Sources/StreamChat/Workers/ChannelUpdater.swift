@@ -88,28 +88,8 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                     }
 
                     let updatedChannel = try session.saveChannel(payload: payload)
-                    let previousOldestMessageAt = updatedChannel.oldestMessageAt?.bridgeDate
-                    let previousNewestMessageAt = updatedChannel.newestMessageAt?.bridgeDate
-                    let newOldestMessageAt = self.paginationState.oldestMessageAt
-                    let newNewestMessageAt = self.paginationState.newestMessageAt
-                    updatedChannel.oldestMessageAt = newOldestMessageAt?.bridgeDate
-                    updatedChannel.newestMessageAt = newNewestMessageAt?.bridgeDate
-
-                    // The message-page bounds (`oldestMessageAt` / `newestMessageAt`) live on
-                    // `ChannelDTO`, but message observers fetch `MessageDTO` rows whose predicate
-                    // references those parent properties. `NSFetchedResultsController` does not
-                    // re-evaluate cached rows when only the parent changes, so older messages
-                    // can leak into the observed page after a mid-page jump shrinks the bounds.
-                    // Touching each linked message after a bounds change nudges Core Data into
-                    // emitting an `updated` event, which forces the predicate to be re-tested.
-                    let boundsChanged = previousOldestMessageAt != newOldestMessageAt
-                        || previousNewestMessageAt != newNewestMessageAt
-                    if boundsChanged {
-                        for messageDTO in updatedChannel.messages {
-                            messageDTO.willChangeValue(forKey: #keyPath(MessageDTO.createdAt))
-                            messageDTO.didChangeValue(forKey: #keyPath(MessageDTO.createdAt))
-                        }
-                    }
+                    updatedChannel.oldestMessageAt = self.paginationState.oldestMessageAt?.bridgeDate
+                    updatedChannel.newestMessageAt = self.paginationState.newestMessageAt?.bridgeDate
 
                     // Share member data with member list query without any filters (requres ChannelDTO to be saved first)
                     let memberListQueryDTO: ChannelMemberListQueryDTO = try {
