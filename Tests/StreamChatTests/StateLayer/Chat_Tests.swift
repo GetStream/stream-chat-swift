@@ -809,7 +809,7 @@ final class Chat_Tests: XCTestCase {
 
         let body = env.client.mockAPIClient.request_endpoint?.body?.encodable as? [String: AnyEncodable]
         let messageRequestBody = body?["message"]?.encodable as? MessageRequestBody
-        XCTAssertEqual(messageRequestBody?.type, MessageType.system.rawValue)
+        XCTAssertEqual(messageRequestBody?.type, MessageRequestBody.MessageRequestType.system)
         
         XCTAssertEqual(text, message.text)
         XCTAssertEqual(.system, message.type)

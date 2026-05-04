@@ -44,6 +44,7 @@ typealias MessageAttachmentPayload = Attachment
 typealias MessageReactionGroupPayload = ReactionGroupResponse
 typealias MessageReactionPayload = ReactionResponse
 typealias MessageReactionRequestPayload = SendReactionRequest
+typealias MessageRequestBody = MessageRequest
 typealias MessageModerationDetailsPayload = ModerationV2Response
 typealias MessageTranslationsPayload = [String: String]
 typealias MemberContainerPayload = ChannelMemberResponse
@@ -2067,7 +2068,7 @@ extension TruncateChannelRequest {
     convenience init(skipPush: Bool, hardDelete: Bool, message: MessageRequestBody?) {
         self.init(
             hardDelete: hardDelete,
-            message: message?.asMessageRequest,
+            message: message,
             skipPush: skipPush
         )
     }
@@ -2166,28 +2167,30 @@ extension MarkUnreadRequest {
     }
 }
 
-extension MessageRequestBody {
-    var asMessageRequest: MessageRequest {
-        let request = MessageRequest(
-            attachments: attachments.isEmpty ? nil : attachments,
-            custom: extraData.isEmpty ? nil : extraData,
-            id: id,
-            mentionedUsers: mentionedUserIds.isEmpty ? nil : mentionedUserIds,
-            parentId: parentId,
-            pinExpires: pinExpires,
-            pinned: pinned,
-            pollId: pollId,
-            quotedMessageId: quotedMessageId,
-            restrictedVisibility: restrictedVisibility,
-            sharedLocation: location?.asSharedLocationOpenAPI,
-            showInChannel: showReplyInChannel,
-            silent: isSilent,
-            text: text
-        )
-        request.type = type.flatMap { MessageRequest.MessageRequestType(rawValue: $0) }
-        return request
-    }
-}
+/*
+ extension MessageRequestBody {
+     var asMessageRequest: MessageRequest {
+         let request = MessageRequest(
+             attachments: attachments.isEmpty ? nil : attachments,
+             custom: extraData.isEmpty ? nil : extraData,
+             id: id,
+             mentionedUsers: mentionedUserIds.isEmpty ? nil : mentionedUserIds,
+             parentId: parentId,
+             pinExpires: pinExpires,
+             pinned: pinned,
+             pollId: pollId,
+             quotedMessageId: quotedMessageId,
+             restrictedVisibility: restrictedVisibility,
+             sharedLocation: location?.asSharedLocationOpenAPI,
+             showInChannel: showReplyInChannel,
+             silent: isSilent,
+             text: text
+         )
+         request.type = type.flatMap { MessageRequest.MessageRequestType(rawValue: $0) }
+         return request
+     }
+ }
+ */
 
 extension Attachment {
     convenience init(type: AttachmentType, payload: RawJSON) {

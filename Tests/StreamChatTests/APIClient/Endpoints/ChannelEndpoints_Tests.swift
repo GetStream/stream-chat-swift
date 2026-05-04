@@ -167,7 +167,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let skipPush = false
         let hardDelete = true
         let systemMessage = "System Message"
-        let messageBody = MessageRequestBody(id: .unique, user: .dummy(userId: .unique), text: systemMessage, extraData: [:])
+        let messageBody = MessageRequestBody(id: .unique, text: systemMessage)
         let payload = ChannelTruncateRequestPayload(skipPush: skipPush, hardDelete: hardDelete, message: messageBody)
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
@@ -301,14 +301,9 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         let messageBody = MessageRequestBody(
             id: .unique,
-            user: .dummy(userId: .unique),
-            text: .unique,
-            type: nil,
-            command: .unique,
-            args: .unique,
             parentId: .unique,
-            showReplyInChannel: true,
-            extraData: [:]
+            showInChannel: true,
+            text: .unique
         )
 
         let expectedEndpoint = Endpoint<MessagePayload.Boxed>(

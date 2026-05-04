@@ -293,42 +293,22 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         systemMessage: String? = nil,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        guard let message = systemMessage else {
+        guard let systemMessage else {
             truncate(cid: cid, skipPush: skipPush, hardDelete: hardDelete, completion: completion)
             return
         }
-
-        let context = database.backgroundReadOnlyContext
-        context.perform { [weak self] in
-            guard let user = context.currentUser?.user.asRequestBody() else {
-                completion?(ClientError.Unknown("Couldn't fetch current user from local cache."))
-                return
-            }
-            let requestBody = MessageRequestBody(
-                id: .newUniqueId,
-                user: user,
-                text: message,
-                type: nil,
-                command: nil,
-                args: nil,
-                parentId: nil,
-                showReplyInChannel: false,
-                isSilent: false,
-                quotedMessageId: nil,
-                attachments: [],
-                mentionedUserIds: [],
-                pinned: false,
-                pinExpires: nil,
-                extraData: [:]
-            )
-            self?.truncate(
-                cid: cid,
-                skipPush: skipPush,
-                hardDelete: hardDelete,
-                requestBody: requestBody,
-                completion: completion
-            )
-        }
+        
+        let messageRequest = MessageRequestBody(
+            id: .newUniqueId,
+            text: systemMessage
+        )
+        truncate(
+            cid: cid,
+            skipPush: skipPush,
+            hardDelete: hardDelete,
+            requestBody: messageRequest,
+            completion: completion
+        )
     }
 
     private func truncate(
@@ -818,24 +798,11 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     // MARK: - private
 
     private func messagePayload(text: String?, currentUserId: UserId?) -> MessageRequestBody? {
-        var messagePayload: MessageRequestBody?
-        if let text = text, let currentUserId = currentUserId {
-            let userRequestBody = UserRequestBody(
-                id: currentUserId,
-                name: nil,
-                imageURL: nil,
-                extraData: [:]
-            )
-            messagePayload = MessageRequestBody(
-                id: .newUniqueId,
-                user: userRequestBody,
-                text: text,
-                type: nil,
-                extraData: [:]
-            )
-            return messagePayload
-        }
-        return nil
+        guard let text, let currentUserId else { return nil }
+        return MessageRequestBody(
+            id: .newUniqueId,
+            text: text
+        )
     }
 }
 

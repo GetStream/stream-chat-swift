@@ -1195,19 +1195,16 @@ final class MessageDTO_Tests: XCTestCase {
 
         // Assert request body has correct fields.
         XCTAssertEqual(requestBody.id, messageId)
-        XCTAssertEqual(requestBody.user.id, currentUserId)
         XCTAssertEqual(requestBody.text, messageText)
-        XCTAssertEqual(requestBody.command, messageCommand)
-        XCTAssertEqual(requestBody.args, messageArguments)
         XCTAssertEqual(requestBody.parentId, parentMessageId)
-        XCTAssertEqual(requestBody.showReplyInChannel, messageShowReplyInChannel)
-        XCTAssertEqual(requestBody.isSilent, messageIsSilent)
-        XCTAssertEqual(requestBody.extraData, ["k": .string("v")])
+        XCTAssertEqual(requestBody.showInChannel, messageShowReplyInChannel)
+        XCTAssertEqual(requestBody.silent, messageIsSilent)
+        XCTAssertEqual(requestBody.custom, ["k": .string("v")])
         XCTAssertEqual(requestBody.pinned, true)
         XCTAssertEqual(requestBody.pinExpires, messagePinning!.expirationDate)
-        XCTAssertEqual(requestBody.attachments.map(\.attachmentType), [.image, .video])
-        XCTAssertEqual(requestBody.attachments.count, 2)
-        XCTAssertEqual(requestBody.mentionedUserIds, mentionedUserIds)
+        XCTAssertEqual(requestBody.attachments?.map(\.attachmentType), [.image, .video])
+        XCTAssertEqual(requestBody.attachments?.count, 2)
+        XCTAssertEqual(requestBody.mentionedUsers, mentionedUserIds)
         XCTAssertEqual(requestBody.type, nil)
     }
 
@@ -1258,9 +1255,8 @@ final class MessageDTO_Tests: XCTestCase {
 
         // Assert request body has correct fields.
         XCTAssertEqual(requestBody.id, messageId)
-        XCTAssertEqual(requestBody.user.id, currentUserId)
         XCTAssertEqual(requestBody.text, messageText)
-        XCTAssertEqual(requestBody.type, "system")
+        XCTAssertEqual(requestBody.type, MessageRequest.MessageRequestType.system)
     }
 
     func test_additionalLocalState_isStored() throws {

@@ -1591,31 +1591,31 @@ extension MessageDTO {
             .compactMap { $0.asRequestPayload() }
 
         // At the moment, we only provide the type for system messages when creating a message.
-        let systemType = type == MessageType.system.rawValue ? type : nil
+        let systemType: MessageRequest.MessageRequestType? = type == MessageRequest.MessageRequestType.system.rawValue ? MessageRequest.MessageRequestType.system : nil
         
         var restrictedVisibilityArray: [UserId]?
         if let restrictedVisibility {
             restrictedVisibilityArray = Array(restrictedVisibility)
         }
-
-        return .init(
-            id: id,
-            user: user.asRequestBody(),
-            text: text,
-            type: systemType,
-            command: command,
-            args: args,
-            parentId: parentMessageId,
-            showReplyInChannel: showReplyInChannel,
-            isSilent: isSilent,
-            quotedMessageId: quotedMessage?.id,
+        
+        var body = MessageRequestBody(
             attachments: uploadedAttachments,
-            mentionedUserIds: mentionedUserIds,
-            pinned: pinned,
+            custom: extraData,
+            id: id,
+            mentionedChannel: nil,
+            mentionedGroupIds: nil,
+            mentionedHere: nil,
+            mentionedRoles: nil,
+            mentionedUsers: mentionedUserIds,
+            mml: nil,
+            parentId: parentMessageId,
             pinExpires: pinExpires?.bridgeDate,
+            pinned: pinned,
+            pinnedAt: pinnedAt?.bridgeDate,
             pollId: poll?.id,
+            quotedMessageId: quotedMessage?.id,
             restrictedVisibility: restrictedVisibilityArray,
-            location: location.map {
+            sharedLocation: location.map {
                 .init(
                     latitude: $0.latitude,
                     longitude: $0.longitude,
@@ -1623,8 +1623,12 @@ extension MessageDTO {
                     createdByDeviceId: $0.deviceId
                 )
             },
-            extraData: extraData
+            showInChannel: showReplyInChannel,
+            silent: isSilent,
+            text: text
         )
+        body.type = systemType
+        return body
     }
 
     func asDraftRequestBody() -> DraftMessageRequestBody {

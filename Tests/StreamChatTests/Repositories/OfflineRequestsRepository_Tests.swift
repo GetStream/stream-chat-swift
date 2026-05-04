@@ -333,10 +333,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         let messageId = "message\(messageIdNumber)"
         let requestBody = MessageRequestBody(
             id: messageId,
-            user: .dummy(userId: .unique),
-            text: .unique,
-            type: nil,
-            extraData: [:]
+            text: .unique
         )
         let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
             cid: .init(type: .messaging, id: id),

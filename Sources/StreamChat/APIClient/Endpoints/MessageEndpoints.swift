@@ -31,8 +31,9 @@ extension Endpoint {
 
     static func editMessage(payload: MessageRequestBody, skipEnrichUrl: Bool, skipPush: Bool)
         -> Endpoint<EmptyResponse> {
-        .init(
-            path: .editMessage(payload.id),
+        guard let messageId = payload.id else { fatalError("Message id is not set") }
+        return .init(
+            path: .editMessage(messageId),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,

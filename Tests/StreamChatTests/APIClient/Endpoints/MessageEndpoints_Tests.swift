@@ -134,16 +134,14 @@ final class MessageEndpoints_Tests: XCTestCase {
     }
 
     func test_editMessage_buildsCorrectly() {
+        let messageId: MessageId = .unique
         let payload = MessageRequestBody(
-            id: .unique,
-            user: .init(id: .unique, name: .unique, imageURL: .unique(), extraData: .init()),
-            text: .unique,
-            type: nil,
-            extraData: [:]
+            id: messageId,
+            text: .unique
         )
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .message(payload.id),
+            path: .message(messageId),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -163,20 +161,18 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(payload.id)", endpoint.path.value)
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
 
     func test_editMessage_withSkipPush_buildsCorrectly() {
+        let messageId: MessageId = .unique
         let payload = MessageRequestBody(
-            id: .unique,
-            user: .init(id: .unique, name: .unique, imageURL: .unique(), extraData: .init()),
-            text: .unique,
-            type: nil,
-            extraData: [:]
+            id: messageId,
+            text: .unique
         )
 
         let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .message(payload.id),
+            path: .message(messageId),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
@@ -192,7 +188,7 @@ final class MessageEndpoints_Tests: XCTestCase {
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(payload.id)", endpoint.path.value)
+        XCTAssertEqual("messages/\(messageId)", endpoint.path.value)
     }
     
     func test_pinMessage_buildsCorrectly() {

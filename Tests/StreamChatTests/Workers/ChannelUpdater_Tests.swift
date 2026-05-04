@@ -1130,38 +1130,10 @@ final class ChannelUpdater_Tests: XCTestCase {
                             .encodable as? ChannelTruncateRequestPayload
                     )?
                         .message?.id ?? "id",
-                    user: currentUser,
-                    text: systemMessage,
-                    type: nil,
-                    extraData: [:]
+                    text: systemMessage
                 )
             )))
         }
-    }
-
-    func test_truncateChannel_failsAPICallWithMessageWhenNoCurrentUser() throws {
-        // GIVEN
-        let expectation = expectation(description: "When no current user is provided, truncate channel with system message fails")
-        let channelID = ChannelId.unique
-        let skipPush = true
-        let hardDelete = true
-        let systemMessage = "System message"
-
-        // WHEN
-        // Simulate `truncateChannel(cid:, completion:)` call
-        channelUpdater.truncateChannel(
-            cid: channelID,
-            skipPush: skipPush,
-            hardDelete: hardDelete,
-            systemMessage: systemMessage
-        ) { error in
-            // THEN
-            XCTAssertNotNil(error)
-            expectation.fulfill()
-        }
-
-        // In this case, timeout `10` should be used for both local and CI runs
-        wait(for: [expectation], timeout: 10)
     }
 
     func test_truncateChannel_successfulResponse_isPropagatedToCompletion() {
@@ -1394,10 +1366,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Assert correct endpoint is called
         let messageRequestBody = MessageRequestBody(
             id: messageId,
-            user: UserRequestBody(id: senderId, name: nil, imageURL: nil, extraData: [:]),
-            text: message,
-            type: nil,
-            extraData: [:]
+            text: message
         )
         let referenceEndpoint: Endpoint<EmptyResponse> = .addMembers(
             cid: channelID,
@@ -1684,10 +1653,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Assert correct endpoint is called
         let messageRequestBody = MessageRequestBody(
             id: messageId,
-            user: UserRequestBody(id: senderId, name: nil, imageURL: nil, extraData: [:]),
-            text: message,
-            type: nil,
-            extraData: [:]
+            text: message
         )
         let referenceEndpoint: Endpoint<EmptyResponse> = .removeMembers(
             cid: channelID,
