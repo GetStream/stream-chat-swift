@@ -192,17 +192,21 @@ class SyncRepository: @unchecked Sendable {
             operations.append(ActiveChannelIdsOperation(syncRepository: self, context: context))
             
             // 2. Refresh channel lists
-            operations.append(contentsOf: activeChannelLists.allObjects.map { RefreshChannelListOperation(channelList: $0, context: context) })
+            let allChannelLists = activeChannelLists.allObjects
+            let prefilledChannelLists = allChannelLists.filter { $0.query.value.groupKey != nil }
+            let standardChannelLists = allChannelLists.filter { $0.query.value.groupKey == nil }
+            operations.append(contentsOf: standardChannelLists.map { RefreshChannelListOperation(channelList: $0, context: context) })
             let allControllers = activeChannelListControllers.allObjects
             let prefilledControllers = allControllers.filter { $0.query.groupKey != nil }
             let standardControllers = allControllers.filter { $0.query.groupKey == nil }
             operations.append(contentsOf: standardControllers.map { RefreshChannelListOperation(controller: $0, context: context) })
 
-            // 2.5 Refresh grouped channels (for controllers populated via `prefill(...)`)
-            if !prefilledControllers.isEmpty {
+            // 2.5 Refresh grouped channels (for lists populated via `prefill(...)`)
+            if !prefilledControllers.isEmpty || !prefilledChannelLists.isEmpty {
                 operations.append(SyncGroupedChannelsOperation(
                     channelListUpdater: channelListUpdater,
                     controllers: prefilledControllers,
+                    channelLists: prefilledChannelLists,
                     context: context
                 ))
             }

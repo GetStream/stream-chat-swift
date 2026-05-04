@@ -14,6 +14,7 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
     private let itemCreator: (DTO) throws -> Item
     private let itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)?
     private let sorting: [SortValue<Item>]
+    private let fetchedResultsControllerType: NSFetchedResultsController<DTO>.Type
 
     /// Used to observe the changes in the DB.
     private(set) var frc: NSFetchedResultsController<DTO>
@@ -73,6 +74,7 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
         self.itemCreator = itemCreator
         self.itemReuseKeyPaths = itemReuseKeyPaths
         self.sorting = sorting
+        self.fetchedResultsControllerType = fetchedResultsControllerType
         changeAggregator = ListChangeAggregator<DTO, Item>(itemCreator: itemCreator)
         frc = fetchedResultsControllerType.init(
             fetchRequest: fetchRequest,
@@ -88,21 +90,39 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
         }
     }
 
-    /// Updates the underlying fetch request's `fetchLimit` and re-runs `performFetch`
-    /// on the FRC's managed object context. Use this to grow (or shrink) the set of
-    /// items the observer exposes without tearing it down and losing delegate wiring.
-    func updateFetchLimit(_ newLimit: Int) {
-        frc.fetchRequest.fetchLimit = newLimit
-        frc.managedObjectContext.perform { [weak self] in
-            guard let self else { return }
+    /// Replaces the underlying fetch request and re-fetches items while preserving delegate wiring.
+    @discardableResult
+    func resetFetchRequest(_ fetchRequest: NSFetchRequest<DTO>) -> [Item] {
+        let context = frc.managedObjectContext
+        nonisolated(unsafe) var items: [Item] = []
+        nonisolated(unsafe) var shouldNotifyDidChange = false
+        context.performAndWait {
+            let wasInitialized = self.isInitialized
+            self.frc.delegate = nil
+            self.frc = self.fetchedResultsControllerType.init(
+                fetchRequest: fetchRequest,
+                managedObjectContext: context,
+                sectionNameKeyPath: nil,
+                cacheName: nil
+            )
+            if wasInitialized {
+                self.frc.delegate = self.changeAggregator
+            }
+            self._items = nil
             do {
                 try self.frc.performFetch()
             } catch {
-                log.error("Failed to re-fetch after updating fetchLimit to \(newLimit): \(error)")
+                log.error("Failed to reset fetch request: \(error)")
                 return
             }
-            self.updateItems(nil)
+            items = self.updateItems(nil)
+            shouldNotifyDidChange = wasInitialized
         }
+        if shouldNotifyDidChange {
+            let changes: [ListChange<Item>] = items.enumerated().map { .insert($1, index: IndexPath(item: $0, section: 0)) }
+            notifyDidChange(changes: changes)
+        }
+        return items
     }
 
     /// Starts observing the changes in the database.

@@ -311,6 +311,60 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertCall("refreshLoadedChannels(completion:)", on: chatListController, times: 1)
     }
 
+    func test_syncLocalState_prefilledChannelList_callsQueryGroupedChannelsAndSkipsRefresh() throws {
+        let cid = ChannelId.unique
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-3600),
+            createChannel: true,
+            cid: cid
+        )
+
+        var prefilledQuery = ChannelListQuery(filter: .exists(.cid))
+        prefilledQuery.groupKey = "all"
+        let channelList = ChannelList_Mock.mock(query: prefilledQuery, client: client)
+        repository.startTrackingChannelList(channelList)
+        let refreshedGroup = GroupedChannelsGroup(groupKey: "all", channels: [.mock(cid: cid)], unreadChannels: 0)
+        channelListUpdater.queryGroupedChannels_result = .success(.init(groups: ["all": refreshedGroup]))
+
+        waitForSyncLocalStateRun()
+
+        XCTAssertEqual(channelListUpdater.queryGroupedChannels_callCount, 1)
+        XCTAssertEqual(channelList.refreshLoadedChannelsCallCount, 0)
+        XCTAssertEqual(channelList.prefillGroups.map(\.groupKey), ["all"])
+    }
+
+    func test_syncLocalState_mixedChannelLists_callsGroupedOnceAndRefreshesOnlyStandard() throws {
+        let prefilledCid = ChannelId.unique
+        let standardCid = ChannelId.unique
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-3600),
+            createChannel: true,
+            cid: prefilledCid
+        )
+
+        var prefilledQuery = ChannelListQuery(filter: .exists(.cid))
+        prefilledQuery.groupKey = "current"
+        let prefilledChannelList = ChannelList_Mock.mock(query: prefilledQuery, client: client)
+        repository.startTrackingChannelList(prefilledChannelList)
+
+        let standardChannelList = ChannelList_Mock.mock(query: .init(filter: .in(.cid, values: [standardCid])), client: client)
+        standardChannelList.refreshLoadedChannelsResult = .success(Set([standardCid]))
+        repository.startTrackingChannelList(standardChannelList)
+
+        let refreshedGroup = GroupedChannelsGroup(groupKey: "current", channels: [.mock(cid: prefilledCid)], unreadChannels: 0)
+        channelListUpdater.queryGroupedChannels_result = .success(.init(groups: ["current": refreshedGroup]))
+
+        waitForSyncLocalStateRun()
+
+        XCTAssertEqual(channelListUpdater.queryGroupedChannels_callCount, 1)
+        XCTAssertEqual(prefilledChannelList.refreshLoadedChannelsCallCount, 0)
+        XCTAssertEqual(standardChannelList.refreshLoadedChannelsCallCount, 1)
+        XCTAssertEqual(prefilledChannelList.prefillGroups.map(\.groupKey), ["current"])
+        XCTAssertTrue(standardChannelList.prefillGroups.isEmpty)
+    }
+
     func test_syncLocalState_ignoresTheCooldown() throws {
         let lastSyncDate = Date()
         let cid = ChannelId.unique

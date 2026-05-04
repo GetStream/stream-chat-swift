@@ -280,6 +280,14 @@ private extension ChannelListUpdater {
 }
 
 extension ChannelListUpdater {
+    @discardableResult func prefill(group: GroupedChannelsGroup, for query: ChannelListQuery) async throws -> [ChatChannel] {
+        try await withCheckedThrowingContinuation { continuation in
+            prefill(group: group, for: query) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+
     @discardableResult func update(channelListQuery: ChannelListQuery) async throws -> [ChatChannel] {
         try await withCheckedThrowingContinuation { continuation in
             update(channelListQuery: channelListQuery) { result in

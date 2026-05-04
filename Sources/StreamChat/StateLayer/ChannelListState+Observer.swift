@@ -64,5 +64,13 @@ extension ChannelListState {
                 return []
             }
         }
+
+        func resetFetchRequest(query: ChannelListQuery, minimumFetchLimit: Int) -> [ChatChannel] {
+            let request = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: clientConfig)
+            let fetchLimit = max(query.pagination.pageSize, minimumFetchLimit)
+            request.fetchLimit = fetchLimit
+            request.fetchBatchSize = fetchLimit
+            return channelListObserver.resetFetchRequest(request)
+        }
     }
 }

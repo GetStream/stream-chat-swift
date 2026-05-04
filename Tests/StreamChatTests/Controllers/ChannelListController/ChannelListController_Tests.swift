@@ -385,6 +385,54 @@ final class ChannelListController_Tests: XCTestCase {
         AssertAsync.willBeEqual(controller.channels.count, prefilledChannels.count)
     }
 
+    func test_prefill_whenChannelsAccessedBeforePrefillAndPrefilledCountIsBelowPageSize_observerReflectsPrefilledChannels() {
+        query = .init(filter: .in(.members, values: [memberId]), pageSize: 10)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+        XCTAssertEqual(controller.channels.count, 0)
+
+        let prefilledChannels: [ChatChannel] = [
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique)
+        ]
+
+        let prefillExpectation = expectation(description: "Prefill completes")
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+            XCTAssertNil(error)
+            prefillExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        controller.synchronize()
+
+        XCTAssertTrue(env.channelListUpdater?.update_queries.isEmpty ?? false)
+        AssertAsync.willBeEqual(Set(controller.channels.map(\.cid)), Set(prefilledChannels.map(\.cid)))
+    }
+
+    func test_prefill_whenChannelsAccessedBeforePrefillAndPrefilledCountExceedsPageSize_observerReflectsAllPrefilledChannels() {
+        query = .init(filter: .in(.members, values: [memberId]), pageSize: 2)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+        XCTAssertEqual(controller.channels.count, 0)
+
+        let prefilledChannels: [ChatChannel] = [
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique)
+        ]
+
+        let prefillExpectation = expectation(description: "Prefill completes")
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+            XCTAssertNil(error)
+            prefillExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        controller.synchronize()
+
+        XCTAssertTrue(env.channelListUpdater?.update_queries.isEmpty ?? false)
+        AssertAsync.willBeEqual(Set(controller.channels.map(\.cid)), Set(prefilledChannels.map(\.cid)))
+    }
+
     func test_prefill_replacesOnlyCurrentQueryLinks() throws {
         let sharedCid = ChannelId.unique
         let currentOnlyCid = ChannelId.unique

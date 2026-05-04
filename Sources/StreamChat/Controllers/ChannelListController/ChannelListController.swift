@@ -227,9 +227,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 self.hasLoadedAllPreviousChannels = savedChannels.isEmpty
                 // When prefilling with a lot of channels, make the `channels` property to reflect it
                 // This makes channels.count to reflect the currently loaded channels count
-                if prefilledChannels.count > self.query.pagination.pageSize {
-                    self.channelListObserver.updateFetchLimit(prefilledChannels.count)
-                }
+                let request = ChannelDTO.channelListFetchRequest(query: self.query, chatClientConfig: self.client.config)
+                let fetchLimit = max(self.query.pagination.pageSize, prefilledChannels.count)
+                request.fetchLimit = fetchLimit
+                request.fetchBatchSize = fetchLimit
+                self.channelListObserver.resetFetchRequest(request)
                 self.callback {
                     completion?(nil)
                 }

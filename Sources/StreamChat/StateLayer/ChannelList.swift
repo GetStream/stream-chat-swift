@@ -8,8 +8,9 @@ import Foundation
 public class ChannelList: @unchecked Sendable {
     private let channelListUpdater: ChannelListUpdater
     private let client: ChatClient
+    private let dynamicFilter: (@Sendable (ChatChannel) -> Bool)?
+    let query: AllocatedUnfairLock<ChannelListQuery>
     @MainActor private var stateBuilder: StateBuilder<ChannelListState>
-    let query: ChannelListQuery
     
     init(
         query: ChannelListQuery,
@@ -18,7 +19,8 @@ public class ChannelList: @unchecked Sendable {
         environment: Environment = .init()
     ) {
         self.client = client
-        self.query = query
+        self.dynamicFilter = dynamicFilter
+        self.query = AllocatedUnfairLock(query)
         let channelListUpdater = environment.channelListUpdater(
             client.databaseContainer,
             client.apiClient
@@ -48,8 +50,35 @@ public class ChannelList: @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
-        let pagination = Pagination(pageSize: query.pagination.pageSize)
+        if await state.consumeShouldSkipInitialRemoteUpdate() {
+            return
+        }
+        let pagination = Pagination(pageSize: query.value.pagination.pageSize)
         try await loadChannels(with: pagination)
+        client.syncRepository.startTrackingChannelList(self)
+    }
+
+    /// Prefills the channel list with an initial channel list snapshot and skips the first remote
+    /// `queryChannels` request when ``get()`` is called afterwards.
+    ///
+    /// The prefetched channels are persisted in the local storage and linked only to this channel
+    /// list query, so pagination, local observation and offline refresh keep working.
+    public func prefill(group: GroupedChannelsGroup) async throws {
+        let prefilledChannels = dynamicFilter.map { runtimeFilter in
+            group.channels.filter(runtimeFilter)
+        } ?? group.channels
+        let prefilledGroup = GroupedChannelsGroup(
+            groupKey: group.groupKey,
+            channels: prefilledChannels,
+            unreadChannels: group.unreadChannels
+        )
+        let updatedQuery = query.withLock {
+            $0.groupKey = group.groupKey
+            return $0
+        }
+
+        _ = try await channelListUpdater.prefill(group: prefilledGroup, for: updatedQuery)
+        await resetStateAfterPrefill(query: updatedQuery, prefilledChannelsCount: prefilledChannels.count)
         client.syncRepository.startTrackingChannelList(self)
     }
     
@@ -64,7 +93,7 @@ public class ChannelList: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channels for the pagination.
     @discardableResult public func loadChannels(with pagination: Pagination) async throws -> [ChatChannel] {
-        try await channelListUpdater.loadChannels(query: query, pagination: pagination)
+        return try await channelListUpdater.loadChannels(query: query.value, pagination: pagination)
     }
     
     /// Loads more channels and updates ``ChannelListState/channels``.
@@ -74,6 +103,7 @@ public class ChannelList: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
     @discardableResult public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
+        let query = query.value
         let limit = limit ?? query.pagination.pageSize
         let count = await state.channels.count
         return try await channelListUpdater.loadNextChannels(
@@ -86,8 +116,17 @@ public class ChannelList: @unchecked Sendable {
     // MARK: - Internal
     
     func refreshLoadedChannels() async throws -> Set<ChannelId> {
+        let query = query.value
         let count = await state.channels.count
         return try await channelListUpdater.refreshLoadedChannels(for: query, channelCount: count)
+    }
+
+    @MainActor private func resetStateAfterPrefill(query: ChannelListQuery, prefilledChannelsCount: Int) {
+        state.reset(
+            query: query,
+            minimumFetchLimit: prefilledChannelsCount
+        )
+        state.skipNextInitialRemoteUpdate()
     }
 }
 

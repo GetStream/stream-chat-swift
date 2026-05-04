@@ -31,8 +31,9 @@ final class ChannelList_Tests: XCTestCase {
     
     func test_restoringState_whenDatabaseHasEntries_thenStateIsUpdated() async throws {
         let channelListPayload = makeMatchingChannelListPayload(channelCount: 5, createdAtOffset: 0)
+        let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-            session.saveChannelList(payload: channelListPayload, query: self.channelList.query)
+            session.saveChannelList(payload: channelListPayload, query: query)
         }
         await setUpChannelList(usesMockedChannelUpdater: true)
         XCTAssertEqual(channelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
@@ -41,11 +42,12 @@ final class ChannelList_Tests: XCTestCase {
     func test_restoringState_whenDatabaseHasEntriesWhichShouldBeIgnored_thenStateOnlyIncludesQueryMatchingResults() async throws {
         let matchingChannelListPayload = makeMatchingChannelListPayload(channelCount: 5, createdAtOffset: 0)
         let deletedChannelPayload = makeMatchingChannelPayload(createdAtOffset: 5)
+        let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
             // These match with the query
-            session.saveChannelList(payload: matchingChannelListPayload, query: self.channelList.query)
+            session.saveChannelList(payload: matchingChannelListPayload, query: query)
             // Should be ignored because it was deleted
-            let dto = try session.saveChannel(payload: deletedChannelPayload, query: self.channelList.query, cache: nil)
+            let dto = try session.saveChannel(payload: deletedChannelPayload, query: query, cache: nil)
             dto.deletedAt = .unique
             // Unrelated channel to the query
             try session.saveChannel(payload: self.dummyPayload(with: .unique))
@@ -59,8 +61,9 @@ final class ChannelList_Tests: XCTestCase {
     func test_get_whenLocalStoreHasChannels_thenGetResetsChannels() async throws {
         // Existing state
         let channelListPayload = makeMatchingChannelListPayload(channelCount: 10, createdAtOffset: 0)
+        let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-            session.saveChannelList(payload: channelListPayload, query: self.channelList.query)
+            session.saveChannelList(payload: channelListPayload, query: query)
         }
         
         await setUpChannelList(usesMockedChannelUpdater: false)
@@ -86,6 +89,96 @@ final class ChannelList_Tests: XCTestCase {
         await XCTAssertEqual(nextChannelListPayload.channels.map(\.channel.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
     }
     
+    // MARK: - Prefill
+    
+    func test_prefill_skipsInitialGetRequest() async throws {
+        await setUpChannelList(usesMockedChannelUpdater: false, loadState: false, pageSize: 2)
+        let prefilledChannels = try await makePrefilledChannels(count: 2, createdAtOffset: 0)
+        
+        try await channelList.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0))
+        try await channelList.get()
+        
+        XCTAssertTrue(env.client.mockAPIClient.request_allRecordedCalls.isEmpty)
+        await XCTAssertEqual("all", channelList.state.query.groupKey)
+        await XCTAssertEqual(prefilledChannels.map(\.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
+    }
+    
+    func test_prefill_loadMoreChannels_usesPrefilledChannelsCountAsOffset() async throws {
+        await setUpChannelList(usesMockedChannelUpdater: true, loadState: false, pageSize: 2)
+        let prefilledChannels = try await makePrefilledChannels(count: 3, createdAtOffset: 0)
+        env.channelListUpdaterMock.update_completion_result = .success([])
+        
+        try await channelList.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0))
+        _ = try await channelList.loadMoreChannels(limit: 2)
+        
+        XCTAssertEqual(env.channelListUpdaterMock.update_queries.last?.pagination, .init(pageSize: 2, offset: 3))
+    }
+    
+    func test_prefill_whenPrefilledCountExceedsPageSize_stateExposesAllPrefilledChannels() async throws {
+        await setUpChannelList(usesMockedChannelUpdater: false, loadState: false, pageSize: 2)
+        let prefilledChannels = try await makePrefilledChannels(count: 3, createdAtOffset: 0)
+        
+        try await channelList.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0))
+        
+        await XCTAssertEqual(prefilledChannels.map(\.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
+    }
+
+    func test_prefill_whenStateAccessedBeforePrefillAndPrefilledCountIsBelowPageSize_stateExposesPrefilledChannels() async throws {
+        await setUpChannelList(usesMockedChannelUpdater: false, pageSize: 10)
+        await XCTAssertEqual(0, channelList.state.channels.count)
+        let prefilledChannels = try await makePrefilledChannels(count: 3, createdAtOffset: 0)
+        
+        try await channelList.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0))
+        try await channelList.get()
+        
+        XCTAssertTrue(env.client.mockAPIClient.request_allRecordedCalls.isEmpty)
+        await XCTAssertEqual(prefilledChannels.map(\.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
+    }
+
+    func test_prefill_whenStateAccessedBeforePrefillAndPrefilledCountExceedsPageSize_stateExposesAllPrefilledChannels() async throws {
+        await setUpChannelList(usesMockedChannelUpdater: false, pageSize: 2)
+        await XCTAssertEqual(0, channelList.state.channels.count)
+        let prefilledChannels = try await makePrefilledChannels(count: 3, createdAtOffset: 0)
+        
+        try await channelList.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0))
+        try await channelList.get()
+        
+        XCTAssertTrue(env.client.mockAPIClient.request_allRecordedCalls.isEmpty)
+        await XCTAssertEqual(prefilledChannels.map(\.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
+    }
+    
+    func test_prefill_replacesOnlyCurrentQueryLinks() async throws {
+        await setUpChannelList(usesMockedChannelUpdater: false)
+        let sharedPayload = makeMatchingChannelPayload(createdAtOffset: 0)
+        let currentOnlyPayload = makeMatchingChannelPayload(createdAtOffset: 1)
+        let replacementPayload = makeMatchingChannelPayload(createdAtOffset: 2)
+        let otherQuery = ChannelListQuery(filter: .equal(.cid, to: sharedPayload.channel.cid))
+        var prefilledQuery = await channelList.state.query
+        prefilledQuery.groupKey = "all"
+        try await env.client.mockDatabaseContainer.write { session in
+            _ = session.saveChannelList(payload: .init(channels: [sharedPayload, currentOnlyPayload]), query: prefilledQuery)
+            _ = session.saveChannelList(payload: .init(channels: [sharedPayload]), query: otherQuery)
+            try session.saveChannel(payload: replacementPayload)
+        }
+        let replacementChannel = try env.client.databaseContainer.readSynchronously { session in
+            try XCTUnwrap(session.channel(cid: replacementPayload.channel.cid)).asModel()
+        }
+        let prefilledGroup = GroupedChannelsGroup(
+            groupKey: "all",
+            channels: [replacementChannel],
+            unreadChannels: 0
+        )
+        
+        try await channelList.prefill(group: prefilledGroup)
+        
+        try env.client.databaseContainer.readAndWait { session in
+            let currentQueryDTO = try XCTUnwrap(session.channelListQuery(prefilledQuery))
+            let otherQueryDTO = try XCTUnwrap(session.channelListQuery(otherQuery))
+            XCTAssertEqual(Set([replacementPayload.channel.cid.rawValue]), Set(currentQueryDTO.channels.map(\.cid)))
+            XCTAssertEqual(Set([sharedPayload.channel.cid.rawValue]), Set(otherQueryDTO.channels.map(\.cid)))
+        }
+    }
+    
     // MARK: - Pagination and Channel Updater Arguments
     
     func test_loadChannels_whenChannelUpdaterSucceeds_thenLoadSucceeds() async throws {
@@ -95,10 +188,11 @@ final class ChannelList_Tests: XCTestCase {
         
         let pagination = Pagination(pageSize: pageSize, offset: 0)
         let result = try await channelList.loadChannels(with: pagination)
+        let query = await channelList.state.query
         
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.count, 1)
-        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.filter, channelList.query.filter)
-        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.sort, channelList.query.sort)
+        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.filter, query.filter)
+        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.sort, query.sort)
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.pagination.pageSize, pageSize)
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.pagination.offset, 0)
         XCTAssertEqual(responseChannels, result)
@@ -115,10 +209,11 @@ final class ChannelList_Tests: XCTestCase {
         let responseChannels = makeChannels(count: pageSize, createdAtOffset: 0)
         env.channelListUpdaterMock.update_completion_result = .success(responseChannels)
         let result = try await channelList.loadMoreChannels(limit: pageSize)
+        let query = await channelList.state.query
         
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.count, 1)
-        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.filter, channelList.query.filter)
-        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.sort, channelList.query.sort)
+        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.filter, query.filter)
+        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.sort, query.sort)
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.pagination.pageSize, pageSize)
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.pagination.offset, 0)
         XCTAssertEqual(responseChannels, result)
@@ -146,8 +241,9 @@ final class ChannelList_Tests: XCTestCase {
     func test_loadMoreChannels_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         // Initial DB state
         let existingChannelListPayload = makeMatchingChannelListPayload(channelCount: 2, createdAtOffset: 0)
+        let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-            session.saveChannelList(payload: existingChannelListPayload, query: self.channelList.query)
+            session.saveChannelList(payload: existingChannelListPayload, query: query)
         }
         await setUpChannelList(usesMockedChannelUpdater: false)
         
@@ -234,8 +330,9 @@ final class ChannelList_Tests: XCTestCase {
                 XCTAssertEqual(incomingChannelListPayload.channels.map(\.channel.cid.rawValue), channels.map(\.cid.rawValue))
                 expectation.fulfill()
             }
+        let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-            session.saveChannelList(payload: incomingChannelListPayload, query: self.channelList.query)
+            session.saveChannelList(payload: incomingChannelListPayload, query: query)
         }
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         cancellable.cancel()
@@ -263,8 +360,9 @@ final class ChannelList_Tests: XCTestCase {
                 XCTAssertTrue(channels.allSatisfy(\.isPinned), channels.filter { !$0.isPinned }.map(\.cid.rawValue).joined())
                 expectation.fulfill()
             }
+        let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-            session.saveChannelList(payload: incomingChannelListPayload, query: self.channelList.query)
+            session.saveChannelList(payload: incomingChannelListPayload, query: query)
         }
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         cancellable.cancel()
@@ -300,8 +398,9 @@ final class ChannelList_Tests: XCTestCase {
                 XCTAssertEqual([true, true, false, false, false], channels.map(\.isPinned))
                 expectation.fulfill()
             }
+        let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-            session.saveChannelList(payload: incomingChannelListPayload, query: self.channelList.query)
+            session.saveChannelList(payload: incomingChannelListPayload, query: query)
         }
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         cancellable.cancel()
@@ -336,8 +435,9 @@ final class ChannelList_Tests: XCTestCase {
                 XCTAssertTrue(channels.allSatisfy(\.isArchived), channels.filter { !$0.isArchived }.map(\.cid.rawValue).joined())
                 expectation.fulfill()
             }
+        let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-            session.saveChannelList(payload: incomingChannelListPayload, query: self.channelList.query)
+            session.saveChannelList(payload: incomingChannelListPayload, query: query)
         }
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         cancellable.cancel()
@@ -409,8 +509,9 @@ final class ChannelList_Tests: XCTestCase {
         await setUpChannelList(usesMockedChannelUpdater: false, dynamicFilter: { _ in true })
         // Create channel list
         let existingChannelListPayload = makeMatchingChannelListPayload(channelCount: 1, createdAtOffset: 0)
+        let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-            session.saveChannelList(payload: existingChannelListPayload, query: self.channelList.query)
+            session.saveChannelList(payload: existingChannelListPayload, query: query)
         }
         
         // New channel event
@@ -450,8 +551,9 @@ final class ChannelList_Tests: XCTestCase {
         // Create channel list
         let existingChannelListPayload = makeMatchingChannelListPayload(channelCount: 1, createdAtOffset: 0)
         let existingCid = try XCTUnwrap(existingChannelListPayload.channels.first?.channel.cid)
+        let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-            session.saveChannelList(payload: existingChannelListPayload, query: self.channelList.query)
+            session.saveChannelList(payload: existingChannelListPayload, query: query)
         }
         // Ensure that the channel is in the state
         XCTAssertEqual(existingChannelListPayload.channels.map(\.channel.cid.rawValue), await channelList.state.channels.map(\.cid.rawValue))
@@ -483,8 +585,9 @@ final class ChannelList_Tests: XCTestCase {
         let pageCount = 2
         let loadedCount = pageCount * Int.channelsPageSize
         let existingChannelListPayload = makeMatchingChannelListPayload(channelCount: loadedCount, createdAtOffset: 0)
+        let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-            session.saveChannelList(payload: existingChannelListPayload, query: self.channelList.query)
+            session.saveChannelList(payload: existingChannelListPayload, query: query)
         }
         
         // Ensure that the channel is in the state
@@ -514,13 +617,15 @@ final class ChannelList_Tests: XCTestCase {
         usesMockedChannelUpdater: Bool,
         loadState: Bool = true,
         filter: Filter<ChannelListFilterScope>? = nil,
+        pageSize: Int = .channelsPageSize,
         sort: [Sorting<ChannelListSortingKey>] = [.init(key: .createdAt, isAscending: true)],
         dynamicFilter: (@Sendable (ChatChannel) -> Bool)? = nil
     ) {
         channelList = ChannelList(
             query: ChannelListQuery(
                 filter: filter ?? .in(.members, values: [memberId]),
-                sort: sort
+                sort: sort,
+                pageSize: pageSize
             ),
             dynamicFilter: dynamicFilter,
             client: env.client,
@@ -535,6 +640,15 @@ final class ChannelList_Tests: XCTestCase {
         (0..<count)
             .map { ChatChannel.mock(cid: .unique, createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset))) }
             .sorted(by: { $0.cid.rawValue < $1.cid.rawValue })
+    }
+    
+    private func makePrefilledChannels(count: Int, createdAtOffset: Int) async throws -> [ChatChannel] {
+        let payload = makeMatchingChannelListPayload(channelCount: count, createdAtOffset: createdAtOffset)
+        nonisolated(unsafe) var channels: [ChatChannel] = []
+        try await env.client.mockDatabaseContainer.write { session in
+            channels = try payload.channels.map { try session.saveChannel(payload: $0).asModel() }
+        }
+        return channels
     }
     
     private func makeMatchingChannelPayload(createdAtOffset: Int) -> ChannelPayload {
