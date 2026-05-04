@@ -114,6 +114,16 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.last?.pagination, .init(pageSize: 2, offset: 3))
     }
     
+    func test_prefill_whenNoChannelsWereSaved_loadMoreChannelsDoesNotRequestNextPage() async throws {
+        await setUpChannelList(usesMockedChannelUpdater: true, loadState: false, pageSize: 2)
+        
+        try await channelList.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: [], unreadChannels: 0))
+        let loadedChannels = try await channelList.loadMoreChannels(limit: 2)
+        
+        XCTAssertEqual([], loadedChannels)
+        XCTAssertTrue(env.channelListUpdaterMock.update_queries.isEmpty)
+    }
+    
     func test_prefill_whenPrefilledCountExceedsPageSize_stateExposesAllPrefilledChannels() async throws {
         await setUpChannelList(usesMockedChannelUpdater: false, loadState: false, pageSize: 2)
         let prefilledChannels = try await makePrefilledChannels(count: 3, createdAtOffset: 0)

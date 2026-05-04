@@ -43,14 +43,16 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     func prefill(
         group: GroupedChannelsGroup,
         for query: ChannelListQuery,
+        filter: (@Sendable (ChatChannel) -> Bool)? = nil,
         completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
+        let channels = filter.map { group.channels.filter($0) } ?? group.channels
         nonisolated(unsafe) var savedChannels: [ChatChannel] = []
         database.write { session in
             let queryDTO = session.saveQuery(query: query)
             queryDTO.channels.removeAll()
 
-            savedChannels = group.channels.compactMapLoggingError { channel in
+            savedChannels = channels.compactMapLoggingError { channel in
                 guard let channelDTO = session.channel(cid: channel.cid) else {
                     log.warning("Prefill skipped channel \(channel.cid): not found in the database.")
                     return nil
@@ -280,9 +282,13 @@ private extension ChannelListUpdater {
 }
 
 extension ChannelListUpdater {
-    @discardableResult func prefill(group: GroupedChannelsGroup, for query: ChannelListQuery) async throws -> [ChatChannel] {
+    @discardableResult func prefill(
+        group: GroupedChannelsGroup,
+        for query: ChannelListQuery,
+        filter: (@Sendable (ChatChannel) -> Bool)? = nil
+    ) async throws -> [ChatChannel] {
         try await withCheckedThrowingContinuation { continuation in
-            prefill(group: group, for: query) { result in
+            prefill(group: group, for: query, filter: filter) { result in
                 continuation.resume(with: result)
             }
         }

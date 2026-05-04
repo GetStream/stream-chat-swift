@@ -64,21 +64,13 @@ public class ChannelList: @unchecked Sendable {
     /// The prefetched channels are persisted in the local storage and linked only to this channel
     /// list query, so pagination, local observation and offline refresh keep working.
     public func prefill(group: GroupedChannelsGroup) async throws {
-        let prefilledChannels = dynamicFilter.map { runtimeFilter in
-            group.channels.filter(runtimeFilter)
-        } ?? group.channels
-        let prefilledGroup = GroupedChannelsGroup(
-            groupKey: group.groupKey,
-            channels: prefilledChannels,
-            unreadChannels: group.unreadChannels
-        )
         let updatedQuery = query.withLock {
             $0.groupKey = group.groupKey
             return $0
         }
 
-        _ = try await channelListUpdater.prefill(group: prefilledGroup, for: updatedQuery)
-        await resetStateAfterPrefill(query: updatedQuery, prefilledChannelsCount: prefilledChannels.count)
+        let savedChannels = try await channelListUpdater.prefill(group: group, for: updatedQuery, filter: dynamicFilter)
+        await resetStateAfterPrefill(query: updatedQuery, prefilledChannelsCount: savedChannels.count)
         client.syncRepository.startTrackingChannelList(self)
     }
     
@@ -103,14 +95,17 @@ public class ChannelList: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
     @discardableResult public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
+        guard await state.hasLoadedAllPreviousChannels == false else { return [] }
         let query = query.value
         let limit = limit ?? query.pagination.pageSize
         let count = await state.channels.count
-        return try await channelListUpdater.loadNextChannels(
+        let loadedChannels = try await channelListUpdater.loadNextChannels(
             query: query,
             limit: limit,
             loadedChannelsCount: count
         )
+        await setHasLoadedAllPreviousChannels(loadedChannels.count < limit)
+        return loadedChannels
     }
     
     // MARK: - Internal
@@ -122,11 +117,16 @@ public class ChannelList: @unchecked Sendable {
     }
 
     @MainActor private func resetStateAfterPrefill(query: ChannelListQuery, prefilledChannelsCount: Int) {
+        state.hasLoadedAllPreviousChannels = prefilledChannelsCount == 0
         state.reset(
             query: query,
             minimumFetchLimit: prefilledChannelsCount
         )
         state.skipNextInitialRemoteUpdate()
+    }
+
+    @MainActor private func setHasLoadedAllPreviousChannels(_ hasLoadedAllPreviousChannels: Bool) {
+        state.hasLoadedAllPreviousChannels = hasLoadedAllPreviousChannels
     }
 }
 

@@ -38,6 +38,9 @@ import Foundation
     /// The query used for filtering the list of channels.
     public private(set) var query: ChannelListQuery
     
+    /// A Boolean value that returns whether pagination is finished.
+    var hasLoadedAllPreviousChannels = false
+    
     /// An array of channels for the specified ``ChannelListQuery``.
     @Published public internal(set) var channels: [ChatChannel] = []
 

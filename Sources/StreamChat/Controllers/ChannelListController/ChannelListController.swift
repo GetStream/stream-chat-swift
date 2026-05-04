@@ -206,18 +206,10 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         group: GroupedChannelsGroup,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        let prefilledChannels = filter.map { runtimeFilter in
-            group.channels.filter(runtimeFilter)
-        } ?? group.channels
-        let prefilledGroup = GroupedChannelsGroup(
-            groupKey: group.groupKey,
-            channels: prefilledChannels,
-            unreadChannels: group.unreadChannels
-        )
         // This changes filter hash to use static group key
         query.groupKey = group.groupKey
 
-        worker.prefill(group: prefilledGroup, for: query) { [weak self] result in
+        worker.prefill(group: group, for: query, filter: filter) { [weak self] result in
             guard let self else { return }
             switch result {
             case let .success(savedChannels):
@@ -228,7 +220,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 // When prefilling with a lot of channels, make the `channels` property to reflect it
                 // This makes channels.count to reflect the currently loaded channels count
                 let request = ChannelDTO.channelListFetchRequest(query: self.query, chatClientConfig: self.client.config)
-                let fetchLimit = max(self.query.pagination.pageSize, prefilledChannels.count)
+                let fetchLimit = max(self.query.pagination.pageSize, savedChannels.count)
                 request.fetchLimit = fetchLimit
                 request.fetchBatchSize = fetchLimit
                 self.channelListObserver.resetFetchRequest(request)

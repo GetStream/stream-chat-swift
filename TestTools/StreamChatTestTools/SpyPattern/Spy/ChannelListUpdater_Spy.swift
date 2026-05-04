@@ -70,11 +70,12 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     override func prefill(
         group: GroupedChannelsGroup,
         for query: ChannelListQuery,
+        filter: (@Sendable (ChatChannel) -> Bool)? = nil,
         completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
         _prefill_queries.mutate { $0.append(query) }
         _prefill_channels.mutate { $0.append(group.channels) }
-        super.prefill(group: group, for: query, completion: completion)
+        super.prefill(group: group, for: query, filter: filter, completion: completion)
     }
 
     override func markAllRead(completion: (@Sendable (Error?) -> Void)? = nil) {
