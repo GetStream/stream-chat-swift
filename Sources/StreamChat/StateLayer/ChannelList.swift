@@ -117,11 +117,7 @@ public class ChannelList: @unchecked Sendable {
     }
 
     @MainActor private func resetStateAfterPrefill(query: ChannelListQuery, prefilledChannelsCount: Int) {
-        state.hasLoadedAllPreviousChannels = prefilledChannelsCount == 0
-        state.reset(
-            query: query,
-            minimumFetchLimit: prefilledChannelsCount
-        )
+        state.reset(to: query, prefilledCount: prefilledChannelsCount)
         state.skipNextInitialRemoteUpdate()
     }
 

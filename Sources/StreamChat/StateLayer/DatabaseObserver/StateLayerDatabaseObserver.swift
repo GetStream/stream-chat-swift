@@ -18,15 +18,14 @@ class ListResult: DatabaseObserverType {}
 /// - Note: Requires the ``DatabaseContainer/stateLayerContext`` which is immediately synchronized.
 final class StateLayerDatabaseObserver<ResultType: DatabaseObserverType, Item, DTO: NSManagedObject>: @unchecked Sendable {
     private let changeAggregator: ListChangeAggregator<DTO, Item>
-    private var frc: NSFetchedResultsController<DTO>
+    private let frc: NSFetchedResultsController<DTO>
     let itemCreator: (DTO) throws -> Item
     let itemReuseKeyPaths: (item: KeyPath<Item, String>, dto: KeyPath<DTO, String>)?
     let sorting: [SortValue<Item>]
-    var request: NSFetchRequest<DTO>
+    let request: NSFetchRequest<DTO>
     let context: NSManagedObjectContext
     // Keep track of last items for reuse
     private var reuseItems: [Item]?
-    private var isObserving = false
     
     private init(
         context: NSManagedObjectContext,
@@ -189,38 +188,18 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
             let items = self.updateItems(changes)
             onContextDidChange(items, changes)
         }
-        isObserving = true
         frc.delegate = changeAggregator
         try frc.performFetch()
         return items
     }
 
-    /// Replaces the underlying fetch request and returns the refreshed items.
-    @discardableResult func resetFetchRequest(_ fetchRequest: NSFetchRequest<DTO>) -> [Item] {
-        nonisolated(unsafe) var collection: [Item] = []
+    func stopObserving() {
         context.performAndWait {
-            self.request = fetchRequest
             self.frc.delegate = nil
-            self.frc = NSFetchedResultsController(
-                fetchRequest: fetchRequest,
-                managedObjectContext: self.context,
-                sectionNameKeyPath: nil,
-                cacheName: nil
-            )
-            if self.isObserving {
-                self.frc.delegate = self.changeAggregator
-            }
-            self.reuseItems = nil
-            do {
-                try self.frc.performFetch()
-            } catch {
-                log.error("Failed to reset fetch request: \(error)")
-                collection = []
-                return
-            }
-            collection = self.updateItems(nil)
+            // Drop the change callback so any in-flight Task.mainActor enqueued by a previous
+            // FRC change becomes a no-op and cannot overwrite the new observer's state.
+            self.changeAggregator.onDidChange = nil
         }
-        return collection
     }
     
     private func updateItems(_ changes: [ListChange<Item>]?) -> [Item] {

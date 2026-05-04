@@ -82,15 +82,26 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    private(set) lazy var channelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
-        let request = ChannelDTO.channelListFetchRequest(query: self.query, chatClientConfig: client.config)
-        let observer = self.environment.createChannelListDatabaseObserver(
+    private(set) lazy var channelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = makeChannelListObserver(
+        query: query,
+        minimumFetchLimit: 0
+    )
+
+    private func makeChannelListObserver(
+        query: ChannelListQuery,
+        minimumFetchLimit: Int
+    ) -> BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> {
+        let request = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: client.config)
+        let fetchLimit = max(query.pagination.pageSize, minimumFetchLimit)
+        request.fetchLimit = fetchLimit
+        request.fetchBatchSize = fetchLimit
+
+        let observer = environment.createChannelListDatabaseObserver(
             client.databaseContainer,
             request,
             { try $0.asModel() },
             query.runtimeSortingValues
         )
-
         observer.onDidChange = { [weak self] changes in
             self?.delegateCallback { [weak self] in
                 guard let self = self else {
@@ -102,7 +113,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             }
         }
         return observer
-    }()
+    }
 
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
@@ -118,10 +129,13 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     private let filter: (@Sendable (ChatChannel) -> Bool)?
     private let environment: Environment
-    private lazy var channelListLinker: ChannelListLinker = self.environment
-        .channelListLinkerBuilder(
+    private lazy var channelListLinker: ChannelListLinker = makeChannelListLinker(query: query)
+
+    private func makeChannelListLinker(query: ChannelListQuery) -> ChannelListLinker {
+        environment.channelListLinkerBuilder(
             query, filter, client.config, client.databaseContainer, worker, client.channelWatcherHandler
         )
+    }
 
     /// Creates a new `ChannelListController`.
     ///
@@ -217,13 +231,22 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 // Prefill can come from a differently sized grouped endpoint page, so we can
                 // only conclude pagination is exhausted when no channels were provided at all.
                 self.hasLoadedAllPreviousChannels = savedChannels.isEmpty
-                // When prefilling with a lot of channels, make the `channels` property to reflect it
-                // This makes channels.count to reflect the currently loaded channels count
-                let request = ChannelDTO.channelListFetchRequest(query: self.query, chatClientConfig: self.client.config)
-                let fetchLimit = max(self.query.pagination.pageSize, savedChannels.count)
-                request.fetchLimit = fetchLimit
-                request.fetchBatchSize = fetchLimit
-                self.channelListObserver.resetFetchRequest(request)
+
+                // Recreate observer + linker so they pick up the new groupKey, mirroring the
+                // state-layer ChannelListState.Observer.start(observing:) flow.
+                self.channelListObserver.stopObserving()
+                self.channelListObserver = self.makeChannelListObserver(
+                    query: self.query,
+                    minimumFetchLimit: savedChannels.count
+                )
+                self.channelListLinker = self.makeChannelListLinker(query: self.query)
+                self.channelListLinker.start(with: self.client.eventNotificationCenter)
+                do {
+                    try self.channelListObserver.startObserving()
+                } catch {
+                    log.error("Failed to restart channel list observer after prefill: \(error)")
+                }
+
                 self.callback {
                     completion?(nil)
                 }
