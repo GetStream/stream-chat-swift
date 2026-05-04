@@ -39,7 +39,8 @@
                 "custom": {}
             }
         ],
-        "config": {}
+        "config": {},
+        "custom": {}
     },
     "member": {
         "user_id": "leia_organa",
@@ -68,5 +69,6 @@
         "name": "Leia Organa",
         "image": "https://vignette.wikia.nocookie.net/starwars/images/f/fc/Leia_Organa_TLJ.png"
     },
-    "created_at": "2022-08-30T15:15:56.430062017Z"
+    "created_at": "2022-08-30T15:15:56.430062017Z",
+    "custom": {}
 }

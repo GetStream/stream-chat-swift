@@ -421,9 +421,19 @@
                     "args": "[text]",
                     "set": "fun_set"
                 }
-            ]
-        }
+            ],
+            "count_messages": true,
+            "delivery_events": false,
+            "mark_messages_pending": false,
+            "polls": true,
+            "reminders": true,
+            "shared_locations": true,
+            "skip_last_msg_update_for_system_msgs": false,
+            "user_message_reminders": true
+        },
+        "custom": {}
     },
     "created_at": "2021-04-23T09:38:47.13361Z",
-    "received_at": "2021-04-23T09:38:47.106Z"
+    "received_at": "2021-04-23T09:38:47.106Z",
+    "custom": {}
 }

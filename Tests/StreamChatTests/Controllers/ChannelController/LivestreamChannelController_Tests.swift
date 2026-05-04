@@ -339,7 +339,7 @@ extension LivestreamChannelController_Tests {
         // First load some messages so we have something to paginate from
         controller.synchronize()
         let channelPayload = ChannelPayload.dummy(messages: [.dummy(messageId: "message1")])
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         
         let apiClient = client.mockAPIClient
         
@@ -359,7 +359,7 @@ extension LivestreamChannelController_Tests {
         // First load some messages so we have something to paginate from
         controller.synchronize()
         let channelPayload = ChannelPayload.dummy(messages: [.dummy(messageId: "message1")])
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         
         let apiClient = client.mockAPIClient
         
@@ -420,7 +420,7 @@ extension LivestreamChannelController_Tests {
                 .dummy(messageId: "new2", text: "New Message 2")
             ]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -468,7 +468,7 @@ extension LivestreamChannelController_Tests {
                 .dummy(messageId: "new2", text: "New Message 2")
             ]
         )
-        client.mockAPIClient.test_simulateResponse(.success(initialPayload))
+        client.mockAPIClient.test_simulateResponse(.success(initialPayload.asChannelStateResponse))
         
         let expectation = self.expectation(description: "Load previous messages completes")
         nonisolated(unsafe) var loadError: Error?
@@ -486,7 +486,7 @@ extension LivestreamChannelController_Tests {
                 .dummy(messageId: "old2", text: "Old Message 2")
             ]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         
         waitForExpectations(timeout: defaultTimeout)
         
@@ -504,7 +504,7 @@ extension LivestreamChannelController_Tests {
                 .dummy(messageId: "old2", text: "Old Message 2")
             ]
         )
-        client.mockAPIClient.test_simulateResponse(.success(initialPayload))
+        client.mockAPIClient.test_simulateResponse(.success(initialPayload.asChannelStateResponse))
         
         let expectation = self.expectation(description: "Load page around message completes")
         nonisolated(unsafe) var loadError: Error?
@@ -522,7 +522,7 @@ extension LivestreamChannelController_Tests {
                 .dummy(messageId: "around2", text: "Around Message 2")
             ]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         
         waitForExpectations(timeout: defaultTimeout)
         
@@ -562,7 +562,7 @@ extension LivestreamChannelController_Tests {
         let channelPayload = ChannelPayload.dummy(
             channel: .dummy(cid: .unique)
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
 
         // Then
         waitForExpectations(timeout: defaultTimeout)
@@ -654,11 +654,11 @@ extension LivestreamChannelController_Tests {
         
         // When
         controller.synchronize()
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         
         // Then
         AssertAsync.willBeTrue(delegate.didUpdateChannelCalled)
-        AssertAsync.willBeEqual(delegate.didUpdateChannelCalledWith?.cid, channelPayload.channel.cid)
+        AssertAsync.willBeEqual(delegate.didUpdateChannelCalledWith?.cid.rawValue, channelPayload.channel?.cid)
     }
     
     @MainActor func test_delegate_isCalledWhenMessagesUpdate() {
@@ -672,7 +672,7 @@ extension LivestreamChannelController_Tests {
         
         // When
         controller.synchronize()
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         
         // Then
         AssertAsync.willBeTrue(delegate.didUpdateMessagesCalled)
@@ -1000,7 +1000,7 @@ extension LivestreamChannelController_Tests {
         }
 
         let channelPayload = dummyPayload(with: controller.cid!, numberOfMessages: 100)
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -1096,7 +1096,7 @@ extension LivestreamChannelController_Tests {
             channel: .dummy(cid: cid),
             pinnedMessages: [] // No pinned messages initially
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // Add an unpinned message
@@ -1164,7 +1164,7 @@ extension LivestreamChannelController_Tests {
             channel: .dummy(cid: cid),
             pinnedMessages: [.dummy(messageId: messageId)]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // Add the pinned message to the messages array
@@ -1225,7 +1225,7 @@ extension LivestreamChannelController_Tests {
             channel: .dummy(cid: cid),
             pinnedMessages: [.dummy(messageId: messageId)]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // Add the pinned message
@@ -1280,7 +1280,7 @@ extension LivestreamChannelController_Tests {
             channel: .dummy(cid: cid),
             pinnedMessages: []
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(controller.messages.count, 0)
@@ -1317,7 +1317,7 @@ extension LivestreamChannelController_Tests {
             channel: .dummy(cid: cid),
             pinnedMessages: [.dummy(messageId: messageId)]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(controller.messages.count, 0)
@@ -1352,7 +1352,7 @@ extension LivestreamChannelController_Tests {
             channel: .dummy(cid: cid),
             pinnedMessages: [.dummy(messageId: "existing-pin")]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(controller.channel?.pinnedMessages.count, 1)
@@ -1528,7 +1528,7 @@ extension LivestreamChannelController_Tests {
         let channelPayload = ChannelPayload.dummy(
             channel: .dummy(cid: cid, name: "Old Name")
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
 
         let updatedChannel = ChatChannel.mock(cid: controller.cid!, name: "Updated Name")
@@ -1566,7 +1566,7 @@ extension LivestreamChannelController_Tests {
                 memberCount: 5
             )
         )
-        client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // When - Send ChannelUpdatedEvent with comprehensive updates
@@ -1735,7 +1735,7 @@ extension LivestreamChannelController_Tests {
                 .dummy(user: .dummy(userId: otherMember.id))
             ]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // When
@@ -1769,7 +1769,7 @@ extension LivestreamChannelController_Tests {
             channel: .dummy(cid: cid, memberCount: initialMemberCount),
             members: [.dummy(user: .dummy(userId: existingMember.id))]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // When
@@ -1802,7 +1802,7 @@ extension LivestreamChannelController_Tests {
         let channelPayload = ChannelPayload.dummy(
             channel: .dummy(cid: cid, memberCount: 1)
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // When
@@ -1838,7 +1838,7 @@ extension LivestreamChannelController_Tests {
                 .dummy(user: .dummy(userId: remainingMember.id))
             ]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // When
@@ -1870,7 +1870,7 @@ extension LivestreamChannelController_Tests {
             channel: .dummy(cid: cid, memberCount: 2),
             membership: .dummy(user: .dummy(userId: currentUserId))
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // Verify initial membership is set
@@ -1912,7 +1912,7 @@ extension LivestreamChannelController_Tests {
                 .dummy(user: .dummy(userId: otherMember.id))
             ]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // Verify initial state
@@ -1959,7 +1959,7 @@ extension LivestreamChannelController_Tests {
             channel: .dummy(cid: cid, memberCount: 2),
             membership: .dummy(user: .dummy(userId: currentUserId))
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // Verify initial membership is set
@@ -1998,7 +1998,7 @@ extension LivestreamChannelController_Tests {
             watcherCount: initialWatcherCount,
             watchers: [.dummy(userId: existingWatcher.id)]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // When
@@ -2037,7 +2037,7 @@ extension LivestreamChannelController_Tests {
                 .dummy(userId: remainingWatcher.id)
             ]
         )
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // When
@@ -2076,7 +2076,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload.asChannelStateResponse))
         
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(controller.channel?.membership?.isBannedFromChannel, false)
@@ -2123,7 +2123,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(controller.channel?.membership?.isBannedFromChannel, true)
@@ -3185,7 +3185,7 @@ extension LivestreamChannelController_Tests {
             channel: .dummy(cid: controller.cid!, cooldownDuration: 0)
         )
         controller.synchronize()
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         
         // When
         let cooldownTime = controller.currentCooldownTime()
@@ -3238,7 +3238,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -3276,7 +3276,7 @@ extension LivestreamChannelController_Tests {
         
         // Load the channel data through normal API flow
         controller.synchronize()
-        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         
         // When
         let cooldownTime = controller.currentCooldownTime()

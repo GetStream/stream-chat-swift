@@ -58,7 +58,8 @@ extension NSManagedObjectContext {
         }
 
         let channel = try saveChannel(payload: channelPayload, query: nil, cache: nil)
-        let dto = ChannelMuteDTO.loadOrCreate(cid: channelPayload.cid, context: self)
+        let cid = try ChannelId(cid: channelPayload.cid)
+        let dto = ChannelMuteDTO.loadOrCreate(cid: cid, context: self)
         dto.channel = channel
         dto.currentUser = currentUser
         dto.createdAt = payload.createdAt.bridgeDate

@@ -18,7 +18,7 @@ extension ChannelDetailPayload {
         deletedAt: Date? = nil,
         updatedAt: Date = .init(),
         truncatedAt: Date? = nil,
-        createdBy: UserPayload = .dummy(userId: .unique),
+        createdBy: UserPayload? = .dummy(userId: .unique),
         config: ChannelConfig = .mock(),
         filterTags: [String]? = nil,
         ownCapabilities: [String] = [],
@@ -31,31 +31,33 @@ extension ChannelDetailPayload {
         messageCount: Int? = nil,
         team: String? = nil,
         cooldownDuration: Int = 0
-    ) -> Self {
-        .init(
-            cid: cid,
-            name: name,
-            imageURL: imageURL,
-            extraData: extraData,
-            typeRawValue: cid.type.rawValue,
-            lastMessageAt: lastMessageAt,
+    ) -> ChannelDetailPayload {
+        var custom = extraData
+        if let name { custom["name"] = .string(name) }
+        if let imageURL { custom["image"] = .string(imageURL.absoluteString) }
+        return ChannelResponse(
+            blocked: isBlocked,
+            cid: cid.rawValue,
+            config: config.asChannelConfigWithInfo,
+            cooldown: cooldownDuration,
             createdAt: createdAt,
+            createdBy: createdBy?.asUserResponse,
+            custom: custom,
             deletedAt: deletedAt,
-            updatedAt: updatedAt,
-            truncatedAt: truncatedAt,
-            createdBy: createdBy,
-            config: config,
+            disabled: isDisabled,
             filterTags: filterTags,
-            ownCapabilities: ownCapabilities,
-            isDisabled: isDisabled,
-            isFrozen: isFrozen,
-            isBlocked: isBlocked,
-            isHidden: isHidden,
-            members: members,
+            frozen: isFrozen,
+            hidden: isHidden,
+            id: cid.id,
+            lastMessageAt: lastMessageAt,
             memberCount: memberCount ?? members.count,
+            members: members,
             messageCount: messageCount,
+            ownCapabilities: ownCapabilities.compactMap(ChannelOwnCapability.init(rawValue:)),
             team: team,
-            cooldownDuration: cooldownDuration
+            truncatedAt: truncatedAt,
+            type: cid.type.rawValue,
+            updatedAt: updatedAt
         )
     }
 }

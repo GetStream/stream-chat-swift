@@ -9,9 +9,12 @@ typealias AppSettingsPayload = GetApplicationResponse
 typealias AttachmentActionRequestBody = MessageActionRequest
 typealias CastPollVoteRequestBody = CastPollVoteRequest
 typealias ChannelDeliveredRequestPayload = MarkDeliveredRequest
+typealias ChannelDetailPayload = ChannelResponse
 typealias ChannelEditDetailPayload = ChannelInput
+typealias ChannelListPayload = QueryChannelsResponse
 typealias ChannelMemberBanRequestPayload = BanRequest
 typealias ChannelMemberListPayload = MembersResponse
+typealias ChannelPayload = ChannelStateResponseFields
 typealias ChannelTruncateRequestPayload = TruncateChannelRequest
 typealias ChannelReadPayload = ReadStateResponse
 typealias ChannelUnreadByTypePayload = UnreadCountsChannelType
@@ -777,7 +780,7 @@ extension DraftResponse {
     ) {
         self.init(
             channel: channelPayload?.asChannelResponse,
-            channelCid: cid?.rawValue ?? channelPayload?.cid.rawValue ?? "",
+            channelCid: cid?.rawValue ?? channelPayload?.cid ?? "",
             createdAt: createdAt,
             message: message,
             parentId: parentId,
@@ -1385,70 +1388,78 @@ extension UserPayload {
 }
 
 extension ChannelResponse {
-    var asChannelDetailPayload: ChannelDetailPayload? {
-        guard let cid = try? ChannelId(cid: cid) else { return nil }
+    // Compatibility shims for callers written against the legacy ChannelDetailPayload class.
+    var name: String? { custom["name"]?.stringValue }
+    var imageURL: URL? { custom["image"]?.stringValue.flatMap(URL.init(string:)) }
+    var extraData: [String: RawJSON] {
+        var c = custom
+        c["name"] = nil
+        c["image"] = nil
+        return c
+    }
 
-        return ChannelDetailPayload(
-            cid: cid,
-            name: custom["name"]?.stringValue,
-            imageURL: custom["image"]?.stringValue.flatMap(URL.init(string:)),
-            extraData: custom.removingValues(forKeys: ["name", "image"]),
-            typeRawValue: type,
-            lastMessageAt: lastMessageAt,
-            createdAt: createdAt,
-            deletedAt: deletedAt,
-            updatedAt: updatedAt,
-            truncatedAt: truncatedAt,
-            createdBy: createdBy?.asUserPayload,
-            config: config?.asChannelConfig ?? .init(),
-            filterTags: filterTags,
-            ownCapabilities: ownCapabilities?.map(\.rawValue),
-            isDisabled: disabled,
-            isFrozen: frozen,
-            isBlocked: blocked,
-            isHidden: hidden,
-            members: nil,
-            memberCount: memberCount ?? 0,
-            messageCount: messageCount,
-            team: team,
-            cooldownDuration: cooldown ?? 0
+    var typeRawValue: String { type }
+    var isDisabled: Bool { disabled }
+    var isFrozen: Bool { frozen }
+    var isBlocked: Bool? { blocked }
+    var isHidden: Bool? { hidden }
+    var cooldownDuration: Int { cooldown ?? 0 }
+    var invitedMembers: [MemberPayload] { [] }
+    var channelId: ChannelId? { try? ChannelId(cid: cid) }
+    var asChannelDetailPayload: ChannelDetailPayload { self }
+    var asChannelResponse: ChannelResponse { self }
+}
+
+extension ChannelStateResponseFields {
+    // Compatibility shims for the legacy ChannelPayload struct.
+    var channelReads: [ChannelReadPayload] { read ?? [] }
+    var newestMessage: MessageResponse? {
+        guard let first = messages.first, let last = messages.last else { return nil }
+        return first.createdAt > last.createdAt ? first : last
+    }
+}
+
+extension ChannelStateResponse {
+    var asChannelPayload: ChannelStateResponseFields {
+        ChannelStateResponseFields(
+            activeLiveLocations: activeLiveLocations,
+            channel: channel,
+            draft: draft,
+            hidden: hidden,
+            hideMessagesBefore: hideMessagesBefore,
+            members: members,
+            membership: membership,
+            messages: messages,
+            pendingMessages: pendingMessages,
+            pinnedMessages: pinnedMessages,
+            pushPreferences: pushPreferences,
+            read: read,
+            threads: threads,
+            watcherCount: watcherCount,
+            watchers: watchers
         )
     }
 }
 
-extension ChannelDetailPayload {
-    var asChannelResponse: ChannelResponse? {
-        var custom = extraData
-        if let name {
-            custom["name"] = .string(name)
-        }
-        if let imageURL {
-            custom["image"] = .string(imageURL.absoluteString)
-        }
-
-        return ChannelResponse(
-            blocked: isBlocked,
-            cid: cid.rawValue,
-            config: config.asChannelConfigWithInfo,
-            cooldown: cooldownDuration,
-            createdAt: createdAt,
-            createdBy: createdBy?.asUserResponse,
-            custom: custom,
-            deletedAt: deletedAt,
-            disabled: isDisabled,
-            filterTags: filterTags,
-            frozen: isFrozen,
-            hidden: isHidden,
-            id: cid.id,
-            lastMessageAt: lastMessageAt,
-            memberCount: memberCount,
-            members: nil,
-            messageCount: messageCount,
-            ownCapabilities: ownCapabilities?.compactMap(ChannelOwnCapability.init(rawValue:)),
-            team: team,
-            truncatedAt: truncatedAt,
-            type: typeRawValue,
-            updatedAt: updatedAt
+extension ChannelStateResponseFields {
+    var asChannelStateResponse: ChannelStateResponse {
+        ChannelStateResponse(
+            activeLiveLocations: activeLiveLocations,
+            channel: channel,
+            draft: draft,
+            duration: "",
+            hidden: hidden,
+            hideMessagesBefore: hideMessagesBefore,
+            members: members,
+            membership: membership,
+            messages: messages,
+            pendingMessages: pendingMessages,
+            pinnedMessages: pinnedMessages,
+            pushPreferences: pushPreferences,
+            read: read,
+            threads: threads,
+            watcherCount: watcherCount,
+            watchers: watchers
         )
     }
 }
@@ -2515,30 +2526,19 @@ extension ThreadStateResponse {
             return channelPayload
         }
         guard let cid = try? ChannelId(cid: channelCid) else { return nil }
-        return ChannelDetailPayload(
-            cid: cid,
-            name: nil,
-            imageURL: nil,
-            extraData: [:],
-            typeRawValue: cid.type.rawValue,
-            lastMessageAt: lastMessageAt,
+        return ChannelResponse(
+            cid: cid.rawValue,
+            config: ChannelConfig().asChannelConfigWithInfo,
             createdAt: createdAt,
-            deletedAt: nil,
-            updatedAt: updatedAt,
-            truncatedAt: nil,
-            createdBy: createdBy?.asUserPayload,
-            config: .init(),
-            filterTags: nil,
-            ownCapabilities: nil,
-            isDisabled: false,
-            isFrozen: false,
-            isBlocked: false,
-            isHidden: nil,
-            members: nil,
+            createdBy: createdBy?.asUserResponse,
+            custom: [:],
+            disabled: false,
+            frozen: false,
+            id: cid.id,
+            lastMessageAt: lastMessageAt,
             memberCount: 0,
-            messageCount: nil,
-            team: nil,
-            cooldownDuration: 0
+            type: cid.type.rawValue,
+            updatedAt: updatedAt
         )
     }
 
@@ -2604,7 +2604,7 @@ extension ThreadStateResponse {
         self.init(
             activeParticipantCount: activeParticipantCount,
             channel: channel.asChannelResponse,
-            channelCid: channel.cid.rawValue,
+            channelCid: channel.cid,
             createdAt: createdAt,
             createdBy: createdBy.asUserResponse,
             createdByUserId: createdBy.id,
@@ -2635,30 +2635,19 @@ extension ThreadResponse {
             return channelPayload
         }
         guard let cid = try? ChannelId(cid: channelCid) else { return nil }
-        return ChannelDetailPayload(
-            cid: cid,
-            name: nil,
-            imageURL: nil,
-            extraData: [:],
-            typeRawValue: cid.type.rawValue,
-            lastMessageAt: lastMessageAt,
+        return ChannelResponse(
+            cid: cid.rawValue,
+            config: ChannelConfig().asChannelConfigWithInfo,
             createdAt: createdAt,
-            deletedAt: nil,
-            updatedAt: updatedAt,
-            truncatedAt: nil,
-            createdBy: createdBy?.asUserPayload,
-            config: .init(),
-            filterTags: nil,
-            ownCapabilities: nil,
-            isDisabled: false,
-            isFrozen: false,
-            isBlocked: false,
-            isHidden: nil,
-            members: nil,
+            createdBy: createdBy?.asUserResponse,
+            custom: [:],
+            disabled: false,
+            frozen: false,
+            id: cid.id,
+            lastMessageAt: lastMessageAt,
             memberCount: 0,
-            messageCount: nil,
-            team: nil,
-            cooldownDuration: 0
+            type: cid.type.rawValue,
+            updatedAt: updatedAt
         )
     }
 
@@ -2712,7 +2701,7 @@ extension ThreadResponse {
         self.init(
             activeParticipantCount: activeParticipantCount,
             channel: channel.asChannelResponse,
-            channelCid: channel.cid.rawValue,
+            channelCid: channel.cid,
             createdAt: createdAt,
             createdBy: createdBy.asUserResponse,
             createdByUserId: createdBy.id,

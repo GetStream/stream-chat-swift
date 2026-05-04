@@ -132,7 +132,7 @@ extension ChannelListPayload: IdentifiablePayloadProxy {
 extension ChannelPayload: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        channel.fillIds(cache: &cache)
+        channel?.fillIds(cache: &cache)
         watchers?.fillIds(cache: &cache)
         membership?.fillIds(cache: &cache)
         messages.fillIds(cache: &cache)
@@ -142,7 +142,7 @@ extension ChannelPayload: IdentifiablePayloadProxy {
 }
 
 extension ChannelDetailPayload: IdentifiablePayload {
-    var databaseId: DatabaseId? { cid.rawValue }
+    var databaseId: DatabaseId? { cid }
     static let modelClass: (IdentifiableDatabaseObject).Type? = ChannelDTO.self
 
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {

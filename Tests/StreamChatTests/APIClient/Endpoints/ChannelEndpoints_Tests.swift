@@ -61,7 +61,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
         for (query, requiresConnectionId) in testCases {
             let expectedEndpoint =
-                Endpoint<ChannelPayload>(
+                Endpoint<ChannelStateResponse>(
                     path: .updateChannel(query.apiPath),
                     method: .post,
                     queryItems: nil,
@@ -70,7 +70,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
                 )
 
             // Build endpoint
-            let endpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
+            let endpoint: Endpoint<ChannelStateResponse> = .updateChannel(query: query)
 
             // Assert endpoint is built correctly
             XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -105,7 +105,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         var query: ChannelQuery = .init(cid: cid)
         query.options = [.state]
 
-        let expectedEndpoint = Endpoint<ChannelPayload>(
+        let expectedEndpoint = Endpoint<ChannelStateResponse>(
             path: .updateChannel(query.apiPath),
             method: .post,
             queryItems: nil,
@@ -114,7 +114,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         )
         
         // Build endpoint
-        let endpoint: Endpoint<ChannelPayload> = .channelState(query: query)
+        let endpoint: Endpoint<ChannelStateResponse> = .channelState(query: query)
         
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -664,7 +664,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         let pagination = Pagination(pageSize: .random(in: 10...100), offset: .random(in: 10...100))
         let query = ChannelWatcherListQuery(cid: cid, pagination: pagination)
 
-        let expectedEndpoint = Endpoint<ChannelPayload>(
+        let expectedEndpoint = Endpoint<ChannelStateResponse>(
             path: .updateChannel(query.cid.apiPath),
             method: .post,
             queryItems: nil,
@@ -672,7 +672,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
             body: query
         )
 
-        let endpoint: Endpoint<ChannelPayload> = .channelWatchers(query: query)
+        let endpoint: Endpoint<ChannelStateResponse> = .channelWatchers(query: query)
 
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
         XCTAssertEqual("channels/\(query.cid.type.rawValue)/\(query.cid.id)/query", endpoint.path.value)

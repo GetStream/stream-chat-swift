@@ -1128,7 +1128,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         if let cid = cid, let payloadCid = payload.channel?.cid {
-            log.assert(cid == payloadCid, "`cid` provided is different from the `payload.channel.cid`.")
+            log.assert(cid.rawValue == payloadCid, "`cid` provided is different from the `payload.channel.cid`.")
         }
 
         var channelDTO: ChannelDTO?

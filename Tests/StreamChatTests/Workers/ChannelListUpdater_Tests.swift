@@ -59,7 +59,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
+        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)], duration: "")
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeTrue(completionCalled)
@@ -105,7 +105,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         })
 
         // Simulate API response with no channel data
-        let payload = ChannelListPayload(channels: [])
+        let payload = ChannelListPayload(channels: [], duration: "")
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeTrue(completionCalled)
@@ -147,7 +147,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         })
 
         let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
+        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)], duration: "")
         apiClient.test_simulateResponse(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -183,7 +183,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         })
 
         let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
+        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)], duration: "")
         apiClient.test_simulateResponse(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -247,12 +247,12 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)])
+        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)], duration: "")
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeEqual(
-            Set(payload.channels.map(\.channel.cid)),
-            Set(channelListPayload?.channels.map(\.channel.cid) ?? [])
+            Set(payload.channels.compactMap { $0.channel?.cid }),
+            Set(channelListPayload?.channels.compactMap { $0.channel?.cid } ?? [])
         )
     }
 
@@ -297,18 +297,18 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let initialChannels = (0..<pageSize * 2 + 5)
             .map { self.dummyPayload(with: ChannelId(type: .messaging, id: "\($0)")) }
         try database.writeSynchronously { session in
-            session.saveChannelList(payload: .init(channels: initialChannels), query: query)
+            session.saveChannelList(payload: .init(channels: initialChannels, duration: ""), query: query)
         }
-        
+
         // Refresh should be called 3 times
         let responseChannels = (0..<pageSize * 2 + 5)
             .map { self.dummyPayload(with: ChannelId(type: .messaging, id: "\($0)_refreshed")) }
-        apiClient.test_mockResponseResult(.success(ChannelListPayload(channels: Array(responseChannels[0..<pageSize]))))
-        apiClient.test_mockResponseResult(.success(ChannelListPayload(channels: Array(responseChannels[pageSize..<pageSize * 2]))))
-        apiClient.test_mockResponseResult(.success(ChannelListPayload(channels: Array(responseChannels[(pageSize * 2)...]))))
+        apiClient.test_mockResponseResult(.success(ChannelListPayload(channels: Array(responseChannels[0..<pageSize]), duration: "")))
+        apiClient.test_mockResponseResult(.success(ChannelListPayload(channels: Array(responseChannels[pageSize..<pageSize * 2]), duration: "")))
+        apiClient.test_mockResponseResult(.success(ChannelListPayload(channels: Array(responseChannels[(pageSize * 2)...]), duration: "")))
         
         let cids = try await listUpdater.refreshLoadedChannels(for: query, channelCount: initialChannels.count)
-        XCTAssertEqual(responseChannels.map(\.channel.cid.id).sorted(), cids.map(\.id).sorted())
+        XCTAssertEqual(responseChannels.compactMap { $0.channel?.id }.sorted(), cids.map(\.id).sorted())
     }
 
     // MARK: - Mark all read
@@ -355,7 +355,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
             actualError = error
             exp.fulfill()
         }
-        let payload = ChannelListPayload(channels: cids.map { dummyPayload(with: $0) })
+        let payload = ChannelListPayload(channels: cids.map { dummyPayload(with: $0) }, duration: "")
         apiClient.test_simulateResponse(.success(payload))
 
         // Then

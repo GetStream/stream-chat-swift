@@ -82,5 +82,6 @@
     "unread_count": 0,
     "unread_channels": 1,
     "type": "message.new",
-    "cid": "messaging:general"
+    "cid": "messaging:general",
+    "custom": {}
 }

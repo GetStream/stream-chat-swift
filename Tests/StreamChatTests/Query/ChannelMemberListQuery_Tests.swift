@@ -116,7 +116,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
         // Declare channel list query sorting by `createdAt` ascending
         let memberListQuery = ChannelMemberListQuery(
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             sort: [.init(key: .createdAt, isAscending: true)]
         )
 
@@ -131,7 +131,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
                     payload: $0,
-                    channelId: channel.cid,
+                    channelId: try! ChannelId(cid: channel.cid),
                     query: memberListQuery,
                     cache: nil
                 )
@@ -165,7 +165,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
         // Declare channel list query sorting by `createdAt` descending
         let memberListQuery = ChannelMemberListQuery(
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             sort: [.init(key: .createdAt, isAscending: false)]
         )
 
@@ -180,7 +180,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
                     payload: $0,
-                    channelId: channel.cid,
+                    channelId: try! ChannelId(cid: channel.cid),
                     query: memberListQuery,
                     cache: nil
                 )
@@ -214,7 +214,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
         // Declare channel list query sorting by `name` ascending
         let memberListQuery = ChannelMemberListQuery(
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             sort: [.init(key: .name, isAscending: true)]
         )
 
@@ -229,7 +229,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
                     payload: $0,
-                    channelId: channel.cid,
+                    channelId: try! ChannelId(cid: channel.cid),
                     query: memberListQuery,
                     cache: nil
                 )
@@ -270,7 +270,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
         // Declare channel list query sorting by `name` and `createdAt`
         let memberListQuery = ChannelMemberListQuery(
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             sort: [
                 .init(key: .name, isAscending: true),
                 .init(key: .createdAt, isAscending: true)
@@ -288,7 +288,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
                     payload: $0,
-                    channelId: channel.cid,
+                    channelId: try! ChannelId(cid: channel.cid),
                     query: memberListQuery,
                     cache: nil
                 )
@@ -335,7 +335,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
         // Declare channel list query sorting by `name` and `createdAt`
         let memberListQuery = ChannelMemberListQuery(
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             sort: [
                 .init(key: .name, isAscending: true),
                 .init(key: .createdAt, isAscending: true)
@@ -353,7 +353,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
             try channel.members?.shuffled().forEach {
                 try session.saveMember(
                     payload: $0,
-                    channelId: channel.cid,
+                    channelId: try! ChannelId(cid: channel.cid),
                     query: memberListQuery,
                     cache: nil
                 )

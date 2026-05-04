@@ -34,7 +34,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let eventPayload = EventPayload(
             eventType: .notificationAddedToChannel,
             connectionId: .unique,
-            cid: channelPayload.channel.cid,
+            cid: channelPayload.channel?.channelId,
             channel: channelPayload.channel
         )
 

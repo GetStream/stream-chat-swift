@@ -221,7 +221,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
                         createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0))
                     )
                 }
-            return ChannelListPayload(channels: channelPayloads)
+            return ChannelListPayload(channels: channelPayloads, duration: "")
         }
         
         try await client.mockDatabaseContainer.write { session in

@@ -910,8 +910,10 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
 
         channel = newChannel
 
+        let cidString = payload.channel?.cid ?? ""
+        let cid = (try? ChannelId(cid: cidString)) ?? .init(type: .messaging, id: "")
         let newMessages = payload.messages.compactMap {
-            $0.asModel(cid: payload.channel.cid, currentUserId: currentUserId, channelReads: newChannel.reads)
+            $0.asModel(cid: cid, currentUserId: currentUserId, channelReads: newChannel.reads)
         }
 
         updateMessagesArray(with: newMessages, pagination: channelQuery.pagination)

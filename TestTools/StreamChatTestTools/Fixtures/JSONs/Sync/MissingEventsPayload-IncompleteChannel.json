@@ -10,7 +10,10 @@
                     {
                         "user_id": "1234"
                     }
-                ]
+                ],
+                "custom": {},
+                "disabled": false,
+                "frozen": false
             },
             "user": {
                 "id": "broken-waterfall-5",
@@ -42,7 +45,10 @@
                     {
                         "user_id": "1234"
                     }
-                ]
+                ],
+                "custom": {},
+                "disabled": false,
+                "frozen": false
             },
             "user": {
                 "id": "broken-waterfall-5",
@@ -76,7 +82,10 @@
                     {
                         "user_id": "1234"
                     }
-                ]
+                ],
+                "custom": {},
+                "disabled": false,
+                "frozen": false
             },
             "user": {
                 "id": "broken-waterfall-5",
@@ -112,7 +121,10 @@
                     {
                         "user_id": "1234"
                     }
-                ]
+                ],
+                "custom": {},
+                "disabled": false,
+                "frozen": false
             },
             "user": {
                 "id": "broken-waterfall-5",

@@ -28,7 +28,7 @@ final class DatabaseSession_Tests: XCTestCase {
         let eventPayload = EventPayload(
             eventType: .notificationAddedToChannel,
             connectionId: .unique,
-            cid: channelPayload.channel.cid,
+            cid: channelPayload.channel?.channelId,
             channel: channelPayload.channel
         )
 
@@ -45,7 +45,7 @@ final class DatabaseSession_Tests: XCTestCase {
         AssertAsync.willBeEqual(loadedChannel?.cid, channelId)
 
         // Try to load a saved channel owner from DB
-        if let userId = channelPayload.channel.createdBy?.id {
+        if let userId = channelPayload.channel?.createdBy?.id {
             var loadedUser: ChatUser? {
                 try? database.viewContext.user(id: userId)?.asModel()
             }
@@ -54,7 +54,7 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // Try to load the saved member from DB
-        if let member = channelPayload.channel.members?.first {
+        if let member = channelPayload.channel?.members?.first {
             var loadedMember: ChatUser? {
                 try? database.viewContext.member(userId: member.resolvedUserId, cid: channelId)?.asModel()
             }
@@ -68,7 +68,7 @@ final class DatabaseSession_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         let messageId: MessageId = .unique
 
-        let channelPayload: ChannelDetailPayload = dummyPayload(with: channelId).channel
+        let channelPayload: ChannelDetailPayload = dummyPayload(with: channelId).channel!
 
         let userPayload: UserPayload = .init(
             id: .unique,
@@ -512,12 +512,12 @@ final class DatabaseSession_Tests: XCTestCase {
             messageId: .unique,
             parentId: .unique,
             authorUserId: .unique,
-            cid: channel.channel.cid
+            cid: channel.channel?.channelId
         )
 
         let messageNewEvent = EventPayload(
             eventType: .messageNew,
-            cid: channel.channel.cid,
+            cid: channel.channel?.channelId,
             message: newMessage
         )
 
@@ -545,12 +545,12 @@ final class DatabaseSession_Tests: XCTestCase {
             messageId: .unique,
             parentId: .unique,
             authorUserId: .unique,
-            cid: channel.channel.cid
+            cid: channel.channel?.channelId
         )
 
         let messageNewEvent = EventPayload(
             eventType: .notificationMessageNew,
-            cid: channel.channel.cid,
+            cid: channel.channel?.channelId,
             message: newMessage
         )
 
@@ -584,7 +584,7 @@ final class DatabaseSession_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
             let dto = try session.saveMessage(
                 payload: newMessage,
-                for: nil,
+                for: channel.channel?.channelId,
                 syncOwnReactions: false,
                 skipDraftUpdate: true,
                 cache: nil
@@ -594,7 +594,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
         let messageNewEvent = EventPayload(
             eventType: .messageNew,
-            cid: channel.channel.cid,
+            cid: channel.channel?.channelId,
             message: newMessage
         )
 
@@ -633,7 +633,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
         let messageNewEvent = EventPayload(
             eventType: .messageNew,
-            cid: channel.channel.cid,
+            cid: channel.channel?.channelId,
             channel: channel.channel,
             message: newMessage
         )
@@ -644,7 +644,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
         // THEN
         let channelModel = try XCTUnwrap(
-            database.viewContext.channel(cid: channel.channel.cid)?.asModel()
+            database.viewContext.channel(cid: channel.channel!.channelId!)?.asModel()
         )
         XCTAssertEqual(channelModel.latestMessages.first?.id, newMessage.id)
     }
@@ -675,7 +675,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
         let messageDeletedEvent = EventPayload(
             eventType: .messageDeleted,
-            cid: channel.channel.cid,
+            cid: channel.channel?.channelId,
             channel: channel.channel,
             message: deletedMessage
         )
@@ -686,7 +686,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
         // THEN
         let channelModel = try XCTUnwrap(
-            database.viewContext.channel(cid: channel.channel.cid)?.asModel()
+            database.viewContext.channel(cid: channel.channel!.channelId!)?.asModel()
         )
         XCTAssertEqual(channelModel.latestMessages.first?.id, message.id)
         XCTAssertNotNil(channelModel.latestMessages.first?.deletedAt)
@@ -718,8 +718,8 @@ final class DatabaseSession_Tests: XCTestCase {
 
         let channelTruncatedEvent = EventPayload(
             eventType: .channelTruncated,
-            cid: channel.channel.cid,
-            channel: .dummy(cid: channel.channel.cid, truncatedAt: systemMessage.createdAt),
+            cid: channel.channel?.channelId,
+            channel: .dummy(cid: channel.channel?.channelId ?? .unique, truncatedAt: systemMessage.createdAt),
             message: systemMessage
         )
 
@@ -729,7 +729,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
         // THEN
         let channelModel = try XCTUnwrap(
-            database.viewContext.channel(cid: channel.channel.cid)?.asModel()
+            database.viewContext.channel(cid: channel.channel!.channelId!)?.asModel()
         )
         XCTAssertEqual(channelModel.latestMessages.first?.id, systemMessage.id)
     }

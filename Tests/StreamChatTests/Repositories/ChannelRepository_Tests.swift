@@ -32,11 +32,11 @@ final class ChannelRepository_Tests: XCTestCase {
         let cid = ChannelId.unique
         let query = ChannelQuery(cid: cid)
         let channelPayload = ChannelPayload.dummy(channel: .dummy(cid: cid))
-        apiClient.test_mockResponseResult(.success(channelPayload))
+        apiClient.test_mockResponseResult(.success(channelPayload.asChannelStateResponse))
         let result = try waitFor { done in
             repository.getChannel(for: query, store: false, completion: done)
         }
-        let expectedEndpoint = Endpoint<ChannelPayload>.createChannel(query: query)
+        let expectedEndpoint = Endpoint<ChannelStateResponse>.createChannel(query: query)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
         XCTAssertEqual(1, database.writeSessionCounter, "Write is called, but rolled back")
         
@@ -51,11 +51,11 @@ final class ChannelRepository_Tests: XCTestCase {
         let cid = ChannelId.unique
         let query = ChannelQuery(cid: cid)
         let expectedError = TestError()
-        apiClient.test_mockResponseResult(Result<ChannelPayload, Error>.failure(expectedError))
+        apiClient.test_mockResponseResult(Result<ChannelStateResponse, Error>.failure(expectedError))
         let result = try waitFor { done in
             repository.getChannel(for: query, store: false, completion: done)
         }
-        let expectedEndpoint = Endpoint<ChannelPayload>.createChannel(query: query)
+        let expectedEndpoint = Endpoint<ChannelStateResponse>.createChannel(query: query)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
         XCTAssertEqual(0, database.writeSessionCounter)
         

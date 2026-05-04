@@ -45,7 +45,7 @@ final class ChannelUpdatedEventDTO: EventDTO {
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let channelDTO = session.channel(cid: channel.cid) else { return nil }
+        guard let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)) else { return nil }
 
         let userDTO = user.flatMap { session.user(id: $0.id) }
         let messageDTO = message.flatMap { session.message(id: $0.id) }
@@ -94,7 +94,7 @@ final class ChannelDeletedEventDTO: EventDTO {
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let channelDTO = session.channel(cid: channel.cid) else { return nil }
+        guard let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)) else { return nil }
 
         let userDTO = user.flatMap { session.user(id: $0.id) }
 
@@ -147,7 +147,7 @@ final class ChannelTruncatedEventDTO: EventDTO {
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let channelDTO = session.channel(cid: channel.cid) else { return nil }
+        guard let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)) else { return nil }
 
         let userDTO = user.flatMap { session.user(id: $0.id) }
         let messageDTO = message.flatMap { session.message(id: $0.id) }

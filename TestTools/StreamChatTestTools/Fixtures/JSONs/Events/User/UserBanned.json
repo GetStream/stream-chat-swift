@@ -49,5 +49,6 @@
     "type": "user.banned",
     "expiration": "2020-07-16T15:40:18.271085Z",
     "cid": "messaging:new_channel_7070",
-    "shadow": true
+    "shadow": true,
+    "custom": {}
 }

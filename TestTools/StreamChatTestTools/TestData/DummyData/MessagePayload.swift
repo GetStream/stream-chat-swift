@@ -65,7 +65,7 @@ extension MessagePayload {
         let resolvedType = type ?? (parentId == nil ? .regular : showReplyInChannel == true ? .regular : .reply)
         return MessageResponse(
             attachments: attachments,
-            cid: cid?.rawValue ?? channel?.cid.rawValue ?? "",
+            cid: cid?.rawValue ?? channel?.cid ?? "",
             command: .unique,
             createdAt: createdAt ?? XCTestCase.channelCreatedDate.addingTimeInterval(TimeInterval.random(in: 100...900)),
             custom: custom,

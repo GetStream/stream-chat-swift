@@ -60,7 +60,17 @@
             "search": false,
             "message_retention": "infinite",
             "uploads": true,
-            "name": "messaging"
+            "name": "messaging",
+            "count_messages": true,
+            "delivery_events": false,
+            "mark_messages_pending": false,
+            "polls": true,
+            "push_notifications": true,
+            "reminders": true,
+            "shared_locations": true,
+            "skip_last_msg_update_for_system_msgs": false,
+            "user_message_reminders": true,
+            "custom_events": false
         },
         "id": "new_channel_6293",
         "created_at": "2020-07-21T15:51:36.162939Z",
@@ -136,8 +146,10 @@
         "member_count": 2,
         "type": "messaging",
         "updated_at": "2020-07-21T15:51:36.162939Z",
-        "name": "Channel 6293",
-        "cid": "messaging:new_channel_6293"
+        "cid": "messaging:new_channel_6293",
+        "custom": {
+            "name": "Channel 6293"
+        }
     },
     "channel_type": "messaging",
     "channel_id": "new_channel_6293",
@@ -167,5 +179,6 @@
     },
     "created_at": "2020-07-21T15:51:53.487263087Z",
     "type": "notification.invite_rejected",
-    "cid": "messaging:new_channel_6293"
+    "cid": "messaging:new_channel_6293",
+    "custom": {}
 }

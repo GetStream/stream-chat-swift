@@ -32,25 +32,25 @@ final class ChannelEvents_Tests: XCTestCase {
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelUpdated")
         let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
-        XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
+        XCTAssertEqual(event?.channel.cid, "messaging:new_channel_7070")
         XCTAssertEqual(event?.payload.user?.id, "broken-waterfall-5")
     }
 
     func test_updated_usingServerSideAuth() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelUpdated_ServerSide")
         let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
-        XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
+        XCTAssertEqual(event?.channel.cid, "messaging:new_channel_7070")
         XCTAssertNil(event?.payload.user?.id)
     }
 
     func test_deleted() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelDeleted")
         let event = try eventDecoder.decode(from: json) as? ChannelDeletedEventDTO
-        XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "default-channel-1"))
+        XCTAssertEqual(event?.channel.cid, "messaging:default-channel-1")
         XCTAssertEqual(event?.createdAt.description, "2021-04-23 09:38:47 +0000")
         XCTAssertEqual(
             event?.payload.channel?.cid,
-            ChannelId(type: .messaging, id: "default-channel-1")
+            "messaging:default-channel-1"
         )
     }
 
@@ -85,7 +85,7 @@ final class ChannelEvents_Tests: XCTestCase {
         let mockData = XCTestCase.mockData(fromJSONFile: "ChannelTruncated")
 
         let event = try eventDecoder.decode(from: mockData) as? ChannelTruncatedEventDTO
-        XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "new_channel_7011"))
+        XCTAssertEqual(event?.channel.cid, "messaging:new_channel_7011")
         XCTAssertNil(event?.message)
 
         let rawPayload = try JSONDecoder.stream.decode(EventPayload.self, from: mockData)
@@ -96,7 +96,7 @@ final class ChannelEvents_Tests: XCTestCase {
         let mockData = XCTestCase.mockData(fromJSONFile: "ChannelTruncated_with_message")
 
         let event = try eventDecoder.decode(from: mockData) as? ChannelTruncatedEventDTO
-        XCTAssertEqual(event?.channel.cid, ChannelId(type: .messaging, id: "8372DE11-E"))
+        XCTAssertEqual(event?.channel.cid, "messaging:8372DE11-E")
 
         let rawPayload = try JSONDecoder.stream.decode(EventPayload.self, from: mockData)
         XCTAssertEqual(event?.payload.createdAt, rawPayload.createdAt)
@@ -136,7 +136,7 @@ final class ChannelEvents_Tests: XCTestCase {
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelUpdatedEvent)
         XCTAssertEqual(event.user?.id, eventPayload.user?.id)
         XCTAssertEqual(event.message?.id, eventPayload.message?.id)
-        XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
+        XCTAssertEqual(event.channel.cid.rawValue, eventPayload.channel?.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 
@@ -165,7 +165,7 @@ final class ChannelEvents_Tests: XCTestCase {
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelDeletedEvent)
         XCTAssertEqual(event.user?.id, eventPayload.user?.id)
-        XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
+        XCTAssertEqual(event.channel.cid.rawValue, eventPayload.channel?.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 
@@ -194,7 +194,7 @@ final class ChannelEvents_Tests: XCTestCase {
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ChannelTruncatedEvent)
         XCTAssertEqual(event.user?.id, eventPayload.user?.id)
-        XCTAssertEqual(event.channel.cid, eventPayload.channel?.cid)
+        XCTAssertEqual(event.channel.cid.rawValue, eventPayload.channel?.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
 

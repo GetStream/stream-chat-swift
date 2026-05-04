@@ -40,7 +40,7 @@ final class Chat_Tests: XCTestCase {
             watcherCount: 8,
             createdAtOffset: 0
         )
-        env.client.mockAPIClient.test_mockResponseResult(.success(initialChannelPayload))
+        env.client.mockAPIClient.test_mockResponseResult(.success(initialChannelPayload.asChannelStateResponse))
         try await setUpChat(usesMockedUpdaters: false)
         try await chat.get(watch: true)
         
@@ -56,7 +56,7 @@ final class Chat_Tests: XCTestCase {
             watcherCount: 1,
             createdAtOffset: 0
         )
-        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
+        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload.asChannelStateResponse))
         try await chat.get(watch: true)
         
         await XCTAssertEqual(3, chat.state.messages.count)
@@ -80,7 +80,7 @@ final class Chat_Tests: XCTestCase {
             watcherCount: 1,
             createdAtOffset: 0
         )
-        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
+        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload.asChannelStateResponse))
         try await chat.get(watch: true)
         
         await XCTAssertEqual(3, chat.state.messages.count)
@@ -104,7 +104,7 @@ final class Chat_Tests: XCTestCase {
             watcherCount: 1,
             createdAtOffset: 0
         )
-        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
+        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload.asChannelStateResponse))
         try await chat.get(watch: true)
         
         await XCTAssertEqual(3, chat.state.messages.count)
@@ -393,9 +393,9 @@ final class Chat_Tests: XCTestCase {
     
     func test_loadMembers_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         try await setUpChat(usesMockedUpdaters: false)
-        
+
         let apiResponse = makeChannelPayload(messageCount: 5, memberCount: 5, createdAtOffset: 0)
-        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
+        env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse.asChannelStateResponse))
         let paginationMembers = try await chat.loadMembers(with: Pagination(pageSize: 5))
         XCTAssertEqual(apiResponse.members.map(\.user?.id), paginationMembers.map(\.id))
         await XCTAssertEqual(apiResponse.members.map(\.user?.id), chat.state.members.map(\.id))
@@ -409,12 +409,12 @@ final class Chat_Tests: XCTestCase {
         
         // Initial load
         let initialResponse = makeChannelPayload(messageCount: 5, memberCount: 3, createdAtOffset: 0)
-        env.client.mockAPIClient.test_mockResponseResult(.success(initialResponse))
+        env.client.mockAPIClient.test_mockResponseResult(.success(initialResponse.asChannelStateResponse))
         try await chat.loadMembers(with: Pagination(pageSize: 3))
         
         // More
         let moreResponse = makeChannelPayload(messageCount: 0, memberCount: 5, createdAtOffset: 3)
-        env.client.mockAPIClient.test_mockResponseResult(.success(moreResponse))
+        env.client.mockAPIClient.test_mockResponseResult(.success(moreResponse.asChannelStateResponse))
         let paginationMembers = try await chat.loadMoreMembers(limit: 5)
         XCTAssertEqual(moreResponse.members.map(\.user?.id), paginationMembers.map(\.id))
         
@@ -917,15 +917,16 @@ final class Chat_Tests: XCTestCase {
         try await setUpChat(usesMockedUpdaters: false, loadState: false)
         
         // Accessing the state triggers loading the initial states
-        let allMessages = initialChannelPayload.messages + (initialChannelPayload.pendingMessages ?? [])
-        await XCTAssertEqual(allMessages.map(\.id), chat.state.messages.map(\.id))
+        let pendingIds = (initialChannelPayload.pendingMessages ?? []).compactMap { $0.message?.id }
+        let allMessageIds = initialChannelPayload.messages.map(\.id) + pendingIds
+        await XCTAssertEqual(allMessageIds, chat.state.messages.map(\.id))
     }
     
     func test_loadMessages_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         try await setUpChat(usesMockedUpdaters: false)
         let pageSize = 2
         let channelPayload = makeChannelPayload(messageCount: pageSize, createdAtOffset: 0)
-        env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
+        env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload.asChannelStateResponse))
         
         let result = try await chat.loadMessages(with: MessagesPagination(pageSize: pageSize))
         XCTAssertEqual(channelPayload.messages.map(\.id), result.map(\.id))
@@ -950,7 +951,7 @@ final class Chat_Tests: XCTestCase {
         
         // Load the first page which should reset the state
         let channelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 5)
-        env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
+        env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload.asChannelStateResponse))
         try await chat.loadMessages(with: MessagesPagination(pageSize: 3, parameter: nil))
         
         await MainActor.run {
@@ -975,7 +976,7 @@ final class Chat_Tests: XCTestCase {
 
         // Load older
         let channelPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 0)
-        env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
+        env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload.asChannelStateResponse))
         try await chat.loadOlderMessages()
         
         let expectedIds = (channelPayload.messages + initialChannelPayload.messages).map(\.id)
@@ -995,12 +996,12 @@ final class Chat_Tests: XCTestCase {
         
         // Reset has loaded state since we always load newest messages
         let initialChannelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 0)
-        env.client.mockAPIClient.test_mockResponseResult(.success(initialChannelPayload))
+        env.client.mockAPIClient.test_mockResponseResult(.success(initialChannelPayload.asChannelStateResponse))
         try await chat.loadMessages(around: initialChannelPayload.messages[1].id, limit: 2)
         
         // Load newer
         let channelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 5)
-        env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
+        env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload.asChannelStateResponse))
         try await chat.loadNewerMessages()
         
         let expectedIds = (initialChannelPayload.messages + channelPayload.messages).map(\.id)
@@ -1026,7 +1027,7 @@ final class Chat_Tests: XCTestCase {
  
         // Jump to a message
         let channelPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 10)
-        env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload))
+        env.client.mockAPIClient.test_mockResponseResult(.success(channelPayload.asChannelStateResponse))
         try await chat.loadMessages(around: channelPayload.messages[1].id, limit: 2)
         
         XCTAssertEqual(channelPayload.messages.map(\.id), await chat.state.messages.map(\.id))
@@ -1089,7 +1090,7 @@ final class Chat_Tests: XCTestCase {
         
         let messageId = String.unique
         let messagePayload = try XCTUnwrap(makeChannelPayload(messageCount: 1, createdAtOffset: 0).messages.first)
-        let apiResponse = GetMessageResponse(duration: "", message: MessageWithChannelResponse(messageResponse: messagePayload, channel: ChannelDetailPayload.dummy(cid: .unique).asChannelResponse!))
+        let apiResponse = GetMessageResponse(duration: "", message: MessageWithChannelResponse(messageResponse: messagePayload, channel: ChannelDetailPayload.dummy(cid: .unique).asChannelResponse))
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         let messageState = try await chat.messageState(for: messageId)
         

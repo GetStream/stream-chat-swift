@@ -224,6 +224,7 @@ extension NSManagedObjectContext {
         guard let parentMessagePayload = payload.parentMessagePayload else {
             throw ClientError("Thread payload is missing parent message")
         }
+        let cid = try ChannelId(cid: channelPayload.cid)
         let threadDTO = ThreadDTO.loadOrCreate(
             parentMessageId: payload.parentMessageId,
             context: self,
@@ -285,12 +286,12 @@ extension NSManagedObjectContext {
         }
 
         if let draft = payload.draft {
-            parentMessageDTO.draftReply = try saveDraftMessage(payload: draft, for: channelPayload.cid, cache: cache)
+            parentMessageDTO.draftReply = try saveDraftMessage(payload: draft, for: cid, cache: cache)
         } else {
             /// If the payload does not contain a draft reply, we should
             /// delete the existing draft reply if it exists.
             if let draft = parentMessageDTO.draftReply {
-                deleteDraftMessage(in: channelPayload.cid, threadId: draft.parentMessageId)
+                deleteDraftMessage(in: cid, threadId: draft.parentMessageId)
                 parentMessageDTO.draftReply = nil
             }
         }

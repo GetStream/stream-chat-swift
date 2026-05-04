@@ -1290,12 +1290,24 @@
                     "search": false,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "messaging"
+                    "name": "messaging",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
-                "image": "",
                 "example": 1,
-                "name": "The water cooler",
-                "last_message_at": "2020-06-10T05:59:48.054692Z"
+                "last_message_at": "2020-06-10T05:59:48.054692Z",
+                "custom": {
+                    "name": "The water cooler",
+                    "image": ""
+                }
             },
             "read": [
                 {
@@ -1528,7 +1540,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -2040,7 +2053,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "usenameinsteadplz-5fac5981-8aec-4b90-a853-a9e5d36924d1",
@@ -2146,7 +2160,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "betausenameinsteadplz-03b2d247-6b56-4b8a-b41d-1eddd7217ddc",
@@ -2489,12 +2504,24 @@
                     "search": false,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "messaging"
+                    "name": "messaging",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "messaging",
                 "updated_at": "2019-12-12T15:41:05.022206Z",
-                "name": "Channel 8884",
-                "cid": "messaging:new_channel_8884"
+                "cid": "messaging:new_channel_8884",
+                "custom": {
+                    "name": "Channel 8884"
+                }
             },
             "read": [
                 {
@@ -2589,7 +2616,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -2916,7 +2944,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "ad59e5e7-2092-4b50-b9bf-f46b2bf26145",
@@ -2959,7 +2988,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "84f77a0e-354a-4407-86a5-a71ad9912b61",
@@ -3002,7 +3032,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "a7411fd7-d271-46ed-beb9-d095c54d5026",
@@ -3045,7 +3076,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "09e79c84-8e0d-45f9-a466-aab6c961b460",
@@ -3088,7 +3120,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "dc6c3a48-7533-43cd-9582-5d0e88f18eaf",
@@ -3131,7 +3164,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "ba4c8d99-eb57-40e2-978c-87c07f35f00f",
@@ -3174,7 +3208,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "d39a60c4-7ae8-4b36-acf4-7691ad61d3cb",
@@ -3217,7 +3252,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "49ec3c79-1abc-4685-941f-54ab36b9666a",
@@ -3260,7 +3296,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "ae96cb9a-3507-4259-97c1-ea2142b9a579",
@@ -3303,7 +3340,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -3403,12 +3441,24 @@
                     "search": false,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "messaging"
+                    "name": "messaging",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "messaging",
                 "updated_at": "2020-06-05T12:53:09.857739Z",
-                "name": "Channel 7487",
-                "cid": "messaging:new_channel_7487"
+                "cid": "messaging:new_channel_7487",
+                "custom": {
+                    "name": "Channel 7487"
+                }
             },
             "read": [
                 {
@@ -3557,7 +3607,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -3602,7 +3653,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "816f3adf-adda-4bb8-a0ee-d541558a2a35",
@@ -3645,7 +3697,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "506edce7-1b8d-4167-9c40-53e85ebaf1ea",
@@ -3688,7 +3741,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "f3892fda-cece-4652-ab48-6a140b43f115",
@@ -3731,7 +3785,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "48525631-2ed0-4726-a5f5-57438eb673e0",
@@ -3774,7 +3829,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "9c9013e7-5210-472a-9d1b-25f2391a2ce6",
@@ -3817,7 +3873,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "857ebebf-8815-424a-a55e-2ca57499ec8e",
@@ -3860,7 +3917,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "fca830e1-cfd5-42f1-a35d-47e37739d6e7",
@@ -3903,7 +3961,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "d629eaad-18e3-4fc0-b634-9c525c1b7622",
@@ -3946,7 +4005,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "957f1472-cbe4-42f1-b11d-1b84d08b6419",
@@ -3989,7 +4049,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "e50dad23-bcd2-4349-9424-65c429a53f66",
@@ -4032,7 +4093,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "c74a442f-5ff1-4268-b646-5d06ffa0244e",
@@ -4075,7 +4137,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "8aa90b87-5e7a-4d73-9b66-799495b8dd4d",
@@ -4118,7 +4181,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "0e310948-f236-4bbe-886c-6db10d067bf5",
@@ -4161,7 +4225,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "741db1f4-9856-414b-be39-a98eb32e9a18",
@@ -4204,7 +4269,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "8f45fa48-9c3c-4652-a534-2c54ace399ad",
@@ -4247,7 +4313,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "9f695cc0-0e15-445e-897d-be3f2adbc556",
@@ -4290,7 +4357,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "0511251f-c8c1-4ec3-a887-c99bf4876bfb",
@@ -4333,7 +4401,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -4433,12 +4502,24 @@
                     "search": false,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "messaging"
+                    "name": "messaging",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "messaging",
                 "updated_at": "2020-06-08T11:57:36.660819Z",
-                "name": "Channel 1751",
-                "cid": "messaging:new_channel_1751"
+                "cid": "messaging:new_channel_1751",
+                "custom": {
+                    "name": "Channel 1751"
+                }
             },
             "read": [
                 {
@@ -4587,7 +4668,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -4632,7 +4714,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "b6fcb352-51b7-4864-a69c-d03682a512e8",
@@ -4675,7 +4758,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "8e8329de-434a-4a31-9d55-081cc4a697b1",
@@ -4718,7 +4802,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "31f21538-2ebd-4efa-ba10-b36b94e6358c",
@@ -4761,7 +4846,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "53262b35-517c-4604-800b-bacad2d676ce",
@@ -4804,7 +4890,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "37b5cb41-fffe-4887-8ca7-1100d264f194",
@@ -4847,7 +4934,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "d6454f14-da3b-40b8-9900-d17affd0fcad",
@@ -4890,7 +4978,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "d9d610ac-1ce9-44e5-90bf-508784a31979",
@@ -4933,7 +5022,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "052f547b-257b-4b51-b41b-03fa53fe51ab",
@@ -4976,7 +5066,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "af295389-8be6-4ba2-b2eb-f4a187f4fbbb",
@@ -5019,7 +5110,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "1713d645-0660-42f5-a3b5-b9158ce18049",
@@ -5062,7 +5154,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "14cd2443-5302-4de5-a7dc-9deb5dc35fb8",
@@ -5105,7 +5198,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -5205,12 +5299,24 @@
                     "search": false,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "messaging"
+                    "name": "messaging",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "messaging",
                 "updated_at": "2020-06-08T11:52:39.731147Z",
-                "name": "Channel 5000",
-                "cid": "messaging:new_channel_5000"
+                "cid": "messaging:new_channel_5000",
+                "custom": {
+                    "name": "Channel 5000"
+                }
             },
             "read": [
                 {
@@ -5359,7 +5465,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -5404,7 +5511,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "095801b0-d074-4e0f-bd4c-d7d0a3678ac6",
@@ -5447,7 +5555,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "4c256c12-cb4f-49b2-8a20-6cdc2324c083",
@@ -5490,7 +5599,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -5589,12 +5699,24 @@
                     "search": false,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "messaging"
+                    "name": "messaging",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "messaging",
                 "updated_at": "2020-06-08T11:51:12.271858Z",
-                "name": "Channel 3124",
-                "cid": "messaging:new_channel_3124"
+                "cid": "messaging:new_channel_3124",
+                "custom": {
+                    "name": "Channel 3124"
+                }
             },
             "read": [
                 {
@@ -5743,7 +5865,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -5791,7 +5914,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "1e350c22-c9a5-48a6-a51e-8a993c9cbd56",
@@ -5837,7 +5961,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -5937,12 +6062,24 @@
                     "search": false,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "messaging"
+                    "name": "messaging",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "messaging",
                 "updated_at": "2020-06-08T11:50:51.389239Z",
-                "name": "Channel 6264",
-                "cid": "messaging:new_channel_6264"
+                "cid": "messaging:new_channel_6264",
+                "custom": {
+                    "name": "Channel 6264"
+                }
             },
             "read": [
                 {
@@ -6037,7 +6174,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -6085,7 +6223,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "1d093306-faae-4bb2-ba70-5a095f7d3028",
@@ -6131,7 +6270,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "8bf6c7c8-a204-4730-bbc9-1844b0688b44",
@@ -6177,7 +6317,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -6277,12 +6418,24 @@
                     "search": false,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "messaging"
+                    "name": "messaging",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "messaging",
                 "updated_at": "2020-06-08T11:49:28.886904Z",
-                "name": "Channel 7940",
-                "cid": "messaging:new_channel_7940"
+                "cid": "messaging:new_channel_7940",
+                "custom": {
+                    "name": "Channel 7940"
+                }
             },
             "read": [
                 {
@@ -6377,7 +6530,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -6425,7 +6579,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "e7c63a1c-aee7-4e35-8148-7f1ad839d133",
@@ -6471,7 +6626,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "9bf11f2f-9f7e-419c-8c6c-0480c9881de0",
@@ -6517,7 +6673,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -6617,11 +6774,22 @@
                     "search": true,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "team"
+                    "name": "team",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "team",
                 "updated_at": "2020-06-06T02:32:06.86138Z",
-                "cid": "team:CD2595FE-985E-47A6-9E35-79F1A1AA7394"
+                "cid": "team:CD2595FE-985E-47A6-9E35-79F1A1AA7394",
+                "custom": {}
             },
             "read": [
                 {
@@ -6758,7 +6926,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -6803,7 +6972,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "fa7ad527-4808-4d06-a6cd-a8faffa7d257",
@@ -6846,7 +7016,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "a65cec92-57e4-4587-a7f2-a09d7a63e9e2",
@@ -6889,7 +7060,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "348f4e6c-64f4-4e94-a298-e83ab325c7f1",
@@ -6932,7 +7104,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "541ca928-5dbe-4d6d-8c4c-583373eef321",
@@ -6975,7 +7148,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "777478ea-eb7e-4f47-a91d-004fdd0844fc",
@@ -7018,7 +7192,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "4bfc1677-d70a-4b05-8b8d-02d8d6572732",
@@ -7061,7 +7236,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "4240528c-e082-43f1-8659-63bc12bcc958",
@@ -7104,7 +7280,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "10fcb71a-6a32-446f-96ac-b5c4f609118d",
@@ -7147,7 +7324,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "821d7c83-5b4d-484f-9321-6ca92a8e49a5",
@@ -7193,7 +7371,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "7cf11988-c7eb-4533-9a69-75cacaf50b7d",
@@ -7239,7 +7418,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "93e3d6de-e44c-4ac1-80f2-929abe6695e4",
@@ -7285,7 +7465,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "fa96905a-8f6d-4cc8-a845-3a7e9a9adc8b",
@@ -7331,7 +7512,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "dd532302-cffd-47e7-9498-1868aed9a0ce",
@@ -7377,7 +7559,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "ae8b1d63-c8dc-4233-83e0-6ceee11e4086",
@@ -7420,7 +7603,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "45619207-0b7f-4b22-aa57-256ae0f9d14a",
@@ -7463,7 +7647,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "32160a20-dfa0-4bfa-928e-98a127e688ad",
@@ -7506,7 +7691,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "dd686419-3b8d-4e81-9601-3bde43c94183",
@@ -7549,7 +7735,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "f8d8d7e2-7ee9-476a-8669-f91a0478af09",
@@ -7592,7 +7779,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "3ceb44ba-852a-4edf-966d-9cea969393f5",
@@ -7635,7 +7823,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "3907bd2f-4d4d-4915-85f8-8e74aafbb893",
@@ -7678,7 +7867,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "cdd434da-1d77-4b29-8c04-d019b61389e4",
@@ -7721,7 +7911,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "f53ef7e0-71a3-4fe4-921e-c6d7471a314b",
@@ -7764,7 +7955,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "97841d73-7bba-4699-86f9-70df70c6a2c8",
@@ -7807,7 +7999,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "2a736394-cb3b-4273-9ed4-ad92d39babed",
@@ -7850,7 +8043,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -7950,12 +8144,24 @@
                     "search": false,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "messaging"
+                    "name": "messaging",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "messaging",
                 "updated_at": "2019-12-13T14:29:33.347005Z",
-                "name": "Channel 1877",
-                "cid": "messaging:new_channel_1877"
+                "cid": "messaging:new_channel_1877",
+                "custom": {
+                    "name": "Channel 1877"
+                }
             },
             "read": [
                 {
@@ -8104,7 +8310,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -8152,7 +8359,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "fff18a09-462b-40c8-9650-221acd5a5fc5",
@@ -8198,7 +8406,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "f5e9c987-7dcc-4b2d-a018-2ab0b28a94a7",
@@ -8259,7 +8468,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "3231868e-a21f-4597-b0fe-eb8f3ed20fe7",
@@ -8305,7 +8515,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -8405,11 +8616,22 @@
                     "search": true,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "team"
+                    "name": "team",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "team",
                 "updated_at": "2020-06-04T14:53:35.136401Z",
-                "cid": "team:31149B30-87CC-4FBF-B374-E9FFF3A044F6"
+                "cid": "team:31149B30-87CC-4FBF-B374-E9FFF3A044F6",
+                "custom": {}
             },
             "read": [
                 {
@@ -8546,7 +8768,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -8697,7 +8920,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "broken-waterfall-5-dbc8f713-b1d5-461e-aabd-6771e78a1d16",
@@ -8743,7 +8967,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "broken-waterfall-5-e49dc604-0d80-484e-80c2-82c81ffba79d",
@@ -8789,7 +9014,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "broken-waterfall-5-fdbe99d6-f851-407d-bef6-eeca976cb3b1",
@@ -8835,7 +9061,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "broken-waterfall-5-ef6f0426-af2d-4717-b0f1-2a3b0ecb228a",
@@ -8881,7 +9108,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "bender-7378800f-7222-4cb9-89f5-4689a32d8a2a",
@@ -9030,7 +9258,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "44f14937-bd63-4e64-9766-3bad0135f671",
@@ -9076,7 +9305,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "bender-832ef2cb-4ab4-4925-9416-f0be8419818f",
@@ -9225,7 +9455,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "f9f6f049-2056-416f-b99c-2c4475f5e690",
@@ -9271,7 +9502,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "4aebdd28-209f-4bf5-a045-5100782a8b3d",
@@ -9317,7 +9549,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "8e9da01d-22c0-4fa7-9a44-609d9aed2e96",
@@ -9363,7 +9596,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "0f33c1cd-2408-4e18-8f43-ffeed2d91a5f",
@@ -9409,7 +9643,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "bender-fb3f22f8-80b4-466e-8999-05a43233a786",
@@ -9558,7 +9793,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "c7df405b-e543-4fdc-93a4-ddce28e86670",
@@ -9604,7 +9840,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "betausenameinsteadplz-1bf4a505-f44d-4463-a60f-1540e53262cd",
@@ -9660,7 +9897,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -9760,12 +9998,24 @@
                     "search": false,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "messaging"
+                    "name": "messaging",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "messaging",
                 "updated_at": "2019-12-16T15:19:47.266902Z",
-                "name": "Channel 4371",
-                "cid": "messaging:new_channel_4371"
+                "cid": "messaging:new_channel_4371",
+                "custom": {
+                    "name": "Channel 4371"
+                }
             },
             "read": [
                 {
@@ -9861,7 +10111,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -9901,7 +10152,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "Steveusenameinsteadplz-7441779b-f8ad-4ed4-a533-22480910d85e",
@@ -10062,7 +10314,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "usenameinsteadplz-3d8f0c9e-3a73-4f20-8d07-b172eae93e62",
@@ -10113,7 +10366,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "YoungShatnerusenameinsteadplz-269e9a96-35d6-4add-ae4b-a099e6f30262",
@@ -10151,7 +10405,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "YoungShatnerusenameinsteadplz-c893dc5e-29af-46bc-9d07-dab9ffcf9dc7",
@@ -10189,7 +10444,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "YoungShatnerusenameinsteadplz-c3e0e02f-a257-4ed6-bb9e-cc3a18b4c1a0",
@@ -10260,7 +10516,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "TheBestBritusenameinsteadplz-aa6a7160-6d7b-4e79-a56a-ac08d7161140",
@@ -10331,7 +10588,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "YoungShatnerusenameinsteadplz-532ec0fe-c2fb-4785-a100-cad6d24f3944",
@@ -10382,7 +10640,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "TheBestBritusenameinsteadplz-d1cc401e-73a5-499b-a384-72a60d17f06e",
@@ -10464,7 +10723,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "thierry-f23ee25d-2ca8-4e35-aa89-28e1bfa2d055",
@@ -10593,7 +10853,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "YoungShatnerusenameinsteadplz-11c2ba44-3fef-4c1e-9838-3cc7bad7ecba",
@@ -10644,7 +10905,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "Thierryusenameinsteadplz-b8ac6563-8fe1-4a87-803a-ab63c7d6ef97",
@@ -10682,7 +10944,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "YoungShatnerusenameinsteadplz-24a726ef-9481-42b4-b3fa-9b69f6712550",
@@ -10720,7 +10983,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "Thierryusenameinsteadplz-b6e3d374-d598-4384-a7c7-58b7327b139a",
@@ -10894,7 +11158,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "YoungShatnerusenameinsteadplz-dd55f297-1383-426d-9801-8f125031fcec",
@@ -10932,7 +11197,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "YoungShatnerusenameinsteadplz-9663bbbd-f319-4971-a7b5-ac21bf1555dd",
@@ -10983,7 +11249,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "usenameinsteadplz-f387386c-7aa3-4f97-9714-47b1f4d469b9",
@@ -11021,7 +11288,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "Steveusenameinsteadplz-e92166f3-ca97-4e79-b766-4fca1b292cb5",
@@ -11270,7 +11538,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "usenameinsteadplz-62de808c-e4e9-44e1-9bcf-7b5083dfca35",
@@ -11308,7 +11577,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "usenameinsteadplz-5fc89657-9d82-49aa-a11a-27b82b7c8160",
@@ -11359,7 +11629,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "usenameinsteadplz-a0478aab-61d7-46ac-b252-8a89053a3d8d",
@@ -11410,7 +11681,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "usenameinsteadplz-d0a99249-25c6-4e13-9990-6b4d58cebd2a",
@@ -11448,7 +11720,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "usenameinsteadplz-1883395e-d708-420c-877d-ecdc9f909ec6",
@@ -11499,7 +11772,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "usenameinsteadplz-c817812c-e78b-4b40-b811-a120b692fcda",
@@ -11550,7 +11824,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "betausenameinsteadplz-af05fa65-2074-4bb6-bd74-68ce0779fc01",
@@ -11588,7 +11863,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -11796,11 +12072,23 @@
                     "search": false,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "messaging"
+                    "name": "messaging",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
-                "image": "https://i.imgur.com/1Oe1TDf.jpg",
-                "name": "Updated - Test Channel 3011",
-                "last_message_at": "2020-05-22T13:00:27.858999Z"
+                "last_message_at": "2020-05-22T13:00:27.858999Z",
+                "custom": {
+                    "name": "Updated - Test Channel 3011",
+                    "image": "https://i.imgur.com/1Oe1TDf.jpg"
+                }
             },
             "read": [
                 {
@@ -12031,7 +12319,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -12079,7 +12368,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "7635fb32-8c86-44c5-8511-bd680534544d",
@@ -12125,7 +12415,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "7f602d85-4b6b-47cc-ac0a-16370bad1ad1",
@@ -12186,7 +12477,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -12286,11 +12578,22 @@
                     "search": true,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "team"
+                    "name": "team",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "team",
                 "updated_at": "2020-05-18T02:33:45.567418Z",
-                "cid": "team:7E76CBEF-BAD6-4713-BF3A-18FE4F4A750F"
+                "cid": "team:7E76CBEF-BAD6-4713-BF3A-18FE4F4A750F",
+                "custom": {}
             },
             "membership": {
                 "created_at": "2020-05-18T02:33:45.574394Z",
@@ -12380,7 +12683,8 @@
                     "notifications_muted": false,
                     "custom": {}
                 }
-            ]
+            ],
+            "threads": []
         },
         {
             "messages": [
@@ -12428,7 +12732,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "de25ec68-d9bb-46d2-a5e1-9f0fe691bd76",
@@ -12474,7 +12779,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "a7eefc4e-3207-436e-a00e-5d63bdd2a5cb",
@@ -12535,7 +12841,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -12635,11 +12942,22 @@
                     "search": true,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "team"
+                    "name": "team",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "team",
                 "updated_at": "2020-05-17T02:33:45.579962Z",
-                "cid": "team:3713C2BC-F865-44FE-807F-85CD7175FCB2"
+                "cid": "team:3713C2BC-F865-44FE-807F-85CD7175FCB2",
+                "custom": {}
             },
             "membership": {
                 "created_at": "2020-05-17T02:33:45.586276Z",
@@ -12729,7 +13047,8 @@
                     "notifications_muted": false,
                     "custom": {}
                 }
-            ]
+            ],
+            "threads": []
         },
         {
             "messages": [
@@ -12777,7 +13096,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -12877,11 +13197,22 @@
                     "search": true,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "team"
+                    "name": "team",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "team",
                 "updated_at": "2020-05-17T02:33:12.370552Z",
-                "cid": "team:ACAE4EC2-046C-4298-85EA-5A7E41C9CB6F"
+                "cid": "team:ACAE4EC2-046C-4298-85EA-5A7E41C9CB6F",
+                "custom": {}
             },
             "membership": {
                 "created_at": "2020-05-17T02:33:12.373057Z",
@@ -12971,7 +13302,8 @@
                     "notifications_muted": false,
                     "custom": {}
                 }
-            ]
+            ],
+            "threads": []
         },
         {
             "messages": [
@@ -13019,7 +13351,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -13119,11 +13452,22 @@
                     "search": true,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "team"
+                    "name": "team",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "team",
                 "updated_at": "2020-05-17T02:32:06.96153Z",
-                "cid": "team:9E38A3E7-315C-441E-87CE-D65DEE26D390"
+                "cid": "team:9E38A3E7-315C-441E-87CE-D65DEE26D390",
+                "custom": {}
             },
             "membership": {
                 "created_at": "2020-05-17T02:32:06.96436Z",
@@ -13213,7 +13557,8 @@
                     "notifications_muted": false,
                     "custom": {}
                 }
-            ]
+            ],
+            "threads": []
         },
         {
             "messages": [
@@ -13261,7 +13606,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "6e11d226-8cc4-48f0-81a5-0c86da83ab4c",
@@ -13307,7 +13653,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "f6283908-3566-49e4-a7e1-803c7a26fd65",
@@ -13368,7 +13715,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -13468,11 +13816,22 @@
                     "search": true,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "team"
+                    "name": "team",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "team",
                 "updated_at": "2020-05-17T02:30:58.02951Z",
-                "cid": "team:F6756D54-1EB2-4075-9AB0-F3E4AA2A5EC6"
+                "cid": "team:F6756D54-1EB2-4075-9AB0-F3E4AA2A5EC6",
+                "custom": {}
             },
             "membership": {
                 "created_at": "2020-05-17T02:30:58.05297Z",
@@ -13562,7 +13921,8 @@
                     "notifications_muted": false,
                     "custom": {}
                 }
-            ]
+            ],
+            "threads": []
         },
         {
             "messages": [
@@ -13610,7 +13970,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "824f93c4-135c-4e53-ac46-c7f9e01ec629",
@@ -13656,7 +14017,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "d6553fb0-2926-415d-8c84-8c56367509a4",
@@ -13740,7 +14102,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -13840,11 +14203,22 @@
                     "search": true,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "team"
+                    "name": "team",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "team",
                 "updated_at": "2020-05-15T12:15:28.677874Z",
-                "cid": "team:A5DC9B6A-AB4A-493F-95A1-73409019F9EF"
+                "cid": "team:A5DC9B6A-AB4A-493F-95A1-73409019F9EF",
+                "custom": {}
             },
             "read": [
                 {
@@ -13963,7 +14337,8 @@
                 "channel_role": "channel_member",
                 "notifications_muted": false,
                 "custom": {}
-            }
+            },
+            "threads": []
         },
         {
             "messages": [
@@ -14011,7 +14386,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "fc136d5c-6591-48ac-b78a-1a593e1a6cfd",
@@ -14057,7 +14433,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 },
                 {
                     "id": "29b9ec73-0da4-49a9-afcf-151cf31cc723",
@@ -14141,7 +14518,8 @@
                     "deleted_reply_count": 0,
                     "restricted_visibility": [],
                     "shadowed": false,
-                    "custom": {}
+                    "custom": {},
+                    "pinned": false
                 }
             ],
             "pinned_messages": [
@@ -14241,11 +14619,22 @@
                     "search": true,
                     "message_retention": "infinite",
                     "uploads": true,
-                    "name": "team"
+                    "name": "team",
+                    "count_messages": true,
+                    "delivery_events": false,
+                    "mark_messages_pending": false,
+                    "polls": true,
+                    "push_notifications": true,
+                    "reminders": true,
+                    "shared_locations": true,
+                    "skip_last_msg_update_for_system_msgs": false,
+                    "user_message_reminders": true,
+                    "custom_events": false
                 },
                 "type": "team",
                 "updated_at": "2020-05-15T02:42:18.260686Z",
-                "cid": "team:BCC7555C-C3BE-438A-9791-CDB9B7B04C8E"
+                "cid": "team:BCC7555C-C3BE-438A-9791-CDB9B7B04C8E",
+                "custom": {}
             },
             "membership": {
                 "created_at": "2020-05-15T02:42:18.263412Z",
@@ -14335,7 +14724,8 @@
                     "notifications_muted": false,
                     "custom": {}
                 }
-            ]
+            ],
+            "threads": []
         }
     ],
     "duration": "146.30ms"

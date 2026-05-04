@@ -107,9 +107,10 @@
                 "skip_last_msg_update_for_system_msgs": false,
                 "user_message_reminders": false
             },
-            "name": "Cult meetup",
             "is_cool": true,
-            "custom": {}
+            "custom": {
+                "name": "Cult meetup"
+            }
         },
         "parent_message_id": "8873fa5a-ddc2-4361-a2c6-137af90fb53e",
         "parent_message": {
@@ -268,5 +269,6 @@
         "custom": {}
     },
     "type": "thread.updated",
-    "created_at": "2024-07-08T17:59:20.17915422Z"
+    "created_at": "2024-07-08T17:59:20.17915422Z",
+    "custom": {}
 }

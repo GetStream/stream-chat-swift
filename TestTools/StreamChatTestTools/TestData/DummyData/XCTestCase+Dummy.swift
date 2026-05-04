@@ -182,48 +182,45 @@ extension XCTestCase {
 
         let lastMessageAt: Date? = payloadMessages.map(\.createdAt).max()
 
-        let payload: ChannelPayload =
-            .init(
-                channel: .init(
-                    cid: channelId,
-                    name: name,
-                    imageURL: .unique(),
-                    extraData: channelExtraData,
-                    typeRawValue: channelId.type.rawValue,
-                    lastMessageAt: lastMessageAt,
-                    createdAt: createdAt,
-                    deletedAt: nil,
-                    updatedAt: .unique,
-                    truncatedAt: truncatedAt,
-                    createdBy: dummyUser,
-                    config: channelConfig,
-                    filterTags: filterTags,
-                    ownCapabilities: ownCapabilities,
-                    isDisabled: false,
-                    isFrozen: true,
-                    isBlocked: blocked,
-                    isHidden: hidden,
-                    members: members,
-                    memberCount: 100,
-                    messageCount: 100,
-                    team: .unique,
-                    cooldownDuration: cooldownDuration ?? .random(in: 0...120)
-                ),
-                watcherCount: watchers?.count ?? 1,
-                watchers: watchers ?? [dummyUser],
-                members: members,
-                membership: includeMembership ? members.first : nil,
-                messages: payloadMessages,
-                pendingMessages: pendingMessages,
-                pinnedMessages: pinnedMessages,
-                channelReads: channelReads ?? [dummyChannelRead],
-                isHidden: false,
-                draft: nil,
-                activeLiveLocations: [],
-                pushPreference: pushPreference
-            )
+        let detail = ChannelDetailPayload.dummy(
+            cid: channelId,
+            name: name,
+            imageURL: .unique(),
+            extraData: channelExtraData,
+            lastMessageAt: lastMessageAt,
+            createdAt: createdAt,
+            updatedAt: .unique,
+            truncatedAt: truncatedAt,
+            createdBy: dummyUser,
+            config: channelConfig,
+            filterTags: filterTags,
+            ownCapabilities: ownCapabilities,
+            isFrozen: true,
+            isBlocked: blocked,
+            isDisabled: false,
+            isHidden: hidden,
+            members: members,
+            memberCount: 100,
+            messageCount: 100,
+            team: .unique,
+            cooldownDuration: cooldownDuration ?? .random(in: 0...120)
+        )
 
-        return payload
+        return ChannelPayload.dummy(
+            channel: detail,
+            watcherCount: watchers?.count ?? 1,
+            watchers: watchers ?? [dummyUser],
+            members: members,
+            membership: includeMembership ? members.first : nil,
+            messages: payloadMessages,
+            pendingMessages: pendingMessages ?? [],
+            pinnedMessages: pinnedMessages,
+            channelReads: channelReads ?? [dummyChannelRead],
+            isHidden: false,
+            draft: nil,
+            activeLiveLocations: [],
+            pushPreference: pushPreference
+        )
     }
 
     var dummyMessageWithNoExtraData: MessagePayload {
@@ -284,71 +281,62 @@ extension XCTestCase {
                 updatedAt: .unique
             )
 
-        let payload: ChannelPayload =
-            .init(
-                channel: .init(
-                    cid: channelId,
-                    name: .unique,
-                    imageURL: .unique(),
-                    extraData: [:],
-                    typeRawValue: channelId.type.rawValue,
-                    lastMessageAt: .unique,
-                    createdAt: .unique,
-                    deletedAt: .unique,
-                    updatedAt: .unique,
-                    truncatedAt: nil,
-                    createdBy: dummyUser,
-                    config: .init(
-                        reactionsEnabled: true,
-                        typingEventsEnabled: true,
-                        readEventsEnabled: true,
-                        connectEventsEnabled: true,
-                        uploadsEnabled: true,
-                        repliesEnabled: true,
-                        quotesEnabled: true,
-                        searchEnabled: true,
-                        mutesEnabled: true,
-                        urlEnrichmentEnabled: true,
-                        messageRetention: "1000",
-                        maxMessageLength: 100,
-                        commands: [
-                            .init(
-                                name: "test",
-                                description: "test commant",
-                                set: "test",
-                                args: "test"
-                            )
-                        ],
-                        createdAt: XCTestCase.channelCreatedDate,
-                        updatedAt: .unique
-                    ),
-                    filterTags: nil,
-                    ownCapabilities: [],
-                    isDisabled: false,
-                    isFrozen: true,
-                    isBlocked: false,
-                    isHidden: nil,
-                    members: nil,
-                    memberCount: 100,
-                    messageCount: 100,
-                    team: .unique,
-                    cooldownDuration: .random(in: 0...120)
-                ),
-                watcherCount: 10,
-                watchers: [dummyUser],
-                members: [member],
-                membership: member,
-                messages: [dummyMessageWithNoExtraData],
-                pendingMessages: nil,
-                pinnedMessages: [dummyMessageWithNoExtraData],
-                channelReads: [dummyChannelReadWithNoExtraData],
-                isHidden: nil,
-                draft: nil,
-                activeLiveLocations: [],
-                pushPreference: nil
-            )
+        let detail = ChannelDetailPayload.dummy(
+            cid: channelId,
+            name: .unique,
+            imageURL: .unique(),
+            extraData: [:],
+            lastMessageAt: .unique,
+            createdAt: .unique,
+            deletedAt: .unique,
+            updatedAt: .unique,
+            createdBy: dummyUser,
+            config: .init(
+                reactionsEnabled: true,
+                typingEventsEnabled: true,
+                readEventsEnabled: true,
+                connectEventsEnabled: true,
+                uploadsEnabled: true,
+                repliesEnabled: true,
+                quotesEnabled: true,
+                searchEnabled: true,
+                mutesEnabled: true,
+                urlEnrichmentEnabled: true,
+                messageRetention: "1000",
+                maxMessageLength: 100,
+                commands: [
+                    .init(
+                        name: "test",
+                        description: "test commant",
+                        set: "test",
+                        args: "test"
+                    )
+                ],
+                createdAt: XCTestCase.channelCreatedDate,
+                updatedAt: .unique
+            ),
+            ownCapabilities: [],
+            isFrozen: true,
+            isBlocked: false,
+            isDisabled: false,
+            isHidden: nil,
+            members: [],
+            memberCount: 100,
+            messageCount: 100,
+            team: .unique,
+            cooldownDuration: .random(in: 0...120)
+        )
 
-        return payload
+        return ChannelPayload.dummy(
+            channel: detail,
+            watcherCount: 10,
+            watchers: [dummyUser],
+            members: [member],
+            membership: member,
+            messages: [dummyMessageWithNoExtraData],
+            pinnedMessages: [dummyMessageWithNoExtraData],
+            channelReads: [dummyChannelReadWithNoExtraData]
+        )
     }
 
     func dummyThreadPayload(

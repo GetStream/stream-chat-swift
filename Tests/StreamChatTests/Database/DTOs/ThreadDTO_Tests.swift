@@ -115,7 +115,7 @@ final class ThreadDTO_Tests: XCTestCase {
         XCTAssertEqual(model.reads.count, 1)
         XCTAssertEqual(model.parentMessageId, payload.parentMessageId)
         XCTAssertEqual(model.parentMessage.id, payload.parentMessage?.id)
-        XCTAssertEqual(model.channel.cid, payload.channelDetailPayload?.cid)
+        XCTAssertEqual(model.channel.cid.rawValue, payload.channelDetailPayload?.cid)
         XCTAssertEqual(model.createdBy.id, payload.createdBy?.id)
         XCTAssertEqual(model.lastMessageAt, payload.lastMessageAt)
         XCTAssertEqual(model.createdAt, payload.createdAt)

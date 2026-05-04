@@ -20,7 +20,7 @@ class ChannelRepository: @unchecked Sendable {
             switch result {
             case .success(let channelPayload):
                 database.write(converting: { session in
-                    let dto = try session.saveChannel(payload: channelPayload)
+                    let dto = try session.saveChannel(payload: channelPayload.asChannelPayload)
                     let model = try dto.asModel()
                     // Currently there is no direct payload to model conversion available
                     // Therefore, the channel has to be added to the context and then converted.

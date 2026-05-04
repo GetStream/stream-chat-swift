@@ -44,5 +44,6 @@
     "channel_id": "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY",
     "created_at": "2021-04-23T12:16:24.839099398Z",
     "type": "member.updated",
-    "cid": "messaging:!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY"
+    "cid": "messaging:!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY",
+    "custom": {}
 }

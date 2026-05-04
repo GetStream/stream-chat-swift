@@ -239,7 +239,8 @@ extension NSManagedObjectContext {
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
-        let dto = ChannelDTO.loadOrCreate(cid: payload.cid, context: self, cache: cache)
+        let cid = try ChannelId(cid: payload.cid)
+        let dto = ChannelDTO.loadOrCreate(cid: cid, context: self, cache: cache)
 
         dto.name = payload.name
         dto.imageURL = payload.imageURL
@@ -253,8 +254,8 @@ extension NSManagedObjectContext {
             dto.extraData = Data()
         }
         dto.typeRawValue = payload.typeRawValue
-        dto.id = payload.cid.id
-        dto.config = payload.config.asDTO(context: self, cid: dto.cid)
+        dto.id = cid.id
+        dto.config = (payload.config?.asChannelConfig ?? .init()).asDTO(context: self, cid: dto.cid)
         if let filterTags = payload.filterTags {
             // Remove existing filter tags
             dto.filterTags.forEach { delete($0) }
@@ -267,14 +268,14 @@ extension NSManagedObjectContext {
             })
         }
         if let ownCapabilities = payload.ownCapabilities {
-            dto.ownCapabilities = ownCapabilities
+            dto.ownCapabilities = ownCapabilities.map(\.rawValue)
         }
         dto.createdAt = payload.createdAt.bridgeDate
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
         dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
-        dto.memberCount = Int64(clamping: payload.memberCount)
+        dto.memberCount = Int64(clamping: payload.memberCount ?? 0)
         
         if let messageCount = payload.messageCount {
             dto.messageCount = NSNumber(value: messageCount)
@@ -320,7 +321,7 @@ extension NSManagedObjectContext {
         }
 
         try payload.members?.forEach { memberPayload in
-            let member = try saveMember(payload: memberPayload, channelId: payload.cid, query: nil, cache: cache)
+            let member = try saveMember(payload: memberPayload, channelId: cid, query: nil, cache: cache)
             dto.members.insert(member)
         }
 
@@ -337,80 +338,81 @@ extension NSManagedObjectContext {
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
-        let dto = try saveChannel(payload: payload.channel, query: query, cache: cache)
+        guard let channelDetail = payload.channel else {
+            throw ClientError.ChannelNotCreatedYet()
+        }
+        let cid = try ChannelId(cid: channelDetail.cid)
+        let dto = try saveChannel(payload: channelDetail, query: query, cache: cache)
 
         // Save reads (note that returned reads are for currently fetched members)
         let reads = Set(
             try payload.channelReads.map {
-                try saveChannelRead(payload: $0, for: payload.channel.cid, cache: cache)
+                try saveChannelRead(payload: $0, for: cid, cache: cache)
             }
         )
         dto.reads.formUnion(reads)
-        
+
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
-        
+
         var pendingMessages = Set<MessageDTO>()
-        try payload.pendingMessages?.forEach {
-            let pending = try saveMessage(
-                payload: $0,
+        try payload.pendingMessages?.forEach { pending in
+            guard let message = pending.message else { return }
+            let pendingDTO = try saveMessage(
+                payload: message,
                 channelDTO: dto,
                 syncOwnReactions: true,
                 cache: cache
             )
-            pendingMessages.insert(pending)
+            pendingMessages.insert(pendingDTO)
         }
-                
+
         dto.pendingMessages = pendingMessages
-        
+
         // Recalculate reads for existing messages (saveMessage updates it for messages in the payload)
         let channelReadDTOs = dto.reads
         let currentUserId = currentUser?.user.id
-        let payloadMessageIds = Set(payload.messages.map(\.id) + (payload.pendingMessages?.map(\.id) ?? []))
+        let pendingIds = (payload.pendingMessages ?? []).compactMap { $0.message?.id }
+        let payloadMessageIds = Set(payload.messages.map(\.id) + pendingIds)
         for message in dto.messages {
             guard message.user.id == currentUserId else { continue }
             guard !payloadMessageIds.contains(message.id) else { continue }
             message.updateReadBy(withChannelReads: channelReadDTOs)
         }
-        
+
         dto.updateOldestMessageAt(payload: payload)
 
         if let draftMessage = payload.draft {
-            dto.draftMessage = try saveDraftMessage(payload: draftMessage, for: payload.channel.cid, cache: nil)
+            dto.draftMessage = try saveDraftMessage(payload: draftMessage, for: cid, cache: nil)
         } else {
             /// If the payload does not contain a draft message, we should
             /// delete the existing draft message if it exists.
             if let draftMessage = dto.draftMessage {
-                deleteDraftMessage(in: payload.channel.cid, threadId: draftMessage.parentMessageId)
+                deleteDraftMessage(in: cid, threadId: draftMessage.parentMessageId)
             }
         }
 
-        dto.activeLiveLocations = Set(try payload.activeLiveLocations.map {
+        dto.activeLiveLocations = Set(try (payload.activeLiveLocations ?? []).map {
             try saveLocation(payload: $0, cache: cache)
         })
 
         try payload.pinnedMessages.forEach {
             _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache)
         }
-        
+
         // Save push preference
-        if let pushPreference = payload.pushPreference {
-            dto.pushPreference = try savePushPreference(
-                id: payload.channel.cid.rawValue,
-                payload: pushPreference
-            )
-        }
+        // TODO: map ChannelPushPreferencesResponse → PushPreferencePayload (legacy compat)
 
         // Note: membership payload should be saved before all the members
         if let membership = payload.membership {
-            let membershipDTO = try saveMember(payload: membership, channelId: payload.channel.cid, query: nil, cache: cache)
+            let membershipDTO = try saveMember(payload: membership, channelId: cid, query: nil, cache: cache)
             dto.membership = membershipDTO
         } else {
             dto.membership = nil
         }
-        
+
         // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
         try payload.members.forEach {
-            let member = try saveMember(payload: $0, channelId: payload.channel.cid, query: nil, cache: cache)
+            let member = try saveMember(payload: $0, channelId: cid, query: nil, cache: cache)
             dto.members.insert(member)
         }
 

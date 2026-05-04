@@ -55,5 +55,6 @@
         "custom": {}
     },
     "type": "message.deleted",
-    "cid": "messaging:general"
+    "cid": "messaging:general",
+    "custom": {}
 }

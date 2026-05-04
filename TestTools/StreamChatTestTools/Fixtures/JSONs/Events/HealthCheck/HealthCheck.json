@@ -124,9 +124,18 @@
                         "max_message_length": 5000,
                         "blocklist_behavior": "flag",
                         "read_events": true,
-                        "search": true
+                        "search": true,
+                        "count_messages": true,
+                        "delivery_events": false,
+                        "mark_messages_pending": false,
+                        "polls": true,
+                        "reminders": true,
+                        "shared_locations": true,
+                        "skip_last_msg_update_for_system_msgs": false,
+                        "user_message_reminders": true
                     },
-                    "cid": "messaging:B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF"
+                    "cid": "messaging:B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF",
+                    "custom": {}
                 },
                 "updated_at": "2021-04-22T10:23:52.516225Z",
                 "user": {
@@ -197,9 +206,18 @@
                         "max_message_length": 5000,
                         "blocklist_behavior": "flag",
                         "read_events": true,
-                        "search": true
+                        "search": true,
+                        "count_messages": true,
+                        "delivery_events": false,
+                        "mark_messages_pending": false,
+                        "polls": true,
+                        "reminders": true,
+                        "shared_locations": true,
+                        "skip_last_msg_update_for_system_msgs": false,
+                        "user_message_reminders": true
                     },
-                    "cid": "messaging:!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE"
+                    "cid": "messaging:!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE",
+                    "custom": {}
                 },
                 "updated_at": "2021-04-22T16:16:46.085715Z",
                 "user": {
@@ -232,5 +250,6 @@
     },
     "type": "health.check",
     "connection_id": "60782eca-0a05-154b-0000-000000a85747",
-    "cid": "*"
+    "cid": "*",
+    "custom": {}
 }

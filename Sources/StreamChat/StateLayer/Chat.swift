@@ -92,8 +92,8 @@ public class Chat: @unchecked Sendable {
         
         client.syncRepository.startTrackingChat(self)
         // cid is retrieved from the server when we are creating new channels or there is no local state present
-        guard query.cid != payload.channel.cid else { return }
-        await state.setChannelId(payload.channel.cid)
+        guard let payloadCid = payload.channel?.channelId, query.cid != payloadCid else { return }
+        await state.setChannelId(payloadCid)
     }
     
     /// Start watching the channel which enables server-side events.

@@ -15,15 +15,15 @@ extension Endpoint {
         )
     }
 
-    static func createChannel(query: ChannelQuery) -> Endpoint<ChannelPayload> {
+    static func createChannel(query: ChannelQuery) -> Endpoint<ChannelStateResponse> {
         createOrUpdateChannel(path: .createChannel(query.apiPath), query: query)
     }
 
-    static func updateChannel(query: ChannelQuery) -> Endpoint<ChannelPayload> {
+    static func updateChannel(query: ChannelQuery) -> Endpoint<ChannelStateResponse> {
         createOrUpdateChannel(path: .updateChannel(query.apiPath), query: query)
     }
-    
-    static func channelState(query: ChannelQuery) -> Endpoint<ChannelPayload> {
+
+    static func channelState(query: ChannelQuery) -> Endpoint<ChannelStateResponse> {
         assert(!query.options.contains(oneOf: [.presence, .watch]), "This method is only for fetching channel data")
         return .init(
             path: .updateChannel(query.apiPath),
@@ -34,7 +34,7 @@ extension Endpoint {
         )
     }
 
-    private static func createOrUpdateChannel(path: EndpointPath, query: ChannelQuery) -> Endpoint<ChannelPayload> {
+    private static func createOrUpdateChannel(path: EndpointPath, query: ChannelQuery) -> Endpoint<ChannelStateResponse> {
         .init(
             path: path,
             method: .post,
@@ -378,7 +378,7 @@ extension Endpoint {
         )
     }
 
-    static func channelWatchers(query: ChannelWatcherListQuery) -> Endpoint<ChannelPayload> {
+    static func channelWatchers(query: ChannelWatcherListQuery) -> Endpoint<ChannelStateResponse> {
         .init(
             path: .updateChannel(query.cid.apiPath),
             method: .post,

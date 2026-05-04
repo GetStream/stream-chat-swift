@@ -211,7 +211,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let channelPayload: ChannelPayload = .dummy()
         let eventPayload: EventPayload = .init(
             eventType: .memberAdded,
-            cid: channelPayload.channel.cid,
+            cid: channelPayload.channel?.channelId,
             user: .dummy(userId: newMemberId),
             memberContainer: .dummy(userId: newMemberId),
             createdAt: .unique
@@ -349,7 +349,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // WHEN
         let eventPayload: EventPayload = .init(
             eventType: .memberRemoved,
-            cid: channelPayload.channel.cid,
+            cid: channelPayload.channel?.channelId,
             user: member.userPayload,
             createdAt: .unique
         )

@@ -166,5 +166,6 @@
         "custom": {}
     },
     "type": "reaction.new",
-    "cid": "messaging:general"
+    "cid": "messaging:general",
+    "custom": {}
 }

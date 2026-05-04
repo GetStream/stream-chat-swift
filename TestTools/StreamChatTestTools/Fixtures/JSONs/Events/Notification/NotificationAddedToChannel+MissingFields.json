@@ -87,7 +87,15 @@
             "max_message_length": 5000,
             "blocklist_behavior": "flag",
             "read_events": true,
-            "search": true
+            "search": true,
+            "count_messages": true,
+            "delivery_events": false,
+            "mark_messages_pending": false,
+            "polls": true,
+            "reminders": true,
+            "shared_locations": true,
+            "skip_last_msg_update_for_system_msgs": false,
+            "user_message_reminders": true
         },
         "id": "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E",
         "created_at": "2021-04-22T19:24:43.833363Z",
@@ -200,12 +208,14 @@
         "member_count": 4,
         "type": "messaging",
         "updated_at": "2021-04-22T19:24:43.833363Z",
-        "cid": "messaging:!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E"
+        "cid": "messaging:!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E",
+        "custom": {}
     },
     "channel_type": "messaging",
     "channel_id": "!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E",
     "created_at": "2021-04-22T19:24:43.849533296Z",
     "unread_channels": 9,
     "type": "notification.added_to_channel",
-    "cid": "messaging:!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E"
+    "cid": "messaging:!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E",
+    "custom": {}
 }

@@ -87,12 +87,12 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
 
         // Assert channel endpoint is called.
-        let channelEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: .init(cid: query.cid))
+        let channelEndpoint: Endpoint<ChannelStateResponse> = .updateChannel(query: .init(cid: query.cid))
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(channelEndpoint))
 
         // Simulate successful channel response.
         let dummyChannelPayload = dummyPayload(with: query.cid)
-        apiClient.test_simulateResponse(.success(dummyChannelPayload))
+        apiClient.test_simulateResponse(.success(dummyChannelPayload.asChannelStateResponse))
 
         let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
         AssertAsync {
@@ -141,12 +141,12 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
 
         // Assert channel endpoint is called.
-        let channelEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: .init(cid: query.cid))
+        let channelEndpoint: Endpoint<ChannelStateResponse> = .updateChannel(query: .init(cid: query.cid))
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(channelEndpoint))
 
         // Simulate channel response with failure.
         let networkError = TestError()
-        apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<ChannelStateResponse, Error>.failure(networkError))
 
         // Assert the channel network error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
@@ -164,11 +164,11 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
 
         // Assert channel endpoint is called.
-        let channelEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: .init(cid: query.cid))
+        let channelEndpoint: Endpoint<ChannelStateResponse> = .updateChannel(query: .init(cid: query.cid))
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(channelEndpoint))
 
         // Simulate channel response with  success.
-        apiClient.test_simulateResponse(.success(dummyPayload(with: query.cid)))
+        apiClient.test_simulateResponse(.success(dummyPayload(with: query.cid).asChannelStateResponse))
 
         // Assert the channel database error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, databaseError)

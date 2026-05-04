@@ -1,3 +1,5 @@
 {
-    "type": "channel.created"
+    "type": "channel.created",
+    "custom": {},
+    "created_at": "2020-06-09T08:10:40.800912Z"
 }

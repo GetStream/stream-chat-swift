@@ -42,24 +42,16 @@ final class ChannelListPayload_Tests: XCTestCase {
         }
     }
 
-    func test_decode_shouldReturnChannelsIfOneChannelHasMissingRequiredProperties() throws {
-        /// Channel List JSON with 3 channels, the first channel has multiple missing required properties:
-        /// - channel.members.first.user.updatedAt
-        /// - channel.pinnedMessages.first.user.updatedAt
-        /// - channel.reads.first.user.updatedAt
+    func test_decode_shouldThrowWhenChannelHasMissingRequiredProperties() throws {
+        /// OpenAPI types are strict: any missing required property fails the whole decode.
         let url = XCTestCase.mockData(fromJSONFile: "PartiallyFailingChannelListPayload")
-
-        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
-        XCTAssertEqual(payload.channels.count, 3)
+        XCTAssertThrowsError(try JSONDecoder.default.decode(ChannelListPayload.self, from: url))
     }
 
-    func test_decode_shouldReturnChannelsIfOneChannelCompletelyFailsParsing() throws {
-        /// Channel List JSON with 3 channels, the first channel has a missing `createdBy.user.updateAt`,
-        /// which is mandatory, so it will skip this channel, and return only 2 channels.
+    func test_decode_shouldThrowWhenOneChannelCompletelyFailsParsing() throws {
+        /// OpenAPI types are strict: any channel with missing required properties fails the whole decode.
         let url = XCTestCase.mockData(fromJSONFile: "FailingChannelListPayload")
-
-        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
-        XCTAssertEqual(payload.channels.count, 2)
+        XCTAssertThrowsError(try JSONDecoder.default.decode(ChannelListPayload.self, from: url))
     }
 
     func saveChannelListPayload(_ payload: ChannelListPayload, database: DatabaseContainer_Spy, timeout: TimeInterval = 20) {
@@ -111,51 +103,20 @@ final class ChannelListPayload_Tests: XCTestCase {
 
             let cid = ChannelId(type: .messaging, id: "\(channelIndex)")
             let channelOwner = channelUsers.randomElement()!
-            let channelDetail = ChannelDetailPayload(
+            let channelDetail = ChannelDetailPayload.dummy(
                 cid: cid,
                 name: .unique,
                 imageURL: .unique(),
                 extraData: [:],
-                typeRawValue: cid.type.rawValue,
                 lastMessageAt: lastMessageDate,
                 createdAt: channelCreatedDate,
-                deletedAt: nil,
                 updatedAt: .unique(after: channelCreatedDate),
-                truncatedAt: nil,
                 createdBy: channelOwner,
-                config: .init(
-                    reactionsEnabled: true,
-                    typingEventsEnabled: true,
-                    readEventsEnabled: true,
-                    deliveryEventsEnabled: false,
-                    connectEventsEnabled: true,
-                    uploadsEnabled: true,
-                    repliesEnabled: true,
-                    searchEnabled: true,
-                    mutesEnabled: true,
-                    urlEnrichmentEnabled: true,
-                    messageRetention: "1000",
-                    maxMessageLength: 100,
-                    commands: [
-                        .init(
-                            name: "test",
-                            description: "test command",
-                            set: "test",
-                            args: "test"
-                        )
-                    ],
-                    createdAt: channelCreatedDate,
-                    updatedAt: .unique
-                ), filterTags: [
-                    "football"
-                ],
-                ownCapabilities: [
-                    "join-channel",
-                    "delete-channel"
-                ],
-                isDisabled: false,
+                filterTags: ["football"],
+                ownCapabilities: ["join-channel", "delete-channel"],
                 isFrozen: true,
                 isBlocked: false,
+                isDisabled: false,
                 isHidden: false,
                 members: channelUsers.map {
                     MemberPayload.dummy(
@@ -215,11 +176,11 @@ final class ChannelListPayload_Tests: XCTestCase {
                 )
             }
 
-            return ChannelPayload(
+            return ChannelPayload.dummy(
                 channel: channelDetail,
                 watcherCount: 0,
                 watchers: [],
-                members: channelDetail.members!,
+                members: channelDetail.members ?? [],
                 membership: MemberPayload.dummy(
                     user: channelOwner,
                     createdAt: channelOwner.createdAt,
@@ -228,7 +189,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                     isMemberBanned: false
                 ),
                 messages: messages,
-                pendingMessages: nil,
+                pendingMessages: [],
                 pinnedMessages: [],
                 channelReads: (0..<channelReadCount).map { i in
                     ChannelReadPayload(
@@ -247,7 +208,7 @@ final class ChannelListPayload_Tests: XCTestCase {
             )
         }
 
-        return ChannelListPayload(channels: channels)
+        return ChannelListPayload(channels: channels, duration: "")
     }
 }
 
@@ -263,7 +224,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.watcherCount, 7)
         XCTAssertEqual(payload.watchers?.count, 3)
         XCTAssertEqual(payload.members.count, 4)
-        XCTAssertEqual(payload.isHidden, true)
+        XCTAssertEqual(payload.hidden, true)
         XCTAssertEqual(payload.watchers?.first?.id, "cilvia")
 
         XCTAssertEqual(payload.messages.count, 25)
@@ -286,12 +247,12 @@ final class ChannelPayload_Tests: XCTestCase {
 
         XCTAssertEqual(payload.pendingMessages?.count ?? 0, 1)
         let pendingMessage = try XCTUnwrap(payload.pendingMessages?.first)
-        XCTAssertEqual(pendingMessage.text, "My pending message")
-        
+        XCTAssertEqual(pendingMessage.message?.text, "My pending message")
+
         XCTAssertEqual(payload.pinnedMessages.map(\.id), ["broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9"])
 
-        let channel = payload.channel
-        XCTAssertEqual(channel.cid, try! ChannelId(cid: "messaging:general"))
+        let channel = try XCTUnwrap(payload.channel)
+        XCTAssertEqual(channel.cid, "messaging:general")
         XCTAssertEqual(channel.createdAt, "2019-05-10T14:03:49.505006Z".toDate())
         XCTAssertNotNil(channel.createdBy)
         XCTAssertEqual(channel.typeRawValue, "messaging")
@@ -314,7 +275,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(firstChannelRead.unreadMessagesCount, 0)
         XCTAssertEqual(firstChannelRead.user.id, "broken-waterfall-5")
 
-        let config = channel.config
+        let config = try XCTUnwrap(channel.config?.asChannelConfig)
         XCTAssertEqual(config.reactionsEnabled, true)
         XCTAssertEqual(config.typingEventsEnabled, true)
         XCTAssertEqual(config.readEventsEnabled, true)
@@ -326,24 +287,24 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(config.searchEnabled, true)
         XCTAssertEqual(config.mutesEnabled, true)
         XCTAssertEqual(config.urlEnrichmentEnabled, true)
-        XCTAssertEqual(config.messageRetention, "infinite")
         XCTAssertEqual(config.maxMessageLength, 5000)
         XCTAssertEqual(config.skipLastMsgAtUpdateForSystemMsg, true)
         XCTAssertEqual(config.sharedLocationsEnabled, true)
         XCTAssertEqual(
             config.commands,
-            [.init(name: "giphy", description: "Post a random gif to the channel", set: "fun_set", args: "[text]")]
+            [
+                .init(name: "giphy", description: "Post a random gif to the channel", set: "fun_set", args: "[text]"),
+                .init(name: "flag", description: "Flag a user", set: "moderation_set", args: "[@username]")
+            ]
         )
         XCTAssertEqual(config.createdAt, "2019-03-21T15:49:15.40182Z".toDate())
         XCTAssertEqual(config.updatedAt, "2020-03-17T18:54:09.460881Z".toDate())
 
         XCTAssertEqual(payload.membership?.user?.id, "broken-waterfall-5")
-        XCTAssertEqual(payload.channel.filterTags, ["football"])
-        XCTAssertEqual(payload.channel.ownCapabilities?.count, 27)
-        XCTAssertEqual(payload.activeLiveLocations.count, 1)
-        XCTAssertNotNil(payload.pushPreference)
-        XCTAssertEqual(payload.pushPreference?.chatLevel, "all")
-        XCTAssertNil(payload.pushPreference?.disabledUntil)
+        XCTAssertEqual(payload.channel?.filterTags, ["football"])
+        XCTAssertEqual(payload.channel?.ownCapabilities?.count, 27)
+        XCTAssertEqual(payload.activeLiveLocations?.count, 1)
+        XCTAssertNotNil(payload.pushPreferences)
     }
 
     func test_newestMessage_whenMessagesAreSortedDesc() throws {
@@ -422,24 +383,22 @@ final class ChannelPayload_Tests: XCTestCase {
         
         let membershipPayload = MemberPayload.dummy(user: UserPayload.dummy(userId: currentUserId), role: .admin)
 
-        let channel = ChannelDetailPayload(
+        let channel = ChannelDetailPayload.dummy(
             cid: cid,
             name: "Test Channel",
             imageURL: URL(string: "https://example.com/channel.png"),
             extraData: ["custom_field": .string("custom_value")],
-            typeRawValue: "messaging",
             lastMessageAt: Date(timeIntervalSince1970: 1_609_459_500),
             createdAt: Date(timeIntervalSince1970: 1_609_459_200),
             deletedAt: Date(timeIntervalSince1970: 1_609_459_600),
             updatedAt: Date(timeIntervalSince1970: 1_609_459_300),
             truncatedAt: Date(timeIntervalSince1970: 1_609_459_250),
             createdBy: createdByPayload,
-            config: ChannelConfig(),
             filterTags: ["football"],
             ownCapabilities: ["send-message", "upload-file"],
-            isDisabled: true,
             isFrozen: true,
             isBlocked: true,
+            isDisabled: true,
             isHidden: true,
             members: [memberPayload],
             memberCount: 10,
@@ -447,11 +406,11 @@ final class ChannelPayload_Tests: XCTestCase {
             team: "team-id",
             cooldownDuration: 30
         )
-        
+
         let typingUsers = Set([ChatUser.mock(id: "typing-user-id", name: "Typing User")])
         let unreadCount = ChannelUnreadCount(messages: 3, mentions: 1)
-        
-        let payload = ChannelPayload(
+
+        let payload = ChannelPayload.dummy(
             channel: channel,
             watcherCount: 5,
             watchers: [watcherPayload],
@@ -520,40 +479,28 @@ final class ChannelPayload_Tests: XCTestCase {
         let currentUserId = "current-user-id"
         let cid = ChannelId(type: .messaging, id: "minimal-channel")
         
-        let channel = ChannelDetailPayload(
+        let channel = ChannelDetailPayload.dummy(
             cid: cid,
             name: "Minimal Channel",
             imageURL: nil,
             extraData: [:],
-            typeRawValue: "messaging",
             lastMessageAt: Date(timeIntervalSince1970: 1_609_459_200),
             createdAt: Date(timeIntervalSince1970: 1_609_459_200),
-            deletedAt: nil,
             updatedAt: Date(timeIntervalSince1970: 1_609_459_200),
-            truncatedAt: nil,
             createdBy: nil,
-            config: ChannelConfig(),
-            filterTags: nil,
-            ownCapabilities: nil,
-            isDisabled: false,
-            isFrozen: false,
-            isBlocked: nil,
-            isHidden: nil,
-            members: nil,
+            members: [],
             memberCount: 0,
-            messageCount: nil,
-            team: nil,
             cooldownDuration: 0
         )
-        
-        let payload = ChannelPayload(
+
+        let payload = ChannelPayload.dummy(
             channel: channel,
             watcherCount: nil,
-            watchers: nil,
+            watchers: [],
             members: [],
             membership: nil,
             messages: [],
-            pendingMessages: nil,
+            pendingMessages: [],
             pinnedMessages: [],
             channelReads: [],
             isHidden: nil,

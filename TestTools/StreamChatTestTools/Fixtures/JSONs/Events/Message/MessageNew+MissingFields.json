@@ -68,5 +68,6 @@
         "custom": {}
     },
     "type": "message.new",
-    "cid": "messaging:general"
+    "cid": "messaging:general",
+    "custom": {}
 }

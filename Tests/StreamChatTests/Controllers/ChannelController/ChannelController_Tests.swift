@@ -904,7 +904,7 @@ final class ChannelController_Tests: XCTestCase {
 
         // Save channel with some messages
         let channelPayload: ChannelPayload = dummyPayload(with: channelId, numberOfMessages: 5)
-        let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
+        let originalLastMessageAt: Date = channelPayload.channel?.lastMessageAt ?? channelPayload.channel?.createdAt ?? Date()
         writeAndWaitForMessageUpdates(count: 5) {
             try $0.saveChannel(payload: channelPayload)
         }
@@ -956,7 +956,7 @@ final class ChannelController_Tests: XCTestCase {
         let newerMessagePayload: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: userId,
-            createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
+            createdAt: .unique(after: channelPayload.channel?.lastMessageAt ?? Date())
         )
         // Save the message payload and check `channel.lastMessageAt` is updated
         writeAndWaitForMessageUpdates(count: 6) {
@@ -1563,7 +1563,7 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_onChannelCreated?(dummyChannel.channel.cid)
+        env.channelUpdater!.update_onChannelCreated?((dummyChannel.channel?.channelId ?? .unique))
 
         // Simulate new channel creation in DB
         writeAndWaitForMessageUpdates(count: dummyChannel.messages.count) { session in
@@ -1574,7 +1574,7 @@ final class ChannelController_Tests: XCTestCase {
         env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
 
         // Assert that initial reported values are correct
-        XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(controller.channel?.cid, (dummyChannel.channel?.channelId ?? .unique))
         XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
     }
 
@@ -1609,7 +1609,7 @@ final class ChannelController_Tests: XCTestCase {
 
         waitForMessagesUpdate(count: dummyChannel.messages.count) {
             // Simulate successful backend channel creation
-            env.channelUpdater!.update_onChannelCreated?(dummyChannel.channel.cid)
+            env.channelUpdater!.update_onChannelCreated?((dummyChannel.channel?.channelId ?? .unique))
 
             // Simulate successful network call.
             env.channelUpdater!.update_completion?(.success(dummyChannel))
@@ -1621,7 +1621,7 @@ final class ChannelController_Tests: XCTestCase {
         // That's why we simulate delegate callbacks for initial values.
         // Assert that delegate gets initial values as callback
         let delegate = controller.delegate as? ControllerUpdateWaiter
-        XCTAssertEqual(delegate?.didUpdateChannel?.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(delegate?.didUpdateChannel?.cid, (dummyChannel.channel?.channelId ?? .unique))
         XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
     }
 
@@ -1642,7 +1642,7 @@ final class ChannelController_Tests: XCTestCase {
         )
 
         // Simulate successful backend channel creation
-        env.channelUpdater!.update_onChannelCreated?(dummyChannel.channel.cid)
+        env.channelUpdater!.update_onChannelCreated?((dummyChannel.channel?.channelId ?? .unique))
 
         // Simulate new channel creation in DB
         writeAndWaitForMessageUpdates(count: dummyChannel.messages.count) { session in
@@ -1653,7 +1653,7 @@ final class ChannelController_Tests: XCTestCase {
         env.channelUpdater!.update_completion?(.success(dummyPayload(with: .unique)))
 
         // Assert that initial reported values are correct
-        XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(controller.channel?.cid, (dummyChannel.channel?.channelId ?? .unique))
         XCTAssertEqual(controller.messages.count, dummyChannel.messages.count)
     }
 
@@ -1680,7 +1680,7 @@ final class ChannelController_Tests: XCTestCase {
         // Unlike new DM ChannelController, this ChannelController knows it's final `cid` so it should be able to fetch initial values
         // from DB, without the `synchronize` call
         // Assert that initial reported values are correct
-        XCTAssertEqual(controller.channel?.cid, dummyChannel.channel.cid)
+        XCTAssertEqual(controller.channel?.cid, (dummyChannel.channel?.channelId ?? .unique))
         XCTAssertTrue(controller.messages.count == dummyChannel.messages.count)
     }
 

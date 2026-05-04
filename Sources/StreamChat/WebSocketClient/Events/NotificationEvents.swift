@@ -46,7 +46,7 @@ final class NotificationMessageNewEventDTO: EventDTO {
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
-            let channelDTO = session.channel(cid: channel.cid),
+            let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)),
             let messageDTO = session.message(id: message.id),
             let currentUser = session.currentUser
         else { return nil }
@@ -316,8 +316,8 @@ final class NotificationAddedToChannelEventDTO: EventDTO {
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
-            let channelDTO = session.channel(cid: channel.cid),
-            let memberDTO = session.member(userId: member.resolvedUserId, cid: channel.cid),
+            let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)),
+            let memberDTO = (try? ChannelId(cid: channel.cid)).flatMap({ session.member(userId: member.resolvedUserId, cid: $0) }),
             let currentUser = session.currentUser
         else { return nil }
 
@@ -515,8 +515,8 @@ final class NotificationInviteAcceptedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
-            let channelDTO = session.channel(cid: channel.cid),
-            let memberDTO = session.member(userId: member.resolvedUserId, cid: channel.cid)
+            let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)),
+            let memberDTO = (try? ChannelId(cid: channel.cid)).flatMap({ session.member(userId: member.resolvedUserId, cid: $0) })
         else { return nil }
 
         return try? NotificationInviteAcceptedEvent(
@@ -572,8 +572,8 @@ final class NotificationInviteRejectedEventDTO: EventDTO {
     func toDomainEvent(session: DatabaseSession) -> Event? {
         guard
             let userDTO = session.user(id: user.id),
-            let channelDTO = session.channel(cid: channel.cid),
-            let memberDTO = session.member(userId: member.resolvedUserId, cid: channel.cid)
+            let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)),
+            let memberDTO = (try? ChannelId(cid: channel.cid)).flatMap({ session.member(userId: member.resolvedUserId, cid: $0) })
         else { return nil }
 
         return try? NotificationInviteRejectedEvent(
@@ -617,7 +617,7 @@ final class NotificationChannelDeletedEventDTO: EventDTO {
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let channelDTO = session.channel(cid: channel.cid) else { return nil }
+        guard let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)) else { return nil }
         return try? NotificationChannelDeletedEvent(
             cid: cid,
             channel: channelDTO.asModel(),

@@ -20,7 +20,7 @@ final class ChatMessageDeliveryStatusView_Tests: XCTestCase {
 
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: .unique,
             author: .mock(id: .unique),
             localState: .sending,
@@ -45,7 +45,7 @@ final class ChatMessageDeliveryStatusView_Tests: XCTestCase {
 
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: .unique,
             author: .mock(id: .unique),
             localState: nil,
@@ -71,7 +71,7 @@ final class ChatMessageDeliveryStatusView_Tests: XCTestCase {
 
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: .unique,
             author: .mock(id: .unique),
             localState: nil,
@@ -95,7 +95,7 @@ final class ChatMessageDeliveryStatusView_Tests: XCTestCase {
 
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: .unique,
             author: .mock(id: .unique),
             localState: nil,

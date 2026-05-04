@@ -22,11 +22,13 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             )
 
         case let event as NotificationMessageNewEventDTO:
-            incrementUnreadCountIfNeeded(
-                for: event.channel.cid,
-                message: event.message,
-                session: session
-            )
+            if let cid = try? ChannelId(cid: event.channel.cid) {
+                incrementUnreadCountIfNeeded(
+                    for: cid,
+                    message: event.message,
+                    session: session
+                )
+            }
 
         case let event as MessageDeletedEventDTO:
             decrementUnreadCountIfNeeded(

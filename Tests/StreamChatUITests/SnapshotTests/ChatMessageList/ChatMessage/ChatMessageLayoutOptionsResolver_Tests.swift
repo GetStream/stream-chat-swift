@@ -1575,7 +1575,7 @@ import XCTest
 
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: .unique,
             author: .mock(id: .unique),
             deletedAt: nil,
@@ -1603,7 +1603,7 @@ import XCTest
 
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: .unique,
             author: .mock(id: .unique),
             deletedAt: nil,
@@ -1631,7 +1631,7 @@ import XCTest
 
         let ephemeralMessage: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: .unique,
             type: .ephemeral,
             author: .mock(id: .unique),

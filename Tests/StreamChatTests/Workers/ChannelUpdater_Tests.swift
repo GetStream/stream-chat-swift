@@ -51,7 +51,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let query = ChannelQuery(cid: .unique)
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false)
 
-        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
+        let referenceEndpoint: Endpoint<ChannelStateResponse> = .updateChannel(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -60,7 +60,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let query = ChannelQuery(cid: .unique)
         channelUpdater.update(channelQuery: query, isInRecoveryMode: true)
 
-        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
+        let referenceEndpoint: Endpoint<ChannelStateResponse> = .updateChannel(query: query)
         XCTAssertEqual(apiClient.recoveryRequest_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -82,7 +82,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
         let payload = dummyPayload(with: cid, numberOfMessages: 2)
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateResponse(.success(payload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -114,7 +114,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
         let payload = dummyPayload(with: cid, numberOfMessages: 2)
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateResponse(.success(payload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -147,7 +147,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
         let payload = dummyPayload(with: cid, numberOfMessages: 2)
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateResponse(.success(payload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -170,7 +170,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
         let payload = dummyPayload(with: cid, numberOfMessages: 2)
-        apiClient.test_simulateRecoveryResponse(.success(payload))
+        apiClient.test_simulateRecoveryResponse(.success(payload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -206,7 +206,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: cid, numberOfMessages: 2)
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateResponse(.success(payload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -242,7 +242,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: cid, numberOfMessages: 2)
-        apiClient.test_simulateRecoveryResponse(.success(payload))
+        apiClient.test_simulateRecoveryResponse(.success(payload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -260,7 +260,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<ChannelStateResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
@@ -274,7 +274,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateRecoveryResponse(Result<ChannelPayload, Error>.failure(error))
+        apiClient.test_simulateRecoveryResponse(Result<ChannelStateResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
@@ -304,7 +304,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: query.cid!)
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateResponse(.success(payload.asChannelStateResponse))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
@@ -338,7 +338,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: query.cid!)
-        apiClient.test_simulateRecoveryResponse(.success(payload))
+        apiClient.test_simulateRecoveryResponse(.success(payload.asChannelStateResponse))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
@@ -376,7 +376,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: cid, numberOfMessages: 1)
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateResponse(.success(payload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
 
@@ -414,7 +414,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: cid, numberOfMessages: 1)
-        apiClient.test_simulateRecoveryResponse(.success(payload))
+        apiClient.test_simulateRecoveryResponse(.success(payload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
 
@@ -458,7 +458,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: cid, numberOfMessages: 1)
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateResponse(.success(payload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
 
@@ -502,7 +502,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: cid, numberOfMessages: 1)
-        apiClient.test_simulateRecoveryResponse(.success(payload))
+        apiClient.test_simulateRecoveryResponse(.success(payload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
 
@@ -530,7 +530,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         let expectedMessagesCount = 5
         let payload = dummyPayload(with: cid, numberOfMessages: expectedMessagesCount)
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateResponse(.success(payload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -556,7 +556,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         let expectedMessagesCount = previousMessagesCount
         let payload = dummyPayload(with: cid, numberOfMessages: expectedMessagesCount)
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateResponse(.success(payload.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -772,7 +772,7 @@ final class ChannelUpdater_Tests: XCTestCase {
                         members: members
                     ),
                     members: members
-                )
+                ).asChannelStateResponse
             )
         )
         
@@ -1299,7 +1299,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         try database.createChannel(cid: channelID)
         
         // Dummy response for exiting the API call
-        apiClient.test_mockResponseResult(.success(ChannelPayload.dummy()))
+        apiClient.test_mockResponseResult(.success(ChannelPayload.dummy().asChannelStateResponse))
         
         let result = try await channelUpdater.loadMembersWithReads(
             in: channelID,
@@ -1317,7 +1317,7 @@ final class ChannelUpdater_Tests: XCTestCase {
             watchersLimit: 0 // avoid default set of watchers
         )
         expectedQuery.options = .state
-        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(
+        let referenceEndpoint: Endpoint<ChannelStateResponse> = .updateChannel(
             query: expectedQuery
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
@@ -1867,7 +1867,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         var query = ChannelQuery(cid: cid)
         query.options = .all
-        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
+        let referenceEndpoint: Endpoint<ChannelStateResponse> = .updateChannel(query: query)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -1878,7 +1878,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         var query = ChannelQuery(cid: cid)
         query.options = .all
-        let referenceEndpoint: Endpoint<ChannelPayload> = .updateChannel(query: query)
+        let referenceEndpoint: Endpoint<ChannelStateResponse> = .updateChannel(query: query)
         XCTAssertEqual(apiClient.recoveryRequest_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -1894,7 +1894,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: cid)
-        apiClient.test_simulateResponse(.success(payload))
+        apiClient.test_simulateResponse(.success(payload.asChannelStateResponse))
 
         AssertAsync.willBeTrue(completionCalled)
     }
@@ -1911,7 +1911,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let payload = dummyPayload(with: cid)
-        apiClient.test_simulateRecoveryResponse(.success(payload))
+        apiClient.test_simulateRecoveryResponse(.success(payload.asChannelStateResponse))
 
         AssertAsync.willBeTrue(completionCalled)
     }
@@ -1921,7 +1921,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.startWatching(cid: .unique, isInRecoveryMode: false) { completionCalledError = $0 }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<ChannelStateResponse, Error>.failure(error))
 
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
@@ -1931,7 +1931,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.startWatching(cid: .unique, isInRecoveryMode: true) { completionCalledError = $0 }
 
         let error = TestError()
-        apiClient.test_simulateRecoveryResponse(Result<ChannelPayload, Error>.failure(error))
+        apiClient.test_simulateRecoveryResponse(Result<ChannelStateResponse, Error>.failure(error))
 
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
@@ -1981,7 +1981,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         channelUpdater.channelWatchers(query: query)
 
-        let referenceEndpoint: Endpoint<ChannelPayload> = .channelWatchers(query: query)
+        let referenceEndpoint: Endpoint<ChannelStateResponse> = .channelWatchers(query: query)
 
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
@@ -1998,7 +1998,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         apiClient.test_simulateResponse(
-            Result<ChannelPayload, Error>.success(dummyPayload(with: cid))
+            Result<ChannelStateResponse, Error>.success(dummyPayload(with: cid).asChannelStateResponse)
         )
 
         AssertAsync.willBeTrue(completionCalled)
@@ -2010,7 +2010,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.channelWatchers(query: query) { completionCalledError = $0.error }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<ChannelPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<ChannelStateResponse, Error>.failure(error))
 
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
@@ -2038,7 +2038,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // Simulate successful response
         apiClient.test_simulateResponse(
-            Result<ChannelPayload, Error>.success(dummyPayload(with: cid, watchers: []))
+            Result<ChannelStateResponse, Error>.success(dummyPayload(with: cid, watchers: []).asChannelStateResponse)
         )
 
         wait(for: [completionCalled], timeout: defaultTimeout)

@@ -133,7 +133,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
     }
 
     func test_ChannelListPayload_isIdentifiablePayload() {
-        let payload = ChannelListPayload(channels: [])
+        let payload = ChannelListPayload(channels: [], duration: "")
         XCTAssertNil(payload.databaseId)
         XCTAssertNil(ChannelListPayload.modelClass)
     }
@@ -200,7 +200,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
         let cid = ChannelId.unique
         let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid, createdBy: watchers[0])
         let channelPayload = ChannelPayload.dummy(channel: channelDetailPayload, watchers: watchers)
-        let payload = ChannelListPayload(channels: [channelPayload])
+        let payload = ChannelListPayload(channels: [channelPayload], duration: "")
 
         let cache = payload.recursivelyGetAllIds()
 
@@ -323,24 +323,19 @@ final class IdentifiablePayload_Tests: XCTestCase {
             let watchers = (userCount..<userCount + otherWatchersCount).map { UserPayload.dummy(userId: "watcher-\($0)") }
             let owner = users[channelIndex]
             let cid = ChannelId(type: .messaging, id: "channel-\(channelIndex)")
-            let channelDetail = ChannelDetailPayload(
+            let channelDetail = ChannelDetailPayload.dummy(
                 cid: cid,
                 name: .unique,
                 imageURL: .unique(),
                 extraData: [:],
-                typeRawValue: cid.type.rawValue,
                 lastMessageAt: Date(),
                 createdAt: Date(),
-                deletedAt: nil,
                 updatedAt: .unique(after: Date()),
-                truncatedAt: nil,
                 createdBy: owner,
-                config: .mock(),
-                filterTags: nil,
                 ownCapabilities: [],
-                isDisabled: false,
                 isFrozen: true,
                 isBlocked: false,
+                isDisabled: false,
                 isHidden: false,
                 members: users.map { MemberPayload.dummy(user: $0) },
                 memberCount: users.count,
@@ -400,11 +395,11 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 )
             }
 
-            return ChannelPayload(
+            return ChannelPayload.dummy(
                 channel: channelDetail,
                 watcherCount: 0,
                 watchers: watchers,
-                members: channelDetail.members!,
+                members: channelDetail.members ?? [],
                 membership: MemberPayload.dummy(
                     user: owner,
                     createdAt: owner.createdAt,
@@ -413,7 +408,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
                     isMemberBanned: false
                 ),
                 messages: messages,
-                pendingMessages: nil,
+                pendingMessages: [],
                 pinnedMessages: [],
                 channelReads: (0..<channelReadCount).map { i in
                     ChannelReadPayload(
@@ -432,6 +427,6 @@ final class IdentifiablePayload_Tests: XCTestCase {
             )
         }
 
-        return ChannelListPayload(channels: channels)
+        return ChannelListPayload(channels: channels, duration: "")
     }
 }

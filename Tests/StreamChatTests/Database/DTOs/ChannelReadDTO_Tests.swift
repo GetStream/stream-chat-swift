@@ -78,14 +78,14 @@ final class ChannelReadDTO_Tests: XCTestCase {
         // WHEN
         let newLastReadAt = read.lastReadAt.addingTimeInterval(10)
         database.viewContext.markChannelAsRead(
-            cid: channel.channel.cid,
+            cid: (channel.channel?.channelId ?? .unique),
             userId: read.user.id,
             at: newLastReadAt
         )
 
         // THEN
         let readDTO = try XCTUnwrap(
-            ChannelReadDTO.load(cid: channel.channel.cid, userId: read.user.id, context: database.viewContext)
+            ChannelReadDTO.load(cid: (channel.channel?.channelId ?? .unique), userId: read.user.id, context: database.viewContext)
         )
         XCTAssertNearlySameDate(readDTO.lastReadAt.bridgeDate, newLastReadAt)
         XCTAssertEqual(readDTO.unreadMessageCount, 0)
@@ -106,14 +106,14 @@ final class ChannelReadDTO_Tests: XCTestCase {
         // WHEN
         let readAt = Date()
         database.viewContext.markChannelAsRead(
-            cid: channel.channel.cid,
+            cid: (channel.channel?.channelId ?? .unique),
             userId: member.resolvedUserId,
             at: readAt
         )
 
         // THEN
         let createdReadDTO = try XCTUnwrap(
-            ChannelReadDTO.load(cid: channel.channel.cid, userId: member.resolvedUserId, context: database.viewContext)
+            ChannelReadDTO.load(cid: (channel.channel?.channelId ?? .unique), userId: member.resolvedUserId, context: database.viewContext)
         )
         XCTAssertNearlySameDate(createdReadDTO.lastReadAt.bridgeDate, readAt)
         XCTAssertEqual(createdReadDTO.unreadMessageCount, 0)
@@ -134,13 +134,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
         // WHEN
         let unknownMemberId: UserId = .unique
         database.viewContext.markChannelAsRead(
-            cid: channel.channel.cid,
+            cid: (channel.channel?.channelId ?? .unique),
             userId: unknownMemberId,
             at: .init()
         )
 
         // THEN
-        let readDTO = ChannelReadDTO.load(cid: channel.channel.cid, userId: member.resolvedUserId, context: database.viewContext)
+        let readDTO = ChannelReadDTO.load(cid: (channel.channel?.channelId ?? .unique), userId: member.resolvedUserId, context: database.viewContext)
         XCTAssertNil(readDTO)
     }
 
@@ -192,12 +192,12 @@ final class ChannelReadDTO_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
         }
 
-        let observer = MessageListObserver(cid: channel.channel.cid, context: database.viewContext)
+        let observer = MessageListObserver(cid: (channel.channel?.channelId ?? .unique), context: database.viewContext)
 
         // WHEN
         try database.writeSynchronously { session in
             session.markChannelAsRead(
-                cid: channel.channel.cid,
+                cid: (channel.channel?.channelId ?? .unique),
                 userId: anotherUser.id,
                 at: ownMessageUnreadByAnotherUser.createdAt
             )
@@ -242,13 +242,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
         }
 
-        let observer = MessageListObserver(cid: channel.channel.cid, context: database.viewContext)
+        let observer = MessageListObserver(cid: (channel.channel?.channelId ?? .unique), context: database.viewContext)
 
         // WHEN
         let anotherUserReadDate = Date()
         try database.writeSynchronously { session in
             session.markChannelAsRead(
-                cid: channel.channel.cid,
+                cid: (channel.channel?.channelId ?? .unique),
                 userId: anotherUser.id,
                 at: anotherUserReadDate
             )
@@ -294,13 +294,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
             try session.saveChannel(payload: channel)
         }
 
-        let observer = MessageListObserver(cid: channel.channel.cid, context: database.viewContext)
+        let observer = MessageListObserver(cid: (channel.channel?.channelId ?? .unique), context: database.viewContext)
 
         // WHEN
         let currentUserReadDate = Date()
         try database.writeSynchronously { session in
             session.markChannelAsRead(
-                cid: channel.channel.cid,
+                cid: (channel.channel?.channelId ?? .unique),
                 userId: currentUser.id,
                 at: currentUserReadDate
             )
@@ -653,13 +653,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
         }
 
         var readDTO: ChannelReadDTO? {
-            self.readDTO(cid: channel.channel.cid, userId: read.user.id)
+            self.readDTO(cid: (channel.channel?.channelId ?? .unique), userId: read.user.id)
         }
         XCTAssertNotNil(readDTO)
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(cid: channel.channel.cid, by: member.resolvedUserId)
+            session.markChannelAsUnread(cid: (channel.channel?.channelId ?? .unique), by: member.resolvedUserId)
         }
 
         // THEN
@@ -696,7 +696,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         // WHEN
         let loadedRead = try XCTUnwrap(
             database.viewContext.loadOrCreateChannelRead(
-                cid: channel.channel.cid,
+                cid: (channel.channel?.channelId ?? .unique),
                 userId: read.user.id
             )
         )
@@ -723,7 +723,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         // WHEN
         let loadedRead = try XCTUnwrap(
             database.viewContext.loadOrCreateChannelRead(
-                cid: channel.channel.cid,
+                cid: (channel.channel?.channelId ?? .unique),
                 userId: user.id
             )
         )

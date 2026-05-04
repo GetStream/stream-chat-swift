@@ -74,9 +74,9 @@ private extension ChannelMemberListUpdater {
         let query = ChannelQuery(cid: cid)
         apiClient.request(endpoint: .updateChannel(query: query)) { [weak self] in
             switch $0 {
-            case let .success(payload):
+            case let .success(response):
                 self?.database.write({ session in
-                    try session.saveChannel(payload: payload)
+                    try session.saveChannel(payload: response.asChannelPayload)
                 }, completion: { error in
                     if let error = error {
                         log.error("Failed to save channel to the database. Error: \(error)")

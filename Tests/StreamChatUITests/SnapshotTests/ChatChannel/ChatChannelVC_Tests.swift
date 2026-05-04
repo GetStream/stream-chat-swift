@@ -325,14 +325,14 @@ import XCTest
 
         let closingGroupMessage: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Closes the group",
             author: user,
             isSentByCurrentUser: true
         )
         let groupMessage: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Included into the group",
             author: user,
             createdAt: closingGroupMessage.createdAt.addingTimeInterval(-maxTimeInterval / 2),
@@ -340,7 +340,7 @@ import XCTest
         )
         let openingGroupMessage: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Opens the group",
             author: user,
             createdAt: groupMessage.createdAt.addingTimeInterval(-maxTimeInterval),
@@ -366,14 +366,14 @@ import XCTest
 
         let message1: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Separate message 1",
             author: user,
             isSentByCurrentUser: true
         )
         let message2: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Separate message 2",
             author: user,
             createdAt: message1.createdAt.addingTimeInterval(-2 * maxTimeInterval),
@@ -398,20 +398,20 @@ import XCTest
 
         let closingGroupMessage: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Closes the group",
             author: user
         )
         let groupMessage: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Included into the group",
             author: user,
             createdAt: closingGroupMessage.createdAt.addingTimeInterval(-maxTimeInterval / 2)
         )
         let openingGroupMessage: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Opens the group",
             author: user,
             createdAt: groupMessage.createdAt.addingTimeInterval(-maxTimeInterval)
@@ -436,13 +436,13 @@ import XCTest
 
         let message1: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Separate message 1",
             author: user
         )
         let message2: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Separate message 2",
             author: user,
             createdAt: message1.createdAt.addingTimeInterval(-2 * maxTimeInterval)
@@ -466,7 +466,7 @@ import XCTest
 
         let errorMessage: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Message didn't pass moderation",
             type: .error,
             author: user,
@@ -474,7 +474,7 @@ import XCTest
         )
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "When the message is followed by error message, it ends the group",
             author: user,
             createdAt: errorMessage.createdAt.addingTimeInterval(-(maxTimeInterval / 2)),
@@ -499,7 +499,7 @@ import XCTest
 
         let systemMessage: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Cooldown was changed to 10 sec",
             type: .system,
             author: user,
@@ -507,7 +507,7 @@ import XCTest
         )
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "When the message is followed by system message, it ends the group",
             author: user,
             createdAt: systemMessage.createdAt.addingTimeInterval(-(maxTimeInterval / 2)),
@@ -532,7 +532,7 @@ import XCTest
 
         let ephemeralMessage: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "/giffy wow",
             type: .ephemeral,
             author: user,
@@ -575,7 +575,7 @@ import XCTest
         )
         let message: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "When the message is followed by ephemeral message, it ends the group",
             author: user,
             createdAt: ephemeralMessage.createdAt.addingTimeInterval(-(maxTimeInterval / 2)),
@@ -600,14 +600,14 @@ import XCTest
 
         let closingGroupMessage: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Closes the group",
             author: user,
             isSentByCurrentUser: true
         )
         let editedMessage: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Ignores group because it is edited",
             author: user,
             createdAt: closingGroupMessage.createdAt.addingTimeInterval(-maxTimeInterval / 2),
@@ -616,7 +616,7 @@ import XCTest
         )
         let openingGroupMessage: ChatMessage = .mock(
             id: .unique,
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             text: "Opens the group",
             author: user,
             createdAt: editedMessage.createdAt.addingTimeInterval(-maxTimeInterval),
@@ -1666,7 +1666,7 @@ import XCTest
         channelControllerMock.channel_mock = updatedChannel
         channelControllerMock.mockCid = channel.cid
         let event = DraftUpdatedEvent(
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             channel: channel,
             draftMessage: updatedDraftMessage,
             createdAt: .unique
@@ -1687,7 +1687,7 @@ import XCTest
         let updatedDraftMessage = DraftMessage.mock(threadId: .unique, text: "Updated draft")
         channelControllerMock.mockCid = channel.cid
         let event = DraftUpdatedEvent(
-            cid: channel.cid,
+            cid: try! ChannelId(cid: channel.cid),
             channel: channel,
             draftMessage: updatedDraftMessage,
             createdAt: .unique

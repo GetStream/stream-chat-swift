@@ -41,8 +41,9 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
             // New Message will unhide the channel
             // but we won't get `ChannelVisibleEvent` for this case
             case let event as NotificationMessageNewEventDTO:
-                guard let channelDTO = session.channel(cid: event.channel.cid) else {
-                    throw ClientError.ChannelDoesNotExist(cid: event.channel.cid)
+                let cid = try ChannelId(cid: event.channel.cid)
+                guard let channelDTO = session.channel(cid: cid) else {
+                    throw ClientError.ChannelDoesNotExist(cid: cid)
                 }
 
                 if !event.message.isShadowed && event.message.campaignId == nil && !channelDTO.isBlocked {

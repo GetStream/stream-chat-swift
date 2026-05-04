@@ -13,63 +13,64 @@ extension ChannelPayload {
         unreadCount: ChannelUnreadCount?
     ) -> ChatChannel {
         let channelPayload = channel
-        
+        let cid = (try? channelPayload.flatMap { try ChannelId(cid: $0.cid) }) ?? .init(type: .messaging, id: "")
+
         // Map members
-        let mappedMembers = members.compactMap { $0.asModel(channelId: channelPayload.cid) }
-        
+        let mappedMembers = members.compactMap { $0.asModel(channelId: cid) }
+
         // Map latest messages
         let reads = channelReads.map { $0.asModel() }
         let latestMessages = messages.compactMap {
-            $0.asModel(cid: channel.cid, currentUserId: currentUserId, channelReads: reads)
+            $0.asModel(cid: cid, currentUserId: currentUserId, channelReads: reads)
         }
-        
+
         // Map reads
         let mappedReads = channelReads.map { $0.asModel() }
-        
+
         // Map watchers
         let mappedWatchers = watchers?.map { $0.asModel() } ?? []
-        
+
         return ChatChannel(
-            cid: channelPayload.cid,
-            name: channelPayload.name,
-            imageURL: channelPayload.imageURL,
-            lastMessageAt: channelPayload.lastMessageAt,
-            createdAt: channelPayload.createdAt,
-            updatedAt: channelPayload.updatedAt,
-            deletedAt: channelPayload.deletedAt,
-            truncatedAt: channelPayload.truncatedAt,
-            isHidden: isHidden ?? false,
-            createdBy: channelPayload.createdBy?.asModel(),
-            config: channelPayload.config,
-            filterTags: Set(channelPayload.filterTags ?? []),
-            ownCapabilities: Set(channelPayload.ownCapabilities?.compactMap { ChannelCapability(rawValue: $0) } ?? []),
-            isFrozen: channelPayload.isFrozen,
-            isDisabled: channelPayload.isDisabled,
-            isBlocked: channelPayload.isBlocked ?? false,
+            cid: cid,
+            name: channelPayload?.name,
+            imageURL: channelPayload?.imageURL,
+            lastMessageAt: channelPayload?.lastMessageAt,
+            createdAt: channelPayload?.createdAt ?? Date(),
+            updatedAt: channelPayload?.updatedAt ?? Date(),
+            deletedAt: channelPayload?.deletedAt,
+            truncatedAt: channelPayload?.truncatedAt,
+            isHidden: hidden ?? false,
+            createdBy: channelPayload?.createdBy?.asModel(),
+            config: channelPayload?.config?.asChannelConfig ?? .init(),
+            filterTags: Set(channelPayload?.filterTags ?? []),
+            ownCapabilities: Set(channelPayload?.ownCapabilities?.compactMap { ChannelCapability(rawValue: $0.rawValue) } ?? []),
+            isFrozen: channelPayload?.isFrozen ?? false,
+            isDisabled: channelPayload?.isDisabled ?? false,
+            isBlocked: channelPayload?.isBlocked ?? false,
             lastActiveMembers: Array(mappedMembers),
-            membership: membership?.asModel(channelId: channelPayload.cid),
+            membership: membership?.asModel(channelId: cid),
             currentlyTypingUsers: currentlyTypingUsers ?? [],
             lastActiveWatchers: Array(mappedWatchers),
-            team: channelPayload.team,
+            team: channelPayload?.team,
             unreadCount: unreadCount ?? .noUnread,
             watcherCount: watcherCount ?? 0,
-            memberCount: channelPayload.memberCount,
-            messageCount: channelPayload.messageCount,
+            memberCount: channelPayload?.memberCount ?? 0,
+            messageCount: channelPayload?.messageCount,
             reads: mappedReads,
-            cooldownDuration: channelPayload.cooldownDuration,
-            extraData: channelPayload.extraData,
+            cooldownDuration: channelPayload?.cooldownDuration ?? 0,
+            extraData: channelPayload?.extraData ?? [:],
             latestMessages: latestMessages,
             lastMessageFromCurrentUser: latestMessages.first { $0.isSentByCurrentUser },
             pinnedMessages: pinnedMessages.compactMap {
-                $0.asModel(cid: channelPayload.cid, currentUserId: currentUserId, channelReads: reads)
+                $0.asModel(cid: cid, currentUserId: currentUserId, channelReads: reads)
             },
             pendingMessages: (pendingMessages ?? []).compactMap {
-                $0.asModel(cid: channelPayload.cid, currentUserId: currentUserId, channelReads: reads)
+                $0.message?.asModel(cid: cid, currentUserId: currentUserId, channelReads: reads)
             },
             muteDetails: nil,
             draftMessage: nil,
             activeLiveLocations: [],
-            pushPreference: pushPreference?.asModel()
+            pushPreference: nil
         )
     }
 }

@@ -109,12 +109,23 @@
                 "max_message_length": 5000,
                 "blocklist_behavior": "flag",
                 "read_events": true,
-                "search": true
+                "search": true,
+                "count_messages": true,
+                "delivery_events": false,
+                "mark_messages_pending": false,
+                "polls": true,
+                "push_notifications": true,
+                "reminders": true,
+                "shared_locations": true,
+                "skip_last_msg_update_for_system_msgs": false,
+                "user_message_reminders": true
             },
-            "image": "https://picsum.photos/seed/63/100/100",
             "example": 7,
-            "name": "Giant Disk",
-            "last_message_at": "2020-12-23T08:26:45.307447Z"
+            "last_message_at": "2020-12-23T08:26:45.307447Z",
+            "custom": {
+                "name": "Giant Disk",
+                "image": "https://picsum.photos/seed/63/100/100"
+            }
         },
         "secret_note": "Anakin is Vader!",
         "tau": 6.28,

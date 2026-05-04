@@ -189,8 +189,9 @@
                     "custom": {},
                     "teams": []
                 },
-                "name": "Release 4.51.0",
-                "custom": {}
+                "custom": {
+                    "name": "Release 4.51.0"
+                }
             },
             "parent_message_id": "eafa39f5-9ace-457c-ad4a-f5142647a9e6",
             "created_by_user_id": "han_solo",
@@ -481,9 +482,10 @@
                     "user_message_reminders": false
                 },
                 "is_pinned_by_luke_skywalker": true,
-                "name": "Luke",
                 "is_cool": false,
-                "custom": {}
+                "custom": {
+                    "name": "Luke"
+                }
             },
             "parent_message_id": "670b0d17-e2e4-4b2f-a0d9-9d80560ff949",
             "parent_message": {
@@ -1015,10 +1017,11 @@
                     "custom": {},
                     "teams": []
                 },
-                "name": "Release 4.46.0",
                 "is_cool": true,
                 "is_pinned_by_han_solo": true,
-                "custom": {}
+                "custom": {
+                    "name": "Release 4.46.0"
+                }
             },
             "parent_message_id": "1fd621a3-8e0b-4887-b326-f90e2ea60d72",
             "parent_message": {

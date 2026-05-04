@@ -162,8 +162,9 @@
             "custom": {},
             "teams": []
         },
-        "name": "Release 4.51.0",
-        "custom": {}
+        "custom": {
+            "name": "Release 4.51.0"
+        }
     },
     "parent_message_id": "488bba2a-193d-48d2-95ae-3aa4b8e34960",
     "parent_message": {

@@ -337,7 +337,7 @@ final class MessageRepositoryTests: XCTestCase {
     func test_getMessage_propagatesDatabaseError() throws {
         let messagePayload: GetMessageResponse = .init(
             duration: "",
-            message: MessageWithChannelResponse(messageResponse: .dummy(messageId: .unique, authorUserId: .unique), channel: ChannelDetailPayload.dummy(cid: .unique).asChannelResponse!)
+            message: MessageWithChannelResponse(messageResponse: .dummy(messageId: .unique, authorUserId: .unique), channel: ChannelDetailPayload.dummy(cid: .unique).asChannelResponse)
         )
         let channelId = ChannelId.unique
 
@@ -381,7 +381,7 @@ final class MessageRepositoryTests: XCTestCase {
         // Simulate API response with success
         let messagePayload: GetMessageResponse = .init(
             duration: "",
-            message: MessageWithChannelResponse(messageResponse: .dummy(messageId: messageId, authorUserId: currentUserId), channel: ChannelDetailPayload.dummy(cid: .unique).asChannelResponse!)
+            message: MessageWithChannelResponse(messageResponse: .dummy(messageId: messageId, authorUserId: currentUserId), channel: ChannelDetailPayload.dummy(cid: .unique).asChannelResponse)
         )
         apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
@@ -412,7 +412,7 @@ final class MessageRepositoryTests: XCTestCase {
         // Simulate API response with success
         let messagePayload: GetMessageResponse = .init(
             duration: "",
-            message: MessageWithChannelResponse(messageResponse: .dummy(messageId: messageId, authorUserId: currentUserId), channel: ChannelDetailPayload.dummy(cid: .unique).asChannelResponse!)
+            message: MessageWithChannelResponse(messageResponse: .dummy(messageId: messageId, authorUserId: currentUserId), channel: ChannelDetailPayload.dummy(cid: .unique).asChannelResponse)
         )
         apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 

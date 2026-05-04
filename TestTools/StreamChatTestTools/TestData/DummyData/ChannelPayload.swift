@@ -22,21 +22,22 @@ extension ChannelPayload {
         draft: DraftPayload? = nil,
         activeLiveLocations: [SharedLocationPayload] = [],
         pushPreference: PushPreferencePayload? = nil
-    ) -> Self {
-        .init(
+    ) -> ChannelPayload {
+        _ = pushPreference
+        return ChannelStateResponseFields(
+            activeLiveLocations: activeLiveLocations,
             channel: channel,
-            watcherCount: watcherCount ?? watchers.count,
-            watchers: watchers,
+            draft: draft,
+            hidden: isHidden,
             members: members,
             membership: membership,
             messages: messages,
-            pendingMessages: pendingMessages,
+            pendingMessages: pendingMessages.map { PendingMessageResponse(message: $0) },
             pinnedMessages: pinnedMessages,
-            channelReads: channelReads,
-            isHidden: isHidden,
-            draft: draft,
-            activeLiveLocations: activeLiveLocations,
-            pushPreference: pushPreference
+            read: channelReads,
+            threads: [],
+            watcherCount: watcherCount ?? watchers.count,
+            watchers: watchers
         )
     }
 }

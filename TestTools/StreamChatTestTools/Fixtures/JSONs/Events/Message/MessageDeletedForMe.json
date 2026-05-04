@@ -80,5 +80,6 @@
     },
     "type": "message.deleted",
     "deleted_for_me": true,
-    "cid": "messaging:general"
+    "cid": "messaging:general",
+    "custom": {}
 }

@@ -48,22 +48,34 @@
         "search": true,
         "message_retention": "infinite",
         "uploads": true,
-        "name": "messaging"
+        "name": "messaging",
+        "count_messages": true,
+        "delivery_events": false,
+        "mark_messages_pending": false,
+        "polls": true,
+        "push_notifications": true,
+        "reminders": true,
+        "shared_locations": true,
+        "skip_last_msg_update_for_system_msgs": false,
+        "user_message_reminders": true,
+        "custom_events": false
     },
-    "image": "https://images.unsplash.com/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80",
-    "name": "The water cooler",
     "last_message_at": "2020-06-10T05:59:48.054692Z",
     "team": "GREEN",
-    "secret_note": "Anakin is Vader!",
-    "good_movies_count": 3,
-    "awesome": true,
-    "nested_stuff": {
-        "how_many_times": 42,
-        "small": 0.001,
-        "colors": [
-            "blue",
-            "yellow",
-            42
-        ]
+    "custom": {
+        "secret_note": "Anakin is Vader!",
+        "good_movies_count": 3,
+        "awesome": true,
+        "nested_stuff": {
+            "how_many_times": 42,
+            "small": 0.001,
+            "colors": [
+                "blue",
+                "yellow",
+                42
+            ]
+        },
+        "name": "The water cooler",
+        "image": "https://images.unsplash.com/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80"
     }
 }

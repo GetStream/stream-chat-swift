@@ -216,7 +216,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         try database.writeSynchronously { session in
-            let channel = try XCTUnwrap(session.channel(cid: channelPayload.channel.cid))
+            let channel = try XCTUnwrap(session.channel(cid: channelPayload.channel?.channelId ?? .unique))
 
             // Save the same reply
             try session.saveMessage(
@@ -276,7 +276,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         try database.writeSynchronously { session in
-            let channel = try XCTUnwrap(session.channel(cid: channelPayload.channel.cid))
+            let channel = try XCTUnwrap(session.channel(cid: channelPayload.channel?.channelId ?? .unique))
 
             // Save another reply
             try session.saveMessage(
@@ -342,7 +342,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         try database.writeSynchronously { session in
-            let channel = try XCTUnwrap(session.channel(cid: channelPayload.channel.cid))
+            let channel = try XCTUnwrap(session.channel(cid: channelPayload.channel?.channelId ?? .unique))
 
             // Save message again
             try session.saveMessage(
@@ -388,7 +388,7 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         try database.writeSynchronously { session in
-            let channel = try XCTUnwrap(session.channel(cid: channelPayload.channel.cid))
+            let channel = try XCTUnwrap(session.channel(cid: channelPayload.channel?.channelId ?? .unique))
 
             // Save message with quoted message which is not yet in DB
             try session.saveMessage(
@@ -479,7 +479,8 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         try! database.writeSynchronously { session in
-            // Save the message, it should also save the channel
+            // Save the channel first (used to be embedded in the payload)
+            try session.saveChannel(payload: channelPayload, query: nil, cache: nil)
             try! session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true, cache: nil)
         }
 
@@ -513,21 +514,22 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertNearlySameDate(channelPayload.deletedAt, loadedChannel?.deletedAt)
 
         // Config
-        XCTAssertEqual(channelPayload.config.reactionsEnabled, loadedChannel?.config.reactionsEnabled)
-        XCTAssertEqual(channelPayload.config.typingEventsEnabled, loadedChannel?.config.typingEventsEnabled)
-        XCTAssertEqual(channelPayload.config.readEventsEnabled, loadedChannel?.config.readEventsEnabled)
-        XCTAssertEqual(channelPayload.config.connectEventsEnabled, loadedChannel?.config.connectEventsEnabled)
-        XCTAssertEqual(channelPayload.config.uploadsEnabled, loadedChannel?.config.uploadsEnabled)
-        XCTAssertEqual(channelPayload.config.repliesEnabled, loadedChannel?.config.repliesEnabled)
-        XCTAssertEqual(channelPayload.config.quotesEnabled, loadedChannel?.config.quotesEnabled)
-        XCTAssertEqual(channelPayload.config.searchEnabled, loadedChannel?.config.searchEnabled)
-        XCTAssertEqual(channelPayload.config.mutesEnabled, loadedChannel?.config.mutesEnabled)
-        XCTAssertEqual(channelPayload.config.urlEnrichmentEnabled, loadedChannel?.config.urlEnrichmentEnabled)
-        XCTAssertEqual(channelPayload.config.messageRetention, loadedChannel?.config.messageRetention)
-        XCTAssertEqual(channelPayload.config.maxMessageLength, loadedChannel?.config.maxMessageLength)
-        XCTAssertEqual(channelPayload.config.commands, loadedChannel?.config.commands)
-        XCTAssertNearlySameDate(channelPayload.config.createdAt, loadedChannel?.config.createdAt)
-        XCTAssertNearlySameDate(channelPayload.config.updatedAt, loadedChannel?.config.updatedAt)
+        let channelConfig = channelPayload.config?.asChannelConfig
+        XCTAssertEqual(channelConfig?.reactionsEnabled, loadedChannel?.config.reactionsEnabled)
+        XCTAssertEqual(channelConfig?.typingEventsEnabled, loadedChannel?.config.typingEventsEnabled)
+        XCTAssertEqual(channelConfig?.readEventsEnabled, loadedChannel?.config.readEventsEnabled)
+        XCTAssertEqual(channelConfig?.connectEventsEnabled, loadedChannel?.config.connectEventsEnabled)
+        XCTAssertEqual(channelConfig?.uploadsEnabled, loadedChannel?.config.uploadsEnabled)
+        XCTAssertEqual(channelConfig?.repliesEnabled, loadedChannel?.config.repliesEnabled)
+        XCTAssertEqual(channelConfig?.quotesEnabled, loadedChannel?.config.quotesEnabled)
+        XCTAssertEqual(channelConfig?.searchEnabled, loadedChannel?.config.searchEnabled)
+        XCTAssertEqual(channelConfig?.mutesEnabled, loadedChannel?.config.mutesEnabled)
+        XCTAssertEqual(channelConfig?.urlEnrichmentEnabled, loadedChannel?.config.urlEnrichmentEnabled)
+        XCTAssertEqual(channelConfig?.messageRetention, loadedChannel?.config.messageRetention)
+        XCTAssertEqual(channelConfig?.maxMessageLength, loadedChannel?.config.maxMessageLength)
+        XCTAssertEqual(channelConfig?.commands, loadedChannel?.config.commands)
+        XCTAssertNearlySameDate(channelConfig?.createdAt, loadedChannel?.config.createdAt)
+        XCTAssertNearlySameDate(channelConfig?.updatedAt, loadedChannel?.config.updatedAt)
 
         // Creator
         XCTAssertEqual(channelPayload.createdBy!.id, loadedChannel?.createdBy?.id)
@@ -2073,7 +2075,7 @@ final class MessageDTO_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         // Save channel with some messages
         let channelPayload: ChannelPayload = dummyPayload(with: channelId, numberOfMessages: 5)
-        let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
+        let originalLastMessageAt: Date = channelPayload.channel!.lastMessageAt ?? channelPayload.channel!.createdAt
         try database.writeSynchronously {
             try $0.saveChannel(payload: channelPayload)
         }
@@ -2082,9 +2084,9 @@ final class MessageDTO_Tests: XCTestCase {
         let olderMessagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
-            createdAt: .unique(before: channelPayload.channel.lastMessageAt!)
+            createdAt: .unique(before: channelPayload.channel!.lastMessageAt!)
         )
-        assert(olderMessagePayload.createdAt < channelPayload.channel.lastMessageAt!)
+        assert(olderMessagePayload.createdAt < channelPayload.channel!.lastMessageAt!)
         // Save the message payload and check `channel.lastMessageAt` is not updated by older message
         try database.writeSynchronously {
             try $0.saveMessage(payload: olderMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
@@ -2096,9 +2098,9 @@ final class MessageDTO_Tests: XCTestCase {
         let newerMessagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
-            createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
+            createdAt: .unique(after: channelPayload.channel!.lastMessageAt!)
         )
-        assert(newerMessagePayload.createdAt > channelPayload.channel.lastMessageAt!)
+        assert(newerMessagePayload.createdAt > channelPayload.channel!.lastMessageAt!)
         // Save the message payload and check `channel.lastMessageAt` is updated
         try database.writeSynchronously {
             try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
@@ -2117,7 +2119,7 @@ final class MessageDTO_Tests: XCTestCase {
             numberOfMessages: 5,
             channelConfig: .mock(skipLastMsgAtUpdateForSystemMsg: true)
         )
-        let originalLastMessageAt: Date = channelPayload.channel.lastMessageAt ?? channelPayload.channel.createdAt
+        let originalLastMessageAt: Date = channelPayload.channel!.lastMessageAt ?? channelPayload.channel!.createdAt
         try database.writeSynchronously {
             try $0.saveChannel(payload: channelPayload)
         }
@@ -2126,9 +2128,9 @@ final class MessageDTO_Tests: XCTestCase {
         let olderMessagePayload: MessagePayload = .dummy(
             messageId: messageId,
             authorUserId: userId,
-            createdAt: .unique(before: channelPayload.channel.lastMessageAt!)
+            createdAt: .unique(before: channelPayload.channel!.lastMessageAt!)
         )
-        assert(olderMessagePayload.createdAt < channelPayload.channel.lastMessageAt!)
+        assert(olderMessagePayload.createdAt < channelPayload.channel!.lastMessageAt!)
         // Save the message payload and check `channel.lastMessageAt` is not updated by older message
         try database.writeSynchronously {
             try $0.saveMessage(payload: olderMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
@@ -2141,9 +2143,9 @@ final class MessageDTO_Tests: XCTestCase {
             type: .system,
             messageId: messageId,
             authorUserId: userId,
-            createdAt: .unique(after: channelPayload.channel.lastMessageAt!)
+            createdAt: .unique(after: channelPayload.channel!.lastMessageAt!)
         )
-        assert(newerMessagePayload.createdAt > channelPayload.channel.lastMessageAt!)
+        assert(newerMessagePayload.createdAt > channelPayload.channel!.lastMessageAt!)
 
         // Save the message payload and check `channel.lastMessageAt` is not updated.
         try database.writeSynchronously {
@@ -3448,7 +3450,7 @@ final class MessageDTO_Tests: XCTestCase {
             for message in [earlierMessage, laterMessage] {
                 try session.saveMessage(
                     payload: message,
-                    for: channel.cid,
+                    for: try ChannelId(cid: channel.cid),
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -3460,7 +3462,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // WHEN
         let results = MessageDTO.load(
-            for: channel.cid.rawValue,
+            for: channel.cid,
             limit: 10,
             offset: 0,
             shouldShowShadowedMessages: true,
@@ -3495,13 +3497,13 @@ final class MessageDTO_Tests: XCTestCase {
             try session.saveChannel(payload: anotherChannel, query: nil, cache: nil)
             try session.saveMessage(
                 payload: channelMessage,
-                for: channel.cid,
+                for: try ChannelId(cid: channel.cid),
                 syncOwnReactions: false,
                 cache: nil
             )
             try session.saveMessage(
                 payload: anotherChannelMessage,
-                for: anotherChannel.cid,
+                for: try ChannelId(cid: anotherChannel.cid),
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -3511,7 +3513,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // WHEN
         let results = MessageDTO.load(
-            for: channel.cid.rawValue,
+            for: channel.cid,
             limit: 10,
             offset: 0,
             shouldShowShadowedMessages: true,
@@ -3536,7 +3538,7 @@ final class MessageDTO_Tests: XCTestCase {
                         authorUserId: .unique,
                         channel: channel
                     ),
-                    for: channel.cid,
+                    for: try ChannelId(cid: channel.cid),
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -3545,7 +3547,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // WHEN
         let results = MessageDTO.load(
-            for: channel.cid.rawValue,
+            for: channel.cid,
             limit: limit,
             offset: 0,
             shouldShowShadowedMessages: true,
@@ -3572,7 +3574,7 @@ final class MessageDTO_Tests: XCTestCase {
             try session.saveChannel(payload: channel, query: nil, cache: nil)
             try session.saveMessage(
                 payload: targetMessage,
-                for: channel.cid,
+                for: try ChannelId(cid: channel.cid),
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -3585,7 +3587,7 @@ final class MessageDTO_Tests: XCTestCase {
                         createdAt: targetMessage.createdAt.addingTimeInterval(Double(i)),
                         channel: channel
                     ),
-                    for: channel.cid,
+                    for: try ChannelId(cid: channel.cid),
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -3596,7 +3598,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // WHEN
         let results = MessageDTO.load(
-            for: channel.cid.rawValue,
+            for: channel.cid,
             limit: 10,
             offset: offset,
             shouldShowShadowedMessages: true,
@@ -3623,7 +3625,7 @@ final class MessageDTO_Tests: XCTestCase {
             try session.saveChannel(payload: channel, query: nil, cache: nil)
             try session.saveMessage(
                 payload: shadowedMessage,
-                for: channel.cid,
+                for: try ChannelId(cid: channel.cid),
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -3633,7 +3635,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // WHEN
         let results = MessageDTO.load(
-            for: channel.cid.rawValue,
+            for: channel.cid,
             limit: 10,
             offset: 0,
             shouldShowShadowedMessages: true,
@@ -3660,7 +3662,7 @@ final class MessageDTO_Tests: XCTestCase {
             try session.saveChannel(payload: channel, query: nil, cache: nil)
             try session.saveMessage(
                 payload: shadowedMessage,
-                for: channel.cid,
+                for: try ChannelId(cid: channel.cid),
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -3668,7 +3670,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // WHEN
         let results = MessageDTO.load(
-            for: channel.cid.rawValue,
+            for: channel.cid,
             limit: 10,
             offset: 0,
             shouldShowShadowedMessages: false,
@@ -4301,7 +4303,7 @@ final class MessageDTO_Tests: XCTestCase {
     private func createMessage(with message: MessagePayload) throws -> MessageDTO {
         let context = database.viewContext
         _ = try context.saveCurrentUser(payload: .dummy(userPayload: message.user))
-        let cid = message.channel?.cid ?? (try? ChannelId(cid: message.cid)) ?? ChannelId.unique
+        let cid = message.channel.flatMap { try? ChannelId(cid: $0.cid) } ?? (try? ChannelId(cid: message.cid)) ?? ChannelId.unique
         try context.saveChannel(payload: ChannelDetailPayload.dummy(cid: cid), query: nil, cache: nil)
         return try XCTUnwrap(
             context.saveMessage(payload: message, for: cid, cache: nil)
@@ -4374,7 +4376,7 @@ final class MessageDTO_Tests: XCTestCase {
         let observer = StateLayerDatabaseObserver(
             database: database,
             fetchRequest: MessageDTO.messagesFetchRequest(
-                for: channelPayload.channel.cid,
+                for: channelPayload.channel.flatMap { try? ChannelId(cid: $0.cid) } ?? .unique,
                 pageSize: 25,
                 sortAscending: true,
                 shouldShowShadowedMessages: false

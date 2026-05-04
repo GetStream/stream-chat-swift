@@ -18,5 +18,6 @@
     },
     "created_at": "2021-04-23T07:53:00.121230568Z",
     "type": "channel.visible",
-    "cid": "messaging:default-channel-6"
+    "cid": "messaging:default-channel-6",
+    "custom": {}
 }

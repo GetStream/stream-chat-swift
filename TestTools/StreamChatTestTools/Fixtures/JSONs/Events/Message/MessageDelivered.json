@@ -29,5 +29,6 @@
     "last_delivered_message_id": "1ff9f6d0-df70-4703-aef0-379f95ad7366",
     "last_delivered_at": "2020-07-17T13:55:56.253358328Z",
     "type": "message.delivered",
-    "cid": "messaging:general"
+    "cid": "messaging:general",
+    "custom": {}
 }
