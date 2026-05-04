@@ -122,10 +122,11 @@
             {
                 "type" : "image",
                 "fallback" : "IMG_0007.JPG",
-                "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/8493ab56-a02e-49fb-becf-1a6bbed2ac62.IMG_0007.JPG?ro=0&s=09ace099e749ea6f8902aa4b9a6957eb"
+                "image_url" : "https:\/\/stream-cloud-uploads-dev.imgix.net\/images\/47574\/8493ab56-a02e-49fb-becf-1a6bbed2ac62.IMG_0007.JPG?ro=0&s=09ace099e749ea6f8902aa4b9a6957eb",
+                "custom" : {}
             },
             {
-
+                "custom" : {}
             }
         ],
         "own_reactions" : [

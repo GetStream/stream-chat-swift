@@ -206,14 +206,6 @@ extension MembersResponse {
     convenience init(members: [MemberPayload]) {
         self.init(duration: "", members: members)
     }
-
-    convenience init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.init(
-            duration: try container.decodeIfPresent(String.self, forKey: .duration) ?? "",
-            members: try container.decode([MemberPayload].self, forKey: .members)
-        )
-    }
 }
 
 extension ChannelMemberResponse {
@@ -609,78 +601,6 @@ extension OwnUserResponse {
             updatedAt: updatedAt
         )
     }
-
-    convenience init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
-        var extraData = (try? [String: RawJSON](from: decoder)) ?? [:]
-        extraData.removeValues(forKeys: CodingKeys.allCases.map(\.rawValue) + Self.legacyUserPayloadKeys)
-        extraData = extraData.merging(custom) { _, customValue in customValue }
-
-        self.init(
-            avgResponseTime: try container.decodeIfPresent(Int.self, forKey: .avgResponseTime),
-            banned: try container.decodeIfPresent(Bool.self, forKey: .banned) ?? false,
-            blockedUserIds: try container.decodeIfPresent([String].self, forKey: .blockedUserIds),
-            channelMutes: try container.decodeIfPresent([ChannelMute].self, forKey: .channelMutes) ?? [],
-            createdAt: try container.decode(Date.self, forKey: .createdAt),
-            custom: extraData,
-            deactivatedAt: try container.decodeIfPresent(Date.self, forKey: .deactivatedAt),
-            deletedAt: try container.decodeIfPresent(Date.self, forKey: .deletedAt),
-            devices: try container.decodeIfPresent([DeviceResponse].self, forKey: .devices) ?? [],
-            id: try container.decodeIfPresent(String.self, forKey: .id) ?? "",
-            image: try container.decodeIfPresent(String.self, forKey: .image),
-            invisible: try container.decodeIfPresent(Bool.self, forKey: .invisible) ?? false,
-            language: try container.decodeIfPresent(String.self, forKey: .language) ?? "",
-            lastActive: try container.decodeIfPresent(Date.self, forKey: .lastActive),
-            latestHiddenChannels: try container.decodeIfPresent([String].self, forKey: .latestHiddenChannels),
-            mutes: try container.decodeIfPresent([UserMuteResponse].self, forKey: .mutes) ?? [],
-            name: try container.decodeIfPresent(String.self, forKey: .name),
-            online: try container.decode(Bool.self, forKey: .online),
-            privacySettings: try container.decodeIfPresent(PrivacySettingsResponse.self, forKey: .privacySettings),
-            pushPreferences: try container.decodeIfPresent(PushPreferencesResponse.self, forKey: .pushPreferences),
-            revokeTokensIssuedBefore: try container.decodeIfPresent(Date.self, forKey: .revokeTokensIssuedBefore),
-            role: try container.decode(String.self, forKey: .role),
-            teams: try container.decodeIfPresent([String].self, forKey: .teams) ?? [],
-            teamsRole: try container.decodeIfPresent([String: String].self, forKey: .teamsRole),
-            totalUnreadCount: try container.decodeIfPresent(Int.self, forKey: .totalUnreadCount) ?? 0,
-            totalUnreadCountByTeam: try container.decodeIfPresent([String: Int].self, forKey: .totalUnreadCountByTeam),
-            unreadChannels: try container.decodeIfPresent(Int.self, forKey: .unreadChannels) ?? 0,
-            unreadCount: try container.decodeIfPresent(Int.self, forKey: .unreadCount) ?? 0,
-            unreadThreads: try container.decodeIfPresent(Int.self, forKey: .unreadThreads) ?? -1,
-            updatedAt: try container.decode(Date.self, forKey: .updatedAt)
-        )
-    }
-
-    private static var legacyUserPayloadKeys: [String] {
-        [
-            "id",
-            "name",
-            "image",
-            "role",
-            "online",
-            "banned",
-            "created_at",
-            "updated_at",
-            "deactivated_at",
-            "last_active",
-            "invisible",
-            "teams",
-            "unread_channels",
-            "total_unread_count",
-            "unread_threads",
-            "mutes",
-            "channel_mutes",
-            "anon",
-            "devices",
-            "unread_count",
-            "language",
-            "privacy_settings",
-            "blocked_user_ids",
-            "teams_role",
-            "avg_response_time",
-            "push_preferences"
-        ]
-    }
 }
 
 extension UserPrivacySettingsPayload {
@@ -700,16 +620,6 @@ extension MuteChannelResponse {
 
     convenience init(channelMute: ChannelMute, channelMutes: [ChannelMute]? = nil, ownUser: OwnUserResponse? = nil) {
         self.init(channelMute: channelMute, channelMutes: channelMutes, duration: "", ownUser: ownUser)
-    }
-
-    convenience init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.init(
-            channelMute: try container.decodeIfPresent(ChannelMute.self, forKey: .channelMute),
-            channelMutes: try container.decodeIfPresent([ChannelMute].self, forKey: .channelMutes),
-            duration: try container.decodeIfPresent(String.self, forKey: .duration) ?? "",
-            ownUser: try container.decodeIfPresent(OwnUserResponse.self, forKey: .ownUser)
-        )
     }
 }
 
@@ -755,19 +665,6 @@ extension ChannelMute {
             createdAt: createdAt,
             updatedAt: updatedAt,
             expiresAt: expiresAt
-        )
-    }
-
-    convenience init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        let channelPayload = try container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
-        let userPayload = try container.decodeIfPresent(UserPayload.self, forKey: .user)
-        self.init(
-            channel: channelPayload?.asChannelResponse,
-            createdAt: try container.decode(Date.self, forKey: .createdAt),
-            expires: try container.decodeIfPresent(Date.self, forKey: .expires),
-            updatedAt: try container.decode(Date.self, forKey: .updatedAt),
-            user: userPayload?.asUserResponse
         )
     }
 }
@@ -2006,27 +1903,6 @@ extension ReactionResponse {
             userId: user.id
         )
     }
-
-    convenience init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        var legacyExtraData = (try? [String: RawJSON](from: decoder)) ?? [:]
-        legacyExtraData.removeValues(forKeys: CodingKeys.allCases.map(\.rawValue))
-
-        let userPayload = try container.decode(UserPayload.self, forKey: .user)
-        let custom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
-        let extraData = legacyExtraData.merging(custom) { _, openAPIValue in openAPIValue }
-
-        self.init(
-            createdAt: try container.decode(Date.self, forKey: .createdAt),
-            custom: extraData,
-            messageId: try container.decode(MessageId.self, forKey: .messageId),
-            score: try container.decode(Int.self, forKey: .score),
-            type: try container.decode(String.self, forKey: .type),
-            updatedAt: try container.decode(Date.self, forKey: .updatedAt),
-            user: userPayload.asUserResponse,
-            userId: try container.decodeIfPresent(UserId.self, forKey: .userId) ?? userPayload.id
-        )
-    }
 }
 
 extension ReactionRequest {
@@ -2349,40 +2225,6 @@ extension Attachment {
             self.init(custom: dict)
         }
         self.type = type.rawValue
-    }
-
-    convenience init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        var legacyExtraData = (try? [String: RawJSON](from: decoder)) ?? [:]
-        legacyExtraData.removeValues(forKeys: CodingKeys.allCases.map(\.rawValue))
-
-        let openAPICustom = try container.decodeIfPresent([String: RawJSON].self, forKey: .custom) ?? [:]
-        let mergedCustom = legacyExtraData.merging(openAPICustom) { _, openAPIValue in openAPIValue }
-
-        self.init(
-            actions: try container.decodeIfPresent([Action].self, forKey: .actions),
-            assetUrl: try container.decodeIfPresent(String.self, forKey: .assetUrl),
-            authorIcon: try container.decodeIfPresent(String.self, forKey: .authorIcon),
-            authorLink: try container.decodeIfPresent(String.self, forKey: .authorLink),
-            authorName: try container.decodeIfPresent(String.self, forKey: .authorName),
-            color: try container.decodeIfPresent(String.self, forKey: .color),
-            custom: mergedCustom,
-            fallback: try container.decodeIfPresent(String.self, forKey: .fallback),
-            fields: try container.decodeIfPresent([Field].self, forKey: .fields),
-            footer: try container.decodeIfPresent(String.self, forKey: .footer),
-            footerIcon: try container.decodeIfPresent(String.self, forKey: .footerIcon),
-            giphy: try container.decodeIfPresent(Images.self, forKey: .giphy),
-            imageUrl: try container.decodeIfPresent(String.self, forKey: .imageUrl),
-            ogScrapeUrl: try container.decodeIfPresent(String.self, forKey: .ogScrapeUrl),
-            originalHeight: try container.decodeIfPresent(Int.self, forKey: .originalHeight),
-            originalWidth: try container.decodeIfPresent(Int.self, forKey: .originalWidth),
-            pretext: try container.decodeIfPresent(String.self, forKey: .pretext),
-            text: try container.decodeIfPresent(String.self, forKey: .text),
-            thumbUrl: try container.decodeIfPresent(String.self, forKey: .thumbUrl),
-            title: try container.decodeIfPresent(String.self, forKey: .title),
-            titleLink: try container.decodeIfPresent(String.self, forKey: .titleLink)
-        )
-        self.type = try container.decodeIfPresent(String.self, forKey: .type)
     }
 
     var attachmentType: AttachmentType {

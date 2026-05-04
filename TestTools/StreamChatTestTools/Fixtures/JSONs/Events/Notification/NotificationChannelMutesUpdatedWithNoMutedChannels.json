@@ -40,6 +40,7 @@
         "channel_mutes": [],
         "unread_count": 100,
         "total_unread_count": 100,
+        "unread_threads": -1,
         "unread_channels": 0,
         "language": "",
         "name": "Luke Skywalker",

@@ -51,14 +51,13 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "AttachmentPayloadCustom")
         let payload = try JSONDecoder.default.decode(MessageAttachmentPayload.self, from: json)
 
-        let expectedRawJSON = try JSONDecoder.default
-            .decode(RawJSON.self, from: json)
-            .dictionary(with: nil, forKey: "type")?
-            .dictionary(with: nil, forKey: "custom")
-
         // Assert `MessageAttachmentPayload` is deserialized correctly.
         XCTAssertEqual(payload.type, "party_invite")
-        XCTAssertEqual(payload.payload, expectedRawJSON)
+        XCTAssertEqual(payload.payload, .dictionary([
+            "place": .string("DeathStar"),
+            "name": .string("New Year Eve Party"),
+            "guest_list": .string("https://docs.google.com/document/guest_list_death_star")
+        ]))
     }
 
     func test_unknownIsUsed_ifTypeIsMissing() throws {
