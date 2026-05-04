@@ -3,14 +3,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
 ### ✅ Added
 - Add `ChannelList.prefill(group:)` for priming state-layer channel data [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 - Add `ChatChannelListController.prefill(group:completion:)` for priming controller-local channel data [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 - Add `ChatClient.queryGroupedChannels(limit:watch:presence:)` to fetch grouped channels with per group unread counts [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 - Add optional `groupedUnreadChannels` data to relevant web-socket events and to `CurrentChatUser` [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
+### 🐞 Fixed
+- Fix image cache misses caused by non-deterministic caching keys in `StreamCDNRequester` [#4075](https://github.com/GetStream/stream-chat-swift/pull/4075)
+- Fix `ChatChannel.latestMessages` being wiped on mid-page pagination [#4077](https://github.com/GetStream/stream-chat-swift/pull/4077)
 
-### 🔄 Changed
-- Make grouped channels decoding tolerate missing `unread_count` and `unread_channels` fields in group buckets, matching the current OpenAPI schema [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
+## StreamChatUI
+### 🐞 Fixed
+- Fix channel list preview showing "No messages" after a mid-page jump [#4077](https://github.com/GetStream/stream-chat-swift/pull/4077)
+- Fix layout shift on delivery-status transitions in message footer [#4078](https://github.com/GetStream/stream-chat-swift/pull/4078)
 
 # [5.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.1.0)
 _April 23, 2026_
