@@ -121,15 +121,9 @@ final class IdentifiablePayload_Tests: XCTestCase {
     }
 
     func test_MessageReactionsPayload_isIdentifiablePayload() {
-        let payload = MessageReactionsPayload(reactions: [])
+        let payload = MessageReactionsPayload(duration: "", reactions: [])
         XCTAssertNil(payload.databaseId)
         XCTAssertNil(MessageReactionsPayload.modelClass)
-    }
-
-    func test_MessagePayloadBoxed_isIdentifiablePayload() {
-        let payload = MessagePayload.Boxed(message: .dummy(messageId: "1", authorUserId: ""))
-        XCTAssertNil(payload.databaseId)
-        XCTAssertNil(MessagePayload.Boxed.modelClass)
     }
 
     func test_ChannelMemberListPayload_isIdentifiablePayload() {
@@ -367,23 +361,13 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 let messageId = "message-c:\(channelIndex)-\(messageIndex)"
                 let messageCreatedDate = Date.unique(after: Date())
                 let messageAuthor = users[channelIndex]
-                return MessagePayload(
-                    id: messageId,
-                    type: .regular,
-                    user: messageAuthor,
-                    createdAt: messageCreatedDate,
-                    updatedAt: .unique,
-                    deletedAt: nil,
-                    text: .unique,
-                    command: .unique,
-                    args: .unique,
-                    parentId: nil,
+                return MessagePayload.dummy(
+                    messageId: messageId,
                     showReplyInChannel: .random(),
-                    quotedMessageId: nil,
-                    quotedMessage: nil,
-                    mentionedUsers: [anotherUser(differentThan: messageIndex)],
                     threadParticipants: [],
-                    replyCount: .random(in: 0...10),
+                    attachments: [],
+                    authorUserId: messageAuthor.id,
+                    text: .unique,
                     extraData: [:],
                     latestReactions: (0..<messageReactionsCount).map {
                         MessageReactionPayload(
@@ -407,16 +391,12 @@ final class IdentifiablePayload_Tests: XCTestCase {
                             extraData: [:]
                         )
                     },
+                    createdAt: messageCreatedDate,
+                    updatedAt: .unique,
+                    channel: channelDetail,
                     reactionScores: [:],
                     reactionCounts: [:],
-                    isSilent: false,
-                    isShadowed: false,
-                    attachments: [],
-                    channel: channelDetail,
-                    pinned: false,
-                    pinnedBy: nil,
-                    pinnedAt: nil,
-                    pinExpires: nil
+                    mentionedUsers: [anotherUser(differentThan: messageIndex)]
                 )
             }
 

@@ -87,22 +87,17 @@ final class DatabaseSession_Tests: XCTestCase {
             extraData: [:]
         )
 
-        let messagePayload = MessagePayload(
-            id: messageId,
-            type: .regular,
-            user: userPayload,
+        let messagePayload = MessagePayload.dummy(
+            messageId: messageId,
+            attachments: [],
+            authorUserId: userPayload.id,
+            text: "No, I am your father 🤯",
+            extraData: [:],
             createdAt: channelPayload.createdAt.addingTimeInterval(300),
             updatedAt: .unique,
-            text: "No, I am your father 🤯",
-            showReplyInChannel: false,
-            mentionedUsers: [],
-            replyCount: 0,
-            extraData: [:],
             reactionScores: [:],
             reactionCounts: [:],
-            isSilent: false,
-            isShadowed: false,
-            attachments: []
+            mentionedUsers: []
         )
 
         let eventPayload: EventPayload = .init(

@@ -18,11 +18,12 @@
                 "disabled": true,
                 "disabled_reason": "BadDeviceToken",
                 "user_id": "luke_skywalker",
-              "banned" : false,
-              "shadow_banned" : false,
-              "channel_role" : "channel_member",
-              "notifications_muted" : false,
-              "custom" : {}},
+                "banned": false,
+                "shadow_banned": false,
+                "channel_role": "channel_member",
+                "notifications_muted": false,
+                "custom": {}
+            },
             {
                 "push_provider": "apn",
                 "id": "60729e8d570b72beb7a1d2072530b9f7ab4a7292f2ea145e0671186111410bab",
@@ -30,11 +31,12 @@
                 "disabled": true,
                 "disabled_reason": "BadDeviceToken",
                 "user_id": "luke_skywalker",
-              "banned" : false,
-              "shadow_banned" : false,
-              "channel_role" : "channel_member",
-              "notifications_muted" : false,
-              "custom" : {}}
+                "banned": false,
+                "shadow_banned": false,
+                "channel_role": "channel_member",
+                "notifications_muted": false,
+                "custom": {}
+            }
         ],
         "mutes": [],
         "channel_mutes": [],
@@ -45,9 +47,10 @@
         "language": "",
         "name": "Luke Skywalker",
         "image": null,
-      "blocked_user_ids" : [],
-      "custom" : {},
-      "teams" : []},
+        "blocked_user_ids": [],
+        "custom": {},
+        "teams": []
+    },
     "created_at": "2021-04-22T14:56:09.064638204Z",
     "received_at": "2021-04-22T14:56:09.048Z"
 }

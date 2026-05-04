@@ -158,7 +158,7 @@ extension Endpoint {
         skipPush: Bool,
         skipEnrichUrl: Bool
     )
-        -> Endpoint<MessagePayload.Boxed> {
+        -> Endpoint<SendMessageResponseOpenAPI> {
         let body: [String: AnyEncodable] = [
             "message": AnyEncodable(messagePayload),
             "skip_push": AnyEncodable(skipPush),

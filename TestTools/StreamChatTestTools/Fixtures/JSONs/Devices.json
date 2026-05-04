@@ -1,15 +1,16 @@
 {
-    "devices" : [
+    "devices": [
         {
-            "id" : "2552c2ec3ba609bd6ebe5d437e6926de20fde3adae2d2e7f0a5a72bc90285fa5",
-            "push_provider" : "apn",
-            "user_id" : "broken-waterfall-5",
-            "created_at" : "2020-08-10T14:12:55.891096Z",
-          "banned" : false,
-          "shadow_banned" : false,
-          "channel_role" : "channel_member",
-          "notifications_muted" : false,
-          "custom" : {}}
+            "id": "2552c2ec3ba609bd6ebe5d437e6926de20fde3adae2d2e7f0a5a72bc90285fa5",
+            "push_provider": "apn",
+            "user_id": "broken-waterfall-5",
+            "created_at": "2020-08-10T14:12:55.891096Z",
+            "banned": false,
+            "shadow_banned": false,
+            "channel_role": "channel_member",
+            "notifications_muted": false,
+            "custom": {}
+        }
     ],
-    "duration" : "0.43ms"
+    "duration": "0.43ms"
 }

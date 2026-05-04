@@ -42,7 +42,7 @@ final class ReactionListUpdater_Tests: XCTestCase {
             )
         }
 
-        let payload = MessageReactionsPayload(reactions: [
+        let payload = MessageReactionsPayload(duration: "", reactions: [
             .dummy(messageId: messageId, user: .dummy(userId: .unique)),
             .dummy(messageId: messageId, user: .dummy(userId: .unique)),
             .dummy(messageId: messageId, user: .dummy(userId: .unique))

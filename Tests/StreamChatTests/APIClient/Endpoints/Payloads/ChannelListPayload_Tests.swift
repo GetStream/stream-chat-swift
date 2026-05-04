@@ -176,23 +176,13 @@ final class ChannelListPayload_Tests: XCTestCase {
                 let messageId = "\(channelIndex)-\(messageIndex)"
                 let messageCreatedDate = Date.unique(after: channelCreatedDate)
                 let messageAuthor = channelUsers.randomElement()!
-                return MessagePayload(
-                    id: messageId,
-                    type: .regular,
-                    user: messageAuthor,
-                    createdAt: messageCreatedDate,
-                    updatedAt: .unique,
-                    deletedAt: nil,
-                    text: .unique,
-                    command: .unique,
-                    args: .unique,
-                    parentId: nil,
+                return MessagePayload.dummy(
+                    messageId: messageId,
                     showReplyInChannel: .random(),
-                    quotedMessageId: nil,
-                    quotedMessage: nil,
-                    mentionedUsers: messageIndex % 2 == 0 ? [channelUsers.randomElement()!] : [],
                     threadParticipants: [],
-                    replyCount: .random(in: 0...10),
+                    attachments: messageIndex % 2 == 0 ? [.dummy()] : [],
+                    authorUserId: messageAuthor.id,
+                    text: .unique,
                     extraData: [:],
                     latestReactions: messageIndex % 2 == 0 ? (0..<3).map { _ in
                         MessageReactionPayload(
@@ -216,16 +206,12 @@ final class ChannelListPayload_Tests: XCTestCase {
                             extraData: [:]
                         )
                     } : [],
+                    createdAt: messageCreatedDate,
+                    updatedAt: .unique,
+                    channel: channelDetail,
                     reactionScores: [:],
                     reactionCounts: [:],
-                    isSilent: false,
-                    isShadowed: false,
-                    attachments: messageIndex % 2 == 0 ? [.dummy()] : [],
-                    channel: channelDetail,
-                    pinned: false,
-                    pinnedBy: nil,
-                    pinnedAt: nil,
-                    pinExpires: nil
+                    mentionedUsers: messageIndex % 2 == 0 ? [channelUsers.randomElement()!] : []
                 )
             }
 
@@ -283,7 +269,7 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.messages.count, 25)
         let firstMessage = payload.messages.first(where: { $0.id == "broken-waterfall-5-7aede36b-b89f-4f45-baff-c40c7c1875d9" })!
 
-        XCTAssertEqual(firstMessage.type, MessageType.regular)
+        XCTAssertEqual(firstMessage.type, MessageType.regular.rawValue)
         XCTAssertEqual(firstMessage.user.id, "broken-waterfall-5")
         XCTAssertEqual(firstMessage.createdAt, "2020-06-09T08:10:40.800912Z".toDate())
         XCTAssertEqual(firstMessage.updatedAt, "2020-06-09T08:10:40.800912Z".toDate())

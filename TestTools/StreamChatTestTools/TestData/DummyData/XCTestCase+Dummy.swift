@@ -60,58 +60,64 @@ extension XCTestCase {
         cid: ChannelId? = nil,
         createdAt: Date = XCTestCase.channelCreatedDate.addingTimeInterval(.random(in: 60...900_000))
     ) -> MessagePayload {
-        MessagePayload(
-            id: id,
-            cid: cid,
-            type: .regular,
-            user: dummyUser,
+        MessageResponse(
+            attachments: [],
+            cid: cid?.rawValue ?? "",
             createdAt: createdAt,
-            updatedAt: .unique,
-            deletedAt: nil,
-            text: .unique,
-            command: nil,
-            args: nil,
-            parentId: nil,
-            showReplyInChannel: false,
+            custom: [:],
+            deletedReplyCount: 0,
+            html: "",
+            id: id,
+            latestReactions: [],
+            mentionedChannel: false,
+            mentionedHere: false,
             mentionedUsers: [dummyCurrentUser.asUserPayload],
-            replyCount: 0,
-            extraData: [:],
-            reactionScores: ["like": 1],
+            ownReactions: [],
+            pinned: false,
             reactionCounts: ["like": 1],
-            isSilent: false,
-            isShadowed: false,
-            attachments: []
+            reactionScores: ["like": 1],
+            replyCount: 0,
+            restrictedVisibility: [],
+            shadowed: false,
+            silent: false,
+            text: .unique,
+            type: MessageType.regular.rawValue,
+            updatedAt: .unique,
+            user: dummyUser
         )
     }
 
     func dummyPinnedMessagePayload(
         createdAt: Date = XCTestCase.channelCreatedDate.addingTimeInterval(.random(in: 50...99))
     ) -> MessagePayload {
-        MessagePayload(
-            id: .unique,
-            type: .regular,
-            user: dummyUser,
+        MessageResponse(
+            attachments: [],
+            cid: "",
             // createAt should be lower than dummyMessage, so it does not come first in `latestMessages`
             createdAt: createdAt,
-            updatedAt: .unique,
-            deletedAt: nil,
-            text: .unique,
-            command: nil,
-            args: nil,
-            parentId: nil,
-            showReplyInChannel: false,
+            custom: [:],
+            deletedReplyCount: 0,
+            html: "",
+            id: .unique,
+            latestReactions: [],
+            mentionedChannel: false,
+            mentionedHere: false,
             mentionedUsers: [dummyCurrentUser.asUserPayload],
-            replyCount: 0,
-            extraData: [:],
-            reactionScores: ["like": 1],
-            reactionCounts: ["like": 1],
-            isSilent: false,
-            isShadowed: false,
-            attachments: [],
+            ownReactions: [],
+            pinExpires: .unique,
             pinned: true,
-            pinnedBy: dummyUser,
             pinnedAt: .unique,
-            pinExpires: .unique
+            pinnedBy: dummyUser,
+            reactionCounts: ["like": 1],
+            reactionScores: ["like": 1],
+            replyCount: 0,
+            restrictedVisibility: [],
+            shadowed: false,
+            silent: false,
+            text: .unique,
+            type: MessageType.regular.rawValue,
+            updatedAt: .unique,
+            user: dummyUser
         )
     }
 
@@ -221,26 +227,30 @@ extension XCTestCase {
     }
 
     var dummyMessageWithNoExtraData: MessagePayload {
-        MessagePayload(
-            id: .unique,
-            type: .regular,
-            user: dummyUser,
+        MessageResponse(
+            attachments: [],
+            cid: "",
             createdAt: .unique,
-            updatedAt: .unique,
-            deletedAt: nil,
-            text: .unique,
-            command: nil,
-            args: nil,
-            parentId: nil,
-            showReplyInChannel: false,
+            custom: [:],
+            deletedReplyCount: 0,
+            html: "",
+            id: .unique,
+            latestReactions: [],
+            mentionedChannel: false,
+            mentionedHere: false,
             mentionedUsers: [],
-            replyCount: 0,
-            extraData: [:],
-            reactionScores: [:],
+            ownReactions: [],
+            pinned: false,
             reactionCounts: [:],
-            isSilent: false,
-            isShadowed: false,
-            attachments: []
+            reactionScores: [:],
+            replyCount: 0,
+            restrictedVisibility: [],
+            shadowed: false,
+            silent: false,
+            text: .unique,
+            type: MessageType.regular.rawValue,
+            updatedAt: .unique,
+            user: dummyUser
         )
     }
 

@@ -601,7 +601,7 @@ extension MessageUpdater.MessageSearchResults {
         .make(api: [], next: nil, models: [])
     }
     
-    static func make(api apiMessages: [MessagePayload.Boxed] = [], next: String? = nil, models: [ChatMessage] = []) -> Self {
-        MessageUpdater.MessageSearchResults(payload: MessageSearchResultsPayload(results: apiMessages, next: next), models: models)
+    static func make(api apiMessages: [SearchResult] = [], next: String? = nil, models: [ChatMessage] = []) -> Self {
+        MessageUpdater.MessageSearchResults(payload: SearchResponse(duration: "", next: next, results: apiMessages), models: models)
     }
 }

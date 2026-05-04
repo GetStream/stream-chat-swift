@@ -645,7 +645,7 @@ final class Chat_Tests: XCTestCase {
         let typingIndicatorResponse = EmptyResponse()
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
         // Fail the send message call
-        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
+        env.client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponseOpenAPI, Error>.failure(expectedTestError))
         let text = "Text"
         let messageId: MessageId = "abc"
         await XCTAssertAsyncFailure(
@@ -659,7 +659,8 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(LocalMessageState.sendingFailed, chat.state.messages.first?.localState)
         
         // Resend and sending succeeds
-        let apiResponse = MessagePayload.Boxed(
+        let apiResponse = SendMessageResponseOpenAPI(
+            duration: "",
             message: .dummy(
                 messageId: messageId,
                 text: text
@@ -702,7 +703,7 @@ final class Chat_Tests: XCTestCase {
         let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
         let action = AttachmentAction(name: "name", value: "value", style: .default, type: .button, text: "text")
         
-        let apiResponse = MessagePayload.Boxed(message: .dummy(type: .ephemeral, messageId: messageId, text: "TextChanged"))
+        let apiResponse = MessageActionResponse(duration: "", message: .dummy(type: .ephemeral, messageId: messageId, text: "TextChanged"))
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         try await chat.sendMessageAction(in: messageId, action: action)
         let message = try await MainActor.run { try XCTUnwrap(chat.localMessage(for: messageId)) }
@@ -721,7 +722,7 @@ final class Chat_Tests: XCTestCase {
         let messageId = initialMessage.id
         let action = AttachmentAction(name: "name", value: "value", style: .default, type: .button, text: "text")
         
-        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
+        env.client.mockAPIClient.test_mockResponseResult(Result<MessageActionResponse, Error>.failure(expectedTestError))
         await XCTAssertAsyncFailure(
             try await chat.sendMessageAction(in: messageId, action: action),
             expectedTestError
@@ -739,7 +740,8 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
         
         let text = "Text"
-        let apiResponse = MessagePayload.Boxed(
+        let apiResponse = SendMessageResponseOpenAPI(
+            duration: "",
             message: .dummy(
                 messageId: "0",
                 text: text
@@ -767,13 +769,14 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
         
         let text = "Text"
-        let apiResponse = MessagePayload.Boxed(
+        let apiResponse = SendMessageResponseOpenAPI(
+            duration: "",
             message: .dummy(
                 messageId: "0",
                 text: text
             )
         )
-        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
+        env.client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponseOpenAPI, Error>.failure(expectedTestError))
         await XCTAssertAsyncFailure(
             try await chat.sendMessage(
                 with: apiResponse.message.text,
@@ -793,7 +796,8 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(0, chat.state.messages.count)
 
         let text = "Text"
-        let apiResponse = MessagePayload.Boxed(
+        let apiResponse = SendMessageResponseOpenAPI(
+            duration: "",
             message: .dummy(
                 type: .system,
                 messageId: "0",
@@ -1073,7 +1077,7 @@ final class Chat_Tests: XCTestCase {
         let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
         
         // Set dummy response for failing the API call if it is mistakenly made
-        env.client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(expectedTestError))
+        env.client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponseOpenAPI, Error>.failure(expectedTestError))
         let messageState = try await chat.messageState(for: messageId)
         
         XCTAssertEqual(nil, env.client.mockAPIClient.request_endpoint)
@@ -1085,7 +1089,7 @@ final class Chat_Tests: XCTestCase {
         
         let messageId = String.unique
         let messagePayload = try XCTUnwrap(makeChannelPayload(messageCount: 1, createdAtOffset: 0).messages.first)
-        let apiResponse = MessagePayload.Boxed(message: messagePayload)
+        let apiResponse = GetMessageResponse(duration: "", message: MessageWithChannelResponse(messageResponse: messagePayload, channel: ChannelDetailPayload.dummy(cid: .unique).asChannelResponse!))
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         let messageState = try await chat.messageState(for: messageId)
         
@@ -1520,7 +1524,8 @@ final class Chat_Tests: XCTestCase {
         
         let typingIndicatorResponse = EmptyResponse()
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
-        let apiResponse = MessagePayload.Boxed(
+        let apiResponse = SendMessageResponseOpenAPI(
+            duration: "",
             message: .dummy(
                 messageId: "reply_0",
                 parentId: lastMessageId
@@ -2040,7 +2045,7 @@ final class Chat_Tests: XCTestCase {
                     user: .dummy(userId: .unique)
                 )
             }
-        return MessageReactionsPayload(reactions: reactions)
+        return MessageReactionsPayload(duration: "", reactions: reactions)
     }
     
     private func makeRepliesPayload(parentMessageId: MessageId, count: Int, offset: Int) -> MessageRepliesPayload {

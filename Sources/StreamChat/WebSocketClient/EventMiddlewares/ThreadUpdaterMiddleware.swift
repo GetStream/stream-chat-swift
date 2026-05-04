@@ -53,7 +53,7 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
             deleteThreads(for: channel, session: session)
         case let event as ThreadMessageNewEventDTO:
             let messagePayload = event.message
-            guard let channelId = event.message.cid,
+            guard let channelId = try? ChannelId(cid: messagePayload.cid),
                   let parentMessageId = messagePayload.parentId,
                   let channelDTO = session.channel(cid: channelId) else {
                 break

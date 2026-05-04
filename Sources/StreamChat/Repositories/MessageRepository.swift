@@ -80,7 +80,7 @@ class MessageRepository: @unchecked Sendable {
                         return
                     }
 
-                    let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
+                    let endpoint: Endpoint<SendMessageResponseOpenAPI> = .sendMessage(
                         cid: cid,
                         messagePayload: requestBody,
                         skipPush: skipPush,
@@ -113,7 +113,7 @@ class MessageRepository: @unchecked Sendable {
 
             // Send the message to offline handling
             let requestBody = dto.asRequestBody() as MessageRequestBody
-            let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(
+            let endpoint: Endpoint<SendMessageResponseOpenAPI> = .sendMessage(
                 cid: cid,
                 messagePayload: requestBody,
                 skipPush: dto.skipPush,
@@ -170,7 +170,7 @@ class MessageRepository: @unchecked Sendable {
 
     /// Handles the result when sending the message to the server.
     private func handleSentMessage(
-        _ result: Result<MessagePayload.Boxed, Error>,
+        _ result: Result<SendMessageResponseOpenAPI, Error>,
         cid: ChannelId,
         messageId: MessageId,
         completion: @escaping @Sendable (Result<ChatMessage, MessageRepositoryError>) -> Void
@@ -302,14 +302,14 @@ class MessageRepository: @unchecked Sendable {
     ///   - store: A boolean indicating if the message should be stored to database or should only be retrieved
     ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
     func getMessage(cid: ChannelId, messageId: MessageId, store: Bool, completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil) {
-        let endpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
+        let endpoint: Endpoint<GetMessageResponse> = .getMessage(messageId: messageId)
         apiClient.request(endpoint: endpoint) {
             switch $0 {
             case let .success(boxed):
                 nonisolated(unsafe) var message: ChatMessage?
                 self.database.write({ session in
                     message = try session.saveMessage(
-                        payload: boxed.message,
+                        payload: boxed.message.asMessageResponse,
                         for: cid,
                         syncOwnReactions: true,
                         skipDraftUpdate: false,

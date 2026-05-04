@@ -84,7 +84,7 @@ final class MessageRepositoryTests: XCTestCase {
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
         let error = NSError(domain: "", code: 1, userInfo: nil)
-        (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.failure(error))
+        (apiClient.request_completion as? (Result<SendMessageResponseOpenAPI, Error>) -> Void)?(.failure(error))
 
         wait(for: [expectation], timeout: defaultTimeout)
 
@@ -115,7 +115,7 @@ final class MessageRepositoryTests: XCTestCase {
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
         let error = ClientError(with: APIError(code: 4, message: "Message X already exists.", statusCode: 400))
-        (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.failure(error))
+        (apiClient.request_completion as? (Result<SendMessageResponseOpenAPI, Error>) -> Void)?(.failure(error))
 
         wait(for: [expectation], timeout: defaultTimeout)
 
@@ -145,8 +145,8 @@ final class MessageRepositoryTests: XCTestCase {
 
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
-        let payload = MessagePayload.Boxed(message: .dummy(messageId: id, authorUserId: .anonymous))
-        (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.success(payload))
+        let payload = SendMessageResponseOpenAPI(duration: "", message: .dummy(messageId: id, authorUserId: .anonymous))
+        (apiClient.request_completion as? (Result<SendMessageResponseOpenAPI, Error>) -> Void)?(.success(payload))
 
         wait(for: [expectation], timeout: defaultTimeout)
 
@@ -169,8 +169,8 @@ final class MessageRepositoryTests: XCTestCase {
 
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
-        let payload = MessagePayload.Boxed(message: .dummy(messageId: id, authorUserId: .anonymous))
-        (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.success(payload))
+        let payload = SendMessageResponseOpenAPI(duration: "", message: .dummy(messageId: id, authorUserId: .anonymous))
+        (apiClient.request_completion as? (Result<SendMessageResponseOpenAPI, Error>) -> Void)?(.success(payload))
 
         wait(for: [expectation], timeout: defaultTimeout)
 
@@ -190,8 +190,8 @@ final class MessageRepositoryTests: XCTestCase {
 
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
-        let payload = MessagePayload.Boxed(message: .dummy(messageId: id, authorUserId: .anonymous))
-        (apiClient.request_completion as? (Result<MessagePayload.Boxed, Error>) -> Void)?(.success(payload))
+        let payload = SendMessageResponseOpenAPI(duration: "", message: .dummy(messageId: id, authorUserId: .anonymous))
+        (apiClient.request_completion as? (Result<SendMessageResponseOpenAPI, Error>) -> Void)?(.success(payload))
 
         wait(for: [expectation], timeout: defaultTimeout)
 
@@ -263,6 +263,7 @@ final class MessageRepositoryTests: XCTestCase {
 
     func test_saveSuccessfullySentMessage_channelPayload_newMessageWithChannel() throws {
         let id = MessageId.unique
+        try database.createChannel(cid: cid)
         let payload = MessagePayload.dummy(messageId: id, authorUserId: .anonymous, channel: .dummy(cid: cid))
         let message = runSaveSuccessfullySentMessageAndWait(payload: payload)
         let dbMessage = self.message(for: id)
@@ -314,7 +315,7 @@ final class MessageRepositoryTests: XCTestCase {
         repository.getMessage(cid: cid, messageId: messageId, store: true)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
+        let expectedEndpoint: Endpoint<GetMessageResponse> = .getMessage(messageId: messageId)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -327,15 +328,16 @@ final class MessageRepositoryTests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
     func test_getMessage_propagatesDatabaseError() throws {
-        let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: .unique, authorUserId: .unique)
+        let messagePayload: GetMessageResponse = .init(
+            duration: "",
+            message: MessageWithChannelResponse(messageResponse: .dummy(messageId: .unique, authorUserId: .unique), channel: ChannelDetailPayload.dummy(cid: .unique).asChannelResponse!)
         )
         let channelId = ChannelId.unique
 
@@ -353,7 +355,7 @@ final class MessageRepositoryTests: XCTestCase {
         }
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
         // Assert database error is propagated
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -377,10 +379,11 @@ final class MessageRepositoryTests: XCTestCase {
         }
 
         // Simulate API response with success
-        let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: messageId, authorUserId: currentUserId)
+        let messagePayload: GetMessageResponse = .init(
+            duration: "",
+            message: MessageWithChannelResponse(messageResponse: .dummy(messageId: messageId, authorUserId: currentUserId), channel: ChannelDetailPayload.dummy(cid: .unique).asChannelResponse!)
         )
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -407,10 +410,11 @@ final class MessageRepositoryTests: XCTestCase {
         }
 
         // Simulate API response with success
-        let messagePayload: MessagePayload.Boxed = .init(
-            message: .dummy(messageId: messageId, authorUserId: currentUserId)
+        let messagePayload: GetMessageResponse = .init(
+            duration: "",
+            message: MessageWithChannelResponse(messageResponse: .dummy(messageId: messageId, authorUserId: currentUserId), channel: ChannelDetailPayload.dummy(cid: .unique).asChannelResponse!)
         )
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(messagePayload))
+        apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)

@@ -379,7 +379,8 @@ extension DatabaseContainer {
             let message: MessagePayload = .dummy(
                 messageId: id,
                 authorUserId: .unique,
-                channel: channelPayload.channel
+                channel: channelPayload.channel,
+                cid: cid
             )
 
             try session.saveMessage(payload: message, for: searchQuery, cache: nil)

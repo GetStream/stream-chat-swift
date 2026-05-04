@@ -540,7 +540,7 @@ final class MessageSearchController_Tests: XCTestCase {
 
         // Simulate network call response
         env.messageUpdater?.search_completion?(.success(.make(
-            api: [MessagePayload.Boxed(message: .dummy(messageId: "123", authorUserId: "456"))],
+            api: [],
             next: nil,
             models: [ChatMessage.mock(id: "123", author: ChatUser.mock(id: "456"))]
         )))

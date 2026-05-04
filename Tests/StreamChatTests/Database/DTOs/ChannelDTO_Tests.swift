@@ -437,7 +437,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
             // Messages
             Assert.willBeEqual(payload.messages[0].id, loadedChannel.latestMessages.first?.id)
-            Assert.willBeEqual(payload.messages[0].type.rawValue, loadedChannel.latestMessages.first?.type.rawValue)
+            Assert.willBeEqual(payload.messages[0].type, loadedChannel.latestMessages.first?.type.rawValue)
             Assert.willBeEqual(payload.messages[0].text, loadedChannel.latestMessages.first?.text)
             Assert.willBeEqual(payload.messages[0].updatedAt, loadedChannel.latestMessages.first?.updatedAt)
             Assert.willBeEqual(payload.messages[0].createdAt, loadedChannel.latestMessages.first?.createdAt)
@@ -448,8 +448,8 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].isSilent, loadedChannel.latestMessages.first?.isSilent)
             Assert.willBeEqual(payload.messages[0].mentionedUsers.count, loadedChannel.latestMessages.first?.mentionedUsers.count)
             Assert.willBeEqual(payload.messages[0].parentId, loadedChannel.latestMessages.first?.parentMessageId)
-            Assert.willBeEqual(payload.messages[0].reactionScores, loadedChannel.latestMessages.first?.reactionScores)
-            Assert.willBeEqual(payload.messages[0].reactionCounts, loadedChannel.latestMessages.first?.reactionCounts)
+            Assert.willBeEqual(payload.messages[0].reactionScores, loadedChannel.latestMessages.first?.reactionScores.mapKeys(\.rawValue))
+            Assert.willBeEqual(payload.messages[0].reactionCounts, loadedChannel.latestMessages.first?.reactionCounts.mapKeys(\.rawValue))
             Assert.willBeEqual(payload.messages[0].replyCount, loadedChannel.latestMessages.first?.replyCount)
 
             // Pinned Messages
@@ -673,27 +673,15 @@ final class ChannelDTO_Tests: XCTestCase {
         )
         
         let channelId: ChannelId = .unique
-        let oldPinnedMessage: MessagePayload = MessagePayload(
-            id: .unique,
-            type: .regular,
-            user: dummyUser,
+        let oldPinnedMessage = MessagePayload.dummy(
+            messageId: .unique,
+            attachments: [],
+            authorUserId: dummyUser.id,
+            text: .unique,
             createdAt: Date.distantPast,
             updatedAt: .unique,
-            deletedAt: nil,
-            text: .unique,
-            command: nil,
-            args: nil,
-            parentId: nil,
-            showReplyInChannel: false,
-            mentionedUsers: [dummyCurrentUser.asUserPayload],
-            replyCount: 0,
-            extraData: [:],
-            reactionScores: ["like": 1],
-            reactionCounts: ["like": 1],
-            isSilent: false,
-            isShadowed: false,
-            attachments: [],
-            pinned: true
+            pinned: true,
+            mentionedUsers: [dummyCurrentUser.asUserPayload]
         )
         let payload = dummyPayload(with: channelId, numberOfMessages: 1, pinnedMessages: [oldPinnedMessage])
 
@@ -707,27 +695,15 @@ final class ChannelDTO_Tests: XCTestCase {
 
     func test_channelPayload_pinnedMessagesNewerThanOldestMessageAreFetched() throws {
         let channelId: ChannelId = .unique
-        let pinnedMessage: MessagePayload = MessagePayload(
-            id: .unique,
-            type: .regular,
-            user: dummyUser,
+        let pinnedMessage = MessagePayload.dummy(
+            messageId: .unique,
+            attachments: [],
+            authorUserId: dummyUser.id,
+            text: .unique,
             createdAt: Date(),
             updatedAt: .unique,
-            deletedAt: nil,
-            text: .unique,
-            command: nil,
-            args: nil,
-            parentId: nil,
-            showReplyInChannel: false,
-            mentionedUsers: [dummyCurrentUser.asUserPayload],
-            replyCount: 0,
-            extraData: [:],
-            reactionScores: ["like": 1],
-            reactionCounts: ["like": 1],
-            isSilent: false,
-            isShadowed: false,
-            attachments: [],
-            pinned: true
+            pinned: true,
+            mentionedUsers: [dummyCurrentUser.asUserPayload]
         )
         let payload = dummyPayload(with: channelId, numberOfMessages: 1, pinnedMessages: [pinnedMessage])
 
@@ -836,50 +812,26 @@ final class ChannelDTO_Tests: XCTestCase {
         let user: UserPayload = dummyCurrentUser.asUserPayload
         let channelId: ChannelId = .unique
         let mainMessageId: String = .unique
-        let mainMessage = MessagePayload(
-            id: mainMessageId,
-            type: .regular,
-            user: user,
+        let mainMessage = MessagePayload.dummy(
+            messageId: mainMessageId,
+            showReplyInChannel: true,
+            attachments: [],
+            authorUserId: user.id,
+            text: .unique,
             createdAt: Date.distantPast,
             updatedAt: .unique,
-            deletedAt: nil,
-            text: .unique,
-            command: nil,
-            args: nil,
-            parentId: nil,
-            showReplyInChannel: true,
-            mentionedUsers: [dummyCurrentUser.asUserPayload],
-            replyCount: 1,
-            extraData: [:],
-            reactionScores: ["like": 1],
-            reactionCounts: ["like": 1],
-            isSilent: false,
-            isShadowed: false,
-            attachments: [],
-            pinned: false
+            mentionedUsers: [dummyCurrentUser.asUserPayload]
         )
 
-        let threadMessage = MessagePayload(
-            id: .unique,
-            type: .regular,
-            user: user,
+        let threadMessage = MessagePayload.dummy(
+            messageId: .unique,
+            parentId: mainMessageId,
+            attachments: [],
+            authorUserId: user.id,
+            text: .unique,
             createdAt: Date(),
             updatedAt: .unique,
-            deletedAt: nil,
-            text: .unique,
-            command: nil,
-            args: nil,
-            parentId: mainMessageId,
-            showReplyInChannel: false,
-            mentionedUsers: [dummyCurrentUser.asUserPayload],
-            replyCount: 0,
-            extraData: [:],
-            reactionScores: ["like": 1],
-            reactionCounts: ["like": 1],
-            isSilent: false,
-            isShadowed: false,
-            attachments: [],
-            pinned: false
+            mentionedUsers: [dummyCurrentUser.asUserPayload]
         )
 
         let channel = dummyPayload(with: channelId, messages: [mainMessage, threadMessage])

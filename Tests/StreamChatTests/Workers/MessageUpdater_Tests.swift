@@ -448,7 +448,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.deleteMessage(messageId: messageId, hard: false)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -465,12 +465,12 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
 
         // Simulate API response with error
         let testError = TestError()
-        let response: Result<MessagePayload.Boxed, Error> = .failure(testError)
+        let response: Result<DeleteMessageResponse, Error> = .failure(testError)
         apiClient.test_simulateResponse(response)
 
         // Assert completion is called without any error
@@ -506,7 +506,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
 
         // Update database container to throw the error on write
@@ -514,8 +514,8 @@ final class MessageUpdater_Tests: XCTestCase {
         messageRepository.saveSuccessfullyDeletedMessageError = databaseError
 
         // Simulate API response with success
-        let response: Result<MessagePayload.Boxed, Error> =
-            .success(.init(message: .dummy(messageId: .unique, authorUserId: .unique)))
+        let response: Result<DeleteMessageResponse, Error> =
+            .success(.init(duration: "", message: .dummy(messageId: .unique, authorUserId: .unique)))
         apiClient.test_simulateResponse(response)
 
         waitForExpectations(timeout: defaultTimeout, handler: nil)
@@ -566,8 +566,8 @@ final class MessageUpdater_Tests: XCTestCase {
         let currentUserId: UserId = .unique
         let messageId: MessageId = .unique
 
-        let pairs: [(Result<MessagePayload.Boxed, Error>, LocalMessageState?)] = [
-            (.success(.init(message: .dummy(messageId: messageId, authorUserId: currentUserId))), nil),
+        let pairs: [(Result<DeleteMessageResponse, Error>, LocalMessageState?)] = [
+            (.success(.init(duration: "", message: .dummy(messageId: messageId, authorUserId: currentUserId))), nil),
             (.failure(TestError()), .deletingFailed)
         ]
 
@@ -646,8 +646,8 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(message.isHardDeleted, true)
 
         // Simulate API response
-        let networkResult: Result<MessagePayload.Boxed, Error> = .success(
-            .init(message: .dummy(messageId: messageId, authorUserId: currentUserId))
+        let networkResult: Result<DeleteMessageResponse, Error> = .success(
+            .init(duration: "", message: .dummy(messageId: messageId, authorUserId: currentUserId))
         )
         apiClient.test_simulateResponse(networkResult)
 
@@ -688,7 +688,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(message.isHardDeleted, true)
 
         // Simulate API response
-        let networkResult: Result<MessagePayload.Boxed, Error> = .failure(TestError())
+        let networkResult: Result<DeleteMessageResponse, Error> = .failure(TestError())
         apiClient.test_simulateResponse(networkResult)
 
         // Local message state is set to deleting failed
@@ -795,7 +795,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.deleteMessage(messageId: messageId, hard: false, deleteForMe: true)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: true)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: true)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -809,7 +809,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.deleteMessage(messageId: messageId, hard: false, deleteForMe: false)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: false)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: false)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -823,7 +823,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.deleteMessage(messageId: messageId, hard: false, deleteForMe: nil)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: nil)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: nil)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -1169,6 +1169,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
     func test_loadReactions_propagatesDatabaseError() throws {
         let reactionsPayload: MessageReactionsPayload = .init(
+            duration: "",
             reactions: [
                 .dummy(messageId: .unique, user: .dummy(userId: .unique)),
                 .dummy(messageId: .unique, user: .dummy(userId: .unique))
@@ -1210,6 +1211,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createMessage(id: messageId)
 
         let reactionsPayload: MessageReactionsPayload = .init(
+            duration: "",
             reactions: [
                 .dummy(type: "like", messageId: messageId, user: .dummy(userId: currentUserId)),
                 .dummy(type: "dislike", messageId: messageId, user: .dummy(userId: currentUserId))
@@ -2632,7 +2634,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
+        let endpoint: Endpoint<MessageActionResponse> = .dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
             action: action
@@ -2640,7 +2642,8 @@ final class MessageUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
 
         // Simulate message response.
-        let messagePayload: MessagePayload.Boxed = .init(
+        let messagePayload: MessageActionResponse = .init(
+            duration: "",
             message: .dummy(
                 messageId: messageId,
                 authorUserId: currentUserId
@@ -2656,8 +2659,8 @@ final class MessageUpdater_Tests: XCTestCase {
             Assert.willBeTrue(completionCalled)
             Assert.staysTrue(completionCalledError == nil)
             // Assert message is updated.
-            Assert.willBeEqual(message.type, messagePayload.message.type.rawValue)
-            Assert.willBeEqual(message.text, messagePayload.message.text)
+            Assert.willBeEqual(message.type, messagePayload.message?.type ?? "")
+            Assert.willBeEqual(message.text, messagePayload.message?.text ?? "")
         }
     }
 
@@ -2694,7 +2697,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
+        let endpoint: Endpoint<MessageActionResponse> = .dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
             action: action
@@ -2703,7 +2706,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate error response.
         let networkError = TestError()
-        let result: Result<MessagePayload.Boxed, Error> = .failure(networkError)
+        let result: Result<MessageActionResponse, Error> = .failure(networkError)
         apiClient.test_simulateResponse(result)
 
         AssertAsync {
@@ -2836,7 +2839,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
+        let endpoint: Endpoint<MessageActionResponse> = .dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
             action: action
@@ -2848,7 +2851,8 @@ final class MessageUpdater_Tests: XCTestCase {
         database.write_errorResponse = databaseError
 
         // Simulate message response.
-        let messagePayload: MessagePayload.Boxed = .init(
+        let messagePayload: MessageActionResponse = .init(
+            duration: "",
             message: .dummy(
                 messageId: messageId,
                 authorUserId: currentUserId
@@ -2889,8 +2893,9 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate successful response
         apiClient.test_simulateResponse(
-            Result<MessagePayload.Boxed, Error>.success(
+            Result<MessageActionResponse, Error>.success(
                 .init(
+                    duration: "",
                     message: .dummy(
                         messageId: messageId,
                         authorUserId: .unique,
@@ -2917,7 +2922,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate failure response
         apiClient.test_simulateResponse(
-            Result<MessagePayload.Boxed, Error>.failure(testError)
+            Result<MessageActionResponse, Error>.failure(testError)
         )
 
         AssertAsync.willBeTrue(completionCalled)
@@ -2943,8 +2948,9 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate successful response
         apiClient.test_simulateResponse(
-            Result<MessagePayload.Boxed, Error>.success(
+            Result<MessageActionResponse, Error>.success(
                 .init(
+                    duration: "",
                     message: .dummy(
                         messageId: messageId,
                         authorUserId: .unique,
@@ -3136,11 +3142,11 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate successful API response
         apiClient.test_simulateResponse(
-            .success(MessagePayload.Boxed(message: .dummy(messageId: messageId)))
+            .success(UpdateMessagePartialResponse(duration: "", message: .dummy(messageId: messageId)))
         )
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessagePayload.Boxed> = .partialUpdateMessage(
+        let expectedEndpoint: Endpoint<UpdateMessagePartialResponse> = .partialUpdateMessage(
             messageId: messageId,
             request: .init(
                 set: .init(
@@ -3171,7 +3177,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with error
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<UpdateMessagePartialResponse, Error>.failure(networkError))
 
         wait(for: [exp], timeout: defaultTimeout)
         
@@ -3209,7 +3215,7 @@ final class MessageUpdater_Tests: XCTestCase {
             text: text,
             cid: cid
         )
-        apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.success(.init(message: messagePayload)))
+        apiClient.test_simulateResponse(Result<UpdateMessagePartialResponse, Error>.success(.init(duration: "", message: messagePayload)))
 
         wait(for: [exp], timeout: defaultTimeout)
         

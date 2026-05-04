@@ -900,19 +900,19 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             return dto
         }
 
-        dto.cid = payload.cid?.rawValue
+        dto.cid = payload.cid.isEmpty ? nil : payload.cid
         dto.text = payload.text
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.textUpdatedAt = payload.messageTextUpdatedAt?.bridgeDate
-        dto.type = payload.type.rawValue
+        dto.type = payload.type
         dto.command = payload.command
         dto.args = payload.args
         dto.parentMessageId = payload.parentId
         dto.showReplyInChannel = payload.showReplyInChannel
         dto.replyCount = Int32(payload.replyCount)
-        if let role = payload.member?.channelRole?.rawValue {
+        if let role = payload.member?.channelRole {
             dto.channelRole = role
         }
 
@@ -989,12 +989,13 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         let user = try saveUser(payload: payload.user)
         dto.user = user
 
-        dto.reactionScores = payload.reactionScores.mapKeys { $0.rawValue }
-        dto.reactionCounts = payload.reactionCounts.mapKeys { $0.rawValue }
-        dto.reactionGroups = Set(payload.reactionGroups.map { (type, groupPayload) in
-            MessageReactionGroupDTO(
-                type: type,
-                payload: groupPayload,
+        dto.reactionScores = payload.reactionScores
+        dto.reactionCounts = payload.reactionCounts
+        dto.reactionGroups = Set((payload.reactionGroups ?? [:]).compactMap { key, value -> MessageReactionGroupDTO? in
+            guard let value else { return nil }
+            return MessageReactionGroupDTO(
+                type: MessageReactionType(rawValue: key),
+                payload: value,
                 context: self
             )
         })
@@ -1009,7 +1010,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
         // If user participated in thread, but deleted message later, we need to get rid of it if backends does
         dto.threadParticipants = try NSOrderedSet(
-            array: payload.threadParticipants.map { try saveUser(payload: $0) }
+            array: (payload.threadParticipants ?? []).map { try saveUser(payload: $0) }
         )
         let restrictedVisibility = Set(payload.restrictedVisibility)
         dto.restrictedVisibility = restrictedVisibility.isEmpty ? nil : restrictedVisibility
@@ -1258,7 +1259,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     }
 
     func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
-        let messageDTO = try saveMessage(payload: payload, for: nil, cache: cache)
+        let cid = try? ChannelId(cid: payload.cid)
+        let messageDTO = try saveMessage(payload: payload, for: cid, cache: cache)
         messageDTO.searches.insert(saveQuery(query: query))
         return messageDTO
     }
@@ -1468,10 +1470,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return reaction
     }
 
-    func saveMessageSearch(payload: MessageSearchResultsPayload, for query: MessageSearchQuery) -> [MessageDTO] {
+    func saveMessageSearch(payload: SearchResponse, for query: MessageSearchQuery) -> [MessageDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
-        return payload.results.compactMapLoggingError {
-            try saveMessage(payload: $0.message, for: query, cache: cache)
+        return payload.results.compactMapLoggingError { result in
+            guard let resultMessage = result.message else { return nil }
+            // Search responses include channel data on each message; save it so that
+            // the message can be linked to a channel DTO when persisted.
+            if let channelDetail = resultMessage.channel?.asChannelDetailPayload {
+                try saveChannel(payload: channelDetail, query: nil, cache: cache)
+            }
+            return try saveMessage(payload: resultMessage.asMessageResponse, for: query, cache: cache)
         }
     }
 

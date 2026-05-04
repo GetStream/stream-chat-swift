@@ -10,7 +10,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     func test_getMessage_buildsCorrectly() {
         let messageId: MessageId = .unique
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+        let expectedEndpoint = Endpoint<GetMessageResponse>(
             path: .message(messageId),
             method: .get,
             queryItems: nil,
@@ -19,7 +19,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint: Endpoint<MessagePayload.Boxed> = .getMessage(messageId: messageId)
+        let endpoint: Endpoint<GetMessageResponse> = .getMessage(messageId: messageId)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -29,7 +29,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     func test_deleteMessage_whenHardDeleteDisabled_buildsCorrectly() {
         let messageId: MessageId = .unique
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+        let expectedEndpoint = Endpoint<DeleteMessageResponse>(
             path: .message(messageId),
             method: .delete,
             queryItems: nil,
@@ -40,7 +40,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false)
+        let endpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -50,7 +50,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     func test_deleteMessage_whenHardDeleteEnabled_buildsCorrectly() {
         let messageId: MessageId = .unique
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+        let expectedEndpoint = Endpoint<DeleteMessageResponse>(
             path: .message(messageId),
             method: .delete,
             queryItems: nil,
@@ -61,7 +61,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: true)
+        let endpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: true)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -71,7 +71,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     func test_deleteMessage_whenDeleteForMeEnabled_buildsCorrectly() {
         let messageId: MessageId = .unique
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+        let expectedEndpoint = Endpoint<DeleteMessageResponse>(
             path: .message(messageId),
             method: .delete,
             queryItems: nil,
@@ -83,7 +83,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: true)
+        let endpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: true)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -93,7 +93,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     func test_deleteMessage_whenDeleteForMeDisabled_buildsCorrectly() {
         let messageId: MessageId = .unique
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+        let expectedEndpoint = Endpoint<DeleteMessageResponse>(
             path: .message(messageId),
             method: .delete,
             queryItems: nil,
@@ -105,7 +105,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: false)
+        let endpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: false)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -115,7 +115,7 @@ final class MessageEndpoints_Tests: XCTestCase {
     func test_deleteMessage_whenDeleteForMeIsNil_buildsCorrectly() {
         let messageId: MessageId = .unique
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+        let expectedEndpoint = Endpoint<DeleteMessageResponse>(
             path: .message(messageId),
             method: .delete,
             queryItems: nil,
@@ -126,7 +126,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint: Endpoint<MessagePayload.Boxed> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: nil)
+        let endpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: nil)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -242,7 +242,7 @@ final class MessageEndpoints_Tests: XCTestCase {
             text: .unique
         )
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+        let expectedEndpoint = Endpoint<MessageActionResponse>(
             path: .messageAction(messageId),
             method: .post,
             queryItems: nil,
@@ -255,7 +255,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint.
-        let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
+        let endpoint: Endpoint<MessageActionResponse> = .dispatchEphemeralMessageAction(
             cid: cid,
             messageId: messageId,
             action: action
@@ -270,7 +270,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         let messageId: MessageId = .unique
         let language = TranslationLanguage.allCases.randomElement()!
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+        let expectedEndpoint = Endpoint<MessageActionResponse>(
             path: .translateMessage(messageId),
             method: .post,
             queryItems: nil,
@@ -278,7 +278,7 @@ final class MessageEndpoints_Tests: XCTestCase {
             body: ["language": language.languageCode]
         )
 
-        let endpoint: Endpoint<MessagePayload.Boxed> = .translate(messageId: messageId, to: language)
+        let endpoint: Endpoint<MessageActionResponse> = .translate(messageId: messageId, to: language)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
@@ -293,7 +293,7 @@ final class MessageEndpoints_Tests: XCTestCase {
             skipEnrichUrl: true
         )
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+        let expectedEndpoint = Endpoint<UpdateMessagePartialResponse>(
             path: .editMessage(messageId),
             method: .put,
             queryItems: nil,
@@ -302,7 +302,7 @@ final class MessageEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint: Endpoint<MessagePayload.Boxed> = .partialUpdateMessage(messageId: messageId, request: request)
+        let endpoint: Endpoint<UpdateMessagePartialResponse> = .partialUpdateMessage(messageId: messageId, request: request)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

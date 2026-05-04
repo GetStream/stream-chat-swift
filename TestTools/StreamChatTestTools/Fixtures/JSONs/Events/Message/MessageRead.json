@@ -18,10 +18,11 @@
         "unread_threads": 10,
         "online": true,
         "name": "steep-moon-9",
-      "blocked_user_ids" : [],
-      "custom" : {},
-      "language" : "",
-      "teams" : []},
+        "blocked_user_ids": [],
+        "custom": {},
+        "language": "",
+        "teams": []
+    },
     "thread": {
         "channel_cid": "messaging:general",
         "parent_message_id": "5b444e0d-a132-41a0-bf99-72dfdba0a053",

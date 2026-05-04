@@ -89,7 +89,7 @@ extension ChannelPayload: Decodable {
             members: try container.decodeArrayIgnoringFailures([MemberPayload].self, forKey: .members),
             membership: try container.decodeIfPresent(MemberPayload.self, forKey: .membership),
             messages: try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .messages),
-            pendingMessages: try container.decodeArrayIfPresentIgnoringFailures([MessagePayload.Boxed].self, forKey: .pendingMessages)?.map(\.message),
+            pendingMessages: try container.decodeArrayIfPresentIgnoringFailures([PendingMessageResponse].self, forKey: .pendingMessages)?.compactMap(\.message),
             pinnedMessages: try container.decodeArrayIgnoringFailures([MessagePayload].self, forKey: .pinnedMessages),
             channelReads: try container.decodeArrayIfPresentIgnoringFailures([ChannelReadPayload].self, forKey: .channelReads) ?? [],
             isHidden: try container.decodeIfPresent(Bool.self, forKey: .hidden),

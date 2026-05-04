@@ -41,6 +41,8 @@ typealias ActiveLiveLocationsResponsePayload = SharedLocationsResponse
 typealias LiveLocationUpdateRequestPayload = UpdateLiveLocationRequest
 typealias MarkUnreadPayload = MarkUnreadRequest
 typealias MessageAttachmentPayload = Attachment
+typealias MessagePayload = MessageResponse
+typealias MessageReactionsPayload = GetReactionsResponse
 typealias MessageReactionGroupPayload = ReactionGroupResponse
 typealias MessageReactionPayload = ReactionResponse
 typealias MessageReactionRequestPayload = SendReactionRequest
@@ -104,6 +106,69 @@ extension GetApplicationResponse {
 }
 
 extension APIError: Error {}
+
+typealias PinnedMessagesPayload = MessageListPayload
+typealias MessageRepliesPayload = MessageListPayload
+
+struct MessageListPayload: Decodable {
+    let messages: [MessagePayload]
+}
+
+enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
+    case id
+    case cid
+    case channelId = "channel_cid"
+    case type
+    case user
+    case userId = "user_id"
+    case createdAt = "created_at"
+    case updatedAt = "updated_at"
+    case deletedAt = "deleted_at"
+    case text
+    case command
+    case args
+    case attachments
+    case parentId = "parent_id"
+    case showReplyInChannel = "show_in_channel"
+    case quotedMessageId = "quoted_message_id"
+    case quotedMessage = "quoted_message"
+    case parentMessage = "parent_message"
+    case mentionedUsers = "mentioned_users"
+    case threadParticipants = "thread_participants"
+    case replyCount = "reply_count"
+    case latestReactions = "latest_reactions"
+    case ownReactions = "own_reactions"
+    case reactionScores = "reaction_scores"
+    case reactionCounts = "reaction_counts"
+    case reactionGroups = "reaction_groups"
+    case isSilent = "silent"
+    case channel
+    case pinned
+    case pinnedBy = "pinned_by"
+    case pinnedAt = "pinned_at"
+    case pinExpires = "pin_expires"
+    case html
+    case i18n
+    case mml
+    case imageLabels = "image_labels"
+    case shadowed
+    case moderationDetails = "moderation_details" // moderation v1 key
+    case moderation // moderation v2 key
+    case messageTextUpdatedAt = "message_text_updated_at"
+    case message
+    case poll
+    case pollId = "poll_id"
+    case set
+    case unset
+    case skipEnrichUrl = "skip_enrich_url"
+    case restrictedVisibility = "restricted_visibility"
+    case draft
+    case location = "shared_location"
+    case reminder
+    case member
+    case deletedForMe = "deleted_for_me"
+    case campaignId = "created_by_campaign_id"
+}
 
 enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case id
@@ -1462,96 +1527,266 @@ extension Command {
 }
 
 extension MessageResponse {
-    var asMessagePayload: MessagePayload? {
-        MessagePayload(
-            id: id,
-            cid: try? ChannelId(cid: cid),
-            type: MessageType(rawValue: type) ?? .regular,
-            user: user.asUserPayload,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deletedAt: deletedAt,
-            text: text,
+    var asMessagePayload: MessagePayload { self }
+    var asMessageResponse: MessageResponse { self }
+
+    // Compatibility shims for callers written against the legacy MessagePayload class.
+    var extraData: [String: RawJSON] {
+        get { custom }
+        set { custom = newValue }
+    }
+
+    var isSilent: Bool { silent }
+    var isShadowed: Bool { shadowed }
+    var showReplyInChannel: Bool { showInChannel ?? false }
+    var args: String? { nil }
+    var location: SharedLocationResponseData? { sharedLocation }
+    var moderationDetails: ModerationV2Response? { nil }
+    var channel: ChannelDetailPayload? { nil }
+    var translations: [TranslationLanguage: String]? { i18n?.translated }
+    var originalLanguage: String? { i18n?.originalLanguage }
+    var campaignId: String? {
+        if case let .string(value) = custom[MessagePayloadsCodingKeys.campaignId.rawValue] {
+            return value
+        }
+        return nil
+    }
+}
+
+extension MessageWithChannelResponse {
+    convenience init(messageResponse: MessageResponse, channel: ChannelResponse) {
+        self.init(
+            attachments: messageResponse.attachments,
+            channel: channel,
+            cid: messageResponse.cid,
+            command: messageResponse.command,
+            createdAt: messageResponse.createdAt,
+            custom: messageResponse.custom,
+            deletedAt: messageResponse.deletedAt,
+            deletedForMe: messageResponse.deletedForMe,
+            deletedReplyCount: messageResponse.deletedReplyCount,
+            draft: messageResponse.draft,
+            html: messageResponse.html,
+            i18n: messageResponse.i18n,
+            id: messageResponse.id,
+            imageLabels: messageResponse.imageLabels,
+            latestReactions: messageResponse.latestReactions,
+            member: messageResponse.member,
+            mentionedChannel: messageResponse.mentionedChannel,
+            mentionedGroupIds: messageResponse.mentionedGroupIds,
+            mentionedHere: messageResponse.mentionedHere,
+            mentionedRoles: messageResponse.mentionedRoles,
+            mentionedUsers: messageResponse.mentionedUsers,
+            messageTextUpdatedAt: messageResponse.messageTextUpdatedAt,
+            mml: messageResponse.mml,
+            moderation: messageResponse.moderation,
+            ownReactions: messageResponse.ownReactions,
+            parentId: messageResponse.parentId,
+            pinExpires: messageResponse.pinExpires,
+            pinned: messageResponse.pinned,
+            pinnedAt: messageResponse.pinnedAt,
+            pinnedBy: messageResponse.pinnedBy,
+            poll: messageResponse.poll,
+            pollId: messageResponse.pollId,
+            quotedMessage: messageResponse.quotedMessage,
+            quotedMessageId: messageResponse.quotedMessageId,
+            reactionCounts: messageResponse.reactionCounts,
+            reactionGroups: messageResponse.reactionGroups,
+            reactionScores: messageResponse.reactionScores,
+            reminder: messageResponse.reminder,
+            replyCount: messageResponse.replyCount,
+            restrictedVisibility: messageResponse.restrictedVisibility,
+            shadowed: messageResponse.shadowed,
+            sharedLocation: messageResponse.sharedLocation,
+            showInChannel: messageResponse.showInChannel,
+            silent: messageResponse.silent,
+            text: messageResponse.text,
+            threadParticipants: messageResponse.threadParticipants,
+            type: messageResponse.type,
+            updatedAt: messageResponse.updatedAt,
+            user: messageResponse.user
+        )
+    }
+
+    var asMessageResponse: MessageResponse {
+        MessageResponse(
+            attachments: attachments,
+            cid: cid,
             command: command,
+            createdAt: createdAt,
+            custom: custom,
+            deletedAt: deletedAt,
+            deletedForMe: deletedForMe,
+            deletedReplyCount: deletedReplyCount,
+            draft: draft,
+            html: html,
+            i18n: i18n,
+            id: id,
+            imageLabels: imageLabels,
+            latestReactions: latestReactions,
+            member: member,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedHere: mentionedHere,
+            mentionedRoles: mentionedRoles,
+            mentionedUsers: mentionedUsers,
+            messageTextUpdatedAt: messageTextUpdatedAt,
+            mml: mml,
+            moderation: moderation,
+            ownReactions: ownReactions,
             parentId: parentId,
-            showReplyInChannel: showInChannel ?? false,
+            pinExpires: pinExpires,
+            pinned: pinned,
+            pinnedAt: pinnedAt,
+            pinnedBy: pinnedBy,
+            poll: poll,
+            pollId: pollId,
+            quotedMessage: quotedMessage,
             quotedMessageId: quotedMessageId,
-            quotedMessage: quotedMessage?.asMessagePayload,
-            mentionedUsers: mentionedUsers.map(\.asUserPayload),
-            threadParticipants: threadParticipants?.map(\.asUserPayload) ?? [],
+            reactionCounts: reactionCounts,
+            reactionGroups: reactionGroups,
+            reactionScores: reactionScores,
+            reminder: reminder,
             replyCount: replyCount,
             restrictedVisibility: restrictedVisibility,
-            extraData: custom,
-            reactionScores: reactionScores.mapKeys(MessageReactionType.init(rawValue:)),
-            reactionCounts: reactionCounts.mapKeys(MessageReactionType.init(rawValue:)),
-            isSilent: silent,
-            isShadowed: shadowed,
-            attachments: attachments,
-            pinned: pinned,
-            pinnedBy: pinnedBy?.asUserPayload,
-            pinnedAt: pinnedAt,
-            pinExpires: pinExpires,
-            translations: i18n?.translated,
-            originalLanguage: i18n?.originalLanguage,
-            moderation: moderation,
-            messageTextUpdatedAt: messageTextUpdatedAt,
-            poll: poll,
-            draft: draft,
-            reminder: reminder,
-            location: sharedLocation,
-            deletedForMe: deletedForMe
+            shadowed: shadowed,
+            sharedLocation: sharedLocation,
+            showInChannel: showInChannel,
+            silent: silent,
+            text: text,
+            threadParticipants: threadParticipants,
+            type: type,
+            updatedAt: updatedAt,
+            user: user
         )
     }
 }
 
-extension MessagePayload {
-    var asMessageResponse: MessageResponse? {
+extension GetMessageResponse {
+    var asMessageResponse: MessageResponse { message.asMessageResponse }
+}
+
+extension SendMessageResponseOpenAPI {
+    var asMessageResponse: MessageResponse { message }
+}
+
+extension DeleteMessageResponse {
+    var asMessageResponse: MessageResponse { message }
+}
+
+extension UpdateMessagePartialResponse {
+    var asMessageResponse: MessageResponse? { message }
+}
+
+extension MessageActionResponse {
+    var asMessageResponse: MessageResponse? { message }
+}
+
+extension SearchResultMessage {
+    convenience init(messageResponse: MessageResponse, channel: ChannelResponse? = nil) {
+        self.init(
+            attachments: messageResponse.attachments,
+            channel: channel,
+            cid: messageResponse.cid,
+            command: messageResponse.command,
+            createdAt: messageResponse.createdAt,
+            custom: messageResponse.custom,
+            deletedAt: messageResponse.deletedAt,
+            deletedForMe: messageResponse.deletedForMe,
+            deletedReplyCount: messageResponse.deletedReplyCount,
+            draft: messageResponse.draft,
+            html: messageResponse.html,
+            i18n: messageResponse.i18n,
+            id: messageResponse.id,
+            imageLabels: messageResponse.imageLabels,
+            latestReactions: messageResponse.latestReactions,
+            member: messageResponse.member,
+            mentionedChannel: messageResponse.mentionedChannel,
+            mentionedGroupIds: messageResponse.mentionedGroupIds,
+            mentionedHere: messageResponse.mentionedHere,
+            mentionedRoles: messageResponse.mentionedRoles,
+            mentionedUsers: messageResponse.mentionedUsers,
+            messageTextUpdatedAt: messageResponse.messageTextUpdatedAt,
+            mml: messageResponse.mml,
+            moderation: messageResponse.moderation,
+            ownReactions: messageResponse.ownReactions,
+            parentId: messageResponse.parentId,
+            pinExpires: messageResponse.pinExpires,
+            pinned: messageResponse.pinned,
+            pinnedAt: messageResponse.pinnedAt,
+            pinnedBy: messageResponse.pinnedBy,
+            poll: messageResponse.poll,
+            pollId: messageResponse.pollId,
+            quotedMessage: messageResponse.quotedMessage,
+            quotedMessageId: messageResponse.quotedMessageId,
+            reactionCounts: messageResponse.reactionCounts,
+            reactionGroups: messageResponse.reactionGroups,
+            reactionScores: messageResponse.reactionScores,
+            reminder: messageResponse.reminder,
+            replyCount: messageResponse.replyCount,
+            restrictedVisibility: messageResponse.restrictedVisibility,
+            shadowed: messageResponse.shadowed,
+            sharedLocation: messageResponse.sharedLocation,
+            showInChannel: messageResponse.showInChannel,
+            silent: messageResponse.silent,
+            text: messageResponse.text,
+            threadParticipants: messageResponse.threadParticipants,
+            type: messageResponse.type,
+            updatedAt: messageResponse.updatedAt,
+            user: messageResponse.user
+        )
+    }
+
+    var asMessageResponse: MessageResponse {
         MessageResponse(
             attachments: attachments,
-            cid: cid?.rawValue ?? channel?.cid.rawValue ?? "",
+            cid: cid,
             command: command,
             createdAt: createdAt,
-            custom: extraData,
+            custom: custom,
             deletedAt: deletedAt,
             deletedForMe: deletedForMe,
-            deletedReplyCount: 0,
-            html: "",
-            i18n: MessageTranslationsPayload.messageTranslations(
-                translations: translations,
-                originalLanguage: originalLanguage
-            ),
+            deletedReplyCount: deletedReplyCount,
+            draft: draft,
+            html: html,
+            i18n: i18n,
             id: id,
-            latestReactions: [],
-            mentionedChannel: false,
-            mentionedHere: false,
-            mentionedUsers: mentionedUsers.map(\.asUserResponse),
+            imageLabels: imageLabels,
+            latestReactions: latestReactions,
+            member: member,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedHere: mentionedHere,
+            mentionedRoles: mentionedRoles,
+            mentionedUsers: mentionedUsers,
             messageTextUpdatedAt: messageTextUpdatedAt,
+            mml: mml,
             moderation: moderation,
-            ownReactions: [],
+            ownReactions: ownReactions,
             parentId: parentId,
             pinExpires: pinExpires,
             pinned: pinned,
             pinnedAt: pinnedAt,
-            pinnedBy: pinnedBy?.asUserResponse,
+            pinnedBy: pinnedBy,
             poll: poll,
-            pollId: poll?.id,
-            quotedMessage: quotedMessage?.asMessageResponse,
+            pollId: pollId,
+            quotedMessage: quotedMessage,
             quotedMessageId: quotedMessageId,
-            reactionCounts: reactionCounts.mapKeys(\.rawValue),
-            reactionGroups: reactionGroups.mapKeys(\.rawValue),
-            reactionScores: reactionScores.mapKeys(\.rawValue),
+            reactionCounts: reactionCounts,
+            reactionGroups: reactionGroups,
+            reactionScores: reactionScores,
             reminder: reminder,
             replyCount: replyCount,
             restrictedVisibility: restrictedVisibility,
-            shadowed: isShadowed,
-            sharedLocation: location,
-            showInChannel: showReplyInChannel,
-            silent: isSilent,
+            shadowed: shadowed,
+            sharedLocation: sharedLocation,
+            showInChannel: showInChannel,
+            silent: silent,
             text: text,
-            threadParticipants: threadParticipants.map(\.asUserResponse),
-            type: type.rawValue,
+            threadParticipants: threadParticipants,
+            type: type,
             updatedAt: updatedAt,
-            user: user.asUserResponse
+            user: user
         )
     }
 }
@@ -2312,24 +2547,31 @@ extension ThreadStateResponse {
     }
 
     var parentMessagePayload: MessagePayload? {
-        parentMessage?.asMessagePayload ?? MessagePayload(
-            id: parentMessageId,
-            cid: try? ChannelId(cid: channelCid),
-            type: .regular,
-            user: createdByPayload,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            text: "",
-            showReplyInChannel: false,
-            mentionedUsers: [],
-            replyCount: replyCount ?? 0,
-            extraData: [:],
-            reactionScores: [:],
-            reactionCounts: [:],
-            isSilent: false,
-            isShadowed: false,
+        parentMessage?.asMessagePayload ?? MessageResponse(
             attachments: [],
-            channel: channelDetailPayload
+            cid: channelCid,
+            createdAt: createdAt,
+            custom: [:],
+            deletedReplyCount: 0,
+            html: "",
+            id: parentMessageId,
+            latestReactions: [],
+            mentionedChannel: false,
+            mentionedHere: false,
+            mentionedUsers: [],
+            ownReactions: [],
+            pinned: false,
+            reactionCounts: [:],
+            reactionScores: [:],
+            replyCount: replyCount ?? 0,
+            restrictedVisibility: [],
+            shadowed: false,
+            showInChannel: false,
+            silent: false,
+            text: "",
+            type: MessageType.regular.rawValue,
+            updatedAt: updatedAt,
+            user: createdByPayload
         )
     }
 
@@ -2425,24 +2667,31 @@ extension ThreadResponse {
     }
 
     var parentMessagePayload: MessagePayload? {
-        parentMessage?.asMessagePayload ?? MessagePayload(
-            id: parentMessageId,
-            cid: cid,
-            type: .regular,
-            user: createdByPayload,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            text: "",
-            showReplyInChannel: false,
-            mentionedUsers: [],
-            replyCount: replyCount ?? 0,
-            extraData: [:],
-            reactionScores: [:],
-            reactionCounts: [:],
-            isSilent: false,
-            isShadowed: false,
+        parentMessage?.asMessagePayload ?? MessageResponse(
             attachments: [],
-            channel: channelDetailPayload
+            cid: channelCid,
+            createdAt: createdAt,
+            custom: [:],
+            deletedReplyCount: 0,
+            html: "",
+            id: parentMessageId,
+            latestReactions: [],
+            mentionedChannel: false,
+            mentionedHere: false,
+            mentionedUsers: [],
+            ownReactions: [],
+            pinned: false,
+            reactionCounts: [:],
+            reactionScores: [:],
+            replyCount: replyCount ?? 0,
+            restrictedVisibility: [],
+            shadowed: false,
+            showInChannel: false,
+            silent: false,
+            text: "",
+            type: MessageType.regular.rawValue,
+            updatedAt: updatedAt,
+            user: createdByPayload
         )
     }
 

@@ -306,7 +306,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
             text: .unique
         )
 
-        let expectedEndpoint = Endpoint<MessagePayload.Boxed>(
+        let expectedEndpoint = Endpoint<SendMessageResponseOpenAPI>(
             path: .sendMessage(cid),
             method: .post,
             queryItems: nil,
@@ -319,7 +319,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
         )
 
         // Build endpoint
-        let endpoint: Endpoint<MessagePayload.Boxed> = .sendMessage(cid: cid, messagePayload: messageBody, skipPush: true, skipEnrichUrl: false)
+        let endpoint: Endpoint<SendMessageResponseOpenAPI> = .sendMessage(cid: cid, messagePayload: messageBody, skipPush: true, skipEnrichUrl: false)
 
         // Assert endpoint is built correctly
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))

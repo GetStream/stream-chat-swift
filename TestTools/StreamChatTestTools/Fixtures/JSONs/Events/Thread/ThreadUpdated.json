@@ -241,10 +241,11 @@
                 "created_at": "2024-07-03T14:27:35.737529Z",
                 "last_read_at": "2024-07-03T17:31:51.209329Z",
                 "custom": {},
-              "banned" : false,
-              "shadow_banned" : false,
-              "channel_role" : "channel_member",
-              "notifications_muted" : false},
+                "banned": false,
+                "shadow_banned": false,
+                "channel_role": "channel_member",
+                "notifications_muted": false
+            },
             {
                 "app_pk": 0,
                 "channel_cid": "messaging:456F834D-1",
@@ -254,10 +255,11 @@
                 "created_at": "2024-07-03T14:27:35.737529Z",
                 "last_read_at": "2024-07-03T17:32:08.799903Z",
                 "custom": {},
-              "banned" : false,
-              "shadow_banned" : false,
-              "channel_role" : "channel_member",
-              "notifications_muted" : false}
+                "banned": false,
+                "shadow_banned": false,
+                "channel_role": "channel_member",
+                "notifications_muted": false
+            }
         ],
         "last_message_at": "2024-07-03T17:34:14.600702Z",
         "created_at": "2024-07-03T14:27:35.737529Z",

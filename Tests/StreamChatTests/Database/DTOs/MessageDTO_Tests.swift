@@ -541,7 +541,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // Assert the message was saved correctly
         XCTAssertEqual(messagePayload.id, loadedMessage?.id)
-        XCTAssertEqual(messagePayload.type.rawValue, loadedMessage?.type)
+        XCTAssertEqual(messagePayload.type, loadedMessage?.type)
         XCTAssertEqual(messagePayload.user.id, loadedMessage?.user.id)
         XCTAssertNearlySameDate(messagePayload.createdAt, loadedMessage?.createdAt.bridgeDate)
         XCTAssertNearlySameDate(messagePayload.updatedAt, loadedMessage?.updatedAt.bridgeDate)
@@ -563,16 +563,14 @@ final class MessageDTO_Tests: XCTestCase {
             loadedMessage?.mentionedUsers.map(\.id)
         )
         XCTAssertEqual(
-            messagePayload.threadParticipants.map(\.id),
+            (messagePayload.threadParticipants ?? []).map(\.id),
             (loadedMessage?.threadParticipants.array as? [UserDTO])?.map(\.id)
         )
         XCTAssertEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
         XCTAssertEqual(messagePayload.extraData, loadedMessage.map {
             try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData!)
         })
-        XCTAssertEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys { reaction in
-            MessageReactionType(rawValue: reaction)
-        })
+        XCTAssertEqual(messagePayload.reactionScores, loadedMessage?.reactionScores)
         XCTAssertEqual(loadedMessage?.latestReactions.count, messagePayload.latestReactions.count)
         XCTAssertEqual(messagePayload.isSilent, loadedMessage?.isSilent)
         XCTAssertEqual(messagePayload.isShadowed, loadedMessage?.isShadowed)
@@ -588,15 +586,15 @@ final class MessageDTO_Tests: XCTestCase {
         let loadedLoveReactionGroup = try XCTUnwrap(loadedMessageReactionGroup.first(where: { $0.type == "love" }))
         let loadedLikeReactionGroup = try XCTUnwrap(loadedMessageReactionGroup.first(where: { $0.type == "like" }))
         XCTAssertEqual(loadedLoveReactionGroup.type, "love")
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.count, Int(loadedLoveReactionGroup.count))
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.sumScores, Int(loadedLoveReactionGroup.sumScores))
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.firstReactionAt, loadedLoveReactionGroup.firstReactionAt.bridgeDate)
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.lastReactionAt, loadedLoveReactionGroup.lastReactionAt.bridgeDate)
+        XCTAssertEqual(messagePayload.reactionGroups?["love"]??.count, Int(loadedLoveReactionGroup.count))
+        XCTAssertEqual(messagePayload.reactionGroups?["love"]??.sumScores, Int(loadedLoveReactionGroup.sumScores))
+        XCTAssertEqual(messagePayload.reactionGroups?["love"]??.firstReactionAt, loadedLoveReactionGroup.firstReactionAt.bridgeDate)
+        XCTAssertEqual(messagePayload.reactionGroups?["love"]??.lastReactionAt, loadedLoveReactionGroup.lastReactionAt.bridgeDate)
         XCTAssertEqual(loadedLikeReactionGroup.type, "like")
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.count, Int(loadedLikeReactionGroup.count))
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.sumScores, Int(loadedLikeReactionGroup.sumScores))
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.firstReactionAt, loadedLikeReactionGroup.firstReactionAt.bridgeDate)
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.lastReactionAt, loadedLikeReactionGroup.lastReactionAt.bridgeDate)
+        XCTAssertEqual(messagePayload.reactionGroups?["like"]??.count, Int(loadedLikeReactionGroup.count))
+        XCTAssertEqual(messagePayload.reactionGroups?["like"]??.sumScores, Int(loadedLikeReactionGroup.sumScores))
+        XCTAssertEqual(messagePayload.reactionGroups?["like"]??.firstReactionAt, loadedLikeReactionGroup.firstReactionAt.bridgeDate)
+        XCTAssertEqual(messagePayload.reactionGroups?["like"]??.lastReactionAt, loadedLikeReactionGroup.lastReactionAt.bridgeDate)
     }
 
     func test_message_isNotOverwrittenWhenAlreadyInDatabase_andIsPending() throws {
@@ -664,7 +662,7 @@ final class MessageDTO_Tests: XCTestCase {
             pinnedByUserId: .unique,
             pinnedAt: .unique,
             pinExpires: .unique,
-            member: MemberInfoPayload(channelRole: .moderator)
+            member: MemberPayload.dummy(role: .moderator)
         )
 
         // Asynchronously save the payload to the db
@@ -691,7 +689,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         AssertAsync {
             Assert.willBeEqual(messagePayload.id, loadedMessage?.id)
-            Assert.willBeEqual(messagePayload.type.rawValue, loadedMessage?.type)
+            Assert.willBeEqual(messagePayload.type, loadedMessage?.type)
             Assert.willBeEqual(messagePayload.user.id, loadedMessage?.user.id)
             Assert.willBeEqual(messagePayload.createdAt.bridgeDate, loadedMessage?.createdAt)
             Assert.willBeEqual(messagePayload.updatedAt.bridgeDate, loadedMessage?.updatedAt)
@@ -710,19 +708,15 @@ final class MessageDTO_Tests: XCTestCase {
                 loadedMessage?.mentionedUsers.map(\.id)
             )
             Assert.willBeEqual(
-                messagePayload.threadParticipants.map(\.id),
+                (messagePayload.threadParticipants ?? []).map(\.id),
                 (loadedMessage?.threadParticipants.array as? [UserDTO])?.map(\.id)
             )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
             Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
                 try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData!)
             })
-            Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores.mapKeys { reaction in
-                MessageReactionType(rawValue: reaction)
-            })
-            Assert.willBeEqual(messagePayload.reactionCounts, loadedMessage?.reactionCounts.mapKeys { reaction in
-                MessageReactionType(rawValue: reaction)
-            })
+            Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores)
+            Assert.willBeEqual(messagePayload.reactionCounts, loadedMessage?.reactionCounts)
             Assert.willBeEqual(loadedMessage?.latestReactions.count, messagePayload.latestReactions.count)
             Assert.willBeEqual(loadedMessage?.ownReactions.count, messagePayload.ownReactions.count)
             Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
@@ -730,7 +724,7 @@ final class MessageDTO_Tests: XCTestCase {
                 Set(messagePayload.attachmentIDs(cid: channelId)),
                 loadedMessage.flatMap { Set($0.attachments.compactMap(\.attachmentID)) }
             )
-            Assert.willBeEqual(messagePayload.member?.channelRole?.rawValue, loadedMessage?.channelRole)
+            Assert.willBeEqual(messagePayload.member?.channelRole, loadedMessage?.channelRole)
         }
     }
 
@@ -1028,8 +1022,8 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         XCTAssertEqual(loadedMessage.id, messagePayload.id)
-        XCTAssertEqual(loadedMessage.cid, messagePayload.channel?.cid)
-        XCTAssertEqual(loadedMessage.type, messagePayload.type)
+        XCTAssertEqual(loadedMessage.cid, channelId)
+        XCTAssertEqual(loadedMessage.type.rawValue, messagePayload.type)
         XCTAssertEqual(loadedMessage.author.id, messagePayload.user.id)
         XCTAssertNearlySameDate(loadedMessage.createdAt, messagePayload.createdAt)
         XCTAssertNearlySameDate(loadedMessage.updatedAt, messagePayload.updatedAt)
@@ -1040,11 +1034,11 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.parentMessageId, messagePayload.parentId)
         XCTAssertEqual(loadedMessage.showReplyInChannel, messagePayload.showReplyInChannel)
         XCTAssertEqual(loadedMessage.mentionedUsers.map(\.id), messagePayload.mentionedUsers.map(\.id))
-        XCTAssertEqual(loadedMessage.threadParticipants.map(\.id), messagePayload.threadParticipants.map(\.id))
+        XCTAssertEqual(loadedMessage.threadParticipants.map(\.id), (messagePayload.threadParticipants ?? []).map(\.id))
         XCTAssertEqual(loadedMessage.replyCount, messagePayload.replyCount)
         XCTAssertEqual(loadedMessage.extraData, messagePayload.extraData)
-        XCTAssertEqual(loadedMessage.reactionScores, messagePayload.reactionScores)
-        XCTAssertEqual(loadedMessage.reactionCounts, messagePayload.reactionCounts)
+        XCTAssertEqual(loadedMessage.reactionScores, messagePayload.reactionScores.mapKeys(MessageReactionType.init(rawValue:)))
+        XCTAssertEqual(loadedMessage.reactionCounts, messagePayload.reactionCounts.mapKeys(MessageReactionType.init(rawValue:)))
         XCTAssertEqual(loadedMessage.isSilent, messagePayload.isSilent)
         XCTAssertEqual(loadedMessage.latestReactions.count, 3)
         XCTAssertEqual(loadedMessage.currentUserReactions.count, 2)
@@ -1099,15 +1093,15 @@ final class MessageDTO_Tests: XCTestCase {
         let loadedLoveReactionGroup = try XCTUnwrap(loadedMessageReactionGroup["love"])
         let loadedLikeReactionGroup = try XCTUnwrap(loadedMessageReactionGroup["like"])
         XCTAssertEqual(loadedLoveReactionGroup.type, "love")
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.count, loadedLoveReactionGroup.count)
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.sumScores, loadedLoveReactionGroup.sumScores)
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.firstReactionAt, loadedLoveReactionGroup.firstReactionAt)
-        XCTAssertEqual(messagePayload.reactionGroups["love"]?.lastReactionAt, loadedLoveReactionGroup.lastReactionAt)
+        XCTAssertEqual(messagePayload.reactionGroups?["love"]??.count, loadedLoveReactionGroup.count)
+        XCTAssertEqual(messagePayload.reactionGroups?["love"]??.sumScores, loadedLoveReactionGroup.sumScores)
+        XCTAssertEqual(messagePayload.reactionGroups?["love"]??.firstReactionAt, loadedLoveReactionGroup.firstReactionAt)
+        XCTAssertEqual(messagePayload.reactionGroups?["love"]??.lastReactionAt, loadedLoveReactionGroup.lastReactionAt)
         XCTAssertEqual(loadedLikeReactionGroup.type, "like")
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.count, loadedLikeReactionGroup.count)
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.sumScores, loadedLikeReactionGroup.sumScores)
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.firstReactionAt, loadedLikeReactionGroup.firstReactionAt)
-        XCTAssertEqual(messagePayload.reactionGroups["like"]?.lastReactionAt, loadedLikeReactionGroup.lastReactionAt)
+        XCTAssertEqual(messagePayload.reactionGroups?["like"]??.count, loadedLikeReactionGroup.count)
+        XCTAssertEqual(messagePayload.reactionGroups?["like"]??.sumScores, loadedLikeReactionGroup.sumScores)
+        XCTAssertEqual(messagePayload.reactionGroups?["like"]??.firstReactionAt, loadedLikeReactionGroup.firstReactionAt)
+        XCTAssertEqual(messagePayload.reactionGroups?["like"]??.lastReactionAt, loadedLikeReactionGroup.lastReactionAt)
     }
 
     func test_newMessage_asRequestBody() throws {
@@ -2649,9 +2643,10 @@ final class MessageDTO_Tests: XCTestCase {
             )
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: ChannelDetailPayload.dummy(cid: cid), query: nil, cache: nil)
             try session.saveMessage(
                 payload: message,
-                for: .unique,
+                for: cid,
                 syncOwnReactions: true,
                 cache: nil
             )
@@ -2679,9 +2674,10 @@ final class MessageDTO_Tests: XCTestCase {
             )
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: ChannelDetailPayload.dummy(cid: cid), query: nil, cache: nil)
             let message = try session.saveMessage(
                 payload: message,
-                for: .unique,
+                for: cid,
                 syncOwnReactions: true,
                 cache: nil
             )
@@ -2724,9 +2720,10 @@ final class MessageDTO_Tests: XCTestCase {
             )
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: ChannelDetailPayload.dummy(cid: cid), query: nil, cache: nil)
             let message = try session.saveMessage(
                 payload: message,
-                for: .unique,
+                for: cid,
                 syncOwnReactions: true,
                 cache: nil
             )
@@ -2769,9 +2766,10 @@ final class MessageDTO_Tests: XCTestCase {
             )
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: ChannelDetailPayload.dummy(cid: cid), query: nil, cache: nil)
             let message = try session.saveMessage(
                 payload: message,
-                for: .unique,
+                for: cid,
                 syncOwnReactions: true,
                 cache: nil
             )
@@ -3268,9 +3266,9 @@ final class MessageDTO_Tests: XCTestCase {
 
     // MARK: - loadCurrentUserMessages
 
-    func test_loadCurrentUserMessages_returnsMatch() {
+    func test_loadCurrentUserMessages_returnsMatch() throws {
         XCTAssertTrue(
-            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+            try saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
                 .dummy(
                     messageId: .unique,
                     authorUserId: .unique,
@@ -3280,9 +3278,9 @@ final class MessageDTO_Tests: XCTestCase {
         )
     }
 
-    func test_loadCurrentUserMessages_doesNotReturnDeletedMessage() {
+    func test_loadCurrentUserMessages_doesNotReturnDeletedMessage() throws {
         XCTAssertFalse(
-            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+            try saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
                 .dummy(
                     type: .deleted,
                     messageId: .unique,
@@ -3294,9 +3292,9 @@ final class MessageDTO_Tests: XCTestCase {
         )
     }
 
-    func test_loadCurrentUserMessages_doesNotReturnMessageAuthoredByAnotherUser() {
+    func test_loadCurrentUserMessages_doesNotReturnMessageAuthoredByAnotherUser() throws {
         XCTAssertFalse(
-            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+            try saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
                 .dummy(
                     messageId: .unique,
                     authorUserId: .unique,
@@ -3307,9 +3305,9 @@ final class MessageDTO_Tests: XCTestCase {
         )
     }
 
-    func test_loadCurrentUserMessages_doesNotReturnMessageFromAnotherChannel() {
+    func test_loadCurrentUserMessages_doesNotReturnMessageFromAnotherChannel() throws {
         XCTAssertFalse(
-            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+            try saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
                 .dummy(
                     messageId: .unique,
                     authorUserId: .unique,
@@ -3320,7 +3318,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
     }
 
-    func test_loadCurrentUserMessages_doesNotReturnMessageBeforeTimewindow() {
+    func test_loadCurrentUserMessages_doesNotReturnMessageBeforeTimewindow() throws {
         let message: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
@@ -3328,7 +3326,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         XCTAssertFalse(
-            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+            try saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
                 message,
                 createdAtFrom: message.createdAt.addingTimeInterval(1),
                 createdAtThrough: message.createdAt.addingTimeInterval(2)
@@ -3336,7 +3334,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
     }
 
-    func test_loadCurrentUserMessages_doesNotReturnMessageAtTimewindowLowerBound() {
+    func test_loadCurrentUserMessages_doesNotReturnMessageAtTimewindowLowerBound() throws {
         let message: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
@@ -3344,7 +3342,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         XCTAssertFalse(
-            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+            try saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
                 message,
                 createdAtFrom: message.createdAt,
                 createdAtThrough: message.createdAt.addingTimeInterval(10)
@@ -3352,7 +3350,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
     }
 
-    func test_loadCurrentUserMessages_returnsMessageAtTimewindowUpperBound() {
+    func test_loadCurrentUserMessages_returnsMessageAtTimewindowUpperBound() throws {
         let message: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
@@ -3360,7 +3358,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         XCTAssertTrue(
-            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+            try saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
                 message,
                 createdAtFrom: message.createdAt.addingTimeInterval(-10),
                 createdAtThrough: message.createdAt
@@ -3368,7 +3366,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
     }
 
-    func test_loadCurrentUserMessages_doesNotReturnsMessageAfterTimewindow() {
+    func test_loadCurrentUserMessages_doesNotReturnsMessageAfterTimewindow() throws {
         let message: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
@@ -3376,7 +3374,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         XCTAssertFalse(
-            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+            try saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
                 message,
                 createdAtFrom: message.createdAt.addingTimeInterval(-20),
                 createdAtThrough: message.createdAt.addingTimeInterval(-10)
@@ -3384,7 +3382,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
     }
 
-    func test_loadCurrentUserMessages_doesNotReturnsMessageWithLocalState() {
+    func test_loadCurrentUserMessages_doesNotReturnsMessageWithLocalState() throws {
         let message: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
@@ -3397,7 +3395,7 @@ final class MessageDTO_Tests: XCTestCase {
             .pendingSync, .syncing, .syncingFailed
         ] {
             XCTAssertFalse(
-                saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
+                try saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(
                     message,
                     messageLocalState: localState
                 )
@@ -3405,20 +3403,23 @@ final class MessageDTO_Tests: XCTestCase {
         }
     }
 
-    func test_loadCurrentUserMessages_doesNotReturnsTruncatedMessage() {
+    func test_loadCurrentUserMessages_doesNotReturnsTruncatedMessage() throws {
         let truncatedAt = Date()
+        let channel: ChannelDetailPayload = .dummy(truncatedAt: truncatedAt)
 
         let message: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: truncatedAt.addingTimeInterval(-10),
-            channel: .dummy(
-                truncatedAt: truncatedAt
-            )
+            channel: channel
         )
 
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
+        }
+
         XCTAssertFalse(
-            saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(message)
+            try saveMessageAndCheckLoadCurrentUserMessagesReturnsIt(message)
         )
     }
 
@@ -3443,10 +3444,11 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
             for message in [earlierMessage, laterMessage] {
                 try session.saveMessage(
                     payload: message,
-                    for: message.channel?.cid,
+                    for: channel.cid,
                     syncOwnReactions: false,
                     cache: nil
                 )
@@ -3473,28 +3475,33 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_load_respectsChannelID() throws {
         // GIVEN
+        let channel: ChannelDetailPayload = .dummy(cid: .unique)
+        let anotherChannel: ChannelDetailPayload = .dummy(cid: .unique)
+
         let channelMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
-            channel: .dummy(cid: .unique)
+            channel: channel
         )
 
         let anotherChannelMessage: MessagePayload = .dummy(
             messageId: .unique,
             authorUserId: .unique,
-            channel: .dummy(cid: .unique)
+            channel: anotherChannel
         )
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
+            try session.saveChannel(payload: anotherChannel, query: nil, cache: nil)
             try session.saveMessage(
                 payload: channelMessage,
-                for: channelMessage.channel?.cid,
+                for: channel.cid,
                 syncOwnReactions: false,
                 cache: nil
             )
             try session.saveMessage(
                 payload: anotherChannelMessage,
-                for: anotherChannelMessage.channel?.cid,
+                for: anotherChannel.cid,
                 syncOwnReactions: false,
                 cache: nil
             )
@@ -3504,7 +3511,7 @@ final class MessageDTO_Tests: XCTestCase {
 
         // WHEN
         let results = MessageDTO.load(
-            for: channelMessage.channel!.cid.rawValue,
+            for: channel.cid.rawValue,
             limit: 10,
             offset: 0,
             shouldShowShadowedMessages: true,
@@ -3521,6 +3528,7 @@ final class MessageDTO_Tests: XCTestCase {
         let channel: ChannelDetailPayload = .dummy()
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
             for _ in 0..<5 {
                 try session.saveMessage(
                     payload: .dummy(
@@ -3561,6 +3569,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
             try session.saveMessage(
                 payload: targetMessage,
                 for: channel.cid,
@@ -3611,6 +3620,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
             try session.saveMessage(
                 payload: shadowedMessage,
                 for: channel.cid,
@@ -3647,6 +3657,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: channel, query: nil, cache: nil)
             try session.saveMessage(
                 payload: shadowedMessage,
                 for: channel.cid,
@@ -4290,8 +4301,10 @@ final class MessageDTO_Tests: XCTestCase {
     private func createMessage(with message: MessagePayload) throws -> MessageDTO {
         let context = database.viewContext
         _ = try context.saveCurrentUser(payload: .dummy(userPayload: message.user))
+        let cid = message.channel?.cid ?? (try? ChannelId(cid: message.cid)) ?? ChannelId.unique
+        try context.saveChannel(payload: ChannelDetailPayload.dummy(cid: cid), query: nil, cache: nil)
         return try XCTUnwrap(
-            context.saveMessage(payload: message, for: message.channel?.cid, cache: nil)
+            context.saveMessage(payload: message, for: cid, cache: nil)
         )
     }
 
@@ -4310,6 +4323,7 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         try database.writeSynchronously { session in
+            try session.saveChannel(payload: ChannelDetailPayload.dummy(cid: channelId), query: nil, cache: nil)
             let savedMessage = try session.saveMessage(payload: message, for: channelId, syncOwnReactions: true, cache: nil)
             if isHardDeleted {
                 savedMessage.isHardDeleted = isHardDeleted
@@ -4328,20 +4342,22 @@ final class MessageDTO_Tests: XCTestCase {
         createdAtThrough: Date? = nil,
         saveAuthorAsCurrentUser: Bool = true,
         messageLocalState: LocalMessageState? = nil
-    ) -> Bool {
+    ) throws -> Bool {
         let context = database.viewContext
 
         if saveAuthorAsCurrentUser {
             _ = try! context.saveCurrentUser(payload: .dummy(userPayload: message.user))
         }
 
-        let messageDTO = try! XCTUnwrap(
-            context.saveMessage(payload: message, for: message.channel?.cid, cache: nil)
+        let cid = try ChannelId(cid: message.cid)
+        try context.saveChannel(payload: ChannelDetailPayload.dummy(cid: cid), query: nil, cache: nil)
+        let messageDTO = try XCTUnwrap(
+            context.saveMessage(payload: message, for: cid, cache: nil)
         )
         messageDTO.localMessageState = messageLocalState
 
         let results = MessageDTO.loadCurrentUserMessages(
-            in: lookInAnotherChannel ? .unique : message.channel!.cid.rawValue,
+            in: lookInAnotherChannel ? .unique : cid.rawValue,
             createdAtFrom: createdAtFrom ?? messageDTO.createdAt.bridgeDate.addingTimeInterval(-10),
             createdAtThrough: createdAtThrough ?? messageDTO.createdAt.bridgeDate.addingTimeInterval(10),
             context: context

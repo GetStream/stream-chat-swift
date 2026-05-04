@@ -7,7 +7,7 @@ import Foundation
 import XCTest
 
 extension MessagePayload {
-    /// Creates a dummy `MessagePayload` with the given `messageId` and `userId` of the author.
+    /// Creates a dummy `MessagePayload` (= `MessageResponse`) with the given `messageId` and `userId` of the author.
     static func dummy(
         type: MessageType? = nil,
         messageId: MessageId = .unique,
@@ -53,55 +53,60 @@ extension MessagePayload {
         poll: PollPayload? = nil,
         draft: DraftPayload? = nil,
         sharedLocation: SharedLocationPayload? = nil,
-        member: MemberInfoPayload? = nil,
+        member: ChannelMemberResponse? = nil,
         deletedForMe: Bool? = nil,
         campaignId: String? = nil
     ) -> MessagePayload {
-        .init(
-            id: messageId,
-            cid: cid,
-            type: type ?? (parentId == nil ? .regular : showReplyInChannel == true ? .regular : .reply),
-            user: UserPayload.dummy(userId: authorUserId) as UserPayload,
-            createdAt: createdAt != nil ? createdAt! : XCTestCase.channelCreatedDate
-                .addingTimeInterval(TimeInterval.random(in: 100...900)),
-            updatedAt: updatedAt,
-            deletedAt: deletedAt,
-            text: text,
+        _ = moderationDetails
+        var custom = extraData
+        if let campaignId {
+            custom[MessagePayloadsCodingKeys.campaignId.rawValue] = .string(campaignId)
+        }
+        let resolvedType = type ?? (parentId == nil ? .regular : showReplyInChannel == true ? .regular : .reply)
+        return MessageResponse(
+            attachments: attachments,
+            cid: cid?.rawValue ?? channel?.cid.rawValue ?? "",
             command: .unique,
-            args: .unique,
-            parentId: parentId,
-            showReplyInChannel: showReplyInChannel,
-            quotedMessageId: quotedMessageId,
-            quotedMessage: quotedMessage,
+            createdAt: createdAt ?? XCTestCase.channelCreatedDate.addingTimeInterval(TimeInterval.random(in: 100...900)),
+            custom: custom,
+            deletedAt: deletedAt,
+            deletedForMe: deletedForMe,
+            deletedReplyCount: 0,
+            draft: draft,
+            html: "",
+            i18n: MessageTranslationsPayload.messageTranslations(translations: translations, originalLanguage: originalLanguage),
+            id: messageId,
+            latestReactions: latestReactions,
+            member: member,
+            mentionedChannel: false,
+            mentionedHere: false,
             mentionedUsers: mentionedUsers,
-            threadParticipants: threadParticipants,
+            messageTextUpdatedAt: messageTextUpdatedAt,
+            moderation: moderation ?? moderationDetails,
+            ownReactions: ownReactions,
+            parentId: parentId,
+            pinExpires: pinExpires,
+            pinned: pinned,
+            pinnedAt: pinnedAt,
+            pinnedBy: pinnedByUserId.map { UserPayload.dummy(userId: $0) },
+            poll: poll,
+            pollId: poll?.id,
+            quotedMessage: quotedMessage,
+            quotedMessageId: quotedMessageId,
+            reactionCounts: reactionCounts.mapKeys(\.rawValue),
+            reactionGroups: reactionGroups.mapKeys(\.rawValue),
+            reactionScores: reactionScores.mapKeys(\.rawValue),
             replyCount: .random(in: 0...1000),
             restrictedVisibility: restrictedVisibility,
-            extraData: extraData,
-            latestReactions: latestReactions,
-            ownReactions: ownReactions,
-            reactionScores: reactionScores,
-            reactionCounts: reactionCounts,
-            reactionGroups: reactionGroups,
-            isSilent: isSilent,
-            isShadowed: isShadowed,
-            attachments: attachments,
-            channel: channel,
-            pinned: pinned,
-            pinnedBy: pinnedByUserId != nil ? UserPayload.dummy(userId: pinnedByUserId!) as UserPayload : nil,
-            pinnedAt: pinnedAt,
-            pinExpires: pinExpires,
-            translations: translations,
-            originalLanguage: originalLanguage,
-            moderation: moderation,
-            moderationDetails: moderationDetails,
-            messageTextUpdatedAt: messageTextUpdatedAt,
-            poll: poll,
-            draft: draft,
-            location: sharedLocation,
-            member: member,
-            deletedForMe: deletedForMe,
-            campaignId: campaignId
+            shadowed: isShadowed,
+            sharedLocation: sharedLocation,
+            showInChannel: showReplyInChannel,
+            silent: isSilent,
+            text: text,
+            threadParticipants: threadParticipants,
+            type: resolvedType.rawValue,
+            updatedAt: updatedAt,
+            user: UserPayload.dummy(userId: authorUserId)
         )
     }
 

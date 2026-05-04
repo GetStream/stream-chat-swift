@@ -18,7 +18,7 @@ extension MessagePayload {
     ) -> ChatMessage {
         let author = user.asModel()
         let mentionedUsers = Set(mentionedUsers.compactMap { $0.asModel() })
-        let threadParticipants = threadParticipants.compactMap { $0.asModel() }
+        let threadParticipants = (threadParticipants ?? []).compactMap { $0.asModel() }
 
         let quotedMessage = quotedMessage?.asModel(
             cid: cid,
@@ -61,7 +61,7 @@ extension MessagePayload {
             id: id,
             cid: cid,
             text: text,
-            type: type,
+            type: MessageType(rawValue: type) ?? .regular,
             command: command,
             createdAt: createdAt,
             locallyCreatedAt: nil,
@@ -77,15 +77,17 @@ extension MessagePayload {
             isSilent: isSilent,
             isShadowed: isShadowed,
             deletedForMe: deletedForMe ?? false,
-            reactionScores: reactionScores,
-            reactionCounts: reactionCounts,
-            reactionGroups: reactionGroups.reduce(into: [:]) { acc, element in
-                acc[element.key] = ChatMessageReactionGroup(
-                    type: element.key,
-                    sumScores: element.value.sumScores,
-                    count: element.value.count,
-                    firstReactionAt: element.value.firstReactionAt,
-                    lastReactionAt: element.value.lastReactionAt
+            reactionScores: reactionScores.mapKeys(MessageReactionType.init(rawValue:)),
+            reactionCounts: reactionCounts.mapKeys(MessageReactionType.init(rawValue:)),
+            reactionGroups: (reactionGroups ?? [:]).reduce(into: [:]) { acc, element in
+                guard let value = element.value else { return }
+                let key = MessageReactionType(rawValue: element.key)
+                acc[key] = ChatMessageReactionGroup(
+                    type: key,
+                    sumScores: value.sumScores,
+                    count: value.count,
+                    firstReactionAt: value.firstReactionAt,
+                    lastReactionAt: value.lastReactionAt
                 )
             },
             author: author,
@@ -138,7 +140,7 @@ extension MessagePayload {
                     endAt: $0.endAt
                 )
             },
-            channelRole: member?.channelRole
+            channelRole: member.map { MemberRole(rawValue: $0.channelRole) }
         )
     }
 }

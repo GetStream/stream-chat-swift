@@ -36,9 +36,9 @@ final class MessageSearch_Tests: XCTestCase {
         env.client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         let results = try await messageSearch.search(text: "text")
-        XCTAssertEqual(apiResponse.results.map(\.message.id), results.map(\.id))
+        XCTAssertEqual(apiResponse.results.compactMap { $0.message?.id }, results.map(\.id))
         await MainActor.run {
-            XCTAssertEqual(apiResponse.results.map(\.message.id), messageSearch.state.messages.map(\.id))
+            XCTAssertEqual(apiResponse.results.compactMap { $0.message?.id }, messageSearch.state.messages.map(\.id))
             XCTAssertEqual(messageSearch.explicitFilterHash, messageSearch.state.query?.filterHash)
             XCTAssertEqual([Sorting(key: .createdAt, isAscending: false)], messageSearch.state.query?.sort)
             XCTAssertEqual(Filter.containMembers(userIds: [currentUserId]), messageSearch.state.query?.channelFilter)
@@ -97,9 +97,9 @@ final class MessageSearch_Tests: XCTestCase {
         let nextMessagesResult = try await messageSearch.loadMoreMessages()
         await MainActor.run {
             XCTAssertEqual(messageSearch.state.nextPageCursor, "B")
-            XCTAssertEqual(apiResponse2.results.map(\.message.id), nextMessagesResult.map(\.id))
+            XCTAssertEqual(apiResponse2.results.compactMap { $0.message?.id }, nextMessagesResult.map(\.id))
             let expected = apiResponse2.results + apiResponse.results
-            XCTAssertEqual(expected.map(\.message.id), messageSearch.state.messages.map(\.id))
+            XCTAssertEqual(expected.compactMap { $0.message?.id }, messageSearch.state.messages.map(\.id))
         }
     }
     
@@ -115,21 +115,29 @@ final class MessageSearch_Tests: XCTestCase {
         }
     }
     
-    private func makeMatchingResponse(messageCount: Int, createdAtOffset: Int, next: String? = nil) -> MessageSearchResultsPayload {
+    private func makeMatchingResponse(messageCount: Int, createdAtOffset: Int, next: String? = nil) -> SearchResponse {
         // Default sorting is ascending false, mimic that in API responses
         let messagePayloads = (0..<messageCount)
             .reversed()
             .map {
-                MessagePayload.dummy(
+                let cid = ChannelId.unique
+                let payload = MessagePayload.dummy(
                     messageId: "\($0 + createdAtOffset)",
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset)),
-                    channel: .dummy(),
-                    cid: .unique
+                    channel: ChannelDetailPayload.dummy(cid: cid),
+                    cid: cid
                 )
+                return (payload, cid)
             }
-        return MessageSearchResultsPayload(
-            results: messagePayloads.map { MessagePayload.Boxed(message: $0) },
-            next: next
+        return SearchResponse(
+            duration: "",
+            next: next,
+            results: messagePayloads.map { payload, cid in
+                SearchResult(message: SearchResultMessage(
+                    messageResponse: payload,
+                    channel: ChannelDetailPayload.dummy(cid: cid).asChannelResponse
+                ))
+            }
         )
     }
 }

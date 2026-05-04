@@ -302,7 +302,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
                         user: .dummy(userId: .unique)
                     )
                 }
-            return MessageReactionsPayload(reactions: reactions)
+            return MessageReactionsPayload(duration: "", reactions: reactions)
         }
         let query = ReactionListQuery(messageId: messageId)
         try await client.databaseContainer.write { session in

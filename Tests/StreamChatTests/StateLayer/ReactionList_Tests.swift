@@ -193,7 +193,7 @@ final class ReactionList_Tests: XCTestCase {
                     user: .dummy(userId: .unique)
                 )
             }
-        return MessageReactionsPayload(reactions: reactions)
+        return MessageReactionsPayload(duration: "", reactions: reactions)
     }
 }
 

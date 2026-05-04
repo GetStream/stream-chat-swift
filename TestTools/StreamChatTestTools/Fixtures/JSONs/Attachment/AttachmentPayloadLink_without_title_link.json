@@ -1,8 +1,8 @@
 {
-  "og_scrape_url" : "google.com",
-  "title" : "Google",
-  "text" : "Google",
-  "thumb_url" : "https:\/\/i.ytimg.com\/vi\/ZXBcwyMUrcU\/maxresdefault_preview.jpg",
-  "asset_url" : "https:\/\/www.youtube.com\/embed\/ZXBcwyMUrcU",
-  "custom" : {}
+    "og_scrape_url": "google.com",
+    "title": "Google",
+    "text": "Google",
+    "thumb_url": "https://i.ytimg.com/vi/ZXBcwyMUrcU/maxresdefault_preview.jpg",
+    "asset_url": "https://www.youtube.com/embed/ZXBcwyMUrcU",
+    "custom": {}
 }

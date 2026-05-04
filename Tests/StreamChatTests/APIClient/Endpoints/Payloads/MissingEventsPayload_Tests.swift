@@ -37,7 +37,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
         let message = try XCTUnwrap(event.message)
         XCTAssertEqual(message.id, "AD6B64F8-1A12-48AF-B246-09774FD1B748")
         XCTAssertEqual(message.text, "How are you?")
-        XCTAssertEqual(message.type, .regular)
+        XCTAssertEqual(message.type, MessageType.regular.rawValue)
         XCTAssertTrue(message.latestReactions.isEmpty)
         XCTAssertTrue(message.ownReactions.isEmpty)
         XCTAssertTrue(message.reactionScores.isEmpty)

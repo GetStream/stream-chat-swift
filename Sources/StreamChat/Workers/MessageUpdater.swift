@@ -224,11 +224,14 @@ class MessageUpdater: Worker, @unchecked Sendable {
         ) { [weak self] result in
             switch result {
             case .success(let messagePayloadBoxed):
-                let messagePayload = messagePayloadBoxed.message
+                guard let messagePayload = messagePayloadBoxed.message else {
+                    completion?(.failure(ClientError.Unknown()))
+                    return
+                }
                 self?.database.write { session in
                     let cid: ChannelId?
 
-                    if let payloadCid = messagePayloadBoxed.message.cid {
+                    if let payloadCid = try? ChannelId(cid: messagePayload.cid) {
                         cid = payloadCid
                     } else if let cidFromLocal = session.message(id: messageId)?.cid,
                               let localCid = try? ChannelId(cid: cidFromLocal) {
@@ -241,7 +244,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                         completion?(.failure(ClientError.ChannelNotCreatedYet()))
                         return
                     }
-                    
+
                     let messageDTO = try session.saveMessage(
                         payload: messagePayload,
                         for: cid,
@@ -935,7 +938,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 if action.isCancel {
                     completion?(nil)
                 } else {
-                    let endpoint: Endpoint<MessagePayload.Boxed> = .dispatchEphemeralMessageAction(
+                    let endpoint: Endpoint<MessageActionResponse> = .dispatchEphemeralMessageAction(
                         cid: cid,
                         messageId: messageId,
                         action: action
@@ -943,9 +946,13 @@ class MessageUpdater: Worker, @unchecked Sendable {
                     self.apiClient.request(endpoint: endpoint) {
                         switch $0 {
                         case let .success(payload):
+                            guard let message = payload.message else {
+                                completion?(nil)
+                                return
+                            }
                             self.database.write({ session in
                                 try session.saveMessage(
-                                    payload: payload.message,
+                                    payload: message,
                                     for: cid,
                                     syncOwnReactions: true,
                                     skipDraftUpdate: true,
@@ -1001,14 +1008,20 @@ class MessageUpdater: Worker, @unchecked Sendable {
     }
 
     func translate(messageId: MessageId, to language: TranslationLanguage, completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil) {
-        apiClient.request(endpoint: .translate(messageId: messageId, to: language), completion: { result in
+        let endpoint: Endpoint<MessageActionResponse> = .translate(messageId: messageId, to: language)
+        apiClient.request(endpoint: endpoint, completion: { result in
             switch result {
             case let .success(boxedMessage):
+                guard let message = boxedMessage.message,
+                      let cid = try? ChannelId(cid: message.cid) else {
+                    completion?(.failure(ClientError.Unknown()))
+                    return
+                }
                 nonisolated(unsafe) var translatedMessage: ChatMessage?
                 self.database.write { session in
                     let messageDTO = try session.saveMessage(
-                        payload: boxedMessage.message,
-                        for: boxedMessage.message.cid,
+                        payload: message,
+                        for: cid,
                         syncOwnReactions: false,
                         skipDraftUpdate: true,
                         cache: nil
@@ -1092,7 +1105,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
 
 extension MessageUpdater {
     struct MessageSearchResults {
-        let payload: MessageSearchResultsPayload
+        let payload: SearchResponse
         let models: [ChatMessage]
 
         var next: String? { payload.next }

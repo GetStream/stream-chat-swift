@@ -111,15 +111,9 @@ extension MessageReactionsPayload: IdentifiablePayloadProxy {
     }
 }
 
-extension MessageSearchResultsPayload: IdentifiablePayloadProxy {
+extension SearchResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        results.fillIds(cache: &cache)
-    }
-}
-
-extension MessagePayload.Boxed: IdentifiablePayloadProxy {
-    func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        message.fillIds(cache: &cache)
+        // TODO: map SearchResult.message to MessageResponse and cache
     }
 }
 
@@ -202,10 +196,9 @@ extension MessagePayload: IdentifiablePayload {
         user.fillIds(cache: &cache)
         quotedMessage?.fillIds(cache: &cache)
         mentionedUsers.fillIds(cache: &cache)
-        threadParticipants.fillIds(cache: &cache)
+        threadParticipants?.fillIds(cache: &cache)
         latestReactions.fillIds(cache: &cache)
         ownReactions.fillIds(cache: &cache)
-        pinnedBy?.fillIds(cache: &cache)
         pinnedBy?.fillIds(cache: &cache)
     }
 }

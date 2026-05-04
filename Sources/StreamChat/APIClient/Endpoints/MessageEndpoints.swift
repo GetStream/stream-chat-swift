@@ -5,7 +5,7 @@
 import Foundation
 
 extension Endpoint {
-    static func getMessage(messageId: MessageId) -> Endpoint<MessagePayload.Boxed> {
+    static func getMessage(messageId: MessageId) -> Endpoint<GetMessageResponse> {
         .init(
             path: .message(messageId),
             method: .get,
@@ -15,7 +15,7 @@ extension Endpoint {
         )
     }
 
-    static func deleteMessage(messageId: MessageId, hard: Bool, deleteForMe: Bool? = nil) -> Endpoint<MessagePayload.Boxed> {
+    static func deleteMessage(messageId: MessageId, hard: Bool, deleteForMe: Bool? = nil) -> Endpoint<DeleteMessageResponse> {
         var body: [String: AnyEncodable] = ["hard": AnyEncodable(hard)]
         if let deleteForMe = deleteForMe {
             body["delete_for_me"] = AnyEncodable(deleteForMe)
@@ -57,7 +57,7 @@ extension Endpoint {
     }
 
     static func partialUpdateMessage(messageId: MessageId, request: MessagePartialUpdateRequest)
-        -> Endpoint<MessagePayload.Boxed> {
+        -> Endpoint<UpdateMessagePartialResponse> {
         .init(
             path: .editMessage(messageId),
             method: .put,
@@ -82,7 +82,7 @@ extension Endpoint {
         cid: ChannelId,
         messageId: MessageId,
         action: AttachmentAction
-    ) -> Endpoint<MessagePayload.Boxed> {
+    ) -> Endpoint<MessageActionResponse> {
         .init(
             path: .messageAction(messageId),
             method: .post,
@@ -96,11 +96,11 @@ extension Endpoint {
         )
     }
 
-    static func search(query: MessageSearchQuery) -> Endpoint<MessageSearchResultsPayload> {
+    static func search(query: MessageSearchQuery) -> Endpoint<SearchResponse> {
         .init(path: .search, method: .get, queryItems: nil, requiresConnectionId: false, body: ["payload": query])
     }
 
-    static func translate(messageId: MessageId, to language: TranslationLanguage) -> Endpoint<MessagePayload.Boxed> {
+    static func translate(messageId: MessageId, to language: TranslationLanguage) -> Endpoint<MessageActionResponse> {
         .init(
             path: .translateMessage(messageId),
             method: .post,

@@ -2465,7 +2465,7 @@ extension LivestreamChannelController_Tests {
         
         // Simulate successful response
         client.mockAPIClient.test_simulateResponse(
-            Result<MessagePayload.Boxed, Error>.success(.init(message: .dummy()))
+            Result<DeleteMessageResponse, Error>.success(.init(duration: "", message: .dummy()))
         )
 
         waitForExpectations(timeout: defaultTimeout)
@@ -2503,7 +2503,7 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate failed response
-        client.mockAPIClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(testError))
+        client.mockAPIClient.test_simulateResponse(Result<DeleteMessageResponse, Error>.failure(testError))
 
         waitForExpectations(timeout: defaultTimeout)
         
@@ -2621,7 +2621,7 @@ extension LivestreamChannelController_Tests {
             messageId: messageId,
             user: UserPayload.dummy(userId: .unique)
         )]
-        let reactionsPayload = MessageReactionsPayload(reactions: mockReactions)
+        let reactionsPayload = MessageReactionsPayload(duration: "", reactions: mockReactions)
         client.mockAPIClient.test_simulateResponse(Result<MessageReactionsPayload, Error>.success(reactionsPayload))
         
         waitForExpectations(timeout: defaultTimeout)

@@ -546,9 +546,9 @@ final class MessageSender_Tests: XCTestCase {
             }
         }
         if success {
-            apiClient.test_simulateResponse(.success(MessagePayload.Boxed(message: .dummy(messageId: messageId, text: "processed", cid: cid))))
+            apiClient.test_simulateResponse(.success(SendMessageResponseOpenAPI(duration: "", message: .dummy(messageId: messageId, text: "processed", cid: cid))))
         } else {
-            apiClient.test_simulateResponse(Result<MessagePayload.Boxed, Error>.failure(NSError(domain: NSURLErrorDomain, code: NSURLErrorNetworkConnectionLost)))
+            apiClient.test_simulateResponse(Result<SendMessageResponseOpenAPI, Error>.failure(NSError(domain: NSURLErrorDomain, code: NSURLErrorNetworkConnectionLost)))
         }
         wait(for: [localStateExpectation], timeout: defaultTimeout)
     }
