@@ -9,7 +9,9 @@ STRIP_ACCESS_MODIFIERS_EXCLUDED_FILES=(
   "$OUTPUT_DIR_CHAT/models/Command.swift"
 )
 rm -rf "$OUTPUT_DIR_CHAT"
-( cd "$CHAT_DIR" ; make openapi ; go run ./cmd/chat-manager openapi generate-client --language swift --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
+( cd "$CHAT_DIR" ; make openapi ; \
+  go run ./cmd/chat-manager openapi generate-client --language swift           --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" ; \
+  go run ./cmd/chat-manager openapi generate-client --language swift-endpoints --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
 is_access_modifier_stripping_excluded() {
   local file="$1"
@@ -55,6 +57,17 @@ rename_generated_type() {
 rename_generated() {
   rename_generated_filename "$1" "$2"
   rename_generated_type "$1" "$2"
+}
+
+# Rename the swift-endpoints-emitted Endpoint/EndpointMethod/EndpointPath types
+# to DefaultEndpoint* so they coexist with the hand-written StreamChat types
+# during the incremental migration.
+rename_default_endpoint_types() {
+  local file="$OUTPUT_DIR_CHAT/DefaultEndpoints.swift"
+  [[ -f "$file" ]] || return 0
+  sed -i '' -E 's/[[:<:]]EndpointPath[[:>:]]/DefaultEndpointPath/g' "$file"
+  sed -i '' -E 's/[[:<:]]EndpointMethod[[:>:]]/DefaultEndpointMethod/g' "$file"
+  sed -i '' -E 's/[[:<:]]Endpoint[[:>:]]/DefaultEndpoint/g' "$file"
 }
 
 escape_swift_keywords_in_cases() {
@@ -154,5 +167,6 @@ fix_invalid_empty_enum_cases
 fix_untyped_arrays
 qualify_stream_core_types
 strip_public_open_access_modifiers
+rename_default_endpoint_types
 
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"

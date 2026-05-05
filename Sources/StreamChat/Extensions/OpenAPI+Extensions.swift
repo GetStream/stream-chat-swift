@@ -2796,3 +2796,29 @@ private extension UserPayload {
         )
     }
 }
+
+extension DefaultEndpointMethod {
+    func asEndpointMethod() -> EndpointMethod {
+        switch self {
+        case .get: return .get
+        case .post: return .post
+        case .patch: return .patch
+        case .delete: return .delete
+        case .put: return .put
+        }
+    }
+}
+
+extension DefaultEndpoint {
+    /// `path` is supplied explicitly because `DefaultEndpointPath` and `EndpointPath` are not yet 1:1.
+    func asEndpoint(path: EndpointPath) -> Endpoint<ResponseType> {
+        Endpoint(
+            path: path,
+            method: method.asEndpointMethod(),
+            queryItems: queryItems,
+            requiresConnectionId: requiresConnectionId,
+            requiresToken: requiresToken,
+            body: body
+        )
+    }
+}
