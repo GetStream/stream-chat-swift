@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### 🐞 Fixed
-- Fix `CurrentUserController.setPushPreference` and `snoozePushNotifications` not updating the local push preference state [#PRNUM](https://github.com/GetStream/stream-chat-swift/pull/PRNUM)
+- Fix `CurrentUserController.setPushPreference` and `snoozePushNotifications` not updating the local push preference state [#4086](https://github.com/GetStream/stream-chat-swift/pull/4086)
 
 ### 🔄 Changed
 
