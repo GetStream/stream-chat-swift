@@ -472,8 +472,8 @@ public extension CurrentChatUserController {
             removeDisable: true
         )
 
-        currentUserUpdater.setPushPreference(userPreference) { [weak self] result in
-            self?.callback {
+        currentUserUpdater.setPushPreference(userPreference) { result in
+            self.callback {
                 completion?(result)
             }
         }
@@ -494,8 +494,8 @@ public extension CurrentChatUserController {
             removeDisable: nil
         )
 
-        currentUserUpdater.setPushPreference(userPreference) { [weak self] result in
-            self?.callback {
+        currentUserUpdater.setPushPreference(userPreference) { result in
+            self.callback {
                 completion?(result)
             }
         }
