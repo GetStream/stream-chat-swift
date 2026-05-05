@@ -162,7 +162,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var enrichUrl_completion: ((Result<LinkAttachmentPayload, Error>) -> Void)?
     @Atomic var enrichUrl_completion_result: Result<LinkAttachmentPayload, Error>?
 
-    @Atomic var setPushPreference_preference: PushPreferenceRequestPayload?
+    @Atomic var setPushPreference_preference: PushPreferenceInput?
     @Atomic var setPushPreference_cid: ChannelId?
     @Atomic var setPushPreference_completion: ((Result<PushPreference, Error>) -> Void)?
     @Atomic var setPushPreference_completion_result: Result<PushPreference, Error>?
@@ -618,7 +618,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     }
 
     override func setPushPreference(
-        _ preference: PushPreferenceRequestPayload,
+        _ preference: PushPreferenceInput,
         cid: ChannelId,
         completion: @escaping (Result<PushPreference, Error>) -> Void
     ) {

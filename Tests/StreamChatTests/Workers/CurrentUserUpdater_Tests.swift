@@ -76,7 +76,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // Simulate API response
-        let currentUserUpdateResponse = CurrentUserUpdateResponse(
+        let currentUserUpdateResponse = UpdateUsersResponse(
             user: CurrentUserPayload.dummy(
                 userId: userPayload.id,
                 name: expectedName,
@@ -92,24 +92,27 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(currentUserUpdateResponse))
 
         // Assert that request is made to the correct endpoint
-        let expectedEndpoint: Endpoint<CurrentUserUpdateResponse> = .updateUser(
-            id: expectedId,
-            payload: .init(
-                name: expectedName,
-                imageURL: expectedImageUrl,
-                privacySettings: .init(
-                    typingIndicators: .init(enabled: true),
-                    readReceipts: .init(enabled: true)
-                ),
-                role: expectedRole,
-                teamsRole: ["ios": "guest"],
-                extraData: [:]
+        let expectedPayload: UpdateUserPartialRequest = .init(
+            name: expectedName,
+            imageURL: expectedImageUrl,
+            privacySettings: .init(
+                typingIndicators: .init(enabled: true),
+                readReceipts: .init(enabled: true)
             ),
-            unset: ["image"]
+            role: expectedRole,
+            teamsRole: ["ios": "guest"],
+            extraData: [:]
         )
+        let expectedEndpoint: Endpoint<UpdateUsersResponse> = DefaultEndpoint<UpdateUsersResponse>
+            .updateUsersPartial(updateUsersPartialRequest: UpdateUsersPartialRequest(
+                users: [
+                    UpdateUserPartialRequest(id: expectedId, set: expectedPayload.set, unset: ["image"])
+                ]
+            ))
+            .asEndpoint(path: .users)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
-    
+
     func test_updateUser_makesCorrectAPICall_whenOnlyUnsetProperties() throws {
         // Simulate user already set
         let userPayload: CurrentUserPayload = .dummy(userId: .unique, role: .user)
@@ -130,18 +133,21 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
         
         // Assert that request is made to the correct endpoint
-        let expectedEndpoint: Endpoint<CurrentUserUpdateResponse> = .updateUser(
-            id: userPayload.id,
-            payload: .init(
-                name: nil,
-                imageURL: nil,
-                privacySettings: nil,
-                role: nil,
-                teamsRole: nil,
-                extraData: nil
-            ),
-            unset: ["image"]
+        let expectedPayload: UpdateUserPartialRequest = .init(
+            name: nil,
+            imageURL: nil,
+            privacySettings: nil,
+            role: nil,
+            teamsRole: nil,
+            extraData: nil
         )
+        let expectedEndpoint: Endpoint<UpdateUsersResponse> = DefaultEndpoint<UpdateUsersResponse>
+            .updateUsersPartial(updateUsersPartialRequest: UpdateUsersPartialRequest(
+                users: [
+                    UpdateUserPartialRequest(id: userPayload.id, set: expectedPayload.set, unset: ["image"])
+                ]
+            ))
+            .asEndpoint(path: .users)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -178,7 +184,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // Simulate API response
-        let currentUserUpdateResponse = CurrentUserUpdateResponse(
+        let currentUserUpdateResponse = UpdateUsersResponse(
             user: CurrentUserPayload.dummy(
                 userId: userPayload.id,
                 name: expectedName,
@@ -234,7 +240,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let error = TestError()
         apiClient
             .test_simulateResponse(
-                Result<CurrentUserUpdateResponse, Error>.failure(error)
+                Result<UpdateUsersResponse, Error>.failure(error)
             )
         apiClient
             .cleanUp()
@@ -296,7 +302,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // Simulate API response
-        let currentUserUpdateResponse = CurrentUserUpdateResponse(
+        let currentUserUpdateResponse = UpdateUsersResponse(
             user: userPayload
         )
         apiClient.test_simulateResponse(.success(currentUserUpdateResponse))
@@ -738,7 +744,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         XCTAssertEqual(endpoint?.method, .get)
         
         // Create test payload for the response
-        let payload = CurrentUserUnreadsPayload(
+        let payload = WrappedUnreadCountsResponse(
             totalUnreadCount: 10,
             totalUnreadThreadsCount: 3,
             totalUnreadCountByTeam: ["Benfica": 3],
@@ -795,7 +801,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         
         // Simulate API error
         let expectedError = TestError()
-        apiClient.test_simulateResponse(Result<CurrentUserUnreadsPayload, Error>.failure(expectedError))
+        apiClient.test_simulateResponse(Result<WrappedUnreadCountsResponse, Error>.failure(expectedError))
         
         // Verify the error is propagated
         XCTAssertEqual(receivedError as? TestError, expectedError)
@@ -889,7 +895,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_makesCorrectAPICall() throws {
         // GIVEN
-        let preference = PushPreferenceRequestPayload(
+        let preference = PushPreferenceInput(
             chatLevel: "mentions",
             channelId: nil,
             disabledUntil: nil,
@@ -900,20 +906,24 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         currentUserUpdater.setPushPreference(preference) { _ in }
 
         // THEN
-        let expectedEndpoint: Endpoint<PushPreferencesPayloadResponse> = .pushPreferences([preference])
+        let expectedEndpoint: Endpoint<UpsertPushPreferencesResponse> = DefaultEndpoint<UpsertPushPreferencesResponse>
+            .updatePushNotificationPreferences(
+                upsertPushPreferencesRequest: UpsertPushPreferencesRequest(preferences: [preference])
+            )
+            .asEndpoint(path: .pushPreferences)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_setPushPreference_successfulResponse_savesToDatabase() throws {
         // GIVEN
-        let preference = PushPreferenceRequestPayload(
+        let preference = PushPreferenceInput(
             chatLevel: "all",
             channelId: nil,
             disabledUntil: nil,
             removeDisable: true
         )
 
-        let response = PushPreferencesPayloadResponse(
+        let response = UpsertPushPreferencesResponse(
             userPreferences: [
                 "userId": PushPreferencePayload(
                     chatLevel: "all",
@@ -938,7 +948,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_propagatesNetworkError() {
         // GIVEN
-        let preference = PushPreferenceRequestPayload(
+        let preference = PushPreferenceInput(
             chatLevel: "mentions",
             channelId: nil,
             disabledUntil: nil,
@@ -954,7 +964,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<PushPreferencesPayloadResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<UpsertPushPreferencesResponse, Error>.failure(error))
 
         // THEN
         AssertAsync.willBeEqual(completionError as? TestError, error)
@@ -962,14 +972,14 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_whenNoUserPreferences_returnsError() {
         // GIVEN
-        let preference = PushPreferenceRequestPayload(
+        let preference = PushPreferenceInput(
             chatLevel: "mentions",
             channelId: nil,
             disabledUntil: nil,
             removeDisable: true
         )
 
-        let response = PushPreferencesPayloadResponse(
+        let response = UpsertPushPreferencesResponse(
             userPreferences: [:],
             channelPreferences: [:]
         )

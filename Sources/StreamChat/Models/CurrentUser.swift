@@ -175,7 +175,7 @@ public struct UnreadThread: Sendable {
     public let lastReadMessageId: MessageId?
 }
 
-extension CurrentUserUnreadsPayload {
+extension WrappedUnreadCountsResponse {
     func asModel() -> CurrentUserUnreads {
         let unreadChannels: [UnreadChannel] = channels.map { .init(
             channelId: $0.channelIdValue,

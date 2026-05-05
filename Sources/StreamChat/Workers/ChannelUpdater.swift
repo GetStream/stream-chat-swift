@@ -117,8 +117,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             }
         }
 
-        let endpoint: Endpoint<ChannelStateResponse> = isChannelCreate ? .createChannel(query: channelQuery) :
-            .updateChannel(query: channelQuery)
+        let endpoint: Endpoint<ChannelStateResponse> = .channelQuery(channelQuery)
 
         if isInRecoveryMode {
             apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
@@ -175,7 +174,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             watchersLimit: 0
         )
         channelQuery.options = .state
-        let endpoint: Endpoint<ChannelStateResponse> = .updateChannel(query: channelQuery)
+        let endpoint: Endpoint<ChannelStateResponse> = .channelQuery(channelQuery)
         apiClient.request(endpoint: endpoint) { [database] result in
             nonisolated(unsafe) var paginatedMembers: [ChatChannelMember]?
             switch result {
@@ -614,7 +613,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     func startWatching(cid: ChannelId, isInRecoveryMode: Bool, completion: (@Sendable (Error?) -> Void)? = nil) {
         var query = ChannelQuery(cid: cid)
         query.options = .all
-        let endpoint = Endpoint<ChannelStateResponse>.updateChannel(query: query)
+        let endpoint = Endpoint<ChannelStateResponse>.channelQuery(query)
         let completion: @Sendable (Result<ChannelStateResponse, Error>) -> Void = { completion?($0.error) }
         if isInRecoveryMode {
             apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
@@ -713,11 +712,15 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     }
 
     func setPushPreference(
-        _ preference: PushPreferenceRequestPayload,
+        _ preference: PushPreferenceInput,
         cid: ChannelId,
         completion: @escaping @Sendable (Result<PushPreference, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] (result: Result<PushPreferencesPayloadResponse, Error>) in
+        apiClient.request(
+            endpoint: Endpoint<UpsertPushPreferencesResponse>.updatePushNotificationPreferences(
+                upsertPushPreferencesRequest: UpsertPushPreferencesRequest(preferences: [preference])
+            )
+        ) { [weak self] (result: Result<UpsertPushPreferencesResponse, Error>) in
             switch result {
             case let .success(response):
                 guard let channelPref = response.channelPreferences.asModel()[cid] else {
@@ -750,7 +753,10 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///
     /// This will return the data present in the OG Metadata.
     public func enrichUrl(_ url: URL, completion: @escaping @Sendable (Result<LinkAttachmentPayload, Error>) -> Void) {
-        apiClient.request(endpoint: .enrichUrl(url: url)) { result in
+        let endpoint = Endpoint<GetOGResponse>
+            .getOG(url: url.absoluteString)
+            .withPayloadType(LinkAttachmentPayload.self)
+        apiClient.request(endpoint: endpoint) { result in
             switch result {
             case let .success(payload):
                 completion(.success(payload))
@@ -791,15 +797,17 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     }
     
     func deleteFile(in cid: ChannelId, url: String, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteFile(cid: cid, url: url), completion: {
-            completion?($0.error)
-        })
+        apiClient.request(
+            endpoint: Endpoint<Response>.deleteChannelFile(type: cid.type.rawValue, id: cid.id, url: url),
+            completion: { completion?($0.error) }
+        )
     }
-    
+
     func deleteImage(in cid: ChannelId, url: String, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteImage(cid: cid, url: url), completion: {
-            completion?($0.error)
-        })
+        apiClient.request(
+            endpoint: Endpoint<Response>.deleteChannelImage(type: cid.type.rawValue, id: cid.id, url: url),
+            completion: { completion?($0.error) }
+        )
     }
 
     // MARK: - private

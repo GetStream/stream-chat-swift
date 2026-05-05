@@ -29,7 +29,7 @@ final class ConnectedUser_Tests: XCTestCase {
         await XCTAssertEqual(UserRole.admin, connectedUser.state.user.userRole)
         
         let changedName = "Name"
-        let apiResult = CurrentUserUpdateResponse(
+        let apiResult = UpdateUsersResponse(
             user: currentUserPayload(
                 name: changedName,
                 role: .user

@@ -130,7 +130,9 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         completion: @escaping @Sendable (Result<ChannelListPayload, Error>) -> Void
     ) {
         apiClient.request(
-            endpoint: .channels(query: channelListQuery),
+            endpoint: Endpoint<QueryChannelsResponse>.queryChannels(
+                queryChannelsRequest: channelListQuery.asQueryChannelsRequest
+            ),
             completion: completion
         )
     }
@@ -138,7 +140,9 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markAllRead(completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .markAllRead()) {
+        apiClient.request(
+            endpoint: Endpoint<MarkReadResponse>.markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest())
+        ) {
             completion?($0.error)
         }
     }

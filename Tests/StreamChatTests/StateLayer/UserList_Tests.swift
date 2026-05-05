@@ -111,11 +111,11 @@ final class UserList_Tests: XCTestCase {
         }
     }
     
-    private func makeUserListPayload(count: Int, offset: Int) -> UserListPayload {
+    private func makeUserListPayload(count: Int, offset: Int) -> QueryUsersResponse {
         let users = (0..<count)
             .map { $0 + offset }
             .map { UserPayload.dummy(userId: "\($0)", name: "name_\($0)") }
-        return UserListPayload(users: users)
+        return QueryUsersResponse(users: users)
     }
 }
 

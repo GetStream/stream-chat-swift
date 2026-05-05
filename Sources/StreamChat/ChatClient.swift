@@ -626,7 +626,7 @@ public class ChatClient: @unchecked Sendable {
     public func loadAppSettings(
         completion: (@Sendable (Result<AppSettings, Error>) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .appSettings()) { [weak self] result in
+        apiClient.request(endpoint: Endpoint<GetApplicationResponse>.getApp()) { [weak self] result in
             switch result {
             case let .success(payload):
                 let appSettings = payload.asModel()

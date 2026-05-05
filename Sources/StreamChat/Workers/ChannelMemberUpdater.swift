@@ -20,17 +20,20 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         completion: @escaping (@Sendable (Result<ChatChannelMember, Error>) -> Void)
     ) {
         apiClient.request(
-            endpoint: .partialMemberUpdate(
-                userId: userId,
-                cid: cid,
-                updates: updates,
-                unset: unset
+            endpoint: Endpoint<UpdateMemberPartialResponse>.updateMemberPartial(
+                type: cid.type.rawValue,
+                id: cid.id,
+                updateMemberPartialRequest: UpdateMemberPartialRequest(set: updates?.set, unset: unset)
             )
         ) { result in
             switch result {
             case .success(let response):
+                guard let memberPayload = response.channelMember else {
+                    completion(.failure(ClientError.MemberDoesNotExist(userId: userId, cid: cid)))
+                    return
+                }
                 self.database.write { session in
-                    let member = try session.saveMember(payload: response.channelMember, channelId: cid).asModel()
+                    let member = try session.saveMember(payload: memberPayload, channelId: cid).asModel()
                     completion(.success(member))
                 }
             case .failure(let error):
@@ -110,7 +113,7 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .banMember(userId, cid: cid, shadow: shadow, timeoutInMinutes: timeoutInMinutes, reason: reason)
+            endpoint: Endpoint<EmptyResponse>.banMember(userId, cid: cid, shadow: shadow, timeoutInMinutes: timeoutInMinutes, reason: reason)
         ) {
             completion?($0.error)
         }

@@ -517,7 +517,7 @@ final class UserSearchController_Tests: XCTestCase {
         // Simulate successful API response for `loadNextUsers`
         let userPayload2 = dummyUser(id: .unique)
         let userPayload3 = dummyUser(id: .unique)
-        let nextPage = UserListPayload(users: [userPayload2, userPayload3])
+        let nextPage = QueryUsersResponse(users: [userPayload2, userPayload3])
         env.userListUpdater!.fetch_completion!(.success(nextPage))
 
         // Wait for `loadNextUsers` completion to be called

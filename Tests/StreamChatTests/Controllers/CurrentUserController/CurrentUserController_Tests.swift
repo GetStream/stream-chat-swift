@@ -856,7 +856,7 @@ final class CurrentUserController_Tests: XCTestCase {
     func test_setPushPreference_callsUpdaterWithCorrectParameters() {
         // GIVEN
         let level: PushPreferenceLevel = .mentions
-        let expectedPreference = PushPreferenceRequestPayload(
+        let expectedPreference = PushPreferenceInput(
             chatLevel: level.rawValue,
             channelId: nil,
             disabledUntil: nil,
@@ -914,7 +914,7 @@ final class CurrentUserController_Tests: XCTestCase {
     func test_snoozePushNotifications_callsUpdaterWithCorrectParameters() {
         // GIVEN
         let date = Date().addingTimeInterval(3600)
-        let expectedPreference = PushPreferenceRequestPayload(
+        let expectedPreference = PushPreferenceInput(
             chatLevel: PushPreferenceLevel.all.rawValue,
             channelId: nil,
             disabledUntil: date,

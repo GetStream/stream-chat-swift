@@ -14,7 +14,7 @@ class UserListUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func update(userListQuery: UserListQuery, policy: UpdatePolicy = .merge, completion: (@Sendable (Result<[ChatUser], Error>) -> Void)? = nil) {
-        fetch(userListQuery: userListQuery) { [weak self] (result: Result<UserListPayload, Error>) in
+        fetch(userListQuery: userListQuery) { [weak self] (result: Result<QueryUsersResponse, Error>) in
             switch result {
             case let .success(userListPayload):
                 nonisolated(unsafe) var users = [ChatUser]()
@@ -30,7 +30,7 @@ class UserListUpdater: Worker, @unchecked Sendable {
                     }
                 } completion: { error in
                     if let error = error {
-                        log.error("Failed to save `UserListPayload` to the database. Error: \(error)")
+                        log.error("Failed to save `QueryUsersResponse` to the database. Error: \(error)")
                         completion?(.failure(error))
                     } else {
                         completion?(.success(users))
@@ -50,10 +50,10 @@ class UserListUpdater: Worker, @unchecked Sendable {
     ///
     func fetch(
         userListQuery: UserListQuery,
-        completion: @escaping @Sendable (Result<UserListPayload, Error>) -> Void
+        completion: @escaping @Sendable (Result<QueryUsersResponse, Error>) -> Void
     ) {
         apiClient.request(
-            endpoint: .users(query: userListQuery),
+            endpoint: Endpoint<QueryUsersResponse>.queryUsers(payload: userListQuery.asQueryUsersPayload),
             completion: completion
         )
     }

@@ -477,7 +477,7 @@ public extension CurrentChatUserController {
         level: PushPreferenceLevel,
         completion: (@MainActor (Result<PushPreference, Error>) -> Void)? = nil
     ) {
-        let userPreference = PushPreferenceRequestPayload(
+        let userPreference = PushPreferenceInput(
             chatLevel: level.rawValue,
             channelId: nil,
             disabledUntil: nil,
@@ -499,7 +499,7 @@ public extension CurrentChatUserController {
         until date: Date,
         completion: (@MainActor (Result<PushPreference, Error>) -> Void)? = nil
     ) {
-        let userPreference = PushPreferenceRequestPayload(
+        let userPreference = PushPreferenceInput(
             chatLevel: PushPreferenceLevel.all.rawValue,
             channelId: nil,
             disabledUntil: date,

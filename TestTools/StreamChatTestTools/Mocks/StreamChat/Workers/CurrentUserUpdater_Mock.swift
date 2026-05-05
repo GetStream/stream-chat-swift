@@ -37,7 +37,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater, @unchecked Sendable {
 
     @Atomic var loadAllUnreads_completion: ((Result<CurrentUserUnreads, Error>) -> Void)?
 
-    @Atomic var setPushPreference_preference: PushPreferenceRequestPayload?
+    @Atomic var setPushPreference_preference: PushPreferenceInput?
     @Atomic var setPushPreference_completion: ((Result<PushPreference, Error>) -> Void)?
     @Atomic var setPushPreference_completion_result: Result<PushPreference, Error>?
 
@@ -106,7 +106,7 @@ final class CurrentUserUpdater_Mock: CurrentUserUpdater, @unchecked Sendable {
     }
 
     override func setPushPreference(
-        _ preference: PushPreferenceRequestPayload,
+        _ preference: PushPreferenceInput,
         completion: @escaping (Result<PushPreference, Error>) -> Void
     ) {
         setPushPreference_preference = preference

@@ -23,8 +23,6 @@ typealias CreatePollRequestBody = CreatePollRequest
 typealias CurrentUserPayload = OwnUserResponse
 typealias CurrentUserChannelUnreadPayload = UnreadCountsChannel
 typealias CurrentUserThreadUnreadPayload = UnreadCountsThread
-typealias CurrentUserUpdateResponse = UpdateUsersResponse
-typealias CurrentUserUnreadsPayload = WrappedUnreadCountsResponse
 typealias CustomEventRequestBody = SendEventRequest
 typealias DeliveredMessagePayload = DeliveredMessagePayloadOpenAPI
 typealias DeviceListPayload = ListDevicesResponse
@@ -74,8 +72,6 @@ typealias PollVoteOptionRequestBody = PollOptionRequest
 typealias PollVotePayload = PollVoteResponseData
 typealias PollVotePayloadResponse = PollVoteResponse
 typealias PushPreferencePayload = PushPreferencesResponse
-typealias PushPreferenceRequestPayload = PushPreferenceInput
-typealias PushPreferencesPayloadResponse = UpsertPushPreferencesResponse
 typealias QueryPollsRequestBody = QueryPollsRequest
 typealias QueryPollVotesRequestBody = QueryPollVotesRequest
 typealias ReactionRequestPayload = ReactionRequest
@@ -95,11 +91,9 @@ typealias ThreadReadPayload = ReadStateResponse
 typealias UpdatePollOptionRequest = UpdatePollOptionRequestOpenAPI
 typealias UpdatePollPartialRequestBody = UpdatePollPartialRequest
 typealias UpdatePollRequestBody = UpdatePollRequest
-typealias UserListPayload = QueryUsersResponse
 typealias UserPayload = UserResponse
 typealias UserPushPreferencesPayload = [String: PushPreferencePayload?]
 typealias UserRequestBody = UserRequest
-typealias UserUpdateRequestBody = UpdateUserPartialRequest
 typealias VoteDataRequestBody = VoteData
 typealias ChannelPushPreferencesPayload = [String: [String: ChannelPushPreferencesResponse]]
 
@@ -2797,28 +2791,795 @@ private extension UserPayload {
     }
 }
 
-extension DefaultEndpointMethod {
-    func asEndpointMethod() -> EndpointMethod {
-        switch self {
-        case .get: return .get
-        case .post: return .post
-        case .patch: return .patch
-        case .delete: return .delete
-        case .put: return .put
+/// A type representing empty body for `.post` Endpoints.
+/// Our backend currently expects a body (not `nil`), even if it's empty.
+struct EmptyBody: Codable, Equatable {}
+
+// MARK: - Endpoints without an OpenAPI-generated equivalent
+
+//
+// Each factory below mirrors the original hand-written shape and uses
+// `EndpointPath.custom(_:)` for path strings the generator does not emit.
+
+extension Endpoint {
+    /// Loads the pinned messages of a channel. The OpenAPI spec does not expose
+    /// a `pinned_messages` operation, so the path is built manually.
+    static func pinnedMessages(cid: ChannelId, query: PinnedMessagesQuery) -> Endpoint<PinnedMessagesPayload> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)/pinned_messages"),
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["payload": query]
+        )
+    }
+
+    /// Unbans a channel member. The OpenAPI `ban` operation is POST-only;
+    /// `DELETE /moderation/ban` has no generated factory.
+    static func unbanMember(_ userId: UserId, cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("moderation/ban"),
+            method: .delete,
+            queryItems: [
+                "target_user_id": userId,
+                "channel_cid": cid.rawValue
+            ],
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+
+    /// `sync` is excluded from the OpenAPI migration per product decision and stays manual.
+    static func missingEvents(since: Date, cids: [ChannelId]) -> Endpoint<MissingEventsPayload> {
+        .init(
+            path: .custom("sync"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: SyncRequest(lastSyncedAt: since, cids: cids)
+        )
+    }
+
+    /// WebSocket connect endpoint. The OpenAPI spec exposes `longPoll` for the
+    /// long-polling fallback, but the actual WebSocket establishment uses
+    /// `?json=<payload>` on `/connect` with a hand-shaped auth body.
+    static func webSocketConnect(userInfo: UserInfo) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("connect"),
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["json": WSAuthMessage(userInfo: userInfo)]
+        )
+    }
+
+    /// Channel query endpoint used by `ChannelRepository.getChannel` and the
+    /// channel-already-exists hot path. The OpenAPI `getOrCreateChannel` /
+    /// `updateChannel` factories take a different request body (`ChannelGetOrCreateRequest`/`UpdateChannelRequest`)
+    /// than the hand-written `ChannelQuery` shape; keeping a thin factory
+    /// preserves the wire format until those converters exist.
+    static func channelQuery(_ query: ChannelQuery, requiresConnectionId: Bool? = nil) -> Endpoint<ChannelStateResponse> {
+        .init(
+            path: .custom("channels/\(query.apiPath)/query"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId ?? query.options.contains(oneOf: [.presence, .state, .watch]),
+            body: query
+        )
+    }
+
+    /// Channel members list endpoint. OpenAPI `queryMembers` exists but takes a
+    /// `QueryMembersPayload` shape that doesn't accept the hand-written
+    /// `ChannelMemberListQuery` directly.
+    static func channelMembers(query: ChannelMemberListQuery) -> Endpoint<MembersResponse> {
+        .init(
+            path: .custom("members"),
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["payload": query]
+        )
+    }
+
+    /// Channel partial update with `data` wrapping. The OpenAPI `updateChannel`
+    /// factory takes a different `UpdateChannelRequest.data: ChannelInputRequest`
+    /// shape that doesn't directly accept a `ChannelInput`.
+    static func updateChannel(cid: ChannelId, channelPayload: ChannelInput) -> Endpoint<UpdateChannelResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["data": channelPayload]
+        )
+    }
+
+    /// Partial channel update with `set`/`unset` shape. The OpenAPI
+    /// `updateChannelPartial` takes `UpdateChannelPartialRequest.set: [String: RawJSON]?`
+    /// — keeping the typed `ChannelInput` makes the call site cleaner.
+    static func partialChannelUpdate(cid: ChannelId, updates: ChannelInput, unsetProperties: [String]) -> Endpoint<UpdateChannelPartialResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)"),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "set": AnyEncodable(updates),
+                "unset": AnyEncodable(unsetProperties)
+            ]
+        )
+    }
+
+    /// Mute a channel by `cid`. The OpenAPI `muteChannel` takes `MuteChannelRequest.channelCids: [String]?`.
+    static func muteChannel(cid: ChannelId, expiration: Int? = nil) -> Endpoint<MuteChannelResponse> {
+        var body: [String: AnyEncodable] = ["channel_cid": AnyEncodable(cid)]
+        if let expiration {
+            body["expiration"] = AnyEncodable(expiration)
         }
+        return .init(
+            path: .custom("moderation/mute/channel"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            body: body
+        )
+    }
+
+    /// Unmute a channel by `cid`.
+    static func unmuteChannel(cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("moderation/unmute/channel"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            body: ["channel_cid": AnyEncodable(cid)]
+        )
+    }
+
+    /// Hide a channel.
+    static func hideChannel(cid: ChannelId, clearHistory: Bool) -> Endpoint<HideChannelResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)/hide"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["clear_history": clearHistory]
+        )
+    }
+
+    /// Show a channel.
+    static func showChannel(cid: ChannelId) -> Endpoint<ShowChannelResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)/show"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+
+    /// Truncate a channel.
+    static func truncateChannel(cid: ChannelId, skipPush: Bool, hardDelete: Bool, message: MessageRequest?) -> Endpoint<TruncateChannelResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)/truncate"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: TruncateChannelRequest(hardDelete: hardDelete, message: message, skipPush: skipPush)
+        )
+    }
+
+    /// Delete a channel.
+    static func deleteChannel(cid: ChannelId) -> Endpoint<DeleteChannelResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)"),
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+
+    /// Mark a single channel as read.
+    static func markRead(cid: ChannelId) -> Endpoint<MarkReadResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)/read"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+
+    /// Mark a single channel as unread from a specific message.
+    static func markUnread(cid: ChannelId, payload: MarkUnreadRequest) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)/unread"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: payload
+        )
+    }
+
+    /// Mark all channels for the user as read.
+    static func markAllRead() -> Endpoint<MarkReadResponse> {
+        .init(
+            path: .custom("channels/read"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+
+    /// Mark a list of channels as delivered.
+    static func markChannelsDelivered(payload: MarkDeliveredRequest) -> Endpoint<MarkDeliveredResponse> {
+        .init(
+            path: .custom("channels/delivered"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: payload
+        )
+    }
+
+    /// Stop watching a channel.
+    static func stopWatching(cid: ChannelId) -> Endpoint<Response> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)/stop-watching"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            body: nil
+        )
+    }
+
+    /// Channel watcher list — uses channel query endpoint with a watcher-shaped query.
+    static func channelWatchers(query: ChannelWatcherListQuery) -> Endpoint<ChannelStateResponse> {
+        .init(
+            path: .custom("channels/\(query.cid.apiPath)/query"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            body: query
+        )
+    }
+
+    /// Send an event to a channel using a typed `EventType`.
+    static func sendEvent(cid: ChannelId, eventType: EventType) -> Endpoint<EventResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)/event"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["event": ["type": eventType]]
+        )
+    }
+
+    /// Send an event with a custom payload.
+    static func sendEvent<Payload: CustomEventPayload>(_ payload: Payload, cid: ChannelId) -> Endpoint<EventResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)/event"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: CustomEventRequestBody(payload: payload)
+        )
+    }
+
+    /// Start typing event with optional thread parent.
+    static func startTypingEvent(cid: ChannelId, parentMessageId: MessageId?) -> Endpoint<EventResponse> {
+        let eventType = EventType.userStartTyping
+        let body: Encodable & Sendable
+        if let parentMessageId {
+            body = ["event": ["type": eventType.rawValue, "parent_id": parentMessageId]]
+        } else {
+            body = ["event": ["type": eventType]]
+        }
+        return .init(
+            path: .custom("channels/\(cid.apiPath)/event"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: body
+        )
+    }
+
+    /// Stop typing event with optional thread parent.
+    static func stopTypingEvent(cid: ChannelId, parentMessageId: MessageId?) -> Endpoint<EventResponse> {
+        let eventType = EventType.userStopTyping
+        let body: Encodable & Sendable
+        if let parentMessageId {
+            body = ["event": ["type": eventType.rawValue, "parent_id": parentMessageId]]
+        } else {
+            body = ["event": ["type": eventType]]
+        }
+        return .init(
+            path: .custom("channels/\(cid.apiPath)/event"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: body
+        )
+    }
+
+    /// Channel slow mode toggle (uses partial channel update with `set: cooldown`).
+    static func enableSlowMode(cid: ChannelId, cooldownDuration: Int) -> Endpoint<UpdateChannelPartialResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)"),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["set": ["cooldown": cooldownDuration]]
+        )
+    }
+
+    /// Channel freeze/unfreeze (uses partial channel update with `set: frozen`).
+    static func freezeChannel(_ freeze: Bool, cid: ChannelId) -> Endpoint<UpdateChannelPartialResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)"),
+            method: .patch,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["set": ["frozen": freeze]]
+        )
+    }
+
+    /// Send a message to a channel — wraps the message in a custom envelope alongside `skip_push` and `skip_enrich_url` flags.
+    static func sendMessage(cid: ChannelId, messagePayload: MessageRequest, skipPush: Bool, skipEnrichUrl: Bool) -> Endpoint<SendMessageResponseOpenAPI> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)/message"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "message": AnyEncodable(messagePayload),
+                "skip_push": AnyEncodable(skipPush),
+                "skip_enrich_url": AnyEncodable(skipEnrichUrl)
+            ]
+        )
+    }
+
+    /// Channel members modification — `add_members` envelope on the channel update path.
+    static func addMembers(cid: ChannelId, members: [MemberInfoRequest], hideHistory: Bool, hideHistoryBefore: Date? = nil, messagePayload: MessageRequest? = nil) -> Endpoint<UpdateChannelResponse> {
+        var body: [String: AnyEncodable] = ["add_members": AnyEncodable(members)]
+        if let hideHistoryBefore {
+            body["hide_history_before"] = AnyEncodable(hideHistoryBefore)
+        } else {
+            body["hide_history"] = AnyEncodable(hideHistory)
+        }
+        if let messagePayload {
+            body["message"] = AnyEncodable(messagePayload)
+        }
+        return .init(
+            path: .custom("channels/\(cid.apiPath)"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: body
+        )
+    }
+
+    static func removeMembers(cid: ChannelId, userIds: Set<UserId>, messagePayload: MessageRequest? = nil) -> Endpoint<UpdateChannelResponse> {
+        var body: [String: AnyEncodable] = ["remove_members": AnyEncodable(userIds)]
+        if let messagePayload {
+            body["message"] = AnyEncodable(messagePayload)
+        }
+        return .init(
+            path: .custom("channels/\(cid.apiPath)"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: body
+        )
+    }
+
+    static func inviteMembers(cid: ChannelId, userIds: Set<UserId>) -> Endpoint<UpdateChannelResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["invites": userIds]
+        )
+    }
+
+    static func acceptInvite(cid: ChannelId, message: String?) -> Endpoint<UpdateChannelResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ChannelInvitePayload(accept: true, reject: false, message: .init(message: message))
+        )
+    }
+
+    static func rejectInvite(cid: ChannelId) -> Endpoint<UpdateChannelResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ChannelInvitePayload(accept: false, reject: true, message: nil)
+        )
+    }
+
+    /// Edit (full update) message with skip_push/skip_enrich_url envelope.
+    static func editMessage(payload: MessageRequest, skipEnrichUrl: Bool, skipPush: Bool) -> Endpoint<UpdateMessageResponse> {
+        guard let messageId = payload.id else { fatalError("Message id is not set") }
+        return .init(
+            path: .custom("messages/\(messageId)"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "message": AnyEncodable(payload),
+                "skip_enrich_url": AnyEncodable(skipEnrichUrl),
+                "skip_push": AnyEncodable(skipPush)
+            ]
+        )
+    }
+
+    /// Pin a message (PUT variant of partial update).
+    static func pinMessage(messageId: MessageId, request: MessagePartialUpdateRequest) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("messages/\(messageId)"),
+            method: .put,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: request
+        )
+    }
+
+    /// Partial update on a message (PUT variant).
+    static func partialUpdateMessage(messageId: MessageId, request: MessagePartialUpdateRequest) -> Endpoint<UpdateMessagePartialResponse> {
+        .init(
+            path: .custom("messages/\(messageId)"),
+            method: .put,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: request
+        )
+    }
+
+    /// Load message replies with rich pagination shape.
+    static func loadReplies(messageId: MessageId, pagination: MessagesPagination) -> Endpoint<MessageRepliesPayload> {
+        .init(
+            path: .custom("messages/\(messageId)/replies"),
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: pagination
+        )
+    }
+
+    /// Run an attachment action on a message.
+    static func dispatchEphemeralMessageAction(cid: ChannelId, messageId: MessageId, action: AttachmentAction) -> Endpoint<MessageActionResponse> {
+        .init(
+            path: .custom("messages/\(messageId)/action"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: AttachmentActionRequestBody(cid: cid, messageId: messageId, action: action)
+        )
+    }
+
+    /// Message search — wraps the search query in a `["payload": query]` envelope.
+    static func search(query: MessageSearchQuery) -> Endpoint<SearchResponse> {
+        .init(
+            path: .custom("search"),
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["payload": query]
+        )
+    }
+
+    /// Translate a message to a target language.
+    static func translate(messageId: MessageId, to language: TranslationLanguage) -> Endpoint<MessageActionResponse> {
+        .init(
+            path: .custom("messages/\(messageId)/translate"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["language": language.languageCode]
+        )
+    }
+
+    /// User mute / unmute — backend uses `target_id` envelope.
+    static func muteUser(_ userId: UserId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("moderation/mute"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["target_id": userId]
+        )
+    }
+
+    static func unmuteUser(_ userId: UserId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("moderation/unmute"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["target_id": userId]
+        )
+    }
+
+    /// Block / unblock user — backend uses `blocked_user_id` envelope (different from OpenAPI `blockUsers`).
+    static func blockUser(_ userId: UserId) -> Endpoint<BlockingUserPayload> {
+        .init(
+            path: .custom("users/block"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["blocked_user_id": userId]
+        )
+    }
+
+    static func unblockUser(_ userId: UserId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("users/unblock"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["blocked_user_id": userId]
+        )
+    }
+
+    static func loadBlockedUsers() -> Endpoint<BlocksPayload> {
+        .init(
+            path: .custom("users/block"),
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false
+        )
+    }
+
+    /// Ban a channel member with the legacy request body shape.
+    static func banMember(_ userId: UserId, cid: ChannelId, shadow: Bool, timeoutInMinutes: Int?, reason: String?) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("moderation/ban"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ChannelMemberBanRequestPayload(userId: userId, cid: cid, shadow: shadow, timeoutInMinutes: timeoutInMinutes, reason: reason)
+        )
+    }
+
+    /// Flag / unflag a user — uses the legacy `target_user_id` envelope.
+    static func flagUser(_ flag: Bool, with userId: UserId, reason: String? = nil, extraData: [String: RawJSON]? = nil) -> Endpoint<FlagUserPayload> {
+        .init(
+            path: .custom("moderation/\(flag ? "flag" : "unflag")"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: FlagRequestBody(reason: reason, targetMessageId: nil, targetUserId: userId, custom: extraData)
+        )
+    }
+
+    /// Flag / unflag a message — uses the legacy `target_message_id` envelope.
+    static func flagMessage(_ flag: Bool, with messageId: MessageId, reason: String? = nil, extraData: [String: RawJSON]? = nil) -> Endpoint<FlagMessagePayload> {
+        .init(
+            path: .custom("moderation/\(flag ? "flag" : "unflag")"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: FlagRequestBody(reason: reason, targetMessageId: messageId, targetUserId: nil, custom: extraData)
+        )
+    }
+
+    /// Channel-scoped CDN file delete — manual path for parity with the deleted `FilesEndpoints`.
+    static func deleteFile(cid: ChannelId, url: String) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)/file"),
+            method: .delete,
+            queryItems: ["url": url],
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+
+    static func deleteImage(cid: ChannelId, url: String) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)/image"),
+            method: .delete,
+            queryItems: ["url": url],
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+
+    /// Devices — admin-style listing accepts `user_id` query param.
+    static func devices(userId: UserId) -> Endpoint<ListDevicesResponse> {
+        .init(
+            path: .custom("devices"),
+            method: .get,
+            queryItems: ["user_id": userId],
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+
+    static func addDevice(userId: UserId, deviceId: DeviceId, pushProvider: PushProvider, providerName: String? = nil) -> Endpoint<EmptyResponse> {
+        var body: [String: String] = [
+            "user_id": userId,
+            "id": deviceId,
+            "push_provider": pushProvider.rawValue
+        ]
+        if let providerName {
+            body["push_provider_name"] = providerName
+        }
+        return .init(
+            path: .custom("devices"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: body
+        )
+    }
+
+    static func removeDevice(userId: UserId, deviceId: DeviceId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("devices"),
+            method: .delete,
+            queryItems: ["user_id": userId, "id": deviceId],
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+
+    /// Guest user token. The OpenAPI `createGuest` exists with a different body shape.
+    static func guestUserToken(userId: UserId, name: String?, imageURL: URL?, extraData: [String: RawJSON]) -> Endpoint<GuestUserTokenPayload> {
+        .init(
+            path: .custom("guest"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            requiresToken: false,
+            body: ["user": GuestUserTokenRequestPayload(userId: userId, name: name, imageURL: imageURL, extraData: extraData)]
+        )
     }
 }
 
-extension DefaultEndpoint {
-    /// `path` is supplied explicitly because `DefaultEndpointPath` and `EndpointPath` are not yet 1:1.
-    func asEndpoint(path: EndpointPath) -> Endpoint<ResponseType> {
-        Endpoint(
+extension Endpoint {
+    /// Returns an `Endpoint` with the same metadata but a different decoded payload type.
+    /// Migration helper while domain payload types (e.g. `FileUploadPayload`, `EmptyResponse`)
+    /// continue to wrap OpenAPI responses (`UploadChannelResponse`, `Response`).
+    func withPayloadType<T: Decodable>(_ type: T.Type) -> Endpoint<T> {
+        Endpoint<T>(
             path: path,
-            method: method.asEndpointMethod(),
+            method: method,
             queryItems: queryItems,
             requiresConnectionId: requiresConnectionId,
             requiresToken: requiresToken,
             body: body
+        )
+    }
+}
+
+extension ConnectUserDetailsRequest {
+    convenience init(userInfo: UserInfo) {
+        self.init(
+            custom: userInfo.extraData,
+            id: userInfo.id,
+            image: userInfo.imageURL?.absoluteString,
+            invisible: userInfo.isInvisible,
+            language: userInfo.language?.languageCode,
+            name: userInfo.name,
+            privacySettings: userInfo.privacySettings.map { UserPrivacySettingsPayload(settings: $0).asPrivacySettingsResponse }
+        )
+    }
+}
+
+extension WSAuthMessage {
+    /// `token` defaults to empty: the synchronous `webSocketEncoder.encodeRequest(for:)`
+    /// has no token in scope; the actual auth token is supplied by the
+    /// `connectionDetailsProviderDelegate` when the URL request is finalized — same as the
+    /// hand-written `WebSocketConnectPayload` flow this replaces.
+    convenience init(userInfo: UserInfo, token: String = "") {
+        self.init(
+            products: nil,
+            token: token,
+            userDetails: ConnectUserDetailsRequest(userInfo: userInfo)
+        )
+    }
+}
+
+extension DraftListQuery {
+    var asQueryDraftsRequest: QueryDraftsRequest {
+        QueryDraftsRequest(
+            limit: pagination.pageSize,
+            sort: sorting.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+        )
+    }
+}
+
+extension ThreadListQuery {
+    var asQueryThreadsRequest: QueryThreadsRequest {
+        let filterDict: [String: RawJSON] = (try? filter
+            .flatMap { try JSONEncoder.stream.encode($0) }
+            .flatMap { try JSONDecoder.stream.decode([String: RawJSON].self, from: $0) }
+        ) ?? [:]
+        return QueryThreadsRequest(
+            filter: filterDict.isEmpty ? nil : filterDict,
+            limit: limit,
+            memberLimit: nil,
+            next: next,
+            participantLimit: participantLimit,
+            prev: nil,
+            replyLimit: replyLimit,
+            sort: sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            watch: watch
+        )
+    }
+}
+
+extension ReactionListQuery {
+    var asQueryReactionsRequest: QueryReactionsRequest {
+        let filterDict: [String: RawJSON] = (try? filter
+            .flatMap { try JSONEncoder.stream.encode($0) }
+            .flatMap { try JSONDecoder.stream.decode([String: RawJSON].self, from: $0) }
+        ) ?? [:]
+        return QueryReactionsRequest(
+            filter: filterDict.isEmpty ? nil : filterDict,
+            limit: pagination.pageSize,
+            next: nil,
+            prev: nil,
+            sort: nil
+        )
+    }
+}
+
+extension MessageReminderListQuery {
+    var asQueryRemindersRequest: QueryRemindersRequest {
+        let filterDict: [String: RawJSON] = (try? filter
+            .flatMap { try JSONEncoder.stream.encode($0) }
+            .flatMap { try JSONDecoder.stream.decode([String: RawJSON].self, from: $0) }
+        ) ?? [:]
+        return QueryRemindersRequest(
+            filter: filterDict.isEmpty ? nil : filterDict,
+            limit: pagination.pageSize,
+            next: pagination.cursor,
+            prev: nil,
+            sort: sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+        )
+    }
+}
+
+extension ChannelListQuery {
+    var asQueryChannelsRequest: QueryChannelsRequest {
+        let filterConditions: [String: RawJSON] = (try? JSONEncoder.stream.encode(filter))
+            .flatMap { try? JSONDecoder.stream.decode([String: RawJSON].self, from: $0) } ?? [:]
+        return QueryChannelsRequest(
+            filterConditions: filterConditions,
+            limit: pagination.pageSize,
+            memberLimit: membersLimit,
+            messageLimit: messagesLimit,
+            offset: pagination.offset,
+            presence: options.contains(.presence),
+            sort: sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            state: options.contains(.state),
+            watch: options.contains(.watch)
+        )
+    }
+}
+
+extension UserListQuery {
+    var asQueryUsersPayload: QueryUsersPayload {
+        let filterConditions: [String: RawJSON] = (try? filter
+            .flatMap { try JSONEncoder.stream.encode($0) }
+            .flatMap { try JSONDecoder.stream.decode([String: RawJSON].self, from: $0) }
+        ) ?? [:]
+        return QueryUsersPayload(
+            filterConditions: filterConditions,
+            includeDeactivatedUsers: nil,
+            limit: pagination?.pageSize,
+            offset: pagination?.offset,
+            presence: options.contains(.presence),
+            sort: sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
         )
     }
 }

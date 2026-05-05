@@ -37,7 +37,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
             return
         }
 
-        let payload = UserUpdateRequestBody(
+        let payload = UpdateUserPartialRequest(
             name: name,
             imageURL: imageURL,
             privacySettings: privacySettings.map { UserPrivacySettingsPayload(settings: $0) },
@@ -46,8 +46,17 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
             extraData: userExtraData
         )
 
+        let body = UpdateUsersPartialRequest(
+            users: [
+                UpdateUserPartialRequest(
+                    id: currentUserId,
+                    set: payload.set,
+                    unset: Array(unset)
+                )
+            ]
+        )
         apiClient
-            .request(endpoint: .updateUser(id: currentUserId, payload: payload, unset: Array(unset))) { [weak self] in
+            .request(endpoint: Endpoint<UpdateUsersResponse>.updateUsersPartial(updateUsersPartialRequest: body)) { [weak self] in
                 switch $0 {
                 case let .success(response):
                     self?.database.write({ (session) in
@@ -193,7 +202,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     }
 
     func loadAllUnreads(completion: @escaping (@Sendable (Result<CurrentUserUnreads, Error>) -> Void)) {
-        apiClient.request(endpoint: .unreads()) { result in
+        apiClient.request(endpoint: Endpoint<WrappedUnreadCountsResponse>.unreadCounts()) { result in
             switch result {
             case .success(let response):
                 let unreads = response.asModel()
@@ -205,10 +214,14 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     }
 
     func setPushPreference(
-        _ preference: PushPreferenceRequestPayload,
+        _ preference: PushPreferenceInput,
         completion: @escaping @Sendable (Result<PushPreference, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] (result: Result<PushPreferencesPayloadResponse, Error>) in
+        apiClient.request(
+            endpoint: Endpoint<UpsertPushPreferencesResponse>.updatePushNotificationPreferences(
+                upsertPushPreferencesRequest: UpsertPushPreferencesRequest(preferences: [preference])
+            )
+        ) { [weak self] (result: Result<UpsertPushPreferencesResponse, Error>) in
             switch result {
             case let .success(response):
                 guard let currentUserPushPref = response.userPreferences.asModel().first else {
@@ -259,7 +272,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     }
 
     func loadActiveLiveLocations(completion: @escaping @Sendable (Result<[SharedLocation], Error>) -> Void) {
-        apiClient.request(endpoint: .currentUserActiveLiveLocations()) { result in
+        apiClient.request(endpoint: Endpoint<SharedLocationsResponse>.getUserLiveLocations()) { result in
             switch result {
             case let .success(payload):
                 self.database.write { session in

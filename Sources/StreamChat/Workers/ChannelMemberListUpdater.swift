@@ -17,8 +17,7 @@ class ChannelMemberListUpdater: Worker, @unchecked Sendable {
                 return
             }
 
-            let membersEndpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
-            self?.apiClient.request(endpoint: membersEndpoint) { [weak self] membersResult in
+            self?.apiClient.request(endpoint: .channelMembers(query: query)) { [weak self] membersResult in
                 switch membersResult {
                 case let .success(memberListPayload):
                     nonisolated(unsafe) var members = [ChatChannelMember]()
@@ -72,7 +71,7 @@ private extension ChannelMemberListUpdater {
 
     func fetchAndSaveChannel(with cid: ChannelId, completion: @escaping @Sendable (Error?) -> Void) {
         let query = ChannelQuery(cid: cid)
-        apiClient.request(endpoint: .updateChannel(query: query)) { [weak self] in
+        apiClient.request(endpoint: .channelQuery(query)) { [weak self] in
             switch $0 {
             case let .success(response):
                 self?.database.write({ session in

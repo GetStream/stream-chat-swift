@@ -109,9 +109,9 @@ final class IdentifiablePayload_Tests: XCTestCase {
     // Identifiable
 
     func test_UserListPayload_isIdentifiablePayload() {
-        let payload = UserListPayload(users: [])
+        let payload = QueryUsersResponse(users: [])
         XCTAssertNil(payload.databaseId)
-        XCTAssertNil(UserListPayload.modelClass)
+        XCTAssertNil(QueryUsersResponse.modelClass)
     }
 
     func test_MessageListPayload_isIdentifiablePayload() {

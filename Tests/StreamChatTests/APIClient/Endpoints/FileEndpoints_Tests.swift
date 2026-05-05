@@ -8,42 +8,24 @@ import XCTest
 
 final class FileEndpoints_Tests: XCTestCase {
     func test_deleteFile_buildsCorrectly() {
-        // Given
         let channelId: ChannelId = .unique
         let url = "https://example.com/someimage.pdf"
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .deleteFile(channelId.apiPath),
-            method: .delete,
-            queryItems: ["url": url],
-            requiresConnectionId: false,
-            requiresToken: true
-        )
-        
-        // When
-        let endpoint: Endpoint<EmptyResponse> = .deleteFile(cid: channelId, url: url)
-        
-        // Then
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(channelId.apiPath)/file", endpoint.path.value)
+
+        let endpoint = Endpoint<Response>.deleteChannelFile(type: channelId.type.rawValue, id: channelId.id, url: url)
+
+        XCTAssertEqual(endpoint.method, .delete)
+        XCTAssertEqual(endpoint.path.value, "channels/\(channelId.type.rawValue)/\(channelId.id)/file")
+        XCTAssertNil(endpoint.body)
     }
-    
+
     func test_deleteImage_buildsCorrectly() {
-        // Given
         let channelId: ChannelId = .unique
         let url = "https://example.com/someimage.pdf"
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .deleteImage(channelId.apiPath),
-            method: .delete,
-            queryItems: ["url": url],
-            requiresConnectionId: false,
-            requiresToken: true
-        )
-        
-        // When
-        let endpoint: Endpoint<EmptyResponse> = .deleteImage(cid: channelId, url: url)
-        
-        // Then
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("channels/\(channelId.apiPath)/image", endpoint.path.value)
+
+        let endpoint = Endpoint<Response>.deleteChannelImage(type: channelId.type.rawValue, id: channelId.id, url: url)
+
+        XCTAssertEqual(endpoint.method, .delete)
+        XCTAssertEqual(endpoint.path.value, "channels/\(channelId.type.rawValue)/\(channelId.id)/image")
+        XCTAssertNil(endpoint.body)
     }
 }

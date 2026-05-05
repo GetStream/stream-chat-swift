@@ -118,7 +118,7 @@ final class UserPayload_Tests: XCTestCase {
 
     func test_unread_isSerialized() throws {
         let json = XCTestCase.mockData(fromJSONFile: "Unread")
-        let payload = try JSONDecoder.default.decode(CurrentUserUnreadsPayload.self, from: json)
+        let payload = try JSONDecoder.default.decode(WrappedUnreadCountsResponse.self, from: json)
         XCTAssertEqual(payload.totalUnreadCount, 1)
         XCTAssertEqual(payload.totalUnreadThreadsCount, 1)
         XCTAssertEqual(payload.channels[0].channelId, "messaging:898be601-5f8b-40cc-919a-3f44e6b4fe64")
@@ -269,7 +269,7 @@ final class UserUpdateRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
         let value = String.unique
 
-        let payload: UserUpdateRequestBody = .init(
+        let payload: UpdateUserPartialRequest = .init(
             name: .unique,
             imageURL: .unique(),
             privacySettings: .init(
@@ -311,7 +311,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
     func test_currentUserUpdateResponseJSON_isSerialized() throws {
         let currentUserUpdateResponseJSON = XCTestCase.mockData(fromJSONFile: "UserUpdateResponse")
         let payload = try JSONDecoder.default.decode(
-            CurrentUserUpdateResponse.self, from: currentUserUpdateResponseJSON
+            UpdateUsersResponse.self, from: currentUserUpdateResponseJSON
         )
         let user = payload.user
         XCTAssertEqual(user.id, "luke_skywalker")
@@ -331,7 +331,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
     func test_currentUserUpdateResponseJSON_whenMissingUser_failsSerialization() {
         let currentUserUpdateResponseJSON = XCTestCase.mockData(fromJSONFile: "UserUpdateResponse+MissingUser")
         XCTAssertThrowsError(try JSONDecoder.default.decode(
-            CurrentUserUpdateResponse.self, from: currentUserUpdateResponseJSON
+            UpdateUsersResponse.self, from: currentUserUpdateResponseJSON
         ).validatedUser())
     }
 }

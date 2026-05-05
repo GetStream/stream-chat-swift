@@ -504,7 +504,11 @@ final class ChatClient_Tests: XCTestCase {
                 let chatClient = ChatClient(config: config)
                 chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
                 
-                let expectedWebSocketEndpoint = AnyEndpoint(.webSocketConnect(userInfo: UserInfo(id: currentUserId)))
+                let expectedWebSocketEndpoint = AnyEndpoint(
+                    DefaultEndpoint<EmptyResponse>
+                        .longPoll(json: WSAuthMessage(userInfo: UserInfo(id: currentUserId)))
+                        .asEndpoint(path: .connect, requiresConnectionId: false)
+                )
                 // 1. Check `currentUserId` is fetched synchronously
                 // 2. `webSocket` has correct connect endpoint
                 if chatClient.currentUserId == currentUserId,

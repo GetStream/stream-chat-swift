@@ -936,13 +936,13 @@ public class ChatMessageController: DataController, DelegateCallable, DataStoreP
         unsetProperties: [String]? = nil,
         completion: @escaping @MainActor (Result<ChatThread, Error>) -> Void
     ) {
+        var setDict: [String: RawJSON] = [:]
+        if let title { setDict["title"] = .string(title) }
+        if let extraData { extraData.forEach { setDict[$0.key] = $0.value } }
         messageUpdater.updateThread(
             for: messageId,
-            request: .init(
-                set: .init(
-                    title: title,
-                    extraData: extraData
-                ),
+            request: UpdateThreadPartialRequest(
+                set: setDict.isEmpty ? nil : setDict,
                 unset: unsetProperties
             )
         ) { result in

@@ -372,10 +372,10 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_reuseUsers_whenSomeChange_thenOthersAreReused() async throws {
-        let makePayload: (Int) -> UserListPayload = { count in
+        let makePayload: (Int) -> QueryUsersResponse = { count in
             let users = (0..<count)
                 .map { UserPayload.dummy(userId: "\($0)", name: "name_\($0)") }
-            return UserListPayload(users: users)
+            return QueryUsersResponse(users: users)
         }
         let query = UserListQuery(
             filter: .query(.id, text: .unique),

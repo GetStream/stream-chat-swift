@@ -146,7 +146,7 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
 
     var updateThread_callCount = 0
     var updateThread_messageId: MessageId?
-    var updateThread_request: ThreadPartialUpdateRequest?
+    var updateThread_request: UpdateThreadPartialRequest?
     var updateThread_completion: ((Result<ChatThread, any Error>) -> Void)?
 
     var loadThread_callCount = 0
@@ -561,7 +561,7 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
 
     override func updateThread(
         for messageId: MessageId,
-        request: ThreadPartialUpdateRequest,
+        request: UpdateThreadPartialRequest,
         completion: @escaping ((Result<ChatThread, any Error>) -> Void)
     ) {
         updateThread_callCount += 1

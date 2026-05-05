@@ -42,7 +42,18 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
             let fileData = try? Data(contentsOf: uploadingState.localFileURL, options: .mappedIfSafe) else {
             return completion(.failure(ClientError.AttachmentUploading(id: attachment.id)))
         }
-        let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(with: attachment.id.cid, type: attachment.type)
+        let cid = attachment.id.cid
+        let endpoint: Endpoint<FileUploadPayload> = attachment.type == .image
+            ? Endpoint<UploadChannelResponse>.uploadChannelImage(
+                type: cid.type.rawValue,
+                id: cid.id,
+                uploadChannelRequest: .init()
+            ).withPayloadType(FileUploadPayload.self)
+            : Endpoint<UploadChannelFileResponse>.uploadChannelFile(
+                type: cid.type.rawValue,
+                id: cid.id,
+                uploadChannelFileRequest: .init()
+            ).withPayloadType(FileUploadPayload.self)
 
         uploadAttachment(
             endpoint: endpoint,
@@ -75,7 +86,13 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
         }
 
         let isImage = uploadingState.file.type.isImage
-        let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(type: isImage ? .image : .file)
+        let endpoint: Endpoint<FileUploadPayload> = isImage
+            ? Endpoint<ImageUploadResponse>.uploadImage(
+                imageUploadRequest: .init()
+            ).withPayloadType(FileUploadPayload.self)
+            : Endpoint<FileUploadResponse>.uploadFile(
+                fileUploadRequest: .init()
+            ).withPayloadType(FileUploadPayload.self)
 
         uploadAttachment(
             endpoint: endpoint,
@@ -92,11 +109,12 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
         completion: @escaping @Sendable (Error?) -> Void
     ) {
         let isImage = AttachmentFileType(ext: remoteUrl.pathExtension).isImage
-        let endpoint = Endpoint<EmptyResponse>
-            .deleteAttachment(
-                url: remoteUrl,
-                type: isImage ? .image : .file
-            )
+        let urlString = remoteUrl.absoluteString
+        let endpoint: Endpoint<EmptyResponse> = isImage
+            ? Endpoint<Response>.deleteImage(url: urlString)
+            .withPayloadType(EmptyResponse.self)
+            : Endpoint<Response>.deleteFile(url: urlString)
+            .withPayloadType(EmptyResponse.self)
 
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             var urlRequest: URLRequest

@@ -76,7 +76,7 @@ final class PushPreferencePayload_Tests: XCTestCase {
 
     func test_pushPreferenceRequestPayload_encoding() throws {
         // GIVEN
-        let requestPayload = PushPreferenceRequestPayload(
+        let requestPayload = PushPreferenceInput(
             chatLevel: "mentions",
             channelId: "messaging:test-channel",
             disabledUntil: "2024-12-31T23:59:59.999Z".toDate(),
@@ -117,7 +117,7 @@ final class PushPreferencePayload_Tests: XCTestCase {
         """.data(using: .utf8)!
         
         // WHEN
-        let response = try JSONDecoder.default.decode(PushPreferencesPayloadResponse.self, from: json)
+        let response = try JSONDecoder.default.decode(UpsertPushPreferencesResponse.self, from: json)
         
         // THEN
         XCTAssertEqual(response.userPreferences.count, 1)
@@ -146,7 +146,7 @@ final class PushPreferencePayload_Tests: XCTestCase {
         """.data(using: .utf8)!
         
         // WHEN
-        let response = try JSONDecoder.default.decode(PushPreferencesPayloadResponse.self, from: json)
+        let response = try JSONDecoder.default.decode(UpsertPushPreferencesResponse.self, from: json)
         
         // THEN
         XCTAssertTrue(response.userPreferences.isEmpty)
