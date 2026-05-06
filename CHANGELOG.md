@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.99.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.99.2)
+_May 06, 2026_
+
 ## StreamChat
 ### 🐞 Fixed
 - Fix `CurrentUserController.setPushPreference` and `snoozePushNotifications` not updating the local push preference state [#4086](https://github.com/GetStream/stream-chat-swift/pull/4086)
