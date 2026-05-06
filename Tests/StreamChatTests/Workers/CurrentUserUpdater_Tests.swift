@@ -906,6 +906,12 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_successfulResponse_savesToDatabase() throws {
         // GIVEN
+        let userId: UserId = .unique
+        let userPayload: CurrentUserPayload = .dummy(userId: userId, role: .user)
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: userPayload)
+        }
+
         let preference = PushPreferenceRequestPayload(
             chatLevel: "all",
             channelId: nil,
@@ -924,16 +930,51 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // WHEN
-        var completionCalled = false
-        currentUserUpdater.setPushPreference(preference) { result in
-            XCTAssertNil(result.error)
-            completionCalled = true
+        let completionResult: Result<PushPreference, Error> = try waitFor { done in
+            currentUserUpdater.setPushPreference(preference, completion: done)
+            apiClient.test_simulateResponse(.success(response))
         }
 
-        apiClient.test_simulateResponse(.success(response))
-
         // THEN
-        AssertAsync.willBeTrue(completionCalled)
+        XCTAssertNil(completionResult.error)
+        AssertAsync {
+            Assert.willBeEqual(self.database.viewContext.currentUser?.pushPreference?.id, userId)
+            Assert.willBeEqual(self.database.viewContext.currentUser?.pushPreference?.chatLevel, "all")
+        }
+
+        // Regression: the DTO must not be saved under the literal "currentUserId" string.
+        XCTAssertNil(PushPreferenceDTO.load(id: "currentUserId", context: database.viewContext))
+    }
+
+    func test_setPushPreference_successfulResponse_whenNoCurrentUser_doesNotCrashOrSave() throws {
+        // GIVEN — no current user seeded in the database
+        let preference = PushPreferenceRequestPayload(
+            chatLevel: "all",
+            channelId: nil,
+            disabledUntil: nil,
+            removeDisable: true
+        )
+
+        let response = PushPreferencesPayloadResponse(
+            userPreferences: [
+                "userId": PushPreferencePayload(
+                    chatLevel: "all",
+                    disabledUntil: nil
+                )
+            ],
+            channelPreferences: [:]
+        )
+
+        // WHEN
+        let completionResult: Result<PushPreference, Error> = try waitFor { done in
+            currentUserUpdater.setPushPreference(preference, completion: done)
+            apiClient.test_simulateResponse(.success(response))
+        }
+
+        // THEN — completion still propagates the API success, but nothing is written to the DB.
+        XCTAssertNil(completionResult.error)
+        XCTAssertNil(PushPreferenceDTO.load(id: "currentUserId", context: database.viewContext))
+        XCTAssertNil(database.viewContext.currentUser)
     }
 
     func test_setPushPreference_propagatesNetworkError() {
