@@ -5318,7 +5318,7 @@ final class ChannelController_Tests: XCTestCase {
 
     // MARK: deinit
 
-    func test_deinit_whenIsJumpingToMessage_deletesAllMessages() throws {
+    func test_deinit_whenIsJumpingToMessage_doesNotDeleteAnyMessage() throws {
         // GIVEN
         controller = ChatChannelController(
             channelQuery: .init(cid: channelId),
@@ -5338,24 +5338,19 @@ final class ChannelController_Tests: XCTestCase {
             let dto = try XCTUnwrap(session.channel(cid: self.channelId))
             XCTAssertEqual(dto.messages.count, messages.count)
         }
-        
-        let deinitWriteExpectation = XCTestExpectation(description: "Deinit")
-        client.mockDatabaseContainer.didWrite = {
-            deinitWriteExpectation.fulfill()
-        }
-        
+
         // WHEN
+        // Mid-page jump state must not wipe the cache on deinit, otherwise
+        // `channel.latestMessages` (used for the channel list preview) would be lost.
         env.channelUpdater?.mockPaginationState.hasLoadedAllNextMessages = false
 
         // THEN
         env.channelUpdater?.cleanUp()
         controller = nil
-        
-        wait(for: [deinitWriteExpectation], timeout: defaultTimeout)
-        
+
         try client.mockDatabaseContainer.readSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: self.channelId))
-            XCTAssertEqual(0, dto.messages.count)
+            XCTAssertEqual(messages.count, dto.messages.count)
         }
     }
 

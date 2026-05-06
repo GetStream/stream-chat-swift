@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+# [5.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.1.1)
+_May 06, 2026_
+
+## StreamChat
+### 🐞 Fixed
+- Fix image cache misses caused by non-deterministic caching keys in `StreamCDNRequester` [#4075](https://github.com/GetStream/stream-chat-swift/pull/4075)
+- Fix `ChatChannel.latestMessages` being wiped on mid-page pagination [#4077](https://github.com/GetStream/stream-chat-swift/pull/4077)
+- Fix `CurrentUserController.setPushPreference` and `snoozePushNotifications` not updating the local push preference state [#4085](https://github.com/GetStream/stream-chat-swift/pull/4085)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix channel list preview showing "No messages" after a mid-page jump [#4077](https://github.com/GetStream/stream-chat-swift/pull/4077)
+- Fix layout shift on delivery-status transitions in message footer [#4078](https://github.com/GetStream/stream-chat-swift/pull/4078)
+
 # [5.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.1.0)
 _April 23, 2026_
 

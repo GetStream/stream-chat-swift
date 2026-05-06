@@ -78,9 +78,6 @@ enum EndpointMethod: String, Codable, Equatable {
     case put = "PUT"
 }
 
-/// A type representing empty response of an Endpoint.
-public struct EmptyResponse: Decodable, Sendable {}
-
 /// A type representing empty body for `.post` Endpoints.
 /// Our backend currently expects a body (not `nil`), even if it's empty.
 struct EmptyBody: Codable, Equatable {}
