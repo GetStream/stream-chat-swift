@@ -9,7 +9,7 @@ extension EndpointPath {
         switch self {
         case .sendMessage, .editMessage, .deleteMessage, .pinMessage, .unpinMessage, .addReaction, .deleteReaction, .draftMessage:
             return true
-        case .createChannel, .connect, .sync, .users, .guest, .members, .partialMemberUpdate, .search, .devices, .channels, .updateChannel,
+        case .createChannel, .connect, .sync, .users, .guest, .members, .partialMemberUpdate, .search, .devices, .channels, .groupedChannels, .updateChannel,
              .deleteChannel, .channelUpdate, .muteChannel, .showChannel, .truncateChannel, .markChannelRead, .markChannelUnread,
              .markAllChannelsRead, .markChannelsDelivered, .channelEvent, .stopWatchingChannel, .pinnedMessages, .uploadChannelAttachment, .message,
              .replies, .reactions, .messageAction, .banMember, .flagUser, .flagMessage, .muteUser, .translateMessage,

@@ -7,6 +7,7 @@ import Foundation
 
 @objc(CurrentUserDTO)
 class CurrentUserDTO: NSManagedObject {
+    @NSManaged var groupedUnreadChannelsData: Data?
     @NSManaged var unreadChannelsCount: Int64
     @NSManaged var unreadMessagesCount: Int64
     @NSManaged var unreadThreadsCount: Int64
@@ -144,6 +145,16 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         }
     }
 
+    func saveCurrentUserGroupedUnreadChannels(_ groupedUnreadChannels: GroupedUnreadChannels) throws {
+        invalidateCurrentUserCache()
+
+        guard let dto = currentUser else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
+        dto.groupedUnreadChannels = groupedUnreadChannels
+    }
+
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
         invalidateCurrentUserCache()
 
@@ -209,6 +220,18 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
     func deleteCurrentUser() {
         guard let currentUser else { return }
         delete(currentUser)
+    }
+}
+
+extension CurrentUserDTO {
+    var groupedUnreadChannels: GroupedUnreadChannels? {
+        get {
+            guard let groupedUnreadChannelsData else { return nil }
+            return try? JSONDecoder.default.decode(GroupedUnreadChannels.self, from: groupedUnreadChannelsData)
+        }
+        set {
+            groupedUnreadChannelsData = newValue.flatMap { try? JSONEncoder.default.encode($0) }
+        }
     }
 }
 
@@ -282,6 +305,7 @@ extension CurrentChatUser {
                 messages: Int(dto.unreadMessagesCount),
                 threads: Int(dto.unreadThreadsCount)
             ),
+            groupedUnreadChannels: dto.groupedUnreadChannels,
             mutedChannels: mutedChannels,
             privacySettings: .init(
                 typingIndicators: .init(enabled: dto.isTypingIndicatorsEnabled),

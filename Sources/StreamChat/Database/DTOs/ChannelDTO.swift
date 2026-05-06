@@ -281,7 +281,9 @@ extension NSManagedObjectContext {
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
-        dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
+        if let lastMessageAt = payload.lastMessageAt {
+            dto.lastMessageAt = lastMessageAt.bridgeDate
+        }
         dto.memberCount = Int64(clamping: payload.memberCount)
         
         if let messageCount = payload.messageCount {
@@ -356,7 +358,7 @@ extension NSManagedObjectContext {
         dto.reads.formUnion(reads)
         
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
-        
+
         var pendingMessages = Set<MessageDTO>()
         try payload.pendingMessages?.forEach {
             let pending = try saveMessage(
@@ -444,7 +446,7 @@ extension NSManagedObjectContext {
     }
 
     func delete(query: ChannelListQuery) {
-        guard let dto = channelListQuery(filterHash: query.filter.filterHash) else { return }
+        guard let dto = channelListQuery(query) else { return }
 
         delete(dto)
     }
@@ -477,7 +479,7 @@ extension ChannelDTO {
         
         request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
 
-        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
+        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.queryHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 
         var subpredicates: [NSPredicate] = [

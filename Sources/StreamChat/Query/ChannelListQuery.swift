@@ -71,6 +71,15 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
     }
+    
+    var groupKey: String?
+
+    /// The stable identity used for locating / linking the corresponding `ChannelListQueryDTO`.
+    /// Uses `groupKey` when set (stable across date-bearing filters from the grouped endpoint);
+    /// otherwise falls back to `filter.filterHash`.
+    var queryHash: String {
+        groupKey ?? filter.filterHash
+    }
 }
 
 extension ChannelListQuery: CustomDebugStringConvertible {
@@ -244,6 +253,38 @@ public extension FilterKey where Scope == ChannelListFilterScope {
     /// A filter key for matching the `memberCount` value.
     /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
     static var memberCount: FilterKey<Scope, Int> { .init(rawValue: "member_count", keyPathString: #keyPath(ChannelDTO.memberCount)) }
+
+    /// A filter key for matching the `messageCount` value.
+    /// Supported operators: `equal`, `greaterThan`, `lessThan`, `greaterOrEqual`, `lessOrEqual`
+    ///
+    /// Only returns value if `count_messages` is configured for your app.
+    ///
+    /// For local filtering, the stored `ChannelDTO.messageCount` is used when the
+    /// backend delivered an accurate total. When the backend omits it, the filter
+    /// falls back to the count of the cached `messages` relationship so predicates
+    /// still behave sensibly.
+    static var messageCount: FilterKey<Scope, Int> {
+        .init(
+            rawValue: "message_count",
+            keyPathString: #keyPath(ChannelDTO.messageCount),
+            predicateMapper: { op, value in
+                let operatorString: String
+                switch op {
+                case .equal: operatorString = "=="
+                case .greater: operatorString = ">"
+                case .greaterOrEqual: operatorString = ">="
+                case .less: operatorString = "<"
+                case .lessOrEqual: operatorString = "<="
+                default: return nil
+                }
+                let storedKey = #keyPath(ChannelDTO.messageCount)
+                let format = "(\(storedKey) != nil AND \(storedKey) \(operatorString) %@)"
+                    + " OR (\(storedKey) == nil AND messages.@count \(operatorString) %@)"
+                let predicateValue = NSNumber(value: value)
+                return NSPredicate(format: format, predicateValue, predicateValue)
+            }
+        )
+    }
 
     /// A filter key for matching the `team` value.
     /// Supported operators: `equal`

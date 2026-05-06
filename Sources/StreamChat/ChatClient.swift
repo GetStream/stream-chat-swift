@@ -619,7 +619,7 @@ public class ChatClient: @unchecked Sendable {
         eventNotificationCenter.subscribe(handler: handler)
     }
     
-    // MARK: -
+    // MARK: - App Settings
 
     /// Fetches the app settings and updates the ``ChatClient/appSettings``.
     /// - Parameter completion: The completion block once the app settings has finished fetching.
@@ -646,6 +646,36 @@ public class ChatClient: @unchecked Sendable {
     public func loadAppSettings() async throws -> AppSettings {
         try await withCheckedThrowingContinuation { continuation in
             loadAppSettings { continuation.resume(with: $0) }
+        }
+    }
+    
+    // MARK: - Grouped Channels
+    
+    /// Queries grouped channel groups for the app.
+    public func queryGroupedChannels(
+        limit: Int? = nil,
+        watch: Bool = false,
+        presence: Bool = false,
+        completion: @escaping @MainActor (Result<GroupedChannels, Error>) -> Void
+    ) {
+        channelListUpdater.queryGroupedChannels(
+            limit: limit,
+            watch: watch,
+            presence: presence,
+            completion: completion
+        )
+    }
+
+    /// Queries grouped channel groups for the app.
+    public func queryGroupedChannels(
+        limit: Int? = nil,
+        watch: Bool = false,
+        presence: Bool = false
+    ) async throws -> GroupedChannels {
+        try await withCheckedThrowingContinuation { continuation in
+            queryGroupedChannels(limit: limit, watch: watch, presence: presence) { result in
+                continuation.resume(with: result)
+            }
         }
     }
     

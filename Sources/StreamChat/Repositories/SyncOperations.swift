@@ -94,14 +94,100 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
                 done(.continue)
                 return
             }
+            guard channelList.query.value.groupKey == nil else {
+                done(.continue)
+                return
+            }
+            let query = channelList.query.value
             Task {
                 do {
                     let channelIds = try await channelList.refreshLoadedChannels()
-                    log.debug("Synced \(channelIds.count) channels in a channel list (\(channelList.query.filter)", subsystems: .offlineSupport)
+                    log.debug("Synced \(channelIds.count) channels in a channel list (\(query.filter)", subsystems: .offlineSupport)
                     context.synchedChannelIds.formUnion(channelIds)
                     done(.continue)
                 } catch {
-                    log.error("Failed refreshing channel list (\(channelList.query.filter) with error \(error)", subsystems: .offlineSupport)
+                    log.error("Failed refreshing channel list (\(query.filter) with error \(error)", subsystems: .offlineSupport)
+                    done(.retry)
+                }
+            }
+        }
+    }
+}
+
+final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
+    init(
+        channelListUpdater: ChannelListUpdater,
+        controllers: [ChatChannelListController],
+        channelLists: [ChannelList],
+        context: SyncContext
+    ) {
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelListUpdater] _, done in
+            let channelListsAndKeys = channelLists.compactMap { channelList -> (channelList: ChannelList, groupKey: String)? in
+                guard let groupKey = channelList.query.value.groupKey else { return nil }
+                return (channelList, groupKey)
+            }
+
+            guard !controllers.isEmpty || !channelListsAndKeys.isEmpty else {
+                done(.continue)
+                return
+            }
+
+            guard let channelListUpdater else {
+                done(.continue)
+                return
+            }
+
+            Task {
+                do {
+                    let groupedChannels = try await channelListUpdater.queryGroupedChannels()
+                    let returnedChannelIds = groupedChannels.groups.values
+                        .flatMap(\.channels)
+                        .map(\.cid)
+                    context.synchedChannelIds.formUnion(returnedChannelIds)
+                    log.debug(
+                        "Synced \(returnedChannelIds.count) grouped channels across \(groupedChannels.groups.count) group(s)",
+                        subsystems: .offlineSupport
+                    )
+
+                    // Forward each returned group to matching prefilled lists so local query-DTO
+                    // links and observer state get refreshed.
+                    let dispatchGroup = DispatchGroup()
+                    for controller in controllers {
+                        guard
+                            let key = controller.query.groupKey,
+                            let group = groupedChannels.groups[key]
+                        else { continue }
+                        dispatchGroup.enter()
+                        controller.prefill(group: group) { @Sendable error in
+                            if let error {
+                                log.error(
+                                    "Failed to prefill controller for group \(key): \(error)",
+                                    subsystems: .offlineSupport
+                                )
+                            }
+                            dispatchGroup.leave()
+                        }
+                    }
+                    for (channelList, key) in channelListsAndKeys {
+                        guard let group = groupedChannels.groups[key] else { continue }
+                        dispatchGroup.enter()
+                        Task {
+                            do {
+                                try await channelList.prefill(group: group)
+                            } catch {
+                                log.error(
+                                    "Failed to prefill channel list for group \(key): \(error)",
+                                    subsystems: .offlineSupport
+                                )
+                            }
+                            dispatchGroup.leave()
+                        }
+                    }
+                    dispatchGroup.notify(queue: .global(qos: .utility)) { @Sendable in
+                        done(.continue)
+                    }
+                } catch {
+                    log.error("Failed to refresh grouped channels during sync: \(error)", subsystems: .offlineSupport)
                     done(.retry)
                 }
             }

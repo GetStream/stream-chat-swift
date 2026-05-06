@@ -192,6 +192,15 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         try frc.performFetch()
         return items
     }
+
+    func stopObserving() {
+        context.performAndWait {
+            self.frc.delegate = nil
+            // Drop the change callback so any in-flight Task.mainActor enqueued by a previous
+            // FRC change becomes a no-op and cannot overwrite the new observer's state.
+            self.changeAggregator.onDidChange = nil
+        }
+    }
     
     private func updateItems(_ changes: [ListChange<Item>]?) -> [Item] {
         let items = DatabaseItemConverter.convert(

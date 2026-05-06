@@ -4,6 +4,9 @@
 
 import Foundation
 
+/// Grouped unread channel counts keyed by the backend-provided group identifier.
+public typealias GroupedUnreadChannels = [String: Int]
+
 /// A struct containing information about unread counts of channels and messages.
 public struct UnreadCount: Decodable, Equatable, Sendable {
     /// The default value representing no unread channels, messages and threads.

@@ -33,6 +33,18 @@ public class ChannelList_Mock: ChannelList, @unchecked Sendable {
     @MainActor public func simulate(channels: [ChatChannel]) async throws {
         state.channels = channels
     }
+
+    @Atomic public var prefillGroups: [GroupedChannelsGroup] = []
+    override public func prefill(group: GroupedChannelsGroup) async throws {
+        _prefillGroups.mutate { $0.append(group) }
+    }
+    
+    @Atomic public var refreshLoadedChannelsCallCount = 0
+    @Atomic public var refreshLoadedChannelsResult: Result<Set<ChannelId>, Error> = .success([])
+    override public func refreshLoadedChannels() async throws -> Set<ChannelId> {
+        _refreshLoadedChannelsCallCount.mutate { $0 += 1 }
+        return try refreshLoadedChannelsResult.get()
+    }
     
     public var loadNextChannelsIsCalled = false
     override public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {

@@ -224,6 +224,264 @@ final class ChannelListController_Tests: XCTestCase {
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
     }
 
+    func test_prefill_skipsInitialSynchronizeRequest() {
+        let prefilledChannels: [ChatChannel] = [
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique)
+        ]
+
+        let prefillExpectation = expectation(description: "Prefill completes")
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+            XCTAssertNil(error)
+            prefillExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        let synchronizeExpectation = expectation(description: "Synchronize completes")
+        controller.synchronize { error in
+            XCTAssertNil(error)
+            synchronizeExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(env.channelListUpdater?.prefill_queries.first?.filter.filterHash, query.filter.filterHash)
+        XCTAssertTrue(env.channelListUpdater?.update_queries.isEmpty ?? false)
+        XCTAssertEqual(Set(controller.channels.map(\.cid)), Set(prefilledChannels.map(\.cid)))
+        XCTAssertEqual(controller.state, .remoteDataFetched)
+    }
+
+    func test_prefill_loadNextChannels_usesPrefilledChannelsCountAsOffset() {
+        query = .init(filter: .in(.members, values: [memberId]), pageSize: 2)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+
+        let prefilledChannels: [ChatChannel] = [
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique)
+        ]
+
+        let prefillExpectation = expectation(description: "Prefill completes")
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+            XCTAssertNil(error)
+            prefillExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        controller.synchronize()
+
+        let limit = 7
+        controller.loadNextChannels(limit: limit)
+
+        XCTAssertEqual(
+            env.channelListUpdater?.update_queries.first?.pagination,
+            .init(pageSize: limit, offset: prefilledChannels.count)
+        )
+    }
+
+    func test_prefill_whenChannelsCountIsLowerThanPageSize_doesNotBlockPagination() {
+        query = .init(filter: .in(.members, values: [memberId]), pageSize: 10)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+
+        let prefilledChannels: [ChatChannel] = [
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique)
+        ]
+
+        let prefillExpectation = expectation(description: "Prefill completes")
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+            XCTAssertNil(error)
+            prefillExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        controller.synchronize()
+
+        XCTAssertFalse(controller.hasLoadedAllPreviousChannels)
+
+        controller.loadNextChannels()
+
+        XCTAssertEqual(
+            env.channelListUpdater?.update_queries.first?.pagination,
+            .init(pageSize: query.pagination.pageSize, offset: prefilledChannels.count)
+        )
+    }
+
+    func test_prefill_refreshLoadedChannels_usesPrefilledChannelsCount() {
+        query = .init(filter: .in(.members, values: [memberId]), pageSize: 2)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+
+        let prefilledChannels: [ChatChannel] = [
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique)
+        ]
+
+        let prefillExpectation = expectation(description: "Prefill completes")
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+            XCTAssertNil(error)
+            prefillExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        controller.synchronize()
+
+        let refreshExpectation = expectation(description: "Refresh loaded channels completes")
+        env.channelListUpdater?.refreshLoadedChannelsResult = .success(Set(prefilledChannels.map(\.cid)))
+        controller.refreshLoadedChannels { result in
+            XCTAssertNil(result.error)
+            refreshExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(
+            env.channelListUpdater?.refreshLoadedChannels_channelCounts.first,
+            prefilledChannels.count
+        )
+    }
+
+    func test_prefill_whenPrefilledCountExceedsPageSize_observerExposesAllPrefilledChannels() {
+        query = .init(filter: .in(.members, values: [memberId]), pageSize: 2)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+
+        let prefilledChannels: [ChatChannel] = [
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique)
+        ]
+
+        let prefillExpectation = expectation(description: "Prefill completes")
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+            XCTAssertNil(error)
+            prefillExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        controller.synchronize()
+
+        // Without the fetchLimit bump this would be capped at 2 (pageSize).
+        AssertAsync.willBeEqual(controller.channels.count, prefilledChannels.count)
+    }
+
+    func test_prefill_whenPrefilledCountIsBelowPageSize_observerStillReflectsPrefilledChannels() {
+        query = .init(filter: .in(.members, values: [memberId]), pageSize: 10)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+
+        let prefilledChannels: [ChatChannel] = [
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique)
+        ]
+
+        let prefillExpectation = expectation(description: "Prefill completes")
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+            XCTAssertNil(error)
+            prefillExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        controller.synchronize()
+
+        AssertAsync.willBeEqual(controller.channels.count, prefilledChannels.count)
+    }
+
+    func test_prefill_whenChannelsAccessedBeforePrefillAndPrefilledCountIsBelowPageSize_observerReflectsPrefilledChannels() {
+        query = .init(filter: .in(.members, values: [memberId]), pageSize: 10)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+        XCTAssertEqual(controller.channels.count, 0)
+
+        let prefilledChannels: [ChatChannel] = [
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique)
+        ]
+
+        let prefillExpectation = expectation(description: "Prefill completes")
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+            XCTAssertNil(error)
+            prefillExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        controller.synchronize()
+
+        XCTAssertTrue(env.channelListUpdater?.update_queries.isEmpty ?? false)
+        AssertAsync.willBeEqual(Set(controller.channels.map(\.cid)), Set(prefilledChannels.map(\.cid)))
+    }
+
+    func test_prefill_whenChannelsAccessedBeforePrefillAndPrefilledCountExceedsPageSize_observerReflectsAllPrefilledChannels() {
+        query = .init(filter: .in(.members, values: [memberId]), pageSize: 2)
+        controller = ChatChannelListController(query: query, client: client, environment: env.environment)
+        XCTAssertEqual(controller.channels.count, 0)
+
+        let prefilledChannels: [ChatChannel] = [
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique),
+            makePrefilledChannel(cid: .unique)
+        ]
+
+        let prefillExpectation = expectation(description: "Prefill completes")
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+            XCTAssertNil(error)
+            prefillExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        controller.synchronize()
+
+        XCTAssertTrue(env.channelListUpdater?.update_queries.isEmpty ?? false)
+        AssertAsync.willBeEqual(Set(controller.channels.map(\.cid)), Set(prefilledChannels.map(\.cid)))
+    }
+
+    func test_prefill_replacesOnlyCurrentQueryLinks() throws {
+        let sharedCid = ChannelId.unique
+        let currentOnlyCid = ChannelId.unique
+        let replacementCid = ChannelId.unique
+        let otherQuery = ChannelListQuery(filter: .equal(.cid, to: sharedCid))
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: sharedCid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+            try session.saveChannel(
+                payload: self.dummyPayload(with: sharedCid),
+                query: otherQuery,
+                cache: nil
+            )
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: currentOnlyCid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        let prefillExpectation = expectation(description: "Prefill completes")
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: [makePrefilledChannel(cid: replacementCid)], unreadChannels: 0)) { error in
+            XCTAssertNil(error)
+            prefillExpectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        controller.synchronize()
+
+        let otherController = ChatChannelListController(
+            query: otherQuery,
+            client: client,
+            environment: env.environment
+        )
+
+        XCTAssertEqual(controller.channels.map(\.cid), [replacementCid])
+        XCTAssertEqual(otherController.channels.map(\.cid), [sharedCid])
+    }
+
     /// This test simulates a bug where the `channels` field was not updated if it wasn't
     /// touched before calling synchronize.
     func test_channelsAreFetched_afterCallingSynchronize() throws {
@@ -572,6 +830,62 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         let event = makeChannelUpdatedEvent(with: .mock(cid: cid, memberCount: 4))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
+
+        AssertAsync.willBeEqual(env.channelListUpdater?.unlink_callCount, 1)
+    }
+
+    func test_didReceiveEvent_whenMessageNewEvent_whenFilterDoesNotMatch_shouldUnlinkChannelFromQuery() throws {
+        let filter: (ChatChannel) -> Bool = { channel in
+            channel.memberCount == 1
+        }
+        setupControllerWithFilter(filter)
+
+        let cid: ChannelId = .unique
+        writeAndWaitForChannelsUpdates { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        let event = makeMessageNewEvent(with: .mock(cid: cid, memberCount: 4))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        controller.client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
+
+        AssertAsync.willBeEqual(env.channelListUpdater?.unlink_callCount, 1)
+    }
+
+    func test_didReceiveEvent_whenNotificationMessageNewEvent_whenFilterDoesNotMatch_shouldUnlinkChannelFromQuery() throws {
+        let filter: (ChatChannel) -> Bool = { channel in
+            channel.memberCount == 1
+        }
+        setupControllerWithFilter(filter)
+
+        let cid: ChannelId = .unique
+        writeAndWaitForChannelsUpdates { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: self.query,
+                cache: nil
+            )
+        }
+
+        let event = makeNotificationMessageNewEvent(with: .mock(cid: cid, memberCount: 4))
         let eventExpectation = XCTestExpectation(description: "Event processed")
         controller.client.eventNotificationCenter.process(event) {
             eventExpectation.fulfill()
@@ -1996,6 +2310,25 @@ final class ChannelListController_Tests: XCTestCase {
             user: .unique,
             message: .unique,
             createdAt: .unique
+        )
+    }
+
+    private func makePrefilledChannel(cid: ChannelId) -> ChatChannel {
+        try! client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(
+                payload: self.dummyPayload(
+                    with: cid,
+                    members: [.dummy(user: .dummy(userId: self.memberId))]
+                ),
+                query: nil,
+                cache: nil
+            )
+        }
+        return .mock(
+            cid: cid,
+            lastActiveMembers: [.mock(id: memberId)],
+            membership: .mock(id: memberId),
+            memberCount: 1
         )
     }
 

@@ -25,6 +25,60 @@ extension ChannelListPayload: Decodable {
     }
 }
 
+final class GroupedQueryChannelsRequestBody: Encodable, Sendable {
+    let limit: Int?
+    let watch: Bool
+    let presence: Bool
+
+    init(limit: Int?, watch: Bool, presence: Bool) {
+        self.limit = limit
+        self.watch = watch
+        self.presence = presence
+    }
+}
+
+final class GroupedQueryChannelsPayload: Decodable, Sendable {
+    let groups: [String: GroupedQueryChannelsGroupPayload]
+    let duration: String
+
+    init(groups: [String: GroupedQueryChannelsGroupPayload], duration: String) {
+        self.groups = groups
+        self.duration = duration
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case groups
+        case duration
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        groups = try container.decode([String: GroupedQueryChannelsGroupPayload].self, forKey: .groups)
+        duration = try container.decode(String.self, forKey: .duration)
+    }
+}
+
+final class GroupedQueryChannelsGroupPayload: Decodable, Sendable {
+    let channels: [ChannelPayload]
+    let unreadChannels: Int
+
+    init(channels: [ChannelPayload], unreadChannels: Int) {
+        self.channels = channels
+        self.unreadChannels = unreadChannels
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case channels
+        case unreadChannels = "unread_channels"
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        channels = try container.decodeArrayIgnoringFailures([ChannelPayload].self, forKey: .channels)
+        unreadChannels = try container.decodeIfPresent(Int.self, forKey: .unreadChannels) ?? 0
+    }
+}
+
 struct ChannelPayload {
     let channel: ChannelDetailPayload
 

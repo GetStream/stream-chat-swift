@@ -32,9 +32,19 @@ class ChatChannelListController_Mock: ChatChannelListController, Spy, @unchecked
         loadNextChannelsIsCalled = true
     }
 
-    override func refreshLoadedChannels(completion: @escaping (Result<Set<ChannelId>, any Error>) -> Void) {
+    override func refreshLoadedChannels(completion: @escaping @Sendable (Result<Set<ChannelId>, any Error>) -> Void) {
         record()
         refreshLoadedChannelsResult.map(completion)
+    }
+
+    @Atomic var prefill_groups: [GroupedChannelsGroup] = []
+    override func prefill(
+        group: GroupedChannelsGroup,
+        completion: (@Sendable (Error?) -> Void)? = nil
+    ) {
+        record()
+        _prefill_groups.mutate { $0.append(group) }
+        completion?(nil)
     }
 }
 

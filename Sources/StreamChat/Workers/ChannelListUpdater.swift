@@ -23,8 +23,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                 var initialActions: (@Sendable (DatabaseSession) -> Void)?
                 if isInitialFetch {
                     initialActions = { session in
-                        let filterHash = channelListQuery.filter.filterHash
-                        guard let queryDTO = session.channelListQuery(filterHash: filterHash) else { return }
+                        guard let queryDTO = session.channelListQuery(channelListQuery) else { return }
                         queryDTO.channels.removeAll()
                     }
                 }
@@ -37,6 +36,35 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                 )
             case let .failure(error):
                 completion?(.failure(error))
+            }
+        }
+    }
+
+    func prefill(
+        group: GroupedChannelsGroup,
+        for query: ChannelListQuery,
+        filter: (@Sendable (ChatChannel) -> Bool)? = nil,
+        completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)? = nil
+    ) {
+        let channels = filter.map { group.channels.filter($0) } ?? group.channels
+        nonisolated(unsafe) var savedChannels: [ChatChannel] = []
+        database.write { session in
+            let queryDTO = session.saveQuery(query: query)
+            queryDTO.channels.removeAll()
+
+            savedChannels = channels.compactMapLoggingError { channel in
+                guard let channelDTO = session.channel(cid: channel.cid) else {
+                    log.warning("Prefill skipped channel \(channel.cid): not found in the database.")
+                    return nil
+                }
+                queryDTO.channels.insert(channelDTO)
+                return try channelDTO.asModel()
+            }
+        } completion: { error in
+            if let error {
+                completion?(.failure(error))
+            } else {
+                completion?(.success(savedChannels))
             }
         }
     }
@@ -166,11 +194,58 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
             completion?(error)
         }
     }
+
+    /// Queries grouped channel groups for the app.
+    func queryGroupedChannels(
+        limit: Int? = nil,
+        watch: Bool = false,
+        presence: Bool = false,
+        completion: @escaping @MainActor (Result<GroupedChannels, Error>) -> Void
+    ) {
+        let request = GroupedQueryChannelsRequestBody(
+            limit: limit,
+            watch: watch,
+            presence: presence
+        )
+        let endpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
+
+        apiClient.request(endpoint: endpoint) { [database] result in
+            switch result {
+            case let .success(payload):
+                database.write(converting: { session in
+                    let groupedUnreadChannels = payload.groups.mapValues(\.unreadChannels)
+                    try session.saveCurrentUserGroupedUnreadChannels(groupedUnreadChannels)
+
+                    var groups: [String: GroupedChannelsGroup] = [:]
+                    for (name, groupPayload) in payload.groups {
+                        let channels = try groupPayload.channels.map { channelPayload in
+                            let dto = try session.saveChannel(payload: channelPayload)
+                            return try dto.asModel()
+                        }
+                        groups[name] = GroupedChannelsGroup(
+                            groupKey: name,
+                            channels: channels,
+                            unreadChannels: groupPayload.unreadChannels
+                        )
+                    }
+                    return GroupedChannels(groups: groups)
+                }, completion: { result in
+                    DispatchQueue.main.async {
+                        completion(result)
+                    }
+                })
+            case let .failure(error):
+                DispatchQueue.main.async {
+                    completion(.failure(error))
+                }
+            }
+        }
+    }
 }
 
 extension DatabaseSession {
     func getChannelWithQuery(cid: ChannelId, query: ChannelListQuery) -> (ChannelDTO, ChannelListQueryDTO)? {
-        guard let queryDTO = channelListQuery(filterHash: query.filter.filterHash) else {
+        guard let queryDTO = channelListQuery(query) else {
             log.debug("Channel list query has not yet created \(query)")
             return nil
         }
@@ -207,6 +282,18 @@ private extension ChannelListUpdater {
 }
 
 extension ChannelListUpdater {
+    @discardableResult func prefill(
+        group: GroupedChannelsGroup,
+        for query: ChannelListQuery,
+        filter: (@Sendable (ChatChannel) -> Bool)? = nil
+    ) async throws -> [ChatChannel] {
+        try await withCheckedThrowingContinuation { continuation in
+            prefill(group: group, for: query, filter: filter) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+
     @discardableResult func update(channelListQuery: ChannelListQuery) async throws -> [ChatChannel] {
         try await withCheckedThrowingContinuation { continuation in
             update(channelListQuery: channelListQuery) { result in
@@ -214,7 +301,19 @@ extension ChannelListUpdater {
             }
         }
     }
-    
+
+    func queryGroupedChannels(
+        limit: Int? = nil,
+        watch: Bool = false,
+        presence: Bool = false
+    ) async throws -> GroupedChannels {
+        try await withCheckedThrowingContinuation { continuation in
+            queryGroupedChannels(limit: limit, watch: watch, presence: presence) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+
     // MARK: -
     
     func loadChannels(query: ChannelListQuery, pagination: Pagination) async throws -> [ChatChannel] {

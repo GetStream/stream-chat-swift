@@ -43,6 +43,36 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertNil(event?.unreadCount)
     }
 
+    func test_messageNewEventDTO_toDomainEvent_includesGroupedUnreadChannels() throws {
+        let groupedUnreadChannels: GroupedUnreadChannels = [
+            "priority": 3,
+            "social": 7
+        ]
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let userPayload = UserPayload.dummy(userId: .unique)
+        let messagePayload = MessagePayload.dummy(messageId: .unique, authorUserId: userPayload.id)
+        let cid: ChannelId = .unique
+        let eventPayload = EventPayload(
+            eventType: .messageNew,
+            cid: cid,
+            user: userPayload,
+            message: messagePayload,
+            unreadCount: .init(channels: 4, messages: 9, threads: 2),
+            groupedUnreadChannels: groupedUnreadChannels,
+            createdAt: .unique
+        )
+
+        try session.saveUser(payload: userPayload)
+        _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
+        _ = try session.saveMessage(payload: messagePayload, for: cid, cache: nil)
+        _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: eventPayload.unreadCount))
+        try session.saveEvent(payload: eventPayload)
+
+        let dto = try MessageNewEventDTO(from: eventPayload)
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageNewEvent)
+        XCTAssertEqual(event.groupedUnreadChannels, groupedUnreadChannels)
+    }
+
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageUpdated")
         let event = try eventDecoder.decode(from: json) as? MessageUpdatedEventDTO

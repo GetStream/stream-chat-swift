@@ -262,6 +262,80 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(testEnv.apiClient?.init_requestEncoder is RequestEncoder_Spy)
     }
 
+    func test_queryGroupedChannels_callsAPIClientAndReturnsGroupedChannels() throws {
+        let client = ChatClient.mock(config: inMemoryStorageConfig)
+        try client.databaseContainer.createCurrentUser()
+        let firstCid = ChannelId.unique
+        let secondCid = ChannelId.unique
+        let thirdCid = ChannelId.unique
+
+        let request = GroupedQueryChannelsRequestBody(limit: 4, watch: true, presence: false)
+        let expectedEndpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
+        let payload = GroupedQueryChannelsPayload(
+            groups: [
+                "all": .init(
+                    channels: [dummyPayload(with: firstCid)],
+                    unreadChannels: 1
+                ),
+                "new": .init(
+                    channels: [dummyPayload(with: secondCid)],
+                    unreadChannels: 1
+                ),
+                "current": .init(
+                    channels: [dummyPayload(with: thirdCid)],
+                    unreadChannels: 2
+                )
+            ],
+            duration: "12ms"
+        )
+
+        let expectation = self.expectation(description: "grouped query channels completes")
+        var receivedGroupedChannels: GroupedChannels?
+        var receivedError: Error?
+
+        client.queryGroupedChannels(limit: 4, watch: true, presence: false) { result in
+            switch result {
+            case let .success(groupedChannels):
+                receivedGroupedChannels = groupedChannels
+            case let .failure(error):
+                receivedError = error
+            }
+            expectation.fulfill()
+        }
+
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        client.mockAPIClient.test_simulateResponse(.success(payload))
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNil(receivedError)
+        XCTAssertEqual(receivedGroupedChannels?.groups.keys.sorted(), ["all", "current", "new"])
+    }
+
+    func test_groupedChannelsGroup_normalizesUnreadTotalsFromChannels() {
+        let firstChannel = ChatChannel.mock(
+            cid: .unique,
+            unreadCount: .init(messages: 3, mentions: 0)
+        )
+        let secondChannel = ChatChannel.mock(
+            cid: .unique,
+            unreadCount: .init(messages: 1, mentions: 0)
+        )
+        let thirdChannel = ChatChannel.mock(
+            cid: .unique,
+            unreadCount: .noUnread
+        )
+
+        let group = GroupedChannelsGroup(
+            groupKey: "all",
+            channels: [firstChannel, secondChannel, thirdChannel],
+            unreadChannels: 0
+        )
+
+        XCTAssertEqual(group.unreadChannels, 2)
+        XCTAssertEqual(group.groupKey, "all")
+    }
+
     func test_disconnect_flushesRequestsQueue() throws {
         // Create a chat client
         let client = ChatClient(

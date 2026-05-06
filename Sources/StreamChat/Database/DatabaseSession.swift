@@ -58,6 +58,10 @@ protocol CurrentUserDatabaseSession {
     /// If there is no current user, the error will be thrown.
     func saveCurrentUserUnreadCount(count: UnreadCountPayload) throws
 
+    /// Updates the `CurrentUserDTO` with grouped unread channel counts.
+    /// If there is no current user, the error will be thrown.
+    func saveCurrentUserGroupedUnreadChannels(_ groupedUnreadChannels: GroupedUnreadChannels) throws
+
     /// Updates the `CurrentUserDTO.devices` with the provided `DevicesPayload`
     /// If there's no current user set, an error will be thrown.
     @discardableResult
@@ -346,9 +350,10 @@ protocol ChannelDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> ChannelDTO
 
-    /// Loads channel list query with the given filter hash from the database.
-    /// - Parameter filterHash: The filter hash.
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO?
+    /// Loads the `ChannelListQueryDTO` corresponding to the given `ChannelListQuery`.
+    /// Lookup uses `query.queryHash` — `groupKey` when set, otherwise `filter.filterHash`.
+    /// - Parameter query: The channel list query.
+    func channelListQuery(_ query: ChannelListQuery) -> ChannelListQueryDTO?
 
     /// Loads all channel list queries from the database.
     /// - Returns: The array of channel list queries.
@@ -744,6 +749,10 @@ extension DatabaseSession {
 
         if let unreadCount = payload.unreadCount {
             try saveCurrentUserUnreadCount(count: unreadCount)
+        }
+
+        if let groupedUnreadChannels = payload.groupedUnreadChannels {
+            try saveCurrentUserGroupedUnreadChannels(groupedUnreadChannels)
         }
 
         if let threadDetailsPayload = payload.threadDetails?.value {

@@ -112,7 +112,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         // Assert the data is stored in the DB
         var queryDTO: ChannelListQueryDTO? {
-            database.viewContext.channelListQuery(filterHash: query.filter.filterHash)
+            database.viewContext.channelListQuery(query)
         }
         AssertAsync {
             Assert.willBeTrue(queryDTO != nil)
@@ -133,9 +133,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         }
 
         var channelsFromQuery: [ChatChannel] {
-            database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
-            )?.channels.compactMap { try? $0.asModel() } ?? []
+            database.viewContext.channelListQuery(query)?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
         XCTAssertEqual(channelsFromQuery.count, 3)
@@ -169,9 +167,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         }
 
         var channelsFromQuery: [ChatChannel] {
-            database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
-            )?.channels.compactMap { try? $0.asModel() } ?? []
+            database.viewContext.channelListQuery(query)?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
         XCTAssertEqual(channelsFromQuery.count, 3)
@@ -205,9 +201,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         }
 
         var channelsFromQuery: [ChatChannel] {
-            database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
-            )?.channels.compactMap { try? $0.asModel() } ?? []
+            database.viewContext.channelListQuery(query)?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
         XCTAssertEqual(channelsFromQuery.count, 3)
@@ -409,9 +403,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         var channelsInQuery: [ChatChannel] {
-            database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
-            )?.channels.compactMap { try? $0.asModel() } ?? []
+            database.viewContext.channelListQuery(query)?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
         XCTAssertTrue(channelsInQuery.contains(where: { $0.cid == channel.cid }))
@@ -431,9 +423,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         }
 
         var channelsInQuery: [ChatChannel] {
-            database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
-            )?.channels.compactMap { try? $0.asModel() } ?? []
+            database.viewContext.channelListQuery(query)?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
         XCTAssertTrue(channelsInQuery.contains(where: { $0.cid == channel.cid }))
