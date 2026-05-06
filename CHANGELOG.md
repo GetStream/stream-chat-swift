@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.1.1)
+_May 06, 2026_
+
 ## StreamChat
 ### 🐞 Fixed
 - Fix image cache misses caused by non-deterministic caching keys in `StreamCDNRequester` [#4075](https://github.com/GetStream/stream-chat-swift/pull/4075)
