@@ -36,10 +36,33 @@ import StreamChat
     
     public nonisolated(unsafe) static var bundle: Bundle?
 
-    /// Provider for custom localization which is dependent on App Bundle.
+    /// Provider for custom localization.
+    ///
+    /// The default implementation resolves each key by walking a fallback chain:
+    /// 1. The app's `Bundle.main` — so any key the integrating app overrides in its own
+    ///    `Localizable.strings` / `Localizable.stringsdict` automatically wins, without the
+    ///    app having to install a custom provider.
+    /// 2. `Appearance.bundle`, when set by a UI SDK (e.g. `StreamChatSwiftUI` points it at
+    ///    its own framework bundle so SwiftUI-specific keys are resolved there).
+    /// 3. `StreamChatCommonUI`'s own bundle, which ships the SDK's default translations.
+    ///
+    /// Replace this provider only if you need a more advanced setup; for simple
+    /// per-key overrides or adding new translations, just ship the keys you want to
+    /// customize in your app's `Localizable.strings` / `Localizable.stringsdict`.
     public var localizationProvider: @Sendable (_ key: String, _ table: String) -> String = { key, table in
-        let bundle = Appearance.bundle ?? Bundle.streamChatCommonUI
-        return bundle.localizedString(forKey: key, value: nil, table: table)
+        let mainLocalizedString = Bundle.main.localizedString(forKey: key, value: nil, table: table)
+        if mainLocalizedString != key {
+            return mainLocalizedString
+        }
+
+        if let bundle = Appearance.bundle {
+            let bundleLocalizedString = bundle.localizedString(forKey: key, value: nil, table: table)
+            if bundleLocalizedString != key {
+                return bundleLocalizedString
+            }
+        }
+
+        return Bundle.streamChatCommonUI.localizedString(forKey: key, value: nil, table: table)
     }
 
     public init() {
