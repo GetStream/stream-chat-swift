@@ -16,7 +16,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChatCommonUI
 ### 🔄 Changed
-- `Appearance.localizationProvider` now resolves keys against `Bundle.main` first, then `Appearance.bundle`, and finally the SDK's bundle, so apps can override individual keys by adding them to their own `Localizable.strings` / `Localizable.stringsdict` without installing a custom provider
+- `Appearance.localizationProvider` now falls back from `Bundle.main` to the SDK bundle, so apps can override keys without installing a custom provider [#4088](https://github.com/GetStream/stream-chat-swift/pull/4088)
 
 # [5.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.1.0)
 _April 23, 2026_
