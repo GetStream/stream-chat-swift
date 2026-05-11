@@ -285,8 +285,8 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         let date = Date(timeIntervalSinceNow: -3600 * 20)
         try createSendMessageRequests(count: count, date: date)
         
-        // Create one recent.
-        let id = "request\(count)"
+        // Create one recent with an id that doesn't collide with the queued ones above.
+        let id = "request\(count + 1)"
         try createRequest(
             id: id,
             path: .sendMessage(.init(type: .messaging, id: id)),
@@ -347,7 +347,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         }
     }
 
-    private func createRequest(id: String, path: EndpointPath, body: Encodable? = nil, date: Date = Date()) throws {
+    private func createRequest(id: String, path: EndpointPath, body: (Encodable & Sendable)? = nil, date: Date = Date()) throws {
         let endpoint = Endpoint<EmptyResponse>(
             path: path,
             method: .post,
