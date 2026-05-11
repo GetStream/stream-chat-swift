@@ -231,7 +231,7 @@ final class ChannelListController_Tests: XCTestCase {
         ]
 
         let prefillExpectation = expectation(description: "Prefill completes")
-        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0, groupHandler: { key, _ in key })) { error in
             XCTAssertNil(error)
             prefillExpectation.fulfill()
         }
@@ -261,7 +261,7 @@ final class ChannelListController_Tests: XCTestCase {
         ]
 
         let prefillExpectation = expectation(description: "Prefill completes")
-        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0, groupHandler: { key, _ in key })) { error in
             XCTAssertNil(error)
             prefillExpectation.fulfill()
         }
@@ -289,7 +289,7 @@ final class ChannelListController_Tests: XCTestCase {
         ]
 
         let prefillExpectation = expectation(description: "Prefill completes")
-        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0, groupHandler: { key, _ in key })) { error in
             XCTAssertNil(error)
             prefillExpectation.fulfill()
         }
@@ -318,7 +318,7 @@ final class ChannelListController_Tests: XCTestCase {
         ]
 
         let prefillExpectation = expectation(description: "Prefill completes")
-        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0, groupHandler: { key, _ in key })) { error in
             XCTAssertNil(error)
             prefillExpectation.fulfill()
         }
@@ -351,7 +351,7 @@ final class ChannelListController_Tests: XCTestCase {
         ]
 
         let prefillExpectation = expectation(description: "Prefill completes")
-        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0, groupHandler: { key, _ in key })) { error in
             XCTAssertNil(error)
             prefillExpectation.fulfill()
         }
@@ -374,7 +374,7 @@ final class ChannelListController_Tests: XCTestCase {
         ]
 
         let prefillExpectation = expectation(description: "Prefill completes")
-        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0, groupHandler: { key, _ in key })) { error in
             XCTAssertNil(error)
             prefillExpectation.fulfill()
         }
@@ -397,7 +397,7 @@ final class ChannelListController_Tests: XCTestCase {
         ]
 
         let prefillExpectation = expectation(description: "Prefill completes")
-        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0, groupHandler: { key, _ in key })) { error in
             XCTAssertNil(error)
             prefillExpectation.fulfill()
         }
@@ -421,7 +421,7 @@ final class ChannelListController_Tests: XCTestCase {
         ]
 
         let prefillExpectation = expectation(description: "Prefill completes")
-        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0)) { error in
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: prefilledChannels, unreadChannels: 0, groupHandler: { key, _ in key })) { error in
             XCTAssertNil(error)
             prefillExpectation.fulfill()
         }
@@ -464,7 +464,7 @@ final class ChannelListController_Tests: XCTestCase {
         }
 
         let prefillExpectation = expectation(description: "Prefill completes")
-        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: [makePrefilledChannel(cid: replacementCid)], unreadChannels: 0)) { error in
+        controller.prefill(group: GroupedChannelsGroup(groupKey: "all", channels: [makePrefilledChannel(cid: replacementCid)], unreadChannels: 0, groupHandler: { key, _ in key })) { error in
             XCTAssertNil(error)
             prefillExpectation.fulfill()
         }

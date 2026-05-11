@@ -23,7 +23,13 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     @Atomic var refreshLoadedChannels_channelCounts: [Int] = []
 
     @Atomic var queryGroupedChannels_callCount = 0
+    @Atomic var queryGroupedChannels_limits: [Int?] = []
+    @Atomic var queryGroupedChannels_paginations: [GroupChannelsPagination?] = []
     @Atomic var queryGroupedChannels_result: Result<GroupedChannels, Error>?
+
+    @Atomic var appendToQuery_queries: [ChannelListQuery] = []
+    @Atomic var appendToQuery_channels: [[ChatChannel]] = []
+    @Atomic var appendToQuery_result: Result<[ChatChannel], Error>?
 
     @Atomic var markAllRead_completion: (@Sendable (Error?) -> Void)?
 
@@ -50,7 +56,12 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
 
         refreshLoadedChannels_channelCounts.removeAll()
         queryGroupedChannels_callCount = 0
+        queryGroupedChannels_limits.removeAll()
+        queryGroupedChannels_paginations.removeAll()
         queryGroupedChannels_result = nil
+        appendToQuery_queries.removeAll()
+        appendToQuery_channels.removeAll()
+        appendToQuery_result = nil
         markAllRead_completion = nil
 
         startWatchingChannels_cids.removeAll()
@@ -102,17 +113,43 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
 
     override func queryGroupedChannels(
         limit: Int? = nil,
+        pagination: GroupChannelsPagination? = nil,
         watch: Bool = false,
         presence: Bool = false,
+        groupHandler: @escaping @Sendable (String, ChatChannel) -> String = { key, _ in key },
         completion: @escaping @MainActor (Result<GroupedChannels, Error>) -> Void
     ) {
         _queryGroupedChannels_callCount.mutate { $0 += 1 }
+        _queryGroupedChannels_limits.mutate { $0.append(limit) }
+        _queryGroupedChannels_paginations.mutate { $0.append(pagination) }
         if let result = queryGroupedChannels_result {
             DispatchQueue.main.async {
                 completion(result)
             }
         } else {
-            super.queryGroupedChannels(limit: limit, watch: watch, presence: presence, completion: completion)
+            super.queryGroupedChannels(
+                limit: limit,
+                pagination: pagination,
+                watch: watch,
+                presence: presence,
+                groupHandler: groupHandler,
+                completion: completion
+            )
+        }
+    }
+
+    override func appendToQuery(
+        group: GroupedChannelsGroup,
+        for query: ChannelListQuery,
+        filter: (@Sendable (ChatChannel) -> Bool)? = nil,
+        completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)? = nil
+    ) {
+        _appendToQuery_queries.mutate { $0.append(query) }
+        _appendToQuery_channels.mutate { $0.append(group.channels) }
+        if let result = appendToQuery_result {
+            completion?(result)
+        } else {
+            super.appendToQuery(group: group, for: query, filter: filter, completion: completion)
         }
     }
 

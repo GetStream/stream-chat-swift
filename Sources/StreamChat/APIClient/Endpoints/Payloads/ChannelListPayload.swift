@@ -27,14 +27,27 @@ extension ChannelListPayload: Decodable {
 
 final class GroupedQueryChannelsRequestBody: Encodable, Sendable {
     let limit: Int?
+    let groups: [String: GroupedQueryChannelsRequestGroup]?
     let watch: Bool
     let presence: Bool
 
-    init(limit: Int?, watch: Bool, presence: Bool) {
+    init(
+        limit: Int?,
+        groups: [String: GroupedQueryChannelsRequestGroup]?,
+        watch: Bool,
+        presence: Bool
+    ) {
         self.limit = limit
+        self.groups = groups
         self.watch = watch
         self.presence = presence
     }
+}
+
+struct GroupedQueryChannelsRequestGroup: Encodable, Sendable {
+    let limit: Int?
+    let next: String?
+    let prev: String?
 }
 
 final class GroupedQueryChannelsPayload: Decodable, Sendable {
@@ -61,21 +74,34 @@ final class GroupedQueryChannelsPayload: Decodable, Sendable {
 final class GroupedQueryChannelsGroupPayload: Decodable, Sendable {
     let channels: [ChannelPayload]
     let unreadChannels: Int
+    let next: String?
+    let prev: String?
 
-    init(channels: [ChannelPayload], unreadChannels: Int) {
+    init(
+        channels: [ChannelPayload],
+        unreadChannels: Int,
+        next: String? = nil,
+        prev: String? = nil
+    ) {
         self.channels = channels
         self.unreadChannels = unreadChannels
+        self.next = next
+        self.prev = prev
     }
 
     enum CodingKeys: String, CodingKey {
         case channels
         case unreadChannels = "unread_channels"
+        case next
+        case prev
     }
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         channels = try container.decodeArrayIgnoringFailures([ChannelPayload].self, forKey: .channels)
         unreadChannels = try container.decodeIfPresent(Int.self, forKey: .unreadChannels) ?? 0
+        next = try container.decodeIfPresent(String.self, forKey: .next)
+        prev = try container.decodeIfPresent(String.self, forKey: .prev)
     }
 }
 

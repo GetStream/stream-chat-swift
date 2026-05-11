@@ -9,17 +9,20 @@ public class ChannelList: @unchecked Sendable {
     private let channelListUpdater: ChannelListUpdater
     private let client: ChatClient
     private let dynamicFilter: (@Sendable (ChatChannel) -> Bool)?
+    let groupHandler: (@Sendable (String, ChatChannel) -> String)?
     let query: AllocatedUnfairLock<ChannelListQuery>
     @MainActor private var stateBuilder: StateBuilder<ChannelListState>
     
     init(
         query: ChannelListQuery,
         dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
+        groupHandler: (@Sendable (String, ChatChannel) -> String)?,
         client: ChatClient,
         environment: Environment = .init()
     ) {
         self.client = client
         self.dynamicFilter = dynamicFilter
+        self.groupHandler = groupHandler
         self.query = AllocatedUnfairLock(query)
         let channelListUpdater = environment.channelListUpdater(
             client.databaseContainer,
@@ -70,7 +73,11 @@ public class ChannelList: @unchecked Sendable {
         }
 
         let savedChannels = try await channelListUpdater.prefill(group: group, for: updatedQuery, filter: dynamicFilter)
-        await resetStateAfterPrefill(query: updatedQuery, prefilledChannelsCount: savedChannels.count)
+        await resetStateAfterPrefill(
+            query: updatedQuery,
+            prefilledChannelsCount: savedChannels.count,
+            next: group.next
+        )
         client.syncRepository.startTrackingChannelList(self)
     }
     
@@ -98,6 +105,9 @@ public class ChannelList: @unchecked Sendable {
         guard await state.hasLoadedAllPreviousChannels == false else { return [] }
         let query = query.value
         let limit = limit ?? query.pagination.pageSize
+        if let groupKey = query.groupKey, let groupHandler = groupHandler {
+            return try await loadMoreGroupedChannels(groupKey: groupKey, groupHandler: groupHandler, query: query, limit: limit)
+        }
         let count = await state.channels.count
         let loadedChannels = try await channelListUpdater.loadNextChannels(
             query: query,
@@ -107,17 +117,37 @@ public class ChannelList: @unchecked Sendable {
         await setHasLoadedAllPreviousChannels(loadedChannels.count < limit)
         return loadedChannels
     }
-    
+
     // MARK: - Internal
-    
+
     func refreshLoadedChannels() async throws -> Set<ChannelId> {
         let query = query.value
         let count = await state.channels.count
         return try await channelListUpdater.refreshLoadedChannels(for: query, channelCount: count)
     }
 
-    @MainActor private func resetStateAfterPrefill(query: ChannelListQuery, prefilledChannelsCount: Int) {
-        state.reset(to: query, prefilledCount: prefilledChannelsCount)
+    private func loadMoreGroupedChannels(
+        groupKey: String,
+        groupHandler: @escaping @Sendable (String, ChatChannel) -> String,
+        query: ChannelListQuery,
+        limit: Int
+    ) async throws -> [ChatChannel] {
+        let cursor = await state.groupPaginationCursor
+        let pagination = GroupChannelsPagination(groupKey: groupKey, next: cursor, prev: nil)
+        let result = try await channelListUpdater.queryGroupedChannels(
+            limit: limit,
+            pagination: pagination,
+            groupHandler: groupHandler
+        )
+        guard let newGroup = result.groups[groupKey] else { return [] }
+        let appended = try await channelListUpdater.appendToQuery(group: newGroup, for: query, filter: dynamicFilter)
+        await state.setGroupPaginationCursor(newGroup.next)
+        await setHasLoadedAllPreviousChannels(newGroup.next == nil)
+        return appended
+    }
+
+    @MainActor private func resetStateAfterPrefill(query: ChannelListQuery, prefilledChannelsCount: Int, next: String?) {
+        state.reset(to: query, prefilledCount: prefilledChannelsCount, next: next)
         state.skipNextInitialRemoteUpdate()
     }
 

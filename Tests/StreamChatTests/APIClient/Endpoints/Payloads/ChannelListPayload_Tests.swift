@@ -123,6 +123,75 @@ final class ChannelListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.duration, "12ms")
     }
 
+    func test_groupedQueryChannelsPayload_decodesNextAndPrevCursors() throws {
+        let json = """
+        {
+          "groups": {
+            "current": {
+              "channels": [],
+              "unread_channels": 0,
+              "next": "current-next-cursor",
+              "prev": "current-prev-cursor"
+            }
+          },
+          "duration": "5ms"
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
+
+        XCTAssertEqual("current-next-cursor", payload.groups["current"]?.next)
+        XCTAssertEqual("current-prev-cursor", payload.groups["current"]?.prev)
+    }
+
+    func test_groupedQueryChannelsPayload_cursorsAreNilWhenMissing() throws {
+        let json = """
+        {
+          "groups": {
+            "all": { "channels": [], "unread_channels": 0 }
+          },
+          "duration": "5ms"
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
+
+        XCTAssertNil(payload.groups["all"]?.next)
+        XCTAssertNil(payload.groups["all"]?.prev)
+    }
+
+    func test_groupedQueryChannelsRequestBody_allGroups_encodesWithoutGroupsKey() throws {
+        let body = GroupedQueryChannelsRequestBody(limit: 10, groups: nil, watch: true, presence: false)
+
+        let encoded = try JSONEncoder.stream.encode(body)
+        let json = try JSONSerialization.jsonObject(with: encoded) as? [String: Any]
+
+        XCTAssertEqual(10, json?["limit"] as? Int)
+        XCTAssertEqual(true, json?["watch"] as? Bool)
+        XCTAssertEqual(false, json?["presence"] as? Bool)
+        XCTAssertNil(json?["groups"])
+    }
+
+    func test_groupedQueryChannelsRequestBody_paginatedGroup_encodesWithGroupsKeyAndCursor() throws {
+        let body = GroupedQueryChannelsRequestBody(
+            limit: nil,
+            groups: ["old": .init(limit: 5, next: "old-cursor", prev: nil)],
+            watch: false,
+            presence: true
+        )
+
+        let encoded = try JSONEncoder.stream.encode(body)
+        let json = try JSONSerialization.jsonObject(with: encoded) as? [String: Any]
+        let groups = json?["groups"] as? [String: [String: Any]]
+
+        XCTAssertNil(json?["limit"])
+        XCTAssertEqual(false, json?["watch"] as? Bool)
+        XCTAssertEqual(true, json?["presence"] as? Bool)
+        XCTAssertEqual(5, groups?["old"]?["limit"] as? Int)
+        XCTAssertEqual("old-cursor", groups?["old"]?["next"] as? String)
+        XCTAssertNil(groups?["old"]?["prev"])
+    }
+
     func test_groupedQueryChannelsPayload_defaultsUnreadCountersWhenMissing() throws {
         let channelId = ChannelId(type: .messaging, id: "bucket-channel")
         let json = """

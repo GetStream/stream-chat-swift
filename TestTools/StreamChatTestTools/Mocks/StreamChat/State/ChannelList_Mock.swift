@@ -19,12 +19,14 @@ public class ChannelList_Mock: ChannelList, @unchecked Sendable {
     override init(
         query: ChannelListQuery,
         dynamicFilter: (@Sendable (ChatChannel) -> Bool)? = nil,
+        groupHandler: (@Sendable (String, ChatChannel) -> String)? = nil,
         client: ChatClient,
         environment: ChannelList.Environment = .init()
     ) {
         super.init(
             query: query,
             dynamicFilter: dynamicFilter,
+            groupHandler: groupHandler,
             client: client,
             environment: environment
         )

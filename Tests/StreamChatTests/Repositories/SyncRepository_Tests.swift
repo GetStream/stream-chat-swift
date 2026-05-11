@@ -242,8 +242,8 @@ class SyncRepository_Tests: XCTestCase {
         chatListController.state_mock = .remoteDataFetched
         chatListController.channels_mock = [.mock(cid: cid)]
         repository.startTrackingChannelListController(chatListController)
-        let refreshedGroup = GroupedChannelsGroup(groupKey: "all", channels: [.mock(cid: cid)], unreadChannels: 0)
-        channelListUpdater.queryGroupedChannels_result = .success(.init(groups: ["all": refreshedGroup]))
+        let refreshedGroup = GroupedChannelsGroup(groupKey: "all", channels: [.mock(cid: cid)], unreadChannels: 0, groupHandler: { key, _ in key })
+        channelListUpdater.queryGroupedChannels_result = .success(.init(groups: ["all": refreshedGroup], groupHandler: { key, _ in key }))
 
         waitForSyncLocalStateRun()
 
@@ -278,8 +278,8 @@ class SyncRepository_Tests: XCTestCase {
         standardController.refreshLoadedChannelsResult = .success(Set([standardCid]))
         repository.startTrackingChannelListController(standardController)
 
-        let refreshedGroup = GroupedChannelsGroup(groupKey: "current", channels: [.mock(cid: prefilledCid)], unreadChannels: 0)
-        channelListUpdater.queryGroupedChannels_result = .success(.init(groups: ["current": refreshedGroup]))
+        let refreshedGroup = GroupedChannelsGroup(groupKey: "current", channels: [.mock(cid: prefilledCid)], unreadChannels: 0, groupHandler: { key, _ in key })
+        channelListUpdater.queryGroupedChannels_result = .success(.init(groups: ["current": refreshedGroup], groupHandler: { key, _ in key }))
 
         waitForSyncLocalStateRun()
 
@@ -324,8 +324,8 @@ class SyncRepository_Tests: XCTestCase {
         prefilledQuery.groupKey = "all"
         let channelList = ChannelList_Mock.mock(query: prefilledQuery, client: client)
         repository.startTrackingChannelList(channelList)
-        let refreshedGroup = GroupedChannelsGroup(groupKey: "all", channels: [.mock(cid: cid)], unreadChannels: 0)
-        channelListUpdater.queryGroupedChannels_result = .success(.init(groups: ["all": refreshedGroup]))
+        let refreshedGroup = GroupedChannelsGroup(groupKey: "all", channels: [.mock(cid: cid)], unreadChannels: 0, groupHandler: { key, _ in key })
+        channelListUpdater.queryGroupedChannels_result = .success(.init(groups: ["all": refreshedGroup], groupHandler: { key, _ in key }))
 
         waitForSyncLocalStateRun()
 
@@ -353,8 +353,8 @@ class SyncRepository_Tests: XCTestCase {
         standardChannelList.refreshLoadedChannelsResult = .success(Set([standardCid]))
         repository.startTrackingChannelList(standardChannelList)
 
-        let refreshedGroup = GroupedChannelsGroup(groupKey: "current", channels: [.mock(cid: prefilledCid)], unreadChannels: 0)
-        channelListUpdater.queryGroupedChannels_result = .success(.init(groups: ["current": refreshedGroup]))
+        let refreshedGroup = GroupedChannelsGroup(groupKey: "current", channels: [.mock(cid: prefilledCid)], unreadChannels: 0, groupHandler: { key, _ in key })
+        channelListUpdater.queryGroupedChannels_result = .success(.init(groups: ["current": refreshedGroup], groupHandler: { key, _ in key }))
 
         waitForSyncLocalStateRun()
 

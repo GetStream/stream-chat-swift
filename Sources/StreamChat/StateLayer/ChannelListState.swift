@@ -39,12 +39,15 @@ import Foundation
     
     /// A Boolean value that returns whether pagination is finished.
     var hasLoadedAllPreviousChannels = false
-    
+
+    /// The next-page cursor for the prefilled group, used to paginate via the grouped endpoint.
+    var groupPaginationCursor: String?
+
     /// An array of channels for the specified ``ChannelListQuery``.
     @Published public internal(set) var channels: [ChatChannel] = []
 
     // MARK: - Internal
-    
+
     func skipNextInitialRemoteUpdate() {
         shouldSkipInitialRemoteUpdate = true
     }
@@ -54,13 +57,18 @@ import Foundation
         return shouldSkipInitialRemoteUpdate
     }
 
-    func reset(to query: ChannelListQuery, prefilledCount: Int) {
-        hasLoadedAllPreviousChannels = prefilledCount == 0
+    func reset(to query: ChannelListQuery, prefilledCount: Int, next: String?) {
+        hasLoadedAllPreviousChannels = next == nil
+        groupPaginationCursor = next
         self.query = query
         channels = observer.start(
             observing: query,
             minimumFetchLimit: prefilledCount,
             handlers: handlers
         )
+    }
+
+    func setGroupPaginationCursor(_ cursor: String?) {
+        groupPaginationCursor = cursor
     }
 }

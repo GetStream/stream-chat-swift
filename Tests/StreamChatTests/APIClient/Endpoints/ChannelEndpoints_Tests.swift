@@ -44,10 +44,10 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
     func test_groupedChannels_buildsCorrectly() {
         let testCases: [(GroupedQueryChannelsRequestBody, Bool)] = [
-            (.init(limit: 10, watch: true, presence: false), true),
-            (.init(limit: 10, watch: false, presence: true), true),
-            (.init(limit: 10, watch: true, presence: true), true),
-            (.init(limit: 10, watch: false, presence: false), false)
+            (.init(limit: 10, groups: nil, watch: true, presence: false), true),
+            (.init(limit: 10, groups: nil, watch: false, presence: true), true),
+            (.init(limit: 10, groups: nil, watch: true, presence: true), true),
+            (.init(limit: 10, groups: nil, watch: false, presence: false), false)
         ]
 
         for (request, requiresConnectionId) in testCases {

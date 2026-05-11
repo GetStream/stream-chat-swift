@@ -137,9 +137,12 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                 return
             }
 
+            let defaultGroupHandler: @Sendable (String, ChatChannel) -> String = { key, _ in key }
+            let groupHandler = channelLists.lazy.compactMap(\.groupHandler).first ?? defaultGroupHandler
+
             Task {
                 do {
-                    let groupedChannels = try await channelListUpdater.queryGroupedChannels()
+                    let groupedChannels = try await channelListUpdater.queryGroupedChannels(groupHandler: groupHandler)
                     let returnedChannelIds = groupedChannels.groups.values
                         .flatMap(\.channels)
                         .map(\.cid)

@@ -269,7 +269,7 @@ final class ChatClient_Tests: XCTestCase {
         let secondCid = ChannelId.unique
         let thirdCid = ChannelId.unique
 
-        let request = GroupedQueryChannelsRequestBody(limit: 4, watch: true, presence: false)
+        let request = GroupedQueryChannelsRequestBody(limit: 4, groups: nil, watch: true, presence: false)
         let expectedEndpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
         let payload = GroupedQueryChannelsPayload(
             groups: [
@@ -293,7 +293,7 @@ final class ChatClient_Tests: XCTestCase {
         var receivedGroupedChannels: GroupedChannels?
         var receivedError: Error?
 
-        client.queryGroupedChannels(limit: 4, watch: true, presence: false) { result in
+        client.queryGroupedChannels(limit: 4, presence: false, watch: true, groupHandler: { key, _ in key }) { result in
             switch result {
             case let .success(groupedChannels):
                 receivedGroupedChannels = groupedChannels
@@ -329,7 +329,8 @@ final class ChatClient_Tests: XCTestCase {
         let group = GroupedChannelsGroup(
             groupKey: "all",
             channels: [firstChannel, secondChannel, thirdChannel],
-            unreadChannels: 0
+            unreadChannels: 0,
+            groupHandler: { key, _ in key }
         )
 
         XCTAssertEqual(group.unreadChannels, 2)

@@ -69,6 +69,33 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         }
     }
 
+    func appendToQuery(
+        group: GroupedChannelsGroup,
+        for query: ChannelListQuery,
+        filter: (@Sendable (ChatChannel) -> Bool)? = nil,
+        completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)? = nil
+    ) {
+        let channels = filter.map { group.channels.filter($0) } ?? group.channels
+        nonisolated(unsafe) var savedChannels: [ChatChannel] = []
+        database.write { session in
+            let queryDTO = session.saveQuery(query: query)
+            savedChannels = channels.compactMapLoggingError { channel in
+                guard let channelDTO = session.channel(cid: channel.cid) else {
+                    log.warning("Append skipped channel \(channel.cid): not found in the database.")
+                    return nil
+                }
+                queryDTO.channels.insert(channelDTO)
+                return try channelDTO.asModel()
+            }
+        } completion: { error in
+            if let error {
+                completion?(.failure(error))
+            } else {
+                completion?(.success(savedChannels))
+            }
+        }
+    }
+
     func refreshLoadedChannels(for query: ChannelListQuery, channelCount: Int, completion: @escaping @Sendable (Result<Set<ChannelId>, Error>) -> Void) {
         guard channelCount > 0 else {
             completion(.success(Set()))
@@ -196,25 +223,50 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     }
 
     /// Queries grouped channel groups for the app.
+    ///
+    /// When `pagination` is non-nil, only that single group is paginated using its cursor and the
+    /// response payload contains only that group. Unread-channel counts are not persisted in the
+    /// paginated case since they reflect just the requested group.
     func queryGroupedChannels(
         limit: Int? = nil,
+        pagination: GroupChannelsPagination? = nil,
         watch: Bool = false,
         presence: Bool = false,
+        groupHandler: @escaping @Sendable (String, ChatChannel) -> String,
         completion: @escaping @MainActor (Result<GroupedChannels, Error>) -> Void
     ) {
-        let request = GroupedQueryChannelsRequestBody(
-            limit: limit,
-            watch: watch,
-            presence: presence
-        )
+        let request: GroupedQueryChannelsRequestBody
+        if let pagination {
+            let group = GroupedQueryChannelsRequestGroup(
+                limit: limit,
+                next: pagination.next,
+                prev: pagination.prev
+            )
+            request = GroupedQueryChannelsRequestBody(
+                limit: nil,
+                groups: [pagination.groupKey: group],
+                watch: watch,
+                presence: presence
+            )
+        } else {
+            request = GroupedQueryChannelsRequestBody(
+                limit: limit,
+                groups: nil,
+                watch: watch,
+                presence: presence
+            )
+        }
         let endpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
+        let isPaginating = pagination != nil
 
         apiClient.request(endpoint: endpoint) { [database] result in
             switch result {
             case let .success(payload):
                 database.write(converting: { session in
-                    let groupedUnreadChannels = payload.groups.mapValues(\.unreadChannels)
-                    try session.saveCurrentUserGroupedUnreadChannels(groupedUnreadChannels)
+                    if !isPaginating {
+                        let groupedUnreadChannels = payload.groups.mapValues(\.unreadChannels)
+                        try session.saveCurrentUserGroupedUnreadChannels(groupedUnreadChannels)
+                    }
 
                     var groups: [String: GroupedChannelsGroup] = [:]
                     for (name, groupPayload) in payload.groups {
@@ -225,10 +277,13 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                         groups[name] = GroupedChannelsGroup(
                             groupKey: name,
                             channels: channels,
-                            unreadChannels: groupPayload.unreadChannels
+                            unreadChannels: groupPayload.unreadChannels,
+                            next: groupPayload.next,
+                            prev: groupPayload.prev,
+                            groupHandler: groupHandler
                         )
                     }
-                    return GroupedChannels(groups: groups)
+                    return GroupedChannels(groups: groups, groupHandler: groupHandler)
                 }, completion: { result in
                     DispatchQueue.main.async {
                         completion(result)
@@ -294,6 +349,18 @@ extension ChannelListUpdater {
         }
     }
 
+    @discardableResult func appendToQuery(
+        group: GroupedChannelsGroup,
+        for query: ChannelListQuery,
+        filter: (@Sendable (ChatChannel) -> Bool)? = nil
+    ) async throws -> [ChatChannel] {
+        try await withCheckedThrowingContinuation { continuation in
+            appendToQuery(group: group, for: query, filter: filter) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+
     @discardableResult func update(channelListQuery: ChannelListQuery) async throws -> [ChatChannel] {
         try await withCheckedThrowingContinuation { continuation in
             update(channelListQuery: channelListQuery) { result in
@@ -304,11 +371,19 @@ extension ChannelListUpdater {
 
     func queryGroupedChannels(
         limit: Int? = nil,
+        pagination: GroupChannelsPagination? = nil,
         watch: Bool = false,
-        presence: Bool = false
+        presence: Bool = false,
+        groupHandler: @escaping @Sendable (String, ChatChannel) -> String
     ) async throws -> GroupedChannels {
         try await withCheckedThrowingContinuation { continuation in
-            queryGroupedChannels(limit: limit, watch: watch, presence: presence) { result in
+            queryGroupedChannels(
+                limit: limit,
+                pagination: pagination,
+                watch: watch,
+                presence: presence,
+                groupHandler: groupHandler
+            ) { result in
                 continuation.resume(with: result)
             }
         }

@@ -5,19 +5,23 @@
 import Foundation
 
 /// A grouped channels response returned by `ChatClient.queryGroupedChannels`.
-public struct GroupedChannels: Equatable, Sendable {
+public struct GroupedChannels: Sendable {
     /// The grouped channel groups returned by the backend, keyed by group name.
     public let groups: [String: GroupedChannelsGroup]
 
     init(
-        groups: [String: GroupedChannelsGroup]
+        groups: [String: GroupedChannelsGroup],
+        groupHandler: @escaping @Sendable (String, ChatChannel) -> String
     ) {
         self.groups = groups
+        self.groupHandler = groupHandler
     }
+    
+    let groupHandler: @Sendable (String, ChatChannel) -> String
 }
 
 /// A grouped channels group returned by `ChatClient.queryGroupedChannels`.
-public struct GroupedChannelsGroup: Equatable, Sendable {
+public struct GroupedChannelsGroup: Sendable {
     /// The group key as returned by the backend (e.g. `"all"`, `"new"`, `"current"`).
     public let groupKey: String
 
@@ -27,10 +31,17 @@ public struct GroupedChannelsGroup: Equatable, Sendable {
     /// The total unread channel count in the group.
     public let unreadChannels: Int
 
+    let next: String?
+    let prev: String?
+    let groupHandler: @Sendable (String, ChatChannel) -> String
+
     init(
         groupKey: String,
         channels: [ChatChannel],
-        unreadChannels: Int
+        unreadChannels: Int,
+        next: String? = nil,
+        prev: String? = nil,
+        groupHandler: @escaping @Sendable (String, ChatChannel) -> String
     ) {
         self.groupKey = groupKey
         self.channels = channels
@@ -41,5 +52,14 @@ public struct GroupedChannelsGroup: Equatable, Sendable {
         }
 
         self.unreadChannels = max(unreadChannels, derivedUnreadChannels)
+        self.next = next
+        self.prev = prev
+        self.groupHandler = groupHandler
     }
+}
+
+struct GroupChannelsPagination: Sendable {
+    let groupKey: String
+    let next: String?
+    let prev: String?
 }
