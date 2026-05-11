@@ -136,7 +136,7 @@ extension NSManagedObjectContext {
     }
 
     @discardableResult
-    func saveReactions(payload: MessageReactionsPayload, query: ReactionListQuery?) -> [MessageReactionDTO] {
+    func saveReactions(payload: GetReactionsResponse, query: ReactionListQuery?) -> [MessageReactionDTO] {
         let isFirstPage = query?.pagination.offset == 0
         if let filterHash = query?.queryHash, isFirstPage {
             let queryDTO = ReactionListQueryDTO.load(filterHash: filterHash, context: self)
@@ -151,7 +151,7 @@ extension NSManagedObjectContext {
 
     @discardableResult
     func saveReaction(
-        payload: MessageReactionPayload,
+        payload: ReactionResponse,
         query: ReactionListQuery?,
         cache: PreWarmedCache?
     ) throws -> MessageReactionDTO {

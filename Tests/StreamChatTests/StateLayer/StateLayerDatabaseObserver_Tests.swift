@@ -35,7 +35,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             expectation.fulfill()
         })
         
-        let firstPayload = makeChannelPayload(name: "first")
+        let firstPayload = makeChannelStateResponseFields(name: "first")
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
@@ -49,7 +49,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_entityDidChangeCount_whenDeletingAndInserting_thenSingleDidChange() async throws {
-        let firstPayload = makeChannelPayload(name: "first")
+        let firstPayload = makeChannelStateResponseFields(name: "first")
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
@@ -62,7 +62,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             expectation.fulfill()
         })
         
-        let secondPayload = makeChannelPayload(name: "second")
+        let secondPayload = makeChannelStateResponseFields(name: "second")
         try await client.mockDatabaseContainer.write { session in
             session.removeChannels(cids: Set([self.channelId]))
             try session.saveChannel(payload: secondPayload)
@@ -85,11 +85,11 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             expectation.fulfill()
         })
         
-        let firstPayload = makeChannelPayload(name: "first", team: "team1")
+        let firstPayload = makeChannelStateResponseFields(name: "first", team: "team1")
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
-        let secondPayload = makeChannelPayload(name: "second", team: "team2")
+        let secondPayload = makeChannelStateResponseFields(name: "second", team: "team2")
         try await MainActor.run {
             let session = client.mockDatabaseContainer.viewContext
             try session.saveChannel(payload: secondPayload)
@@ -108,7 +108,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     // MARK: Observing List
     
     func test_listDidChangeCount_whenInserting_thenSingleDidChange() async throws {
-        let firstPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 0)
+        let firstPayload = makeChannelStateResponseFields(messageCount: 5, createdAtOffset: 0)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
@@ -121,7 +121,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             expectation.fulfill()
         })
         
-        let secondPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 5)
+        let secondPayload = makeChannelStateResponseFields(messageCount: 3, createdAtOffset: 5)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: secondPayload)
         }
@@ -137,7 +137,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_listDidChangeCount_whenDeletingAndInserting_thenSingleDidChange() async throws {
-        let firstPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 0)
+        let firstPayload = makeChannelStateResponseFields(messageCount: 5, createdAtOffset: 0)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
@@ -150,7 +150,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             expectation.fulfill()
         })
         
-        let secondPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 5)
+        let secondPayload = makeChannelStateResponseFields(messageCount: 3, createdAtOffset: 5)
         try await client.mockDatabaseContainer.write { session in
             for messageId in firstPayload.messages.map(\.id) {
                 let message = try XCTUnwrap(session.message(id: messageId))
@@ -169,7 +169,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_listDidChangeCount_whenTwoContextsChange_thenTwoDidChange() async throws {
-        let firstPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 0)
+        let firstPayload = makeChannelStateResponseFields(messageCount: 5, createdAtOffset: 0)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
@@ -182,11 +182,11 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
             expectation.fulfill()
         })
         
-        let secondPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 5)
+        let secondPayload = makeChannelStateResponseFields(messageCount: 3, createdAtOffset: 5)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: secondPayload)
         }
-        let thirdPayload = makeChannelPayload(messageCount: 3, createdAtOffset: 8)
+        let thirdPayload = makeChannelStateResponseFields(messageCount: 3, createdAtOffset: 8)
         try await MainActor.run {
             let session = client.mockDatabaseContainer.viewContext
             try session.saveChannel(payload: thirdPayload)
@@ -207,12 +207,12 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     
     func test_reuseChannels_whenSomeChange_thenOthersAreReused() async throws {
         let memberId = UserId.unique
-        let memberPayload = MemberPayload.dummy(user: .dummy(userId: memberId))
+        let memberPayload = ChannelMemberResponse.dummy(user: .dummy(userId: memberId))
         let query = ChannelListQuery(
             filter: .in(.members, values: [memberId]),
             sort: [.init(key: .createdAt, isAscending: true)]
         )
-        let makePayload: (Int) -> ChannelListPayload = { count in
+        let makePayload: (Int) -> QueryChannelsResponse = { count in
             let channelPayloads = (0..<count)
                 .map {
                     self.dummyPayload(
@@ -221,7 +221,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
                         createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0))
                     )
                 }
-            return ChannelListPayload(channels: channelPayloads, duration: "")
+            return QueryChannelsResponse(channels: channelPayloads, duration: "")
         }
         
         try await client.mockDatabaseContainer.write { session in
@@ -261,7 +261,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_reuseMessages_whenSomeChange_thenOthersAreReused() async throws {
-        let firstPayload = makeChannelPayload(messageCount: 10, createdAtOffset: 0)
+        let firstPayload = makeChannelStateResponseFields(messageCount: 10, createdAtOffset: 0)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: firstPayload)
         }
@@ -274,7 +274,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         XCTAssertEqual(10, messageItemCreatorCounter)
         
         // Change 5 existing messages
-        let secondPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 0)
+        let secondPayload = makeChannelStateResponseFields(messageCount: 5, createdAtOffset: 0)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: secondPayload)
         }
@@ -286,23 +286,23 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_reuseReactions_whenSomeChange_thenOthersAreReused() async throws {
-        let channelPayload = makeChannelPayload(messageCount: 5, createdAtOffset: 0)
+        let channelPayload = makeChannelStateResponseFields(messageCount: 5, createdAtOffset: 0)
         try await client.mockDatabaseContainer.write { session in
             try session.saveChannel(payload: channelPayload)
         }
         let messageId = try XCTUnwrap(channelPayload.messages.first?.id)
-        let makePayload: (Int) -> MessageReactionsPayload = { count in
+        let makePayload: (Int) -> GetReactionsResponse = { count in
             let reactions = (0..<count)
                 .reversed() // last updated ones first
                 .map {
-                    MessageReactionPayload.dummy(
+                    ReactionResponse.dummy(
                         messageId: messageId,
                         createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0)),
                         updatedAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0)),
                         user: .dummy(userId: .unique)
                     )
                 }
-            return MessageReactionsPayload(duration: "", reactions: reactions)
+            return GetReactionsResponse(duration: "", reactions: reactions)
         }
         let query = ReactionListQuery(messageId: messageId)
         try await client.databaseContainer.write { session in
@@ -336,10 +336,10 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_reuseThreads_whenSomeChange_thenOthersAreReused() async throws {
-        let makePayload: (Int) -> ThreadListPayload = { count in
+        let makePayload: (Int) -> QueryThreadsResponse = { count in
             let threads = (0..<count)
-                .map { ThreadPayload.dummy(parentMessageId: "\($0)") }
-            return ThreadListPayload(threads: threads, next: nil)
+                .map { ThreadStateResponse.dummy(parentMessageId: "\($0)") }
+            return QueryThreadsResponse(threads: threads, next: nil)
         }
         try await client.databaseContainer.write { session in
             session.saveThreadList(payload: makePayload(5))
@@ -372,10 +372,10 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     }
     
     func test_reuseUsers_whenSomeChange_thenOthersAreReused() async throws {
-        let makePayload: (Int) -> UserListPayload = { count in
+        let makePayload: (Int) -> QueryUsersResponse = { count in
             let users = (0..<count)
-                .map { UserPayload.dummy(userId: "\($0)", name: "name_\($0)") }
-            return UserListPayload(users: users)
+                .map { UserResponse.dummy(userId: "\($0)", name: "name_\($0)") }
+            return QueryUsersResponse(users: users)
         }
         let query = UserListQuery(
             filter: .query(.id, text: .unique),
@@ -438,12 +438,12 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         )
     }
     
-    private func makeChannelPayload(name: String?, team: String? = nil) -> ChannelPayload {
-        ChannelPayload.dummy(channel: .dummy(cid: channelId, name: name, team: team))
+    private func makeChannelStateResponseFields(name: String?, team: String? = nil) -> ChannelStateResponseFields {
+        ChannelStateResponseFields.dummy(channel: .dummy(cid: channelId, name: name, team: team))
     }
     
-    private func makeChannelPayload(messageCount: Int, createdAtOffset: Int) -> ChannelPayload {
-        let messages: [MessagePayload] = (0..<messageCount)
+    private func makeChannelStateResponseFields(messageCount: Int, createdAtOffset: Int) -> ChannelStateResponseFields {
+        let messages: [MessageResponse] = (0..<messageCount)
             .map {
                 .dummy(
                     messageId: "\($0 + createdAtOffset)",
@@ -451,7 +451,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
                     cid: channelId
                 )
             }
-        return ChannelPayload.dummy(channel: .dummy(cid: channelId), messages: messages)
+        return ChannelStateResponseFields.dummy(channel: .dummy(cid: channelId), messages: messages)
     }
 }
 

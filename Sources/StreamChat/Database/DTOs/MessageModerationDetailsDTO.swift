@@ -18,7 +18,7 @@ final class MessageModerationDetailsDTO: NSManagedObject {
 
 extension MessageModerationDetailsDTO {
     static func create(
-        from payload: MessageModerationDetailsPayload,
+        from payload: ModerationV2Response,
         isV1: Bool,
         context: NSManagedObjectContext
     ) -> MessageModerationDetailsDTO? {

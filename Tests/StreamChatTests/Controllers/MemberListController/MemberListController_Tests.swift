@@ -276,11 +276,11 @@ final class MemberListController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: query.cid)
 
         // Create 2 members, the first created more recently
-        nonisolated(unsafe) var member1: MemberPayload = .dummy(
+        nonisolated(unsafe) var member1: ChannelMemberResponse = .dummy(
             user: .dummy(userId: member1ID),
             createdAt: Date()
         )
-        nonisolated(unsafe) var member2: MemberPayload = .dummy(
+        nonisolated(unsafe) var member2: ChannelMemberResponse = .dummy(
             user: .dummy(userId: member2ID),
             createdAt: Date().addingTimeInterval(-10)
         )

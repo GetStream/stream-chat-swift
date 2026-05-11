@@ -22,7 +22,13 @@ class DraftMessagesRepository: @unchecked Sendable {
         query: DraftListQuery,
         completion: @escaping @Sendable (Result<DraftListResponse, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .drafts(query: query)) { [weak self] result in
+        let request = QueryDraftsRequest(
+            limit: query.pagination.pageSize,
+            sort: query.sorting.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+        )
+        apiClient.request(
+            endpoint: Endpoint<QueryDraftsResponse>.queryDrafts(queryDraftsRequest: request)
+        ) { [weak self] result in
             switch result {
             case .success(let response):
                 nonisolated(unsafe) var drafts: [DraftMessage] = []
@@ -62,7 +68,7 @@ class DraftMessagesRepository: @unchecked Sendable {
         extraData: [String: RawJSON],
         completion: (@Sendable (Result<DraftMessage, Error>) -> Void)?
     ) {
-        nonisolated(unsafe) var draftRequestBody: DraftMessageRequestBody?
+        nonisolated(unsafe) var draftRequestBody: CreateDraftRequest?
         database.write({ (session) in
             let newMessageDTO = try session.createNewDraftMessage(
                 in: cid,
@@ -85,7 +91,11 @@ class DraftMessagesRepository: @unchecked Sendable {
             }
 
             self.apiClient.request(
-                endpoint: .updateDraftMessage(channelId: cid, requestBody: requestBody)
+                endpoint: Endpoint<CreateDraftResponse>.createDraft(
+                    type: cid.type.rawValue,
+                    id: cid.id,
+                    createDraftRequest: requestBody
+                )
             ) { [weak self] result in
                 switch result {
                 case .success(let response):
@@ -118,7 +128,11 @@ class DraftMessagesRepository: @unchecked Sendable {
         completion: (@Sendable (Result<DraftMessage?, Error>) -> Void)?
     ) {
         apiClient.request(
-            endpoint: .getDraftMessage(channelId: cid, threadId: threadId)
+            endpoint: Endpoint<GetDraftResponse>.getDraft(
+                type: cid.type.rawValue,
+                id: cid.id,
+                parentId: threadId
+            )
         ) { [weak self] result in
             switch result {
             case .success(let response):
@@ -152,7 +166,11 @@ class DraftMessagesRepository: @unchecked Sendable {
             session.deleteDraftMessage(in: cid, threadId: threadId)
         }
         apiClient.request(
-            endpoint: .deleteDraftMessage(channelId: cid, threadId: threadId)
+            endpoint: Endpoint<Response>.deleteDraft(
+                type: cid.type.rawValue,
+                id: cid.id,
+                parentId: threadId
+            )
         ) { result in
             completion(result.error)
         }

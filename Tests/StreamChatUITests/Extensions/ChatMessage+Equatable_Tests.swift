@@ -209,9 +209,9 @@ final class ChatMessage_Equatable_Tests: XCTestCase {
         return messages
     }
 
-    private func userPayload(id: Int) -> UserPayload {
+    private func userPayload(id: Int) -> UserResponse {
         let userId = "user-\(id)"
-        return UserPayload(
+        return UserResponse(
             id: userId,
             name: userId,
             imageURL: nil,

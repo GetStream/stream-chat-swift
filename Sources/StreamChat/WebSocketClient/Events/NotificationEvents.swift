@@ -30,8 +30,8 @@ public final class NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadC
 }
 
 final class NotificationMessageNewEventDTO: EventDTO {
-    let channel: ChannelDetailPayload
-    let message: MessagePayload
+    let channel: ChannelResponse
+    let message: MessageResponse
     let unreadCount: UnreadCountPayload?
     let createdAt: Date
     let payload: EventPayload
@@ -79,7 +79,7 @@ public final class NotificationMarkAllReadEvent: Event, HasUnreadCount {
 }
 
 final class NotificationMarkAllReadEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let unreadCount: UnreadCountPayload
     let createdAt: Date
     let payload: EventPayload
@@ -168,7 +168,7 @@ public final class NotificationMarkUnreadEvent: ChannelSpecificEvent {
 }
 
 final class NotificationMarkReadEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let cid: ChannelId
     let unreadCount: UnreadCountPayload
     let createdAt: Date
@@ -199,7 +199,7 @@ final class NotificationMarkReadEventDTO: EventDTO {
 }
 
 final class NotificationMarkUnreadEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let cid: ChannelId
     let createdAt: Date
     let firstUnreadMessageId: MessageId
@@ -253,7 +253,7 @@ public final class NotificationMutesUpdatedEvent: Event {
 }
 
 final class NotificationMutesUpdatedEventDTO: EventDTO {
-    let currentUser: CurrentUserPayload
+    let currentUser: OwnUserResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -299,10 +299,10 @@ public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnr
 }
 
 final class NotificationAddedToChannelEventDTO: EventDTO {
-    let channel: ChannelDetailPayload
+    let channel: ChannelResponse
     let unreadCount: UnreadCountPayload?
     // This `member` field is equal to the `membership` field in channel query
-    let member: MemberPayload
+    let member: ChannelMemberResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -354,9 +354,9 @@ public final class NotificationRemovedFromChannelEvent: ChannelSpecificEvent {
 
 final class NotificationRemovedFromChannelEventDTO: EventDTO {
     let cid: ChannelId
-    let user: UserPayload
+    let user: UserResponse
     // This `member` field is equal to the `membership` field in channel query
-    let member: MemberPayload
+    let member: ChannelMemberResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -398,7 +398,7 @@ public final class NotificationChannelMutesUpdatedEvent: Event {
 }
 
 final class NotificationChannelMutesUpdatedEventDTO: EventDTO {
-    let currentUser: CurrentUserPayload
+    let currentUser: OwnUserResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -441,10 +441,10 @@ public final class NotificationInvitedEvent: MemberEvent, ChannelSpecificEvent {
 }
 
 final class NotificationInvitedEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let cid: ChannelId
     // This `member` field is equal to the `membership` field in channel query
-    let member: MemberPayload
+    let member: ChannelMemberResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -497,10 +497,10 @@ public final class NotificationInviteAcceptedEvent: MemberEvent, ChannelSpecific
 }
 
 final class NotificationInviteAcceptedEventDTO: EventDTO {
-    let user: UserPayload
-    let channel: ChannelDetailPayload
+    let user: UserResponse
+    let channel: ChannelResponse
     // This `member` field is equal to the `membership` field in channel query
-    let member: MemberPayload
+    let member: ChannelMemberResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -554,10 +554,10 @@ public final class NotificationInviteRejectedEvent: MemberEvent, ChannelSpecific
 }
 
 final class NotificationInviteRejectedEventDTO: EventDTO {
-    let user: UserPayload
-    let channel: ChannelDetailPayload
+    let user: UserResponse
+    let channel: ChannelResponse
     // This `member` field is equal to the `membership` field in channel query
-    let member: MemberPayload
+    let member: ChannelMemberResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -605,7 +605,7 @@ public final class NotificationChannelDeletedEvent: ChannelSpecificEvent {
 
 final class NotificationChannelDeletedEventDTO: EventDTO {
     let cid: ChannelId
-    let channel: ChannelDetailPayload
+    let channel: ChannelResponse
     let createdAt: Date
     let payload: EventPayload
 

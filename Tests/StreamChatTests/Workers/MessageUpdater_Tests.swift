@@ -406,7 +406,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createMessage(
             id: messageId,
             authorId: currentUserId,
-            attachments: originalAttachmentTypes.map { MessageAttachmentPayload.dummy(type: $0) }
+            attachments: originalAttachmentTypes.map { Attachment.dummy(type: $0) }
         )
         let createdMessage = try XCTUnwrap(database.viewContext.message(id: messageId))
         let databaseAttachmentTypes = createdMessage.attachments.map(\.attachmentType)
@@ -448,7 +448,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.deleteMessage(messageId: messageId, hard: false)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(id: messageId, hard: false, deletedBy: nil, deleteForMe: nil)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -465,7 +465,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(id: messageId, hard: false, deletedBy: nil, deleteForMe: nil)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
 
         // Simulate API response with error
@@ -506,7 +506,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(id: messageId, hard: false, deletedBy: nil, deleteForMe: nil)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
 
         // Update database container to throw the error on write
@@ -795,7 +795,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.deleteMessage(messageId: messageId, hard: false, deleteForMe: true)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: true)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(id: messageId, hard: false, deletedBy: nil, deleteForMe: true)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -809,7 +809,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.deleteMessage(messageId: messageId, hard: false, deleteForMe: false)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: false)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(id: messageId, hard: false, deletedBy: nil, deleteForMe: false)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -823,7 +823,7 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.deleteMessage(messageId: messageId, hard: false, deleteForMe: nil)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(messageId: messageId, hard: false, deleteForMe: nil)
+        let expectedEndpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(id: messageId, hard: false, deletedBy: nil, deleteForMe: nil)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -988,7 +988,7 @@ final class MessageUpdater_Tests: XCTestCase {
     // MARK: Load replies
 
     func test_loadReplies_makesCorrectAPICall() {
-        let repliesPayload: MessageRepliesPayload = .init(messages: [
+        let repliesPayload: GetRepliesResponse = .init(messages: [
             .dummy(messageId: .unique, authorUserId: .unique)
         ])
         let messageId: MessageId = .unique
@@ -1005,14 +1005,20 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(paginationStateHandler.endCallCount, 0)
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<MessageRepliesPayload> = .loadReplies(
-            messageId: messageId,
-            pagination: pagination
+        let expectedEndpoint = Endpoint<GetRepliesResponse>.getReplies(
+            parentId: messageId,
+            limit: pagination.pageSize,
+            idGte: nil,
+            idGt: nil,
+            idLte: nil,
+            idLt: nil,
+            idAround: nil,
+            sort: nil
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
+        apiClient.test_simulateResponse(Result<GetRepliesResponse, Error>.success(repliesPayload))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -1030,14 +1036,14 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<GetRepliesResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
     func test_loadReplies_propagatesDatabaseError() throws {
-        let repliesPayload: MessageRepliesPayload = .init(messages: [
+        let repliesPayload: GetRepliesResponse = .init(messages: [
             .dummy(messageId: .unique, authorUserId: .unique)
         ])
         let cid = ChannelId.unique
@@ -1056,7 +1062,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
+        apiClient.test_simulateResponse(Result<GetRepliesResponse, Error>.success(repliesPayload))
 
         // Assert database error is propagated
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -1080,10 +1086,10 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with success
-        let repliesPayload: MessageRepliesPayload = .init(
+        let repliesPayload: GetRepliesResponse = .init(
             messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique) }
         )
-        apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
+        apiClient.test_simulateResponse(Result<GetRepliesResponse, Error>.success(repliesPayload))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -1097,7 +1103,7 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_loadReplies_shouldSetNewestReplyAt() throws {
         let pagination = MessagesPagination(pageSize: 3, parameter: .around(.unique))
         let expectedNewestReplyAt = Date.unique
-        let repliesPayload: MessageRepliesPayload = .init(
+        let repliesPayload: GetRepliesResponse = .init(
             messages: [
                 .dummy(),
                 .dummy(),
@@ -1112,7 +1118,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
     func test_loadReplies_whenNewestFetchedMessageIsNil_shouldSetNewestReplyAtToNil() throws {
         let pagination = MessagesPagination(pageSize: 3, parameter: nil)
-        let repliesPayload: MessageRepliesPayload = .init(
+        let repliesPayload: GetRepliesResponse = .init(
             messages: [
                 .dummy(),
                 .dummy(),
@@ -1148,9 +1154,10 @@ final class MessageUpdater_Tests: XCTestCase {
 
         messageUpdater.loadReactions(cid: .unique, messageId: messageId, pagination: pagination)
 
-        let expectedEndpoint: Endpoint<MessageReactionsPayload> = .loadReactions(
-            messageId: messageId,
-            pagination: pagination
+        let expectedEndpoint: Endpoint<GetReactionsResponse> = .getReactions(
+            id: messageId,
+            limit: pagination.pageSize,
+            offset: pagination.offset
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -1162,13 +1169,13 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<MessageReactionsPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<GetReactionsResponse, Error>.failure(error))
 
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
 
     func test_loadReactions_propagatesDatabaseError() throws {
-        let reactionsPayload: MessageReactionsPayload = .init(
+        let reactionsPayload: GetReactionsResponse = .init(
             duration: "",
             reactions: [
                 .dummy(messageId: .unique, user: .dummy(userId: .unique)),
@@ -1190,7 +1197,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<MessageReactionsPayload, Error>.success(reactionsPayload))
+        apiClient.test_simulateResponse(Result<GetReactionsResponse, Error>.success(reactionsPayload))
 
         // Assert database error is propagated
         AssertAsync.willBeEqual(completionCalledError as? TestError, testError)
@@ -1210,7 +1217,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Create message in the database
         try database.createMessage(id: messageId)
 
-        let reactionsPayload: MessageReactionsPayload = .init(
+        let reactionsPayload: GetReactionsResponse = .init(
             duration: "",
             reactions: [
                 .dummy(type: "like", messageId: messageId, user: .dummy(userId: currentUserId)),
@@ -1225,7 +1232,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<MessageReactionsPayload, Error>.success(reactionsPayload))
+        apiClient.test_simulateResponse(Result<GetReactionsResponse, Error>.success(reactionsPayload))
 
         AssertAsync.willBeTrue(completionCalled)
         XCTAssertNotNil(database.viewContext.reaction(messageId: messageId, userId: currentUserId, type: "like"))
@@ -1261,13 +1268,13 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason, extraData: extraData)
+        let flagEndpoint: Endpoint<FlagResponse> = .flagMessage(true, with: messageId, reason: reason, extraData: extraData)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Add it to DB as it is as expected after a successful getMessage call
         try database.writeSynchronously { session in
             try session.saveMessage(
-                payload: MessagePayload.dummy(messageId: messageId, authorUserId: currentUserId),
+                payload: MessageResponse.dummy(messageId: messageId, authorUserId: currentUserId),
                 for: cid,
                 syncOwnReactions: true,
                 cache: nil
@@ -1275,7 +1282,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate flag API response.
-        let flagMessagePayload = FlagMessagePayload(
+        let flagMessagePayload = FlagResponse(
             currentUser: .dummy(userId: currentUserId, role: .user),
             flaggedMessageId: messageId
         )
@@ -1303,7 +1310,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert unflag endpoint is called.
-        let unflagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(false, with: messageId)
+        let unflagEndpoint: Endpoint<FlagResponse> = .flagMessage(false, with: messageId)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(unflagEndpoint))
 
         // Simulate unflag API response.
@@ -1353,12 +1360,12 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason)
+        let flagEndpoint: Endpoint<FlagResponse> = .flagMessage(true, with: messageId, reason: reason)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Simulate flag API response with failure.
         let networkError = TestError()
-        apiClient.test_simulateResponse(Result<FlagMessagePayload, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<FlagResponse, Error>.failure(networkError))
 
         // Assert the flag database error is propagated.
         AssertAsync.willBeEqual(completionCalledError as? TestError, networkError)
@@ -1384,11 +1391,11 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason)
+        let flagEndpoint: Endpoint<FlagResponse> = .flagMessage(true, with: messageId, reason: reason)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Simulate flag API response with success.
-        let payload = FlagMessagePayload(
+        let payload = FlagResponse(
             currentUser: .dummy(userId: currentUserId, role: .user),
             flaggedMessageId: messageId
         )
@@ -1414,7 +1421,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert flag endpoint is called.
-        let flagEndpoint: Endpoint<FlagMessagePayload> = .flagMessage(true, with: messageId, reason: reason)
+        let flagEndpoint: Endpoint<FlagResponse> = .flagMessage(true, with: messageId, reason: reason)
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Delete the message from the database.
@@ -1425,7 +1432,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate flag API response with success.
-        let payload = FlagMessagePayload(
+        let payload = FlagResponse(
             currentUser: .dummy(userId: currentUserId, role: .user),
             flaggedMessageId: messageId
         )
@@ -1476,14 +1483,17 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert correct endpoint is called.
         XCTAssertEqual(
             request,
-            AnyEndpoint(.addReaction(
-                reactionType,
-                score: reactionScore,
-                enforceUnique: false,
-                extraData: reactionExtraData,
-                skipPush: false,
-                emojiCode: nil,
-                messageId: messageId
+            AnyEndpoint(Endpoint<SendReactionResponse>.sendReaction(
+                id: messageId,
+                sendReactionRequest: SendReactionRequest(
+                    enforceUnique: false,
+                    reaction: ReactionRequest(
+                        custom: nil,
+                        score: reactionScore,
+                        type: reactionType.rawValue
+                    ),
+                    skipPush: false
+                )
             ))
         )
     }
@@ -1512,7 +1522,9 @@ final class MessageUpdater_Tests: XCTestCase {
         apiClient.waitForRequest()
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<SendReactionResponse, Error>.success(
+            .init(duration: "", message: .dummy(messageId: messageId), reaction: .dummy(messageId: messageId, user: .dummy(userId: .unique)))
+        ))
     }
 
     func test_addReaction_retry() throws {
@@ -1546,7 +1558,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(reaction.localState, .sending)
 
         // Simulate API response with failure - this kind of error is not retried
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(TestError()))
+        apiClient.test_simulateResponse(Result<SendReactionResponse, Error>.failure(TestError()))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1592,7 +1604,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(reaction.localState, .sending)
         // Simulate API response with failure - this kind of error is not retried
         let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<SendReactionResponse, Error>.failure(networkError))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1639,7 +1651,7 @@ final class MessageUpdater_Tests: XCTestCase {
         XCTAssertEqual(reaction.localState, .sending)
         // Simulate API response with failure - this kind of error is not retried
         let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<SendReactionResponse, Error>.failure(networkError))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1673,7 +1685,10 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Assert correct endpoint is called.
         apiClient.waitForRequest()
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.deleteReaction(reactionType, messageId: messageId)))
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(Endpoint<DeleteReactionResponse>.deleteReaction(id: messageId, type: reactionType.rawValue, userId: nil))
+        )
     }
 
     func test_deleteReaction_propagatesSuccessfulResponse() throws {
@@ -1692,7 +1707,9 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate API response with success.
         apiClient.waitForRequest()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.success(
+            .init(duration: "", message: .dummy(messageId: messageId), reaction: .dummy(messageId: messageId, user: .dummy(userId: .unique)))
+        ))
     }
 
     func test_deleteReaction_propagatesError() throws {
@@ -1729,7 +1746,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure.
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.failure(error))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1780,7 +1797,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure.
         let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.failure(networkError))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1832,7 +1849,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure.
         let networkError = NSError(domain: "", code: NSURLErrorNotConnectedToInternet, userInfo: nil)
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(networkError))
+        apiClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.failure(networkError))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1887,7 +1904,7 @@ final class MessageUpdater_Tests: XCTestCase {
             message: .unique,
             statusCode: 400
         ))
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(clientError))
+        apiClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.failure(clientError))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1943,7 +1960,7 @@ final class MessageUpdater_Tests: XCTestCase {
             message: .unique,
             statusCode: 404
         ))
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(clientError))
+        apiClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.failure(clientError))
         apiClient.waitForRequest()
 
         try database.writeSynchronously { _ in
@@ -1977,7 +1994,9 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser(id: userId)
         try database.createMessage(id: messageId, authorId: userId)
         
-        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        apiClient.test_mockResponseResult(
+            Result<UpdateMessagePartialResponse, Error>.success(.init(duration: "", message: .dummy(messageId: messageId)))
+        )
 
         let expiration: MessagePinning = .expirationDate(.unique)
         let result = try waitFor {
@@ -1998,7 +2017,7 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createMessage(id: messageId, authorId: userId)
         
         let expectedError = TestError()
-        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(expectedError))
+        apiClient.test_mockResponseResult(Result<UpdateMessagePartialResponse, Error>.failure(expectedError))
 
         let completionResult = try waitFor {
             messageUpdater.pinMessage(messageId: messageId, pinning: .expirationDate(.unique), completion: $0)
@@ -2031,7 +2050,9 @@ final class MessageUpdater_Tests: XCTestCase {
         try database.createCurrentUser(id: userId)
         try database.createMessage(id: messageId, authorId: userId)
         
-        apiClient.test_mockResponseResult(.success(EmptyResponse()))
+        apiClient.test_mockResponseResult(
+            Result<UpdateMessagePartialResponse, Error>.success(.init(duration: "", message: .dummy(messageId: messageId)))
+        )
 
         let result = try waitFor {
             messageUpdater.unpinMessage(messageId: messageId, completion: $0)
@@ -2059,7 +2080,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
         
         let expectedError = TestError()
-        apiClient.test_mockResponseResult(Result<EmptyResponse, Error>.failure(expectedError))
+        apiClient.test_mockResponseResult(Result<UpdateMessagePartialResponse, Error>.failure(expectedError))
 
         let completionResult = try waitFor {
             messageUpdater.unpinMessage(messageId: messageId, completion: $0)
@@ -2634,10 +2655,9 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<MessageActionResponse> = .dispatchEphemeralMessageAction(
-            cid: cid,
-            messageId: messageId,
-            action: action
+        let endpoint = Endpoint<MessageActionResponse>.runMessageAction(
+            id: messageId,
+            messageActionRequest: MessageActionRequest(cid: cid, messageId: messageId, action: action)
         )
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
 
@@ -2697,10 +2717,9 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<MessageActionResponse> = .dispatchEphemeralMessageAction(
-            cid: cid,
-            messageId: messageId,
-            action: action
+        let endpoint = Endpoint<MessageActionResponse>.runMessageAction(
+            id: messageId,
+            messageActionRequest: MessageActionRequest(cid: cid, messageId: messageId, action: action)
         )
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
 
@@ -2839,10 +2858,9 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Assert endpoint is called.
-        let endpoint: Endpoint<MessageActionResponse> = .dispatchEphemeralMessageAction(
-            cid: cid,
-            messageId: messageId,
-            action: action
+        let endpoint = Endpoint<MessageActionResponse>.runMessageAction(
+            id: messageId,
+            messageActionRequest: MessageActionRequest(cid: cid, messageId: messageId, action: action)
         )
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
 
@@ -2874,7 +2892,11 @@ final class MessageUpdater_Tests: XCTestCase {
         messageUpdater.translate(messageId: messageId, to: language)
 
         // Assert correct endpoint is called.
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.translate(messageId: messageId, to: language)))
+        let expectedEndpoint = Endpoint<MessageActionResponse>.translateMessage(
+            id: messageId,
+            translateMessageRequest: TranslateMessageRequest(language: .init(rawValue: language.languageCode) ?? .unknown)
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
     func test_translate_propagatesSuccessfulResponse() throws {
@@ -2975,11 +2997,18 @@ final class MessageUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(EmptyResponse()))
+        apiClient.test_simulateResponse(.success(MarkReadResponse(duration: "")))
 
         wait(for: [exp], timeout: defaultTimeout)
 
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markThreadRead(cid: cid, threadId: threadId)))
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(Endpoint<MarkReadResponse>.markRead(
+                type: cid.type.rawValue,
+                id: cid.id,
+                markReadRequest: MarkReadRequest(threadId: threadId)
+            ))
+        )
     }
 
     func test_markThreadRead_whenFailure() throws {
@@ -2992,12 +3021,19 @@ final class MessageUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        let response = Result<EmptyResponse, Error>.failure(TestError())
+        let response = Result<MarkReadResponse, Error>.failure(TestError())
         apiClient.test_simulateResponse(response)
 
         wait(for: [exp], timeout: defaultTimeout)
 
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markThreadRead(cid: cid, threadId: threadId)))
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(Endpoint<MarkReadResponse>.markRead(
+                type: cid.type.rawValue,
+                id: cid.id,
+                markReadRequest: MarkReadRequest(threadId: threadId)
+            ))
+        )
     }
 
     // MARK: Mark unread
@@ -3012,11 +3048,18 @@ final class MessageUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(EmptyResponse()))
+        apiClient.test_simulateResponse(.success(Response(duration: "")))
 
         wait(for: [exp], timeout: defaultTimeout)
 
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markThreadUnread(cid: cid, threadId: threadId)))
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(Endpoint<Response>.markUnread(
+                type: cid.type.rawValue,
+                id: cid.id,
+                markUnreadRequest: MarkUnreadRequest(threadId: threadId)
+            ))
+        )
     }
 
     func test_markThreadUnread_whenFailure() throws {
@@ -3029,12 +3072,19 @@ final class MessageUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        let response = Result<EmptyResponse, Error>.failure(TestError())
+        let response = Result<Response, Error>.failure(TestError())
         apiClient.test_simulateResponse(response)
 
         wait(for: [exp], timeout: defaultTimeout)
 
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(.markThreadUnread(cid: cid, threadId: threadId)))
+        XCTAssertEqual(
+            apiClient.request_endpoint,
+            AnyEndpoint(Endpoint<Response>.markUnread(
+                type: cid.type.rawValue,
+                id: cid.id,
+                markUnreadRequest: MarkUnreadRequest(threadId: threadId)
+            ))
+        )
     }
 
     // MARK: updateThread
@@ -3045,14 +3095,14 @@ final class MessageUpdater_Tests: XCTestCase {
 
         messageUpdater.updateThread(
             for: threadId,
-            request: ThreadPartialUpdateRequest(set: .init(title: "test"))
+            request: UpdateThreadPartialRequest(set: ["title": .string("test")])
         ) { result in
             XCTAssertNil(result.error)
             XCTAssertEqual(result.value?.parentMessageId, threadId)
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(ThreadPartialUpdateResponse(thread: .dummy(parentMessageId: threadId))))
+        apiClient.test_simulateResponse(.success(UpdateThreadPartialResponse(duration: "", thread: .dummy(parentMessageId: threadId))))
 
         wait(for: [exp], timeout: defaultTimeout)
     }
@@ -3063,13 +3113,13 @@ final class MessageUpdater_Tests: XCTestCase {
 
         messageUpdater.updateThread(
             for: threadId,
-            request: ThreadPartialUpdateRequest(set: .init(title: "test"))
+            request: UpdateThreadPartialRequest(set: ["title": .string("test")])
         ) { result in
             XCTAssertNotNil(result.error)
             exp.fulfill()
         }
 
-        let response = Result<ThreadPartialUpdateResponse, Error>.failure(TestError())
+        let response = Result<UpdateThreadPartialResponse, Error>.failure(TestError())
         apiClient.test_simulateResponse(response)
 
         wait(for: [exp], timeout: defaultTimeout)
@@ -3088,7 +3138,7 @@ final class MessageUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(ThreadPayloadResponse(thread: .dummy(parentMessageId: threadId, title: "TEST"))))
+        apiClient.test_simulateResponse(.success(GetThreadResponse(duration: "", thread: .dummy(parentMessageId: threadId, title: "TEST"))))
 
         wait(for: [exp], timeout: defaultTimeout)
     }
@@ -3102,7 +3152,7 @@ final class MessageUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        let response = Result<ThreadPayloadResponse, Error>.failure(TestError())
+        let response = Result<GetThreadResponse, Error>.failure(TestError())
         apiClient.test_simulateResponse(response)
 
         wait(for: [exp], timeout: defaultTimeout)
@@ -3117,12 +3167,12 @@ final class MessageUpdater_Tests: XCTestCase {
         let attachments: [AnyAttachmentPayload] = [.mockImage]
         
         // Convert attachments to expected format
-        let expectedAttachmentPayloads: [MessageAttachmentPayload] = attachments.compactMap { attachment in
+        let expectedAttachmentPayloads: [Attachment] = attachments.compactMap { attachment in
             guard let payloadData = try? JSONEncoder.default.encode(attachment.payload),
                   let payloadRawJSON = try? JSONDecoder.default.decode(RawJSON.self, from: payloadData) else {
                 return nil
             }
-            return MessageAttachmentPayload(
+            return Attachment(
                 type: attachment.type,
                 payload: payloadRawJSON
             )
@@ -3146,13 +3196,15 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Assert correct endpoint is called
-        let expectedEndpoint: Endpoint<UpdateMessagePartialResponse> = .partialUpdateMessage(
-            messageId: messageId,
-            request: .init(
-                set: .init(
-                    text: text,
-                    extraData: extraData,
-                    attachments: expectedAttachmentPayloads
+        let expectedEndpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+            id: messageId,
+            updateMessagePartialRequest: UpdateMessagePartialRequest(
+                .init(
+                    set: .init(
+                        text: text,
+                        extraData: extraData,
+                        attachments: expectedAttachmentPayloads
+                    )
                 )
             )
         )
@@ -3209,7 +3261,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate successful API response
-        let messagePayload = MessagePayload.dummy(
+        let messagePayload = MessageResponse.dummy(
             messageId: messageId,
             authorUserId: currentUserId,
             text: text,
@@ -3254,7 +3306,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Prepare API response
-        let payload = SharedLocationPayload(
+        let payload = SharedLocationResponseData(
             channelId: cid.rawValue,
             messageId: messageId,
             userId: userId,
@@ -3356,7 +3408,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         let testError = TestError()
-        apiClient.test_mockResponseResult(Result<SharedLocationPayload, Error>.failure(testError))
+        apiClient.test_mockResponseResult(Result<SharedLocationResponseData, Error>.failure(testError))
 
         let result = try waitFor {
             messageUpdater.updateLiveLocation(
@@ -3390,7 +3442,7 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Prepare API response
-        let payload = SharedLocationPayload(
+        let payload = SharedLocationResponseData(
             channelId: cid.rawValue,
             messageId: messageId,
             userId: .unique,
@@ -3460,7 +3512,7 @@ final class MessageUpdater_Tests: XCTestCase {
             )
         )
         let testError = TestError()
-        apiClient.test_mockResponseResult(Result<SharedLocationPayload, Error>.failure(testError))
+        apiClient.test_mockResponseResult(Result<SharedLocationResponseData, Error>.failure(testError))
         let result = try waitFor {
             messageUpdater.stopLiveLocationSharing(messageId: messageId, completion: $0)
         }
@@ -3477,7 +3529,7 @@ final class MessageUpdater_Tests: XCTestCase {
 extension MessageUpdater_Tests {
     private func AssertLoadReplies(
         expectedNewestReplyAt: Date?,
-        for repliesPayload: MessageRepliesPayload,
+        for repliesPayload: GetRepliesResponse,
         with pagination: MessagesPagination,
         line: UInt = #line,
         file: StaticString = #filePath
@@ -3500,7 +3552,7 @@ extension MessageUpdater_Tests {
         messageUpdater.loadReplies(cid: cid, messageId: parentMessageId, pagination: pagination, paginationStateHandler: paginationStateHandler) { _ in
             exp.fulfill()
         }
-        apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
+        apiClient.test_simulateResponse(Result<GetRepliesResponse, Error>.success(repliesPayload))
         waitForExpectations(timeout: defaultTimeout)
 
         // THEN
@@ -3559,10 +3611,10 @@ extension MessageUpdater_Tests {
         }
 
         // Simulate API response with success
-        let repliesPayload: MessageRepliesPayload = .init(
+        let repliesPayload: GetRepliesResponse = .init(
             messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique) }
         )
-        apiClient.test_simulateResponse(Result<MessageRepliesPayload, Error>.success(repliesPayload))
+        apiClient.test_simulateResponse(Result<GetRepliesResponse, Error>.success(repliesPayload))
 
         waitForExpectations(timeout: defaultTimeout)
 

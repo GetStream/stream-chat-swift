@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension UserPayload {
+extension UserResponse {
     /// Returns a dummy user payload with the given `id` and `extraData`
     static func dummy(
         userId: UserId,
@@ -20,7 +20,7 @@ extension UserPayload {
         isBanned: Bool = false,
         updatedAt: Date = .unique,
         deactivatedAt: Date? = nil
-    ) -> UserPayload {
+    ) -> UserResponse {
         .init(
             id: userId,
             name: name,
@@ -41,7 +41,7 @@ extension UserPayload {
     }
 }
 
-extension CurrentUserPayload {
+extension OwnUserResponse {
     static func dummy(
         userId: UserId,
         name: String = .unique,
@@ -55,7 +55,7 @@ extension CurrentUserPayload {
         updatedAt: Date = .unique,
         deactivatedAt: Date? = nil,
         privacySettings: UserPrivacySettingsPayload? = nil
-    ) -> CurrentUserPayload {
+    ) -> OwnUserResponse {
         .init(
             id: userId,
             name: name,

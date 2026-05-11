@@ -226,15 +226,15 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
 
     // MARK: - Helper Methods
 
-    private func dummyPayload(with channelId: ChannelId) -> ChannelPayload {
-        ChannelPayload.dummy(channel: .dummy(cid: channelId))
+    private func dummyPayload(with channelId: ChannelId) -> ChannelStateResponseFields {
+        ChannelStateResponseFields.dummy(channel: .dummy(cid: channelId))
     }
 
     private func createMessageNewEvent(channelId: ChannelId, messageId: MessageId, authorUserId: UserId? = nil) throws -> MessageNewEventDTO {
         let userId = authorUserId ?? UserId.unique
-        let user = UserPayload.dummy(userId: userId)
-        let message = MessagePayload.dummy(messageId: messageId, authorUserId: user.id)
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        let user = UserResponse.dummy(userId: userId)
+        let message = MessageResponse.dummy(messageId: messageId, authorUserId: user.id)
+        let channel = ChannelResponse.dummy(cid: channelId)
         
         let eventPayload = EventPayload(
             eventType: .messageNew,
@@ -249,8 +249,8 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
     }
 
     private func createNotificationMarkReadEvent(channelId: ChannelId) throws -> NotificationMarkReadEventDTO {
-        let user = UserPayload.dummy(userId: .unique)
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        let user = UserResponse.dummy(userId: .unique)
+        let channel = ChannelResponse.dummy(cid: channelId)
         
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
@@ -270,8 +270,8 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         messageId: MessageId,
         deliveredAt: Date
     ) throws -> MessageDeliveredEventDTO {
-        let user = UserPayload.dummy(userId: userId)
-        let channel = ChannelDetailPayload.dummy(cid: channelId)
+        let user = UserResponse.dummy(userId: userId)
+        let channel = ChannelResponse.dummy(cid: channelId)
         
         let eventPayload = EventPayload(
             eventType: .messageDelivered,

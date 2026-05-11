@@ -42,15 +42,24 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
             let fileData = try? Data(contentsOf: uploadingState.localFileURL, options: .mappedIfSafe) else {
             return completion(.failure(ClientError.AttachmentUploading(id: attachment.id)))
         }
-        let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(with: attachment.id.cid, type: attachment.type)
-
-        uploadAttachment(
-            endpoint: endpoint,
-            fileData: fileData,
-            uploadingState: uploadingState,
-            progress: options.progress,
-            completion: completion
-        )
+        let cid = attachment.id.cid
+        if attachment.type == .image {
+            uploadAttachment(
+                endpoint: .uploadChannelImage(type: cid.type.rawValue, id: cid.id, uploadChannelRequest: .init()),
+                fileData: fileData,
+                uploadingState: uploadingState,
+                progress: options.progress,
+                completion: completion
+            )
+        } else {
+            uploadAttachment(
+                endpoint: .uploadChannelFile(type: cid.type.rawValue, id: cid.id, uploadChannelFileRequest: .init()),
+                fileData: fileData,
+                uploadingState: uploadingState,
+                progress: options.progress,
+                completion: completion
+            )
+        }
     }
 
     func uploadAttachment(
@@ -75,7 +84,32 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
         }
 
         let isImage = uploadingState.file.type.isImage
-        let endpoint = Endpoint<FileUploadPayload>.uploadAttachment(type: isImage ? .image : .file)
+        let endpoint: Endpoint<UploadChannelResponse>
+        if isImage {
+            let uploadEndpoint = Endpoint<ImageUploadResponse>.uploadImage(
+                imageUploadRequest: .init()
+            )
+            endpoint = Endpoint(
+                path: uploadEndpoint.path,
+                method: uploadEndpoint.method,
+                queryItems: uploadEndpoint.queryItems,
+                requiresConnectionId: uploadEndpoint.requiresConnectionId,
+                requiresToken: uploadEndpoint.requiresToken,
+                body: uploadEndpoint.body
+            )
+        } else {
+            let uploadEndpoint = Endpoint<FileUploadResponse>.uploadFile(
+                fileUploadRequest: .init()
+            )
+            endpoint = Endpoint(
+                path: uploadEndpoint.path,
+                method: uploadEndpoint.method,
+                queryItems: uploadEndpoint.queryItems,
+                requiresConnectionId: uploadEndpoint.requiresConnectionId,
+                requiresToken: uploadEndpoint.requiresToken,
+                body: uploadEndpoint.body
+            )
+        }
 
         uploadAttachment(
             endpoint: endpoint,
@@ -92,11 +126,18 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
         completion: @escaping @Sendable (Error?) -> Void
     ) {
         let isImage = AttachmentFileType(ext: remoteUrl.pathExtension).isImage
-        let endpoint = Endpoint<EmptyResponse>
-            .deleteAttachment(
-                url: remoteUrl,
-                type: isImage ? .image : .file
-            )
+        let urlString = remoteUrl.absoluteString
+        let deleteEndpoint: Endpoint<Response> = isImage
+            ? Endpoint<Response>.deleteImage(url: urlString)
+            : Endpoint<Response>.deleteFile(url: urlString)
+        let endpoint = Endpoint<EmptyResponse>(
+            path: deleteEndpoint.path,
+            method: deleteEndpoint.method,
+            queryItems: deleteEndpoint.queryItems,
+            requiresConnectionId: deleteEndpoint.requiresConnectionId,
+            requiresToken: deleteEndpoint.requiresToken,
+            body: deleteEndpoint.body
+        )
 
         encoder.encodeRequest(for: endpoint) { [weak self] (requestResult) in
             var urlRequest: URLRequest
@@ -155,7 +196,7 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
 
             let task = self.session.dataTask(with: urlRequest) { [decoder = self.decoder] (data, response, error) in
                 do {
-                    let response: FileUploadPayload = try decoder.decodeRequestResponse(
+                    let response: UploadChannelResponse = try decoder.decodeRequestResponse(
                         data: data,
                         response: response,
                         error: error

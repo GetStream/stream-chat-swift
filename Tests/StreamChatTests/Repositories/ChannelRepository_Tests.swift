@@ -31,12 +31,12 @@ final class ChannelRepository_Tests: XCTestCase {
     func test_getChannel_storeFalse_successfulResponse() throws {
         let cid = ChannelId.unique
         let query = ChannelQuery(cid: cid)
-        let channelPayload = ChannelPayload.dummy(channel: .dummy(cid: cid))
+        let channelPayload = ChannelStateResponseFields.dummy(channel: .dummy(cid: cid))
         apiClient.test_mockResponseResult(.success(channelPayload.asChannelStateResponse))
         let result = try waitFor { done in
             repository.getChannel(for: query, store: false, completion: done)
         }
-        let expectedEndpoint = Endpoint<ChannelStateResponse>.createChannel(query: query)
+        let expectedEndpoint = Endpoint<ChannelStateResponse>.channelQuery(query, requiresConnectionId: true)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
         XCTAssertEqual(1, database.writeSessionCounter, "Write is called, but rolled back")
         
@@ -55,7 +55,7 @@ final class ChannelRepository_Tests: XCTestCase {
         let result = try waitFor { done in
             repository.getChannel(for: query, store: false, completion: done)
         }
-        let expectedEndpoint = Endpoint<ChannelStateResponse>.createChannel(query: query)
+        let expectedEndpoint = Endpoint<ChannelStateResponse>.channelQuery(query, requiresConnectionId: true)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
         XCTAssertEqual(0, database.writeSessionCounter)
         
@@ -76,10 +76,14 @@ final class ChannelRepository_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<MarkReadResponse, Error>.success(.init(duration: "")))
         waitForExpectations(timeout: defaultTimeout)
 
-        let referenceEndpoint = Endpoint<EmptyResponse>.markRead(cid: cid)
+        let referenceEndpoint = Endpoint<MarkReadResponse>.markRead(
+            type: cid.type.rawValue,
+            id: cid.id,
+            markReadRequest: MarkReadRequest()
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
         XCTAssertEqual(database.writeSessionCounter, 1)
         XCTAssertNil(receivedError)
@@ -97,11 +101,15 @@ final class ChannelRepository_Tests: XCTestCase {
         }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<MarkReadResponse, Error>.failure(error))
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let referenceEndpoint = Endpoint<EmptyResponse>.markRead(cid: cid)
+        let referenceEndpoint = Endpoint<MarkReadResponse>.markRead(
+            type: cid.type.rawValue,
+            id: cid.id,
+            markReadRequest: MarkReadRequest()
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
         XCTAssertEqual(database.writeSessionCounter, 0)
         XCTAssertEqual(receivedError, error)
@@ -127,10 +135,14 @@ final class ChannelRepository_Tests: XCTestCase {
             expectation.fulfill()
         }
 
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<Response, Error>.success(.init(duration: "")))
         waitForExpectations(timeout: defaultTimeout)
 
-        let referenceEndpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, payload: .init(criteria: .messageId(messageId), userId: userId))
+        let referenceEndpoint = Endpoint<Response>.markUnread(
+            type: cid.type.rawValue,
+            id: cid.id,
+            markUnreadRequest: MarkUnreadRequest(criteria: .messageId(messageId), userId: userId)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
         XCTAssertEqual(database.writeSessionCounter, 1)
         XCTAssertNil(receivedError)
@@ -149,11 +161,15 @@ final class ChannelRepository_Tests: XCTestCase {
         }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<Response, Error>.failure(error))
 
         waitForExpectations(timeout: defaultTimeout)
 
-        let referenceEndpoint = Endpoint<EmptyResponse>.markUnread(cid: cid, payload: .init(criteria: .messageId(messageId), userId: userId))
+        let referenceEndpoint = Endpoint<Response>.markUnread(
+            type: cid.type.rawValue,
+            id: cid.id,
+            markUnreadRequest: MarkUnreadRequest(criteria: .messageId(messageId), userId: userId)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
         XCTAssertEqual(database.writeSessionCounter, 0)
         XCTAssertEqual(receivedError, error)

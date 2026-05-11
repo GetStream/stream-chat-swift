@@ -4,117 +4,8 @@
 
 import Foundation
 
-// Typealiases for reducing changes when switching to OpenAPI generated models
-typealias AppSettingsPayload = GetApplicationResponse
-typealias AttachmentActionRequestBody = MessageActionRequest
-typealias CastPollVoteRequestBody = CastPollVoteRequest
-typealias ChannelDeliveredRequestPayload = MarkDeliveredRequest
-typealias ChannelDetailPayload = ChannelResponse
-typealias ChannelEditDetailPayload = ChannelInput
-typealias ChannelListPayload = QueryChannelsResponse
-typealias ChannelMemberBanRequestPayload = BanRequest
-typealias ChannelMemberListPayload = MembersResponse
-typealias ChannelPayload = ChannelStateResponseFields
-typealias ChannelTruncateRequestPayload = TruncateChannelRequest
-typealias ChannelReadPayload = ReadStateResponse
-typealias ChannelUnreadByTypePayload = UnreadCountsChannelType
-typealias CreatePollOptionRequestBody = CreatePollOptionRequest
-typealias CreatePollRequestBody = CreatePollRequest
-typealias CurrentUserPayload = OwnUserResponse
-typealias CurrentUserChannelUnreadPayload = UnreadCountsChannel
-typealias CurrentUserThreadUnreadPayload = UnreadCountsThread
-typealias CurrentUserUpdateResponse = UpdateUsersResponse
-typealias CurrentUserUnreadsPayload = WrappedUnreadCountsResponse
-typealias CustomEventRequestBody = SendEventRequest
-typealias DeliveredMessagePayload = DeliveredMessagePayloadOpenAPI
-typealias DeviceListPayload = ListDevicesResponse
-typealias DevicePayload = DeviceResponse
-typealias DraftListPayloadResponse = QueryDraftsResponse
-typealias DraftMessagePayload = DraftPayloadResponseOpenAPI
-typealias DraftMessageRequestBody = CreateDraftRequest
-typealias DraftPayload = DraftResponse
-typealias DraftPayloadResponse = GetDraftResponse
-typealias FileUploadPayload = UploadChannelResponse
-typealias FlagMessagePayload = FlagResponse
-typealias FlagRequestBody = FlagRequest
-typealias FlagUserPayload = FlagResponse
-typealias GuestUserTokenPayload = CreateGuestResponse
-typealias GuestUserTokenRequestPayload = UserRequest
-typealias ActiveLiveLocationsResponsePayload = SharedLocationsResponse
-typealias LiveLocationUpdateRequestPayload = UpdateLiveLocationRequest
-typealias MarkUnreadPayload = MarkUnreadRequest
-typealias MessageAttachmentPayload = Attachment
-typealias MessagePayload = MessageResponse
-typealias MessageReactionsPayload = GetReactionsResponse
-typealias MessageReactionGroupPayload = ReactionGroupResponse
-typealias MessageReactionPayload = ReactionResponse
-typealias MessageReactionRequestPayload = SendReactionRequest
-typealias MessageRequestBody = MessageRequest
-typealias MessageModerationDetailsPayload = ModerationV2Response
-typealias MessageTranslationsPayload = [String: String]
-typealias MemberContainerPayload = ChannelMemberResponse
-typealias MemberInvitePayload = ChannelMemberResponse
-typealias MemberPayload = ChannelMemberResponse
-typealias MemberRolePayload = ChannelMemberResponse
-typealias MemberUpdatePayload = UpdateMemberPartialRequest
-typealias MutedChannelPayload = ChannelMute
-typealias MutedChannelPayloadResponse = MuteChannelResponse
-typealias MutedUserPayload = UserMuteResponse
-typealias MutedUsersResponse = MuteResponse
-typealias MissingEventsRequestBody = SyncRequest
-typealias NewLocationRequestPayload = SharedLocationOpenAPI
-typealias PollOptionPayload = PollOptionResponseData
-typealias PollOptionRequestBody = PollOptionInput
-typealias PollOptionResponse = PollOptionResponseOpenAPI
-typealias PollPayload = PollResponseData
-typealias PollPayloadResponse = PollResponse
-typealias PollsListPayloadResponse = QueryPollsResponse
-typealias PollVoteListResponse = PollVotesResponse
-typealias PollVoteOptionRequestBody = PollOptionRequest
-typealias PollVotePayload = PollVoteResponseData
-typealias PollVotePayloadResponse = PollVoteResponse
-typealias PushPreferencePayload = PushPreferencesResponse
-typealias PushPreferenceRequestPayload = PushPreferenceInput
-typealias PushPreferencesPayloadResponse = UpsertPushPreferencesResponse
-typealias QueryPollsRequestBody = QueryPollsRequest
-typealias QueryPollVotesRequestBody = QueryPollVotesRequest
-typealias ReactionRequestPayload = ReactionRequest
-typealias ReminderPayload = ReminderResponseData
-typealias ReminderRequestBody = CreateReminderRequest
-typealias ReminderResponsePayload = UpdateReminderResponse
-typealias RemindersQueryPayload = QueryRemindersResponse
-typealias SortParamRequest = SortParamRequestOpenAPI
-typealias SharedLocationPayload = SharedLocationResponseData
-typealias StopLiveLocationRequestPayload = UpdateLiveLocationRequest
-typealias ThreadDetailsPayload = ThreadResponse
-typealias ThreadListPayload = QueryThreadsResponse
-typealias ThreadParticipantPayload = ThreadParticipantOpenAPI
-typealias ThreadPartialPayload = ThreadResponse
-typealias ThreadPayload = ThreadStateResponse
-typealias ThreadReadPayload = ReadStateResponse
-typealias UpdatePollOptionRequest = UpdatePollOptionRequestOpenAPI
-typealias UpdatePollPartialRequestBody = UpdatePollPartialRequest
-typealias UpdatePollRequestBody = UpdatePollRequest
-typealias UserListPayload = QueryUsersResponse
-typealias UserPayload = UserResponse
-typealias UserPushPreferencesPayload = [String: PushPreferencePayload?]
-typealias UserRequestBody = UserRequest
-typealias UserUpdateRequestBody = UpdateUserPartialRequest
-typealias VoteDataRequestBody = VoteData
-typealias ChannelPushPreferencesPayload = [String: [String: ChannelPushPreferencesResponse]]
-
-extension GetApplicationResponse {
-    typealias AppPayload = AppResponseFields
-    typealias UploadConfigPayload = FileUploadConfig
-}
-
-extension APIError: Error {}
-
-typealias PinnedMessagesPayload = MessageListPayload
-typealias MessageRepliesPayload = MessageListPayload
-
 struct MessageListPayload: Decodable {
-    let messages: [MessagePayload]
+    let messages: [MessageResponse]
 }
 
 enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
@@ -229,7 +120,7 @@ extension Dictionary where Key == String, Value == String {
     static func messageTranslations(
         translations: [TranslationLanguage: String]?,
         originalLanguage: String?
-    ) -> MessageTranslationsPayload? {
+    ) -> [String: String]? {
         guard translations != nil || originalLanguage != nil else { return nil }
 
         var i18n = originalLanguage.map { [MessageTranslationsPayloadKeys.originalLanguage: $0] } ?? [:]
@@ -266,27 +157,27 @@ extension DeviceResponse {
 }
 
 extension ListDevicesResponse {
-    convenience init(devices: [DevicePayload]) {
+    convenience init(devices: [DeviceResponse]) {
         self.init(devices: devices, duration: "")
     }
 }
 
 extension MembersResponse {
-    convenience init(members: [MemberPayload]) {
+    convenience init(members: [ChannelMemberResponse]) {
         self.init(duration: "", members: members)
     }
 }
 
 extension ChannelMemberResponse {
-    var member: MemberPayload? {
+    var member: ChannelMemberResponse? {
         self
     }
 
-    var invite: MemberInvitePayload? {
+    var invite: ChannelMemberResponse? {
         self
     }
 
-    var userPayload: UserPayload? {
+    var userPayload: UserResponse? {
         user?.asUserPayload
     }
 
@@ -319,9 +210,9 @@ extension ChannelMemberResponse {
     }
 
     convenience init(
-        member: MemberPayload?,
-        invite: MemberInvitePayload?,
-        memberRole: MemberRolePayload?
+        member: ChannelMemberResponse?,
+        invite: ChannelMemberResponse?,
+        memberRole: ChannelMemberResponse?
     ) {
         let payload = member ?? invite ?? memberRole
         self.init(
@@ -349,7 +240,7 @@ extension ChannelMemberResponse {
     }
 
     convenience init(
-        user: UserPayload?,
+        user: UserResponse?,
         userId: String,
         role: MemberRole?,
         createdAt: Date,
@@ -437,14 +328,14 @@ extension FlagResponse {
         itemId
     }
 
-    convenience init(currentUser: CurrentUserPayload, flaggedMessageId: MessageId) {
+    convenience init(currentUser: OwnUserResponse, flaggedMessageId: MessageId) {
         self.init(duration: "", itemId: flaggedMessageId)
     }
 }
 
 extension UserMuteResponse {
-    var mutedUser: UserPayload {
-        target?.asUserPayload ?? UserPayload(
+    var mutedUser: UserResponse {
+        target?.asUserPayload ?? UserResponse(
             id: "",
             name: nil,
             imageURL: nil,
@@ -470,13 +361,13 @@ extension UserMuteResponse {
         updatedAt
     }
 
-    convenience init(mutedUser: UserPayload, created: Date, updated: Date) {
+    convenience init(mutedUser: UserResponse, created: Date, updated: Date) {
         self.init(createdAt: created, target: mutedUser.asUserResponse, updatedAt: updated)
     }
 }
 
 extension MuteResponse {
-    var mutedUser: MutedUserPayload {
+    var mutedUser: UserMuteResponse {
         mutes?.first ?? UserMuteResponse(
             createdAt: Date(timeIntervalSince1970: 0),
             target: nil,
@@ -484,8 +375,8 @@ extension MuteResponse {
         )
     }
 
-    var currentUser: CurrentUserPayload {
-        ownUser?.asCurrentUserPayload ?? UserPayload(
+    var currentUser: OwnUserResponse {
+        ownUser?.asOwnUserResponse ?? UserResponse(
             id: "",
             name: nil,
             imageURL: nil,
@@ -500,17 +391,17 @@ extension MuteResponse {
             isBanned: false,
             language: nil,
             extraData: [:]
-        ).asCurrentUserPayload
+        ).asOwnUserResponse
     }
 }
 
 extension OwnUserResponse {
-    var asCurrentUserPayload: CurrentUserPayload {
+    var asOwnUserResponse: OwnUserResponse {
         self
     }
 
-    var asUserPayload: UserPayload {
-        UserPayload(
+    var asUserPayload: UserResponse {
+        UserResponse(
             id: id,
             name: name,
             imageURL: imageURL,
@@ -593,11 +484,11 @@ extension OwnUserResponse {
         custom
     }
 
-    var mutedUsers: [MutedUserPayload] {
+    var mutedUsers: [UserMuteResponse] {
         mutes
     }
 
-    var mutedChannels: [MutedChannelPayload] {
+    var mutedChannels: [ChannelMute] {
         channelMutes
     }
 
@@ -613,7 +504,7 @@ extension OwnUserResponse {
         Set(blockedUserIds ?? [])
     }
 
-    var pushPreference: PushPreferencePayload? {
+    var pushPreference: PushPreferencesResponse? {
         pushPreferences
     }
 
@@ -633,13 +524,13 @@ extension OwnUserResponse {
         teams: [TeamId] = [],
         language: String?,
         extraData: [String: RawJSON],
-        devices: [DevicePayload] = [],
-        mutedUsers: [MutedUserPayload] = [],
-        mutedChannels: [MutedChannelPayload] = [],
+        devices: [DeviceResponse] = [],
+        mutedUsers: [UserMuteResponse] = [],
+        mutedChannels: [ChannelMute] = [],
         unreadCount: UnreadCountPayload? = nil,
         privacySettings: UserPrivacySettingsPayload? = nil,
         blockedUserIds: Set<UserId> = [],
-        pushPreference: PushPreferencePayload?
+        pushPreference: PushPreferencesResponse?
     ) {
         self.init(
             avgResponseTime: nil,
@@ -693,11 +584,11 @@ extension MuteChannelResponse {
 }
 
 extension ChannelMute {
-    var channelPayload: ChannelDetailPayload? {
-        channel?.asChannelDetailPayload
+    var channelPayload: ChannelResponse? {
+        channel?.asChannelResponse
     }
 
-    var userPayload: UserPayload? {
+    var userPayload: UserResponse? {
         user?.asUserPayload
     }
 
@@ -706,8 +597,8 @@ extension ChannelMute {
     }
 
     convenience init(
-        mutedChannel: ChannelDetailPayload,
-        user: UserPayload,
+        mutedChannel: ChannelResponse,
+        user: UserResponse,
         createdAt: Date,
         updatedAt: Date,
         expiresAt: Date? = nil
@@ -722,8 +613,8 @@ extension ChannelMute {
     }
 
     convenience init(
-        mutedChannel: ChannelDetailPayload,
-        user: CurrentUserPayload,
+        mutedChannel: ChannelResponse,
+        user: OwnUserResponse,
         createdAt: Date,
         updatedAt: Date,
         expiresAt: Date? = nil
@@ -749,13 +640,13 @@ extension PrivacySettingsResponse {
 }
 
 extension QueryDraftsResponse {
-    convenience init(drafts: [DraftPayload], next: String? = nil) {
+    convenience init(drafts: [DraftResponse], next: String? = nil) {
         self.init(drafts: drafts, duration: "", next: next)
     }
 }
 
 extension GetDraftResponse {
-    convenience init(draft: DraftPayload) {
+    convenience init(draft: DraftResponse) {
         self.init(draft: draft, duration: "")
     }
 }
@@ -765,18 +656,18 @@ extension DraftResponse {
         try? ChannelId(cid: channelCid)
     }
 
-    var channelPayload: ChannelDetailPayload? {
-        channel?.asChannelDetailPayload
+    var channelPayload: ChannelResponse? {
+        channel?.asChannelResponse
     }
 
     convenience init(
         cid: ChannelId?,
-        channelPayload: ChannelDetailPayload?,
+        channelPayload: ChannelResponse?,
         createdAt: Date,
-        message: DraftMessagePayload,
-        quotedMessage: MessagePayload?,
+        message: DraftPayloadResponseOpenAPI,
+        quotedMessage: MessageResponse?,
         parentId: String?,
-        parentMessage: MessagePayload?
+        parentMessage: MessageResponse?
     ) {
         self.init(
             channel: channelPayload?.asChannelResponse,
@@ -807,7 +698,7 @@ extension DraftPayloadResponseOpenAPI {
         silent ?? false
     }
 
-    var mentionedUsersPayload: [UserPayload]? {
+    var mentionedUsersPayload: [UserResponse]? {
         mentionedUsers?.map(\.asUserPayload)
     }
 
@@ -815,7 +706,7 @@ extension DraftPayloadResponseOpenAPI {
         custom
     }
 
-    var attachmentPayloads: [MessageAttachmentPayload]? {
+    var attachmentPayloads: [Attachment]? {
         attachments
     }
 
@@ -825,9 +716,9 @@ extension DraftPayloadResponseOpenAPI {
         command: String?,
         args: String?,
         showReplyInChannel: Bool,
-        mentionedUsers: [UserPayload]?,
+        mentionedUsers: [UserResponse]?,
         extraData: [String: RawJSON],
-        attachments: [MessageAttachmentPayload]?,
+        attachments: [Attachment]?,
         isSilent: Bool
     ) {
         self.init(
@@ -852,7 +743,7 @@ extension CreateDraftRequest {
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: String?,
-        attachments: [MessageAttachmentPayload],
+        attachments: [Attachment],
         mentionedUserIds: [UserId],
         extraData: [String: RawJSON]
     ) {
@@ -887,7 +778,7 @@ extension ReadStateResponse {
     }
 
     convenience init(
-        user: UserPayload,
+        user: UserResponse,
         lastReadAt: Date,
         lastReadMessageId: MessageId? = nil,
         unreadMessagesCount: Int,
@@ -905,7 +796,7 @@ extension ReadStateResponse {
     }
 
     convenience init(
-        user: CurrentUserPayload,
+        user: OwnUserResponse,
         lastReadAt: Date,
         lastReadMessageId: MessageId? = nil,
         unreadMessagesCount: Int,
@@ -928,9 +819,9 @@ extension WrappedUnreadCountsResponse {
         totalUnreadCount: Int,
         totalUnreadThreadsCount: Int,
         totalUnreadCountByTeam: [TeamId: Int]?,
-        channels: [CurrentUserChannelUnreadPayload],
-        channelType: [ChannelUnreadByTypePayload],
-        threads: [CurrentUserThreadUnreadPayload]
+        channels: [UnreadCountsChannel],
+        channelType: [UnreadCountsChannelType],
+        threads: [UnreadCountsThread]
     ) {
         self.init(
             channelType: channelType,
@@ -1061,7 +952,7 @@ extension ModerationV2Response {
 }
 
 extension CreateGuestResponse {
-    convenience init(user: CurrentUserPayload, token: Token) {
+    convenience init(user: OwnUserResponse, token: Token) {
         let userResponse = user.asUserPayload.asUserResponse
         userResponse.id = token.userId
         self.init(accessToken: token.rawValue, duration: "", user: userResponse)
@@ -1077,7 +968,7 @@ extension CreateGuestResponse {
 }
 
 extension UserResponse {
-    var asUserPayload: UserPayload {
+    var asUserPayload: UserResponse {
         self
     }
 
@@ -1157,8 +1048,8 @@ extension UserResponse {
 }
 
 extension FullUserResponse {
-    var asUserPayload: UserPayload {
-        UserPayload(
+    var asUserPayload: UserResponse {
+        UserResponse(
             id: id,
             name: name,
             imageURL: image.flatMap(URL.init(string:)),
@@ -1178,8 +1069,8 @@ extension FullUserResponse {
         )
     }
 
-    var asCurrentUserPayload: CurrentUserPayload {
-        CurrentUserPayload(
+    var asOwnUserResponse: OwnUserResponse {
+        OwnUserResponse(
             id: id,
             name: name,
             imageURL: imageURL,
@@ -1243,11 +1134,11 @@ extension FullUserResponse {
 }
 
 extension QueryUsersResponse {
-    var userPayloads: [UserPayload] {
+    var userPayloads: [UserResponse] {
         users.map(\.asUserPayload)
     }
 
-    convenience init(users: [UserPayload]) {
+    convenience init(users: [UserResponse]) {
         self.init(duration: "", users: users.map(\.asFullUserResponse))
     }
 }
@@ -1332,19 +1223,19 @@ extension UpdateUserPartialRequest {
 }
 
 extension UpdateUsersResponse {
-    var user: CurrentUserPayload {
-        (try? validatedUser()) ?? UserPayload.empty.asCurrentUserPayload
+    var user: OwnUserResponse {
+        (try? validatedUser()) ?? UserResponse.empty.asOwnUserResponse
     }
 
-    convenience init(user: CurrentUserPayload) {
+    convenience init(user: OwnUserResponse) {
         self.init(duration: "", membershipDeletionTaskId: "", users: [user.id: user.asFullUserResponse])
     }
 
-    func validatedUser() throws -> CurrentUserPayload {
+    func validatedUser() throws -> OwnUserResponse {
         guard let user = users.first?.value else {
             throw ClientError.Unexpected("Missing updated user.")
         }
-        return user.asCurrentUserPayload
+        return user.asOwnUserResponse
     }
 }
 
@@ -1355,7 +1246,7 @@ private extension Encodable {
     }
 }
 
-extension UserPayload {
+extension UserResponse {
     var asFullUserResponse: FullUserResponse {
         FullUserResponse(
             avgResponseTime: avgResponseTime,
@@ -1388,7 +1279,7 @@ extension UserPayload {
 }
 
 extension ChannelResponse {
-    // Compatibility shims for callers written against the legacy ChannelDetailPayload class.
+    // Compatibility shims for callers written against the legacy channel detail payload class.
     var name: String? { custom["name"]?.stringValue }
     var imageURL: URL? { custom["image"]?.stringValue.flatMap(URL.init(string:)) }
     var extraData: [String: RawJSON] {
@@ -1404,15 +1295,14 @@ extension ChannelResponse {
     var isBlocked: Bool? { blocked }
     var isHidden: Bool? { hidden }
     var cooldownDuration: Int { cooldown ?? 0 }
-    var invitedMembers: [MemberPayload] { [] }
+    var invitedMembers: [ChannelMemberResponse] { [] }
     var channelId: ChannelId? { try? ChannelId(cid: cid) }
-    var asChannelDetailPayload: ChannelDetailPayload { self }
     var asChannelResponse: ChannelResponse { self }
 }
 
 extension ChannelStateResponseFields {
-    // Compatibility shims for the legacy ChannelPayload struct.
-    var channelReads: [ChannelReadPayload] { read ?? [] }
+    // Compatibility shims for the legacy ChannelStateResponseFields struct.
+    var channelReads: [ReadStateResponse] { read ?? [] }
     var newestMessage: MessageResponse? {
         guard let first = messages.first, let last = messages.last else { return nil }
         return first.createdAt > last.createdAt ? first : last
@@ -1420,7 +1310,7 @@ extension ChannelStateResponseFields {
 }
 
 extension ChannelStateResponse {
-    var asChannelPayload: ChannelStateResponseFields {
+    var asChannelStateResponseFields: ChannelStateResponseFields {
         ChannelStateResponseFields(
             activeLiveLocations: activeLiveLocations,
             channel: channel,
@@ -1538,10 +1428,10 @@ extension Command {
 }
 
 extension MessageResponse {
-    var asMessagePayload: MessagePayload { self }
+    var asMessagePayload: MessageResponse { self }
     var asMessageResponse: MessageResponse { self }
 
-    // Compatibility shims for callers written against the legacy MessagePayload class.
+    // Compatibility shims for callers written against the legacy MessageResponse class.
     var extraData: [String: RawJSON] {
         get { custom }
         set { custom = newValue }
@@ -1553,7 +1443,7 @@ extension MessageResponse {
     var args: String? { nil }
     var location: SharedLocationResponseData? { sharedLocation }
     var moderationDetails: ModerationV2Response? { nil }
-    var channel: ChannelDetailPayload? { nil }
+    var channel: ChannelResponse? { nil }
     var translations: [TranslationLanguage: String]? { i18n?.translated }
     var originalLanguage: String? { i18n?.originalLanguage }
     var campaignId: String? {
@@ -1840,8 +1730,8 @@ extension ReminderResponseData {
     convenience init(
         channelCid: ChannelId,
         messageId: MessageId,
-        message: MessagePayload? = nil,
-        channel: ChannelDetailPayload? = nil,
+        message: MessageResponse? = nil,
+        channel: ChannelResponse? = nil,
         remindAt: Date?,
         createdAt: Date,
         updatedAt: Date
@@ -1858,13 +1748,13 @@ extension ReminderResponseData {
 }
 
 extension UpdateReminderResponse {
-    convenience init(reminder: ReminderPayload) {
+    convenience init(reminder: ReminderResponseData) {
         self.init(duration: "", reminder: reminder)
     }
 }
 
 extension QueryRemindersResponse {
-    convenience init(reminders: [ReminderPayload], next: String?) {
+    convenience init(reminders: [ReminderResponseData], next: String?) {
         self.init(duration: "", next: next, reminders: reminders)
     }
 }
@@ -1895,11 +1785,11 @@ extension UpdateLiveLocationRequest {
 }
 
 extension SharedLocationsResponse {
-    var locations: [SharedLocationPayload] {
+    var locations: [SharedLocationResponseData] {
         activeLiveLocations
     }
 
-    convenience init(locations: [SharedLocationPayload]) {
+    convenience init(locations: [SharedLocationResponseData]) {
         self.init(activeLiveLocations: locations, duration: "")
     }
 }
@@ -1917,16 +1807,16 @@ extension PollResponseData {
         name: String,
         updatedAt: Date,
         voteCount: Int,
-        latestAnswers: [PollVotePayload?]?,
-        options: [PollOptionPayload?],
-        ownVotes: [PollVotePayload?],
+        latestAnswers: [PollVoteResponseData?]?,
+        options: [PollOptionResponseData?],
+        ownVotes: [PollVoteResponseData?],
         custom: [String: RawJSON],
-        latestVotesByOption: [String: [PollVotePayload]]?,
+        latestVotesByOption: [String: [PollVoteResponseData]]?,
         voteCountsByOption: [String: Int],
         isClosed: Bool? = nil,
         maxVotesAllowed: Int? = nil,
         votingVisibility: String? = nil,
-        createdBy: UserPayload? = nil
+        createdBy: UserResponse? = nil
     ) {
         self.init(
             allowAnswers: allowAnswers,
@@ -1974,7 +1864,7 @@ extension PollVoteResponseData {
         answerText: String? = nil,
         isAnswer: Bool? = false,
         userId: String? = nil,
-        user: UserPayload? = nil
+        user: UserResponse? = nil
     ) {
         self.init(
             answerText: answerText,
@@ -2025,13 +1915,13 @@ extension ChannelPushPreferencesResponse {
 }
 
 extension UpsertPushPreferencesResponse {
-    var channelPreferences: ChannelPushPreferencesPayload {
+    var channelPreferences: [String: [String: ChannelPushPreferencesResponse]] {
         userChannelPreferences.mapValues { $0.compactMapValues { $0 } }
     }
 
     convenience init(
-        userPreferences: UserPushPreferencesPayload,
-        channelPreferences: ChannelPushPreferencesPayload
+        userPreferences: [String: PushPreferencesResponse?],
+        channelPreferences: [String: [String: ChannelPushPreferencesResponse]]
     ) {
         self.init(
             duration: "",
@@ -2041,7 +1931,7 @@ extension UpsertPushPreferencesResponse {
     }
 }
 
-extension UserPushPreferencesPayload {
+extension [String: PushPreferencesResponse?] {
     func asModel() -> [PushPreference] {
         values.compactMap { $0?.asModel() }
     }
@@ -2053,7 +1943,7 @@ extension [String: PushPreferencesResponse] {
     }
 }
 
-extension ChannelPushPreferencesPayload {
+extension [String: [String: ChannelPushPreferencesResponse]] {
     func asModel() -> [ChannelId: PushPreference] {
         .init(uniqueKeysWithValues: values
             .flatMap { $0 }
@@ -2065,19 +1955,19 @@ extension ChannelPushPreferencesPayload {
 }
 
 extension QueryPollsResponse {
-    convenience init(duration: String, polls: [PollPayload], next: String? = nil, prev: String? = nil) {
+    convenience init(duration: String, polls: [PollResponseData], next: String? = nil, prev: String? = nil) {
         self.init(duration: duration, next: next, polls: polls, prev: prev)
     }
 }
 
 extension PollVoteResponse {
-    convenience init(duration: String, vote: PollVotePayload? = nil) {
+    convenience init(duration: String, vote: PollVoteResponseData? = nil) {
         self.init(duration: duration, poll: nil, vote: vote)
     }
 }
 
 extension PollVotesResponse {
-    convenience init(duration: String, votes: [PollVotePayload?], next: String? = nil, prev: String? = nil) {
+    convenience init(duration: String, votes: [PollVoteResponseData?], next: String? = nil, prev: String? = nil) {
         self.init(duration: duration, next: next, prev: prev, votes: votes.compactMap { $0 })
     }
 }
@@ -2085,6 +1975,169 @@ extension PollVotesResponse {
 extension MessageActionRequest {
     convenience init(cid: ChannelId, messageId: MessageId, action: AttachmentAction) {
         self.init(formData: [action.name: action.value])
+    }
+}
+
+extension GetRepliesResponse {
+    convenience init(messages: [MessageResponse]) {
+        self.init(duration: "", messages: messages)
+    }
+}
+
+private func openAPIModel<Model: Decodable, Value: Encodable>(from value: Value, as type: Model.Type = Model.self) -> Model? {
+    (try? JSONEncoder.stream.encode(value))
+        .flatMap { try? JSONDecoder.stream.decode(Model.self, from: $0) }
+}
+
+private func rawJSONDictionary<Value: Encodable>(from value: Value) -> [String: RawJSON]? {
+    openAPIModel(from: value, as: [String: RawJSON].self)
+}
+
+private extension RawJSON {
+    var stringValue: String? {
+        if case let .string(value) = self { return value }
+        return nil
+    }
+
+    var intValue: Int? {
+        if case let .number(value) = self { return Int(value) }
+        return nil
+    }
+}
+
+extension ChannelGetOrCreateRequest {
+    convenience init(query: ChannelQuery) {
+        if let request = openAPIModel(from: query, as: ChannelGetOrCreateRequest.self) {
+            self.init(
+                data: request.data,
+                hideForCreator: request.hideForCreator,
+                members: request.members,
+                messages: request.messages,
+                presence: request.presence,
+                state: request.state,
+                threadUnreadCounts: request.threadUnreadCounts,
+                watch: request.watch,
+                watchers: request.watchers
+            )
+        } else {
+            self.init(
+                data: query.channelPayload,
+                presence: query.options.contains(.presence) ? true : nil,
+                state: query.options.contains(.state) ? true : nil,
+                watch: query.options.contains(.watch) ? true : nil
+            )
+        }
+    }
+}
+
+extension QueryMembersPayload {
+    convenience init(query: ChannelMemberListQuery) {
+        let sort = query.sort.map {
+            SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey)
+        }
+        self.init(
+            filterConditions: query.filter?.toRawJSONDictionary() ?? [:],
+            id: query.cid.id,
+            limit: query.pagination.pageSize,
+            offset: query.pagination.offset == 0 ? nil : query.pagination.offset,
+            sort: sort.isEmpty ? nil : sort,
+            type: query.cid.type.rawValue
+        )
+    }
+}
+
+extension UpdateChannelPartialRequest {
+    convenience init(channelInput: ChannelInput, unsetProperties: [String]) {
+        self.init(set: rawJSONDictionary(from: channelInput), unset: unsetProperties)
+    }
+}
+
+extension ChannelInputRequest {
+    convenience init(channelInput: ChannelInput) {
+        if let request = openAPIModel(from: channelInput, as: ChannelInputRequest.self) {
+            self.init(
+                autoTranslationEnabled: request.autoTranslationEnabled,
+                autoTranslationLanguage: request.autoTranslationLanguage,
+                configOverrides: request.configOverrides,
+                createdBy: request.createdBy,
+                custom: request.custom,
+                disabled: request.disabled,
+                frozen: request.frozen,
+                invites: request.invites,
+                members: request.members,
+                team: request.team
+            )
+        } else {
+            self.init(custom: rawJSONDictionary(from: channelInput))
+        }
+    }
+}
+
+extension ChannelMemberRequest {
+    convenience init(memberInfo: MemberInfoRequest) {
+        self.init(custom: memberInfo.extraData, userId: memberInfo.userId)
+    }
+}
+
+extension UpdateMessagePartialRequest {
+    convenience init(_ request: MessagePartialUpdateRequest) {
+        self.init(
+            set: request.set.flatMap { rawJSONDictionary(from: $0) },
+            skipEnrichUrl: request.skipEnrichUrl,
+            unset: request.unset
+        )
+    }
+}
+
+extension SearchPayload {
+    convenience init(query: MessageSearchQuery) {
+        let sort = query.sort.map {
+            SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey)
+        }
+        self.init(
+            filterConditions: query.channelFilter.toRawJSONDictionary(),
+            limit: query.pagination?.pageSize,
+            messageFilterConditions: query.messageFilter.toRawJSONDictionary(),
+            next: query.pagination?.cursor,
+            offset: query.pagination.flatMap { $0.cursor == nil && $0.offset != 0 ? $0.offset : nil },
+            sort: sort.isEmpty ? nil : sort
+        )
+    }
+}
+
+private extension ChannelMemberListSortingKey {
+    var remoteKey: String {
+        switch self {
+        case .channelRole:
+            return "channel_role"
+        case .createdAt:
+            return "created_at"
+        case .name:
+            return "name"
+        case .userId:
+            return "user_id"
+        }
+    }
+}
+
+private extension MessageSearchSortingKey {
+    var remoteKey: String {
+        switch self {
+        case .createdAt:
+            return "created_at"
+        case .id:
+            return "id"
+        case .relevance:
+            return "relevance"
+        case .updatedAt:
+            return "updated_at"
+        }
+    }
+}
+
+extension CreateDeviceRequest.CreateDeviceRequestPushProvider {
+    init(pushProvider: PushProvider) {
+        self = Self(rawValue: pushProvider.rawValue) ?? .unknown
     }
 }
 
@@ -2112,7 +2165,7 @@ extension SendEventRequest {
 }
 
 extension SendReactionRequest {
-    convenience init(enforceUnique: Bool, skipPush: Bool, reaction: ReactionRequestPayload) {
+    convenience init(enforceUnique: Bool, skipPush: Bool, reaction: ReactionRequest) {
         self.init(enforceUnique: enforceUnique, reaction: reaction, skipPush: skipPush)
     }
 }
@@ -2122,7 +2175,7 @@ extension ReactionResponse {
         MessageReactionType(rawValue: type)
     }
 
-    var userPayload: UserPayload {
+    var userPayload: UserResponse {
         user.asUserPayload
     }
 
@@ -2136,7 +2189,7 @@ extension ReactionResponse {
         messageId: String,
         createdAt: Date,
         updatedAt: Date,
-        user: UserPayload,
+        user: UserResponse,
         extraData: [String: RawJSON]
     ) {
         self.init(
@@ -2188,12 +2241,12 @@ extension FlagRequest {
 }
 
 extension FlagResponse {
-    var currentUserPayload: CurrentUserPayload {
-        userPayload.asCurrentUserPayload
+    var currentUserPayload: OwnUserResponse {
+        userPayload.asOwnUserResponse
     }
 
-    var userPayload: UserPayload {
-        UserPayload(
+    var userPayload: UserResponse {
+        UserResponse(
             id: "",
             name: nil,
             imageURL: nil,
@@ -2211,8 +2264,8 @@ extension FlagResponse {
         )
     }
 
-    var targetUserPayload: UserPayload {
-        UserPayload(
+    var targetUserPayload: UserResponse {
+        UserResponse(
             id: "",
             name: nil,
             imageURL: nil,
@@ -2231,9 +2284,9 @@ extension FlagResponse {
     }
 }
 
-extension UserPayload {
-    var asCurrentUserPayload: CurrentUserPayload {
-        CurrentUserPayload(
+extension UserResponse {
+    var asOwnUserResponse: OwnUserResponse {
+        OwnUserResponse(
             id: id,
             name: name,
             imageURL: imageURL,
@@ -2255,8 +2308,8 @@ extension UserPayload {
 }
 
 extension FlagResponse {
-    var currentUser: CurrentUserPayload {
-        UserPayload(
+    var currentUser: OwnUserResponse {
+        UserResponse(
             id: "",
             name: nil,
             imageURL: nil,
@@ -2271,11 +2324,11 @@ extension FlagResponse {
             isBanned: false,
             language: nil,
             extraData: [:]
-        ).asCurrentUserPayload
+        ).asOwnUserResponse
     }
 
-    var flaggedUser: UserPayload {
-        UserPayload(
+    var flaggedUser: UserResponse {
+        UserResponse(
             id: "",
             name: nil,
             imageURL: nil,
@@ -2293,7 +2346,7 @@ extension FlagResponse {
         )
     }
 
-    convenience init(currentUser: CurrentUserPayload, flaggedUser: UserPayload) {
+    convenience init(currentUser: OwnUserResponse, flaggedUser: UserResponse) {
         self.init(duration: "", itemId: flaggedUser.id)
     }
 }
@@ -2311,7 +2364,7 @@ extension CreatePollOptionRequest {
 }
 
 extension TruncateChannelRequest {
-    convenience init(skipPush: Bool, hardDelete: Bool, message: MessageRequestBody?) {
+    convenience init(skipPush: Bool, hardDelete: Bool, message: MessageRequest?) {
         self.init(
             hardDelete: hardDelete,
             message: message,
@@ -2339,7 +2392,7 @@ extension BanRequest {
 }
 
 extension CastPollVoteRequest {
-    convenience init(pollId: String, vote: VoteDataRequestBody? = nil) {
+    convenience init(pollId: String, vote: VoteData? = nil) {
         self.init(vote: vote)
     }
 }
@@ -2348,7 +2401,7 @@ extension VoteData {
     convenience init(
         answerText: String? = nil,
         optionId: String? = nil,
-        option: PollVoteOptionRequestBody? = nil
+        option: PollOptionRequest? = nil
     ) {
         self.init(answerText: answerText, optionId: optionId)
     }
@@ -2365,7 +2418,7 @@ extension UpdatePollRequest {
         isClosed: Bool? = nil,
         maxVotesAllowed: Int? = nil,
         votingVisibility: String? = nil,
-        options: [PollVoteOptionRequestBody?]? = nil,
+        options: [PollOptionRequest?]? = nil,
         custom: [String: RawJSON]? = nil
     ) {
         self.init(
@@ -2414,7 +2467,7 @@ extension MarkUnreadRequest {
 }
 
 /*
- extension MessageRequestBody {
+ extension MessageRequest {
      var asMessageRequest: MessageRequest {
          let request = MessageRequest(
              attachments: attachments.isEmpty ? nil : attachments,
@@ -2501,7 +2554,7 @@ extension Attachment {
     }
 }
 
-private extension NewLocationRequestPayload {
+private extension SharedLocationOpenAPI {
     var asSharedLocationOpenAPI: SharedLocationOpenAPI {
         SharedLocationOpenAPI(
             createdByDeviceId: createdByDeviceId,
@@ -2521,8 +2574,8 @@ extension QueryThreadsResponse {
 extension ThreadStateResponse {
     var extraData: [String: RawJSON] { custom }
 
-    var channelDetailPayload: ChannelDetailPayload? {
-        if let channelPayload = channel?.asChannelDetailPayload {
+    var channelDetailPayload: ChannelResponse? {
+        if let channelPayload = channel?.asChannelResponse {
             return channelPayload
         }
         guard let cid = try? ChannelId(cid: channelCid) else { return nil }
@@ -2542,11 +2595,11 @@ extension ThreadStateResponse {
         )
     }
 
-    var createdByPayload: UserPayload {
-        createdBy?.asUserPayload ?? UserPayload.empty
+    var createdByPayload: UserResponse {
+        createdBy?.asUserPayload ?? UserResponse.empty
     }
 
-    var parentMessagePayload: MessagePayload? {
+    var parentMessagePayload: MessageResponse? {
         parentMessage?.asMessagePayload ?? MessageResponse(
             attachments: [],
             cid: channelCid,
@@ -2575,7 +2628,7 @@ extension ThreadStateResponse {
         )
     }
 
-    var latestRepliesPayload: [MessagePayload] {
+    var latestRepliesPayload: [MessageResponse] {
         latestReplies.compactMap(\.asMessagePayload)
     }
 
@@ -2585,9 +2638,9 @@ extension ThreadStateResponse {
 
     convenience init(
         parentMessageId: MessageId,
-        parentMessage: MessagePayload,
-        channel: ChannelDetailPayload,
-        createdBy: UserPayload,
+        parentMessage: MessageResponse,
+        channel: ChannelResponse,
+        createdBy: UserResponse,
         replyCount: Int,
         participantCount: Int,
         activeParticipantCount: Int,
@@ -2596,9 +2649,9 @@ extension ThreadStateResponse {
         createdAt: Date,
         updatedAt: Date?,
         title: String?,
-        latestReplies: [MessagePayload],
+        latestReplies: [MessageResponse],
         read: [ReadStateResponse],
-        draft: DraftPayload?,
+        draft: DraftResponse?,
         extraData: [String: RawJSON]
     ) {
         self.init(
@@ -2630,8 +2683,8 @@ extension ThreadResponse {
 
     var extraData: [String: RawJSON] { custom }
 
-    var channelDetailPayload: ChannelDetailPayload? {
-        if let channelPayload = channel?.asChannelDetailPayload {
+    var channelDetailPayload: ChannelResponse? {
+        if let channelPayload = channel?.asChannelResponse {
             return channelPayload
         }
         guard let cid = try? ChannelId(cid: channelCid) else { return nil }
@@ -2651,11 +2704,11 @@ extension ThreadResponse {
         )
     }
 
-    var createdByPayload: UserPayload {
-        createdBy?.asUserPayload ?? UserPayload.empty
+    var createdByPayload: UserResponse {
+        createdBy?.asUserPayload ?? UserResponse.empty
     }
 
-    var parentMessagePayload: MessagePayload? {
+    var parentMessagePayload: MessageResponse? {
         parentMessage?.asMessagePayload ?? MessageResponse(
             attachments: [],
             cid: channelCid,
@@ -2686,9 +2739,9 @@ extension ThreadResponse {
 
     convenience init(
         parentMessageId: MessageId,
-        parentMessage: MessagePayload,
-        channel: ChannelDetailPayload,
-        createdBy: UserPayload,
+        parentMessage: MessageResponse,
+        channel: ChannelResponse,
+        createdBy: UserResponse,
         replyCount: Int,
         participantCount: Int,
         activeParticipantCount: Int,
@@ -2751,12 +2804,12 @@ extension ThreadResponse {
 }
 
 extension ThreadParticipantOpenAPI {
-    var userPayload: UserPayload {
-        user?.asUserPayload ?? UserPayload.empty
+    var userPayload: UserResponse {
+        user?.asUserPayload ?? UserResponse.empty
     }
 
     convenience init(
-        user: UserPayload,
+        user: UserResponse,
         threadId: String,
         createdAt: Date,
         lastReadAt: Date?
@@ -2776,9 +2829,9 @@ extension ThreadParticipantOpenAPI {
     }
 }
 
-private extension UserPayload {
-    static var empty: UserPayload {
-        UserPayload(
+private extension UserResponse {
+    static var empty: UserResponse {
+        UserResponse(
             id: "",
             name: nil,
             imageURL: nil,
@@ -2797,28 +2850,154 @@ private extension UserPayload {
     }
 }
 
-extension DefaultEndpointMethod {
-    func asEndpointMethod() -> EndpointMethod {
-        switch self {
-        case .get: return .get
-        case .post: return .post
-        case .patch: return .patch
-        case .delete: return .delete
-        case .put: return .put
-        }
-    }
-}
+/// A type representing empty body for `.post` Endpoints.
+/// Our backend currently expects a body (not `nil`), even if it's empty.
+struct EmptyBody: Codable, Equatable {}
 
-extension DefaultEndpoint {
-    /// `path` is supplied explicitly because `DefaultEndpointPath` and `EndpointPath` are not yet 1:1.
-    func asEndpoint(path: EndpointPath) -> Endpoint<ResponseType> {
-        Endpoint(
-            path: path,
-            method: method.asEndpointMethod(),
-            queryItems: queryItems,
-            requiresConnectionId: requiresConnectionId,
-            requiresToken: requiresToken,
-            body: body
+// MARK: - Endpoint compatibility wrappers
+
+//
+// Factories below keep existing call sites small while delegating to generated
+// OpenAPI endpoints wherever the operation and model shape match.
+
+extension Endpoint {
+    /// Loads the pinned messages of a channel. The OpenAPI spec does not expose
+    /// a `pinned_messages` operation, so the path is built manually.
+    static func pinnedMessages(cid: ChannelId, query: PinnedMessagesQuery) -> Endpoint<MessageListPayload> {
+        .init(
+            path: .custom("channels/\(cid.apiPath)/pinned_messages"),
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["payload": query]
+        )
+    }
+
+    /// Unbans a channel member. The OpenAPI `ban` operation is POST-only;
+    /// `DELETE /moderation/ban` has no generated factory.
+    static func unbanMember(_ userId: UserId, cid: ChannelId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("moderation/ban"),
+            method: .delete,
+            queryItems: [
+                "target_user_id": userId,
+                "channel_cid": cid.rawValue
+            ],
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+
+    /// `sync` is excluded from the OpenAPI migration per product decision and stays manual.
+    static func missingEvents(since: Date, cids: [ChannelId]) -> Endpoint<MissingEventsPayload> {
+        .init(
+            path: .custom("sync"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: SyncRequest(lastSyncedAt: since, cids: cids)
+        )
+    }
+
+    /// WebSocket connect endpoint. The OpenAPI spec exposes `longPoll` for the
+    /// long-polling fallback, but the actual WebSocket establishment uses
+    /// `?json=<payload>` on `/connect` with a hand-shaped auth body.
+    static func webSocketConnect(userInfo: UserInfo) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("connect"),
+            method: .get,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: [
+                "json": WSAuthMessage(
+                    products: nil,
+                    token: "",
+                    userDetails: ConnectUserDetailsRequest(
+                        custom: userInfo.extraData,
+                        id: userInfo.id,
+                        image: userInfo.imageURL?.absoluteString,
+                        invisible: userInfo.isInvisible,
+                        language: userInfo.language?.languageCode,
+                        name: userInfo.name,
+                        privacySettings: userInfo.privacySettings.map {
+                            UserPrivacySettingsPayload(settings: $0).asPrivacySettingsResponse
+                        }
+                    )
+                )
+            ]
+        )
+    }
+
+    /// Channel query endpoint used by `ChannelRepository.getChannel` and the
+    /// channel-already-exists hot path.
+    static func channelQuery(_ query: ChannelQuery, requiresConnectionId: Bool? = nil) -> Endpoint<ChannelStateResponse> {
+        let request = ChannelGetOrCreateRequest(query: query)
+        return .init(
+            path: query.id.map { .getOrCreateChannel(type: query.type.rawValue, id: $0) } ?? .getOrCreateDistinctChannel(type: query.type.rawValue),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: requiresConnectionId ?? query.options.contains(oneOf: [.presence, .state, .watch]),
+            body: request
+        )
+    }
+
+    /// Channel watcher list — uses channel query endpoint with a watcher-shaped query.
+    static func channelWatchers(query: ChannelWatcherListQuery) -> Endpoint<ChannelStateResponse> {
+        .init(
+            path: .getOrCreateChannel(type: query.cid.type.rawValue, id: query.cid.id),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: true,
+            body: query
+        )
+    }
+
+    /// User mute / unmute — backend uses `target_id` envelope.
+    static func muteUser(_ userId: UserId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("moderation/mute"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["target_id": userId]
+        )
+    }
+
+    static func unmuteUser(_ userId: UserId) -> Endpoint<EmptyResponse> {
+        .init(
+            path: .custom("moderation/unmute"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: ["target_id": userId]
+        )
+    }
+
+    /// Flag / unflag a user — uses the legacy `target_user_id` envelope.
+    static func flagUser(_ flag: Bool, with userId: UserId, reason: String? = nil, extraData: [String: RawJSON]? = nil) -> Endpoint<FlagResponse> {
+        if flag {
+            return .flag(flagRequest: FlagRequest(reason: reason, targetUserId: userId, custom: extraData))
+        }
+        return .init(
+            path: .custom("moderation/\(flag ? "flag" : "unflag")"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: FlagRequest(reason: reason, targetMessageId: nil, targetUserId: userId, custom: extraData)
+        )
+    }
+
+    /// Flag / unflag a message — uses the legacy `target_message_id` envelope.
+    static func flagMessage(_ flag: Bool, with messageId: MessageId, reason: String? = nil, extraData: [String: RawJSON]? = nil) -> Endpoint<FlagResponse> {
+        if flag {
+            return .flag(flagRequest: FlagRequest(reason: reason, targetMessageId: messageId, custom: extraData))
+        }
+        return .init(
+            path: .custom("moderation/\(flag ? "flag" : "unflag")"),
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: FlagRequest(reason: reason, targetMessageId: messageId, targetUserId: nil, custom: extraData)
         )
     }
 }

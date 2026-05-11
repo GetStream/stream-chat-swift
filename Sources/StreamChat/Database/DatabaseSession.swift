@@ -26,11 +26,11 @@ protocol UserDatabaseSession {
     /// Saves the provided payload to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
-    func saveUser(payload: UserPayload, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO
+    func saveUser(payload: UserResponse, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO
 
     /// Saves the provided payload to the DB. Return's the matching `UserDTO`s  if the save was successful. Ignores unsaved elements.
     @discardableResult
-    func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO]
+    func saveUsers(payload: QueryUsersResponse, query: UserListQuery?) -> [UserDTO]
 
     /// Saves the provided query to the DB. Return's the matching `UserListQueryDTO` if the save was successful. Throws an error
     /// if the save fails.
@@ -52,7 +52,7 @@ protocol CurrentUserDatabaseSession {
     /// Saves the provided payload to the DB. Return's a `CurrentUserDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
-    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO
+    func saveCurrentUser(payload: OwnUserResponse) throws -> CurrentUserDTO
 
     /// Updates the `CurrentUserDTO` with the provided unread.
     /// If there is no current user, the error will be thrown.
@@ -61,7 +61,7 @@ protocol CurrentUserDatabaseSession {
     /// Updates the `CurrentUserDTO.devices` with the provided `DevicesPayload`
     /// If there's no current user set, an error will be thrown.
     @discardableResult
-    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO]
+    func saveCurrentUserDevices(_ devices: [DeviceResponse], clearExisting: Bool) throws -> [DeviceDTO]
 
     /// Saves the `currentDevice` for current user.
     func saveCurrentDevice(_ deviceId: String) throws
@@ -71,7 +71,7 @@ protocol CurrentUserDatabaseSession {
     ///   - id: The channel ID or the currentUser ID.
     ///   - payload: The push preference payload.
     @discardableResult
-    func savePushPreference(id: String, payload: PushPreferencePayload) throws -> PushPreferenceDTO
+    func savePushPreference(id: String, payload: PushPreferencesResponse) throws -> PushPreferenceDTO
 
     /// Removes the device with the given id from DB.
     func deleteDevice(id: DeviceId)
@@ -85,7 +85,7 @@ protocol CurrentUserDatabaseSession {
 
 extension CurrentUserDatabaseSession {
     @discardableResult
-    func saveCurrentUserDevices(_ devices: [DevicePayload]) throws -> [DeviceDTO] {
+    func saveCurrentUserDevices(_ devices: [DeviceResponse]) throws -> [DeviceDTO] {
         try saveCurrentUserDevices(devices, clearExisting: false)
     }
 }
@@ -110,7 +110,7 @@ protocol MessageDatabaseSession {
         createdAt: Date?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
-        poll: PollPayload?,
+        poll: PollResponseData?,
         location: NewLocationInfo?,
         restrictedVisibility: [UserId],
         extraData: [String: RawJSON]
@@ -151,7 +151,7 @@ protocol MessageDatabaseSession {
     ///   - cache: The pre-warmed cache.
     @discardableResult
     func saveMessage(
-        payload: MessagePayload,
+        payload: MessageResponse,
         for cid: ChannelId?,
         syncOwnReactions: Bool,
         skipDraftUpdate: Bool,
@@ -162,7 +162,7 @@ protocol MessageDatabaseSession {
     /// Throws an error if the save fails.
     @discardableResult
     func saveDraftMessage(
-        payload: DraftPayload,
+        payload: DraftResponse,
         for cid: ChannelId,
         cache: PreWarmedCache?
     ) throws -> MessageDTO
@@ -178,7 +178,7 @@ protocol MessageDatabaseSession {
     ///   - cache: The pre-warmed cache.
     @discardableResult
     func saveMessage(
-        payload: MessagePayload,
+        payload: MessageResponse,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
         skipDraftUpdate: Bool,
@@ -186,7 +186,7 @@ protocol MessageDatabaseSession {
     ) throws -> MessageDTO
 
     @discardableResult
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO
+    func saveMessage(payload: MessageResponse, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO
 
     func addReaction(
         to messageId: MessageId,
@@ -229,13 +229,13 @@ protocol MessageDatabaseSession {
     /// Saves the provided reactions payload to the DB. Ignores reactions that cannot be saved
     /// returns saved `MessageReactionDTO` entities.
     @discardableResult
-    func saveReactions(payload: MessageReactionsPayload, query: ReactionListQuery?) -> [MessageReactionDTO]
+    func saveReactions(payload: GetReactionsResponse, query: ReactionListQuery?) -> [MessageReactionDTO]
 
     /// Saves the provided reaction payload to the DB. Throws an error if the save fails
     /// else returns saved `MessageReactionDTO` entity.
     @discardableResult
     func saveReaction(
-        payload: MessageReactionPayload,
+        payload: ReactionResponse,
         query: ReactionListQuery?,
         cache: PreWarmedCache?
     ) throws -> MessageReactionDTO
@@ -287,7 +287,7 @@ extension MessageDatabaseSession {
         skipEnrichUrl: Bool,
         attachments: [AnyAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
-        pollPayload: PollPayload? = nil,
+        pollPayload: PollResponseData? = nil,
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON] = [:]
     ) throws -> MessageDTO {
@@ -326,14 +326,14 @@ protocol ChannelDatabaseSession {
     /// Creates `ChannelDTO` objects for the given channel payloads and `query`. ignores items that could not be saved
     @discardableResult
     func saveChannelList(
-        payload: ChannelListPayload,
+        payload: QueryChannelsResponse,
         query: ChannelListQuery?
     ) -> [ChannelDTO]
 
     /// Creates a new `ChannelDTO` object in the database with the given `payload` and `query`.
     @discardableResult
     func saveChannel(
-        payload: ChannelPayload,
+        payload: ChannelStateResponseFields,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO
@@ -341,7 +341,7 @@ protocol ChannelDatabaseSession {
     /// Creates a new `ChannelDTO` object in the database with the given `payload` and `query`.
     @discardableResult
     func saveChannel(
-        payload: ChannelDetailPayload,
+        payload: ChannelResponse,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO
@@ -374,7 +374,7 @@ protocol ChannelReadDatabaseSession {
     /// Creates a new `ChannelReadDTO` object in the database. Throws an error if the ChannelRead fails to be created.
     @discardableResult
     func saveChannelRead(
-        payload: ChannelReadPayload,
+        payload: ReadStateResponse,
         for cid: ChannelId,
         cache: PreWarmedCache?
     ) throws -> ChannelReadDTO
@@ -414,14 +414,14 @@ protocol ChannelReadDatabaseSession {
 protocol ChannelMuteDatabaseSession {
     /// Creates a new `ChannelMuteDTO` object in the database. Throws an error if the `ChannelMuteDTO` fails to be created.
     @discardableResult
-    func saveChannelMute(payload: MutedChannelPayload) throws -> ChannelMuteDTO
+    func saveChannelMute(payload: ChannelMute) throws -> ChannelMuteDTO
 }
 
 protocol MemberDatabaseSession {
     /// Creates a new `MemberDTO` object in the database with the given `payload` in the channel with `channelId`.
     @discardableResult
     func saveMember(
-        payload: MemberPayload,
+        payload: ChannelMemberResponse,
         channelId: ChannelId,
         query: ChannelMemberListQuery?,
         cache: PreWarmedCache?
@@ -430,7 +430,7 @@ protocol MemberDatabaseSession {
     /// Creates new `MemberDTO` objects in the database with the given `payload` in the channel with `channelId`.
     @discardableResult
     func saveMembers(
-        payload: ChannelMemberListPayload,
+        payload: MembersResponse,
         channelId: ChannelId,
         query: ChannelMemberListQuery?
     ) -> [MemberDTO]
@@ -456,7 +456,7 @@ protocol AttachmentDatabaseSession {
     /// with the given `messageId` in the channel with the given `cid`.
     @discardableResult
     func saveAttachment(
-        payload: MessageAttachmentPayload,
+        payload: Attachment,
         id: AttachmentId
     ) throws -> AttachmentDTO
 
@@ -490,27 +490,27 @@ protocol ThreadDatabaseSession {
 
     /// Creates `ThreadDTO` objects for the given thread payloads.
     @discardableResult
-    func saveThreadList(payload: ThreadListPayload) -> [ThreadDTO]
+    func saveThreadList(payload: QueryThreadsResponse) -> [ThreadDTO]
     
     /// Creates a new `ThreadDTO` object in the database with the given `payload`.
     @discardableResult
     func saveThread(
-        payload: ThreadPayload,
+        payload: ThreadStateResponse,
         cache: PreWarmedCache?
     ) throws -> ThreadDTO
 
     /// Updates the thread with details from a thread event.
     @discardableResult
-    func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO
+    func saveThread(detailsPayload: ThreadResponse) throws -> ThreadDTO
 
     /// Updates the thread with partial thread information.
     @discardableResult
-    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO
+    func saveThread(partialPayload: ThreadResponse) throws -> ThreadDTO
 
     /// Creates a new `ThreadParticipantDTO` object in the database with the given `payload`.
     @discardableResult
     func saveThreadParticipant(
-        payload: ThreadParticipantPayload,
+        payload: ThreadParticipantOpenAPI,
         threadId: String,
         cache: PreWarmedCache?
     ) throws -> ThreadParticipantDTO
@@ -526,7 +526,7 @@ protocol ThreadReadDatabaseSession {
     /// Creates a new `ThreadReadDTO` object in the database with the given `payload`.
     @discardableResult
     func saveThreadRead(
-        payload: ThreadReadPayload,
+        payload: ReadStateResponse,
         parentMessageId: String,
         cache: PreWarmedCache?
     ) throws -> ThreadReadDTO
@@ -554,13 +554,13 @@ protocol ThreadReadDatabaseSession {
 protocol ReminderDatabaseSession {
     /// Saves a reminder with the provided payload.
     /// - Parameters:
-    ///   - payload: The `ReminderPayload` containing the details of the reminder to be saved.
+    ///   - payload: The `ReminderResponseData` containing the details of the reminder to be saved.
     ///   - cache: An optional `PreWarmedCache` to optimize the save operation.
     /// - Returns: A `MessageReminderDTO` representing the saved reminder.
     /// - Throws: An error if the save operation fails.
     @discardableResult
     func saveReminder(
-        payload: ReminderPayload,
+        payload: ReminderResponseData,
         cache: PreWarmedCache?
     ) throws -> MessageReminderDTO
     
@@ -571,37 +571,37 @@ protocol ReminderDatabaseSession {
 protocol PollDatabaseSession {
     /// Saves a poll with the provided payload.
     /// - Parameters:
-    ///   - payload: The `PollPayload` containing the details of the poll to be saved.
+    ///   - payload: The `PollResponseData` containing the details of the poll to be saved.
     ///   - cache: An optional `PreWarmedCache` to optimize the save operation.
     /// - Returns: A `PollDTO` representing the saved poll.
     /// - Throws: An error if the save operation fails.
     @discardableResult
-    func savePoll(payload: PollPayload, cache: PreWarmedCache?, fromEvent: Bool) throws -> PollDTO
+    func savePoll(payload: PollResponseData, cache: PreWarmedCache?, fromEvent: Bool) throws -> PollDTO
     
     /// Saves a list of poll votes with the provided payload.
     /// - Parameters:
-    ///   - payload: The `PollVoteListResponse` containing the details of the poll votes to be saved.
+    ///   - payload: The `PollVotesResponse` containing the details of the poll votes to be saved.
     ///   - query: An optional `PollVoteListQuery` to specify the query parameters.
     ///   - cache: An optional `PreWarmedCache` to optimize the save operation.
     /// - Returns: An array of `PollVoteDTO` representing the saved poll votes.
     /// - Throws: An error if the save operation fails.
     @discardableResult
     func savePollVotes(
-        payload: PollVoteListResponse,
+        payload: PollVotesResponse,
         query: PollVoteListQuery?,
         cache: PreWarmedCache?
     ) throws -> [PollVoteDTO]
     
     /// Saves a poll vote with the provided payload.
     /// - Parameters:
-    ///   - payload: The `PollVotePayload` containing the details of the poll vote to be saved.
+    ///   - payload: The `PollVoteResponseData` containing the details of the poll vote to be saved.
     ///   - query: An optional `PollVoteListQuery` to specify the query parameters.
     ///   - cache: An optional `PreWarmedCache` to optimize the save operation.
     /// - Returns: A `PollVoteDTO` representing the saved poll vote.
     /// - Throws: An error if the save operation fails.
     @discardableResult
     func savePollVote(
-        payload: PollVotePayload,
+        payload: PollVoteResponseData,
         query: PollVoteListQuery?,
         cache: PreWarmedCache?
     ) throws -> PollVoteDTO
@@ -684,7 +684,7 @@ protocol PollDatabaseSession {
 
 extension PollDatabaseSession {
     @discardableResult
-    func savePoll(payload: PollPayload, cache: PreWarmedCache?) throws -> PollDTO {
+    func savePoll(payload: PollResponseData, cache: PreWarmedCache?) throws -> PollDTO {
         try savePoll(payload: payload, cache: cache, fromEvent: false)
     }
 }
@@ -692,7 +692,7 @@ extension PollDatabaseSession {
 protocol LocationDatabaseSession {
     /// Saves the provided location payload to the DB.
     @discardableResult
-    func saveLocation(payload: SharedLocationPayload, cache: PreWarmedCache?) throws -> SharedLocationDTO
+    func saveLocation(payload: SharedLocationResponseData, cache: PreWarmedCache?) throws -> SharedLocationDTO
 }
 
 protocol DatabaseSession: UserDatabaseSession,
@@ -715,18 +715,18 @@ protocol DatabaseSession: UserDatabaseSession,
 
 extension DatabaseSession {
     @discardableResult
-    func saveChannel(payload: ChannelPayload) throws -> ChannelDTO {
+    func saveChannel(payload: ChannelStateResponseFields) throws -> ChannelDTO {
         try saveChannel(payload: payload, query: nil, cache: nil)
     }
 
     @discardableResult
-    func saveUser(payload: UserPayload) throws -> UserDTO {
+    func saveUser(payload: UserResponse) throws -> UserDTO {
         try saveUser(payload: payload, query: nil, cache: nil)
     }
 
     @discardableResult
     func saveMember(
-        payload: MemberPayload,
+        payload: ChannelMemberResponse,
         channelId: ChannelId
     ) throws -> MemberDTO {
         try saveMember(payload: payload, channelId: channelId, query: nil, cache: nil)
@@ -871,7 +871,7 @@ extension DatabaseSession {
         }
     }
 
-    func handlePollVoteChangedEvent(vote: PollVotePayload) throws {
+    func handlePollVoteChangedEvent(vote: PollVoteResponseData) throws {
         var voteUpdated = false
         let userId = vote.userId ?? "anon"
         if !vote.optionId.isEmpty {
@@ -906,7 +906,7 @@ extension DatabaseSession {
         }
     }
     
-    func handlePollVoteEvent(vote: PollVotePayload, payload: EventPayload) throws {
+    func handlePollVoteEvent(vote: PollVoteResponseData, payload: EventPayload) throws {
         var voteUpdated = false
         if payload.eventType == .pollVoteCasted {
             if vote.isAnswer == true, let userId = vote.userId {

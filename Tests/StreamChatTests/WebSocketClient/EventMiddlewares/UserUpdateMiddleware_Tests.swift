@@ -60,14 +60,14 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
     func test_whenDatabaseWriteDoesNotFail_userInformationIsUpdated() throws {
         // Given
         let userId = UserId.unique
-        let initialUserPayload = UserPayload.dummy(userId: userId, name: "Initial name")
+        let initialUserPayload = UserResponse.dummy(userId: userId, name: "Initial name")
         try database.writeSynchronously {
             try $0.saveUser(payload: initialUserPayload)
         }
         XCTAssertEqual(database.viewContext.user(id: userId)?.name, "Initial name")
 
         // When
-        let updatedUserPayload = UserPayload.dummy(userId: userId, name: "Updated name")
+        let updatedUserPayload = UserResponse.dummy(userId: userId, name: "Updated name")
         let eventPayload: EventPayload = .init(
             eventType: .userUpdated,
             user: updatedUserPayload,
@@ -88,17 +88,17 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
     func test_whenDatabaseWriteDoesNotFail_whenEventIsForCurrentUser_currentUserInformationIsUpdated() throws {
         // Given
         let currentUserId = UserId.unique
-        let initialCurrentUserPayload = CurrentUserPayload.dummy(
+        let initialOwnUserResponse = OwnUserResponse.dummy(
             userPayload: .dummy(userId: currentUserId, name: "Name 1")
         )
         try database.writeSynchronously {
-            try $0.saveCurrentUser(payload: initialCurrentUserPayload)
+            try $0.saveCurrentUser(payload: initialOwnUserResponse)
         }
         XCTAssertEqual(database.viewContext.user(id: currentUserId)?.name, "Name 1")
         XCTAssertEqual(database.viewContext.currentUser?.user.name, "Name 1")
 
         // When
-        let updatedUserPayload = UserPayload.dummy(userId: currentUserId, name: "Name 2")
+        let updatedUserPayload = UserResponse.dummy(userId: currentUserId, name: "Name 2")
         let eventPayload: EventPayload = .init(
             eventType: .userUpdated,
             user: updatedUserPayload,

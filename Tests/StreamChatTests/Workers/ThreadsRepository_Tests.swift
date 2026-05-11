@@ -43,7 +43,7 @@ final class ThreadsRepository_Tests: XCTestCase {
             )
         }
 
-        let payload = ThreadListPayload(
+        let payload = QueryThreadsResponse(
             threads: [
                 .dummy(
                     parentMessageId: messageId,
@@ -80,9 +80,18 @@ final class ThreadsRepository_Tests: XCTestCase {
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        let referenceEndpoint: Endpoint<ThreadListPayload> = .threads(
-            query: query
+        let request = QueryThreadsRequest(
+            filter: nil,
+            limit: query.limit,
+            memberLimit: nil,
+            next: query.next,
+            participantLimit: query.participantLimit,
+            prev: nil,
+            replyLimit: query.replyLimit,
+            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            watch: query.watch
         )
+        let referenceEndpoint: Endpoint<QueryThreadsResponse> = .queryThreads(queryThreadsRequest: request)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
 
         let loadedThreads = payload.threads.map {
@@ -117,7 +126,7 @@ final class ThreadsRepository_Tests: XCTestCase {
         }
         XCTAssertEqual(loadedPreviousThreads.count, 2)
 
-        let payload = ThreadListPayload(
+        let payload = QueryThreadsResponse(
             threads: [
                 .dummy(parentMessageId: .unique, channel: .dummy(cid: .unique)),
                 .dummy(parentMessageId: .unique, channel: .dummy(cid: .unique)),
@@ -137,9 +146,18 @@ final class ThreadsRepository_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(payload))
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        let referenceEndpoint: Endpoint<ThreadListPayload> = .threads(
-            query: query
+        let request = QueryThreadsRequest(
+            filter: nil,
+            limit: query.limit,
+            memberLimit: nil,
+            next: query.next,
+            participantLimit: query.participantLimit,
+            prev: nil,
+            replyLimit: query.replyLimit,
+            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            watch: query.watch
         )
+        let referenceEndpoint: Endpoint<QueryThreadsResponse> = .queryThreads(queryThreadsRequest: request)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
 
         let loadedThreads = payload.threads.map {
@@ -158,13 +176,22 @@ final class ThreadsRepository_Tests: XCTestCase {
         }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<ThreadListPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<QueryThreadsResponse, Error>.failure(error))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        let referenceEndpoint: Endpoint<ThreadListPayload> = .threads(
-            query: query
+        let request = QueryThreadsRequest(
+            filter: nil,
+            limit: query.limit,
+            memberLimit: nil,
+            next: query.next,
+            participantLimit: query.participantLimit,
+            prev: nil,
+            replyLimit: query.replyLimit,
+            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            watch: query.watch
         )
+        let referenceEndpoint: Endpoint<QueryThreadsResponse> = .queryThreads(queryThreadsRequest: request)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 }

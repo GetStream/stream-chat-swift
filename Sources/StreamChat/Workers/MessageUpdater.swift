@@ -47,7 +47,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     func deleteMessage(messageId: MessageId, hard: Bool, deleteForMe: Bool? = nil, completion: (@Sendable (Error?) -> Void)? = nil) {
         nonisolated(unsafe) var shouldDeleteOnBackend = true
 
-        database.write({ session in
+        database.write({ (session: DatabaseSession) in
             guard let messageDTO = session.message(id: messageId) else {
                 // Even though the message does not exist locally
                 // we don't throw any error because we still want
@@ -70,16 +70,17 @@ class MessageUpdater: Worker, @unchecked Sendable {
             } else {
                 messageDTO.localMessageState = .deleting
             }
-        }, completion: { [weak database, weak apiClient, weak repository] error in
+        }, completion: { [weak database, weak apiClient, weak repository] (error: Error?) in
             guard shouldDeleteOnBackend, error == nil else {
                 completion?(error)
                 return
             }
 
             apiClient?.request(
-                endpoint: .deleteMessage(
-                    messageId: messageId,
+                endpoint: Endpoint<DeleteMessageResponse>.deleteMessage(
+                    id: messageId,
                     hard: hard,
+                    deletedBy: nil,
                     deleteForMe: deleteForMe
                 )
             ) { [weak repository, weak database] result in
@@ -196,29 +197,31 @@ class MessageUpdater: Worker, @unchecked Sendable {
         unset: [String]? = nil,
         completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil
     ) {
-        let attachmentPayloads: [MessageAttachmentPayload]? = attachments?.compactMap { attachment in
+        let attachmentPayloads: [Attachment]? = attachments?.compactMap { attachment in
             guard let payloadData = try? JSONEncoder.default.encode(attachment.payload) else {
                 return nil
             }
             guard let payloadRawJSON = try? JSONDecoder.default.decode(RawJSON.self, from: payloadData) else {
                 return nil
             }
-            return MessageAttachmentPayload(
+            return Attachment(
                 type: attachment.type,
                 payload: payloadRawJSON
             )
         }
 
         apiClient.request(
-            endpoint: .partialUpdateMessage(
-                messageId: messageId,
-                request: .init(
-                    set: .init(
-                        text: text,
-                        extraData: extraData,
-                        attachments: attachmentPayloads
-                    ),
-                    unset: unset
+            endpoint: Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+                id: messageId,
+                updateMessagePartialRequest: UpdateMessagePartialRequest(
+                    MessagePartialUpdateRequest(
+                        set: MessagePartialUpdateRequest.SetProperties(
+                            text: text,
+                            extraData: extraData,
+                            attachments: attachmentPayloads
+                        ),
+                        unset: unset
+                    )
                 )
             )
         ) { [weak self] result in
@@ -361,14 +364,22 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 return
             }
 
-            let request = LiveLocationUpdateRequestPayload(
+            let request = UpdateLiveLocationRequest(
                 messageId: messageId,
                 latitude: locationInfo.latitude,
                 longitude: locationInfo.longitude,
                 createdByDeviceId: currentDeviceId
             )
 
-            let endpoint = Endpoint<SharedLocationPayload>.updateLiveLocation(request: request)
+            let updateEndpoint = Endpoint<SharedLocationResponse>.updateLiveLocation(updateLiveLocationRequest: request)
+            let endpoint = Endpoint<SharedLocationResponseData>(
+                path: updateEndpoint.path,
+                method: updateEndpoint.method,
+                queryItems: updateEndpoint.queryItems,
+                requiresConnectionId: updateEndpoint.requiresConnectionId,
+                requiresToken: updateEndpoint.requiresToken,
+                body: updateEndpoint.body
+            )
             self?.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
                 case let .success(payload):
@@ -404,12 +415,18 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 completion(.failure(ClientError.CurrentUserDoesNotExist()))
                 return
             }
-            let request = StopLiveLocationRequestPayload(
+            let request = UpdateLiveLocationRequest(
                 messageId: messageId,
                 createdByDeviceId: currentDeviceId
             )
-            let endpoint = Endpoint<SharedLocationPayload>.stopLiveLocation(
-                request: request
+            let updateEndpoint = Endpoint<SharedLocationResponse>.updateLiveLocation(updateLiveLocationRequest: request)
+            let endpoint = Endpoint<SharedLocationResponseData>(
+                path: updateEndpoint.path,
+                method: updateEndpoint.method,
+                queryItems: updateEndpoint.queryItems,
+                requiresConnectionId: updateEndpoint.requiresConnectionId,
+                requiresToken: updateEndpoint.requiresToken,
+                body: updateEndpoint.body
             )
             self?.apiClient.request(endpoint: endpoint) { [weak self] result in
                 switch result {
@@ -445,13 +462,22 @@ class MessageUpdater: Worker, @unchecked Sendable {
         messageId: MessageId,
         pagination: MessagesPagination,
         paginationStateHandler: MessagesPaginationStateHandling,
-        completion: (@Sendable (Result<MessageRepliesPayload, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<GetRepliesResponse, Error>) -> Void)? = nil
     ) {
         paginationStateHandler.begin(pagination: pagination)
 
         let didLoadFirstPage = pagination.parameter == nil
         let didJumpToMessage = pagination.parameter?.isJumpingToMessage == true
-        let endpoint: Endpoint<MessageRepliesPayload> = .loadReplies(messageId: messageId, pagination: pagination)
+        let endpoint: Endpoint<GetRepliesResponse> = Endpoint<GetRepliesResponse>.getReplies(
+            parentId: messageId,
+            limit: pagination.pageSize,
+            idGte: pagination.parameter?.idGte,
+            idGt: pagination.parameter?.idGt,
+            idLte: pagination.parameter?.idLte,
+            idLt: pagination.parameter?.idLt,
+            idAround: pagination.parameter?.idAround,
+            sort: nil
+        )
 
         apiClient.request(endpoint: endpoint) {
             paginationStateHandler.end(pagination: pagination, with: $0.map(\.messages))
@@ -470,7 +496,11 @@ class MessageUpdater: Worker, @unchecked Sendable {
                         parentMessage.newestReplyAt = paginationStateHandler.state.newestMessageAt?.bridgeDate
                     }
 
-                    let replies = session.saveMessages(messagesPayload: payload, for: cid, syncOwnReactions: true)
+                    let replies = session.saveMessages(
+                        messagesPayload: MessageListPayload(messages: payload.messages),
+                        for: cid,
+                        syncOwnReactions: true
+                    )
                     replies.forEach {
                         $0.showInsideThread = true
                     }
@@ -494,9 +524,10 @@ class MessageUpdater: Worker, @unchecked Sendable {
         pagination: Pagination,
         completion: (@Sendable (Result<[ChatMessageReaction], Error>) -> Void)? = nil
     ) {
-        let endpoint: Endpoint<MessageReactionsPayload> = .loadReactions(
-            messageId: messageId,
-            pagination: pagination
+        let endpoint = Endpoint<GetReactionsResponse>.getReactions(
+            id: messageId,
+            limit: pagination.pageSize,
+            offset: pagination.offset
         )
 
         apiClient.request(endpoint: endpoint) { result in
@@ -538,7 +569,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 return
             }
 
-            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId, reason: reason, extraData: extraData)
+            let endpoint: Endpoint<FlagResponse> = .flagMessage(flag, with: messageId, reason: reason, extraData: extraData)
             self.apiClient.request(endpoint: endpoint) { result in
                 switch result {
                 case let .success(payload):
@@ -585,14 +616,19 @@ class MessageUpdater: Worker, @unchecked Sendable {
     ) {
         let version = UUID().uuidString
 
-        let endpoint: Endpoint<EmptyResponse> = .addReaction(
-            type,
-            score: score,
-            enforceUnique: enforceUnique,
-            extraData: extraData,
-            skipPush: skipPush,
-            emojiCode: pushEmojiCode,
-            messageId: messageId
+        var reactionExtraData = extraData
+        if let pushEmojiCode { reactionExtraData["emoji_code"] = .string(pushEmojiCode) }
+        let endpoint = Endpoint<SendReactionResponse>.sendReaction(
+            id: messageId,
+            sendReactionRequest: SendReactionRequest(
+                enforceUnique: enforceUnique,
+                reaction: ReactionRequest(
+                    custom: reactionExtraData.isEmpty ? nil : reactionExtraData,
+                    score: score,
+                    type: type.rawValue
+                ),
+                skipPush: skipPush
+            )
         )
 
         database.write { session in
@@ -641,7 +677,9 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 log.warning("Failed to remove the reaction from to the database: \(error)")
             }
         } completion: { [weak self, weak repository] error in
-            self?.apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { [weak self, weak repository] result in
+            self?.apiClient.request(
+                endpoint: Endpoint<DeleteReactionResponse>.deleteReaction(id: messageId, type: type.rawValue, userId: nil)
+            ) { [weak self, weak repository] result in
                 guard let error = result.error else { return }
 
                 if self?.canKeepReactionState(for: error) == true { return }
@@ -667,9 +705,9 @@ class MessageUpdater: Worker, @unchecked Sendable {
             case .failure(let pinError):
                 completion?(.failure(pinError))
             case .success(let message):
-                let endpoint: Endpoint<EmptyResponse> = .pinMessage(
-                    messageId: messageId,
-                    request: .init(set: .init(pinned: true))
+                let endpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+                    id: messageId,
+                    updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(true)])
                 )
 
                 self?.apiClient.request(endpoint: endpoint) { [weak self] result in
@@ -696,9 +734,9 @@ class MessageUpdater: Worker, @unchecked Sendable {
             case .failure(let unpinError):
                 completion?(.failure(unpinError))
             case .success(let message):
-                let endpoint: Endpoint<EmptyResponse> = .pinMessage(
-                    messageId: messageId,
-                    request: .init(set: .init(pinned: false))
+                let endpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+                    id: messageId,
+                    updateMessagePartialRequest: UpdateMessagePartialRequest(.init(set: .init(pinned: false)))
                 )
 
                 self?.apiClient.request(endpoint: endpoint) { [weak self] result in
@@ -938,10 +976,9 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 if action.isCancel {
                     completion?(nil)
                 } else {
-                    let endpoint: Endpoint<MessageActionResponse> = .dispatchEphemeralMessageAction(
-                        cid: cid,
-                        messageId: messageId,
-                        action: action
+                    let endpoint = Endpoint<MessageActionResponse>.runMessageAction(
+                        id: messageId,
+                        messageActionRequest: MessageActionRequest(cid: cid, messageId: messageId, action: action)
                     )
                     self.apiClient.request(endpoint: endpoint) {
                         switch $0 {
@@ -971,7 +1008,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     }
 
     func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: (@Sendable (Result<MessageSearchResults, Error>) -> Void)? = nil) {
-        apiClient.request(endpoint: .search(query: query)) { result in
+        apiClient.request(endpoint: Endpoint<SearchResponse>.search(payload: SearchPayload(query: query))) { result in
             switch result {
             case let .success(payload):
                 nonisolated(unsafe) var messages = [ChatMessage]()
@@ -1008,7 +1045,10 @@ class MessageUpdater: Worker, @unchecked Sendable {
     }
 
     func translate(messageId: MessageId, to language: TranslationLanguage, completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil) {
-        let endpoint: Endpoint<MessageActionResponse> = .translate(messageId: messageId, to: language)
+        let endpoint = Endpoint<MessageActionResponse>.translateMessage(
+            id: messageId,
+            translateMessageRequest: TranslateMessageRequest(language: .init(rawValue: language.languageCode) ?? .unknown)
+        )
         apiClient.request(endpoint: endpoint, completion: { result in
             switch result {
             case let .success(boxedMessage):
@@ -1048,7 +1088,11 @@ class MessageUpdater: Worker, @unchecked Sendable {
         completion: @escaping (@Sendable (Error?) -> Void)
     ) {
         apiClient.request(
-            endpoint: .markThreadRead(cid: cid, threadId: threadId)
+            endpoint: Endpoint<MarkReadResponse>.markRead(
+                type: cid.type.rawValue,
+                id: cid.id,
+                markReadRequest: MarkReadRequest(threadId: threadId)
+            )
         ) { result in
             completion(result.error)
         }
@@ -1060,14 +1104,26 @@ class MessageUpdater: Worker, @unchecked Sendable {
         completion: @escaping (@Sendable (Error?) -> Void)
     ) {
         apiClient.request(
-            endpoint: .markThreadUnread(cid: cid, threadId: threadId)
+            endpoint: Endpoint<Response>.markUnread(
+                type: cid.type.rawValue,
+                id: cid.id,
+                markUnreadRequest: MarkUnreadRequest(threadId: threadId)
+            )
         ) { result in
             completion(result.error)
         }
     }
 
     func loadThread(query: ThreadQuery, completion: @escaping @Sendable (Result<ChatThread, Error>) -> Void) {
-        apiClient.request(endpoint: .thread(query: query)) { result in
+        apiClient.request(
+            endpoint: Endpoint<GetThreadResponse>.getThread(
+                messageId: query.messageId,
+                watch: query.watch,
+                replyLimit: query.replyLimit,
+                participantLimit: query.participantLimit,
+                memberLimit: nil
+            )
+        ) { result in
             switch result {
             case .success(let response):
                 self.database.write { session in
@@ -1082,13 +1138,13 @@ class MessageUpdater: Worker, @unchecked Sendable {
 
     func updateThread(
         for messageId: MessageId,
-        request: ThreadPartialUpdateRequest,
+        request: UpdateThreadPartialRequest,
         completion: @escaping @Sendable (Result<ChatThread, Error>) -> Void
     ) {
         apiClient.request(
-            endpoint: .partialThreadUpdate(
+            endpoint: Endpoint<UpdateThreadPartialResponse>.updateThreadPartial(
                 messageId: messageId,
-                request: request
+                updateThreadPartialRequest: request
             )) { result in
                 switch result {
                 case .success(let response):
@@ -1131,6 +1187,33 @@ private extension MessageUpdater {
             let exists = context.message(id: messageId) != nil
             completion(exists)
         }
+    }
+}
+
+private extension PaginationParameter {
+    var idGte: String? {
+        if case let .greaterThanOrEqual(id) = self { return id }
+        return nil
+    }
+
+    var idGt: String? {
+        if case let .greaterThan(id) = self { return id }
+        return nil
+    }
+
+    var idLte: String? {
+        if case let .lessThanOrEqual(id) = self { return id }
+        return nil
+    }
+
+    var idLt: String? {
+        if case let .lessThan(id) = self { return id }
+        return nil
+    }
+
+    var idAround: String? {
+        if case let .around(id) = self { return id }
+        return nil
     }
 }
 
@@ -1366,7 +1449,7 @@ extension MessageUpdater {
         messageId: MessageId,
         pagination: MessagesPagination,
         paginationStateHandler: MessagesPaginationStateHandling
-    ) async throws -> MessageRepliesPayload {
+    ) async throws -> GetRepliesResponse {
         try await withCheckedThrowingContinuation { continuation in
             loadReplies(
                 cid: cid,

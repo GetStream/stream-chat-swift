@@ -13,7 +13,7 @@ protocol MessagesPaginationStateHandling: Sendable {
     func begin(pagination: MessagesPagination?)
     /// A method that will be called to inform the object that a pagination call has finished
     /// with the provided result.
-    func end(pagination: MessagesPagination?, with result: Result<[MessagePayload], Error>)
+    func end(pagination: MessagesPagination?, with result: Result<[MessageResponse], Error>)
 }
 
 /// A component responsible for handling the messages pagination state.
@@ -61,7 +61,7 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling, @unchecke
         }
     }
 
-    func end(pagination: MessagesPagination?, with result: Result<[MessagePayload], Error>) {
+    func end(pagination: MessagesPagination?, with result: Result<[MessageResponse], Error>) {
         state.isLoadingNextMessages = false
         state.isLoadingMiddleMessages = false
         state.isLoadingPreviousMessages = false
@@ -128,7 +128,7 @@ class MessagesPaginationStateHandler: MessagesPaginationStateHandling, @unchecke
     ///   from the backend, this logic wouldn't be required. But until then we need to do this.
     private func calculateHasLoadedAllMessagesBasedOnTheLocation(
         of aroundMessageId: MessageId,
-        given messages: [MessagePayload]
+        given messages: [MessageResponse]
     ) {
         guard !messages.isEmpty else {
             return

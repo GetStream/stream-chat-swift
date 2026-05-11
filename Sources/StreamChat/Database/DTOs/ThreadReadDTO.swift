@@ -85,7 +85,7 @@ extension ThreadReadDTO {
 
 extension NSManagedObjectContext {
     func saveThreadRead(
-        payload: ThreadReadPayload,
+        payload: ReadStateResponse,
         parentMessageId: String,
         cache: PreWarmedCache?
     ) throws -> ThreadReadDTO {

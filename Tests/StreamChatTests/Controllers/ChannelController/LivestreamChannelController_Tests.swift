@@ -180,7 +180,7 @@ extension LivestreamChannelController_Tests {
         )
         controller.loadInitialMessagesFromCache = true
         
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
             messages: [.dummy(), .dummy()]
         )
@@ -208,7 +208,7 @@ extension LivestreamChannelController_Tests {
         )
         controller.loadInitialMessagesFromCache = false
         
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
             messages: [.dummy(), .dummy()]
         )
@@ -253,7 +253,7 @@ extension LivestreamChannelController_Tests {
         
         // Simulate successful updater response
         let cid = ChannelId.unique
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
             messages: [
                 .dummy(messageId: "1", text: "Message 1"),
@@ -338,7 +338,7 @@ extension LivestreamChannelController_Tests {
         // Given
         // First load some messages so we have something to paginate from
         controller.synchronize()
-        let channelPayload = ChannelPayload.dummy(messages: [.dummy(messageId: "message1")])
+        let channelPayload = ChannelStateResponseFields.dummy(messages: [.dummy(messageId: "message1")])
         client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         
         let apiClient = client.mockAPIClient
@@ -350,7 +350,7 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 50, parameter: .lessThan("specific-message-id"))
         var expectedQuery = try XCTUnwrap(channelQuery)
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = Endpoint<ChannelStateResponse>.channelQuery(expectedQuery)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
@@ -358,7 +358,7 @@ extension LivestreamChannelController_Tests {
         // Given
         // First load some messages so we have something to paginate from
         controller.synchronize()
-        let channelPayload = ChannelPayload.dummy(messages: [.dummy(messageId: "message1")])
+        let channelPayload = ChannelStateResponseFields.dummy(messages: [.dummy(messageId: "message1")])
         client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
         
         let apiClient = client.mockAPIClient
@@ -370,7 +370,7 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 25, parameter: .lessThan("specific-message-id"))
         var expectedQuery = try XCTUnwrap(channelQuery)
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = Endpoint<ChannelStateResponse>.channelQuery(expectedQuery)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -391,7 +391,7 @@ extension LivestreamChannelController_Tests {
         )
 
         // Save initial messages to the DB
-        let initialChannelPayload = ChannelPayload.dummy(
+        let initialChannelStateResponseFields = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: channelQuery.cid!),
             messages: [
                 .dummy(messageId: "old1"),
@@ -400,7 +400,7 @@ extension LivestreamChannelController_Tests {
         )
         // Save channel to cache
         try! client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: initialChannelPayload)
+            try session.saveChannel(payload: initialChannelStateResponseFields)
         }
         controller.synchronize()
 
@@ -414,7 +414,7 @@ extension LivestreamChannelController_Tests {
         }
 
         // Simulate successful API response for next messages
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             messages: [
                 .dummy(messageId: "new1", text: "New Message 1"),
                 .dummy(messageId: "new2", text: "New Message 2")
@@ -441,7 +441,7 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 40, parameter: .around("target-message-id"))
         var expectedQuery = try XCTUnwrap(channelQuery)
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = Endpoint<ChannelStateResponse>.channelQuery(expectedQuery)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
@@ -456,13 +456,13 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 25, parameter: nil)
         var expectedQuery = try XCTUnwrap(channelQuery)
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = Endpoint<ChannelStateResponse>.channelQuery(expectedQuery)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
     func test_loadPreviousMessages_successfulResponse_appendsMessages() {
         controller.synchronize()
-        let initialPayload = ChannelPayload.dummy(
+        let initialPayload = ChannelStateResponseFields.dummy(
             messages: [
                 .dummy(messageId: "new1", text: "New Message 1"),
                 .dummy(messageId: "new2", text: "New Message 2")
@@ -480,7 +480,7 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate successful API response for previous messages
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             messages: [
                 .dummy(messageId: "old1", text: "Old Message 1"),
                 .dummy(messageId: "old2", text: "Old Message 2")
@@ -498,7 +498,7 @@ extension LivestreamChannelController_Tests {
     
     func test_loadPageAroundMessageId_successfulResponse_replacesMessages() {
         controller.synchronize()
-        let initialPayload = ChannelPayload.dummy(
+        let initialPayload = ChannelStateResponseFields.dummy(
             messages: [
                 .dummy(messageId: "old1", text: "Old Message 1"),
                 .dummy(messageId: "old2", text: "Old Message 2")
@@ -516,7 +516,7 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate successful API response for page around message
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             messages: [
                 .dummy(messageId: "around1", text: "Around Message 1"),
                 .dummy(messageId: "around2", text: "Around Message 2")
@@ -559,7 +559,7 @@ extension LivestreamChannelController_Tests {
             exp.fulfill()
         }
 
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: .unique)
         )
         client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
@@ -604,7 +604,7 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 25, parameter: nil)
         var expectedQuery = try XCTUnwrap(channelQuery)
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = Endpoint<ChannelStateResponse>.channelQuery(expectedQuery)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
@@ -648,7 +648,7 @@ extension LivestreamChannelController_Tests {
         let delegate = LivestreamChannelControllerDelegate_Mock()
         controller.delegate = delegate
         
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: .unique)
         )
         
@@ -666,7 +666,7 @@ extension LivestreamChannelController_Tests {
         let delegate = LivestreamChannelControllerDelegate_Mock()
         controller.delegate = delegate
         
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             messages: [.dummy(), .dummy()]
         )
         
@@ -937,7 +937,7 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 25, parameter: nil)
         var expectedQuery = channelQuery!
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = Endpoint<ChannelStateResponse>.channelQuery(expectedQuery)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -953,7 +953,7 @@ extension LivestreamChannelController_Tests {
         let expectedPagination = MessagesPagination(pageSize: 25, parameter: nil)
         var expectedQuery = channelQuery!
         expectedQuery.pagination = expectedPagination
-        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        let expectedEndpoint = Endpoint<ChannelStateResponse>.channelQuery(expectedQuery)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
@@ -1092,7 +1092,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
             pinnedMessages: [] // No pinned messages initially
         )
@@ -1160,7 +1160,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
             pinnedMessages: [.dummy(messageId: messageId)]
         )
@@ -1221,7 +1221,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
             pinnedMessages: [.dummy(messageId: messageId)]
         )
@@ -1276,7 +1276,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
             pinnedMessages: []
         )
@@ -1313,7 +1313,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
             pinnedMessages: [.dummy(messageId: messageId)]
         )
@@ -1348,7 +1348,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
             pinnedMessages: [.dummy(messageId: "existing-pin")]
         )
@@ -1525,7 +1525,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid, name: "Old Name")
         )
         client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
@@ -1556,7 +1556,7 @@ extension LivestreamChannelController_Tests {
             exp.fulfill()
         }
         
-        let initialChannelPayload = ChannelPayload.dummy(
+        let initialChannelStateResponseFields = ChannelStateResponseFields.dummy(
             channel: .dummy(
                 cid: cid,
                 name: "Original Name",
@@ -1566,7 +1566,7 @@ extension LivestreamChannelController_Tests {
                 memberCount: 5
             )
         )
-        client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload.asChannelStateResponse))
+        client.mockAPIClient.test_simulateResponse(.success(initialChannelStateResponseFields.asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
         
         // When - Send ChannelUpdatedEvent with comprehensive updates
@@ -1686,7 +1686,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid, memberCount: initialMemberCount),
             members: [.dummy(user: .dummy(userId: existingMember.id))]
         )
@@ -1728,7 +1728,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid, memberCount: initialMemberCount),
             members: [
                 .dummy(user: .dummy(userId: existingMember.id)),
@@ -1765,7 +1765,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid, memberCount: initialMemberCount),
             members: [.dummy(user: .dummy(userId: existingMember.id))]
         )
@@ -1799,7 +1799,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid, memberCount: 1)
         )
         client.mockAPIClient.test_simulateResponse(.success(channelPayload.asChannelStateResponse))
@@ -1831,7 +1831,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid, memberCount: initialMemberCount),
             members: [
                 .dummy(user: .dummy(userId: removedMember.id)),
@@ -1866,7 +1866,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid, memberCount: 2),
             membership: .dummy(user: .dummy(userId: currentUserId))
         )
@@ -1905,7 +1905,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid, memberCount: initialMemberCount),
             members: [
                 .dummy(user: .dummy(userId: memberId)),
@@ -1955,7 +1955,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid, memberCount: 2),
             membership: .dummy(user: .dummy(userId: currentUserId))
         )
@@ -1993,7 +1993,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
             watcherCount: initialWatcherCount,
             watchers: [.dummy(userId: existingWatcher.id)]
@@ -2029,7 +2029,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
             watcherCount: initialWatcherCount,
             watchers: [
@@ -2061,14 +2061,14 @@ extension LivestreamChannelController_Tests {
         let cid = controller.cid!
 
         let userId = UserId.unique
-        let membership = MemberPayload.dummy(user: .dummy(userId: userId))
+        let membership = ChannelMemberResponse.dummy(user: .dummy(userId: userId))
 
         // Save initial channel to database
-        let initialChannelPayload = ChannelPayload.dummy(
+        let initialChannelStateResponseFields = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid), membership: membership
         )
         try! client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: initialChannelPayload)
+            try session.saveChannel(payload: initialChannelStateResponseFields)
         }
         
         // Load initial data
@@ -2076,7 +2076,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload.asChannelStateResponse))
+        client.mockAPIClient.test_simulateResponse(.success(initialChannelStateResponseFields.asChannelStateResponse))
         
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(controller.channel?.membership?.isBannedFromChannel, false)
@@ -2108,14 +2108,14 @@ extension LivestreamChannelController_Tests {
         let cid = controller.cid!
 
         let userId = UserId.unique
-        let membership = MemberPayload.dummy(user: .dummy(userId: userId), isMemberBanned: true)
+        let membership = ChannelMemberResponse.dummy(user: .dummy(userId: userId), isMemberBanned: true)
 
         // Save initial channel to database
-        let initialChannelPayload = ChannelPayload.dummy(
+        let initialChannelStateResponseFields = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid), membership: membership
         )
         try! client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: initialChannelPayload)
+            try session.saveChannel(payload: initialChannelStateResponseFields)
         }
 
         // Load initial data
@@ -2123,7 +2123,7 @@ extension LivestreamChannelController_Tests {
         controller.synchronize { _ in
             exp.fulfill()
         }
-        client.mockAPIClient.test_simulateResponse(.success(initialChannelPayload.asChannelStateResponse))
+        client.mockAPIClient.test_simulateResponse(.success(initialChannelStateResponseFields.asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(controller.channel?.membership?.isBannedFromChannel, true)
@@ -2471,7 +2471,7 @@ extension LivestreamChannelController_Tests {
         waitForExpectations(timeout: defaultTimeout)
         
         // Then
-        let expectedEndpoint = Endpoint<EmptyResponse>.deleteMessage(messageId: messageId, hard: false)
+        let expectedEndpoint = Endpoint<DeleteMessageResponse>.deleteMessage(id: messageId, hard: false, deletedBy: nil, deleteForMe: nil)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(deleteError)
     }
@@ -2485,7 +2485,7 @@ extension LivestreamChannelController_Tests {
         controller.deleteMessage(messageId: messageId, hard: true) { _ in }
         
         // Then
-        let expectedEndpoint = Endpoint<EmptyResponse>.deleteMessage(messageId: messageId, hard: true)
+        let expectedEndpoint = Endpoint<DeleteMessageResponse>.deleteMessage(id: messageId, hard: true, deletedBy: nil, deleteForMe: nil)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
@@ -2538,19 +2538,24 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate successful response
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<SendReactionResponse, Error>.success(
+            .init(duration: "", message: .dummy(messageId: messageId), reaction: .dummy(messageId: messageId, user: .dummy(userId: .unique)))
+        ))
         
         waitForExpectations(timeout: defaultTimeout)
         
         // Then
-        let expectedEndpoint = Endpoint<EmptyResponse>.addReaction(
-            reactionType,
-            score: 5,
-            enforceUnique: true,
-            extraData: ["key": .string("value")],
-            skipPush: true,
-            emojiCode: "👍",
-            messageId: messageId
+        let expectedEndpoint = Endpoint<SendReactionResponse>.sendReaction(
+            id: messageId,
+            sendReactionRequest: SendReactionRequest(
+                enforceUnique: true,
+                reaction: ReactionRequest(
+                    custom: ["key": .string("value"), "emoji_code": .string("👍")],
+                    score: 5,
+                    type: reactionType.rawValue
+                ),
+                skipPush: true
+            )
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(reactionError)
@@ -2566,14 +2571,17 @@ extension LivestreamChannelController_Tests {
         controller.addReaction(reactionType, to: messageId) { _ in }
         
         // Then
-        let expectedEndpoint = Endpoint<EmptyResponse>.addReaction(
-            reactionType,
-            score: 1,
-            enforceUnique: false,
-            extraData: [:],
-            skipPush: false,
-            emojiCode: nil,
-            messageId: messageId
+        let expectedEndpoint = Endpoint<SendReactionResponse>.sendReaction(
+            id: messageId,
+            sendReactionRequest: SendReactionRequest(
+                enforceUnique: false,
+                reaction: ReactionRequest(
+                    custom: nil,
+                    score: 1,
+                    type: reactionType.rawValue
+                ),
+                skipPush: false
+            )
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -2593,12 +2601,14 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate successful response
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<DeleteReactionResponse, Error>.success(
+            .init(duration: "", message: .dummy(messageId: messageId), reaction: .dummy(messageId: messageId, user: .dummy(userId: .unique)))
+        ))
         
         waitForExpectations(timeout: defaultTimeout)
         
         // Then
-        let expectedEndpoint = Endpoint<EmptyResponse>.deleteReaction(reactionType, messageId: messageId)
+        let expectedEndpoint = Endpoint<DeleteReactionResponse>.deleteReaction(id: messageId, type: reactionType.rawValue, userId: nil)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(reactionError)
     }
@@ -2617,18 +2627,22 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate successful response
-        let mockReactions = [MessageReactionPayload.dummy(
+        let mockReactions = [ReactionResponse.dummy(
             messageId: messageId,
-            user: UserPayload.dummy(userId: .unique)
+            user: UserResponse.dummy(userId: .unique)
         )]
-        let reactionsPayload = MessageReactionsPayload(duration: "", reactions: mockReactions)
-        client.mockAPIClient.test_simulateResponse(Result<MessageReactionsPayload, Error>.success(reactionsPayload))
+        let reactionsPayload = GetReactionsResponse(duration: "", reactions: mockReactions)
+        client.mockAPIClient.test_simulateResponse(Result<GetReactionsResponse, Error>.success(reactionsPayload))
         
         waitForExpectations(timeout: defaultTimeout)
         
         // Then
         let expectedPagination = Pagination(pageSize: 50, offset: 10)
-        let expectedEndpoint = Endpoint<MessageReactionsPayload>.loadReactions(messageId: messageId, pagination: expectedPagination)
+        let expectedEndpoint = Endpoint<GetReactionsResponse>.getReactions(
+            id: messageId,
+            limit: expectedPagination.pageSize,
+            offset: expectedPagination.offset
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNotNil(loadResult)
         if case .success = loadResult {
@@ -2648,7 +2662,11 @@ extension LivestreamChannelController_Tests {
         
         // Then
         let expectedPagination = Pagination(pageSize: 25, offset: 0)
-        let expectedEndpoint = Endpoint<MessageReactionsPayload>.loadReactions(messageId: messageId, pagination: expectedPagination)
+        let expectedEndpoint = Endpoint<GetReactionsResponse>.getReactions(
+            id: messageId,
+            limit: expectedPagination.pageSize,
+            offset: expectedPagination.offset
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
@@ -2666,7 +2684,7 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate failed response
-        client.mockAPIClient.test_simulateResponse(Result<MessageReactionsPayload, Error>.failure(testError))
+        client.mockAPIClient.test_simulateResponse(Result<GetReactionsResponse, Error>.failure(testError))
         
         waitForExpectations(timeout: defaultTimeout)
         
@@ -2699,20 +2717,13 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate successful response
-        let flagPayload = FlagMessagePayload(
-            currentUser: CurrentUserPayload.dummy(userId: .unique, role: .user),
-            flaggedMessageId: messageId
-        )
-        client.mockAPIClient.test_simulateResponse(Result<FlagMessagePayload, Error>.success(flagPayload))
+        client.mockAPIClient.test_simulateResponse(Result<FlagResponse, Error>.success(.init(duration: "", itemId: .unique)))
         
         waitForExpectations(timeout: defaultTimeout)
         
         // Then
-        let expectedEndpoint = Endpoint<FlagMessagePayload>.flagMessage(
-            true,
-            with: messageId,
-            reason: reason,
-            extraData: extraData
+        let expectedEndpoint = Endpoint<FlagResponse>.flag(
+            flagRequest: FlagRequest(reason: reason, targetMessageId: messageId, custom: extraData)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(flagError)
@@ -2727,11 +2738,8 @@ extension LivestreamChannelController_Tests {
         controller.flag(messageId: messageId) { _ in }
         
         // Then
-        let expectedEndpoint = Endpoint<FlagMessagePayload>.flagMessage(
-            true,
-            with: messageId,
-            reason: nil,
-            extraData: nil
+        let expectedEndpoint = Endpoint<FlagResponse>.flag(
+            flagRequest: FlagRequest(reason: nil, targetMessageId: messageId, custom: nil)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -2750,20 +2758,13 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate successful response
-        let flagPayload = FlagMessagePayload(
-            currentUser: CurrentUserPayload.dummy(userId: .unique, role: .user),
-            flaggedMessageId: messageId
-        )
-        client.mockAPIClient.test_simulateResponse(Result<FlagMessagePayload, Error>.success(flagPayload))
+        client.mockAPIClient.test_simulateResponse(Result<FlagResponse, Error>.success(.init(duration: "", itemId: .unique)))
         
         waitForExpectations(timeout: defaultTimeout)
         
         // Then
-        let expectedEndpoint = Endpoint<FlagMessagePayload>.flagMessage(
-            false,
-            with: messageId,
-            reason: nil,
-            extraData: nil
+        let expectedEndpoint = Endpoint<FlagResponse>.flag(
+            flagRequest: FlagRequest(targetMessageId: messageId)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(unflagError)
@@ -2784,14 +2785,14 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate successful response
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<UpdateMessagePartialResponse, Error>.success(.init(duration: "")))
         
         waitForExpectations(timeout: defaultTimeout)
         
         // Then
-        let expectedEndpoint = Endpoint<EmptyResponse>.pinMessage(
-            messageId: messageId,
-            request: .init(set: .init(pinned: true))
+        let expectedEndpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+            id: messageId,
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(true)])
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(pinError)
@@ -2806,9 +2807,9 @@ extension LivestreamChannelController_Tests {
         controller.pin(messageId: messageId) { _ in }
         
         // Then
-        let expectedEndpoint = Endpoint<EmptyResponse>.pinMessage(
-            messageId: messageId,
-            request: .init(set: .init(pinned: true))
+        let expectedEndpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+            id: messageId,
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(true)])
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -2827,14 +2828,14 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate successful response
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<UpdateMessagePartialResponse, Error>.success(.init(duration: "")))
         
         waitForExpectations(timeout: defaultTimeout)
         
         // Then
-        let expectedEndpoint = Endpoint<EmptyResponse>.pinMessage(
-            messageId: messageId,
-            request: .init(set: .init(pinned: false))
+        let expectedEndpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+            id: messageId,
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(false)])
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(unpinError)
@@ -2859,8 +2860,8 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate successful response
-        let pinnedMessagesPayload = PinnedMessagesPayload(messages: [.dummy()])
-        client.mockAPIClient.test_simulateResponse(Result<PinnedMessagesPayload, Error>.success(pinnedMessagesPayload))
+        let pinnedMessagesPayload = MessageListPayload(messages: [.dummy()])
+        client.mockAPIClient.test_simulateResponse(Result<MessageListPayload, Error>.success(pinnedMessagesPayload))
         
         waitForExpectations(timeout: defaultTimeout)
         
@@ -2870,7 +2871,7 @@ extension LivestreamChannelController_Tests {
             sorting: sorting,
             pagination: pagination
         )
-        let expectedEndpoint = Endpoint<PinnedMessagesPayload>.pinnedMessages(cid: controller.cid!, query: expectedQuery)
+        let expectedEndpoint = Endpoint<MessageListPayload>.pinnedMessages(cid: controller.cid!, query: expectedQuery)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNotNil(loadResult)
         if case .success = loadResult {
@@ -2893,7 +2894,7 @@ extension LivestreamChannelController_Tests {
             sorting: [],
             pagination: nil
         )
-        let expectedEndpoint = Endpoint<PinnedMessagesPayload>.pinnedMessages(cid: controller.cid!, query: expectedQuery)
+        let expectedEndpoint = Endpoint<MessageListPayload>.pinnedMessages(cid: controller.cid!, query: expectedQuery)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 }
@@ -3149,12 +3150,16 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate successful response
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<UpdateChannelPartialResponse, Error>.success(.init(duration: "", members: [])))
         
         waitForExpectations(timeout: defaultTimeout)
         
         // Then
-        let expectedEndpoint = Endpoint<EmptyResponse>.enableSlowMode(cid: controller.cid!, cooldownDuration: cooldownDuration)
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: controller.cid!.type.rawValue,
+            id: controller.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["cooldown": .number(Double(cooldownDuration))])
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(slowModeError)
     }
@@ -3171,7 +3176,7 @@ extension LivestreamChannelController_Tests {
         }
         
         // Simulate successful response - this goes through the updater
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<UpdateChannelPartialResponse, Error>.success(.init(duration: "", members: [])))
         
         waitForExpectations(timeout: defaultTimeout)
         
@@ -3181,7 +3186,7 @@ extension LivestreamChannelController_Tests {
 
     func test_currentCooldownTime_withNoCooldown_returnsZero() {
         // Given
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: controller.cid!, cooldownDuration: 0)
         )
         controller.synchronize()
@@ -3218,7 +3223,7 @@ extension LivestreamChannelController_Tests {
         let cooldownDuration = 30
         
         // Create a mock channel payload with cooldown
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(
                 cid: controller.cid!,
                 ownCapabilities: [],
@@ -3259,7 +3264,7 @@ extension LivestreamChannelController_Tests {
         let messageDate = currentDate.addingTimeInterval(-10)
         
         // Create a mock channel payload with skip slow mode capability
-        let channelPayload = ChannelPayload.dummy(
+        let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(
                 cid: controller.cid!,
                 ownCapabilities: [ChannelCapability.skipSlowMode.rawValue],
@@ -3302,12 +3307,16 @@ extension LivestreamChannelController_Tests {
         }
 
         // Simulate successful response
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<UpdateChannelPartialResponse, Error>.success(.init(duration: "", members: [])))
 
         waitForExpectations(timeout: defaultTimeout)
 
         // Then
-        let expectedEndpoint = Endpoint<EmptyResponse>.freezeChannel(true, cid: controller.cid!)
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: controller.cid!.type.rawValue,
+            id: controller.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["frozen": .bool(true)])
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(freezeError)
     }
@@ -3325,12 +3334,16 @@ extension LivestreamChannelController_Tests {
         }
 
         // Simulate successful response
-        client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        client.mockAPIClient.test_simulateResponse(Result<UpdateChannelPartialResponse, Error>.success(.init(duration: "", members: [])))
 
         waitForExpectations(timeout: defaultTimeout)
 
         // Then
-        let expectedEndpoint = Endpoint<EmptyResponse>.freezeChannel(false, cid: controller.cid!)
+        let expectedEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: controller.cid!.type.rawValue,
+            id: controller.cid!.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["frozen": .bool(false)])
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(unfreezeError)
     }
@@ -3350,7 +3363,7 @@ class MockPaginationStateHandler: MessagesPaginationStateHandling, @unchecked Se
         beginCallCount += 1
     }
     
-    func end(pagination: MessagesPagination?, with result: Result<[MessagePayload], any Error>) {
+    func end(pagination: MessagesPagination?, with result: Result<[MessageResponse], any Error>) {
         endCallCount += 1
     }
 }

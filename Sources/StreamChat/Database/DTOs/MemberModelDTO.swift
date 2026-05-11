@@ -108,7 +108,7 @@ extension MemberDTO {
 
 extension NSManagedObjectContext {
     func saveMember(
-        payload: MemberPayload,
+        payload: ChannelMemberResponse,
         channelId: ChannelId,
         query: ChannelMemberListQuery?,
         cache: PreWarmedCache?
@@ -157,7 +157,7 @@ extension NSManagedObjectContext {
         MemberDTO.load(userId: userId, channelId: cid, context: self)
     }
 
-    func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
+    func saveMembers(payload: MembersResponse, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
         // If it is the first page of the members list, make sure to clear the members from local cache
         // which are not in the remote response anymore.
         let isFirstPage = query?.pagination.offset == 0

@@ -105,14 +105,14 @@ class MessageReminderDTO: NSManagedObject {
 extension NSManagedObjectContext: ReminderDatabaseSession {
     /// Creates or updates a reminder for a message.
     func saveReminder(
-        payload: ReminderPayload,
+        payload: ReminderResponseData,
         cache: PreWarmedCache?
     ) throws -> MessageReminderDTO {
         let cid = try ChannelId(cid: payload.channelCid)
         let channelDTO: ChannelDTO
         if let existingChannel = ChannelDTO.load(cid: cid, context: self) {
             channelDTO = existingChannel
-        } else if let channelPayload = payload.channel?.asChannelDetailPayload {
+        } else if let channelPayload = payload.channel?.asChannelResponse {
             channelDTO = try saveChannel(payload: channelPayload, query: nil, cache: nil)
         } else {
             throw ClientError.ChannelDoesNotExist(cid: cid)

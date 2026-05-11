@@ -140,7 +140,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
     }
 
     func saveUser(
-        payload: UserPayload,
+        payload: UserResponse,
         query: UserListQuery?,
         cache: PreWarmedCache?
     ) throws -> UserDTO {
@@ -181,7 +181,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
     }
 
     @discardableResult
-    func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
+    func saveUsers(payload: QueryUsersResponse, query: UserListQuery?) -> [UserDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.userPayloads.compactMapLoggingError {
             try saveUser(payload: $0, query: query, cache: cache)
@@ -194,7 +194,7 @@ extension UserDTO {
     func asModel() throws -> ChatUser { try .create(fromDTO: self) }
 
     /// Snapshots the current state of `UserDTO` and returns its representation for used in API calls.
-    func asRequestBody() -> UserRequestBody {
+    func asRequestBody() -> UserRequest {
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)

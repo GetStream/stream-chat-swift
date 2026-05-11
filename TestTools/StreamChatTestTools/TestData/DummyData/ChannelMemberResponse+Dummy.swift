@@ -5,17 +5,17 @@
 import Foundation
 @testable import StreamChat
 
-extension MemberPayload {
+extension ChannelMemberResponse {
     /// Returns a dummy member payload with the given `userId` and `role`
     static func dummy(
-        user: UserPayload = .dummy(userId: .unique),
+        user: UserResponse = .dummy(userId: .unique),
         createdAt: Date = .unique,
         updatedAt: Date = .unique,
         role: MemberRole = .member,
         isMemberBanned: Bool = false,
         archivedAt: Date? = nil,
         pinnedAt: Date? = nil
-    ) -> MemberPayload {
+    ) -> ChannelMemberResponse {
         .init(
             user: user,
             userId: user.id,
@@ -29,10 +29,10 @@ extension MemberPayload {
     }
 }
 
-extension MemberContainerPayload {
-    static func dummy(userId: UserId = .unique) -> MemberContainerPayload {
+extension ChannelMemberResponse {
+    static func dummy(userId: UserId = .unique) -> ChannelMemberResponse {
         .init(
-            member: .dummy(user: UserPayload.dummy(userId: userId)),
+            member: .dummy(user: UserResponse.dummy(userId: userId)),
             invite: nil,
             memberRole: nil
         )

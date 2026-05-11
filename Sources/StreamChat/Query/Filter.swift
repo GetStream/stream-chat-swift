@@ -218,6 +218,30 @@ public extension Filter {
     }
 }
 
+extension Filter {
+    var rawJSON: RawJSON {
+        .dictionary(toRawJSONDictionary())
+    }
+
+    /// Converts the filter to a `RawJSON` dictionary for OpenAPI request bodies.
+    func toRawJSONDictionary() -> [String: RawJSON] {
+        if self.operator.isGroupOperator {
+            guard let filters = value as? [Filter] else {
+                log.error("Unknown filter value used with \(self.operator)")
+                return [:]
+            }
+            return [self.operator: .array(filters.map(\.rawJSON))]
+        }
+
+        guard let key else {
+            log.error("Filter must have the `key` value when the operator is not a group operator.")
+            return [:]
+        }
+
+        return [key: .dictionary([self.operator: value.rawJSON])]
+    }
+}
+
 /// A helper struct that represents a key of a filter.
 ///
 /// It allows tagging a key with a scope and a type of the value the key is related to.
@@ -554,6 +578,58 @@ extension String {
     var isGroupOperator: Bool {
         let groupOperators: [FilterOperator] = [.and, .or, .nor]
         return groupOperators.map(\.rawValue).contains(self)
+    }
+}
+
+private extension FilterValue {
+    var rawJSON: RawJSON {
+        switch self {
+        case let value as Bool:
+            return .bool(value)
+        case let value as Date:
+            return .string(RFC3339DateFormatter.string(from: value))
+        case let value as Double:
+            return .number(value)
+        case let value as Float:
+            return .number(Double(value))
+        case let value as Int:
+            return .number(Double(value))
+        case let value as String:
+            return .string(value)
+        case let value as URL:
+            return .string(value.absoluteString)
+        case let value as [FilterValue]:
+            return .array(value.map(\.rawJSON))
+        case let value as ChannelId:
+            return .string(value.rawValue)
+        case let value as ChannelType:
+            return .string(value.rawValue)
+        case let value as MemberRole:
+            return .string(value.filterRawValue)
+        case let value as TeamId?:
+            return value.map(RawJSON.string) ?? .nil
+        case let value as any RawRepresentable:
+            if let rawValue = value.rawValue as? String {
+                return .string(rawValue)
+            }
+            fallthrough
+        default:
+            log.error("Unsupported filter value \(type(of: self)) cannot be converted to RawJSON.")
+            return .nil
+        }
+    }
+}
+
+private extension MemberRole {
+    var filterRawValue: String {
+        switch self {
+        case .member:
+            return "channel_member"
+        case .moderator:
+            return "channel_moderator"
+        default:
+            return rawValue
+        }
     }
 }
 

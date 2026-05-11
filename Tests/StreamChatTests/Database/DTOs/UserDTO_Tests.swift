@@ -23,7 +23,7 @@ final class UserDTO_Tests: XCTestCase {
     func test_userPayload_isStoredAndLoadedFromDB() throws {
         let userId = UUID().uuidString
 
-        let payload: UserPayload = .dummy(userId: userId, language: "pt")
+        let payload: UserResponse = .dummy(userId: userId, language: "pt")
 
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -55,7 +55,7 @@ final class UserDTO_Tests: XCTestCase {
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let userId: UserId = .unique
 
-        let payload: UserPayload = .init(
+        let payload: UserResponse = .init(
             id: userId,
             name: .unique,
             imageURL: .unique(),
@@ -87,7 +87,7 @@ final class UserDTO_Tests: XCTestCase {
     func test_DTO_asModel() throws {
         let userId = UUID().uuidString
 
-        let payload: UserPayload = .dummy(userId: userId, extraData: ["k": .string("v")], language: "pt")
+        let payload: UserResponse = .dummy(userId: userId, extraData: ["k": .string("v")], language: "pt")
 
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -116,7 +116,7 @@ final class UserDTO_Tests: XCTestCase {
     func test_DTO_asPayload() throws {
         let userId = UUID().uuidString
 
-        let payload: UserPayload = .dummy(userId: userId, extraData: ["k": .string("v")])
+        let payload: UserResponse = .dummy(userId: userId, extraData: ["k": .string("v")])
 
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -134,7 +134,7 @@ final class UserDTO_Tests: XCTestCase {
         // Create a new user and set it's online status to `true`
         let userId: UserId = .unique
         try database.writeSynchronously {
-            let dto = try $0.saveUser(payload: UserPayload.dummy(userId: userId))
+            let dto = try $0.saveUser(payload: UserResponse.dummy(userId: userId))
             dto.isOnline = true
         }
 
@@ -148,7 +148,7 @@ final class UserDTO_Tests: XCTestCase {
     func test_DTO_updateFromSamePayload_doNotProduceChanges() throws {
         // Arrange: Store random user payload to db
         let userId = UUID().uuidString
-        let payload: UserPayload = .dummy(userId: userId)
+        let payload: UserResponse = .dummy(userId: userId)
         try database.writeSynchronously { session in
             try session.saveUser(payload: payload)
         }
@@ -286,9 +286,9 @@ final class UserDTO_Tests: XCTestCase {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique
 
-        let userPayload: UserPayload = .dummy(userId: userId)
+        let userPayload: UserResponse = .dummy(userId: userId)
 
-        let payload: MemberPayload = .init(
+        let payload: ChannelMemberResponse = .init(
             user: userPayload,
             userId: userPayload.id,
             role: .moderator,
@@ -322,11 +322,11 @@ final class UserDTO_Tests: XCTestCase {
         // Arrange: Store current user in database
         let userId: UserId = .unique
 
-        let payload: CurrentUserPayload = .dummy(
+        let payload: OwnUserResponse = .dummy(
             userId: userId,
             role: .admin,
             extraData: [:],
-            devices: [DevicePayload.dummy],
+            devices: [DeviceResponse.dummy],
             mutedUsers: [
                 .dummy(userId: .unique)
             ]
@@ -359,9 +359,9 @@ final class UserDTO_Tests: XCTestCase {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique
 
-        let memberPayload: MemberPayload = .dummy(user: UserPayload.dummy(userId: userId))
-        let channelPayload: ChannelPayload = .dummy(channel: .dummy(cid: channelId))
-        let payload: MessagePayload = .dummy(
+        let memberPayload: ChannelMemberResponse = .dummy(user: UserResponse.dummy(userId: userId))
+        let channelPayload: ChannelStateResponseFields = .dummy(channel: .dummy(cid: channelId))
+        let payload: MessageResponse = .dummy(
             showReplyInChannel: false,
             authorUserId: userId,
             text: "Yo"
@@ -396,9 +396,9 @@ final class UserDTO_Tests: XCTestCase {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique
 
-        let userPayload: UserPayload = .dummy(userId: userId)
-        let channelPayload: ChannelPayload = .dummy(channel: .dummy(cid: channelId))
-        let payload: MessagePayload = .dummy(
+        let userPayload: UserResponse = .dummy(userId: userId)
+        let channelPayload: ChannelStateResponseFields = .dummy(channel: .dummy(cid: channelId))
+        let payload: MessageResponse = .dummy(
             showReplyInChannel: false,
             authorUserId: userId,
             text: "Yo"

@@ -128,16 +128,16 @@ final class PollVoteListController_Tests: XCTestCase {
         // Create current user in the database
         try client.databaseContainer.createCurrentUser(id: currentUserId)
         
-        let user = UserPayload.dummy(userId: currentUserId)
+        let user = UserResponse.dummy(userId: currentUserId)
         try client.databaseContainer.createPoll(id: pollId, createdBy: user)
 
         // Create votes.
-        var votes = [PollVotePayload]()
+        var votes = [PollVoteResponseData]()
         for _ in 0..<5 {
             votes.append(XCTestCase().dummyPollVotePayload(pollId: pollId, userId: user.id, user: user))
         }
         
-        let response = PollVoteListResponse(duration: "", votes: votes)
+        let response = PollVotesResponse(duration: "", votes: votes)
         let query = controller.query
         try client.databaseContainer.writeSynchronously { session in
             try session.savePollVotes(payload: response, query: query, cache: nil)
@@ -505,7 +505,7 @@ final class PollVoteListController_Tests: XCTestCase {
     
     func test_pollProperty_returnsPollFromObserver() {
         // Create a poll in the database
-        let user = UserPayload.dummy(userId: currentUserId)
+        let user = UserResponse.dummy(userId: currentUserId)
         let poll = dummyPollPayload(id: pollId, user: user)
 
         try! client.databaseContainer.writeSynchronously { session in
@@ -530,7 +530,7 @@ final class PollVoteListController_Tests: XCTestCase {
     
     @MainActor func test_pollObserver_notifiesDelegateOnPollUpdate() {
         // Create initial poll
-        let user = UserPayload.dummy(userId: currentUserId)
+        let user = UserResponse.dummy(userId: currentUserId)
         let initialPoll = dummyPollPayload(id: pollId, user: user)
 
         try! client.databaseContainer.writeSynchronously { session in

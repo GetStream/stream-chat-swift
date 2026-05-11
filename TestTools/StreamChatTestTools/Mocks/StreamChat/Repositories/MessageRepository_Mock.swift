@@ -37,7 +37,7 @@ final class MessageRepository_Mock: MessageRepository, Spy, @unchecked Sendable 
 
     override func saveSuccessfullySentMessage(
         cid: ChannelId,
-        message: MessagePayload,
+        message: MessageResponse,
         completion: @escaping (Result<ChatMessage, Error>) -> Void
     ) {
         record()
@@ -55,7 +55,7 @@ final class MessageRepository_Mock: MessageRepository, Spy, @unchecked Sendable 
         getMessageResult.map { completion?($0) }
     }
 
-    override func saveSuccessfullyDeletedMessage(message: MessagePayload, completion: ((Error?) -> Void)? = nil) {
+    override func saveSuccessfullyDeletedMessage(message: MessageResponse, completion: ((Error?) -> Void)? = nil) {
         record()
         completion?(saveSuccessfullyDeletedMessageError)
     }

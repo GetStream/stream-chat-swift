@@ -127,7 +127,7 @@ final class PollController_Tests: XCTestCase {
         try client.databaseContainer.createCurrentUser(id: currentUserId)
 
         // Create poll in that matches controller's `pollId`
-        let user = UserPayload.dummy(userId: currentUserId)
+        let user = UserResponse.dummy(userId: currentUserId)
         try client.databaseContainer.createPoll(id: pollId, createdBy: user)
         
         // Assert message is fetched from the database and has correct field values
@@ -136,7 +136,7 @@ final class PollController_Tests: XCTestCase {
 
         // Simulate response from the backend with updated `name`, update the local poll in the database
         let updatedName = "Poll Updated"
-        let pollPayload: PollPayload = XCTestCase().dummyPollPayload(
+        let pollPayload: PollResponseData = XCTestCase().dummyPollPayload(
             id: pollId,
             name: updatedName,
             user: user
@@ -158,18 +158,18 @@ final class PollController_Tests: XCTestCase {
         // Create current user in the database
         try client.databaseContainer.createCurrentUser(id: currentUserId)
         
-        let user = UserPayload.dummy(userId: currentUserId)
+        let user = UserResponse.dummy(userId: currentUserId)
         try client.databaseContainer.createPoll(id: pollId, createdBy: user)
         
         client.mockPollsRepository.getQueryPollVotes_completion?(.success(.init(votes: [])))
 
         // Create own votes.
-        var ownVotes = [PollVotePayload]()
+        var ownVotes = [PollVoteResponseData]()
         for _ in 0..<5 {
             ownVotes.append(XCTestCase().dummyPollVotePayload(pollId: pollId, userId: user.id, user: user))
         }
         
-        let response = PollVoteListResponse(duration: "", votes: ownVotes)
+        let response = PollVotesResponse(duration: "", votes: ownVotes)
         let query = controller.ownVotesQuery
         try client.databaseContainer.writeSynchronously { session in
             try session.savePollVotes(payload: response, query: query, cache: nil)

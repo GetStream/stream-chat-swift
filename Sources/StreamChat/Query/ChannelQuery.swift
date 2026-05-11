@@ -26,7 +26,7 @@ public struct ChannelQuery: Encodable, Sendable {
     /// A query options.
     public var options: QueryOptions = .all
     /// ChannelCreatePayload that is needed only when creating channel
-    let channelPayload: ChannelEditDetailPayload?
+    let channelPayload: ChannelInput?
     /// A pagination for members for the channel to be retrieved.
     let membersPagination: Pagination?
 
@@ -83,7 +83,7 @@ public struct ChannelQuery: Encodable, Sendable {
     /// Init a channel query.
     /// - Parameters:
     ///   - channelPayload: a payload that has data needed for channel creation or update.
-    init(id: String?, type: ChannelType, channelPayload: ChannelEditDetailPayload) {
+    init(id: String?, type: ChannelType, channelPayload: ChannelInput) {
         self.id = id
         self.type = type
         self.channelPayload = channelPayload

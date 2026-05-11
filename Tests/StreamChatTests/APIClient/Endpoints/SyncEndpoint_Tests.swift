@@ -7,22 +7,16 @@
 import XCTest
 
 final class SyncEndpoint_Tests: XCTestCase {
-    func test_missingEvents_buildsCorrectly() {
-        let lastSyncedAt: Date = .unique
-        let cids: [ChannelId] = [.unique, .unique, .unique]
+    func test_missingEvents_buildsCompatibilityEndpoint() {
+        let since = Date(timeIntervalSince1970: 1_700_000_000)
+        let cid = ChannelId(type: .messaging, id: "general")
 
-        let expectedEndpoint = Endpoint<MissingEventsPayload>(
-            path: .sync,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: MissingEventsRequestBody(lastSyncedAt: lastSyncedAt, cids: cids)
-        )
+        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: since, cids: [cid])
 
-        // Build endpoint
-        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: lastSyncedAt, cids: cids)
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual(endpoint.path.value, "sync")
+        XCTAssertEqual(endpoint.method, .post)
+        XCTAssertNil(endpoint.queryItems)
+        XCTAssertFalse(endpoint.requiresConnectionId)
+        XCTAssertEqual(endpoint.body as? SyncRequest, SyncRequest(lastSyncedAt: since, cids: [cid]))
     }
 }

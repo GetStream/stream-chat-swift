@@ -12,7 +12,7 @@ final class MissingEventsPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
         XCTAssertEqual(payload.eventPayloads.count, 1)
 
-        let expectedUser = UserPayload(
+        let expectedUser = UserResponse(
             id: "broken-waterfall-5",
             name: "Broken Waterfall",
             imageURL: URL(string: "https://api.adorable.io/avatars/285/broken-waterfall-5.png"),

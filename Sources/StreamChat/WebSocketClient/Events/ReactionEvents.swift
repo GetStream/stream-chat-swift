@@ -31,10 +31,10 @@ public final class ReactionNewEvent: ChannelSpecificEvent {
 }
 
 final class ReactionNewEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let cid: ChannelId
-    let message: MessagePayload
-    let reaction: MessageReactionPayload
+    let message: MessageResponse
+    let reaction: ReactionResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -95,10 +95,10 @@ public final class ReactionUpdatedEvent: ChannelSpecificEvent {
 }
 
 final class ReactionUpdatedEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let cid: ChannelId
-    let message: MessagePayload
-    let reaction: MessageReactionPayload
+    let message: MessageResponse
+    let reaction: ReactionResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -159,10 +159,10 @@ public final class ReactionDeletedEvent: ChannelSpecificEvent {
 }
 
 final class ReactionDeletedEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let cid: ChannelId
-    let message: MessagePayload
-    let reaction: MessageReactionPayload
+    let message: MessageResponse
+    let reaction: ReactionResponse
     let createdAt: Date
     let payload: EventPayload
 

@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension CurrentUserPayload {
+extension OwnUserResponse {
     /// Returns a dummy current user payload with the given UserId and extra data
     static func dummy(
         userId: UserId,
@@ -22,13 +22,13 @@ extension CurrentUserPayload {
         teamsRole: [String: UserRole]? = nil,
         unreadCount: UnreadCountPayload? = .dummy,
         extraData: [String: RawJSON] = [:],
-        devices: [DevicePayload] = [],
-        mutedUsers: [MutedUserPayload] = [],
+        devices: [DeviceResponse] = [],
+        mutedUsers: [UserMuteResponse] = [],
         teams: [TeamId] = [],
         language: String? = nil,
-        mutedChannels: [MutedChannelPayload] = [],
-        pushPreference: PushPreferencePayload? = nil
-    ) -> CurrentUserPayload {
+        mutedChannels: [ChannelMute] = [],
+        pushPreference: PushPreferencesResponse? = nil
+    ) -> OwnUserResponse {
         .init(
             id: userId,
             name: name,
@@ -55,14 +55,14 @@ extension CurrentUserPayload {
 
     /// Returns a dummy current user payload with the given user payload
     static func dummy(
-        userPayload: UserPayload,
+        userPayload: UserResponse,
         unreadCount: UnreadCountPayload? = .dummy,
-        devices: [DevicePayload] = [],
-        mutedUsers: [MutedUserPayload] = [],
-        mutedChannels: [MutedChannelPayload] = [],
+        devices: [DeviceResponse] = [],
+        mutedUsers: [UserMuteResponse] = [],
+        mutedChannels: [ChannelMute] = [],
         privacySettings: UserPrivacySettingsPayload? = nil,
-        pushPreference: PushPreferencePayload? = nil
-    ) -> CurrentUserPayload {
+        pushPreference: PushPreferencesResponse? = nil
+    ) -> OwnUserResponse {
         .init(
             id: userPayload.id,
             name: userPayload.name,

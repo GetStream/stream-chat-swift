@@ -31,43 +31,43 @@ final class CustomDataHashMap_Tests: XCTestCase {
     }
 
     func test_channelDetailJSONDecodeWithoutAnyCustomData() throws {
-        try! assertEmptyCustomData(ChannelDetailPayload.self, "ChannelPayload")
+        try! assertEmptyCustomData(ChannelResponse.self, "ChannelPayload")
     }
 
     func test_channelDetailJSONDecodeWithCustomData() throws {
-        try! assertCustomData(ChannelDetailPayload.self, "ChannelPayloadWithCustom")
+        try! assertCustomData(ChannelResponse.self, "ChannelPayloadWithCustom")
     }
 
     func test_messageJSONDecodeWithoutAnyCustomData() throws {
-        try! assertEmptyCustomData(MessagePayload.self, "MessagePayload")
+        try! assertEmptyCustomData(MessageResponse.self, "MessagePayload")
     }
 
     func test_messageJSONDecodeWithCustomData() throws {
-        try! assertCustomData(MessagePayload.self, "MessagePayloadWithCustom")
+        try! assertCustomData(MessageResponse.self, "MessagePayloadWithCustom")
     }
 
     func test_messageReactionJSONDecodeWithoutAnyCustomData() throws {
-        try! assertEmptyCustomData(MessageReactionPayload.self, "MessageReactionPayload")
+        try! assertEmptyCustomData(ReactionResponse.self, "MessageReactionPayload")
     }
 
     func test_messageReactionJSONDecodeWithCustomData() throws {
-        try! assertCustomData(MessageReactionPayload.self, "MessageReactionPayloadWithCustom")
+        try! assertCustomData(ReactionResponse.self, "MessageReactionPayloadWithCustom")
     }
 
     func test_userJSONDecodeWithoutAnyCustomData() throws {
-        try! assertEmptyCustomData(UserPayload.self, "UserPayload")
+        try! assertEmptyCustomData(UserResponse.self, "UserPayload")
     }
 
     func test_userJSONDecodeWithCustomData() throws {
-        try! assertCustomData(UserPayload.self, "UserPayloadWithCustom")
+        try! assertCustomData(UserResponse.self, "UserPayloadWithCustom")
     }
 
     func test_currentUserJSONDecodeWithoutAnyCustomData() throws {
-        try! assertEmptyCustomData(CurrentUserPayload.self, "CurrentUserPayload")
+        try! assertEmptyCustomData(OwnUserResponse.self, "CurrentUserPayload")
     }
 
     func test_currentUserJSONDecodeWithCustomData() throws {
-        try! assertCustomData(CurrentUserPayload.self, "CurrentUserPayloadWithCustom")
+        try! assertCustomData(OwnUserResponse.self, "CurrentUserPayloadWithCustom")
     }
 }
 

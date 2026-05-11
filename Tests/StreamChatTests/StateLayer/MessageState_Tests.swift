@@ -22,7 +22,7 @@ final class MessageState_Tests: XCTestCase {
         
         // Channel is required for saving messages
         env.client.databaseContainer.write { session in
-            try session.saveChannel(payload: self.makeChannelPayload(messageId: nil))
+            try session.saveChannel(payload: self.makeChannelStateResponseFields(messageId: nil))
         }
     }
 
@@ -167,8 +167,8 @@ final class MessageState_Tests: XCTestCase {
     private func setUpMessageState(writeMessages: Bool = true) async throws {
         if writeMessages {
             try await env.client.databaseContainer.write { session in
-                try session.saveChannel(payload: self.makeChannelPayload(messageId: self.messageId))
-                try session.saveChannel(payload: self.makeChannelPayload(messageId: self.unrelatedMessageId))
+                try session.saveChannel(payload: self.makeChannelStateResponseFields(messageId: self.messageId))
+                try session.saveChannel(payload: self.makeChannelStateResponseFields(messageId: self.unrelatedMessageId))
             }
         }
         
@@ -194,38 +194,38 @@ final class MessageState_Tests: XCTestCase {
         }
     }
     
-    private func makeChannelPayload(messageId: MessageId?) -> ChannelPayload {
+    private func makeChannelStateResponseFields(messageId: MessageId?) -> ChannelStateResponseFields {
         // Note that message pagination relies on createdAt and cid
-        var messages = [MessagePayload]()
+        var messages = [MessageResponse]()
         if let messageId {
             messages.append(
-                MessagePayload.dummy(
+                MessageResponse.dummy(
                     messageId: messageId,
                     createdAt: Date(timeIntervalSinceReferenceDate: 0),
                     cid: .unique
                 )
             )
         }
-        return ChannelPayload.dummy(channel: .dummy(cid: channelId), messages: messages)
+        return ChannelStateResponseFields.dummy(channel: .dummy(cid: channelId), messages: messages)
     }
     
-    private func makeMessagePayload(reactionCount: Int, messageId: MessageId) -> MessagePayload {
+    private func makeMessagePayload(reactionCount: Int, messageId: MessageId) -> MessageResponse {
         let reactions = (0..<reactionCount)
             .reversed() // last updated ones first
             .map {
-                MessageReactionPayload.dummy(
+                ReactionResponse.dummy(
                     messageId: messageId,
                     updatedAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0)),
                     user: .dummy(userId: .unique)
                 )
             }
-        return MessagePayload.dummy(messageId: messageId, latestReactions: reactions)
+        return MessageResponse.dummy(messageId: messageId, latestReactions: reactions)
     }
     
-    private func makeMessageRepliesPayload(repliesCount: Int, parentMessageId: MessageId) -> [MessagePayload] {
+    private func makeMessageRepliesPayload(repliesCount: Int, parentMessageId: MessageId) -> [MessageResponse] {
         (0..<repliesCount)
             .map {
-                MessagePayload.dummy(
+                MessageResponse.dummy(
                     messageId: "\(parentMessageId)_reply_\($0)",
                     parentId: parentMessageId,
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0)),

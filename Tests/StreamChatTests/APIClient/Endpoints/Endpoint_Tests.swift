@@ -3,138 +3,46 @@
 //
 
 @testable import StreamChat
+@testable import StreamChatTestTools
 import XCTest
 
 final class Endpoint_Tests: XCTestCase {
-    class SomethingDecodable: Decodable {}
-
-    func test_endpointWithoutQueryItemsNorBodyEncodingAndDecoding() {
-        let endpoint = Endpoint<SomethingDecodable>.init(
-            path: .guest,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            requiresToken: true,
-            body: nil
-        )
-        let encoder = JSONEncoder()
-        guard let encodedEndpoint = try? encoder.encode(endpoint) else {
-            XCTFail("Should properly encode the endpoint")
-            return
-        }
-
-        let decoder = JSONDecoder()
-        guard let decodedEndpoint = try? decoder.decode(Endpoint<SomethingDecodable>.self, from: encodedEndpoint) else {
-            XCTFail("Should properly decode the endpoint")
-            return
-        }
-
-        XCTAssertEqual(decodedEndpoint.path.value, "guest")
-        XCTAssertEqual(decodedEndpoint.method, .post)
-        XCTAssertNil(decodedEndpoint.queryItems)
-        XCTAssertEqual(decodedEndpoint.requiresConnectionId, false)
-        XCTAssertEqual(decodedEndpoint.requiresToken, true)
-        XCTAssertNil(decodedEndpoint.body)
-    }
-
-    func test_endpointWithBodyEncodingAndDecoding() {
-        let endpoint = Endpoint<SomethingDecodable>.init(
-            path: .guest,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            requiresToken: true,
-            body: ["BodyHello": 1]
-        )
-        let encoder = JSONEncoder()
-        guard let encodedEndpoint = try? encoder.encode(endpoint) else {
-            XCTFail("Should properly encode the endpoint")
-            return
-        }
-
-        let decoder = JSONDecoder()
-        guard let decodedEndpoint = try? decoder.decode(Endpoint<SomethingDecodable>.self, from: encodedEndpoint) else {
-            XCTFail("Should properly decode the endpoint")
-            return
-        }
-
-        XCTAssertEqual(decodedEndpoint.path.value, "guest")
-        XCTAssertEqual(decodedEndpoint.method, .post)
-        XCTAssertNil(decodedEndpoint.queryItems)
-        XCTAssertEqual(decodedEndpoint.requiresConnectionId, false)
-        XCTAssertEqual(decodedEndpoint.requiresToken, true)
-
-        guard let bodyData = decodedEndpoint.body as? Data else {
-            XCTFail("Should have body")
-            return
-        }
-
-        let decodedBody = try? JSONDecoder.stream.decode([String: Int].self, from: bodyData)
-        XCTAssertEqual(decodedBody, ["BodyHello": 1])
-    }
-
-    func test_endpointWithQueryItemsEncodingAndDecoding() {
-        let endpoint = Endpoint<SomethingDecodable>.init(
-            path: .guest,
+    func test_withDataResponse_preservesEndpointConfiguration() {
+        let endpoint = Endpoint<GetMessageResponse>(
+            path: .getMessage(id: "message-id"),
             method: .get,
-            queryItems: ["QueryHello": 2],
-            requiresConnectionId: false,
+            queryItems: ["include_thread": "true"],
+            requiresConnectionId: true,
             requiresToken: true,
             body: nil
         )
-        let encoder = JSONEncoder()
-        guard let encodedEndpoint = try? encoder.encode(endpoint) else {
-            XCTFail("Should properly encode the endpoint")
-            return
-        }
 
-        let decoder = JSONDecoder()
-        guard let decodedEndpoint = try? decoder.decode(Endpoint<SomethingDecodable>.self, from: encodedEndpoint) else {
-            XCTFail("Should properly decode the endpoint")
-            return
-        }
+        let dataEndpoint = endpoint.withDataResponse
 
-        XCTAssertEqual(decodedEndpoint.path.value, "guest")
-        XCTAssertEqual(decodedEndpoint.method, .get)
-        XCTAssertNil(decodedEndpoint.body)
-        XCTAssertEqual(decodedEndpoint.requiresConnectionId, false)
-        XCTAssertEqual(decodedEndpoint.requiresToken, true)
-
-        guard let queryItemsData = decodedEndpoint.queryItems as? Data else {
-            XCTFail("Should have query items")
-            return
-        }
-
-        let decodedQueryItems = try? JSONDecoder.stream.decode([String: Int].self, from: queryItemsData)
-        XCTAssertEqual(decodedQueryItems, ["QueryHello": 2])
+        XCTAssertEqual(AnyEndpoint(dataEndpoint).path.value, AnyEndpoint(endpoint).path.value)
+        XCTAssertEqual(dataEndpoint.method, endpoint.method)
+        XCTAssertEqual(dataEndpoint.queryItems, endpoint.queryItems)
+        XCTAssertEqual(dataEndpoint.requiresConnectionId, endpoint.requiresConnectionId)
+        XCTAssertEqual(dataEndpoint.requiresToken, endpoint.requiresToken)
     }
 
-    func test_endpointEncodingAndDecodingToEmptyResponse() {
-        let endpoint = Endpoint<SomethingDecodable>.init(
-            path: .guest,
+    func test_endpointCodable_roundTripsGeneratedPathAndMethod() throws {
+        let endpoint = Endpoint<EmptyResponse>(
+            path: .custom("custom/path"),
             method: .post,
-            queryItems: nil,
+            queryItems: ["foo": "bar"],
             requiresConnectionId: false,
-            requiresToken: true,
-            body: nil
+            requiresToken: false,
+            body: EmptyBody()
         )
-        let encoder = JSONEncoder()
-        guard let encodedEndpoint = try? encoder.encode(endpoint) else {
-            XCTFail("Should properly encode the endpoint")
-            return
-        }
 
-        let decoder = JSONDecoder()
-        guard let decodedEndpoint = try? decoder.decode(Endpoint<EmptyResponse>.self, from: encodedEndpoint) else {
-            XCTFail("Should properly decode the endpoint")
-            return
-        }
+        let data = try JSONEncoder.stream.encode(endpoint)
+        let decoded = try JSONDecoder.stream.decode(Endpoint<EmptyResponse>.self, from: data)
 
-        XCTAssertEqual(decodedEndpoint.path.value, "guest")
-        XCTAssertEqual(decodedEndpoint.method, .post)
-        XCTAssertNil(decodedEndpoint.queryItems)
-        XCTAssertEqual(decodedEndpoint.requiresConnectionId, false)
-        XCTAssertEqual(decodedEndpoint.requiresToken, true)
-        XCTAssertNil(decodedEndpoint.body)
+        XCTAssertEqual(decoded.path.value, "custom/path")
+        XCTAssertEqual(decoded.method, .post)
+        XCTAssertEqual(decoded.queryItems?["foo"] ?? nil, "bar")
+        XCTAssertFalse(decoded.requiresConnectionId)
+        XCTAssertFalse(decoded.requiresToken)
     }
 }

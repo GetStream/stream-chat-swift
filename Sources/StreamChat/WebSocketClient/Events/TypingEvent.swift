@@ -34,7 +34,7 @@ public final class TypingEvent: ChannelSpecificEvent {
 }
 
 final class TypingEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let cid: ChannelId
     let isTyping: Bool
     let parentId: MessageId?

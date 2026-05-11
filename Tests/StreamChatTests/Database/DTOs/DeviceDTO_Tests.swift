@@ -21,7 +21,7 @@ final class DeviceDTO_Tests: XCTestCase {
     }
 
     func test_deviceListPayload_isStoredAndLoadedFromDB() throws {
-        let dummyDevices = DeviceListPayload.dummy
+        let dummyDevices = ListDevicesResponse.dummy
 
         try database.writeSynchronously { (session) in
             // Save a current user to db for testing

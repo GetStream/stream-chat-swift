@@ -35,7 +35,7 @@ class UserUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func blockUser(_ userId: UserId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .blockUser(userId)) {
+        apiClient.request(endpoint: Endpoint<BlockUsersResponse>.blockUsers(blockUsersRequest: BlockUsersRequest(blockedUserId: userId))) {
             switch $0 {
             case .success:
                 self.database.write({ session in
@@ -67,7 +67,7 @@ class UserUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func unblockUser(_ userId: UserId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .unblockUser(userId)) {
+        apiClient.request(endpoint: Endpoint<UnblockUsersResponse>.unblockUsers(unblockUsersRequest: UnblockUsersRequest(blockedUserId: userId))) {
             switch $0 {
             case .success:
                 self.database.write({ session in
@@ -100,8 +100,18 @@ class UserUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func loadUser(_ userId: UserId, completion: (@Sendable (Error?) -> Void)? = nil) {
+        let query = UserListQuery.user(withID: userId)
+        let filterConditions = query.filter?.toRawJSONDictionary() ?? [:]
+        let payload = QueryUsersPayload(
+            filterConditions: filterConditions,
+            includeDeactivatedUsers: nil,
+            limit: query.pagination?.pageSize,
+            offset: query.pagination?.offset,
+            presence: query.options.contains(.presence),
+            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+        )
         apiClient
-            .request(endpoint: .users(query: .user(withID: userId))) { (result: Result<UserListPayload, Error>) in
+            .request(endpoint: Endpoint<QueryUsersResponse>.queryUsers(payload: payload)) { (result: Result<QueryUsersResponse, Error>) in
                 switch result {
                 case let .success(payload):
                     guard payload.users.count <= 1 else {
@@ -144,7 +154,7 @@ class UserUpdater: Worker, @unchecked Sendable {
         extraData: [String: RawJSON]? = nil,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        let endpoint: Endpoint<FlagUserPayload> = .flagUser(
+        let endpoint: Endpoint<FlagResponse> = .flagUser(
             flag,
             with: userId,
             reason: reason,
@@ -155,7 +165,7 @@ class UserUpdater: Worker, @unchecked Sendable {
             case let .success(payload):
                 self.database.write({ session in
                     let userDTO = try session.saveUser(payload: payload.flaggedUser.id.isEmpty
-                        ? UserPayload(
+                        ? UserResponse(
                             id: userId,
                             name: nil,
                             imageURL: nil,

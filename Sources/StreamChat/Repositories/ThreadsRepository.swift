@@ -22,7 +22,21 @@ class ThreadsRepository: @unchecked Sendable {
         query: ThreadListQuery,
         completion: @escaping @Sendable (Result<ThreadListResponse, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .threads(query: query)) { [weak self] result in
+        let filter = query.filter?.toRawJSONDictionary() ?? [:]
+        let request = QueryThreadsRequest(
+            filter: filter.isEmpty ? nil : filter,
+            limit: query.limit,
+            memberLimit: nil,
+            next: query.next,
+            participantLimit: query.participantLimit,
+            prev: nil,
+            replyLimit: query.replyLimit,
+            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            watch: query.watch
+        )
+        apiClient.request(
+            endpoint: Endpoint<QueryThreadsResponse>.queryThreads(queryThreadsRequest: request)
+        ) { [weak self] result in
             switch result {
             case .success(let threadListPayload):
                 nonisolated(unsafe) var threads: [ChatThread] = []

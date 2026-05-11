@@ -8,7 +8,7 @@ import XCTest
 final class AppSettingsPayload_Tests: XCTestCase {
     func testDecoding() throws {
         let url = XCTestCase.mockData(fromJSONFile: "AppSettings")
-        let payload = try JSONDecoder.default.decode(AppSettingsPayload.self, from: url)
+        let payload = try JSONDecoder.default.decode(GetApplicationResponse.self, from: url)
 
         XCTAssertEqual(payload.app.name, "Stream SDK - iOS")
         XCTAssertEqual(payload.app.autoTranslationEnabled, true)

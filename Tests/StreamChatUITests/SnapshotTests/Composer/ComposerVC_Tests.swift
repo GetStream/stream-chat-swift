@@ -377,8 +377,8 @@ import XCTest
 
         let encoder = JSONEncoder.default
         let attachments: [AnyChatMessageAttachment] = [
-            MessageAttachmentPayload.dummy(type: .image),
-            MessageAttachmentPayload.dummy(type: .image)
+            Attachment.dummy(type: .image),
+            Attachment.dummy(type: .image)
         ].compactMap {
             guard let payload = try? encoder.encode($0.payload) else { return nil }
             return AnyChatMessageAttachment.dummy(type: $0.type, payload: payload)

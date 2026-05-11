@@ -26,7 +26,7 @@ extension UnknownUserEvent: Decodable {
 
         self.init(
             type: try container.decode(EventType.self, forKey: .eventType),
-            userId: try container.decode(UserPayload.self, forKey: .user).id,
+            userId: try container.decode(UserResponse.self, forKey: .user).id,
             createdAt: try container.decode(Date.self, forKey: .createdAt),
             payload: try decoder
                 .singleValueContainer()

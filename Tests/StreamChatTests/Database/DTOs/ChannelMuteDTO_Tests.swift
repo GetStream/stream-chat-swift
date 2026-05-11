@@ -22,12 +22,12 @@ final class ChannelMuteDTO_Tests: XCTestCase {
     }
 
     func test_channelMutePayload_isStoredAndLoadedFromDB() throws {
-        let currentUserPayload: CurrentUserPayload = .dummy(
+        let currentUserPayload: OwnUserResponse = .dummy(
             userId: .unique,
             role: .user
         )
 
-        let mutePayload: MutedChannelPayload = .init(
+        let mutePayload: ChannelMute = .init(
             mutedChannel: .dummy(cid: .unique),
             user: currentUserPayload,
             createdAt: .unique,
@@ -52,9 +52,9 @@ final class ChannelMuteDTO_Tests: XCTestCase {
 
     func test_saveChannelMute_whenThereIsNoCurrentUser_throws() throws {
         // GIVEN
-        let mute: MutedChannelPayload = .init(
+        let mute: ChannelMute = .init(
             mutedChannel: .dummy(cid: .unique),
-            user: UserPayload.dummy(userId: .unique),
+            user: UserResponse.dummy(userId: .unique),
             createdAt: .unique,
             updatedAt: .unique,
             expiresAt: .unique
@@ -69,9 +69,9 @@ final class ChannelMuteDTO_Tests: XCTestCase {
 
     func test_saveChannelMute_whenMuteDoesNotExist_createsIt() throws {
         // GIVEN
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let channel: ChannelDetailPayload = .dummy(cid: .unique)
-        let mute: MutedChannelPayload = .init(
+        let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
+        let channel: ChannelResponse = .dummy(cid: .unique)
+        let mute: ChannelMute = .init(
             mutedChannel: channel,
             user: currentUser,
             createdAt: .unique,
@@ -101,9 +101,9 @@ final class ChannelMuteDTO_Tests: XCTestCase {
 
     func test_saveChannelMute_whenMuteExists_updatesIt() throws {
         // GIVEN
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let channel: ChannelDetailPayload = .dummy(cid: .unique)
-        let initialMute: MutedChannelPayload = .init(
+        let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
+        let channel: ChannelResponse = .dummy(cid: .unique)
+        let initialMute: ChannelMute = .init(
             mutedChannel: channel,
             user: currentUser,
             createdAt: .unique,
@@ -117,7 +117,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         }
 
         // WHEN
-        let updatedMute: MutedChannelPayload = .init(
+        let updatedMute: ChannelMute = .init(
             mutedChannel: channel,
             user: currentUser,
             createdAt: .unique,

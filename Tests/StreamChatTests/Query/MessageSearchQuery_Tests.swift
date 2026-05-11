@@ -75,3 +75,24 @@ final class MessageSearchQuery_ChannelListSortMapping_Tests: XCTestCase {
         XCTAssertEqual(result, [.init(key: .createdAt, isAscending: false)])
     }
 }
+
+final class MessageSearchQuery_OpenAPIPayload_Tests: XCTestCase {
+    func test_searchPayload_usesRawJSONFiltersAndSort() {
+        let query = MessageSearchQuery(
+            channelFilter: .equal(.cid, to: ChannelId(type: .messaging, id: "general")),
+            messageFilter: .withAttachments([.image]),
+            sort: [.init(key: .updatedAt, isAscending: true)],
+            pageSize: 10
+        )
+
+        let payload = SearchPayload(query: query)
+
+        XCTAssertEqual(payload.filterConditions, ["cid": .dictionary(["$eq": .string("messaging:general")])])
+        XCTAssertEqual(
+            payload.messageFilterConditions,
+            ["attachments.type": .dictionary(["$in": .array([.string("image")])])]
+        )
+        XCTAssertEqual(payload.limit, 10)
+        XCTAssertEqual(payload.sort, [SortParamRequestOpenAPI(direction: 1, field: "updated_at")])
+    }
+}

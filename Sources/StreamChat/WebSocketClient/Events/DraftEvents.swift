@@ -28,7 +28,7 @@ public final class DraftUpdatedEvent: Event {
 
 final class DraftUpdatedEventDTO: EventDTO {
     let cid: ChannelId
-    let draft: DraftPayload
+    let draft: DraftResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -74,7 +74,7 @@ public final class DraftDeletedEvent: Event {
 
 final class DraftDeletedEventDTO: EventDTO {
     let cid: ChannelId
-    let draft: DraftPayload
+    let draft: DraftResponse
     let createdAt: Date
     let payload: EventPayload
 

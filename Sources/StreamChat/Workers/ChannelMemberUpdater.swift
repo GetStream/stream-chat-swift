@@ -15,22 +15,25 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
     func partialUpdate(
         userId: UserId,
         in cid: ChannelId,
-        updates: MemberUpdatePayload?,
+        updates: UpdateMemberPartialRequest?,
         unset: [String]?,
         completion: @escaping (@Sendable (Result<ChatChannelMember, Error>) -> Void)
     ) {
         apiClient.request(
-            endpoint: .partialMemberUpdate(
-                userId: userId,
-                cid: cid,
-                updates: updates,
-                unset: unset
+            endpoint: Endpoint<UpdateMemberPartialResponse>.updateMemberPartial(
+                type: cid.type.rawValue,
+                id: cid.id,
+                updateMemberPartialRequest: UpdateMemberPartialRequest(set: updates?.set, unset: unset)
             )
         ) { result in
             switch result {
             case .success(let response):
+                guard let memberPayload = response.channelMember else {
+                    completion(.failure(ClientError.MemberDoesNotExist(userId: userId, cid: cid)))
+                    return
+                }
                 self.database.write { session in
-                    let member = try session.saveMember(payload: response.channelMember, channelId: cid).asModel()
+                    let member = try session.saveMember(payload: memberPayload, channelId: cid).asModel()
                     completion(.success(member))
                 }
             case .failure(let error):
@@ -48,8 +51,8 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         partialUpdate(
             userId: userId,
             in: cid,
-            updates: isPinned ? MemberUpdatePayload(pinned: true) : nil,
-            unset: isPinned ? nil : [MemberUpdatePayload.MemberUpdateField.pinned.rawValue],
+            updates: isPinned ? UpdateMemberPartialRequest(pinned: true) : nil,
+            unset: isPinned ? nil : [UpdateMemberPartialRequest.MemberUpdateField.pinned.rawValue],
             completion: { completion($0.error) }
         )
     }
@@ -75,8 +78,8 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         partialUpdate(
             userId: userId,
             in: cid,
-            updates: isArchived ? MemberUpdatePayload(archived: true) : nil,
-            unset: isArchived ? nil : [MemberUpdatePayload.MemberUpdateField.archived.rawValue],
+            updates: isArchived ? UpdateMemberPartialRequest(archived: true) : nil,
+            unset: isArchived ? nil : [UpdateMemberPartialRequest.MemberUpdateField.archived.rawValue],
             completion: { completion($0.error) }
         )
     }
@@ -110,7 +113,15 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .banMember(userId, cid: cid, shadow: shadow, timeoutInMinutes: timeoutInMinutes, reason: reason)
+            endpoint: Endpoint<BanResponse>.ban(
+                banRequest: BanRequest(
+                    userId: userId,
+                    cid: cid,
+                    shadow: shadow,
+                    timeoutInMinutes: timeoutInMinutes,
+                    reason: reason
+                )
+            )
         ) {
             completion?($0.error)
         }

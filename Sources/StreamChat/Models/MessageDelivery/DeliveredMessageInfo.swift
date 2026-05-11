@@ -27,7 +27,7 @@ public struct MessageDeliveryInfo: Equatable, Sendable {
 
 extension MessageDeliveryInfo {
     /// Converts this model to its corresponding payload representation.
-    var asPayload: DeliveredMessagePayload {
-        DeliveredMessagePayload(cid: channelId, id: messageId)
+    var asPayload: DeliveredMessagePayloadOpenAPI {
+        DeliveredMessagePayloadOpenAPI(cid: channelId, id: messageId)
     }
 }

@@ -11,8 +11,8 @@ extension XCTestCase {
 
     // MARK: - Dummy data with extra data
 
-    var dummyCurrentUser: CurrentUserPayload {
-        CurrentUserPayload(
+    var dummyCurrentUser: OwnUserResponse {
+        OwnUserResponse(
             id: "dummyCurrentUser",
             name: .unique,
             imageURL: nil,
@@ -31,12 +31,12 @@ extension XCTestCase {
         )
     }
 
-    var dummyUser: UserPayload {
+    var dummyUser: UserResponse {
         dummyUser(id: .unique)
     }
 
-    func dummyUser(id: String) -> UserPayload {
-        UserPayload(
+    func dummyUser(id: String) -> UserResponse {
+        UserResponse(
             id: id,
             name: .unique,
             imageURL: .unique(),
@@ -59,7 +59,7 @@ extension XCTestCase {
         id: MessageId = .unique,
         cid: ChannelId? = nil,
         createdAt: Date = XCTestCase.channelCreatedDate.addingTimeInterval(.random(in: 60...900_000))
-    ) -> MessagePayload {
+    ) -> MessageResponse {
         MessageResponse(
             attachments: [],
             cid: cid?.rawValue ?? "",
@@ -89,7 +89,7 @@ extension XCTestCase {
 
     func dummyPinnedMessagePayload(
         createdAt: Date = XCTestCase.channelCreatedDate.addingTimeInterval(.random(in: 50...99))
-    ) -> MessagePayload {
+    ) -> MessageResponse {
         MessageResponse(
             attachments: [],
             cid: "",
@@ -121,20 +121,20 @@ extension XCTestCase {
         )
     }
 
-    var dummyChannelRead: ChannelReadPayload {
-        ChannelReadPayload(user: dummyCurrentUser.asUserPayload, lastReadAt: Date(timeIntervalSince1970: 1), lastReadMessageId: .unique, unreadMessagesCount: 10, lastDeliveredAt: nil, lastDeliveredMessageId: nil)
+    var dummyChannelRead: ReadStateResponse {
+        ReadStateResponse(user: dummyCurrentUser.asUserPayload, lastReadAt: Date(timeIntervalSince1970: 1), lastReadMessageId: .unique, unreadMessagesCount: 10, lastDeliveredAt: nil, lastDeliveredMessageId: nil)
     }
 
     func dummyPayload(
         with channelId: ChannelId,
         name: String = .unique,
         numberOfMessages: Int = 1,
-        members: [MemberPayload] = [.unique],
-        watchers: [UserPayload]? = nil,
+        members: [ChannelMemberResponse] = [.unique],
+        watchers: [UserResponse]? = nil,
         includeMembership: Bool = true,
-        messages: [MessagePayload]? = nil,
-        pendingMessages: [MessagePayload]? = nil,
-        pinnedMessages: [MessagePayload] = [],
+        messages: [MessageResponse]? = nil,
+        pendingMessages: [MessageResponse]? = nil,
+        pinnedMessages: [MessageResponse] = [],
         channelConfig: ChannelConfig = .init(
             reactionsEnabled: true,
             typingEventsEnabled: true,
@@ -168,10 +168,10 @@ extension XCTestCase {
         hidden: Bool? = nil,
         truncatedAt: Date? = nil,
         cooldownDuration: Int? = nil,
-        channelReads: [ChannelReadPayload]? = nil,
-        pushPreference: PushPreferencePayload? = nil
-    ) -> ChannelPayload {
-        var payloadMessages: [MessagePayload] = []
+        channelReads: [ReadStateResponse]? = nil,
+        pushPreference: PushPreferencesResponse? = nil
+    ) -> ChannelStateResponseFields {
+        var payloadMessages: [MessageResponse] = []
         if let messages = messages {
             payloadMessages = messages
         } else {
@@ -182,7 +182,7 @@ extension XCTestCase {
 
         let lastMessageAt: Date? = payloadMessages.map(\.createdAt).max()
 
-        let detail = ChannelDetailPayload.dummy(
+        let detail = ChannelResponse.dummy(
             cid: channelId,
             name: name,
             imageURL: .unique(),
@@ -206,7 +206,7 @@ extension XCTestCase {
             cooldownDuration: cooldownDuration ?? .random(in: 0...120)
         )
 
-        return ChannelPayload.dummy(
+        return ChannelStateResponseFields.dummy(
             channel: detail,
             watcherCount: watchers?.count ?? 1,
             watchers: watchers ?? [dummyUser],
@@ -223,7 +223,7 @@ extension XCTestCase {
         )
     }
 
-    var dummyMessageWithNoExtraData: MessagePayload {
+    var dummyMessageWithNoExtraData: MessageResponse {
         MessageResponse(
             attachments: [],
             cid: "",
@@ -251,12 +251,12 @@ extension XCTestCase {
         )
     }
 
-    var dummyChannelReadWithNoExtraData: ChannelReadPayload {
-        ChannelReadPayload(user: dummyUser, lastReadAt: .unique, lastReadMessageId: .unique, unreadMessagesCount: .random(in: 0...10), lastDeliveredAt: nil, lastDeliveredMessageId: nil)
+    var dummyChannelReadWithNoExtraData: ReadStateResponse {
+        ReadStateResponse(user: dummyUser, lastReadAt: .unique, lastReadMessageId: .unique, unreadMessagesCount: .random(in: 0...10), lastDeliveredAt: nil, lastDeliveredMessageId: nil)
     }
 
-    func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelPayload {
-        let member: MemberPayload =
+    func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelStateResponseFields {
+        let member: ChannelMemberResponse =
             .init(
                 user: .init(
                     id: .unique,
@@ -281,7 +281,7 @@ extension XCTestCase {
                 updatedAt: .unique
             )
 
-        let detail = ChannelDetailPayload.dummy(
+        let detail = ChannelResponse.dummy(
             cid: channelId,
             name: .unique,
             imageURL: .unique(),
@@ -327,7 +327,7 @@ extension XCTestCase {
             cooldownDuration: .random(in: 0...120)
         )
 
-        return ChannelPayload.dummy(
+        return ChannelStateResponseFields.dummy(
             channel: detail,
             watcherCount: 10,
             watchers: [dummyUser],
@@ -341,22 +341,22 @@ extension XCTestCase {
 
     func dummyThreadPayload(
         parentMessageId: MessageId = .unique,
-        parentMessage: MessagePayload = .dummy(),
-        channel: ChannelDetailPayload = .dummy(),
-        createdBy: UserPayload = .dummy(userId: .newUniqueId),
+        parentMessage: MessageResponse = .dummy(),
+        channel: ChannelResponse = .dummy(),
+        createdBy: UserResponse = .dummy(userId: .newUniqueId),
         replyCount: Int = 0,
         participantCount: Int = 0,
         activeParticipantCount: Int = 0,
-        threadParticipants: [ThreadParticipantPayload] = [],
+        threadParticipants: [ThreadParticipantOpenAPI] = [],
         lastMessageAt: Date? = .unique,
         createdAt: Date = .unique,
         updatedAt: Date? = .unique,
         title: String? = .unique,
-        latestReplies: [MessagePayload] = [],
-        read: [ThreadReadPayload] = [],
-        draft: DraftPayload? = nil,
+        latestReplies: [MessageResponse] = [],
+        read: [ReadStateResponse] = [],
+        draft: DraftResponse? = nil,
         extraData: [String: RawJSON] = [:]
-    ) -> ThreadPayload {
+    ) -> ThreadStateResponse {
         .init(
             parentMessageId: parentMessageId,
             parentMessage: parentMessage,
@@ -378,10 +378,10 @@ extension XCTestCase {
     }
 
     func dummyThreadReadPayload(
-        user: UserPayload = .dummy(userId: .unique),
+        user: UserResponse = .dummy(userId: .unique),
         lastReadAt: Date? = .unique,
         unreadMessagesCount: Int = 0
-    ) -> ThreadReadPayload {
+    ) -> ReadStateResponse {
         .init(
             user: user,
             lastReadAt: lastReadAt ?? Date(timeIntervalSince1970: 0),
@@ -390,11 +390,11 @@ extension XCTestCase {
     }
 
     func dummyThreadParticipantPayload(
-        user: UserPayload = .dummy(userId: .unique),
+        user: UserResponse = .dummy(userId: .unique),
         threadId: String = .unique,
         createdAt: Date = .unique,
         lastReadAt: Date? = .unique
-    ) -> ThreadParticipantPayload {
+    ) -> ThreadParticipantOpenAPI {
         .init(
             user: user,
             threadId: threadId,
@@ -415,17 +415,17 @@ extension XCTestCase {
         name: String = "Test Poll",
         updatedAt: Date = Date(),
         voteCount: Int = 0,
-        latestAnswers: [PollVotePayload?]? = nil,
-        options: [PollOptionPayload?] = [],
-        ownVotes: [PollVotePayload?] = [],
+        latestAnswers: [PollVoteResponseData?]? = nil,
+        options: [PollOptionResponseData?] = [],
+        ownVotes: [PollVoteResponseData?] = [],
         custom: [String: RawJSON] = [:],
-        latestVotesByOption: [String: [PollVotePayload]] = [:],
+        latestVotesByOption: [String: [PollVoteResponseData]] = [:],
         voteCountsByOption: [String: Int] = [:],
         isClosed: Bool? = nil,
         maxVotesAllowed: Int? = nil,
         votingVisibility: String? = nil,
-        user: UserPayload? = .dummy(userId: .unique)
-    ) -> PollPayload {
+        user: UserResponse? = .dummy(userId: .unique)
+    ) -> PollResponseData {
         .init(
             allowAnswers: allowAnswers,
             allowUserSuggestedOptions: allowUserSuggestedOptions,
@@ -455,7 +455,7 @@ extension XCTestCase {
         id: String = .unique,
         text: String = "Test Option",
         custom: [String: RawJSON] = [:]
-    ) -> PollOptionPayload {
+    ) -> PollOptionResponseData {
         .init(
             id: id,
             text: text,
@@ -472,8 +472,8 @@ extension XCTestCase {
         answerText: String? = nil,
         isAnswer: Bool? = false,
         userId: String? = .unique,
-        user: UserPayload? = .dummy(userId: .unique)
-    ) -> PollVotePayload {
+        user: UserResponse? = .dummy(userId: .unique)
+    ) -> PollVoteResponseData {
         .init(
             createdAt: createdAt,
             id: id,
@@ -488,12 +488,12 @@ extension XCTestCase {
     }
 }
 
-private extension MemberPayload {
-    static var unique: MemberPayload {
+private extension ChannelMemberResponse {
+    static var unique: ChannelMemberResponse {
         withLastActivity(at: .unique)
     }
 
-    static func withLastActivity(at date: Date) -> MemberPayload {
+    static func withLastActivity(at date: Date) -> ChannelMemberResponse {
         let userId = String.unique
         return .init(
             user: .init(
@@ -521,8 +521,8 @@ private extension MemberPayload {
     }
 }
 
-private extension UserPayload {
-    static func withLastActivity(at date: Date) -> UserPayload {
+private extension UserResponse {
+    static func withLastActivity(at date: Date) -> UserResponse {
         .init(
             id: .unique,
             name: .unique,

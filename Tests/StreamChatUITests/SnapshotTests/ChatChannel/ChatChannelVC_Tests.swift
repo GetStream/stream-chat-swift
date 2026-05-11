@@ -758,7 +758,7 @@ import XCTest
 
     // This test is temporary until we support jumping to inside a thread.
     func test_shouldLoadPageAroundMessageId_whenMessageIsInsideThread_thenDontLoadPageAroundMessageId() throws {
-        let messageInsideThread = MessagePayload.dummy(
+        let messageInsideThread = MessageResponse.dummy(
             parentId: .unique,
             showReplyInChannel: false
         )

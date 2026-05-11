@@ -11,7 +11,7 @@ final class MemberPayload_Tests: XCTestCase {
     let memberRoleJSON = XCTestCase.mockData(fromJSONFile: "MemberRole")
 
     func test_memberJSON_isSerialized() throws {
-        let payload = try JSONDecoder.default.decode(MemberPayload.self, from: memberJSON)
+        let payload = try JSONDecoder.default.decode(ChannelMemberResponse.self, from: memberJSON)
 
         XCTAssertEqual(payload.memberRole, .owner)
         XCTAssertEqual(payload.createdAt, "2020-06-05T12:53:09.862721Z".toDate())
@@ -39,7 +39,7 @@ final class MemberPayload_Tests: XCTestCase {
     }
 
     func test_memberJSON_channelRole_isCustomRole() throws {
-        let payload = try JSONDecoder.default.decode(MemberPayload.self, from: memberRoleJSON)
+        let payload = try JSONDecoder.default.decode(ChannelMemberResponse.self, from: memberRoleJSON)
         XCTAssertEqual(payload.memberRole, "custom_role")
     }
 }

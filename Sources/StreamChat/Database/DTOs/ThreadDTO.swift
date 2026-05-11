@@ -207,7 +207,7 @@ extension NSManagedObjectContext {
         )
     }
 
-    func saveThreadList(payload: ThreadListPayload) -> [ThreadDTO] {
+    func saveThreadList(payload: QueryThreadsResponse) -> [ThreadDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
         return payload.threads.compactMapLoggingError { threadPayload in
             try saveThread(payload: threadPayload, cache: cache)
@@ -215,7 +215,7 @@ extension NSManagedObjectContext {
     }
 
     func saveThread(
-        payload: ThreadPayload,
+        payload: ThreadStateResponse,
         cache: PreWarmedCache?
     ) throws -> ThreadDTO {
         guard let channelPayload = payload.channelDetailPayload else {
@@ -318,7 +318,7 @@ extension NSManagedObjectContext {
     }
 
     @discardableResult
-    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO {
+    func saveThread(partialPayload: ThreadResponse) throws -> ThreadDTO {
         guard let channelPayload = partialPayload.channelDetailPayload else {
             throw ClientError("Thread partial payload is missing channel")
         }
@@ -373,7 +373,7 @@ extension NSManagedObjectContext {
     }
 
     @discardableResult
-    func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO {
+    func saveThread(detailsPayload: ThreadResponse) throws -> ThreadDTO {
         let threadDTO = ThreadDTO.loadOrCreate(
             parentMessageId: detailsPayload.parentMessageId,
             context: self,

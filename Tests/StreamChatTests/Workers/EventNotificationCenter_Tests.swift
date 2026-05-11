@@ -246,14 +246,14 @@ final class EventNotificationCenter_Tests: XCTestCase {
     // Performance tests
 
     func test_measure_processMultipleNewMessageEvents() throws {
-        let existingPayloads: [MessagePayload] = (0...200).map { _ in
-            MessagePayload.dummy(messageId: .unique, authorUserId: .unique)
+        let existingPayloads: [MessageResponse] = (0...200).map { _ in
+            MessageResponse.dummy(messageId: .unique, authorUserId: .unique)
         }
         let channelId = ChannelId.unique
 
         waitUntil(timeout: 100) { done in
             database.write({ session in
-                try session.saveChannel(payload: ChannelPayload.dummy(channel: .dummy(cid: channelId)))
+                try session.saveChannel(payload: ChannelStateResponseFields.dummy(channel: .dummy(cid: channelId)))
                 try existingPayloads.forEach {
                     try session.saveMessage(payload: $0, for: channelId, syncOwnReactions: false, cache: nil)
                 }
@@ -264,7 +264,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.channel(cid: channelId)?.messages.count, existingPayloads.count)
 
         let events: [MessageNewEventDTO] = try existingPayloads.map { message -> MessageNewEventDTO in
-            let payload = EventPayload(eventType: .messageNew, cid: channelId, user: UserPayload.dummy(userId: .unique), message: message, createdAt: Date())
+            let payload = EventPayload(eventType: .messageNew, cid: channelId, user: UserResponse.dummy(userId: .unique), message: message, createdAt: Date())
             return try MessageNewEventDTO(from: payload)
         }
 

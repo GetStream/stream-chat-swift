@@ -65,7 +65,11 @@ class TypingEventsSender: Worker, @unchecked Sendable {
         currentUserLastTypingDate = timer.currentTime()
 
         apiClient.request(
-            endpoint: .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
+            endpoint: Endpoint<EventResponse>.sendEvent(
+                type: cid.type.rawValue,
+                id: cid.id,
+                sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStartTyping.rawValue))
+            )
         ) {
             completion?($0.error)
         }
@@ -81,7 +85,11 @@ class TypingEventsSender: Worker, @unchecked Sendable {
         typingInfo = nil
 
         apiClient.request(
-            endpoint: .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
+            endpoint: Endpoint<EventResponse>.sendEvent(
+                type: cid.type.rawValue,
+                id: cid.id,
+                sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStopTyping.rawValue))
+            )
         ) {
             completion?($0.error)
         }

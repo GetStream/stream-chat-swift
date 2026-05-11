@@ -68,7 +68,7 @@ final class DataStore_Tests: XCTestCase {
         let parentMessageId: MessageId = .unique
         XCTAssertNil(dataStore.message(id: parentMessageId))
         try _client.databaseContainer.writeSynchronously { session in
-            let payload = ThreadPayload.dummy(parentMessageId: parentMessageId)
+            let payload = ThreadStateResponse.dummy(parentMessageId: parentMessageId)
             try session.saveThread(payload: payload, cache: nil)
         }
         XCTAssertNotNil(dataStore.thread(parentMessageId: parentMessageId))

@@ -49,12 +49,12 @@ class DatabaseSession_Mock: DatabaseSession {
         return try saveCurrentDevice(deviceId)
     }
 
-    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
+    func saveCurrentUserDevices(_ devices: [DeviceResponse], clearExisting: Bool) throws -> [DeviceDTO] {
         try throwErrorIfNeeded()
         return try underlyingSession.saveCurrentUserDevices(devices, clearExisting: clearExisting)
     }
 
-    func saveChannelList(payload: ChannelListPayload, query: ChannelListQuery?) -> [ChannelDTO] {
+    func saveChannelList(payload: QueryChannelsResponse, query: ChannelListQuery?) -> [ChannelDTO] {
         underlyingSession.saveChannelList(payload: payload, query: query)
     }
 
@@ -62,7 +62,7 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.saveQuery(query: query)
     }
 
-    func saveReminder(payload: ReminderPayload, cache: PreWarmedCache?) throws -> MessageReminderDTO {
+    func saveReminder(payload: ReminderResponseData, cache: PreWarmedCache?) throws -> MessageReminderDTO {
         try underlyingSession.saveReminder(payload: payload, cache: cache)
     }
 
@@ -71,7 +71,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveChannel(
-        payload: ChannelDetailPayload,
+        payload: ChannelResponse,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
@@ -79,12 +79,12 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.saveChannel(payload: payload, query: query, cache: cache)
     }
 
-    func saveUser(payload: UserPayload, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO {
+    func saveUser(payload: UserResponse, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveUser(payload: payload, query: query, cache: cache)
     }
 
-    func saveUsers(payload: UserListPayload, query: UserListQuery?) -> [UserDTO] {
+    func saveUsers(payload: QueryUsersResponse, query: UserListQuery?) -> [UserDTO] {
         underlyingSession.saveUsers(payload: payload, query: query)
     }
 
@@ -109,7 +109,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.removeChannels(cids: cids)
     }
 
-    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
+    func saveCurrentUser(payload: OwnUserResponse) throws -> CurrentUserDTO {
         try throwErrorIfNeeded()
         return try saveCurrentUser(payload: payload)
     }
@@ -129,7 +129,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.deleteCurrentUser()
     }
 
-    func savePushPreference(id: String, payload: PushPreferencePayload) throws -> PushPreferenceDTO {
+    func savePushPreference(id: String, payload: PushPreferencesResponse) throws -> PushPreferenceDTO {
         try underlyingSession.savePushPreference(id: id, payload: payload)
     }
 
@@ -150,7 +150,7 @@ class DatabaseSession_Mock: DatabaseSession {
         createdAt: Date?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
-        poll: PollPayload?,
+        poll: PollResponseData?,
         location: NewLocationInfo? = nil,
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON]
@@ -210,7 +210,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveMessage(
-        payload: MessagePayload,
+        payload: MessageResponse,
         for cid: ChannelId?,
         syncOwnReactions: Bool,
         skipDraftUpdate: Bool,
@@ -227,7 +227,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveMessage(
-        payload: MessagePayload,
+        payload: MessageResponse,
         for cid: ChannelId?,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
@@ -236,7 +236,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveMessage(
-        payload: MessagePayload,
+        payload: MessageResponse,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
         skipDraftUpdate: Bool,
@@ -253,7 +253,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveMessage(
-        payload: MessagePayload,
+        payload: MessageResponse,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
@@ -275,7 +275,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.saveMessageSearch(payload: payload, for: query)
     }
 
-    func saveLocation(payload: SharedLocationPayload, cache: PreWarmedCache?) throws -> SharedLocationDTO {
+    func saveLocation(payload: SharedLocationResponseData, cache: PreWarmedCache?) throws -> SharedLocationDTO {
         try underlyingSession.saveLocation(payload: payload, cache: cache)
     }
 
@@ -304,7 +304,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.delete(mute: mute)
     }
 
-    func saveDraftMessage(payload: DraftPayload, for cid: ChannelId, cache: PreWarmedCache?) throws -> MessageDTO {
+    func saveDraftMessage(payload: DraftResponse, for cid: ChannelId, cache: PreWarmedCache?) throws -> MessageDTO {
         try underlyingSession.saveDraftMessage(payload: payload, for: cid, cache: cache)
     }
 
@@ -328,12 +328,12 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.reaction(messageId: messageId, userId: userId, type: type)
     }
 
-    func saveReaction(payload: MessageReactionPayload, query: ReactionListQuery?, cache: PreWarmedCache?) throws -> MessageReactionDTO {
+    func saveReaction(payload: ReactionResponse, query: ReactionListQuery?, cache: PreWarmedCache?) throws -> MessageReactionDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveReaction(payload: payload, query: query, cache: cache)
     }
 
-    func saveReactions(payload: MessageReactionsPayload, query: ReactionListQuery?) -> [MessageReactionDTO] {
+    func saveReactions(payload: GetReactionsResponse, query: ReactionListQuery?) -> [MessageReactionDTO] {
         underlyingSession.saveReactions(payload: payload, query: query)
     }
 
@@ -341,7 +341,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.delete(reaction: reaction)
     }
 
-    func saveChannelRead(payload: ChannelReadPayload, for cid: ChannelId, cache: PreWarmedCache?) throws -> ChannelReadDTO {
+    func saveChannelRead(payload: ReadStateResponse, for cid: ChannelId, cache: PreWarmedCache?) throws -> ChannelReadDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveChannelRead(payload: payload, for: cid, cache: cache)
     }
@@ -388,7 +388,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
     
     func saveChannel(
-        payload: ChannelPayload,
+        payload: ChannelStateResponseFields,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
@@ -401,7 +401,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveMember(
-        payload: MemberPayload,
+        payload: ChannelMemberResponse,
         channelId: ChannelId,
         query: ChannelMemberListQuery?,
         cache: PreWarmedCache?
@@ -410,7 +410,7 @@ class DatabaseSession_Mock: DatabaseSession {
         return try underlyingSession.saveMember(payload: payload, channelId: channelId, query: query, cache: cache)
     }
 
-    func saveMembers(payload: ChannelMemberListPayload, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
+    func saveMembers(payload: MembersResponse, channelId: ChannelId, query: ChannelMemberListQuery?) -> [MemberDTO] {
         underlyingSession.saveMembers(payload: payload, channelId: channelId, query: query)
     }
 
@@ -431,7 +431,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.attachment(id: id)
     }
 
-    func saveAttachment(payload: MessageAttachmentPayload, id: AttachmentId) throws -> AttachmentDTO {
+    func saveAttachment(payload: Attachment, id: AttachmentId) throws -> AttachmentDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveAttachment(payload: payload, id: id)
     }
@@ -450,7 +450,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
 
     func saveChannelMute(
-        payload: MutedChannelPayload
+        payload: ChannelMute
     ) throws -> ChannelMuteDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveChannelMute(payload: payload)
@@ -460,7 +460,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.delete(query: query)
     }
 
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
+    func saveMessage(payload: MessageResponse, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
         try throwErrorIfNeeded()
         return try underlyingSession.saveMessage(payload: payload, for: query, cache: cache)
     }
@@ -492,27 +492,27 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.thread(parentMessageId: parentMessageId, cache: cache)
     }
 
-    func saveThreadList(payload: ThreadListPayload) -> [ThreadDTO] {
+    func saveThreadList(payload: QueryThreadsResponse) -> [ThreadDTO] {
         underlyingSession.saveThreadList(payload: payload)
     }
 
-    func saveThreadParticipant(payload: ThreadParticipantPayload, threadId: String, cache: PreWarmedCache?) throws -> ThreadParticipantDTO {
+    func saveThreadParticipant(payload: ThreadParticipantOpenAPI, threadId: String, cache: PreWarmedCache?) throws -> ThreadParticipantDTO {
         try underlyingSession.saveThreadParticipant(payload: payload, threadId: threadId, cache: cache)
     }
 
-    func saveThread(payload: ThreadPayload, cache: PreWarmedCache?) throws -> ThreadDTO {
+    func saveThread(payload: ThreadStateResponse, cache: PreWarmedCache?) throws -> ThreadDTO {
         try underlyingSession.saveThread(payload: payload, cache: cache)
     }
 
-    func saveThread(detailsPayload: ThreadDetailsPayload) throws -> ThreadDTO {
+    func saveThread(detailsPayload: ThreadResponse) throws -> ThreadDTO {
         try underlyingSession.saveThread(detailsPayload: detailsPayload)
     }
 
-    func saveThread(partialPayload: ThreadPartialPayload) throws -> ThreadDTO {
+    func saveThread(partialPayload: ThreadResponse) throws -> ThreadDTO {
         try underlyingSession.saveThread(partialPayload: partialPayload)
     }
 
-    func saveThreadRead(payload: ThreadReadPayload, parentMessageId: String, cache: PreWarmedCache?) throws -> ThreadReadDTO {
+    func saveThreadRead(payload: ReadStateResponse, parentMessageId: String, cache: PreWarmedCache?) throws -> ThreadReadDTO {
         try underlyingSession.saveThreadRead(payload: payload, parentMessageId: parentMessageId, cache: cache)
     }
     
@@ -554,12 +554,12 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.markThreadAsUnread(for: parentMessageId, userId: userId)
     }
     
-    func savePoll(payload: PollPayload, cache: PreWarmedCache?, fromEvent: Bool) throws -> PollDTO {
+    func savePoll(payload: PollResponseData, cache: PreWarmedCache?, fromEvent: Bool) throws -> PollDTO {
         try underlyingSession.savePoll(payload: payload, cache: cache, fromEvent: fromEvent)
     }
     
     func savePollVotes(
-        payload: PollVoteListResponse,
+        payload: PollVotesResponse,
         query: PollVoteListQuery?,
         cache: PreWarmedCache?
     ) throws -> [PollVoteDTO] {
@@ -567,7 +567,7 @@ class DatabaseSession_Mock: DatabaseSession {
     }
     
     func savePollVote(
-        payload: PollVotePayload,
+        payload: PollVoteResponseData,
         query: PollVoteListQuery?,
         cache: PreWarmedCache?
     ) throws -> PollVoteDTO {
@@ -635,7 +635,7 @@ private extension DatabaseSession_Mock {
 extension DatabaseSession {
     @discardableResult
     func saveMessage(
-        payload: MessagePayload,
+        payload: MessageResponse,
         for cid: ChannelId?,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?
@@ -651,7 +651,7 @@ extension DatabaseSession {
 
     @discardableResult
     func saveMessage(
-        payload: MessagePayload,
+        payload: MessageResponse,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
         cache: PreWarmedCache?

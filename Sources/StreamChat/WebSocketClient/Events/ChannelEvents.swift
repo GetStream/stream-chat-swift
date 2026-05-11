@@ -30,9 +30,9 @@ public final class ChannelUpdatedEvent: ChannelSpecificEvent {
 }
 
 final class ChannelUpdatedEventDTO: EventDTO {
-    let channel: ChannelDetailPayload
-    let user: UserPayload?
-    let message: MessagePayload?
+    let channel: ChannelResponse
+    let user: UserResponse?
+    let message: MessageResponse?
     let createdAt: Date
     let payload: EventPayload
 
@@ -81,8 +81,8 @@ public final class ChannelDeletedEvent: ChannelSpecificEvent {
 }
 
 final class ChannelDeletedEventDTO: EventDTO {
-    let user: UserPayload?
-    let channel: ChannelDetailPayload
+    let user: UserResponse?
+    let channel: ChannelResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -132,11 +132,11 @@ public final class ChannelTruncatedEvent: ChannelSpecificEvent {
 }
 
 final class ChannelTruncatedEventDTO: EventDTO {
-    let channel: ChannelDetailPayload
-    let user: UserPayload?
+    let channel: ChannelResponse
+    let user: UserResponse?
     let createdAt: Date
     let payload: EventPayload
-    let message: MessagePayload?
+    let message: MessageResponse?
 
     init(from response: EventPayload) throws {
         channel = try response.value(at: \.channel)
@@ -181,7 +181,7 @@ public final class ChannelVisibleEvent: ChannelSpecificEvent {
 
 final class ChannelVisibleEventDTO: EventDTO {
     let cid: ChannelId
-    let user: UserPayload
+    let user: UserResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -227,7 +227,7 @@ public final class ChannelHiddenEvent: ChannelSpecificEvent {
 
 final class ChannelHiddenEventDTO: EventDTO {
     let cid: ChannelId
-    let user: UserPayload
+    let user: UserResponse
     let isHistoryCleared: Bool
     let createdAt: Date
     let payload: EventPayload

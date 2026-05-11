@@ -11,10 +11,10 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     fileprivate var center: EventNotificationCenter_Mock!
     fileprivate var database: DatabaseContainer_Spy!
 
-    var channelPayload: ChannelPayload!
-    var currentUserPayload: CurrentUserPayload!
-    var currentUserReadPayload: ChannelReadPayload!
-    var anotherUserPayload: UserPayload!
+    var channelPayload: ChannelStateResponseFields!
+    var currentUserPayload: OwnUserResponse!
+    var currentUserReadPayload: ReadStateResponse!
+    var anotherUserPayload: UserResponse!
 
     var currentUserReadDTO: ChannelReadDTO? {
         guard let cid = channelPayload.channel?.channelId else { return nil }
@@ -44,7 +44,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
 
-        channelPayload = ChannelPayload.dummy(
+        channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: .unique),
             watcherCount: 0,
             watchers: [],
@@ -81,7 +81,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageDeletedEvent_whenChannelIsMuted_doesNotDecrementUnreadCount() throws {
         // GIVEN
-        let channelMute = MutedChannelPayload(
+        let channelMute = ChannelMute(
             mutedChannel: channelPayload.channel!,
             user: currentUserPayload.asUserPayload,
             createdAt: .init(),
@@ -93,7 +93,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
 
         // WHEN
-        let message: MessagePayload = .dummy(
+        let message: MessageResponse = .dummy(
             type: .deleted,
             messageId: .unique,
             parentId: .unique,
@@ -124,7 +124,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageDeletedEvent_whenMessageIsSentByCurrentUser_doesNotDecrementUnreadCount() throws {
         // WHEN
-        let messageFromCurrentUser: MessagePayload = .dummy(
+        let messageFromCurrentUser: MessageResponse = .dummy(
             type: .deleted,
             messageId: .unique,
             parentId: nil,
@@ -162,7 +162,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
 
         // WHEN
-        let messageFromMutedUser: MessagePayload = .dummy(
+        let messageFromMutedUser: MessageResponse = .dummy(
             type: .deleted,
             messageId: .unique,
             authorUserId: anotherUserPayload.id,
@@ -192,7 +192,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageDeletedEvent_whenMessageIsSoftDeleted_doesNotDecrementUnreadCount() throws {
         // WHEN
-        let softDeletedMessage: MessagePayload = .dummy(
+        let softDeletedMessage: MessageResponse = .dummy(
             type: .deleted,
             messageId: .unique,
             authorUserId: anotherUserPayload.id,
@@ -222,7 +222,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageDeletedEvent_whenMessageIsSilent_doesNotDecrementUnreadCount() throws {
         // WHEN
-        let silentMessage: MessagePayload = .dummy(
+        let silentMessage: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: anotherUserPayload.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
@@ -252,7 +252,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageDeletedEvent_whenMessageIsThreadReply_doesNotDecrementUnreadCount() throws {
         // WHEN
-        let threadReply: MessagePayload = .dummy(
+        let threadReply: MessageResponse = .dummy(
             type: .reply,
             messageId: .unique,
             parentId: .unique,
@@ -284,7 +284,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageDeletedEvent_whenMessageIsSystem_decrementsUnreadCount() throws {
         // WHEN
-        let systemMessage: MessagePayload = .dummy(
+        let systemMessage: MessageResponse = .dummy(
             type: .system,
             messageId: .unique,
             authorUserId: anotherUserPayload.id,
@@ -314,7 +314,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageDeletedEvent_whenMessageIsRead_doesNotDecrementUnreadCount() throws {
         // WHEN
-        let message: MessagePayload = .dummy(
+        let message: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: anotherUserPayload.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(-1),
@@ -343,7 +343,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageDeletedEvent_whenMessageIsRegular_decrementsUnreadMessagesCount() throws {
         // WHEN
-        let message: MessagePayload = .dummy(
+        let message: MessageResponse = .dummy(
             type: .regular,
             messageId: .unique,
             authorUserId: anotherUserPayload.id,
@@ -373,7 +373,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageDeletedEvent_whenMessageIsThreadReplySentToMainChannel_decrementsUnreadMessagesCount() throws {
         // WHEN
-        let message: MessagePayload = .dummy(
+        let message: MessageResponse = .dummy(
             type: .reply,
             messageId: .unique,
             parentId: .unique,
@@ -407,7 +407,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageNewEvent_whenChannelIsMuted_doesNotIncrementUnreadCount() throws {
         // GIVEN
-        let channelMute = MutedChannelPayload(
+        let channelMute = ChannelMute(
             mutedChannel: channelPayload.channel!,
             user: currentUserPayload.asUserPayload,
             createdAt: .init(),
@@ -419,7 +419,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
 
         // WHEN
-        let message: MessagePayload = .dummy(
+        let message: MessageResponse = .dummy(
             type: .regular,
             messageId: .unique,
             parentId: .unique,
@@ -448,7 +448,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageNewEvent_whenMessageIsSentByCurrentUser_doesNotIncrementUnreadCount() throws {
         // WHEN
-        let messageFromCurrentUser: MessagePayload = .dummy(
+        let messageFromCurrentUser: MessageResponse = .dummy(
             messageId: .unique,
             parentId: nil,
             authorUserId: currentUserPayload.id,
@@ -484,7 +484,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
 
         // WHEN
-        let messageFromMutedUser: MessagePayload = .dummy(
+        let messageFromMutedUser: MessageResponse = .dummy(
             type: .regular,
             messageId: .unique,
             authorUserId: anotherUserPayload.id,
@@ -512,7 +512,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageNewEvent_whenMessageIsSilent_doesNotIncrementUnreadCount() throws {
         // WHEN
-        let silentMessage: MessagePayload = .dummy(
+        let silentMessage: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: anotherUserPayload.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
@@ -540,7 +540,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageNewEvent_whenMessageIsThreadReply_doesNotIncrementUnreadCount() throws {
         // WHEN
-        let threadReplyPayload: MessagePayload = .dummy(
+        let threadReplyPayload: MessageResponse = .dummy(
             type: .reply,
             messageId: .unique,
             parentId: .unique,
@@ -570,7 +570,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageNewEvent_whenMessageIsSystem_incrementsUnreadCount() throws {
         // WHEN
-        let systemMessage: MessagePayload = .dummy(
+        let systemMessage: MessageResponse = .dummy(
             type: .system,
             messageId: .unique,
             authorUserId: anotherUserPayload.id,
@@ -601,7 +601,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageNewEvent_whenMessageIsShadowed_doesNotIncrementUnreadCount() throws {
         // WHEN
-        let shadowedMessage: MessagePayload = .dummy(
+        let shadowedMessage: MessageResponse = .dummy(
             type: .regular,
             messageId: .unique,
             authorUserId: anotherUserPayload.id,
@@ -630,7 +630,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageNewEvent_whenMessageIsRead_doesNotIncrementUnreadCount() throws {
         // WHEN
-        let regularMessageEarlierThanLastRead: MessagePayload = .dummy(
+        let regularMessageEarlierThanLastRead: MessageResponse = .dummy(
             messageId: .unique,
             parentId: nil,
             authorUserId: anotherUserPayload.id,
@@ -805,7 +805,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Save a channel without a channel read
         let channelId = ChannelId.unique
         let payload = dummyPayload(with: channelId, channelReads: [])
-        let user = UserPayload.dummy(userId: .unique)
+        let user = UserResponse.dummy(userId: .unique)
         let messageId = MessageId.unique
         center.newMessageIdsMock = [messageId]
 
@@ -1004,8 +1004,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Create a NotificationMarkReadEvent
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
-        // Unfortunately, ChannelDetailPayload is needed for NotificationMarkReadEvent...
-        let channelDetailPayload = ChannelDetailPayload.dummy(
+        // Unfortunately, ChannelResponse is needed for NotificationMarkReadEvent...
+        let channelDetailPayload = ChannelResponse.dummy(
             cid: channelId,
             name: .unique,
             imageURL: .unique(),
@@ -1070,7 +1070,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // Create a NotificationMarkReadEvent
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
-        let channelDetailPayload = ChannelDetailPayload.dummy(cid: channelId)
+        let channelDetailPayload = ChannelResponse.dummy(cid: channelId)
         let threadEventPayload = EventPayload(
             eventType: .notificationMarkRead,
             cid: try! ChannelId(cid: channelDetailPayload.cid),
@@ -1226,7 +1226,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     }
 
     private func newMessageEvent(type: MessageType) throws -> MessageNewEventDTO {
-        let regularMessage: MessagePayload = .dummy(
+        let regularMessage: MessageResponse = .dummy(
             type: type,
             messageId: .unique,
             parentId: type == .reply ? .unique : nil,

@@ -12,7 +12,7 @@ final class UserListPayload_Tests: XCTestCase {
         let url = XCTestCase.mockData(fromJSONFile: "UsersQuery")
 
         // WHEN
-        let payload = try JSONDecoder.default.decode(UserListPayload.self, from: url)
+        let payload = try JSONDecoder.default.decode(QueryUsersResponse.self, from: url)
 
         // THEN
         XCTAssertEqual(payload.users.count, 20)
@@ -52,7 +52,7 @@ final class UserListPayload_Tests: XCTestCase {
             """.utf8
         )
 
-        let payload = try JSONDecoder.default.decode(UserListPayload.self, from: json)
+        let payload = try JSONDecoder.default.decode(QueryUsersResponse.self, from: json)
         let user = try XCTUnwrap(payload.userPayloads.first)
 
         XCTAssertEqual(user.id, "open-api-user")

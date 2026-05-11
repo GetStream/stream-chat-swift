@@ -15,7 +15,7 @@ final class MessageReactionGroupDTO: NSManagedObject {
 
     convenience init(
         type: MessageReactionType,
-        payload: MessageReactionGroupPayload,
+        payload: ReactionGroupResponse,
         context: NSManagedObjectContext
     ) {
         self.init(context: context)

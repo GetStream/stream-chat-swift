@@ -61,7 +61,7 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
     @Atomic var loadReplies_messageId: MessageId?
     @Atomic var loadReplies_pagination: MessagesPagination?
     @Atomic var loadReplies_paginationStateHandler: MessagesPaginationStateHandling?
-    @Atomic var loadReplies_completion: ((Result<MessageRepliesPayload, Error>) -> Void)?
+    @Atomic var loadReplies_completion: ((Result<GetRepliesResponse, Error>) -> Void)?
 
     @Atomic var loadReactions_cid: ChannelId?
     @Atomic var loadReactions_messageId: MessageId?
@@ -146,7 +146,7 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
 
     var updateThread_callCount = 0
     var updateThread_messageId: MessageId?
-    var updateThread_request: ThreadPartialUpdateRequest?
+    var updateThread_request: UpdateThreadPartialRequest?
     var updateThread_completion: ((Result<ChatThread, any Error>) -> Void)?
 
     var loadThread_callCount = 0
@@ -407,7 +407,7 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
         messageId: MessageId,
         pagination: MessagesPagination,
         paginationStateHandler: MessagesPaginationStateHandling,
-        completion: ((Result<MessageRepliesPayload, Error>) -> Void)? = nil
+        completion: ((Result<GetRepliesResponse, Error>) -> Void)? = nil
     ) {
         loadReplies_callCount += 1
         loadReplies_cid = cid
@@ -561,7 +561,7 @@ final class MessageUpdater_Mock: MessageUpdater, @unchecked Sendable {
 
     override func updateThread(
         for messageId: MessageId,
-        request: ThreadPartialUpdateRequest,
+        request: UpdateThreadPartialRequest,
         completion: @escaping ((Result<ChatThread, any Error>) -> Void)
     ) {
         updateThread_callCount += 1

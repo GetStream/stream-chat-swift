@@ -463,9 +463,11 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .deleteMessage(
-                messageId: messageId,
-                hard: hard
+            endpoint: Endpoint<DeleteMessageResponse>.deleteMessage(
+                id: messageId,
+                hard: hard,
+                deletedBy: nil,
+                deleteForMe: nil
             )
         ) { [weak self] result in
             self?.callback {
@@ -486,9 +488,8 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         offset: Int = 0,
         completion: @escaping @MainActor (Result<[ChatMessageReaction], Error>) -> Void
     ) {
-        let pagination = Pagination(pageSize: limit, offset: offset)
         apiClient.request(
-            endpoint: .loadReactions(messageId: messageId, pagination: pagination)
+            endpoint: Endpoint<GetReactionsResponse>.getReactions(id: messageId, limit: limit, offset: offset)
         ) { [weak self] result in
             self?.callback {
                 switch result {
@@ -518,11 +519,8 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .flagMessage(
-                true,
-                with: messageId,
-                reason: reason,
-                extraData: extraData
+            endpoint: Endpoint<FlagResponse>.flag(
+                flagRequest: FlagRequest(reason: reason, targetMessageId: messageId, custom: extraData)
             )
         ) { [weak self] result in
             self?.callback {
@@ -541,11 +539,8 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .flagMessage(
-                false,
-                with: messageId,
-                reason: nil,
-                extraData: nil
+            endpoint: Endpoint<FlagResponse>.flag(
+                flagRequest: FlagRequest(targetMessageId: messageId)
             )
         ) { [weak self] result in
             self?.callback {
@@ -574,15 +569,21 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         extraData: [String: RawJSON] = [:],
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
+        var reactionExtraData = extraData
+        if let pushEmojiCode { reactionExtraData["emoji_code"] = .string(pushEmojiCode) }
+        let reaction = ReactionRequest(
+            custom: reactionExtraData.isEmpty ? nil : reactionExtraData,
+            score: score,
+            type: type.rawValue
+        )
         apiClient.request(
-            endpoint: .addReaction(
-                type,
-                score: score,
-                enforceUnique: enforceUnique,
-                extraData: extraData,
-                skipPush: skipPush,
-                emojiCode: pushEmojiCode,
-                messageId: messageId
+            endpoint: Endpoint<SendReactionResponse>.sendReaction(
+                id: messageId,
+                sendReactionRequest: SendReactionRequest(
+                    enforceUnique: enforceUnique,
+                    reaction: reaction,
+                    skipPush: skipPush
+                )
             )
         ) { [weak self] result in
             self?.callback {
@@ -601,7 +602,9 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         from messageId: MessageId,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { [weak self] result in
+        apiClient.request(
+            endpoint: Endpoint<DeleteReactionResponse>.deleteReaction(id: messageId, type: type.rawValue, userId: nil)
+        ) { [weak self] result in
             self?.callback {
                 completion?(result.error)
             }
@@ -618,10 +621,12 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         pinning: MessagePinning = .noExpiration,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .pinMessage(
-            messageId: messageId,
-            request: .init(set: .init(pinned: true))
-        )) { [weak self] result in
+        apiClient.request(
+            endpoint: Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+                id: messageId,
+                updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(true)])
+            )
+        ) { [weak self] result in
             self?.callback {
                 completion?(result.error)
             }
@@ -637,9 +642,9 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .pinMessage(
-                messageId: messageId,
-                request: .init(set: .init(pinned: false))
+            endpoint: Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
+                id: messageId,
+                updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(false)])
             )
         ) { [weak self] result in
             self?.callback {
@@ -725,7 +730,11 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         }
 
         apiClient.request(
-            endpoint: .enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)
+            endpoint: Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+                type: cid.type.rawValue,
+                id: cid.id,
+                updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["cooldown": .number(Double(cooldownDuration))])
+            )
         ) { result in
             self.callback {
                 completion?(result.error)
@@ -873,13 +882,13 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         let pagination = channelQuery.pagination
         paginationStateHandler.begin(pagination: pagination)
 
-        let requestCompletion: @Sendable (Result<ChannelPayload, Error>) -> Void = { [weak self] result in
+        let requestCompletion: @Sendable (Result<ChannelStateResponseFields, Error>) -> Void = { [weak self] result in
             self?.callback { [weak self] in
                 guard let self = self else { return }
 
                 switch result {
                 case .success(let payload):
-                    self.handleChannelPayload(payload, channelQuery: channelQuery)
+                    self.handleChannelStateResponseFields(payload, channelQuery: channelQuery)
                     completion?(nil)
 
                 case .failure(let error):
@@ -899,7 +908,7 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         )
     }
 
-    private func handleChannelPayload(_ payload: ChannelPayload, channelQuery: ChannelQuery) {
+    private func handleChannelStateResponseFields(_ payload: ChannelStateResponseFields, channelQuery: ChannelQuery) {
         paginationStateHandler.end(pagination: channelQuery.pagination, with: .success(payload.messages))
 
         let newChannel = payload.asModel(
@@ -1230,7 +1239,7 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         restrictedVisibility: [UserId] = [],
         location: NewLocationInfo? = nil,
         extraData: [String: RawJSON] = [:],
-        poll: PollPayload?,
+        poll: PollResponseData?,
         completion: (@MainActor (Result<MessageId, Error>) -> Void)? = nil
     ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.

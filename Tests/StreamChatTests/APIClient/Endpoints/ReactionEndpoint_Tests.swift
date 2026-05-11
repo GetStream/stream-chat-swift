@@ -6,134 +6,26 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ReactionEndpoints_Tests: XCTestCase {
-    func test_loadReactions_buildsCorrectly() {
-        let messageId: MessageId = "ID"
-        let pagination: Pagination = .init(pageSize: 10)
+final class ReactionEndpoint_Tests: XCTestCase {
+    func test_getReactions_buildsGeneratedEndpoint() {
+        let endpoint: Endpoint<GetReactionsResponse> = .getReactions(id: "message-id", limit: 20, offset: 10)
 
-        let endpoint: Endpoint<MessageReactionsPayload> = .loadReactions(
-            messageId: messageId,
-            pagination: pagination
-        )
-
-        XCTAssertEqual(endpoint.path.value, "messages/ID/reactions")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/messages/message-id/reactions")
         XCTAssertEqual(endpoint.method, .get)
-        XCTAssertTrue(endpoint.queryItems == nil)
-        XCTAssertEqual(endpoint.requiresConnectionId, false)
-        XCTAssertEqual(endpoint.body?.asAnyEncodable, pagination.asAnyEncodable)
+        XCTAssertEqual(endpoint.queryItems?["limit"] ?? nil, "20")
+        XCTAssertEqual(endpoint.queryItems?["offset"] ?? nil, "10")
+        XCTAssertFalse(endpoint.requiresConnectionId)
+        XCTAssertNil(endpoint.body)
     }
 
-    func test_loadReactionsV2_buildsCorrectly() {
-        let messageId: MessageId = "ID"
-        let query: ReactionListQuery = .init(
-            messageId: messageId,
-            pagination: .init(pageSize: 20, offset: 0),
-            filter: .equal(.reactionType, to: "like")
-        )
+    func test_sendReaction_buildsGeneratedEndpoint() {
+        let request = SendReactionRequest(reaction: ReactionRequest(type: "like"), skipPush: true)
+        let endpoint: Endpoint<SendReactionResponse> = .sendReaction(id: "message-id", sendReactionRequest: request)
 
-        let endpoint: Endpoint<MessageReactionsPayload> = .loadReactionsV2(
-            query: query
-        )
-
-        XCTAssertEqual(endpoint.path.value, "messages/ID/reactions")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/messages/message-id/reaction")
         XCTAssertEqual(endpoint.method, .post)
-        XCTAssertTrue(endpoint.queryItems == nil)
-        XCTAssertEqual(endpoint.requiresConnectionId, false)
-        XCTAssertEqual(endpoint.body?.asAnyEncodable, query.asAnyEncodable)
-    }
-
-    func test_addReaction_buildsCorrectly() {
-        let messageId: MessageId = .unique
-        let reaction: MessageReactionType = .init(rawValue: "like")
-        let score = 5
-        let extraData: [String: RawJSON] = [:]
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .addReaction(messageId),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: MessageReactionRequestPayload(
-                enforceUnique: false,
-                skipPush: false,
-                reaction: ReactionRequestPayload(type: reaction, score: score, emojiCode: nil, extraData: extraData)
-            )
-        )
-
-        // Build endpoint.
-        let endpoint: Endpoint<EmptyResponse> = .addReaction(
-            reaction,
-            score: score,
-            enforceUnique: false,
-            extraData: extraData,
-            skipPush: false,
-            emojiCode: nil,
-            messageId: messageId
-        )
-
-        // Assert endpoint is built correctly.
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/reaction", endpoint.path.value)
-    }
-
-    func test_addReaction_withSkipPushAndEmojiCode_buildsCorrectly() {
-        let messageId: MessageId = .unique
-        let reaction: MessageReactionType = .init(rawValue: "love")
-        let score = 3
-        let skipPush = true
-        let emojiCode = "❤️"
-        let extraData: [String: RawJSON] = ["custom": .string("value")]
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .addReaction(messageId),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: MessageReactionRequestPayload(
-                enforceUnique: true,
-                skipPush: skipPush,
-                reaction: ReactionRequestPayload(
-                    type: reaction,
-                    score: score,
-                    emojiCode: emojiCode,
-                    extraData: extraData
-                )
-            )
-        )
-
-        // Build endpoint.
-        let endpoint: Endpoint<EmptyResponse> = .addReaction(
-            reaction,
-            score: score,
-            enforceUnique: true,
-            extraData: extraData,
-            skipPush: skipPush,
-            emojiCode: emojiCode,
-            messageId: messageId
-        )
-
-        // Assert endpoint is built correctly.
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/reaction", endpoint.path.value)
-    }
-
-    func test_deleteReaction_buildsCorrectly() {
-        let messageId: MessageId = .unique
-        let reaction: MessageReactionType = .init(rawValue: "like")
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .deleteReaction(messageId, reaction),
-            method: .delete,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: nil
-        )
-
-        // Build endpoint.
-        let endpoint: Endpoint<EmptyResponse> = .deleteReaction(reaction, messageId: messageId)
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("messages/\(messageId)/reaction/\(reaction.rawValue)", endpoint.path.value)
+        XCTAssertNil(endpoint.queryItems)
+        XCTAssertFalse(endpoint.requiresConnectionId)
+        XCTAssertEqual(endpoint.body as? SendReactionRequest, request)
     }
 }

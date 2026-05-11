@@ -5,16 +5,16 @@
 import Foundation
 @testable import StreamChat
 
-extension MessageReactionPayload {
+extension ReactionResponse {
     static func dummy(
         type: MessageReactionType = .init(rawValue: .unique),
         score: Int = .random(in: 0...10),
         messageId: String,
         createdAt: Date = .unique,
         updatedAt: Date = .unique,
-        user: UserPayload,
+        user: UserResponse,
         extraData: [String: RawJSON] = [:]
-    ) -> MessageReactionPayload {
+    ) -> ReactionResponse {
         .init(
             type: type,
             score: score,

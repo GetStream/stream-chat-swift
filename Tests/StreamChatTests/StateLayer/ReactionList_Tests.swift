@@ -70,7 +70,9 @@ final class ReactionList_Tests: XCTestCase {
             offset: 0,
             messageId: messageId
         )
-        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
+        env.client.mockAPIClient.test_mockResponseResult(
+            Result<QueryReactionsResponse, Error>.success(.init(duration: nextPayload.duration, reactions: nextPayload.reactions))
+        )
         try await reactionList.get()
         
         // TODO: Reset is not implemented (if it is, the result should be 2)
@@ -91,7 +93,9 @@ final class ReactionList_Tests: XCTestCase {
             offset: 0,
             messageId: messageId
         )
-        env.client.mockAPIClient.test_mockResponseResult(.success(nextPayload))
+        env.client.mockAPIClient.test_mockResponseResult(
+            Result<QueryReactionsResponse, Error>.success(.init(duration: nextPayload.duration, reactions: nextPayload.reactions))
+        )
         try await reactionList.get()
         
         await XCTAssertEqual(3, reactionList.state.reactions.count)
@@ -112,7 +116,9 @@ final class ReactionList_Tests: XCTestCase {
             offset: 0,
             messageId: messageId
         )
-        env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
+        env.client.mockAPIClient.test_mockResponseResult(
+            Result<QueryReactionsResponse, Error>.success(.init(duration: apiResult.duration, reactions: apiResult.reactions))
+        )
         let pagination = Pagination(pageSize: 10)
         let result = try await reactionList.loadReactions(with: pagination)
         XCTAssertEqual(
@@ -143,7 +149,9 @@ final class ReactionList_Tests: XCTestCase {
             offset: 0,
             messageId: messageId
         )
-        env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
+        env.client.mockAPIClient.test_mockResponseResult(
+            Result<QueryReactionsResponse, Error>.success(.init(duration: apiResult.duration, reactions: apiResult.reactions))
+        )
         let result = try await reactionList.loadMoreReactions(limit: 3)
         XCTAssertEqual(apiResult.reactions.map(\.reactionType.rawValue), result.map(\.type.rawValue))
         
@@ -167,7 +175,7 @@ final class ReactionList_Tests: XCTestCase {
     private func createChannel() async throws {
         try await env.client.databaseContainer.write { session in
             try session.saveChannel(
-                payload: ChannelPayload.dummy(
+                payload: ChannelStateResponseFields.dummy(
                     channel: .dummy(cid: self.channelId),
                     messages: [
                         .dummy(messageId: self.messageId)
@@ -181,19 +189,19 @@ final class ReactionList_Tests: XCTestCase {
         reactionCount: Int,
         offset: Int,
         messageId: MessageId
-    ) -> MessageReactionsPayload {
+    ) -> GetReactionsResponse {
         let reactions = (0..<reactionCount)
             .map { $0 + offset }
             .reversed() // last updated ones first
             .map {
-                MessageReactionPayload.dummy(
+                ReactionResponse.dummy(
                     messageId: messageId,
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0)),
                     updatedAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0)),
                     user: .dummy(userId: .unique)
                 )
             }
-        return MessageReactionsPayload(duration: "", reactions: reactions)
+        return GetReactionsResponse(duration: "", reactions: reactions)
     }
 }
 

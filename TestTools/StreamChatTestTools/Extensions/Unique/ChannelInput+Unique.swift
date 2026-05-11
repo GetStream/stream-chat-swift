@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension ChannelEditDetailPayload {
+extension ChannelInput {
     static var unique: Self {
         Self(
             name: .unique,

@@ -104,3 +104,21 @@ extension SharedLocationDTO: IdentifiableModel {
     static var idKeyPath: String? { #keyPath(SharedLocationDTO.messageId) }
     static func id(for model: NSManagedObject) -> DatabaseId? { (model as? Self)?.messageId }
 }
+
+extension CurrentUserDTO: IdentifiableModel {
+    static let className: DatabaseType = _className
+    static let idKeyPath: String? = #keyPath(CurrentUserDTO.user.id)
+    static func id(for model: NSManagedObject) -> DatabaseId? { (model as? Self)?.user.id }
+}
+
+extension DeviceDTO: IdentifiableModel {
+    static let className: DatabaseType = _className
+    static let idKeyPath: String? = #keyPath(DeviceDTO.id)
+    static func id(for model: NSManagedObject) -> DatabaseId? { (model as? Self)?.id }
+}
+
+extension MessageReminderDTO: IdentifiableModel {
+    static let className: DatabaseType = _className
+    static let idKeyPath: String? = #keyPath(MessageReminderDTO.id)
+    static func id(for model: NSManagedObject) -> DatabaseId? { (model as? Self)?.id }
+}

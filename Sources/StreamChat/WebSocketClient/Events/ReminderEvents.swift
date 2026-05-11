@@ -27,7 +27,7 @@ public final class MessageReminderCreatedEvent: Event {
 
 final class ReminderCreatedEventDTO: EventDTO {
     let messageId: MessageId
-    let reminder: ReminderPayload
+    let reminder: ReminderResponseData
     let createdAt: Date
     let payload: EventPayload
     
@@ -75,7 +75,7 @@ public final class MessageReminderUpdatedEvent: Event {
 
 final class ReminderUpdatedEventDTO: EventDTO {
     let messageId: MessageId
-    let reminder: ReminderPayload
+    let reminder: ReminderResponseData
     let createdAt: Date
     let payload: EventPayload
     
@@ -123,7 +123,7 @@ public final class MessageReminderDeletedEvent: Event {
 
 final class ReminderDeletedEventDTO: EventDTO {
     let messageId: MessageId
-    let reminder: ReminderPayload
+    let reminder: ReminderResponseData
     let createdAt: Date
     let payload: EventPayload
     
@@ -175,7 +175,7 @@ public final class MessageReminderDueEvent: Event {
 
 final class ReminderDueNotificationEventDTO: EventDTO {
     let messageId: MessageId
-    let reminder: ReminderPayload
+    let reminder: ReminderResponseData
     let createdAt: Date
     let payload: EventPayload
     

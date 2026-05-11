@@ -5,14 +5,14 @@
 import Foundation
 
 protocol PollEventDTO: EventDTO {
-    var poll: PollPayload? { get }
+    var poll: PollResponseData? { get }
     var payload: EventPayload { get }
     static func createModel(poll: Poll, payload: EventPayload) -> Event?
 }
 
 protocol PollVoteEventDTO: EventDTO {
-    var poll: PollPayload? { get }
-    var vote: PollVotePayload? { get }
+    var poll: PollResponseData? { get }
+    var vote: PollVoteResponseData? { get }
     var payload: EventPayload { get }
     static func createModel(vote: PollVote, poll: Poll, payload: EventPayload) -> Event?
 }
@@ -63,7 +63,7 @@ public final class PollClosedEvent: Event {
 }
 
 struct PollClosedEventDTO: PollEventDTO {
-    var poll: PollPayload?
+    var poll: PollResponseData?
     var payload: EventPayload
 
     init(from response: EventPayload) throws {
@@ -92,7 +92,7 @@ public final class PollCreatedEvent: Event {
 }
 
 struct PollCreatedEventDTO: PollEventDTO {
-    var poll: PollPayload?
+    var poll: PollResponseData?
     var payload: EventPayload
 
     init(from response: EventPayload) throws {
@@ -121,7 +121,7 @@ public final class PollDeletedEvent: Event {
 }
 
 struct PollDeletedEventDTO: PollEventDTO {
-    var poll: PollPayload?
+    var poll: PollResponseData?
     var payload: EventPayload
 
     init(from response: EventPayload) throws {
@@ -150,7 +150,7 @@ public final class PollUpdatedEvent: Event {
 }
 
 struct PollUpdatedEventDTO: PollEventDTO {
-    var poll: PollPayload?
+    var poll: PollResponseData?
     var payload: EventPayload
 
     init(from response: EventPayload) throws {
@@ -183,8 +183,8 @@ public final class PollVoteCastedEvent: Event {
 }
 
 struct PollVoteCastedEventDTO: PollVoteEventDTO {
-    var vote: PollVotePayload?
-    var poll: PollPayload?
+    var vote: PollVoteResponseData?
+    var poll: PollResponseData?
     var payload: EventPayload
 
     init(from response: EventPayload) throws {
@@ -218,8 +218,8 @@ public final class PollVoteChangedEvent: Event {
 }
 
 struct PollVoteChangedEventDTO: PollVoteEventDTO {
-    var vote: PollVotePayload?
-    var poll: PollPayload?
+    var vote: PollVoteResponseData?
+    var poll: PollResponseData?
     var payload: EventPayload
 
     init(from response: EventPayload) throws {
@@ -253,8 +253,8 @@ public final class PollVoteRemovedEvent: Event {
 }
 
 struct PollVoteRemovedEventDTO: PollVoteEventDTO {
-    var vote: PollVotePayload?
-    var poll: PollPayload?
+    var vote: PollVoteResponseData?
+    var poll: PollResponseData?
     var payload: EventPayload
 
     init(from response: EventPayload) throws {

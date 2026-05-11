@@ -43,7 +43,7 @@ final class TypingEventsSender_Tests: XCTestCase {
         let parentMessageId: MessageId? = nil
         eventSender.keystroke(in: cid, parentMessageId: parentMessageId)
 
-        let startTypingEndpoint: Endpoint<EmptyResponse> = .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let startTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStartTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
         apiClient.request_endpoint = nil
 
@@ -51,7 +51,7 @@ final class TypingEventsSender_Tests: XCTestCase {
         time.run(numberOfSeconds: .startTypingEventTimeout)
 
         // Make sure the stop typing event has been sent.
-        let stopTypingEndpoint: Endpoint<EmptyResponse> = .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let stopTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStopTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
     }
 
@@ -61,7 +61,7 @@ final class TypingEventsSender_Tests: XCTestCase {
         let parentMessageId = MessageId.unique
         eventSender.keystroke(in: cid, parentMessageId: parentMessageId)
 
-        let startTypingEndpoint: Endpoint<EmptyResponse> = .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let startTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStartTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
         apiClient.request_endpoint = nil
 
@@ -69,7 +69,7 @@ final class TypingEventsSender_Tests: XCTestCase {
         time.run(numberOfSeconds: .startTypingEventTimeout)
 
         // Make sure the stop typing event has been sent.
-        let stopTypingEndpoint: Endpoint<EmptyResponse> = .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let stopTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStopTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
     }
 
@@ -79,7 +79,7 @@ final class TypingEventsSender_Tests: XCTestCase {
         let parentMessageId = MessageId.unique
         eventSender.keystroke(in: cid, parentMessageId: parentMessageId)
 
-        let startTypingEndpoint: Endpoint<EmptyResponse> = .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let startTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStartTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
 
         // Before typing timeout send keystroke after `.startTypingEventTimeout` - 1 to avoid sending the stop typing event.
@@ -106,7 +106,7 @@ final class TypingEventsSender_Tests: XCTestCase {
         } while time.currentTime < .startTypingResendInterval
 
         // Only 1 other startTyping event should be sent, for a total of 2 events
-        let startTypingEndpoint: Endpoint<EmptyResponse> = .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let startTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStartTyping.rawValue)))
         let calls: [AnyEndpoint] = apiClient.request_allRecordedCalls.map(\.endpoint)
         XCTAssertEqual(calls, [AnyEndpoint(startTypingEndpoint), AnyEndpoint(startTypingEndpoint)])
     }
@@ -119,7 +119,7 @@ final class TypingEventsSender_Tests: XCTestCase {
         eventSender.stopTyping(in: cid, parentMessageId: parentMessageId)
 
         // Check the start typing event has been sent.
-        let startTypingEndpoint: Endpoint<EmptyResponse> = .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let startTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStopTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
     }
 
@@ -130,14 +130,14 @@ final class TypingEventsSender_Tests: XCTestCase {
         eventSender.keystroke(in: cid, parentMessageId: parentMessageId)
 
         // Check the start typing event has been sent.
-        let startTypingEndpoint: Endpoint<EmptyResponse> = .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let startTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStartTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
 
         time.run(numberOfSeconds: .startTypingEventTimeout - 1)
 
         // Force to stop typing and it should reset scheduled stop typing timer.
         eventSender.stopTyping(in: cid, parentMessageId: parentMessageId)
-        let stopTypingEndpoint: Endpoint<EmptyResponse> = .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let stopTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStopTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 2)
 
@@ -154,14 +154,14 @@ final class TypingEventsSender_Tests: XCTestCase {
         eventSender.keystroke(in: cid, parentMessageId: parentMessageId)
 
         // Check the start typing event has been sent.
-        let startTypingEndpoint: Endpoint<EmptyResponse> = .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let startTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStartTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
 
         // Deinit the eventSender
         eventSender = nil
 
         // Make sure the stop typing event has been sent.
-        let stopTypingEndpoint: Endpoint<EmptyResponse> = .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let stopTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStopTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
     }
 
@@ -173,7 +173,7 @@ final class TypingEventsSender_Tests: XCTestCase {
         eventSender.startTyping(in: cid, parentMessageId: parentMessageId)
 
         // Check the start typing event has been sent.
-        let startTypingEndpoint: Endpoint<EmptyResponse> = .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let startTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStartTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
     }
 
@@ -185,7 +185,7 @@ final class TypingEventsSender_Tests: XCTestCase {
         eventSender.startTyping(in: cid, parentMessageId: parentMessageId)
 
         // Check the start typing event has been sent.
-        let startTypingEndpoint: Endpoint<EmptyResponse> = .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let startTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStartTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
     }
 
@@ -197,14 +197,14 @@ final class TypingEventsSender_Tests: XCTestCase {
         eventSender.startTyping(in: cid, parentMessageId: parentMessageId)
 
         // Check the start typing event has been sent.
-        let startTypingEndpoint: Endpoint<EmptyResponse> = .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let startTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStartTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
 
         // Call stopTyping
         eventSender.stopTyping(in: cid, parentMessageId: parentMessageId)
 
         // Make sure the stop typing event has been sent.
-        let stopTypingEndpoint: Endpoint<EmptyResponse> = .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let stopTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStopTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
     }
 
@@ -216,14 +216,14 @@ final class TypingEventsSender_Tests: XCTestCase {
         eventSender.startTyping(in: cid, parentMessageId: parentMessageId)
 
         // Check the start typing event has been sent.
-        let startTypingEndpoint: Endpoint<EmptyResponse> = .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let startTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStartTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
 
         // Deinit the eventSender
         eventSender = nil
 
         // Make sure the stop typing event has been sent.
-        let stopTypingEndpoint: Endpoint<EmptyResponse> = .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let stopTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStopTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
     }
 
@@ -235,14 +235,14 @@ final class TypingEventsSender_Tests: XCTestCase {
         eventSender.keystroke(in: cid, parentMessageId: parentMessageId)
 
         // Check the start typing event has been sent.
-        let startTypingEndpoint: Endpoint<EmptyResponse> = .startTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let startTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStartTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(startTypingEndpoint))
 
         // Run the time until stopTyping is sent by the timer
         time.run(numberOfSeconds: .startTypingEventTimeout)
 
         // Make sure the stop typing event has been sent.
-        let stopTypingEndpoint: Endpoint<EmptyResponse> = .stopTypingEvent(cid: cid, parentMessageId: parentMessageId)
+        let stopTypingEndpoint: Endpoint<EventResponse> = .sendEvent(type: cid.type.rawValue, id: cid.id, sendEventRequest: SendEventRequest(event: EventRequest(parentId: parentMessageId, type: EventType.userStopTyping.rawValue)))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(stopTypingEndpoint))
         XCTAssertEqual(apiClient.request_allRecordedCalls.count, 2)
 

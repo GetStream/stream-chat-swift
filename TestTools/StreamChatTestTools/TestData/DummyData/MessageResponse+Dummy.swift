@@ -6,20 +6,20 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-extension MessagePayload {
-    /// Creates a dummy `MessagePayload` (= `MessageResponse`) with the given `messageId` and `userId` of the author.
+extension MessageResponse {
+    /// Creates a dummy `MessageResponse` (= `MessageResponse`) with the given `messageId` and `userId` of the author.
     static func dummy(
         type: MessageType? = nil,
         messageId: MessageId = .unique,
         parentId: MessageId? = nil,
         showReplyInChannel: Bool = false,
         quotedMessageId: MessageId? = nil,
-        quotedMessage: MessagePayload? = nil,
-        threadParticipants: [UserPayload] = [
-            UserPayload.dummy(userId: .unique),
-            UserPayload.dummy(userId: .unique)
+        quotedMessage: MessageResponse? = nil,
+        threadParticipants: [UserResponse] = [
+            UserResponse.dummy(userId: .unique),
+            UserResponse.dummy(userId: .unique)
         ],
-        attachments: [MessageAttachmentPayload] = [
+        attachments: [Attachment] = [
             .dummy(),
             .dummy(),
             .dummy()
@@ -28,12 +28,12 @@ extension MessagePayload {
         text: String = .unique,
         restrictedVisibility: [UserId] = [],
         extraData: [String: RawJSON] = [:],
-        latestReactions: [MessageReactionPayload] = [],
-        ownReactions: [MessageReactionPayload] = [],
+        latestReactions: [ReactionResponse] = [],
+        ownReactions: [ReactionResponse] = [],
         createdAt: Date? = .unique,
         deletedAt: Date? = nil,
         updatedAt: Date = .unique,
-        channel: ChannelDetailPayload? = nil,
+        channel: ChannelResponse? = nil,
         cid: ChannelId? = nil,
         pinned: Bool = false,
         pinnedByUserId: UserId? = nil,
@@ -43,20 +43,20 @@ extension MessagePayload {
         isShadowed: Bool = false,
         reactionScores: [MessageReactionType: Int] = ["like": 1],
         reactionCounts: [MessageReactionType: Int] = ["like": 1],
-        reactionGroups: [MessageReactionType: MessageReactionGroupPayload] = [:],
+        reactionGroups: [MessageReactionType: ReactionGroupResponse] = [:],
         translations: [TranslationLanguage: String]? = nil,
         originalLanguage: String? = nil,
-        moderation: MessageModerationDetailsPayload? = nil,
-        moderationDetails: MessageModerationDetailsPayload? = nil,
-        mentionedUsers: [UserPayload] = [.dummy(userId: .unique)],
+        moderation: ModerationV2Response? = nil,
+        moderationDetails: ModerationV2Response? = nil,
+        mentionedUsers: [UserResponse] = [.dummy(userId: .unique)],
         messageTextUpdatedAt: Date? = nil,
-        poll: PollPayload? = nil,
-        draft: DraftPayload? = nil,
-        sharedLocation: SharedLocationPayload? = nil,
+        poll: PollResponseData? = nil,
+        draft: DraftResponse? = nil,
+        sharedLocation: SharedLocationResponseData? = nil,
         member: ChannelMemberResponse? = nil,
         deletedForMe: Bool? = nil,
         campaignId: String? = nil
-    ) -> MessagePayload {
+    ) -> MessageResponse {
         _ = moderationDetails
         var custom = extraData
         if let campaignId {
@@ -74,7 +74,7 @@ extension MessagePayload {
             deletedReplyCount: 0,
             draft: draft,
             html: "",
-            i18n: MessageTranslationsPayload.messageTranslations(translations: translations, originalLanguage: originalLanguage),
+            i18n: [String: String].messageTranslations(translations: translations, originalLanguage: originalLanguage),
             id: messageId,
             latestReactions: latestReactions,
             member: member,
@@ -88,7 +88,7 @@ extension MessagePayload {
             pinExpires: pinExpires,
             pinned: pinned,
             pinnedAt: pinnedAt,
-            pinnedBy: pinnedByUserId.map { UserPayload.dummy(userId: $0) },
+            pinnedBy: pinnedByUserId.map { UserResponse.dummy(userId: $0) },
             poll: poll,
             pollId: poll?.id,
             quotedMessage: quotedMessage,
@@ -106,26 +106,26 @@ extension MessagePayload {
             threadParticipants: threadParticipants,
             type: resolvedType.rawValue,
             updatedAt: updatedAt,
-            user: UserPayload.dummy(userId: authorUserId)
+            user: UserResponse.dummy(userId: authorUserId)
         )
     }
 
-    static func multipleDummies(amount: Int) -> [MessagePayload] {
-        var messages: [MessagePayload] = []
+    static func multipleDummies(amount: Int) -> [MessageResponse] {
+        var messages: [MessageResponse] = []
         for messageIndex in stride(from: 0, to: amount, by: 1) {
-            messages.append(MessagePayload.dummy(messageId: "\(messageIndex)", authorUserId: .unique, createdAt: .unique))
+            messages.append(MessageResponse.dummy(messageId: "\(messageIndex)", authorUserId: .unique, createdAt: .unique))
         }
         return messages
     }
 }
 
-extension MessagePayload {
+extension MessageResponse {
     func attachmentIDs(cid: ChannelId) -> [AttachmentId] {
         attachments.enumerated().map { .init(cid: cid, messageId: id, index: $0.offset) }
     }
 }
 
-extension MessageModerationDetailsPayload {
+extension ModerationV2Response {
     static func dummy(
         originalText: String,
         action: String,

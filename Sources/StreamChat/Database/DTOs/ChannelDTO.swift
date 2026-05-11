@@ -216,7 +216,7 @@ extension ChannelDTO: EphemeralValuesContainer {
 
 extension NSManagedObjectContext {
     func saveChannelList(
-        payload: ChannelListPayload,
+        payload: QueryChannelsResponse,
         query: ChannelListQuery?
     ) -> [ChannelDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
@@ -235,7 +235,7 @@ extension NSManagedObjectContext {
     }
 
     func saveChannel(
-        payload: ChannelDetailPayload,
+        payload: ChannelResponse,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
@@ -334,7 +334,7 @@ extension NSManagedObjectContext {
     }
 
     func saveChannel(
-        payload: ChannelPayload,
+        payload: ChannelStateResponseFields,
         query: ChannelListQuery?,
         cache: PreWarmedCache?
     ) throws -> ChannelDTO {
@@ -400,7 +400,7 @@ extension NSManagedObjectContext {
         }
 
         // Save push preference
-        // TODO: map ChannelPushPreferencesResponse → PushPreferencePayload (legacy compat)
+        // TODO: map ChannelPushPreferencesResponse → PushPreferencesResponse (legacy compat)
 
         // Note: membership payload should be saved before all the members
         if let membership = payload.membership {
@@ -410,7 +410,7 @@ extension NSManagedObjectContext {
             dto.membership = nil
         }
 
-        // Sometimes, `members` are not part of `ChannelDetailPayload` so they need to be saved here too.
+        // Sometimes, `members` are not part of `ChannelResponse` so they need to be saved here too.
         try payload.members.forEach {
             let member = try saveMember(payload: $0, channelId: cid, query: nil, cache: cache)
             dto.members.insert(member)
@@ -699,7 +699,7 @@ extension ChannelDTO {
     /// Updates the `oldestMessageAt` of the channel. It should only update if the current `oldestMessageAt` is not older already.
     /// This property is useful to filter out older pinned/quoted messages that do not belong to the regular channel query,
     /// but are already in the database.
-    func updateOldestMessageAt(payload: ChannelPayload) {
+    func updateOldestMessageAt(payload: ChannelStateResponseFields) {
         guard let payloadOldestMessageAt = payload.messages.map(\.createdAt).min() else { return }
         let isOlderThanCurrentOldestMessage = payloadOldestMessageAt < (oldestMessageAt?.bridgeDate ?? Date.distantFuture)
         if isOlderThanCurrentOldestMessage {

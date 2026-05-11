@@ -371,7 +371,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             try session.saveCurrentDevice("123")
             try session.saveChannelMute(payload: .init(
                 mutedChannel: .dummy(cid: cid),
-                user: UserPayload.dummy(userId: currentUserId),
+                user: UserResponse.dummy(userId: currentUserId),
                 createdAt: .unique,
                 updatedAt: .unique
             ))
@@ -380,7 +380,7 @@ final class DatabaseContainer_Tests: XCTestCase {
             session.currentUser?.mutedUsers = Set([mutedUserDTO])
             try session.savePushPreference(id: "currentUserId", payload: .init(chatLevel: "mentions", disabledUntil: nil))
             session.saveThreadList(
-                payload: ThreadListPayload(
+                payload: QueryThreadsResponse(
                     threads: [
                         self.dummyThreadPayload(
                             threadParticipants: [self.dummyThreadParticipantPayload(), self.dummyThreadParticipantPayload()],
@@ -393,10 +393,10 @@ final class DatabaseContainer_Tests: XCTestCase {
             )
             try session.saveUser(payload: .dummy(userId: .unique), query: .user(withID: currentUserId), cache: nil)
             try session.saveUser(payload: .dummy(userId: .unique))
-            let messages: [MessagePayload] = [
+            let messages: [MessageResponse] = [
                 .dummy(
                     reactionGroups: [
-                        "like": MessageReactionGroupPayload(
+                        "like": ReactionGroupResponse(
                             sumScores: 1,
                             count: 1,
                             firstReactionAt: .unique,

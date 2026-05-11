@@ -29,7 +29,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                     }
                 }
 
-                self?.writeChannelListPayload(
+                self?.writeQueryChannelsResponse(
                     payload: channelListPayload,
                     query: channelListQuery,
                     initialActions: initialActions,
@@ -75,7 +75,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         fetch(channelListQuery: nextQuery) { [weak self] result in
             switch result {
             case .success(let channelListPayload):
-                self?.writeChannelListPayload(
+                self?.writeQueryChannelsResponse(
                     payload: channelListPayload,
                     query: nextQuery,
                     completion: { [weak self] writeResult in
@@ -127,10 +127,24 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     ///   - completion: The completion to call with the results.
     func fetch(
         channelListQuery: ChannelListQuery,
-        completion: @escaping @Sendable (Result<ChannelListPayload, Error>) -> Void
+        completion: @escaping @Sendable (Result<QueryChannelsResponse, Error>) -> Void
     ) {
+        let filterConditions = channelListQuery.filter.toRawJSONDictionary()
+        let request = QueryChannelsRequest(
+            filterConditions: filterConditions,
+            limit: channelListQuery.pagination.pageSize,
+            memberLimit: channelListQuery.membersLimit,
+            messageLimit: channelListQuery.messagesLimit,
+            offset: channelListQuery.pagination.offset,
+            presence: channelListQuery.options.contains(.presence),
+            sort: channelListQuery.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            state: channelListQuery.options.contains(.state),
+            watch: channelListQuery.options.contains(.watch)
+        )
         apiClient.request(
-            endpoint: .channels(query: channelListQuery),
+            endpoint: Endpoint<QueryChannelsResponse>.queryChannels(
+                queryChannelsRequest: request
+            ),
             completion: completion
         )
     }
@@ -138,7 +152,9 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markAllRead(completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .markAllRead()) {
+        apiClient.request(
+            endpoint: Endpoint<MarkReadResponse>.markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest())
+        ) {
             completion?($0.error)
         }
     }
@@ -185,8 +201,8 @@ extension DatabaseSession {
 }
 
 private extension ChannelListUpdater {
-    func writeChannelListPayload(
-        payload: ChannelListPayload,
+    func writeQueryChannelsResponse(
+        payload: QueryChannelsResponse,
         query: ChannelListQuery,
         initialActions: (@Sendable (DatabaseSession) -> Void)? = nil,
         completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)? = nil
@@ -197,7 +213,7 @@ private extension ChannelListUpdater {
             channels = session.saveChannelList(payload: payload, query: query).compactMap { try? $0.asModel() }
         } completion: { error in
             if let error = error {
-                log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
+                log.error("Failed to save `QueryChannelsResponse` to the database. Error: \(error)")
                 completion?(.failure(error))
             } else {
                 completion?(.success(channels))

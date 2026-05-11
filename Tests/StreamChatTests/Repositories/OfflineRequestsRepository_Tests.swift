@@ -72,7 +72,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests_createChannel() throws {
         // We add one .createChannel request to the queue. This is NOT a supported offline action anymore.
-        try createRequest(id: .unique, path: .createChannel(""))
+        try createRequest(id: .unique, path: .getOrCreateChannel(type: "messaging", id: "unsupported"))
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -93,7 +93,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests_sendMessage() throws {
         // We add one .sendMessage request to the queue
-        try createRequest(id: .unique, path: .sendMessage(.unique))
+        try createRequest(id: .unique, path: .sendMessage(type: "messaging", id: .unique))
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -120,7 +120,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests_editMessage() throws {
         // We add one .editMessage request to the queue
-        try createRequest(id: .unique, path: .editMessage(.unique))
+        try createRequest(id: .unique, path: .updateMessage(id: .unique))
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -146,7 +146,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_runQueuedRequestsWithPendingRequests_deleteMessage() throws {
         // We add one .deleteMessage request to the queue
-        try createRequest(id: .unique, path: .deleteMessage(.unique))
+        try createRequest(id: .unique, path: .deleteMessage(id: .unique))
 
         let expectation = self.expectation(description: "Running completes")
         repository.runQueuedRequests {
@@ -214,7 +214,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         // We make all the requests succeed but 1, which receives a Connection Error
         apiClient.recoveryRequest_allRecordedCalls.forEach { endpoint, completion in
             let completion = completion as? ((Result<Data, Error>) -> Void)
-            if case let .sendMessage(id) = endpoint.path, id.id == "request2" {
+            if case let .sendMessage(_, id) = endpoint.path, id == "request2" {
                 completion?(.failure(ClientError.ConnectionError()))
             } else {
                 completion?(.success(Data()))
@@ -245,7 +245,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         // We make all the requests succeed but 1, which receives a random error
         apiClient.recoveryRequest_allRecordedCalls.forEach { endpoint, completion in
             let completion = completion as? ((Result<Data, Error>) -> Void)
-            if case let .sendMessage(id) = endpoint.path, id.id == "request2" {
+            if case let .sendMessage(_, id) = endpoint.path, id == "request2" {
                 completion?(.failure(NSError(domain: "whatever", code: 1, userInfo: nil)))
             } else {
                 completion?(.success(Data()))
@@ -289,7 +289,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
         let id = "request\(count + 1)"
         try createRequest(
             id: id,
-            path: .sendMessage(.init(type: .messaging, id: id)),
+            path: .sendMessage(type: "messaging", id: id),
             body: ["some\(id)": 123],
             date: Date()
         )
@@ -331,15 +331,18 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
     private func createSendMessageRequest(requestIdNumber: Int, messageIdNumber: Int, date: Date) throws {
         let id = "request\(requestIdNumber)"
         let messageId = "message\(messageIdNumber)"
-        let requestBody = MessageRequestBody(
+        let requestBody = MessageRequest(
             id: messageId,
             text: .unique
         )
         let endpoint: Endpoint<SendMessageResponseOpenAPI> = .sendMessage(
-            cid: .init(type: .messaging, id: id),
-            messagePayload: requestBody,
-            skipPush: false,
-            skipEnrichUrl: false
+            type: "messaging",
+            id: id,
+            sendMessageRequest: SendMessageRequest(
+                message: MessageRequest(id: requestBody.id, text: requestBody.text),
+                skipEnrichUrl: false,
+                skipPush: false
+            )
         )
         let endpointData: Data = try JSONEncoder.stream.encode(endpoint.withDataResponse)
         try database.writeSynchronously { _ in
@@ -366,7 +369,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_queueOfflineRequestNotWanted() {
         let endpoint = DataEndpoint(
-            path: .channelEvent("id"),
+            path: .sendEvent(type: "messaging", id: "id"),
             method: .post,
             queryItems: nil,
             requiresConnectionId: true,
@@ -384,7 +387,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
 
     func test_queueOfflineRequestWanted() {
         let endpoint = DataEndpoint(
-            path: .sendMessage(.unique),
+            path: .sendMessage(type: "messaging", id: .unique),
             method: .post,
             queryItems: nil,
             requiresConnectionId: true,

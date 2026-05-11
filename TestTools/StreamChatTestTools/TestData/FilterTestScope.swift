@@ -13,6 +13,15 @@ extension FilterKey where Scope == FilterTestScope {
     static var testKeyDate: FilterKey<Scope, Date> { "test_key_Date" }
     static var testKeyDouble: FilterKey<Scope, Double> { "test_key_Double" }
     static var testKeyBool: FilterKey<Scope, Bool> { "test_key_Bool" }
+    static var testKeyURL: FilterKey<Scope, URL> { "test_key_URL" }
+    static var testKeyChannelId: FilterKey<Scope, ChannelId> { "test_key_ChannelId" }
+    static var testKeyChannelType: FilterKey<Scope, ChannelType> { "test_key_ChannelType" }
+    static var testKeyMemberRole: FilterKey<Scope, MemberRole> { "test_key_MemberRole" }
+    static var testKeyUserRole: FilterKey<Scope, UserRole> { "test_key_UserRole" }
+    static var testKeyAttachmentType: FilterKey<Scope, AttachmentType> { "test_key_AttachmentType" }
+    static var testKeyMessageReactionType: FilterKey<Scope, MessageReactionType> { "test_key_MessageReactionType" }
+    static var testKeyInviteFilterValue: FilterKey<Scope, InviteFilterValue> { "test_key_InviteFilterValue" }
+    static var testKeyOptionalTeamId: FilterKey<Scope, TeamId?> { "test_key_OptionalTeamId" }
 
     static var testKeyArrayString: FilterKey<Scope, String> { "test_key_ArrayString" }
     static var testKeyArrayInt: FilterKey<Scope, Int> { "test_key_ArrayInt" }

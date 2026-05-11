@@ -5,7 +5,7 @@
 import Foundation
 @testable import StreamChat
 
-extension SharedLocationPayload {
+extension SharedLocationResponseData {
     /// Returns dummy draft payload with the given values.
     static func dummy(
         channelId: ChannelId = .unique,
@@ -17,7 +17,7 @@ extension SharedLocationPayload {
         updatedAt: Date = .unique,
         endAt: Date? = nil,
         createdByDeviceId: DeviceId = .unique
-    ) -> SharedLocationPayload {
+    ) -> SharedLocationResponseData {
         .init(
             channelId: channelId.rawValue,
             messageId: messageId,

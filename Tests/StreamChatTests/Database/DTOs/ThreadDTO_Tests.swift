@@ -23,7 +23,7 @@ final class ThreadDTO_Tests: XCTestCase {
     }
 
     func test_saveThreadListPayload() throws {
-        let payload = ThreadListPayload(
+        let payload = QueryThreadsResponse(
             threads: [
                 dummyThreadPayload(),
                 dummyThreadPayload()
@@ -39,7 +39,7 @@ final class ThreadDTO_Tests: XCTestCase {
     }
 
     func test_saveThreadPayload() throws {
-        let payload = ThreadPayload(
+        let payload = ThreadStateResponse(
             parentMessageId: .unique,
             parentMessage: .dummy(),
             channel: .dummy(),
@@ -80,7 +80,7 @@ final class ThreadDTO_Tests: XCTestCase {
     }
 
     func test_asModel() throws {
-        let payload = ThreadPayload(
+        let payload = ThreadStateResponse(
             parentMessageId: .unique,
             parentMessage: .dummy(),
             channel: .dummy(),
@@ -124,7 +124,7 @@ final class ThreadDTO_Tests: XCTestCase {
 
     func test_asModel_sortsLatestRepliesByCreatedAt() throws {
         let now = Date()
-        let payload = ThreadPayload.dummy(
+        let payload = ThreadStateResponse.dummy(
             parentMessageId: .unique,
             latestReplies: [
                 .dummy(text: "3", createdAt: now.addingTimeInterval(20)),
@@ -148,7 +148,7 @@ final class ThreadDTO_Tests: XCTestCase {
 
     func test_saveThreadPayload_withDraftReply() throws {
         // GIVEN
-        let draftMessagePayload = DraftMessagePayload(
+        let draftMessagePayload = DraftPayloadResponseOpenAPI(
             id: .unique,
             text: "Draft reply text",
             command: nil,
@@ -160,7 +160,7 @@ final class ThreadDTO_Tests: XCTestCase {
             isSilent: false
         )
 
-        let draftPayload = DraftPayload(
+        let draftPayload = DraftResponse(
             cid: .unique,
             channelPayload: nil,
             createdAt: .init(),
@@ -170,7 +170,7 @@ final class ThreadDTO_Tests: XCTestCase {
             parentMessage: nil
         )
 
-        let payload = ThreadPayload(
+        let payload = ThreadStateResponse(
             parentMessageId: .unique,
             parentMessage: .dummy(),
             channel: .dummy(),
@@ -210,7 +210,7 @@ final class ThreadDTO_Tests: XCTestCase {
     func test_saveThreadPayload_whenDraftIsNil_removesExistingDraft() throws {
         // GIVEN
         // First save a thread with a draft
-        let draftMessagePayload = DraftMessagePayload(
+        let draftMessagePayload = DraftPayloadResponseOpenAPI(
             id: .unique,
             text: "Draft reply text",
             command: nil,
@@ -222,7 +222,7 @@ final class ThreadDTO_Tests: XCTestCase {
             isSilent: false
         )
 
-        let draftPayload = DraftPayload(
+        let draftPayload = DraftResponse(
             cid: .unique,
             channelPayload: nil,
             createdAt: .init(),
@@ -232,7 +232,7 @@ final class ThreadDTO_Tests: XCTestCase {
             parentMessage: nil
         )
 
-        let payloadWithDraft = ThreadPayload(
+        let payloadWithDraft = ThreadStateResponse(
             parentMessageId: .unique,
             parentMessage: .dummy(),
             channel: .dummy(),
@@ -263,7 +263,7 @@ final class ThreadDTO_Tests: XCTestCase {
 
         // WHEN
         // Save the same thread without a draft
-        let payloadWithoutDraft = ThreadPayload(
+        let payloadWithoutDraft = ThreadStateResponse(
             parentMessageId: payloadWithDraft.parentMessageId,
             parentMessage: payloadWithDraft.parentMessagePayload!,
             channel: payloadWithDraft.channelDetailPayload!,

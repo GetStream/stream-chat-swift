@@ -84,7 +84,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network call.
-        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelPayload.channelJSONFile()))
+        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelStateResponseFields.channelJSONFile()))
         // Release reference of completion so we can deallocate stuff
         env.watcherListUpdater!.channelWatchers_completion = nil
 
@@ -169,7 +169,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         }
 
         // Simulate the updater callback
-        env.watcherListUpdater?.channelWatchers_completion?(.success(try ChannelPayload.channelJSONFile()))
+        env.watcherListUpdater?.channelWatchers_completion?(.success(try ChannelStateResponseFields.channelJSONFile()))
 
         XCTAssertEqual(controller.watchers.map(\.id), [watcherId])
     }
@@ -253,7 +253,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         AssertAsync.willBeEqual(delegate.state, .localDataFetched)
 
         // Simulate network call response
-        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelPayload.channelJSONFile()))
+        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelStateResponseFields.channelJSONFile()))
 
         // Assert delegate is notified about state changes
         AssertAsync.willBeEqual(delegate.state, .remoteDataFetched)
@@ -271,10 +271,10 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         try client.databaseContainer.createChannel(cid: query.cid)
 
         // Create 2 watchers
-        nonisolated(unsafe) var watcher1: UserPayload = .dummy(
+        nonisolated(unsafe) var watcher1: UserResponse = .dummy(
             userId: watcher1ID
         )
-        nonisolated(unsafe) var watcher2: UserPayload = .dummy(
+        nonisolated(unsafe) var watcher2: UserResponse = .dummy(
             userId: watcher2ID
         )
 
@@ -331,7 +331,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
                 channel?.watchers.insert(try session.saveUser(payload: watcher))
             }
         }
-        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelPayload.channelJSONFile()))
+        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelStateResponseFields.channelJSONFile()))
 
         // Assert `update` changes are received by the delegate.
         AssertAsync {
@@ -425,7 +425,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network response.
-        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelPayload.channelJSONFile()))
+        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelStateResponseFields.channelJSONFile()))
         // Release reference of completion so we can deallocate stuff
         env.watcherListUpdater!.channelWatchers_completion = nil
 
@@ -449,7 +449,7 @@ final class ChatChannelWatcherListController_Tests: XCTestCase {
         XCTAssertEqual(controller.query.pagination, oldPagination)
 
         // Simulate successful network response.
-        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelPayload.channelJSONFile()))
+        env.watcherListUpdater!.channelWatchers_completion!(.success(try ChannelStateResponseFields.channelJSONFile()))
 
         // Assert controller's query is updated with the new pagination.
         AssertAsync.willBeEqual(controller.query.pagination, newPagination)
@@ -486,9 +486,9 @@ private class TestEnvironment {
     )
 }
 
-private extension ChannelPayload {
-    static func channelJSONFile() throws -> ChannelPayload {
+private extension ChannelStateResponseFields {
+    static func channelJSONFile() throws -> ChannelStateResponseFields {
         let url = XCTestCase.mockData(fromJSONFile: "Channel")
-        return try JSONDecoder.default.decode(ChannelPayload.self, from: url)
+        return try JSONDecoder.default.decode(ChannelStateResponseFields.self, from: url)
     }
 }

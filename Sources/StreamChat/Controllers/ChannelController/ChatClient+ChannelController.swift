@@ -87,7 +87,7 @@ public extension ChatClient {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
-        let payload = ChannelEditDetailPayload(
+        let payload = ChannelInput(
             name: name,
             imageURL: imageURL,
             team: team,
@@ -144,7 +144,7 @@ public extension ChatClient {
         guard let currentUserId = currentUserId else { throw ClientError.CurrentUserDoesNotExist() }
         guard !members.isEmpty else { throw ClientError.ChannelEmptyMembers() }
 
-        let payload = ChannelEditDetailPayload(
+        let payload = ChannelInput(
             name: name,
             imageURL: imageURL,
             team: team,

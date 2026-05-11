@@ -298,7 +298,7 @@ extension ChatThreadListController_Tests {
     private func assertThreadFilterPredicate(
         _ filter: @autoclosure () -> Filter<ThreadListFilterScope>,
         sort: [Sorting<ThreadListSortingKey>] = [],
-        threadsInDB: @escaping @autoclosure () -> [ThreadPayload],
+        threadsInDB: @escaping @autoclosure () -> [ThreadStateResponse],
         expectedResult: @autoclosure () -> [MessageId],
         file: StaticString = #file,
         line: UInt = #line

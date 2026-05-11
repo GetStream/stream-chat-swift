@@ -208,7 +208,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
 
         // GIVEN
         let newMemberId = UserId.unique
-        let channelPayload: ChannelPayload = .dummy()
+        let channelPayload: ChannelStateResponseFields = .dummy()
         let eventPayload: EventPayload = .init(
             eventType: .memberAdded,
             cid: channelPayload.channel?.channelId,
@@ -340,8 +340,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let mockSession = DatabaseSession_Mock(underlyingSession: database.viewContext)
 
         // GIVEN
-        let member: MemberPayload = .dummy()
-        let channelPayload: ChannelPayload = .dummy(members: [member])
+        let member: ChannelMemberResponse = .dummy()
+        let channelPayload: ChannelStateResponseFields = .dummy(members: [member])
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
         }

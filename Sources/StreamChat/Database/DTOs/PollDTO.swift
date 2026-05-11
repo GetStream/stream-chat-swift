@@ -143,7 +143,7 @@ extension PollDTO {
 
 extension NSManagedObjectContext {
     @discardableResult
-    func savePoll(payload: PollPayload, cache: PreWarmedCache?, fromEvent: Bool = false) throws -> PollDTO {
+    func savePoll(payload: PollResponseData, cache: PreWarmedCache?, fromEvent: Bool = false) throws -> PollDTO {
         let pollDto = PollDTO.loadOrCreate(pollId: payload.id, context: self, cache: cache)
         
         pollDto.allowAnswers = payload.allowAnswers

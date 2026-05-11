@@ -11,7 +11,7 @@ final class UserPayload_Tests: XCTestCase {
     let otherUserJSON = XCTestCase.mockData(fromJSONFile: "OtherUser")
 
     func test_currentUserJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserPayload.self, from: currentUserJSON)
+        let payload = try JSONDecoder.default.decode(UserResponse.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
@@ -31,7 +31,7 @@ final class UserPayload_Tests: XCTestCase {
     }
 
     func test_currentUserJSON_isSerialized_withCustomExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserPayload.self, from: currentUserJSON)
+        let payload = try JSONDecoder.default.decode(UserResponse.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
@@ -47,7 +47,7 @@ final class UserPayload_Tests: XCTestCase {
     }
 
     func test_otherUserJSON_isSerialized_withDefaultExtraData() throws {
-        let payload = try JSONDecoder.default.decode(UserPayload.self, from: otherUserJSON)
+        let payload = try JSONDecoder.default.decode(UserResponse.self, from: otherUserJSON)
         XCTAssertEqual(payload.id, "bitter-cloud-0")
         XCTAssertEqual(payload.isBanned, true)
         XCTAssertEqual(payload.isOnline, true)
@@ -88,7 +88,7 @@ final class UserPayload_Tests: XCTestCase {
             """.utf8
         )
 
-        let payload = try JSONDecoder.default.decode(UserPayload.self, from: json)
+        let payload = try JSONDecoder.default.decode(UserResponse.self, from: json)
 
         XCTAssertEqual(payload.id, "open-api-user")
         XCTAssertEqual(payload.extraData, ["secret_note": .string("Anakin is Vader!")])
@@ -98,7 +98,7 @@ final class UserPayload_Tests: XCTestCase {
 
     func test_deactivatedUserJSON_isSerialized() throws {
         let deactivatedUserJSON = XCTestCase.mockData(fromJSONFile: "DeactivatedUser")
-        let payload = try JSONDecoder.default.decode(UserPayload.self, from: deactivatedUserJSON)
+        let payload = try JSONDecoder.default.decode(UserResponse.self, from: deactivatedUserJSON)
         XCTAssertEqual(payload.id, "deactivated-5")
         XCTAssertEqual(payload.isBanned, false)
         XCTAssertEqual(payload.isOnline, true)
@@ -118,7 +118,7 @@ final class UserPayload_Tests: XCTestCase {
 
     func test_unread_isSerialized() throws {
         let json = XCTestCase.mockData(fromJSONFile: "Unread")
-        let payload = try JSONDecoder.default.decode(CurrentUserUnreadsPayload.self, from: json)
+        let payload = try JSONDecoder.default.decode(WrappedUnreadCountsResponse.self, from: json)
         XCTAssertEqual(payload.totalUnreadCount, 1)
         XCTAssertEqual(payload.totalUnreadThreadsCount, 1)
         XCTAssertEqual(payload.channels[0].channelId, "messaging:898be601-5f8b-40cc-919a-3f44e6b4fe64")
@@ -133,10 +133,10 @@ final class UserPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.threads[0].parentMessageId, "6e75266e-c8e9-49f9-be87-f8e745e94821")
     }
     
-    // MARK: - UserPayload.asModel() Tests
+    // MARK: - UserResponse.asModel() Tests
     
     func test_userPayload_asModel_convertsAllPropertiesCorrectly() {
-        // Given: UserPayload with all properties set
+        // Given: UserResponse with all properties set
         let userId = "test-user-id"
         let name = "Test User"
         let imageURL = URL(string: "https://example.com/avatar.png")!
@@ -153,7 +153,7 @@ final class UserPayload_Tests: XCTestCase {
         let avgResponseTime = 30
         let extraData: [String: RawJSON] = ["custom_field": .string("custom_value")]
         
-        let payload = UserPayload(
+        let payload = UserResponse(
             id: userId,
             name: name,
             imageURL: imageURL,
@@ -195,14 +195,14 @@ final class UserPayload_Tests: XCTestCase {
     }
     
     func test_userPayload_asModel_withNilValues_handlesCorrectly() {
-        // Given: UserPayload with nil optional values
+        // Given: UserResponse with nil optional values
         let userId = "test-user-id-nil"
         let role = UserRole.user
         let createdAt = Date()
         let updatedAt = Date()
         let extraData: [String: RawJSON] = [:]
         
-        let payload = UserPayload(
+        let payload = UserResponse(
             id: userId,
             name: nil,
             imageURL: nil,
@@ -246,7 +246,7 @@ final class UserPayload_Tests: XCTestCase {
 
 final class UserRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
-        let payload: UserRequestBody = .init(
+        let payload: UserRequest = .init(
             id: .unique,
             name: .unique,
             imageURL: .unique(),
@@ -269,7 +269,7 @@ final class UserUpdateRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
         let value = String.unique
 
-        let payload: UserUpdateRequestBody = .init(
+        let payload: UpdateUserPartialRequest = .init(
             name: .unique,
             imageURL: .unique(),
             privacySettings: .init(
@@ -311,7 +311,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
     func test_currentUserUpdateResponseJSON_isSerialized() throws {
         let currentUserUpdateResponseJSON = XCTestCase.mockData(fromJSONFile: "UserUpdateResponse")
         let payload = try JSONDecoder.default.decode(
-            CurrentUserUpdateResponse.self, from: currentUserUpdateResponseJSON
+            UpdateUsersResponse.self, from: currentUserUpdateResponseJSON
         )
         let user = payload.user
         XCTAssertEqual(user.id, "luke_skywalker")
@@ -331,7 +331,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
     func test_currentUserUpdateResponseJSON_whenMissingUser_failsSerialization() {
         let currentUserUpdateResponseJSON = XCTestCase.mockData(fromJSONFile: "UserUpdateResponse+MissingUser")
         XCTAssertThrowsError(try JSONDecoder.default.decode(
-            CurrentUserUpdateResponse.self, from: currentUserUpdateResponseJSON
+            UpdateUsersResponse.self, from: currentUserUpdateResponseJSON
         ).validatedUser())
     }
 }

@@ -318,10 +318,11 @@ final class ChatClient_Tests: XCTestCase {
 
         // WHEN
         let userId = UserId.unique
+        let deviceId = DeviceId.unique
         testEnv.authenticationRepository?.mockedCurrentUserId = userId
         try testEnv.databaseContainer?.writeSynchronously {
             try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .admin))
-            try $0.saveCurrentDevice(.unique)
+            try $0.saveCurrentDevice(deviceId)
         }
 
         let expectation = self.expectation(description: "logout completes")
@@ -334,7 +335,7 @@ final class ChatClient_Tests: XCTestCase {
         // THEN
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertCall(ConnectionRepository_Mock.Signature.disconnect, on: testEnv.connectionRepository!)
-        XCTAssertEqual(testEnv.apiClient?.request_endpoint?.path, .devices)
+        XCTAssertEqual(testEnv.apiClient?.request_endpoint?.path, .deleteDevice)
         XCTAssertEqual(testEnv.apiClient?.request_endpoint?.method, .delete)
     }
 
@@ -504,7 +505,9 @@ final class ChatClient_Tests: XCTestCase {
                 let chatClient = ChatClient(config: config)
                 chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
                 
-                let expectedWebSocketEndpoint = AnyEndpoint(.webSocketConnect(userInfo: UserInfo(id: currentUserId)))
+                let expectedWebSocketEndpoint = AnyEndpoint(
+                    Endpoint<EmptyResponse>.webSocketConnect(userInfo: UserInfo(id: currentUserId))
+                )
                 // 1. Check `currentUserId` is fetched synchronously
                 // 2. `webSocket` has correct connect endpoint
                 if chatClient.currentUserId == currentUserId,

@@ -24,7 +24,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         let userId = UUID().uuidString
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
 
-        let userPayload: UserPayload = .init(
+        let userPayload: UserResponse = .init(
             id: userId,
             name: .unique,
             imageURL: .unique(),
@@ -42,7 +42,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             extraData: ["k": .string("v")]
         )
 
-        let payload: MemberPayload = .init(
+        let payload: ChannelMemberResponse = .init(
             user: userPayload,
             userId: userPayload.id,
             role: .moderator,
@@ -94,7 +94,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         let userId: UserId = .unique
         let channelId: ChannelId = .unique
 
-        let userPayload: UserPayload = .init(
+        let userPayload: UserResponse = .init(
             id: userId,
             name: .unique,
             imageURL: .unique(),
@@ -111,7 +111,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             extraData: .init()
         )
 
-        let payload: MemberPayload = .init(
+        let payload: ChannelMemberResponse = .init(
             user: userPayload,
             userId: userPayload.id,
             role: .moderator,
@@ -135,7 +135,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         let cid: ChannelId = .unique
 
         // Create member and query.
-        let member: MemberPayload = .dummy(user: .dummy(userId: userId))
+        let member: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
         let query = ChannelMemberListQuery(cid: cid, filter: .equal("id", to: userId))
 
         // Save channel, then member, and pass the query in.
@@ -152,7 +152,7 @@ final class MemberModelDTO_Tests: XCTestCase {
 
     func test_saveMembers_whenFirstPage_clearPreviousMembersFromQuery() throws {
         let cid: ChannelId = .unique
-        let members: ChannelMemberListPayload = .init(members: [.dummy(), .dummy()])
+        let members: MembersResponse = .init(members: [.dummy(), .dummy()])
         let query = ChannelMemberListQuery(cid: cid, filter: .equal(.isModerator, to: true))
 
         // Save previous members
@@ -173,7 +173,7 @@ final class MemberModelDTO_Tests: XCTestCase {
 
     func test_saveMembers_whenAnotherPage_doesNotClearPreviousMembersFromQuery() throws {
         let cid: ChannelId = .unique
-        let members: ChannelMemberListPayload = .init(members: [.dummy(), .dummy()])
+        let members: MembersResponse = .init(members: [.dummy(), .dummy()])
         nonisolated(unsafe) var query = ChannelMemberListQuery(cid: cid)
         query.pagination = .init(pageSize: 20, offset: 25)
 
@@ -209,7 +209,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         // GIVEN
         let userId = UserId.unique
         let channelId = ChannelId(type: .messaging, id: .unique)
-        let payload: MemberPayload = MemberPayload.dummy(user: UserPayload.dummy(userId: userId))
+        let payload: ChannelMemberResponse = ChannelMemberResponse.dummy(user: UserResponse.dummy(userId: userId))
 
         let transformer = CustomMemberTransformer()
         var config = ChatClientConfig(apiKeyString: .unique)
@@ -231,11 +231,11 @@ final class MemberModelDTO_Tests: XCTestCase {
     }
 
     private func saveDummyMembers(
-        _ members: [MemberPayload] = [.dummy(), .dummy(), .dummy(), .dummy()],
+        _ members: [ChannelMemberResponse] = [.dummy(), .dummy(), .dummy(), .dummy()],
         toQuery query: ChannelMemberListQuery,
         cid: ChannelId
     ) throws -> [ChatChannelMember] {
-        let members: ChannelMemberListPayload = .init(members: [.dummy(), .dummy(), .dummy(), .dummy()])
+        let members: MembersResponse = .init(members: [.dummy(), .dummy(), .dummy(), .dummy()])
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid))
             session.saveMembers(payload: members, channelId: cid, query: query)

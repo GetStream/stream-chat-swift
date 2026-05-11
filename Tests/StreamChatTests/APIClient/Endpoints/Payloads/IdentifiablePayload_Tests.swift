@@ -22,13 +22,13 @@ final class IdentifiablePayload_Tests: XCTestCase {
 
     // Fetch
 
-    var measurePayload: ChannelListPayload {
-        let channelsCount = 25 // ChannelDetailPayload
-        let userCount = 25 // UserPayload
-        let otherWatchersCount = 25 // UserPayload
-        let messageCount = 20 // MessagePayload
-        let readCountsPerChannel = 0 // ChannelReadPayload
-        let messageReactionsCount = 1 // MessageReactionPayload
+    var measurePayload: QueryChannelsResponse {
+        let channelsCount = 25 // ChannelResponse
+        let userCount = 25 // UserResponse
+        let otherWatchersCount = 25 // UserResponse
+        let messageCount = 20 // MessageResponse
+        let readCountsPerChannel = 0 // ReadStateResponse
+        let messageReactionsCount = 1 // ReactionResponse
 
         return createChannelList(
             channels: channelsCount,
@@ -40,8 +40,8 @@ final class IdentifiablePayload_Tests: XCTestCase {
         )
     }
 
-    func savePayload(payload: ChannelListPayload, database: DatabaseContainer_Spy) {
-        ChannelListPayload_Tests().saveChannelListPayload(payload, database: database, timeout: 40)
+    func savePayload(payload: QueryChannelsResponse, database: DatabaseContainer_Spy) {
+        QueryChannelsResponse_Tests().saveQueryChannelsResponse(payload, database: database, timeout: 40)
     }
 
     func test_measureBigPayload_recursivelyGetAllIds() {
@@ -109,9 +109,9 @@ final class IdentifiablePayload_Tests: XCTestCase {
     // Identifiable
 
     func test_UserListPayload_isIdentifiablePayload() {
-        let payload = UserListPayload(users: [])
+        let payload = QueryUsersResponse(users: [])
         XCTAssertNil(payload.databaseId)
-        XCTAssertNil(UserListPayload.modelClass)
+        XCTAssertNil(QueryUsersResponse.modelClass)
     }
 
     func test_MessageListPayload_isIdentifiablePayload() {
@@ -121,66 +121,66 @@ final class IdentifiablePayload_Tests: XCTestCase {
     }
 
     func test_MessageReactionsPayload_isIdentifiablePayload() {
-        let payload = MessageReactionsPayload(duration: "", reactions: [])
+        let payload = GetReactionsResponse(duration: "", reactions: [])
         XCTAssertNil(payload.databaseId)
-        XCTAssertNil(MessageReactionsPayload.modelClass)
+        XCTAssertNil(GetReactionsResponse.modelClass)
     }
 
-    func test_ChannelMemberListPayload_isIdentifiablePayload() {
-        let payload = ChannelMemberListPayload(members: [])
+    func test_MembersResponse_isIdentifiablePayload() {
+        let payload = MembersResponse(members: [])
         XCTAssertNil(payload.databaseId)
-        XCTAssertNil(ChannelMemberListPayload.modelClass)
+        XCTAssertNil(MembersResponse.modelClass)
     }
 
-    func test_ChannelListPayload_isIdentifiablePayload() {
-        let payload = ChannelListPayload(channels: [], duration: "")
+    func test_QueryChannelsResponse_isIdentifiablePayload() {
+        let payload = QueryChannelsResponse(channels: [], duration: "")
         XCTAssertNil(payload.databaseId)
-        XCTAssertNil(ChannelListPayload.modelClass)
+        XCTAssertNil(QueryChannelsResponse.modelClass)
     }
 
-    func test_ChannelPayload_isIdentifiablePayload() {
-        let payload = ChannelPayload.dummy()
+    func test_ChannelStateResponseFields_isIdentifiablePayload() {
+        let payload = ChannelStateResponseFields.dummy()
         XCTAssertNil(payload.databaseId)
-        XCTAssertNil(ChannelPayload.modelClass)
+        XCTAssertNil(ChannelStateResponseFields.modelClass)
     }
 
-    func test_ChannelDetailPayload_isIdentifiablePayload() {
-        let payload = ChannelDetailPayload.dummy(cid: ChannelId(type: .messaging, id: "1"))
+    func test_ChannelResponse_isIdentifiablePayload() {
+        let payload = ChannelResponse.dummy(cid: ChannelId(type: .messaging, id: "1"))
         XCTAssertEqual(payload.databaseId, "messaging:1")
-        XCTAssertTrue(ChannelDetailPayload.modelClass == ChannelDTO.self)
+        XCTAssertTrue(ChannelResponse.modelClass == ChannelDTO.self)
     }
 
     func test_UserPayload_isIdentifiablePayload() {
-        let payload = UserPayload.dummy(userId: "1")
+        let payload = UserResponse.dummy(userId: "1")
         XCTAssertEqual(payload.databaseId, "1")
-        XCTAssertTrue(UserPayload.modelClass == UserDTO.self)
+        XCTAssertTrue(UserResponse.modelClass == UserDTO.self)
     }
 
     func test_MessagePayload_isIdentifiablePayload() {
-        let payload = MessagePayload.dummy(messageId: "m1", authorUserId: "u1")
+        let payload = MessageResponse.dummy(messageId: "m1", authorUserId: "u1")
         XCTAssertEqual(payload.databaseId, "m1")
-        XCTAssertTrue(MessagePayload.modelClass == MessageDTO.self)
+        XCTAssertTrue(MessageResponse.modelClass == MessageDTO.self)
     }
 
     func test_MessageReactionPayload_isIdentifiablePayload() {
-        let payload = MessageReactionPayload.dummy(
+        let payload = ReactionResponse.dummy(
             type: MessageReactionType(rawValue: "1"),
             messageId: "2",
-            user: UserPayload.dummy(userId: "3")
+            user: UserResponse.dummy(userId: "3")
         )
         XCTAssertEqual(payload.databaseId, "3/2/1")
-        XCTAssertTrue(MessageReactionPayload.modelClass == MessageReactionDTO.self)
+        XCTAssertTrue(ReactionResponse.modelClass == MessageReactionDTO.self)
     }
 
     func test_MemberPayload_isIdentifiablePayload() {
-        let payload = MemberPayload.dummy(user: UserPayload.dummy(userId: "u2"))
+        let payload = ChannelMemberResponse.dummy(user: UserResponse.dummy(userId: "u2"))
         XCTAssertNil(payload.databaseId)
-        XCTAssertTrue(MemberPayload.modelClass == MemberDTO.self)
+        XCTAssertTrue(ChannelMemberResponse.modelClass == MemberDTO.self)
     }
 
-    func test_ChannelReadPayload_isIdentifiablePayload() {
-        let payload = ChannelReadPayload(
-            user: UserPayload.dummy(userId: "u3"),
+    func test_ReadStateResponse_isIdentifiablePayload() {
+        let payload = ReadStateResponse(
+            user: UserResponse.dummy(userId: "u3"),
             lastReadAt: Date(),
             lastReadMessageId: .unique,
             unreadMessagesCount: 2,
@@ -188,19 +188,19 @@ final class IdentifiablePayload_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
         XCTAssertNil(payload.databaseId)
-        XCTAssertTrue(ChannelReadPayload.modelClass == ChannelReadDTO.self)
+        XCTAssertTrue(ReadStateResponse.modelClass == ChannelReadDTO.self)
     }
 
     // Recursion
 
-    func test_ChannelListPayload_isIdentifiablePayload_recursively() throws {
+    func test_QueryChannelsResponse_isIdentifiablePayload_recursively() throws {
         let watchers = (0..<4).map {
-            UserPayload.dummy(userId: "\($0)")
+            UserResponse.dummy(userId: "\($0)")
         }
         let cid = ChannelId.unique
-        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid, createdBy: watchers[0])
-        let channelPayload = ChannelPayload.dummy(channel: channelDetailPayload, watchers: watchers)
-        let payload = ChannelListPayload(channels: [channelPayload], duration: "")
+        let channelDetailPayload = ChannelResponse.dummy(cid: cid, createdBy: watchers[0])
+        let channelPayload = ChannelStateResponseFields.dummy(channel: channelDetailPayload, watchers: watchers)
+        let payload = QueryChannelsResponse(channels: [channelPayload], duration: "")
 
         let cache = payload.recursivelyGetAllIds()
 
@@ -212,13 +212,13 @@ final class IdentifiablePayload_Tests: XCTestCase {
         XCTAssertEqual(channelDetailIds, [cid.rawValue])
     }
 
-    func test_ChannelPayload_isIdentifiablePayload_recursively() throws {
+    func test_ChannelStateResponseFields_isIdentifiablePayload_recursively() throws {
         let watchers = (0..<4).map {
-            UserPayload.dummy(userId: "\($0)")
+            UserResponse.dummy(userId: "\($0)")
         }
         let cid = ChannelId.unique
-        let channelDetailPayload = ChannelDetailPayload.dummy(cid: cid, createdBy: watchers[0])
-        let payload = ChannelPayload.dummy(channel: channelDetailPayload, watchers: watchers)
+        let channelDetailPayload = ChannelResponse.dummy(cid: cid, createdBy: watchers[0])
+        let payload = ChannelStateResponseFields.dummy(channel: channelDetailPayload, watchers: watchers)
 
         let cache = payload.recursivelyGetAllIds()
 
@@ -231,10 +231,10 @@ final class IdentifiablePayload_Tests: XCTestCase {
     }
 
     func test_MessageReactionPayload_isIdentifiablePayload_recursively() throws {
-        let payload = MessageReactionPayload.dummy(
+        let payload = ReactionResponse.dummy(
             type: MessageReactionType(rawValue: "r1"),
             messageId: "m2",
-            user: UserPayload.dummy(userId: "u3")
+            user: UserResponse.dummy(userId: "u3")
         )
 
         let cache = payload.recursivelyGetAllIds()
@@ -247,12 +247,12 @@ final class IdentifiablePayload_Tests: XCTestCase {
         XCTAssertEqual(userIds, ["u3"])
     }
 
-    func test_bigChannelListPayload_recursivelyIdentifiablePayload() throws {
-        let channelsCount = 4 // ChannelDetailPayload
-        let userCount = 4 // UserPayload
-        let otherWatchersCount = 4 // UserPayload
-        let messageCount = 4 // MessagePayload
-        let messageReactionsCount = 1 // MessageReactionPayload
+    func test_bigQueryChannelsResponse_recursivelyIdentifiablePayload() throws {
+        let channelsCount = 4 // ChannelResponse
+        let userCount = 4 // UserResponse
+        let otherWatchersCount = 4 // UserResponse
+        let messageCount = 4 // MessageResponse
+        let messageReactionsCount = 1 // ReactionResponse
 
         let channelList = createChannelList(
             channels: channelsCount,
@@ -311,19 +311,19 @@ final class IdentifiablePayload_Tests: XCTestCase {
         messagesPerChannel: Int,
         readCountsPerChannel: Int,
         messageReactionsPerChannel: Int
-    ) -> ChannelListPayload {
+    ) -> QueryChannelsResponse {
         let channelsCount = channels
         let userCount = users
         let otherWatchersCount = otherWatchers
         let messageCount = messagesPerChannel
         let channelReadCount = readCountsPerChannel
         let messageReactionsCount = messageReactionsPerChannel
-        let channels: [ChannelPayload] = (0..<channelsCount).map { channelIndex in
-            let users = (0..<userCount).map { UserPayload.dummy(userId: "user-\($0)") }
-            let watchers = (userCount..<userCount + otherWatchersCount).map { UserPayload.dummy(userId: "watcher-\($0)") }
+        let channels: [ChannelStateResponseFields] = (0..<channelsCount).map { channelIndex in
+            let users = (0..<userCount).map { UserResponse.dummy(userId: "user-\($0)") }
+            let watchers = (userCount..<userCount + otherWatchersCount).map { UserResponse.dummy(userId: "watcher-\($0)") }
             let owner = users[channelIndex]
             let cid = ChannelId(type: .messaging, id: "channel-\(channelIndex)")
-            let channelDetail = ChannelDetailPayload.dummy(
+            let channelDetail = ChannelResponse.dummy(
                 cid: cid,
                 name: .unique,
                 imageURL: .unique(),
@@ -337,14 +337,14 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 isBlocked: false,
                 isDisabled: false,
                 isHidden: false,
-                members: users.map { MemberPayload.dummy(user: $0) },
+                members: users.map { ChannelMemberResponse.dummy(user: $0) },
                 memberCount: users.count,
                 messageCount: messageCount,
                 team: .unique,
                 cooldownDuration: 20
             )
 
-            func anotherUser(differentThan: Int) -> UserPayload {
+            func anotherUser(differentThan: Int) -> UserResponse {
                 if differentThan + 1 >= users.count {
                     return users[0]
                 } else {
@@ -352,11 +352,11 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 }
             }
 
-            let messages = (0..<messageCount).map { messageIndex -> MessagePayload in
+            let messages = (0..<messageCount).map { messageIndex -> MessageResponse in
                 let messageId = "message-c:\(channelIndex)-\(messageIndex)"
                 let messageCreatedDate = Date.unique(after: Date())
                 let messageAuthor = users[channelIndex]
-                return MessagePayload.dummy(
+                return MessageResponse.dummy(
                     messageId: messageId,
                     showReplyInChannel: .random(),
                     threadParticipants: [],
@@ -365,7 +365,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
                     text: .unique,
                     extraData: [:],
                     latestReactions: (0..<messageReactionsCount).map {
-                        MessageReactionPayload(
+                        ReactionResponse(
                             type: "like",
                             score: 1,
                             messageId: messageId,
@@ -376,7 +376,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
                         )
                     },
                     ownReactions: (0..<messageReactionsCount).map {
-                        MessageReactionPayload(
+                        ReactionResponse(
                             type: "love",
                             score: 1,
                             messageId: messageId,
@@ -395,12 +395,12 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 )
             }
 
-            return ChannelPayload.dummy(
+            return ChannelStateResponseFields.dummy(
                 channel: channelDetail,
                 watcherCount: 0,
                 watchers: watchers,
                 members: channelDetail.members ?? [],
-                membership: MemberPayload.dummy(
+                membership: ChannelMemberResponse.dummy(
                     user: owner,
                     createdAt: owner.createdAt,
                     updatedAt: owner.updatedAt,
@@ -411,7 +411,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 pendingMessages: [],
                 pinnedMessages: [],
                 channelReads: (0..<channelReadCount).map { i in
-                    ChannelReadPayload(
+                    ReadStateResponse(
                         user: users[i],
                         lastReadAt: .unique(after: channelDetail.createdAt),
                         lastReadMessageId: .unique,
@@ -427,6 +427,6 @@ final class IdentifiablePayload_Tests: XCTestCase {
             )
         }
 
-        return ChannelListPayload(channels: channels, duration: "")
+        return QueryChannelsResponse(channels: channels, duration: "")
     }
 }

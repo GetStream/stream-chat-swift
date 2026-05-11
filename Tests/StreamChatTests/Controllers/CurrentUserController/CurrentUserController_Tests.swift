@@ -187,7 +187,7 @@ final class CurrentUserController_Tests: XCTestCase {
         controller.synchronize()
 
         let extraData: [String: RawJSON] = [:]
-        let currentUserPayload: CurrentUserPayload = .dummy(
+        let currentUserPayload: OwnUserResponse = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
@@ -214,7 +214,7 @@ final class CurrentUserController_Tests: XCTestCase {
         controller.synchronize()
 
         var extraData: [String: RawJSON] = [:]
-        nonisolated(unsafe) var currentUserPayload: CurrentUserPayload = .dummy(
+        nonisolated(unsafe) var currentUserPayload: OwnUserResponse = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
@@ -261,7 +261,7 @@ final class CurrentUserController_Tests: XCTestCase {
 
         // Simulate saving current user to a database
         try client.databaseContainer.writeSynchronously {
-            let currentUserPayload: CurrentUserPayload = .dummy(
+            let currentUserPayload: OwnUserResponse = .dummy(
                 userId: .unique,
                 role: .user,
                 unreadCount: unreadCount
@@ -856,7 +856,7 @@ final class CurrentUserController_Tests: XCTestCase {
     func test_setPushPreference_callsUpdaterWithCorrectParameters() {
         // GIVEN
         let level: PushPreferenceLevel = .mentions
-        let expectedPreference = PushPreferenceRequestPayload(
+        let expectedPreference = PushPreferenceInput(
             chatLevel: level.rawValue,
             channelId: nil,
             disabledUntil: nil,
@@ -914,7 +914,7 @@ final class CurrentUserController_Tests: XCTestCase {
     func test_snoozePushNotifications_callsUpdaterWithCorrectParameters() {
         // GIVEN
         let date = Date().addingTimeInterval(3600)
-        let expectedPreference = PushPreferenceRequestPayload(
+        let expectedPreference = PushPreferenceInput(
             chatLevel: PushPreferenceLevel.all.rawValue,
             channelId: nil,
             disabledUntil: date,

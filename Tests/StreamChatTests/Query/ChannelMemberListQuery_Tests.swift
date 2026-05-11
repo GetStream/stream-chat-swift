@@ -85,6 +85,25 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         ])
     }
 
+    func test_queryMembersPayload_usesRawJSONFilterAndSort() throws {
+        var query = ChannelMemberListQuery(
+            cid: try ChannelId(cid: "messaging:general"),
+            filter: .equal(.id, to: "luke"),
+            sort: [.init(key: .channelRole, isAscending: true)],
+            pageSize: 10
+        )
+        query.pagination = .init(pageSize: 10, offset: 5)
+
+        let payload = QueryMembersPayload(query: query)
+
+        XCTAssertEqual(payload.filterConditions, ["id": .dictionary(["$eq": .string("luke")])])
+        XCTAssertEqual(payload.id, "general")
+        XCTAssertEqual(payload.limit, 10)
+        XCTAssertEqual(payload.offset, 5)
+        XCTAssertEqual(payload.sort, [SortParamRequestOpenAPI(direction: 1, field: "channel_role")])
+        XCTAssertEqual(payload.type, "messaging")
+    }
+
     func test_singleMemberQuery_worksCorrectly() throws {
         let userId: UserId = .unique
         let cid: ChannelId = .unique
@@ -103,13 +122,13 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
     func test_sortingByCreatedAt_ascending() throws {
         // Declare some channel member payloads
-        let member1: MemberPayload = .dummy()
-        let member2: MemberPayload = .dummy(
+        let member1: ChannelMemberResponse = .dummy()
+        let member2: ChannelMemberResponse = .dummy(
             createdAt: member1.createdAt.addingTimeInterval(10)
         )
 
         // Declare channel payload
-        let channel: ChannelDetailPayload = .dummy(
+        let channel: ChannelResponse = .dummy(
             cid: .unique,
             members: [member1, member2]
         )
@@ -152,13 +171,13 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
     func test_sortingByCreatedAt_descending() throws {
         // Declare some channel member payloads
-        let member1: MemberPayload = .dummy()
-        let member2: MemberPayload = .dummy(
+        let member1: ChannelMemberResponse = .dummy()
+        let member2: ChannelMemberResponse = .dummy(
             createdAt: member1.createdAt.addingTimeInterval(10)
         )
 
         // Declare channel payload
-        let channel: ChannelDetailPayload = .dummy(
+        let channel: ChannelResponse = .dummy(
             cid: .unique,
             members: [member1, member2]
         )
@@ -203,11 +222,11 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
     func test_sortingByName_ascending() throws {
         // Declare some channel member payloads
-        let member1: MemberPayload = .dummy(user: .dummy(userId: .unique, name: "A"))
-        let member2: MemberPayload = .dummy(user: .dummy(userId: .unique, name: "B"))
+        let member1: ChannelMemberResponse = .dummy(user: .dummy(userId: .unique, name: "A"))
+        let member2: ChannelMemberResponse = .dummy(user: .dummy(userId: .unique, name: "B"))
 
         // Declare channel payload
-        let channel: ChannelDetailPayload = .dummy(
+        let channel: ChannelResponse = .dummy(
             cid: .unique,
             members: [member1, member2]
         )
@@ -250,20 +269,20 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
     func test_sortingByName_descending() throws {
         // Declare some channel member payloads
-        let member1: MemberPayload = .dummy(
+        let member1: ChannelMemberResponse = .dummy(
             user: .dummy(userId: .unique, name: "A")
         )
-        let member2: MemberPayload = .dummy(
+        let member2: ChannelMemberResponse = .dummy(
             user: .dummy(userId: .unique, name: "B"),
             createdAt: member1.createdAt.addingTimeInterval(10)
         )
-        let member3: MemberPayload = .dummy(
+        let member3: ChannelMemberResponse = .dummy(
             user: .dummy(userId: .unique, name: "B"),
             createdAt: member1.createdAt.addingTimeInterval(-10)
         )
 
         // Declare channel payload
-        let channel: ChannelDetailPayload = .dummy(
+        let channel: ChannelResponse = .dummy(
             cid: .unique,
             members: [member1, member2, member3]
         )
@@ -311,20 +330,20 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
 
     func test_sortingByNameThenCreatedAt() throws {
         // Declare some channel member payloads
-        let member1: MemberPayload = .dummy(
+        let member1: ChannelMemberResponse = .dummy(
             user: .dummy(userId: .unique, name: "A")
         )
-        let member2: MemberPayload = .dummy(
+        let member2: ChannelMemberResponse = .dummy(
             user: .dummy(userId: .unique, name: "B"),
             createdAt: member1.createdAt.addingTimeInterval(10)
         )
-        let member3: MemberPayload = .dummy(
+        let member3: ChannelMemberResponse = .dummy(
             user: .dummy(userId: .unique, name: "B"),
             createdAt: member1.createdAt.addingTimeInterval(-10)
         )
 
         // Declare channel payload
-        let channel: ChannelDetailPayload = .dummy(
+        let channel: ChannelResponse = .dummy(
             cid: .unique,
             members: [
                 member1,

@@ -8,7 +8,7 @@ import XCTest
 final class PollPayload_Tests: XCTestCase {
     func test_decodingPollPayload() throws {
         let url = XCTestCase.mockData(fromJSONFile: "Poll")
-        let payload = try JSONDecoder.default.decode(PollPayloadResponse.self, from: url).poll
+        let payload = try JSONDecoder.default.decode(PollResponse.self, from: url).poll
 
         XCTAssertEqual(payload.id, "7fd88eb3-fc05-4e89-89af-36c6d8995dda")
         XCTAssertEqual(payload.name, "test")

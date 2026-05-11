@@ -270,7 +270,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Add 2 channels to the DB
         let cid: ChannelId = .unique
         writeAndWaitForChannelsUpdates { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: UserPayload.dummy(userId: self.memberId))]), query: self.query, cache: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: UserResponse.dummy(userId: self.memberId))]), query: self.query, cache: nil)
             let dto = try session.saveChannel(payload: self.dummyPayload(with: .unique, members: [.dummy(user: .dummy(userId: self.memberId))]), query: self.query, cache: nil)
             dto.isHidden = true
         }
@@ -669,7 +669,7 @@ final class ChannelListController_Tests: XCTestCase {
         // Simulate DB update
         let cid: ChannelId = .unique
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: UserPayload.dummy(userId: self.memberId))]), query: self.query, cache: nil)
+            try session.saveChannel(payload: self.dummyPayload(with: cid, members: [.dummy(user: UserResponse.dummy(userId: self.memberId))]), query: self.query, cache: nil)
         }
 
         let channel = try XCTUnwrap(client.databaseContainer.viewContext.channel(cid: cid)).asModel()
@@ -708,7 +708,7 @@ final class ChannelListController_Tests: XCTestCase {
 
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(
-                payload: self.dummyPayload(with: cid, members: [.dummy(user: UserPayload.dummy(userId: self.memberId))]),
+                payload: self.dummyPayload(with: cid, members: [.dummy(user: UserResponse.dummy(userId: self.memberId))]),
                 query: self.query,
                 cache: nil
             )
@@ -1103,8 +1103,8 @@ final class ChannelListController_Tests: XCTestCase {
             cid2,
             cid3
         ]
-        let expectedChannels: [ChannelPayload] = expectedCids.map { .dummy(channel: .dummy(cid: $0)) }
-        let unexpectedChannels: [ChannelPayload] = [
+        let expectedChannels: [ChannelStateResponseFields] = expectedCids.map { .dummy(channel: .dummy(cid: $0)) }
+        let unexpectedChannels: [ChannelStateResponseFields] = [
             .dummy(channel: .dummy(cid: .unique)),
             .dummy(channel: .dummy(cid: .unique))
         ]
@@ -1181,7 +1181,7 @@ final class ChannelListController_Tests: XCTestCase {
         let cidAccentA = ChannelId.unique
         let cidTildeO = ChannelId.unique
 
-        let channelsInDB: [ChannelPayload] = [
+        let channelsInDB: [ChannelStateResponseFields] = [
             .dummy(channel: .dummy(cid: cidPlain, name: "Joao Silva")),
             .dummy(channel: .dummy(cid: cidAccentA, name: "João Silva")),
             .dummy(channel: .dummy(cid: cidTildeO, name: "Jõao Silva")),
@@ -1706,7 +1706,7 @@ final class ChannelListController_Tests: XCTestCase {
                     channel: .dummy(cid: cid1),
                     channelReads: [
                         .init(
-                            user: UserPayload.dummy(userId: currentUserId),
+                            user: UserResponse.dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
                             unreadMessagesCount: 3,
@@ -1717,7 +1717,7 @@ final class ChannelListController_Tests: XCTestCase {
                 ),
                 .dummy(channel: .dummy(team: .unique), channelReads: [
                     .init(
-                        user: UserPayload.dummy(userId: .unique),
+                        user: UserResponse.dummy(userId: .unique),
                         lastReadAt: .unique,
                         lastReadMessageId: nil,
                         unreadMessagesCount: 10,
@@ -1731,7 +1731,7 @@ final class ChannelListController_Tests: XCTestCase {
                     channel: .dummy(cid: cid2),
                     channelReads: [
                         .init(
-                            user: UserPayload.dummy(userId: currentUserId),
+                            user: UserResponse.dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
                             unreadMessagesCount: 20,
@@ -1765,7 +1765,7 @@ final class ChannelListController_Tests: XCTestCase {
                     channel: .dummy(cid: cid1, createdAt: createdAt.addingTimeInterval(100)),
                     channelReads: [
                         .init(
-                            user: UserPayload.dummy(userId: currentUserId),
+                            user: UserResponse.dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
                             unreadMessagesCount: 3,
@@ -1780,7 +1780,7 @@ final class ChannelListController_Tests: XCTestCase {
                     channel: .dummy(cid: cid2, createdAt: createdAt),
                     channelReads: [
                         .init(
-                            user: UserPayload.dummy(userId: currentUserId),
+                            user: UserResponse.dummy(userId: currentUserId),
                             lastReadAt: .unique,
                             lastReadMessageId: nil,
                             unreadMessagesCount: 20,
@@ -1808,9 +1808,9 @@ final class ChannelListController_Tests: XCTestCase {
         controller.synchronize()
 
         // Save Mute
-        let mutedChannel: ChannelDetailPayload = .dummy(
+        let mutedChannel: ChannelResponse = .dummy(
             cid: cid1,
-            members: [.dummy(user: UserPayload.dummy(userId: userId))]
+            members: [.dummy(user: UserResponse.dummy(userId: userId))]
         )
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(channel: mutedChannel), query: query, cache: nil)
@@ -1820,14 +1820,14 @@ final class ChannelListController_Tests: XCTestCase {
             ))
             try session.saveChannelMute(payload: .init(
                 mutedChannel: mutedChannel,
-                user: UserPayload.dummy(userId: userId),
+                user: UserResponse.dummy(userId: userId),
                 createdAt: .unique,
                 updatedAt: .unique
             ))
         }
 
         // Save Channels
-        let channelsInDB: [ChannelPayload] = [
+        let channelsInDB: [ChannelStateResponseFields] = [
             .dummy(channel: .dummy(cid: cid1), membership: .dummy()),
             .dummy(channel: .dummy(team: .unique)),
             .dummy(channel: .dummy(team: .unique)),
@@ -1905,7 +1905,7 @@ final class ChannelListController_Tests: XCTestCase {
         _ filter: @autoclosure () -> Filter<ChannelListFilterScope>,
         sort: [Sorting<ChannelListSortingKey>] = [],
         currentUserId: UserId? = nil,
-        channelsInDB: @escaping @autoclosure () -> [ChannelPayload],
+        channelsInDB: @escaping @autoclosure () -> [ChannelStateResponseFields],
         expectedResult: @autoclosure () -> [ChannelId],
         file: StaticString = #file,
         line: UInt = #line

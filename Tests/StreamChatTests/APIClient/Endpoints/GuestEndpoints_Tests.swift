@@ -7,70 +7,15 @@
 import XCTest
 
 final class GuestEndpoints_Tests: XCTestCase {
-    func test_token_buildsCorrectly_withDefaultExtraData() {
-        let userId: UserId = .unique
-        let name: String = .unique
-        let imageURL: URL = .unique()
-        let payload = GuestUserTokenRequestPayload(
-            userId: userId,
-            name: name,
-            imageURL: imageURL,
-            extraData: [:]
-        )
-        let expectedEndpoint = Endpoint<GuestUserTokenPayload>(
-            path: .guest,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["user": payload]
-        )
+    func test_createGuest_buildsGeneratedEndpoint() {
+        let request = CreateGuestRequest(user: UserRequest(id: "guest-id", name: "Guest"))
+        let endpoint: Endpoint<CreateGuestResponse> = .createGuest(createGuestRequest: request)
 
-        let actualEndpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
-            userId: userId,
-            name: name,
-            imageURL: imageURL,
-            extraData: [:]
-        )
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(
-            AnyEndpoint(expectedEndpoint),
-            AnyEndpoint(actualEndpoint)
-        )
-        XCTAssertEqual("guest", actualEndpoint.path.value)
-    }
-
-    func test_token_buildsCorrectly_withCustomExtraData() {
-        let userId: UserId = .unique
-        let name: String = .unique
-        let imageURL: URL = .unique()
-        let extraData: [String: RawJSON] = ["company": .string("getstream.io")]
-        let payload = GuestUserTokenRequestPayload(
-            userId: userId,
-            name: name,
-            imageURL: imageURL,
-            extraData: extraData
-        )
-        let expectedEndpoint = Endpoint<GuestUserTokenPayload>(
-            path: .guest,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["user": payload]
-        )
-
-        let actualEndpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
-            userId: userId,
-            name: name,
-            imageURL: imageURL,
-            extraData: extraData
-        )
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(
-            AnyEndpoint(expectedEndpoint),
-            AnyEndpoint(actualEndpoint)
-        )
-        XCTAssertEqual("guest", actualEndpoint.path.value)
+        XCTAssertEqual(endpoint.path.value, "/api/v2/guest")
+        XCTAssertEqual(endpoint.method, .post)
+        XCTAssertNil(endpoint.queryItems)
+        XCTAssertFalse(endpoint.requiresConnectionId)
+        XCTAssertFalse(endpoint.requiresToken)
+        XCTAssertEqual(endpoint.body as? CreateGuestRequest, request)
     }
 }

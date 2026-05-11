@@ -42,7 +42,7 @@ final class ReactionListUpdater_Tests: XCTestCase {
             )
         }
 
-        let payload = MessageReactionsPayload(duration: "", reactions: [
+        let payload = QueryReactionsResponse(duration: "", reactions: [
             .dummy(messageId: messageId, user: .dummy(userId: .unique)),
             .dummy(messageId: messageId, user: .dummy(userId: .unique)),
             .dummy(messageId: messageId, user: .dummy(userId: .unique))
@@ -64,9 +64,15 @@ final class ReactionListUpdater_Tests: XCTestCase {
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        let referenceEndpoint: Endpoint<MessageReactionsPayload> = .loadReactionsV2(
-            query: query
+        let filter = query.filter?.toRawJSONDictionary() ?? [:]
+        let request = QueryReactionsRequest(
+            filter: filter.isEmpty ? nil : filter,
+            limit: query.pagination.pageSize,
+            next: nil,
+            prev: nil,
+            sort: nil
         )
+        let referenceEndpoint: Endpoint<QueryReactionsResponse> = .queryReactions(id: query.messageId, queryReactionsRequest: request)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
 
         let loadedReactions = try payload.reactions.compactMap {
@@ -89,13 +95,19 @@ final class ReactionListUpdater_Tests: XCTestCase {
         }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<MessageReactionsPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<QueryReactionsResponse, Error>.failure(error))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
-        let referenceEndpoint: Endpoint<MessageReactionsPayload> = .loadReactionsV2(
-            query: query
+        let filter = query.filter?.toRawJSONDictionary() ?? [:]
+        let request = QueryReactionsRequest(
+            filter: filter.isEmpty ? nil : filter,
+            limit: query.pagination.pageSize,
+            next: nil,
+            prev: nil,
+            sort: nil
         )
+        let referenceEndpoint: Endpoint<QueryReactionsResponse> = .queryReactions(id: query.messageId, queryReactionsRequest: request)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 }

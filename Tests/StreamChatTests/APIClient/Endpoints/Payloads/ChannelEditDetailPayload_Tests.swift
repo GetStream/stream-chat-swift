@@ -6,8 +6,8 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ChannelEditDetailPayload_Tests: XCTestCase {
-    // Test ChannelEditDetailPayload encoded correctly
+final class ChannelInput_Tests: XCTestCase {
+    // Test ChannelInput encoded correctly
     func test_channelEditDetailPayload_encodedCorrectly() throws {
         let cid: ChannelId = .unique
         let name: String = .unique
@@ -16,8 +16,8 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
         let invite: UserId = .unique
         let filterTag: String = .unique
 
-        // Create ChannelEditDetailPayload
-        let payload = ChannelEditDetailPayload(
+        // Create ChannelInput
+        let payload = ChannelInput(
             name: name,
             imageURL: imageURL,
             team: team,
@@ -41,13 +41,13 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
         let encodedJSON = try JSONEncoder.default.encode(payload)
         let expectedJSON = try JSONSerialization.data(withJSONObject: expectedData, options: [])
 
-        // Assert ChannelEditDetailPayload encoded correctly
+        // Assert ChannelInput encoded correctly
         AssertJSONEqual(encodedJSON, expectedJSON)
     }
 
     func test_channelQueryCarriesAPIPath() {
         // Create payload without id specified
-        let payload1: ChannelEditDetailPayload = .init(
+        let payload1: ChannelInput = .init(
             name: .unique,
             imageURL: .unique(),
             team: nil,
@@ -62,7 +62,7 @@ final class ChannelEditDetailPayload_Tests: XCTestCase {
 
         // Create payload with id and type specified
         let cid: ChannelId = .unique
-        let payload2: ChannelEditDetailPayload = .init(
+        let payload2: ChannelInput = .init(
             name: .unique,
             imageURL: .unique(),
             team: nil,

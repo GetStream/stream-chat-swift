@@ -78,7 +78,7 @@ class ChannelReadDTO: NSManagedObject {
 
 extension NSManagedObjectContext {
     func saveChannelRead(
-        payload: ChannelReadPayload,
+        payload: ReadStateResponse,
         for cid: ChannelId,
         cache: PreWarmedCache?
     ) throws -> ChannelReadDTO {

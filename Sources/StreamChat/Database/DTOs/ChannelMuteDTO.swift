@@ -49,7 +49,7 @@ extension ChannelMuteDTO {
 
 extension NSManagedObjectContext {
     @discardableResult
-    func saveChannelMute(payload: MutedChannelPayload) throws -> ChannelMuteDTO {
+    func saveChannelMute(payload: ChannelMute) throws -> ChannelMuteDTO {
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }

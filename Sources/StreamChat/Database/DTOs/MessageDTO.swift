@@ -687,7 +687,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         createdAt: Date?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
-        poll: PollPayload?,
+        poll: PollResponseData?,
         location: NewLocationInfo?,
         restrictedVisibility: [UserId],
         extraData: [String: RawJSON]
@@ -880,7 +880,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     ///   saveDraftMessage function to avoid an infinite loop since saving the draft would be called again.
     ///   - cache: The pre-warmed cache.
     func saveMessage(
-        payload: MessagePayload,
+        payload: MessageResponse,
         channelDTO: ChannelDTO,
         syncOwnReactions: Bool,
         skipDraftUpdate: Bool = false,
@@ -1113,7 +1113,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     }
 
     func saveMessage(
-        payload: MessagePayload,
+        payload: MessageResponse,
         for cid: ChannelId?,
         syncOwnReactions: Bool = true,
         skipDraftUpdate: Bool = false,
@@ -1160,7 +1160,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
 
     @discardableResult
     func saveDraftMessage(
-        payload: DraftPayload,
+        payload: DraftResponse,
         for cid: ChannelId,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
@@ -1258,7 +1258,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         return dto
     }
 
-    func saveMessage(payload: MessagePayload, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
+    func saveMessage(payload: MessageResponse, for query: MessageSearchQuery, cache: PreWarmedCache?) throws -> MessageDTO {
         let cid = try? ChannelId(cid: payload.cid)
         let messageDTO = try saveMessage(payload: payload, for: cid, cache: cache)
         messageDTO.searches.insert(saveQuery(query: query))
@@ -1476,7 +1476,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             guard let resultMessage = result.message else { return nil }
             // Search responses include channel data on each message; save it so that
             // the message can be linked to a channel DTO when persisted.
-            if let channelDetail = resultMessage.channel?.asChannelDetailPayload {
+            if let channelDetail = resultMessage.channel?.asChannelResponse {
                 try saveChannel(payload: channelDetail, query: nil, cache: cache)
             }
             return try saveMessage(payload: resultMessage.asMessageResponse, for: query, cache: cache)
@@ -1584,7 +1584,7 @@ extension MessageDTO {
     }
 
     /// Snapshots the current state of `MessageDTO` and returns its representation for the use in API calls.
-    func asRequestBody() -> MessageRequestBody {
+    func asRequestBody() -> MessageRequest {
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
@@ -1593,7 +1593,7 @@ extension MessageDTO {
             extraData = [:]
         }
 
-        let uploadedAttachments: [MessageAttachmentPayload] = attachments
+        let uploadedAttachments: [Attachment] = attachments
             .filter { $0.localState == .uploaded || $0.localState == nil }
             .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
             .compactMap { $0.asRequestPayload() }
@@ -1606,7 +1606,7 @@ extension MessageDTO {
             restrictedVisibilityArray = Array(restrictedVisibility)
         }
         
-        var body = MessageRequestBody(
+        var body = MessageRequest(
             attachments: uploadedAttachments,
             custom: extraData,
             id: id,
@@ -1639,7 +1639,7 @@ extension MessageDTO {
         return body
     }
 
-    func asDraftRequestBody() -> DraftMessageRequestBody {
+    func asDraftRequestBody() -> CreateDraftRequest {
         let extraData: [String: RawJSON]
         do {
             extraData = try JSONDecoder.stream.decodeRawJSON(from: self.extraData)
@@ -1648,7 +1648,7 @@ extension MessageDTO {
             extraData = [:]
         }
 
-        let uploadedAttachments: [MessageAttachmentPayload] = attachments
+        let uploadedAttachments: [Attachment] = attachments
             .filter { $0.localState == .uploaded || $0.localState == nil }
             .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
             .compactMap { $0.asRequestPayload() }

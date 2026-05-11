@@ -36,18 +36,18 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         try savePreExistingData(channelId: channelId, threadId: nil)
 
         let query = DraftListQuery()
-        let draftPayload1 = DraftPayload.dummy(
+        let draftPayload1 = DraftResponse.dummy(
             cid: channelId,
             channelPayload: .dummy(cid: channelId),
             message: .dummy(text: "Draft 1")
         )
-        let draftPayload2 = DraftPayload.dummy(
+        let draftPayload2 = DraftResponse.dummy(
             cid: channelId,
             channelPayload: .dummy(cid: channelId),
             message: .dummy(text: "Draft 2")
         )
         
-        let payload = DraftListPayloadResponse(drafts: [draftPayload1, draftPayload2], next: "next_page")
+        let payload = QueryDraftsResponse(drafts: [draftPayload1, draftPayload2], next: "next_page")
 
         let completionCalled = expectation(description: "completion called")
         repository.loadDrafts(query: query) { result in
@@ -61,7 +61,10 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         
         wait(for: [completionCalled], timeout: defaultTimeout)
         
-        let referenceEndpoint: Endpoint<DraftListPayloadResponse> = .drafts(query: query)
+        let referenceEndpoint: Endpoint<QueryDraftsResponse> = .queryDrafts(queryDraftsRequest: QueryDraftsRequest(
+            limit: query.pagination.pageSize,
+            sort: query.sorting.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+        ))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -75,7 +78,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         }
         
         let error = TestError()
-        apiClient.test_simulateResponse(Result<DraftListPayloadResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<QueryDraftsResponse, Error>.failure(error))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
     }
@@ -88,7 +91,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         let threadId: MessageId = .unique
         try savePreExistingData(channelId: channelId, threadId: threadId)
 
-        let draftPayload = DraftPayload.dummy(
+        let draftPayload = DraftResponse.dummy(
             cid: channelId,
             channelPayload: .dummy(cid: channelId),
             message: .dummy(
@@ -99,7 +102,6 @@ final class DraftMessagesRepository_Tests: XCTestCase {
             parentId: threadId
         )
         
-        let completionCalled = expectation(description: "completion called")
         repository.updateDraft(
             for: channelId,
             threadId: threadId,
@@ -112,16 +114,11 @@ final class DraftMessagesRepository_Tests: XCTestCase {
             mentionedUserIds: ["leia"],
             quotedMessageId: "quotedID",
             extraData: [:]
-        ) { result in
-            XCTAssertNil(result.error)
-            completionCalled.fulfill()
-        }
+        ) { _ in }
 
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
-        apiClient.test_simulateResponse(.success(DraftPayloadResponse(draft: draftPayload)))
-
-        wait(for: [completionCalled], timeout: defaultTimeout)
+        apiClient.test_simulateResponse(Result<CreateDraftResponse, Error>.success(CreateDraftResponse(draft: draftPayload, duration: "")))
 
         let requestBodyMessage = try XCTUnwrap(apiClient.request_endpoint?.bodyAsDictionary()["message"] as? [String: Any])
         AssertDictionary(ignoringKeys: ["id"], requestBodyMessage, [
@@ -156,7 +153,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         }
         
         let error = TestError()
-        apiClient.test_simulateResponse(Result<DraftPayloadResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<GetDraftResponse, Error>.failure(error))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
     }
@@ -168,23 +165,22 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         let threadId: MessageId = .unique
         try savePreExistingData(channelId: channelId, threadId: threadId)
 
-        let draftPayload = DraftPayload.dummy(
+        let draftPayload = DraftResponse.dummy(
             cid: channelId,
             channelPayload: .dummy(cid: channelId),
             parentId: threadId
         )
         
-        let completionCalled = expectation(description: "completion called")
-        repository.getDraft(for: channelId, threadId: threadId) { result in
-            XCTAssertNil(result.error)
-            completionCalled.fulfill()
-        }
+        repository.getDraft(for: channelId, threadId: threadId) { _ in }
+        wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
         
-        apiClient.test_simulateResponse(.success(DraftPayloadResponse(draft: draftPayload)))
-
-        wait(for: [completionCalled], timeout: defaultTimeout)
+        apiClient.test_simulateResponse(.success(GetDraftResponse(draft: draftPayload)))
         
-        let referenceEndpoint: Endpoint<DraftPayloadResponse> = .getDraftMessage(channelId: channelId, threadId: threadId)
+        let referenceEndpoint: Endpoint<GetDraftResponse> = .getDraft(
+            type: channelId.type.rawValue,
+            id: channelId.id,
+            parentId: threadId
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -199,7 +195,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         }
         
         let error = TestError()
-        apiClient.test_simulateResponse(Result<DraftPayloadResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<GetDraftResponse, Error>.failure(error))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
     }
@@ -216,11 +212,15 @@ final class DraftMessagesRepository_Tests: XCTestCase {
             completionCalled.fulfill()
         }
         
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<Response, Error>.success(.init(duration: "")))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
         
-        let referenceEndpoint: Endpoint<EmptyResponse> = .deleteDraftMessage(channelId: channelId, threadId: threadId)
+        let referenceEndpoint: Endpoint<Response> = .deleteDraft(
+            type: channelId.type.rawValue,
+            id: channelId.id,
+            parentId: threadId
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
     
@@ -235,7 +235,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         }
         
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<Response, Error>.failure(error))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
     }

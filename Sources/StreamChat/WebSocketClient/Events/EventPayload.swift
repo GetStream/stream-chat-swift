@@ -53,13 +53,13 @@ final class EventPayload: Decodable, Sendable {
     let connectionId: String?
     let connectionError: APIError?
     let cid: ChannelId?
-    let currentUser: CurrentUserPayload?
-    let user: UserPayload?
-    let createdBy: UserPayload?
-    let memberContainer: MemberContainerPayload?
-    let channel: ChannelDetailPayload?
-    let message: MessagePayload?
-    let reaction: MessageReactionPayload?
+    let currentUser: OwnUserResponse?
+    let user: UserResponse?
+    let createdBy: UserResponse?
+    let memberContainer: ChannelMemberResponse?
+    let channel: ChannelResponse?
+    let message: MessageResponse?
+    let reaction: ReactionResponse?
     let watcherCount: Int?
     let unreadCount: UnreadCountPayload?
     let createdAt: Date?
@@ -76,18 +76,18 @@ final class EventPayload: Decodable, Sendable {
     let lastDeliveredAt: Date?
     let lastDeliveredMessageId: MessageId?
     let unreadMessagesCount: Int?
-    let poll: PollPayload?
-    let vote: PollVotePayload?
+    let poll: PollResponseData?
+    let vote: PollVoteResponseData?
 
     /// Thread Data, it is stored in Result, to be easier to debug decoding errors
-    let threadDetails: Result<ThreadDetailsPayload, Error>?
-    let threadPartial: Result<ThreadPartialPayload, Error>?
+    let threadDetails: Result<ThreadResponse, Error>?
+    let threadPartial: Result<ThreadResponse, Error>?
     
     let aiState: String?
     let messageId: String?
     let aiMessage: String?
-    let draft: DraftPayload?
-    let reminder: ReminderPayload?
+    let draft: DraftResponse?
+    let reminder: ReminderResponseData?
     let channelMessageCount: Int?
     let team: TeamId?
 
@@ -96,13 +96,13 @@ final class EventPayload: Decodable, Sendable {
         connectionId: String? = nil,
         connectionError: APIError? = nil,
         cid: ChannelId? = nil,
-        currentUser: CurrentUserPayload? = nil,
-        user: UserPayload? = nil,
-        createdBy: UserPayload? = nil,
-        memberContainer: MemberContainerPayload? = nil,
-        channel: ChannelDetailPayload? = nil,
-        message: MessagePayload? = nil,
-        reaction: MessageReactionPayload? = nil,
+        currentUser: OwnUserResponse? = nil,
+        user: UserResponse? = nil,
+        createdBy: UserResponse? = nil,
+        memberContainer: ChannelMemberResponse? = nil,
+        channel: ChannelResponse? = nil,
+        message: MessageResponse? = nil,
+        reaction: ReactionResponse? = nil,
         watcherCount: Int? = nil,
         unreadCount: UnreadCountPayload? = nil,
         createdAt: Date? = nil,
@@ -116,15 +116,15 @@ final class EventPayload: Decodable, Sendable {
         lastReadAt: Date? = nil,
         lastReadMessageId: MessageId? = nil,
         unreadMessagesCount: Int? = nil,
-        threadDetails: Result<ThreadDetailsPayload, Error>? = nil,
-        threadPartial: Result<ThreadPartialPayload, Error>? = nil,
-        poll: PollPayload? = nil,
-        vote: PollVotePayload? = nil,
+        threadDetails: Result<ThreadResponse, Error>? = nil,
+        threadPartial: Result<ThreadResponse, Error>? = nil,
+        poll: PollResponseData? = nil,
+        vote: PollVoteResponseData? = nil,
         aiState: String? = nil,
         messageId: String? = nil,
         aiMessage: String? = nil,
-        draft: DraftPayload? = nil,
-        reminder: ReminderPayload? = nil,
+        draft: DraftResponse? = nil,
+        reminder: ReminderResponseData? = nil,
         channelMessageCount: Int? = nil,
         deletedForMe: Bool? = nil,
         lastDeliveredAt: Date? = nil,
@@ -179,13 +179,13 @@ final class EventPayload: Decodable, Sendable {
         // In healthCheck event we can receive invalid id containing "*".
         // We don't need to throw error in that case and can treat it like missing cid.
         cid = try? container.decodeIfPresent(ChannelId.self, forKey: .cid)
-        currentUser = try container.decodeIfPresent(CurrentUserPayload.self, forKey: .currentUser)
-        user = try container.decodeIfPresent(UserPayload.self, forKey: .user)
-        createdBy = try container.decodeIfPresent(UserPayload.self, forKey: .createdBy)
-        memberContainer = try container.decodeIfPresent(MemberContainerPayload.self, forKey: .memberContainer)
-        channel = try? container.decodeIfPresent(ChannelDetailPayload.self, forKey: .channel)
-        message = try container.decodeIfPresent(MessagePayload.self, forKey: .message)
-        reaction = try container.decodeIfPresent(MessageReactionPayload.self, forKey: .reaction)
+        currentUser = try container.decodeIfPresent(OwnUserResponse.self, forKey: .currentUser)
+        user = try container.decodeIfPresent(UserResponse.self, forKey: .user)
+        createdBy = try container.decodeIfPresent(UserResponse.self, forKey: .createdBy)
+        memberContainer = try container.decodeIfPresent(ChannelMemberResponse.self, forKey: .memberContainer)
+        channel = try? container.decodeIfPresent(ChannelResponse.self, forKey: .channel)
+        message = try container.decodeIfPresent(MessageResponse.self, forKey: .message)
+        reaction = try container.decodeIfPresent(ReactionResponse.self, forKey: .reaction)
         watcherCount = try container.decodeIfPresent(Int.self, forKey: .watcherCount)
         unreadCount = try? UnreadCountPayload(from: decoder)
         createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
@@ -199,15 +199,15 @@ final class EventPayload: Decodable, Sendable {
         lastReadAt = try container.decodeIfPresent(Date.self, forKey: .lastReadAt)
         lastReadMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastReadMessageId)
         unreadMessagesCount = try container.decodeIfPresent(Int.self, forKey: .unreadMessagesCount)
-        threadDetails = container.decodeAsResultIfPresent(ThreadDetailsPayload.self, forKey: .thread)
-        threadPartial = container.decodeAsResultIfPresent(ThreadPartialPayload.self, forKey: .thread)
-        vote = try container.decodeIfPresent(PollVotePayload.self, forKey: .vote)
-        poll = try container.decodeIfPresent(PollPayload.self, forKey: .poll)
+        threadDetails = container.decodeAsResultIfPresent(ThreadResponse.self, forKey: .thread)
+        threadPartial = container.decodeAsResultIfPresent(ThreadResponse.self, forKey: .thread)
+        vote = try container.decodeIfPresent(PollVoteResponseData.self, forKey: .vote)
+        poll = try container.decodeIfPresent(PollResponseData.self, forKey: .poll)
         aiState = try container.decodeIfPresent(String.self, forKey: .aiState)
         messageId = try container.decodeIfPresent(String.self, forKey: .messageId)
         aiMessage = try container.decodeIfPresent(String.self, forKey: .aiMessage)
-        draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
-        reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
+        draft = try container.decodeIfPresent(DraftResponse.self, forKey: .draft)
+        reminder = try container.decodeIfPresent(ReminderResponseData.self, forKey: .reminder)
         channelMessageCount = try container.decodeIfPresent(Int.self, forKey: .channelMessageCount)
         deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
         lastDeliveredAt = try container.decodeIfPresent(Date.self, forKey: .lastDeliveredAt)
@@ -223,7 +223,7 @@ final class EventPayload: Decodable, Sendable {
 /// Extension to make decoding error messages better.
 /// The error message:
 /// ```
-/// `Swift.KeyPath<StreamChat.EventPayload, Swift.Optional<StreamChat.MemberPayload>>` field can't be `nil` for the `EventPayload` event.
+/// `Swift.KeyPath<StreamChat.EventPayload, Swift.Optional<StreamChat.ChannelMemberResponse>>` field can't be `nil` for the `EventPayload` event.
 /// ```
 /// becomes:
 /// ```

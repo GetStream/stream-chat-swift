@@ -37,7 +37,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
             return
         }
 
-        let payload = UserUpdateRequestBody(
+        let payload = UpdateUserPartialRequest(
             name: name,
             imageURL: imageURL,
             privacySettings: privacySettings.map { UserPrivacySettingsPayload(settings: $0) },
@@ -46,8 +46,17 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
             extraData: userExtraData
         )
 
+        let body = UpdateUsersPartialRequest(
+            users: [
+                UpdateUserPartialRequest(
+                    id: currentUserId,
+                    set: payload.set,
+                    unset: Array(unset)
+                )
+            ]
+        )
         apiClient
-            .request(endpoint: .updateUser(id: currentUserId, payload: payload, unset: Array(unset))) { [weak self] in
+            .request(endpoint: Endpoint<UpdateUsersResponse>.updateUsersPartial(updateUsersPartialRequest: body)) { [weak self] in
                 switch $0 {
                 case let .success(response):
                     self?.database.write({ (session) in
@@ -83,11 +92,12 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
             }
             self.apiClient
                 .request(
-                    endpoint: .addDevice(
-                        userId: currentUserId,
-                        deviceId: deviceId,
-                        pushProvider: pushProvider,
-                        providerName: providerName
+                    endpoint: Endpoint<Response>.createDevice(
+                        createDeviceRequest: CreateDeviceRequest(
+                            id: deviceId,
+                            pushProvider: .init(pushProvider: pushProvider),
+                            pushProviderName: providerName
+                        )
                     ),
                     completion: { result in
                         if let error = result.error {
@@ -119,10 +129,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
             }
             self.apiClient
                 .request(
-                    endpoint: .removeDevice(
-                        userId: currentUserId,
-                        deviceId: id
-                    ),
+                    endpoint: Endpoint<Response>.deleteDevice(id: id),
                     completion: { result in
                         completion?(result.error)
                     }
@@ -135,7 +142,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     ///     - currentUserId: The current user identifier.
     ///     - completion: Called when request is successfully completed, or with error.
     func fetchDevices(currentUserId: UserId, completion: (@Sendable (Result<[Device], Error>) -> Void)? = nil) {
-        apiClient.request(endpoint: .devices(userId: currentUserId)) { [weak self] result in
+        apiClient.request(endpoint: Endpoint<ListDevicesResponse>.listDevices()) { [weak self] result in
             do {
                 nonisolated(unsafe) var devices = [Device]()
                 let devicesPayload = try result.get()
@@ -187,13 +194,13 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     /// Marks all channels for a user as read.
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func markAllRead(completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .markAllRead()) {
+        apiClient.request(endpoint: Endpoint<MarkReadResponse>.markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest())) {
             completion?($0.error)
         }
     }
 
     func loadAllUnreads(completion: @escaping (@Sendable (Result<CurrentUserUnreads, Error>) -> Void)) {
-        apiClient.request(endpoint: .unreads()) { result in
+        apiClient.request(endpoint: Endpoint<WrappedUnreadCountsResponse>.unreadCounts()) { result in
             switch result {
             case .success(let response):
                 let unreads = response.asModel()
@@ -205,10 +212,14 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     }
 
     func setPushPreference(
-        _ preference: PushPreferenceRequestPayload,
+        _ preference: PushPreferenceInput,
         completion: @escaping @Sendable (Result<PushPreference, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] (result: Result<PushPreferencesPayloadResponse, Error>) in
+        apiClient.request(
+            endpoint: Endpoint<UpsertPushPreferencesResponse>.updatePushNotificationPreferences(
+                upsertPushPreferencesRequest: UpsertPushPreferencesRequest(preferences: [preference])
+            )
+        ) { [weak self] (result: Result<UpsertPushPreferencesResponse, Error>) in
             switch result {
             case let .success(response):
                 guard let currentUserPushPref = response.userPreferences.asModel().first else {
@@ -238,16 +249,16 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func loadBlockedUsers(completion: @escaping @Sendable (Result<[BlockedUserDetails], Error>) -> Void) {
-        apiClient.request(endpoint: .loadBlockedUsers()) {
+        apiClient.request(endpoint: Endpoint<GetBlockedUsersResponse>.getBlockedUsers()) {
             switch $0 {
             case let .success(payload):
                 self.database.write({ session in
-                    session.currentUser?.blockedUserIds = Set(payload.blockedUsers.map(\.blockedUserId))
+                    session.currentUser?.blockedUserIds = Set(payload.blocks.map(\.blockedUserId))
                 }, completion: {
                     if let error = $0 {
                         log.error("Failed to save blocked users to the database. Error: \(error)")
                     }
-                    let blockedUsers = payload.blockedUsers.map {
+                    let blockedUsers = payload.blocks.map {
                         BlockedUserDetails(userId: $0.blockedUserId, blockedAt: $0.createdAt)
                     }
                     completion(.success(blockedUsers))
@@ -259,7 +270,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
     }
 
     func loadActiveLiveLocations(completion: @escaping @Sendable (Result<[SharedLocation], Error>) -> Void) {
-        apiClient.request(endpoint: .currentUserActiveLiveLocations()) { result in
+        apiClient.request(endpoint: Endpoint<SharedLocationsResponse>.getUserLiveLocations()) { result in
             switch result {
             case let .success(payload):
                 self.database.write { session in
@@ -284,11 +295,11 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
         _ deliveries: [MessageDeliveryInfo],
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        let payload = ChannelDeliveredRequestPayload(
+        let payload = MarkDeliveredRequest(
             latestDeliveredMessages: deliveries.map { $0.asPayload }
         )
         
-        apiClient.request(endpoint: .markChannelsDelivered(payload: payload)) { result in
+        apiClient.request(endpoint: Endpoint<MarkDeliveredResponse>.markDelivered(markDeliveredRequest: payload)) { result in
             completion?(result.error)
         }
     }

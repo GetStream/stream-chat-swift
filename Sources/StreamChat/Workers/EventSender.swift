@@ -17,7 +17,11 @@ class EventSender: Worker, @unchecked Sendable {
         to cid: ChannelId,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .sendEvent(payload, cid: cid)) {
+        apiClient.request(endpoint: Endpoint<EventResponse>.sendEvent(
+            type: cid.type.rawValue,
+            id: cid.id,
+            sendEventRequest: SendEventRequest(payload: payload)
+        )) {
             completion?($0.error)
         }
     }

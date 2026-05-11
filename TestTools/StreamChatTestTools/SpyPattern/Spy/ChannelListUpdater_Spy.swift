@@ -14,7 +14,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     @Atomic var update_completion_result: Result<[ChatChannel], Error>?
 
     @Atomic var fetch_queries: [ChannelListQuery] = []
-    @Atomic var fetch_completion: ((Result<ChannelListPayload, Error>) -> Void)?
+    @Atomic var fetch_completion: ((Result<QueryChannelsResponse, Error>) -> Void)?
 
     @Atomic var refreshLoadedChannelsResult: Result<Set<ChannelId>, Error>?
 
@@ -60,7 +60,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
 
     override func fetch(
         channelListQuery: ChannelListQuery,
-        completion: @escaping (Result<ChannelListPayload, Error>) -> Void
+        completion: @escaping (Result<QueryChannelsResponse, Error>) -> Void
     ) {
         _fetch_queries.mutate { $0.append(channelListQuery) }
         fetch_completion = completion

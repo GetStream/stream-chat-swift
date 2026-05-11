@@ -39,7 +39,11 @@ final class EventSender_Tests: XCTestCase {
         sender.sendEvent(payload, to: cid)
 
         // Assert correct endpoint is called
-        let referenceEndpoint: Endpoint<EmptyResponse> = .sendEvent(payload, cid: cid)
+        let referenceEndpoint = Endpoint<EventResponse>.sendEvent(
+            type: cid.type.rawValue,
+            id: cid.id,
+            sendEventRequest: SendEventRequest(payload: payload)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -55,7 +59,9 @@ final class EventSender_Tests: XCTestCase {
         XCTAssertFalse(completionCalled)
 
         // Simulate API response with success
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<EventResponse, Error>.success(
+            .init(duration: "", event: .typeCustomEvent(CustomEvent(createdAt: .unique, custom: [:])))
+        ))
 
         // Assert completion is called
         AssertAsync.willBeTrue(completionCalled)
@@ -70,7 +76,7 @@ final class EventSender_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<EventResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)

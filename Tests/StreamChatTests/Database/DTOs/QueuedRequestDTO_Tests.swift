@@ -25,7 +25,7 @@ final class QueuedRequestDTO_Tests: XCTestCase {
         let id = String.newUniqueId
         let date = Date()
         let endpoint = Endpoint<EmptyResponse>(
-            path: .guest,
+            path: .custom("guest"),
             method: .post,
             queryItems: nil,
             requiresConnectionId: true,
@@ -99,7 +99,7 @@ final class QueuedRequestDTO_Tests: XCTestCase {
             let id = "request\(index)"
             let date = Date()
             let endpoint = Endpoint<EmptyResponse>(
-                path: .sendMessage(.init(type: .messaging, id: "\(index)")),
+                path: .sendMessage(type: ChannelType.messaging.rawValue, id: "\(index)"),
                 method: .post,
                 queryItems: nil,
                 requiresConnectionId: true,

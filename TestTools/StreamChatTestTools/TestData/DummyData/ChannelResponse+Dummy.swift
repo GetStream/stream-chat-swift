@@ -6,7 +6,7 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-extension ChannelDetailPayload {
+extension ChannelResponse {
     /// Returns dummy channel detail payload with the given values.
     static func dummy(
         cid: ChannelId = .unique,
@@ -18,7 +18,7 @@ extension ChannelDetailPayload {
         deletedAt: Date? = nil,
         updatedAt: Date = .init(),
         truncatedAt: Date? = nil,
-        createdBy: UserPayload? = .dummy(userId: .unique),
+        createdBy: UserResponse? = .dummy(userId: .unique),
         config: ChannelConfig = .mock(),
         filterTags: [String]? = nil,
         ownCapabilities: [String] = [],
@@ -26,12 +26,12 @@ extension ChannelDetailPayload {
         isBlocked: Bool? = false,
         isDisabled: Bool = false,
         isHidden: Bool? = nil,
-        members: [MemberPayload] = [],
+        members: [ChannelMemberResponse] = [],
         memberCount: Int? = nil,
         messageCount: Int? = nil,
         team: String? = nil,
         cooldownDuration: Int = 0
-    ) -> ChannelDetailPayload {
+    ) -> ChannelResponse {
         var custom = extraData
         if let name { custom["name"] = .string(name) }
         if let imageURL { custom["image"] = .string(imageURL.absoluteString) }

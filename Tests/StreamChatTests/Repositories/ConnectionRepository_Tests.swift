@@ -207,11 +207,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         // UserInfo should take priority
         XCTAssertEqual(
             repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
-            AnyEndpoint(
-                .webSocketConnect(
-                    userInfo: UserInfo(id: tokenUserId)
-                )
-            )
+            AnyEndpoint(Endpoint<EmptyResponse>.webSocketConnect(userInfo: UserInfo(id: tokenUserId)))
         )
     }
 
@@ -227,11 +223,7 @@ final class ConnectionRepository_Tests: XCTestCase {
         // UserInfo should take priority
         XCTAssertEqual(
             repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
-            AnyEndpoint(
-                .webSocketConnect(
-                    userInfo: UserInfo(id: userInfoUserId)
-                )
-            )
+            AnyEndpoint(Endpoint<EmptyResponse>.webSocketConnect(userInfo: UserInfo(id: userInfoUserId)))
         )
     }
 
@@ -242,11 +234,7 @@ final class ConnectionRepository_Tests: XCTestCase {
 
         XCTAssertEqual(
             repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
-            AnyEndpoint(
-                .webSocketConnect(
-                    userInfo: UserInfo(id: userId)
-                )
-            )
+            AnyEndpoint(Endpoint<EmptyResponse>.webSocketConnect(userInfo: UserInfo(id: userId)))
         )
     }
 

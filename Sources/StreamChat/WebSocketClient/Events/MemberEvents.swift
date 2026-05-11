@@ -27,9 +27,9 @@ public final class MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
 }
 
 final class MemberAddedEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let cid: ChannelId
-    let member: MemberPayload
+    let member: ChannelMemberResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -79,9 +79,9 @@ public final class MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
 }
 
 final class MemberUpdatedEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let cid: ChannelId
-    let member: MemberPayload
+    let member: ChannelMemberResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -127,7 +127,7 @@ public final class MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
 }
 
 final class MemberRemovedEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let cid: ChannelId
     let createdAt: Date
     let payload: EventPayload

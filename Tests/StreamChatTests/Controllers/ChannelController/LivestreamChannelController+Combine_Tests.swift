@@ -61,7 +61,7 @@ final class LivestreamChannelController_Combine_Tests: iOS13TestCase {
         livestreamChannelController.synchronize { _ in
             exp.fulfill()
         }
-        let channelPayload = ChannelPayload.dummy(channel: .dummy(cid: channelQuery.cid!))
+        let channelPayload = ChannelStateResponseFields.dummy(channel: .dummy(cid: channelQuery.cid!))
         mockUpdater.update_completion?(.success(channelPayload))
         waitForExpectations(timeout: defaultTimeout)
 

@@ -34,8 +34,9 @@ class MessageRepository: @unchecked Sendable {
         completion: @escaping @Sendable (Result<ChatMessage, MessageRepositoryError>) -> Void
     ) {
         // Check the message with the given id is still in the DB.
-        database.backgroundReadOnlyContext.perform { [weak self] in
-            guard let dto = self?.database.backgroundReadOnlyContext.message(id: messageId) else {
+        let context: NSManagedObjectContext = database.backgroundReadOnlyContext
+        context.perform({ [weak self] in
+            guard let dto = context.message(id: messageId) else {
                 log.error("Trying to send a message with id \(messageId) but the message was deleted.")
                 completion(.failure(.messageDoesNotExist))
                 return
@@ -54,7 +55,7 @@ class MessageRepository: @unchecked Sendable {
                 return
             }
 
-            let requestBody = dto.asRequestBody() as MessageRequestBody
+            let requestBody = dto.asRequestBody() as MessageRequest
             let skipPush: Bool = dto.skipPush
             let skipEnrichUrl: Bool = dto.skipEnrichUrl
 
@@ -80,11 +81,14 @@ class MessageRepository: @unchecked Sendable {
                         return
                     }
 
-                    let endpoint: Endpoint<SendMessageResponseOpenAPI> = .sendMessage(
-                        cid: cid,
-                        messagePayload: requestBody,
-                        skipPush: skipPush,
-                        skipEnrichUrl: skipEnrichUrl
+                    let endpoint = Endpoint<SendMessageResponseOpenAPI>.sendMessage(
+                        type: cid.type.rawValue,
+                        id: cid.id,
+                        sendMessageRequest: SendMessageRequest(
+                            message: requestBody,
+                            skipEnrichUrl: skipEnrichUrl,
+                            skipPush: skipPush
+                        )
                     )
                     self?.apiClient.request(endpoint: endpoint) { [weak self] result in
                         self?.handleSentMessage(result, cid: cid, messageId: messageId, completion: completion)
@@ -96,7 +100,7 @@ class MessageRepository: @unchecked Sendable {
                     }
                 }
             })
-        }
+        })
     }
 
     /// Marks the message's local status to failed and adds it to the offline retry which sends the message when connection comes back.
@@ -112,12 +116,15 @@ class MessageRepository: @unchecked Sendable {
             }
 
             // Send the message to offline handling
-            let requestBody = dto.asRequestBody() as MessageRequestBody
-            let endpoint: Endpoint<SendMessageResponseOpenAPI> = .sendMessage(
-                cid: cid,
-                messagePayload: requestBody,
-                skipPush: dto.skipPush,
-                skipEnrichUrl: dto.skipEnrichUrl
+            let requestBody = dto.asRequestBody() as MessageRequest
+            let endpoint = Endpoint<SendMessageResponseOpenAPI>.sendMessage(
+                type: cid.type.rawValue,
+                id: cid.id,
+                sendMessageRequest: SendMessageRequest(
+                    message: requestBody,
+                    skipEnrichUrl: dto.skipEnrichUrl,
+                    skipPush: dto.skipPush
+                )
             )
             dataEndpoint = endpoint.withDataResponse
 
@@ -142,7 +149,7 @@ class MessageRepository: @unchecked Sendable {
 
     func saveSuccessfullySentMessage(
         cid: ChannelId,
-        message: MessagePayload,
+        message: MessageResponse,
         completion: @escaping @Sendable (Result<ChatMessage, Error>) -> Void
     ) {
         nonisolated(unsafe) var messageModel: ChatMessage!
@@ -272,7 +279,7 @@ class MessageRepository: @unchecked Sendable {
         updateMessage(withID: id, localState: nil, completion: { _ in completion() })
     }
 
-    func saveSuccessfullyDeletedMessage(message: MessagePayload, completion: (@Sendable (Error?) -> Void)? = nil) {
+    func saveSuccessfullyDeletedMessage(message: MessageResponse, completion: (@Sendable (Error?) -> Void)? = nil) {
         database.write({ session in
             guard let messageDTO = session.message(id: message.id), let cid = messageDTO.channel?.cid else { return }
             let deletedMessage = try session.saveMessage(
@@ -302,7 +309,7 @@ class MessageRepository: @unchecked Sendable {
     ///   - store: A boolean indicating if the message should be stored to database or should only be retrieved
     ///   - completion: The completion. Will be called with an error if something goes wrong, otherwise - will be called with `nil`.
     func getMessage(cid: ChannelId, messageId: MessageId, store: Bool, completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil) {
-        let endpoint: Endpoint<GetMessageResponse> = .getMessage(messageId: messageId)
+        let endpoint: Endpoint<GetMessageResponse> = .getMessage(id: messageId)
         apiClient.request(endpoint: endpoint) {
             switch $0 {
             case let .success(boxed):

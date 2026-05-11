@@ -44,7 +44,19 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
         listUpdater.update(channelListQuery: query)
 
-        let referenceEndpoint: Endpoint<ChannelListPayload> = .channels(query: query)
+        let filterConditions = query.filter.toRawJSONDictionary()
+        let request = QueryChannelsRequest(
+            filterConditions: filterConditions,
+            limit: query.pagination.pageSize,
+            memberLimit: query.membersLimit,
+            messageLimit: query.messagesLimit,
+            offset: query.pagination.offset,
+            presence: query.options.contains(.presence),
+            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            state: query.options.contains(.state),
+            watch: query.options.contains(.watch)
+        )
+        let referenceEndpoint: Endpoint<QueryChannelsResponse> = .queryChannels(queryChannelsRequest: request)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -59,7 +71,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)], duration: "")
+        let payload = QueryChannelsResponse(channels: [dummyPayload(with: cid)], duration: "")
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeTrue(completionCalled)
@@ -81,7 +93,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<ChannelListPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<QueryChannelsResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
@@ -105,7 +117,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         })
 
         // Simulate API response with no channel data
-        let payload = ChannelListPayload(channels: [], duration: "")
+        let payload = QueryChannelsResponse(channels: [], duration: "")
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeTrue(completionCalled)
@@ -147,7 +159,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         })
 
         let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)], duration: "")
+        let payload = QueryChannelsResponse(channels: [dummyPayload(with: cid)], duration: "")
         apiClient.test_simulateResponse(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -183,7 +195,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         })
 
         let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)], duration: "")
+        let payload = QueryChannelsResponse(channels: [dummyPayload(with: cid)], duration: "")
         apiClient.test_simulateResponse(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -218,7 +230,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
             exp.fulfill()
         })
 
-        let result: Result<ChannelListPayload, Error> = .failure(TestError())
+        let result: Result<QueryChannelsResponse, Error> = .failure(TestError())
         apiClient.test_simulateResponse(result)
 
         waitForExpectations(timeout: defaultTimeout)
@@ -233,21 +245,33 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
         listUpdater.fetch(channelListQuery: query, completion: { _ in })
 
-        let referenceEndpoint: Endpoint<ChannelListPayload> = .channels(query: query)
+        let filterConditions = query.filter.toRawJSONDictionary()
+        let request = QueryChannelsRequest(
+            filterConditions: filterConditions,
+            limit: query.pagination.pageSize,
+            memberLimit: query.membersLimit,
+            messageLimit: query.messagesLimit,
+            offset: query.pagination.offset,
+            presence: query.options.contains(.presence),
+            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            state: query.options.contains(.state),
+            watch: query.options.contains(.watch)
+        )
+        let referenceEndpoint: Endpoint<QueryChannelsResponse> = .queryChannels(queryChannelsRequest: request)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
     func test_fetch_successfulResponse_isPropagatedToCompletion() {
         // Simulate `fetch` call
         let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
-        nonisolated(unsafe) var channelListPayload: ChannelListPayload?
+        nonisolated(unsafe) var channelListPayload: QueryChannelsResponse?
         listUpdater.fetch(channelListQuery: query, completion: { result in
             channelListPayload = try? result.get()
         })
 
         // Simulate API response with channel data
         let cid = ChannelId(type: .messaging, id: .unique)
-        let payload = ChannelListPayload(channels: [dummyPayload(with: cid)], duration: "")
+        let payload = QueryChannelsResponse(channels: [dummyPayload(with: cid)], duration: "")
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeEqual(
@@ -264,7 +288,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         // Simulate API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<ChannelListPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<QueryChannelsResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
@@ -303,9 +327,9 @@ final class ChannelListUpdater_Tests: XCTestCase {
         // Refresh should be called 3 times
         let responseChannels = (0..<pageSize * 2 + 5)
             .map { self.dummyPayload(with: ChannelId(type: .messaging, id: "\($0)_refreshed")) }
-        apiClient.test_mockResponseResult(.success(ChannelListPayload(channels: Array(responseChannels[0..<pageSize]), duration: "")))
-        apiClient.test_mockResponseResult(.success(ChannelListPayload(channels: Array(responseChannels[pageSize..<pageSize * 2]), duration: "")))
-        apiClient.test_mockResponseResult(.success(ChannelListPayload(channels: Array(responseChannels[(pageSize * 2)...]), duration: "")))
+        apiClient.test_mockResponseResult(.success(QueryChannelsResponse(channels: Array(responseChannels[0..<pageSize]), duration: "")))
+        apiClient.test_mockResponseResult(.success(QueryChannelsResponse(channels: Array(responseChannels[pageSize..<pageSize * 2]), duration: "")))
+        apiClient.test_mockResponseResult(.success(QueryChannelsResponse(channels: Array(responseChannels[(pageSize * 2)...]), duration: "")))
         
         let cids = try await listUpdater.refreshLoadedChannels(for: query, channelCount: initialChannels.count)
         XCTAssertEqual(responseChannels.compactMap { $0.channel?.id }.sorted(), cids.map(\.id).sorted())
@@ -316,7 +340,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     func test_markAllRead_makesCorrectAPICall() {
         listUpdater.markAllRead()
 
-        let referenceEndpoint = Endpoint<EmptyResponse>.markAllRead()
+        let referenceEndpoint = Endpoint<MarkReadResponse>.markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest())
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -329,7 +353,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         XCTAssertFalse(completionCalled)
 
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
+        apiClient.test_simulateResponse(Result<MarkReadResponse, Error>.success(.init(duration: "")))
 
         AssertAsync.willBeTrue(completionCalled)
     }
@@ -339,7 +363,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.markAllRead { completionCalledError = $0 }
 
         let error = TestError()
-        apiClient.test_simulateResponse(Result<EmptyResponse, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<MarkReadResponse, Error>.failure(error))
 
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
     }
@@ -355,13 +379,25 @@ final class ChannelListUpdater_Tests: XCTestCase {
             actualError = error
             exp.fulfill()
         }
-        let payload = ChannelListPayload(channels: cids.map { dummyPayload(with: $0) }, duration: "")
+        let payload = QueryChannelsResponse(channels: cids.map { dummyPayload(with: $0) }, duration: "")
         apiClient.test_simulateResponse(.success(payload))
 
         // Then
         wait(for: [exp], timeout: defaultTimeout)
         let expectedQuery = ChannelListQuery(filter: .in(.cid, values: cids))
-        let expectedEndpoint: Endpoint<ChannelListPayload> = .channels(query: expectedQuery)
+        let filterConditions = expectedQuery.filter.toRawJSONDictionary()
+        let request = QueryChannelsRequest(
+            filterConditions: filterConditions,
+            limit: expectedQuery.pagination.pageSize,
+            memberLimit: expectedQuery.membersLimit,
+            messageLimit: expectedQuery.messagesLimit,
+            offset: expectedQuery.pagination.offset,
+            presence: expectedQuery.options.contains(.presence),
+            sort: expectedQuery.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            state: expectedQuery.options.contains(.state),
+            watch: expectedQuery.options.contains(.watch)
+        )
+        let expectedEndpoint: Endpoint<QueryChannelsResponse> = .queryChannels(queryChannelsRequest: request)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
         XCTAssertEqual(
             Set(cids.compactMap { try? database.viewContext.channel(cid: $0)?.asModel().cid }),
@@ -380,12 +416,24 @@ final class ChannelListUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
         let error = TestError()
-        apiClient.test_simulateResponse(Result<ChannelListPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<QueryChannelsResponse, Error>.failure(error))
 
         // Then
         wait(for: [exp], timeout: defaultTimeout)
         let expectedQuery = ChannelListQuery(filter: .in(.cid, values: cids))
-        let expectedEndpoint: Endpoint<ChannelListPayload> = .channels(query: expectedQuery)
+        let filterConditions = expectedQuery.filter.toRawJSONDictionary()
+        let request = QueryChannelsRequest(
+            filterConditions: filterConditions,
+            limit: expectedQuery.pagination.pageSize,
+            memberLimit: expectedQuery.membersLimit,
+            messageLimit: expectedQuery.messagesLimit,
+            offset: expectedQuery.pagination.offset,
+            presence: expectedQuery.options.contains(.presence),
+            sort: expectedQuery.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            state: expectedQuery.options.contains(.state),
+            watch: expectedQuery.options.contains(.watch)
+        )
+        let expectedEndpoint: Endpoint<QueryChannelsResponse> = .queryChannels(queryChannelsRequest: request)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
         XCTAssertNotNil(actualError)
     }

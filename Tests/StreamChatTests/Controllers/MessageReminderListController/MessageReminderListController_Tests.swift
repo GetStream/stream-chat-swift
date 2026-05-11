@@ -199,21 +199,21 @@ final class MessageReminderListController_Tests: XCTestCase {
             try session.saveMessage(payload: .dummy(messageId: messageId3), for: cid, syncOwnReactions: false, cache: nil)
 
             let reminders = [
-                ReminderPayload(
+                ReminderResponseData(
                     channelCid: cid,
                     messageId: messageId1,
                     remindAt: date.addingTimeInterval(3),
                     createdAt: date,
                     updatedAt: date
                 ),
-                ReminderPayload(
+                ReminderResponseData(
                     channelCid: cid,
                     messageId: messageId2,
                     remindAt: date.addingTimeInterval(2),
                     createdAt: date,
                     updatedAt: date
                 ),
-                ReminderPayload(
+                ReminderResponseData(
                     channelCid: cid,
                     messageId: messageId3,
                     remindAt: date.addingTimeInterval(1),

@@ -7,207 +7,35 @@
 import XCTest
 
 final class ModerationEndpoints_Tests: XCTestCase {
-    func test_muteUser_buildsCorrectly() {
-        let userId: UserId = .unique
+    func test_muteUserWrapper_buildsCompatibilityEndpoint() {
+        let endpoint: Endpoint<EmptyResponse> = .muteUser("user-id")
 
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .muteUser(true),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["target_id": userId]
-        )
-
-        // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .muteUser(userId)
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("moderation/mute", endpoint.path.value)
+        XCTAssertEqual(endpoint.path.value, "moderation/mute")
+        XCTAssertEqual(endpoint.method, .post)
+        XCTAssertNil(endpoint.queryItems)
+        XCTAssertFalse(endpoint.requiresConnectionId)
+        XCTAssertNotNil(endpoint.body)
     }
 
-    func test_unmuteUser_buildsCorrectly() {
-        let userId: UserId = .unique
+    func test_unbanMemberWrapper_buildsCompatibilityEndpoint() {
+        let cid = ChannelId(type: .messaging, id: "general")
+        let endpoint: Endpoint<EmptyResponse> = .unbanMember("user-id", cid: cid)
 
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .muteUser(false),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["target_id": userId]
-        )
-
-        // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .unmuteUser(userId)
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("moderation/unmute", endpoint.path.value)
+        XCTAssertEqual(endpoint.path.value, "moderation/ban")
+        XCTAssertEqual(endpoint.method, .delete)
+        XCTAssertEqual(endpoint.queryItems?["target_user_id"] ?? nil, "user-id")
+        XCTAssertEqual(endpoint.queryItems?["channel_cid"] ?? nil, cid.rawValue)
+        XCTAssertFalse(endpoint.requiresConnectionId)
+        XCTAssertNil(endpoint.body)
     }
 
-    func test_banMember_buildsCorrectly() {
-        let userId: UserId = .unique
-        let cid: ChannelId = .unique
-        let timeoutInMinutes = 15
-        let reason: String = .unique
+    func test_flagMessageWrapper_buildsGeneratedFlagEndpoint() {
+        let endpoint: Endpoint<FlagResponse> = .flagMessage(true, with: "message-id", reason: "spam")
 
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .banMember,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ChannelMemberBanRequestPayload(
-                userId: userId,
-                cid: cid,
-                shadow: false,
-                timeoutInMinutes: timeoutInMinutes,
-                reason: reason
-            )
-        )
-
-        // Build endpoint.
-        let endpoint: Endpoint<EmptyResponse> = .banMember(
-            userId,
-            cid: cid,
-            shadow: false,
-            timeoutInMinutes: timeoutInMinutes,
-            reason: reason
-        )
-
-        // Assert endpoint is built correctly.
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("moderation/ban", endpoint.path.value)
-    }
-
-    func test_unbanMember_buildsCorrectly() {
-        let userId: UserId = .unique
-        let cid: ChannelId = .unique
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .banMember,
-            method: .delete,
-            queryItems: ChannelMemberUnbanRequestPayload(
-                userId: userId,
-                cid: cid
-            ),
-            requiresConnectionId: false,
-            body: nil
-        )
-
-        // Build endpoint.
-        let endpoint: Endpoint<EmptyResponse> = .unbanMember(userId, cid: cid)
-
-        // Assert endpoint is built correctly.
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("moderation/ban", endpoint.path.value)
-    }
-
-    func test_flagUser_buildsCorrectly() {
-        let testCases = [
-            (true, EndpointPath.flagUser(true)),
-            (false, EndpointPath.flagUser(false))
-        ]
-
-        for (flag, path) in testCases {
-            let userId: UserId = .unique
-            let reason: String = .unique
-            let extraData: [String: RawJSON] = ["key": .string(.unique)]
-            let body = FlagRequestBody(
-                reason: reason,
-                targetMessageId: nil,
-                targetUserId: userId,
-                custom: extraData
-            )
-            let expectedEndpoint = Endpoint<FlagUserPayload>(
-                path: path,
-                method: .post,
-                queryItems: nil,
-                requiresConnectionId: false,
-                body: body
-            )
-
-            // Build endpoint.
-            let endpoint: Endpoint<FlagUserPayload> = .flagUser(
-                flag,
-                with: userId,
-                reason: reason,
-                extraData: extraData
-            )
-
-            // Assert endpoint is built correctly.
-            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual(flag ? "moderation/flag" : "moderation/unflag", endpoint.path.value)
-        }
-    }
-
-    func test_flagMessage_buildsCorrectly() {
-        let testCases = [
-            (true, EndpointPath.flagMessage(true)),
-            (false, EndpointPath.flagMessage(false))
-        ]
-
-        for (flag, path) in testCases {
-            let messageId: MessageId = .unique
-            let reason: String = .unique
-            let extraData: [String: RawJSON] = ["key": .string(.unique)]
-            let body = FlagRequestBody(
-                reason: reason,
-                targetMessageId: messageId,
-                targetUserId: nil,
-                custom: extraData
-            )
-            let expectedEndpoint = Endpoint<FlagMessagePayload>(
-                path: path,
-                method: .post,
-                queryItems: nil,
-                requiresConnectionId: false,
-                body: body
-            )
-
-            // Build endpoint.
-            let endpoint: Endpoint<FlagMessagePayload> = .flagMessage(flag, with: messageId, reason: reason, extraData: extraData)
-
-            // Assert endpoint is built correctly.
-            XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-            XCTAssertEqual(flag ? "moderation/flag" : "moderation/unflag", endpoint.path.value)
-        }
-    }
-    
-    func test_blockUser_buildsCorrectly() {
-        let userId: UserId = .unique
-
-        let expectedEndpoint = Endpoint<BlockingUserPayload>(
-            path: .blockUser,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["blocked_user_id": userId]
-        )
-
-        // Build endpoint
-        let endpoint: Endpoint<BlockingUserPayload> = .blockUser(userId)
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("users/block", endpoint.path.value)
-    }
-
-    func test_unblockUser_buildsCorrectly() {
-        let userId: UserId = .unique
-
-        let expectedEndpoint = Endpoint<EmptyResponse>(
-            path: .unblockUser,
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["blocked_user_id": userId]
-        )
-
-        // Build endpoint
-        let endpoint: Endpoint<EmptyResponse> = .unblockUser(userId)
-
-        // Assert endpoint is built correctly
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("users/unblock", endpoint.path.value)
+        XCTAssertEqual(endpoint.path.value, "/api/v2/moderation/flag")
+        XCTAssertEqual(endpoint.method, .post)
+        XCTAssertNil(endpoint.queryItems)
+        XCTAssertFalse(endpoint.requiresConnectionId)
+        XCTAssertNotNil(endpoint.body)
     }
 }

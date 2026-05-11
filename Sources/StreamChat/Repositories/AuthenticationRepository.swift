@@ -403,11 +403,15 @@ class AuthenticationRepository: @unchecked Sendable {
         userInfo: UserInfo,
         completion: @escaping @Sendable (Result<Token, Error>) -> Void
     ) {
-        let endpoint: Endpoint<GuestUserTokenPayload> = .guestUserToken(
-            userId: userInfo.id,
-            name: userInfo.name,
-            imageURL: userInfo.imageURL,
-            extraData: userInfo.extraData
+        let endpoint = Endpoint<CreateGuestResponse>.createGuest(
+            createGuestRequest: CreateGuestRequest(
+                user: UserRequest(
+                    userId: userInfo.id,
+                    name: userInfo.name,
+                    imageURL: userInfo.imageURL,
+                    extraData: userInfo.extraData
+                )
+            )
         )
 
         /// We need to ensure that the request to fetch the userToken will be executed. As APIClient's

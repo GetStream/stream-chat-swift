@@ -163,7 +163,7 @@ extension NSManagedObjectContext: AttachmentDatabaseSession {
     }
 
     func saveAttachment(
-        payload: MessageAttachmentPayload,
+        payload: Attachment,
         id: AttachmentId
     ) throws -> AttachmentDTO {
         guard let messageDTO = message(id: id.messageId) else {
@@ -283,7 +283,7 @@ extension AttachmentDTO {
     /// Snapshots the current state of `AttachmentDTO` and returns its representation for used in API calls.
     /// It's possible to introduce custom attachment types outside the SDK.
     /// That is why `RawJSON` object is used for sending it to backend because SDK doesn't know the structure of custom attachment.
-    func asRequestPayload() -> MessageAttachmentPayload? {
+    func asRequestPayload() -> Attachment? {
         guard
             let payload = try? JSONDecoder.default.decode(RawJSON.self, from: data)
         else {

@@ -87,7 +87,7 @@ extension CurrentUserDTO {
 }
 
 extension NSManagedObjectContext: CurrentUserDatabaseSession {
-    func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
+    func saveCurrentUser(payload: OwnUserResponse) throws -> CurrentUserDTO {
         invalidateCurrentUserCache()
         
         let dto = CurrentUserDTO.loadOrCreate(context: self)
@@ -144,7 +144,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         }
     }
 
-    func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
+    func saveCurrentUserDevices(_ devices: [DeviceResponse], clearExisting: Bool) throws -> [DeviceDTO] {
         invalidateCurrentUserCache()
 
         guard let currentUser = currentUser else {

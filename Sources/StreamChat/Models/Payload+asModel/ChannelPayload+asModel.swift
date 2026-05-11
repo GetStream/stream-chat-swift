@@ -4,8 +4,8 @@
 
 import Foundation
 
-extension ChannelPayload {
-    /// Converts the ChannelPayload to a ChatChannel model
+extension ChannelStateResponseFields {
+    /// Converts the ChannelStateResponseFields to a ChatChannel model
     /// - Returns: A ChatChannel instance
     func asModel(
         currentUserId: UserId?,
@@ -75,8 +75,8 @@ extension ChannelPayload {
     }
 }
 
-extension MemberPayload {
-    /// Converts the MemberPayload to a ChatChannelMember model
+extension ChannelMemberResponse {
+    /// Converts the ChannelMemberResponse to a ChatChannelMember model
     /// - Parameter channelId: The channel ID the member belongs to
     /// - Returns: A ChatChannelMember instance, or nil if user is missing
     func asModel(channelId: ChannelId) -> ChatChannelMember? {
@@ -117,8 +117,8 @@ extension MemberPayload {
     }
 }
 
-extension ChannelReadPayload {
-    /// Converts the ChannelReadPayload to a ChatChannelRead model
+extension ReadStateResponse {
+    /// Converts the ReadStateResponse to a ChatChannelRead model
     /// - Returns: A ChatChannelRead instance
     func asModel() -> ChatChannelRead {
         ChatChannelRead(

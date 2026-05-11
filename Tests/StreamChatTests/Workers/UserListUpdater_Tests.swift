@@ -48,7 +48,16 @@ final class UserListUpdater_Tests: XCTestCase {
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
         listUpdater.update(userListQuery: query)
 
-        let referenceEndpoint: Endpoint<UserListPayload> = .users(query: query)
+        let filterConditions = query.filter?.toRawJSONDictionary() ?? [:]
+        let payload = QueryUsersPayload(
+            filterConditions: filterConditions,
+            includeDeactivatedUsers: nil,
+            limit: query.pagination?.pageSize,
+            offset: query.pagination?.offset,
+            presence: query.options.contains(.presence),
+            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+        )
+        let referenceEndpoint: Endpoint<QueryUsersResponse> = .queryUsers(payload: payload)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -64,7 +73,7 @@ final class UserListUpdater_Tests: XCTestCase {
         // Simualte API response with user data
         let dummyUser1 = dummyUser
         let id = dummyUser1.id
-        let payload = UserListPayload(users: [dummyUser1])
+        let payload = QueryUsersResponse(users: [dummyUser1])
         apiClient.test_simulateResponse(.success(payload))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
@@ -83,7 +92,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simualte API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<UserListPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<QueryUsersResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)
@@ -103,7 +112,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simualte API response with user data
         let dummyUser1 = dummyUser
-        let payload = UserListPayload(users: [dummyUser1])
+        let payload = QueryUsersResponse(users: [dummyUser1])
         apiClient.test_simulateResponse(.success(payload))
 
         wait(for: [exp], timeout: defaultTimeout)
@@ -119,7 +128,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simulate API response with user data
         let userId = UserId.unique
-        let payload = UserListPayload(users: [.dummy(userId: userId)])
+        let payload = QueryUsersResponse(users: [.dummy(userId: userId)])
         apiClient.test_simulateResponse(.success(payload))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
@@ -135,7 +144,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simulate API response with user data
         let newUserId = UserId.unique
-        let newPayload = UserListPayload(users: [.dummy(userId: newUserId)])
+        let newPayload = QueryUsersResponse(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
 
         wait(for: [completionCalled2], timeout: defaultTimeout)
@@ -172,7 +181,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simulate API response with user data
         let userId = UserId.unique
-        let payload = UserListPayload(users: [.dummy(userId: userId)])
+        let payload = QueryUsersResponse(users: [.dummy(userId: userId)])
         apiClient.test_simulateResponse(.success(payload))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
@@ -190,7 +199,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simulate API response with user data
         let newUserId = UserId.unique
-        let newPayload = UserListPayload(users: [.dummy(userId: newUserId)])
+        let newPayload = QueryUsersResponse(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
 
         wait(for: [completionCalled2], timeout: defaultTimeout)
@@ -233,7 +242,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simulate API response with user data
         let user = dummyUser(id: dummyUserId)
-        let payload = UserListPayload(users: [user])
+        let payload = QueryUsersResponse(users: [user])
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeTrue(completionCalled)
@@ -246,21 +255,30 @@ final class UserListUpdater_Tests: XCTestCase {
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
         listUpdater.fetch(userListQuery: query, completion: { _ in })
 
-        let referenceEndpoint: Endpoint<UserListPayload> = .users(query: query)
+        let filterConditions = query.filter?.toRawJSONDictionary() ?? [:]
+        let payload = QueryUsersPayload(
+            filterConditions: filterConditions,
+            includeDeactivatedUsers: nil,
+            limit: query.pagination?.pageSize,
+            offset: query.pagination?.offset,
+            presence: query.options.contains(.presence),
+            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+        )
+        let referenceEndpoint: Endpoint<QueryUsersResponse> = .queryUsers(payload: payload)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
     func test_fetch_whenSuccess_payloadIsPropagatedToCompletion() {
         // Simulate `fetch` call
         let query = UserListQuery(filter: .equal(.id, to: "Luke"))
-        nonisolated(unsafe) var userListPayload: UserListPayload?
+        nonisolated(unsafe) var userListPayload: QueryUsersResponse?
         listUpdater.fetch(userListQuery: query, completion: { result in
             XCTAssertNil(result.error)
             userListPayload = try? result.get()
         })
 
         // Simualte API response with user data
-        let payload = UserListPayload(users: [dummyUser])
+        let payload = QueryUsersResponse(users: [dummyUser])
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeEqual(
@@ -277,7 +295,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simualte API response with failure
         let error = TestError()
-        apiClient.test_simulateResponse(Result<UserListPayload, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<QueryUsersResponse, Error>.failure(error))
 
         // Assert the completion is called with the error
         AssertAsync.willBeEqual(completionCalledError as? TestError, error)

@@ -29,7 +29,7 @@ final class ConnectedUser_Tests: XCTestCase {
         await XCTAssertEqual(UserRole.admin, connectedUser.state.user.userRole)
         
         let changedName = "Name"
-        let apiResult = CurrentUserUpdateResponse(
+        let apiResult = UpdateUsersResponse(
             user: currentUserPayload(
                 name: changedName,
                 role: .user
@@ -54,7 +54,7 @@ final class ConnectedUser_Tests: XCTestCase {
     func test_loadDevices_whenAPIRequestSucceeds_thenResultsAreReturnedAndStateUpdates() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: false)
         
-        let apiResult = DeviceListPayload(devices: [.dummy, .dummy, .dummy])
+        let apiResult = ListDevicesResponse(devices: [.dummy, .dummy, .dummy])
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
         
         let devices = try await connectedUser.loadDevices()
@@ -71,7 +71,7 @@ final class ConnectedUser_Tests: XCTestCase {
         
         // Fetch devices which resets the device list
         try await setUpConnectedUser(usesMockedUpdaters: false)
-        let apiResult = DeviceListPayload(devices: [.dummy, .dummy, .dummy])
+        let apiResult = ListDevicesResponse(devices: [.dummy, .dummy, .dummy])
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResult))
         let devices = try await connectedUser.loadDevices()
         
@@ -83,7 +83,7 @@ final class ConnectedUser_Tests: XCTestCase {
         try await setUpConnectedUser(usesMockedUpdaters: false)
         await XCTAssertEqual(0, connectedUser.state.user.devices.count)
         
-        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        env.client.mockAPIClient.test_mockResponseResult(.success(Response(duration: "")))
         try await connectedUser.addDevice(.apn(token: Data("test123".utf8)))
         
         // Converted to hex (test123 > 74657374313233)
@@ -93,7 +93,7 @@ final class ConnectedUser_Tests: XCTestCase {
     func test_removeDevice_whenAPIRequestSucceeds_thenStateUpdates() async throws {
         try await setUpConnectedUser(usesMockedUpdaters: false, initialDeviceCount: 2)
         
-        env.client.mockAPIClient.test_mockResponseResult(.success(EmptyResponse()))
+        env.client.mockAPIClient.test_mockResponseResult(.success(Response(duration: "")))
         var devices = await connectedUser.state.user.devices
         let deviceToRemove = try XCTUnwrap(devices.popLast()?.id)
         try await connectedUser.removeDevice(deviceToRemove)
@@ -204,9 +204,9 @@ final class ConnectedUser_Tests: XCTestCase {
         }
     }
     
-    private func currentUserPayload(name: String = "InitialName", deviceCount: Int = 0, role: UserRole = .admin) -> CurrentUserPayload {
-        let devices = (0..<deviceCount).map { _ in DevicePayload.dummy }
-        return CurrentUserPayload.dummy(
+    private func currentUserPayload(name: String = "InitialName", deviceCount: Int = 0, role: UserRole = .admin) -> OwnUserResponse {
+        let devices = (0..<deviceCount).map { _ in DeviceResponse.dummy }
+        return OwnUserResponse.dummy(
             userId: connectedUserId,
             name: name,
             role: role,

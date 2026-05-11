@@ -45,7 +45,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         isInRecoveryMode: Bool,
         onChannelCreated: (@Sendable (ChannelId) -> Void)? = nil,
         actions: ChannelUpdateActions? = nil,
-        completion: (@Sendable (Result<ChannelPayload, Error>) -> Void)? = nil
+        completion: (@Sendable (Result<ChannelStateResponseFields, Error>) -> Void)? = nil
     ) {
         let pagination = channelQuery.pagination
         paginationStateHandler.begin(pagination: pagination)
@@ -63,7 +63,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                 self.paginationStateHandler.end(pagination: pagination, with: result.map(\.messages))
 
                 let response = try result.get()
-                let payload = response.asChannelPayload
+                let payload = response.asChannelStateResponseFields
                 guard let cid = payload.channel?.channelId else {
                     completion?(.failure(ClientError.ChannelNotCreatedYet()))
                     return
@@ -117,8 +117,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             }
         }
 
-        let endpoint: Endpoint<ChannelStateResponse> = isChannelCreate ? .createChannel(query: channelQuery) :
-            .updateChannel(query: channelQuery)
+        let endpoint: Endpoint<ChannelStateResponse> = .channelQuery(channelQuery)
 
         if isInRecoveryMode {
             apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
@@ -131,8 +130,12 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// - Parameters:
     ///   - channelPayload: New channel data.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func updateChannel(cid: ChannelId, channelPayload: ChannelEditDetailPayload, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .updateChannel(cid: cid, channelPayload: channelPayload)) {
+    func updateChannel(cid: ChannelId, channelPayload: ChannelInput, completion: (@Sendable (Error?) -> Void)? = nil) {
+        apiClient.request(endpoint: Endpoint<UpdateChannelResponse>.updateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelRequest: UpdateChannelRequest(data: ChannelInputRequest(channelInput: channelPayload))
+        )) {
             completion?($0.error)
         }
     }
@@ -144,11 +147,15 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func partialChannelUpdate(
         cid: ChannelId,
-        updates: ChannelEditDetailPayload,
+        updates: ChannelInput,
         unsetProperties: [String],
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .partialChannelUpdate(cid: cid, updates: updates, unsetProperties: unsetProperties)) {
+        apiClient.request(endpoint: Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(channelInput: updates, unsetProperties: unsetProperties)
+        )) {
             completion?($0.error)
         }
     }
@@ -175,12 +182,12 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             watchersLimit: 0
         )
         channelQuery.options = .state
-        let endpoint: Endpoint<ChannelStateResponse> = .updateChannel(query: channelQuery)
+        let endpoint: Endpoint<ChannelStateResponse> = .channelQuery(channelQuery)
         apiClient.request(endpoint: endpoint) { [database] result in
             nonisolated(unsafe) var paginatedMembers: [ChatChannelMember]?
             switch result {
             case .success(let response):
-                let payload = response.asChannelPayload
+                let payload = response.asChannelStateResponseFields
                 database.write { session in
                     // State layer uses member list query to return all the paginated members
                     // In addition to this, we want to save channel data because reads are
@@ -219,8 +226,10 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func muteChannel(cid: ChannelId, expiration: Int? = nil, completion: (@Sendable (Error?) -> Void)? = nil) {
         apiClient.request(
-            endpoint: .muteChannel(cid: cid, expiration: expiration)
-        ) { [weak self] (result: Result<MutedChannelPayloadResponse, Error>) in
+            endpoint: Endpoint<MuteChannelResponse>.muteChannel(
+                muteChannelRequest: MuteChannelRequest(channelCids: [cid.rawValue], expiration: expiration)
+            )
+        ) { [weak self] (result: Result<MuteChannelResponse, Error>) in
             switch result {
             case .success(let payload):
                 guard let channelMute = payload.primaryChannelMute else {
@@ -244,8 +253,8 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func unmuteChannel(cid: ChannelId, completion: (@Sendable (Error?) -> Void)? = nil) {
         apiClient.request(
-            endpoint: .unmuteChannel(cid: cid)
-        ) { [weak self] (result: Result<EmptyResponse, Error>) in
+            endpoint: Endpoint<UnmuteResponse>.unmuteChannel(unmuteChannelRequest: UnmuteChannelRequest(channelCids: [cid.rawValue]))
+        ) { [weak self] (result: Result<UnmuteResponse, Error>) in
             switch result {
             case .success:
                 self?.database.write({ session in
@@ -268,7 +277,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - cid: The channel identifier.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func deleteChannel(cid: ChannelId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteChannel(cid: cid)) { [weak self] result in
+        apiClient.request(endpoint: Endpoint<DeleteChannelResponse>.deleteChannel(type: cid.type.rawValue, id: cid.id, hardDelete: nil)) { [weak self] result in
             switch result {
             case .success:
                 self?.database.write {
@@ -305,7 +314,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
             return
         }
         
-        let messageRequest = MessageRequestBody(
+        let messageRequest = MessageRequest(
             id: .newUniqueId,
             text: systemMessage
         )
@@ -322,10 +331,14 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         cid: ChannelId,
         skipPush: Bool = false,
         hardDelete: Bool = true,
-        requestBody: MessageRequestBody? = nil,
+        requestBody: MessageRequest? = nil,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .truncateChannel(cid: cid, skipPush: skipPush, hardDelete: hardDelete, message: requestBody)) {
+        apiClient.request(endpoint: Endpoint<TruncateChannelResponse>.truncateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            truncateChannelRequest: TruncateChannelRequest(hardDelete: hardDelete, message: requestBody, skipPush: skipPush)
+        )) {
             if let error = $0.error {
                 log.error(error)
             }
@@ -339,7 +352,11 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - clearHistory: Flag to remove channel history.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func hideChannel(cid: ChannelId, clearHistory: Bool, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .hideChannel(cid: cid, clearHistory: clearHistory)) { [weak self] result in
+        apiClient.request(endpoint: Endpoint<HideChannelResponse>.hideChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            hideChannelRequest: HideChannelRequest(clearHistory: clearHistory)
+        )) { [weak self] result in
             if result.error == nil {
                 // If the API call is a success, we mark the channel as hidden
                 // We do this because if the channel was already hidden, but the SDK
@@ -366,7 +383,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - channel: The channel you want to show.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func showChannel(cid: ChannelId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .showChannel(cid: cid)) {
+        apiClient.request(endpoint: Endpoint<ShowChannelResponse>.showChannel(type: cid.type.rawValue, id: cid.id)) {
             completion?($0.error)
         }
     }
@@ -402,7 +419,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         restrictedVisibility: [UserId] = [],
-        poll: PollPayload? = nil,
+        poll: PollResponseData? = nil,
         location: NewLocationInfo? = nil,
         extraData: [String: RawJSON],
         completion: (@Sendable (Result<ChatMessage, Error>) -> Void)? = nil
@@ -465,12 +482,15 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ) {
         let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
         apiClient.request(
-            endpoint: .addMembers(
-                cid: cid,
-                members: members.map { MemberInfoRequest(userId: $0.userId, extraData: $0.extraData) },
-                hideHistory: hideHistory,
-                hideHistoryBefore: hideHistoryBefore,
-                messagePayload: messagePayload
+            endpoint: Endpoint<UpdateChannelResponse>.updateChannel(
+                type: cid.type.rawValue,
+                id: cid.id,
+                updateChannelRequest: UpdateChannelRequest(
+                    addMembers: members.map { ChannelMemberRequest(custom: $0.extraData, userId: $0.userId) },
+                    hideHistory: hideHistoryBefore == nil ? hideHistory : nil,
+                    hideHistoryBefore: hideHistoryBefore,
+                    message: messagePayload
+                )
             )
         ) {
             completion?($0.error)
@@ -493,10 +513,10 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ) {
         let messagePayload = messagePayload(text: message, currentUserId: currentUserId)
         apiClient.request(
-            endpoint: .removeMembers(
-                cid: cid,
-                userIds: userIds,
-                messagePayload: messagePayload
+            endpoint: Endpoint<UpdateChannelResponse>.updateChannel(
+                type: cid.type.rawValue,
+                id: cid.id,
+                updateChannelRequest: UpdateChannelRequest(message: messagePayload, removeMembers: Array(userIds))
             )
         ) {
             completion?($0.error)
@@ -513,7 +533,11 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         userIds: Set<UserId>,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .inviteMembers(cid: cid, userIds: userIds)) {
+        apiClient.request(endpoint: Endpoint<UpdateChannelResponse>.updateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelRequest: UpdateChannelRequest(invites: userIds.map { ChannelMemberRequest(userId: $0) })
+        )) {
             completion?($0.error)
         }
     }
@@ -528,7 +552,11 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         message: String?,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .acceptInvite(cid: cid, message: message)) {
+        apiClient.request(endpoint: Endpoint<UpdateChannelResponse>.updateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelRequest: UpdateChannelRequest(acceptInvite: true, message: message.map { MessageRequest(text: $0) })
+        )) {
             completion?($0.error)
         }
     }
@@ -541,7 +569,11 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         cid: ChannelId,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .rejectInvite(cid: cid)) {
+        apiClient.request(endpoint: Endpoint<UpdateChannelResponse>.updateChannel(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelRequest: UpdateChannelRequest(rejectInvite: true)
+        )) {
             completion?($0.error)
         }
     }
@@ -588,14 +620,22 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///   - cooldownDuration: Duration of the time interval users have to wait between messages.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func enableSlowMode(cid: ChannelId, cooldownDuration: Int, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .enableSlowMode(cid: cid, cooldownDuration: cooldownDuration)) {
+        apiClient.request(endpoint: Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["cooldown": .number(Double(cooldownDuration))])
+        )) {
             completion?($0.error)
         }
     }
 
     /// Disables slow mode for the channel.
     func disableSlowMode(cid: ChannelId, completion: @escaping @Sendable (Error?) -> Void) {
-        apiClient.request(endpoint: .enableSlowMode(cid: cid, cooldownDuration: 0)) {
+        apiClient.request(endpoint: Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["cooldown": .number(0)])
+        )) {
             completion($0.error)
         }
     }
@@ -614,7 +654,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     func startWatching(cid: ChannelId, isInRecoveryMode: Bool, completion: (@Sendable (Error?) -> Void)? = nil) {
         var query = ChannelQuery(cid: cid)
         query.options = .all
-        let endpoint = Endpoint<ChannelStateResponse>.updateChannel(query: query)
+        let endpoint = Endpoint<ChannelStateResponse>.channelQuery(query)
         let completion: @Sendable (Result<ChannelStateResponse, Error>) -> Void = { completion?($0.error) }
         if isInRecoveryMode {
             apiClient.recoveryRequest(endpoint: endpoint, completion: completion)
@@ -631,7 +671,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// - Parameter cid: Channel id of the channel to stop watching
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func stopWatching(cid: ChannelId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .stopWatching(cid: cid)) {
+        apiClient.request(endpoint: Endpoint<Response>.stopWatchingChannel(type: cid.type.rawValue, id: cid.id)) {
             completion?($0.error)
         }
     }
@@ -643,10 +683,10 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// - Parameters:
     ///   - query: Query object for watchers. See `ChannelWatcherListQuery`
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func channelWatchers(query: ChannelWatcherListQuery, completion: (@Sendable (Result<ChannelPayload, Error>) -> Void)? = nil) {
+    func channelWatchers(query: ChannelWatcherListQuery, completion: (@Sendable (Result<ChannelStateResponseFields, Error>) -> Void)? = nil) {
         apiClient.request(endpoint: .channelWatchers(query: query)) { (result: Result<ChannelStateResponse, Error>) in
             do {
-                let payload = try result.get().asChannelPayload
+                let payload = try result.get().asChannelStateResponseFields
                 self.database.write { (session) in
                     if let channel = session.channel(cid: query.cid) {
                         if query.pagination.offset == 0, payload.watchers?.isEmpty ?? false {
@@ -681,7 +721,11 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// - Parameter cid: Channel id of the channel to be watched
     /// - Parameter completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     func freezeChannel(_ freeze: Bool, cid: ChannelId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .freezeChannel(freeze, cid: cid)) {
+        apiClient.request(endpoint: Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
+            type: cid.type.rawValue,
+            id: cid.id,
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: ["frozen": .bool(freeze)])
+        )) {
             completion?($0.error)
         }
     }
@@ -713,11 +757,15 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     }
 
     func setPushPreference(
-        _ preference: PushPreferenceRequestPayload,
+        _ preference: PushPreferenceInput,
         cid: ChannelId,
         completion: @escaping @Sendable (Result<PushPreference, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .pushPreferences([preference])) { [weak self] (result: Result<PushPreferencesPayloadResponse, Error>) in
+        apiClient.request(
+            endpoint: Endpoint<UpsertPushPreferencesResponse>.updatePushNotificationPreferences(
+                upsertPushPreferencesRequest: UpsertPushPreferencesRequest(preferences: [preference])
+            )
+        ) { [weak self] (result: Result<UpsertPushPreferencesResponse, Error>) in
             switch result {
             case let .success(response):
                 guard let channelPref = response.channelPreferences.asModel()[cid] else {
@@ -750,7 +798,16 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     ///
     /// This will return the data present in the OG Metadata.
     public func enrichUrl(_ url: URL, completion: @escaping @Sendable (Result<LinkAttachmentPayload, Error>) -> Void) {
-        apiClient.request(endpoint: .enrichUrl(url: url)) { result in
+        let getOGEndpoint = Endpoint<GetOGResponse>.getOG(url: url.absoluteString)
+        let endpoint = Endpoint<LinkAttachmentPayload>(
+            path: getOGEndpoint.path,
+            method: getOGEndpoint.method,
+            queryItems: getOGEndpoint.queryItems,
+            requiresConnectionId: getOGEndpoint.requiresConnectionId,
+            requiresToken: getOGEndpoint.requiresToken,
+            body: getOGEndpoint.body
+        )
+        apiClient.request(endpoint: endpoint) { result in
             switch result {
             case let .success(payload):
                 completion(.success(payload))
@@ -791,22 +848,24 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     }
     
     func deleteFile(in cid: ChannelId, url: String, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteFile(cid: cid, url: url), completion: {
-            completion?($0.error)
-        })
+        apiClient.request(
+            endpoint: Endpoint<Response>.deleteChannelFile(type: cid.type.rawValue, id: cid.id, url: url),
+            completion: { completion?($0.error) }
+        )
     }
-    
+
     func deleteImage(in cid: ChannelId, url: String, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .deleteImage(cid: cid, url: url), completion: {
-            completion?($0.error)
-        })
+        apiClient.request(
+            endpoint: Endpoint<Response>.deleteChannelImage(type: cid.type.rawValue, id: cid.id, url: url),
+            completion: { completion?($0.error) }
+        )
     }
 
     // MARK: - private
 
-    private func messagePayload(text: String?, currentUserId: UserId?) -> MessageRequestBody? {
+    private func messagePayload(text: String?, currentUserId: UserId?) -> MessageRequest? {
         guard let text, let currentUserId else { return nil }
-        return MessageRequestBody(
+        return MessageRequest(
             id: .newUniqueId,
             text: text
         )
@@ -1069,7 +1128,7 @@ extension ChannelUpdater {
     @discardableResult func update(
         channelQuery: ChannelQuery,
         memberSorting: [Sorting<ChannelMemberListSortingKey>] = []
-    ) async throws -> ChannelPayload {
+    ) async throws -> ChannelStateResponseFields {
         // Just populate the closure since we select the endpoint based on it.
         var useCreateEndpoint: (@Sendable (ChannelId) -> Void)?
         if channelQuery.cid == nil {
@@ -1086,7 +1145,7 @@ extension ChannelUpdater {
         }
     }
 
-    func update(cid: ChannelId, channelPayload: ChannelEditDetailPayload) async throws {
+    func update(cid: ChannelId, channelPayload: ChannelInput) async throws {
         try await withCheckedThrowingContinuation { continuation in
             updateChannel(cid: cid, channelPayload: channelPayload) { error in
                 continuation.resume(with: error)
@@ -1094,7 +1153,7 @@ extension ChannelUpdater {
         }
     }
 
-    func updatePartial(cid: ChannelId, channelPayload: ChannelEditDetailPayload, unsetProperties: [String]) async throws {
+    func updatePartial(cid: ChannelId, channelPayload: ChannelInput, unsetProperties: [String]) async throws {
         try await withCheckedThrowingContinuation { continuation in
             partialChannelUpdate(cid: cid, updates: channelPayload, unsetProperties: unsetProperties) { error in
                 continuation.resume(with: error)

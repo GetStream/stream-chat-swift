@@ -274,7 +274,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let payload: ChannelEditDetailPayload = .init(
+        let payload: ChannelInput = .init(
             name: name,
             imageURL: imageURL,
             team: team,
@@ -320,7 +320,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let payload: ChannelEditDetailPayload = .init(
+        let payload: ChannelInput = .init(
             name: name,
             imageURL: imageURL,
             team: team,
@@ -1768,7 +1768,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let channelPreference = PushPreferenceRequestPayload(
+        let channelPreference = PushPreferenceInput(
             chatLevel: level.rawValue,
             channelId: channelId.rawValue,
             disabledUntil: nil,
@@ -1797,7 +1797,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let channelPreference = PushPreferenceRequestPayload(
+        let channelPreference = PushPreferenceInput(
             chatLevel: PushPreferenceLevel.all.rawValue,
             channelId: channelId.rawValue,
             disabledUntil: date,
@@ -1834,7 +1834,7 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         restrictedVisibility: [UserId] = [],
         location: NewLocationInfo? = nil,
         extraData: [String: RawJSON] = [:],
-        poll: PollPayload?,
+        poll: PollResponseData?,
         completion: (@MainActor (Result<MessageId, Error>) -> Void)? = nil
     ) {
         /// Perform action only if channel is already created on backend side and have a valid `cid`.

@@ -453,7 +453,7 @@ final class MessageSender_Tests: XCTestCase {
         try resumeAPIRequestAndWaitForLocalStateChange(messageId: "2", success: false)
         
         // We use mocked API client which does not do the automatic forwarding, therefore we simulate it here
-        apiClient.queueOfflineRequest?(DataEndpoint(path: .sendMessage(cid), method: .post))
+        apiClient.queueOfflineRequest?(DataEndpoint(path: .sendMessage(type: cid.type.rawValue, id: cid.id), method: .post))
         
         // Since connection error was received, all the remaining queued messages are sent directly to offline repository
         wait(for: [offlineQueuingExpectation], timeout: defaultTimeout)

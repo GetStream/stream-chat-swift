@@ -206,8 +206,8 @@ final class CurrentUserController_Drafts_Tests: XCTestCase {
 
             // Test a draft in a channel and thread in the same channel
             let messages = [
-                DraftPayload.dummy(cid: cid, createdAt: date, message: .dummy(text: "1")),
-                DraftPayload.dummy(cid: cid, createdAt: date.addingTimeInterval(1), message: .dummy(text: "2"), parentId: parentId)
+                DraftResponse.dummy(cid: cid, createdAt: date, message: .dummy(text: "1")),
+                DraftResponse.dummy(cid: cid, createdAt: date.addingTimeInterval(1), message: .dummy(text: "2"), parentId: parentId)
             ]
 
             try messages.forEach {

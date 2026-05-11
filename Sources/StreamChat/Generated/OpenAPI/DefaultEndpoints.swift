@@ -4,17 +4,17 @@
 
 import Foundation
 
-final class DefaultEndpoint<ResponseType: Decodable>: Codable, Sendable {
-    let path: DefaultEndpointPath
-    let method: DefaultEndpointMethod
+final class Endpoint<ResponseType: Decodable>: Codable, Sendable {
+    let path: EndpointPath
+    let method: EndpointMethod
     let queryItems: [String: String?]?
     let requiresConnectionId: Bool
     let requiresToken: Bool
     let body: (Encodable & Sendable)?
 
     init(
-        path: DefaultEndpointPath,
-        method: DefaultEndpointMethod,
+        path: EndpointPath,
+        method: EndpointMethod,
         queryItems: [String: String?]? = nil,
         requiresConnectionId: Bool = false,
         requiresToken: Bool = true,
@@ -39,8 +39,8 @@ final class DefaultEndpoint<ResponseType: Decodable>: Codable, Sendable {
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        path = try container.decode(DefaultEndpointPath.self, forKey: .path)
-        method = try container.decode(DefaultEndpointMethod.self, forKey: .method)
+        path = try container.decode(EndpointPath.self, forKey: .path)
+        method = try container.decode(EndpointMethod.self, forKey: .method)
         queryItems = try container.decodeIfPresent([String: String?].self, forKey: .queryItems)
         requiresConnectionId = try container.decode(Bool.self, forKey: .requiresConnectionId)
         requiresToken = try container.decode(Bool.self, forKey: .requiresToken)
@@ -66,7 +66,7 @@ private extension Encodable where Self: Sendable {
     }
 }
 
-enum DefaultEndpointMethod: String, Codable, Equatable {
+enum EndpointMethod: String, Codable, Equatable {
     case get = "GET"
     case post = "POST"
     case patch = "PATCH"
@@ -74,7 +74,7 @@ enum DefaultEndpointMethod: String, Codable, Equatable {
     case put = "PUT"
 }
 
-enum DefaultEndpointPath: Codable, Equatable {
+enum EndpointPath: Codable, Equatable {
     case addUserGroupMembers(id: String)
     case appeal
     case ban
@@ -187,6 +187,7 @@ enum DefaultEndpointPath: Codable, Equatable {
     case uploadFile
     case uploadImage
     case upsertConfig
+    case custom(String)
 
     var value: String {
         switch self {
@@ -414,12 +415,14 @@ enum DefaultEndpointPath: Codable, Equatable {
             return "/api/v2/uploads/image"
         case .upsertConfig:
             return "/api/v2/moderation/config"
+        case let .custom(path):
+            return path
         }
     }
 }
 
-extension DefaultEndpoint {
-    static func addUserGroupMembers(id: String, addUserGroupMembersRequest: AddUserGroupMembersRequest) -> DefaultEndpoint<AddUserGroupMembersResponse> {
+extension Endpoint {
+    static func addUserGroupMembers(id: String, addUserGroupMembersRequest: AddUserGroupMembersRequest) -> Endpoint<AddUserGroupMembersResponse> {
         .init(
             path: .addUserGroupMembers(id: id),
             method: .post,
@@ -429,7 +432,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func appeal(appealRequest: AppealRequest) -> DefaultEndpoint<AppealResponse> {
+    static func appeal(appealRequest: AppealRequest) -> Endpoint<AppealResponse> {
         .init(
             path: .appeal,
             method: .post,
@@ -439,7 +442,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func ban(banRequest: BanRequest) -> DefaultEndpoint<BanResponse> {
+    static func ban(banRequest: BanRequest) -> Endpoint<BanResponse> {
         .init(
             path: .ban,
             method: .post,
@@ -449,7 +452,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func blockUsers(blockUsersRequest: BlockUsersRequest) -> DefaultEndpoint<BlockUsersResponse> {
+    static func blockUsers(blockUsersRequest: BlockUsersRequest) -> Endpoint<BlockUsersResponse> {
         .init(
             path: .blockUsers,
             method: .post,
@@ -459,7 +462,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func castPollVote(messageId: String, pollId: String, castPollVoteRequest: CastPollVoteRequest) -> DefaultEndpoint<PollVoteResponse> {
+    static func castPollVote(messageId: String, pollId: String, castPollVoteRequest: CastPollVoteRequest) -> Endpoint<PollVoteResponse> {
         .init(
             path: .castPollVote(messageId: messageId, pollId: pollId),
             method: .post,
@@ -469,7 +472,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func createBlockList(createBlockListRequest: CreateBlockListRequest) -> DefaultEndpoint<CreateBlockListResponse> {
+    static func createBlockList(createBlockListRequest: CreateBlockListRequest) -> Endpoint<CreateBlockListResponse> {
         .init(
             path: .createBlockList,
             method: .post,
@@ -479,7 +482,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func createDevice(createDeviceRequest: CreateDeviceRequest) -> DefaultEndpoint<Response> {
+    static func createDevice(createDeviceRequest: CreateDeviceRequest) -> Endpoint<Response> {
         .init(
             path: .createDevice,
             method: .post,
@@ -489,7 +492,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func createDraft(type: String, id: String, createDraftRequest: CreateDraftRequest) -> DefaultEndpoint<CreateDraftResponse> {
+    static func createDraft(type: String, id: String, createDraftRequest: CreateDraftRequest) -> Endpoint<CreateDraftResponse> {
         .init(
             path: .createDraft(type: type, id: id),
             method: .post,
@@ -499,7 +502,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func createGuest(createGuestRequest: CreateGuestRequest) -> DefaultEndpoint<CreateGuestResponse> {
+    static func createGuest(createGuestRequest: CreateGuestRequest) -> Endpoint<CreateGuestResponse> {
         .init(
             path: .createGuest,
             method: .post,
@@ -510,7 +513,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func createPoll(createPollRequest: CreatePollRequest) -> DefaultEndpoint<PollResponse> {
+    static func createPoll(createPollRequest: CreatePollRequest) -> Endpoint<PollResponse> {
         .init(
             path: .createPoll,
             method: .post,
@@ -520,7 +523,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func createPollOption(pollId: String, createPollOptionRequest: CreatePollOptionRequest) -> DefaultEndpoint<PollOptionResponseOpenAPI> {
+    static func createPollOption(pollId: String, createPollOptionRequest: CreatePollOptionRequest) -> Endpoint<PollOptionResponseOpenAPI> {
         .init(
             path: .createPollOption(pollId: pollId),
             method: .post,
@@ -530,7 +533,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func createReminder(messageId: String, createReminderRequest: CreateReminderRequest) -> DefaultEndpoint<ReminderResponseData> {
+    static func createReminder(messageId: String, createReminderRequest: CreateReminderRequest) -> Endpoint<ReminderResponseData> {
         .init(
             path: .createReminder(messageId: messageId),
             method: .post,
@@ -540,7 +543,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func createUserGroup(createUserGroupRequest: CreateUserGroupRequest) -> DefaultEndpoint<CreateUserGroupResponse> {
+    static func createUserGroup(createUserGroupRequest: CreateUserGroupRequest) -> Endpoint<CreateUserGroupResponse> {
         .init(
             path: .createUserGroup,
             method: .post,
@@ -550,7 +553,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteBlockList(name: String, team: String?) -> DefaultEndpoint<Response> {
+    static func deleteBlockList(name: String, team: String?) -> Endpoint<Response> {
         .init(
             path: .deleteBlockList(name: name),
             method: .delete,
@@ -562,7 +565,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteChannel(type: String, id: String, hardDelete: Bool?) -> DefaultEndpoint<DeleteChannelResponse> {
+    static func deleteChannel(type: String, id: String, hardDelete: Bool?) -> Endpoint<DeleteChannelResponse> {
         .init(
             path: .deleteChannel(type: type, id: id),
             method: .delete,
@@ -574,7 +577,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteChannelFile(type: String, id: String, url: String?) -> DefaultEndpoint<Response> {
+    static func deleteChannelFile(type: String, id: String, url: String?) -> Endpoint<Response> {
         .init(
             path: .deleteChannelFile(type: type, id: id),
             method: .delete,
@@ -586,7 +589,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteChannelImage(type: String, id: String, url: String?) -> DefaultEndpoint<Response> {
+    static func deleteChannelImage(type: String, id: String, url: String?) -> Endpoint<Response> {
         .init(
             path: .deleteChannelImage(type: type, id: id),
             method: .delete,
@@ -598,7 +601,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteChannels(deleteChannelsRequest: DeleteChannelsRequest) -> DefaultEndpoint<DeleteChannelsResponse> {
+    static func deleteChannels(deleteChannelsRequest: DeleteChannelsRequest) -> Endpoint<DeleteChannelsResponse> {
         .init(
             path: .deleteChannels,
             method: .post,
@@ -608,7 +611,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteConfig(key: String, team: String?) -> DefaultEndpoint<DeleteModerationConfigResponse> {
+    static func deleteConfig(key: String, team: String?) -> Endpoint<DeleteModerationConfigResponse> {
         .init(
             path: .deleteConfig(key: key),
             method: .delete,
@@ -620,7 +623,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteDevice(id: String) -> DefaultEndpoint<Response> {
+    static func deleteDevice(id: String) -> Endpoint<Response> {
         .init(
             path: .deleteDevice,
             method: .delete,
@@ -632,7 +635,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteDraft(type: String, id: String, parentId: String?) -> DefaultEndpoint<Response> {
+    static func deleteDraft(type: String, id: String, parentId: String?) -> Endpoint<Response> {
         .init(
             path: .deleteDraft(type: type, id: id),
             method: .delete,
@@ -644,7 +647,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteFile(url: String?) -> DefaultEndpoint<Response> {
+    static func deleteFile(url: String?) -> Endpoint<Response> {
         .init(
             path: .deleteFile,
             method: .delete,
@@ -656,7 +659,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteImage(url: String?) -> DefaultEndpoint<Response> {
+    static func deleteImage(url: String?) -> Endpoint<Response> {
         .init(
             path: .deleteImage,
             method: .delete,
@@ -668,7 +671,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteMessage(id: String, hard: Bool?, deletedBy: String?, deleteForMe: Bool?) -> DefaultEndpoint<DeleteMessageResponse> {
+    static func deleteMessage(id: String, hard: Bool?, deletedBy: String?, deleteForMe: Bool?) -> Endpoint<DeleteMessageResponse> {
         .init(
             path: .deleteMessage(id: id),
             method: .delete,
@@ -682,7 +685,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deletePoll(pollId: String, userId: String?) -> DefaultEndpoint<Response> {
+    static func deletePoll(pollId: String, userId: String?) -> Endpoint<Response> {
         .init(
             path: .deletePoll(pollId: pollId),
             method: .delete,
@@ -694,7 +697,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deletePollOption(pollId: String, optionId: String, userId: String?) -> DefaultEndpoint<Response> {
+    static func deletePollOption(pollId: String, optionId: String, userId: String?) -> Endpoint<Response> {
         .init(
             path: .deletePollOption(pollId: pollId, optionId: optionId),
             method: .delete,
@@ -706,7 +709,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deletePollVote(messageId: String, pollId: String, voteId: String, userId: String?) -> DefaultEndpoint<PollVoteResponse> {
+    static func deletePollVote(messageId: String, pollId: String, voteId: String, userId: String?) -> Endpoint<PollVoteResponse> {
         .init(
             path: .deletePollVote(messageId: messageId, pollId: pollId, voteId: voteId),
             method: .delete,
@@ -718,7 +721,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteReaction(id: String, type: String, userId: String?) -> DefaultEndpoint<DeleteReactionResponse> {
+    static func deleteReaction(id: String, type: String, userId: String?) -> Endpoint<DeleteReactionResponse> {
         .init(
             path: .deleteReaction(id: id, type: type),
             method: .delete,
@@ -730,7 +733,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteReminder(messageId: String) -> DefaultEndpoint<DeleteReminderResponse> {
+    static func deleteReminder(messageId: String) -> Endpoint<DeleteReminderResponse> {
         .init(
             path: .deleteReminder(messageId: messageId),
             method: .delete,
@@ -740,7 +743,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func deleteUserGroup(id: String, teamId: String?) -> DefaultEndpoint<Response> {
+    static func deleteUserGroup(id: String, teamId: String?) -> Endpoint<Response> {
         .init(
             path: .deleteUserGroup(id: id),
             method: .delete,
@@ -752,7 +755,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func flag(flagRequest: FlagRequest) -> DefaultEndpoint<FlagResponse> {
+    static func flag(flagRequest: FlagRequest) -> Endpoint<FlagResponse> {
         .init(
             path: .flag,
             method: .post,
@@ -762,7 +765,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getApp() -> DefaultEndpoint<GetApplicationResponse> {
+    static func getApp() -> Endpoint<GetApplicationResponse> {
         .init(
             path: .getApp,
             method: .get,
@@ -772,7 +775,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getAppeal(id: String) -> DefaultEndpoint<GetAppealResponse> {
+    static func getAppeal(id: String) -> Endpoint<GetAppealResponse> {
         .init(
             path: .getAppeal(id: id),
             method: .get,
@@ -782,7 +785,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getBlockedUsers() -> DefaultEndpoint<GetBlockedUsersResponse> {
+    static func getBlockedUsers() -> Endpoint<GetBlockedUsersResponse> {
         .init(
             path: .getBlockedUsers,
             method: .get,
@@ -792,7 +795,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getConfig(key: String, team: String?) -> DefaultEndpoint<GetConfigResponse> {
+    static func getConfig(key: String, team: String?) -> Endpoint<GetConfigResponse> {
         .init(
             path: .getConfig(key: key),
             method: .get,
@@ -804,7 +807,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getDraft(type: String, id: String, parentId: String?) -> DefaultEndpoint<GetDraftResponse> {
+    static func getDraft(type: String, id: String, parentId: String?) -> Endpoint<GetDraftResponse> {
         .init(
             path: .getDraft(type: type, id: id),
             method: .get,
@@ -816,7 +819,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getManyMessages(type: String, id: String, ids: [String]) -> DefaultEndpoint<GetManyMessagesResponse> {
+    static func getManyMessages(type: String, id: String, ids: [String]) -> Endpoint<GetManyMessagesResponse> {
         .init(
             path: .getManyMessages(type: type, id: id),
             method: .get,
@@ -828,7 +831,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getMessage(id: String) -> DefaultEndpoint<GetMessageResponse> {
+    static func getMessage(id: String) -> Endpoint<GetMessageResponse> {
         .init(
             path: .getMessage(id: id),
             method: .get,
@@ -838,7 +841,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getOG(url: String) -> DefaultEndpoint<GetOGResponse> {
+    static func getOG(url: String) -> Endpoint<GetOGResponse> {
         .init(
             path: .getOG,
             method: .get,
@@ -850,7 +853,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getOrCreateChannel(type: String, id: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest) -> DefaultEndpoint<ChannelStateResponse> {
+    static func getOrCreateChannel(type: String, id: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest) -> Endpoint<ChannelStateResponse> {
         .init(
             path: .getOrCreateChannel(type: type, id: id),
             method: .post,
@@ -860,7 +863,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getOrCreateDistinctChannel(type: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest) -> DefaultEndpoint<ChannelStateResponse> {
+    static func getOrCreateDistinctChannel(type: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest) -> Endpoint<ChannelStateResponse> {
         .init(
             path: .getOrCreateDistinctChannel(type: type),
             method: .post,
@@ -870,7 +873,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getPoll(pollId: String, userId: String?) -> DefaultEndpoint<PollResponse> {
+    static func getPoll(pollId: String, userId: String?) -> Endpoint<PollResponse> {
         .init(
             path: .getPoll(pollId: pollId),
             method: .get,
@@ -882,7 +885,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getPollOption(pollId: String, optionId: String, userId: String?) -> DefaultEndpoint<PollOptionResponseOpenAPI> {
+    static func getPollOption(pollId: String, optionId: String, userId: String?) -> Endpoint<PollOptionResponseOpenAPI> {
         .init(
             path: .getPollOption(pollId: pollId, optionId: optionId),
             method: .get,
@@ -894,7 +897,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getReactions(id: String, limit: Int?, offset: Int?) -> DefaultEndpoint<GetReactionsResponse> {
+    static func getReactions(id: String, limit: Int?, offset: Int?) -> Endpoint<GetReactionsResponse> {
         .init(
             path: .getReactions(id: id),
             method: .get,
@@ -907,7 +910,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getReplies(parentId: String, limit: Int?, idGte: String?, idGt: String?, idLte: String?, idLt: String?, idAround: String?, sort: [SortParamRequestOpenAPI]?) -> DefaultEndpoint<GetRepliesResponse> {
+    static func getReplies(parentId: String, limit: Int?, idGte: String?, idGt: String?, idLte: String?, idLt: String?, idAround: String?, sort: [SortParamRequestOpenAPI]?) -> Endpoint<GetRepliesResponse> {
         .init(
             path: .getReplies(parentId: parentId),
             method: .get,
@@ -925,7 +928,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getThread(messageId: String, watch: Bool?, replyLimit: Int?, participantLimit: Int?, memberLimit: Int?) -> DefaultEndpoint<GetThreadResponse> {
+    static func getThread(messageId: String, watch: Bool?, replyLimit: Int?, participantLimit: Int?, memberLimit: Int?) -> Endpoint<GetThreadResponse> {
         .init(
             path: .getThread(messageId: messageId),
             method: .get,
@@ -940,7 +943,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getUserGroup(id: String, teamId: String?) -> DefaultEndpoint<GetUserGroupResponse> {
+    static func getUserGroup(id: String, teamId: String?) -> Endpoint<GetUserGroupResponse> {
         .init(
             path: .getUserGroup(id: id),
             method: .get,
@@ -952,7 +955,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func getUserLiveLocations() -> DefaultEndpoint<SharedLocationsResponse> {
+    static func getUserLiveLocations() -> Endpoint<SharedLocationsResponse> {
         .init(
             path: .getUserLiveLocations,
             method: .get,
@@ -962,7 +965,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func groupedQueryChannels(groupedQueryChannelsRequest: GroupedQueryChannelsRequest) -> DefaultEndpoint<GroupedQueryChannelsResponse> {
+    static func groupedQueryChannels(groupedQueryChannelsRequest: GroupedQueryChannelsRequest) -> Endpoint<GroupedQueryChannelsResponse> {
         .init(
             path: .groupedQueryChannels,
             method: .post,
@@ -972,7 +975,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func hideChannel(type: String, id: String, hideChannelRequest: HideChannelRequest) -> DefaultEndpoint<HideChannelResponse> {
+    static func hideChannel(type: String, id: String, hideChannelRequest: HideChannelRequest) -> Endpoint<HideChannelResponse> {
         .init(
             path: .hideChannel(type: type, id: id),
             method: .post,
@@ -982,7 +985,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func listBlockLists(team: String?) -> DefaultEndpoint<ListBlockListResponse> {
+    static func listBlockLists(team: String?) -> Endpoint<ListBlockListResponse> {
         .init(
             path: .listBlockLists,
             method: .get,
@@ -994,7 +997,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func listDevices() -> DefaultEndpoint<ListDevicesResponse> {
+    static func listDevices() -> Endpoint<ListDevicesResponse> {
         .init(
             path: .listDevices,
             method: .get,
@@ -1004,7 +1007,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func listUserGroups(limit: Int?, idGt: String?, createdAtGt: String?, teamId: String?) -> DefaultEndpoint<ListUserGroupsResponse> {
+    static func listUserGroups(limit: Int?, idGt: String?, createdAtGt: String?, teamId: String?) -> Endpoint<ListUserGroupsResponse> {
         .init(
             path: .listUserGroups,
             method: .get,
@@ -1019,7 +1022,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func longPoll(json: WSAuthMessage?) -> DefaultEndpoint<EmptyResponse> {
+    static func longPoll(json: WSAuthMessage?) -> Endpoint<EmptyResponse> {
         .init(
             path: .longPoll,
             method: .get,
@@ -1031,7 +1034,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest) -> DefaultEndpoint<MarkReadResponse> {
+    static func markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest) -> Endpoint<MarkReadResponse> {
         .init(
             path: .markChannelsRead,
             method: .post,
@@ -1041,7 +1044,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func markDelivered(markDeliveredRequest: MarkDeliveredRequest) -> DefaultEndpoint<MarkDeliveredResponse> {
+    static func markDelivered(markDeliveredRequest: MarkDeliveredRequest) -> Endpoint<MarkDeliveredResponse> {
         .init(
             path: .markDelivered,
             method: .post,
@@ -1051,7 +1054,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func markRead(type: String, id: String, markReadRequest: MarkReadRequest) -> DefaultEndpoint<MarkReadResponse> {
+    static func markRead(type: String, id: String, markReadRequest: MarkReadRequest) -> Endpoint<MarkReadResponse> {
         .init(
             path: .markRead(type: type, id: id),
             method: .post,
@@ -1061,7 +1064,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func markUnread(type: String, id: String, markUnreadRequest: MarkUnreadRequest) -> DefaultEndpoint<Response> {
+    static func markUnread(type: String, id: String, markUnreadRequest: MarkUnreadRequest) -> Endpoint<Response> {
         .init(
             path: .markUnread(type: type, id: id),
             method: .post,
@@ -1071,7 +1074,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func mute(muteRequest: MuteRequest) -> DefaultEndpoint<MuteResponse> {
+    static func mute(muteRequest: MuteRequest) -> Endpoint<MuteResponse> {
         .init(
             path: .mute,
             method: .post,
@@ -1081,7 +1084,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func muteChannel(muteChannelRequest: MuteChannelRequest) -> DefaultEndpoint<MuteChannelResponse> {
+    static func muteChannel(muteChannelRequest: MuteChannelRequest) -> Endpoint<MuteChannelResponse> {
         .init(
             path: .muteChannel,
             method: .post,
@@ -1091,7 +1094,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryAppeals(queryAppealsRequest: QueryAppealsRequest) -> DefaultEndpoint<QueryAppealsResponse> {
+    static func queryAppeals(queryAppealsRequest: QueryAppealsRequest) -> Endpoint<QueryAppealsResponse> {
         .init(
             path: .queryAppeals,
             method: .post,
@@ -1101,7 +1104,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryBannedUsers(payload: QueryBannedUsersPayload?) -> DefaultEndpoint<QueryBannedUsersResponse> {
+    static func queryBannedUsers(payload: QueryBannedUsersPayload?) -> Endpoint<QueryBannedUsersResponse> {
         .init(
             path: .queryBannedUsers,
             method: .get,
@@ -1113,7 +1116,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryChannels(queryChannelsRequest: QueryChannelsRequest) -> DefaultEndpoint<QueryChannelsResponse> {
+    static func queryChannels(queryChannelsRequest: QueryChannelsRequest) -> Endpoint<QueryChannelsResponse> {
         .init(
             path: .queryChannels,
             method: .post,
@@ -1123,7 +1126,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryDrafts(queryDraftsRequest: QueryDraftsRequest) -> DefaultEndpoint<QueryDraftsResponse> {
+    static func queryDrafts(queryDraftsRequest: QueryDraftsRequest) -> Endpoint<QueryDraftsResponse> {
         .init(
             path: .queryDrafts,
             method: .post,
@@ -1133,7 +1136,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryFutureChannelBans(payload: QueryFutureChannelBansPayload?) -> DefaultEndpoint<QueryFutureChannelBansResponse> {
+    static func queryFutureChannelBans(payload: QueryFutureChannelBansPayload?) -> Endpoint<QueryFutureChannelBansResponse> {
         .init(
             path: .queryFutureChannelBans,
             method: .get,
@@ -1145,7 +1148,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryMembers(payload: QueryMembersPayload?) -> DefaultEndpoint<MembersResponse> {
+    static func queryMembers(payload: QueryMembersPayload?) -> Endpoint<MembersResponse> {
         .init(
             path: .queryMembers,
             method: .get,
@@ -1157,7 +1160,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryMessageFlags(payload: QueryMessageFlagsPayload?) -> DefaultEndpoint<QueryMessageFlagsResponse> {
+    static func queryMessageFlags(payload: QueryMessageFlagsPayload?) -> Endpoint<QueryMessageFlagsResponse> {
         .init(
             path: .queryMessageFlags,
             method: .get,
@@ -1169,7 +1172,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryModerationConfigs(queryModerationConfigsRequest: QueryModerationConfigsRequest) -> DefaultEndpoint<QueryModerationConfigsResponse> {
+    static func queryModerationConfigs(queryModerationConfigsRequest: QueryModerationConfigsRequest) -> Endpoint<QueryModerationConfigsResponse> {
         .init(
             path: .queryModerationConfigs,
             method: .post,
@@ -1179,7 +1182,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryPollVotes(pollId: String, userId: String?, queryPollVotesRequest: QueryPollVotesRequest) -> DefaultEndpoint<PollVotesResponse> {
+    static func queryPollVotes(pollId: String, userId: String?, queryPollVotesRequest: QueryPollVotesRequest) -> Endpoint<PollVotesResponse> {
         .init(
             path: .queryPollVotes(pollId: pollId),
             method: .post,
@@ -1191,7 +1194,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryPolls(userId: String?, queryPollsRequest: QueryPollsRequest) -> DefaultEndpoint<QueryPollsResponse> {
+    static func queryPolls(userId: String?, queryPollsRequest: QueryPollsRequest) -> Endpoint<QueryPollsResponse> {
         .init(
             path: .queryPolls,
             method: .post,
@@ -1203,7 +1206,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryReactions(id: String, queryReactionsRequest: QueryReactionsRequest) -> DefaultEndpoint<QueryReactionsResponse> {
+    static func queryReactions(id: String, queryReactionsRequest: QueryReactionsRequest) -> Endpoint<QueryReactionsResponse> {
         .init(
             path: .queryReactions(id: id),
             method: .post,
@@ -1213,7 +1216,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryReminders(queryRemindersRequest: QueryRemindersRequest) -> DefaultEndpoint<QueryRemindersResponse> {
+    static func queryReminders(queryRemindersRequest: QueryRemindersRequest) -> Endpoint<QueryRemindersResponse> {
         .init(
             path: .queryReminders,
             method: .post,
@@ -1223,7 +1226,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryReviewQueue(queryReviewQueueRequest: QueryReviewQueueRequest) -> DefaultEndpoint<QueryReviewQueueResponse> {
+    static func queryReviewQueue(queryReviewQueueRequest: QueryReviewQueueRequest) -> Endpoint<QueryReviewQueueResponse> {
         .init(
             path: .queryReviewQueue,
             method: .post,
@@ -1233,7 +1236,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryThreads(queryThreadsRequest: QueryThreadsRequest) -> DefaultEndpoint<QueryThreadsResponse> {
+    static func queryThreads(queryThreadsRequest: QueryThreadsRequest) -> Endpoint<QueryThreadsResponse> {
         .init(
             path: .queryThreads,
             method: .post,
@@ -1243,7 +1246,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func queryUsers(payload: QueryUsersPayload?) -> DefaultEndpoint<QueryUsersResponse> {
+    static func queryUsers(payload: QueryUsersPayload?) -> Endpoint<QueryUsersResponse> {
         .init(
             path: .queryUsers,
             method: .get,
@@ -1255,7 +1258,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func removeUserGroupMembers(id: String, removeUserGroupMembersRequest: RemoveUserGroupMembersRequest) -> DefaultEndpoint<RemoveUserGroupMembersResponse> {
+    static func removeUserGroupMembers(id: String, removeUserGroupMembersRequest: RemoveUserGroupMembersRequest) -> Endpoint<RemoveUserGroupMembersResponse> {
         .init(
             path: .removeUserGroupMembers(id: id),
             method: .post,
@@ -1265,7 +1268,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func runMessageAction(id: String, messageActionRequest: MessageActionRequest) -> DefaultEndpoint<MessageActionResponse> {
+    static func runMessageAction(id: String, messageActionRequest: MessageActionRequest) -> Endpoint<MessageActionResponse> {
         .init(
             path: .runMessageAction(id: id),
             method: .post,
@@ -1275,7 +1278,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func search(payload: SearchPayload?) -> DefaultEndpoint<SearchResponse> {
+    static func search(payload: SearchPayload?) -> Endpoint<SearchResponse> {
         .init(
             path: .search,
             method: .get,
@@ -1287,7 +1290,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func searchUserGroups(query: String, limit: Int?, nameGt: String?, idGt: String?, teamId: String?) -> DefaultEndpoint<SearchUserGroupsResponse> {
+    static func searchUserGroups(query: String, limit: Int?, nameGt: String?, idGt: String?, teamId: String?) -> Endpoint<SearchUserGroupsResponse> {
         .init(
             path: .searchUserGroups,
             method: .get,
@@ -1303,7 +1306,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func sendEvent(type: String, id: String, sendEventRequest: SendEventRequest) -> DefaultEndpoint<EventResponse> {
+    static func sendEvent(type: String, id: String, sendEventRequest: SendEventRequest) -> Endpoint<EventResponse> {
         .init(
             path: .sendEvent(type: type, id: id),
             method: .post,
@@ -1313,7 +1316,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func sendMessage(type: String, id: String, sendMessageRequest: SendMessageRequest) -> DefaultEndpoint<SendMessageResponseOpenAPI> {
+    static func sendMessage(type: String, id: String, sendMessageRequest: SendMessageRequest) -> Endpoint<SendMessageResponseOpenAPI> {
         .init(
             path: .sendMessage(type: type, id: id),
             method: .post,
@@ -1323,7 +1326,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func sendReaction(id: String, sendReactionRequest: SendReactionRequest) -> DefaultEndpoint<SendReactionResponse> {
+    static func sendReaction(id: String, sendReactionRequest: SendReactionRequest) -> Endpoint<SendReactionResponse> {
         .init(
             path: .sendReaction(id: id),
             method: .post,
@@ -1333,7 +1336,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func showChannel(type: String, id: String) -> DefaultEndpoint<ShowChannelResponse> {
+    static func showChannel(type: String, id: String) -> Endpoint<ShowChannelResponse> {
         .init(
             path: .showChannel(type: type, id: id),
             method: .post,
@@ -1343,7 +1346,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func stopWatchingChannel(type: String, id: String) -> DefaultEndpoint<Response> {
+    static func stopWatchingChannel(type: String, id: String) -> Endpoint<Response> {
         .init(
             path: .stopWatchingChannel(type: type, id: id),
             method: .post,
@@ -1353,7 +1356,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func submitAction(submitActionRequest: SubmitActionRequest) -> DefaultEndpoint<SubmitActionResponse> {
+    static func submitAction(submitActionRequest: SubmitActionRequest) -> Endpoint<SubmitActionResponse> {
         .init(
             path: .submitAction,
             method: .post,
@@ -1363,7 +1366,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func sync(syncRequest: SyncRequest, withInaccessibleCids: Bool?, watch: Bool?) -> DefaultEndpoint<SyncResponse> {
+    static func sync(syncRequest: SyncRequest, withInaccessibleCids: Bool?, watch: Bool?) -> Endpoint<SyncResponse> {
         .init(
             path: .sync,
             method: .post,
@@ -1376,7 +1379,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func translateMessage(id: String, translateMessageRequest: TranslateMessageRequest) -> DefaultEndpoint<MessageActionResponse> {
+    static func translateMessage(id: String, translateMessageRequest: TranslateMessageRequest) -> Endpoint<MessageActionResponse> {
         .init(
             path: .translateMessage(id: id),
             method: .post,
@@ -1386,7 +1389,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func truncateChannel(type: String, id: String, truncateChannelRequest: TruncateChannelRequest) -> DefaultEndpoint<TruncateChannelResponse> {
+    static func truncateChannel(type: String, id: String, truncateChannelRequest: TruncateChannelRequest) -> Endpoint<TruncateChannelResponse> {
         .init(
             path: .truncateChannel(type: type, id: id),
             method: .post,
@@ -1396,7 +1399,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func unblockUsers(unblockUsersRequest: UnblockUsersRequest) -> DefaultEndpoint<UnblockUsersResponse> {
+    static func unblockUsers(unblockUsersRequest: UnblockUsersRequest) -> Endpoint<UnblockUsersResponse> {
         .init(
             path: .unblockUsers,
             method: .post,
@@ -1406,7 +1409,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func unmuteChannel(unmuteChannelRequest: UnmuteChannelRequest) -> DefaultEndpoint<UnmuteResponse> {
+    static func unmuteChannel(unmuteChannelRequest: UnmuteChannelRequest) -> Endpoint<UnmuteResponse> {
         .init(
             path: .unmuteChannel,
             method: .post,
@@ -1416,7 +1419,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func unreadCounts() -> DefaultEndpoint<WrappedUnreadCountsResponse> {
+    static func unreadCounts() -> Endpoint<WrappedUnreadCountsResponse> {
         .init(
             path: .unreadCounts,
             method: .get,
@@ -1426,7 +1429,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updateBlockList(name: String, updateBlockListRequest: UpdateBlockListRequest) -> DefaultEndpoint<UpdateBlockListResponse> {
+    static func updateBlockList(name: String, updateBlockListRequest: UpdateBlockListRequest) -> Endpoint<UpdateBlockListResponse> {
         .init(
             path: .updateBlockList(name: name),
             method: .put,
@@ -1436,7 +1439,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updateChannel(type: String, id: String, updateChannelRequest: UpdateChannelRequest) -> DefaultEndpoint<UpdateChannelResponse> {
+    static func updateChannel(type: String, id: String, updateChannelRequest: UpdateChannelRequest) -> Endpoint<UpdateChannelResponse> {
         .init(
             path: .updateChannel(type: type, id: id),
             method: .post,
@@ -1446,7 +1449,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updateChannelPartial(type: String, id: String, updateChannelPartialRequest: UpdateChannelPartialRequest) -> DefaultEndpoint<UpdateChannelPartialResponse> {
+    static func updateChannelPartial(type: String, id: String, updateChannelPartialRequest: UpdateChannelPartialRequest) -> Endpoint<UpdateChannelPartialResponse> {
         .init(
             path: .updateChannelPartial(type: type, id: id),
             method: .patch,
@@ -1456,7 +1459,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updateLiveLocation(updateLiveLocationRequest: UpdateLiveLocationRequest) -> DefaultEndpoint<SharedLocationResponse> {
+    static func updateLiveLocation(updateLiveLocationRequest: UpdateLiveLocationRequest) -> Endpoint<SharedLocationResponse> {
         .init(
             path: .updateLiveLocation,
             method: .put,
@@ -1466,7 +1469,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updateMemberPartial(type: String, id: String, updateMemberPartialRequest: UpdateMemberPartialRequest) -> DefaultEndpoint<UpdateMemberPartialResponse> {
+    static func updateMemberPartial(type: String, id: String, updateMemberPartialRequest: UpdateMemberPartialRequest) -> Endpoint<UpdateMemberPartialResponse> {
         .init(
             path: .updateMemberPartial(type: type, id: id),
             method: .patch,
@@ -1476,7 +1479,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updateMessage(id: String, updateMessageRequest: UpdateMessageRequest) -> DefaultEndpoint<UpdateMessageResponse> {
+    static func updateMessage(id: String, updateMessageRequest: UpdateMessageRequest) -> Endpoint<UpdateMessageResponse> {
         .init(
             path: .updateMessage(id: id),
             method: .post,
@@ -1486,7 +1489,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updateMessagePartial(id: String, updateMessagePartialRequest: UpdateMessagePartialRequest) -> DefaultEndpoint<UpdateMessagePartialResponse> {
+    static func updateMessagePartial(id: String, updateMessagePartialRequest: UpdateMessagePartialRequest) -> Endpoint<UpdateMessagePartialResponse> {
         .init(
             path: .updateMessagePartial(id: id),
             method: .put,
@@ -1496,7 +1499,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updatePoll(updatePollRequest: UpdatePollRequest) -> DefaultEndpoint<PollResponse> {
+    static func updatePoll(updatePollRequest: UpdatePollRequest) -> Endpoint<PollResponse> {
         .init(
             path: .updatePoll,
             method: .put,
@@ -1506,7 +1509,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updatePollOption(pollId: String, updatePollOptionRequest: UpdatePollOptionRequestOpenAPI) -> DefaultEndpoint<PollOptionResponseOpenAPI> {
+    static func updatePollOption(pollId: String, updatePollOptionRequest: UpdatePollOptionRequestOpenAPI) -> Endpoint<PollOptionResponseOpenAPI> {
         .init(
             path: .updatePollOption(pollId: pollId),
             method: .put,
@@ -1516,7 +1519,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updatePollPartial(pollId: String, updatePollPartialRequest: UpdatePollPartialRequest) -> DefaultEndpoint<PollResponse> {
+    static func updatePollPartial(pollId: String, updatePollPartialRequest: UpdatePollPartialRequest) -> Endpoint<PollResponse> {
         .init(
             path: .updatePollPartial(pollId: pollId),
             method: .patch,
@@ -1526,7 +1529,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updatePushNotificationPreferences(upsertPushPreferencesRequest: UpsertPushPreferencesRequest) -> DefaultEndpoint<UpsertPushPreferencesResponse> {
+    static func updatePushNotificationPreferences(upsertPushPreferencesRequest: UpsertPushPreferencesRequest) -> Endpoint<UpsertPushPreferencesResponse> {
         .init(
             path: .updatePushNotificationPreferences,
             method: .post,
@@ -1536,7 +1539,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updateReminder(messageId: String, updateReminderRequest: UpdateReminderRequest) -> DefaultEndpoint<UpdateReminderResponse> {
+    static func updateReminder(messageId: String, updateReminderRequest: UpdateReminderRequest) -> Endpoint<UpdateReminderResponse> {
         .init(
             path: .updateReminder(messageId: messageId),
             method: .patch,
@@ -1546,7 +1549,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updateThreadPartial(messageId: String, updateThreadPartialRequest: UpdateThreadPartialRequest) -> DefaultEndpoint<UpdateThreadPartialResponse> {
+    static func updateThreadPartial(messageId: String, updateThreadPartialRequest: UpdateThreadPartialRequest) -> Endpoint<UpdateThreadPartialResponse> {
         .init(
             path: .updateThreadPartial(messageId: messageId),
             method: .patch,
@@ -1556,7 +1559,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updateUserGroup(id: String, updateUserGroupRequest: UpdateUserGroupRequest) -> DefaultEndpoint<UpdateUserGroupResponse> {
+    static func updateUserGroup(id: String, updateUserGroupRequest: UpdateUserGroupRequest) -> Endpoint<UpdateUserGroupResponse> {
         .init(
             path: .updateUserGroup(id: id),
             method: .put,
@@ -1566,7 +1569,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updateUsers(updateUsersRequest: UpdateUsersRequest) -> DefaultEndpoint<UpdateUsersResponse> {
+    static func updateUsers(updateUsersRequest: UpdateUsersRequest) -> Endpoint<UpdateUsersResponse> {
         .init(
             path: .updateUsers,
             method: .post,
@@ -1576,7 +1579,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func updateUsersPartial(updateUsersPartialRequest: UpdateUsersPartialRequest) -> DefaultEndpoint<UpdateUsersResponse> {
+    static func updateUsersPartial(updateUsersPartialRequest: UpdateUsersPartialRequest) -> Endpoint<UpdateUsersResponse> {
         .init(
             path: .updateUsersPartial,
             method: .patch,
@@ -1586,7 +1589,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func uploadChannelFile(type: String, id: String, uploadChannelFileRequest: UploadChannelFileRequest) -> DefaultEndpoint<UploadChannelFileResponse> {
+    static func uploadChannelFile(type: String, id: String, uploadChannelFileRequest: UploadChannelFileRequest) -> Endpoint<UploadChannelFileResponse> {
         .init(
             path: .uploadChannelFile(type: type, id: id),
             method: .post,
@@ -1596,7 +1599,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func uploadChannelImage(type: String, id: String, uploadChannelRequest: UploadChannelRequest) -> DefaultEndpoint<UploadChannelResponse> {
+    static func uploadChannelImage(type: String, id: String, uploadChannelRequest: UploadChannelRequest) -> Endpoint<UploadChannelResponse> {
         .init(
             path: .uploadChannelImage(type: type, id: id),
             method: .post,
@@ -1606,7 +1609,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func uploadFile(fileUploadRequest: FileUploadRequest) -> DefaultEndpoint<FileUploadResponse> {
+    static func uploadFile(fileUploadRequest: FileUploadRequest) -> Endpoint<FileUploadResponse> {
         .init(
             path: .uploadFile,
             method: .post,
@@ -1616,7 +1619,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func uploadImage(imageUploadRequest: ImageUploadRequest) -> DefaultEndpoint<ImageUploadResponse> {
+    static func uploadImage(imageUploadRequest: ImageUploadRequest) -> Endpoint<ImageUploadResponse> {
         .init(
             path: .uploadImage,
             method: .post,
@@ -1626,7 +1629,7 @@ extension DefaultEndpoint {
         )
     }
 
-    static func upsertConfig(upsertConfigRequest: UpsertConfigRequest) -> DefaultEndpoint<UpsertConfigResponse> {
+    static func upsertConfig(upsertConfigRequest: UpsertConfigRequest) -> Endpoint<UpsertConfigResponse> {
         .init(
             path: .upsertConfig,
             method: .post,

@@ -6,23 +6,23 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-extension ChannelPayload {
+extension ChannelStateResponseFields {
     /// Returns dummy channel payload with the given values.
     static func dummy(
-        channel: ChannelDetailPayload = .dummy(),
+        channel: ChannelResponse = .dummy(),
         watcherCount: Int? = nil,
-        watchers: [UserPayload] = [],
-        members: [MemberPayload] = [],
-        membership: MemberPayload? = nil,
-        messages: [MessagePayload] = [],
-        pendingMessages: [MessagePayload] = [],
-        pinnedMessages: [MessagePayload] = [],
-        channelReads: [ChannelReadPayload] = [],
+        watchers: [UserResponse] = [],
+        members: [ChannelMemberResponse] = [],
+        membership: ChannelMemberResponse? = nil,
+        messages: [MessageResponse] = [],
+        pendingMessages: [MessageResponse] = [],
+        pinnedMessages: [MessageResponse] = [],
+        channelReads: [ReadStateResponse] = [],
         isHidden: Bool? = nil,
-        draft: DraftPayload? = nil,
-        activeLiveLocations: [SharedLocationPayload] = [],
-        pushPreference: PushPreferencePayload? = nil
-    ) -> ChannelPayload {
+        draft: DraftResponse? = nil,
+        activeLiveLocations: [SharedLocationResponseData] = [],
+        pushPreference: PushPreferencesResponse? = nil
+    ) -> ChannelStateResponseFields {
         _ = pushPreference
         return ChannelStateResponseFields(
             activeLiveLocations: activeLiveLocations,
@@ -42,9 +42,9 @@ extension ChannelPayload {
     }
 }
 
-extension ChannelReadPayload {
+extension ReadStateResponse {
     convenience init(
-        user: UserPayload,
+        user: UserResponse,
         lastReadAt: Date,
         lastReadMessageId: MessageId? = nil,
         unreadMessagesCount: Int

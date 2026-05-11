@@ -24,7 +24,7 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
     
     func test_createFromPayload_v1_bounce() throws {
         // Given
-        let payload = MessageModerationDetailsPayload(
+        let payload = ModerationV2Response(
             originalText: "bad message",
             action: "MESSAGE_RESPONSE_ACTION_BOUNCE",
             textHarms: nil,
@@ -50,7 +50,7 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
     
     func test_createFromPayload_v1_block() throws {
         // Given
-        let payload = MessageModerationDetailsPayload(
+        let payload = ModerationV2Response(
             originalText: "bad message",
             action: "MESSAGE_RESPONSE_ACTION_BLOCK",
             textHarms: nil,
@@ -76,7 +76,7 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
     
     func test_createFromPayload_v2_bounce() throws {
         // Given
-        let payload = MessageModerationDetailsPayload(
+        let payload = ModerationV2Response(
             originalText: "bad message",
             action: "bounce",
             textHarms: ["hate"],
@@ -107,7 +107,7 @@ final class MessageModerationDetailsDTO_Tests: XCTestCase {
     
     func test_createFromPayload_v2_remove() throws {
         // Given
-        let payload = MessageModerationDetailsPayload(
+        let payload = ModerationV2Response(
             originalText: "bad message",
             action: "remove",
             textHarms: nil,

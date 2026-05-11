@@ -6,24 +6,24 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
-extension ThreadPayload {
+extension ThreadStateResponse {
     /// Returns dummy thread payload with the given values.
     static func dummy(
         parentMessageId: MessageId,
-        parentMessage: MessagePayload? = nil,
-        channel: ChannelDetailPayload = .dummy(),
-        createdBy: UserPayload = .dummy(userId: .newUniqueId),
+        parentMessage: MessageResponse? = nil,
+        channel: ChannelResponse = .dummy(),
+        createdBy: UserResponse = .dummy(userId: .newUniqueId),
         replyCount: Int = 0,
         participantCount: Int = 0,
         activeParticipantCount: Int = 0,
-        threadParticipants: [ThreadParticipantPayload] = [],
+        threadParticipants: [ThreadParticipantOpenAPI] = [],
         lastMessageAt: Date? = nil,
         createdAt: Date = .unique,
         updatedAt: Date? = .unique,
         title: String? = nil,
-        latestReplies: [MessagePayload] = [],
-        read: [ThreadReadPayload] = [],
-        draft: DraftPayload? = nil,
+        latestReplies: [MessageResponse] = [],
+        read: [ReadStateResponse] = [],
+        draft: DraftResponse? = nil,
         extraData: [String: RawJSON] = [:]
     ) -> Self {
         .init(
@@ -47,12 +47,12 @@ extension ThreadPayload {
     }
 }
 
-extension ThreadPartialPayload {
+extension ThreadResponse {
     static func dummy(
         parentMessageId: MessageId,
-        parentMessage: MessagePayload? = nil,
-        channel: ChannelDetailPayload = .dummy(),
-        createdBy: UserPayload = .dummy(userId: .newUniqueId),
+        parentMessage: MessageResponse? = nil,
+        channel: ChannelResponse = .dummy(),
+        createdBy: UserResponse = .dummy(userId: .newUniqueId),
         replyCount: Int = 0,
         participantCount: Int = 0,
         activeParticipantCount: Int = 0,
@@ -61,7 +61,7 @@ extension ThreadPartialPayload {
         updatedAt: Date? = .unique,
         title: String? = nil,
         extraData: [String: RawJSON] = [:]
-    ) -> ThreadPartialPayload {
+    ) -> ThreadResponse {
         .init(
             parentMessageId: parentMessageId,
             parentMessage: parentMessage ?? .dummy(messageId: parentMessageId),
@@ -79,7 +79,7 @@ extension ThreadPartialPayload {
     }
 }
 
-extension ThreadDetailsPayload {
+extension ThreadResponse {
     static func dummy(
         parentMessageId: MessageId,
         cid: ChannelId = .unique,
@@ -90,7 +90,7 @@ extension ThreadDetailsPayload {
         createdAt: Date = .unique,
         updatedAt: Date = .unique,
         title: String? = nil
-    ) -> ThreadDetailsPayload {
+    ) -> ThreadResponse {
         .init(
             cid: cid,
             parentMessageId: parentMessageId,

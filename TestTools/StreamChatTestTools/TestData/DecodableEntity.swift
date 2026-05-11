@@ -9,8 +9,8 @@ protocol DecodableEntity: Decodable {
     var extraData: [String: RawJSON] { get }
 }
 
-extension MessagePayload: DecodableEntity {}
-extension MessageReactionPayload: DecodableEntity {}
-extension UserPayload: DecodableEntity {}
+extension MessageResponse: DecodableEntity {}
+extension ReactionResponse: DecodableEntity {}
+extension UserResponse: DecodableEntity {}
 extension OwnUserResponse: DecodableEntity {}
-extension ChannelDetailPayload: DecodableEntity {}
+extension ChannelResponse: DecodableEntity {}

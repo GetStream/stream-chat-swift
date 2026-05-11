@@ -22,7 +22,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
     }
 
     func test_currentUserPayload_customRolesEncoding() throws {
-        let payload: CurrentUserPayload = .dummy(userPayload: .dummy(userId: .unique, role: UserRole("banana-master")))
+        let payload: OwnUserResponse = .dummy(userPayload: .dummy(userId: .unique, role: UserRole("banana-master")))
 
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -38,15 +38,15 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
     }
 
     func test_currentUserPayload_isStoredAndLoadedFromDB() throws {
-        let userPayload: UserPayload = .dummy(
+        let userPayload: UserResponse = .dummy(
             userId: .unique,
             extraData: ["k": .string("v")],
             language: "pt"
         )
 
-        let payload: CurrentUserPayload = .dummy(
+        let payload: OwnUserResponse = .dummy(
             userPayload: userPayload,
-            devices: [DevicePayload.dummy],
+            devices: [DeviceResponse.dummy],
             mutedUsers: [
                 .dummy(userId: .unique),
                 .dummy(userId: .unique),
@@ -114,12 +114,12 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
     }
 
     func test_savingCurrentUser_removesCurrentDevice() throws {
-        let initialDevice = DevicePayload.dummy
-        let initialCurrentUserPayload = CurrentUserPayload.dummy(userId: .unique, role: .admin, devices: [initialDevice])
+        let initialDevice = DeviceResponse.dummy
+        let initialOwnUserResponse = OwnUserResponse.dummy(userId: .unique, role: .admin, devices: [initialDevice])
 
         // Save the payload to the db
         try database.writeSynchronously { session in
-            let dto = try session.saveCurrentUser(payload: initialCurrentUserPayload)
+            let dto = try session.saveCurrentUser(payload: initialOwnUserResponse)
             dto.currentDevice = dto.devices.first
         }
 
@@ -133,11 +133,11 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         // ..and is set to currentDevice
         XCTAssertNotEqual(currentUser?.currentDevice, nil)
 
-        let newCurrentUserPayload = CurrentUserPayload.dummy(userId: initialCurrentUserPayload.id, role: .admin, devices: [.dummy])
+        let newOwnUserResponse = OwnUserResponse.dummy(userId: initialOwnUserResponse.id, role: .admin, devices: [.dummy])
 
         // Save the payload to the db
         try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: newCurrentUserPayload)
+            try session.saveCurrentUser(payload: newOwnUserResponse)
         }
 
         // Assert only 1 device exists
@@ -150,7 +150,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
 
     func test_savingCurrentUser_whenUnreadThreadsCountNil_doesNotOverrideThreadsCount() throws {
         let userId = UserId.unique
-        let previousUserPayload = CurrentUserPayload.dummy(userId: userId, role: .admin, unreadCount: .init(
+        let previousUserPayload = OwnUserResponse.dummy(userId: userId, role: .admin, unreadCount: .init(
             channels: 3,
             messages: 2,
             threads: 3
@@ -167,7 +167,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(currentUser?.unreadCount.messages, 2)
         XCTAssertEqual(currentUser?.unreadCount.threads, 3)
 
-        let newUserPayload = CurrentUserPayload.dummy(userId: userId, role: .admin, unreadCount: .init(
+        let newUserPayload = OwnUserResponse.dummy(userId: userId, role: .admin, unreadCount: .init(
             channels: 3,
             messages: 2,
             threads: nil
@@ -184,21 +184,21 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
 
     func test_saveCurrentUser_removesChannelMutesNotInPayload() throws {
         // GIVEN
-        let userPayload: UserPayload = .dummy(userId: .unique)
-        let mute1 = MutedChannelPayload(
+        let userPayload: UserResponse = .dummy(userId: .unique)
+        let mute1 = ChannelMute(
             mutedChannel: .dummy(cid: .unique),
             user: userPayload,
             createdAt: .unique,
             updatedAt: .unique
         )
-        let mute2 = MutedChannelPayload(
+        let mute2 = ChannelMute(
             mutedChannel: .dummy(cid: .unique),
             user: userPayload,
             createdAt: .unique,
             updatedAt: .unique
         )
 
-        let payloadWithMutes: CurrentUserPayload = .dummy(
+        let payloadWithMutes: OwnUserResponse = .dummy(
             userPayload: userPayload,
             mutedChannels: [mute1, mute2]
         )
@@ -211,13 +211,13 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(try! database.viewContext.count(for: allMutesRequest), 2)
 
         // WHEN
-        let mute3 = MutedChannelPayload(
+        let mute3 = ChannelMute(
             mutedChannel: .dummy(cid: .unique),
             user: userPayload,
             createdAt: .unique,
             updatedAt: .unique
         )
-        let payloadWithUpdatedMutes: CurrentUserPayload = .dummy(
+        let payloadWithUpdatedMutes: OwnUserResponse = .dummy(
             userPayload: userPayload,
             mutedChannels: [mute1, mute3]
         )
@@ -236,7 +236,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
     func test_defaultExtraDataIsUsed_whenExtraDataDecodingFails() throws {
         let userId: UserId = .unique
 
-        let payload: CurrentUserPayload = .dummy(userId: userId, role: .user)
+        let payload: OwnUserResponse = .dummy(userId: userId, role: .user)
 
         try database.writeSynchronously { session in
             // Save the user
@@ -276,12 +276,12 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
     }
 
     func test_currentUserPayload_defaultPrivacySettingsValues() throws {
-        let userPayload: UserPayload = .dummy(
+        let userPayload: UserResponse = .dummy(
             userId: .unique,
             extraData: ["k": .string("v")],
             language: "pt"
         )
-        let payload: CurrentUserPayload = .dummy(
+        let payload: OwnUserResponse = .dummy(
             userPayload: userPayload,
             privacySettings: nil
         )

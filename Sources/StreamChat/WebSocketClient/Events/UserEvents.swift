@@ -19,7 +19,7 @@ public final class UserPresenceChangedEvent: Event {
 }
 
 final class UserPresenceChangedEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -54,7 +54,7 @@ public final class UserUpdatedEvent: Event {
 }
 
 final class UserUpdatedEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -104,7 +104,7 @@ public final class UserWatchingEvent: ChannelSpecificEvent {
 
 final class UserWatchingEventDTO: EventDTO {
     let cid: ChannelId
-    let user: UserPayload
+    let user: UserResponse
     let createdAt: Date
     let watcherCount: Int
     let isStarted: Bool
@@ -149,7 +149,7 @@ public final class UserGloballyBannedEvent: Event {
 }
 
 final class UserGloballyBannedEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -205,7 +205,7 @@ public final class UserBannedEvent: ChannelSpecificEvent {
 
 final class UserBannedEventDTO: EventDTO {
     let cid: ChannelId
-    let user: UserPayload
+    let user: UserResponse
     let ownerId: UserId
     let createdAt: Date
     let reason: String?
@@ -254,7 +254,7 @@ public final class UserGloballyUnbannedEvent: Event {
 }
 
 final class UserGloballyUnbannedEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -294,7 +294,7 @@ public final class UserUnbannedEvent: ChannelSpecificEvent {
 
 final class UserUnbannedEventDTO: EventDTO {
     let cid: ChannelId
-    let user: UserPayload
+    let user: UserResponse
     let createdAt: Date
     let payload: EventPayload
 
@@ -335,7 +335,7 @@ public final class UserMessagesDeletedEvent: Event {
 }
 
 final class UserMessagesDeletedEventDTO: EventDTO {
-    let user: UserPayload
+    let user: UserResponse
     let createdAt: Date
     let payload: EventPayload
 

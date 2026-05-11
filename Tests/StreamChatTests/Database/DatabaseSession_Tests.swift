@@ -68,9 +68,9 @@ final class DatabaseSession_Tests: XCTestCase {
         let channelId: ChannelId = .unique
         let messageId: MessageId = .unique
 
-        let channelPayload: ChannelDetailPayload = dummyPayload(with: channelId).channel!
+        let channelPayload: ChannelResponse = dummyPayload(with: channelId).channel!
 
-        let userPayload: UserPayload = .init(
+        let userPayload: UserResponse = .init(
             id: .unique,
             name: .unique,
             imageURL: .unique(),
@@ -87,7 +87,7 @@ final class DatabaseSession_Tests: XCTestCase {
             extraData: [:]
         )
 
-        let messagePayload = MessagePayload.dummy(
+        let messagePayload = MessageResponse.dummy(
             messageId: messageId,
             attachments: [],
             authorUserId: userPayload.id,
@@ -499,7 +499,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenMessageNewEventComes_whenIsThreadReply_thenShowInsideThreadIsTrue() throws {
         // GIVEN
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             messages: []
         )
 
@@ -508,7 +508,7 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // WHEN
-        let newMessage: MessagePayload = .dummy(
+        let newMessage: MessageResponse = .dummy(
             messageId: .unique,
             parentId: .unique,
             authorUserId: .unique,
@@ -532,7 +532,7 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenNotificationMessageNewEventComes_whenIsThreadReply_thenShowInsideThreadIsTrue() throws {
         // GIVEN
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             messages: []
         )
 
@@ -541,7 +541,7 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // WHEN
-        let newMessage: MessagePayload = .dummy(
+        let newMessage: MessageResponse = .dummy(
             messageId: .unique,
             parentId: .unique,
             authorUserId: .unique,
@@ -565,14 +565,14 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenMessageNewEventComes_whenMessageIsNotMarkedAsSent_markItAsSent() throws {
         // GIVEN
-        let channel: ChannelPayload = .dummy(channel: .dummy(cid: .unique))
+        let channel: ChannelStateResponseFields = .dummy(channel: .dummy(cid: .unique))
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channel)
         }
 
         // WHEN
-        let newMessage: MessagePayload = .dummy(
+        let newMessage: MessageResponse = .dummy(
             messageId: .unique,
             parentId: .unique,
             authorUserId: .unique,
@@ -610,13 +610,13 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenMessageNewEventComes_latestMessagesFirstReflectsNewMessage() throws {
         // GIVEN
-        let existingMessage: MessagePayload = .dummy(
+        let existingMessage: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: Date(timeIntervalSince1970: 1000)
         )
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             messages: [existingMessage]
         )
 
@@ -625,7 +625,7 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // WHEN
-        let newMessage: MessagePayload = .dummy(
+        let newMessage: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: Date(timeIntervalSince1970: 2000)
@@ -651,13 +651,13 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenMessageDeletedEvent_latestMessagesFirstStillReturnsDeletedMessage() throws {
         // GIVEN
-        let message: MessagePayload = .dummy(
+        let message: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: Date(timeIntervalSince1970: 1000)
         )
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             messages: [message]
         )
 
@@ -666,7 +666,7 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // WHEN
-        let deletedMessage: MessagePayload = .dummy(
+        let deletedMessage: MessageResponse = .dummy(
             messageId: message.id,
             authorUserId: message.user.id,
             createdAt: message.createdAt,
@@ -694,13 +694,13 @@ final class DatabaseSession_Tests: XCTestCase {
 
     func test_saveEvent_whenChannelTruncatedEventWithMessage_latestMessagesFirstReturnsSystemMessage() throws {
         // GIVEN
-        let existingMessage: MessagePayload = .dummy(
+        let existingMessage: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: Date(timeIntervalSince1970: 1000)
         )
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             messages: [existingMessage]
         )
 
@@ -709,7 +709,7 @@ final class DatabaseSession_Tests: XCTestCase {
         }
 
         // WHEN
-        let systemMessage: MessagePayload = .dummy(
+        let systemMessage: MessageResponse = .dummy(
             type: .system,
             messageId: .unique,
             authorUserId: .unique,
@@ -777,8 +777,8 @@ final class DatabaseSession_Tests: XCTestCase {
         nonisolated(unsafe) var voteId: String!
         let currentUserId = String.unique
         let secondOptionId = "789"
-        let firstOption = PollOptionPayload(id: pollOptionId, text: "First", custom: [:])
-        let secondOption = PollOptionPayload(id: secondOptionId, text: "Second", custom: [:])
+        let firstOption = PollOptionResponseData(id: pollOptionId, text: "First", custom: [:])
+        let secondOption = PollOptionResponseData(id: secondOptionId, text: "Second", custom: [:])
         
         let payload = XCTestCase().dummyPollVotePayload(optionId: pollOptionId, pollId: pollId)
         
@@ -827,7 +827,7 @@ final class DatabaseSession_Tests: XCTestCase {
         let pollOptionId = "345"
         let pollId = "123"
         let currentUserId = String.unique
-        let firstOption = PollOptionPayload(id: pollOptionId, text: "First", custom: [:])
+        let firstOption = PollOptionResponseData(id: pollOptionId, text: "First", custom: [:])
                 
         try database.createCurrentUser(id: currentUserId)
         

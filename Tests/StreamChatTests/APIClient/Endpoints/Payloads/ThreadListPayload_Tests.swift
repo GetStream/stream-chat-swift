@@ -11,13 +11,13 @@ import XCTest
 final class ThreadListPayload_Tests: XCTestCase {
     func test_threadList_decoding() throws {
         let url = XCTestCase.mockData(fromJSONFile: "ThreadList")
-        let payload = try JSONDecoder.default.decode(ThreadListPayload.self, from: url)
+        let payload = try JSONDecoder.default.decode(QueryThreadsResponse.self, from: url)
         XCTAssertEqual(payload.threads.count, 3)
     }
 
     func test_thread_decoding() throws {
         let url = XCTestCase.mockData(fromJSONFile: "Thread")
-        let payload = try JSONDecoder.default.decode(ThreadPayload.self, from: url)
+        let payload = try JSONDecoder.default.decode(ThreadStateResponse.self, from: url)
         XCTAssertEqual(payload.channelCid, "messaging:4AB11F2F-4")
         XCTAssertEqual(payload.parentMessageId, "488bba2a-193d-48d2-95ae-3aa4b8e34960")
         XCTAssertEqual(payload.parentMessage?.id, "488bba2a-193d-48d2-95ae-3aa4b8e34960")

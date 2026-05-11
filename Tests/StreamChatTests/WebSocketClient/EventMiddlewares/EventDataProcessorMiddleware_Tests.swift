@@ -55,9 +55,9 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
 
-        let reactionPayload: MessageReactionPayload = .dummy(
+        let reactionPayload: ReactionResponse = .dummy(
             messageId: messageId,
-            user: UserPayload.dummy(userId: .unique)
+            user: UserResponse.dummy(userId: .unique)
         )
 
         try database.writeSynchronously { session in
@@ -104,17 +104,17 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
     func test_middleware_handlesReactionUpdated() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: .unique)
+        let messagePayload: MessageResponse = .dummy(messageId: messageId, authorUserId: .unique)
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             try session.saveMessage(payload: messagePayload, for: cid, syncOwnReactions: true, cache: nil)
         }
 
-        let user = UserPayload.dummy(userId: .unique)
+        let user = UserResponse.dummy(userId: .unique)
 
         // Create reaction payload.
-        let reactionPayload: MessageReactionPayload = .dummy(
+        let reactionPayload: ReactionResponse = .dummy(
             messageId: messageId,
             user: user
         )
@@ -156,7 +156,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
     func test_middleware_handlesReactionNewEvent() throws {
         let cid: ChannelId = .unique
         let messageId: MessageId = .unique
-        let messagePayload: MessagePayload = .dummy(messageId: messageId, authorUserId: .unique)
+        let messagePayload: MessageResponse = .dummy(messageId: messageId, authorUserId: .unique)
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
@@ -164,13 +164,13 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         }
 
         // Create reaction payload.
-        let reactionPayload: MessageReactionPayload = .dummy(
+        let reactionPayload: ReactionResponse = .dummy(
             messageId: messageId,
-            user: UserPayload.dummy(userId: .unique)
+            user: UserResponse.dummy(userId: .unique)
         )
 
         // Create event payload.
-        let user = UserPayload.dummy(userId: .unique)
+        let user = UserResponse.dummy(userId: .unique)
         let eventPayload: EventPayload = .init(
             eventType: .reactionNew,
             cid: cid,

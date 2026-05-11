@@ -85,7 +85,7 @@ extension SharedLocationDTO {
 
 extension NSManagedObjectContext {
     @discardableResult
-    func saveLocation(payload: SharedLocationPayload, cache: PreWarmedCache?) throws -> SharedLocationDTO {
+    func saveLocation(payload: SharedLocationResponseData, cache: PreWarmedCache?) throws -> SharedLocationDTO {
         let locationDTO = SharedLocationDTO.loadOrCreate(
             messageId: payload.messageId,
             context: self,

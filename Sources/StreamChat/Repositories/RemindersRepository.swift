@@ -35,7 +35,17 @@ class RemindersRepository: @unchecked Sendable {
         query: MessageReminderListQuery,
         completion: @escaping @Sendable (Result<ReminderListResponse, Error>) -> Void
     ) {
-        apiClient.request(endpoint: .queryReminders(query: query)) { [weak self] result in
+        let filter = query.filter?.toRawJSONDictionary() ?? [:]
+        let request = QueryRemindersRequest(
+            filter: filter.isEmpty ? nil : filter,
+            limit: query.pagination.pageSize,
+            next: query.pagination.cursor,
+            prev: nil,
+            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+        )
+        apiClient.request(
+            endpoint: Endpoint<QueryRemindersResponse>.queryReminders(queryRemindersRequest: request)
+        ) { [weak self] result in
             switch result {
             case .success(let response):
                 self?.database.write(
@@ -71,16 +81,16 @@ class RemindersRepository: @unchecked Sendable {
         remindAt: Date?,
         completion: @escaping @Sendable (Result<MessageReminder, Error>) -> Void
     ) {
-        let requestBody = ReminderRequestBody(remindAt: remindAt)
-        let endpoint: Endpoint<ReminderResponsePayload> = .createReminder(
+        let requestBody = CreateReminderRequest(remindAt: remindAt)
+        let endpoint: Endpoint<ReminderResponseData> = .createReminder(
             messageId: messageId,
-            request: requestBody
+            createReminderRequest: requestBody
         )
 
         // First optimistically create the reminder locally
         database.write { session in
             let now = Date()
-            let reminderPayload = ReminderPayload(
+            let reminderPayload = ReminderResponseData(
                 channelCid: cid,
                 messageId: messageId,
                 message: nil,
@@ -95,7 +105,7 @@ class RemindersRepository: @unchecked Sendable {
                 switch result {
                 case .success(let payload):
                     self?.database.write(converting: {
-                        try $0.saveReminder(payload: payload.reminder, cache: nil).asModel()
+                        try $0.saveReminder(payload: payload, cache: nil).asModel()
                     }, completion: completion)
                 case .failure(let error):
                     // Rollback the optimistic update if the API call fails
@@ -108,7 +118,7 @@ class RemindersRepository: @unchecked Sendable {
             }
         }
     }
-    
+
     /// Updates an existing reminder for a message.
     /// - Parameters:
     ///   - messageId: The message identifier for the reminder to update.
@@ -121,8 +131,8 @@ class RemindersRepository: @unchecked Sendable {
         remindAt: Date?,
         completion: @escaping @Sendable (Result<MessageReminder, Error>) -> Void
     ) {
-        let requestBody = ReminderRequestBody(remindAt: remindAt)
-        let endpoint: Endpoint<ReminderResponsePayload> = .updateReminder(messageId: messageId, request: requestBody)
+        let requestBody = UpdateReminderRequest(remindAt: remindAt)
+        let endpoint: Endpoint<UpdateReminderResponse> = .updateReminder(messageId: messageId, updateReminderRequest: requestBody)
         
         // Save current data for potential rollback
         nonisolated(unsafe) var originalRemindAt: Date?
@@ -171,10 +181,10 @@ class RemindersRepository: @unchecked Sendable {
         cid: ChannelId,
         completion: @escaping @Sendable (Error?) -> Void
     ) {
-        let endpoint: Endpoint<EmptyResponse> = .deleteReminder(messageId: messageId)
+        let endpoint: Endpoint<DeleteReminderResponse> = .deleteReminder(messageId: messageId)
         
         // Save data for potential rollback
-        nonisolated(unsafe) var originalPayload: ReminderPayload?
+        nonisolated(unsafe) var originalPayload: ReminderResponseData?
         
         // First optimistically delete the reminder locally
         database.write { session in
@@ -187,7 +197,7 @@ class RemindersRepository: @unchecked Sendable {
             // Get original reminder data for potential rollback
             if let reminderDTO = messageDTO.reminder {
                 // Store the original state for potential rollback
-                originalPayload = ReminderPayload(
+                originalPayload = ReminderResponseData(
                     channelCid: cid,
                     messageId: messageId,
                     message: nil,

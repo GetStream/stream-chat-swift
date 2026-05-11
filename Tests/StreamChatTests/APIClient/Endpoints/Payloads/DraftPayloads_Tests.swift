@@ -14,7 +14,7 @@ private extension Data {
 final class DraftPayloads_Tests: XCTestCase {
     func test_draftPayloadResponse_decodingFromJSON() throws {
         // Given
-        let json = try JSONDecoder.default.decode(DraftPayloadResponse.self, from: .draftMessage)
+        let json = try JSONDecoder.default.decode(GetDraftResponse.self, from: .draftMessage)
         
         // Then
         XCTAssertEqual(json.draft.cid?.rawValue, "messaging:!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E")
@@ -48,7 +48,7 @@ final class DraftPayloads_Tests: XCTestCase {
         let data = Data(jsonString.utf8)
         
         // When
-        let response = try JSONDecoder.default.decode(DraftListPayloadResponse.self, from: data)
+        let response = try JSONDecoder.default.decode(QueryDraftsResponse.self, from: data)
         
         // Then
         XCTAssertEqual(response.drafts.count, 1)
@@ -60,7 +60,7 @@ final class DraftPayloads_Tests: XCTestCase {
     
     func test_draftMessageRequestBody_encoding() throws {
         // Given
-        let requestBody = DraftMessageRequestBody(
+        let requestBody = CreateDraftRequest(
             id: "draft-id",
             text: "Hello @user1",
             command: "/giphy",

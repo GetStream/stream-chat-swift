@@ -22,7 +22,7 @@ final class PinnedMessagesQuery_IntegrationTests: XCTestCase {
         )
 
         // Create endpoint.
-        let endpoint: Endpoint<PinnedMessagesPayload> = .pinnedMessages(
+        let endpoint: Endpoint<MessageListPayload> = .pinnedMessages(
             cid: cid,
             query: query
         )

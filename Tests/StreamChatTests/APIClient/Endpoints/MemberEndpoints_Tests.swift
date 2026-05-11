@@ -7,56 +7,29 @@
 import XCTest
 
 final class MemberEndpoints_Tests: XCTestCase {
-    func test_channelMembers_buildsCorrectly() {
-        let query = ChannelMemberListQuery(
-            cid: .unique,
-            filter: .equal(.id, to: "Luke"),
-            sort: [.init(key: .createdAt)]
-        )
+    func test_queryMembers_buildsGeneratedEndpoint() {
+        let payload = QueryMembersPayload(filterConditions: [:], id: "general", limit: 25, type: "messaging")
+        let endpoint: Endpoint<MembersResponse> = .queryMembers(payload: payload)
 
-        let expectedEndpoint = Endpoint<ChannelMemberListPayload>(
-            path: .members,
-            method: .get,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["payload": query]
-        )
-
-        // Build endpoint.
-        let endpoint: Endpoint<ChannelMemberListPayload> = .channelMembers(query: query)
-
-        // Assert endpoint is built correctly.
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
-        XCTAssertEqual("members", endpoint.path.value)
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/members")
+        XCTAssertEqual(endpoint.method, .get)
+        XCTAssertNotNil(endpoint.queryItems?["payload"] ?? nil)
+        XCTAssertFalse(endpoint.requiresConnectionId)
+        XCTAssertNil(endpoint.body)
     }
 
-    func test_partialMemberUpdate_buildsCorrectly() {
-        let userId: UserId = "test-user"
-        let cid: ChannelId = .unique
-        let updates = MemberUpdatePayload(extraData: ["is_premium": .bool(true)])
-        let unset: [String] = ["is_cool"]
-
-        let body: [String: AnyEncodable] = [
-            "set": AnyEncodable(["is_premium": true]),
-            "unset": AnyEncodable(["is_cool"])
-        ]
-        let expectedEndpoint = Endpoint<PartialMemberUpdateResponse>(
-            path: .partialMemberUpdate(userId: userId, cid: cid),
-            method: .patch,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: body
+    func test_updateMemberPartial_buildsGeneratedEndpoint() {
+        let request = UpdateMemberPartialRequest(set: ["role": .string("moderator")], unset: ["archived"])
+        let endpoint: Endpoint<UpdateMemberPartialResponse> = .updateMemberPartial(
+            type: "messaging",
+            id: "general",
+            updateMemberPartialRequest: request
         )
 
-        // Build endpoint.
-        let endpoint: Endpoint<PartialMemberUpdateResponse> = .partialMemberUpdate(
-            userId: userId,
-            cid: cid,
-            updates: updates,
-            unset: unset
-        )
-
-        // Assert endpoint is built correctly.
-        XCTAssertEqual(AnyEndpoint(expectedEndpoint), AnyEndpoint(endpoint))
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/channels/messaging/general/member")
+        XCTAssertEqual(endpoint.method, .patch)
+        XCTAssertNil(endpoint.queryItems)
+        XCTAssertFalse(endpoint.requiresConnectionId)
+        XCTAssertEqual(endpoint.body as? UpdateMemberPartialRequest, request)
     }
 }

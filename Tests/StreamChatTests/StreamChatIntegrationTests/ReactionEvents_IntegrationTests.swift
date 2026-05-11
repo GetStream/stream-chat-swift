@@ -143,10 +143,10 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
-        let channel: ChannelDetailPayload = .dummy(cid: .unique)
-        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        let user: UserPayload = .dummy(userId: .unique)
-        let reaction: MessageReactionPayload = .dummy(messageId: message.id, user: user)
+        let channel: ChannelResponse = .dummy(cid: .unique)
+        let message: MessageResponse = .dummy(messageId: .unique, authorUserId: .unique)
+        let user: UserResponse = .dummy(userId: .unique)
+        let reaction: ReactionResponse = .dummy(messageId: message.id, user: user)
 
         let eventPayload = EventPayload(
             eventType: .reactionNew,
@@ -185,10 +185,10 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
-        let channel: ChannelDetailPayload = .dummy(cid: .unique)
-        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        let user: UserPayload = .dummy(userId: .unique)
-        let reaction: MessageReactionPayload = .dummy(messageId: message.id, user: user)
+        let channel: ChannelResponse = .dummy(cid: .unique)
+        let message: MessageResponse = .dummy(messageId: .unique, authorUserId: .unique)
+        let user: UserResponse = .dummy(userId: .unique)
+        let reaction: ReactionResponse = .dummy(messageId: message.id, user: user)
 
         let eventPayload = EventPayload(
             eventType: .reactionUpdated,
@@ -227,10 +227,10 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
-        let channel: ChannelDetailPayload = .dummy(cid: .unique)
-        let message: MessagePayload = .dummy(messageId: .unique, authorUserId: .unique)
-        let user: UserPayload = .dummy(userId: .unique)
-        let reaction: MessageReactionPayload = .dummy(messageId: message.id, user: user)
+        let channel: ChannelResponse = .dummy(cid: .unique)
+        let message: MessageResponse = .dummy(messageId: .unique, authorUserId: .unique)
+        let user: UserResponse = .dummy(userId: .unique)
+        let reaction: ReactionResponse = .dummy(messageId: message.id, user: user)
 
         let eventPayload = EventPayload(
             eventType: .reactionDeleted,

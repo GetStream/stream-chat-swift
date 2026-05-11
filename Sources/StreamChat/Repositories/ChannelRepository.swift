@@ -15,12 +15,12 @@ class ChannelRepository: @unchecked Sendable {
     }
     
     func getChannel(for query: ChannelQuery, store: Bool, completion: @escaping @Sendable (Result<ChatChannel, Error>) -> Void) {
-        let endpoint: Endpoint = query.options == .state ? .channelState(query: query) : .updateChannel(query: query)
-        apiClient.request(endpoint: endpoint) { [database] result in
+        let requiresConnectionId = query.options != .state && query.options.contains(oneOf: [.presence, .state, .watch])
+        apiClient.request(endpoint: .channelQuery(query, requiresConnectionId: requiresConnectionId)) { [database] result in
             switch result {
             case .success(let channelPayload):
                 database.write(converting: { session in
-                    let dto = try session.saveChannel(payload: channelPayload.asChannelPayload)
+                    let dto = try session.saveChannel(payload: channelPayload.asChannelStateResponseFields)
                     let model = try dto.asModel()
                     // Currently there is no direct payload to model conversion available
                     // Therefore, the channel has to be added to the context and then converted.
@@ -44,7 +44,13 @@ class ChannelRepository: @unchecked Sendable {
         userId: UserId,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] result in
+        apiClient.request(
+            endpoint: Endpoint<MarkReadResponse>.markRead(
+                type: cid.type.rawValue,
+                id: cid.id,
+                markReadRequest: MarkReadRequest()
+            )
+        ) { [weak self] result in
             if let error = result.error {
                 completion?(error)
                 return
@@ -74,7 +80,11 @@ class ChannelRepository: @unchecked Sendable {
         completion: (@Sendable (Result<ChatChannel, Error>) -> Void)? = nil
     ) {
         apiClient.request(
-            endpoint: .markUnread(cid: cid, payload: .init(criteria: unreadCriteria, userId: userId))
+            endpoint: Endpoint<Response>.markUnread(
+                type: cid.type.rawValue,
+                id: cid.id,
+                markUnreadRequest: MarkUnreadRequest(criteria: unreadCriteria, userId: userId)
+            )
         ) { [weak self] result in
             if let error = result.error {
                 completion?(.failure(error))

@@ -82,7 +82,7 @@ extension PollOptionDTO {
 
 extension NSManagedObjectContext {
     func savePollOption(
-        payload: PollOptionPayload,
+        payload: PollOptionResponseData,
         pollId: String,
         cache: PreWarmedCache?
     ) throws -> PollOptionDTO {

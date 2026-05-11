@@ -645,7 +645,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // Token Provider Failure
         let apiError = TestError()
-        apiClient.test_mockUnmanagedResponseResult(Result<GuestUserTokenPayload, Error>.failure(apiError))
+        apiClient.test_mockUnmanagedResponseResult(Result<CreateGuestResponse, Error>.failure(apiError))
 
         let completionExpectation = expectation(description: "Connect completion")
         nonisolated(unsafe) var receivedError: Error?
@@ -661,7 +661,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         XCTAssertNil(repository.currentToken)
         XCTAssertEqual(receivedError, apiError)
         let request = try XCTUnwrap(apiClient.unmanagedRequest_endpoint)
-        XCTAssertEqual(request.path, .guest)
+        XCTAssertEqual(request.path, .createGuest)
         XCTAssertNotCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
         XCTAssertNotCall(ConnectionRepository_Mock.Signature.forceConnectionInactiveMode, on: connectionRepository)
         XCTAssertEqual(delegate.logoutCallCount, 1)
@@ -682,8 +682,8 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // API Result
         apiClient.test_mockUnmanagedResponseResult(
-            Result<GuestUserTokenPayload, Error>.success(GuestUserTokenPayload(
-                user: CurrentUserPayload.dummy(userId: "", role: .user),
+            Result<CreateGuestResponse, Error>.success(CreateGuestResponse(
+                user: OwnUserResponse.dummy(userId: "", role: .user),
                 token: apiToken
             )
             )
@@ -702,7 +702,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(repository.currentToken, apiToken)
         let request = try XCTUnwrap(apiClient.unmanagedRequest_endpoint)
-        XCTAssertEqual(request.path, .guest)
+        XCTAssertEqual(request.path, .createGuest)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, apiToken)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, userInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
@@ -725,8 +725,8 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // API Result
         apiClient.test_mockUnmanagedResponseResult(
-            Result<GuestUserTokenPayload, Error>.success(GuestUserTokenPayload(
-                user: CurrentUserPayload.dummy(userId: "", role: .user),
+            Result<CreateGuestResponse, Error>.success(CreateGuestResponse(
+                user: OwnUserResponse.dummy(userId: "", role: .user),
                 token: apiToken
             )
             )
@@ -745,7 +745,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertEqual(repository.currentToken, apiToken)
         let request = try XCTUnwrap(apiClient.unmanagedRequest_endpoint)
-        XCTAssertEqual(request.path, .guest)
+        XCTAssertEqual(request.path, .createGuest)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointToken, apiToken)
         XCTAssertEqual(connectionRepository.updateWebSocketEndpointUserInfo, userInfo)
         XCTAssertCall(ConnectionRepository_Mock.Signature.connect, on: connectionRepository)
@@ -1143,7 +1143,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
     private func setCurrentUserId(userId: UserId, delegate: AuthenticationRepositoryDelegateMock) throws {
         try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: CurrentUserPayload.dummy(userId: userId, role: .user))
+            try session.saveCurrentUser(payload: OwnUserResponse.dummy(userId: userId, role: .user))
         }
 
         repository = AuthenticationRepository(

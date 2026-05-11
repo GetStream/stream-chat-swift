@@ -226,7 +226,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_lastOldestReplyId_whenPaginationStateHasOldestFetchedMessage_thenReturnsItsId() {
         // Given
-        let oldestFetchedMessage = MessagePayload.dummy()
+        let oldestFetchedMessage = MessageResponse.dummy()
         replyPaginationHandler.mockState.oldestFetchedMessage = oldestFetchedMessage
 
         // When
@@ -251,7 +251,7 @@ final class MessageController_Tests: XCTestCase {
 
     func test_lastNewestReplyId_whenPaginationStateHasNewestFetchedMessage_thenReturnsItsId() {
         // Given
-        let newestFetchedMessage = MessagePayload.dummy()
+        let newestFetchedMessage = MessageResponse.dummy()
         replyPaginationHandler.mockState.newestFetchedMessage = newestFetchedMessage
 
         // When
@@ -345,7 +345,7 @@ final class MessageController_Tests: XCTestCase {
         XCTAssertEqual(message.text, messageLocalText)
 
         // Simulate response from the backend with updated `text`, update the local message in the database
-        let messagePayload: MessagePayload = .dummy(
+        let messagePayload: MessageResponse = .dummy(
             messageId: messageId,
             authorUserId: currentUserId,
             text: .unique
@@ -383,14 +383,14 @@ final class MessageController_Tests: XCTestCase {
         let delegate = TestDelegate()
         controller.delegate = delegate
         
-        let reply1: MessagePayload = .dummy(
+        let reply1: MessageResponse = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
             authorUserId: .unique
         )
 
-        let reply2: MessagePayload = .dummy(
+        let reply2: MessageResponse = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
@@ -429,7 +429,7 @@ final class MessageController_Tests: XCTestCase {
         client = ChatClient_Mock(config: ChatClient.defaultMockedConfig)
         controller = ChatMessageController(client: client, cid: cid, messageId: messageId, replyPaginationHandler: replyPaginationHandler, environment: env.controllerEnvironment)
 
-        let reply1: MessagePayload = .dummy(
+        let reply1: MessageResponse = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
@@ -438,7 +438,7 @@ final class MessageController_Tests: XCTestCase {
         )
 
         let createdAt = Date.unique(after: truncatedDate)
-        let reply2: MessagePayload = .dummy(
+        let reply2: MessageResponse = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
@@ -448,7 +448,7 @@ final class MessageController_Tests: XCTestCase {
         )
 
         // Insert 3rd reply before truncation date
-        let reply3: MessagePayload = .dummy(
+        let reply3: MessageResponse = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
@@ -485,7 +485,7 @@ final class MessageController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
 
         // Insert a reply
-        let nonShadowedReply: MessagePayload = .dummy(
+        let nonShadowedReply: MessageResponse = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
@@ -496,7 +496,7 @@ final class MessageController_Tests: XCTestCase {
 
         // Insert shadowed reply by another user
         let createdAt = Date.unique(after: truncatedDate)
-        let shadowedReply: MessagePayload = .dummy(
+        let shadowedReply: MessageResponse = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
@@ -535,7 +535,7 @@ final class MessageController_Tests: XCTestCase {
         try client.databaseContainer.createMessage(id: messageId, authorId: .unique, cid: cid, text: "Parent")
 
         // Insert a reply
-        let nonShadowedReply: MessagePayload = .dummy(
+        let nonShadowedReply: MessageResponse = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
@@ -546,7 +546,7 @@ final class MessageController_Tests: XCTestCase {
 
         // Insert shadowed reply by another user
         let createdAt = Date.unique(after: truncatedDate)
-        let shadowedReply: MessagePayload = .dummy(
+        let shadowedReply: MessageResponse = .dummy(
             messageId: .unique,
             parentId: messageId,
             showReplyInChannel: false,
@@ -619,7 +619,7 @@ final class MessageController_Tests: XCTestCase {
         controller.synchronize()
 
         // Simulate response from a backend with a message that doesn't exist locally
-        let messagePayload: MessagePayload = .dummy(
+        let messagePayload: MessageResponse = .dummy(
             messageId: messageId,
             authorUserId: currentUserId
         )
@@ -655,7 +655,7 @@ final class MessageController_Tests: XCTestCase {
         controller.synchronize()
 
         // Simulate response from a backend with a message that exists locally but has out-dated text
-        let messagePayload: MessagePayload = .dummy(
+        let messagePayload: MessageResponse = .dummy(
             messageId: messageId,
             authorUserId: currentUserId,
             text: "new text"
@@ -1290,7 +1290,7 @@ final class MessageController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network response
-        env.messageUpdater.loadReplies_completion?(.success(MessageRepliesPayload(messages: [])))
+        env.messageUpdater.loadReplies_completion?(.success(GetRepliesResponse(messages: [])))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.loadReplies_completion = nil
 
@@ -1450,7 +1450,7 @@ final class MessageController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network response
-        env.messageUpdater.loadReplies_completion?(.success(MessageRepliesPayload(messages: [])))
+        env.messageUpdater.loadReplies_completion?(.success(GetRepliesResponse(messages: [])))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.loadReplies_completion = nil
 
@@ -1558,8 +1558,8 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        let oldestReply = MessagePayload.dummy()
-        let newestReply = MessagePayload.dummy()
+        let oldestReply = MessageResponse.dummy()
+        let newestReply = MessageResponse.dummy()
         env.messageUpdater.loadReplies_completion?(.success(.init(
             messages: [oldestReply, .dummy(), newestReply]
         )))
@@ -1610,10 +1610,10 @@ final class MessageController_Tests: XCTestCase {
     func test_reactions_shouldReturnLatestReactionsWhenObserversStarts() throws {
         try client.databaseContainer.createCurrentUser(id: currentUserId)
 
-        var mockedReactions: [MessageReactionPayload] = []
+        var mockedReactions: [ReactionResponse] = []
 
         for _ in (0..<20) {
-            mockedReactions.append(MessageReactionPayload.dummy(
+            mockedReactions.append(ReactionResponse.dummy(
                 messageId: messageId,
                 user: .dummy(userId: .unique)
             ))
@@ -2427,8 +2427,8 @@ final class MessageController_Tests: XCTestCase {
 
         XCTAssertEqual(env.messageUpdater.updateThread_callCount, 1)
         XCTAssertEqual(env.messageUpdater.updateThread_messageId, messageId)
-        XCTAssertEqual(env.messageUpdater.updateThread_request?.set?.title, "New Title")
-        XCTAssertEqual(env.messageUpdater.updateThread_request?.set?.extraData, ["custom": "test"])
+        XCTAssertEqual(env.messageUpdater.updateThread_request?.set?["title"], .string("New Title"))
+        XCTAssertEqual(env.messageUpdater.updateThread_request?.set?["custom"], .string("test"))
         XCTAssertEqual(env.messageUpdater.updateThread_request?.unset, ["prop"])
     }
 
@@ -2493,16 +2493,16 @@ final class MessageController_Tests: XCTestCase {
     // MARK: Helpers
 
     @discardableResult
-    private func saveReplies(with ids: [MessageId], channelPayload: ChannelPayload? = nil) throws -> [MessageDTO] {
-        let payloads: [MessagePayload] = ids.map {
-            MessagePayload.dummy(messageId: $0, parentId: self.messageId)
+    private func saveReplies(with ids: [MessageId], channelPayload: ChannelStateResponseFields? = nil) throws -> [MessageDTO] {
+        let payloads: [MessageResponse] = ids.map {
+            MessageResponse.dummy(messageId: $0, parentId: self.messageId)
         }
 
         return try saveReplies(with: payloads, channelPayload: channelPayload)
     }
 
     @discardableResult
-    private func saveReplies(with payloads: [MessagePayload], channelPayload: ChannelPayload? = nil) throws -> [MessageDTO] {
+    private func saveReplies(with payloads: [MessageResponse], channelPayload: ChannelStateResponseFields? = nil) throws -> [MessageDTO] {
         nonisolated(unsafe) var replies: [MessageDTO] = []
 
         try client.databaseContainer.writeSynchronously { session in

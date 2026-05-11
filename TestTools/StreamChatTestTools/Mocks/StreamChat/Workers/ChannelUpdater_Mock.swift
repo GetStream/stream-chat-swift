@@ -9,16 +9,16 @@ import XCTest
 final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var update_channelQuery: ChannelQuery?
     @Atomic var update_onChannelCreated: ((ChannelId) -> Void)?
-    @Atomic var update_completion: ((Result<ChannelPayload, Error>) -> Void)?
+    @Atomic var update_completion: ((Result<ChannelStateResponseFields, Error>) -> Void)?
     @Atomic var update_callCount = 0
 
-    @Atomic var updateChannel_payload: ChannelEditDetailPayload?
+    @Atomic var updateChannel_payload: ChannelInput?
     @Atomic var updateChannel_cid: ChannelId?
     @Atomic var updateChannel_completion: ((Error?) -> Void)?
     @Atomic var updateChannel_completion_result: Result<Void, Error>?
 
     @Atomic var partialChannelUpdate_cid: ChannelId?
-    @Atomic var partialChannelUpdate_updates: ChannelEditDetailPayload?
+    @Atomic var partialChannelUpdate_updates: ChannelInput?
     @Atomic var partialChannelUpdate_unsetProperties: [String]?
     @Atomic var partialChannelUpdate_completion: ((Error?) -> Void)?
     @Atomic var partialChannelUpdate_completion_result: Result<Void, Error>?
@@ -131,7 +131,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var stopWatching_completion_result: Result<Void, Error>?
 
     @Atomic var channelWatchers_query: ChannelWatcherListQuery?
-    @Atomic var channelWatchers_completion: ((Result<ChannelPayload, any Error>) -> Void)?
+    @Atomic var channelWatchers_completion: ((Result<ChannelStateResponseFields, any Error>) -> Void)?
 
     @Atomic var freezeChannel_freeze: Bool?
     @Atomic var freezeChannel_cid: ChannelId?
@@ -162,7 +162,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var enrichUrl_completion: ((Result<LinkAttachmentPayload, Error>) -> Void)?
     @Atomic var enrichUrl_completion_result: Result<LinkAttachmentPayload, Error>?
 
-    @Atomic var setPushPreference_preference: PushPreferenceRequestPayload?
+    @Atomic var setPushPreference_preference: PushPreferenceInput?
     @Atomic var setPushPreference_cid: ChannelId?
     @Atomic var setPushPreference_completion: ((Result<PushPreference, Error>) -> Void)?
     @Atomic var setPushPreference_completion_result: Result<PushPreference, Error>?
@@ -331,7 +331,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         isInRecoveryMode: Bool,
         onChannelCreated: ((ChannelId) -> Void)? = nil,
         actions: ChannelUpdateActions? = nil,
-        completion: ((Result<ChannelPayload, Error>) -> Void)? = nil
+        completion: ((Result<ChannelStateResponseFields, Error>) -> Void)? = nil
     ) {
         update_channelQuery = channelQuery
         update_onChannelCreated = onChannelCreated
@@ -339,14 +339,14 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         update_callCount += 1
     }
 
-    override func updateChannel(cid: ChannelId, channelPayload: ChannelEditDetailPayload, completion: ((Error?) -> Void)? = nil) {
+    override func updateChannel(cid: ChannelId, channelPayload: ChannelInput, completion: ((Error?) -> Void)? = nil) {
         updateChannel_cid = cid
         updateChannel_payload = channelPayload
         updateChannel_completion = completion
         updateChannel_completion_result?.invoke(with: completion)
     }
 
-    override func partialChannelUpdate(cid: ChannelId, updates: ChannelEditDetailPayload, unsetProperties: [String], completion: ((Error?) -> Void)? = nil) {
+    override func partialChannelUpdate(cid: ChannelId, updates: ChannelInput, unsetProperties: [String], completion: ((Error?) -> Void)? = nil) {
         partialChannelUpdate_cid = cid
         partialChannelUpdate_updates = updates
         partialChannelUpdate_unsetProperties = unsetProperties
@@ -416,7 +416,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         skipPush: Bool,
         skipEnrichUrl: Bool,
         restrictedVisibility: [UserId] = [],
-        poll: PollPayload?,
+        poll: PollResponseData?,
         location: NewLocationInfo? = nil,
         extraData: [String: RawJSON] = [:],
         completion: ((Result<ChatMessage, Error>) -> Void)? = nil
@@ -565,7 +565,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         stopWatching_completion_result?.invoke(with: completion)
     }
 
-    override func channelWatchers(query: ChannelWatcherListQuery, completion: ((Result<ChannelPayload, any Error>) -> Void)? = nil) {
+    override func channelWatchers(query: ChannelWatcherListQuery, completion: ((Result<ChannelStateResponseFields, any Error>) -> Void)? = nil) {
         channelWatchers_query = query
         channelWatchers_completion = completion
     }
@@ -618,7 +618,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     }
 
     override func setPushPreference(
-        _ preference: PushPreferenceRequestPayload,
+        _ preference: PushPreferenceInput,
         cid: ChannelId,
         completion: @escaping (Result<PushPreference, Error>) -> Void
     ) {

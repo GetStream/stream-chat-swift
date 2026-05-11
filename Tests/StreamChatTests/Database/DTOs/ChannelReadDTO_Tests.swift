@@ -24,14 +24,14 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     // MARK: - saveChannelRead
 
-    func test_saveChannelReadPayload() throws {
+    func test_saveReadStateResponse() throws {
         // GIVEN
         let userId = UserId.unique
         let lastReadAt = Date.unique
         let lastReadMessageId = MessageId.unique
         let unreadMessagesCount = 8
         let channelId = ChannelId.unique
-        let payload = ChannelReadPayload(
+        let payload = ReadStateResponse(
             user: dummyUser(id: userId),
             lastReadAt: lastReadAt,
             lastReadMessageId: lastReadMessageId,
@@ -57,8 +57,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     func test_markChannelAsRead_whenReadExists_isIsUpdated() throws {
         // GIVEN
-        let read = ChannelReadPayload(
-            user: UserPayload.dummy(userId: .unique),
+        let read = ReadStateResponse(
+            user: UserResponse.dummy(userId: .unique),
             lastReadAt: .init(),
             lastReadMessageId: .unique,
             unreadMessagesCount: 10,
@@ -66,7 +66,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             members: [.dummy(user: read.user)],
             channelReads: [read]
         )
@@ -93,8 +93,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     func test_markChannelAsRead_whenReadDoesNotExistButCanBeCreated_isIsCreated() throws {
         // GIVEN
-        let member: MemberPayload = .dummy()
-        let channel: ChannelPayload = .dummy(
+        let member: ChannelMemberResponse = .dummy()
+        let channel: ChannelStateResponseFields = .dummy(
             members: [member],
             channelReads: []
         )
@@ -121,8 +121,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     func test_markChannelAsRead_whenReadDoesNotExistAndCanNotBeCreated_doesNothing() throws {
         // GIVEN
-        let member: MemberPayload = .dummy()
-        let channel: ChannelPayload = .dummy(
+        let member: ChannelMemberResponse = .dummy()
+        let channel: ChannelStateResponseFields = .dummy(
             members: [member],
             channelReads: []
         )
@@ -146,14 +146,14 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     func test_markChannelAsRead_whenMemberReadExists_ownMessagesFromPreviousReadAreUpdated() throws {
         // GIVEN
-        let anotherUser: UserPayload = .dummy(userId: .unique)
-        let anotherUserMember: MemberPayload = .dummy(user: anotherUser)
-        let anotherUserMessage: MessagePayload = .dummy(
+        let anotherUser: UserResponse = .dummy(userId: .unique)
+        let anotherUserMember: ChannelMemberResponse = .dummy(user: anotherUser)
+        let anotherUserMessage: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: anotherUser.id,
             createdAt: .init()
         )
-        let anotherUserRead = ChannelReadPayload(
+        let anotherUserRead = ReadStateResponse(
             user: anotherUser,
             lastReadAt: anotherUserMessage.createdAt.addingTimeInterval(-1),
             lastReadMessageId: .unique,
@@ -162,20 +162,20 @@ final class ChannelReadDTO_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
 
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let currentUserMember: MemberPayload = .dummy(user: currentUser.asUserPayload)
-        let ownMessageReadByAnotherUser: MessagePayload = .dummy(
+        let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
+        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserPayload)
+        let ownMessageReadByAnotherUser: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
             createdAt: anotherUserRead.lastReadAt.addingTimeInterval(-5)
         )
-        let ownMessageUnreadByAnotherUser: MessagePayload = .dummy(
+        let ownMessageUnreadByAnotherUser: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
             createdAt: anotherUserRead.lastReadAt.addingTimeInterval(5)
         )
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             members: [anotherUserMember, currentUserMember],
             membership: currentUserMember,
             messages: [
@@ -209,29 +209,29 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     func test_markChannelAsRead_whenMemberReadDoesNotExist_allOwnMessagesAreUpdated() throws {
         // GIVEN
-        let anotherUser: UserPayload = .dummy(userId: .unique)
-        let anotherUserMember: MemberPayload = .dummy(user: anotherUser)
+        let anotherUser: UserResponse = .dummy(userId: .unique)
+        let anotherUserMember: ChannelMemberResponse = .dummy(user: anotherUser)
 
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let currentUserMember: MemberPayload = .dummy(user: currentUser.asUserPayload)
+        let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
+        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserPayload)
 
-        let messageFromAnotherUser: MessagePayload = .dummy(
+        let messageFromAnotherUser: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: anotherUser.id,
             createdAt: Date().addingTimeInterval(-3)
         )
-        let ownMessage1: MessagePayload = .dummy(
+        let ownMessage1: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
             createdAt: Date().addingTimeInterval(-2)
         )
-        let ownMessage2: MessagePayload = .dummy(
+        let ownMessage2: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
             createdAt: Date().addingTimeInterval(-1)
         )
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             members: [anotherUserMember, currentUserMember],
             membership: currentUserMember,
             messages: [messageFromAnotherUser, ownMessage1, ownMessage2]
@@ -261,29 +261,29 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     func test_markChannelAsRead_ownRead_doesNotTriggerOwnMessagesUpdate() throws {
         // GIVEN
-        let anotherUser: UserPayload = .dummy(userId: .unique)
-        let anotherUserMember: MemberPayload = .dummy(user: anotherUser)
+        let anotherUser: UserResponse = .dummy(userId: .unique)
+        let anotherUserMember: ChannelMemberResponse = .dummy(user: anotherUser)
 
-        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
-        let currentUserMember: MemberPayload = .dummy(user: currentUser.asUserPayload)
+        let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
+        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserPayload)
 
-        let messageFromAnotherUser: MessagePayload = .dummy(
+        let messageFromAnotherUser: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: anotherUser.id,
             createdAt: Date().addingTimeInterval(-3)
         )
-        let ownMessage1: MessagePayload = .dummy(
+        let ownMessage1: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
             createdAt: Date().addingTimeInterval(-2)
         )
-        let ownMessage2: MessagePayload = .dummy(
+        let ownMessage2: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
             createdAt: Date().addingTimeInterval(-1)
         )
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             members: [anotherUserMember, currentUserMember],
             membership: currentUserMember,
             messages: [messageFromAnotherUser, ownMessage1, ownMessage2]
@@ -351,8 +351,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let userId = UserId.unique
         let messageId = MessageId.unique
 
-        let member: MemberPayload = .dummy(user: .dummy(userId: userId))
-        let read = ChannelReadPayload(
+        let member: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
+        let read = ReadStateResponse(
             user: member.user!,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
@@ -361,7 +361,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             channel: .dummy(cid: cid),
             members: [member],
             channelReads: [read]
@@ -390,8 +390,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let userId = UserId.unique
         let messageDate = Date()
 
-        let member: MemberPayload = .dummy(user: .dummy(userId: userId))
-        let read = ChannelReadPayload(
+        let member: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
+        let read = ReadStateResponse(
             user: member.user!,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
@@ -400,7 +400,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             channel: .dummy(cid: cid),
             members: [member],
             channelReads: [read]
@@ -429,8 +429,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let messageId = MessageId.unique
         let lastReadMessageId = MessageId.unique
 
-        let member: MemberPayload = .dummy(user: .dummy(userId: userId))
-        let read = ChannelReadPayload(
+        let member: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
+        let read = ReadStateResponse(
             user: member.user!,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
@@ -439,11 +439,11 @@ final class ChannelReadDTO_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
         let firstMessageDate = Date()
-        let messages: [MessagePayload] = [messageId, .unique, .unique].enumerated().map { index, id in
-            MessagePayload.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
+        let messages: [MessageResponse] = [messageId, .unique, .unique].enumerated().map { index, id in
+            MessageResponse.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
         }
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             channel: .dummy(cid: cid),
             members: [member],
             messages: messages,
@@ -476,8 +476,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let userId = UserId.unique
         let lastReadMessageId = MessageId.unique
 
-        let member: MemberPayload = .dummy(user: .dummy(userId: userId))
-        let read = ChannelReadPayload(
+        let member: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
+        let read = ReadStateResponse(
             user: member.user!,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
@@ -486,11 +486,11 @@ final class ChannelReadDTO_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
         let firstMessageDate = Date()
-        let messages: [MessagePayload] = [.unique, .unique, .unique].enumerated().map { index, id in
-            MessagePayload.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
+        let messages: [MessageResponse] = [.unique, .unique, .unique].enumerated().map { index, id in
+            MessageResponse.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
         }
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             channel: .dummy(cid: cid),
             members: [member],
             messages: messages,
@@ -523,8 +523,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let messageId = MessageId.unique
         let lastReadMessageId = MessageId.unique
 
-        let member: MemberPayload = .dummy(user: .dummy(userId: userId))
-        let read = ChannelReadPayload(
+        let member: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
+        let read = ReadStateResponse(
             user: member.user!,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
@@ -533,11 +533,11 @@ final class ChannelReadDTO_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
         let firstMessageDate = Date()
-        let messages: [MessagePayload] = [messageId, .unique, .unique].enumerated().map { index, id in
-            MessagePayload.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
+        let messages: [MessageResponse] = [messageId, .unique, .unique].enumerated().map { index, id in
+            MessageResponse.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
         }
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             channel: .dummy(cid: cid),
             members: [member],
             messages: messages,
@@ -580,8 +580,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let userId = UserId.unique
         let lastReadMessageId = MessageId.unique
 
-        let member: MemberPayload = .dummy(user: .dummy(userId: userId))
-        let read = ChannelReadPayload(
+        let member: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
+        let read = ReadStateResponse(
             user: member.user!,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
@@ -590,11 +590,11 @@ final class ChannelReadDTO_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
         let firstMessageDate = Date()
-        let messages: [MessagePayload] = [.unique, .unique, .unique].enumerated().map { index, id in
-            MessagePayload.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
+        let messages: [MessageResponse] = [.unique, .unique, .unique].enumerated().map { index, id in
+            MessageResponse.dummy(messageId: id, authorUserId: .unique, createdAt: firstMessageDate.addingTimeInterval(TimeInterval(index)))
         }
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             channel: .dummy(cid: cid),
             members: [member],
             messages: messages,
@@ -633,8 +633,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     func test_markChannelAsUnread_whenReadExists_removesIt() throws {
         // GIVEN
-        let member: MemberPayload = .dummy()
-        let read = ChannelReadPayload(
+        let member: ChannelMemberResponse = .dummy()
+        let read = ReadStateResponse(
             user: member.user!,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
@@ -643,7 +643,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             members: [member],
             channelReads: [read]
         )
@@ -675,8 +675,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
     func test_loadOrCreateChannelRead_channelReadExists_returnsExpectedResult() throws {
         // GIVEN
         let lastReadAt = Date.unique
-        let read = ChannelReadPayload(
-            user: UserPayload.dummy(userId: .unique),
+        let read = ReadStateResponse(
+            user: UserResponse.dummy(userId: .unique),
             lastReadAt: lastReadAt,
             lastReadMessageId: .unique,
             unreadMessagesCount: 10,
@@ -684,7 +684,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             members: [.dummy(user: read.user)],
             channelReads: [read]
         )
@@ -709,9 +709,9 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     func test_loadOrCreateChannelRead_channelReadNotExist_returnsExpectedResult() throws {
         // GIVEN
-        let user = UserPayload.dummy(userId: .unique)
+        let user = UserResponse.dummy(userId: .unique)
 
-        let channel: ChannelPayload = .dummy(
+        let channel: ChannelStateResponseFields = .dummy(
             members: [.dummy(user: user)],
             channelReads: []
         )

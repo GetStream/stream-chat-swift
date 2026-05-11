@@ -6,14 +6,14 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ChannelReadPayload_Tests: XCTestCase {
+final class ReadStateResponse_Tests: XCTestCase {
     func test_channelReadPayload_isProperlyDecoded_whenOptionalValuesArePresent() throws {
         // GIVEN
         let json = readJSON
 
         // WHEN
         let data = try JSONSerialization.data(withJSONObject: json)
-        let payload = try JSONDecoder.default.decode(ChannelReadPayload.self, from: data)
+        let payload = try JSONDecoder.default.decode(ReadStateResponse.self, from: data)
 
         // THEN
         XCTAssertEqual(payload.unreadMessagesCount, 15)
@@ -29,7 +29,7 @@ final class ChannelReadPayload_Tests: XCTestCase {
 
         // WHEN
         let data = try JSONSerialization.data(withJSONObject: json)
-        let payload = try JSONDecoder.default.decode(ChannelReadPayload.self, from: data)
+        let payload = try JSONDecoder.default.decode(ReadStateResponse.self, from: data)
 
         // THEN
         XCTAssertEqual(payload.unreadMessagesCount, 15)

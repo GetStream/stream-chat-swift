@@ -191,7 +191,7 @@ extension DatabaseContainer {
         name: String = .unique
     ) throws {
         try writeSynchronously { session in
-            let payload: CurrentUserPayload = .dummy(
+            let payload: OwnUserResponse = .dummy(
                 userId: id,
                 name: name,
                 role: .admin,
@@ -285,13 +285,13 @@ extension DatabaseContainer {
         pinnedAt: Date? = nil,
         pinExpires: Date? = nil,
         updatedAt: Date = .unique,
-        latestReactions: [MessageReactionPayload] = [],
-        ownReactions: [MessageReactionPayload] = [],
-        attachments: [MessageAttachmentPayload] = [],
+        latestReactions: [ReactionResponse] = [],
+        ownReactions: [ReactionResponse] = [],
+        attachments: [Attachment] = [],
         reactionScores: [MessageReactionType: Int] = [:],
         reactionCounts: [MessageReactionType: Int] = [:],
-        reactionGroups: [MessageReactionType: MessageReactionGroupPayload] = [:],
-        location: SharedLocationPayload? = nil,
+        reactionGroups: [MessageReactionType: ReactionGroupResponse] = [:],
+        location: SharedLocationResponseData? = nil,
         localState: LocalMessageState? = nil,
         type: MessageType? = nil,
         numberOfReplies: Int = 0,
@@ -303,7 +303,7 @@ extension DatabaseContainer {
                 return
             }
 
-            let message: MessagePayload = .dummy(
+            let message: MessageResponse = .dummy(
                 type: type,
                 messageId: id,
                 quotedMessageId: quotedMessageId,
@@ -339,7 +339,7 @@ extension DatabaseContainer {
             })
 
             for idx in 0..<numberOfReplies {
-                let reply: MessagePayload = .dummy(
+                let reply: MessageResponse = .dummy(
                     type: .reply,
                     messageId: .unique,
                     parentId: id,
@@ -376,7 +376,7 @@ extension DatabaseContainer {
 
             try session.saveChannel(payload: channelPayload)
 
-            let message: MessagePayload = .dummy(
+            let message: MessageResponse = .dummy(
                 messageId: id,
                 authorUserId: .unique,
                 channel: channelPayload.channel,
@@ -404,7 +404,7 @@ extension DatabaseContainer {
             try session.saveChannel(payload: channelPayload)
 
             try ids.forEach {
-                let message: MessagePayload = .dummy(
+                let message: MessageResponse = .dummy(
                     messageId: $0,
                     authorUserId: .unique,
                     channel: channelPayload.channel
@@ -427,7 +427,7 @@ extension DatabaseContainer {
         try writeSynchronously { session in
             try session.saveMember(
                 payload: .dummy(
-                    user: UserPayload.dummy(
+                    user: UserResponse.dummy(
                         userId: userId,
                         isBanned: isGloballyBanned
                     ),
@@ -442,7 +442,7 @@ extension DatabaseContainer {
         }
     }
     
-    func createPoll(id: String = .unique, createdBy: UserPayload? = nil) throws {
+    func createPoll(id: String = .unique, createdBy: UserResponse? = nil) throws {
         try writeSynchronously { session in
             try session.savePoll(payload: XCTestCase().dummyPollPayload(id: id, user: createdBy), cache: nil)
         }

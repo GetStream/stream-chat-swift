@@ -130,7 +130,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
         try client.databaseContainer.createCurrentUser(id: "luke_skywalker")
 
         // Create mute payloads for current user so there are some muted Channels:
-        let mutePayloads: [MutedChannelPayload] = [
+        let mutePayloads: [ChannelMute] = [
             .init(
                 mutedChannel: .dummy(cid: .unique),
                 user: dummyUser(id: "luke_skywalker"),
@@ -197,7 +197,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
         try client.databaseContainer.writeSynchronously { session in
             let read = try XCTUnwrap(
                 session.saveChannelRead(
-                    payload: ChannelReadPayload(
+                    payload: ReadStateResponse(
                         user: self.dummyUser(id: "steep-moon-9"),
                         lastReadAt: .unique,
                         lastReadMessageId: .unique,

@@ -160,7 +160,7 @@ final class MemberList_Tests: XCTestCase {
     private func createChannel() async throws {
         try await env.client.databaseContainer.write { session in
             try session.saveChannel(
-                payload: ChannelPayload.dummy(
+                payload: ChannelStateResponseFields.dummy(
                     channel: .dummy(cid: self.channelId)
                 )
             )
@@ -171,7 +171,7 @@ final class MemberList_Tests: XCTestCase {
         count: Int,
         offset: Int,
         memberNameCreator: ((Int) -> String?)? = nil
-    ) -> ChannelMemberListPayload {
+    ) -> MembersResponse {
         let members = (0..<count)
             .map { $0 + offset }
             .map { index in
@@ -181,14 +181,14 @@ final class MemberList_Tests: XCTestCase {
                 } else {
                     name = String(format: "%03d", index)
                 }
-                return MemberPayload.dummy(
+                return ChannelMemberResponse.dummy(
                     user: .dummy(
                         userId: String(format: "%03d", index),
                         name: name
                     )
                 )
             }
-        return ChannelMemberListPayload(members: members)
+        return MembersResponse(members: members)
     }
 }
 

@@ -10,7 +10,7 @@ final class ReminderPayload_Tests: XCTestCase {
     let reminderJSON = XCTestCase.mockData(fromJSONFile: "ReminderPayload")
     
     func test_reminderPayload_isSerialized() throws {
-        let payload = try JSONDecoder.default.decode(ReminderPayload.self, from: reminderJSON)
+        let payload = try JSONDecoder.default.decode(ReminderResponseData.self, from: reminderJSON)
         
         // Test basic properties
         XCTAssertEqual(payload.channelCid, "messaging:26D82FB1-5")
@@ -29,7 +29,7 @@ final class ReminderPayload_Tests: XCTestCase {
 
 final class ReminderResponsePayload_Tests: XCTestCase {
     func test_isSerialized() throws {
-        // Create a JSON representation of a ReminderResponsePayload
+        // Create a JSON representation of a UpdateReminderResponse
         // with the updated structure including duration
         let reminderResponseJSON = """
         {
@@ -45,7 +45,7 @@ final class ReminderResponsePayload_Tests: XCTestCase {
         }
         """.data(using: .utf8)!
         
-        let payload = try JSONDecoder.default.decode(ReminderResponsePayload.self, from: reminderResponseJSON)
+        let payload = try JSONDecoder.default.decode(UpdateReminderResponse.self, from: reminderResponseJSON)
         
         XCTAssertEqual(payload.reminder.channelCid, "messaging:26D82FB1-5")
         XCTAssertEqual(payload.reminder.messageId, "lando_calrissian-8tnV2qn0umMogef2WjR4k")
@@ -57,7 +57,7 @@ final class ReminderResponsePayload_Tests: XCTestCase {
 
 final class RemindersQueryPayload_Tests: XCTestCase {
     func test_isSerialized() throws {
-        // Create a JSON representation of a RemindersQueryPayload with updated structure
+        // Create a JSON representation of a QueryRemindersResponse with updated structure
         let remindersQueryJSON = """
         {
             "duration": "30.74ms",
@@ -83,7 +83,7 @@ final class RemindersQueryPayload_Tests: XCTestCase {
         }
         """.data(using: .utf8)!
         
-        let payload = try JSONDecoder.default.decode(RemindersQueryPayload.self, from: remindersQueryJSON)
+        let payload = try JSONDecoder.default.decode(QueryRemindersResponse.self, from: remindersQueryJSON)
         
         // Verify the count of reminders
         XCTAssertEqual(payload.reminders.count, 2)

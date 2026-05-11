@@ -121,7 +121,7 @@ class ConnectionRepository: @unchecked Sendable {
     func updateWebSocketEndpoint(with token: Token, userInfo: UserInfo?) {
         webSocketConnectEndpoint.value = .webSocketConnect(userInfo: userInfo ?? .init(id: token.userId))
     }
-    
+
     /// Updates the WebSocket endpoint to use the passed user id
     func updateWebSocketEndpoint(with currentUserId: UserId) {
         webSocketConnectEndpoint.value = .webSocketConnect(userInfo: UserInfo(id: currentUserId))

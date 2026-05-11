@@ -7,17 +7,17 @@ import Foundation
 @testable import StreamChatTestTools
 import XCTest
 
-final class CurrentUserPayload_Tests: XCTestCase {
+final class OwnUserResponse_Tests: XCTestCase {
     let currentUserJSON = XCTestCase.mockData(fromJSONFile: "CurrentUser")
 
     func test_currentUserJSON_customRoleIsDecodedCorrectly() throws {
         let json = XCTestCase.mockData(fromJSONFile: "CurrentUserCustomRole")
-        let payload = try JSONDecoder.default.decode(CurrentUserPayload.self, from: json)
+        let payload = try JSONDecoder.default.decode(OwnUserResponse.self, from: json)
         XCTAssertEqual(payload.userRole, UserRole("banana-master"))
     }
 
     func test_currentUserJSON_isDecodedCorrectly() throws {
-        let payload = try JSONDecoder.default.decode(CurrentUserPayload.self, from: currentUserJSON)
+        let payload = try JSONDecoder.default.decode(OwnUserResponse.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
         XCTAssertEqual(payload.isBanned, false)
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())

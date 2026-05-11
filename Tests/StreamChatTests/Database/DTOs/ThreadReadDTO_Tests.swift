@@ -23,7 +23,7 @@ final class ThreadReadDTO_Tests: XCTestCase {
     }
 
     func test_saveThreadReadPayload() throws {
-        let payload = ThreadReadPayload(
+        let payload = ReadStateResponse(
             user: .dummy(userId: .unique),
             lastReadAt: .unique,
             unreadMessagesCount: 10

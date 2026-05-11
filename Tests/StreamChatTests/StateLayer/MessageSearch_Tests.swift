@@ -121,10 +121,10 @@ final class MessageSearch_Tests: XCTestCase {
             .reversed()
             .map {
                 let cid = ChannelId.unique
-                let payload = MessagePayload.dummy(
+                let payload = MessageResponse.dummy(
                     messageId: "\($0 + createdAtOffset)",
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0 + createdAtOffset)),
-                    channel: ChannelDetailPayload.dummy(cid: cid),
+                    channel: ChannelResponse.dummy(cid: cid),
                     cid: cid
                 )
                 return (payload, cid)
@@ -135,7 +135,7 @@ final class MessageSearch_Tests: XCTestCase {
             results: messagePayloads.map { payload, cid in
                 SearchResult(message: SearchResultMessage(
                     messageResponse: payload,
-                    channel: ChannelDetailPayload.dummy(cid: cid).asChannelResponse
+                    channel: ChannelResponse.dummy(cid: cid).asChannelResponse
                 ))
             }
         )

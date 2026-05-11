@@ -22,7 +22,7 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater, @unchecked Sendable
 
     @Atomic var partialUpdate_userId: UserId?
     @Atomic var partialUpdate_cid: ChannelId?
-    @Atomic var partialUpdate_updates: MemberUpdatePayload?
+    @Atomic var partialUpdate_updates: UpdateMemberPartialRequest?
     @Atomic var partialUpdate_unset: [String]?
     @Atomic var partialUpdate_completion: ((Result<ChatChannelMember, Error>) -> Void)?
     @Atomic var partialUpdate_completion_result: Result<ChatChannelMember, Error>?
@@ -79,7 +79,7 @@ final class ChannelMemberUpdater_Mock: ChannelMemberUpdater, @unchecked Sendable
     override func partialUpdate(
         userId: UserId,
         in cid: ChannelId,
-        updates: MemberUpdatePayload?,
+        updates: UpdateMemberPartialRequest?,
         unset: [String]?,
         completion: @escaping ((Result<ChatChannelMember, Error>) -> Void)
     ) {

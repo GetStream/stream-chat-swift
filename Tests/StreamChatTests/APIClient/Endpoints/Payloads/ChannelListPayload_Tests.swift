@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class ChannelListPayload_Tests: XCTestCase {
+final class QueryChannelsResponse_Tests: XCTestCase {
     private var database: DatabaseContainer_Spy!
     
     override func setUpWithError() throws {
@@ -23,19 +23,19 @@ final class ChannelListPayload_Tests: XCTestCase {
         let url = XCTestCase.mockData(fromJSONFile: "ChannelsQuery")
 
         // WHEN
-        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
+        let payload = try JSONDecoder.default.decode(QueryChannelsResponse.self, from: url)
 
         // THEN
         XCTAssertEqual(payload.channels.count, 20)
     }
 
-    func test_decode_bigChannelListPayload() {
+    func test_decode_bigQueryChannelsResponse() {
         // 3MB JSON Channel List from Watercooler
         let url = XCTestCase.mockData(fromJSONFile: "BigChannelListPayload")
 
         measure {
             do {
-                _ = try JSONDecoder.default.decode(ChannelListPayload.self, from: url)
+                _ = try JSONDecoder.default.decode(QueryChannelsResponse.self, from: url)
             } catch {
                 XCTFail("Failed to parse JSON: \(error)")
             }
@@ -45,16 +45,16 @@ final class ChannelListPayload_Tests: XCTestCase {
     func test_decode_shouldThrowWhenChannelHasMissingRequiredProperties() throws {
         /// OpenAPI types are strict: any missing required property fails the whole decode.
         let url = XCTestCase.mockData(fromJSONFile: "PartiallyFailingChannelListPayload")
-        XCTAssertThrowsError(try JSONDecoder.default.decode(ChannelListPayload.self, from: url))
+        XCTAssertThrowsError(try JSONDecoder.default.decode(QueryChannelsResponse.self, from: url))
     }
 
     func test_decode_shouldThrowWhenOneChannelCompletelyFailsParsing() throws {
         /// OpenAPI types are strict: any channel with missing required properties fails the whole decode.
         let url = XCTestCase.mockData(fromJSONFile: "FailingChannelListPayload")
-        XCTAssertThrowsError(try JSONDecoder.default.decode(ChannelListPayload.self, from: url))
+        XCTAssertThrowsError(try JSONDecoder.default.decode(QueryChannelsResponse.self, from: url))
     }
 
-    func saveChannelListPayload(_ payload: ChannelListPayload, database: DatabaseContainer_Spy, timeout: TimeInterval = 20) {
+    func saveQueryChannelsResponse(_ payload: QueryChannelsResponse, database: DatabaseContainer_Spy, timeout: TimeInterval = 20) {
         let writeCompleted = expectation(description: "DB write complete")
         database.write({ session in
             session.saveChannelList(payload: payload, query: .init(filter: .containMembers(userIds: [.unique])))
@@ -72,7 +72,7 @@ final class ChannelListPayload_Tests: XCTestCase {
         let timeout: TimeInterval = 180
         database = DatabaseContainer_Spy(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()))
         measure {
-            saveChannelListPayload(decodedPayload, database: database, timeout: timeout)
+            saveQueryChannelsResponse(decodedPayload, database: database, timeout: timeout)
         }
     }
 
@@ -81,21 +81,21 @@ final class ChannelListPayload_Tests: XCTestCase {
         database = DatabaseContainer_Spy(kind: .onDisk(databaseFileURL: .newTemporaryFileURL()))
         let timeout: TimeInterval = 180
 
-        saveChannelListPayload(decodedPayload, database: database, timeout: timeout)
+        saveQueryChannelsResponse(decodedPayload, database: database, timeout: timeout)
 
         measure {
-            saveChannelListPayload(decodedPayload, database: database, timeout: timeout)
+            saveQueryChannelsResponse(decodedPayload, database: database, timeout: timeout)
         }
     }
 
-    func createHugeChannelList() -> ChannelListPayload {
+    func createHugeChannelList() -> QueryChannelsResponse {
         let userCount = 600
         let channelCount = 20
         let messageCount = 25
         let channelReadCount = 20
 
-        let users = (0..<max(userCount, 30)).map { userIndex in UserPayload.dummy(userId: "\(userIndex)") }
-        let channels = (0..<channelCount).map { channelIndex -> ChannelPayload in
+        let users = (0..<max(userCount, 30)).map { userIndex in UserResponse.dummy(userId: "\(userIndex)") }
+        let channels = (0..<channelCount).map { channelIndex -> ChannelStateResponseFields in
             let channelUsers = users.shuffled().prefix(30)
 
             let channelCreatedDate = Date.unique
@@ -103,7 +103,7 @@ final class ChannelListPayload_Tests: XCTestCase {
 
             let cid = ChannelId(type: .messaging, id: "\(channelIndex)")
             let channelOwner = channelUsers.randomElement()!
-            let channelDetail = ChannelDetailPayload.dummy(
+            let channelDetail = ChannelResponse.dummy(
                 cid: cid,
                 name: .unique,
                 imageURL: .unique(),
@@ -119,7 +119,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                 isDisabled: false,
                 isHidden: false,
                 members: channelUsers.map {
-                    MemberPayload.dummy(
+                    ChannelMemberResponse.dummy(
                         user: $0,
                         createdAt: $0.createdAt,
                         updatedAt: $0.updatedAt,
@@ -133,11 +133,11 @@ final class ChannelListPayload_Tests: XCTestCase {
                 cooldownDuration: .random(in: 0...120)
             )
 
-            let messages = (0..<messageCount).map { messageIndex -> MessagePayload in
+            let messages = (0..<messageCount).map { messageIndex -> MessageResponse in
                 let messageId = "\(channelIndex)-\(messageIndex)"
                 let messageCreatedDate = Date.unique(after: channelCreatedDate)
                 let messageAuthor = channelUsers.randomElement()!
-                return MessagePayload.dummy(
+                return MessageResponse.dummy(
                     messageId: messageId,
                     showReplyInChannel: .random(),
                     threadParticipants: [],
@@ -146,7 +146,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                     text: .unique,
                     extraData: [:],
                     latestReactions: messageIndex % 2 == 0 ? (0..<3).map { _ in
-                        MessageReactionPayload(
+                        ReactionResponse(
                             type: "like",
                             score: 1,
                             messageId: messageId,
@@ -157,7 +157,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                         )
                     } : [],
                     ownReactions: messageIndex % 2 == 0 ? (0..<3).map { _ in
-                        MessageReactionPayload(
+                        ReactionResponse(
                             type: "like",
                             score: 1,
                             messageId: messageId,
@@ -176,12 +176,12 @@ final class ChannelListPayload_Tests: XCTestCase {
                 )
             }
 
-            return ChannelPayload.dummy(
+            return ChannelStateResponseFields.dummy(
                 channel: channelDetail,
                 watcherCount: 0,
                 watchers: [],
                 members: channelDetail.members ?? [],
-                membership: MemberPayload.dummy(
+                membership: ChannelMemberResponse.dummy(
                     user: channelOwner,
                     createdAt: channelOwner.createdAt,
                     updatedAt: channelOwner.updatedAt,
@@ -192,7 +192,7 @@ final class ChannelListPayload_Tests: XCTestCase {
                 pendingMessages: [],
                 pinnedMessages: [],
                 channelReads: (0..<channelReadCount).map { i in
-                    ChannelReadPayload(
+                    ReadStateResponse(
                         user: channelUsers[i],
                         lastReadAt: .unique(after: channelCreatedDate),
                         lastReadMessageId: .unique,
@@ -208,17 +208,17 @@ final class ChannelListPayload_Tests: XCTestCase {
             )
         }
 
-        return ChannelListPayload(channels: channels, duration: "")
+        return QueryChannelsResponse(channels: channels, duration: "")
     }
 }
 
-final class ChannelPayload_Tests: XCTestCase {
+final class ChannelStateResponseFields_Tests: XCTestCase {
     func test_channelJSON_isSerialized_withDefaultExtraData() throws {
         // GIVEN
         let url = XCTestCase.mockData(fromJSONFile: "Channel")
 
         // WHEN
-        let payload = try JSONDecoder.default.decode(ChannelPayload.self, from: url)
+        let payload = try JSONDecoder.default.decode(ChannelStateResponseFields.self, from: url)
 
         // THEN
         XCTAssertEqual(payload.watcherCount, 7)
@@ -309,20 +309,20 @@ final class ChannelPayload_Tests: XCTestCase {
 
     func test_newestMessage_whenMessagesAreSortedDesc() throws {
         // GIVEN
-        let earlierMessage: MessagePayload = .dummy(
+        let earlierMessage: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: .init()
         )
 
-        let laterMessage: MessagePayload = .dummy(
+        let laterMessage: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: earlierMessage.createdAt.addingTimeInterval(10)
         )
 
         // WHEN
-        let payload: ChannelPayload = .dummy(
+        let payload: ChannelStateResponseFields = .dummy(
             messages: [
                 laterMessage,
                 earlierMessage
@@ -335,20 +335,20 @@ final class ChannelPayload_Tests: XCTestCase {
 
     func test_newestMessage_whenMessagesAreSortedAsc() throws {
         // GIVEN
-        let earlierMessage: MessagePayload = .dummy(
+        let earlierMessage: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: .init()
         )
 
-        let laterMessage: MessagePayload = .dummy(
+        let laterMessage: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: earlierMessage.createdAt.addingTimeInterval(10)
         )
 
         // WHEN
-        let payload: ChannelPayload = .dummy(
+        let payload: ChannelStateResponseFields = .dummy(
             messages: [
                 earlierMessage,
                 laterMessage
@@ -359,21 +359,21 @@ final class ChannelPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.newestMessage?.id, laterMessage.id)
     }
     
-    // MARK: - ChannelPayload.asModel() Tests
+    // MARK: - ChannelStateResponseFields.asModel() Tests
     
     func test_channelPayload_asModel_convertsAllPropertiesCorrectly() {
         let currentUserId = "current-user-id"
         let cid = ChannelId(type: .messaging, id: "test-channel")
         
-        let createdByPayload = UserPayload.dummy(userId: "creator-user-id", name: "Channel Creator")
-        let memberPayload = MemberPayload.dummy(user: UserPayload.dummy(userId: "member-user-id"), role: .member)
-        let watcherPayload = UserPayload.dummy(userId: "watcher-user-id", name: "Channel Watcher")
-        let messagePayload = MessagePayload.dummy(messageId: "message-id", authorUserId: "author-id")
-        let pinnedMessagePayload = MessagePayload.dummy(messageId: "pinned-message-id", authorUserId: "pinned-author-id")
-        let pendingMessagePayload = MessagePayload.dummy(messageId: "pending-message-id", authorUserId: "pending-author-id")
+        let createdByPayload = UserResponse.dummy(userId: "creator-user-id", name: "Channel Creator")
+        let memberPayload = ChannelMemberResponse.dummy(user: UserResponse.dummy(userId: "member-user-id"), role: .member)
+        let watcherPayload = UserResponse.dummy(userId: "watcher-user-id", name: "Channel Watcher")
+        let messagePayload = MessageResponse.dummy(messageId: "message-id", authorUserId: "author-id")
+        let pinnedMessagePayload = MessageResponse.dummy(messageId: "pinned-message-id", authorUserId: "pinned-author-id")
+        let pendingMessagePayload = MessageResponse.dummy(messageId: "pending-message-id", authorUserId: "pending-author-id")
         
-        let channelReadPayload = ChannelReadPayload(
-            user: UserPayload.dummy(userId: "reader-user-id", name: "Reader User"),
+        let channelReadPayload = ReadStateResponse(
+            user: UserResponse.dummy(userId: "reader-user-id", name: "Reader User"),
             lastReadAt: Date(timeIntervalSince1970: 1_609_459_400),
             lastReadMessageId: "last-read-message-id",
             unreadMessagesCount: 5,
@@ -381,9 +381,9 @@ final class ChannelPayload_Tests: XCTestCase {
             lastDeliveredMessageId: nil
         )
         
-        let membershipPayload = MemberPayload.dummy(user: UserPayload.dummy(userId: currentUserId), role: .admin)
+        let membershipPayload = ChannelMemberResponse.dummy(user: UserResponse.dummy(userId: currentUserId), role: .admin)
 
-        let channel = ChannelDetailPayload.dummy(
+        let channel = ChannelResponse.dummy(
             cid: cid,
             name: "Test Channel",
             imageURL: URL(string: "https://example.com/channel.png"),
@@ -410,7 +410,7 @@ final class ChannelPayload_Tests: XCTestCase {
         let typingUsers = Set([ChatUser.mock(id: "typing-user-id", name: "Typing User")])
         let unreadCount = ChannelUnreadCount(messages: 3, mentions: 1)
 
-        let payload = ChannelPayload.dummy(
+        let payload = ChannelStateResponseFields.dummy(
             channel: channel,
             watcherCount: 5,
             watchers: [watcherPayload],
@@ -479,7 +479,7 @@ final class ChannelPayload_Tests: XCTestCase {
         let currentUserId = "current-user-id"
         let cid = ChannelId(type: .messaging, id: "minimal-channel")
         
-        let channel = ChannelDetailPayload.dummy(
+        let channel = ChannelResponse.dummy(
             cid: cid,
             name: "Minimal Channel",
             imageURL: nil,
@@ -493,7 +493,7 @@ final class ChannelPayload_Tests: XCTestCase {
             cooldownDuration: 0
         )
 
-        let payload = ChannelPayload.dummy(
+        let payload = ChannelStateResponseFields.dummy(
             channel: channel,
             watcherCount: nil,
             watchers: [],

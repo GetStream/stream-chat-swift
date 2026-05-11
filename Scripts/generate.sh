@@ -59,17 +59,6 @@ rename_generated() {
   rename_generated_type "$1" "$2"
 }
 
-# Rename the swift-endpoints-emitted Endpoint/EndpointMethod/EndpointPath types
-# to DefaultEndpoint* so they coexist with the hand-written StreamChat types
-# during the incremental migration.
-rename_default_endpoint_types() {
-  local file="$OUTPUT_DIR_CHAT/DefaultEndpoints.swift"
-  [[ -f "$file" ]] || return 0
-  sed -i '' -E 's/[[:<:]]EndpointPath[[:>:]]/DefaultEndpointPath/g' "$file"
-  sed -i '' -E 's/[[:<:]]EndpointMethod[[:>:]]/DefaultEndpointMethod/g' "$file"
-  sed -i '' -E 's/[[:<:]]Endpoint[[:>:]]/DefaultEndpoint/g' "$file"
-}
-
 escape_swift_keywords_in_cases() {
   # `default` is only escaped in enum case declarations — it's a valid identifier elsewhere (e.g. JSONDecoder.default).
   find "$OUTPUT_DIR_CHAT" -name '*.swift' -exec sed -i '' -E 's/^([[:space:]]*case)[[:space:]]+default[[:>:]]/\1 `default`/' {} +
@@ -167,6 +156,5 @@ fix_invalid_empty_enum_cases
 fix_untyped_arrays
 qualify_stream_core_types
 strip_public_open_access_modifiers
-rename_default_endpoint_types
 
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
