@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChatCommonUI
 ### 🔄 Changed
+- `Appearance.localizationProvider` now falls back from `Bundle.main` to the SDK bundle, so apps can override keys without installing a custom provider [#4088](https://github.com/GetStream/stream-chat-swift/pull/4088)
 
 # [5.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.1.1)
 _May 08, 2026_
@@ -18,10 +20,6 @@ _May 08, 2026_
 ### 🐞 Fixed
 - Fix channel list preview showing "No messages" after a mid-page jump [#4077](https://github.com/GetStream/stream-chat-swift/pull/4077)
 - Fix layout shift on delivery-status transitions in message footer [#4078](https://github.com/GetStream/stream-chat-swift/pull/4078)
-
-## StreamChatCommonUI
-### 🔄 Changed
-- `Appearance.localizationProvider` now falls back from `Bundle.main` to the SDK bundle, so apps can override keys without installing a custom provider [#4088](https://github.com/GetStream/stream-chat-swift/pull/4088)
 
 # [5.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.1.0)
 _April 23, 2026_
