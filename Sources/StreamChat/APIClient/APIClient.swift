@@ -321,7 +321,7 @@ class APIClient: @unchecked Sendable {
             self?.cdnStorage.uploadAttachment(attachment, options: .init(progress: progress)) { [weak self] result in
                 let mappedResult = result.map { file in
                     UploadedAttachment(
-                        attachment: attachment,
+                        attachment: file.attachment ?? attachment,
                         remoteURL: file.fileURL,
                         thumbnailURL: file.thumbnailURL
                     )

@@ -11,6 +11,10 @@ import Foundation
 public protocol CDNStorage: Sendable {
     /// Uploads an attachment tied to a message and returns the uploaded file information.
     ///
+    /// If your CDN response contains extra metadata (e.g. title, codec, dimensions, signed
+    /// thumbnail URLs) that you want to write into the attachment payload, mutate the typed
+    /// payload using ``AnyAttachmentUpdater`` and return it via ``UploadedFile/attachment``.
+    ///
     /// - Parameters:
     ///   - attachment: The message attachment to upload.
     ///   - options: Options for the upload, such as progress reporting.
