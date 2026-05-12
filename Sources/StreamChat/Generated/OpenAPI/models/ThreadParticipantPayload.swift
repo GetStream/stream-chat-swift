@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ThreadParticipantOpenAPI: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class ThreadParticipantPayload: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     var appPk: Int
     var channelCid: String
     /// Date/time of creation
@@ -46,7 +46,7 @@ final class ThreadParticipantOpenAPI: @unchecked Sendable, Codable, JSONEncodabl
         case userId = "user_id"
     }
 
-    static func == (lhs: ThreadParticipantOpenAPI, rhs: ThreadParticipantOpenAPI) -> Bool {
+    static func == (lhs: ThreadParticipantPayload, rhs: ThreadParticipantPayload) -> Bool {
         lhs.appPk == rhs.appPk &&
             lhs.channelCid == rhs.channelCid &&
             lhs.createdAt == rhs.createdAt &&

@@ -24,7 +24,7 @@ class DraftMessagesRepository: @unchecked Sendable {
     ) {
         let request = QueryDraftsRequest(
             limit: query.pagination.pageSize,
-            sort: query.sorting.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+            sort: query.sorting.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
         )
         apiClient.request(
             endpoint: Endpoint<QueryDraftsResponse>.queryDrafts(queryDraftsRequest: request)

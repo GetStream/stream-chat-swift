@@ -23,7 +23,7 @@ final class ThreadParticipantDTO_Tests: XCTestCase {
     }
 
     func test_saveThreadParticipantPayload() throws {
-        let payload = ThreadParticipantOpenAPI(
+        let payload = ThreadParticipantPayload(
             user: .dummy(userId: .unique),
             threadId: .unique,
             createdAt: .unique,

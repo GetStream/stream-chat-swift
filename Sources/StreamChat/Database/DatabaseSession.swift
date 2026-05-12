@@ -510,7 +510,7 @@ protocol ThreadDatabaseSession {
     /// Creates a new `ThreadParticipantDTO` object in the database with the given `payload`.
     @discardableResult
     func saveThreadParticipant(
-        payload: ThreadParticipantOpenAPI,
+        payload: ThreadParticipantPayload,
         threadId: String,
         cache: PreWarmedCache?
     ) throws -> ThreadParticipantDTO

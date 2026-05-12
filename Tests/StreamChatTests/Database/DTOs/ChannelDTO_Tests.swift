@@ -1429,7 +1429,7 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_saveChannel_savesAndLoadsDraftMessage() throws {
         // GIVEN
         let cid: ChannelId = .unique
-        let draftMessagePayload = DraftPayloadResponseOpenAPI(
+        let draftMessagePayload = DraftPayloadResponse(
             id: .unique,
             text: "Draft message text",
             command: nil,
@@ -1474,7 +1474,7 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_saveChannel_whenDraftMessageIsNil_removesExistingDraft() throws {
         // GIVEN
         let cid: ChannelId = .unique
-        let draftMessagePayload = DraftPayloadResponseOpenAPI(
+        let draftMessagePayload = DraftPayloadResponse(
             id: .unique,
             text: "Draft message text",
             command: nil,
@@ -1531,7 +1531,7 @@ final class ChannelDTO_Tests: XCTestCase {
             authorUserId: .unique,
             text: "Quoted message"
         )
-        let draftMessagePayload = DraftPayloadResponseOpenAPI(
+        let draftMessagePayload = DraftPayloadResponse(
             id: .unique,
             text: "Draft message text",
             command: nil,
@@ -1578,7 +1578,7 @@ final class ChannelDTO_Tests: XCTestCase {
             authorUserId: .unique,
             text: "Parent message"
         )
-        let draftMessagePayload = DraftPayloadResponseOpenAPI(
+        let draftMessagePayload = DraftPayloadResponse(
             id: .unique,
             text: "Draft message text",
             command: nil,

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class SharedLocationOpenAPI: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class SharedLocationPayload: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     var createdByDeviceId: String?
     var endAt: Date?
     var latitude: Float
@@ -24,7 +24,7 @@ final class SharedLocationOpenAPI: @unchecked Sendable, Codable, JSONEncodable, 
         case longitude
     }
 
-    static func == (lhs: SharedLocationOpenAPI, rhs: SharedLocationOpenAPI) -> Bool {
+    static func == (lhs: SharedLocationPayload, rhs: SharedLocationPayload) -> Bool {
         lhs.createdByDeviceId == rhs.createdByDeviceId &&
             lhs.endAt == rhs.endAt &&
             lhs.latitude == rhs.latitude &&

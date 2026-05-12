@@ -81,7 +81,7 @@ class MessageRepository: @unchecked Sendable {
                         return
                     }
 
-                    let endpoint = Endpoint<SendMessageResponseOpenAPI>.sendMessage(
+                    let endpoint = Endpoint<SendMessageResponsePayload>.sendMessage(
                         type: cid.type.rawValue,
                         id: cid.id,
                         sendMessageRequest: SendMessageRequest(
@@ -117,7 +117,7 @@ class MessageRepository: @unchecked Sendable {
 
             // Send the message to offline handling
             let requestBody = dto.asRequestBody() as MessageRequest
-            let endpoint = Endpoint<SendMessageResponseOpenAPI>.sendMessage(
+            let endpoint = Endpoint<SendMessageResponsePayload>.sendMessage(
                 type: cid.type.rawValue,
                 id: cid.id,
                 sendMessageRequest: SendMessageRequest(
@@ -177,7 +177,7 @@ class MessageRepository: @unchecked Sendable {
 
     /// Handles the result when sending the message to the server.
     private func handleSentMessage(
-        _ result: Result<SendMessageResponseOpenAPI, Error>,
+        _ result: Result<SendMessageResponsePayload, Error>,
         cid: ChannelId,
         messageId: MessageId,
         completion: @escaping @Sendable (Result<ChatMessage, MessageRepositoryError>) -> Void

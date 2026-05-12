@@ -296,7 +296,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         let payload = MarkDeliveredRequest(
-            latestDeliveredMessages: deliveries.map { $0.asPayload }
+            latestDeliveredMessages: deliveries.map { DeliveredMessagePayload(cid: $0.channelId, id: $0.messageId) }
         )
         
         apiClient.request(endpoint: Endpoint<MarkDeliveredResponse>.markDelivered(markDeliveredRequest: payload)) { result in

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class UpdatePollOptionRequestOpenAPI: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class UpdatePollOptionRequest: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     var custom: [String: RawJSON]?
     /// Option ID
     var id: String
@@ -23,7 +23,7 @@ final class UpdatePollOptionRequestOpenAPI: @unchecked Sendable, Codable, JSONEn
         case text
     }
 
-    static func == (lhs: UpdatePollOptionRequestOpenAPI, rhs: UpdatePollOptionRequestOpenAPI) -> Bool {
+    static func == (lhs: UpdatePollOptionRequest, rhs: UpdatePollOptionRequest) -> Bool {
         lhs.custom == rhs.custom &&
             lhs.id == rhs.id &&
             lhs.text == rhs.text

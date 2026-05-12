@@ -145,7 +145,7 @@ final class UserUpdater_Tests: XCTestCase {
             limit: query.pagination?.pageSize,
             offset: query.pagination?.offset,
             presence: query.options.contains(.presence),
-            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+            sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
         )
         let expectedEndpoint: Endpoint<QueryUsersResponse> = .queryUsers(payload: payload)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))

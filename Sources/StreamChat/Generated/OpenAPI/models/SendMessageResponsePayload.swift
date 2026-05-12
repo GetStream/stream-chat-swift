@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class SendMessageResponseOpenAPI: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class SendMessageResponsePayload: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     /// Duration of the request in milliseconds
     var duration: String
     var message: MessageResponse
@@ -23,7 +23,7 @@ final class SendMessageResponseOpenAPI: @unchecked Sendable, Codable, JSONEncoda
         case pendingMessageMetadata = "pending_message_metadata"
     }
 
-    static func == (lhs: SendMessageResponseOpenAPI, rhs: SendMessageResponseOpenAPI) -> Bool {
+    static func == (lhs: SendMessageResponsePayload, rhs: SendMessageResponsePayload) -> Bool {
         lhs.duration == rhs.duration &&
             lhs.message == rhs.message &&
             lhs.pendingMessageMetadata == rhs.pendingMessageMetadata

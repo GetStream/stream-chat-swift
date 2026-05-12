@@ -22,12 +22,3 @@ public struct MessageDeliveryInfo: Equatable, Sendable {
         self.messageId = messageId
     }
 }
-
-// MARK: - Conversion to Payload
-
-extension MessageDeliveryInfo {
-    /// Converts this model to its corresponding payload representation.
-    var asPayload: DeliveredMessagePayloadOpenAPI {
-        DeliveredMessagePayloadOpenAPI(cid: channelId, id: messageId)
-    }
-}

@@ -335,7 +335,7 @@ final class OfflineRequestsRepository_Tests: XCTestCase {
             id: messageId,
             text: .unique
         )
-        let endpoint: Endpoint<SendMessageResponseOpenAPI> = .sendMessage(
+        let endpoint: Endpoint<SendMessageResponsePayload> = .sendMessage(
             type: "messaging",
             id: id,
             sendMessageRequest: SendMessageRequest(

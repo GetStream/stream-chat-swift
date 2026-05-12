@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class ChannelConfigOpenAPI: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class ChannelConfigPayload: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     enum ChannelConfigBlocklistBehavior: String, Sendable, Codable, CaseIterable {
         case block
         case flag
@@ -95,7 +95,7 @@ final class ChannelConfigOpenAPI: @unchecked Sendable, Codable, JSONEncodable, H
         case urlEnrichment = "url_enrichment"
     }
 
-    static func == (lhs: ChannelConfigOpenAPI, rhs: ChannelConfigOpenAPI) -> Bool {
+    static func == (lhs: ChannelConfigPayload, rhs: ChannelConfigPayload) -> Bool {
         lhs.blocklist == rhs.blocklist &&
             lhs.blocklistBehavior == rhs.blocklistBehavior &&
             lhs.chatPreferences == rhs.chatPreferences &&

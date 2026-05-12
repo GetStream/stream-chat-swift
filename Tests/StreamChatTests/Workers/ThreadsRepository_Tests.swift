@@ -88,7 +88,7 @@ final class ThreadsRepository_Tests: XCTestCase {
             participantLimit: query.participantLimit,
             prev: nil,
             replyLimit: query.replyLimit,
-            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
             watch: query.watch
         )
         let referenceEndpoint: Endpoint<QueryThreadsResponse> = .queryThreads(queryThreadsRequest: request)
@@ -154,7 +154,7 @@ final class ThreadsRepository_Tests: XCTestCase {
             participantLimit: query.participantLimit,
             prev: nil,
             replyLimit: query.replyLimit,
-            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
             watch: query.watch
         )
         let referenceEndpoint: Endpoint<QueryThreadsResponse> = .queryThreads(queryThreadsRequest: request)
@@ -188,7 +188,7 @@ final class ThreadsRepository_Tests: XCTestCase {
             participantLimit: query.participantLimit,
             prev: nil,
             replyLimit: query.replyLimit,
-            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
             watch: query.watch
         )
         let referenceEndpoint: Endpoint<QueryThreadsResponse> = .queryThreads(queryThreadsRequest: request)

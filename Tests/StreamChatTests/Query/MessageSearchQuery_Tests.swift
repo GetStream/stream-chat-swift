@@ -93,6 +93,6 @@ final class MessageSearchQuery_OpenAPIPayload_Tests: XCTestCase {
             ["attachments.type": .dictionary(["$in": .array([.string("image")])])]
         )
         XCTAssertEqual(payload.limit, 10)
-        XCTAssertEqual(payload.sort, [SortParamRequestOpenAPI(direction: 1, field: "updated_at")])
+        XCTAssertEqual(payload.sort, [SortParamRequest(direction: 1, field: "updated_at")])
     }
 }

@@ -645,7 +645,7 @@ final class Chat_Tests: XCTestCase {
         let typingIndicatorResponse = makeEventResponse()
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
         // Fail the send message call
-        env.client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponseOpenAPI, Error>.failure(expectedTestError))
+        env.client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(expectedTestError))
         let text = "Text"
         let messageId: MessageId = "abc"
         await XCTAssertAsyncFailure(
@@ -659,7 +659,7 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(LocalMessageState.sendingFailed, chat.state.messages.first?.localState)
         
         // Resend and sending succeeds
-        let apiResponse = SendMessageResponseOpenAPI(
+        let apiResponse = SendMessageResponsePayload(
             duration: "",
             message: .dummy(
                 messageId: messageId,
@@ -740,7 +740,7 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
         
         let text = "Text"
-        let apiResponse = SendMessageResponseOpenAPI(
+        let apiResponse = SendMessageResponsePayload(
             duration: "",
             message: .dummy(
                 messageId: "0",
@@ -769,14 +769,14 @@ final class Chat_Tests: XCTestCase {
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
         
         let text = "Text"
-        let apiResponse = SendMessageResponseOpenAPI(
+        let apiResponse = SendMessageResponsePayload(
             duration: "",
             message: .dummy(
                 messageId: "0",
                 text: text
             )
         )
-        env.client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponseOpenAPI, Error>.failure(expectedTestError))
+        env.client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(expectedTestError))
         await XCTAssertAsyncFailure(
             try await chat.sendMessage(
                 with: apiResponse.message.text,
@@ -796,7 +796,7 @@ final class Chat_Tests: XCTestCase {
         await XCTAssertEqual(0, chat.state.messages.count)
 
         let text = "Text"
-        let apiResponse = SendMessageResponseOpenAPI(
+        let apiResponse = SendMessageResponsePayload(
             duration: "",
             message: .dummy(
                 type: .system,
@@ -1083,7 +1083,7 @@ final class Chat_Tests: XCTestCase {
         let messageId = try await MainActor.run { try XCTUnwrap(chat.state.messages.first?.id) }
         
         // Set dummy response for failing the API call if it is mistakenly made
-        env.client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponseOpenAPI, Error>.failure(expectedTestError))
+        env.client.mockAPIClient.test_mockResponseResult(Result<SendMessageResponsePayload, Error>.failure(expectedTestError))
         let messageState = try await chat.messageState(for: messageId)
         
         XCTAssertEqual(nil, env.client.mockAPIClient.request_endpoint)
@@ -1542,7 +1542,7 @@ final class Chat_Tests: XCTestCase {
         
         let typingIndicatorResponse = makeEventResponse()
         env.client.mockAPIClient.test_mockResponseResult(.success(typingIndicatorResponse))
-        let apiResponse = SendMessageResponseOpenAPI(
+        let apiResponse = SendMessageResponsePayload(
             duration: "",
             message: .dummy(
                 messageId: "reply_0",

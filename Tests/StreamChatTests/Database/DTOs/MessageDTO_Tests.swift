@@ -4503,7 +4503,7 @@ final class MessageDTO_Tests: XCTestCase {
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
         let channelDetailPayload = ChannelResponse.dummy(cid: cid)
         let channelPayload: ChannelStateResponseFields = .dummy(channel: channelDetailPayload)
-        let draftMessage = DraftPayloadResponseOpenAPI.dummy(text: "Draft Reply")
+        let draftMessage = DraftPayloadResponse.dummy(text: "Draft Reply")
         let parentMessageId = MessageId.unique
         let parentMessage = MessageResponse.dummy(
             messageId: parentMessageId,
@@ -4698,7 +4698,7 @@ final class MessageDTO_Tests: XCTestCase {
     func test_saveMessage_savesAndLoadsDraftReply() throws {
         // GIVEN
         let cid: ChannelId = .unique
-        let draftMessagePayload = DraftPayloadResponseOpenAPI.dummy(
+        let draftMessagePayload = DraftPayloadResponse.dummy(
             text: "Draft message text"
         )
         let messagePayload = MessageResponse.dummy(
@@ -4726,7 +4726,7 @@ final class MessageDTO_Tests: XCTestCase {
     func test_saveMessage_whenDraftReplyIsNil_removesExistingDraft() throws {
         // GIVEN
         let cid: ChannelId = .unique
-        let draftMessagePayload = DraftPayloadResponseOpenAPI.dummy(
+        let draftMessagePayload = DraftPayloadResponse.dummy(
             text: "Draft message text"
         )
         let messagePayload = MessageResponse.dummy(
@@ -4765,7 +4765,7 @@ final class MessageDTO_Tests: XCTestCase {
     func test_saveMessage_whenSkipsDraftUpdate_shouldNotSaveDraft() throws {
         // GIVEN
         let cid: ChannelId = .unique
-        let draftMessagePayload = DraftPayloadResponseOpenAPI.dummy(
+        let draftMessagePayload = DraftPayloadResponse.dummy(
             text: "Draft message text"
         )
         let messagePayload = MessageResponse.dummy(

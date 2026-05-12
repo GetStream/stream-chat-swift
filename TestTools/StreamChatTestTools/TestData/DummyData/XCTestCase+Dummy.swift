@@ -347,7 +347,7 @@ extension XCTestCase {
         replyCount: Int = 0,
         participantCount: Int = 0,
         activeParticipantCount: Int = 0,
-        threadParticipants: [ThreadParticipantOpenAPI] = [],
+        threadParticipants: [ThreadParticipantPayload] = [],
         lastMessageAt: Date? = .unique,
         createdAt: Date = .unique,
         updatedAt: Date? = .unique,
@@ -394,7 +394,7 @@ extension XCTestCase {
         threadId: String = .unique,
         createdAt: Date = .unique,
         lastReadAt: Date? = .unique
-    ) -> ThreadParticipantOpenAPI {
+    ) -> ThreadParticipantPayload {
         .init(
             user: user,
             threadId: threadId,

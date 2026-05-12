@@ -523,7 +523,7 @@ extension Endpoint {
         )
     }
 
-    static func createPollOption(pollId: String, createPollOptionRequest: CreatePollOptionRequest) -> Endpoint<PollOptionResponseOpenAPI> {
+    static func createPollOption(pollId: String, createPollOptionRequest: CreatePollOptionRequest) -> Endpoint<PollOptionResponse> {
         .init(
             path: .createPollOption(pollId: pollId),
             method: .post,
@@ -885,7 +885,7 @@ extension Endpoint {
         )
     }
 
-    static func getPollOption(pollId: String, optionId: String, userId: String?) -> Endpoint<PollOptionResponseOpenAPI> {
+    static func getPollOption(pollId: String, optionId: String, userId: String?) -> Endpoint<PollOptionResponse> {
         .init(
             path: .getPollOption(pollId: pollId, optionId: optionId),
             method: .get,
@@ -910,7 +910,7 @@ extension Endpoint {
         )
     }
 
-    static func getReplies(parentId: String, limit: Int?, idGte: String?, idGt: String?, idLte: String?, idLt: String?, idAround: String?, sort: [SortParamRequestOpenAPI]?) -> Endpoint<GetRepliesResponse> {
+    static func getReplies(parentId: String, limit: Int?, idGte: String?, idGt: String?, idLte: String?, idLt: String?, idAround: String?, sort: [SortParamRequest]?) -> Endpoint<GetRepliesResponse> {
         .init(
             path: .getReplies(parentId: parentId),
             method: .get,
@@ -1316,7 +1316,7 @@ extension Endpoint {
         )
     }
 
-    static func sendMessage(type: String, id: String, sendMessageRequest: SendMessageRequest) -> Endpoint<SendMessageResponseOpenAPI> {
+    static func sendMessage(type: String, id: String, sendMessageRequest: SendMessageRequest) -> Endpoint<SendMessageResponsePayload> {
         .init(
             path: .sendMessage(type: type, id: id),
             method: .post,
@@ -1509,7 +1509,7 @@ extension Endpoint {
         )
     }
 
-    static func updatePollOption(pollId: String, updatePollOptionRequest: UpdatePollOptionRequestOpenAPI) -> Endpoint<PollOptionResponseOpenAPI> {
+    static func updatePollOption(pollId: String, updatePollOptionRequest: UpdatePollOptionRequest) -> Endpoint<PollOptionResponse> {
         .init(
             path: .updatePollOption(pollId: pollId),
             method: .put,

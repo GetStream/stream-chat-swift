@@ -496,7 +496,7 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.saveThreadList(payload: payload)
     }
 
-    func saveThreadParticipant(payload: ThreadParticipantOpenAPI, threadId: String, cache: PreWarmedCache?) throws -> ThreadParticipantDTO {
+    func saveThreadParticipant(payload: ThreadParticipantPayload, threadId: String, cache: PreWarmedCache?) throws -> ThreadParticipantDTO {
         try underlyingSession.saveThreadParticipant(payload: payload, threadId: threadId, cache: cache)
     }
 

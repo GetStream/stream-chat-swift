@@ -197,7 +197,7 @@ class OfflineRequestsRepository: @unchecked Sendable {
 
         switch endpoint.path {
         case let .sendMessage(type, id):
-            guard let response = decodeTo(SendMessageResponseOpenAPI.self),
+            guard let response = decodeTo(SendMessageResponsePayload.self),
                   let cid = try? ChannelId(cid: "\(type):\(id)") else {
                 completion()
                 return

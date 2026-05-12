@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class PollOptionResponseOpenAPI: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class PollOptionResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     /// Duration of the request in milliseconds
     var duration: String
     var pollOption: PollOptionResponseData
@@ -19,7 +19,7 @@ final class PollOptionResponseOpenAPI: @unchecked Sendable, Codable, JSONEncodab
         case pollOption = "poll_option"
     }
 
-    static func == (lhs: PollOptionResponseOpenAPI, rhs: PollOptionResponseOpenAPI) -> Bool {
+    static func == (lhs: PollOptionResponse, rhs: PollOptionResponse) -> Bool {
         lhs.duration == rhs.duration &&
             lhs.pollOption == rhs.pollOption
     }

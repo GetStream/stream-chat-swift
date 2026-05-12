@@ -11,7 +11,7 @@ extension DraftResponse {
         cid: ChannelId? = nil,
         channelPayload: ChannelResponse? = nil,
         createdAt: Date = .unique,
-        message: DraftPayloadResponseOpenAPI = .dummy(),
+        message: DraftPayloadResponse = .dummy(),
         quotedMessage: MessageResponse? = nil,
         parentId: String? = nil,
         parentMessage: MessageResponse? = nil
@@ -28,7 +28,7 @@ extension DraftResponse {
     }
 }
 
-extension DraftPayloadResponseOpenAPI {
+extension DraftPayloadResponse {
     static func dummy(
         id: String = .unique,
         text: String = .unique,
@@ -39,7 +39,7 @@ extension DraftPayloadResponseOpenAPI {
         extraData: [String: RawJSON] = [:],
         attachments: [Attachment]? = nil,
         isSilent: Bool = false
-    ) -> DraftPayloadResponseOpenAPI {
+    ) -> DraftPayloadResponse {
         .init(
             id: id,
             text: text,

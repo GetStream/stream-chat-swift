@@ -148,7 +148,7 @@ final class ThreadDTO_Tests: XCTestCase {
 
     func test_saveThreadPayload_withDraftReply() throws {
         // GIVEN
-        let draftMessagePayload = DraftPayloadResponseOpenAPI(
+        let draftMessagePayload = DraftPayloadResponse(
             id: .unique,
             text: "Draft reply text",
             command: nil,
@@ -210,7 +210,7 @@ final class ThreadDTO_Tests: XCTestCase {
     func test_saveThreadPayload_whenDraftIsNil_removesExistingDraft() throws {
         // GIVEN
         // First save a thread with a draft
-        let draftMessagePayload = DraftPayloadResponseOpenAPI(
+        let draftMessagePayload = DraftPayloadResponse(
             id: .unique,
             text: "Draft reply text",
             command: nil,

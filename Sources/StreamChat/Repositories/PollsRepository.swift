@@ -234,7 +234,7 @@ class PollsRepository: @unchecked Sendable {
             custom: custom
         )
         apiClient.request(
-            endpoint: Endpoint<PollOptionResponseOpenAPI>.createPollOption(pollId: pollId, createPollOptionRequest: request),
+            endpoint: Endpoint<PollOptionResponse>.createPollOption(pollId: pollId, createPollOptionRequest: request),
             completion: {
                 completion?($0.error)
             }
@@ -251,7 +251,7 @@ class PollsRepository: @unchecked Sendable {
             limit: query.pagination.pageSize,
             next: nil,
             prev: nil,
-            sort: query.sorting.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+            sort: query.sorting.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
         )
         apiClient.request(
             endpoint: Endpoint<PollVotesResponse>.queryPollVotes(pollId: query.pollId, userId: nil, queryPollVotesRequest: request)
@@ -279,7 +279,7 @@ class PollsRepository: @unchecked Sendable {
         limit: Int?,
         next: String?,
         prev: String?,
-        sort: [SortParamRequestOpenAPI?],
+        sort: [SortParamRequest?],
         filter: [String: RawJSON]?,
         completion: (@Sendable (Result<PollVotesResponse, Error>) -> Void)? = nil
     ) {

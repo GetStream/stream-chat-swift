@@ -5,9 +5,9 @@
 import Foundation
 
 final class MarkDeliveredRequest: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    var latestDeliveredMessages: [DeliveredMessagePayloadOpenAPI]?
+    var latestDeliveredMessages: [DeliveredMessagePayload]?
 
-    init(latestDeliveredMessages: [DeliveredMessagePayloadOpenAPI]? = nil) {
+    init(latestDeliveredMessages: [DeliveredMessagePayload]? = nil) {
         self.latestDeliveredMessages = latestDeliveredMessages
     }
 

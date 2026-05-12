@@ -61,7 +61,7 @@ final class RemindersRepository_Tests: XCTestCase {
             limit: query.pagination.pageSize,
             next: query.pagination.cursor,
             prev: nil,
-            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+            sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
         ))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }

@@ -137,7 +137,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
             messageLimit: channelListQuery.messagesLimit,
             offset: channelListQuery.pagination.offset,
             presence: channelListQuery.options.contains(.presence),
-            sort: channelListQuery.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            sort: channelListQuery.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
             state: channelListQuery.options.contains(.state),
             watch: channelListQuery.options.contains(.watch)
         )

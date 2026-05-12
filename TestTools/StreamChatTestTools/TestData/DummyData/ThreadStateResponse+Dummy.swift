@@ -16,7 +16,7 @@ extension ThreadStateResponse {
         replyCount: Int = 0,
         participantCount: Int = 0,
         activeParticipantCount: Int = 0,
-        threadParticipants: [ThreadParticipantOpenAPI] = [],
+        threadParticipants: [ThreadParticipantPayload] = [],
         lastMessageAt: Date? = nil,
         createdAt: Date = .unique,
         updatedAt: Date? = .unique,

@@ -58,7 +58,7 @@ extension ThreadParticipantDTO {
 
 extension NSManagedObjectContext {
     func saveThreadParticipant(
-        payload: ThreadParticipantOpenAPI,
+        payload: ThreadParticipantPayload,
         threadId: String,
         cache: PreWarmedCache?
     ) throws -> ThreadParticipantDTO {

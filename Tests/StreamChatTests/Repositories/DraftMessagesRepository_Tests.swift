@@ -63,7 +63,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         
         let referenceEndpoint: Endpoint<QueryDraftsResponse> = .queryDrafts(queryDraftsRequest: QueryDraftsRequest(
             limit: query.pagination.pageSize,
-            sort: query.sorting.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+            sort: query.sorting.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
         ))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }

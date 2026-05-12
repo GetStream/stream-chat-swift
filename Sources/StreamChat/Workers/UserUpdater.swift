@@ -108,7 +108,7 @@ class UserUpdater: Worker, @unchecked Sendable {
             limit: query.pagination?.pageSize,
             offset: query.pagination?.offset,
             presence: query.options.contains(.presence),
-            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+            sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
         )
         apiClient
             .request(endpoint: Endpoint<QueryUsersResponse>.queryUsers(payload: payload)) { (result: Result<QueryUsersResponse, Error>) in

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class CommandOpenAPI: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class CommandPayload: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     /// Arguments help text, shown in commands auto-completion
     var args: String
     /// Date/time of creation
@@ -36,7 +36,7 @@ final class CommandOpenAPI: @unchecked Sendable, Codable, JSONEncodable, Hashabl
         case updatedAt = "updated_at"
     }
 
-    static func == (lhs: CommandOpenAPI, rhs: CommandOpenAPI) -> Bool {
+    static func == (lhs: CommandPayload, rhs: CommandPayload) -> Bool {
         lhs.args == rhs.args &&
             lhs.createdAt == rhs.createdAt &&
             lhs.description == rhs.description &&

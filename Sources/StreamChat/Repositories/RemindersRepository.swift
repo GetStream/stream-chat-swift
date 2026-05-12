@@ -41,7 +41,7 @@ class RemindersRepository: @unchecked Sendable {
             limit: query.pagination.pageSize,
             next: query.pagination.cursor,
             prev: nil,
-            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+            sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
         )
         apiClient.request(
             endpoint: Endpoint<QueryRemindersResponse>.queryReminders(queryRemindersRequest: request)

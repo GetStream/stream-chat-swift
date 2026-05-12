@@ -100,7 +100,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         XCTAssertEqual(payload.id, "general")
         XCTAssertEqual(payload.limit, 10)
         XCTAssertEqual(payload.offset, 5)
-        XCTAssertEqual(payload.sort, [SortParamRequestOpenAPI(direction: 1, field: "channel_role")])
+        XCTAssertEqual(payload.sort, [SortParamRequest(direction: 1, field: "channel_role")])
         XCTAssertEqual(payload.type, "messaging")
     }
 

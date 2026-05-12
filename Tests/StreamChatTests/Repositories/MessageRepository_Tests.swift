@@ -84,7 +84,7 @@ final class MessageRepositoryTests: XCTestCase {
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
         let error = NSError(domain: "", code: 1, userInfo: nil)
-        (apiClient.request_completion as? (Result<SendMessageResponseOpenAPI, Error>) -> Void)?(.failure(error))
+        (apiClient.request_completion as? (Result<SendMessageResponsePayload, Error>) -> Void)?(.failure(error))
 
         wait(for: [expectation], timeout: defaultTimeout)
 
@@ -115,7 +115,7 @@ final class MessageRepositoryTests: XCTestCase {
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
         let error = ClientError(with: APIError(code: 4, message: "Message X already exists.", statusCode: 400))
-        (apiClient.request_completion as? (Result<SendMessageResponseOpenAPI, Error>) -> Void)?(.failure(error))
+        (apiClient.request_completion as? (Result<SendMessageResponsePayload, Error>) -> Void)?(.failure(error))
 
         wait(for: [expectation], timeout: defaultTimeout)
 
@@ -145,8 +145,8 @@ final class MessageRepositoryTests: XCTestCase {
 
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
-        let payload = SendMessageResponseOpenAPI(duration: "", message: .dummy(messageId: id, authorUserId: .anonymous))
-        (apiClient.request_completion as? (Result<SendMessageResponseOpenAPI, Error>) -> Void)?(.success(payload))
+        let payload = SendMessageResponsePayload(duration: "", message: .dummy(messageId: id, authorUserId: .anonymous))
+        (apiClient.request_completion as? (Result<SendMessageResponsePayload, Error>) -> Void)?(.success(payload))
 
         wait(for: [expectation], timeout: defaultTimeout)
 
@@ -169,8 +169,8 @@ final class MessageRepositoryTests: XCTestCase {
 
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
-        let payload = SendMessageResponseOpenAPI(duration: "", message: .dummy(messageId: id, authorUserId: .anonymous))
-        (apiClient.request_completion as? (Result<SendMessageResponseOpenAPI, Error>) -> Void)?(.success(payload))
+        let payload = SendMessageResponsePayload(duration: "", message: .dummy(messageId: id, authorUserId: .anonymous))
+        (apiClient.request_completion as? (Result<SendMessageResponsePayload, Error>) -> Void)?(.success(payload))
 
         wait(for: [expectation], timeout: defaultTimeout)
 
@@ -190,8 +190,8 @@ final class MessageRepositoryTests: XCTestCase {
 
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
 
-        let payload = SendMessageResponseOpenAPI(duration: "", message: .dummy(messageId: id, authorUserId: .anonymous))
-        (apiClient.request_completion as? (Result<SendMessageResponseOpenAPI, Error>) -> Void)?(.success(payload))
+        let payload = SendMessageResponsePayload(duration: "", message: .dummy(messageId: id, authorUserId: .anonymous))
+        (apiClient.request_completion as? (Result<SendMessageResponsePayload, Error>) -> Void)?(.success(payload))
 
         wait(for: [expectation], timeout: defaultTimeout)
 

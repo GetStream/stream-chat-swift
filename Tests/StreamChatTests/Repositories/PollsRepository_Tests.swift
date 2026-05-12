@@ -148,11 +148,11 @@ final class PollsRepository_Tests: XCTestCase {
             completionCalled.fulfill()
         }
         
-        let response = PollOptionResponseOpenAPI(duration: "", pollOption: payload)
+        let response = PollOptionResponse(duration: "", pollOption: payload)
         apiClient.test_simulateResponse(.success(response))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
-        let referenceEndpoint: Endpoint<PollOptionResponseOpenAPI> = .createPollOption(
+        let referenceEndpoint: Endpoint<PollOptionResponse> = .createPollOption(
             pollId: pollId,
             createPollOptionRequest: .init(pollId: pollId, text: pollOption)
         )
@@ -171,10 +171,10 @@ final class PollsRepository_Tests: XCTestCase {
         }
         
         let error = TestError()
-        apiClient.test_simulateResponse(Result<PollOptionResponseOpenAPI, Error>.failure(error))
+        apiClient.test_simulateResponse(Result<PollOptionResponse, Error>.failure(error))
         
         wait(for: [completionCalled], timeout: defaultTimeout)
-        let referenceEndpoint: Endpoint<PollOptionResponseOpenAPI> = .createPollOption(
+        let referenceEndpoint: Endpoint<PollOptionResponse> = .createPollOption(
             pollId: pollId,
             createPollOptionRequest: .init(pollId: pollId, text: pollOption)
         )
@@ -453,7 +453,7 @@ final class PollsRepository_Tests: XCTestCase {
                 limit: query.pagination.pageSize,
                 next: nil,
                 prev: nil,
-                sort: query.sorting.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+                sort: query.sorting.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
             )
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
@@ -483,7 +483,7 @@ final class PollsRepository_Tests: XCTestCase {
                 limit: query.pagination.pageSize,
                 next: nil,
                 prev: nil,
-                sort: query.sorting.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
+                sort: query.sorting.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
             )
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))

@@ -664,7 +664,7 @@ extension DraftResponse {
         cid: ChannelId?,
         channelPayload: ChannelResponse?,
         createdAt: Date,
-        message: DraftPayloadResponseOpenAPI,
+        message: DraftPayloadResponse,
         quotedMessage: MessageResponse?,
         parentId: String?,
         parentMessage: MessageResponse?
@@ -681,7 +681,7 @@ extension DraftResponse {
     }
 }
 
-extension DraftPayloadResponseOpenAPI {
+extension DraftPayloadResponse {
     var command: String? {
         nil
     }
@@ -887,7 +887,7 @@ extension ReactionGroupResponse {
     }
 }
 
-extension DeliveredMessagePayloadOpenAPI {
+extension DeliveredMessagePayload {
     convenience init(cid: ChannelId, id: MessageId) {
         self.init(cid: cid.rawValue, id: id)
     }
@@ -1415,14 +1415,14 @@ extension ChannelConfig {
     }
 }
 
-extension CommandOpenAPI {
+extension CommandPayload {
     var asCommand: Command {
         .init(name: name, description: description, set: set, args: args)
     }
 }
 
 extension Command {
-    var asCommandOpenAPI: CommandOpenAPI {
+    var asCommandOpenAPI: CommandPayload {
         .init(args: args, description: description, name: name, set: set)
     }
 }
@@ -1567,7 +1567,7 @@ extension GetMessageResponse {
     var asMessageResponse: MessageResponse { message.asMessageResponse }
 }
 
-extension SendMessageResponseOpenAPI {
+extension SendMessageResponsePayload {
     var asMessageResponse: MessageResponse { message }
 }
 
@@ -1759,7 +1759,7 @@ extension QueryRemindersResponse {
     }
 }
 
-extension SharedLocationOpenAPI {
+extension SharedLocationPayload {
     convenience init(latitude: Double, longitude: Double, endAt: Date?, createdByDeviceId: String) {
         self.init(
             createdByDeviceId: createdByDeviceId,
@@ -2033,7 +2033,7 @@ extension ChannelGetOrCreateRequest {
 extension QueryMembersPayload {
     convenience init(query: ChannelMemberListQuery) {
         let sort = query.sort.map {
-            SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey)
+            SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey)
         }
         self.init(
             filterConditions: query.filter?.toRawJSONDictionary() ?? [:],
@@ -2092,7 +2092,7 @@ extension UpdateMessagePartialRequest {
 extension SearchPayload {
     convenience init(query: MessageSearchQuery) {
         let sort = query.sort.map {
-            SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey)
+            SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey)
         }
         self.init(
             filterConditions: query.channelFilter.toRawJSONDictionary(),
@@ -2437,7 +2437,7 @@ extension UpdatePollRequest {
     }
 }
 
-extension UpdatePollOptionRequestOpenAPI {
+extension UpdatePollOptionRequest {
     convenience init(id: String, pollId: String, text: String, custom: [String: RawJSON]? = nil) {
         self.init(custom: custom, id: id, text: text)
     }
@@ -2554,9 +2554,9 @@ extension Attachment {
     }
 }
 
-private extension SharedLocationOpenAPI {
-    var asSharedLocationOpenAPI: SharedLocationOpenAPI {
-        SharedLocationOpenAPI(
+private extension SharedLocationPayload {
+    var asSharedLocationOpenAPI: SharedLocationPayload {
+        SharedLocationPayload(
             createdByDeviceId: createdByDeviceId,
             endAt: endAt,
             latitude: Float(latitude),
@@ -2634,7 +2634,7 @@ extension ThreadStateResponse {
 
     var readPayload: [ReadStateResponse] { read ?? [] }
 
-    var threadParticipantPayloads: [ThreadParticipantOpenAPI] { threadParticipants ?? [] }
+    var threadParticipantPayloads: [ThreadParticipantPayload] { threadParticipants ?? [] }
 
     convenience init(
         parentMessageId: MessageId,
@@ -2644,7 +2644,7 @@ extension ThreadStateResponse {
         replyCount: Int,
         participantCount: Int,
         activeParticipantCount: Int,
-        threadParticipants: [ThreadParticipantOpenAPI],
+        threadParticipants: [ThreadParticipantPayload],
         lastMessageAt: Date?,
         createdAt: Date,
         updatedAt: Date?,
@@ -2803,7 +2803,7 @@ extension ThreadResponse {
     }
 }
 
-extension ThreadParticipantOpenAPI {
+extension ThreadParticipantPayload {
     var userPayload: UserResponse {
         user?.asUserPayload ?? UserResponse.empty
     }

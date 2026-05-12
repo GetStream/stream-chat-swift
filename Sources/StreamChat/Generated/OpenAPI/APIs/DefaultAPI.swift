@@ -536,7 +536,7 @@ class DefaultAPI: DefaultAPIEndpoints, @unchecked Sendable {
         }
     }
 
-    func sendMessage(type: String, id: String, sendMessageRequest: SendMessageRequest) async throws -> SendMessageResponseOpenAPI {
+    func sendMessage(type: String, id: String, sendMessageRequest: SendMessageRequest) async throws -> SendMessageResponsePayload {
         var path = "/api/v2/chat/channels/{type}/{id}/message"
 
         let typePreEscape = "\(APIHelper.mapValueToPathItem(type))"
@@ -552,7 +552,7 @@ class DefaultAPI: DefaultAPIEndpoints, @unchecked Sendable {
             request: sendMessageRequest
         )
         return try await send(request: urlRequest) {
-            try self.jsonDecoder.decode(SendMessageResponseOpenAPI.self, from: $0)
+            try self.jsonDecoder.decode(SendMessageResponsePayload.self, from: $0)
         }
     }
 
@@ -1007,7 +1007,7 @@ class DefaultAPI: DefaultAPIEndpoints, @unchecked Sendable {
         }
     }
 
-    func getReplies(parentId: String, limit: Int?, idGte: String?, idGt: String?, idLte: String?, idLt: String?, idAround: String?, sort: [SortParamRequestOpenAPI]?) async throws -> GetRepliesResponse {
+    func getReplies(parentId: String, limit: Int?, idGte: String?, idGt: String?, idLte: String?, idLt: String?, idAround: String?, sort: [SortParamRequest]?) async throws -> GetRepliesResponse {
         var path = "/api/v2/chat/messages/{parent_id}/replies"
 
         let parentIdPreEscape = "\(APIHelper.mapValueToPathItem(parentId))"
@@ -1587,7 +1587,7 @@ class DefaultAPI: DefaultAPIEndpoints, @unchecked Sendable {
         }
     }
 
-    func createPollOption(pollId: String, createPollOptionRequest: CreatePollOptionRequest) async throws -> PollOptionResponseOpenAPI {
+    func createPollOption(pollId: String, createPollOptionRequest: CreatePollOptionRequest) async throws -> PollOptionResponse {
         var path = "/api/v2/polls/{poll_id}/options"
 
         let pollIdPreEscape = "\(APIHelper.mapValueToPathItem(pollId))"
@@ -1600,11 +1600,11 @@ class DefaultAPI: DefaultAPIEndpoints, @unchecked Sendable {
             request: createPollOptionRequest
         )
         return try await send(request: urlRequest) {
-            try self.jsonDecoder.decode(PollOptionResponseOpenAPI.self, from: $0)
+            try self.jsonDecoder.decode(PollOptionResponse.self, from: $0)
         }
     }
 
-    func updatePollOption(pollId: String, updatePollOptionRequest: UpdatePollOptionRequestOpenAPI) async throws -> PollOptionResponseOpenAPI {
+    func updatePollOption(pollId: String, updatePollOptionRequest: UpdatePollOptionRequest) async throws -> PollOptionResponse {
         var path = "/api/v2/polls/{poll_id}/options"
 
         let pollIdPreEscape = "\(APIHelper.mapValueToPathItem(pollId))"
@@ -1617,7 +1617,7 @@ class DefaultAPI: DefaultAPIEndpoints, @unchecked Sendable {
             request: updatePollOptionRequest
         )
         return try await send(request: urlRequest) {
-            try self.jsonDecoder.decode(PollOptionResponseOpenAPI.self, from: $0)
+            try self.jsonDecoder.decode(PollOptionResponse.self, from: $0)
         }
     }
 
@@ -1644,7 +1644,7 @@ class DefaultAPI: DefaultAPIEndpoints, @unchecked Sendable {
         }
     }
 
-    func getPollOption(pollId: String, optionId: String, userId: String?) async throws -> PollOptionResponseOpenAPI {
+    func getPollOption(pollId: String, optionId: String, userId: String?) async throws -> PollOptionResponse {
         var path = "/api/v2/polls/{poll_id}/options/{option_id}"
 
         let pollIdPreEscape = "\(APIHelper.mapValueToPathItem(pollId))"
@@ -1663,7 +1663,7 @@ class DefaultAPI: DefaultAPIEndpoints, @unchecked Sendable {
             httpMethod: "GET"
         )
         return try await send(request: urlRequest) {
-            try self.jsonDecoder.decode(PollOptionResponseOpenAPI.self, from: $0)
+            try self.jsonDecoder.decode(PollOptionResponse.self, from: $0)
         }
     }
 
@@ -2062,7 +2062,7 @@ protocol DefaultAPIEndpoints {
 
     func updateMemberPartial(type: String, id: String, updateMemberPartialRequest: UpdateMemberPartialRequest) async throws -> UpdateMemberPartialResponse
 
-    func sendMessage(type: String, id: String, sendMessageRequest: SendMessageRequest) async throws -> SendMessageResponseOpenAPI
+    func sendMessage(type: String, id: String, sendMessageRequest: SendMessageRequest) async throws -> SendMessageResponsePayload
 
     func getManyMessages(type: String, id: String, ids: [String]) async throws -> GetManyMessagesResponse
 
@@ -2112,7 +2112,7 @@ protocol DefaultAPIEndpoints {
 
     func createReminder(messageId: String, createReminderRequest: CreateReminderRequest) async throws -> ReminderResponseData
 
-    func getReplies(parentId: String, limit: Int?, idGte: String?, idGt: String?, idLte: String?, idLt: String?, idAround: String?, sort: [SortParamRequestOpenAPI]?) async throws -> GetRepliesResponse
+    func getReplies(parentId: String, limit: Int?, idGte: String?, idGt: String?, idLte: String?, idLt: String?, idAround: String?, sort: [SortParamRequest]?) async throws -> GetRepliesResponse
 
     func queryMessageFlags(payload: QueryMessageFlagsPayload?) async throws -> QueryMessageFlagsResponse
 
@@ -2186,13 +2186,13 @@ protocol DefaultAPIEndpoints {
 
     func updatePollPartial(pollId: String, updatePollPartialRequest: UpdatePollPartialRequest) async throws -> PollResponse
 
-    func createPollOption(pollId: String, createPollOptionRequest: CreatePollOptionRequest) async throws -> PollOptionResponseOpenAPI
+    func createPollOption(pollId: String, createPollOptionRequest: CreatePollOptionRequest) async throws -> PollOptionResponse
 
-    func updatePollOption(pollId: String, updatePollOptionRequest: UpdatePollOptionRequestOpenAPI) async throws -> PollOptionResponseOpenAPI
+    func updatePollOption(pollId: String, updatePollOptionRequest: UpdatePollOptionRequest) async throws -> PollOptionResponse
 
     func deletePollOption(pollId: String, optionId: String, userId: String?) async throws -> Response
 
-    func getPollOption(pollId: String, optionId: String, userId: String?) async throws -> PollOptionResponseOpenAPI
+    func getPollOption(pollId: String, optionId: String, userId: String?) async throws -> PollOptionResponse
 
     func queryPollVotes(pollId: String, userId: String?, queryPollVotesRequest: QueryPollVotesRequest) async throws -> PollVotesResponse
 

@@ -14,9 +14,9 @@ final class QueryBannedUsersPayload: @unchecked Sendable, Codable, JSONEncodable
     /// Number of records to offset
     var offset: Int?
     /// [RawJSON] of sort parameters
-    var sort: [SortParamRequestOpenAPI]?
+    var sort: [SortParamRequest]?
 
-    init(excludeExpiredBans: Bool? = nil, filterConditions: [String: RawJSON], limit: Int? = nil, offset: Int? = nil, sort: [SortParamRequestOpenAPI]? = nil) {
+    init(excludeExpiredBans: Bool? = nil, filterConditions: [String: RawJSON], limit: Int? = nil, offset: Int? = nil, sort: [SortParamRequest]? = nil) {
         self.excludeExpiredBans = excludeExpiredBans
         self.filterConditions = filterConditions
         self.limit = limit

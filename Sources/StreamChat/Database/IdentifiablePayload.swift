@@ -185,7 +185,7 @@ extension ThreadStateResponse: IdentifiablePayloadProxy {
     }
 }
 
-extension ThreadParticipantOpenAPI: IdentifiablePayloadProxy {
+extension ThreadParticipantPayload: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         userPayload.fillIds(cache: &cache)
@@ -294,7 +294,7 @@ extension DraftResponse: IdentifiablePayloadProxy {
     }
 }
 
-extension DraftPayloadResponseOpenAPI: IdentifiablePayload {
+extension DraftPayloadResponse: IdentifiablePayload {
     var databaseId: DatabaseId? { id }
     static let modelClass: (IdentifiableDatabaseObject).Type? = MessageDTO.self
 

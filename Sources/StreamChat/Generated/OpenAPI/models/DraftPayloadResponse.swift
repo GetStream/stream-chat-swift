@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class DraftPayloadResponseOpenAPI: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class DraftPayloadResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     /// [RawJSON] of message attachments
     var attachments: [Attachment]?
     var custom: [String: RawJSON]
@@ -61,7 +61,7 @@ final class DraftPayloadResponseOpenAPI: @unchecked Sendable, Codable, JSONEncod
         case type
     }
 
-    static func == (lhs: DraftPayloadResponseOpenAPI, rhs: DraftPayloadResponseOpenAPI) -> Bool {
+    static func == (lhs: DraftPayloadResponse, rhs: DraftPayloadResponse) -> Bool {
         lhs.attachments == rhs.attachments &&
             lhs.custom == rhs.custom &&
             lhs.html == rhs.html &&

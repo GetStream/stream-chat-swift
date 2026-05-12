@@ -52,7 +52,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
             messageLimit: query.messagesLimit,
             offset: query.pagination.offset,
             presence: query.options.contains(.presence),
-            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
             state: query.options.contains(.state),
             watch: query.options.contains(.watch)
         )
@@ -253,7 +253,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
             messageLimit: query.messagesLimit,
             offset: query.pagination.offset,
             presence: query.options.contains(.presence),
-            sort: query.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
             state: query.options.contains(.state),
             watch: query.options.contains(.watch)
         )
@@ -393,7 +393,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
             messageLimit: expectedQuery.messagesLimit,
             offset: expectedQuery.pagination.offset,
             presence: expectedQuery.options.contains(.presence),
-            sort: expectedQuery.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            sort: expectedQuery.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
             state: expectedQuery.options.contains(.state),
             watch: expectedQuery.options.contains(.watch)
         )
@@ -429,7 +429,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
             messageLimit: expectedQuery.messagesLimit,
             offset: expectedQuery.pagination.offset,
             presence: expectedQuery.options.contains(.presence),
-            sort: expectedQuery.sort.map { SortParamRequestOpenAPI(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
+            sort: expectedQuery.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
             state: expectedQuery.options.contains(.state),
             watch: expectedQuery.options.contains(.watch)
         )

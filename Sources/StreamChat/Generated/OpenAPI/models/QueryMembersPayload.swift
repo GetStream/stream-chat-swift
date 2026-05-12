@@ -12,10 +12,10 @@ final class QueryMembersPayload: @unchecked Sendable, Codable, JSONEncodable, Ha
     var members: [ChannelMemberRequest]?
     var offset: Int?
     /// [RawJSON] of sort parameters
-    var sort: [SortParamRequestOpenAPI]?
+    var sort: [SortParamRequest]?
     var type: String
 
-    init(filterConditions: [String: RawJSON], id: String? = nil, limit: Int? = nil, members: [ChannelMemberRequest]? = nil, offset: Int? = nil, sort: [SortParamRequestOpenAPI]? = nil, type: String) {
+    init(filterConditions: [String: RawJSON], id: String? = nil, limit: Int? = nil, members: [ChannelMemberRequest]? = nil, offset: Int? = nil, sort: [SortParamRequest]? = nil, type: String) {
         self.filterConditions = filterConditions
         self.id = id
         self.limit = limit

@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class SortParamRequestOpenAPI: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class SortParamRequest: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     /// Direction of sorting, 1 for Ascending, -1 for Descending, default is 1. One of: -1, 1
     var direction: Int?
     /// Name of field to sort by
@@ -23,7 +23,7 @@ final class SortParamRequestOpenAPI: @unchecked Sendable, Codable, JSONEncodable
         case type
     }
 
-    static func == (lhs: SortParamRequestOpenAPI, rhs: SortParamRequestOpenAPI) -> Bool {
+    static func == (lhs: SortParamRequest, rhs: SortParamRequest) -> Bool {
         lhs.direction == rhs.direction &&
             lhs.field == rhs.field &&
             lhs.type == rhs.type

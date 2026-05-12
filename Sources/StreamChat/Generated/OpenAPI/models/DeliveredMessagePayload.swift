@@ -4,7 +4,7 @@
 
 import Foundation
 
-final class DeliveredMessagePayloadOpenAPI: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+final class DeliveredMessagePayload: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     var cid: String?
     var id: String?
 
@@ -18,7 +18,7 @@ final class DeliveredMessagePayloadOpenAPI: @unchecked Sendable, Codable, JSONEn
         case id
     }
 
-    static func == (lhs: DeliveredMessagePayloadOpenAPI, rhs: DeliveredMessagePayloadOpenAPI) -> Bool {
+    static func == (lhs: DeliveredMessagePayload, rhs: DeliveredMessagePayload) -> Bool {
         lhs.cid == rhs.cid &&
             lhs.id == rhs.id
     }
