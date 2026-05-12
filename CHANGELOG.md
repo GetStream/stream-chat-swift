@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Support typing indicators in `LivestreamChannelController` via new `sendKeystrokeEvent`, `sendStartTypingEvent`, and `sendStopTypingEvent` APIs, plus in-memory `channel.currentlyTypingUsers` updates
 ### 🐞 Fixed
 - Fix `PartialKeyPath: Sendable` retroactive conformance conflict with other modules [#4090](https://github.com/GetStream/stream-chat-swift/pull/4090)
 
