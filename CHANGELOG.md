@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### 🐞 Fixed
-- Fix `PartialKeyPath: Sendable` retroactive conformance conflict with other modules
+- Fix `PartialKeyPath: Sendable` retroactive conformance conflict with other modules [#4090](https://github.com/GetStream/stream-chat-swift/pull/4090)
 
 ## StreamChatCommonUI
 ### 🔄 Changed
