@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+`UploadedFile` now carries an optional `attachment` so custom `CDNStorage` implementations can mutate the attachment payload [#4091](https://github.com/GetStream/stream-chat-swift/pull/4091)
+
 ## StreamChatCommonUI
 ### 🔄 Changed
 - `Appearance.localizationProvider` now falls back from `Bundle.main` to the SDK bundle, so apps can override keys without installing a custom provider [#4088](https://github.com/GetStream/stream-chat-swift/pull/4088)
