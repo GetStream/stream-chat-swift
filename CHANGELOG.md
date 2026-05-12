@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### ✅ Added
 `UploadedFile` now carries an optional `attachment` so custom `CDNStorage` implementations can mutate the attachment payload [#4091](https://github.com/GetStream/stream-chat-swift/pull/4091)
+### 🐞 Fixed
+- Fix `PartialKeyPath: Sendable` retroactive conformance conflict with other modules [#4090](https://github.com/GetStream/stream-chat-swift/pull/4090)
 
 ## StreamChatCommonUI
 ### 🔄 Changed
