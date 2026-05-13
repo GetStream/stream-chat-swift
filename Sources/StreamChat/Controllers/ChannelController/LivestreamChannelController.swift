@@ -899,7 +899,7 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
 
     /// A boolean value indicating if typing events can be sent.
     private var canSendTypingEvents: Bool {
-        channel?.canSendTypingEvents ?? true
+        channel?.canSendTypingEvents ?? false
     }
 
     /// Pauses the collecting of new messages.

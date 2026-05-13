@@ -3765,6 +3765,42 @@ extension LivestreamChannelController_Tests {
         waitForExpectations(timeout: defaultTimeout)
         XCTAssertTrue(receivedError is ClientError.ChannelFeatureDisabled)
     }
+
+    func test_sendTypingEvents_whenChannelIsNotLoaded_doesNotHitTypingEventsSender() {
+        // Given - controller starts with `channel == nil` from setUp(), so we have no idea
+        // whether typing events are enabled. The conservative default is to treat them as
+        // disabled rather than fire API requests that may not be supported.
+        let apiClient = client.mockAPIClient
+        XCTAssertNil(controller.channel)
+
+        let keystrokeExp = expectation(description: "keystroke completion called")
+        let startExp = expectation(description: "start typing completion called")
+        let stopExp = expectation(description: "stop typing completion called")
+        nonisolated(unsafe) var keystrokeError: Error?
+        nonisolated(unsafe) var startError: Error?
+        nonisolated(unsafe) var stopError: Error?
+
+        // When
+        controller.sendKeystrokeEvent { error in
+            keystrokeError = error
+            keystrokeExp.fulfill()
+        }
+        controller.sendStartTypingEvent { error in
+            startError = error
+            startExp.fulfill()
+        }
+        controller.sendStopTypingEvent { error in
+            stopError = error
+            stopExp.fulfill()
+        }
+
+        // Then
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertNil(apiClient.request_endpoint)
+        XCTAssertNil(keystrokeError)
+        XCTAssertTrue(startError is ClientError.ChannelFeatureDisabled)
+        XCTAssertTrue(stopError is ClientError.ChannelFeatureDisabled)
+    }
 }
 
 class MockPaginationStateHandler: MessagesPaginationStateHandling, @unchecked Sendable {
