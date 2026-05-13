@@ -1214,10 +1214,6 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         // Thread typing events should not affect the channel-level typing indicator.
         guard event.parentId == nil else { return }
 
-        // `ChatUser.Equatable` compares many fields (including `lastActiveAt`), but we want
-        // to identify typing users by `id` only. Drop any existing entry for the user so
-        // `Set` semantics don't keep stale copies when the payload metadata differs between
-        // typing.start and typing.stop events.
         var typingUsers = (channel?.currentlyTypingUsers ?? []).filter { $0.id != event.user.id }
         if event.isTyping {
             typingUsers.insert(event.user)
