@@ -221,7 +221,6 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         }
         appStateObserver.unsubscribe(self)
         typingCleanupTimers.values.forEach { $0.cancel() }
-        typingCleanupTimers.removeAll()
     }
 
     // MARK: - Public Methods
