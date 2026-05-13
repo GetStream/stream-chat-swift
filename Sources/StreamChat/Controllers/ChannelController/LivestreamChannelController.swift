@@ -878,7 +878,7 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
     private func sendTypingEvent(
         failsWhenDisabled: Bool,
         completion: (@MainActor (Error?) -> Void)?,
-        send: (ChannelId, @escaping (Error?) -> Void) -> Void
+        send: (ChannelId, @escaping @Sendable (Error?) -> Void) -> Void
     ) {
         guard let cid = cid else {
             callback { completion?(ClientError.ChannelNotCreatedYet()) }
