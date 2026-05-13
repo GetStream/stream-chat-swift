@@ -901,12 +901,6 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
     }
 
     /// A boolean value indicating if typing events can be sent.
-    ///
-    /// It is `true` if the channel has the `sendTypingEvents` capability. Unlike `ChatChannelController`,
-    /// this does not consult the user's privacy settings (`isTypingIndicatorsEnabled`) since the
-    /// livestream controller is intentionally decoupled from the local database. If you need to respect the
-    /// current user's typing privacy preference, gate the call site on the value of
-    /// `client.currentUserController().currentUser?.privacySettings.typingIndicators?.enabled`.
     private var canSendTypingEvents: Bool {
         channel?.canSendTypingEvents ?? true
     }
