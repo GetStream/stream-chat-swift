@@ -1208,15 +1208,21 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         // Thread typing events should not affect the channel-level typing indicator.
         guard event.parentId == nil else { return }
 
-        var typingUsers = (channel?.currentlyTypingUsers ?? []).filter { $0.id != event.user.id }
-        if event.isTyping {
-            typingUsers.insert(event.user)
-            scheduleTypingCleanup(for: event.user)
-        } else {
-            cancelTypingCleanup(for: event.user.id)
-        }
+        let currentTypingUsers = channel?.currentlyTypingUsers ?? []
+        let userId = event.user.id
 
-        updateCurrentlyTypingUsers(typingUsers)
+        if event.isTyping {
+            scheduleTypingCleanup(for: event.user)
+            var nextTypingUsers = currentTypingUsers.filter { $0.id != userId }
+            nextTypingUsers.insert(event.user)
+            updateCurrentlyTypingUsers(nextTypingUsers)
+        } else {
+            cancelTypingCleanup(for: userId)
+            // No-op when the user wasn't tracked locally (e.g. we joined mid-typing).
+            // Avoids allocating a filtered copy of the set for every spurious stop event.
+            guard currentTypingUsers.contains(where: { $0.id == userId }) else { return }
+            updateCurrentlyTypingUsers(currentTypingUsers.filter { $0.id != userId })
+        }
     }
 
     private func scheduleTypingCleanup(for user: ChatUser) {
