@@ -334,6 +334,7 @@ public struct ChatChannel {
         cooldownDuration: Int? = nil,
         pinnedMessages: [ChatMessage]? = nil,
         pushPreference: PushPreference? = nil,
+        currentlyTypingUsers: Set<ChatUser>? = nil,
         extraData: [String: RawJSON]? = nil
     ) -> ChatChannel {
         .init(
@@ -355,7 +356,7 @@ public struct ChatChannel {
             isBlocked: isBlocked ?? self.isBlocked,
             lastActiveMembers: members ?? lastActiveMembers,
             membership: membership ?? self.membership,
-            currentlyTypingUsers: currentlyTypingUsers,
+            currentlyTypingUsers: currentlyTypingUsers ?? self.currentlyTypingUsers,
             lastActiveWatchers: watchers ?? lastActiveWatchers,
             team: team ?? self.team,
             unreadCount: unreadCount,

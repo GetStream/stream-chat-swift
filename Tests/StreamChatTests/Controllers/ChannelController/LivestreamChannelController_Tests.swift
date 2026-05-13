@@ -775,7 +775,10 @@ extension LivestreamChannelController_Tests {
         
         var didChangeSkippedMessagesAmountCalled = false
         var didChangeSkippedMessagesAmountCalledWith: Int?
-        
+
+        var didChangeTypingUsersCalled = false
+        var didChangeTypingUsersCalledWith: Set<ChatUser>?
+
         func livestreamChannelController(
             _ controller: LivestreamChannelController,
             didUpdateChannel channel: ChatChannel
@@ -806,6 +809,14 @@ extension LivestreamChannelController_Tests {
         ) {
             didChangeSkippedMessagesAmountCalled = true
             didChangeSkippedMessagesAmountCalledWith = skippedMessagesAmount
+        }
+
+        func livestreamChannelController(
+            _ controller: LivestreamChannelController,
+            didChangeTypingUsers typingUsers: Set<ChatUser>
+        ) {
+            didChangeTypingUsersCalled = true
+            didChangeTypingUsersCalledWith = typingUsers
         }
     }
 }
@@ -3485,6 +3496,527 @@ extension LivestreamChannelController_Tests {
         let expectedEndpoint = Endpoint<EmptyResponse>.freezeChannel(false, cid: controller.cid!)
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(unfreezeError)
+    }
+}
+
+// MARK: - Typing Events Tests
+
+extension LivestreamChannelController_Tests {
+    private func loadChannel(
+        cid: ChannelId? = nil,
+        ownCapabilities: [ChannelCapability] = [.sendTypingEvents]
+    ) {
+        let cid = cid ?? controller.cid!
+        let exp = expectation(description: "sync completes")
+        controller.synchronize { _ in exp.fulfill() }
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, ownCapabilities: ownCapabilities.map(\.rawValue))
+        )
+        client.mockAPIClient.test_simulateResponse(.success(channelPayload))
+        waitForExpectations(timeout: defaultTimeout)
+    }
+
+    // MARK: Receiving typing events
+
+    func test_didReceiveEvent_typingStartEvent_addsUserToTypingUsers() {
+        // Given
+        loadChannel()
+        let typingUser = ChatUser.mock(id: .unique)
+
+        // When
+        let event = TypingEvent(
+            isTyping: true,
+            cid: controller.cid!,
+            user: typingUser,
+            parentId: nil,
+            createdAt: .unique
+        )
+        controller.didReceiveEvent(event)
+
+        // Then
+        XCTAssertEqual(controller.channel?.currentlyTypingUsers, [typingUser])
+    }
+
+    func test_didReceiveEvent_typingStopEvent_removesUserFromTypingUsers() {
+        // Given
+        loadChannel()
+        let typingUser = ChatUser.mock(id: .unique)
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: typingUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+        XCTAssertEqual(controller.channel?.currentlyTypingUsers, [typingUser])
+
+        // When
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: false,
+                cid: controller.cid!,
+                user: typingUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+
+        // Then
+        XCTAssertEqual(controller.channel?.currentlyTypingUsers, [])
+    }
+
+    func test_didReceiveEvent_typingStopEvent_removesUserEvenWhenUserMetadataChanged() {
+        // Given
+        loadChannel()
+        let userId = UserId.unique
+        let startUser = ChatUser.mock(id: userId, name: "Alice", isOnline: true, lastActiveAt: .init(timeIntervalSince1970: 100))
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: startUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+        XCTAssertEqual(controller.channel?.currentlyTypingUsers.map(\.id), [userId])
+
+        // When the typing.stop payload reflects updated metadata for the same user
+        // (e.g. a refreshed `lastActiveAt`), the user should still be removed from
+        // the set. `Set.remove` would otherwise no-op because `ChatUser.Equatable`
+        // compares many fields, leaving the indicator stuck visible.
+        let stopUser = ChatUser.mock(id: userId, name: "Alice", isOnline: true, lastActiveAt: .init(timeIntervalSince1970: 200))
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: false,
+                cid: controller.cid!,
+                user: stopUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+
+        // Then
+        XCTAssertEqual(controller.channel?.currentlyTypingUsers, [])
+    }
+
+    func test_didReceiveEvent_typingStartEvent_forAlreadyTypingUser_doesNotDuplicateEntry() {
+        // Given
+        loadChannel()
+        let userId = UserId.unique
+        let firstUser = ChatUser.mock(id: userId, name: "Alice", isOnline: false)
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: firstUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+        XCTAssertEqual(controller.channel?.currentlyTypingUsers.count, 1)
+
+        // When a second typing.start arrives for the same user id with updated metadata
+        let updatedUser = ChatUser.mock(id: userId, name: "Alice", isOnline: true)
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: updatedUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+
+        // Then we still have a single entry for that user (no duplicate). The cached
+        // user-metadata is intentionally NOT refreshed mid-session: a same-id update
+        // is treated as a no-op so we don't broadcast `didUpdateChannel` on every
+        // re-emitted `typing.start`. The user is removed via auto-cleanup or an
+        // explicit `typing.stop`.
+        let typingUsers = controller.channel?.currentlyTypingUsers ?? []
+        XCTAssertEqual(typingUsers.count, 1)
+        XCTAssertEqual(typingUsers.first?.id, userId)
+    }
+
+    @MainActor
+    func test_didReceiveEvent_typingStart_withRefreshedUserMetadata_doesNotFireDelegatesAgain() {
+        // Given
+        loadChannel()
+        let delegate = LivestreamChannelControllerDelegate_Mock()
+        controller.delegate = delegate
+        let userId = UserId.unique
+
+        // First typing.start adds the user.
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: .mock(id: userId, name: "Alice", lastActiveAt: .init(timeIntervalSince1970: 100)),
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+        AssertAsync.willBeTrue(delegate.didChangeTypingUsersCalled)
+        AssertAsync.willBeTrue(delegate.didUpdateChannelCalled)
+        delegate.didChangeTypingUsersCalled = false
+        delegate.didUpdateChannelCalled = false
+
+        // When a second typing.start arrives for the same user id but with refreshed
+        // server metadata (e.g. an updated `lastActiveAt`). `Set<ChatUser>.==` would
+        // otherwise report this as a change because `ChatUser.Equatable` compares
+        // ~13 fields, and the controller would fire `didUpdateChannel` on every
+        // keystroke from an already-typing user.
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: .mock(id: userId, name: "Alice", lastActiveAt: .init(timeIntervalSince1970: 200)),
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+
+        // Then neither delegate should fire again because the typing-user set is
+        // unchanged when compared by id.
+        AssertAsync {
+            Assert.staysFalse(delegate.didChangeTypingUsersCalled)
+            Assert.staysFalse(delegate.didUpdateChannelCalled)
+        }
+    }
+
+    @MainActor
+    func test_didReceiveEvent_duplicateTypingStart_doesNotFireDelegatesAgain() {
+        // Given
+        loadChannel()
+        let delegate = LivestreamChannelControllerDelegate_Mock()
+        controller.delegate = delegate
+        let typingUser = ChatUser.mock(id: .unique)
+        let event = TypingEvent(
+            isTyping: true,
+            cid: controller.cid!,
+            user: typingUser,
+            parentId: nil,
+            createdAt: .unique
+        )
+
+        // When the first typing.start arrives the user is added and both delegates fire.
+        controller.didReceiveEvent(event)
+        AssertAsync.willBeTrue(delegate.didChangeTypingUsersCalled)
+        AssertAsync.willBeTrue(delegate.didUpdateChannelCalled)
+
+        // Reset the flags before sending an identical typing.start for the same user
+        // (this happens in practice because senders re-emit `typing.start` periodically).
+        delegate.didChangeTypingUsersCalled = false
+        delegate.didUpdateChannelCalled = false
+
+        // When the duplicate event arrives
+        controller.didReceiveEvent(event)
+
+        // Then neither delegate should fire again, because the typing set is unchanged.
+        // Otherwise the controller would re-allocate `ChatChannel` and broadcast
+        // `didUpdateChannel` on every keystroke from every typing user.
+        AssertAsync {
+            Assert.staysFalse(delegate.didChangeTypingUsersCalled)
+            Assert.staysFalse(delegate.didUpdateChannelCalled)
+        }
+    }
+
+    func test_didReceiveEvent_typingEvent_fromCurrentUser_isIgnored() {
+        // Given
+        let currentUserId = UserId.unique
+        client.mockAuthenticationRepository.mockedCurrentUserId = currentUserId
+        loadChannel()
+
+        // When
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: .mock(id: currentUserId),
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+
+        // Then
+        XCTAssertTrue(controller.channel?.currentlyTypingUsers.isEmpty ?? true)
+    }
+
+    func test_didReceiveEvent_typingEvent_inThread_doesNotAffectChannelTyping() {
+        // Given
+        loadChannel()
+
+        // When
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: .mock(id: .unique),
+                parentId: .unique,
+                createdAt: .unique
+            )
+        )
+
+        // Then
+        XCTAssertTrue(controller.channel?.currentlyTypingUsers.isEmpty ?? true)
+    }
+
+    func test_didReceiveEvent_typingEvent_forDifferentChannel_isIgnored() {
+        // Given
+        loadChannel()
+        let typingUser = ChatUser.mock(id: .unique)
+
+        // When
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: .unique,
+                user: typingUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+
+        // Then
+        XCTAssertTrue(controller.channel?.currentlyTypingUsers.isEmpty ?? true)
+    }
+
+    @MainActor func test_didReceiveEvent_typingEvent_callsDelegate() {
+        // Given
+        loadChannel()
+        let delegate = LivestreamChannelControllerDelegate_Mock()
+        controller.delegate = delegate
+        let typingUser = ChatUser.mock(id: .unique)
+
+        // When
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: typingUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+
+        // Then
+        AssertAsync.willBeTrue(delegate.didChangeTypingUsersCalled)
+        AssertAsync.willBeEqual(delegate.didChangeTypingUsersCalledWith, [typingUser])
+    }
+
+    func test_didReceiveEvent_typingStart_autoCleansUp_afterTimeout() {
+        // Given
+        let virtualTime = VirtualTime()
+        VirtualTimeTimer.time = virtualTime
+        controller.timerType = VirtualTimeTimer.self
+        loadChannel()
+
+        let typingUser = ChatUser.mock(id: .unique)
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: typingUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+        XCTAssertEqual(controller.channel?.currentlyTypingUsers, [typingUser])
+
+        // When
+        virtualTime.run(numberOfSeconds: .incomingTypingStartEventTimeout + 1)
+
+        // Then
+        XCTAssertTrue(controller.channel?.currentlyTypingUsers.isEmpty ?? false)
+
+        VirtualTimeTimer.invalidate()
+    }
+
+    func test_didReceiveEvent_typingStop_cancelsAutoCleanup() {
+        // Given
+        let virtualTime = VirtualTime()
+        VirtualTimeTimer.time = virtualTime
+        controller.timerType = VirtualTimeTimer.self
+        loadChannel()
+
+        let typingUser = ChatUser.mock(id: .unique)
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: typingUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+        // Stop typing before the timeout.
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: false,
+                cid: controller.cid!,
+                user: typingUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+
+        // When - the timeout would have fired, but the timer must have been cancelled.
+        virtualTime.run(numberOfSeconds: .incomingTypingStartEventTimeout + 1)
+
+        // Then - typing set stays empty (and importantly the cleanup did not raise an error or re-trigger).
+        XCTAssertTrue(controller.channel?.currentlyTypingUsers.isEmpty ?? false)
+
+        VirtualTimeTimer.invalidate()
+    }
+
+    // MARK: Sending typing events
+
+    func test_sendKeystrokeEvent_callsCorrectEndpoint() {
+        // Given
+        loadChannel()
+        let apiClient = client.mockAPIClient
+
+        // When
+        controller.sendKeystrokeEvent()
+
+        // Then
+        let expectedEndpoint = Endpoint<EmptyResponse>.startTypingEvent(cid: controller.cid!, parentMessageId: nil)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_sendKeystrokeEvent_withParentMessageId_callsCorrectEndpoint() {
+        // Given
+        loadChannel()
+        let apiClient = client.mockAPIClient
+        let parentMessageId = MessageId.unique
+
+        // When
+        controller.sendKeystrokeEvent(parentMessageId: parentMessageId)
+
+        // Then
+        let expectedEndpoint = Endpoint<EmptyResponse>.startTypingEvent(
+            cid: controller.cid!,
+            parentMessageId: parentMessageId
+        )
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_sendStartTypingEvent_callsCorrectEndpoint() {
+        // Given
+        loadChannel()
+        let apiClient = client.mockAPIClient
+
+        // When
+        controller.sendStartTypingEvent()
+
+        // Then
+        let expectedEndpoint = Endpoint<EmptyResponse>.startTypingEvent(cid: controller.cid!, parentMessageId: nil)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_sendStopTypingEvent_callsCorrectEndpoint() {
+        // Given
+        loadChannel()
+        let apiClient = client.mockAPIClient
+
+        // When
+        controller.sendStopTypingEvent()
+
+        // Then
+        let expectedEndpoint = Endpoint<EmptyResponse>.stopTypingEvent(cid: controller.cid!, parentMessageId: nil)
+        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_sendKeystrokeEvent_whenTypingEventsAreDisabled_doesNothing() {
+        // Given
+        loadChannel(ownCapabilities: [])
+        let apiClient = client.mockAPIClient
+        apiClient.cleanUp()
+        let exp = expectation(description: "completion called")
+        nonisolated(unsafe) var receivedError: Error?
+
+        // When
+        controller.sendKeystrokeEvent { error in
+            receivedError = error
+            exp.fulfill()
+        }
+
+        // Then
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertNil(receivedError)
+        XCTAssertNil(apiClient.request_endpoint)
+    }
+
+    func test_sendStartTypingEvent_whenTypingEventsAreDisabled_errors() {
+        // Given
+        loadChannel(ownCapabilities: [])
+        let exp = expectation(description: "completion called")
+        nonisolated(unsafe) var receivedError: Error?
+
+        // When
+        controller.sendStartTypingEvent { error in
+            receivedError = error
+            exp.fulfill()
+        }
+
+        // Then
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertTrue(receivedError is ClientError.ChannelFeatureDisabled)
+    }
+
+    func test_sendTypingEvents_whenChannelIsNotLoaded_doesNotHitTypingEventsSender() {
+        // Given - controller starts with `channel == nil` from setUp(), so we have no idea
+        // whether typing events are enabled. The conservative default is to treat them as
+        // disabled rather than fire API requests that may not be supported.
+        let apiClient = client.mockAPIClient
+        XCTAssertNil(controller.channel)
+
+        let keystrokeExp = expectation(description: "keystroke completion called")
+        let startExp = expectation(description: "start typing completion called")
+        let stopExp = expectation(description: "stop typing completion called")
+        nonisolated(unsafe) var keystrokeError: Error?
+        nonisolated(unsafe) var startError: Error?
+        nonisolated(unsafe) var stopError: Error?
+
+        // When
+        controller.sendKeystrokeEvent { error in
+            keystrokeError = error
+            keystrokeExp.fulfill()
+        }
+        controller.sendStartTypingEvent { error in
+            startError = error
+            startExp.fulfill()
+        }
+        controller.sendStopTypingEvent { error in
+            stopError = error
+            stopExp.fulfill()
+        }
+
+        // Then
+        waitForExpectations(timeout: defaultTimeout)
+        XCTAssertNil(apiClient.request_endpoint)
+        XCTAssertNil(keystrokeError)
+        XCTAssertTrue(startError is ClientError.ChannelFeatureDisabled)
+        XCTAssertTrue(stopError is ClientError.ChannelFeatureDisabled)
+    }
+}
+
+private extension LivestreamChannelController {
+    /// Test-only convenience that bridges the v5-style `didReceiveEvent(_:)` API used by
+    /// the cherry-picked typing-events tests onto the v4 `EventsControllerDelegate` entry
+    /// point so we don't have to duplicate the verbose `EventsController` boilerplate at
+    /// every call site.
+    func didReceiveEvent(_ event: Event) {
+        eventsController(
+            EventsController(
+                notificationCenter: EventNotificationCenter_Mock(
+                    database: DatabaseContainer_Spy()
+                )
+            ),
+            didReceiveEvent: event
+        )
     }
 }
 
