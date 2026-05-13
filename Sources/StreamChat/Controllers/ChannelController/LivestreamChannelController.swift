@@ -1243,9 +1243,10 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
     }
 
     private func updateCurrentlyTypingUsers(_ typingUsers: Set<ChatUser>) {
-        let previousTypingUsers = channel?.currentlyTypingUsers
+        // Bail out before mutating `channel` so we don't trigger `didUpdateChannel`
+        // (or a new `ChatChannel` struct copy) on every redundant typing event.
+        guard channel?.currentlyTypingUsers != typingUsers else { return }
         channel = channel?.changing(currentlyTypingUsers: typingUsers)
-        guard previousTypingUsers != typingUsers else { return }
         delegateCallback { [weak self] in
             guard let self else { return }
             $0.livestreamChannelController(self, didChangeTypingUsers: typingUsers)
