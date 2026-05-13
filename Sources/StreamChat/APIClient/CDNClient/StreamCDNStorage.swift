@@ -9,9 +9,40 @@ public struct UploadedFile: Sendable, Decodable {
     public let fileURL: URL
     public let thumbnailURL: URL?
 
-    public init(fileURL: URL, thumbnailURL: URL? = nil) {
+    /// The chat message attachment associated with the upload, after any payload mutations
+    /// performed by a custom ``CDNStorage`` implementation.
+    ///
+    /// Set this from `CDNStorage.uploadAttachment(_:options:completion:)` when your custom CDN
+    /// returns extra metadata (e.g. title, codec, dimensions, signed thumbnail URLs) that you
+    /// want to write into the attachment payload before the SDK persists it. Use
+    /// ``AnyAttachmentUpdater`` to mutate the typed payload and pass the resulting attachment here.
+    ///
+    /// - Note: This property is only meaningful when returned from
+    ///   ``CDNStorage/uploadAttachment(_:options:completion:)`` (the message-attached overload).
+    ///   It is ignored by ``CDNStorage/uploadAttachment(localUrl:options:completion:)`` because
+    ///   standalone file uploads have no message attachment context.
+    public let attachment: AnyChatMessageAttachment?
+
+    public init(
+        fileURL: URL,
+        thumbnailURL: URL? = nil,
+        attachment: AnyChatMessageAttachment? = nil
+    ) {
         self.fileURL = fileURL
         self.thumbnailURL = thumbnailURL
+        self.attachment = attachment
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case fileURL
+        case thumbnailURL
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        fileURL = try container.decode(URL.self, forKey: .fileURL)
+        thumbnailURL = try container.decodeIfPresent(URL.self, forKey: .thumbnailURL)
+        attachment = nil
     }
 }
 
