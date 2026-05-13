@@ -3486,6 +3486,43 @@ extension LivestreamChannelController_Tests {
         XCTAssertEqual(typingUsers.first?.isOnline, true)
     }
 
+    @MainActor
+    func test_didReceiveEvent_duplicateTypingStart_doesNotFireDelegatesAgain() {
+        // Given
+        loadChannel()
+        let delegate = LivestreamChannelControllerDelegate_Mock()
+        controller.delegate = delegate
+        let typingUser = ChatUser.mock(id: .unique)
+        let event = TypingEvent(
+            isTyping: true,
+            cid: controller.cid!,
+            user: typingUser,
+            parentId: nil,
+            createdAt: .unique
+        )
+
+        // When the first typing.start arrives the user is added and both delegates fire.
+        controller.didReceiveEvent(event)
+        AssertAsync.willBeTrue(delegate.didChangeTypingUsersCalled)
+        AssertAsync.willBeTrue(delegate.didUpdateChannelCalled)
+
+        // Reset the flags before sending an identical typing.start for the same user
+        // (this happens in practice because senders re-emit `typing.start` periodically).
+        delegate.didChangeTypingUsersCalled = false
+        delegate.didUpdateChannelCalled = false
+
+        // When the duplicate event arrives
+        controller.didReceiveEvent(event)
+
+        // Then neither delegate should fire again, because the typing set is unchanged.
+        // Otherwise the controller would re-allocate `ChatChannel` and broadcast
+        // `didUpdateChannel` on every keystroke from every typing user.
+        AssertAsync {
+            Assert.staysFalse(delegate.didChangeTypingUsersCalled)
+            Assert.staysFalse(delegate.didUpdateChannelCalled)
+        }
+    }
+
     func test_didReceiveEvent_typingEvent_fromCurrentUser_isIgnored() {
         // Given
         let currentUserId = UserId.unique
