@@ -98,14 +98,15 @@ final class ManualEventHandler_Tests: XCTestCase {
     // MARK: - Event Handling - Unsupported Event Type
     
     func test_handle_unsupportedEventType_returnsNil() throws {
-        // Use a typing event which is not handled by ManualEventHandler
+        // Use a user watching event which is not handled by ManualEventHandler.
         let eventPayload = EventPayload(
-            eventType: .userStartTyping,
+            eventType: .userStartWatching,
             cid: cid,
             user: .dummy(userId: .unique),
+            watcherCount: 1,
             createdAt: .unique
         )
-        let eventDTO = try! TypingEventDTO(from: eventPayload)
+        let eventDTO = try! UserWatchingEventDTO(from: eventPayload)
         
         var result: Event!
         try database.writeSynchronously { _ in
@@ -322,5 +323,95 @@ final class ManualEventHandler_Tests: XCTestCase {
         XCTAssertEqual(reactionDeletedEvent.cid, cid)
         XCTAssertEqual(reactionDeletedEvent.reaction.type, reactionType)
         XCTAssertEqual(reactionDeletedEvent.createdAt, createdAt)
+    }
+
+    // MARK: - Typing Events
+
+    func test_handle_typingStartEvent_withValidData_returnsEvent() throws {
+        let userId: UserId = .unique
+        let createdAt = Date.unique
+
+        let eventPayload = EventPayload(
+            eventType: .userStartTyping,
+            cid: cid,
+            user: .dummy(userId: userId),
+            createdAt: createdAt
+        )
+        let eventDTO = try! TypingEventDTO(from: eventPayload)
+
+        nonisolated(unsafe) var result: Event!
+        try database.writeSynchronously { _ in
+            result = self.handler.handle(eventDTO)
+        }
+
+        let typingEvent = try XCTUnwrap(result as? TypingEvent)
+        XCTAssertTrue(typingEvent.isTyping)
+        XCTAssertEqual(typingEvent.user.id, userId)
+        XCTAssertEqual(typingEvent.cid, cid)
+        XCTAssertEqual(typingEvent.createdAt, createdAt)
+        XCTAssertNil(typingEvent.parentId)
+        XCTAssertFalse(typingEvent.isThread)
+    }
+
+    func test_handle_typingStopEvent_withValidData_returnsEvent() throws {
+        let userId: UserId = .unique
+        let createdAt = Date.unique
+
+        let eventPayload = EventPayload(
+            eventType: .userStopTyping,
+            cid: cid,
+            user: .dummy(userId: userId),
+            createdAt: createdAt
+        )
+        let eventDTO = try! TypingEventDTO(from: eventPayload)
+
+        nonisolated(unsafe) var result: Event!
+        try database.writeSynchronously { _ in
+            result = self.handler.handle(eventDTO)
+        }
+
+        let typingEvent = try XCTUnwrap(result as? TypingEvent)
+        XCTAssertFalse(typingEvent.isTyping)
+        XCTAssertEqual(typingEvent.user.id, userId)
+        XCTAssertEqual(typingEvent.cid, cid)
+    }
+
+    func test_handle_typingEvent_inThread_returnsEventWithParentId() throws {
+        let parentMessageId: MessageId = .unique
+        let eventPayload = EventPayload(
+            eventType: .userStartTyping,
+            cid: cid,
+            user: .dummy(userId: .unique),
+            createdAt: .unique,
+            parentId: parentMessageId
+        )
+        let eventDTO = try! TypingEventDTO(from: eventPayload)
+
+        nonisolated(unsafe) var result: Event!
+        try database.writeSynchronously { _ in
+            result = self.handler.handle(eventDTO)
+        }
+
+        let typingEvent = try XCTUnwrap(result as? TypingEvent)
+        XCTAssertEqual(typingEvent.parentId, parentMessageId)
+        XCTAssertTrue(typingEvent.isThread)
+    }
+
+    func test_handle_typingEvent_onUnregisteredChannel_returnsNil() throws {
+        let unregisteredCid: ChannelId = .unique
+        let eventPayload = EventPayload(
+            eventType: .userStartTyping,
+            cid: unregisteredCid,
+            user: .dummy(userId: .unique),
+            createdAt: .unique
+        )
+        let eventDTO = try! TypingEventDTO(from: eventPayload)
+
+        nonisolated(unsafe) var result: Event!
+        try database.writeSynchronously { _ in
+            result = self.handler.handle(eventDTO)
+        }
+
+        XCTAssertNil(result)
     }
 }

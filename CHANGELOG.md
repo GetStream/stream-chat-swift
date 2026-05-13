@@ -3,6 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Support typing indicators in `LivestreamChannelController` [#4094](https://github.com/GetStream/stream-chat-swift/pull/4094)
 ### 🔄 Changed
 
 # [4.99.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.99.2)

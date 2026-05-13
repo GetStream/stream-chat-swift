@@ -26,6 +26,16 @@ extension LivestreamChannelController {
         basePublishers.skippedMessagesAmount.keepAlive(self)
     }
 
+    /// A publisher emitting a new value every time the set of currently typing users changes.
+    ///
+    /// The publisher's initial value is captured from `controller.channel?.currentlyTypingUsers`
+    /// at the time the controller's Combine bridge is first accessed. If a subscriber attaches
+    /// before `synchronize()` resolves the channel, the initial value will be an empty set;
+    /// subsequent updates are still delivered as typing events arrive.
+    public var typingUsersPublisher: AnyPublisher<Set<ChatUser>, Never> {
+        basePublishers.typingUsers.keepAlive(self)
+    }
+
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
     /// publishers. Instead of creating custom `Publisher` types, we use `CurrentValueSubject` and `PassthroughSubject` internally,
     /// and expose the published values by mapping them to a read-only `AnyPublisher` type.
@@ -45,12 +55,16 @@ extension LivestreamChannelController {
         // A backing subject for `skippedMessagesAmountPublisher`.
         let skippedMessagesAmount: CurrentValueSubject<Int, Never>
 
+        /// A backing subject for `typingUsersPublisher`.
+        let typingUsers: CurrentValueSubject<Set<ChatUser>, Never>
+
         init(controller: LivestreamChannelController) {
             self.controller = controller
             channelChange = .init(controller.channel)
             messagesChanges = .init(controller.messages)
             skippedMessagesAmount = .init(controller.skippedMessagesAmount)
             isPaused = .init(controller.isPaused)
+            typingUsers = .init(controller.channel?.currentlyTypingUsers ?? [])
             controller.multicastDelegate.add(additionalDelegate: self)
         }
     }
@@ -83,5 +97,12 @@ extension LivestreamChannelController.BasePublishers: LivestreamChannelControlle
         didChangeSkippedMessagesAmount skippedMessagesAmount: Int
     ) {
         self.skippedMessagesAmount.send(skippedMessagesAmount)
+    }
+
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
+    ) {
+        self.typingUsers.send(typingUsers)
     }
 }

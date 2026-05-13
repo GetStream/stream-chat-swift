@@ -18,7 +18,6 @@ public extension ChatClient {
 /// Unlike `ChatChannelController`, this controller manages all data in memory and communicates directly with the API.
 /// It is more performant than `ChatChannelController` but is more simpler and it has less features, like for example:
 /// - Read updates
-/// - Typing indicators
 /// - etc..
 public class LivestreamChannelController: DataStoreProvider, EventsControllerDelegate, AppStateObserverDelegate {
     public typealias Delegate = LivestreamChannelControllerDelegate
@@ -157,6 +156,21 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     /// The current user id.
     private var currentUserId: UserId? { client.currentUserId }
 
+    /// Sends typing events (keystroke/start/stop) for the current user.
+    private lazy var typingEventsSender: TypingEventsSender = TypingEventsSender(
+        database: client.databaseContainer,
+        apiClient: client.apiClient
+    )
+
+    /// The timer scheduler used for the auto-stop typing cleanup.
+    var timerType: TimerScheduling.Type = DefaultTimer.self
+
+    /// Per-user timers that synthesize a "stop typing" effect locally if a typing.stop event never arrives.
+    ///
+    /// Required because livestream channels bypass `TypingStartCleanupMiddleware`, which is responsible for
+    /// the timeout-based cleanup in regular channels.
+    private var typingCleanupTimers: [UserId: TimerControl] = [:]
+
     /// An internal backing object for all publicly available Combine publishers.
     var basePublishers: BasePublishers {
         if let value = _basePublishers as? BasePublishers {
@@ -206,6 +220,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
             client.eventNotificationCenter.unregisterManualEventHandling(for: cid)
         }
         appStateObserver.unsubscribe(self)
+        typingCleanupTimers.values.forEach { $0.cancel() }
     }
 
     // MARK: - Public Methods
@@ -796,6 +811,97 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
         }
     }
 
+    // MARK: - Typing
+
+    /// Sends the start typing event and schedules a timer to send the stop typing event.
+    ///
+    /// This method is meant to be called every time the user presses a key. The method will manage requests and timer as needed.
+    ///
+    /// - Parameters:
+    ///   - parentMessageId: A message id of the message in a thread the user is replying to.
+    ///   - completion: a completion block with an error if the request was failed.
+    public func sendKeystrokeEvent(
+        parentMessageId: MessageId? = nil,
+        completion: (@MainActor (Error?) -> Void)? = nil
+    ) {
+        sendTypingEvent(failsWhenDisabled: false, completion: completion) { cid, sendCompletion in
+            typingEventsSender.keystroke(in: cid, parentMessageId: parentMessageId, completion: sendCompletion)
+        }
+    }
+
+    /// Sends the start typing event.
+    ///
+    /// For the majority of cases, you don't need to call `sendStartTypingEvent` directly. Instead, use `sendKeystrokeEvent`
+    /// method and call it every time the user presses a key. The controller will manage
+    /// `sendStartTypingEvent`/`sendStopTypingEvent` calls automatically.
+    ///
+    /// - Parameters:
+    ///   - parentMessageId: A message id of the message in a thread the user is replying to.
+    ///   - completion: a completion block with an error if the request was failed.
+    public func sendStartTypingEvent(
+        parentMessageId: MessageId? = nil,
+        completion: (@MainActor (Error?) -> Void)? = nil
+    ) {
+        sendTypingEvent(failsWhenDisabled: true, completion: completion) { cid, sendCompletion in
+            typingEventsSender.startTyping(in: cid, parentMessageId: parentMessageId, completion: sendCompletion)
+        }
+    }
+
+    /// Sends the stop typing event.
+    ///
+    /// For the majority of cases, you don't need to call `sendStopTypingEvent` directly. Instead, use `sendKeystrokeEvent`
+    /// method and call it every time the user presses a key. The controller will manage
+    /// `sendStartTypingEvent`/`sendStopTypingEvent` calls automatically.
+    ///
+    /// - Parameters:
+    ///   - parentMessageId: A message id of the message in a thread the user is replying to.
+    ///   - completion: a completion block with an error if the request was failed.
+    public func sendStopTypingEvent(
+        parentMessageId: MessageId? = nil,
+        completion: (@MainActor (Error?) -> Void)? = nil
+    ) {
+        sendTypingEvent(failsWhenDisabled: true, completion: completion) { cid, sendCompletion in
+            typingEventsSender.stopTyping(in: cid, parentMessageId: parentMessageId, completion: sendCompletion)
+        }
+    }
+
+    /// Shared boilerplate for the three public typing-event entry points.
+    ///
+    /// - Parameters:
+    ///   - failsWhenDisabled: When `true`, the completion receives a
+    ///     `ChannelFeatureDisabled` error if typing events are disabled. When `false`
+    ///     (used by `sendKeystrokeEvent`) the completion is invoked with `nil` so a
+    ///     disabled channel is treated as a silent no-op.
+    ///   - completion: The caller's completion handler.
+    ///   - send: Performs the underlying send once a valid `cid` and an enabled
+    ///     channel have been confirmed.
+    private func sendTypingEvent(
+        failsWhenDisabled: Bool,
+        completion: (@MainActor (Error?) -> Void)?,
+        send: (ChannelId, @escaping @Sendable (Error?) -> Void) -> Void
+    ) {
+        guard let cid = cid else {
+            callback { completion?(ClientError.ChannelNotCreatedYet()) }
+            return
+        }
+        guard canSendTypingEvents else {
+            callback {
+                completion?(failsWhenDisabled
+                    ? ClientError.ChannelFeatureDisabled("Channel feature: typing events is disabled for this channel.")
+                    : nil)
+            }
+            return
+        }
+        send(cid) { [weak self] error in
+            self?.callback { completion?(error) }
+        }
+    }
+
+    /// A boolean value indicating if typing events can be sent.
+    private var canSendTypingEvents: Bool {
+        channel?.canSendTypingEvents ?? false
+    }
+
     /// Pauses the collecting of new messages.
     ///
     /// When paused, new messages from other users will not be added to the messages array.
@@ -1083,8 +1189,78 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
                 messages = []
             }
 
+        case let typingEvent as TypingEvent:
+            handleTypingEvent(typingEvent)
+
         default:
             break
+        }
+    }
+
+    private func handleTypingEvent(_ event: TypingEvent) {
+        // The current user's typing state is sent over the wire, but we don't want to render
+        // ourselves in our own typing indicator. This matches `TypingStartCleanupMiddleware`.
+        guard event.user.id != currentUserId else { return }
+
+        // Thread typing events should not affect the channel-level typing indicator.
+        guard event.parentId == nil else { return }
+
+        let currentTypingUsers = channel?.currentlyTypingUsers ?? []
+        let userId = event.user.id
+
+        if event.isTyping {
+            scheduleTypingCleanup(for: event.user)
+            var nextTypingUsers = currentTypingUsers.filter { $0.id != userId }
+            nextTypingUsers.insert(event.user)
+            updateCurrentlyTypingUsers(nextTypingUsers)
+        } else {
+            cancelTypingCleanup(for: userId)
+            // No-op when the user wasn't tracked locally (e.g. we joined mid-typing).
+            // Avoids allocating a filtered copy of the set for every spurious stop event.
+            guard currentTypingUsers.contains(where: { $0.id == userId }) else { return }
+            updateCurrentlyTypingUsers(currentTypingUsers.filter { $0.id != userId })
+        }
+    }
+
+    private func scheduleTypingCleanup(for user: ChatUser) {
+        let userId = user.id
+        cancelTypingCleanup(for: userId)
+        // Capture only `userId` so the timer doesn't retain a full `ChatUser` value
+        // (and the strings/dates it references) for up to 30 seconds.
+        typingCleanupTimers[userId] = timerType.schedule(
+            timeInterval: .incomingTypingStartEventTimeout,
+            queue: .main
+        ) { [weak self] in
+            self?.removeTypingUser(withId: userId)
+        }
+    }
+
+    private func cancelTypingCleanup(for userId: UserId) {
+        typingCleanupTimers[userId]?.cancel()
+        typingCleanupTimers[userId] = nil
+    }
+
+    private func removeTypingUser(withId userId: UserId) {
+        cancelTypingCleanup(for: userId)
+        guard let currentTypingUsers = channel?.currentlyTypingUsers,
+              currentTypingUsers.contains(where: { $0.id == userId }) else { return }
+        let typingUsers = currentTypingUsers.filter { $0.id != userId }
+        updateCurrentlyTypingUsers(typingUsers)
+    }
+
+    private func updateCurrentlyTypingUsers(_ typingUsers: Set<ChatUser>) {
+        // Compare by user id only. `Set<ChatUser>.==` falls back to `ChatUser.Equatable`,
+        // which checks ~13 fields including `lastActiveAt` and `extraData`. The server
+        // refreshes those on each re-emitted `typing.start`, so a strict comparison would
+        // report a change for every keystroke from an already-typing user and fire
+        // `didUpdateChannel` (plus rebuild the `ChatChannel` struct) for free.
+        let previousIds = Set((channel?.currentlyTypingUsers ?? []).map(\.id))
+        let newIds = Set(typingUsers.map(\.id))
+        guard previousIds != newIds else { return }
+        channel = channel?.changing(currentlyTypingUsers: typingUsers)
+        delegateCallback { [weak self] in
+            guard let self else { return }
+            $0.livestreamChannelController(self, didChangeTypingUsers: typingUsers)
         }
     }
 
@@ -1311,6 +1487,15 @@ public protocol LivestreamChannelControllerDelegate: AnyObject {
         _ controller: LivestreamChannelController,
         didChangeSkippedMessagesAmount skippedMessagesAmount: Int
     )
+
+    /// Called when the set of currently typing users in the channel changes.
+    /// - Parameters:
+    ///   - controller: The controller that updated.
+    ///   - typingUsers: The current set of users typing in the channel (excludes thread typing events).
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
+    )
 }
 
 // MARK: - Default Implementations
@@ -1334,6 +1519,11 @@ public extension LivestreamChannelControllerDelegate {
     func livestreamChannelController(
         _ controller: LivestreamChannelController,
         didChangeSkippedMessagesAmount skippedMessagesAmount: Int
+    ) {}
+
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
     ) {}
 }
 
