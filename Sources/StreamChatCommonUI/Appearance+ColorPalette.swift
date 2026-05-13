@@ -7,7 +7,67 @@ import SwiftUI
 import UIKit
 
 public extension Appearance {
+    /// The set of color tokens used throughout the SDK.
+    ///
+    /// - Important: Start by adjusting the `brand` and `chrome` ramps — most semantic tokens
+    /// derive from them, so a small number of overrides reskins the whole SDK.
+    /// Reach for individual semantic tokens only when a specific surface needs
+    /// to deviate from what the ramps produce.
     @MainActor final class ColorPalette {
+        // MARK: - Brand
+
+        /// Lightest tint of the brand color ramp.
+        public lazy var brand50: UIColor = UIColor(light: .blue50, dark: .blue900)
+        /// Very light tint of the brand color ramp. Used for outgoing message bubble backgrounds.
+        public lazy var brand100: UIColor = UIColor(light: .blue100, dark: .blue800)
+        /// Light tint of the brand color ramp. Used for outgoing attachment backgrounds.
+        public lazy var brand150: UIColor = UIColor(light: .blue150, dark: .blue700)
+        /// Pale step of the brand color ramp. Used for primary button borders.
+        public lazy var brand200: UIColor = UIColor(light: .blue200, dark: .blue600)
+        /// Muted step of the brand color ramp. Used for borders inside outgoing message content.
+        public lazy var brand300: UIColor = UIColor(light: .blue300, dark: .blue500)
+        /// Mid tone of the brand color ramp. Anchors the ramp across light and dark mode.
+        public lazy var brand400: UIColor = .blue400
+        /// Primary brand color. Override this and the surrounding steps to apply your brand across the SDK.
+        public lazy var brand500: UIColor = UIColor(light: .blue500, dark: .blue300)
+        /// Slightly dark shade of the brand color ramp.
+        public lazy var brand600: UIColor = UIColor(light: .blue600, dark: .blue200)
+        /// Dark shade of the brand color ramp.
+        public lazy var brand700: UIColor = UIColor(light: .blue700, dark: .blue150)
+        /// Very dark shade of the brand color ramp.
+        public lazy var brand800: UIColor = UIColor(light: .blue800, dark: .blue100)
+        /// Darkest shade of the brand color ramp. Used for text on tinted brand surfaces.
+        public lazy var brand900: UIColor = UIColor(light: .blue900, dark: .blue50)
+
+        // MARK: - Chrome
+
+        /// Base chrome surface. White in light mode, black in dark mode.
+        public lazy var chrome0: UIColor = UIColor(light: .baseWhite, dark: .baseBlack)
+        /// Subtle tint of the chrome (neutral) ramp.
+        public lazy var chrome50: UIColor = UIColor(light: .slate50, dark: .neutral900)
+        /// Light tint of the chrome (neutral) ramp.
+        public lazy var chrome100: UIColor = UIColor(light: .slate100, dark: .neutral800)
+        /// Lifted tint of the chrome (neutral) ramp.
+        public lazy var chrome150: UIColor = UIColor(light: .slate150, dark: .neutral700)
+        /// Pale step of the chrome (neutral) ramp.
+        public lazy var chrome200: UIColor = UIColor(light: .slate200, dark: .neutral600)
+        /// Mid-light step of the chrome (neutral) ramp.
+        public lazy var chrome300: UIColor = UIColor(light: .slate300, dark: .neutral500)
+        /// Mid step of the chrome (neutral) ramp.
+        public lazy var chrome400: UIColor = UIColor(light: .slate400, dark: .neutral400)
+        /// Mid-dark step of the chrome (neutral) ramp.
+        public lazy var chrome500: UIColor = UIColor(light: .slate500, dark: .neutral300)
+        /// Dark step of the chrome (neutral) ramp.
+        public lazy var chrome600: UIColor = UIColor(light: .slate600, dark: .neutral200)
+        /// Very dark step of the chrome (neutral) ramp.
+        public lazy var chrome700: UIColor = UIColor(light: .slate700, dark: .neutral150)
+        /// Darker step of the chrome (neutral) ramp.
+        public lazy var chrome800: UIColor = UIColor(light: .slate800, dark: .neutral100)
+        /// Darkest step of the chrome (neutral) ramp.
+        public lazy var chrome900: UIColor = UIColor(light: .slate900, dark: .neutral50)
+        /// Extreme chrome value. Black in light mode, white in dark mode.
+        public lazy var chrome1000: UIColor = UIColor(light: .baseBlack, dark: .baseWhite)
+
         // MARK: - Accent
 
         /// The main brand color. Used for interactive elements, buttons, links, and primary actions.
@@ -301,33 +361,6 @@ public extension Appearance {
 
         /// Returns a highlighted variant of the given color. Used for tap/press states in UIKit views.
         public var highlightedColorForColor: @Sendable (UIColor) -> UIColor = { $0.withAlphaComponent(0.5) }
-
-        // MARK: - Internal
-
-        var brand100: UIColor { UIColor(light: .blue100, dark: .blue800) }
-        var brand150: UIColor { UIColor(light: .blue150, dark: .blue700) }
-        var brand200: UIColor { UIColor(light: .blue200, dark: .blue600) }
-        var brand300: UIColor { UIColor(light: .blue300, dark: .blue500) }
-        var brand400: UIColor { .blue400 }
-        var brand50: UIColor { UIColor(light: .blue50, dark: .blue900) }
-        var brand500: UIColor { UIColor(light: .blue500, dark: .blue300) }
-        var brand600: UIColor { UIColor(light: .blue600, dark: .blue200) }
-        var brand700: UIColor { UIColor(light: .blue700, dark: .blue150) }
-        var brand800: UIColor { UIColor(light: .blue800, dark: .blue100) }
-        var brand900: UIColor { UIColor(light: .blue900, dark: .blue50) }
-        var chrome0: UIColor { UIColor(light: .baseWhite, dark: .baseBlack) }
-        var chrome100: UIColor { UIColor(light: .slate100, dark: .neutral800) }
-        var chrome1000: UIColor { UIColor(light: .baseBlack, dark: .baseWhite) }
-        var chrome150: UIColor { UIColor(light: .slate150, dark: .neutral700) }
-        var chrome200: UIColor { UIColor(light: .slate200, dark: .neutral600) }
-        var chrome300: UIColor { UIColor(light: .slate300, dark: .neutral500) }
-        var chrome400: UIColor { UIColor(light: .slate400, dark: .neutral400) }
-        var chrome50: UIColor { UIColor(light: .slate50, dark: .neutral900) }
-        var chrome500: UIColor { UIColor(light: .slate500, dark: .neutral300) }
-        var chrome600: UIColor { UIColor(light: .slate600, dark: .neutral200) }
-        var chrome700: UIColor { UIColor(light: .slate700, dark: .neutral150) }
-        var chrome800: UIColor { UIColor(light: .slate800, dark: .neutral100) }
-        var chrome900: UIColor { UIColor(light: .slate900, dark: .neutral50) }
 
         public init() {
             // Public init.
