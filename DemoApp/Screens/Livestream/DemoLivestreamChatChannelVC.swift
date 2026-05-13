@@ -510,8 +510,11 @@ class DemoLivestreamComposerVC: ComposerVC {
     }
 
     /// Route keystroke events through `LivestreamChannelController`, mirroring `ComposerVC.updateKeystrokeEvents`.
+    ///
+    /// We intentionally don't call `super` because the base implementation would forward to
+    /// `channelController?.sendKeystrokeEvent`, which is always nil here (we wire the demo to
+    /// the livestream controller instead).
     override open func updateKeystrokeEvents() {
-        super.updateKeystrokeEvents()
         guard let livestreamController = livestreamChannelController else { return }
         guard !content.isEmpty, livestreamController.channel?.config.typingEventsEnabled == true else { return }
         livestreamController.sendKeystrokeEvent(parentMessageId: content.threadMessage?.id)
