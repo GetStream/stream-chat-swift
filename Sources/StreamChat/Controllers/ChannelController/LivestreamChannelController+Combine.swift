@@ -27,6 +27,11 @@ extension LivestreamChannelController {
     }
 
     /// A publisher emitting a new value every time the set of currently typing users changes.
+    ///
+    /// The publisher's initial value is captured from `controller.channel?.currentlyTypingUsers`
+    /// at the time the controller's Combine bridge is first accessed. If a subscriber attaches
+    /// before `synchronize()` resolves the channel, the initial value will be an empty set;
+    /// subsequent updates are still delivered as typing events arrive.
     public var typingUsersPublisher: AnyPublisher<Set<ChatUser>, Never> {
         basePublishers.typingUsers.keepAlive(self)
     }
