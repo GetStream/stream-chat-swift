@@ -160,7 +160,7 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         apiClient: client.apiClient
     )
 
-    /// The timer scheduler used for the auto-stop typing cleanup. Injectable for testing.
+    /// The timer scheduler used for the auto-stop typing cleanup.
     var timerType: TimerScheduling.Type = DefaultTimer.self
 
     /// Per-user timers that synthesize a "stop typing" effect locally if a typing.stop event never arrives.
