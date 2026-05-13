@@ -163,7 +163,7 @@ public class LivestreamChannelController: DataStoreProvider, EventsControllerDel
     )
 
     /// The timer scheduler used for the auto-stop typing cleanup.
-    var timerType: TimerScheduling.Type = DefaultTimer.self
+    var timerType: Timer.Type = DefaultTimer.self
 
     /// Per-user timers that synthesize a "stop typing" effect locally if a typing.stop event never arrives.
     ///

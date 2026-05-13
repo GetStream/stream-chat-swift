@@ -4003,6 +4003,23 @@ extension LivestreamChannelController_Tests {
     }
 }
 
+private extension LivestreamChannelController {
+    /// Test-only convenience that bridges the v5-style `didReceiveEvent(_:)` API used by
+    /// the cherry-picked typing-events tests onto the v4 `EventsControllerDelegate` entry
+    /// point so we don't have to duplicate the verbose `EventsController` boilerplate at
+    /// every call site.
+    func didReceiveEvent(_ event: Event) {
+        eventsController(
+            EventsController(
+                notificationCenter: EventNotificationCenter_Mock(
+                    database: DatabaseContainer_Spy()
+                )
+            ),
+            didReceiveEvent: event
+        )
+    }
+}
+
 class MockPaginationStateHandler: MessagesPaginationStateHandling {
     init() {
         state = .initial
