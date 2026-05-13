@@ -825,18 +825,8 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         parentMessageId: MessageId? = nil,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
-        guard let cid = cid else {
-            callback {
-                completion?(ClientError.ChannelNotCreatedYet())
-            }
-            return
-        }
-        guard canSendTypingEvents else {
-            callback { completion?(nil) }
-            return
-        }
-        typingEventsSender.keystroke(in: cid, parentMessageId: parentMessageId) { [weak self] error in
-            self?.callback { completion?(error) }
+        sendTypingEvent(failsWhenDisabled: false, completion: completion) { cid, sendCompletion in
+            typingEventsSender.keystroke(in: cid, parentMessageId: parentMessageId, completion: sendCompletion)
         }
     }
 
@@ -853,20 +843,8 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         parentMessageId: MessageId? = nil,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
-        guard let cid = cid else {
-            callback {
-                completion?(ClientError.ChannelNotCreatedYet())
-            }
-            return
-        }
-        guard canSendTypingEvents else {
-            callback {
-                completion?(ClientError.ChannelFeatureDisabled("Channel feature: typing events is disabled for this channel."))
-            }
-            return
-        }
-        typingEventsSender.startTyping(in: cid, parentMessageId: parentMessageId) { [weak self] error in
-            self?.callback { completion?(error) }
+        sendTypingEvent(failsWhenDisabled: true, completion: completion) { cid, sendCompletion in
+            typingEventsSender.startTyping(in: cid, parentMessageId: parentMessageId, completion: sendCompletion)
         }
     }
 
@@ -883,19 +861,39 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         parentMessageId: MessageId? = nil,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
+        sendTypingEvent(failsWhenDisabled: true, completion: completion) { cid, sendCompletion in
+            typingEventsSender.stopTyping(in: cid, parentMessageId: parentMessageId, completion: sendCompletion)
+        }
+    }
+
+    /// Shared boilerplate for the three public typing-event entry points.
+    ///
+    /// - Parameters:
+    ///   - failsWhenDisabled: When `true`, the completion receives a
+    ///     `ChannelFeatureDisabled` error if typing events are disabled. When `false`
+    ///     (used by `sendKeystrokeEvent`) the completion is invoked with `nil` so a
+    ///     disabled channel is treated as a silent no-op.
+    ///   - completion: The caller's completion handler.
+    ///   - send: Performs the underlying send once a valid `cid` and an enabled
+    ///     channel have been confirmed.
+    private func sendTypingEvent(
+        failsWhenDisabled: Bool,
+        completion: (@MainActor (Error?) -> Void)?,
+        send: (ChannelId, @escaping (Error?) -> Void) -> Void
+    ) {
         guard let cid = cid else {
-            callback {
-                completion?(ClientError.ChannelNotCreatedYet())
-            }
+            callback { completion?(ClientError.ChannelNotCreatedYet()) }
             return
         }
         guard canSendTypingEvents else {
             callback {
-                completion?(ClientError.ChannelFeatureDisabled("Channel feature: typing events is disabled for this channel."))
+                completion?(failsWhenDisabled
+                    ? ClientError.ChannelFeatureDisabled("Channel feature: typing events is disabled for this channel.")
+                    : nil)
             }
             return
         }
-        typingEventsSender.stopTyping(in: cid, parentMessageId: parentMessageId) { [weak self] error in
+        send(cid) { [weak self] error in
             self?.callback { completion?(error) }
         }
     }
