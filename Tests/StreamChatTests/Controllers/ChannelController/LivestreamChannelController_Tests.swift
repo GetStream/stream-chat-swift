@@ -3415,6 +3415,77 @@ extension LivestreamChannelController_Tests {
         XCTAssertEqual(controller.channel?.currentlyTypingUsers, [])
     }
 
+    func test_didReceiveEvent_typingStopEvent_removesUserEvenWhenUserMetadataChanged() {
+        // Given
+        loadChannel()
+        let userId = UserId.unique
+        let startUser = ChatUser.mock(id: userId, name: "Alice", isOnline: true, lastActiveAt: .init(timeIntervalSince1970: 100))
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: startUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+        XCTAssertEqual(controller.channel?.currentlyTypingUsers.map(\.id), [userId])
+
+        // When the typing.stop payload reflects updated metadata for the same user
+        // (e.g. a refreshed `lastActiveAt`), the user should still be removed from
+        // the set. `Set.remove` would otherwise no-op because `ChatUser.Equatable`
+        // compares many fields, leaving the indicator stuck visible.
+        let stopUser = ChatUser.mock(id: userId, name: "Alice", isOnline: true, lastActiveAt: .init(timeIntervalSince1970: 200))
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: false,
+                cid: controller.cid!,
+                user: stopUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+
+        // Then
+        XCTAssertEqual(controller.channel?.currentlyTypingUsers, [])
+    }
+
+    func test_didReceiveEvent_typingStartEvent_replacesStaleUserMetadata() {
+        // Given
+        loadChannel()
+        let userId = UserId.unique
+        let firstUser = ChatUser.mock(id: userId, name: "Alice", isOnline: false)
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: firstUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+        XCTAssertEqual(controller.channel?.currentlyTypingUsers.count, 1)
+
+        // When a second typing.start arrives for the same user id with updated metadata
+        let updatedUser = ChatUser.mock(id: userId, name: "Alice", isOnline: true)
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: updatedUser,
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+
+        // Then we should have a single entry reflecting the latest metadata,
+        // not two stale entries with the same id.
+        let typingUsers = controller.channel?.currentlyTypingUsers ?? []
+        XCTAssertEqual(typingUsers.count, 1)
+        XCTAssertEqual(typingUsers.first?.id, userId)
+        XCTAssertEqual(typingUsers.first?.isOnline, true)
+    }
+
     func test_didReceiveEvent_typingEvent_fromCurrentUser_isIgnored() {
         // Given
         let currentUserId = UserId.unique
