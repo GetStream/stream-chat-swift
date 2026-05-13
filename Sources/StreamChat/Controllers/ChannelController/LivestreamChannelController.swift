@@ -1249,9 +1249,14 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
     }
 
     private func updateCurrentlyTypingUsers(_ typingUsers: Set<ChatUser>) {
-        // Bail out before mutating `channel` so we don't trigger `didUpdateChannel`
-        // (or a new `ChatChannel` struct copy) on every redundant typing event.
-        guard channel?.currentlyTypingUsers != typingUsers else { return }
+        // Compare by user id only. `Set<ChatUser>.==` falls back to `ChatUser.Equatable`,
+        // which checks ~13 fields including `lastActiveAt` and `extraData`. The server
+        // refreshes those on each re-emitted `typing.start`, so a strict comparison would
+        // report a change for every keystroke from an already-typing user and fire
+        // `didUpdateChannel` (plus rebuild the `ChatChannel` struct) for free.
+        let previousIds = Set((channel?.currentlyTypingUsers ?? []).map(\.id))
+        let newIds = Set(typingUsers.map(\.id))
+        guard previousIds != newIds else { return }
         channel = channel?.changing(currentlyTypingUsers: typingUsers)
         delegateCallback { [weak self] in
             guard let self else { return }

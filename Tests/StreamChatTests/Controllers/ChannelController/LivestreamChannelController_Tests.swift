@@ -3450,7 +3450,7 @@ extension LivestreamChannelController_Tests {
         XCTAssertEqual(controller.channel?.currentlyTypingUsers, [])
     }
 
-    func test_didReceiveEvent_typingStartEvent_replacesStaleUserMetadata() {
+    func test_didReceiveEvent_typingStartEvent_forAlreadyTypingUser_doesNotDuplicateEntry() {
         // Given
         loadChannel()
         let userId = UserId.unique
@@ -3478,12 +3478,60 @@ extension LivestreamChannelController_Tests {
             )
         )
 
-        // Then we should have a single entry reflecting the latest metadata,
-        // not two stale entries with the same id.
+        // Then we still have a single entry for that user (no duplicate). The cached
+        // user-metadata is intentionally NOT refreshed mid-session: a same-id update
+        // is treated as a no-op so we don't broadcast `didUpdateChannel` on every
+        // re-emitted `typing.start`. The user is removed via auto-cleanup or an
+        // explicit `typing.stop`.
         let typingUsers = controller.channel?.currentlyTypingUsers ?? []
         XCTAssertEqual(typingUsers.count, 1)
         XCTAssertEqual(typingUsers.first?.id, userId)
-        XCTAssertEqual(typingUsers.first?.isOnline, true)
+    }
+
+    @MainActor
+    func test_didReceiveEvent_typingStart_withRefreshedUserMetadata_doesNotFireDelegatesAgain() {
+        // Given
+        loadChannel()
+        let delegate = LivestreamChannelControllerDelegate_Mock()
+        controller.delegate = delegate
+        let userId = UserId.unique
+
+        // First typing.start adds the user.
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: .mock(id: userId, name: "Alice", lastActiveAt: .init(timeIntervalSince1970: 100)),
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+        AssertAsync.willBeTrue(delegate.didChangeTypingUsersCalled)
+        AssertAsync.willBeTrue(delegate.didUpdateChannelCalled)
+        delegate.didChangeTypingUsersCalled = false
+        delegate.didUpdateChannelCalled = false
+
+        // When a second typing.start arrives for the same user id but with refreshed
+        // server metadata (e.g. an updated `lastActiveAt`). `Set<ChatUser>.==` would
+        // otherwise report this as a change because `ChatUser.Equatable` compares
+        // ~13 fields, and the controller would fire `didUpdateChannel` on every
+        // keystroke from an already-typing user.
+        controller.didReceiveEvent(
+            TypingEvent(
+                isTyping: true,
+                cid: controller.cid!,
+                user: .mock(id: userId, name: "Alice", lastActiveAt: .init(timeIntervalSince1970: 200)),
+                parentId: nil,
+                createdAt: .unique
+            )
+        )
+
+        // Then neither delegate should fire again because the typing-user set is
+        // unchanged when compared by id.
+        AssertAsync {
+            Assert.staysFalse(delegate.didChangeTypingUsersCalled)
+            Assert.staysFalse(delegate.didUpdateChannelCalled)
+        }
     }
 
     @MainActor
