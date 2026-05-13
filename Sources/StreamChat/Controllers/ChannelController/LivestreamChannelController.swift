@@ -1226,12 +1226,15 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
     }
 
     private func scheduleTypingCleanup(for user: ChatUser) {
-        cancelTypingCleanup(for: user.id)
-        typingCleanupTimers[user.id] = timerType.schedule(
+        let userId = user.id
+        cancelTypingCleanup(for: userId)
+        // Capture only `userId` so the timer doesn't retain a full `ChatUser` value
+        // (and the strings/dates it references) for up to 30 seconds.
+        typingCleanupTimers[userId] = timerType.schedule(
             timeInterval: .incomingTypingStartEventTimeout,
             queue: .main
         ) { [weak self] in
-            self?.removeTypingUser(user)
+            self?.removeTypingUser(withId: userId)
         }
     }
 
@@ -1240,11 +1243,11 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         typingCleanupTimers[userId] = nil
     }
 
-    private func removeTypingUser(_ user: ChatUser) {
-        cancelTypingCleanup(for: user.id)
+    private func removeTypingUser(withId userId: UserId) {
+        cancelTypingCleanup(for: userId)
         guard let currentTypingUsers = channel?.currentlyTypingUsers,
-              currentTypingUsers.contains(where: { $0.id == user.id }) else { return }
-        let typingUsers = currentTypingUsers.filter { $0.id != user.id }
+              currentTypingUsers.contains(where: { $0.id == userId }) else { return }
+        let typingUsers = currentTypingUsers.filter { $0.id != userId }
         updateCurrentlyTypingUsers(typingUsers)
     }
 
