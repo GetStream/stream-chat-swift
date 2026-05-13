@@ -146,6 +146,8 @@ final class StreamCDNStorage_Tests: XCTestCase {
 
         // Check the outgoing data is from the decoder
         XCTAssertEqual(try result.get().fileURL, payload.fileURL)
+        // Default Stream CDN does not carry an attachment back; the SDK uses the original attachment.
+        XCTAssertNil(try result.get().attachment)
     }
     
     func test_standaloneUploadFileSuccess() throws {

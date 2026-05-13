@@ -414,6 +414,52 @@ final class APIClient_Tests: XCTestCase {
         XCTAssertEqual(receivedResult?.error as NSError?, error)
     }
 
+    func test_uploadAttachment_usesStorageReturnedAttachment_whenProvided() throws {
+        let attachment = AnyChatMessageAttachment.dummy(
+            payload: "original".data(using: .utf8)!
+        )
+        let mutatedAttachment = AnyChatMessageAttachment.dummy(
+            id: attachment.id,
+            payload: "mutated".data(using: .utf8)!
+        )
+        let mockedURL = URL(string: "https://hello.com")!
+        cdnStorage.uploadAttachmentResult = .success(
+            UploadedFile(fileURL: mockedURL, attachment: mutatedAttachment)
+        )
+
+        nonisolated(unsafe) var receivedResult: Result<UploadedAttachment, Error>?
+        waitUntil(timeout: defaultTimeout) { done in
+            apiClient.uploadAttachment(
+                attachment,
+                progress: nil,
+                completion: { receivedResult = $0; done() }
+            )
+        }
+
+        XCTAssertEqual(receivedResult?.value?.remoteURL, mockedURL)
+        XCTAssertEqual(receivedResult?.value?.attachment.payload, mutatedAttachment.payload)
+    }
+
+    func test_uploadAttachment_fallsBackToOriginalAttachment_whenStorageDoesNotReturnAttachment() throws {
+        let attachment = AnyChatMessageAttachment.dummy()
+        let mockedURL = URL(string: "https://hello.com")!
+        cdnStorage.uploadAttachmentResult = .success(
+            UploadedFile(fileURL: mockedURL)
+        )
+
+        nonisolated(unsafe) var receivedResult: Result<UploadedAttachment, Error>?
+        waitUntil(timeout: defaultTimeout) { done in
+            apiClient.uploadAttachment(
+                attachment,
+                progress: nil,
+                completion: { receivedResult = $0; done() }
+            )
+        }
+
+        XCTAssertEqual(receivedResult?.value?.remoteURL, mockedURL)
+        XCTAssertEqual(receivedResult?.value?.attachment.id, attachment.id)
+    }
+
     // MARK: - Token Refresh
 
     func test_requestFailedWithExpiredToken_refreshesToken() throws {

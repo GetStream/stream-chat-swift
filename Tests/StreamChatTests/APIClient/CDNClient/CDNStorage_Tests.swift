@@ -114,6 +114,32 @@ final class CDNStorage_Tests: XCTestCase {
         let file = UploadedFile(fileURL: url, thumbnailURL: thumb)
         XCTAssertEqual(file.fileURL, url)
         XCTAssertEqual(file.thumbnailURL, thumb)
+        XCTAssertNil(file.attachment)
+    }
+
+    func test_uploadedFile_initWithAttachment() {
+        let url = URL(string: "https://cdn.example.com/file.jpg")!
+        let attachment = AnyChatMessageAttachment.dummy()
+        let file = UploadedFile(fileURL: url, attachment: attachment)
+        XCTAssertEqual(file.fileURL, url)
+        XCTAssertNil(file.thumbnailURL)
+        XCTAssertEqual(file.attachment?.id, attachment.id)
+    }
+
+    func test_uploadedFile_decoding_ignoresAttachmentField() throws {
+        let url = URL(string: "https://cdn.example.com/file.jpg")!
+        let thumb = URL(string: "https://cdn.example.com/thumb.jpg")!
+        let json = """
+        {
+            "fileURL": "\(url.absoluteString)",
+            "thumbnailURL": "\(thumb.absoluteString)"
+        }
+        """.data(using: .utf8)!
+
+        let file = try JSONDecoder.stream.decode(UploadedFile.self, from: json)
+        XCTAssertEqual(file.fileURL, url)
+        XCTAssertEqual(file.thumbnailURL, thumb)
+        XCTAssertNil(file.attachment)
     }
 }
 
