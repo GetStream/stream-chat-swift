@@ -377,7 +377,12 @@ extension UIColor {
         self.init(red: r, green: g, blue: b, alpha: a)
     }
 
-    convenience init(light: UIColor, dark: UIColor) {
+    /// Creates a dynamic color that resolves to `light` in light mode and `dark` in dark mode.
+    ///
+    /// Use this when overriding tokens on ``Appearance/ColorPalette`` to provide a separate
+    /// value for each user interface style. The trait-aware resolver picks the matching
+    /// color whenever it is rendered.
+    public convenience init(light: UIColor, dark: UIColor) {
         self.init { trait in
             return trait.userInterfaceStyle == .dark ? dark : light
         }

@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChatCommonUI
 ### ✅ Added
 - Expose brand (50–900) and chrome (0–1000) color ramps on `Appearance.ColorPalette` [#4093](https://github.com/GetStream/stream-chat-swift/pull/4093)
+- Expose `UIColor(light:dark:)` for building trait-aware overrides on `Appearance.ColorPalette` [#4093](https://github.com/GetStream/stream-chat-swift/pull/4093)
 ### 🔄 Changed
 - `Appearance.localizationProvider` now falls back from `Bundle.main` to the SDK bundle, so apps can override keys without installing a custom provider [#4088](https://github.com/GetStream/stream-chat-swift/pull/4088)
 
