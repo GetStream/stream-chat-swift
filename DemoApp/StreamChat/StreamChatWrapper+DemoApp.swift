@@ -23,16 +23,6 @@ extension StreamChatWrapper {
         if client == nil {
             client = ChatClient(config: config)
         }
-
-        // L10N
-        let localizationProvider = Appearance.default.localizationProvider
-        Appearance.default.localizationProvider = { key, table in
-            let localizedString = localizationProvider(key, table)
-
-            return localizedString == key
-                ? Bundle.main.localizedString(forKey: key, value: nil, table: table)
-                : localizedString
-        }
     }
 
     func configureUI() {

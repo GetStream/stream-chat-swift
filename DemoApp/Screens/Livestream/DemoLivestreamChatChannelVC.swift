@@ -393,6 +393,23 @@ class DemoLivestreamChatChannelVC: _ViewController,
         messageListVC.scrollToBottomButton.content = .init(messages: skippedMessagesAmount, mentions: 0)
     }
 
+    func livestreamChannelController(
+        _ controller: LivestreamChannelController,
+        didChangeTypingUsers typingUsers: Set<ChatUser>
+    ) {
+        guard controller.channel?.canSendTypingEvents == true else { return }
+
+        let typingUsersWithoutCurrentUser = typingUsers
+            .sorted { $0.id < $1.id }
+            .filter { $0.id != self.client.currentUserId }
+
+        if typingUsersWithoutCurrentUser.isEmpty {
+            messageListVC.hideTypingIndicator()
+        } else {
+            messageListVC.showTypingIndicator(typingUsers: typingUsersWithoutCurrentUser)
+        }
+    }
+
     func eventsController(_ controller: EventsController, didReceiveEvent event: any Event) {
         if event is NewMessagePendingEvent {
             if livestreamChannelController.isPaused {
@@ -490,6 +507,25 @@ class DemoLivestreamComposerVC: ComposerVC {
             skipEnrichUrl: content.skipEnrichUrl,
             extraData: content.extraData
         )
+    }
+
+    /// Route keystroke events through `LivestreamChannelController`, mirroring `ComposerVC.updateKeystrokeEvents`.
+    ///
+    /// We intentionally don't call `super` because the base implementation would forward to
+    /// `channelController?.sendKeystrokeEvent`, which is always nil here (we wire the demo to
+    /// the livestream controller instead).
+    override open func updateKeystrokeEvents() {
+        guard let livestreamController = livestreamChannelController else { return }
+        guard !content.isEmpty, livestreamController.channel?.config.typingEventsEnabled == true else { return }
+        livestreamController.sendKeystrokeEvent(parentMessageId: content.threadMessage?.id)
+    }
+
+    @objc override open func publishMessage(sender: UIButton) {
+        // The keystroke timer scheduled in `TypingEventsSender` will only fire after
+        // `.startTypingEventTimeout` of inactivity. Send a stop event explicitly when the user
+        // submits, matching the regular `ComposerVC.publishMessage` flow.
+        livestreamChannelController?.sendStopTypingEvent()
+        super.publishMessage(sender: sender)
     }
 
     /// Override to hide the record button for livestream

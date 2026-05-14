@@ -3,6 +3,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.2.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.2.0)
+_May 13, 2026_
+
+## StreamChat
+### ✅ Added
+- Support typing indicators in `LivestreamChannelController` [#4094](https://github.com/GetStream/stream-chat-swift/pull/4094)
+- `UploadedFile` now carries an optional `attachment` so custom `CDNStorage` implementations can mutate the attachment payload [#4091](https://github.com/GetStream/stream-chat-swift/pull/4091)
+### 🐞 Fixed
+- Fix `PartialKeyPath: Sendable` retroactive conformance conflict with other modules [#4090](https://github.com/GetStream/stream-chat-swift/pull/4090)
+
+## StreamChatCommonUI
+### ✅ Added
+- Expose brand (50–900) and chrome (0–1000) color ramps on `Appearance.ColorPalette` [#4093](https://github.com/GetStream/stream-chat-swift/pull/4093)
+- Expose `UIColor(light:dark:)` for building trait-aware overrides on `Appearance.ColorPalette` [#4093](https://github.com/GetStream/stream-chat-swift/pull/4093)
+### 🔄 Changed
+- `Appearance.localizationProvider` now falls back from `Bundle.main` to the SDK bundle, so apps can override keys without installing a custom provider [#4088](https://github.com/GetStream/stream-chat-swift/pull/4088)
+
+# [5.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.1.1)
+_May 08, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Add `ChatClient.queryGroupedChannels(limit:presence:watch:)` to fetch grouped channels with per-group unread counts [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
@@ -12,6 +34,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Fix image cache misses caused by non-deterministic caching keys in `StreamCDNRequester` [#4075](https://github.com/GetStream/stream-chat-swift/pull/4075)
 - Fix `ChatChannel.latestMessages` being wiped on mid-page pagination [#4077](https://github.com/GetStream/stream-chat-swift/pull/4077)
+- Fix `CurrentUserController.setPushPreference` and `snoozePushNotifications` not updating the local push preference state [#4085](https://github.com/GetStream/stream-chat-swift/pull/4085)
 
 ## StreamChatUI
 ### 🐞 Fixed

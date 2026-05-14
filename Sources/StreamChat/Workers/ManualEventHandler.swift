@@ -81,6 +81,9 @@ class ManualEventHandler: @unchecked Sendable {
         case .reactionDeleted:
             return createReactionDeletedEvent(from: eventPayload, cid: cid)
 
+        case .userStartTyping, .userStopTyping:
+            return createTypingEvent(from: eventPayload, cid: cid)
+
         default:
             return nil
         }
@@ -199,6 +202,21 @@ class ManualEventHandler: @unchecked Sendable {
             cid: cid,
             message: message,
             reaction: reactionPayload.asModel(messageId: messagePayload.id),
+            createdAt: createdAt
+        )
+    }
+
+    private func createTypingEvent(from payload: EventPayload, cid: ChannelId) -> TypingEvent? {
+        guard
+            let userPayload = payload.user,
+            let createdAt = payload.createdAt
+        else { return nil }
+
+        return TypingEvent(
+            isTyping: payload.eventType == .userStartTyping,
+            cid: cid,
+            user: userPayload.asModel(),
+            parentId: payload.parentId,
             createdAt: createdAt
         )
     }

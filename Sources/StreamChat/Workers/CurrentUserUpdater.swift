@@ -215,16 +215,19 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
                     completion(.failure(ClientError.CurrentUserDoesNotExist()))
                     return
                 }
-                self?.database.write {
-                    // No need to use the actual current user id.
-                    // There is only one push preference related to a user, which is the current user.
-                    try $0.savePushPreference(
-                        id: "currentUserId",
+                self?.database.write { session in
+                    guard let currentUserDTO = session.currentUser else {
+                        log.error("Cannot save push preference: no current user in the database")
+                        return
+                    }
+                    let savedDTO = try session.savePushPreference(
+                        id: currentUserDTO.user.id,
                         payload: .init(
                             chatLevel: currentUserPushPref.level.rawValue,
                             disabledUntil: currentUserPushPref.disabledUntil
                         )
                     )
+                    currentUserDTO.pushPreference = savedDTO
                 }
                 completion(.success(currentUserPushPref))
             case let .failure(error):
