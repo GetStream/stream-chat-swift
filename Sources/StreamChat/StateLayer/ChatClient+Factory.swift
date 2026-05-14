@@ -49,13 +49,18 @@ extension ChatClient {
         with query: ChannelListQuery,
         dynamicFilter: (@Sendable (ChatChannel) -> Bool)? = nil
     ) -> ChannelList {
-        ChannelList(query: query, dynamicFilter: dynamicFilter, groupHandler: nil, client: self)
+        ChannelList(query: query, dynamicFilter: dynamicFilter, client: self)
     }
-    
-    public func makeChannelList(with group: GroupedChannelsGroup) -> ChannelList {
-        var query = ChannelListQuery(filter: .and([]))
-        query.groupKey = group.groupKey
-        return ChannelList(query: query, dynamicFilter: nil, groupHandler: group.groupHandler, client: self)
+
+    /// Creates an instance of ``ChannelList`` which represents an array of channels matching to the specified group.
+    ///
+    /// - Note: The initial state for the group must be fetched with ``ChatClient/queryGroupedChannels(limit:presence:watch:)``.
+    public func makeChannelList(with groupKey: String) -> ChannelList {
+        ChannelList(
+            query: .init(groupKey: groupKey),
+            dynamicFilter: nil,
+            client: self
+        )
     }
 }
 

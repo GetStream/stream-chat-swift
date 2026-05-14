@@ -9,15 +9,9 @@ public struct GroupedChannels: Sendable {
     /// The grouped channel groups returned by the backend, keyed by group name.
     public let groups: [String: GroupedChannelsGroup]
 
-    init(
-        groups: [String: GroupedChannelsGroup],
-        groupHandler: @escaping @Sendable (String, ChatChannel) -> String
-    ) {
+    init(groups: [String: GroupedChannelsGroup]) {
         self.groups = groups
-        self.groupHandler = groupHandler
     }
-    
-    let groupHandler: @Sendable (String, ChatChannel) -> String
 }
 
 /// A grouped channels group returned by `ChatClient.queryGroupedChannels`.
@@ -33,15 +27,13 @@ public struct GroupedChannelsGroup: Sendable {
 
     let next: String?
     let prev: String?
-    let groupHandler: @Sendable (String, ChatChannel) -> String
 
     init(
         groupKey: String,
         channels: [ChatChannel],
         unreadChannels: Int,
         next: String? = nil,
-        prev: String? = nil,
-        groupHandler: @escaping @Sendable (String, ChatChannel) -> String
+        prev: String? = nil
     ) {
         self.groupKey = groupKey
         self.channels = channels
@@ -54,11 +46,10 @@ public struct GroupedChannelsGroup: Sendable {
         self.unreadChannels = max(unreadChannels, derivedUnreadChannels)
         self.next = next
         self.prev = prev
-        self.groupHandler = groupHandler
     }
 }
 
-struct GroupChannelsPagination: Sendable {
+struct GroupedChannelsPagination: Sendable {
     let groupKey: String
     let next: String?
     let prev: String?

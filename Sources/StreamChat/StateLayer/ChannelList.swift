@@ -8,22 +8,17 @@ import Foundation
 public class ChannelList: @unchecked Sendable {
     private let channelListUpdater: ChannelListUpdater
     private let client: ChatClient
-    private let dynamicFilter: (@Sendable (ChatChannel) -> Bool)?
-    let groupHandler: (@Sendable (String, ChatChannel) -> String)?
-    let query: AllocatedUnfairLock<ChannelListQuery>
+    let query: ChannelListQuery
     @MainActor private var stateBuilder: StateBuilder<ChannelListState>
-    
+
     init(
         query: ChannelListQuery,
         dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
-        groupHandler: (@Sendable (String, ChatChannel) -> String)?,
         client: ChatClient,
         environment: Environment = .init()
     ) {
         self.client = client
-        self.dynamicFilter = dynamicFilter
-        self.groupHandler = groupHandler
-        self.query = AllocatedUnfairLock(query)
+        self.query = query
         let channelListUpdater = environment.channelListUpdater(
             client.databaseContainer,
             client.apiClient
@@ -53,36 +48,15 @@ public class ChannelList: @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
-        if await state.consumeShouldSkipInitialRemoteUpdate() {
-            return
+        if query.groupKey == nil {
+            let pagination = Pagination(pageSize: query.pagination.pageSize)
+            try await loadChannels(with: pagination)
         }
-        let pagination = Pagination(pageSize: query.value.pagination.pageSize)
-        try await loadChannels(with: pagination)
         client.syncRepository.startTrackingChannelList(self)
     }
 
-    /// Prefills the channel list with an initial channel list snapshot and skips the first remote
-    /// `queryChannels` request when ``get()`` is called afterwards.
-    ///
-    /// The prefetched channels are persisted in the local storage and linked only to this channel
-    /// list query, so pagination, local observation and offline refresh keep working.
-    public func prefill(group: GroupedChannelsGroup) async throws {
-        let updatedQuery = query.withLock {
-            $0.groupKey = group.groupKey
-            return $0
-        }
-
-        let savedChannels = try await channelListUpdater.prefill(group: group, for: updatedQuery, filter: dynamicFilter)
-        await resetStateAfterPrefill(
-            query: updatedQuery,
-            prefilledChannelsCount: savedChannels.count,
-            next: group.next
-        )
-        client.syncRepository.startTrackingChannelList(self)
-    }
-    
     // MARK: - Channel List Pagination
-    
+
     /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.
     ///
     /// - Important: If the pagination offset is 0 and cursor is nil, then loaded channels are reset.
@@ -92,9 +66,21 @@ public class ChannelList: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channels for the pagination.
     @discardableResult public func loadChannels(with pagination: Pagination) async throws -> [ChatChannel] {
-        return try await channelListUpdater.loadChannels(query: query.value, pagination: pagination)
+        if let groupKey = query.groupKey {
+            let groupedChannels = try await channelListUpdater.queryGroupedChannels(
+                groupPagination: .init(groupKey: groupKey, next: pagination.cursor, prev: nil),
+                limit: pagination.pageSize,
+                watch: true,
+                presence: true
+            )
+            let group = groupedChannels.groups[groupKey]
+            await setHasLoadedAllPreviousChannels(group?.next == nil)
+            return group?.channels ?? []
+        } else {
+            return try await channelListUpdater.loadChannels(query: query, pagination: pagination)
+        }
     }
-    
+
     /// Loads more channels and updates ``ChannelListState/channels``.
     ///
     /// - Parameter limit: The limit for the page size. The default limit is 20.
@@ -102,53 +88,27 @@ public class ChannelList: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
     @discardableResult public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
-        guard await state.hasLoadedAllPreviousChannels == false else { return [] }
-        let query = query.value
+        guard await !state.hasLoadedAllPreviousChannels else { return [] }
         let limit = limit ?? query.pagination.pageSize
-        if let groupKey = query.groupKey, let groupHandler = groupHandler {
-            return try await loadMoreGroupedChannels(groupKey: groupKey, groupHandler: groupHandler, query: query, limit: limit)
+        if let groupKey = query.groupKey {
+            let cursor = try await channelListUpdater.paginationCursor(for: groupKey)
+            guard let cursor else {
+                await setHasLoadedAllPreviousChannels(true)
+                return []
+            }
+            return try await loadChannels(with: Pagination(pageSize: limit, cursor: cursor))
+        } else {
+            let channels = try await loadChannels(with: Pagination(pageSize: limit, offset: await state.channels.count))
+            await setHasLoadedAllPreviousChannels(channels.count < limit)
+            return channels
         }
-        let count = await state.channels.count
-        let loadedChannels = try await channelListUpdater.loadNextChannels(
-            query: query,
-            limit: limit,
-            loadedChannelsCount: count
-        )
-        await setHasLoadedAllPreviousChannels(loadedChannels.count < limit)
-        return loadedChannels
     }
 
     // MARK: - Internal
 
     func refreshLoadedChannels() async throws -> Set<ChannelId> {
-        let query = query.value
         let count = await state.channels.count
         return try await channelListUpdater.refreshLoadedChannels(for: query, channelCount: count)
-    }
-
-    private func loadMoreGroupedChannels(
-        groupKey: String,
-        groupHandler: @escaping @Sendable (String, ChatChannel) -> String,
-        query: ChannelListQuery,
-        limit: Int
-    ) async throws -> [ChatChannel] {
-        let cursor = await state.groupPaginationCursor
-        let pagination = GroupChannelsPagination(groupKey: groupKey, next: cursor, prev: nil)
-        let result = try await channelListUpdater.queryGroupedChannels(
-            limit: limit,
-            pagination: pagination,
-            groupHandler: groupHandler
-        )
-        guard let newGroup = result.groups[groupKey] else { return [] }
-        let appended = try await channelListUpdater.appendToQuery(group: newGroup, for: query, filter: dynamicFilter)
-        await state.setGroupPaginationCursor(newGroup.next)
-        await setHasLoadedAllPreviousChannels(newGroup.next == nil)
-        return appended
-    }
-
-    @MainActor private func resetStateAfterPrefill(query: ChannelListQuery, prefilledChannelsCount: Int, next: String?) {
-        state.reset(to: query, prefilledCount: prefilledChannelsCount, next: next)
-        state.skipNextInitialRemoteUpdate()
     }
 
     @MainActor private func setHasLoadedAllPreviousChannels(_ hasLoadedAllPreviousChannels: Bool) {

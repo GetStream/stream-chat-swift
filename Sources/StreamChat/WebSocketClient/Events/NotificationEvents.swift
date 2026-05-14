@@ -24,18 +24,22 @@ public final class NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadC
     /// Grouped unread channel counts keyed by the backend-provided group identifier.
     public let groupedUnreadChannels: GroupedUnreadChannels?
 
+    let channelCustom: ChannelCustom?
+
     init(
         channel: ChatChannel,
         message: ChatMessage,
         createdAt: Date,
         unreadCount: UnreadCount?,
-        groupedUnreadChannels: GroupedUnreadChannels? = nil
+        groupedUnreadChannels: GroupedUnreadChannels? = nil,
+        channelCustom: ChannelCustom? = nil
     ) {
         self.channel = channel
         self.message = message
         self.createdAt = createdAt
         self.unreadCount = unreadCount
         self.groupedUnreadChannels = groupedUnreadChannels
+        self.channelCustom = channelCustom
     }
 }
 
@@ -44,6 +48,7 @@ final class NotificationMessageNewEventDTO: EventDTO {
     let message: MessagePayload
     let unreadCount: UnreadCountPayload?
     let createdAt: Date
+    let channelCustom: ChannelCustom?
     let payload: EventPayload
 
     init(from response: EventPayload) throws {
@@ -51,6 +56,7 @@ final class NotificationMessageNewEventDTO: EventDTO {
         message = try response.value(at: \.message)
         createdAt = try response.value(at: \.createdAt)
         unreadCount = try? response.value(at: \.unreadCount)
+        channelCustom = try? response.value(at: \.channelCustom)
         payload = response
     }
 
@@ -66,7 +72,8 @@ final class NotificationMessageNewEventDTO: EventDTO {
             message: messageDTO.asModel(),
             createdAt: createdAt,
             unreadCount: UnreadCount(currentUserDTO: currentUser),
-            groupedUnreadChannels: currentUser.groupedUnreadChannels
+            groupedUnreadChannels: currentUser.groupedUnreadChannels,
+            channelCustom: channelCustom
         )
     }
 }
@@ -328,11 +335,20 @@ public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnr
     /// The event timestamp.
     public let createdAt: Date
 
-    init(channel: ChatChannel, unreadCount: UnreadCount?, member: ChatChannelMember, createdAt: Date) {
+    let channelCustom: ChannelCustom?
+
+    init(
+        channel: ChatChannel,
+        unreadCount: UnreadCount?,
+        member: ChatChannelMember,
+        createdAt: Date,
+        channelCustom: ChannelCustom? = nil
+    ) {
         self.channel = channel
         self.unreadCount = unreadCount
         self.member = member
         self.createdAt = createdAt
+        self.channelCustom = channelCustom
     }
 }
 
@@ -342,6 +358,7 @@ final class NotificationAddedToChannelEventDTO: EventDTO {
     // This `member` field is equal to the `membership` field in channel query
     let member: MemberPayload
     let createdAt: Date
+    let channelCustom: ChannelCustom?
     let payload: EventPayload
 
     init(from response: EventPayload) throws {
@@ -349,6 +366,7 @@ final class NotificationAddedToChannelEventDTO: EventDTO {
         unreadCount = try? response.value(at: \.unreadCount)
         member = try response.value(at: \.memberContainer?.member)
         createdAt = try response.value(at: \.createdAt)
+        channelCustom = try? response.value(at: \.channelCustom)
         payload = response
     }
 
@@ -363,7 +381,8 @@ final class NotificationAddedToChannelEventDTO: EventDTO {
             channel: channelDTO.asModel(),
             unreadCount: UnreadCount(currentUserDTO: currentUser),
             member: memberDTO.asModel(),
-            createdAt: createdAt
+            createdAt: createdAt,
+            channelCustom: channelCustom
         )
     }
 }

@@ -37,15 +37,6 @@ class ChatChannelListController_Mock: ChatChannelListController, Spy, @unchecked
         refreshLoadedChannelsResult.map(completion)
     }
 
-    @Atomic var prefill_groups: [GroupedChannelsGroup] = []
-    override func prefill(
-        group: GroupedChannelsGroup,
-        completion: (@Sendable (Error?) -> Void)? = nil
-    ) {
-        record()
-        _prefill_groups.mutate { $0.append(group) }
-        completion?(nil)
-    }
 }
 
 extension ChatChannelListController_Mock {

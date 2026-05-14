@@ -656,27 +656,25 @@ public class ChatClient: @unchecked Sendable {
         limit: Int? = nil,
         presence: Bool = false,
         watch: Bool = false,
-        groupHandler: @escaping @Sendable (String, ChatChannel) -> String,
-        completion: @escaping @MainActor (Result<GroupedChannels, Error>) -> Void
+        completion: @escaping @Sendable (Result<GroupedChannels, Error>) -> Void
     ) {
         channelListUpdater.queryGroupedChannels(
+            groupPagination: nil,
             limit: limit,
             watch: watch,
             presence: presence,
-            groupHandler: groupHandler,
             completion: completion
         )
     }
 
     /// Queries grouped channel groups for the app.
-    public func queryGroupedChannels(
+    @discardableResult public func queryGroupedChannels(
         limit: Int? = nil,
         presence: Bool = false,
-        watch: Bool = false,
-        groupHandler: @escaping @Sendable (String, ChatChannel) -> String
+        watch: Bool = false
     ) async throws -> GroupedChannels {
         try await withCheckedThrowingContinuation { continuation in
-            queryGroupedChannels(limit: limit, presence: presence, watch: watch, groupHandler: groupHandler) { result in
+            queryGroupedChannels(limit: limit, presence: presence, watch: watch) { result in
                 continuation.resume(with: result)
             }
         }

@@ -116,6 +116,7 @@
     <entity name="ChannelListQueryDTO" representedClassName="ChannelListQueryDTO" syncable="YES">
         <attribute name="filterHash" attributeType="String"/>
         <attribute name="filterJSONData" attributeType="Binary"/>
+        <attribute name="next" optional="YES" attributeType="String"/>
         <relationship name="channels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="queries" inverseEntity="ChannelDTO"/>
         <fetchIndex name="filterHash">
             <fetchIndexElement property="filterHash" type="Binary" order="ascending"/>

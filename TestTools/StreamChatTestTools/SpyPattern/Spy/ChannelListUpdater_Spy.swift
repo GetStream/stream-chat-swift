@@ -13,23 +13,14 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     @Atomic var update_completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)?
     @Atomic var update_completion_result: Result<[ChatChannel], Error>?
 
-    @Atomic var prefill_queries: [ChannelListQuery] = []
-    @Atomic var prefill_channels: [[ChatChannel]] = []
-
     @Atomic var fetch_queries: [ChannelListQuery] = []
     @Atomic var fetch_completion: (@Sendable (Result<ChannelListPayload, Error>) -> Void)?
 
     @Atomic var refreshLoadedChannelsResult: Result<Set<ChannelId>, Error>?
-    @Atomic var refreshLoadedChannels_channelCounts: [Int] = []
 
     @Atomic var queryGroupedChannels_callCount = 0
-    @Atomic var queryGroupedChannels_limits: [Int?] = []
-    @Atomic var queryGroupedChannels_paginations: [GroupChannelsPagination?] = []
+    @Atomic var queryGroupedChannels_paginations: [GroupedChannelsPagination?] = []
     @Atomic var queryGroupedChannels_result: Result<GroupedChannels, Error>?
-
-    @Atomic var appendToQuery_queries: [ChannelListQuery] = []
-    @Atomic var appendToQuery_channels: [[ChatChannel]] = []
-    @Atomic var appendToQuery_result: Result<[ChatChannel], Error>?
 
     @Atomic var markAllRead_completion: (@Sendable (Error?) -> Void)?
 
@@ -48,20 +39,12 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         update_completion = nil
         update_completion_result = nil
 
-        prefill_queries.removeAll()
-        prefill_channels.removeAll()
-
         fetch_queries.removeAll()
         fetch_completion = nil
 
-        refreshLoadedChannels_channelCounts.removeAll()
         queryGroupedChannels_callCount = 0
-        queryGroupedChannels_limits.removeAll()
         queryGroupedChannels_paginations.removeAll()
         queryGroupedChannels_result = nil
-        appendToQuery_queries.removeAll()
-        appendToQuery_channels.removeAll()
-        appendToQuery_result = nil
         markAllRead_completion = nil
 
         startWatchingChannels_cids.removeAll()
@@ -76,17 +59,6 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         _update_queries.mutate { $0.append(channelListQuery) }
         update_completion = completion
         update_completion_result?.invoke(with: completion)
-    }
-
-    override func prefill(
-        group: GroupedChannelsGroup,
-        for query: ChannelListQuery,
-        filter: (@Sendable (ChatChannel) -> Bool)? = nil,
-        completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)? = nil
-    ) {
-        _prefill_queries.mutate { $0.append(query) }
-        _prefill_channels.mutate { $0.append(group.channels) }
-        super.prefill(group: group, for: query, filter: filter, completion: completion)
     }
 
     override func markAllRead(completion: (@Sendable (Error?) -> Void)? = nil) {
@@ -107,49 +79,44 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         completion: @escaping @Sendable (Result<Set<ChannelId>, any Error>) -> Void
     ) {
         record()
-        _refreshLoadedChannels_channelCounts.mutate { $0.append(channelCount) }
         refreshLoadedChannelsResult?.invoke(with: completion)
     }
 
+    override func paginationCursor(
+        for groupKey: String,
+        completion: @escaping @Sendable (Result<String?, Error>) -> Void
+    ) {
+        do {
+            let cursor = try database.readAndWait { session in
+                session.channelListQuery(ChannelListQuery(groupKey: groupKey))?.next
+            }
+            completion(.success(cursor))
+        } catch {
+            completion(.failure(error))
+        }
+    }
+
     override func queryGroupedChannels(
-        limit: Int? = nil,
-        pagination: GroupChannelsPagination? = nil,
-        watch: Bool = false,
-        presence: Bool = false,
-        groupHandler: @escaping @Sendable (String, ChatChannel) -> String = { key, _ in key },
-        completion: @escaping @MainActor (Result<GroupedChannels, Error>) -> Void
+        groupPagination: GroupedChannelsPagination?,
+        limit: Int?,
+        watch: Bool,
+        presence: Bool,
+        completion: @escaping @Sendable (Result<GroupedChannels, Error>) -> Void
     ) {
         _queryGroupedChannels_callCount.mutate { $0 += 1 }
-        _queryGroupedChannels_limits.mutate { $0.append(limit) }
-        _queryGroupedChannels_paginations.mutate { $0.append(pagination) }
+        _queryGroupedChannels_paginations.mutate { $0.append(groupPagination) }
         if let result = queryGroupedChannels_result {
             DispatchQueue.main.async {
                 completion(result)
             }
         } else {
             super.queryGroupedChannels(
+                groupPagination: groupPagination,
                 limit: limit,
-                pagination: pagination,
                 watch: watch,
                 presence: presence,
-                groupHandler: groupHandler,
                 completion: completion
             )
-        }
-    }
-
-    override func appendToQuery(
-        group: GroupedChannelsGroup,
-        for query: ChannelListQuery,
-        filter: (@Sendable (ChatChannel) -> Bool)? = nil,
-        completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)? = nil
-    ) {
-        _appendToQuery_queries.mutate { $0.append(query) }
-        _appendToQuery_channels.mutate { $0.append(group.channels) }
-        if let result = appendToQuery_result {
-            completion?(result)
-        } else {
-            super.appendToQuery(group: group, for: query, filter: filter, completion: completion)
         }
     }
 

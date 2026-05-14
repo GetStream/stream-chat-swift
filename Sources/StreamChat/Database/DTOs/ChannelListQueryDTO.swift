@@ -12,6 +12,11 @@ class ChannelListQueryDTO: NSManagedObject {
     /// Serialized `Filter` JSON which can be used in cases the query needs to be repeated, i.e. for newly created channels.
     @NSManaged var filterJSONData: Data
 
+    /// Next-page cursor returned by the grouped channels endpoint for this group.
+    /// `nil` means there is no next page (either never paginated or the backend
+    /// signaled exhaustion). Only meaningful for queries that carry a `groupKey`.
+    @NSManaged var next: String?
+
     // MARK: - Relationships
 
     @NSManaged var channels: Set<ChannelDTO>

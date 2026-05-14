@@ -160,8 +160,8 @@ class SyncRepository: @unchecked Sendable {
     ///
     /// Background mode (other regular API requests are allowed to run at the same time)
     /// 1. Collect all the **active** channel ids (from instances of `Chat`, `ChannelList`, `ChatChannelController`, `ChatChannelListController`)
-    /// 2. Refresh channel lists (channels for current pages in `ChannelList`, non-prefilled `ChatChannelListController`)
-    /// 2.5 Refresh the shared grouped channels response when any prefilled `ChatChannelListController` is active
+    /// 2. Refresh channel lists (channels for current pages in `ChannelList`, non-grouped `ChatChannelListController`)
+    /// 2.5 Refresh the shared grouped channels response when any grouped `ChatChannelListController` or `ChannelList` is active
     /// 3. Apply updates from the /sync endpoint for channels not in active channel lists (max 2000 events is supported)
     ///      * channel controllers targeting other channels
     ///      * no channel lists active, but channel controllers are
@@ -191,24 +191,23 @@ class SyncRepository: @unchecked Sendable {
             /// 1. Collect all the **active** channel ids
             operations.append(ActiveChannelIdsOperation(syncRepository: self, context: context))
             
-            // 2. Refresh channel lists
+            // 2. Refresh standard (non-grouped) channel lists
             let allChannelLists = activeChannelLists.allObjects
-            let prefilledChannelLists = allChannelLists.filter { $0.query.value.groupKey != nil }
-            let standardChannelLists = allChannelLists.filter { $0.query.value.groupKey == nil }
-            operations.append(contentsOf: standardChannelLists.map { RefreshChannelListOperation(channelList: $0, context: context) })
             let allControllers = activeChannelListControllers.allObjects
-            let prefilledControllers = allControllers.filter { $0.query.groupKey != nil }
-            let standardControllers = allControllers.filter { $0.query.groupKey == nil }
-            operations.append(contentsOf: standardControllers.map { RefreshChannelListOperation(controller: $0, context: context) })
+            operations.append(contentsOf: allChannelLists
+                .filter { $0.query.groupKey == nil }
+                .map { RefreshChannelListOperation(channelList: $0, context: context) }
+            )
+            operations.append(contentsOf: allControllers
+                .filter { $0.query.groupKey == nil }
+                .map { RefreshChannelListOperation(controller: $0, context: context) }
+            )
 
-            // 2.5 Refresh grouped channels (for lists populated via `prefill(...)`)
-            if !prefilledControllers.isEmpty || !prefilledChannelLists.isEmpty {
-                operations.append(SyncGroupedChannelsOperation(
-                    channelListUpdater: channelListUpdater,
-                    controllers: prefilledControllers,
-                    channelLists: prefilledChannelLists,
-                    context: context
-                ))
+            // 2.5 Refresh grouped channels (lists / controllers identified by groupKey)
+            let hasGroupedLists = allChannelLists.contains { $0.query.groupKey != nil }
+            let hasGroupedControllers = allControllers.contains { $0.query.groupKey != nil }
+            if hasGroupedLists || hasGroupedControllers {
+                operations.append(SyncGroupedChannelsOperation(channelListUpdater: channelListUpdater, context: context))
             }
 
             // 3. /sync (for channels what not part of active channel lists)

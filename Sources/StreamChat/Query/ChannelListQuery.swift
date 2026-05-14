@@ -53,6 +53,11 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
         self.membersLimit = membersLimit
     }
 
+    init(groupKey: String) {
+        self.init(filter: .and([]))
+        self.groupKey = groupKey
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(filter, forKey: .filter)

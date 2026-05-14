@@ -19,14 +19,12 @@ public class ChannelList_Mock: ChannelList, @unchecked Sendable {
     override init(
         query: ChannelListQuery,
         dynamicFilter: (@Sendable (ChatChannel) -> Bool)? = nil,
-        groupHandler: (@Sendable (String, ChatChannel) -> String)? = nil,
         client: ChatClient,
         environment: ChannelList.Environment = .init()
     ) {
         super.init(
             query: query,
             dynamicFilter: dynamicFilter,
-            groupHandler: groupHandler,
             client: client,
             environment: environment
         )
@@ -36,11 +34,6 @@ public class ChannelList_Mock: ChannelList, @unchecked Sendable {
         state.channels = channels
     }
 
-    @Atomic public var prefillGroups: [GroupedChannelsGroup] = []
-    override public func prefill(group: GroupedChannelsGroup) async throws {
-        _prefillGroups.mutate { $0.append(group) }
-    }
-    
     @Atomic public var refreshLoadedChannelsCallCount = 0
     @Atomic public var refreshLoadedChannelsResult: Result<Set<ChannelId>, Error> = .success([])
     override public func refreshLoadedChannels() async throws -> Set<ChannelId> {
@@ -48,10 +41,8 @@ public class ChannelList_Mock: ChannelList, @unchecked Sendable {
         return try refreshLoadedChannelsResult.get()
     }
     
-    public var loadNextChannelsIsCalled = false
     override public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
-        loadNextChannelsIsCalled = true
-        return await MainActor.run {
+        await MainActor.run {
             Array(state.channels)
         }
     }

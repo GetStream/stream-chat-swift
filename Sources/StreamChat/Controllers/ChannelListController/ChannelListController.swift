@@ -28,6 +28,25 @@ extension ChatClient {
     ) -> ChatChannelListController {
         .init(query: query, client: self, filter: filter)
     }
+
+    /// Creates a new `ChannelListController` for a single grouped channels group identified by `groupKey`.
+    ///
+    /// - Parameters:
+    ///   - groupKey: The group key returned by `queryGroupedChannels` (e.g. `"all"`, `"new"`,
+    ///     `"current"`) used to identify the underlying `ChannelListQueryDTO`.
+    ///   - dynamicFilter: A predicate consulted by ``ChannelListLinker`` when channel-related
+    ///     web-socket events arrive (`message.new`, `notification.added_to_channel`,
+    ///     `notification.message_new`, `channel.updated`, `channel.visible`). Returning `true`
+    ///     keeps/links the channel in this list's `ChannelListQueryDTO`; returning `false`
+    ///     unlinks it. Required so events for channels in other groups don't leak into this
+    ///     list when automatic filtering is enabled.
+    /// - Returns: A new instance of `ChatChannelListController`.
+    public func channelListController(
+        groupKey: String,
+        dynamicFilter: @escaping @Sendable (ChatChannel) -> Bool
+    ) -> ChatChannelListController {
+        .init(query: .init(groupKey: groupKey), client: self, filter: dynamicFilter)
+    }
 }
 
 /// `ChatChannelListController` is a controller class which allows observing a list of chat channels based on the provided query.
@@ -35,7 +54,7 @@ extension ChatClient {
 /// - Note: For an async-await alternative of the `ChatChannelListController`, please check ``ChannelList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatChannelListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query specifying and filtering the list of channels.
-    public private(set) var query: ChannelListQuery
+    public let query: ChannelListQuery
 
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
@@ -69,7 +88,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     /// A Boolean value that returns whether pagination is finished
     public private(set) var hasLoadedAllPreviousChannels: Bool = false
-    @Atomic private var shouldSkipInitialRemoteUpdate = false
 
     /// A type-erased delegate.
     var multicastDelegate: MulticastDelegate<ChatChannelListControllerDelegate> = .init() {
@@ -162,14 +180,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         channelListLinker.start(with: client.eventNotificationCenter)
         client.syncRepository.startTrackingChannelListController(self)
 
-        if shouldSkipInitialRemoteUpdate {
-            shouldSkipInitialRemoteUpdate = false
+        if query.groupKey != nil {
             state = .remoteDataFetched
             hasLoadedAllPreviousChannels = channels.isEmpty
             markChannelsAsDeliveredIfNeeded(channels: Array(channels))
-            callback {
-                completion?(nil)
-            }
+            callback { completion?(nil) }
             return
         }
 
@@ -196,63 +211,51 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             return
         }
 
-        let limit = limit ?? query.pagination.pageSize
-        var updatedQuery = query
-        updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
-        worker.update(channelListQuery: updatedQuery) { result in
-            switch result {
-            case let .success(channels):
-                self.markChannelsAsDeliveredIfNeeded(channels: channels)
-                self.hasLoadedAllPreviousChannels = channels.count < limit
-                self.callback { completion?(nil) }
-            case let .failure(error):
-                self.callback { completion?(error) }
+        if let groupKey = query.groupKey {
+            worker.paginationCursor(for: groupKey) { result in
+                switch result {
+                case .failure(let error):
+                    self.callback { completion?(error) }
+                case .success(let cursor):
+                    guard let cursor else {
+                        self.hasLoadedAllPreviousChannels = true
+                        self.callback { completion?(nil) }
+                        return
+                    }
+                    self.worker.queryGroupedChannels(
+                        groupPagination: .init(groupKey: groupKey, next: cursor, prev: nil),
+                        limit: limit,
+                        watch: true,
+                        presence: true
+                    ) { queryResult in
+                        switch queryResult {
+                        case let .success(grouped):
+                            if let group = grouped.groups[groupKey] {
+                                self.hasLoadedAllPreviousChannels = group.next == nil
+                                self.markChannelsAsDeliveredIfNeeded(channels: group.channels)
+                            }
+                            self.callback { completion?(nil) }
+                        case let .failure(error):
+                            self.callback { completion?(error) }
+                        }
+                    }
+                }
             }
-        }
-    }
-
-    /// Prefills the controller with an initial channel list snapshot and skips the first remote
-    /// `queryChannels` request when `synchronize()` is called afterwards.
-    ///
-    /// The prefetched channels are persisted in the local storage and linked only to this
-    /// controller query, so pagination, local observation and offline refresh keep working.
-    public func prefill(
-        group: GroupedChannelsGroup,
-        completion: (@Sendable (Error?) -> Void)? = nil
-    ) {
-        // This changes filter hash to use static group key
-        query.groupKey = group.groupKey
-
-        worker.prefill(group: group, for: query, filter: filter) { [weak self] result in
-            guard let self else { return }
-            switch result {
-            case let .success(savedChannels):
-                self.shouldSkipInitialRemoteUpdate = true
-                // Prefill can come from a differently sized grouped endpoint page, so we can
-                // only conclude pagination is exhausted when no channels were provided at all.
-                self.hasLoadedAllPreviousChannels = savedChannels.isEmpty
-
-                // Recreate observer + linker so they pick up the new groupKey, mirroring the
-                // state-layer ChannelListState.Observer.start(observing:) flow.
-                self.channelListObserver.stopObserving()
-                self.channelListObserver = self.makeChannelListObserver(
-                    query: self.query,
-                    minimumFetchLimit: savedChannels.count
-                )
-                self.channelListLinker = self.makeChannelListLinker(query: self.query)
-                self.channelListLinker.start(with: self.client.eventNotificationCenter)
-                do {
-                    try self.channelListObserver.startObserving()
-                } catch {
-                    log.error("Failed to restart channel list observer after prefill: \(error)")
-                }
-
-                self.callback {
-                    completion?(nil)
-                }
-            case let .failure(error):
-                self.callback {
-                    completion?(error)
+        } else {
+            let limit = limit ?? query.pagination.pageSize
+            var updatedQuery = query
+            updatedQuery.pagination = Pagination(
+                pageSize: limit,
+                offset: channels.count
+            )
+            worker.update(channelListQuery: updatedQuery) { result in
+                switch result {
+                case let .success(channels):
+                    self.markChannelsAsDeliveredIfNeeded(channels: channels)
+                    self.hasLoadedAllPreviousChannels = channels.count < limit
+                    self.callback { completion?(nil) }
+                case let .failure(error):
+                    self.callback { completion?(error) }
                 }
             }
         }

@@ -40,52 +40,62 @@ final class ChannelListLinker: Sendable {
         eventObservers = [
             EventObserver(
                 notificationCenter: nc,
-                transform: { $0 as? NotificationAddedToChannelEvent }
-            ) { [weak self] event in self?.linkChannelIfNeeded(event.channel) },
+                transform: { $0 as? NotificationAddedToChannelEvent },
+                callback: { [weak self] event in
+                    self?.handle(channel: event.channel, allowedActions: [.link], channelCustom: event.channelCustom)
+                }
+            ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? MessageNewEvent },
-                callback: { [weak self] event in
-                    guard let self else { return }
-                    self.unlinkChannelIfNeeded(event.channel) {
-                        self.linkChannelIfNeeded(event.channel)
-                    }
+                callback: { [weak self, query] event in
+                    let allowedActions: Set<LinkingAction> = query.groupKey != nil ? [.link, .unlink] : [.link]
+                    self?.handle(channel: event.channel, allowedActions: allowedActions, channelCustom: event.channelCustom)
                 }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? NotificationMessageNewEvent },
-                callback: { [weak self] event in
-                    guard let self else { return }
-                    self.unlinkChannelIfNeeded(event.channel) {
-                        self.linkChannelIfNeeded(event.channel)
-                    }
+                callback: { [weak self, query] event in
+                    let allowedActions: Set<LinkingAction> = query.groupKey != nil ? [.link, .unlink] : [.link]
+                    self?.handle(channel: event.channel, allowedActions: allowedActions, channelCustom: event.channelCustom)
                 }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? ChannelUpdatedEvent },
                 callback: { [weak self] event in
-                    guard let self else { return }
-                    self.unlinkChannelIfNeeded(event.channel) {
-                        self.linkChannelIfNeeded(event.channel)
-                    }
+                    self?.handle(channel: event.channel, allowedActions: [.link, .unlink], channelCustom: event.channelCustom)
                 }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? ChannelVisibleEvent },
                 callback: { [weak self, databaseContainer] event in
+                    let channelCustom = event.channelCustom
                     let context = databaseContainer.backgroundReadOnlyContext
                     context.perform { [self] in
                         guard let channel = try? context.channel(cid: event.cid)?.asModel() else { return }
-                        self?.linkChannelIfNeeded(channel)
+                        self?.handle(channel: channel, allowedActions: [.link], channelCustom: channelCustom)
                     }
                 }
             )
         ]
     }
 
+    private func handle(channel: ChatChannel, allowedActions: Set<LinkingAction>, channelCustom: ChannelCustom?) {
+        let action = linkingAction(for: channel, channelCustom: channelCustom)
+        
+        switch action {
+        case .link where allowedActions.contains(.link):
+            linkChannel(channel)
+        case .unlink where allowedActions.contains(.unlink):
+            unlinkChannel(channel)
+        default:
+            break
+        }
+    }
+    
     private func isInChannelList(
         _ channel: ChatChannel,
         completion: @escaping @Sendable (_ isPresent: Bool, _ belongsToOtherQuery: Bool) -> Void
@@ -103,9 +113,7 @@ final class ChannelListLinker: Sendable {
         }
     }
     
-    /// Handles if a channel should be linked to the current query or not.
-    private func linkChannelIfNeeded(_ channel: ChatChannel) {
-        guard shouldChannelBelongToCurrentQuery(channel) else { return }
+    private func linkChannel(_ channel: ChatChannel) {
         isInChannelList(channel) { [worker, query, channelWatcherHandler] exists, belongsToOtherQuery in
             guard !exists else { return }
             worker.link(channel: channel, with: query) { error in
@@ -128,35 +136,38 @@ final class ChannelListLinker: Sendable {
         }
     }
 
-    /// Handles if a channel should be unlinked from the current query or not.
-    private func unlinkChannelIfNeeded(_ channel: ChatChannel, completion: (@Sendable () -> Void)? = nil) {
-        guard !shouldChannelBelongToCurrentQuery(channel) else {
-            completion?()
-            return
-        }
+    private func unlinkChannel(_ channel: ChatChannel) {
         isInChannelList(channel) { [worker, query] exists, _ in
-            guard exists else {
-                completion?()
-                return
-            }
-            worker.unlink(channel: channel, with: query) { _ in
-                completion?()
-            }
+            guard exists else { return }
+            worker.unlink(channel: channel, with: query)
         }
     }
 
     /// Checks if the given channel should belong to the current query or not.
-    private func shouldChannelBelongToCurrentQuery(_ channel: ChatChannel) -> Bool {
-        if let filter = filter {
-            return filter(channel)
+    private func linkingAction(for channel: ChatChannel, channelCustom: ChannelCustom?) -> LinkingAction {
+        if let groupKey = query.groupKey {
+            if let updatedGroupKey = channelCustom?.custom?.group {
+                return groupKey == updatedGroupKey.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() ? .link : .unlink
+            }
+            return .none
+        } else {
+            if let filter = filter {
+                return filter(channel) ? .link : .unlink
+            }
+            
+            if clientConfig.isChannelAutomaticFilteringEnabled {
+                // When auto-filtering is enabled the channel will appear or not automatically if the
+                // query matches the DB Predicate. So here we default to saying it always belong to the current query.
+                return .link
+            }
+            
+            return .none
         }
+    }
+}
 
-        if clientConfig.isChannelAutomaticFilteringEnabled {
-            // When auto-filtering is enabled the channel will appear or not automatically if the
-            // query matches the DB Predicate. So here we default to saying it always belong to the current query.
-            return true
-        }
-
-        return false
+extension ChannelListLinker {
+    enum LinkingAction {
+        case link, unlink, none
     }
 }
