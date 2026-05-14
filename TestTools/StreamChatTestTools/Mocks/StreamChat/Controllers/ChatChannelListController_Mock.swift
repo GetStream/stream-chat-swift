@@ -36,7 +36,6 @@ class ChatChannelListController_Mock: ChatChannelListController, Spy, @unchecked
         record()
         refreshLoadedChannelsResult.map(completion)
     }
-
 }
 
 extension ChatChannelListController_Mock {

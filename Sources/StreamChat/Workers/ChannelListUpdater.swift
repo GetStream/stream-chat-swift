@@ -255,7 +255,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                 groupPagination: groupPagination,
                 limit: limit,
                 watch: watch,
-                presence: presence,
+                presence: presence
             ) { result in
                 continuation.resume(with: result)
             }

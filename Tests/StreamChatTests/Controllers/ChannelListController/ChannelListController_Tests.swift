@@ -2111,7 +2111,6 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
-
     private func setupControllerWithFilter(_ filter: @escaping @Sendable (ChatChannel) -> Bool) {
         // Prepare controller
         controller = ChatChannelListController(
