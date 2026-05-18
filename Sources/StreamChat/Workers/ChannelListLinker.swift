@@ -42,7 +42,9 @@ final class ChannelListLinker: Sendable {
                 notificationCenter: nc,
                 transform: { $0 as? NotificationAddedToChannelEvent },
                 callback: { [weak self] event in
-                    self?.handle(channel: event.channel, allowedActions: [.link], channelCustom: event.channelCustom)
+                    // The event may omit channel_custom; the channel's extraData is the up-to-date fallback.
+                    let eventGroupKey = event.channelCustom?.custom?.group ?? event.channel.extraData["group"]?.stringValue
+                    self?.handle(channel: event.channel, allowedActions: [.link], eventGroupKey: eventGroupKey)
                 }
             ),
             EventObserver(
@@ -50,7 +52,7 @@ final class ChannelListLinker: Sendable {
                 transform: { $0 as? MessageNewEvent },
                 callback: { [weak self, query] event in
                     let allowedActions: Set<LinkingAction> = query.groupKey != nil ? [.link, .unlink] : [.link]
-                    self?.handle(channel: event.channel, allowedActions: allowedActions, channelCustom: event.channelCustom)
+                    self?.handle(channel: event.channel, allowedActions: allowedActions, eventGroupKey: event.channelCustom?.custom?.group)
                 }
             ),
             EventObserver(
@@ -58,33 +60,33 @@ final class ChannelListLinker: Sendable {
                 transform: { $0 as? NotificationMessageNewEvent },
                 callback: { [weak self, query] event in
                     let allowedActions: Set<LinkingAction> = query.groupKey != nil ? [.link, .unlink] : [.link]
-                    self?.handle(channel: event.channel, allowedActions: allowedActions, channelCustom: event.channelCustom)
+                    self?.handle(channel: event.channel, allowedActions: allowedActions, eventGroupKey: event.channelCustom?.custom?.group)
                 }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? ChannelUpdatedEvent },
                 callback: { [weak self] event in
-                    self?.handle(channel: event.channel, allowedActions: [.link, .unlink], channelCustom: event.channelCustom)
+                    self?.handle(channel: event.channel, allowedActions: [.link, .unlink], eventGroupKey: event.channelCustom?.custom?.group)
                 }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? ChannelVisibleEvent },
                 callback: { [weak self, databaseContainer] event in
-                    let channelCustom = event.channelCustom
+                    let eventGroupKey = event.channelCustom?.custom?.group
                     let context = databaseContainer.backgroundReadOnlyContext
                     context.perform { [self] in
                         guard let channel = try? context.channel(cid: event.cid)?.asModel() else { return }
-                        self?.handle(channel: channel, allowedActions: [.link], channelCustom: channelCustom)
+                        self?.handle(channel: channel, allowedActions: [.link], eventGroupKey: eventGroupKey)
                     }
                 }
             )
         ]
     }
 
-    private func handle(channel: ChatChannel, allowedActions: Set<LinkingAction>, channelCustom: ChannelCustom?) {
-        let action = linkingAction(for: channel, channelCustom: channelCustom)
+    private func handle(channel: ChatChannel, allowedActions: Set<LinkingAction>, eventGroupKey: String?) {
+        let action = linkingAction(for: channel, eventGroupKey: eventGroupKey)
         
         switch action {
         case .link where allowedActions.contains(.link):
@@ -144,10 +146,14 @@ final class ChannelListLinker: Sendable {
     }
 
     /// Checks if the given channel should belong to the current query or not.
-    private func linkingAction(for channel: ChatChannel, channelCustom: ChannelCustom?) -> LinkingAction {
+    private func linkingAction(for channel: ChatChannel, eventGroupKey: String?) -> LinkingAction {
         if let groupKey = query.groupKey {
-            if let updatedGroupKey = channelCustom?.custom?.group {
-                return groupKey == updatedGroupKey.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() ? .link : .unlink
+            // "all" group key is special, all the other groups are always linked to it
+            let currentGroupKey = eventGroupKey?
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+                .lowercased()
+            if let currentGroupKey, !currentGroupKey.isEmpty {
+                return groupKey == currentGroupKey || groupKey == "all" ? .link : .unlink
             }
             return .none
         } else {

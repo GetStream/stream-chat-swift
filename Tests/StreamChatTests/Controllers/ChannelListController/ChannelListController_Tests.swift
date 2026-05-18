@@ -737,6 +737,105 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(env.channelListUpdater?.unlink_callCount, 0)
     }
 
+    // MARK: - Linking with Group Key
+
+    func test_didReceiveEvent_whenQueryGroupKeyMatchesEventGroupKey_shouldLinkChannelToQuery() {
+        let groupedController = setUpGroupedController(groupKey: "team-a")
+
+        let event = makeMessageNewEvent(with: .mock(cid: .unique), channelCustom: makeChannelCustom(group: "team-a"))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
+
+        AssertAsync.willBeTrue(env.channelListUpdater?.link_completion != nil)
+        env.channelListUpdater?.link_completion?(nil)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
+        XCTAssertEqual(env.channelListUpdater?.unlink_callCount, 0)
+        _ = groupedController
+    }
+
+    func test_didReceiveEvent_whenQueryGroupKeyDoesNotMatchEventGroupKey_shouldNotLinkChannelToQuery() {
+        let groupedController = setUpGroupedController(groupKey: "team-a")
+
+        let event = makeMessageNewEvent(with: .mock(cid: .unique), channelCustom: makeChannelCustom(group: "team-b"))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
+        _ = groupedController
+    }
+
+    func test_didReceiveEvent_whenQueryGroupKeyIsAll_andEventGroupKeyIsDifferent_shouldLinkChannelToQuery() {
+        let groupedController = setUpGroupedController(groupKey: "all")
+
+        let event = makeMessageNewEvent(with: .mock(cid: .unique), channelCustom: makeChannelCustom(group: "team-a"))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
+
+        AssertAsync.willBeTrue(env.channelListUpdater?.link_completion != nil)
+        env.channelListUpdater?.link_completion?(nil)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
+        XCTAssertEqual(env.channelListUpdater?.unlink_callCount, 0)
+        _ = groupedController
+    }
+
+    func test_didReceiveEvent_whenQueryGroupKeyIsAll_andEventHasNoGroup_shouldNotLinkChannelToQuery() {
+        let groupedController = setUpGroupedController(groupKey: "all")
+
+        let event = makeMessageNewEvent(with: .mock(cid: .unique))
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
+        _ = groupedController
+    }
+
+    func test_didReceiveEvent_whenNotificationAddedToChannelEvent_andChannelCustomMissing_shouldFallBackToExtraData() {
+        let groupedController = setUpGroupedController(groupKey: "team-a")
+
+        let channel = ChatChannel.mock(cid: .unique, extraData: ["group": .string("team-a")])
+        let event = makeAddedChannelEvent(with: channel)
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
+
+        AssertAsync.willBeTrue(env.channelListUpdater?.link_completion != nil)
+        env.channelListUpdater?.link_completion?(nil)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 1)
+        _ = groupedController
+    }
+
+    func test_didReceiveEvent_whenMessageNewEvent_andChannelCustomMissing_shouldNotFallBackToExtraData() {
+        let groupedController = setUpGroupedController(groupKey: "team-a")
+
+        let channel = ChatChannel.mock(cid: .unique, extraData: ["group": .string("team-a")])
+        let event = makeMessageNewEvent(with: channel)
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        client.eventNotificationCenter.process(event) {
+            eventExpectation.fulfill()
+        }
+        wait(for: [eventExpectation], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.channelListUpdater?.link_callCount, 0)
+        _ = groupedController
+    }
+
     // MARK: - Delegate tests
 
     func test_settingDelegate_leadsToFetchingLocalData() {
@@ -2065,24 +2164,44 @@ final class ChannelListController_Tests: XCTestCase {
         )
     }
 
-    private func makeAddedChannelEvent(with channel: ChatChannel) -> NotificationAddedToChannelEvent {
+    private func makeAddedChannelEvent(with channel: ChatChannel, channelCustom: ChannelCustom? = nil) -> NotificationAddedToChannelEvent {
         NotificationAddedToChannelEvent(
             channel: channel,
             unreadCount: nil,
             member: .mock(id: .unique),
-            createdAt: .unique
+            createdAt: .unique,
+            channelCustom: channelCustom
         )
     }
 
-    private func makeMessageNewEvent(with channel: ChatChannel) -> MessageNewEvent {
+    private func makeMessageNewEvent(with channel: ChatChannel, channelCustom: ChannelCustom? = nil) -> MessageNewEvent {
         MessageNewEvent(
             user: .unique,
             message: .unique,
             channel: channel,
             createdAt: .unique,
             watcherCount: nil,
-            unreadCount: nil
+            unreadCount: nil,
+            channelCustom: channelCustom
         )
+    }
+
+    private func makeChannelCustom(group: String?) -> ChannelCustom {
+        let groupJSON = group.map { "\"\($0)\"" } ?? "null"
+        let json = "{\"custom\":{\"group\":\(groupJSON)}}"
+        return try! JSONDecoder().decode(ChannelCustom.self, from: Data(json.utf8))
+    }
+
+    private func setUpGroupedController(groupKey: String) -> ChatChannelListController {
+        let groupedQuery = ChannelListQuery(groupKey: groupKey)
+        let groupedController = ChatChannelListController(
+            query: groupedQuery,
+            client: client,
+            filter: { _ in true },
+            environment: env.environment
+        )
+        groupedController.synchronize()
+        return groupedController
     }
 
     private func makeChannelVisibleEvent(with channel: ChatChannel) -> ChannelVisibleEvent {
