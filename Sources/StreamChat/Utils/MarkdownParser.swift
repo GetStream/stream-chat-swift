@@ -90,9 +90,27 @@ public struct MarkdownParser {
             }
         }
         
-        var previousPresentationIntentStyling: PresentationIntentStyling?
-        for (presentationIntent, range) in attributedString.runs[\.presentationIntent].reversed() {
+        let initialCharacters = attributedString.characters
+        var presentationIntentEntries: [(intent: PresentationIntent, lowerOffset: Int, upperOffset: Int)] = []
+        for (presentationIntent, range) in attributedString.runs[\.presentationIntent] {
             guard let presentationIntent else { continue }
+            let lowerOffset = initialCharacters.distance(from: initialCharacters.startIndex, to: range.lowerBound)
+            let upperOffset = initialCharacters.distance(from: initialCharacters.startIndex, to: range.upperBound)
+            presentationIntentEntries.append((presentationIntent, lowerOffset, upperOffset))
+        }
+        
+        // Remove presentation intent attributes from the final string because they are handled below.
+        attributedString = attributedString.transformingAttributes(\.presentationIntent) { attribute in
+            attribute.value = nil
+        }
+        
+        var previousPresentationIntentStyling: PresentationIntentStyling?
+        for entry in presentationIntentEntries.reversed() {
+            let presentationIntent = entry.intent
+            let currentCharacters = attributedString.characters
+            let lowerBound = currentCharacters.index(currentCharacters.startIndex, offsetBy: entry.lowerOffset)
+            let upperBound = currentCharacters.index(currentCharacters.startIndex, offsetBy: entry.upperOffset)
+            let range = lowerBound..<upperBound
             var presentationIntentStyling = PresentationIntentStyling(range: range, components: presentationIntent.components)
             
             for intentType in presentationIntent.components {
@@ -135,11 +153,6 @@ public struct MarkdownParser {
                     break
                 }
             }
-            // Remove presentation intent attribute from the final string because it has been handled
-            attributedString[range].replaceAttributes(
-                AttributeContainer().presentationIntent(presentationIntent),
-                with: AttributeContainer()
-            )
             // Paragraph applies to text and other intents
             if presentationIntentStyling.paragraphId != previousPresentationIntentStyling?.paragraphId {
                 presentationIntentStyling.succeedingNewlineCount += 1
