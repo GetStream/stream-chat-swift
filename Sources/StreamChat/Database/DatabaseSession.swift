@@ -393,6 +393,17 @@ protocol ChannelReadDatabaseSession {
     /// Sets the channel `cid` as read for `userId`
     func markChannelAsRead(cid: ChannelId, userId: UserId, at: Date)
 
+    /// Sets the channel `cid` as read for `userId` without relying on server-side read events.
+    func markChannelAsReadLocally(
+        cid: ChannelId,
+        userId: UserId,
+        at: Date,
+        lastReadMessageId: MessageId?
+    )
+
+    /// Returns the newest locally stored message id in the channel.
+    func latestMessageId(in cid: ChannelId) throws -> MessageId?
+
     /// Sets the channel `cid` as unread for `userId` starting from the message id or timestamp.
     /// Uses `lastReadAt` and `unreadMessagesCount` if passed, otherwise it calculates it.
     func markChannelAsUnread(

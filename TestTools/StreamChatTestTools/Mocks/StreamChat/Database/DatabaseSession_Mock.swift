@@ -351,6 +351,24 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.markChannelAsRead(cid: cid, userId: userId, at: at)
     }
 
+    func markChannelAsReadLocally(
+        cid: ChannelId,
+        userId: UserId,
+        at: Date,
+        lastReadMessageId: MessageId?
+    ) {
+        underlyingSession.markChannelAsReadLocally(
+            cid: cid,
+            userId: userId,
+            at: at,
+            lastReadMessageId: lastReadMessageId
+        )
+    }
+
+    func latestMessageId(in cid: ChannelId) throws -> MessageId? {
+        try underlyingSession.latestMessageId(in: cid)
+    }
+
     func markChannelAsUnread(cid: ChannelId, by userId: UserId) {
         markChannelAsUnreadParams = (cid, userId)
         underlyingSession.markChannelAsUnread(cid: cid, by: userId)

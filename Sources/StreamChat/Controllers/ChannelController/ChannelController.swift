@@ -1303,8 +1303,10 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        /// Read events are not enabled for this channel
-        guard channel.canReceiveReadEvents == true else {
+        /// Read events are not enabled for this channel.
+        /// Channels with server-side read events disabled can still maintain
+        /// a local read state for per-channel unread counts.
+        guard channel.config.readEventsEnabled == false || channel.canReceiveReadEvents == true else {
             channelFeatureDisabled(feature: "read events", completion: completion)
             return
         }

@@ -44,6 +44,11 @@ class ChannelRepository: @unchecked Sendable {
         userId: UserId,
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
+        if shouldMarkReadLocally(cid: cid) {
+            markReadLocally(cid: cid, userId: userId, completion: completion)
+            return
+        }
+
         apiClient.request(endpoint: .markRead(cid: cid)) { [weak self] result in
             if let error = result.error {
                 completion?(error)
@@ -55,6 +60,29 @@ class ChannelRepository: @unchecked Sendable {
             }, completion: { error in
                 completion?(error)
             })
+        }
+    }
+
+    private func shouldMarkReadLocally(cid: ChannelId) -> Bool {
+        (try? database.readAndWait {
+            $0.channel(cid: cid)?.config.readEventsEnabled == false
+        }) ?? false
+    }
+
+    private func markReadLocally(
+        cid: ChannelId,
+        userId: UserId,
+        completion: (@Sendable (Error?) -> Void)?
+    ) {
+        database.write { session in
+            session.markChannelAsReadLocally(
+                cid: cid,
+                userId: userId,
+                at: Date(),
+                lastReadMessageId: try session.latestMessageId(in: cid)
+            )
+        } completion: { error in
+            completion?(error)
         }
     }
 

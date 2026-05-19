@@ -3810,7 +3810,7 @@ final class ChannelController_Tests: XCTestCase {
 
     // MARK: - Mark read
 
-    func test_markRead_whenReadEventsAreDisabled_errors() throws {
+    func test_markRead_whenReadEventsCapabilityIsMissing_errors() throws {
         let payload = dummyPayload(with: channelId, ownCapabilities: [])
         try client.databaseContainer.writeSynchronously { session in
             try session.saveChannel(payload: payload)
@@ -3828,6 +3828,32 @@ final class ChannelController_Tests: XCTestCase {
         }
 
         XCTAssertEqual(channelFeatureError.localizedDescription, "Channel feature: read events is disabled for this channel.")
+    }
+
+    func test_markRead_whenReadEventsAreDisabled_callsChannelUpdaterForLocalReadState() throws {
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let payload = dummyPayload(
+            with: channelId,
+            channelConfig: .mock(readEventsEnabled: false),
+            ownCapabilities: []
+        )
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: payload)
+        }
+        client.setToken(token: .unique(userId: currentUser.id))
+
+        let error: Error? = try waitFor { completion in
+            controller.markRead { error in
+                completion(error)
+            }
+            env.channelUpdater!.markRead_completion?(nil)
+        }
+
+        XCTAssertNil(error)
+        XCTAssertEqual(env.channelUpdater!.markRead_cid, channelId)
+        XCTAssertEqual(env.channelUpdater!.markRead_userId, currentUser.id)
     }
 
     func test_markRead_whenChannelIsMissing_throws() throws {

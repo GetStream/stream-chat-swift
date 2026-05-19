@@ -135,6 +135,25 @@ extension NSManagedObjectContext {
         }
     }
 
+    func markChannelAsReadLocally(
+        cid: ChannelId,
+        userId: UserId,
+        at: Date,
+        lastReadMessageId: MessageId?
+    ) {
+        guard let channel = channel(cid: cid) else {
+            log.debug("Discarding local read update for cid \(cid) because the channel doesn't exist locally.")
+            return
+        }
+
+        let read = ChannelReadDTO.loadOrCreate(cid: cid, userId: userId, context: self, cache: nil)
+        read.channel = channel
+        read.user = UserDTO.loadOrCreate(id: userId, context: self, cache: nil)
+        read.lastReadAt = at.bridgeDate
+        read.lastReadMessageId = lastReadMessageId
+        read.unreadMessageCount = 0
+    }
+
     func markChannelAsUnread(
         for cid: ChannelId,
         userId: UserId,
@@ -196,6 +215,19 @@ extension NSManagedObjectContext {
 
     func loadChannelReads(for userId: UserId) -> [ChannelReadDTO] {
         ChannelReadDTO.load(userId: userId, context: self)
+    }
+
+    func latestMessageId(in cid: ChannelId) throws -> MessageId? {
+        let clientConfig = chatClientConfig
+        let request = NSFetchRequest<MessageDTO>(entityName: MessageDTO.entityName)
+        MessageDTO.applyPrefetchingState(to: request)
+        request.predicate = MessageDTO.channelMessagesPredicate(
+            for: cid.rawValue,
+            shouldShowShadowedMessages: clientConfig?.shouldShowShadowedMessages ?? false
+        )
+        request.sortDescriptors = [NSSortDescriptor(keyPath: \MessageDTO.createdAt, ascending: false)]
+        request.fetchLimit = 1
+        return try fetch(request).first?.id
     }
 
     private func markMessagesFromCurrentUserAsRead(

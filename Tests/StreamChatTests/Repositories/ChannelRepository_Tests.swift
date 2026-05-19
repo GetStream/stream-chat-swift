@@ -85,6 +85,55 @@ final class ChannelRepository_Tests: XCTestCase {
         XCTAssertNil(receivedError)
     }
 
+    func test_markRead_whenReadEventsAreDisabled_updatesLocalReadStateWithoutAPICall() throws {
+        let cid = ChannelId.unique
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+        let latestMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            createdAt: .unique,
+            cid: cid
+        )
+        let readPayload = ChannelReadPayload(
+            user: currentUser,
+            lastReadAt: latestMessage.createdAt.addingTimeInterval(-10),
+            lastReadMessageId: .unique,
+            unreadMessagesCount: 3,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
+        )
+        let channelPayload = dummyPayload(
+            with: cid,
+            members: [.dummy(user: currentUser)],
+            messages: [latestMessage],
+            channelConfig: .mock(readEventsEnabled: false),
+            channelReads: [readPayload]
+        )
+
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: currentUser)
+            try $0.saveChannel(payload: channelPayload)
+        }
+        database.writeSessionCounter = 0
+
+        let expectation = self.expectation(description: "markRead completes")
+        nonisolated(unsafe) var receivedError: Error?
+        repository.markRead(cid: cid, userId: currentUser.id) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNil(apiClient.request_endpoint)
+        XCTAssertEqual(database.writeSessionCounter, 1)
+        XCTAssertNil(receivedError)
+
+        let read = try XCTUnwrap(database.viewContext.loadChannelRead(cid: cid, userId: currentUser.id))
+        XCTAssertEqual(read.unreadMessageCount, 0)
+        XCTAssertEqual(read.lastReadMessageId, latestMessage.id)
+    }
+
     func test_markRead_errorResponse() {
         let cid = ChannelId.unique
         let userId = UserId.unique

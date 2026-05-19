@@ -86,7 +86,13 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                                 memberListQueryDTO.members.removeAll()
                             }
                             channelDTO.members.removeAll()
-                            channelDTO.reads.removeAll()
+                            if payload.channel.config.readEventsEnabled {
+                                channelDTO.reads.removeAll()
+                            } else if let currentUserId = session.currentUser?.user.id {
+                                channelDTO.reads = Set(channelDTO.reads.filter { $0.user.id == currentUserId })
+                            } else {
+                                channelDTO.reads.removeAll()
+                            }
                         }
                         if resetWatchers {
                             channelDTO.watchers.removeAll()
