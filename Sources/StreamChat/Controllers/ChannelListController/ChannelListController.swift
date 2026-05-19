@@ -28,25 +28,6 @@ extension ChatClient {
     ) -> ChatChannelListController {
         .init(query: query, client: self, filter: filter)
     }
-
-    /// Creates a new `ChannelListController` for a single grouped channels group identified by `groupKey`.
-    ///
-    /// - Parameters:
-    ///   - groupKey: The group key returned by `queryGroupedChannels` (e.g. `"all"`, `"new"`,
-    ///     `"current"`) used to identify the underlying `ChannelListQueryDTO`.
-    ///   - dynamicFilter: A predicate consulted by ``ChannelListLinker`` when channel-related
-    ///     web-socket events arrive (`message.new`, `notification.added_to_channel`,
-    ///     `notification.message_new`, `channel.updated`, `channel.visible`). Returning `true`
-    ///     keeps/links the channel in this list's `ChannelListQueryDTO`; returning `false`
-    ///     unlinks it. Required so events for channels in other groups don't leak into this
-    ///     list when automatic filtering is enabled.
-    /// - Returns: A new instance of `ChatChannelListController`.
-    public func channelListController(
-        groupKey: String,
-        dynamicFilter: @escaping @Sendable (ChatChannel) -> Bool
-    ) -> ChatChannelListController {
-        .init(query: .init(groupKey: groupKey), client: self, filter: dynamicFilter)
-    }
 }
 
 /// `ChatChannelListController` is a controller class which allows observing a list of chat channels based on the provided query.
@@ -100,26 +81,15 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         }
     }
 
-    private(set) lazy var channelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = makeChannelListObserver(
-        query: query,
-        minimumFetchLimit: 0
-    )
-
-    private func makeChannelListObserver(
-        query: ChannelListQuery,
-        minimumFetchLimit: Int
-    ) -> BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> {
-        let request = ChannelDTO.channelListFetchRequest(query: query, chatClientConfig: client.config)
-        let fetchLimit = max(query.pagination.pageSize, minimumFetchLimit)
-        request.fetchLimit = fetchLimit
-        request.fetchBatchSize = fetchLimit
-
-        let observer = environment.createChannelListDatabaseObserver(
+    private(set) lazy var channelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
+        let request = ChannelDTO.channelListFetchRequest(query: self.query, chatClientConfig: client.config)
+        let observer = self.environment.createChannelListDatabaseObserver(
             client.databaseContainer,
             request,
             { try $0.asModel() },
             query.runtimeSortingValues
         )
+
         observer.onDidChange = { [weak self] changes in
             self?.delegateCallback { [weak self] in
                 guard let self = self else {
@@ -131,7 +101,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             }
         }
         return observer
-    }
+    }()
 
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
@@ -147,13 +117,10 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     private let filter: (@Sendable (ChatChannel) -> Bool)?
     private let environment: Environment
-    private lazy var channelListLinker: ChannelListLinker = makeChannelListLinker(query: query)
-
-    private func makeChannelListLinker(query: ChannelListQuery) -> ChannelListLinker {
-        environment.channelListLinkerBuilder(
+    private lazy var channelListLinker: ChannelListLinker = self.environment
+        .channelListLinkerBuilder(
             query, filter, client.config, client.databaseContainer, worker, client.channelWatcherHandler
         )
-    }
 
     /// Creates a new `ChannelListController`.
     ///
@@ -179,16 +146,12 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         startChannelListObserverIfNeeded()
         channelListLinker.start(with: client.eventNotificationCenter)
         client.syncRepository.startTrackingChannelListController(self)
-
-        if query.groupKey != nil {
-            state = .remoteDataFetched
-            hasLoadedAllPreviousChannels = channels.isEmpty
-            markChannelsAsDeliveredIfNeeded(channels: Array(channels))
-            callback { completion?(nil) }
-            return
+        updateChannelList { [weak self] error in
+            guard let completion else { return }
+            self?.callback {
+                completion(error)
+            }
         }
-
-        updateChannelList(completion)
     }
 
     // MARK: - Actions
@@ -211,52 +174,17 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             return
         }
 
-        if let groupKey = query.groupKey {
-            worker.paginationCursor(for: groupKey) { result in
-                switch result {
-                case .failure(let error):
-                    self.callback { completion?(error) }
-                case .success(let cursor):
-                    guard let cursor else {
-                        self.hasLoadedAllPreviousChannels = true
-                        self.callback { completion?(nil) }
-                        return
-                    }
-                    self.worker.queryGroupedChannels(
-                        groupPagination: .init(groupKey: groupKey, next: cursor, prev: nil),
-                        limit: limit,
-                        watch: true,
-                        presence: true
-                    ) { queryResult in
-                        switch queryResult {
-                        case let .success(grouped):
-                            if let group = grouped.groups[groupKey] {
-                                self.hasLoadedAllPreviousChannels = group.next == nil
-                                self.markChannelsAsDeliveredIfNeeded(channels: group.channels)
-                            }
-                            self.callback { completion?(nil) }
-                        case let .failure(error):
-                            self.callback { completion?(error) }
-                        }
-                    }
-                }
-            }
-        } else {
-            let limit = limit ?? query.pagination.pageSize
-            var updatedQuery = query
-            updatedQuery.pagination = Pagination(
-                pageSize: limit,
-                offset: channels.count
-            )
-            worker.update(channelListQuery: updatedQuery) { result in
-                switch result {
-                case let .success(channels):
-                    self.markChannelsAsDeliveredIfNeeded(channels: channels)
-                    self.hasLoadedAllPreviousChannels = channels.count < limit
-                    self.callback { completion?(nil) }
-                case let .failure(error):
-                    self.callback { completion?(error) }
-                }
+        let limit = limit ?? query.pagination.pageSize
+        var updatedQuery = query
+        updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
+        worker.update(channelListQuery: updatedQuery) { result in
+            switch result {
+            case let .success(channels):
+                self.markChannelsAsDeliveredIfNeeded(channels: channels)
+                self.hasLoadedAllPreviousChannels = channels.count < limit
+                self.callback { completion?(nil) }
+            case let .failure(error):
+                self.callback { completion?(error) }
             }
         }
     }
@@ -264,7 +192,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     // MARK: - Internal
 
     func refreshLoadedChannels(completion: @escaping @Sendable (Result<Set<ChannelId>, Error>) -> Void) {
-        worker.refreshLoadedChannels(for: query, channelCount: channels.count, completion: completion)
+        let channelCount = channelListObserver.items.count
+        worker.refreshLoadedChannels(for: query, channelCount: channelCount, completion: completion)
     }
 
     // MARK: - Helpers
