@@ -632,11 +632,9 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
     /// Pins a message.
     /// - Parameters:
     ///   - messageId: The message identifier to pin.
-    ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
     ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
     public func pin(
         messageId: MessageId,
-        pinning: MessagePinning = .noExpiration,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .pinMessage(
@@ -647,6 +645,20 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
                 completion?(result.error)
             }
         }
+    }
+
+    /// Pins a message.
+    /// - Parameters:
+    ///   - messageId: The message identifier to pin.
+    ///   - pinning: This parameter is ignored. `LivestreamChannelController` does not persist messages locally, so pin expirations have no effect.
+    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    @available(*, deprecated, message: "The pinning parameter has no effect. Use pin(messageId:completion:) instead.")
+    public func pin(
+        messageId: MessageId,
+        pinning: MessagePinning,
+        completion: (@MainActor (Error?) -> Void)? = nil
+    ) {
+        pin(messageId: messageId, completion: completion)
     }
 
     /// Unpins a message.

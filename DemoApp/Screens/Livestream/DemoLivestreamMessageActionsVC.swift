@@ -280,7 +280,7 @@ class DemoLivestreamMessageActionsVC: UIViewController {
                 }
             }
         } else {
-            controller.pin(messageId: message.id, pinning: .noExpiration) { [weak self] error in
+            controller.pin(messageId: message.id) { [weak self] error in
                 if let error = error {
                     DispatchQueue.main.async {
                         self?.showErrorAlert(error: error)

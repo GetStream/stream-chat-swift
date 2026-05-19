@@ -493,14 +493,12 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
 
     // MARK: - Message Pinning
 
-    /// Pins the message to the channel until the specified date.
+    /// Pins the message to the channel.
     ///
-    /// - Parameters:
-    ///   - messageId: The id of the message to be pinned.
-    ///   - pinning: The pinning expiration information. The default value is `.noExpiration`.
+    /// - Parameter messageId: The id of the message to be pinned.
     ///
     /// - Throws: An error while communicating with the Stream API.
-    public func pinMessage(_ messageId: MessageId, pinning: MessagePinning = .noExpiration) async throws {
+    public func pinMessage(_ messageId: MessageId) async throws {
         try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             apiClient.request(
                 endpoint: .pinMessage(messageId: messageId, request: .init(set: .init(pinned: true)))

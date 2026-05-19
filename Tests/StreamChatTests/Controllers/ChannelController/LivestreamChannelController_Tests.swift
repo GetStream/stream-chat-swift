@@ -2783,22 +2783,21 @@ extension LivestreamChannelController_Tests {
     func test_pin_makesCorrectAPICall() {
         // Given
         let messageId = MessageId.unique
-        let pinning = MessagePinning.expirationTime(20)
         let apiClient = client.mockAPIClient
         let expectation = self.expectation(description: "Pin message completes")
         nonisolated(unsafe) var pinError: Error?
-        
+
         // When
-        controller.pin(messageId: messageId, pinning: pinning) { error in
+        controller.pin(messageId: messageId) { error in
             pinError = error
             expectation.fulfill()
         }
-        
+
         // Simulate successful response
         client.mockAPIClient.test_simulateResponse(Result<EmptyResponse, Error>.success(.init()))
-        
+
         waitForExpectations(timeout: defaultTimeout)
-        
+
         // Then
         let expectedEndpoint = Endpoint<EmptyResponse>.pinMessage(
             messageId: messageId,
@@ -2806,22 +2805,6 @@ extension LivestreamChannelController_Tests {
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(pinError)
-    }
-    
-    func test_pin_withDefaultPinning_makesCorrectAPICall() {
-        // Given
-        let messageId = MessageId.unique
-        let apiClient = client.mockAPIClient
-        
-        // When
-        controller.pin(messageId: messageId) { _ in }
-        
-        // Then
-        let expectedEndpoint = Endpoint<EmptyResponse>.pinMessage(
-            messageId: messageId,
-            request: .init(set: .init(pinned: true))
-        )
-        XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
     
     func test_unpin_makesCorrectAPICall() {
