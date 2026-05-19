@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add `LivestreamChat` state-layer component with an `async/await` and `ObservableObject` interface for livestream channels [#4103](https://github.com/GetStream/stream-chat-swift/pull/4103)
 ### 🐞 Fixed
 - Fix crash in `MarkdownParser` when parsing long messages with many presentation intents [#4098](https://github.com/GetStream/stream-chat-swift/pull/4098)
 
