@@ -163,6 +163,22 @@ public struct ChatClientConfig: Sendable {
     /// - SeeAlso: Query option``QueryOptions/watch`` used by ``ChannelListQuery`` and ``ChannelQuery``.
     public var isAutomaticSyncOnReconnectEnabled = true
 
+    /// When enabled, the per-channel unread count is tracked locally for channels where server-side
+    /// read events are disabled (i.e. ``ChannelConfig/readEventsEnabled`` is `false`, typical for
+    /// livestream channels).
+    ///
+    /// While the server normally records who has read what, some channel types (e.g. livestreams)
+    /// turn this off to reduce load. With this flag set to `true`:
+    /// - New messages that arrive while the channel is not active increment a local unread counter.
+    /// - Calling ``markRead`` updates the local last-read timestamp only, without making a network
+    ///   request, so the unread count is reset immediately on-device.
+    ///
+    /// The total unread count (``CurrentChatUser/unreadCount``) is **not** affected; only the
+    /// per-channel ``ChatChannel/unreadCount`` is tracked locally.
+    ///
+    /// Defaults to `false`.
+    public var isLocalUnreadCountEnabled: Bool = false
+
     public init(
         apiKey: APIKey
     ) {

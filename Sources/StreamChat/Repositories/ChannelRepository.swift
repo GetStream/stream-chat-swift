@@ -58,6 +58,25 @@ class ChannelRepository: @unchecked Sendable {
         }
     }
 
+    /// Marks a channel as read locally, without making a network request.
+    ///
+    /// Used when server-side read events are disabled (e.g. livestream channels).
+    /// - Parameters:
+    ///   - cid: Channel id of the channel to be marked as read
+    ///   - userId: The id of the current user
+    ///   - completion: Called when the local write completes. Called with `Error` if the database write fails.
+    func markReadLocally(
+        cid: ChannelId,
+        userId: UserId,
+        completion: (@Sendable (Error?) -> Void)? = nil
+    ) {
+        database.write({ session in
+            session.markChannelAsRead(cid: cid, userId: userId, at: .init())
+        }, completion: { error in
+            completion?(error)
+        })
+    }
+
     /// Marks a subset of the messages of the channel as unread. All the following messages including the one that is
     /// passed as parameter, will be marked as not read.
     /// - Parameters:
