@@ -188,9 +188,6 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadOlderMessages(before messageId: MessageId? = nil, limit: Int? = nil) async throws {
-        let cid = try self.cid
-        _ = cid
-
         let messageId = messageId
             ?? handler.paginationStateHandler.state.oldestFetchedMessage?.id
             ?? handler.messages.last?.id
@@ -213,9 +210,6 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadNewerMessages(after messageId: MessageId? = nil, limit: Int? = nil) async throws {
-        let cid = try self.cid
-        _ = cid
-
         let messageId = messageId
             ?? handler.paginationStateHandler.state.newestFetchedMessage?.id
             ?? handler.messages.first?.id
