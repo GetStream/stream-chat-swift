@@ -120,7 +120,6 @@ final class ChannelListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.groups.keys.sorted(), ["all"])
         XCTAssertEqual(payload.groups["all"]?.channels.map(\.channel.cid), [channelId])
         XCTAssertEqual(payload.groups["all"]?.unreadChannels, 1)
-        XCTAssertEqual(payload.duration, "12ms")
     }
 
     func test_groupedQueryChannelsPayload_decodesNextAndPrevCursors() throws {

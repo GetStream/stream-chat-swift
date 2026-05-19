@@ -52,22 +52,18 @@ struct GroupedQueryChannelsRequestGroup: Encodable, Sendable {
 
 final class GroupedQueryChannelsPayload: Decodable, Sendable {
     let groups: [String: GroupedQueryChannelsGroupPayload]
-    let duration: String
 
-    init(groups: [String: GroupedQueryChannelsGroupPayload], duration: String) {
+    init(groups: [String: GroupedQueryChannelsGroupPayload]) {
         self.groups = groups
-        self.duration = duration
     }
 
     enum CodingKeys: String, CodingKey {
         case groups
-        case duration
     }
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         groups = try container.decode([String: GroupedQueryChannelsGroupPayload].self, forKey: .groups)
-        duration = try container.decode(String.self, forKey: .duration)
     }
 }
 

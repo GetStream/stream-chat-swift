@@ -88,22 +88,6 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
         }
     }
 
-    /// Stops observing changes from the underlying fetch results controller.
-    ///
-    /// Releases the FRC delegate so further context changes don't trigger callbacks, and clears
-    /// the change closures so a `DispatchQueue.main.async` already enqueued by a previous change
-    /// can't fire on a stale instance.
-    func stopObserving() {
-        let context = frc.managedObjectContext
-        context.performAndWait {
-            self.frc.delegate = nil
-            self.changeAggregator.onDidChange = nil
-            self._items = nil
-        }
-        isInitialized = false
-        onDidChange = nil
-    }
-
     /// Starts observing the changes in the database.
     /// - Throws: An error if the fetch  fails.
     func startObserving() throws {

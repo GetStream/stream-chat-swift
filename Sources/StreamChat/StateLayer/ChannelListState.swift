@@ -23,6 +23,7 @@ import Foundation
     ) {
         self.query = query
         observer = Observer(
+            query: query,
             dynamicFilter: dynamicFilter,
             clientConfig: clientConfig,
             channelListUpdater: channelListUpdater,
@@ -30,7 +31,7 @@ import Foundation
             eventNotificationCenter: eventNotificationCenter,
             channelWatcherHandler: channelWatcherHandler
         )
-        channels = observer.start(observing: query, handlers: handlers)
+        channels = observer.start(with: handlers)
     }
 
     /// The query used for filtering the list of channels.

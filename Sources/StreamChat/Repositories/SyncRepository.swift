@@ -193,20 +193,16 @@ class SyncRepository: @unchecked Sendable {
             
             // 2. Refresh standard (non-grouped) channel lists
             let allChannelLists = activeChannelLists.allObjects
-            let allControllers = activeChannelListControllers.allObjects
             operations.append(contentsOf: allChannelLists
                 .filter { $0.query.groupKey == nil }
                 .map { RefreshChannelListOperation(channelList: $0, context: context) }
             )
-            operations.append(contentsOf: allControllers
-                .filter { $0.query.groupKey == nil }
+            operations.append(contentsOf: activeChannelListControllers.allObjects
                 .map { RefreshChannelListOperation(controller: $0, context: context) }
             )
 
-            // 2.5 Refresh grouped channels (lists / controllers identified by groupKey)
-            let hasGroupedLists = allChannelLists.contains { $0.query.groupKey != nil }
-            let hasGroupedControllers = allControllers.contains { $0.query.groupKey != nil }
-            if hasGroupedLists || hasGroupedControllers {
+            // 2.5 Refresh grouped channels (lists identified by groupKey)
+            if allChannelLists.contains(where: { $0.query.groupKey != nil }) {
                 operations.append(SyncGroupedChannelsOperation(channelListUpdater: channelListUpdater, context: context))
             }
 

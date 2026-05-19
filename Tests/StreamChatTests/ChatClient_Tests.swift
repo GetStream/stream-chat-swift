@@ -285,8 +285,7 @@ final class ChatClient_Tests: XCTestCase {
                     channels: [dummyPayload(with: thirdCid)],
                     unreadChannels: 2
                 )
-            ],
-            duration: "12ms"
+            ]
         )
 
         let expectation = self.expectation(description: "grouped query channels completes")
