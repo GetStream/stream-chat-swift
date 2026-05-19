@@ -44,6 +44,10 @@ final class ActiveChannelIdsOperation: AsyncOperation, @unchecked Sendable {
                     .map(\.cid)
             )
             
+            context.localChannelIds.formUnion(
+                syncRepository.activeLivestreamChats.allObjects.compactMap { try? $0.cid }
+            )
+
             let activeChats = syncRepository.activeChats.allObjects
             let activeChannelLists = syncRepository.activeChannelLists.allObjects
             if activeChats.isEmpty, activeChannelLists.isEmpty {
@@ -207,6 +211,28 @@ final class WatchChannelOperation: AsyncOperation, @unchecked Sendable {
                     done(.continue)
                 } catch {
                     log.error("Failed watching active chat with error \(error.localizedDescription)", subsystems: .offlineSupport)
+                    done(.retry)
+                }
+            }
+        }
+    }
+
+    init(livestreamChat: LivestreamChat, context: SyncContext) {
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak livestreamChat] _, done in
+            guard let livestreamChat else {
+                done(.continue)
+                return
+            }
+            Task {
+                do {
+                    let cid = try livestreamChat.cid
+                    log.info("Watching active livestream chat \(cid.rawValue)", subsystems: .offlineSupport)
+                    try await livestreamChat.watch()
+                    context.watchedAndSynchedChannelIds.insert(cid)
+                    log.info("Successfully watched active livestream chat \(cid.rawValue)", subsystems: .offlineSupport)
+                    done(.continue)
+                } catch {
+                    log.error("Failed watching active livestream chat with error \(error.localizedDescription)", subsystems: .offlineSupport)
                     done(.retry)
                 }
             }
