@@ -7,7 +7,8 @@ import Foundation
 
 @objc(CurrentUserDTO)
 class CurrentUserDTO: NSManagedObject {
-    @NSManaged var groupedUnreadChannelsData: Data?
+    /// JSON-encoded `GroupedUnreadChannels` (`[groupKey: unreadCount]`)
+    @NSManaged var unreadGroupedChannelsCounts: Data?
     @NSManaged var unreadChannelsCount: Int64
     @NSManaged var unreadMessagesCount: Int64
     @NSManaged var unreadThreadsCount: Int64
@@ -226,11 +227,11 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 extension CurrentUserDTO {
     var groupedUnreadChannels: GroupedUnreadChannels? {
         get {
-            guard let groupedUnreadChannelsData else { return nil }
-            return try? JSONDecoder.default.decode(GroupedUnreadChannels.self, from: groupedUnreadChannelsData)
+            guard let unreadGroupedChannelsCounts else { return nil }
+            return try? JSONDecoder.default.decode(GroupedUnreadChannels.self, from: unreadGroupedChannelsCounts)
         }
         set {
-            groupedUnreadChannelsData = newValue.flatMap { try? JSONEncoder.default.encode($0) }
+            unreadGroupedChannelsCounts = newValue.flatMap { try? JSONEncoder.default.encode($0) }
         }
     }
 }

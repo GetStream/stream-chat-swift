@@ -35,13 +35,7 @@ public struct GroupedChannelsGroup: Sendable {
     ) {
         self.groupKey = groupKey
         self.channels = channels
-        let derivedUnreadChannels = channels.reduce(into: 0) { partialResult, channel in
-            if channel.unreadCount.messages > 0 {
-                partialResult += 1
-            }
-        }
-
-        self.unreadChannels = max(unreadChannels, derivedUnreadChannels)
+        self.unreadChannels = unreadChannels
         self.next = next
     }
 }
