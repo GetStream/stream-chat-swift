@@ -47,7 +47,6 @@ final class EventPayload: Decodable, Sendable {
         case draft
         case reminder
         case channelMessageCount = "channel_message_count"
-        case channelCustom = "channel_custom"
         case team
     }
 
@@ -92,7 +91,6 @@ final class EventPayload: Decodable, Sendable {
     let draft: DraftPayload?
     let reminder: ReminderPayload?
     let channelMessageCount: Int?
-    let channelCustom: ChannelCustom?
     let team: TeamId?
 
     init(
@@ -131,7 +129,6 @@ final class EventPayload: Decodable, Sendable {
         draft: DraftPayload? = nil,
         reminder: ReminderPayload? = nil,
         channelMessageCount: Int? = nil,
-        channelCustom: ChannelCustom? = nil,
         deletedForMe: Bool? = nil,
         lastDeliveredAt: Date? = nil,
         lastDeliveredMessageId: MessageId? = nil,
@@ -172,7 +169,6 @@ final class EventPayload: Decodable, Sendable {
         self.draft = draft
         self.reminder = reminder
         self.channelMessageCount = channelMessageCount
-        self.channelCustom = channelCustom
         self.deletedForMe = deletedForMe
         self.lastDeliveredAt = lastDeliveredAt
         self.lastDeliveredMessageId = lastDeliveredMessageId
@@ -218,7 +214,6 @@ final class EventPayload: Decodable, Sendable {
         draft = try container.decodeIfPresent(DraftPayload.self, forKey: .draft)
         reminder = try container.decodeIfPresent(ReminderPayload.self, forKey: .reminder)
         channelMessageCount = try container.decodeIfPresent(Int.self, forKey: .channelMessageCount)
-        channelCustom = try container.decodeIfPresent(ChannelCustom.self, forKey: .channelCustom)
         deletedForMe = try container.decodeIfPresent(Bool.self, forKey: .deletedForMe)
         lastDeliveredAt = try container.decodeIfPresent(Date.self, forKey: .lastDeliveredAt)
         lastDeliveredMessageId = try container.decodeIfPresent(MessageId.self, forKey: .lastDeliveredMessageId)

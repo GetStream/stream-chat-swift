@@ -26,14 +26,12 @@ public struct GroupedChannelsGroup: Sendable {
     public let unreadChannels: Int
 
     let next: String?
-    let prev: String?
 
     init(
         groupKey: String,
         channels: [ChatChannel],
         unreadChannels: Int,
-        next: String? = nil,
-        prev: String? = nil
+        next: String? = nil
     ) {
         self.groupKey = groupKey
         self.channels = channels
@@ -45,12 +43,10 @@ public struct GroupedChannelsGroup: Sendable {
 
         self.unreadChannels = max(unreadChannels, derivedUnreadChannels)
         self.next = next
-        self.prev = prev
     }
 }
 
 struct GroupedChannelsPagination: Sendable {
     let groupKey: String
     let next: String?
-    let prev: String?
 }

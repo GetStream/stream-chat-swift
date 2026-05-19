@@ -42,51 +42,46 @@ final class ChannelListLinker: Sendable {
                 notificationCenter: nc,
                 transform: { $0 as? NotificationAddedToChannelEvent },
                 callback: { [weak self] event in
-                    // The event may omit channel_custom; the channel's extraData is the up-to-date fallback.
-                    let eventGroupKey = event.channelCustom?.custom?.group ?? event.channel.extraData["group"]?.stringValue
-                    self?.handle(channel: event.channel, allowedActions: [.link], eventGroupKey: eventGroupKey)
+                    self?.handle(channel: event.channel, allowedActions: [.link])
                 }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? MessageNewEvent },
-                callback: { [weak self, query] event in
-                    let allowedActions: Set<LinkingAction> = query.groupKey != nil ? [.link, .unlink] : [.link]
-                    self?.handle(channel: event.channel, allowedActions: allowedActions, eventGroupKey: event.channelCustom?.custom?.group)
+                callback: { [weak self] event in
+                    self?.handle(channel: event.channel, allowedActions: [.link])
                 }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? NotificationMessageNewEvent },
-                callback: { [weak self, query] event in
-                    let allowedActions: Set<LinkingAction> = query.groupKey != nil ? [.link, .unlink] : [.link]
-                    self?.handle(channel: event.channel, allowedActions: allowedActions, eventGroupKey: event.channelCustom?.custom?.group)
+                callback: { [weak self] event in
+                    self?.handle(channel: event.channel, allowedActions: [.link])
                 }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? ChannelUpdatedEvent },
                 callback: { [weak self] event in
-                    self?.handle(channel: event.channel, allowedActions: [.link, .unlink], eventGroupKey: event.channelCustom?.custom?.group)
+                    self?.handle(channel: event.channel, allowedActions: [.link, .unlink])
                 }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? ChannelVisibleEvent },
                 callback: { [weak self, databaseContainer] event in
-                    let eventGroupKey = event.channelCustom?.custom?.group
                     let context = databaseContainer.backgroundReadOnlyContext
                     context.perform { [self] in
                         guard let channel = try? context.channel(cid: event.cid)?.asModel() else { return }
-                        self?.handle(channel: channel, allowedActions: [.link], eventGroupKey: eventGroupKey)
+                        self?.handle(channel: channel, allowedActions: [.link])
                     }
                 }
             )
         ]
     }
 
-    private func handle(channel: ChatChannel, allowedActions: Set<LinkingAction>, eventGroupKey: String?) {
-        let action = linkingAction(for: channel, eventGroupKey: eventGroupKey)
+    private func handle(channel: ChatChannel, allowedActions: Set<LinkingAction>) {
+        let action = linkingAction(for: channel)
         
         switch action {
         case .link where allowedActions.contains(.link):
@@ -146,10 +141,10 @@ final class ChannelListLinker: Sendable {
     }
 
     /// Checks if the given channel should belong to the current query or not.
-    private func linkingAction(for channel: ChatChannel, eventGroupKey: String?) -> LinkingAction {
+    private func linkingAction(for channel: ChatChannel) -> LinkingAction {
         if let groupKey = query.groupKey {
             // "all" group key is special, all the other groups are always linked to it
-            let currentGroupKey = eventGroupKey?
+            let currentGroupKey = channel.extraData["group"]?.stringValue?
                 .trimmingCharacters(in: .whitespacesAndNewlines)
                 .lowercased()
             if let currentGroupKey, !currentGroupKey.isEmpty {

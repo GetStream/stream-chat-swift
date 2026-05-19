@@ -232,8 +232,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                             groupKey: groupKey,
                             channels: channels,
                             unreadChannels: groupPayload.unreadChannels,
-                            next: groupPayload.next,
-                            prev: groupPayload.prev
+                            next: groupPayload.next
                         )
                     }
                     return GroupedChannels(groups: groups)

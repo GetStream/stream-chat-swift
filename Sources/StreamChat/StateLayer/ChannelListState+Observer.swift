@@ -37,7 +37,6 @@ extension ChannelListState {
         
         func start(
             observing query: ChannelListQuery,
-            minimumFetchLimit: Int = 0,
             handlers: Handlers
         ) -> [ChatChannel] {
             channelListObserver?.stopObserving()
@@ -46,7 +45,7 @@ extension ChannelListState {
                 query: query,
                 chatClientConfig: clientConfig
             )
-            let fetchLimit = max(query.pagination.pageSize, minimumFetchLimit)
+            let fetchLimit = query.pagination.pageSize
             fetchRequest.fetchLimit = fetchLimit
             fetchRequest.fetchBatchSize = fetchLimit
 

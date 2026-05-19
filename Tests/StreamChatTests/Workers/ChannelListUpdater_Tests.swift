@@ -448,7 +448,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
     }
 
     func test_queryGroupedChannels_paginated_sendsBodyWithGroupsKeyAndCursor() throws {
-        let pagination = GroupedChannelsPagination(groupKey: "old", next: "old-cursor", prev: nil)
+        let pagination = GroupedChannelsPagination(groupKey: "old", next: "old-cursor")
         listUpdater.queryGroupedChannels(
             groupPagination: pagination,
             limit: 5,
@@ -466,7 +466,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertNil(groups["old"]?["prev"])
     }
 
-    func test_queryGroupedChannels_response_populatesNextAndPrevOnGroup() throws {
+    func test_queryGroupedChannels_response_populatesNextOnGroup() throws {
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
         }
@@ -480,8 +480,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let groupPayload = GroupedQueryChannelsGroupPayload(
             channels: [],
             unreadChannels: 3,
-            next: "next-cursor",
-            prev: "prev-cursor"
+            next: "next-cursor"
         )
         let payload = GroupedQueryChannelsPayload(groups: ["current": groupPayload], duration: "1ms")
         apiClient.test_simulateResponse(.success(payload))
@@ -489,7 +488,6 @@ final class ChannelListUpdater_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
         let group = try completionResult?.get().groups["current"]
         XCTAssertEqual("next-cursor", group?.next)
-        XCTAssertEqual("prev-cursor", group?.prev)
     }
 
     func test_queryGroupedChannels_paginated_doesNotOverwriteGroupedUnreadChannels() throws {
@@ -500,7 +498,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
             try session.saveCurrentUserGroupedUnreadChannels(["new": 5, "current": 10, "old": 2])
         }
 
-        let pagination = GroupedChannelsPagination(groupKey: "old", next: "cursor", prev: nil)
+        let pagination = GroupedChannelsPagination(groupKey: "old", next: "cursor")
         nonisolated(unsafe) var completionCalled = false
         listUpdater.queryGroupedChannels(groupPagination: pagination, limit: nil, watch: false, presence: false) { _ in
             completionCalled = true
@@ -563,7 +561,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let freshCid = ChannelId(type: .messaging, id: .unique)
         let freshChannels = [self.dummyPayload(with: freshCid)]
 
-        let pagination = GroupedChannelsPagination(groupKey: "all", next: nil, prev: nil)
+        let pagination = GroupedChannelsPagination(groupKey: "all", next: nil)
         let exp = expectation(description: "completion called")
         listUpdater.queryGroupedChannels(groupPagination: pagination, limit: nil, watch: false, presence: false) { _ in exp.fulfill() }
         let payload = GroupedQueryChannelsPayload(
@@ -613,7 +611,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let appendedCid = ChannelId(type: .messaging, id: .unique)
         let appendedChannels = [self.dummyPayload(with: appendedCid)]
 
-        let pagination = GroupedChannelsPagination(groupKey: "all", next: "cursor-1", prev: nil)
+        let pagination = GroupedChannelsPagination(groupKey: "all", next: "cursor-1")
         let exp = expectation(description: "completion called")
         listUpdater.queryGroupedChannels(groupPagination: pagination, limit: nil, watch: false, presence: false) { _ in exp.fulfill() }
         let payload = GroupedQueryChannelsPayload(

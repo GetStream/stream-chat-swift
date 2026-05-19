@@ -20,15 +20,12 @@ public final class ChannelUpdatedEvent: ChannelSpecificEvent {
 
     /// The event timestamp.
     public let createdAt: Date
-    
-    let channelCustom: ChannelCustom?
 
-    init(channel: ChatChannel, user: ChatUser?, message: ChatMessage?, createdAt: Date, channelCustom: ChannelCustom? = nil) {
+    init(channel: ChatChannel, user: ChatUser?, message: ChatMessage?, createdAt: Date) {
         self.channel = channel
         self.user = user
         self.message = message
         self.createdAt = createdAt
-        self.channelCustom = channelCustom
     }
 }
 
@@ -37,7 +34,6 @@ final class ChannelUpdatedEventDTO: EventDTO {
     let user: UserPayload?
     let message: MessagePayload?
     let createdAt: Date
-    let channelCustom: ChannelCustom?
     let payload: EventPayload
 
     init(from response: EventPayload) throws {
@@ -45,7 +41,6 @@ final class ChannelUpdatedEventDTO: EventDTO {
         user = try? response.value(at: \.user)
         message = try? response.value(at: \.message)
         createdAt = try response.value(at: \.createdAt)
-        channelCustom = try? response.value(at: \.channelCustom)
         payload = response
     }
 
@@ -59,8 +54,7 @@ final class ChannelUpdatedEventDTO: EventDTO {
             channel: channelDTO.asModel(),
             user: userDTO?.asModel(),
             message: messageDTO?.asModel(),
-            createdAt: createdAt,
-            channelCustom: channelCustom
+            createdAt: createdAt
         )
     }
 }
@@ -189,13 +183,10 @@ public final class ChannelVisibleEvent: ChannelSpecificEvent {
     /// The event timestamp.
     public let createdAt: Date
 
-    let channelCustom: ChannelCustom?
-
-    init(cid: ChannelId, user: ChatUser, createdAt: Date, channelCustom: ChannelCustom? = nil) {
+    init(cid: ChannelId, user: ChatUser, createdAt: Date) {
         self.cid = cid
         self.user = user
         self.createdAt = createdAt
-        self.channelCustom = channelCustom
     }
 }
 
@@ -203,14 +194,12 @@ final class ChannelVisibleEventDTO: EventDTO {
     let cid: ChannelId
     let user: UserPayload
     let createdAt: Date
-    let channelCustom: ChannelCustom?
     let payload: EventPayload
 
     init(from response: EventPayload) throws {
         cid = try response.value(at: \.cid)
         user = try response.value(at: \.user)
         createdAt = try response.value(at: \.createdAt)
-        channelCustom = try? response.value(at: \.channelCustom)
         payload = response
     }
 
@@ -220,8 +209,7 @@ final class ChannelVisibleEventDTO: EventDTO {
         return try? ChannelVisibleEvent(
             cid: cid,
             user: userDTO.asModel(),
-            createdAt: createdAt,
-            channelCustom: channelCustom
+            createdAt: createdAt
         )
     }
 }
@@ -272,13 +260,5 @@ final class ChannelHiddenEventDTO: EventDTO {
             isHistoryCleared: isHistoryCleared,
             createdAt: createdAt
         )
-    }
-}
-
-final class ChannelCustom: Decodable, Sendable {
-    let custom: Custom?
-
-    final class Custom: Decodable, Sendable {
-        let group: String?
     }
 }

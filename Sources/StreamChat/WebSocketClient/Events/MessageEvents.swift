@@ -30,8 +30,6 @@ public final class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount, HasGro
     /// Grouped unread channel counts keyed by the backend-provided group identifier.
     public let groupedUnreadChannels: GroupedUnreadChannels?
 
-    let channelCustom: ChannelCustom?
-
     init(
         user: ChatUser,
         message: ChatMessage,
@@ -39,8 +37,7 @@ public final class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount, HasGro
         createdAt: Date,
         watcherCount: Int?,
         unreadCount: UnreadCount?,
-        groupedUnreadChannels: GroupedUnreadChannels? = nil,
-        channelCustom: ChannelCustom? = nil
+        groupedUnreadChannels: GroupedUnreadChannels? = nil
     ) {
         self.user = user
         self.message = message
@@ -49,7 +46,6 @@ public final class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount, HasGro
         self.watcherCount = watcherCount
         self.unreadCount = unreadCount
         self.groupedUnreadChannels = groupedUnreadChannels
-        self.channelCustom = channelCustom
     }
 }
 
@@ -60,7 +56,6 @@ final class MessageNewEventDTO: EventDTO {
     let createdAt: Date
     let watcherCount: Int?
     let unreadCount: UnreadCountPayload?
-    let channelCustom: ChannelCustom?
     let payload: EventPayload
 
     init(from response: EventPayload) throws {
@@ -70,7 +65,6 @@ final class MessageNewEventDTO: EventDTO {
         createdAt = try response.value(at: \.createdAt)
         watcherCount = try? response.value(at: \.watcherCount)
         unreadCount = try? response.value(at: \.unreadCount)
-        channelCustom = try? response.value(at: \.channelCustom)
         payload = response
     }
 
@@ -89,8 +83,7 @@ final class MessageNewEventDTO: EventDTO {
             createdAt: createdAt,
             watcherCount: watcherCount,
             unreadCount: UnreadCount(currentUserDTO: currentUser),
-            groupedUnreadChannels: currentUser.groupedUnreadChannels,
-            channelCustom: channelCustom
+            groupedUnreadChannels: currentUser.groupedUnreadChannels
         )
     }
 }
