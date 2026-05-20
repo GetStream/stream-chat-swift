@@ -160,7 +160,8 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         channelQuery: ChannelQuery,
         client: ChatClient,
         updater: ChannelUpdater? = nil,
-        paginationStateHandler: MessagesPaginationStateHandling = MessagesPaginationStateHandler()
+        paginationStateHandler: MessagesPaginationStateHandling = MessagesPaginationStateHandler(),
+        handler: LivestreamChannelHandler? = nil
     ) {
         self.client = client
         apiClient = client.apiClient
@@ -172,7 +173,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
             database: client.databaseContainer,
             apiClient: client.apiClient
         )
-        handler = LivestreamChannelHandler(
+        self.handler = handler ?? LivestreamChannelHandler(
             channelQuery: channelQuery,
             client: client,
             paginationStateHandler: paginationStateHandler

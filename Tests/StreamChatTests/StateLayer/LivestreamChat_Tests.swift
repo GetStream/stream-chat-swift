@@ -6,6 +6,13 @@
 @testable import StreamChatTestTools
 import XCTest
 
+/// Tests for `LivestreamChat` focused on wrapper-specific behaviour:
+/// API wiring, sync repository tracking, manual event registration, and
+/// forwarding to the underlying `LivestreamChannelHandler`.
+///
+/// Handler-internal behaviour (event handling, pagination state, message
+/// pruning, typing aggregation, cooldown, etc.) is exercised in
+/// `LivestreamChannelHandler_Tests`.
 @MainActor
 final class LivestreamChat_Tests: XCTestCase {
     private var client: ChatClient_Mock!
@@ -61,12 +68,60 @@ final class LivestreamChat_Tests: XCTestCase {
     }
 
     func test_init_stateInitiallyEmpty() {
-        XCTAssertEqual(livestreamChat.state.cid, channelQuery.cid)
-        XCTAssertNil(livestreamChat.state.channel)
-        XCTAssertTrue(livestreamChat.state.messages.isEmpty)
-        XCTAssertFalse(livestreamChat.state.isPaused)
-        XCTAssertEqual(livestreamChat.state.skippedMessagesAmount, 0)
-        XCTAssertTrue(livestreamChat.state.typingUsers.isEmpty)
+        let state = livestreamChat.state
+        XCTAssertEqual(state.cid, channelQuery.cid)
+        XCTAssertEqual(state.channelQuery.cid, channelQuery.cid)
+        XCTAssertNil(state.channel)
+        XCTAssertTrue(state.messages.isEmpty)
+        XCTAssertFalse(state.isPaused)
+        XCTAssertEqual(state.skippedMessagesAmount, 0)
+        XCTAssertTrue(state.typingUsers.isEmpty)
+        XCTAssertEqual(state.remainingCooldownDuration, 0)
+        XCTAssertTrue(state.client === client)
+
+        XCTAssertTrue(state.hasLoadedAllNewestMessages)
+        XCTAssertFalse(state.hasLoadedAllOldestMessages)
+        XCTAssertFalse(state.isLoadingNewerMessages)
+        XCTAssertFalse(state.isLoadingOlderMessages)
+        XCTAssertFalse(state.isLoadingMiddleMessages)
+        XCTAssertFalse(state.isJumpingToMessage)
+    }
+
+    func test_init_withoutCid_doesNotRegisterManualEventHandling() async {
+        let client = ChatClient_Mock.mock()
+        let eventNotificationCenter = EventNotificationCenter_Mock(
+            database: DatabaseContainer_Spy()
+        )
+        client.mockedEventNotificationCenter = eventNotificationCenter
+
+        let livestreamChat = LivestreamChat(channelQuery: makeChannelQueryWithoutCid(), client: client)
+        _ = livestreamChat.state
+
+        XCTAssertEqual(eventNotificationCenter.registerManualEventHandling_callCount, 0)
+    }
+
+    // MARK: - Configuration Forwarding
+
+    func test_configurationProperties_areForwardedToHandler() {
+        let (livestreamChat, mockHandler) = makeLivestreamChatWithMockHandler()
+        _ = livestreamChat.state
+
+        XCTAssertTrue(livestreamChat.loadInitialMessagesFromCache)
+        XCTAssertFalse(livestreamChat.countSkippedMessagesWhenPaused)
+        XCTAssertNil(livestreamChat.maxMessageLimitOptions)
+
+        livestreamChat.loadInitialMessagesFromCache = false
+        livestreamChat.countSkippedMessagesWhenPaused = true
+        livestreamChat.maxMessageLimitOptions = .recommended
+
+        XCTAssertFalse(mockHandler.loadInitialMessagesFromCache)
+        XCTAssertTrue(mockHandler.countSkippedMessagesWhenPaused)
+        XCTAssertEqual(mockHandler.maxMessageLimitOptions?.maxLimit, 200)
+        XCTAssertEqual(mockHandler.maxMessageLimitOptions?.discardAmount, 50)
+
+        XCTAssertFalse(livestreamChat.loadInitialMessagesFromCache)
+        XCTAssertTrue(livestreamChat.countSkippedMessagesWhenPaused)
+        XCTAssertNotNil(livestreamChat.maxMessageLimitOptions)
     }
 
     // MARK: - Get
@@ -115,6 +170,31 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertEqual(client.syncRepository.activeLivestreamChats.count, 1)
     }
 
+    func test_get_callsCorrectAPIEndpoint() async throws {
+        client.mockAPIClient.test_mockResponseResult(
+            .success(ChannelPayload.dummy(channel: .dummy(cid: channelQuery.cid!)))
+        )
+
+        try await livestreamChat.get()
+
+        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: channelQuery)
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_get_callsPopulateFromCacheOnHandler() async throws {
+        let (livestreamChat, mockHandler) = makeLivestreamChatWithMockHandler()
+        _ = livestreamChat.state
+
+        client.mockAPIClient.test_mockResponseResult(
+            .success(ChannelPayload.dummy(channel: .dummy(cid: channelQuery.cid!)))
+        )
+        try await livestreamChat.get()
+
+        XCTAssertEqual(mockHandler.populateFromCacheIfEnabled_callCount, 1)
+        XCTAssertEqual(mockHandler.beginPagination_callCount, 1)
+        XCTAssertEqual(mockHandler.handleChannelPayload_callCount, 1)
+    }
+
     // MARK: - Watching
 
     func test_watch_callsCorrectAPI() async throws {
@@ -159,6 +239,28 @@ final class LivestreamChat_Tests: XCTestCase {
         try await livestreamChat.stopWatching()
 
         XCTAssertEqual(client.syncRepository.activeLivestreamChats.count, 0)
+    }
+
+    func test_watch_withoutCid_throwsChannelNotCreatedYet() async {
+        let livestreamChat = makeLivestreamChatWithoutCid()
+
+        do {
+            try await livestreamChat.watch()
+            XCTFail("Expected ChannelNotCreatedYet error")
+        } catch {
+            XCTAssertTrue(error is ClientError.ChannelNotCreatedYet)
+        }
+    }
+
+    func test_stopWatching_withoutCid_throwsChannelNotCreatedYet() async {
+        let livestreamChat = makeLivestreamChatWithoutCid()
+
+        do {
+            try await livestreamChat.stopWatching()
+            XCTFail("Expected ChannelNotCreatedYet error")
+        } catch {
+            XCTAssertTrue(error is ClientError.ChannelNotCreatedYet)
+        }
     }
 
     // MARK: - Pagination
@@ -211,15 +313,66 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
+    func test_loadOlderMessages_withoutMessageId_usesOldestLoadedMessageId() async throws {
+        try await jumpToMidPageAndClear()
+        client.mockAPIClient.test_mockResponseResult(
+            .success(ChannelPayload.dummy(channel: .dummy(cid: channelQuery.cid!)))
+        )
+
+        try await livestreamChat.loadOlderMessages()
+
+        var expectedQuery = channelQuery!
+        expectedQuery.pagination = MessagesPagination(pageSize: 25, parameter: .lessThan("older"))
+        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_loadNewerMessages_withMessageId_callsCorrectAPI() async throws {
+        try await jumpToMidPageAndClear()
+        client.mockAPIClient.test_mockResponseResult(
+            .success(ChannelPayload.dummy(channel: .dummy(cid: channelQuery.cid!)))
+        )
+
+        try await livestreamChat.loadNewerMessages(after: "newer-message-id", limit: 30)
+
+        var expectedQuery = channelQuery!
+        expectedQuery.pagination = MessagesPagination(pageSize: 30, parameter: .greaterThan("newer-message-id"))
+        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_loadNewerMessages_withoutMessageId_usesNewestLoadedMessageId() async throws {
+        try await jumpToMidPageAndClear()
+        client.mockAPIClient.test_mockResponseResult(
+            .success(ChannelPayload.dummy(channel: .dummy(cid: channelQuery.cid!)))
+        )
+
+        try await livestreamChat.loadNewerMessages()
+
+        var expectedQuery = channelQuery!
+        expectedQuery.pagination = MessagesPagination(pageSize: 25, parameter: .greaterThan("newer"))
+        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_loadNewerMessages_withoutMessages_throwsChannelEmptyMessages() async {
+        do {
+            try await livestreamChat.loadNewerMessages()
+            XCTFail("Expected ChannelEmptyMessages error")
+        } catch {
+            XCTAssertTrue(error is ClientError.ChannelEmptyMessages)
+        }
+    }
+
     // MARK: - Pause / Resume
 
-    func test_pause_setsIsPausedToTrue() async {
-        XCTAssertFalse(livestreamChat.state.isPaused)
+    func test_pause_forwardsToHandler() {
+        let (livestreamChat, mockHandler) = makeLivestreamChatWithMockHandler()
+        _ = livestreamChat.state
+
         livestreamChat.pause()
 
-        // The pause handler dispatches asynchronously to main, so spin the run loop.
-        await waitForMainQueue()
-        XCTAssertTrue(livestreamChat.state.isPaused)
+        XCTAssertEqual(mockHandler.pause_callCount, 1)
     }
 
     func test_resume_loadsFirstPageAndSetsIsPausedToFalse() async throws {
@@ -249,34 +402,27 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertNil(client.mockAPIClient.request_endpoint)
     }
 
-    // MARK: - Event Handling
+    // MARK: - Event Forwarding
 
-    func test_didReceiveEvent_messageNewEvent_addsMessageToState() async throws {
-        // Load the first page so the engine considers the channel loaded.
-        client.mockAPIClient.test_mockResponseResult(
-            .success(ChannelPayload.dummy(channel: .dummy(cid: channelQuery.cid!)))
-        )
-        try await livestreamChat.get()
-        await waitForMainQueue()
+    func test_didReceiveEvent_forwardsToHandler() async {
+        let (livestreamChat, mockHandler) = makeLivestreamChatWithMockHandler()
+        _ = livestreamChat.state
 
-        let newMessage = ChatMessage.mock(id: "new", cid: channelQuery.cid!, text: "New message")
         let event = MessageNewEvent(
             user: .mock(id: .unique),
-            message: newMessage,
+            message: .mock(id: "new", cid: channelQuery.cid!, text: "New"),
             channel: .mock(cid: channelQuery.cid!),
             createdAt: .unique,
             watcherCount: nil,
             unreadCount: nil
         )
-
         livestreamChat.didReceiveEvent(event)
-        await waitForMainQueue()
 
-        XCTAssertEqual(["new"], livestreamChat.state.messages.map(\.id))
+        XCTAssertEqual(mockHandler.didReceiveEvent_callCount, 1)
+        XCTAssertTrue(mockHandler.didReceiveEvent_event is MessageNewEvent)
     }
 
     func test_didReceiveEvent_notificationAddedToChannelEvent_callsWatch() async throws {
-        // Load initial channel data first.
         client.mockAPIClient.test_mockResponseResult(
             .success(ChannelPayload.dummy(channel: .dummy(cid: channelQuery.cid!)))
         )
@@ -295,16 +441,328 @@ final class LivestreamChat_Tests: XCTestCase {
         )
         livestreamChat.didReceiveEvent(event)
 
-        // The watch() call is dispatched on a Task so we wait briefly.
-        for _ in 0..<10 {
-            if client.mockAPIClient.request_endpoint != nil { break }
-            await waitForMainQueue()
-            try await Task.sleep(nanoseconds: 50_000_000)
-        }
-
+        try await waitForRequest()
         let expectedQuery = ChannelQuery(cid: channelQuery.cid!)
         let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), client.mockAPIClient.request_endpoint)
+    }
+
+    // MARK: - State Forwarding via Mock Handler
+
+    func test_handlerCallbacks_updateStateProperties() async {
+        let (livestreamChat, mockHandler) = makeLivestreamChatWithMockHandler()
+        let state = livestreamChat.state
+
+        let channel = ChatChannel.mock(cid: channelQuery.cid!, name: "Live")
+        mockHandler.simulateChannelDidChange(channel)
+        XCTAssertEqual(state.channel?.name, "Live")
+
+        let messages = [ChatMessage.mock(id: "m1"), ChatMessage.mock(id: "m2")]
+        mockHandler.simulateMessagesDidChange(messages)
+        XCTAssertEqual(state.messages.map(\.id), ["m1", "m2"])
+
+        mockHandler.simulatePauseDidChange(true)
+        XCTAssertTrue(state.isPaused)
+
+        mockHandler.simulateSkippedMessagesAmountDidChange(7)
+        XCTAssertEqual(state.skippedMessagesAmount, 7)
+
+        let typingUser = ChatUser.mock(id: "user-1")
+        mockHandler.simulateTypingUsersDidChange([typingUser])
+        XCTAssertEqual(state.typingUsers.map(\.id), [typingUser.id])
+    }
+
+    func test_remainingCooldownDuration_returnsValueFromHandler() {
+        let (livestreamChat, mockHandler) = makeLivestreamChatWithMockHandler()
+        let state = livestreamChat.state
+
+        mockHandler.stubbedCurrentCooldownTime = 5
+        XCTAssertEqual(state.remainingCooldownDuration, 5)
+
+        mockHandler.stubbedCurrentCooldownTime = 0
+        XCTAssertEqual(state.remainingCooldownDuration, 0)
+    }
+
+    // MARK: - Message Actions
+
+    func test_deleteMessage_callsCorrectAPI() async throws {
+        client.mockAPIClient.test_mockResponseResult(
+            Result<MessagePayload.Boxed, Error>.success(MessagePayload.Boxed(message: .dummy(messageId: "msg-1")))
+        )
+
+        try await livestreamChat.deleteMessage("msg-1")
+
+        let expectedEndpoint = Endpoint<MessagePayload.Boxed>.deleteMessage(messageId: "msg-1", hard: false)
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_deleteMessage_withHardTrue_callsCorrectAPI() async throws {
+        client.mockAPIClient.test_mockResponseResult(
+            Result<MessagePayload.Boxed, Error>.success(MessagePayload.Boxed(message: .dummy(messageId: "msg-1")))
+        )
+
+        try await livestreamChat.deleteMessage("msg-1", hard: true)
+
+        let expectedEndpoint = Endpoint<MessagePayload.Boxed>.deleteMessage(messageId: "msg-1", hard: true)
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_deleteMessage_propagatesAPIErrors() async {
+        let testError = TestError()
+        client.mockAPIClient.test_mockResponseResult(Result<MessagePayload.Boxed, Error>.failure(testError))
+
+        do {
+            try await livestreamChat.deleteMessage("msg-1")
+            XCTFail("Expected failure")
+        } catch {
+            XCTAssertTrue(error is TestError)
+        }
+    }
+
+    func test_flagMessage_callsCorrectAPI() async throws {
+        client.mockAPIClient.test_mockResponseResult(
+            Result<FlagMessagePayload, Error>.success(.init(currentUser: .dummy(userId: .unique), flaggedMessageId: "msg-1"))
+        )
+
+        try await livestreamChat.flagMessage("msg-1", reason: "spam", extraData: ["k": .string("v")])
+
+        let expectedEndpoint = Endpoint<FlagMessagePayload>.flagMessage(
+            true,
+            with: "msg-1",
+            reason: "spam",
+            extraData: ["k": .string("v")]
+        )
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_unflagMessage_callsCorrectAPI() async throws {
+        client.mockAPIClient.test_mockResponseResult(
+            Result<FlagMessagePayload, Error>.success(.init(currentUser: .dummy(userId: .unique), flaggedMessageId: "msg-1"))
+        )
+
+        try await livestreamChat.unflagMessage("msg-1")
+
+        let expectedEndpoint = Endpoint<FlagMessagePayload>.flagMessage(
+            false,
+            with: "msg-1",
+            reason: nil,
+            extraData: nil
+        )
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    // MARK: - Message Reactions
+
+    func test_sendReaction_callsCorrectAPI() async throws {
+        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+
+        let reactionType = MessageReactionType(rawValue: "like")
+        try await livestreamChat.sendReaction(
+            to: "msg-1",
+            with: reactionType,
+            score: 2,
+            enforceUnique: true,
+            skipPush: true,
+            pushEmojiCode: "👍",
+            extraData: ["k": .string("v")]
+        )
+
+        let expectedEndpoint = Endpoint<EmptyResponse>.addReaction(
+            reactionType,
+            score: 2,
+            enforceUnique: true,
+            extraData: ["k": .string("v")],
+            skipPush: true,
+            emojiCode: "👍",
+            messageId: "msg-1"
+        )
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_deleteReaction_callsCorrectAPI() async throws {
+        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+
+        let reactionType = MessageReactionType(rawValue: "like")
+        try await livestreamChat.deleteReaction(from: "msg-1", with: reactionType)
+
+        let expectedEndpoint = Endpoint<EmptyResponse>.deleteReaction(reactionType, messageId: "msg-1")
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_loadReactions_callsCorrectAPIAndReturnsReactions() async throws {
+        let messageId = MessageId.unique
+        let reactionType = MessageReactionType(rawValue: "like")
+        let reactionPayload = MessageReactionPayload.dummy(
+            type: reactionType,
+            messageId: messageId,
+            user: .dummy(userId: .unique)
+        )
+        let payload = MessageReactionsPayload(reactions: [reactionPayload])
+        client.mockAPIClient.test_mockResponseResult(Result<MessageReactionsPayload, Error>.success(payload))
+
+        let reactions = try await livestreamChat.loadReactions(for: messageId, limit: 10, offset: 5)
+
+        let expectedEndpoint = Endpoint<MessageReactionsPayload>.loadReactions(
+            messageId: messageId,
+            pagination: .init(pageSize: 10, offset: 5)
+        )
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+        XCTAssertEqual(reactions.count, 1)
+        XCTAssertEqual(reactions.first?.type, reactionType)
+    }
+
+    // MARK: - Message Pinning
+
+    func test_pinMessage_callsCorrectAPI() async throws {
+        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+
+        try await livestreamChat.pinMessage("msg-1")
+
+        let expectedEndpoint = Endpoint<EmptyResponse>.pinMessage(
+            messageId: "msg-1",
+            request: .init(set: .init(pinned: true))
+        )
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_unpinMessage_callsCorrectAPI() async throws {
+        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+
+        try await livestreamChat.unpinMessage("msg-1")
+
+        let expectedEndpoint = Endpoint<EmptyResponse>.pinMessage(
+            messageId: "msg-1",
+            request: .init(set: .init(pinned: false))
+        )
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_loadPinnedMessages_callsCorrectAPI() async throws {
+        client.mockAPIClient.test_mockResponseResult(
+            Result<PinnedMessagesPayload, Error>.success(.init(messages: []))
+        )
+
+        _ = try await livestreamChat.loadPinnedMessages(pageSize: 15)
+
+        let expectedQuery = PinnedMessagesQuery(pageSize: 15, sorting: [], pagination: nil)
+        let expectedEndpoint = Endpoint<PinnedMessagesPayload>.pinnedMessages(
+            cid: channelQuery.cid!,
+            query: expectedQuery
+        )
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    // MARK: - Slow Mode
+
+    func test_enableSlowMode_callsCorrectAPI() async throws {
+        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+
+        try await livestreamChat.enableSlowMode(cooldownDuration: 7)
+
+        let expectedEndpoint = Endpoint<EmptyResponse>.enableSlowMode(
+            cid: channelQuery.cid!,
+            cooldownDuration: 7
+        )
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_disableSlowMode_callsAPIWithZeroCooldown() async throws {
+        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+
+        try await livestreamChat.disableSlowMode()
+
+        let expectedEndpoint = Endpoint<EmptyResponse>.enableSlowMode(
+            cid: channelQuery.cid!,
+            cooldownDuration: 0
+        )
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    // MARK: - Channel Freezing
+
+    func test_freeze_callsCorrectAPI() async throws {
+        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+
+        try await livestreamChat.freeze()
+
+        let expectedEndpoint = Endpoint<EmptyResponse>.freezeChannel(true, cid: channelQuery.cid!)
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_unfreeze_callsCorrectAPI() async throws {
+        client.mockAPIClient.test_mockResponseResult(Result<EmptyResponse, Error>.success(EmptyResponse()))
+
+        try await livestreamChat.unfreeze()
+
+        let expectedEndpoint = Endpoint<EmptyResponse>.freezeChannel(false, cid: channelQuery.cid!)
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    // MARK: - Typing Indicators
+
+    func test_keystroke_whenChannelIsNotLoaded_doesNotMakeAPIRequest() async throws {
+        try await livestreamChat.keystroke()
+
+        XCTAssertNil(client.mockAPIClient.request_endpoint)
+    }
+
+    func test_stopTyping_whenChannelIsNotLoaded_doesNotMakeAPIRequest() async throws {
+        try await livestreamChat.stopTyping()
+
+        XCTAssertNil(client.mockAPIClient.request_endpoint)
+    }
+
+    func test_keystroke_whenChannelCannotSendTypingEvents_doesNotMakeAPIRequest() async throws {
+        client.mockAPIClient.test_mockResponseResult(
+            .success(ChannelPayload.dummy(channel: .dummy(cid: channelQuery.cid!, ownCapabilities: [])))
+        )
+        try await livestreamChat.get()
+        client.mockAPIClient.cleanUp()
+
+        try await livestreamChat.keystroke()
+
+        XCTAssertNil(client.mockAPIClient.request_endpoint)
+    }
+
+    func test_keystroke_withoutCid_throwsChannelNotCreatedYet() async {
+        let livestreamChat = makeLivestreamChatWithoutCid()
+
+        do {
+            try await livestreamChat.keystroke()
+            XCTFail("Expected ChannelNotCreatedYet error")
+        } catch {
+            XCTAssertTrue(error is ClientError.ChannelNotCreatedYet)
+        }
+    }
+
+    // MARK: - App State
+
+    func test_applicationDidReceiveMemoryWarning_triggersLoadFirstPage() async throws {
+        client.mockAPIClient.test_mockResponseResult(
+            .success(ChannelPayload.dummy(channel: .dummy(cid: channelQuery.cid!)))
+        )
+
+        livestreamChat.applicationDidReceiveMemoryWarning()
+
+        try await waitForRequest()
+        var expectedQuery = channelQuery!
+        expectedQuery.pagination = MessagesPagination(pageSize: 25, parameter: nil)
+        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
+    }
+
+    func test_applicationDidMoveToForeground_whenDisconnected_triggersLoadFirstPage() async throws {
+        client.mockAPIClient.test_mockResponseResult(
+            .success(ChannelPayload.dummy(channel: .dummy(cid: channelQuery.cid!)))
+        )
+
+        livestreamChat.applicationDidMoveToForeground()
+
+        try await waitForRequest()
+        var expectedQuery = channelQuery!
+        expectedQuery.pagination = MessagesPagination(pageSize: 25, parameter: nil)
+        let expectedEndpoint = Endpoint<ChannelPayload>.updateChannel(query: expectedQuery)
+        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 }
 
@@ -315,5 +773,73 @@ private extension LivestreamChat_Tests {
         await withCheckedContinuation { continuation in
             DispatchQueue.main.async { continuation.resume() }
         }
+    }
+
+    /// Polls until a request is recorded on the spy or a timeout is reached.
+    func waitForRequest(timeoutMilliseconds: Int = 500) async throws {
+        let pollIntervalMs = 50
+        let maxIterations = max(1, timeoutMilliseconds / pollIntervalMs)
+        for _ in 0..<maxIterations {
+            if client.mockAPIClient.request_endpoint != nil { return }
+            await waitForMainQueue()
+            try await Task.sleep(nanoseconds: UInt64(pollIntervalMs) * 1_000_000)
+        }
+    }
+
+    /// Loads a 2-message page around the older message so the pagination state ends up with both
+    /// `hasLoadedAllNextMessages` and `hasLoadedAllPreviousMessages` set to `false`. This avoids the
+    /// short-circuits in `loadOlderMessages` / `loadNewerMessages` for tests that only care about
+    /// the resulting endpoint.
+    func jumpToMidPageAndClear() async throws {
+        let cid = channelQuery.cid!
+        let payload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid),
+            messages: [
+                .dummy(messageId: "older", text: "Older"),
+                .dummy(messageId: "newer", text: "Newer")
+            ]
+        )
+        client.mockAPIClient.test_mockResponseResult(.success(payload))
+        try await livestreamChat.loadMessages(around: "older", limit: 2)
+        client.mockAPIClient.cleanUp()
+    }
+
+    func makeChannelQueryWithoutCid() -> ChannelQuery {
+        let payload = ChannelEditDetailPayload(
+            type: .messaging,
+            name: nil,
+            imageURL: nil,
+            team: nil,
+            members: [],
+            invites: [],
+            filterTags: [],
+            extraData: [:]
+        )
+        return ChannelQuery(channelPayload: payload)
+    }
+
+    func makeLivestreamChatWithoutCid() -> LivestreamChat {
+        let livestreamChat = LivestreamChat(channelQuery: makeChannelQueryWithoutCid(), client: client)
+        _ = livestreamChat.state
+        return livestreamChat
+    }
+
+    /// Builds a `LivestreamChat` whose underlying `LivestreamChannelHandler` is the returned
+    /// mock. Used for wiring tests that verify `LivestreamChat` forwards calls and that
+    /// handler callbacks update the published state.
+    func makeLivestreamChatWithMockHandler() -> (LivestreamChat, LivestreamChannelHandler_Mock) {
+        let mockHandler = LivestreamChannelHandler_Mock(
+            channelQuery: channelQuery,
+            client: client,
+            paginationStateHandler: MessagesPaginationStateHandler()
+        )
+        var environment = LivestreamChat.Environment()
+        environment.handlerBuilder = { _, _, _ in mockHandler }
+        let livestreamChat = LivestreamChat(
+            channelQuery: channelQuery,
+            client: client,
+            environment: environment
+        )
+        return (livestreamChat, mockHandler)
     }
 }

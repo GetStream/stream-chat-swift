@@ -18,7 +18,7 @@ import Foundation
 /// State changes are surfaced through a ``Handlers`` struct whose closures are
 /// always invoked on the main thread, matching the existing controller's
 /// delegate dispatching behavior.
-final class LivestreamChannelHandler: DataStoreProvider, @unchecked Sendable {
+class LivestreamChannelHandler: DataStoreProvider, @unchecked Sendable {
     // MARK: - Configuration
 
     /// Configuration for message limiting behaviour.
@@ -36,13 +36,13 @@ final class LivestreamChannelHandler: DataStoreProvider, @unchecked Sendable {
     // MARK: - Stored State
 
     /// The channel query backing this handler.
-    private(set) var channelQuery: ChannelQuery
+    var channelQuery: ChannelQuery
 
     /// The channel id this handler observes.
     var cid: ChannelId? { channelQuery.cid }
 
     /// The channel the handler represents.
-    private(set) var channel: ChatChannel? {
+    var channel: ChatChannel? {
         didSet {
             guard let channel else { return }
             handlerCallback { $0.channelDidChange(channel) }
@@ -50,7 +50,7 @@ final class LivestreamChannelHandler: DataStoreProvider, @unchecked Sendable {
     }
 
     /// The messages of the channel the handler represents.
-    private(set) var messages: [ChatMessage] = [] {
+    var messages: [ChatMessage] = [] {
         didSet {
             let captured = messages
             handlerCallback { $0.messagesDidChange(captured) }
@@ -58,7 +58,7 @@ final class LivestreamChannelHandler: DataStoreProvider, @unchecked Sendable {
     }
 
     /// Whether message processing is currently paused.
-    private(set) var isPaused: Bool = false {
+    var isPaused: Bool = false {
         didSet {
             let captured = isPaused
             handlerCallback { $0.pauseDidChange(captured) }
@@ -66,7 +66,7 @@ final class LivestreamChannelHandler: DataStoreProvider, @unchecked Sendable {
     }
 
     /// The amount of messages that were skipped during the pause state.
-    private(set) var skippedMessagesAmount: Int = 0 {
+    var skippedMessagesAmount: Int = 0 {
         didSet {
             let captured = skippedMessagesAmount
             handlerCallback { $0.skippedMessagesAmountDidChange(captured) }
