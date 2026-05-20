@@ -15,8 +15,12 @@ public extension Int {
     static let channelMembersPageSize = 30
     /// A default channel watchers page size.
     static let channelWatchersPageSize = 30
+}
+
+extension Int {
     /// Sentinel signalling "no client-side page size" — the request omits `limit` and the backend uses its default.
-    static let unsetPageSize = -1
+    /// `0` matches `NSFetchRequest.fetchLimit`'s "no limit" semantics, so it safely passes through to Core Data unchanged.
+    static let unsetPageSize = 0
 }
 
 /// Basic pagination with `pageSize` and `offset`.
@@ -49,7 +53,7 @@ public struct Pagination: Encodable, Equatable, Sendable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        if pageSize >= 0 {
+        if pageSize != .unsetPageSize {
             try container.encode(pageSize, forKey: .pageSize)
         }
         if let cursor = cursor {

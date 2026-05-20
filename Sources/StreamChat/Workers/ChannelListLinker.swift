@@ -4,12 +4,19 @@
 
 import Foundation
 
-/// When we receive events, we need to check if a channel should be added or removed from
-/// the current query depending on the following events:
-/// - Channel created: We analyse if the channel should be added to the current query.
-/// - New message sent: This means the channel can reorder and also move between query-backed
-///   lists, so we analyse if it should be removed from or added to the current query.
-/// - Channel is updated: We analyse if it should be removed from or added to the current query.
+/// Subscribes to channel-relevant WS events and links / unlinks channels for the owning query.
+///
+/// Each observer declares an `allowedActions` set that bounds what `linkingAction(for:)` may decide:
+/// - ``NotificationAddedToChannelEvent``, ``MessageNewEvent``, ``NotificationMessageNewEvent``, ``ChannelVisibleEvent`` — link-only.
+///   Membership/visibility gained or activity arrived; never an unlink trigger.
+/// - ``ChannelUpdatedEvent`` — link or unlink. Channel metadata changed (filter-matching attributes, the
+///   `"group"` extra-data value), which can move the channel into or out of this query.
+///
+/// `linkingAction(for:)` resolves the decision against the query type:
+/// - Group-based queries (`query.groupKey != nil`) match `channel.extraData["group"]` against ``GroupedChannelKey/all``
+///   or the query's `groupKey`.
+/// - Filter-based queries either run the optional in-memory `filter` block, or — when automatic filtering
+///   is enabled in `ChatClientConfig` — defer to the DB fetch predicate and always link.
 final class ChannelListLinker: Sendable {
     private let clientConfig: ChatClientConfig
     private let databaseContainer: DatabaseContainer

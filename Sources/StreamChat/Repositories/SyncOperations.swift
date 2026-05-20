@@ -131,7 +131,7 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
 
             Task {
                 do {
-                    let channelGroups = try await channelListUpdater.queryGroupedChannels(groupPagination: nil, limit: nil, watch: true, presence: false)
+                    let channelGroups = try await channelListUpdater.queryGroupedChannels(groupPagination: nil, limit: nil, watch: false, presence: false)
                     let returnedChannelIds = channelGroups.flatMap(\.channelIds)
                     context.synchedChannelIds.formUnion(returnedChannelIds)
                     log.debug(

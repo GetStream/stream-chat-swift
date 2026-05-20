@@ -11,6 +11,10 @@ extension Filter {
     ///
     /// **Note:** Extra data properties will be ignored since they are stored in binary format.
     var predicate: NSPredicate? {
+        // `Filter.empty` (`.and([])`) imposes no constraint — no predicate to apply.
+        if let filters = value as? [Filter<Scope>], filters.isEmpty {
+            return nil
+        }
         guard let op = FilterOperator(rawValue: `operator`) else {
             return nil
         }

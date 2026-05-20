@@ -74,9 +74,9 @@ public class ChannelList: @unchecked Sendable {
         if let groupKey = query.groupKey {
             let channelGroups = try await channelListUpdater.queryGroupedChannels(
                 groupPagination: .init(groupKey: groupKey, next: pagination.cursor),
-                limit: pagination.pageSize >= 0 ? pagination.pageSize : nil,
-                watch: true,
-                presence: true
+                limit: pagination.pageSize != .unsetPageSize ? pagination.pageSize : nil,
+                watch: false,
+                presence: false
             )
             let group = channelGroups.first { $0.groupKey == groupKey }
             await setHasLoadedAllPreviousChannels(group?.next == nil)

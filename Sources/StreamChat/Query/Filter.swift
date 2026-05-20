@@ -218,6 +218,11 @@ public extension Filter {
     }
 }
 
+extension Filter {
+    /// A filter that imposes no constraints — matches every value in the scope.
+    static var empty: Filter { .and([]) }
+}
+
 /// A helper struct that represents a key of a filter.
 ///
 /// It allows tagging a key with a scope and a type of the value the key is related to.
