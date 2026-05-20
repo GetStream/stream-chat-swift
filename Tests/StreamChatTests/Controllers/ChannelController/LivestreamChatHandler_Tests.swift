@@ -7,23 +7,23 @@ import CoreData
 @testable import StreamChatTestTools
 import XCTest
 
-/// Tests that exercise `LivestreamChannelHandler` in isolation. These cover the shared
+/// Tests that exercise `LivestreamChatHandler` in isolation. These cover the shared
 /// in-memory state, event handling, pause/resume bookkeeping, message limit application,
 /// cooldown calculation and typing cleanup that both `LivestreamChannelController` and
 /// `LivestreamChat` rely on.
 ///
 /// Wrappers are tested separately and only verify wiring/forwarding — they use a mock
 /// handler so the same handler behavior is not re-exercised through the wrapper.
-final class LivestreamChannelHandler_Tests: XCTestCase {
+final class LivestreamChatHandler_Tests: XCTestCase {
     private var client: ChatClient_Mock!
     private var cid: ChannelId!
-    private var handler: LivestreamChannelHandler!
+    private var handler: LivestreamChatHandler!
 
     override func setUp() {
         super.setUp()
         client = ChatClient.mock(config: ChatClient_Mock.defaultMockedConfig)
         cid = .unique
-        handler = LivestreamChannelHandler(channelQuery: ChannelQuery(cid: cid), client: client)
+        handler = LivestreamChatHandler(channelQuery: ChannelQuery(cid: cid), client: client)
     }
 
     override func tearDown() {
@@ -37,7 +37,7 @@ final class LivestreamChannelHandler_Tests: XCTestCase {
 
 // MARK: - Initial State & Configuration
 
-extension LivestreamChannelHandler_Tests {
+extension LivestreamChatHandler_Tests {
     func test_initialState_isEmpty() {
         XCTAssertEqual(handler.cid, cid)
         XCTAssertNil(handler.channel)
@@ -72,7 +72,7 @@ extension LivestreamChannelHandler_Tests {
 
 // MARK: - populateFromCacheIfEnabled
 
-extension LivestreamChannelHandler_Tests {
+extension LivestreamChatHandler_Tests {
     func test_populateFromCacheIfEnabled_loadsChannelAndMessagesFromDataStore() throws {
         let cachedMessage = MessagePayload.dummy(messageId: "cached", text: "Cached")
         let payload = ChannelPayload.dummy(channel: .dummy(cid: cid), messages: [cachedMessage])
@@ -105,7 +105,7 @@ extension LivestreamChannelHandler_Tests {
 
 // MARK: - handleChannelPayload
 
-extension LivestreamChannelHandler_Tests {
+extension LivestreamChatHandler_Tests {
     func test_handleChannelPayload_replacesStateWhenNoPagination() {
         let payload = ChannelPayload.dummy(
             channel: .dummy(cid: cid),
@@ -156,7 +156,7 @@ extension LivestreamChannelHandler_Tests {
 
     func test_handlePaginationFailure_marksPaginationEnded() {
         let mockPagination = MockPaginationStateHandler()
-        handler = LivestreamChannelHandler(
+        handler = LivestreamChatHandler(
             channelQuery: ChannelQuery(cid: cid),
             client: client,
             paginationStateHandler: mockPagination
@@ -169,7 +169,7 @@ extension LivestreamChannelHandler_Tests {
 
     func test_beginPagination_invokesUnderlyingStateHandler() {
         let mockPagination = MockPaginationStateHandler()
-        handler = LivestreamChannelHandler(
+        handler = LivestreamChatHandler(
             channelQuery: ChannelQuery(cid: cid),
             client: client,
             paginationStateHandler: mockPagination
@@ -183,7 +183,7 @@ extension LivestreamChannelHandler_Tests {
 
 // MARK: - Pause / Resume / Counters
 
-extension LivestreamChannelHandler_Tests {
+extension LivestreamChatHandler_Tests {
     func test_pause_setsIsPausedToTrue() {
         handler.pause()
         XCTAssertTrue(handler.isPaused)
@@ -238,7 +238,7 @@ extension LivestreamChannelHandler_Tests {
 
 // MARK: - Message Limit
 
-extension LivestreamChannelHandler_Tests {
+extension LivestreamChatHandler_Tests {
     func test_maxMessageLimitOptions_whenSet_appliesLimitOnNewMessage() {
         handler.maxMessageLimitOptions = .init(maxLimit: 3, discardAmount: 2)
         let preloaded: [ChatMessage] = (0..<3).map { .mock(id: "m\($0)", cid: cid, text: "msg") }
@@ -303,7 +303,7 @@ extension LivestreamChannelHandler_Tests {
 
 // MARK: - Event Handling: Messages
 
-extension LivestreamChannelHandler_Tests {
+extension LivestreamChatHandler_Tests {
     func test_didReceiveEvent_messageNewEvent_addsMessageToArray() {
         handler.didReceiveEvent(makeNewMessageEvent(id: "new"))
         XCTAssertEqual(handler.messages.map(\.id), ["new"])
@@ -544,7 +544,7 @@ extension LivestreamChannelHandler_Tests {
 
 // MARK: - Event Handling: Channel & Membership
 
-extension LivestreamChannelHandler_Tests {
+extension LivestreamChatHandler_Tests {
     func test_didReceiveEvent_channelUpdatedEvent_updatesChannel() {
         seedChannel(name: "Original")
 
@@ -679,7 +679,7 @@ extension LivestreamChannelHandler_Tests {
 
 // MARK: - Event Handling: Typing
 
-extension LivestreamChannelHandler_Tests {
+extension LivestreamChatHandler_Tests {
     func test_didReceiveEvent_typingStart_addsUserToTypingUsers() {
         seedChannel()
         let typingUser = ChatUser.mock(id: .unique)
@@ -793,7 +793,7 @@ extension LivestreamChannelHandler_Tests {
 
 // MARK: - Cooldown
 
-extension LivestreamChannelHandler_Tests {
+extension LivestreamChatHandler_Tests {
     func test_currentCooldownTime_withNoChannel_returnsZero() {
         XCTAssertEqual(handler.currentCooldownTime(), 0)
     }
@@ -838,7 +838,7 @@ extension LivestreamChannelHandler_Tests {
 
 // MARK: - Callbacks
 
-extension LivestreamChannelHandler_Tests {
+extension LivestreamChatHandler_Tests {
     func test_settingChannel_invokesChannelDidChangeCallback() {
         let exp = expectation(description: "channelDidChange fires")
         handler.setHandlers(.test(channelDidChange: { channel in
@@ -886,7 +886,7 @@ extension LivestreamChannelHandler_Tests {
 
 // MARK: - Handler convenience for tests
 
-private extension LivestreamChannelHandler.Handlers {
+private extension LivestreamChatHandler.Handlers {
     /// Convenience for tests that only care about a single callback. All
     /// callbacks default to no-ops; pass only the ones the test needs.
     static func test(
@@ -908,7 +908,7 @@ private extension LivestreamChannelHandler.Handlers {
 
 // MARK: - Helpers
 
-private extension LivestreamChannelHandler_Tests {
+private extension LivestreamChatHandler_Tests {
     func makeNewMessageEvent(id: MessageId, text: String = "msg", author: ChatUser? = nil, pinned: Bool = false) -> MessageNewEvent {
         let pinDetails: MessagePinDetails? = pinned
             ? .init(pinnedAt: .unique, pinnedBy: .unique, expiresAt: nil)

@@ -19,7 +19,7 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     private let apiClient: APIClient
     private let typingEventsSender: TypingEventsSender
     private let appStateObserver: AppStateObserving
-    private let handler: LivestreamChannelHandling
+    private let handler: LivestreamChatHandling
     private var eventObserver: AnyCancellable?
     @MainActor private var stateBuilder: StateBuilder<LivestreamChatState>
 
@@ -595,7 +595,7 @@ extension LivestreamChat {
 extension LivestreamChat {
     struct Environment: Sendable {
         var livestreamChatStateBuilder: @Sendable @MainActor (
-            _ handler: LivestreamChannelHandling,
+            _ handler: LivestreamChatHandling,
             _ client: ChatClient
         ) -> LivestreamChatState = { @MainActor in
             LivestreamChatState(handler: $0, client: $1)
@@ -626,8 +626,8 @@ extension LivestreamChat {
             _ channelQuery: ChannelQuery,
             _ client: ChatClient,
             _ paginationStateHandler: MessagesPaginationStateHandling
-        ) -> LivestreamChannelHandling = {
-            LivestreamChannelHandler(
+        ) -> LivestreamChatHandling = {
+            LivestreamChatHandler(
                 channelQuery: $0,
                 client: $1,
                 paginationStateHandler: $2

@@ -112,7 +112,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
     // MARK: - Private Properties
 
     /// The handler encapsulating the shared livestream state and event handling.
-    let handler: LivestreamChannelHandling
+    let handler: LivestreamChatHandling
 
     /// The API client for making direct API calls.
     private let apiClient: APIClient
@@ -161,7 +161,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         client: ChatClient,
         updater: ChannelUpdater? = nil,
         paginationStateHandler: MessagesPaginationStateHandling = MessagesPaginationStateHandler(),
-        handler: LivestreamChannelHandling? = nil
+        handler: LivestreamChatHandling? = nil
     ) {
         self.client = client
         apiClient = client.apiClient
@@ -173,7 +173,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
             database: client.databaseContainer,
             apiClient: client.apiClient
         )
-        self.handler = handler ?? LivestreamChannelHandler(
+        self.handler = handler ?? LivestreamChatHandler(
             channelQuery: channelQuery,
             client: client,
             paginationStateHandler: paginationStateHandler
@@ -200,7 +200,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
 
     private func configureHandlerCallbacks() {
         handler.setHandlers(
-            LivestreamChannelHandler.Handlers(
+            LivestreamChatHandler.Handlers(
                 channelDidChange: { [weak self] channel in
                     guard let self else { return }
                     self.multicastDelegate.invoke {

@@ -8,11 +8,11 @@ import XCTest
 
 /// Tests for `LivestreamChat` focused on wrapper-specific behaviour:
 /// API wiring, sync repository tracking, manual event registration, and
-/// forwarding to the underlying `LivestreamChannelHandler`.
+/// forwarding to the underlying `LivestreamChatHandler`.
 ///
 /// Handler-internal behaviour (event handling, pagination state, message
 /// pruning, typing aggregation, cooldown, etc.) is exercised in
-/// `LivestreamChannelHandler_Tests`.
+/// `LivestreamChatHandler_Tests`.
 @MainActor
 final class LivestreamChat_Tests: XCTestCase {
     private var client: ChatClient_Mock!
@@ -815,11 +815,11 @@ private extension LivestreamChat_Tests {
         return livestreamChat
     }
 
-    /// Builds a `LivestreamChat` whose underlying `LivestreamChannelHandler` is the returned
+    /// Builds a `LivestreamChat` whose underlying `LivestreamChatHandler` is the returned
     /// mock. Used for wiring tests that verify `LivestreamChat` forwards calls and that
     /// handler callbacks update the published state.
-    func makeLivestreamChatWithMockHandler() -> (LivestreamChat, LivestreamChannelHandler_Mock) {
-        let mockHandler = LivestreamChannelHandler_Mock(channelQuery: channelQuery)
+    func makeLivestreamChatWithMockHandler() -> (LivestreamChat, LivestreamChatHandler_Mock) {
+        let mockHandler = LivestreamChatHandler_Mock(channelQuery: channelQuery)
         var environment = LivestreamChat.Environment()
         environment.handlerBuilder = { _, _, _ in mockHandler }
         let livestreamChat = LivestreamChat(

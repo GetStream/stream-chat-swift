@@ -5,12 +5,12 @@
 import Foundation
 @testable import StreamChat
 
-/// A mock `LivestreamChannelHandling` implementation used to verify that the higher-level
+/// A mock `LivestreamChatHandling` implementation used to verify that the higher-level
 /// `LivestreamChannelController` and `LivestreamChat` correctly forward configuration,
 /// events and lifecycle calls to the handler. Handler-internal behaviour is exercised in
-/// `LivestreamChannelHandler_Tests` so wrapper tests do not need to set up real handler
+/// `LivestreamChatHandler_Tests` so wrapper tests do not need to set up real handler
 /// state.
-final class LivestreamChannelHandler_Mock: LivestreamChannelHandling, @unchecked Sendable {
+final class LivestreamChatHandler_Mock: LivestreamChatHandling, @unchecked Sendable {
     // MARK: - Configuration
 
     var maxMessageLimitOptions: MaxMessageLimitOptions?
@@ -72,7 +72,7 @@ final class LivestreamChannelHandler_Mock: LivestreamChannelHandling, @unchecked
 
     /// The captured `Handlers` struct. Use the `simulate*` helpers to invoke its closures
     /// from a test to verify forwarding by the wrapper.
-    @Atomic var capturedHandlers: LivestreamChannelHandler.Handlers?
+    @Atomic var capturedHandlers: LivestreamChatHandler.Handlers?
 
     // MARK: - Initialization
 
@@ -80,9 +80,9 @@ final class LivestreamChannelHandler_Mock: LivestreamChannelHandling, @unchecked
         self.channelQuery = channelQuery
     }
 
-    // MARK: - LivestreamChannelHandling
+    // MARK: - LivestreamChatHandling
 
-    func setHandlers(_ handlers: LivestreamChannelHandler.Handlers) {
+    func setHandlers(_ handlers: LivestreamChatHandler.Handlers) {
         setHandlers_callCount += 1
         capturedHandlers = handlers
     }

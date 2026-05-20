@@ -8,15 +8,15 @@ import Foundation
 /// Represents the observable state of a ``LivestreamChat`` instance.
 ///
 /// ``LivestreamChatState`` mirrors the in-memory state managed by
-/// ``LivestreamChannelHandler`` and exposes it via `@Published` properties so it
+/// ``LivestreamChatHandler`` and exposes it via `@Published` properties so it
 /// can be observed from SwiftUI views or other Combine consumers.
 @MainActor public final class LivestreamChatState: ObservableObject {
-    private let handler: LivestreamChannelHandling
+    private let handler: LivestreamChatHandling
 
     /// The client instance the ``LivestreamChat`` was created with.
     public let client: ChatClient
 
-    init(handler: LivestreamChannelHandling, client: ChatClient) {
+    init(handler: LivestreamChatHandling, client: ChatClient) {
         self.handler = handler
         self.client = client
         channel = handler.channel
@@ -110,7 +110,7 @@ import Foundation
     
     private func configureHandlerCallbacks() {
         handler.setHandlers(
-            LivestreamChannelHandler.Handlers(
+            LivestreamChatHandler.Handlers(
                 channelDidChange: { [weak self] channel in
                     self?.channel = channel
                 },

@@ -11,9 +11,9 @@ import Foundation
 /// in-memory state, read-write access to the configuration options, and the
 /// lifecycle methods the wrappers need to call. Tests can substitute a mock
 /// implementation without having to subclass the concrete
-/// ``LivestreamChannelHandler``, which keeps the concrete type `final` and its
+/// ``LivestreamChatHandler``, which keeps the concrete type `final` and its
 /// stored state free from external mutation.
-protocol LivestreamChannelHandling: AnyObject {
+protocol LivestreamChatHandling: AnyObject {
     // MARK: - Configuration
 
     /// Configuration for message limiting behaviour.
@@ -77,7 +77,7 @@ protocol LivestreamChannelHandling: AnyObject {
     // MARK: - Lifecycle
 
     /// Registers the closures that are invoked when state changes.
-    func setHandlers(_ handlers: LivestreamChannelHandler.Handlers)
+    func setHandlers(_ handlers: LivestreamChatHandler.Handlers)
 
     /// Loads the initial messages from the data store when enabled.
     func populateFromCacheIfEnabled()
@@ -127,12 +127,12 @@ protocol LivestreamChannelHandling: AnyObject {
 /// delegate dispatching behavior.
 ///
 /// The class is `final` and its stored state is only externally observable via
-/// the ``LivestreamChannelHandling`` protocol. The remaining `var` properties
+/// the ``LivestreamChatHandling`` protocol. The remaining `var` properties
 /// are intentionally module-internal so the handler's own private logic and
 /// its tests can drive the state directly, while public wrappers and mocks
 /// interact with the handler exclusively through the protocol's read-only
 /// surface.
-final class LivestreamChannelHandler: LivestreamChannelHandling, DataStoreProvider, @unchecked Sendable {
+final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @unchecked Sendable {
     // MARK: - Configuration
 
     /// Configuration for message limiting behaviour.

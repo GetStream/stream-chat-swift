@@ -750,7 +750,7 @@
 				"StreamChatTests/Controllers/ChannelController/ChannelController+Drafts_Tests.swift",
 				StreamChatTests/Controllers/ChannelController/LivestreamChannelController_Tests.swift,
 				"StreamChatTests/Controllers/ChannelController/LivestreamChannelController+Combine_Tests.swift",
-				StreamChatTests/Controllers/ChannelController/LivestreamChannelHandler_Tests.swift,
+				StreamChatTests/Controllers/ChannelController/LivestreamChatHandler_Tests.swift,
 				StreamChatTests/Controllers/ChannelListController/ChannelListController_Tests.swift,
 				"StreamChatTests/Controllers/ChannelListController/ChannelListController+Combine_Tests.swift",
 				StreamChatTests/Controllers/ChannelWatcherListController/ChatChannelWatcherListController_Tests.swift,

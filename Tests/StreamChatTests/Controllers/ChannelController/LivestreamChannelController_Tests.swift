@@ -9,11 +9,11 @@ import XCTest
 
 /// Tests for `LivestreamChannelController` focused on controller-specific behaviour:
 /// API wiring, delegate forwarding, sync repository tracking, manual event
-/// registration, and forwarding to the underlying `LivestreamChannelHandler`.
+/// registration, and forwarding to the underlying `LivestreamChatHandler`.
 ///
 /// Handler-internal behaviour (event handling, pagination state, message pruning,
 /// typing aggregation, cooldown, etc.) is exercised in
-/// `LivestreamChannelHandler_Tests`.
+/// `LivestreamChatHandler_Tests`.
 final class LivestreamChannelController_Tests: XCTestCase {
     fileprivate var env: TestEnvironment!
 
@@ -1657,8 +1657,8 @@ private extension LivestreamChannelController_Tests {
     /// Builds a `LivestreamChannelController` whose underlying handler is the returned
     /// mock. Used for wiring tests that verify forwarding to the handler and that
     /// handler callbacks fire the delegate / update controller state.
-    func makeControllerWithMockHandler() -> (LivestreamChannelController, LivestreamChannelHandler_Mock) {
-        let mockHandler = LivestreamChannelHandler_Mock(channelQuery: channelQuery)
+    func makeControllerWithMockHandler() -> (LivestreamChannelController, LivestreamChatHandler_Mock) {
+        let mockHandler = LivestreamChatHandler_Mock(channelQuery: channelQuery)
         let controller = LivestreamChannelController(
             channelQuery: channelQuery,
             client: client,
