@@ -71,9 +71,7 @@ class ChannelRepository: @unchecked Sendable {
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         database.write({ session in
-            guard let read = session.loadOrCreateChannelRead(cid: cid, userId: userId) else { return }
-            read.lastReadAt = Date().bridgeDate
-            read.unreadMessageCount = 0
+            session.markChannelAsRead(cid: cid, userId: userId, at: .init())
         }, completion: { error in
             completion?(error)
         })
