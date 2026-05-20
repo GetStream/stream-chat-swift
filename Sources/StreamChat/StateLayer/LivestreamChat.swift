@@ -71,10 +71,12 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     }
 
     func didReceiveEvent(_ event: Event) {
-        handler.didReceiveEvent(event)
-
-        if let notificationAddedToChannelEvent = event as? NotificationAddedToChannelEvent,
-           notificationAddedToChannelEvent.cid == handler.cid {
+        let shouldWatch = accessHandler { handler -> Bool in
+            handler.didReceiveEvent(event)
+            guard let added = event as? NotificationAddedToChannelEvent else { return false }
+            return added.cid == handler.cid
+        }
+        if shouldWatch {
             Task { try? await self.watch() }
         }
     }
@@ -90,14 +92,14 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// Only the initial page will be loaded from cache, to avoid an initial blank screen.
     public var loadInitialMessagesFromCache: Bool {
-        get { handler.loadInitialMessagesFromCache }
-        set { handler.loadInitialMessagesFromCache = newValue }
+        get { accessHandler { $0.loadInitialMessagesFromCache } }
+        set { accessHandler { $0.loadInitialMessagesFromCache = newValue } }
     }
 
     /// A boolean value indicating if the controller should count the number of skipped messages when in pause state.
     public var countSkippedMessagesWhenPaused: Bool {
-        get { handler.countSkippedMessagesWhenPaused }
-        set { handler.countSkippedMessagesWhenPaused = newValue }
+        get { accessHandler { $0.countSkippedMessagesWhenPaused } }
+        set { accessHandler { $0.countSkippedMessagesWhenPaused = newValue } }
     }
 
     /// Configuration for message limiting behaviour.
@@ -112,8 +114,8 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     /// Call ``resume()`` afterwards to start collecting new messages again. Sending a
     /// new message resumes automatically.
     public var maxMessageLimitOptions: MaxMessageLimitOptions? {
-        get { handler.maxMessageLimitOptions }
-        set { handler.maxMessageLimitOptions = newValue }
+        get { accessHandler { $0.maxMessageLimitOptions } }
+        set { accessHandler { $0.maxMessageLimitOptions = newValue } }
     }
 
     // MARK: - Watching the Channel
@@ -124,9 +126,12 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
-        handler.populateFromCacheIfEnabled()
+        let channelQuery = accessHandler { handler -> ChannelQuery in
+            handler.populateFromCacheIfEnabled()
+            return handler.channelQuery
+        }
         client.syncRepository.startTrackingLivestreamChat(self)
-        try await updateChannelData(channelQuery: handler.channelQuery)
+        try await updateChannelData(channelQuery: channelQuery)
     }
 
     /// Start watching the channel which enables server-side events.
@@ -163,18 +168,21 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadOlderMessages(before messageId: MessageId? = nil, limit: Int? = nil) async throws {
-        guard !handler.hasLoadedAllPreviousMessages, !handler.isLoadingPreviousMessages else { return }
+        let query = try accessHandler { handler -> ChannelQuery? in
+            guard !handler.hasLoadedAllPreviousMessages, !handler.isLoadingPreviousMessages else { return nil }
 
-        let messageId = messageId
-            ?? handler.oldestFetchedMessageId
-            ?? handler.messages.last?.id
+            let resolvedMessageId = messageId
+                ?? handler.oldestFetchedMessageId
+                ?? handler.messages.last?.id
 
-        guard let messageId else { throw ClientError.ChannelEmptyMessages() }
+            guard let resolvedMessageId else { throw ClientError.ChannelEmptyMessages() }
 
-        let limit = limit ?? handler.channelQuery.pagination?.pageSize ?? .messagesPageSize
-        var query = handler.channelQuery
-        query.pagination = MessagesPagination(pageSize: limit, parameter: .lessThan(messageId))
-
+            let pageSize = limit ?? handler.channelQuery.pagination?.pageSize ?? .messagesPageSize
+            var query = handler.channelQuery
+            query.pagination = MessagesPagination(pageSize: pageSize, parameter: .lessThan(resolvedMessageId))
+            return query
+        }
+        guard let query else { return }
         try await updateChannelData(channelQuery: query)
     }
 
@@ -186,18 +194,21 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadNewerMessages(after messageId: MessageId? = nil, limit: Int? = nil) async throws {
-        guard !handler.hasLoadedAllNextMessages, !handler.isLoadingNextMessages else { return }
+        let query = try accessHandler { handler -> ChannelQuery? in
+            guard !handler.hasLoadedAllNextMessages, !handler.isLoadingNextMessages else { return nil }
 
-        let messageId = messageId
-            ?? handler.newestFetchedMessageId
-            ?? handler.messages.first?.id
+            let resolvedMessageId = messageId
+                ?? handler.newestFetchedMessageId
+                ?? handler.messages.first?.id
 
-        guard let messageId else { throw ClientError.ChannelEmptyMessages() }
+            guard let resolvedMessageId else { throw ClientError.ChannelEmptyMessages() }
 
-        let limit = limit ?? handler.channelQuery.pagination?.pageSize ?? .messagesPageSize
-        var query = handler.channelQuery
-        query.pagination = MessagesPagination(pageSize: limit, parameter: .greaterThan(messageId))
-
+            let pageSize = limit ?? handler.channelQuery.pagination?.pageSize ?? .messagesPageSize
+            var query = handler.channelQuery
+            query.pagination = MessagesPagination(pageSize: pageSize, parameter: .greaterThan(resolvedMessageId))
+            return query
+        }
+        guard let query else { return }
         try await updateChannelData(channelQuery: query)
     }
 
@@ -213,10 +224,14 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadMessages(around messageId: MessageId, limit: Int? = nil) async throws {
-        guard !handler.isLoadingMiddleMessages else { return }
-        let limit = limit ?? handler.channelQuery.pagination?.pageSize ?? .messagesPageSize
-        var query = handler.channelQuery
-        query.pagination = MessagesPagination(pageSize: limit, parameter: .around(messageId))
+        let query = accessHandler { handler -> ChannelQuery? in
+            guard !handler.isLoadingMiddleMessages else { return nil }
+            let pageSize = limit ?? handler.channelQuery.pagination?.pageSize ?? .messagesPageSize
+            var query = handler.channelQuery
+            query.pagination = MessagesPagination(pageSize: pageSize, parameter: .around(messageId))
+            return query
+        }
+        guard let query else { return }
         try await updateChannelData(channelQuery: query)
     }
 
@@ -224,11 +239,14 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadFirstPage() async throws {
-        var query = handler.channelQuery
-        query.pagination = MessagesPagination(
-            pageSize: handler.channelQuery.pagination?.pageSize ?? .messagesPageSize,
-            parameter: nil
-        )
+        let query = accessHandler { handler -> ChannelQuery in
+            var query = handler.channelQuery
+            query.pagination = MessagesPagination(
+                pageSize: handler.channelQuery.pagination?.pageSize ?? .messagesPageSize,
+                parameter: nil
+            )
+            return query
+        }
         try await updateChannelData(channelQuery: query)
     }
 
@@ -238,7 +256,7 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// When paused, new messages from other users will not be added to ``LivestreamChatState/messages``.
     public func pause() {
-        handler.pause()
+        accessHandler { $0.pause() }
     }
 
     /// Resumes the collecting of new messages.
@@ -249,13 +267,16 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     @MainActor public func resume() async throws {
-        guard handler.isPaused, !state.isResuming else { return }
-
-        handler.resetSkippedMessagesCountIfNeeded()
+        let shouldResume = accessHandler { handler -> Bool in
+            guard handler.isPaused else { return false }
+            handler.resetSkippedMessagesCountIfNeeded()
+            return true
+        }
+        guard shouldResume, !state.isResuming else { return }
 
         state.isResuming = true
         defer { state.isResuming = false }
-        defer { handler.resume() }
+        defer { accessHandler { $0.resume() } }
         try await loadFirstPage()
     }
 
@@ -538,7 +559,7 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func keystroke(parentMessageId: MessageId? = nil) async throws {
         let cid = try self.cid
-        guard handler.channel?.canSendTypingEvents ?? false else { return }
+        guard accessHandler({ $0.channel?.canSendTypingEvents ?? false }) else { return }
         try await typingEventsSender.keystroke(in: cid, parentMessageId: parentMessageId)
     }
 
@@ -549,7 +570,7 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     public func stopTyping(parentMessageId: MessageId? = nil) async throws {
         let cid = try self.cid
-        guard handler.channel?.canSendTypingEvents ?? false else { return }
+        guard accessHandler({ $0.channel?.canSendTypingEvents ?? false }) else { return }
         try await typingEventsSender.stopTyping(in: cid, parentMessageId: parentMessageId)
     }
 
@@ -568,13 +589,30 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     // MARK: - Private
 
     private func updateChannelData(channelQuery: ChannelQuery) async throws {
-        handler.beginPagination(for: channelQuery)
+        accessHandler { $0.beginPagination(for: channelQuery) }
         do {
             let payload = try await channelUpdater.update(channelQuery: channelQuery)
-            handler.handleChannelPayload(payload, channelQuery: channelQuery)
+            accessHandler { $0.handleChannelPayload(payload, channelQuery: channelQuery) }
         } catch {
-            handler.handlePaginationFailure(channelQuery: channelQuery, error: error)
+            accessHandler { $0.handlePaginationFailure(channelQuery: channelQuery, error: error) }
             throw error
+        }
+    }
+
+    /// Synchronously runs ``action`` on the main thread with the underlying
+    /// ``LivestreamChatHandling`` instance.
+    ///
+    /// This is the only entry point through which ``LivestreamChat`` touches
+    /// the handler. By funnelling all reads, writes and event dispatch
+    /// through the main thread, the handler's mutable state never has to
+    /// contend with concurrent access from background callers of the async
+    /// API.
+    @discardableResult
+    private func accessHandler<T: Sendable>(
+        _ action: @MainActor @Sendable (LivestreamChatHandling) throws -> T
+    ) rethrows -> T {
+        try StreamConcurrency.onMain {
+            try action(self.handler)
         }
     }
 }
@@ -584,7 +622,7 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
 extension LivestreamChat {
     var cid: ChannelId {
         get throws {
-            guard let cid = handler.cid else { throw ClientError.ChannelNotCreatedYet() }
+            guard let cid = accessHandler({ $0.cid }) else { throw ClientError.ChannelNotCreatedYet() }
             return cid
         }
     }
