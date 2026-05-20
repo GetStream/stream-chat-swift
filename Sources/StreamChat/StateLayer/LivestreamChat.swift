@@ -163,12 +163,13 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadOlderMessages(before messageId: MessageId? = nil, limit: Int? = nil) async throws {
+        guard !handler.hasLoadedAllPreviousMessages, !handler.isLoadingPreviousMessages else { return }
+
         let messageId = messageId
             ?? handler.paginationStateHandler.state.oldestFetchedMessage?.id
             ?? handler.messages.last?.id
 
         guard let messageId else { throw ClientError.ChannelEmptyMessages() }
-        guard !handler.hasLoadedAllPreviousMessages, !handler.isLoadingPreviousMessages else { return }
 
         let limit = limit ?? handler.channelQuery.pagination?.pageSize ?? .messagesPageSize
         var query = handler.channelQuery
@@ -185,12 +186,13 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadNewerMessages(after messageId: MessageId? = nil, limit: Int? = nil) async throws {
+        guard !handler.hasLoadedAllNextMessages, !handler.isLoadingNextMessages else { return }
+
         let messageId = messageId
             ?? handler.paginationStateHandler.state.newestFetchedMessage?.id
             ?? handler.messages.first?.id
 
         guard let messageId else { throw ClientError.ChannelEmptyMessages() }
-        guard !handler.hasLoadedAllNextMessages, !handler.isLoadingNextMessages else { return }
 
         let limit = limit ?? handler.channelQuery.pagination?.pageSize ?? .messagesPageSize
         var query = handler.channelQuery
