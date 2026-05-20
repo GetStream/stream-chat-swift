@@ -28,9 +28,8 @@ _May 08, 2026_
 ## StreamChat
 ### ✅ Added
 - Add `ChatClient.queryGroupedChannels(limit:presence:watch:)` to fetch grouped channels with per-group unread counts [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
-- Add `ChatClient.channelListController(groupKey:dynamicFilter:)` for observing a single grouped channels group [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 - Add `ChatClient.makeChannelList(with:)` overload for observing a single grouped channels group in the state layer [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
-- Add optional `groupedUnreadChannels` data to relevant web-socket events and `CurrentChatUser` [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
+- Add optional `groupedUnreadCount` data to relevant web-socket events and `CurrentChatUser` [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 ### 🐞 Fixed
 - Fix image cache misses caused by non-deterministic caching keys in `StreamCDNRequester` [#4075](https://github.com/GetStream/stream-chat-swift/pull/4075)
 - Fix `ChatChannel.latestMessages` being wiped on mid-page pagination [#4077](https://github.com/GetStream/stream-chat-swift/pull/4077)

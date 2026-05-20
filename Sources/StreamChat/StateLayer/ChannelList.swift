@@ -44,7 +44,10 @@ public class ChannelList: @unchecked Sendable {
     
     /// Fetches the most recent state from the server and updates the local store.
     ///
-    /// - Important: Loaded channels in ``ChannelListState/channels`` are reset.
+    /// - Important: For filter-based lists, loaded channels in ``ChannelListState/channels`` are reset.
+    /// For group-based lists (created via ``ChatClient/makeChannelList(with:)-(String)``), this only
+    /// registers the list for sync tracking — call ``loadChannels(with:)`` to fetch the first page from the
+    /// grouped endpoint.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
@@ -59,7 +62,9 @@ public class ChannelList: @unchecked Sendable {
 
     /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.
     ///
-    /// - Important: If the pagination offset is 0 and cursor is nil, then loaded channels are reset.
+    /// - Important: For filter-based lists, loaded channels are reset when the pagination offset is 0 and
+    /// the cursor is nil. For group-based lists, only ``Pagination/cursor`` is used — the offset is ignored —
+    /// and the grouped endpoint controls the page contents.
     ///
     /// - Parameter pagination: The pagination configuration which includes a limit and a cursor or an offset.
     ///
@@ -69,7 +74,7 @@ public class ChannelList: @unchecked Sendable {
         if let groupKey = query.groupKey {
             let channelGroups = try await channelListUpdater.queryGroupedChannels(
                 groupPagination: .init(groupKey: groupKey, next: pagination.cursor),
-                limit: pagination.pageSize,
+                limit: pagination.pageSize >= 0 ? pagination.pageSize : nil,
                 watch: true,
                 presence: true
             )
@@ -86,23 +91,24 @@ public class ChannelList: @unchecked Sendable {
 
     /// Loads more channels and updates ``ChannelListState/channels``.
     ///
-    /// - Parameter limit: The limit for the page size. The default limit is 20.
+    /// - Parameter limit: The limit for the page size. For filter-based lists the default is ``Int/channelsPageSize`` (20);
+    /// for group-based lists, the backend chooses the default and `limit` is forwarded only when provided.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
     @discardableResult public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
         guard await !state.hasLoadedAllPreviousChannels else { return [] }
-        let limit = limit ?? query.pagination.pageSize
         if let groupKey = query.groupKey {
             let cursor = try await channelListUpdater.paginationCursor(for: groupKey)
             guard let cursor else {
                 await setHasLoadedAllPreviousChannels(true)
                 return []
             }
-            return try await loadChannels(with: Pagination(pageSize: limit, cursor: cursor))
+            return try await loadChannels(with: Pagination(pageSize: limit ?? .unsetPageSize, cursor: cursor))
         } else {
-            let channels = try await loadChannels(with: Pagination(pageSize: limit, offset: await state.channels.count))
-            await setHasLoadedAllPreviousChannels(channels.count < limit)
+            let resolved = limit ?? query.pagination.pageSize
+            let channels = try await loadChannels(with: Pagination(pageSize: resolved, offset: await state.channels.count))
+            await setHasLoadedAllPreviousChannels(channels.count < resolved)
             return channels
         }
     }

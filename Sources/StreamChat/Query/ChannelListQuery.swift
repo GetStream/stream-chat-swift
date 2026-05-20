@@ -56,7 +56,7 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
     init(groupKey: String) {
         self.init(filter: .and([]))
         self.groupKey = groupKey
-        self.pagination = Pagination(pageSize: 10)
+        self.pagination = Pagination(pageSize: .unsetPageSize)
     }
 
     public func encode(to encoder: Encoder) throws {

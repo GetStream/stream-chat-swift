@@ -15,6 +15,8 @@ public extension Int {
     static let channelMembersPageSize = 30
     /// A default channel watchers page size.
     static let channelWatchersPageSize = 30
+    /// Sentinel signalling "no client-side page size" — the request omits `limit` and the backend uses its default.
+    static let unsetPageSize = -1
 }
 
 /// Basic pagination with `pageSize` and `offset`.
@@ -47,7 +49,9 @@ public struct Pagination: Encodable, Equatable, Sendable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(pageSize, forKey: .pageSize)
+        if pageSize >= 0 {
+            try container.encode(pageSize, forKey: .pageSize)
+        }
         if let cursor = cursor {
             try container.encode(cursor, forKey: .cursor)
         } else if offset != 0 {
