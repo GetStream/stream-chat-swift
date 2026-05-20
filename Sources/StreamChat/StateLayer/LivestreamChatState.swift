@@ -11,12 +11,12 @@ import Foundation
 /// ``LivestreamChannelHandler`` and exposes it via `@Published` properties so it
 /// can be observed from SwiftUI views or other Combine consumers.
 @MainActor public final class LivestreamChatState: ObservableObject {
-    private let handler: LivestreamChannelHandler
+    private let handler: LivestreamChannelHandling
 
     /// The client instance the ``LivestreamChat`` was created with.
     public let client: ChatClient
 
-    init(handler: LivestreamChannelHandler, client: ChatClient) {
+    init(handler: LivestreamChannelHandling, client: ChatClient) {
         self.handler = handler
         self.client = client
         channel = handler.channel

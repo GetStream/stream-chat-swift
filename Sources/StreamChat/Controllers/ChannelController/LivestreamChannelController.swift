@@ -112,7 +112,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
     // MARK: - Private Properties
 
     /// The handler encapsulating the shared livestream state and event handling.
-    let handler: LivestreamChannelHandler
+    let handler: LivestreamChannelHandling
 
     /// The API client for making direct API calls.
     private let apiClient: APIClient
@@ -161,7 +161,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         client: ChatClient,
         updater: ChannelUpdater? = nil,
         paginationStateHandler: MessagesPaginationStateHandling = MessagesPaginationStateHandler(),
-        handler: LivestreamChannelHandler? = nil
+        handler: LivestreamChannelHandling? = nil
     ) {
         self.client = client
         apiClient = client.apiClient
@@ -309,7 +309,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         }
 
         let messageId = messageId
-            ?? handler.paginationStateHandler.state.oldestFetchedMessage?.id
+            ?? handler.oldestFetchedMessageId
             ?? messages.last?.id
 
         guard let messageId = messageId else {
@@ -351,7 +351,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
         }
 
         let messageId = messageId
-            ?? handler.paginationStateHandler.state.newestFetchedMessage?.id
+            ?? handler.newestFetchedMessageId
             ?? messages.first?.id
 
         guard let messageId = messageId else {

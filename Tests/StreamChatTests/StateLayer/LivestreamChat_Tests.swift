@@ -819,11 +819,7 @@ private extension LivestreamChat_Tests {
     /// mock. Used for wiring tests that verify `LivestreamChat` forwards calls and that
     /// handler callbacks update the published state.
     func makeLivestreamChatWithMockHandler() -> (LivestreamChat, LivestreamChannelHandler_Mock) {
-        let mockHandler = LivestreamChannelHandler_Mock(
-            channelQuery: channelQuery,
-            client: client,
-            paginationStateHandler: MessagesPaginationStateHandler()
-        )
+        let mockHandler = LivestreamChannelHandler_Mock(channelQuery: channelQuery)
         var environment = LivestreamChat.Environment()
         environment.handlerBuilder = { _, _, _ in mockHandler }
         let livestreamChat = LivestreamChat(

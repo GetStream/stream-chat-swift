@@ -1658,11 +1658,7 @@ private extension LivestreamChannelController_Tests {
     /// mock. Used for wiring tests that verify forwarding to the handler and that
     /// handler callbacks fire the delegate / update controller state.
     func makeControllerWithMockHandler() -> (LivestreamChannelController, LivestreamChannelHandler_Mock) {
-        let mockHandler = LivestreamChannelHandler_Mock(
-            channelQuery: channelQuery,
-            client: client,
-            paginationStateHandler: MessagesPaginationStateHandler()
-        )
+        let mockHandler = LivestreamChannelHandler_Mock(channelQuery: channelQuery)
         let controller = LivestreamChannelController(
             channelQuery: channelQuery,
             client: client,

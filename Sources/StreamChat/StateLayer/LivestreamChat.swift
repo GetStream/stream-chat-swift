@@ -19,7 +19,7 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     private let apiClient: APIClient
     private let typingEventsSender: TypingEventsSender
     private let appStateObserver: AppStateObserving
-    private let handler: LivestreamChannelHandler
+    private let handler: LivestreamChannelHandling
     private var eventObserver: AnyCancellable?
     @MainActor private var stateBuilder: StateBuilder<LivestreamChatState>
 
@@ -166,7 +166,7 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
         guard !handler.hasLoadedAllPreviousMessages, !handler.isLoadingPreviousMessages else { return }
 
         let messageId = messageId
-            ?? handler.paginationStateHandler.state.oldestFetchedMessage?.id
+            ?? handler.oldestFetchedMessageId
             ?? handler.messages.last?.id
 
         guard let messageId else { throw ClientError.ChannelEmptyMessages() }
@@ -189,7 +189,7 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
         guard !handler.hasLoadedAllNextMessages, !handler.isLoadingNextMessages else { return }
 
         let messageId = messageId
-            ?? handler.paginationStateHandler.state.newestFetchedMessage?.id
+            ?? handler.newestFetchedMessageId
             ?? handler.messages.first?.id
 
         guard let messageId else { throw ClientError.ChannelEmptyMessages() }
@@ -595,7 +595,7 @@ extension LivestreamChat {
 extension LivestreamChat {
     struct Environment: Sendable {
         var livestreamChatStateBuilder: @Sendable @MainActor (
-            _ handler: LivestreamChannelHandler,
+            _ handler: LivestreamChannelHandling,
             _ client: ChatClient
         ) -> LivestreamChatState = { @MainActor in
             LivestreamChatState(handler: $0, client: $1)
@@ -626,7 +626,7 @@ extension LivestreamChat {
             _ channelQuery: ChannelQuery,
             _ client: ChatClient,
             _ paginationStateHandler: MessagesPaginationStateHandling
-        ) -> LivestreamChannelHandler = {
+        ) -> LivestreamChannelHandling = {
             LivestreamChannelHandler(
                 channelQuery: $0,
                 client: $1,

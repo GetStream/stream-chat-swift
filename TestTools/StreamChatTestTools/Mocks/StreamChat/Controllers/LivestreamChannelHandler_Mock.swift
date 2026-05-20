@@ -5,12 +5,40 @@
 import Foundation
 @testable import StreamChat
 
-/// A mock subclass of `LivestreamChannelHandler` used to verify that the higher-level
+/// A mock `LivestreamChannelHandling` implementation used to verify that the higher-level
 /// `LivestreamChannelController` and `LivestreamChat` correctly forward configuration,
 /// events and lifecycle calls to the handler. Handler-internal behaviour is exercised in
 /// `LivestreamChannelHandler_Tests` so wrapper tests do not need to set up real handler
 /// state.
-final class LivestreamChannelHandler_Mock: LivestreamChannelHandler, @unchecked Sendable {
+final class LivestreamChannelHandler_Mock: LivestreamChannelHandling, @unchecked Sendable {
+    // MARK: - Configuration
+
+    var maxMessageLimitOptions: MaxMessageLimitOptions?
+    var countSkippedMessagesWhenPaused: Bool = false
+    var loadInitialMessagesFromCache: Bool = true
+    var timerType: TimerScheduling.Type = DefaultTimer.self
+
+    // MARK: - State
+
+    var channelQuery: ChannelQuery
+    var cid: ChannelId? { channelQuery.cid }
+    var channel: ChatChannel?
+    var messages: [ChatMessage] = []
+    var isPaused: Bool = false
+    var skippedMessagesAmount: Int = 0
+
+    // MARK: - Pagination
+
+    var hasLoadedAllPreviousMessages: Bool = false
+    /// Matches the real handler default: `true` when no messages are loaded.
+    var hasLoadedAllNextMessages: Bool = true
+    var isLoadingPreviousMessages: Bool = false
+    var isLoadingNextMessages: Bool = false
+    var isLoadingMiddleMessages: Bool = false
+    var isJumpingToMessage: Bool = false
+    var oldestFetchedMessageId: MessageId?
+    var newestFetchedMessageId: MessageId?
+
     // MARK: - Call Tracking
 
     @Atomic var populateFromCacheIfEnabled_callCount = 0
@@ -46,61 +74,64 @@ final class LivestreamChannelHandler_Mock: LivestreamChannelHandler, @unchecked 
     /// from a test to verify forwarding by the wrapper.
     @Atomic var capturedHandlers: LivestreamChannelHandler.Handlers?
 
-    // MARK: - Overrides
+    // MARK: - Initialization
 
-    override func setHandlers(_ handlers: LivestreamChannelHandler.Handlers) {
-        setHandlers_callCount += 1
-        capturedHandlers = handlers
-        super.setHandlers(handlers)
+    init(channelQuery: ChannelQuery) {
+        self.channelQuery = channelQuery
     }
 
-    override func populateFromCacheIfEnabled() {
+    // MARK: - LivestreamChannelHandling
+
+    func setHandlers(_ handlers: LivestreamChannelHandler.Handlers) {
+        setHandlers_callCount += 1
+        capturedHandlers = handlers
+    }
+
+    func populateFromCacheIfEnabled() {
         populateFromCacheIfEnabled_callCount += 1
     }
 
-    override func handleChannelPayload(_ payload: ChannelPayload, channelQuery: ChannelQuery) {
+    func handleChannelPayload(_ payload: ChannelPayload, channelQuery: ChannelQuery) {
         handleChannelPayload_callCount += 1
         handleChannelPayload_payload = payload
         handleChannelPayload_channelQuery = channelQuery
     }
 
-    override func handlePaginationFailure(channelQuery: ChannelQuery, error: Error) {
+    func handlePaginationFailure(channelQuery: ChannelQuery, error: Error) {
         handlePaginationFailure_callCount += 1
         handlePaginationFailure_channelQuery = channelQuery
         handlePaginationFailure_error = error
     }
 
-    override func beginPagination(for channelQuery: ChannelQuery) {
+    func beginPagination(for channelQuery: ChannelQuery) {
         beginPagination_callCount += 1
         beginPagination_channelQuery = channelQuery
     }
 
-    override func pause() {
+    func pause() {
         pause_callCount += 1
-        super.pause()
     }
 
-    override func resume() {
+    func resume() {
         resume_callCount += 1
-        super.resume()
     }
 
-    override func resetSkippedMessagesCountIfNeeded() {
+    func resetSkippedMessagesCountIfNeeded() {
         resetSkippedMessagesCountIfNeeded_callCount += 1
     }
 
-    override func clearMessages() {
+    func clearMessages() {
         clearMessages_callCount += 1
-        super.clearMessages()
+        messages = []
     }
 
-    override func didReceiveEvent(_ event: Event) {
+    func didReceiveEvent(_ event: Event) {
         didReceiveEvent_callCount += 1
         didReceiveEvent_event = event
         _didReceiveEvent_allEvents.mutate { $0.append(event) }
     }
 
-    override func currentCooldownTime() -> Int {
+    func currentCooldownTime() -> Int {
         stubbedCurrentCooldownTime
     }
 

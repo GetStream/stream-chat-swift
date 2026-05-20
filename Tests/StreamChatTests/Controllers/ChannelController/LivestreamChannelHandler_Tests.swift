@@ -890,11 +890,11 @@ private extension LivestreamChannelHandler.Handlers {
     /// Convenience for tests that only care about a single callback. All
     /// callbacks default to no-ops; pass only the ones the test needs.
     static func test(
-        channelDidChange: @escaping @MainActor (ChatChannel) -> Void = { _ in },
-        messagesDidChange: @escaping @MainActor ([ChatMessage]) -> Void = { _ in },
-        pauseDidChange: @escaping @MainActor (Bool) -> Void = { _ in },
-        skippedMessagesAmountDidChange: @escaping @MainActor (Int) -> Void = { _ in },
-        typingUsersDidChange: @escaping @MainActor (Set<ChatUser>) -> Void = { _ in }
+        channelDidChange: @escaping @Sendable @MainActor (ChatChannel) -> Void = { _ in },
+        messagesDidChange: @escaping @Sendable @MainActor ([ChatMessage]) -> Void = { _ in },
+        pauseDidChange: @escaping @Sendable @MainActor (Bool) -> Void = { _ in },
+        skippedMessagesAmountDidChange: @escaping @Sendable @MainActor (Int) -> Void = { _ in },
+        typingUsersDidChange: @escaping @Sendable @MainActor (Set<ChatUser>) -> Void = { _ in }
     ) -> Self {
         .init(
             channelDidChange: channelDidChange,
