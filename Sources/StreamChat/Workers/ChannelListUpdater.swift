@@ -148,19 +148,26 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
             guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: channel.cid, query: query) else {
                 return
             }
-            queryDTO.channels.insert(channelDTO)
+            let (inserted, _) = queryDTO.channels.insert(channelDTO)
+            // The "all" group's unread count is driven by WS events, not by per-channel link/unlink.
+            if inserted, let groupKey = query.groupKey, groupKey != GroupedChannelKey.all, channelDTO.currentUserUnreadMessagesCount > 0 {
+                session.adjustGroupedUnreadCount(forGroup: groupKey, by: 1)
+            }
         } completion: { error in
             completion?(error)
         }
     }
 
-    /// Unlinks a channel to the given query.
+    /// Unlinks a channel from the given query.
     func unlink(channel: ChatChannel, with query: ChannelListQuery, completion: (@Sendable (Error?) -> Void)? = nil) {
         database.write { session in
             guard let (channelDTO, queryDTO) = session.getChannelWithQuery(cid: channel.cid, query: query) else {
                 return
             }
-            queryDTO.channels.remove(channelDTO)
+            let removed = queryDTO.channels.remove(channelDTO)
+            if removed != nil, let groupKey = query.groupKey, groupKey != GroupedChannelKey.all, channelDTO.currentUserUnreadMessagesCount > 0 {
+                session.adjustGroupedUnreadCount(forGroup: groupKey, by: -1)
+            }
         } completion: { error in
             completion?(error)
         }

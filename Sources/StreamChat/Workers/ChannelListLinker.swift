@@ -144,11 +144,11 @@ final class ChannelListLinker: Sendable {
     private func linkingAction(for channel: ChatChannel) -> LinkingAction {
         if let groupKey = query.groupKey {
             // "all" group key is special, all the other groups are always linked to it
-            let currentGroupKey = channel.extraData["group"]?.stringValue?
+            let currentGroupKey = channel.extraData[GroupedChannelKey.extraData]?.stringValue?
                 .trimmingCharacters(in: .whitespacesAndNewlines)
                 .lowercased()
             if let currentGroupKey, !currentGroupKey.isEmpty {
-                return groupKey == currentGroupKey || groupKey == "all" ? .link : .unlink
+                return groupKey == currentGroupKey || groupKey == GroupedChannelKey.all ? .link : .unlink
             }
             return .none
         } else {

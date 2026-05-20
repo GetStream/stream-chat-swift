@@ -124,6 +124,10 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.saveCurrentUserGroupedUnreadCount(groupedUnreadCount)
     }
 
+    func adjustGroupedUnreadCount(forGroup groupKey: String, by delta: Int) {
+        underlyingSession.adjustGroupedUnreadCount(forGroup: groupKey, by: delta)
+    }
+
     func deleteDevice(id: DeviceId) {
         underlyingSession.deleteDevice(id: id)
     }

@@ -44,3 +44,11 @@ struct GroupedChannelsPagination: Sendable {
     let groupKey: String
     let next: String?
 }
+
+/// Constants used by the grouped channels feature.
+enum GroupedChannelKey {
+    /// Special group key whose list contains channels from every other group.
+    static let all = "all"
+    /// `ChatChannel.extraData` field that carries the channel's group membership.
+    static let extraData = "group"
+}

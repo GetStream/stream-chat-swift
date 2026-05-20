@@ -156,6 +156,15 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         dto.groupedUnreadCount = groupedUnreadCount
     }
 
+    func adjustGroupedUnreadCount(forGroup groupKey: String, by delta: Int) {
+        invalidateCurrentUserCache()
+        guard let dto = currentUser, var counts = dto.groupedUnreadCount, let existing = counts[groupKey] else {
+            return
+        }
+        counts[groupKey] = max(0, existing + delta)
+        dto.groupedUnreadCount = counts
+    }
+
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
         invalidateCurrentUserCache()
 
