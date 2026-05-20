@@ -115,14 +115,14 @@ class LivestreamChannelHandler: DataStoreProvider, @unchecked Sendable {
 
     /// Closures invoked on the main thread when state changes.
     struct Handlers {
-        var channelDidChange: @MainActor (ChatChannel) -> Void = { _ in }
-        var messagesDidChange: @MainActor ([ChatMessage]) -> Void = { _ in }
-        var pauseDidChange: @MainActor (Bool) -> Void = { _ in }
-        var skippedMessagesAmountDidChange: @MainActor (Int) -> Void = { _ in }
-        var typingUsersDidChange: @MainActor (Set<ChatUser>) -> Void = { _ in }
+        var channelDidChange: @MainActor (ChatChannel) -> Void
+        var messagesDidChange: @MainActor ([ChatMessage]) -> Void
+        var pauseDidChange: @MainActor (Bool) -> Void
+        var skippedMessagesAmountDidChange: @MainActor (Int) -> Void
+        var typingUsersDidChange: @MainActor (Set<ChatUser>) -> Void
     }
 
-    private var handlers = Handlers()
+    private var handlers: Handlers?
 
     func setHandlers(_ handlers: Handlers) {
         self.handlers = handlers
@@ -242,7 +242,7 @@ class LivestreamChannelHandler: DataStoreProvider, @unchecked Sendable {
     // MARK: - Private
 
     private func handlerCallback(_ callback: @escaping @MainActor (Handlers) -> Void) {
-        let handlers = handlers
+        guard let handlers else { return }
         DispatchQueue.main.async {
             callback(handlers)
         }

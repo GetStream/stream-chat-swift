@@ -145,35 +145,30 @@ final class YTLiveChatViewController: _ViewController,
 
     private func observeStateChanges() {
         livestreamChat.state.$channel
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] _ in
                 self?.messageComposerVC.updateContent()
             }
             .store(in: &cancellables)
 
         livestreamChat.state.$messages
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] messages in
                 self?.applyMessagesUpdate(messages)
             }
             .store(in: &cancellables)
 
         livestreamChat.state.$isPaused
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] isPaused in
                 self?.showPauseBanner(isPaused)
             }
             .store(in: &cancellables)
 
         livestreamChat.state.$skippedMessagesAmount
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] skipped in
                 self?.messageListVC.scrollToBottomButton.content = .init(messages: skipped, mentions: 0)
             }
             .store(in: &cancellables)
 
         livestreamChat.state.$typingUsers
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] typingUsers in
                 self?.applyTypingUsersUpdate(typingUsers)
             }

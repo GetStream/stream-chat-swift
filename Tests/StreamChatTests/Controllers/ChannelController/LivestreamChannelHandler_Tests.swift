@@ -193,7 +193,7 @@ extension LivestreamChannelHandler_Tests {
         let exp = expectation(description: "pause callback fires once")
         exp.expectedFulfillmentCount = 1
         exp.assertForOverFulfill = true
-        handler.setHandlers(.init(
+        handler.setHandlers(.test(
             pauseDidChange: { _ in exp.fulfill() }
         ))
 
@@ -722,7 +722,7 @@ extension LivestreamChannelHandler_Tests {
         let exp = expectation(description: "typingUsers callback fires once")
         exp.expectedFulfillmentCount = 1
         exp.assertForOverFulfill = true
-        handler.setHandlers(.init(typingUsersDidChange: { _ in
+        handler.setHandlers(.test(typingUsersDidChange: { _ in
             exp.fulfill()
         }))
 
@@ -841,7 +841,7 @@ extension LivestreamChannelHandler_Tests {
 extension LivestreamChannelHandler_Tests {
     func test_settingChannel_invokesChannelDidChangeCallback() {
         let exp = expectation(description: "channelDidChange fires")
-        handler.setHandlers(.init(channelDidChange: { channel in
+        handler.setHandlers(.test(channelDidChange: { channel in
             XCTAssertEqual(channel.cid, self.cid)
             exp.fulfill()
         }))
@@ -852,7 +852,7 @@ extension LivestreamChannelHandler_Tests {
 
     func test_settingMessages_invokesMessagesDidChangeCallback() {
         let exp = expectation(description: "messagesDidChange fires")
-        handler.setHandlers(.init(messagesDidChange: { messages in
+        handler.setHandlers(.test(messagesDidChange: { messages in
             XCTAssertEqual(messages.map(\.id), ["m"])
             exp.fulfill()
         }))
@@ -863,7 +863,7 @@ extension LivestreamChannelHandler_Tests {
 
     func test_settingIsPaused_invokesPauseDidChangeCallback() {
         let exp = expectation(description: "pauseDidChange fires")
-        handler.setHandlers(.init(pauseDidChange: { isPaused in
+        handler.setHandlers(.test(pauseDidChange: { isPaused in
             XCTAssertTrue(isPaused)
             exp.fulfill()
         }))
@@ -874,13 +874,35 @@ extension LivestreamChannelHandler_Tests {
 
     func test_skippedMessagesAmount_invokesSkippedCallback() {
         let exp = expectation(description: "skippedMessagesAmountDidChange fires")
-        handler.setHandlers(.init(skippedMessagesAmountDidChange: { amount in
+        handler.setHandlers(.test(skippedMessagesAmountDidChange: { amount in
             XCTAssertEqual(amount, 7)
             exp.fulfill()
         }))
 
         handler.skippedMessagesAmount = 7
         wait(for: [exp], timeout: defaultTimeout)
+    }
+}
+
+// MARK: - Handler convenience for tests
+
+private extension LivestreamChannelHandler.Handlers {
+    /// Convenience for tests that only care about a single callback. All
+    /// callbacks default to no-ops; pass only the ones the test needs.
+    static func test(
+        channelDidChange: @escaping @MainActor (ChatChannel) -> Void = { _ in },
+        messagesDidChange: @escaping @MainActor ([ChatMessage]) -> Void = { _ in },
+        pauseDidChange: @escaping @MainActor (Bool) -> Void = { _ in },
+        skippedMessagesAmountDidChange: @escaping @MainActor (Int) -> Void = { _ in },
+        typingUsersDidChange: @escaping @MainActor (Set<ChatUser>) -> Void = { _ in }
+    ) -> Self {
+        .init(
+            channelDidChange: channelDidChange,
+            messagesDidChange: messagesDidChange,
+            pauseDidChange: pauseDidChange,
+            skippedMessagesAmountDidChange: skippedMessagesAmountDidChange,
+            typingUsersDidChange: typingUsersDidChange
+        )
     }
 }
 

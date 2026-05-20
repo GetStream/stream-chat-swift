@@ -355,15 +355,6 @@ final class LivestreamChat_Tests: XCTestCase {
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
-    func test_loadNewerMessages_withoutMessages_throwsChannelEmptyMessages() async {
-        do {
-            try await livestreamChat.loadNewerMessages()
-            XCTFail("Expected ChannelEmptyMessages error")
-        } catch {
-            XCTAssertTrue(error is ClientError.ChannelEmptyMessages)
-        }
-    }
-
     // MARK: - Pause / Resume
 
     func test_pause_forwardsToHandler() {

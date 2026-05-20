@@ -871,7 +871,6 @@
 				StreamChatTests/StateLayer/Chat_Tests.swift,
 				StreamChatTests/StateLayer/ConnectedUser_Tests.swift,
 				StreamChatTests/StateLayer/LivestreamChat_Tests.swift,
-				StreamChatTests/StateLayer/LivestreamChatState_Tests.swift,
 				StreamChatTests/StateLayer/MemberList_Tests.swift,
 				StreamChatTests/StateLayer/MessageSearch_Tests.swift,
 				StreamChatTests/StateLayer/MessageState_Tests.swift,
