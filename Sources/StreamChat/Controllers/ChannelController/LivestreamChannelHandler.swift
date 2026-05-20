@@ -460,11 +460,6 @@ class LivestreamChannelHandler: DataStoreProvider, @unchecked Sendable {
     }
 
     private func updateCurrentlyTypingUsers(_ typingUsers: Set<ChatUser>) {
-        // Compare by user id only. `Set<ChatUser>.==` falls back to `ChatUser.Equatable`,
-        // which checks ~13 fields including `lastActiveAt` and `extraData`. The server
-        // refreshes those on each re-emitted `typing.start`, so a strict comparison would
-        // report a change for every keystroke from an already-typing user and fire
-        // `didUpdateChannel` (plus rebuild the `ChatChannel` struct) for free.
         let previousIds = Set((channel?.currentlyTypingUsers ?? []).map(\.id))
         let newIds = Set(typingUsers.map(\.id))
         guard previousIds != newIds else { return }
