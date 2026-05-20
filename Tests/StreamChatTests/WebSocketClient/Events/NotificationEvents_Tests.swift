@@ -54,7 +54,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.unreadCount, .init(channels: 8, messages: 55, threads: 10))
     }
 
-    func test_markRead_decodesGroupedUnreadChannels() throws {
+    func test_markRead_decodesGroupedUnreadCount() throws {
         let json = """
         {
           "type": "notification.mark_read",
@@ -107,10 +107,10 @@ final class NotificationsEvents_Tests: XCTestCase {
         """.data(using: .utf8)!
 
         let event = try eventDecoder.decode(from: json) as? NotificationMarkReadEventDTO
-        let groupedUnreadChannels = try XCTUnwrap(event?.payload.groupedUnreadChannels)
-        XCTAssertEqual(groupedUnreadChannels["direct"], 2)
-        XCTAssertEqual(groupedUnreadChannels["vip"], 5)
-        XCTAssertEqual(groupedUnreadChannels.count, 2)
+        let groupedUnreadCount = try XCTUnwrap(event?.payload.groupedUnreadCount)
+        XCTAssertEqual(groupedUnreadCount["direct"], 2)
+        XCTAssertEqual(groupedUnreadCount["vip"], 5)
+        XCTAssertEqual(groupedUnreadCount.count, 2)
     }
 
     func test_markUnread() throws {
@@ -259,13 +259,13 @@ final class NotificationsEvents_Tests: XCTestCase {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
-        let groupedUnreadChannels: GroupedUnreadChannels = ["direct": 4, "support": 1]
+        let groupedUnreadCount: [String: Int] = ["direct": 4, "support": 1]
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
             cid: .unique,
             user: .dummy(userId: .unique),
             unreadCount: .init(channels: .unique, messages: .unique, threads: .unique),
-            groupedUnreadChannels: groupedUnreadChannels,
+            groupedUnreadCount: groupedUnreadCount,
             createdAt: .unique,
             lastReadMessageId: "lastRead"
         )
@@ -286,7 +286,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.user.id, eventPayload.user?.id)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssert(event.unreadCount?.isEqual(toPayload: eventPayload.unreadCount) == true)
-        XCTAssertEqual(event.groupedUnreadChannels, groupedUnreadChannels)
+        XCTAssertEqual(event.groupedUnreadCount, groupedUnreadCount)
         XCTAssertEqual(event.lastReadMessageId, eventPayload.lastReadMessageId)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
     }
@@ -297,13 +297,13 @@ final class NotificationsEvents_Tests: XCTestCase {
 
         let lastReadAt = Date()
         // Create event payload
-        let groupedUnreadChannels: GroupedUnreadChannels = ["mentions": 2, "team": 6]
+        let groupedUnreadCount: [String: Int] = ["mentions": 2, "team": 6]
         let eventPayload = EventPayload(
             eventType: .notificationMarkRead,
             cid: .unique,
             user: .dummy(userId: .unique),
             unreadCount: .init(channels: .unique, messages: .unique, threads: .unique),
-            groupedUnreadChannels: groupedUnreadChannels,
+            groupedUnreadCount: groupedUnreadCount,
             createdAt: .unique,
             firstUnreadMessageId: "Hello",
             lastReadAt: lastReadAt,
@@ -330,7 +330,7 @@ final class NotificationsEvents_Tests: XCTestCase {
         XCTAssertEqual(event.firstUnreadMessageId, eventPayload.firstUnreadMessageId)
         XCTAssertEqual(event.lastReadAt, eventPayload.lastReadAt)
         XCTAssertEqual(event.lastReadMessageId, eventPayload.lastReadMessageId)
-        XCTAssertEqual(event.groupedUnreadChannels, groupedUnreadChannels)
+        XCTAssertEqual(event.groupedUnreadCount, groupedUnreadCount)
         XCTAssertEqual(event.unreadMessagesCount, eventPayload.unreadMessagesCount)
     }
 
@@ -565,12 +565,12 @@ final class NotificationsEvents_Tests: XCTestCase {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         // Create event payload
-        let groupedUnreadChannels: GroupedUnreadChannels = ["deleted": 8]
+        let groupedUnreadCount: [String: Int] = ["deleted": 8]
         let eventPayload = EventPayload(
             eventType: .notificationChannelDeleted,
             cid: .unique,
             channel: .dummy(cid: .unique),
-            groupedUnreadChannels: groupedUnreadChannels,
+            groupedUnreadCount: groupedUnreadCount,
             createdAt: .unique
         )
 
@@ -586,6 +586,6 @@ final class NotificationsEvents_Tests: XCTestCase {
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? NotificationChannelDeletedEvent)
         XCTAssertEqual(event.cid, eventPayload.cid)
         XCTAssertEqual(event.createdAt, eventPayload.createdAt)
-        XCTAssertEqual(event.groupedUnreadChannels, groupedUnreadChannels)
+        XCTAssertEqual(event.groupedUnreadCount, groupedUnreadCount)
     }
 }

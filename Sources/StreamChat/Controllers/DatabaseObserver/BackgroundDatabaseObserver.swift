@@ -16,7 +16,7 @@ class BackgroundDatabaseObserver<Item: Sendable, DTO: NSManagedObject>: @uncheck
     private let sorting: [SortValue<Item>]
 
     /// Used to observe the changes in the DB.
-    let frc: NSFetchedResultsController<DTO>
+    private(set) var frc: NSFetchedResultsController<DTO>
 
     /// Acts like the `NSFetchedResultsController`'s delegate and aggregates the reported changes into easily consumable form.
     let changeAggregator: ListChangeAggregator<DTO, Item>

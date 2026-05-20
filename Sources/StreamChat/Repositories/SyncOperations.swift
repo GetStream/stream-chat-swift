@@ -114,6 +114,13 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
     }
 }
 
+/// Refreshes all grouped channel lists (queries with a `groupKey`) with a single shared `/channels` request.
+///
+/// Grouped channel lists share their first page via a backend-side group identifier, so per-list refreshes
+/// would duplicate work and produce inconsistent first pages across active lists. This operation issues one
+/// request that returns the first page for every active group, and every grouped `ChannelList`
+/// reads from the resulting cached response. The returned channel ids are added to `context.synchedChannelIds`
+/// so the subsequent `/sync` step skips them.
 final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
     init(channelListUpdater: ChannelListUpdater, context: SyncContext) {
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelListUpdater] _, done in
@@ -124,13 +131,11 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
 
             Task {
                 do {
-                    let groupedChannels = try await channelListUpdater.queryGroupedChannels(groupPagination: nil, limit: nil, watch: true, presence: false)
-                    let returnedChannelIds = groupedChannels.groups.values
-                        .flatMap(\.channels)
-                        .map(\.cid)
+                    let channelGroups = try await channelListUpdater.queryGroupedChannels(groupPagination: nil, limit: nil, watch: true, presence: false)
+                    let returnedChannelIds = channelGroups.flatMap(\.channelIds)
                     context.synchedChannelIds.formUnion(returnedChannelIds)
                     log.debug(
-                        "Synced \(returnedChannelIds.count) grouped channels across \(groupedChannels.groups.count) group(s)",
+                        "Synced \(returnedChannelIds.count) grouped channels across \(channelGroups.count) group(s)",
                         subsystems: .offlineSupport
                     )
                     done(.continue)

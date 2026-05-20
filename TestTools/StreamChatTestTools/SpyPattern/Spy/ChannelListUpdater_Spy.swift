@@ -20,7 +20,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
 
     @Atomic var queryGroupedChannels_callCount = 0
     @Atomic var queryGroupedChannels_paginations: [GroupedChannelsPagination?] = []
-    @Atomic var queryGroupedChannels_result: Result<GroupedChannels, Error>?
+    @Atomic var queryGroupedChannels_result: Result<[ChannelGroup], Error>?
 
     @Atomic var markAllRead_completion: (@Sendable (Error?) -> Void)?
 
@@ -101,7 +101,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         limit: Int?,
         watch: Bool,
         presence: Bool,
-        completion: @escaping @Sendable (Result<GroupedChannels, Error>) -> Void
+        completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
     ) {
         _queryGroupedChannels_callCount.mutate { $0 += 1 }
         _queryGroupedChannels_paginations.mutate { $0.append(groupPagination) }

@@ -67,15 +67,18 @@ public class ChannelList: @unchecked Sendable {
     /// - Returns: An array of channels for the pagination.
     @discardableResult public func loadChannels(with pagination: Pagination) async throws -> [ChatChannel] {
         if let groupKey = query.groupKey {
-            let groupedChannels = try await channelListUpdater.queryGroupedChannels(
+            let channelGroups = try await channelListUpdater.queryGroupedChannels(
                 groupPagination: .init(groupKey: groupKey, next: pagination.cursor),
                 limit: pagination.pageSize,
                 watch: true,
                 presence: true
             )
-            let group = groupedChannels.groups[groupKey]
+            let group = channelGroups.first { $0.groupKey == groupKey }
             await setHasLoadedAllPreviousChannels(group?.next == nil)
-            return group?.channels ?? []
+            guard let channelIds = group?.channelIds, !channelIds.isEmpty else { return [] }
+            return try await client.databaseContainer.read { session in
+                channelIds.compactMap { try? session.channel(cid: $0)?.asModel() }
+            }
         } else {
             return try await channelListUpdater.loadChannels(query: query, pagination: pagination)
         }

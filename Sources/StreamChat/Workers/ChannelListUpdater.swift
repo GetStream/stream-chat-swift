@@ -190,12 +190,12 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         limit: Int?,
         watch: Bool,
         presence: Bool,
-        completion: @escaping @Sendable (Result<GroupedChannels, Error>) -> Void
+        completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
     ) {
         // Only one group is supported for pagination, nil means all groups are returned with the first page
         let paginatedGroup: [String: GroupedQueryChannelsRequestGroup]? = {
             guard let groupPagination else { return nil }
-            return [groupPagination.groupKey: GroupedQueryChannelsRequestGroup(limit: limit, next: groupPagination.next, prev: nil)]
+            return [groupPagination.groupKey: GroupedQueryChannelsRequestGroup(limit: limit, next: groupPagination.next)]
         }()
         let request = GroupedQueryChannelsRequestBody(
             limit: paginatedGroup == nil ? limit : nil,
@@ -213,29 +213,29 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
             case let .success(payload):
                 database.write(converting: { session in
                     if isInitialFetch {
-                        let groupedUnreadChannels = payload.groups.mapValues(\.unreadChannels)
-                        try session.saveCurrentUserGroupedUnreadChannels(groupedUnreadChannels)
+                        let groupedUnreadCount = payload.groups.mapValues(\.unreadChannels)
+                        try session.saveCurrentUserGroupedUnreadCount(groupedUnreadCount)
                     }
-                    var groups: [String: GroupedChannelsGroup] = [:]
+                    var groups: [ChannelGroup] = []
                     for (groupKey, groupPayload) in payload.groups {
                         let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: groupKey))
                         if isInitialFetch || isFirstPageForSingleGroup {
                             queryDTO.channels.removeAll()
                         }
                         queryDTO.next = groupPayload.next
-                        let channels = groupPayload.channels.compactMapLoggingError { channelPayload in
+                        let channelIds = groupPayload.channels.compactMapLoggingError { channelPayload in
                             let dto = try session.saveChannel(payload: channelPayload)
                             queryDTO.channels.insert(dto)
-                            return try dto.asModel()
+                            return channelPayload.channel.cid
                         }
-                        groups[groupKey] = GroupedChannelsGroup(
+                        groups.append(ChannelGroup(
                             groupKey: groupKey,
-                            channels: channels,
+                            channelIds: channelIds,
                             unreadChannels: groupPayload.unreadChannels,
                             next: groupPayload.next
-                        )
+                        ))
                     }
-                    return GroupedChannels(groups: groups)
+                    return groups
                 }, completion: { result in
                     completion(result)
                 })
@@ -248,7 +248,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         limit: Int?,
         watch: Bool,
         presence: Bool
-    ) async throws -> GroupedChannels {
+    ) async throws -> [ChannelGroup] {
         try await withCheckedThrowingContinuation { continuation in
             queryGroupedChannels(
                 groupPagination: groupPagination,

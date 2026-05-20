@@ -160,8 +160,7 @@ class SyncRepository: @unchecked Sendable {
     ///
     /// Background mode (other regular API requests are allowed to run at the same time)
     /// 1. Collect all the **active** channel ids (from instances of `Chat`, `ChannelList`, `ChatChannelController`, `ChatChannelListController`)
-    /// 2. Refresh channel lists (channels for current pages in `ChannelList`, non-grouped `ChatChannelListController`)
-    /// 2.5 Refresh the shared grouped channels response when any grouped `ChatChannelListController` or `ChannelList` is active
+    /// 2. Refresh channel lists (channels for current pages in `ChannelList`, `ChatChannelListController`, including grouped lists)
     /// 3. Apply updates from the /sync endpoint for channels not in active channel lists (max 2000 events is supported)
     ///      * channel controllers targeting other channels
     ///      * no channel lists active, but channel controllers are
@@ -191,7 +190,7 @@ class SyncRepository: @unchecked Sendable {
             /// 1. Collect all the **active** channel ids
             operations.append(ActiveChannelIdsOperation(syncRepository: self, context: context))
             
-            // 2. Refresh standard (non-grouped) channel lists
+            // 2. Refresh channel lists (non-grouped lists individually, grouped lists via a single shared request)
             let allChannelLists = activeChannelLists.allObjects
             operations.append(contentsOf: allChannelLists
                 .filter { $0.query.groupKey == nil }
@@ -200,8 +199,6 @@ class SyncRepository: @unchecked Sendable {
             operations.append(contentsOf: activeChannelListControllers.allObjects
                 .map { RefreshChannelListOperation(controller: $0, context: context) }
             )
-
-            // 2.5 Refresh grouped channels (lists identified by groupKey)
             if allChannelLists.contains(where: { $0.query.groupKey != nil }) {
                 operations.append(SyncGroupedChannelsOperation(channelListUpdater: channelListUpdater, context: context))
             }

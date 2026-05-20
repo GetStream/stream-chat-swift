@@ -7,7 +7,7 @@ import Foundation
 
 @objc(CurrentUserDTO)
 class CurrentUserDTO: NSManagedObject {
-    /// JSON-encoded `GroupedUnreadChannels` (`[groupKey: unreadCount]`)
+    /// JSON-encoded `[groupKey: unreadCount]`.
     @NSManaged var unreadGroupedChannelsCounts: Data?
     @NSManaged var unreadChannelsCount: Int64
     @NSManaged var unreadMessagesCount: Int64
@@ -146,14 +146,14 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         }
     }
 
-    func saveCurrentUserGroupedUnreadChannels(_ groupedUnreadChannels: GroupedUnreadChannels) throws {
+    func saveCurrentUserGroupedUnreadCount(_ groupedUnreadCount: [String: Int]) throws {
         invalidateCurrentUserCache()
 
         guard let dto = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
-        dto.groupedUnreadChannels = groupedUnreadChannels
+        dto.groupedUnreadCount = groupedUnreadCount
     }
 
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
@@ -225,10 +225,10 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 }
 
 extension CurrentUserDTO {
-    var groupedUnreadChannels: GroupedUnreadChannels? {
+    var groupedUnreadCount: [String: Int]? {
         get {
             guard let unreadGroupedChannelsCounts else { return nil }
-            return try? JSONDecoder.default.decode(GroupedUnreadChannels.self, from: unreadGroupedChannelsCounts)
+            return try? JSONDecoder.default.decode([String: Int].self, from: unreadGroupedChannelsCounts)
         }
         set {
             unreadGroupedChannelsCounts = newValue.flatMap { try? JSONEncoder.default.encode($0) }
@@ -306,7 +306,7 @@ extension CurrentChatUser {
                 messages: Int(dto.unreadMessagesCount),
                 threads: Int(dto.unreadThreadsCount)
             ),
-            groupedUnreadChannels: dto.groupedUnreadChannels,
+            groupedUnreadCount: dto.groupedUnreadCount,
             mutedChannels: mutedChannels,
             privacySettings: .init(
                 typingIndicators: .init(enabled: dto.isTypingIndicatorsEnabled),

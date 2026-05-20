@@ -182,20 +182,20 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(currentUser?.unreadCount.threads, 3)
     }
 
-    func test_saveCurrentUserGroupedUnreadChannels_isStoredAndLoadedFromDB() throws {
+    func test_saveCurrentUserGroupedUnreadCount_isStoredAndLoadedFromDB() throws {
         let payload = CurrentUserPayload.dummy(userPayload: .dummy(userId: .unique, role: .admin))
-        let groupedUnreadChannels: GroupedUnreadChannels = [
+        let groupedUnreadCount: [String: Int] = [
             "direct": 2,
             "support": 5
         ]
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: payload)
-            try session.saveCurrentUserGroupedUnreadChannels(groupedUnreadChannels)
+            try session.saveCurrentUserGroupedUnreadCount(groupedUnreadCount)
         }
 
         let loadedCurrentUser = try XCTUnwrap(database.viewContext.currentUser?.asModel())
-        XCTAssertEqual(loadedCurrentUser.groupedUnreadChannels, groupedUnreadChannels)
+        XCTAssertEqual(loadedCurrentUser.groupedUnreadCount, groupedUnreadCount)
     }
 
     func test_saveCurrentUser_removesChannelMutesNotInPayload() throws {

@@ -119,9 +119,9 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.saveCurrentUserUnreadCount(count: count)
     }
 
-    func saveCurrentUserGroupedUnreadChannels(_ groupedUnreadChannels: GroupedUnreadChannels) throws {
+    func saveCurrentUserGroupedUnreadCount(_ groupedUnreadCount: [String: Int]) throws {
         try throwErrorIfNeeded()
-        try underlyingSession.saveCurrentUserGroupedUnreadChannels(groupedUnreadChannels)
+        try underlyingSession.saveCurrentUserGroupedUnreadCount(groupedUnreadCount)
     }
 
     func deleteDevice(id: DeviceId) {

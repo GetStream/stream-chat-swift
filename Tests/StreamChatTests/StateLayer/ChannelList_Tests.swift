@@ -121,14 +121,14 @@ final class ChannelList_Tests: XCTestCase {
             let queryDTO = session.saveQuery(query: groupedQuery)
             queryDTO.next = "cursor-1"
         }
-        env.channelListUpdaterMock.queryGroupedChannels_result = .success(
-            GroupedChannels(groups: ["all": GroupedChannelsGroup(
+        env.channelListUpdaterMock.queryGroupedChannels_result = .success([
+            ChannelGroup(
                 groupKey: "all",
-                channels: [],
+                channelIds: [],
                 unreadChannels: 0,
                 next: "cursor-2"
-            )])
-        )
+            )
+        ])
 
         _ = try await channelList.loadMoreChannels(limit: 5)
 

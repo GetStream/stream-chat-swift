@@ -656,7 +656,7 @@ public class ChatClient: @unchecked Sendable {
         limit: Int? = nil,
         presence: Bool = false,
         watch: Bool = false,
-        completion: @escaping @Sendable (Result<GroupedChannels, Error>) -> Void
+        completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
     ) {
         channelListUpdater.queryGroupedChannels(
             groupPagination: nil,
@@ -672,7 +672,7 @@ public class ChatClient: @unchecked Sendable {
         limit: Int? = nil,
         presence: Bool = false,
         watch: Bool = false
-    ) async throws -> GroupedChannels {
+    ) async throws -> [ChannelGroup] {
         try await withCheckedThrowingContinuation { continuation in
             queryGroupedChannels(limit: limit, presence: presence, watch: watch) { result in
                 continuation.resume(with: result)

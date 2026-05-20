@@ -470,7 +470,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
         }
-        nonisolated(unsafe) var completionResult: Result<GroupedChannels, Error>?
+        nonisolated(unsafe) var completionResult: Result<[ChannelGroup], Error>?
         let exp = expectation(description: "completion called")
         listUpdater.queryGroupedChannels(groupPagination: nil, limit: nil, watch: false, presence: false) { result in
             completionResult = result
@@ -486,16 +486,16 @@ final class ChannelListUpdater_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(payload))
 
         waitForExpectations(timeout: defaultTimeout)
-        let group = try completionResult?.get().groups["current"]
+        let group = try completionResult?.get().first { $0.groupKey == "current" }
         XCTAssertEqual("next-cursor", group?.next)
     }
 
-    func test_queryGroupedChannels_paginated_doesNotOverwriteGroupedUnreadChannels() throws {
+    func test_queryGroupedChannels_paginated_doesNotOverwriteGroupedUnreadCount() throws {
         // Seed current user with unread counts for multiple groups.
         let userId = UserId.unique
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
-            try session.saveCurrentUserGroupedUnreadChannels(["new": 5, "current": 10, "old": 2])
+            try session.saveCurrentUserGroupedUnreadCount(["new": 5, "current": 10, "old": 2])
         }
 
         let pagination = GroupedChannelsPagination(groupKey: "old", next: "cursor")
@@ -513,7 +513,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionCalled)
 
         // Other groups' counters must remain intact (would be clobbered if mapValues ran).
-        let counters = database.viewContext.currentUser?.groupedUnreadChannels ?? [:]
+        let counters = database.viewContext.currentUser?.groupedUnreadCount ?? [:]
         XCTAssertEqual(5, counters["new"])
         XCTAssertEqual(10, counters["current"])
         XCTAssertEqual(2, counters["old"])

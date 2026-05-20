@@ -174,7 +174,7 @@ final class ChannelListPayload_Tests: XCTestCase {
     func test_groupedQueryChannelsRequestBody_paginatedGroup_encodesWithGroupsKeyAndCursor() throws {
         let body = GroupedQueryChannelsRequestBody(
             limit: nil,
-            groups: ["old": .init(limit: 5, next: "old-cursor", prev: nil)],
+            groups: ["old": .init(limit: 5, next: "old-cursor")],
             watch: false,
             presence: true
         )

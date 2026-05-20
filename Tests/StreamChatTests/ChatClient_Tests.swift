@@ -289,7 +289,7 @@ final class ChatClient_Tests: XCTestCase {
         )
 
         let expectation = self.expectation(description: "grouped query channels completes")
-        var receivedGroupedChannels: GroupedChannels?
+        var receivedGroupedChannels: [ChannelGroup]?
         var receivedError: Error?
 
         client.queryGroupedChannels(limit: 4, presence: false, watch: true) { result in
@@ -308,7 +308,7 @@ final class ChatClient_Tests: XCTestCase {
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertNil(receivedError)
-        XCTAssertEqual(receivedGroupedChannels?.groups.keys.sorted(), ["all", "current", "new"])
+        XCTAssertEqual(receivedGroupedChannels?.map(\.groupKey).sorted(), ["all", "current", "new"])
     }
 
     func test_disconnect_flushesRequestsQueue() throws {

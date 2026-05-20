@@ -44,10 +44,14 @@ final class GroupedQueryChannelsRequestBody: Encodable, Sendable {
     }
 }
 
-struct GroupedQueryChannelsRequestGroup: Encodable, Sendable {
+final class GroupedQueryChannelsRequestGroup: Encodable, Sendable {
     let limit: Int?
     let next: String?
-    let prev: String?
+
+    init(limit: Int?, next: String?) {
+        self.limit = limit
+        self.next = next
+    }
 }
 
 final class GroupedQueryChannelsPayload: Decodable, Sendable {

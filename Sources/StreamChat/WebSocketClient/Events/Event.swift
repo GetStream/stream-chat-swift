@@ -40,9 +40,9 @@ public protocol HasUnreadCount: Event {
 }
 
 /// A protocol for events that carry grouped unread channel counts.
-public protocol HasGroupedUnreadChannels: Event {
+public protocol HasGroupedUnreadCount: Event {
     /// Grouped unread channel counts keyed by the backend-provided group identifier.
-    var groupedUnreadChannels: GroupedUnreadChannels? { get }
+    var groupedUnreadCount: [String: Int]? { get }
 }
 
 /// A protocol for any `MemberEvent` where it has a `member`, and `channel` payload.
