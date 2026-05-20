@@ -177,9 +177,6 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
     /// Returns `nil` when there are no headers to forward. Otherwise returns a
     /// dictionary containing `AVURLAssetHTTPHeaderFieldsKey` so the asset's
     /// underlying network requests carry the CDN-provided authentication headers.
-    ///
-    /// Internal (not `private`) so the headers-forwarding contract can be
-    /// directly unit-tested via `@testable import`.
     func assetOptions(for cdnRequest: CDNRequest) -> [String: Any]? {
         guard let headers = cdnRequest.headers, !headers.isEmpty else { return nil }
         return ["AVURLAssetHTTPHeaderFieldsKey": headers]
