@@ -24,6 +24,7 @@ import Foundation
         isPaused = handler.isPaused
         skippedMessagesAmount = handler.skippedMessagesAmount
         typingUsers = handler.channel?.currentlyTypingUsers ?? []
+        configureHandlerCallbacks()
     }
 
     // MARK: - Represented Channel and Query
@@ -103,5 +104,29 @@ import Foundation
     /// - Returns: 0, if slow mode is not enabled or the channel can skip slow mode, otherwise the remaining cooldown duration in seconds.
     public var remainingCooldownDuration: Int {
         handler.currentCooldownTime()
+    }
+    
+    // MARK: - Internal
+    
+    private func configureHandlerCallbacks() {
+        handler.setHandlers(
+            LivestreamChannelHandler.Handlers(
+                channelDidChange: { [weak self] channel in
+                    self?.channel = channel
+                },
+                messagesDidChange: { [weak self] messages in
+                    self?.messages = messages
+                },
+                pauseDidChange: { [weak self] isPaused in
+                    self?.isPaused = isPaused
+                },
+                skippedMessagesAmountDidChange: { [weak self] skipped in
+                    self?.skippedMessagesAmount = skipped
+                },
+                typingUsersDidChange: { [weak self] typingUsers in
+                    self?.typingUsers = typingUsers
+                }
+            )
+        )
     }
 }

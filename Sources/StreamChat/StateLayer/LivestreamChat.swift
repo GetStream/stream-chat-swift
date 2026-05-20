@@ -53,8 +53,6 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
             environment.livestreamChatStateBuilder(handler, client)
         }
 
-        configureHandlerCallbacks()
-
         eventObserver = client.subscribe { [weak self] event in
             self?.didReceiveEvent(event)
         }
@@ -70,28 +68,6 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
             client.eventNotificationCenter.unregisterManualEventHandling(for: cid)
         }
         appStateObserver.unsubscribe(self)
-    }
-
-    private func configureHandlerCallbacks() {
-        handler.setHandlers(
-            LivestreamChannelHandler.Handlers(
-                channelDidChange: { [weak self] channel in
-                    self?.stateBuilder.state.channel = channel
-                },
-                messagesDidChange: { [weak self] messages in
-                    self?.stateBuilder.state.messages = messages
-                },
-                pauseDidChange: { [weak self] isPaused in
-                    self?.stateBuilder.state.isPaused = isPaused
-                },
-                skippedMessagesAmountDidChange: { [weak self] skipped in
-                    self?.stateBuilder.state.skippedMessagesAmount = skipped
-                },
-                typingUsersDidChange: { [weak self] typingUsers in
-                    self?.stateBuilder.state.typingUsers = typingUsers
-                }
-            )
-        )
     }
 
     func didReceiveEvent(_ event: Event) {
