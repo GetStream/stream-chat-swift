@@ -22,7 +22,6 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     private let handler: LivestreamChannelHandler
     private var eventObserver: AnyCancellable?
     @MainActor private var stateBuilder: StateBuilder<LivestreamChatState>
-    @MainActor private var isResuming: Bool = false
 
     init(
         channelQuery: ChannelQuery,
@@ -272,12 +271,12 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     @MainActor public func resume() async throws {
-        guard handler.isPaused, !isResuming else { return }
+        guard handler.isPaused, !state.isResuming else { return }
 
         handler.resetSkippedMessagesCountIfNeeded()
 
-        isResuming = true
-        defer { isResuming = false }
+        state.isResuming = true
+        defer { state.isResuming = false }
         defer { handler.resume() }
         try await loadFirstPage()
     }

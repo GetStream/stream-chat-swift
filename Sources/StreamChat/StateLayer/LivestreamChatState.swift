@@ -89,6 +89,8 @@ import Foundation
     /// The amount of messages that were skipped during the pause state.
     @Published public internal(set) var skippedMessagesAmount: Int = 0
 
+    var isResuming: Bool = false
+
     // MARK: - Typing
 
     /// The current set of users typing in the channel (excludes thread typing events).
