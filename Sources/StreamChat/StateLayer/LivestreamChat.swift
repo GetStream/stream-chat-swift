@@ -22,7 +22,6 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     private let handler: LivestreamChannelHandler
     private var eventObserver: AnyCancellable?
     @MainActor private var stateBuilder: StateBuilder<LivestreamChatState>
-    @MainActor private var isResuming: Bool = false
 
     init(
         channelQuery: ChannelQuery,
@@ -54,8 +53,6 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
             environment.livestreamChatStateBuilder(handler, client)
         }
 
-        configureHandlerCallbacks()
-
         eventObserver = client.subscribe { [weak self] event in
             self?.didReceiveEvent(event)
         }
@@ -71,28 +68,6 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
             client.eventNotificationCenter.unregisterManualEventHandling(for: cid)
         }
         appStateObserver.unsubscribe(self)
-    }
-
-    private func configureHandlerCallbacks() {
-        handler.setHandlers(
-            LivestreamChannelHandler.Handlers(
-                channelDidChange: { [weak self] channel in
-                    self?.stateBuilder.state.channel = channel
-                },
-                messagesDidChange: { [weak self] messages in
-                    self?.stateBuilder.state.messages = messages
-                },
-                pauseDidChange: { [weak self] isPaused in
-                    self?.stateBuilder.state.isPaused = isPaused
-                },
-                skippedMessagesAmountDidChange: { [weak self] skipped in
-                    self?.stateBuilder.state.skippedMessagesAmount = skipped
-                },
-                typingUsersDidChange: { [weak self] typingUsers in
-                    self?.stateBuilder.state.typingUsers = typingUsers
-                }
-            )
-        )
     }
 
     func didReceiveEvent(_ event: Event) {
@@ -188,12 +163,13 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadOlderMessages(before messageId: MessageId? = nil, limit: Int? = nil) async throws {
+        guard !handler.hasLoadedAllPreviousMessages, !handler.isLoadingPreviousMessages else { return }
+
         let messageId = messageId
             ?? handler.paginationStateHandler.state.oldestFetchedMessage?.id
             ?? handler.messages.last?.id
 
         guard let messageId else { throw ClientError.ChannelEmptyMessages() }
-        guard !handler.hasLoadedAllPreviousMessages, !handler.isLoadingPreviousMessages else { return }
 
         let limit = limit ?? handler.channelQuery.pagination?.pageSize ?? .messagesPageSize
         var query = handler.channelQuery
@@ -210,12 +186,13 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func loadNewerMessages(after messageId: MessageId? = nil, limit: Int? = nil) async throws {
+        guard !handler.hasLoadedAllNextMessages, !handler.isLoadingNextMessages else { return }
+
         let messageId = messageId
             ?? handler.paginationStateHandler.state.newestFetchedMessage?.id
             ?? handler.messages.first?.id
 
         guard let messageId else { throw ClientError.ChannelEmptyMessages() }
-        guard !handler.hasLoadedAllNextMessages, !handler.isLoadingNextMessages else { return }
 
         let limit = limit ?? handler.channelQuery.pagination?.pageSize ?? .messagesPageSize
         var query = handler.channelQuery
@@ -272,12 +249,12 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     @MainActor public func resume() async throws {
-        guard handler.isPaused, !isResuming else { return }
+        guard handler.isPaused, !state.isResuming else { return }
 
         handler.resetSkippedMessagesCountIfNeeded()
 
-        isResuming = true
-        defer { isResuming = false }
+        state.isResuming = true
+        defer { state.isResuming = false }
         defer { handler.resume() }
         try await loadFirstPage()
     }
@@ -363,11 +340,7 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func deleteMessage(_ messageId: MessageId, hard: Bool = false) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            apiClient.request(endpoint: .deleteMessage(messageId: messageId, hard: hard)) { result in
-                continuation.resume(with: result.map { _ in () })
-            }
-        }
+        try await apiClient.request(endpoint: .deleteMessage(messageId: messageId, hard: hard))
     }
 
     /// Flags the specified message and forwards it for moderation.
@@ -383,13 +356,9 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
         reason: String? = nil,
         extraData: [String: RawJSON]? = nil
     ) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            apiClient.request(
-                endpoint: .flagMessage(true, with: messageId, reason: reason, extraData: extraData)
-            ) { result in
-                continuation.resume(with: result.map { _ in () })
-            }
-        }
+        try await apiClient.request(
+            endpoint: .flagMessage(true, with: messageId, reason: reason, extraData: extraData)
+        )
     }
 
     /// Removes the flag from the specified message.
@@ -398,13 +367,9 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func unflagMessage(_ messageId: MessageId) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            apiClient.request(
-                endpoint: .flagMessage(false, with: messageId, reason: nil, extraData: nil)
-            ) { result in
-                continuation.resume(with: result.map { _ in () })
-            }
-        }
+        try await apiClient.request(
+            endpoint: .flagMessage(false, with: messageId, reason: nil, extraData: nil)
+        )
     }
 
     // MARK: - Message Reactions
@@ -430,21 +395,17 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
         pushEmojiCode: String? = nil,
         extraData: [String: RawJSON] = [:]
     ) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            apiClient.request(
-                endpoint: .addReaction(
-                    type,
-                    score: score,
-                    enforceUnique: enforceUnique,
-                    extraData: extraData,
-                    skipPush: skipPush,
-                    emojiCode: pushEmojiCode,
-                    messageId: messageId
-                )
-            ) { result in
-                continuation.resume(with: result.map { _ in () })
-            }
-        }
+        try await apiClient.request(
+            endpoint: .addReaction(
+                type,
+                score: score,
+                enforceUnique: enforceUnique,
+                extraData: extraData,
+                skipPush: skipPush,
+                emojiCode: pushEmojiCode,
+                messageId: messageId
+            )
+        )
     }
 
     /// Removes a reaction with a specified type from a message.
@@ -455,11 +416,7 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func deleteReaction(from messageId: MessageId, with type: MessageReactionType) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            apiClient.request(endpoint: .deleteReaction(type, messageId: messageId)) { result in
-                continuation.resume(with: result.map { _ in () })
-            }
-        }
+        try await apiClient.request(endpoint: .deleteReaction(type, messageId: messageId))
     }
 
     /// Loads reactions for the specified message.
@@ -477,11 +434,9 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
         offset: Int = 0
     ) async throws -> [ChatMessageReaction] {
         let pagination = Pagination(pageSize: limit, offset: offset)
-        let payload: MessageReactionsPayload = try await withCheckedThrowingContinuation { continuation in
-            apiClient.request(endpoint: .loadReactions(messageId: messageId, pagination: pagination)) { result in
-                continuation.resume(with: result)
-            }
-        }
+        let payload: MessageReactionsPayload = try await apiClient.request(
+            endpoint: .loadReactions(messageId: messageId, pagination: pagination)
+        )
         return payload.reactions.compactMap { $0.asModel(messageId: messageId) }
     }
 
@@ -493,13 +448,9 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func pinMessage(_ messageId: MessageId) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            apiClient.request(
-                endpoint: .pinMessage(messageId: messageId, request: .init(set: .init(pinned: true)))
-            ) { result in
-                continuation.resume(with: result.map { _ in () })
-            }
-        }
+        try await apiClient.request(
+            endpoint: .pinMessage(messageId: messageId, request: .init(set: .init(pinned: true)))
+        )
     }
 
     /// Removes the message from the channel's pinned messages.
@@ -508,13 +459,9 @@ public class LivestreamChat: AppStateObserverDelegate, @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func unpinMessage(_ messageId: MessageId) async throws {
-        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
-            apiClient.request(
-                endpoint: .pinMessage(messageId: messageId, request: .init(set: .init(pinned: false)))
-            ) { result in
-                continuation.resume(with: result.map { _ in () })
-            }
-        }
+        try await apiClient.request(
+            endpoint: .pinMessage(messageId: messageId, request: .init(set: .init(pinned: false)))
+        )
     }
 
     /// Loads the pinned messages of the current channel.
