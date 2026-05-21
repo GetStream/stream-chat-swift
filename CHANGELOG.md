@@ -8,7 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `LivestreamChat`, the state-layer counterpart of `LivestreamChannelController` [#4103](https://github.com/GetStream/stream-chat-swift/pull/4103)
 ### 🐞 Fixed
 - Fix crash in `MarkdownParser` when parsing long messages with many presentation intents [#4098](https://github.com/GetStream/stream-chat-swift/pull/4098)
-- Remove the unused `pinning` parameter from `LivestreamChannelController.pin(messageId:completion:)`. The parameter had no effect [#4103](https://github.com/GetStream/stream-chat-swift/pull/4103)
+### 🔄 Changed
+- Deprecate `LivestreamChannelController.pin(messageId:pinning:completion:)` in favor of `pin(messageId:completion:)`. The `pinning` parameter had no effect [#4103](https://github.com/GetStream/stream-chat-swift/pull/4103)
 
 ## StreamChatCommonUI
 ### 🐞 Fixed

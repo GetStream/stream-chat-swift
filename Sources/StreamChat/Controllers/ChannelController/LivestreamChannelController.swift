@@ -1153,3 +1153,21 @@ public struct MaxMessageLimitOptions: Sendable {
     /// The recommended configuration with 200 max messages and 50 discard amount.
     public static let recommended = MaxMessageLimitOptions()
 }
+
+// MARK: - Deprecations
+
+public extension LivestreamChannelController {
+    /// Pins a message.
+    /// - Parameters:
+    ///   - messageId: The message identifier to pin.
+    ///   - pinning: This parameter is ignored. `LivestreamChannelController` does not persist messages locally, so pin expirations have no effect.
+    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    @available(*, deprecated, message: "The pinning parameter has no effect. Use pin(messageId:completion:) instead.")
+    func pin(
+        messageId: MessageId,
+        pinning: MessagePinning,
+        completion: (@MainActor (Error?) -> Void)? = nil
+    ) {
+        pin(messageId: messageId, completion: completion)
+    }
+}
