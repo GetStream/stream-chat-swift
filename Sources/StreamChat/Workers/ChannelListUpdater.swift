@@ -173,17 +173,30 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         }
     }
 
-    func paginationCursor(for groupKey: String, completion: @escaping @Sendable (Result<String?, Error>) -> Void) {
-        database.read { session in
-            session.channelListQuery(ChannelListQuery(groupKey: groupKey))?.next
-        } completion: { result in
-            completion(result)
-        }
+    /// The persisted pagination state for a grouped query: the next-page cursor and the
+    /// `watch` / `presence` flags that the original `queryGroupedChannels` call used.
+    ///
+    /// The `watch` and `presence` fields are `nil` when no DTO exists for the group yet — i.e.
+    /// `queryGroupedChannels` has not been called for this `groupKey` in this session. Callers
+    /// can use `state.watch != nil` as the sentinel for "has the group been initialized?".
+    ///
+    /// `ChannelList` (pagination) and `SyncRepository` (reconnect refetch) read this to reuse
+    /// the original flags instead of hardcoding `false`; `ChatClient`'s grouped factory uses
+    /// the nil-ness of `watch` to decide whether to auto-register the new list for sync tracking.
+    struct GroupedQueryPaginationState: Sendable {
+        let next: String?
+        let watch: Bool?
+        let presence: Bool?
+
+        static let empty = GroupedQueryPaginationState(next: nil, watch: nil, presence: nil)
     }
-    
-    func paginationCursor(for groupKey: String) async throws -> String? {
-        try await withCheckedThrowingContinuation { continuation in
-            paginationCursor(for: groupKey, completion: { continuation.resume(with: $0) })
+
+    func paginationState(for groupKey: String) async throws -> GroupedQueryPaginationState {
+        try await database.read { session in
+            guard let dto = session.channelListQuery(ChannelListQuery(groupKey: groupKey)) else {
+                return GroupedQueryPaginationState.empty
+            }
+            return GroupedQueryPaginationState(next: dto.next, watch: dto.watch, presence: dto.presence)
         }
     }
     
@@ -230,6 +243,8 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                             queryDTO.channels.removeAll()
                         }
                         queryDTO.next = groupPayload.next
+                        queryDTO.watch = watch
+                        queryDTO.presence = presence
                         let channelIds = groupPayload.channels.compactMapLoggingError { channelPayload in
                             let dto = try session.saveChannel(payload: channelPayload)
                             queryDTO.channels.insert(dto)

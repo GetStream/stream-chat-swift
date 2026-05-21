@@ -311,6 +311,14 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssertEqual(receivedGroupedChannels?.map(\.groupKey).sorted(), ["all", "current", "new"])
     }
 
+    func test_makeChannelList_withGroupKey_startsTrackingChannelList() {
+        let client = ChatClient.mock(config: inMemoryStorageConfig)
+
+        let channelList = client.makeChannelList(with: "all")
+
+        XCTAssertTrue(client.syncRepository.activeChannelLists.contains(channelList))
+    }
+
     func test_disconnect_flushesRequestsQueue() throws {
         // Create a chat client
         let client = ChatClient(

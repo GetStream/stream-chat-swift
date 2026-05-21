@@ -20,6 +20,8 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
 
     @Atomic var queryGroupedChannels_callCount = 0
     @Atomic var queryGroupedChannels_paginations: [GroupedChannelsPagination?] = []
+    @Atomic var queryGroupedChannels_watchValues: [Bool] = []
+    @Atomic var queryGroupedChannels_presenceValues: [Bool] = []
     @Atomic var queryGroupedChannels_result: Result<[ChannelGroup], Error>?
 
     @Atomic var markAllRead_completion: (@Sendable (Error?) -> Void)?
@@ -44,6 +46,8 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
 
         queryGroupedChannels_callCount = 0
         queryGroupedChannels_paginations.removeAll()
+        queryGroupedChannels_watchValues.removeAll()
+        queryGroupedChannels_presenceValues.removeAll()
         queryGroupedChannels_result = nil
         markAllRead_completion = nil
 
@@ -91,6 +95,8 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     ) {
         _queryGroupedChannels_callCount.mutate { $0 += 1 }
         _queryGroupedChannels_paginations.mutate { $0.append(groupPagination) }
+        _queryGroupedChannels_watchValues.mutate { $0.append(watch) }
+        _queryGroupedChannels_presenceValues.mutate { $0.append(presence) }
         if let result = queryGroupedChannels_result {
             DispatchQueue.main.async {
                 completion(result)

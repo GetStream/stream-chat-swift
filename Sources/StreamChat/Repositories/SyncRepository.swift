@@ -199,8 +199,13 @@ class SyncRepository: @unchecked Sendable {
             operations.append(contentsOf: activeChannelListControllers.allObjects
                 .map { RefreshChannelListOperation(controller: $0, context: context) }
             )
-            if allChannelLists.contains(where: { $0.query.groupKey != nil }) {
-                operations.append(SyncGroupedChannelsOperation(channelListUpdater: channelListUpdater, context: context))
+            let groupedChannelLists = allChannelLists.filter { $0.query.groupKey != nil }
+            if !groupedChannelLists.isEmpty {
+                operations.append(SyncGroupedChannelsOperation(
+                    channelListUpdater: channelListUpdater,
+                    groupedChannelLists: groupedChannelLists,
+                    context: context
+                ))
             }
 
             // 3. /sync (for channels what not part of active channel lists)

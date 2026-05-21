@@ -54,13 +54,17 @@ extension ChatClient {
 
     /// Creates an instance of ``ChannelList`` which represents an array of channels matching to the specified group.
     ///
-    /// - Note: The initial state for the group must be fetched with ``ChatClient/queryGroupedChannels(limit:presence:watch:)``.
+    /// - Important: The initial state for the group must be fetched with ``ChatClient/queryGroupedChannels(limit:presence:watch:)``
+    /// which does a batch fetch for all the groups.
     public func makeChannelList(with groupKey: String) -> ChannelList {
-        ChannelList(
+        let channelList = ChannelList(
             query: .init(groupKey: groupKey),
             dynamicFilter: nil,
             client: self
         )
+        // Start tracking immediately, because the first page is meant to be fetches with queryGroupedChannels
+        syncRepository.startTrackingChannelList(channelList)
+        return channelList
     }
 }
 

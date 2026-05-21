@@ -42,19 +42,26 @@ public class ChannelList: @unchecked Sendable {
     /// An observable object representing the current state of the channel list.
     @MainActor public var state: ChannelListState { stateBuilder.state }
     
-    /// Fetches the most recent state from the server and updates the local store.
+    /// Fetches the first page of channels from the server and registers the list for reconnect sync.
     ///
-    /// - Important: For filter-based lists, loaded channels in ``ChannelListState/channels`` are reset.
-    /// For group-based lists (created via ``ChatClient/makeChannelList(with:)-(String)``), this only
-    /// registers the list for sync tracking — call ``loadChannels(with:)`` to fetch the first page from the
-    /// grouped endpoint.
+    /// - For filter-based lists, ``ChannelListState/channels`` is reset to the first page returned
+    ///   by the channels endpoint.
+    /// - For group-based lists (created via ``ChatClient/makeChannelList(with:)-(String)``), the
+    ///   first page is fetched from the grouped endpoint with no cursor; the request inherits the
+    ///   `watch` / `presence` flags persisted by the most recent
+    ///   ``ChatClient/queryGroupedChannels(limit:presence:watch:)`` call for the group.
+    ///
+    /// Subsequent pages are loaded via ``loadMoreChannels(limit:)``.
+    ///
+    /// - Important: For group-based lists, prefer `get()` only when fetching the first page for a *single* group
+    /// in isolation. When the app needs first pages for multiple groups, call
+    /// ``ChatClient/queryGroupedChannels(limit:presence:watch:)`` instead — it returns every group
+    /// in one request, which is significantly more efficient than calling `get()` per `ChannelList`.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
-        if query.groupKey == nil {
-            let pagination = Pagination(pageSize: query.pagination.pageSize)
-            try await loadChannels(with: pagination)
-        }
+        let pagination = Pagination(pageSize: query.pagination.pageSize)
+        try await loadChannels(with: pagination)
         client.syncRepository.startTrackingChannelList(self)
     }
 
@@ -72,11 +79,12 @@ public class ChannelList: @unchecked Sendable {
     /// - Returns: An array of channels for the pagination.
     @discardableResult public func loadChannels(with pagination: Pagination) async throws -> [ChatChannel] {
         if let groupKey = query.groupKey {
+            let state = try await channelListUpdater.paginationState(for: groupKey)
             let channelGroups = try await channelListUpdater.queryGroupedChannels(
                 groupPagination: .init(groupKey: groupKey, next: pagination.cursor),
                 limit: pagination.pageSize != .unsetPageSize ? pagination.pageSize : nil,
-                watch: false,
-                presence: false
+                watch: state.watch ?? false,
+                presence: state.presence ?? false
             )
             let group = channelGroups.first { $0.groupKey == groupKey }
             await setHasLoadedAllPreviousChannels(group?.next == nil)
@@ -99,8 +107,8 @@ public class ChannelList: @unchecked Sendable {
     @discardableResult public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
         guard await !state.hasLoadedAllPreviousChannels else { return [] }
         if let groupKey = query.groupKey {
-            let cursor = try await channelListUpdater.paginationCursor(for: groupKey)
-            guard let cursor else {
+            let paginationState = try await channelListUpdater.paginationState(for: groupKey)
+            guard let cursor = paginationState.next else {
                 await setHasLoadedAllPreviousChannels(true)
                 return []
             }

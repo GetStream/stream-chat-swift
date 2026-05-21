@@ -249,6 +249,36 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(channelList.refreshLoadedChannelsCallCount, 0)
     }
 
+    func test_syncLocalState_groupedChannelList_passesPersistedWatchAndPresenceToQueryGroupedChannels() throws {
+        let cid = ChannelId.unique
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-3600),
+            createChannel: true,
+            cid: cid
+        )
+
+        var groupedQuery = ChannelListQuery(filter: .exists(.cid))
+        groupedQuery.groupKey = "all"
+        let channelList = ChannelList_Mock.mock(query: groupedQuery, client: client)
+        repository.startTrackingChannelList(channelList)
+
+        // Pre-populate the persisted state for the group with both flags enabled.
+        try database.writeSynchronously { session in
+            let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: "all"))
+            queryDTO.watch = true
+            queryDTO.presence = true
+        }
+        let refreshedGroup = ChannelGroup(groupKey: "all", channelIds: [cid], unreadChannels: 0)
+        channelListUpdater.queryGroupedChannels_result = .success([refreshedGroup])
+
+        waitForSyncLocalStateRun()
+
+        XCTAssertEqual(channelListUpdater.queryGroupedChannels_callCount, 1)
+        XCTAssertEqual([true], channelListUpdater.queryGroupedChannels_watchValues)
+        XCTAssertEqual([true], channelListUpdater.queryGroupedChannels_presenceValues)
+    }
+
     func test_syncLocalState_mixedChannelLists_callsGroupedOnceAndRefreshesOnlyStandard() throws {
         let groupedCid = ChannelId.unique
         let standardCid = ChannelId.unique

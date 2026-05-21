@@ -121,17 +121,30 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
 /// request that returns the first page for every active group, and every grouped `ChannelList`
 /// reads from the resulting cached response. The returned channel ids are added to `context.synchedChannelIds`
 /// so the subsequent `/sync` step skips them.
+///
+/// The `watch` and `presence` flags are read from the persisted state of any active grouped query (they are
+/// set together by the initial `queryGroupedChannels` call, so any group's persisted value reflects the latest
+/// caller intent). Reusing them keeps watching / presence subscriptions alive across reconnects.
 final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
-    init(channelListUpdater: ChannelListUpdater, context: SyncContext) {
+    init(channelListUpdater: ChannelListUpdater, groupedChannelLists: [ChannelList], context: SyncContext) {
+        // All grouped lists share the same persisted flags (set together by the initial
+        // `queryGroupedChannels` call), so any one of them is a valid source.
+        let sampleGroupKey = groupedChannelLists.first?.query.groupKey
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelListUpdater] _, done in
-            guard let channelListUpdater else {
+            guard let channelListUpdater, let sampleGroupKey else {
                 done(.continue)
                 return
             }
 
             Task {
                 do {
-                    let channelGroups = try await channelListUpdater.queryGroupedChannels(groupPagination: nil, limit: nil, watch: false, presence: false)
+                    let state = try await channelListUpdater.paginationState(for: sampleGroupKey)
+                    let channelGroups = try await channelListUpdater.queryGroupedChannels(
+                        groupPagination: nil,
+                        limit: nil,
+                        watch: state.watch ?? false,
+                        presence: state.presence ?? false
+                    )
                     let returnedChannelIds = channelGroups.flatMap(\.channelIds)
                     context.synchedChannelIds.formUnion(returnedChannelIds)
                     log.debug(

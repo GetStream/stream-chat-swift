@@ -835,6 +835,76 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertNil(exhaustedLinked.next)
     }
 
+    func test_queryGroupedChannels_persistsWatchAndPresenceOnQueryDTO() throws {
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
+        }
+        let exp = expectation(description: "completion called")
+        listUpdater.queryGroupedChannels(groupPagination: nil, limit: nil, watch: true, presence: true) { _ in exp.fulfill() }
+        let payload = GroupedQueryChannelsPayload(
+            groups: [
+                "all": .init(channels: [], unreadChannels: 0, next: nil, prev: nil),
+                "current": .init(channels: [], unreadChannels: 0, next: nil, prev: nil)
+            ]
+        )
+        apiClient.test_simulateResponse(.success(payload))
+        waitForExpectations(timeout: defaultTimeout)
+
+        let allLinked = try XCTUnwrap(database.viewContext.channelListQuery(ChannelListQuery(groupKey: "all")))
+        let currentLinked = try XCTUnwrap(database.viewContext.channelListQuery(ChannelListQuery(groupKey: "current")))
+        XCTAssertTrue(allLinked.watch)
+        XCTAssertTrue(allLinked.presence)
+        XCTAssertTrue(currentLinked.watch)
+        XCTAssertTrue(currentLinked.presence)
+    }
+
+    func test_queryGroupedChannels_overwritesWatchAndPresenceOnSubsequentCalls() throws {
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
+        }
+        // First call with both flags true.
+        let firstExp = expectation(description: "first completion called")
+        listUpdater.queryGroupedChannels(groupPagination: nil, limit: nil, watch: true, presence: true) { _ in firstExp.fulfill() }
+        let firstPayload = GroupedQueryChannelsPayload(
+            groups: ["all": .init(channels: [], unreadChannels: 0, next: nil, prev: nil)]
+        )
+        apiClient.test_simulateResponse(.success(firstPayload))
+        wait(for: [firstExp], timeout: defaultTimeout)
+
+        // Second call with both flags false should overwrite.
+        apiClient.cleanUp()
+        let secondExp = expectation(description: "second completion called")
+        listUpdater.queryGroupedChannels(groupPagination: nil, limit: nil, watch: false, presence: false) { _ in secondExp.fulfill() }
+        apiClient.test_simulateResponse(.success(firstPayload))
+        wait(for: [secondExp], timeout: defaultTimeout)
+
+        let linked = try XCTUnwrap(database.viewContext.channelListQuery(ChannelListQuery(groupKey: "all")))
+        XCTAssertFalse(linked.watch)
+        XCTAssertFalse(linked.presence)
+    }
+
+    // MARK: - paginationState
+
+    func test_paginationState_returnsPersistedNextWatchAndPresence() async throws {
+        try await database.write { session in
+            let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: "all"))
+            queryDTO.next = "cursor-1"
+            queryDTO.watch = true
+            queryDTO.presence = true
+        }
+        let state = try await listUpdater.paginationState(for: "all")
+        XCTAssertEqual("cursor-1", state.next)
+        XCTAssertEqual(true, state.watch)
+        XCTAssertEqual(true, state.presence)
+    }
+
+    func test_paginationState_unknownGroup_returnsEmpty() async throws {
+        let state = try await listUpdater.paginationState(for: "never-saved")
+        XCTAssertNil(state.next)
+        XCTAssertNil(state.watch)
+        XCTAssertNil(state.presence)
+    }
+
     func test_queryGroupedChannels_paginatedContinuation_appendsToQueryDTOWithoutReset() throws {
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: .unique, role: .user))
