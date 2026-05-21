@@ -1230,6 +1230,146 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
     }
 
+    // MARK: - ChannelUpdated group-change adjusts grouped unread counts
+
+    func test_channelUpdatedEvent_groupChange_withUnread_adjustsBothCounts() throws {
+        try database.writeSynchronously { session in
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3, "all": 8])
+            self.linkChannelToGroupedQueries(["new", "all"], session: session)
+        }
+
+        let event = try channelUpdatedEvent(group: "current")
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        XCTAssertEqual(
+            ["new": 4, "current": 4, "all": 8],
+            database.viewContext.currentUser?.unreadChannelCountsByGroup
+        )
+    }
+
+    func test_channelUpdatedEvent_groupUnchanged_doesNotAdjust() throws {
+        try database.writeSynchronously { session in
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5, "all": 8])
+            self.linkChannelToGroupedQueries(["new", "all"], session: session)
+        }
+
+        let event = try channelUpdatedEvent(group: "new")
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        XCTAssertEqual(
+            ["new": 5, "all": 8],
+            database.viewContext.currentUser?.unreadChannelCountsByGroup
+        )
+    }
+
+    func test_channelUpdatedEvent_zeroUnread_doesNotAdjust() throws {
+        try database.writeSynchronously { session in
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3, "all": 8])
+            self.linkChannelToGroupedQueries(["new", "all"], session: session)
+            // Drop the channel's unread count to zero via the read; mark the channel dirty so its
+            // `willSave` recomputes `currentUserUnreadMessagesCount` from the updated read.
+            if let readDTO = session.loadChannelRead(
+                cid: self.channelPayload.channel.cid,
+                userId: self.currentUserPayload.id
+            ) {
+                readDTO.unreadMessageCount = 0
+            }
+            if let channelDTO = session.channel(cid: self.channelPayload.channel.cid) {
+                channelDTO.currentUserUnreadMessagesCount = 0
+            }
+        }
+
+        let event = try channelUpdatedEvent(group: "current")
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        XCTAssertEqual(
+            ["new": 5, "current": 3, "all": 8],
+            database.viewContext.currentUser?.unreadChannelCountsByGroup
+        )
+    }
+
+    func test_channelUpdatedEvent_noGroupedQueryReferencingChannel_doesNotAdjust() throws {
+        try database.writeSynchronously { session in
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3, "all": 8])
+            // Intentionally do not link the channel to any grouped query.
+        }
+
+        let event = try channelUpdatedEvent(group: "current")
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        XCTAssertEqual(
+            ["new": 5, "current": 3, "all": 8],
+            database.viewContext.currentUser?.unreadChannelCountsByGroup
+        )
+    }
+
+    func test_channelUpdatedEvent_unreadCountsByGroupNotPopulated_doesNotAdjust() throws {
+        try database.writeSynchronously { session in
+            self.linkChannelToGroupedQueries(["new", "all"], session: session)
+            // Intentionally do not call saveCurrentUserUnreadChannelCountsByGroup.
+        }
+
+        let event = try channelUpdatedEvent(group: "current")
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        XCTAssertNil(database.viewContext.currentUser?.unreadChannelCountsByGroup)
+    }
+
+    func test_channelUpdatedEvent_newGroupIsAll_onlyDecrementsOld() throws {
+        try database.writeSynchronously { session in
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5, "all": 8])
+            self.linkChannelToGroupedQueries(["new", "all"], session: session)
+        }
+
+        let event = try channelUpdatedEvent(group: "all")
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        // "new" decrements; "all" is intentionally never adjusted directly.
+        XCTAssertEqual(
+            ["new": 4, "all": 8],
+            database.viewContext.currentUser?.unreadChannelCountsByGroup
+        )
+    }
+
+    private func channelUpdatedEvent(group: String?) throws -> ChannelUpdatedEventDTO {
+        var extraData: [String: RawJSON] = [:]
+        if let group {
+            extraData[GroupedChannelKey.extraData] = .string(group)
+        }
+        let updatedChannel = ChannelDetailPayload.dummy(
+            cid: channelPayload.channel.cid,
+            extraData: extraData
+        )
+        return try ChannelUpdatedEventDTO(from: EventPayload(
+            eventType: .channelUpdated,
+            cid: channelPayload.channel.cid,
+            user: anotherUserPayload,
+            channel: updatedChannel,
+            createdAt: .unique
+        ))
+    }
+
+    private func linkChannelToGroupedQueries(_ groupKeys: [String], session: DatabaseSession) {
+        for key in groupKeys {
+            let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: key))
+            if let channelDTO = session.channel(cid: channelPayload.channel.cid) {
+                queryDTO.channels.insert(channelDTO)
+            }
+        }
+    }
+
     private func newMessageEvent(type: MessageType) throws -> MessageNewEventDTO {
         let regularMessage: MessagePayload = .dummy(
             type: type,

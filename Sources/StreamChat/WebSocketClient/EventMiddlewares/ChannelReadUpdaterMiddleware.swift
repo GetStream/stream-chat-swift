@@ -80,11 +80,56 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 read.unreadMessageCount = 0
             }
 
+        case let event as ChannelUpdatedEventDTO:
+            adjustUnreadChannelCountsForGroupChange(event: event, session: session)
+
         default:
             break
         }
 
         return event
+    }
+
+    /// Adjusts the current user's per-group unread-channel counts when a `ChannelUpdatedEvent`
+    /// moves a channel between groups.
+    ///
+    /// Earlier middlewares in the chain (`EventDataProcessorMiddleware`) have already overwritten
+    /// `channelDTO.extraData` with the new payload, so the old group can no longer be read off the
+    /// channel directly. We recover it from `channelDTO.queries` — `ChannelListLinker` re-links
+    /// the channel into the new group's query *after* the middleware chain finishes, so at this
+    /// point the channel is still linked to whichever grouped query represented its previous group.
+    ///
+    /// The `"all"` bucket is intentionally skipped on both sides — its count is driven by the
+    /// server's `unread_channels` field, not by per-channel deltas.
+    ///
+    /// Channel updated events are not carrying unread group counts.
+    private func adjustUnreadChannelCountsForGroupChange(
+        event: ChannelUpdatedEventDTO,
+        session: DatabaseSession
+    ) {
+        guard let channelDTO = session.channel(cid: event.channel.cid) else { return }
+        guard let knownGroupKeys = session.currentUser?.unreadChannelCountsByGroup?.keys,
+              !knownGroupKeys.isEmpty else { return }
+
+        let groupedFilterHashes = channelDTO.queries
+            .map(\.filterHash)
+            .filter { knownGroupKeys.contains($0) }
+        guard !groupedFilterHashes.isEmpty else { return }
+
+        let oldGroup = groupedFilterHashes.first { $0 != GroupedChannelKey.all }
+        let newGroup = event.channel.extraData[GroupedChannelKey.extraData]?.stringValue?
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+            .lowercased()
+
+        guard oldGroup != newGroup else { return }
+        guard channelDTO.currentUserUnreadMessagesCount > 0 else { return }
+
+        if let oldGroup, oldGroup != GroupedChannelKey.all {
+            session.adjustUnreadChannelCount(forGroup: oldGroup, by: -1)
+        }
+        if let newGroup, !newGroup.isEmpty, newGroup != GroupedChannelKey.all {
+            session.adjustUnreadChannelCount(forGroup: newGroup, by: 1)
+        }
     }
 
     private func isThreadReadEvent(eventPayload: EventPayload) -> Bool {
