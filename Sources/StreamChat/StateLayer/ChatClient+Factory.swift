@@ -235,6 +235,38 @@ extension ChatClient {
     }
 }
 
+// MARK: - Factory Methods for Creating LivestreamChats
+
+extension ChatClient {
+    /// An instance of ``LivestreamChat`` which represents a livestream channel with the specified channel id.
+    ///
+    /// ``LivestreamChat`` is optimized for livestream channels and operates fully in-memory without local
+    /// database persistence. It is more performant than ``Chat`` but exposes fewer features (no read updates, no threads).
+    ///
+    /// - Note: It is the caller's responsibility to call ``LivestreamChat/get()`` for receiving the most recent state from the server.
+    ///
+    /// - Parameter cid: The id of the channel.
+    ///
+    /// - Returns: An instance of ``LivestreamChat`` representing the channel.
+    public func makeLivestreamChat(for cid: ChannelId) -> LivestreamChat {
+        makeLivestreamChat(with: ChannelQuery(cid: cid))
+    }
+
+    /// An instance of ``LivestreamChat`` which represents a livestream channel matching the channel query.
+    ///
+    /// ``LivestreamChat`` is optimized for livestream channels and operates fully in-memory without local
+    /// database persistence. It is more performant than ``Chat`` but exposes fewer features (no read updates, no threads).
+    ///
+    /// - Note: It is the caller's responsibility to call ``LivestreamChat/get()`` for receiving the most recent state from the server.
+    ///
+    /// - Parameter channelQuery: The channel query used for looking up the channel.
+    ///
+    /// - Returns: An instance of ``LivestreamChat`` representing the channel.
+    public func makeLivestreamChat(with channelQuery: ChannelQuery) -> LivestreamChat {
+        LivestreamChat(channelQuery: channelQuery, client: self)
+    }
+}
+
 // MARK: - Factory Methods for Creating Channel Member Lists
 
 extension ChatClient {

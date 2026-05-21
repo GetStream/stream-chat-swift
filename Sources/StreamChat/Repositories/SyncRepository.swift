@@ -40,6 +40,7 @@ class SyncRepository: @unchecked Sendable {
     let activeChannelControllers = ThreadSafeWeakCollection<ChatChannelController>()
     let activeChannelListControllers = ThreadSafeWeakCollection<ChatChannelListController>()
     let activeChats = ThreadSafeWeakCollection<Chat>()
+    let activeLivestreamChats = ThreadSafeWeakCollection<LivestreamChat>()
     let activeLivestreamControllers = ThreadSafeWeakCollection<LivestreamChannelController>()
     let activeChannelLists = ThreadSafeWeakCollection<ChannelList>()
 
@@ -100,6 +101,15 @@ class SyncRepository: @unchecked Sendable {
         activeLivestreamControllers.remove(controller)
     }
 
+    func startTrackingLivestreamChat(_ livestreamChat: LivestreamChat) {
+        guard !activeLivestreamChats.contains(livestreamChat) else { return }
+        activeLivestreamChats.add(livestreamChat)
+    }
+
+    func stopTrackingLivestreamChat(_ livestreamChat: LivestreamChat) {
+        activeLivestreamChats.remove(livestreamChat)
+    }
+
     func startTrackingChannelList(_ channelList: ChannelList) {
         guard !activeChannelLists.contains(channelList) else { return }
         activeChannelLists.add(channelList)
@@ -120,6 +130,7 @@ class SyncRepository: @unchecked Sendable {
 
     func removeAllTracked() {
         activeChats.removeAllObjects()
+        activeLivestreamChats.removeAllObjects()
         activeChannelControllers.removeAllObjects()
         activeChannelLists.removeAllObjects()
         activeChannelListControllers.removeAllObjects()
@@ -218,6 +229,9 @@ class SyncRepository: @unchecked Sendable {
             })
             operations.append(contentsOf: activeChats.allObjects.map {
                 WatchChannelOperation(chat: $0, context: context)
+            })
+            operations.append(contentsOf: activeLivestreamChats.allObjects.map {
+                WatchChannelOperation(livestreamChat: $0, context: context)
             })
             operations.append(contentsOf: activeLivestreamControllers.allObjects.map {
                 WatchChannelOperation(livestreamController: $0, context: context, recovery: false)
