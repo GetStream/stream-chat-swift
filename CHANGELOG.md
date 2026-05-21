@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.3.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.3.0)
+_May 21, 2026_
+
 ## StreamChat
 ### ✅ Added
 - Add `LivestreamChat`, the state-layer counterpart of `LivestreamChannelController` [#4103](https://github.com/GetStream/stream-chat-swift/pull/4103)
