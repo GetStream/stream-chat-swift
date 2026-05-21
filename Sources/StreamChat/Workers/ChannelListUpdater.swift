@@ -151,7 +151,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
             let (inserted, _) = queryDTO.channels.insert(channelDTO)
             // The "all" group's unread count is driven by WS events, not by per-channel link/unlink.
             if inserted, let groupKey = query.groupKey, groupKey != GroupedChannelKey.all, channelDTO.currentUserUnreadMessagesCount > 0 {
-                session.adjustGroupedUnreadCount(forGroup: groupKey, by: 1)
+                session.adjustUnreadChannelCount(forGroup: groupKey, by: 1)
             }
         } completion: { error in
             completion?(error)
@@ -166,7 +166,7 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
             }
             let removed = queryDTO.channels.remove(channelDTO)
             if removed != nil, let groupKey = query.groupKey, groupKey != GroupedChannelKey.all, channelDTO.currentUserUnreadMessagesCount > 0 {
-                session.adjustGroupedUnreadCount(forGroup: groupKey, by: -1)
+                session.adjustUnreadChannelCount(forGroup: groupKey, by: -1)
             }
         } completion: { error in
             completion?(error)
@@ -233,8 +233,8 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
             case let .success(payload):
                 database.write(converting: { session in
                     if isInitialFetch {
-                        let groupedUnreadCount = payload.groups.mapValues(\.unreadChannels)
-                        try session.saveCurrentUserGroupedUnreadCount(groupedUnreadCount)
+                        let unreadChannelCountsByGroup = payload.groups.mapValues(\.unreadChannels)
+                        try session.saveCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
                     }
                     var groups: [ChannelGroup] = []
                     for (groupKey, groupPayload) in payload.groups {

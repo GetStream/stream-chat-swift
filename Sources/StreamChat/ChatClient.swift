@@ -650,34 +650,61 @@ public class ChatClient: @unchecked Sendable {
     }
     
     // MARK: - Grouped Channels
-    
-    /// Queries grouped channel groups for the app.
-    public func queryGroupedChannels(
-        limit: Int? = nil,
-        presence: Bool = false,
-        watch: Bool = false,
-        completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
-    ) {
-        channelListUpdater.queryGroupedChannels(
-            groupPagination: nil,
-            limit: limit,
-            watch: watch,
-            presence: presence,
-            completion: completion
-        )
-    }
 
-    /// Queries grouped channel groups for the app.
+    /// Fetches the configured set of channel groups (e.g. `"all"`, `"new"`, `"old"`, `"current"`)
+    /// for the current user in a single batched request.
+    ///
+    /// Channel groups are server-side buckets — configured per-app — that classify channels by some
+    /// criterion. The group a channel belongs to is carried in `extraData["group"]`. One call to
+    /// this method returns the first page of channels for **every** configured group, which is
+    /// significantly more efficient than calling ``ChannelList/get()`` per group.
+    ///
+    /// The response always includes the special ``GroupedChannelKey/all`` group, which aggregates
+    /// channels from every other group — useful for an "everything" tab.
+    ///
+    /// ### Pairing with `ChannelList`
+    ///
+    /// Build a ``ChannelList`` per group via ``ChatClient/makeChannelList(with:)-(String)`` to
+    /// observe the group's channels and paginate further. The factory also registers each list with
+    /// the sync repository, so calling ``ChannelList/get()`` afterwards is only needed when forcing
+    /// a fresh first-page fetch for a single group.
+    ///
+    /// ```swift
+    /// let groups = try await client.queryGroupedChannels(presence: true, watch: true)
+    /// for group in groups {
+    ///     let list = client.makeChannelList(with: group.groupKey)
+    ///     // Observe `list.state.channels`; call `list.loadMoreChannels()` for additional pages.
+    /// }
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - limit: The number of channels to return **per group** on the first page. `nil` uses the
+    ///     backend default.
+    ///   - presence: When `true`, includes presence info (user online state) in the response and
+    ///     streams presence updates over the WebSocket for the returned channels' members. Requires
+    ///     an active WebSocket connection.
+    ///   - watch: When `true`, starts server-side watching for every returned channel. Watching does
+    ///     **not** gate ordinary channel / member events — those arrive for channels the user is a
+    ///     member of either way. What it enables is the watcher-scoped event stream, most notably
+    ///     typing indicators (`typing.start` / `typing.stop`). Requires an active WebSocket
+    ///     connection. Pass `watch: true` if any UI on top of the groups needs typing indicators;
+    ///     otherwise keep it `false` for performance reasons (less server-side watcher state and
+    ///     fewer events streamed to the client).
+    ///
+    /// - Returns: The ``ChannelGroup`` values returned by the backend. Each carries the group's
+    ///   name, its channel ids in the order returned by the backend, and the unread channel count.
+    /// - Throws: An error while communicating with the Stream API.
     @discardableResult public func queryGroupedChannels(
         limit: Int? = nil,
         presence: Bool = false,
         watch: Bool = false
     ) async throws -> [ChannelGroup] {
-        try await withCheckedThrowingContinuation { continuation in
-            queryGroupedChannels(limit: limit, presence: presence, watch: watch) { result in
-                continuation.resume(with: result)
-            }
-        }
+        try await channelListUpdater.queryGroupedChannels(
+            groupPagination: nil,
+            limit: limit,
+            watch: watch,
+            presence: presence
+        )
     }
     
     // MARK: - Upload attachments

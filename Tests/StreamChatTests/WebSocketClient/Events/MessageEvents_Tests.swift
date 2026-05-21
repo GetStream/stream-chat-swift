@@ -43,8 +43,8 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertNil(event?.unreadCount)
     }
 
-    func test_messageNewEventDTO_toDomainEvent_includesGroupedUnreadCount() throws {
-        let groupedUnreadCount: [String: Int] = [
+    func test_messageNewEventDTO_toDomainEvent_includesUnreadChannelCountsByGroup() throws {
+        let unreadChannelCountsByGroup: [String: Int] = [
             "priority": 3,
             "social": 7
         ]
@@ -58,7 +58,7 @@ final class MessageEvents_Tests: XCTestCase {
             user: userPayload,
             message: messagePayload,
             unreadCount: .init(channels: 4, messages: 9, threads: 2),
-            groupedUnreadCount: groupedUnreadCount,
+            unreadChannelCountsByGroup: unreadChannelCountsByGroup,
             createdAt: .unique
         )
 
@@ -70,7 +70,7 @@ final class MessageEvents_Tests: XCTestCase {
 
         let dto = try MessageNewEventDTO(from: eventPayload)
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageNewEvent)
-        XCTAssertEqual(event.groupedUnreadCount, groupedUnreadCount)
+        XCTAssertEqual(event.unreadChannelCountsByGroup, unreadChannelCountsByGroup)
     }
 
     func test_updated() throws {

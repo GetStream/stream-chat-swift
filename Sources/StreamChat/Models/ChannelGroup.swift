@@ -16,7 +16,7 @@ import Foundation
 /// let channels = await channelList.state.channels
 /// ```
 public struct ChannelGroup: Sendable {
-    /// The group key as returned by the backend (e.g. `"all"`, `"new"`, `"current"`).
+    /// The group key as returned by the backend (e.g. `"all"`, `"new"`, `"old"`, `"current"`).
     public let groupKey: String
 
     /// The total unread channel count in the group.

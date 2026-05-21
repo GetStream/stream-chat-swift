@@ -262,7 +262,7 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(testEnv.apiClient?.init_requestEncoder is RequestEncoder_Spy)
     }
 
-    func test_queryGroupedChannels_callsAPIClientAndReturnsGroupedChannels() throws {
+    func test_queryGroupedChannels_callsAPIClientAndReturnsGroupedChannels() async throws {
         let client = ChatClient.mock(config: inMemoryStorageConfig)
         try client.databaseContainer.createCurrentUser()
         let firstCid = ChannelId.unique
@@ -287,28 +287,12 @@ final class ChatClient_Tests: XCTestCase {
                 )
             ]
         )
+        client.mockAPIClient.test_mockResponseResult(.success(payload))
 
-        let expectation = self.expectation(description: "grouped query channels completes")
-        var receivedGroupedChannels: [ChannelGroup]?
-        var receivedError: Error?
-
-        client.queryGroupedChannels(limit: 4, presence: false, watch: true) { result in
-            switch result {
-            case let .success(groupedChannels):
-                receivedGroupedChannels = groupedChannels
-            case let .failure(error):
-                receivedError = error
-            }
-            expectation.fulfill()
-        }
+        let groupedChannels = try await client.queryGroupedChannels(limit: 4, presence: false, watch: true)
 
         XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
-        client.mockAPIClient.test_simulateResponse(.success(payload))
-
-        waitForExpectations(timeout: defaultTimeout)
-
-        XCTAssertNil(receivedError)
-        XCTAssertEqual(receivedGroupedChannels?.map(\.groupKey).sorted(), ["all", "current", "new"])
+        XCTAssertEqual(groupedChannels.map(\.groupKey).sorted(), ["all", "current", "new"])
     }
 
     func test_makeChannelList_withGroupKey_startsTrackingChannelList() {

@@ -119,13 +119,13 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.saveCurrentUserUnreadCount(count: count)
     }
 
-    func saveCurrentUserGroupedUnreadCount(_ groupedUnreadCount: [String: Int]) throws {
+    func saveCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws {
         try throwErrorIfNeeded()
-        try underlyingSession.saveCurrentUserGroupedUnreadCount(groupedUnreadCount)
+        try underlyingSession.saveCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
     }
 
-    func adjustGroupedUnreadCount(forGroup groupKey: String, by delta: Int) {
-        underlyingSession.adjustGroupedUnreadCount(forGroup: groupKey, by: delta)
+    func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int) {
+        underlyingSession.adjustUnreadChannelCount(forGroup: groupKey, by: delta)
     }
 
     func deleteDevice(id: DeviceId) {

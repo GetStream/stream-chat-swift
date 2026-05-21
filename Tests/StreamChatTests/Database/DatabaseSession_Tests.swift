@@ -143,9 +143,9 @@ final class DatabaseSession_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel.messageCount, 5)
     }
 
-    func test_eventPayloadGroupedUnreadCount_isSavedToDatabase() throws {
+    func test_eventPayloadUnreadChannelCountsByGroup_isSavedToDatabase() throws {
         let currentUserPayload = CurrentUserPayload.dummy(userPayload: .dummy(userId: .unique, role: .admin))
-        let groupedUnreadCount: [String: Int] = [
+        let unreadChannelCountsByGroup: [String: Int] = [
             "direct": 1,
             "team": 4
         ]
@@ -157,12 +157,12 @@ final class DatabaseSession_Tests: XCTestCase {
                 cid: .unique,
                 user: .dummy(userId: .unique),
                 message: .dummy(messageId: .unique, authorUserId: .unique),
-                groupedUnreadCount: groupedUnreadCount,
+                unreadChannelCountsByGroup: unreadChannelCountsByGroup,
                 createdAt: .unique
             ))
         }
 
-        XCTAssertEqual(database.viewContext.currentUser?.groupedUnreadCount, groupedUnreadCount)
+        XCTAssertEqual(database.viewContext.currentUser?.unreadChannelCountsByGroup, unreadChannelCountsByGroup)
     }
 
     func test_deleteMessage() throws {

@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new message is sent to channel.
-public final class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount, HasGroupedUnreadCount {
+public final class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount, HasUnreadChannelCountsByGroup {
     /// The user who sent a message.
     public let user: ChatUser
 
@@ -27,8 +27,8 @@ public final class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount, HasGro
     /// The unread counts.
     public let unreadCount: UnreadCount?
 
-    /// Grouped unread channel counts keyed by the backend-provided group identifier.
-    public let groupedUnreadCount: [String: Int]?
+    /// Unread channel counts keyed by the backend-provided group identifier.
+    public let unreadChannelCountsByGroup: [String: Int]?
 
     init(
         user: ChatUser,
@@ -37,7 +37,7 @@ public final class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount, HasGro
         createdAt: Date,
         watcherCount: Int?,
         unreadCount: UnreadCount?,
-        groupedUnreadCount: [String: Int]? = nil
+        unreadChannelCountsByGroup: [String: Int]? = nil
     ) {
         self.user = user
         self.message = message
@@ -45,7 +45,7 @@ public final class MessageNewEvent: ChannelSpecificEvent, HasUnreadCount, HasGro
         self.createdAt = createdAt
         self.watcherCount = watcherCount
         self.unreadCount = unreadCount
-        self.groupedUnreadCount = groupedUnreadCount
+        self.unreadChannelCountsByGroup = unreadChannelCountsByGroup
     }
 }
 
@@ -83,7 +83,7 @@ final class MessageNewEventDTO: EventDTO {
             createdAt: createdAt,
             watcherCount: watcherCount,
             unreadCount: UnreadCount(currentUserDTO: currentUser),
-            groupedUnreadCount: currentUser.groupedUnreadCount
+            unreadChannelCountsByGroup: currentUser.unreadChannelCountsByGroup
         )
     }
 }

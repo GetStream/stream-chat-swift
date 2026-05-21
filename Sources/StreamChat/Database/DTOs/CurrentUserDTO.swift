@@ -146,23 +146,23 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         }
     }
 
-    func saveCurrentUserGroupedUnreadCount(_ groupedUnreadCount: [String: Int]) throws {
+    func saveCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws {
         invalidateCurrentUserCache()
 
         guard let dto = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
-        dto.groupedUnreadCount = groupedUnreadCount
+        dto.unreadChannelCountsByGroup = unreadChannelCountsByGroup
     }
 
-    func adjustGroupedUnreadCount(forGroup groupKey: String, by delta: Int) {
+    func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int) {
         invalidateCurrentUserCache()
-        guard let dto = currentUser, var counts = dto.groupedUnreadCount, let existing = counts[groupKey] else {
+        guard let dto = currentUser, var counts = dto.unreadChannelCountsByGroup, let existing = counts[groupKey] else {
             return
         }
         counts[groupKey] = max(0, existing + delta)
-        dto.groupedUnreadCount = counts
+        dto.unreadChannelCountsByGroup = counts
     }
 
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
@@ -234,7 +234,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 }
 
 extension CurrentUserDTO {
-    var groupedUnreadCount: [String: Int]? {
+    var unreadChannelCountsByGroup: [String: Int]? {
         get {
             guard let unreadGroupedChannelsCounts else { return nil }
             return try? JSONDecoder.default.decode([String: Int].self, from: unreadGroupedChannelsCounts)
@@ -315,7 +315,7 @@ extension CurrentChatUser {
                 messages: Int(dto.unreadMessagesCount),
                 threads: Int(dto.unreadThreadsCount)
             ),
-            groupedUnreadCount: dto.groupedUnreadCount,
+            unreadChannelCountsByGroup: dto.unreadChannelCountsByGroup,
             mutedChannels: mutedChannels,
             privacySettings: .init(
                 typingIndicators: .init(enabled: dto.isTypingIndicatorsEnabled),

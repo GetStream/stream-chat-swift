@@ -437,15 +437,15 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertFalse(channelsInQuery.contains(channel))
     }
 
-    // MARK: - link / unlink groupedUnreadCount
+    // MARK: - link / unlink unread channel counts by group
 
-    func test_link_groupBasedQuery_incrementsGroupedUnreadCount_whenChannelHasUnread() throws {
+    func test_link_groupBasedQuery_incrementsUnreadChannelCountsByGroup_whenChannelHasUnread() throws {
         let channel = ChatChannel.mock(cid: .unique)
         let query = ChannelListQuery(groupKey: "new")
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: self.dummyCurrentUser)
-            try session.saveCurrentUserGroupedUnreadCount(["new": 2])
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 2])
             try session.saveChannel(payload: self.dummyPayload(with: channel.cid))
             session.saveQuery(query: query)
         }
@@ -454,7 +454,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.link(channel: channel, with: query) { _ in exp.fulfill() }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(["new": 3], database.viewContext.currentUser?.groupedUnreadCount)
+        XCTAssertEqual(["new": 3], database.viewContext.currentUser?.unreadChannelCountsByGroup)
     }
 
     func test_link_groupBasedQuery_doesNotIncrement_whenChannelHasNoUnread() throws {
@@ -463,7 +463,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: self.dummyCurrentUser)
-            try session.saveCurrentUserGroupedUnreadCount(["new": 2])
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 2])
             try session.saveChannel(payload: self.dummyPayload(with: channel.cid, channelReads: []))
             session.saveQuery(query: query)
         }
@@ -472,10 +472,10 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.link(channel: channel, with: query) { _ in exp.fulfill() }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(["new": 2], database.viewContext.currentUser?.groupedUnreadCount)
+        XCTAssertEqual(["new": 2], database.viewContext.currentUser?.unreadChannelCountsByGroup)
     }
 
-    func test_link_groupBasedQuery_skips_whenGroupedUnreadCountIsNil() throws {
+    func test_link_groupBasedQuery_skips_whenUnreadChannelCountsByGroupIsNil() throws {
         let channel = ChatChannel.mock(cid: .unique)
         let query = ChannelListQuery(groupKey: "new")
 
@@ -489,7 +489,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.link(channel: channel, with: query) { _ in exp.fulfill() }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertNil(database.viewContext.currentUser?.groupedUnreadCount)
+        XCTAssertNil(database.viewContext.currentUser?.unreadChannelCountsByGroup)
     }
 
     func test_link_groupBasedQuery_skips_whenGroupKeyMissingFromDictionary() throws {
@@ -498,7 +498,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: self.dummyCurrentUser)
-            try session.saveCurrentUserGroupedUnreadCount(["other": 1])
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["other": 1])
             try session.saveChannel(payload: self.dummyPayload(with: channel.cid))
             session.saveQuery(query: query)
         }
@@ -507,7 +507,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.link(channel: channel, with: query) { _ in exp.fulfill() }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(["other": 1], database.viewContext.currentUser?.groupedUnreadCount)
+        XCTAssertEqual(["other": 1], database.viewContext.currentUser?.unreadChannelCountsByGroup)
     }
 
     func test_link_groupBasedQuery_doesNotIncrement_whenChannelAlreadyLinked() throws {
@@ -516,7 +516,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: self.dummyCurrentUser)
-            try session.saveCurrentUserGroupedUnreadCount(["new": 2])
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 2])
             let channelDTO = try session.saveChannel(payload: self.dummyPayload(with: channel.cid))
             let queryDTO = session.saveQuery(query: query)
             queryDTO.channels.insert(channelDTO)
@@ -526,7 +526,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.link(channel: channel, with: query) { _ in exp.fulfill() }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(["new": 2], database.viewContext.currentUser?.groupedUnreadCount)
+        XCTAssertEqual(["new": 2], database.viewContext.currentUser?.unreadChannelCountsByGroup)
     }
 
     func test_link_groupBasedQuery_doesNotIncrement_whenGroupKeyIsAll() throws {
@@ -535,7 +535,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: self.dummyCurrentUser)
-            try session.saveCurrentUserGroupedUnreadCount(["all": 5])
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["all": 5])
             try session.saveChannel(payload: self.dummyPayload(with: channel.cid))
             session.saveQuery(query: query)
         }
@@ -544,16 +544,16 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.link(channel: channel, with: query) { _ in exp.fulfill() }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(["all": 5], database.viewContext.currentUser?.groupedUnreadCount)
+        XCTAssertEqual(["all": 5], database.viewContext.currentUser?.unreadChannelCountsByGroup)
     }
 
-    func test_link_nonGroupBasedQuery_doesNotModifyGroupedUnreadCount() throws {
+    func test_link_nonGroupBasedQuery_doesNotModifyUnreadChannelCountsByGroup() throws {
         let channel = ChatChannel.mock(cid: .unique)
         let query = ChannelListQuery(filter: .noTeam)
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: self.dummyCurrentUser)
-            try session.saveCurrentUserGroupedUnreadCount(["new": 2])
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 2])
             try session.saveChannel(payload: self.dummyPayload(with: channel.cid))
             session.saveQuery(query: query)
         }
@@ -562,16 +562,16 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.link(channel: channel, with: query) { _ in exp.fulfill() }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(["new": 2], database.viewContext.currentUser?.groupedUnreadCount)
+        XCTAssertEqual(["new": 2], database.viewContext.currentUser?.unreadChannelCountsByGroup)
     }
 
-    func test_unlink_groupBasedQuery_decrementsGroupedUnreadCount_whenChannelHasUnread() throws {
+    func test_unlink_groupBasedQuery_decrementsUnreadChannelCountsByGroup_whenChannelHasUnread() throws {
         let channel = ChatChannel.mock(cid: .unique)
         let query = ChannelListQuery(groupKey: "new")
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: self.dummyCurrentUser)
-            try session.saveCurrentUserGroupedUnreadCount(["new": 5])
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5])
             let channelDTO = try session.saveChannel(payload: self.dummyPayload(with: channel.cid))
             let queryDTO = session.saveQuery(query: query)
             queryDTO.channels.insert(channelDTO)
@@ -581,7 +581,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.unlink(channel: channel, with: query) { _ in exp.fulfill() }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(["new": 4], database.viewContext.currentUser?.groupedUnreadCount)
+        XCTAssertEqual(["new": 4], database.viewContext.currentUser?.unreadChannelCountsByGroup)
     }
 
     func test_unlink_groupBasedQuery_doesNotDecrement_whenChannelHasNoUnread() throws {
@@ -590,7 +590,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: self.dummyCurrentUser)
-            try session.saveCurrentUserGroupedUnreadCount(["new": 5])
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5])
             let channelDTO = try session.saveChannel(payload: self.dummyPayload(with: channel.cid, channelReads: []))
             let queryDTO = session.saveQuery(query: query)
             queryDTO.channels.insert(channelDTO)
@@ -600,7 +600,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.unlink(channel: channel, with: query) { _ in exp.fulfill() }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(["new": 5], database.viewContext.currentUser?.groupedUnreadCount)
+        XCTAssertEqual(["new": 5], database.viewContext.currentUser?.unreadChannelCountsByGroup)
     }
 
     func test_unlink_groupBasedQuery_floorsAtZero() throws {
@@ -609,7 +609,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: self.dummyCurrentUser)
-            try session.saveCurrentUserGroupedUnreadCount(["new": 0])
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 0])
             let channelDTO = try session.saveChannel(payload: self.dummyPayload(with: channel.cid))
             let queryDTO = session.saveQuery(query: query)
             queryDTO.channels.insert(channelDTO)
@@ -619,7 +619,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.unlink(channel: channel, with: query) { _ in exp.fulfill() }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(["new": 0], database.viewContext.currentUser?.groupedUnreadCount)
+        XCTAssertEqual(["new": 0], database.viewContext.currentUser?.unreadChannelCountsByGroup)
     }
 
     func test_unlink_groupBasedQuery_doesNotDecrement_whenChannelNotLinked() throws {
@@ -628,7 +628,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: self.dummyCurrentUser)
-            try session.saveCurrentUserGroupedUnreadCount(["new": 5])
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5])
             try session.saveChannel(payload: self.dummyPayload(with: channel.cid))
             session.saveQuery(query: query)
         }
@@ -637,7 +637,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.unlink(channel: channel, with: query) { _ in exp.fulfill() }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(["new": 5], database.viewContext.currentUser?.groupedUnreadCount)
+        XCTAssertEqual(["new": 5], database.viewContext.currentUser?.unreadChannelCountsByGroup)
     }
 
     func test_unlink_groupBasedQuery_doesNotDecrement_whenGroupKeyIsAll() throws {
@@ -646,7 +646,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: self.dummyCurrentUser)
-            try session.saveCurrentUserGroupedUnreadCount(["all": 5])
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["all": 5])
             let channelDTO = try session.saveChannel(payload: self.dummyPayload(with: channel.cid))
             let queryDTO = session.saveQuery(query: query)
             queryDTO.channels.insert(channelDTO)
@@ -656,16 +656,16 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.unlink(channel: channel, with: query) { _ in exp.fulfill() }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(["all": 5], database.viewContext.currentUser?.groupedUnreadCount)
+        XCTAssertEqual(["all": 5], database.viewContext.currentUser?.unreadChannelCountsByGroup)
     }
 
-    func test_unlink_nonGroupBasedQuery_doesNotModifyGroupedUnreadCount() throws {
+    func test_unlink_nonGroupBasedQuery_doesNotModifyUnreadChannelCountsByGroup() throws {
         let channel = ChatChannel.mock(cid: .unique)
         let query = ChannelListQuery(filter: .noTeam)
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: self.dummyCurrentUser)
-            try session.saveCurrentUserGroupedUnreadCount(["new": 2])
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 2])
             let channelDTO = try session.saveChannel(payload: self.dummyPayload(with: channel.cid))
             let queryDTO = session.saveQuery(query: query)
             queryDTO.channels.insert(channelDTO)
@@ -675,7 +675,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         listUpdater.unlink(channel: channel, with: query) { _ in exp.fulfill() }
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(["new": 2], database.viewContext.currentUser?.groupedUnreadCount)
+        XCTAssertEqual(["new": 2], database.viewContext.currentUser?.unreadChannelCountsByGroup)
     }
 
     // MARK: - queryGroupedChannels
@@ -731,12 +731,12 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertEqual("next-cursor", group?.next)
     }
 
-    func test_queryGroupedChannels_paginated_doesNotOverwriteGroupedUnreadCount() throws {
+    func test_queryGroupedChannels_paginated_doesNotOverwriteUnreadChannelCountsByGroup() throws {
         // Seed current user with unread counts for multiple groups.
         let userId = UserId.unique
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
-            try session.saveCurrentUserGroupedUnreadCount(["new": 5, "current": 10, "old": 2])
+            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 10, "old": 2])
         }
 
         let pagination = GroupedChannelsPagination(groupKey: "old", next: "cursor")
@@ -754,7 +754,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionCalled)
 
         // Other groups' counters must remain intact (would be clobbered if mapValues ran).
-        let counters = database.viewContext.currentUser?.groupedUnreadCount ?? [:]
+        let counters = database.viewContext.currentUser?.unreadChannelCountsByGroup ?? [:]
         XCTAssertEqual(5, counters["new"])
         XCTAssertEqual(10, counters["current"])
         XCTAssertEqual(2, counters["old"])
