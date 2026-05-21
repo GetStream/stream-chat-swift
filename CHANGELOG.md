@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### 🐞 Fixed
 - Forward CDN authentication headers when generating local video preview thumbnails [#4105](https://github.com/GetStream/stream-chat-swift/pull/4105)
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix UIKit attachment previews flickering when adding reactions to messages with cached CDN images [#4106](https://github.com/GetStream/stream-chat-swift/pull/4106)
+
 # [5.2.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.2.0)
 _May 13, 2026_
 
