@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Fix crash in `MarkdownParser` when parsing long messages with many presentation intents [#4098](https://github.com/GetStream/stream-chat-swift/pull/4098)
 - Remove the unused `pinning` parameter from `LivestreamChannelController.pin(messageId:completion:)`. The parameter had no effect [#4103](https://github.com/GetStream/stream-chat-swift/pull/4103)
 
+## StreamChatCommonUI
+### 🐞 Fixed
+- Forward CDN authentication headers when generating local video preview thumbnails [#4105](https://github.com/GetStream/stream-chat-swift/pull/4105)
+
 # [5.2.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.2.0)
 _May 13, 2026_
 
