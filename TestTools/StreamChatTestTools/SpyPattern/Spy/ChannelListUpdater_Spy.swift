@@ -19,7 +19,8 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     @Atomic var refreshLoadedChannelsResult: Result<Set<ChannelId>, Error>?
 
     @Atomic var queryGroupedChannels_callCount = 0
-    @Atomic var queryGroupedChannels_paginations: [GroupedChannelsPagination?] = []
+    @Atomic var queryGroupedChannels_groups: [[String: GroupedQueryChannelsRequestGroup]?] = []
+    @Atomic var queryGroupedChannels_limits: [Int?] = []
     @Atomic var queryGroupedChannels_watchValues: [Bool] = []
     @Atomic var queryGroupedChannels_presenceValues: [Bool] = []
     @Atomic var queryGroupedChannels_result: Result<[ChannelGroup], Error>?
@@ -45,7 +46,8 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         fetch_completion = nil
 
         queryGroupedChannels_callCount = 0
-        queryGroupedChannels_paginations.removeAll()
+        queryGroupedChannels_groups.removeAll()
+        queryGroupedChannels_limits.removeAll()
         queryGroupedChannels_watchValues.removeAll()
         queryGroupedChannels_presenceValues.removeAll()
         queryGroupedChannels_result = nil
@@ -87,14 +89,15 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     }
 
     override func queryGroupedChannels(
-        groupPagination: GroupedChannelsPagination?,
+        groups: [String: GroupedQueryChannelsRequestGroup]?,
         limit: Int?,
         watch: Bool,
         presence: Bool,
         completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
     ) {
         _queryGroupedChannels_callCount.mutate { $0 += 1 }
-        _queryGroupedChannels_paginations.mutate { $0.append(groupPagination) }
+        _queryGroupedChannels_groups.mutate { $0.append(groups) }
+        _queryGroupedChannels_limits.mutate { $0.append(limit) }
         _queryGroupedChannels_watchValues.mutate { $0.append(watch) }
         _queryGroupedChannels_presenceValues.mutate { $0.append(presence) }
         if let result = queryGroupedChannels_result {
@@ -103,7 +106,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
             }
         } else {
             super.queryGroupedChannels(
-                groupPagination: groupPagination,
+                groups: groups,
                 limit: limit,
                 watch: watch,
                 presence: presence,

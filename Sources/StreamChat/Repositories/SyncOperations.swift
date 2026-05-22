@@ -144,7 +144,7 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                 do {
                     let state = try await channelListUpdater.paginationState(for: sampleGroupKey)
                     let channelGroups = try await channelListUpdater.queryGroupedChannels(
-                        groupPagination: nil,
+                        groups: nil,
                         limit: nil,
                         watch: state.watch ?? false,
                         presence: state.presence ?? false

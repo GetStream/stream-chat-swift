@@ -106,9 +106,9 @@ final class ChannelList_Tests: XCTestCase {
         try await channelList.get()
 
         XCTAssertEqual(1, env.channelListUpdaterMock.queryGroupedChannels_callCount)
-        let pagination = env.channelListUpdaterMock.queryGroupedChannels_paginations.first ?? nil
-        XCTAssertEqual("all", pagination?.groupKey)
-        XCTAssertNil(pagination?.next)
+        let groups = env.channelListUpdaterMock.queryGroupedChannels_groups.first ?? nil
+        XCTAssertEqual(["all"], groups?.keys.sorted())
+        XCTAssertNil(groups?["all"]?.next)
         XCTAssertTrue(env.channelListUpdaterMock.update_queries.isEmpty)
     }
 
@@ -138,9 +138,9 @@ final class ChannelList_Tests: XCTestCase {
         _ = try await channelList.loadMoreChannels(limit: 5)
 
         XCTAssertEqual(1, env.channelListUpdaterMock.queryGroupedChannels_callCount)
-        let pagination = env.channelListUpdaterMock.queryGroupedChannels_paginations.first ?? nil
-        XCTAssertEqual("all", pagination?.groupKey)
-        XCTAssertEqual("cursor-1", pagination?.next)
+        let groups = env.channelListUpdaterMock.queryGroupedChannels_groups.first ?? nil
+        XCTAssertEqual(["all"], groups?.keys.sorted())
+        XCTAssertEqual("cursor-1", groups?["all"]?.next)
     }
 
     func test_loadMoreChannels_whenQueryHasGroupKey_propagatesPersistedWatchAndPresence() async throws {

@@ -80,9 +80,13 @@ public class ChannelList: @unchecked Sendable {
     @discardableResult public func loadChannels(with pagination: Pagination) async throws -> [ChatChannel] {
         if let groupKey = query.groupKey {
             let state = try await channelListUpdater.paginationState(for: groupKey)
-            let channelGroups = try await channelListUpdater.queryGroupedChannels(
-                groupPagination: .init(groupKey: groupKey, next: pagination.cursor),
+            let perGroup = GroupedQueryChannelsRequestGroup(
                 limit: pagination.pageSize != .unsetPageSize ? pagination.pageSize : nil,
+                next: pagination.cursor
+            )
+            let channelGroups = try await channelListUpdater.queryGroupedChannels(
+                groups: [groupKey: perGroup],
+                limit: nil,
                 watch: state.watch ?? false,
                 presence: state.presence ?? false
             )

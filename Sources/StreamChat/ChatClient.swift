@@ -651,16 +651,16 @@ public class ChatClient: @unchecked Sendable {
     
     // MARK: - Grouped Channels
 
-    /// Fetches the configured set of channel groups (e.g. `"all"`, `"new"`, `"old"`, `"current"`)
-    /// for the current user in a single batched request.
+    /// Fetches a batched set of channel groups (e.g. `"all"`, `"new"`, `"old"`, `"current"`) for
+    /// the current user in a single request.
     ///
     /// Channel groups are server-side buckets — configured per-app — that classify channels by some
     /// criterion. The group a channel belongs to is carried in `extraData["group"]`. One call to
-    /// this method returns the first page of channels for **every** configured group, which is
+    /// this method returns the first page of channels for every requested group, which is
     /// significantly more efficient than calling ``ChannelList/get()`` per group.
     ///
-    /// The response always includes the special ``GroupedChannelKey/all`` group, which aggregates
-    /// channels from every other group — useful for an "everything" tab.
+    /// The response for a fetch-all call always includes the special ``GroupedChannelKey/all`` group,
+    /// which aggregates channels from every other group — useful for an "everything" tab.
     ///
     /// ### Pairing with `ChannelList`
     ///
@@ -670,14 +670,21 @@ public class ChatClient: @unchecked Sendable {
     /// a fresh first-page fetch for a single group.
     ///
     /// ```swift
-    /// let groups = try await client.queryGroupedChannels(presence: true, watch: true)
+    /// // Fetch every configured group.
+    /// let groups = try await client.queryGroupedChannels()
     /// for group in groups {
     ///     let list = client.makeChannelList(with: group.groupKey)
     ///     // Observe `list.state.channels`; call `list.loadMoreChannels()` for additional pages.
     /// }
+    ///
+    /// // Fetch only a subset of groups.
+    /// let subset = try await client.queryGroupedChannels(groups: ["new", "current"], limit: 5)
     /// ```
     ///
     /// - Parameters:
+    ///   - groups: The group keys to fetch. `nil` (the default) or an empty array fetches every
+    ///     configured group. A non-empty array fetches only those groups; the response will not
+    ///     include the synthetic `"all"` aggregate.
     ///   - limit: The number of channels to return **per group** on the first page. `nil` uses the
     ///     backend default.
     ///   - presence: When `true`, includes presence info (user online state) in the response and
@@ -695,13 +702,19 @@ public class ChatClient: @unchecked Sendable {
     ///   name, its channel ids in the order returned by the backend, and the unread channel count.
     /// - Throws: An error while communicating with the Stream API.
     @discardableResult public func queryGroupedChannels(
+        groups: [String]? = nil,
         limit: Int? = nil,
         presence: Bool = false,
         watch: Bool = false
     ) async throws -> [ChannelGroup] {
-        try await channelListUpdater.queryGroupedChannels(
-            groupPagination: nil,
-            limit: limit,
+        let groupRequests: [String: GroupedQueryChannelsRequestGroup]? = groups.flatMap { keys in
+            keys.isEmpty ? nil : keys.reduce(into: [:]) { result, key in
+                result[key] = GroupedQueryChannelsRequestGroup(limit: limit, next: nil)
+            }
+        }
+        return try await channelListUpdater.queryGroupedChannels(
+            groups: groupRequests,
+            limit: groupRequests == nil ? limit : nil,
             watch: watch,
             presence: presence
         )

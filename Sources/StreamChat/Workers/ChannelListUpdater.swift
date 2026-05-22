@@ -195,29 +195,31 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     
     /// Queries grouped channel groups for the app.
     ///
-    /// When `groupPagination` is non-nil, only that single group is paginated using its cursor and the
-    /// response payload contains only that group. Unread-channel counts are not persisted in the
-    /// paginated case since they reflect just the requested group.
+    /// The `groups` parameter controls which groups are requested and how:
+    /// - `nil` → fetch every configured group; the request body's `groups` field is `nil` and the
+    ///   top-level `limit` applies.
+    /// - non-`nil` → fetch only those groups; the entries are forwarded as-is. Each entry's
+    ///   `next` cursor (if any) paginates that group; `limit` is per-group.
+    ///
+    /// Per-group, the locally-cached channel set is reset whenever the response represents a
+    /// fresh first page for that group (i.e. the request had `next == nil` for it, or the request
+    /// was a fetch-all). Unread-channel counts on `CurrentUserDTO` are only persisted in the
+    /// fetch-all case — partial responses would otherwise clobber counts for groups that weren't
+    /// in the request.
     func queryGroupedChannels(
-        groupPagination: GroupedChannelsPagination?,
+        groups: [String: GroupedQueryChannelsRequestGroup]?,
         limit: Int?,
         watch: Bool,
         presence: Bool,
         completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
     ) {
-        // Only one group is supported for pagination, nil means all groups are returned with the first page
-        let paginatedGroup: [String: GroupedQueryChannelsRequestGroup]? = {
-            guard let groupPagination else { return nil }
-            return [groupPagination.groupKey: GroupedQueryChannelsRequestGroup(limit: limit, next: groupPagination.next)]
-        }()
         let request = GroupedQueryChannelsRequestBody(
-            limit: paginatedGroup == nil ? limit : nil,
-            groups: paginatedGroup,
+            limit: groups == nil ? limit : nil,
+            groups: groups,
             watch: watch,
             presence: presence
         )
         let isInitialFetch = request.groups == nil
-        let isFirstPageForSingleGroup = groupPagination?.next == nil
         let endpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
         apiClient.request(endpoint: endpoint) { [database] result in
             switch result {
@@ -229,10 +231,11 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                         let unreadChannelCountsByGroup = payload.groups.mapValues(\.unreadChannels)
                         try session.saveCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
                     }
-                    var groups: [ChannelGroup] = []
+                    var channelGroups: [ChannelGroup] = []
                     for (groupKey, groupPayload) in payload.groups {
                         let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: groupKey))
-                        if isInitialFetch || isFirstPageForSingleGroup {
+                        let wasFreshFetch = isInitialFetch || request.groups?[groupKey]?.next == nil
+                        if wasFreshFetch {
                             queryDTO.channels.removeAll()
                         }
                         queryDTO.next = groupPayload.next
@@ -243,30 +246,30 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                             queryDTO.channels.insert(dto)
                             return channelPayload.channel.cid
                         }
-                        groups.append(ChannelGroup(
+                        channelGroups.append(ChannelGroup(
                             groupKey: groupKey,
                             channelIds: channelIds,
                             unreadChannels: groupPayload.unreadChannels,
                             next: groupPayload.next
                         ))
                     }
-                    return groups
+                    return channelGroups
                 }, completion: { result in
                     completion(result)
                 })
             }
         }
     }
-    
+
     func queryGroupedChannels(
-        groupPagination: GroupedChannelsPagination?,
+        groups: [String: GroupedQueryChannelsRequestGroup]?,
         limit: Int?,
         watch: Bool,
         presence: Bool
     ) async throws -> [ChannelGroup] {
         try await withCheckedThrowingContinuation { continuation in
             queryGroupedChannels(
-                groupPagination: groupPagination,
+                groups: groups,
                 limit: limit,
                 watch: watch,
                 presence: presence
