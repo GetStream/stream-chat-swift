@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [4.100.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.100.1)
+_May 22, 2026_
+
 ## StreamChat
 ### 🐞 Fixed
 - Fix crash in `MarkdownParser` when parsing long messages with many presentation intents [#4099](https://github.com/GetStream/stream-chat-swift/pull/4099)
