@@ -196,8 +196,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Internet -> ON
         mockInternetConnection.monitorMock.status = .available(.great)
 
-        // Assert reconnection happens
-        XCTAssertTrue(mockChatClient.mockWebSocketClient.connect_called)
+        // Assert reconnection happens (handler dispatches through engineQueue, so wait for it)
+        AssertAsync.willBeTrue(mockChatClient.mockWebSocketClient.connect_called)
     }
 
     /// keepConnectionAliveInBackground == true
@@ -260,8 +260,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Backgroud task killed
         mockBackgroundTaskScheduler.beginBackgroundTask_expirationHandler?()
 
-        // Assert disconnection is initiated by the system
-        XCTAssertEqual(mockChatClient.mockWebSocketClient.disconnect_source, .systemInitiated)
+        // Assert disconnection is initiated by the system (handler dispatches through engineQueue)
+        AssertAsync.willBeEqual(mockChatClient.mockWebSocketClient.disconnect_source, .systemInitiated)
 
         // Disconnect (system initiated)
         disconnectWebSocket(source: .systemInitiated)
@@ -270,7 +270,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         mockBackgroundTaskScheduler.simulateAppGoingToForeground()
 
         // Assert reconnection happens
-        XCTAssertTrue(mockChatClient.mockWebSocketClient.connect_called)
+        AssertAsync.willBeTrue(mockChatClient.mockWebSocketClient.connect_called)
     }
 
     /// keepConnectionAliveInBackground == false
@@ -288,8 +288,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // App -> background
         mockBackgroundTaskScheduler.simulateAppGoingToBackground()
 
-        // Assert disconnect is initiated by the sytem
-        XCTAssertEqual(mockChatClient.mockWebSocketClient.disconnect_source, .systemInitiated)
+        // Assert disconnect is initiated by the sytem (handler dispatches through engineQueue)
+        AssertAsync.willBeEqual(mockChatClient.mockWebSocketClient.disconnect_source, .systemInitiated)
         // Assert no background task
         XCTAssertFalse(mockBackgroundTaskScheduler.beginBackgroundTask_called)
         // Assert no reconnect timer
@@ -302,7 +302,7 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         mockBackgroundTaskScheduler.simulateAppGoingToForeground()
 
         // Assert reconnection happens
-        XCTAssertTrue(mockChatClient.mockWebSocketClient.connect_called)
+        AssertAsync.willBeTrue(mockChatClient.mockWebSocketClient.connect_called)
     }
 
     /// keepConnectionAliveInBackground == true
@@ -387,8 +387,8 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         // Wait for reconnection delay to pass
         mockTime.run(numberOfSeconds: 10)
 
-        // Assert reconnection happens
-        XCTAssertTrue(mockChatClient.mockWebSocketClient.connect_called)
+        // Assert reconnection happens (timer onFire dispatches through engineQueue)
+        AssertAsync.willBeTrue(mockChatClient.mockWebSocketClient.connect_called)
     }
 
     /// 1. ws -> connected
@@ -602,6 +602,86 @@ final class ConnectionRecoveryHandler_Tests: XCTestCase {
         )
 
         XCTAssertNotCall("syncLocalState(completion:)", on: mockChatClient.mockSyncRepository)
+    }
+
+    // MARK: - Race regression: disconnect/reconnect must dispatch onto engineQueue
+
+    /// Regression test for the data race that left `connectionState` stuck at `.disconnecting`.
+    ///
+    /// Without the fix, `disconnectIfNeeded` ran synchronously on the caller's queue (typically
+    /// `io.getStream.chat.internet-monitor`). When the internet went down, the handler's
+    /// `webSocketClient.disconnect(source: .systemInitiated)` raced with the engine's own
+    /// `webSocketDidDisconnect` callback on `engineQueue`, allowing the handler to overwrite
+    /// the engine's legitimate `.disconnected` with `.disconnecting`.
+    ///
+    /// The fix dispatches the handler's check-and-act onto `engineQueue`, serialising it with
+    /// engine callbacks. This test verifies the dispatch mechanism by suspending the queue:
+    /// without the fix, `disconnect` would be called synchronously on the test thread; with
+    /// the fix, the call is queued and only runs once the queue is resumed.
+    func test_disconnectIfNeeded_dispatchesOntoEngineQueue() {
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false)
+        connectWebSocket()
+
+        let webSocketClient = mockChatClient.mockWebSocketClient
+        webSocketClient.disconnect_calledCounter = 0
+
+        webSocketClient.engineQueue.suspend()
+        defer { webSocketClient.engineQueue.resume() }
+
+        // Trigger disconnectIfNeeded via internet OFF.
+        mockInternetConnection.monitorMock.status = .unavailable
+
+        // With the fix, the handler's block is queued on the suspended engineQueue — disconnect
+        // has not been invoked yet. Without the fix, disconnect would already have been called.
+        XCTAssertFalse(
+            webSocketClient.disconnect_called,
+            "Handler must dispatch disconnect onto engineQueue, not call it from the caller's queue."
+        )
+    }
+
+    /// Symmetric to `test_disconnectIfNeeded_dispatchesOntoEngineQueue` but for the reconnect
+    /// path triggered by internet returning (`reconnectIfNeededFromOffline`).
+    func test_reconnectFromOffline_dispatchesOntoEngineQueue() {
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false)
+        // Put the client in a state from which automatic reconnection is allowed.
+        connectWebSocket()
+        disconnectWebSocket(source: .systemInitiated)
+
+        let webSocketClient = mockChatClient.mockWebSocketClient
+        webSocketClient.connect_calledCounter = 0
+
+        webSocketClient.engineQueue.suspend()
+        defer { webSocketClient.engineQueue.resume() }
+
+        // Trigger reconnect via internet ON.
+        mockInternetConnection.monitorMock.status = .available(.great)
+
+        XCTAssertFalse(
+            webSocketClient.connect_called,
+            "Handler must dispatch connect onto engineQueue, not call it from the caller's queue."
+        )
+    }
+
+    /// Verifies the reconnection-timer onFire path also dispatches onto `engineQueue`.
+    func test_reconnectTimerFire_dispatchesOntoEngineQueue() {
+        handler = makeConnectionRecoveryHandler(keepConnectionAliveInBackground: false)
+        connectWebSocket()
+        // Server-initiated disconnect schedules the reconnection timer.
+        disconnectWebSocket(source: .serverInitiated(error: nil))
+
+        let webSocketClient = mockChatClient.mockWebSocketClient
+        webSocketClient.connect_calledCounter = 0
+
+        webSocketClient.engineQueue.suspend()
+        defer { webSocketClient.engineQueue.resume() }
+
+        // Advance virtual time so the reconnect timer fires.
+        mockTime.run(numberOfSeconds: 10)
+
+        XCTAssertFalse(
+            webSocketClient.connect_called,
+            "Timer-driven reconnect must dispatch connect onto engineQueue, not call it from the timer's queue."
+        )
     }
 }
 

@@ -50,8 +50,9 @@ class WebSocketClient {
     /// The web socket engine used to make the actual WS connection
     @Atomic private(set) var engine: WebSocketEngine?
 
-    /// The queue on which web socket engine methods are called
-    private let engineQueue: DispatchQueue = .init(label: "io.getStream.chat.core.web_socket_engine_queue", qos: .userInitiated)
+    /// The queue on which web socket engine methods are called.
+    /// Also used by the connection recovery handler to serialize check-and-act sequences against engine state mutations.
+    let engineQueue: DispatchQueue = .init(label: "io.getStream.chat.core.web_socket_engine_queue", qos: .userInitiated)
 
     private let requestEncoder: RequestEncoder
 

@@ -108,9 +108,7 @@ extension DefaultConnectionRecoveryHandler {
 
         backgroundTaskScheduler?.endTask()
 
-        if canReconnectFromOffline {
-            webSocketClient.connect()
-        }
+        reconnectIfNeededFromOffline()
     }
 
     private func appDidEnterBackground() {
@@ -151,9 +149,7 @@ extension DefaultConnectionRecoveryHandler {
         log.debug("Internet -> \(isAvailable ? "✅" : "❌")", subsystems: .webSocket)
 
         if isAvailable {
-            if canReconnectFromOffline {
-                webSocketClient.connect()
-            }
+            reconnectIfNeededFromOffline()
         } else {
             disconnectIfNeeded()
         }
@@ -201,11 +197,52 @@ extension DefaultConnectionRecoveryHandler {
 // MARK: - Disconnection
 
 private extension DefaultConnectionRecoveryHandler {
+    /// Asks the web socket client to disconnect when the system decides we should drop the connection
+    /// (app went to background, internet became unavailable, background task expired, etc.).
+    ///
+    /// The work is dispatched onto `WebSocketClient.engineQueue` to serialize the check-and-act
+    /// (`canBeDisconnected` read + `webSocketClient.disconnect(...)` call) against the engine's
+    /// own state mutations. All `WebSocketEngineDelegate` callbacks — `webSocketDidConnect`,
+    /// `webSocketDidReceiveMessage`, `webSocketDidDisconnect` — run on `engineQueue` and mutate
+    /// `WebSocketClient.connectionState`. By piggy-backing on the same serial queue, our decision
+    /// cannot interleave with theirs.
+    ///
+    /// Bug this prevents: this method is called from multiple queues (main thread for app lifecycle
+    /// events, `io.getStream.chat.internet-monitor` for reachability changes). Previously the flow was:
+    ///
+    ///   1. `canBeDisconnected` reads `connectionState == .connected` on the internet-monitor queue → returns `true`.
+    ///   2. Meanwhile on `engineQueue`, `webSocketDidDisconnect` fires (Wi-Fi just dropped) and sets state to
+    ///      `.disconnected(.serverInitiated)`.
+    ///   3. The internet-monitor queue resumes and unconditionally calls `disconnect(source: .systemInitiated)`,
+    ///      which writes `.disconnecting(.systemInitiated)`, overwriting the legitimate `.disconnected`.
+    ///   4. The engine has already closed the socket, so no further `webSocketDidDisconnect` fires to
+    ///      transition `.disconnecting → .disconnected`. State stays stuck at `.disconnecting`.
+    ///   5. When Wi-Fi returns, automatic reconnection is rejected because the state's
+    ///      `isAutomaticReconnectionEnabled` only matches `.disconnected`. The client never recovers.
+    ///
+    /// With this dispatch, the two writers are serialized on the same queue, so either ordering
+    /// ends at `.disconnected` — no stuck `.disconnecting` state.
     func disconnectIfNeeded() {
-        guard canBeDisconnected else { return }
+        webSocketClient.engineQueue.async { [weak self] in
+            guard let self = self else { return }
+            guard self.canBeDisconnected else { return }
 
-        webSocketClient.disconnect(source: .systemInitiated) {
-            log.debug("Did disconnect automatically", subsystems: .webSocket)
+            self.webSocketClient.disconnect(source: .systemInitiated) {
+                log.debug("Did disconnect automatically", subsystems: .webSocket)
+            }
+        }
+    }
+
+    /// Asks the web socket client to reconnect when conditions allow it (app foregrounding,
+    /// internet returning). Mirrors `disconnectIfNeeded`: the check (`canReconnectFromOffline`)
+    /// and the act (`webSocketClient.connect()`) are dispatched onto `engineQueue` so they cannot
+    /// race with the engine's own state mutations.
+    func reconnectIfNeededFromOffline() {
+        webSocketClient.engineQueue.async { [weak self] in
+            guard let self = self else { return }
+            guard self.canReconnectFromOffline else { return }
+
+            self.webSocketClient.connect()
         }
     }
 
@@ -245,8 +282,11 @@ private extension DefaultConnectionRecoveryHandler {
             onFire: { [weak self] in
                 log.debug("Timer 🔥", subsystems: .webSocket)
 
-                if self?.canReconnectAutomatically == true {
-                    self?.webSocketClient.connect()
+                self?.webSocketClient.engineQueue.async { [weak self] in
+                    guard let self = self else { return }
+                    guard self.canReconnectAutomatically else { return }
+
+                    self.webSocketClient.connect()
                 }
             }
         )

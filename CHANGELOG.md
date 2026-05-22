@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Fix WebSocket reconnection getting stuck in `.disconnecting` after the device temporarily loses network connectivity
+
 ### 🔄 Changed
 
 # [4.100.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.100.1)
