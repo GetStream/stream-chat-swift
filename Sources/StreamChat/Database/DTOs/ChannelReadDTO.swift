@@ -86,9 +86,15 @@ extension NSManagedObjectContext {
 
         dto.user = try saveUser(payload: payload.user)
 
-        dto.lastReadAt = payload.lastReadAt.bridgeDate
-        dto.lastReadMessageId = payload.lastReadMessageId
-        dto.unreadMessageCount = Int32(payload.unreadMessagesCount)
+        let isLocallyTracked = !dto.isInserted
+            && chatClientConfig?.isLocalUnreadCountEnabled == true
+            && !dto.channel.config.readEventsEnabled
+
+        if !isLocallyTracked {
+            dto.lastReadAt = payload.lastReadAt.bridgeDate
+            dto.lastReadMessageId = payload.lastReadMessageId
+            dto.unreadMessageCount = Int32(payload.unreadMessagesCount)
+        }
         dto.lastDeliveredAt = payload.lastDeliveredAt?.bridgeDate
         dto.lastDeliveredMessageId = payload.lastDeliveredMessageId
 

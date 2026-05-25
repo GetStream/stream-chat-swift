@@ -53,6 +53,178 @@ final class ChannelReadDTO_Tests: XCTestCase {
         XCTAssertEqual(readDTO.lastDeliveredMessageId, payload.lastDeliveredMessageId)
     }
 
+    // MARK: - saveChannelRead local tracking
+
+    func test_saveChannelRead_whenLocalTrackingEnabled_readEventsDisabled_existingDTO_preservesLocalCount() throws {
+        // Local tracking is on and the server has read events disabled. An existing ChannelReadDTO
+        // with a locally-incremented count must not be overwritten by the server payload.
+        let userId = UserId.unique
+        let cid = ChannelId.unique
+
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isLocalUnreadCountEnabled = true
+        let database = DatabaseContainer_Spy(kind: .inMemory, chatClientConfig: config)
+
+        // Seed the channel with a properly-populated read so the user DTO exists in the store.
+        let initialRead = ChannelReadPayload(
+            user: dummyUser(id: userId),
+            lastReadAt: Date.distantPast,
+            lastReadMessageId: nil,
+            unreadMessagesCount: 0
+        )
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, config: .mock(readEventsEnabled: false)),
+            channelReads: [initialRead]
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        // Simulate a locally-incremented count (e.g. via ChannelReadUpdaterMiddleware).
+        try database.writeSynchronously { session in
+            let read = session.loadChannelRead(cid: cid, userId: userId)
+            read?.unreadMessageCount = 3
+        }
+
+        // Server sends a sync payload with unreadMessagesCount = 0.
+        let serverPayload = ChannelReadPayload(
+            user: dummyUser(id: userId),
+            lastReadAt: Date(),
+            lastReadMessageId: MessageId.unique,
+            unreadMessagesCount: 0,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
+        )
+        try database.writeSynchronously { session in
+            _ = try session.saveChannelRead(payload: serverPayload, for: cid, cache: nil)
+        }
+
+        // The locally-incremented count must be preserved.
+        let readDTO = try XCTUnwrap(database.viewContext.loadChannelRead(cid: cid, userId: userId))
+        XCTAssertEqual(readDTO.unreadMessageCount, 3)
+    }
+
+    func test_saveChannelRead_whenLocalTrackingEnabled_readEventsDisabled_newDTO_usesServerCount() throws {
+        // When there is no existing DTO (first channel load), the server value is authoritative.
+        let userId = UserId.unique
+        let cid = ChannelId.unique
+
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isLocalUnreadCountEnabled = true
+        let database = DatabaseContainer_Spy(kind: .inMemory, chatClientConfig: config)
+
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, config: .mock(readEventsEnabled: false)),
+            channelReads: []
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        let serverPayload = ChannelReadPayload(
+            user: dummyUser(id: userId),
+            lastReadAt: Date(),
+            lastReadMessageId: MessageId.unique,
+            unreadMessagesCount: 5,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
+        )
+        try database.writeSynchronously { session in
+            _ = try session.saveChannelRead(payload: serverPayload, for: cid, cache: nil)
+        }
+
+        let readDTO = try XCTUnwrap(database.viewContext.loadChannelRead(cid: cid, userId: userId))
+        XCTAssertEqual(readDTO.unreadMessageCount, 5)
+    }
+
+    func test_saveChannelRead_whenLocalTrackingDisabled_existingDTO_serverCountOverwrites() throws {
+        // When the flag is off, the server payload always overwrites the local count.
+        let userId = UserId.unique
+        let cid = ChannelId.unique
+
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isLocalUnreadCountEnabled = false
+        let database = DatabaseContainer_Spy(kind: .inMemory, chatClientConfig: config)
+
+        let initialRead = ChannelReadPayload(
+            user: dummyUser(id: userId),
+            lastReadAt: Date.distantPast,
+            lastReadMessageId: nil,
+            unreadMessagesCount: 0
+        )
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, config: .mock(readEventsEnabled: false)),
+            channelReads: [initialRead]
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        try database.writeSynchronously { session in
+            let read = session.loadChannelRead(cid: cid, userId: userId)
+            read?.unreadMessageCount = 7
+        }
+
+        let serverPayload = ChannelReadPayload(
+            user: dummyUser(id: userId),
+            lastReadAt: Date(),
+            lastReadMessageId: MessageId.unique,
+            unreadMessagesCount: 0,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
+        )
+        try database.writeSynchronously { session in
+            _ = try session.saveChannelRead(payload: serverPayload, for: cid, cache: nil)
+        }
+
+        let readDTO = try XCTUnwrap(database.viewContext.loadChannelRead(cid: cid, userId: userId))
+        XCTAssertEqual(readDTO.unreadMessageCount, 0)
+    }
+
+    func test_saveChannelRead_whenLocalTrackingEnabled_readEventsEnabled_existingDTO_serverCountOverwrites() throws {
+        // Even with the flag on, if the channel has readEventsEnabled the server count is authoritative.
+        let userId = UserId.unique
+        let cid = ChannelId.unique
+
+        var config = ChatClientConfig(apiKeyString: .unique)
+        config.isLocalUnreadCountEnabled = true
+        let database = DatabaseContainer_Spy(kind: .inMemory, chatClientConfig: config)
+
+        let initialRead = ChannelReadPayload(
+            user: dummyUser(id: userId),
+            lastReadAt: Date.distantPast,
+            lastReadMessageId: nil,
+            unreadMessagesCount: 0
+        )
+        let channelPayload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid, config: .mock(readEventsEnabled: true)),
+            channelReads: [initialRead]
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelPayload)
+        }
+
+        try database.writeSynchronously { session in
+            let read = session.loadChannelRead(cid: cid, userId: userId)
+            read?.unreadMessageCount = 9
+        }
+
+        let serverPayload = ChannelReadPayload(
+            user: dummyUser(id: userId),
+            lastReadAt: Date(),
+            lastReadMessageId: MessageId.unique,
+            unreadMessagesCount: 1,
+            lastDeliveredAt: nil,
+            lastDeliveredMessageId: nil
+        )
+        try database.writeSynchronously { session in
+            _ = try session.saveChannelRead(payload: serverPayload, for: cid, cache: nil)
+        }
+
+        let readDTO = try XCTUnwrap(database.viewContext.loadChannelRead(cid: cid, userId: userId))
+        XCTAssertEqual(readDTO.unreadMessageCount, 1)
+    }
+
     // MARK: - markChannelAsRead
 
     func test_markChannelAsRead_whenReadExists_isIsUpdated() throws {

@@ -402,6 +402,193 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount - 1)
     }
 
+    // MARK: - message.new (no existing ChannelReadDTO — readEventsEnabled = false scenario)
+
+    func test_messageNewEvent_whenNoChannelReadExists_createsReadDTOAndIncrementsCount() throws {
+        // Simulates a channel where readEventsEnabled = false on the server.
+        // The server omits the current user's read state from the channel payload,
+        // so no ChannelReadDTO exists when the first message arrives.
+
+        // GIVEN: channel saved without any read entry for the current user
+        let cid = ChannelId.unique
+        let channelWithoutReads = ChannelPayload(
+            channel: .dummy(cid: cid),
+            watcherCount: 0,
+            watchers: [],
+            members: [.dummy(user: currentUserPayload)],
+            membership: .dummy(user: currentUserPayload),
+            messages: [],
+            pendingMessages: nil,
+            pinnedMessages: [],
+            channelReads: [],
+            isHidden: false,
+            draft: nil,
+            activeLiveLocations: [],
+            pushPreference: nil
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelWithoutReads)
+        }
+
+        // Verify precondition: no read DTO exists yet
+        XCTAssertNil(database.viewContext.loadChannelRead(cid: cid, userId: currentUserPayload.id))
+
+        // WHEN: a new message arrives from another user
+        let messageId = MessageId.unique
+        let message: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: anotherUserPayload.id,
+            createdAt: Date()
+        )
+        let event = try MessageNewEventDTO(from: .init(
+            eventType: .messageNew,
+            cid: cid,
+            user: anotherUserPayload,
+            message: message,
+            createdAt: message.createdAt
+        ))
+        center.newMessageIdsMock = [messageId]
+
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        // THEN: a read DTO is created on-the-fly and the unread count is 1
+        let read = try XCTUnwrap(
+            database.viewContext.loadChannelRead(cid: cid, userId: currentUserPayload.id)
+        )
+        XCTAssertEqual(Int(read.unreadMessageCount), 1)
+    }
+
+    func test_messageNewEvent_whenNoChannelReadExists_ownMessage_doesNotIncrementCount() throws {
+        // GIVEN: channel without read state
+        let cid = ChannelId.unique
+        let channelWithoutReads = ChannelPayload(
+            channel: .dummy(cid: cid),
+            watcherCount: 0,
+            watchers: [],
+            members: [.dummy(user: currentUserPayload)],
+            membership: .dummy(user: currentUserPayload),
+            messages: [],
+            pendingMessages: nil,
+            pinnedMessages: [],
+            channelReads: [],
+            isHidden: false,
+            draft: nil,
+            activeLiveLocations: [],
+            pushPreference: nil
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelWithoutReads)
+        }
+
+        // WHEN: the current user sends a message
+        let messageId = MessageId.unique
+        let ownMessage: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: currentUserPayload.id,
+            createdAt: Date()
+        )
+        let event = try MessageNewEventDTO(from: .init(
+            eventType: .messageNew,
+            cid: cid,
+            user: currentUserPayload,
+            message: ownMessage,
+            createdAt: ownMessage.createdAt
+        ))
+        center.newMessageIdsMock = [messageId]
+
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        // THEN: own messages do not increment the unread count
+        let read = try XCTUnwrap(
+            database.viewContext.loadChannelRead(cid: cid, userId: currentUserPayload.id)
+        )
+        XCTAssertEqual(Int(read.unreadMessageCount), 0)
+    }
+
+    func test_messageNewEvent_afterMarkReadLocally_onlyCountsMessagesReceivedAfterMark() throws {
+        // Simulates the full local-tracking lifecycle for a channel with readEventsEnabled = false:
+        // 1. message arrives → unread = 1
+        // 2. user opens channel → markChannelAsRead (lastReadAt = now)
+        // 3. another message arrives → unread = 1 again (not 2)
+
+        let cid = ChannelId.unique
+        let channelWithoutReads = ChannelPayload(
+            channel: .dummy(cid: cid),
+            watcherCount: 0,
+            watchers: [],
+            members: [.dummy(user: currentUserPayload)],
+            membership: .dummy(user: currentUserPayload),
+            messages: [],
+            pendingMessages: nil,
+            pinnedMessages: [],
+            channelReads: [],
+            isHidden: false,
+            draft: nil,
+            activeLiveLocations: [],
+            pushPreference: nil
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelWithoutReads)
+        }
+
+        // Step 1: first message arrives
+        let firstMessageId = MessageId.unique
+        let firstMessage: MessagePayload = .dummy(
+            messageId: firstMessageId,
+            authorUserId: anotherUserPayload.id,
+            createdAt: Date()
+        )
+        let firstEvent = try MessageNewEventDTO(from: .init(
+            eventType: .messageNew,
+            cid: cid,
+            user: anotherUserPayload,
+            message: firstMessage,
+            createdAt: firstMessage.createdAt
+        ))
+        center.newMessageIdsMock = [firstMessageId]
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: firstEvent, session: session)
+        }
+
+        var read = try XCTUnwrap(database.viewContext.loadChannelRead(cid: cid, userId: currentUserPayload.id))
+        XCTAssertEqual(Int(read.unreadMessageCount), 1, "Unread count should be 1 after first message")
+
+        // Step 2: user opens channel — markReadLocally sets lastReadAt = now and count = 0
+        let markReadAt = Date()
+        try database.writeSynchronously { session in
+            session.markChannelAsRead(cid: cid, userId: self.currentUserPayload.id, at: markReadAt)
+        }
+
+        read = try XCTUnwrap(database.viewContext.loadChannelRead(cid: cid, userId: currentUserPayload.id))
+        XCTAssertEqual(Int(read.unreadMessageCount), 0, "Unread count should be 0 after markRead")
+
+        // Step 3: second message arrives after the mark
+        let secondMessageId = MessageId.unique
+        let secondMessage: MessagePayload = .dummy(
+            messageId: secondMessageId,
+            authorUserId: anotherUserPayload.id,
+            createdAt: markReadAt.addingTimeInterval(1)
+        )
+        let secondEvent = try MessageNewEventDTO(from: .init(
+            eventType: .messageNew,
+            cid: cid,
+            user: anotherUserPayload,
+            message: secondMessage,
+            createdAt: secondMessage.createdAt
+        ))
+        center.newMessageIdsMock = [secondMessageId]
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: secondEvent, session: session)
+        }
+
+        read = try XCTUnwrap(database.viewContext.loadChannelRead(cid: cid, userId: currentUserPayload.id))
+        XCTAssertEqual(Int(read.unreadMessageCount), 1, "Only messages after markRead should be counted")
+    }
+
     // MARK: - message.new
 
     func test_messageNewEvent_whenChannelIsMuted_doesNotIncrementUnreadCount() throws {

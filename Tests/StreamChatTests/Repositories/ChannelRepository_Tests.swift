@@ -107,6 +107,69 @@ final class ChannelRepository_Tests: XCTestCase {
         XCTAssertEqual(receivedError, error)
     }
 
+    // MARK: - Mark as read locally
+
+    func test_markReadLocally_doesNotMakeAPIRequest_writesToDatabase() {
+        let cid = ChannelId.unique
+        let userId = UserId.unique
+
+        let expectation = self.expectation(description: "markReadLocally completes")
+        nonisolated(unsafe) var receivedError: Error?
+        repository.markReadLocally(cid: cid, userId: userId) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNil(apiClient.request_endpoint, "markReadLocally must not make a network request")
+        XCTAssertEqual(database.writeSessionCounter, 1)
+        XCTAssertNil(receivedError)
+    }
+
+    func test_markReadLocally_onDatabaseError_callsCompletionWithError() throws {
+        let cid = ChannelId.unique
+        let userId = UserId.unique
+        let dbError = TestError()
+        database.write_errorResponse = dbError
+
+        let expectation = self.expectation(description: "markReadLocally completes")
+        nonisolated(unsafe) var receivedError: Error?
+        repository.markReadLocally(cid: cid, userId: userId) { error in
+            receivedError = error
+            expectation.fulfill()
+        }
+
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertNil(apiClient.request_endpoint)
+        XCTAssertEqual(receivedError as? TestError, dbError)
+    }
+
+    func test_markReadLocally_updatesLastReadAtInDatabase() throws {
+        let cid = ChannelId.unique
+        let currentUserPayload = UserPayload.dummy(userId: .unique)
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: currentUserPayload.id, role: .user))
+            try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
+            _ = session.loadOrCreateChannelRead(cid: cid, userId: currentUserPayload.id)
+        }
+
+        let beforeMark = Date()
+        let expectation = self.expectation(description: "markReadLocally completes")
+        repository.markReadLocally(cid: cid, userId: currentUserPayload.id) { _ in
+            expectation.fulfill()
+        }
+        waitForExpectations(timeout: defaultTimeout)
+
+        let read = try XCTUnwrap(
+            database.viewContext.loadChannelRead(cid: cid, userId: currentUserPayload.id)
+        )
+        XCTAssertGreaterThanOrEqual(read.lastReadAt.bridgeDate, beforeMark)
+        XCTAssertEqual(read.unreadMessageCount, 0)
+    }
+
     // MARK: - Mark as unread
 
     func test_markUnread_successfulResponse() throws {
