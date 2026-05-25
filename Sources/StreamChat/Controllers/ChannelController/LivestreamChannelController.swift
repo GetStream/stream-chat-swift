@@ -20,99 +20,68 @@ public extension ChatClient {
 /// It is more performant than `ChatChannelController` but is more simpler and it has less features, like for example:
 /// - Read updates
 /// - etc..
-public class LivestreamChannelController: DataStoreProvider, AppStateObserverDelegate, @unchecked Sendable {
+public class LivestreamChannelController: AppStateObserverDelegate, @unchecked Sendable {
     public typealias Delegate = LivestreamChannelControllerDelegate
 
     // MARK: - Public Properties
 
     /// The ChannelQuery this controller observes.
-    public private(set) var channelQuery: ChannelQuery
+    public var channelQuery: ChannelQuery { handler.channelQuery }
 
     /// The identifier of a channel this controller observes.
-    public var cid: ChannelId? { channelQuery.cid }
+    public var cid: ChannelId? { handler.cid }
 
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
 
     /// The channel the controller represents.
-    public private(set) var channel: ChatChannel? {
-        didSet {
-            guard let channel else { return }
-            delegateCallback {
-                $0.livestreamChannelController(self, didUpdateChannel: channel)
-            }
-        }
-    }
+    public var channel: ChatChannel? { handler.channel }
 
     /// The messages of the channel the controller represents.
-    public private(set) var messages: [ChatMessage] = [] {
-        didSet {
-            delegateCallback {
-                $0.livestreamChannelController(self, didUpdateMessages: self.messages)
-            }
-        }
-    }
+    public var messages: [ChatMessage] { handler.messages }
 
     /// A Boolean value that indicates whether message processing is paused.
     ///
     /// When paused, new messages from other users will not be added to the messages array.
     /// This is useful when loading previous messages to prevent the array from being modified.
-    public private(set) var isPaused: Bool = false {
-        didSet {
-            delegateCallback {
-                $0.livestreamChannelController(self, didChangePauseState: self.isPaused)
-            }
-        }
-    }
+    public var isPaused: Bool { handler.isPaused }
 
     private var isResuming: Bool = false
 
     /// The amount of messages that were skipped during the pause state.
-    public private(set) var skippedMessagesAmount: Int = 0 {
-        didSet {
-            delegateCallback {
-                $0.livestreamChannelController(self, didChangeSkippedMessagesAmount: self.skippedMessagesAmount)
-            }
-        }
-    }
+    public var skippedMessagesAmount: Int { handler.skippedMessagesAmount }
 
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
-    public var hasLoadedAllPreviousMessages: Bool {
-        paginationStateHandler.state.hasLoadedAllPreviousMessages
-    }
+    public var hasLoadedAllPreviousMessages: Bool { handler.hasLoadedAllPreviousMessages }
 
     /// A Boolean value that returns whether the newest messages have all been loaded or not.
-    public var hasLoadedAllNextMessages: Bool {
-        paginationStateHandler.state.hasLoadedAllNextMessages || messages.isEmpty
-    }
+    public var hasLoadedAllNextMessages: Bool { handler.hasLoadedAllNextMessages }
 
     /// A Boolean value that returns whether the channel is currently loading previous (old) messages.
-    public var isLoadingPreviousMessages: Bool {
-        paginationStateHandler.state.isLoadingPreviousMessages
-    }
+    public var isLoadingPreviousMessages: Bool { handler.isLoadingPreviousMessages }
 
     /// A Boolean value that returns whether the channel is currently loading next (new) messages.
-    public var isLoadingNextMessages: Bool {
-        paginationStateHandler.state.isLoadingNextMessages
-    }
+    public var isLoadingNextMessages: Bool { handler.isLoadingNextMessages }
 
     /// A Boolean value that returns whether the channel is currently loading a page around a message.
-    public var isLoadingMiddleMessages: Bool {
-        paginationStateHandler.state.isLoadingMiddleMessages
-    }
+    public var isLoadingMiddleMessages: Bool { handler.isLoadingMiddleMessages }
 
     /// A Boolean value that returns whether the channel is currently in a mid-page.
-    public var isJumpingToMessage: Bool {
-        paginationStateHandler.state.isJumpingToMessage
-    }
+    public var isJumpingToMessage: Bool { handler.isJumpingToMessage }
 
     /// A Boolean value that indicates whether to load initial messages from the cache.
     ///
     /// Only the initial page will be loaded from cache, to avoid an initial blank screen.
-    public var loadInitialMessagesFromCache: Bool = true
+    public var loadInitialMessagesFromCache: Bool {
+        get { handler.loadInitialMessagesFromCache }
+        set { handler.loadInitialMessagesFromCache = newValue }
+    }
 
     /// A boolean value indicating if the controller should count the number o skipped messages when in pause state.
-    public var countSkippedMessagesWhenPaused: Bool = false
+    public var countSkippedMessagesWhenPaused: Bool {
+        get { handler.countSkippedMessagesWhenPaused }
+        set { handler.countSkippedMessagesWhenPaused = newValue }
+    }
 
     /// Configuration for message limiting behaviour.
     ///
@@ -126,7 +95,10 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
     /// pagination will also be capped. Once the user scrolls back to the newest messages, you
     /// can call `resume()`. Whenever the user creates a new message, the controller will
     /// automatically resume.
-    public var maxMessageLimitOptions: MaxMessageLimitOptions?
+    public var maxMessageLimitOptions: MaxMessageLimitOptions? {
+        get { handler.maxMessageLimitOptions }
+        set { handler.maxMessageLimitOptions = newValue }
+    }
 
     /// Set the delegate to observe the changes in the system.
     public var delegate: LivestreamChannelControllerDelegate? {
@@ -139,11 +111,11 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
 
     // MARK: - Private Properties
 
+    /// The handler encapsulating the shared livestream state and event handling.
+    let handler: LivestreamChatHandling
+
     /// The API client for making direct API calls.
     private let apiClient: APIClient
-
-    /// Pagination state handler for managing message pagination.
-    private let paginationStateHandler: MessagesPaginationStateHandling
 
     /// The channel updater to reuse actions from channel controller which is safe to use without DB.
     private let updater: ChannelUpdater
@@ -161,13 +133,10 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
     )
 
     /// The timer scheduler used for the auto-stop typing cleanup.
-    var timerType: TimerScheduling.Type = DefaultTimer.self
-
-    /// Per-user timers that synthesize a "stop typing" effect locally if a typing.stop event never arrives.
-    ///
-    /// Required because livestream channels bypass `TypingStartCleanupMiddleware`, which is responsible for
-    /// the timeout-based cleanup in regular channels.
-    private var typingCleanupTimers: [UserId: TimerControl] = [:]
+    var timerType: TimerScheduling.Type {
+        get { handler.timerType }
+        set { handler.timerType = newValue }
+    }
 
     /// An internal backing object for all publicly available Combine publishers.
     var basePublishers: BasePublishers {
@@ -191,12 +160,11 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         channelQuery: ChannelQuery,
         client: ChatClient,
         updater: ChannelUpdater? = nil,
-        paginationStateHandler: MessagesPaginationStateHandling = MessagesPaginationStateHandler()
+        paginationStateHandler: MessagesPaginationStateHandling = MessagesPaginationStateHandler(),
+        handler: LivestreamChatHandling? = nil
     ) {
-        self.channelQuery = channelQuery
         self.client = client
         apiClient = client.apiClient
-        self.paginationStateHandler = paginationStateHandler
         appStateObserver = StreamAppStateObserver()
         self.updater = updater ?? ChannelUpdater(
             channelRepository: client.channelRepository,
@@ -205,6 +173,14 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
             database: client.databaseContainer,
             apiClient: client.apiClient
         )
+        self.handler = handler ?? LivestreamChatHandler(
+            channelQuery: channelQuery,
+            client: client,
+            paginationStateHandler: paginationStateHandler
+        )
+
+        configureHandlerCallbacks()
+
         eventObserver = client.subscribe { [weak self] event in
             self?.didReceiveEvent(event)
         }
@@ -220,7 +196,43 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
             client.eventNotificationCenter.unregisterManualEventHandling(for: cid)
         }
         appStateObserver.unsubscribe(self)
-        typingCleanupTimers.values.forEach { $0.cancel() }
+    }
+
+    private func configureHandlerCallbacks() {
+        handler.setHandlers(
+            LivestreamChatHandler.Handlers(
+                channelDidChange: { [weak self] channel in
+                    guard let self else { return }
+                    self.multicastDelegate.invoke {
+                        $0.livestreamChannelController(self, didUpdateChannel: channel)
+                    }
+                },
+                messagesDidChange: { [weak self] messages in
+                    guard let self else { return }
+                    self.multicastDelegate.invoke {
+                        $0.livestreamChannelController(self, didUpdateMessages: messages)
+                    }
+                },
+                pauseDidChange: { [weak self] isPaused in
+                    guard let self else { return }
+                    self.multicastDelegate.invoke {
+                        $0.livestreamChannelController(self, didChangePauseState: isPaused)
+                    }
+                },
+                skippedMessagesAmountDidChange: { [weak self] skipped in
+                    guard let self else { return }
+                    self.multicastDelegate.invoke {
+                        $0.livestreamChannelController(self, didChangeSkippedMessagesAmount: skipped)
+                    }
+                },
+                typingUsersDidChange: { [weak self] typingUsers in
+                    guard let self else { return }
+                    self.multicastDelegate.invoke {
+                        $0.livestreamChannelController(self, didChangeTypingUsers: typingUsers)
+                    }
+                }
+            )
+        )
     }
 
     // MARK: - Public Methods
@@ -228,12 +240,7 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
     /// Synchronizes the controller with the backend data.
     /// - Parameter completion: Called when the synchronization is finished.
     public func synchronize(_ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
-        // Populate the initial data with existing cache.
-        if loadInitialMessagesFromCache, let cid = self.cid, let channel = dataStore.channel(cid: cid) {
-            self.channel = channel
-            messages = channel.latestMessages
-        }
-
+        handler.populateFromCacheIfEnabled()
         client.syncRepository.startTrackingLivestreamController(self)
 
         updateChannelData(
@@ -302,7 +309,7 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         }
 
         let messageId = messageId
-            ?? paginationStateHandler.state.oldestFetchedMessage?.id
+            ?? handler.oldestFetchedMessageId
             ?? messages.last?.id
 
         guard let messageId = messageId else {
@@ -344,7 +351,7 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         }
 
         let messageId = messageId
-            ?? paginationStateHandler.state.newestFetchedMessage?.id
+            ?? handler.newestFetchedMessageId
             ?? messages.first?.id
 
         guard let messageId = messageId else {
@@ -626,11 +633,9 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
     /// Pins a message.
     /// - Parameters:
     ///   - messageId: The message identifier to pin.
-    ///   - pinning: The pinning expiration information. It supports setting an infinite expiration, setting a date, or the amount of time a message is pinned.
     ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
     public func pin(
         messageId: MessageId,
-        pinning: MessagePinning = .noExpiration,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
         apiClient.request(endpoint: .pinMessage(
@@ -711,14 +716,7 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
 
     // Returns the current cooldown time for the channel. Returns 0 in case there is no cooldown active.
     public func currentCooldownTime() -> Int {
-        guard let cooldownDuration = channel?.cooldownDuration, cooldownDuration > 0,
-              let currentUserLatestMessage = messages.first(where: { $0.author.id == currentUserId }),
-              channel?.ownCapabilities.contains(.skipSlowMode) == false else {
-            return 0
-        }
-
-        let currentTime = Date().timeIntervalSince(currentUserLatestMessage.createdAt)
-        return max(0, cooldownDuration - Int(currentTime))
+        handler.currentCooldownTime()
     }
 
     /// Enables slow mode for the channel
@@ -907,8 +905,7 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
     /// When paused, new messages from other users will not be added to the messages array.
     /// This is useful for the loading of previous message to not conflict with the max limit of the messages array.
     public func pause() {
-        guard !isPaused else { return }
-        isPaused = true
+        handler.pause()
     }
 
     /// Resumes the collecting of new messages.
@@ -923,13 +920,11 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
             return
         }
 
-        if countSkippedMessagesWhenPaused {
-            skippedMessagesAmount = 0
-        }
-        
+        handler.resetSkippedMessagesCountIfNeeded()
+
         isResuming = true
         loadFirstPage { [weak self] error in
-            self?.isPaused = false
+            self?.handler.resume()
             self?.isResuming = false
             completion?(error)
         }
@@ -938,19 +933,11 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
     // MARK: - Events
 
     func didReceiveEvent(_ event: Event) {
-        if let channelEvent = event as? ChannelSpecificEvent, channelEvent.cid == cid {
-            handleChannelEvent(event)
-        }
+        handler.didReceiveEvent(event)
 
-        // User deleted messages event is a global event, not tied to a channel.
-        if let userMessagesDeletedEvent = event as? UserMessagesDeletedEvent {
-            let userId = userMessagesDeletedEvent.user.id
-            if userMessagesDeletedEvent.hardDelete {
-                hardDeleteMessages(from: userId)
-            } else {
-                let deletedAt = userMessagesDeletedEvent.createdAt
-                softDeleteMessages(from: userId, deletedAt: deletedAt)
-            }
+        if let notificationAddedToChannelEvent = event as? NotificationAddedToChannelEvent,
+           notificationAddedToChannelEvent.cid == cid {
+            startWatching(isInRecoveryMode: false)
         }
     }
 
@@ -976,8 +963,7 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         channelQuery: ChannelQuery,
         completion: (@MainActor (Error?) -> Void)? = nil
     ) {
-        let pagination = channelQuery.pagination
-        paginationStateHandler.begin(pagination: pagination)
+        handler.beginPagination(for: channelQuery)
 
         let requestCompletion: @Sendable (Result<ChannelPayload, Error>) -> Void = { [weak self] result in
             self?.callback { [weak self] in
@@ -985,14 +971,11 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
 
                 switch result {
                 case .success(let payload):
-                    self.handleChannelPayload(payload, channelQuery: channelQuery)
+                    self.handler.handleChannelPayload(payload, channelQuery: channelQuery)
                     completion?(nil)
 
                 case .failure(let error):
-                    self.paginationStateHandler.end(
-                        pagination: channelQuery.pagination,
-                        with: .failure(error)
-                    )
+                    self.handler.handlePaginationFailure(channelQuery: channelQuery, error: error)
                     completion?(error)
                 }
             }
@@ -1005,390 +988,11 @@ public class LivestreamChannelController: DataStoreProvider, AppStateObserverDel
         )
     }
 
-    private func handleChannelPayload(_ payload: ChannelPayload, channelQuery: ChannelQuery) {
-        paginationStateHandler.end(pagination: channelQuery.pagination, with: .success(payload.messages))
-
-        let newChannel = payload.asModel(
-            currentUserId: currentUserId,
-            currentlyTypingUsers: channel?.currentlyTypingUsers,
-            unreadCount: channel?.unreadCount
-        )
-
-        channel = newChannel
-
-        let newMessages = payload.messages.compactMap {
-            $0.asModel(cid: payload.channel.cid, currentUserId: currentUserId, channelReads: newChannel.reads)
-        }
-
-        updateMessagesArray(with: newMessages, pagination: channelQuery.pagination)
-    }
-
-    private func updateMessagesArray(with newMessages: [ChatMessage], pagination: MessagesPagination?) {
-        let newMessages = Array(newMessages.reversed())
-        switch pagination?.parameter {
-        case .lessThan, .lessThanOrEqual:
-            messages.append(contentsOf: newMessages)
-
-        case .greaterThan, .greaterThanOrEqual:
-            messages.insert(contentsOf: newMessages, at: 0)
-
-        case .around, .none:
-            messages = newMessages
-        }
-    }
-
-    private func applyMessageLimit() {
-        guard let options = maxMessageLimitOptions,
-              messages.count > options.maxLimit else {
-            return
-        }
-
-        let newCount = options.maxLimit - options.discardAmount
-        messages = Array(messages.prefix(newCount))
-    }
-
     /// Helper method to execute the callbacks on the main thread.
     private func callback(_ action: @MainActor @escaping () -> Void) {
         DispatchQueue.main.async {
             action()
         }
-    }
-
-    private func delegateCallback(_ callback: @escaping @MainActor (Delegate) -> Void) {
-        self.callback {
-            self.multicastDelegate.invoke(callback)
-        }
-    }
-
-    private func handleChannelEvent(_ event: Event) {
-        switch event {
-        case let messageNewEvent as MessageNewEvent:
-            handleNewMessage(messageNewEvent.message)
-
-            // Apply message limit only when not paused
-            if !isPaused {
-                applyMessageLimit()
-            }
-
-        case let localMessageNewEvent as NewMessagePendingEvent:
-            if isPaused {
-                break
-            }
-            
-            handleNewMessage(localMessageNewEvent.message)
-
-        case let messageUpdatedEvent as MessageUpdatedEvent:
-            handleUpdatedMessage(messageUpdatedEvent.message)
-
-        case let messageDeletedEvent as MessageDeletedEvent:
-            if messageDeletedEvent.isHardDelete {
-                handleDeletedMessage(messageDeletedEvent.message)
-                return
-            }
-            let deletedMessage = messageDeletedEvent.message.changing(
-                deletedAt: messageDeletedEvent.createdAt
-            )
-            handleUpdatedMessage(deletedMessage)
-
-        case let newMessageErrorEvent as NewMessageErrorEvent:
-            guard let message = messages.first(where: { $0.id == newMessageErrorEvent.messageId }) else {
-                return
-            }
-            let errorMessage = message.changing(state: .sendingFailed)
-            handleUpdatedMessage(errorMessage)
-
-        case let reactionNewEvent as ReactionNewEvent:
-            handleNewReaction(reactionNewEvent)
-
-        case let reactionUpdatedEvent as ReactionUpdatedEvent:
-            handleUpdatedReaction(reactionUpdatedEvent)
-
-        case let reactionDeletedEvent as ReactionDeletedEvent:
-            handleDeletedReaction(reactionDeletedEvent)
-
-        case let channelUpdatedEvent as ChannelUpdatedEvent:
-            handleChannelUpdated(channelUpdatedEvent)
-
-        case let notificationAddedToChannelEvent as NotificationAddedToChannelEvent:
-            var members = Set(channel?.lastActiveMembers ?? [])
-            members.insert(notificationAddedToChannelEvent.member)
-            let memberCount = channel?.memberCount ?? 0
-            channel = channel?.changing(
-                members: Array(members),
-                membership: notificationAddedToChannelEvent.member,
-                memberCount: memberCount + 1
-            )
-            startWatching(isInRecoveryMode: false)
-
-        case let notificationRemovedFromChannelEvent as NotificationRemovedFromChannelEvent:
-            var members = channel?.lastActiveMembers ?? []
-            members.removeAll(where: { $0.id == notificationRemovedFromChannelEvent.user.id })
-            let memberCount = channel?.memberCount ?? 0
-
-            channel = channel?.changing(members: members, memberCount: memberCount - 1)
-            channel?.membership = nil
-
-        case let memberAddedEvent as MemberAddedEvent:
-            var members = Set(channel?.lastActiveMembers ?? [])
-            members.insert(memberAddedEvent.member)
-            let memberCount = channel?.memberCount ?? 0
-
-            var membership: ChatChannelMember?
-            if memberAddedEvent.member.id == currentUserId {
-                membership = memberAddedEvent.member
-            }
-            channel = channel?.changing(
-                members: Array(members),
-                membership: membership,
-                memberCount: memberCount + 1
-            )
-
-        case let memberRemovedEvent as MemberRemovedEvent:
-            var members = channel?.lastActiveMembers ?? []
-            members.removeAll(where: { $0.id == memberRemovedEvent.user.id })
-            let memberCount = channel?.memberCount ?? 0
-
-            var membership: ChatChannelMember? = channel?.membership
-            if memberRemovedEvent.user.id == currentUserId {
-                membership = nil
-            }
-            channel = channel?.changing(members: members, memberCount: memberCount - 1)
-            channel?.membership = membership
-
-        case let userWatchingEvent as UserWatchingEvent:
-            var watchers = channel?.lastActiveWatchers ?? []
-            if userWatchingEvent.isStarted {
-                watchers.append(userWatchingEvent.user)
-            } else {
-                watchers.removeAll(where: { $0.id == userWatchingEvent.user.id })
-            }
-            channel = channel?.changing(watchers: watchers, watcherCount: userWatchingEvent.watcherCount)
-
-        case let memberUpdatedEvent as MemberUpdatedEvent:
-            var members = channel?.lastActiveMembers ?? []
-            if let index = members.firstIndex(where: { $0.id == memberUpdatedEvent.member.id }) {
-                members[index] = memberUpdatedEvent.member
-            }
-            
-            var membership: ChatChannelMember? = channel?.membership
-            if memberUpdatedEvent.member.id == currentUserId {
-                membership = memberUpdatedEvent.member
-            }
-            
-            channel = channel?.changing(members: members, membership: membership)
-
-        case is UserBannedEvent,
-             is UserUnbannedEvent:
-            updateChannelFromDataStore()
-
-        case let channelTruncatedEvent as ChannelTruncatedEvent:
-            channel = channelTruncatedEvent.channel
-            if let message = channelTruncatedEvent.message {
-                messages = [message]
-            } else {
-                messages = []
-            }
-
-        case let typingEvent as TypingEvent:
-            handleTypingEvent(typingEvent)
-
-        default:
-            break
-        }
-    }
-
-    private func handleTypingEvent(_ event: TypingEvent) {
-        // The current user's typing state is sent over the wire, but we don't want to render
-        // ourselves in our own typing indicator. This matches `TypingStartCleanupMiddleware`.
-        guard event.user.id != currentUserId else { return }
-
-        // Thread typing events should not affect the channel-level typing indicator.
-        guard event.parentId == nil else { return }
-
-        let currentTypingUsers = channel?.currentlyTypingUsers ?? []
-        let userId = event.user.id
-
-        if event.isTyping {
-            scheduleTypingCleanup(for: event.user)
-            var nextTypingUsers = currentTypingUsers.filter { $0.id != userId }
-            nextTypingUsers.insert(event.user)
-            updateCurrentlyTypingUsers(nextTypingUsers)
-        } else {
-            cancelTypingCleanup(for: userId)
-            // No-op when the user wasn't tracked locally (e.g. we joined mid-typing).
-            // Avoids allocating a filtered copy of the set for every spurious stop event.
-            guard currentTypingUsers.contains(where: { $0.id == userId }) else { return }
-            updateCurrentlyTypingUsers(currentTypingUsers.filter { $0.id != userId })
-        }
-    }
-
-    private func scheduleTypingCleanup(for user: ChatUser) {
-        let userId = user.id
-        cancelTypingCleanup(for: userId)
-        // Capture only `userId` so the timer doesn't retain a full `ChatUser` value
-        // (and the strings/dates it references) for up to 30 seconds.
-        typingCleanupTimers[userId] = timerType.schedule(
-            timeInterval: .incomingTypingStartEventTimeout,
-            queue: .main
-        ) { [weak self] in
-            self?.removeTypingUser(withId: userId)
-        }
-    }
-
-    private func cancelTypingCleanup(for userId: UserId) {
-        typingCleanupTimers[userId]?.cancel()
-        typingCleanupTimers[userId] = nil
-    }
-
-    private func removeTypingUser(withId userId: UserId) {
-        cancelTypingCleanup(for: userId)
-        guard let currentTypingUsers = channel?.currentlyTypingUsers,
-              currentTypingUsers.contains(where: { $0.id == userId }) else { return }
-        let typingUsers = currentTypingUsers.filter { $0.id != userId }
-        updateCurrentlyTypingUsers(typingUsers)
-    }
-
-    private func updateCurrentlyTypingUsers(_ typingUsers: Set<ChatUser>) {
-        // Compare by user id only. `Set<ChatUser>.==` falls back to `ChatUser.Equatable`,
-        // which checks ~13 fields including `lastActiveAt` and `extraData`. The server
-        // refreshes those on each re-emitted `typing.start`, so a strict comparison would
-        // report a change for every keystroke from an already-typing user and fire
-        // `didUpdateChannel` (plus rebuild the `ChatChannel` struct) for free.
-        let previousIds = Set((channel?.currentlyTypingUsers ?? []).map(\.id))
-        let newIds = Set(typingUsers.map(\.id))
-        guard previousIds != newIds else { return }
-        channel = channel?.changing(currentlyTypingUsers: typingUsers)
-        delegateCallback { [weak self] in
-            guard let self else { return }
-            $0.livestreamChannelController(self, didChangeTypingUsers: typingUsers)
-        }
-    }
-
-    private func handleNewMessage(_ message: ChatMessage) {
-        // If message already exists, update it instead
-        if messages.contains(where: { $0.id == message.id }) {
-            handleUpdatedMessage(message)
-            return
-        }
-
-        // If paused and the message is not from the current user, skip processing
-        if countSkippedMessagesWhenPaused, isPaused && message.author.id != currentUserId {
-            skippedMessagesAmount += 1
-            return
-        }
-
-        // If we don't have the first page loaded, do not insert new messages
-        // they will be inserted once we load the first page again.
-        if !hasLoadedAllNextMessages {
-            return
-        }
-
-        messages.insert(message, at: 0)
-    }
-
-    private func handleUpdatedMessage(_ updatedMessage: ChatMessage) {
-        if let index = messages.firstIndex(where: { $0.id == updatedMessage.id }) {
-            let existingMessage = messages[index]
-            messages[index] = updatedMessage
-
-            if existingMessage.isPinned != updatedMessage.isPinned {
-                updatePinnedMessages(for: updatedMessage)
-            }
-        } else if updatedMessage.isPinned || channel?.pinnedMessages.contains(where: { $0.id == updatedMessage.id }) == true {
-            updatePinnedMessages(for: updatedMessage)
-        }
-    }
-
-    private func updatePinnedMessages(for message: ChatMessage) {
-        var pinnedMessages = channel?.pinnedMessages ?? []
-        if message.isPinned {
-            if !pinnedMessages.contains(where: { $0.id == message.id }) {
-                pinnedMessages.append(message)
-            }
-        } else {
-            pinnedMessages.removeAll(where: { $0.id == message.id })
-        }
-        channel = channel?.changing(pinnedMessages: pinnedMessages)
-    }
-
-    private func handleDeletedMessage(_ deletedMessage: ChatMessage) {
-        messages.removeAll { $0.id == deletedMessage.id }
-    }
-
-    private func softDeleteMessages(from userId: UserId, deletedAt: Date) {
-        let messagesWithDeletedMessages = messages.map { message in
-            if message.author.id == userId {
-                return message.changing(
-                    deletedAt: deletedAt
-                )
-            }
-            return message
-        }
-        messages = messagesWithDeletedMessages
-    }
-
-    private func hardDeleteMessages(from userId: UserId) {
-        messages.removeAll { message in
-            message.author.id == userId
-        }
-    }
-
-    private func handleNewReaction(_ reactionEvent: ReactionNewEvent) {
-        updateMessage(reactionEvent.message)
-    }
-
-    private func handleUpdatedReaction(_ reactionEvent: ReactionUpdatedEvent) {
-        updateMessage(reactionEvent.message)
-    }
-
-    private func handleDeletedReaction(_ reactionEvent: ReactionDeletedEvent) {
-        updateMessage(reactionEvent.message)
-    }
-
-    private func updateMessage(
-        _ updatedMessage: ChatMessage
-    ) {
-        if let messageIndex = messages.firstIndex(where: { $0.id == updatedMessage.id }) {
-            messages[messageIndex] = updatedMessage
-        }
-    }
-
-    private func handleChannelUpdated(_ event: ChannelUpdatedEvent) {
-        channel = channel?.changing(
-            name: event.channel.name,
-            imageURL: event.channel.imageURL,
-            lastMessageAt: event.channel.lastMessageAt,
-            createdAt: event.channel.createdAt,
-            deletedAt: event.channel.deletedAt,
-            updatedAt: event.channel.updatedAt,
-            truncatedAt: event.channel.truncatedAt,
-            isHidden: event.channel.isHidden,
-            createdBy: event.channel.createdBy,
-            config: event.channel.config,
-            filterTags: event.channel.filterTags,
-            ownCapabilities: event.channel.ownCapabilities,
-            isFrozen: event.channel.isFrozen,
-            isDisabled: event.channel.isDisabled,
-            isBlocked: event.channel.isBlocked,
-            reads: event.channel.reads,
-            members: event.channel.lastActiveMembers,
-            membership: event.channel.membership,
-            memberCount: event.channel.memberCount,
-            watchers: event.channel.lastActiveWatchers,
-            watcherCount: event.channel.watcherCount,
-            team: event.channel.team,
-            cooldownDuration: event.channel.cooldownDuration,
-            extraData: event.channel.extraData
-        )
-    }
-
-    // For events that do not have the channel data, and still
-    // go through the middleware, lets fetch it from DB and update it.
-    private func updateChannelFromDataStore() {
-        guard let cid = cid, let updatedChannel = dataStore.channel(cid: cid) else {
-            return
-        }
-        channel = updatedChannel
     }
 
     private func createNewMessage(
@@ -1548,4 +1152,22 @@ public struct MaxMessageLimitOptions: Sendable {
 
     /// The recommended configuration with 200 max messages and 50 discard amount.
     public static let recommended = MaxMessageLimitOptions()
+}
+
+// MARK: - Deprecations
+
+public extension LivestreamChannelController {
+    /// Pins a message.
+    /// - Parameters:
+    ///   - messageId: The message identifier to pin.
+    ///   - pinning: This parameter is ignored. `LivestreamChannelController` does not persist messages locally, so pin expirations have no effect.
+    ///   - completion: Called when the network request is finished. If request fails, the completion will be called with an error.
+    @available(*, deprecated, message: "The pinning parameter has no effect. Use pin(messageId:completion:) instead.")
+    func pin(
+        messageId: MessageId,
+        pinning: MessagePinning,
+        completion: (@MainActor (Error?) -> Void)? = nil
+    ) {
+        pin(messageId: messageId, completion: completion)
+    }
 }

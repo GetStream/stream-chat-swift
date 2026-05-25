@@ -3,9 +3,26 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.3.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.3.0)
+_May 21, 2026_
+
 ## StreamChat
+### ✅ Added
+- Add `LivestreamChat`, the state-layer counterpart of `LivestreamChannelController` [#4103](https://github.com/GetStream/stream-chat-swift/pull/4103)
 ### 🐞 Fixed
 - Fix crash in `MarkdownParser` when parsing long messages with many presentation intents [#4098](https://github.com/GetStream/stream-chat-swift/pull/4098)
+### 🔄 Changed
+- Deprecate `LivestreamChannelController.pin(messageId:pinning:completion:)` in favor of `pin(messageId:completion:)`. The `pinning` parameter had no effect [#4103](https://github.com/GetStream/stream-chat-swift/pull/4103)
+
+## StreamChatCommonUI
+### 🐞 Fixed
+- Forward CDN authentication headers when generating local video preview thumbnails [#4105](https://github.com/GetStream/stream-chat-swift/pull/4105)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix UIKit attachment previews flickering when adding reactions to messages with cached CDN images [#4106](https://github.com/GetStream/stream-chat-swift/pull/4106)
 
 # [5.2.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.2.0)
 _May 13, 2026_
