@@ -499,8 +499,8 @@ extension ChannelDTO {
         }
 
         request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
-        request.fetchLimit = query.pagination.pageSize
-        // For grouped queries `pageSize` is `.unsetPageSize` (0), which would disable batching.
+        request.fetchLimit = query.pagination.pageSize == .unsetPageSize ? 0 : query.pagination.pageSize
+        // For grouped queries `pageSize` is `.unsetPageSize`, which would disable batching.
         // Fall back to the standard channels page size to keep memory bounded as the linked set
         // grows across pagination.
         request.fetchBatchSize = query.pagination.pageSize == .unsetPageSize

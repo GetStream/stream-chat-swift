@@ -19,8 +19,9 @@ public extension Int {
 
 extension Int {
     /// Sentinel signalling "no client-side page size" — the request omits `limit` and the backend uses its default.
-    /// `0` matches `NSFetchRequest.fetchLimit`'s "no limit" semantics, so it safely passes through to Core Data unchanged.
-    static let unsetPageSize = 0
+    /// Chosen as a negative value so any accidental leak into a request fails fast (the backend rejects/clamps negative
+    /// limits) rather than being interpreted as `limit: 0` (return zero items).
+    static let unsetPageSize = -1
 }
 
 /// Basic pagination with `pageSize` and `offset`.
