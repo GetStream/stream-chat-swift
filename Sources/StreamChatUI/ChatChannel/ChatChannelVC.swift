@@ -670,7 +670,11 @@ private extension ChatChannelVC {
     }
 
     func updateUnreadMessagesBannerRelatedComponents(channel: ChatChannel? = nil) {
-        let firstUnreadMessageId = channel.flatMap { channelController.getFirstUnreadMessageId(for: $0) } ?? channelController.firstUnreadMessageId
+        let resolvedChannel = channel ?? channelController.channel
+        let hasUnreadMessages = (resolvedChannel?.unreadCount.messages ?? 0) > 0
+        let firstUnreadMessageId = hasUnreadMessages
+            ? (channel.flatMap { channelController.getFirstUnreadMessageId(for: $0) } ?? channelController.firstUnreadMessageId)
+            : nil
         self.firstUnreadMessageId = firstUnreadMessageId
         messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
     }
