@@ -1030,6 +1030,7 @@
 				StreamChatTests/Workers/EventSender_Tests.swift,
 				StreamChatTests/Workers/ManualEventHandler_Tests.swift,
 				StreamChatTests/Workers/MessageUpdater_Tests.swift,
+				StreamChatTests/Workers/ReadStateHandler_Tests.swift,
 				StreamChatTests/Workers/ReactionListUpdater_Tests.swift,
 				StreamChatTests/Workers/ThreadsRepository_Tests.swift,
 				StreamChatTests/Workers/TypingEventSender_Tests.swift,

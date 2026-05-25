@@ -783,7 +783,7 @@ import XCTest
         let unreadMessageId = MessageId.unique
         vc.components.isUnreadMessagesSeparatorEnabled = true
         channelControllerMock.simulateInitial(
-            channel: .mock(cid: .unique),
+            channel: .mock(cid: .unique, unreadCount: .mock(messages: 1)),
             messages: [
                 .mock(id: .unique, text: "Read message", createdAt: Date(timeIntervalSince1970: 1)),
                 .mock(id: unreadMessageId, text: "Unread message", createdAt: Date(timeIntervalSince1970: 2))
@@ -989,6 +989,58 @@ import XCTest
         vc.chatMessageListVC(ChatMessageListVC_Mock(), scrollViewDidScroll: UIScrollView())
         channelControllerMock.markReadCallCount = 0
 
+        XCTAssertFalse(vc.shouldMarkChannelRead)
+    }
+
+    func test_shouldMarkChannelRead_jumpToUnreadEnabled_localTrackingChannel_withoutHavingSeenFirstUnreadMessage_shouldReturnTrue() throws {
+        var config = ChatClient_Mock.defaultMockedConfig
+        config.isLocalUnreadCountEnabled = true
+        channelControllerMock = ChatChannelController_Mock.mock(chatClientConfig: config)
+        vc.channelController = channelControllerMock
+
+        let mockedListView = makeMockMessageListView()
+        let currentUserId = UserId.unique
+        vc.mockIsViewVisible(true)
+        vc.components.isJumpToUnreadEnabled = true
+        vc.messages = [.mock()]
+        channelControllerMock.state_mock = .remoteDataFetched
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: false),
+            reads: [.mock(lastReadAt: .distantPast, lastReadMessageId: .unique, unreadMessagesCount: 0, user: .mock(id: currentUserId))]
+        )
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        try XCTUnwrap(channelControllerMock.client as? ChatClient_Mock).currentUserId_mock = currentUserId
+
+        // hasSeenFirstUnreadMessage stays false — local tracking bypass should allow read
+        XCTAssertTrue(vc.shouldMarkChannelRead)
+    }
+
+    func test_shouldMarkChannelRead_jumpToUnreadEnabled_regularChannel_withoutHavingSeenFirstUnreadMessage_shouldReturnFalse() throws {
+        var config = ChatClient_Mock.defaultMockedConfig
+        config.isLocalUnreadCountEnabled = true
+        channelControllerMock = ChatChannelController_Mock.mock(chatClientConfig: config)
+        vc.channelController = channelControllerMock
+
+        let mockedListView = makeMockMessageListView()
+        let currentUserId = UserId.unique
+        vc.mockIsViewVisible(true)
+        vc.components.isJumpToUnreadEnabled = true
+        vc.messages = [.mock()]
+        channelControllerMock.state_mock = .remoteDataFetched
+        channelControllerMock.channel_mock = .mock(
+            cid: .unique,
+            config: .mock(readEventsEnabled: true),
+            reads: [.mock(lastReadAt: .distantPast, lastReadMessageId: .unique, unreadMessagesCount: 0, user: .mock(id: currentUserId))]
+        )
+        mockedListView.mockIsLastCellFullyVisible = true
+        channelControllerMock.hasLoadedAllNextMessages_mock = true
+        channelControllerMock.markedAsUnread_mock = false
+        try XCTUnwrap(channelControllerMock.client as? ChatClient_Mock).currentUserId_mock = currentUserId
+
+        // readEventsEnabled = true means local bypass doesn't apply; hasSeenFirstUnreadMessage = false → false
         XCTAssertFalse(vc.shouldMarkChannelRead)
     }
 
