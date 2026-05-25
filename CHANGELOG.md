@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
+## StreamChatUI
+### 🐞 Fixed
+- Fix attachment upload overlay text and action buttons being illegible in dark mode [#4111](https://github.com/GetStream/stream-chat-swift/pull/4111)
 
 # [5.3.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.3.0)
 _May 21, 2026_
