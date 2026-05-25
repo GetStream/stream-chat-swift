@@ -670,21 +670,18 @@ public class ChatClient: @unchecked Sendable {
     /// a fresh first-page fetch for a single group.
     ///
     /// ```swift
-    /// // Fetch every configured group.
-    /// let groups = try await client.queryGroupedChannels()
-    /// for group in groups {
+    /// // Fetch only a subset of groups.
+    /// let subset = try await client.queryGroupedChannels(groups: ["new", "current"], limit: 5)
+    /// for group in subset {
     ///     let list = client.makeChannelList(with: group.groupKey)
     ///     // Observe `list.state.channels`; call `list.loadMoreChannels()` for additional pages.
     /// }
-    ///
-    /// // Fetch only a subset of groups.
-    /// let subset = try await client.queryGroupedChannels(groups: ["new", "current"], limit: 5)
     /// ```
     ///
     /// - Parameters:
-    ///   - groups: The group keys to fetch. `nil` (the default) or an empty array fetches every
-    ///     configured group. A non-empty array fetches only those groups; the response will not
-    ///     include the synthetic `"all"` aggregate.
+    ///   - groups: The group keys to fetch. An empty array fetches every configured group
+    ///     (response includes the synthetic `"all"` aggregate). A non-empty array fetches only
+    ///     those groups; the response will not include the synthetic `"all"` aggregate.
     ///   - limit: The number of channels to return **per group** on the first page. `nil` uses the
     ///     backend default.
     ///   - presence: When `true`, includes presence info (user online state) in the response and
@@ -702,15 +699,13 @@ public class ChatClient: @unchecked Sendable {
     ///   name, its channel ids in the order returned by the backend, and the unread channel count.
     /// - Throws: An error while communicating with the Stream API.
     @discardableResult public func queryGroupedChannels(
-        groups: [String]? = nil,
+        groups: [String],
         limit: Int? = nil,
         presence: Bool = false,
         watch: Bool = false
     ) async throws -> [ChannelGroup] {
-        let groupRequests: [String: GroupedQueryChannelsRequestGroup]? = groups.flatMap { keys in
-            keys.isEmpty ? nil : keys.reduce(into: [:]) { result, key in
-                result[key] = GroupedQueryChannelsRequestGroup(limit: limit, next: nil)
-            }
+        let groupRequests: [String: GroupedQueryChannelsRequestGroup]? = groups.isEmpty ? nil : groups.reduce(into: [:]) { result, key in
+            result[key] = GroupedQueryChannelsRequestGroup(limit: limit, next: nil)
         }
         return try await channelListUpdater.queryGroupedChannels(
             groups: groupRequests,

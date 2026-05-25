@@ -119,9 +119,9 @@ class DatabaseSession_Mock: DatabaseSession {
         try underlyingSession.saveCurrentUserUnreadCount(count: count)
     }
 
-    func saveCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws {
+    func mergeCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws {
         try throwErrorIfNeeded()
-        try underlyingSession.saveCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
+        try underlyingSession.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
     }
 
     func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int) {

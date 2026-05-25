@@ -58,9 +58,10 @@ protocol CurrentUserDatabaseSession {
     /// If there is no current user, the error will be thrown.
     func saveCurrentUserUnreadCount(count: UnreadCountPayload) throws
 
-    /// Updates the `CurrentUserDTO` with unread channel counts keyed by group.
-    /// If there is no current user, the error will be thrown.
-    func saveCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws
+    /// Merges per-group unread channel counts into `CurrentUserDTO.unreadChannelCountsByGroup`.
+    /// Keys present in the input replace existing values; keys absent from the input are left
+    /// untouched. If there is no current user, the error will be thrown.
+    func mergeCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws
 
     /// Adjusts `CurrentUserDTO.unreadChannelCountsByGroup[groupKey]` by `delta`, flooring at 0.
     /// No-op when there is no current user, no existing dictionary, or no entry for `groupKey`.
@@ -756,7 +757,7 @@ extension DatabaseSession {
         }
 
         if let unreadChannelCountsByGroup = payload.unreadChannelCountsByGroup {
-            try saveCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
+            try mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
         }
 
         if let threadDetailsPayload = payload.threadDetails?.value {

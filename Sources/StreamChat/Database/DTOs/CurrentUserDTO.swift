@@ -146,14 +146,14 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         }
     }
 
-    func saveCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws {
+    func mergeCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws {
         invalidateCurrentUserCache()
 
         guard let dto = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
 
-        dto.unreadChannelCountsByGroup = unreadChannelCountsByGroup
+        dto.unreadChannelCountsByGroup = (dto.unreadChannelCountsByGroup ?? [:]).merging(unreadChannelCountsByGroup) { _, new in new }
     }
 
     func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int) {

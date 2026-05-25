@@ -122,20 +122,20 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
 ///
 /// Grouped channel lists share their first page via a backend-side group identifier, so per-list refreshes
 /// would duplicate work and produce inconsistent first pages across active lists. This operation issues one
-/// request that returns the first page for every active group, and every grouped `ChannelList`
-/// reads from the resulting cached response. The returned channel ids are added to `context.synchedChannelIds`
-/// so the subsequent `/sync` step skips them.
+/// request that returns the first page for every group with an active `ChannelList` instance, and every
+/// grouped `ChannelList` reads from the resulting cached response. The returned channel ids are added to
+/// `context.synchedChannelIds` so the subsequent `/sync` step skips them.
 ///
 /// The `watch` and `presence` flags are read from the persisted state of any active grouped query (they are
 /// set together by the initial `queryGroupedChannels` call, so any group's persisted value reflects the latest
 /// caller intent). Reusing them keeps watching / presence subscriptions alive across reconnects.
 final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
     init(channelListUpdater: ChannelListUpdater, groupedChannelLists: [ChannelList], context: SyncContext) {
-        // All grouped lists share the same persisted flags (set together by the initial
-        // `queryGroupedChannels` call), so any one of them is a valid source.
-        let sampleGroupKey = groupedChannelLists.first?.query.groupKey
+        let groupKeys = Set(groupedChannelLists.compactMap(\.query.groupKey))
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelListUpdater] _, done in
-            guard let channelListUpdater, let sampleGroupKey else {
+            // All grouped lists share the same persisted flags (set together by the initial
+            // `queryGroupedChannels` call), so any one of them is a valid source.
+            guard let channelListUpdater, let sampleGroupKey = groupKeys.first else {
                 done(.continue)
                 return
             }
@@ -143,8 +143,9 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
             Task {
                 do {
                     let state = try await channelListUpdater.paginationState(for: sampleGroupKey)
+                    let groups = Dictionary(uniqueKeysWithValues: groupKeys.map { ($0, GroupedQueryChannelsRequestGroup(limit: nil, next: nil)) })
                     let channelGroups = try await channelListUpdater.queryGroupedChannels(
-                        groups: nil,
+                        groups: groups,
                         limit: nil,
                         watch: state.watch ?? false,
                         presence: state.presence ?? false

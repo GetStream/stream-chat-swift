@@ -1234,7 +1234,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_channelUpdatedEvent_groupChange_withUnread_adjustsBothCounts() throws {
         try database.writeSynchronously { session in
-            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3, "all": 8])
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3, "all": 8])
             self.linkChannelToGroupedQueries(["new", "all"], session: session)
         }
 
@@ -1251,7 +1251,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_channelUpdatedEvent_groupUnchanged_doesNotAdjust() throws {
         try database.writeSynchronously { session in
-            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5, "all": 8])
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "all": 8])
             self.linkChannelToGroupedQueries(["new", "all"], session: session)
         }
 
@@ -1268,7 +1268,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_channelUpdatedEvent_zeroUnread_doesNotAdjust() throws {
         try database.writeSynchronously { session in
-            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3, "all": 8])
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3, "all": 8])
             self.linkChannelToGroupedQueries(["new", "all"], session: session)
             // Drop the channel's unread count to zero via the read; mark the channel dirty so its
             // `willSave` recomputes `currentUserUnreadMessagesCount` from the updated read.
@@ -1296,7 +1296,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_channelUpdatedEvent_noGroupedQueryReferencingChannel_doesNotAdjust() throws {
         try database.writeSynchronously { session in
-            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3, "all": 8])
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3, "all": 8])
             // Intentionally do not link the channel to any grouped query.
         }
 
@@ -1314,7 +1314,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     func test_channelUpdatedEvent_unreadCountsByGroupNotPopulated_doesNotAdjust() throws {
         try database.writeSynchronously { session in
             self.linkChannelToGroupedQueries(["new", "all"], session: session)
-            // Intentionally do not call saveCurrentUserUnreadChannelCountsByGroup.
+            // Intentionally do not call mergeCurrentUserUnreadChannelCountsByGroup.
         }
 
         let event = try channelUpdatedEvent(group: "current")
@@ -1327,7 +1327,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_channelUpdatedEvent_newGroupIsAll_onlyDecrementsOld() throws {
         try database.writeSynchronously { session in
-            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5, "all": 8])
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "all": 8])
             self.linkChannelToGroupedQueries(["new", "all"], session: session)
         }
 

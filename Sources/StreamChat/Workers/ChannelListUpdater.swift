@@ -203,9 +203,8 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     ///
     /// Per-group, the locally-cached channel set is reset whenever the response represents a
     /// fresh first page for that group (i.e. the request had `next == nil` for it, or the request
-    /// was a fetch-all). Unread-channel counts on `CurrentUserDTO` are only persisted in the
-    /// fetch-all case — partial responses would otherwise clobber counts for groups that weren't
-    /// in the request.
+    /// was a fetch-all). Unread-channel counts on `CurrentUserDTO` are merged per group on every
+    /// response — keys present in the payload replace their values, keys absent are left untouched.
     func queryGroupedChannels(
         groups: [String: GroupedQueryChannelsRequestGroup]?,
         limit: Int?,
@@ -219,7 +218,6 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
             watch: watch,
             presence: presence
         )
-        let isInitialFetch = request.groups == nil
         let endpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
         apiClient.request(endpoint: endpoint) { [database] result in
             switch result {
@@ -227,14 +225,12 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                 completion(.failure(error))
             case let .success(payload):
                 database.write(converting: { session in
-                    if isInitialFetch {
-                        let unreadChannelCountsByGroup = payload.groups.mapValues(\.unreadChannels)
-                        try session.saveCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
-                    }
+                    let unreadChannelCountsByGroup = payload.groups.mapValues(\.unreadChannels)
+                    try session.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
                     var channelGroups: [ChannelGroup] = []
                     for (groupKey, groupPayload) in payload.groups {
                         let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: groupKey))
-                        let wasFreshFetch = isInitialFetch || request.groups?[groupKey]?.next == nil
+                        let wasFreshFetch = request.groups?[groupKey]?.next == nil
                         if wasFreshFetch {
                             queryDTO.channels.removeAll()
                         }

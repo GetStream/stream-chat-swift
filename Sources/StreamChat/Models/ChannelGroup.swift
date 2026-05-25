@@ -4,7 +4,7 @@
 
 import Foundation
 
-/// A channel group returned by ``ChatClient/queryGroupedChannels(limit:presence:watch:)``.
+/// A channel group returned by ``ChatClient/queryGroupedChannels(groups:limit:presence:watch:)``.
 ///
 /// To observe and read the channels that belong to a group, create a
 /// ``ChannelList`` with ``ChatClient/makeChannelList(with:)-(String)`` and read

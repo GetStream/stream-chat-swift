@@ -21,7 +21,7 @@ class ChannelListQueryDTO: NSManagedObject {
     ///
     /// Persisted so that subsequent paginated fetches (via `ChannelList`) and the
     /// `SyncRepository` refetch after reconnect can reuse the same value the caller
-    /// passed to `ChatClient.queryGroupedChannels(limit:presence:watch:)` instead of
+    /// passed to `ChatClient.queryGroupedChannels(groups:limit:presence:watch:)` instead of
     /// silently downgrading to `false`.
     ///
     /// When `watch` is `false`, ordinary channel and member WebSocket events

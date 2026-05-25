@@ -267,32 +267,24 @@ final class ChatClient_Tests: XCTestCase {
         try client.databaseContainer.createCurrentUser()
         let firstCid = ChannelId.unique
         let secondCid = ChannelId.unique
-        let thirdCid = ChannelId.unique
 
-        let request = GroupedQueryChannelsRequestBody(limit: 4, groups: nil, watch: true, presence: false)
-        let expectedEndpoint: Endpoint<GroupedQueryChannelsPayload> = .groupedChannels(request: request)
         let payload = GroupedQueryChannelsPayload(
             groups: [
-                "all": .init(
+                "new": .init(
                     channels: [dummyPayload(with: firstCid)],
                     unreadChannels: 1
                 ),
-                "new": .init(
-                    channels: [dummyPayload(with: secondCid)],
-                    unreadChannels: 1
-                ),
                 "current": .init(
-                    channels: [dummyPayload(with: thirdCid)],
+                    channels: [dummyPayload(with: secondCid)],
                     unreadChannels: 2
                 )
             ]
         )
         client.mockAPIClient.test_mockResponseResult(.success(payload))
 
-        let groupedChannels = try await client.queryGroupedChannels(limit: 4, presence: false, watch: true)
+        let groupedChannels = try await client.queryGroupedChannels(groups: ["new", "current"], limit: 4, presence: false, watch: true)
 
-        XCTAssertEqual(client.mockAPIClient.request_endpoint, AnyEndpoint(expectedEndpoint))
-        XCTAssertEqual(groupedChannels.map(\.groupKey).sorted(), ["all", "current", "new"])
+        XCTAssertEqual(groupedChannels.map(\.groupKey).sorted(), ["current", "new"])
     }
 
     func test_queryGroupedChannels_withSpecificGroups_sendsPerGroupBody() async throws {

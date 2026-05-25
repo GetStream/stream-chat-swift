@@ -247,6 +247,7 @@ class SyncRepository_Tests: XCTestCase {
 
         XCTAssertEqual(channelListUpdater.queryGroupedChannels_callCount, 1)
         XCTAssertEqual(channelList.refreshLoadedChannelsCallCount, 0)
+        XCTAssertEqual(["all"], channelListUpdater.queryGroupedChannels_groups.last??.keys.sorted())
     }
 
     func test_syncLocalState_groupedChannelList_passesPersistedWatchAndPresenceToQueryGroupedChannels() throws {
@@ -306,6 +307,32 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(channelListUpdater.queryGroupedChannels_callCount, 1)
         XCTAssertEqual(groupedChannelList.refreshLoadedChannelsCallCount, 0)
         XCTAssertEqual(standardChannelList.refreshLoadedChannelsCallCount, 1)
+        XCTAssertEqual(["current"], channelListUpdater.queryGroupedChannels_groups.last??.keys.sorted())
+    }
+
+    func test_syncLocalState_multipleGroupedChannelLists_dedupesGroupKeysPassedToUpdater() throws {
+        let cid = ChannelId.unique
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-3600),
+            createChannel: true,
+            cid: cid
+        )
+
+        var groupedQuery = ChannelListQuery(filter: .exists(.cid))
+        groupedQuery.groupKey = "all"
+        let firstList = ChannelList_Mock.mock(query: groupedQuery, client: client)
+        let secondList = ChannelList_Mock.mock(query: groupedQuery, client: client)
+        repository.startTrackingChannelList(firstList)
+        repository.startTrackingChannelList(secondList)
+
+        let refreshedGroup = ChannelGroup(groupKey: "all", channelIds: [cid], unreadChannels: 0)
+        channelListUpdater.queryGroupedChannels_result = .success([refreshedGroup])
+
+        waitForSyncLocalStateRun()
+
+        XCTAssertEqual(channelListUpdater.queryGroupedChannels_callCount, 1)
+        XCTAssertEqual(["all"], channelListUpdater.queryGroupedChannels_groups.last??.keys.sorted())
     }
 
     func test_syncLocalState_ignoresTheCooldown() throws {

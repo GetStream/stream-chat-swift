@@ -49,13 +49,13 @@ public class ChannelList: @unchecked Sendable {
     /// - For group-based lists (created via ``ChatClient/makeChannelList(with:)-(String)``), the
     ///   first page is fetched from the grouped endpoint with no cursor; the request inherits the
     ///   `watch` / `presence` flags persisted by the most recent
-    ///   ``ChatClient/queryGroupedChannels(limit:presence:watch:)`` call for the group.
+    ///   ``ChatClient/queryGroupedChannels(groups:limit:presence:watch:)`` call for the group.
     ///
     /// Subsequent pages are loaded via ``loadMoreChannels(limit:)``.
     ///
     /// - Important: For group-based lists, prefer `get()` only when fetching the first page for a *single* group
     /// in isolation. When the app needs first pages for multiple groups, call
-    /// ``ChatClient/queryGroupedChannels(limit:presence:watch:)`` instead — it returns every group
+    /// ``ChatClient/queryGroupedChannels(groups:limit:presence:watch:)`` instead — it returns every group
     /// in one request, which is significantly more efficient than calling `get()` per `ChannelList`.
     ///
     /// - Throws: An error while communicating with the Stream API.

@@ -490,12 +490,12 @@ final class ChannelListUpdater_Tests: XCTestCase {
         XCTAssertEqual("next-cursor", group?.next)
     }
 
-    func test_queryGroupedChannels_paginated_doesNotOverwriteUnreadChannelCountsByGroup() throws {
+    func test_queryGroupedChannels_paginated_mergesUnreadChannelCountsByGroup() throws {
         // Seed current user with unread counts for multiple groups.
         let userId = UserId.unique
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
-            try session.saveCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 10, "old": 2])
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 10, "old": 2])
         }
 
         let groups = ["old": GroupedQueryChannelsRequestGroup(limit: nil, next: "cursor")]
@@ -512,11 +512,41 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         AssertAsync.willBeTrue(completionCalled)
 
-        // Other groups' counters must remain intact (would be clobbered if mapValues ran).
+        // "old" is refreshed from the payload; unrelated groups are left untouched.
         let counters = database.viewContext.currentUser?.unreadChannelCountsByGroup ?? [:]
         XCTAssertEqual(5, counters["new"])
         XCTAssertEqual(10, counters["current"])
-        XCTAssertEqual(2, counters["old"])
+        XCTAssertEqual(99, counters["old"])
+    }
+
+    func test_queryGroupedChannels_initial_mergesIntoExistingUnreadChannelCountsByGroup() throws {
+        // Seed an unrelated group; the initial fetch should leave it intact while updating
+        // counts for the groups the payload covers.
+        let userId = UserId.unique
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["old": 99])
+        }
+
+        nonisolated(unsafe) var completionCalled = false
+        listUpdater.queryGroupedChannels(groups: nil, limit: nil, watch: false, presence: false) { _ in
+            completionCalled = true
+        }
+
+        let payload = GroupedQueryChannelsPayload(
+            groups: [
+                "new": .init(channels: [], unreadChannels: 5),
+                "current": .init(channels: [], unreadChannels: 10)
+            ]
+        )
+        apiClient.test_simulateResponse(.success(payload))
+
+        AssertAsync.willBeTrue(completionCalled)
+
+        let counters = database.viewContext.currentUser?.unreadChannelCountsByGroup ?? [:]
+        XCTAssertEqual(5, counters["new"])
+        XCTAssertEqual(10, counters["current"])
+        XCTAssertEqual(99, counters["old"])
     }
 
     func test_queryGroupedChannels_initial_linksChannelsToQueryDTOPerGroupKey() throws {
