@@ -194,7 +194,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             try session.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
         }
 
-        let loadedCurrentUser = try XCTUnwrap(database.viewContext.currentUser?.asModel())
+        let loadedCurrentUser = try database.readSynchronously { try XCTUnwrap($0.currentUser?.asModel()) }
         XCTAssertEqual(loadedCurrentUser.unreadChannelCountsByGroup, unreadChannelCountsByGroup)
     }
 
@@ -207,7 +207,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             try session.mergeCurrentUserUnreadChannelCountsByGroup(["direct": 10, "billing": 1])
         }
 
-        let loadedCurrentUser = try XCTUnwrap(database.viewContext.currentUser?.asModel())
+        let loadedCurrentUser = try database.readSynchronously { try XCTUnwrap($0.currentUser?.asModel()) }
         XCTAssertEqual(
             loadedCurrentUser.unreadChannelCountsByGroup,
             ["direct": 10, "support": 5, "billing": 1]

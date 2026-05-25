@@ -262,7 +262,7 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(testEnv.apiClient?.init_requestEncoder is RequestEncoder_Spy)
     }
 
-    func test_queryGroupedChannels_callsAPIClientAndReturnsGroupedChannels() async throws {
+    func test_queryGroupedChannels_withSpecificGroups_returnsMappedChannelGroups() async throws {
         let client = ChatClient.mock(config: inMemoryStorageConfig)
         try client.databaseContainer.createCurrentUser()
         let firstCid = ChannelId.unique

@@ -513,7 +513,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionCalled)
 
         // "old" is refreshed from the payload; unrelated groups are left untouched.
-        let counters = database.viewContext.currentUser?.unreadChannelCountsByGroup ?? [:]
+        let counters = try database.readSynchronously { $0.currentUser?.unreadChannelCountsByGroup ?? [:] }
         XCTAssertEqual(5, counters["new"])
         XCTAssertEqual(10, counters["current"])
         XCTAssertEqual(99, counters["old"])
@@ -543,7 +543,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         AssertAsync.willBeTrue(completionCalled)
 
-        let counters = database.viewContext.currentUser?.unreadChannelCountsByGroup ?? [:]
+        let counters = try database.readSynchronously { $0.currentUser?.unreadChannelCountsByGroup ?? [:] }
         XCTAssertEqual(5, counters["new"])
         XCTAssertEqual(10, counters["current"])
         XCTAssertEqual(99, counters["old"])
@@ -574,6 +574,43 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let newLinked = try XCTUnwrap(database.viewContext.channelListQuery(ChannelListQuery(groupKey: "new")))
         XCTAssertEqual(Set([allCid1.rawValue, allCid2.rawValue]), Set(allLinked.channels.map(\.cid)))
         XCTAssertEqual(Set([newCid.rawValue]), Set(newLinked.channels.map(\.cid)))
+    }
+
+    func test_queryGroupedChannels_initial_resetsChannelsForAllPreSeededGroups() throws {
+        let userId = UserId.unique
+        let staleAllCid = ChannelId(type: .messaging, id: .unique)
+        let staleNewCid = ChannelId(type: .messaging, id: .unique)
+        let freshAllCid = ChannelId(type: .messaging, id: .unique)
+        let freshNewCid = ChannelId(type: .messaging, id: .unique)
+
+        try database.writeSynchronously { [self] session in
+            try session.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+            let allQuery = session.saveQuery(query: ChannelListQuery(groupKey: "all"))
+            let newQuery = session.saveQuery(query: ChannelListQuery(groupKey: "new"))
+            let staleAll = try session.saveChannel(payload: dummyPayload(with: staleAllCid))
+            let staleNew = try session.saveChannel(payload: dummyPayload(with: staleNewCid))
+            allQuery.channels.insert(staleAll)
+            newQuery.channels.insert(staleNew)
+        }
+
+        let exp = expectation(description: "completion called")
+        listUpdater.queryGroupedChannels(groups: nil, limit: nil, watch: false, presence: false) { _ in exp.fulfill() }
+        let payload = GroupedQueryChannelsPayload(
+            groups: [
+                "all": .init(channels: [dummyPayload(with: freshAllCid)], unreadChannels: 0),
+                "new": .init(channels: [dummyPayload(with: freshNewCid)], unreadChannels: 0)
+            ]
+        )
+        apiClient.test_simulateResponse(.success(payload))
+        waitForExpectations(timeout: defaultTimeout)
+
+        let (allCids, newCids) = try database.readSynchronously { session -> (Set<String>, Set<String>) in
+            let allLinked = try XCTUnwrap(session.channelListQuery(ChannelListQuery(groupKey: "all")))
+            let newLinked = try XCTUnwrap(session.channelListQuery(ChannelListQuery(groupKey: "new")))
+            return (Set(allLinked.channels.map(\.cid)), Set(newLinked.channels.map(\.cid)))
+        }
+        XCTAssertEqual(Set([freshAllCid.rawValue]), allCids)
+        XCTAssertEqual(Set([freshNewCid.rawValue]), newCids)
     }
 
     func test_queryGroupedChannels_initialFetchForSingleGroup_resetsAndLinks() throws {

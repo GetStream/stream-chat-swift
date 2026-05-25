@@ -126,6 +126,10 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
 /// grouped `ChannelList` reads from the resulting cached response. The returned channel ids are added to
 /// `context.synchedChannelIds` so the subsequent `/sync` step skips them.
 ///
+/// Groups that were queried via `ChatClient.queryGroupedChannels(groups:…)` but have no active `ChannelList`
+/// are intentionally skipped — there is nothing observing them, so their first page is allowed to grow
+/// stale until the next explicit query. Sync is scoped to what the SDK is actively presenting.
+///
 /// The `watch` and `presence` flags are read from the persisted state of any active grouped query (they are
 /// set together by the initial `queryGroupedChannels` call, so any group's persisted value reflects the latest
 /// caller intent). Reusing them keeps watching / presence subscriptions alive across reconnects.
@@ -134,8 +138,9 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
         let groupKeys = Set(groupedChannelLists.compactMap(\.query.groupKey))
         super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelListUpdater] _, done in
             // All grouped lists share the same persisted flags (set together by the initial
-            // `queryGroupedChannels` call), so any one of them is a valid source.
-            guard let channelListUpdater, let sampleGroupKey = groupKeys.first else {
+            // `queryGroupedChannels` call), so any one of them is a valid source. `sorted().first`
+            // keeps the choice deterministic across runs.
+            guard let channelListUpdater, let sampleGroupKey = groupKeys.sorted().first else {
                 done(.continue)
                 return
             }

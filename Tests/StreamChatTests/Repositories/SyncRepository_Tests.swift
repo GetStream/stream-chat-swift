@@ -335,6 +335,36 @@ class SyncRepository_Tests: XCTestCase {
         XCTAssertEqual(["all"], channelListUpdater.queryGroupedChannels_groups.last??.keys.sorted())
     }
 
+    func test_syncLocalState_multipleGroupedChannelLists_passesAllDistinctGroupKeysToUpdater() throws {
+        let cid = ChannelId.unique
+        try prepareForSyncLocalStorage(
+            createUser: true,
+            lastSynchedEventDate: Date().addingTimeInterval(-3600),
+            createChannel: true,
+            cid: cid
+        )
+
+        var newQuery = ChannelListQuery(filter: .exists(.cid))
+        newQuery.groupKey = "new"
+        var currentQuery = ChannelListQuery(filter: .exists(.cid))
+        currentQuery.groupKey = "current"
+        let newList = ChannelList_Mock.mock(query: newQuery, client: client)
+        let currentList = ChannelList_Mock.mock(query: currentQuery, client: client)
+        repository.startTrackingChannelList(newList)
+        repository.startTrackingChannelList(currentList)
+
+        let refreshedGroups = [
+            ChannelGroup(groupKey: "new", channelIds: [cid], unreadChannels: 0),
+            ChannelGroup(groupKey: "current", channelIds: [cid], unreadChannels: 0)
+        ]
+        channelListUpdater.queryGroupedChannels_result = .success(refreshedGroups)
+
+        waitForSyncLocalStateRun()
+
+        XCTAssertEqual(channelListUpdater.queryGroupedChannels_callCount, 1)
+        XCTAssertEqual(["current", "new"], channelListUpdater.queryGroupedChannels_groups.last??.keys.sorted())
+    }
+
     func test_syncLocalState_ignoresTheCooldown() throws {
         let lastSyncDate = Date()
         let cid = ChannelId.unique

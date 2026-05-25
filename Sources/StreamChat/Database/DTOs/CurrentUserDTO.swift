@@ -146,6 +146,11 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         }
     }
 
+    /// Merges per-group unread channel counts into `CurrentUserDTO.unreadChannelCountsByGroup`.
+    /// Called from `queryGroupedChannels` responses and from WS events carrying
+    /// `grouped_unread_channels`; both paths use merge semantics, so keys absent from the input
+    /// are left untouched and a group that disappears from a server snapshot will keep its
+    /// locally-cached count until something explicitly clears it.
     func mergeCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws {
         invalidateCurrentUserCache()
 
