@@ -783,7 +783,7 @@ import XCTest
         let unreadMessageId = MessageId.unique
         vc.components.isUnreadMessagesSeparatorEnabled = true
         channelControllerMock.simulateInitial(
-            channel: .mock(cid: .unique),
+            channel: .mock(cid: .unique, unreadCount: .mock(messages: 1)),
             messages: [
                 .mock(id: .unique, text: "Read message", createdAt: Date(timeIntervalSince1970: 1)),
                 .mock(id: unreadMessageId, text: "Unread message", createdAt: Date(timeIntervalSince1970: 2))
