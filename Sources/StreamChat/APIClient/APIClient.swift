@@ -85,6 +85,21 @@ class APIClient: @unchecked Sendable {
         operationQueue.addOperation(requestOperation)
     }
 
+    /// Performs a network request and retries in case of network failures.
+    ///
+    /// - Parameter endpoint: The `Endpoint` used to create the network request.
+    /// - Returns: The decoded response.
+    @discardableResult
+    func request<Response: Decodable & Sendable>(
+        endpoint: Endpoint<Response>
+    ) async throws -> Response {
+        try await withCheckedThrowingContinuation { continuation in
+            request(endpoint: endpoint) { result in
+                continuation.resume(with: result)
+            }
+        }
+    }
+
     /// Performs a network request and retries in case of network failures
     ///
     /// - Parameters:

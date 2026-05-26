@@ -552,6 +552,13 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         channelRepository.markRead(cid: cid, userId: userId, completion: completion)
     }
 
+    /// Marks a channel as read locally, without making a network request.
+    ///
+    /// Used when server-side read events are disabled (e.g. livestream channels).
+    func markReadLocally(cid: ChannelId, userId: UserId, completion: (@Sendable (Error?) -> Void)? = nil) {
+        channelRepository.markReadLocally(cid: cid, userId: userId, completion: completion)
+    }
+
     /// Marks a subset of the messages of the channel as unread. All the following messages, including the one that is
     /// passed as parameter, will be marked as not read.
     /// - Parameters:

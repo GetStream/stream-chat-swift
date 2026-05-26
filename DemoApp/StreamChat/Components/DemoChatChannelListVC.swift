@@ -121,6 +121,7 @@ final class DemoChatChannelListVC: ChatChannelListVC {
         filterValues: ["channel_type": .string(ChannelType.livestream.rawValue), "user_id": .string(currentUserId)],
         sortValues: nil
     )
+    lazy var livestreamChannelsQuery: ChannelListQuery = .init(filter: .equal(.type, to: .livestream))
 
     var demoRouter: DemoChatChannelListRouter? {
         router as? DemoChatChannelListRouter
@@ -297,6 +298,13 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 self?.setPredefinedLivestreamChannelsQuery()
             }
         )
+        let livestreamChannelsAction = UIAlertAction(
+            title: "Livestream Channels",
+            style: .default
+        ) { [weak self] _ in
+            self?.title = "Livestream Channels"
+            self?.setLivestreamChannelsQuery()
+        }
 
         presentAlert(
             title: "Filter Channels",
@@ -315,7 +323,8 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 channelRoleChannelsAction,
                 taggedChannelsAction,
                 predefinedMessagingChannelsAction,
-                predefinedLivestreamChannelsAction
+                predefinedLivestreamChannelsAction,
+                livestreamChannelsAction
             ].sorted(by: { $0.title ?? "" < $1.title ?? "" }),
             preferredStyle: .actionSheet,
             sourceView: filterChannelsButton
@@ -382,6 +391,10 @@ final class DemoChatChannelListVC: ChatChannelListVC {
 
     func setPredefinedLivestreamChannelsQuery() {
         replaceQuery(predefinedLivestreamChannelsQuery)
+    }
+    
+    func setLivestreamChannelsQuery() {
+        replaceQuery(livestreamChannelsQuery)
     }
 
     func setInitialChannelsQuery() {
