@@ -31,10 +31,6 @@ extension ChannelMemberResponse {
 
 extension ChannelMemberResponse {
     static func dummy(userId: UserId = .unique) -> ChannelMemberResponse {
-        .init(
-            member: .dummy(user: UserResponse.dummy(userId: userId)),
-            invite: nil,
-            memberRole: nil
-        )
+        .dummy(user: UserResponse.dummy(userId: userId))
     }
 }

@@ -8,17 +8,11 @@ import CoreData
 struct UserTypingStateUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
-        case let event as TypingEventDTO:
-            guard
-                let channelDTO = session.channel(cid: event.cid),
-                let userDTO = session.user(id: event.user.id)
-            else { break }
+        case let event as TypingStartEventDTO:
+            applyTyping(cidString: event.cid, userId: event.user?.id, isTyping: true, session: session)
 
-            if event.isTyping {
-                channelDTO.currentlyTypingUsers.insert(userDTO)
-            } else {
-                channelDTO.currentlyTypingUsers.remove(userDTO)
-            }
+        case let event as TypingStopEventDTO:
+            applyTyping(cidString: event.cid, userId: event.user?.id, isTyping: false, session: session)
 
         case let event as CleanUpTypingEvent:
             guard
@@ -33,5 +27,21 @@ struct UserTypingStateUpdaterMiddleware: EventMiddleware {
         }
 
         return event
+    }
+
+    private func applyTyping(cidString: String?, userId: String?, isTyping: Bool, session: DatabaseSession) {
+        guard
+            let cidString,
+            let cid = try? ChannelId(cid: cidString),
+            let userId,
+            let channelDTO = session.channel(cid: cid),
+            let userDTO = session.user(id: userId)
+        else { return }
+
+        if isTyping {
+            channelDTO.currentlyTypingUsers.insert(userDTO)
+        } else {
+            channelDTO.currentlyTypingUsers.remove(userDTO)
+        }
     }
 }

@@ -57,7 +57,7 @@ class PersistentEventNotificationCenter: NotificationCenter, EventNotificationCe
         log.debug(processingEventsDebugMessage(), subsystems: .webSocket)
 
         let messageIds: [MessageId] = events.compactMap {
-            ($0 as? MessageNewEventDTO)?.message.id ?? ($0 as? NotificationMessageNewEventDTO)?.message.id
+            ($0 as? MessageNewEventDTO)?.message.id ?? ($0 as? NotificationNewMessageEventDTO)?.message.id
         }
 
         nonisolated(unsafe) var eventsToPost = [Event]()

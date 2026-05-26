@@ -26,41 +26,38 @@ final class ReactionEvents_Tests: XCTestCase {
     func test_new() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionNew")
         let event = try eventDecoder.decode(from: json) as? ReactionNewEventDTO
-        let reactionPayload = event?.payload.reaction
-        XCTAssertEqual(event?.user.id, userId)
-        XCTAssertEqual(event?.cid, cid)
-        XCTAssertEqual(event?.message.id, messageId)
-        XCTAssertEqual(event?.reaction.type, "like")
-        XCTAssertEqual(event?.reaction.score, 1)
+        XCTAssertEqual(event?.user?.id, userId)
+        XCTAssertEqual(event?.cid, cid.rawValue)
+        XCTAssertEqual(event?.message?.id, messageId)
+        XCTAssertEqual(event?.reaction?.type, "like")
+        XCTAssertEqual(event?.reaction?.score, 1)
         XCTAssertEqual(event?.createdAt.description, "2020-07-20 17:09:56 +0000")
-        XCTAssertEqual(reactionPayload?.messageId, messageId)
-        XCTAssertEqual(reactionPayload?.user.id, userId)
+        XCTAssertEqual(event?.reaction?.messageId, messageId)
+        XCTAssertEqual(event?.reaction?.user.id, userId)
     }
 
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionUpdated")
         let event = try eventDecoder.decode(from: json) as? ReactionUpdatedEventDTO
-        let reactionPayload = event?.payload.reaction
-        XCTAssertEqual(event?.user.id, userId)
-        XCTAssertEqual(event?.cid, cid)
+        XCTAssertEqual(event?.user?.id, userId)
+        XCTAssertEqual(event?.cid, cid.rawValue)
         XCTAssertEqual(event?.message.id, messageId)
-        XCTAssertEqual(event?.reaction.type, "like")
-        XCTAssertEqual(event?.reaction.score, 2)
+        XCTAssertEqual(event?.reaction?.type, "like")
+        XCTAssertEqual(event?.reaction?.score, 2)
         XCTAssertEqual(event?.createdAt.description, "2020-07-20 17:09:56 +0000")
-        XCTAssertEqual(reactionPayload?.messageId, messageId)
-        XCTAssertEqual(reactionPayload?.user.id, userId)
+        XCTAssertEqual(event?.reaction?.messageId, messageId)
+        XCTAssertEqual(event?.reaction?.user.id, userId)
     }
 
     func test_deleted() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionDeleted")
         let event = try eventDecoder.decode(from: json) as? ReactionDeletedEventDTO
-        let reactionPayload = event?.payload.reaction
-        XCTAssertEqual(event?.user.id, userId)
-        XCTAssertEqual(event?.cid, cid)
-        XCTAssertEqual(event?.message.id, messageId)
-        XCTAssertEqual(event?.reaction.type, "like")
-        XCTAssertEqual(event?.reaction.score, 1)
-        XCTAssertEqual(reactionPayload?.messageId, messageId)
-        XCTAssertEqual(reactionPayload?.user.id, userId)
+        XCTAssertEqual(event?.user?.id, userId)
+        XCTAssertEqual(event?.cid, cid.rawValue)
+        XCTAssertEqual(event?.message?.id, messageId)
+        XCTAssertEqual(event?.reaction?.type, "like")
+        XCTAssertEqual(event?.reaction?.score, 1)
+        XCTAssertEqual(event?.reaction?.messageId, messageId)
+        XCTAssertEqual(event?.reaction?.user.id, userId)
     }
 }

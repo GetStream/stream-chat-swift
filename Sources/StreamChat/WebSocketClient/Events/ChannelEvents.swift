@@ -29,22 +29,8 @@ public final class ChannelUpdatedEvent: ChannelSpecificEvent {
     }
 }
 
-final class ChannelUpdatedEventDTO: EventDTO {
-    let channel: ChannelResponse
-    let user: UserResponse?
-    let message: MessageResponse?
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        channel = try response.value(at: \.channel)
-        user = try? response.value(at: \.user)
-        message = try? response.value(at: \.message)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension ChannelUpdatedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)) else { return nil }
 
         let userDTO = user.flatMap { session.user(id: $0.id) }
@@ -80,20 +66,8 @@ public final class ChannelDeletedEvent: ChannelSpecificEvent {
     }
 }
 
-final class ChannelDeletedEventDTO: EventDTO {
-    let user: UserResponse?
-    let channel: ChannelResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try? response.value(at: \.user)
-        channel = try response.value(at: \.channel)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension ChannelDeletedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)) else { return nil }
 
         let userDTO = user.flatMap { session.user(id: $0.id) }
@@ -131,22 +105,8 @@ public final class ChannelTruncatedEvent: ChannelSpecificEvent {
     }
 }
 
-final class ChannelTruncatedEventDTO: EventDTO {
-    let channel: ChannelResponse
-    let user: UserResponse?
-    let createdAt: Date
-    let payload: EventPayload
-    let message: MessageResponse?
-
-    init(from response: EventPayload) throws {
-        channel = try response.value(at: \.channel)
-        user = try? response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        message = try? response.value(at: \.message)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension ChannelTruncatedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)) else { return nil }
 
         let userDTO = user.flatMap { session.user(id: $0.id) }
@@ -179,24 +139,13 @@ public final class ChannelVisibleEvent: ChannelSpecificEvent {
     }
 }
 
-final class ChannelVisibleEventDTO: EventDTO {
-    let cid: ChannelId
-    let user: UserResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
+extension ChannelVisibleEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
 
         return try? ChannelVisibleEvent(
-            cid: cid,
+            cid: channelId,
             user: userDTO.asModel(),
             createdAt: createdAt
         )
@@ -225,28 +174,15 @@ public final class ChannelHiddenEvent: ChannelSpecificEvent {
     }
 }
 
-final class ChannelHiddenEventDTO: EventDTO {
-    let cid: ChannelId
-    let user: UserResponse
-    let isHistoryCleared: Bool
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        createdAt = try response.value(at: \.createdAt)
-        user = try response.value(at: \.user)
-        isHistoryCleared = (try? response.value(at: \.isChannelHistoryCleared)) ?? false
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
+extension ChannelHiddenEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
 
         return try? ChannelHiddenEvent(
-            cid: cid,
+            cid: channelId,
             user: userDTO.asModel(),
-            isHistoryCleared: isHistoryCleared,
+            isHistoryCleared: clearHistory,
             createdAt: createdAt
         )
     }

@@ -10,37 +10,40 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
         do {
             switch event {
             case let event as ChannelVisibleEventDTO:
-                guard let channelDTO = session.channel(cid: event.cid) else {
-                    throw ClientError.ChannelDoesNotExist(cid: event.cid)
+                guard let cidString = event.cid, let cid = try? ChannelId(cid: cidString) else { break }
+                guard let channelDTO = session.channel(cid: cid) else {
+                    throw ClientError.ChannelDoesNotExist(cid: cid)
                 }
 
                 channelDTO.isHidden = false
 
             case let event as ChannelHiddenEventDTO:
-                guard let channelDTO = session.channel(cid: event.cid) else {
-                    throw ClientError.ChannelDoesNotExist(cid: event.cid)
+                guard let cidString = event.cid, let cid = try? ChannelId(cid: cidString) else { break }
+                guard let channelDTO = session.channel(cid: cid) else {
+                    throw ClientError.ChannelDoesNotExist(cid: cid)
                 }
 
                 channelDTO.isHidden = true
 
-                if event.isHistoryCleared {
+                if event.clearHistory {
                     channelDTO.truncatedAt = event.createdAt.bridgeDate
                 }
 
             // New Message will unhide the channel
             // but we won't get `ChannelVisibleEvent` for this case
             case let event as MessageNewEventDTO:
-                guard let channelDTO = session.channel(cid: event.cid) else {
-                    throw ClientError.ChannelDoesNotExist(cid: event.cid)
+                guard let cidString = event.cid, let cid = try? ChannelId(cid: cidString) else { break }
+                guard let channelDTO = session.channel(cid: cid) else {
+                    throw ClientError.ChannelDoesNotExist(cid: cid)
                 }
-                
+
                 if !event.message.isShadowed && event.message.campaignId == nil && !channelDTO.isBlocked {
                     channelDTO.isHidden = false
                 }
 
             // New Message will unhide the channel
             // but we won't get `ChannelVisibleEvent` for this case
-            case let event as NotificationMessageNewEventDTO:
+            case let event as NotificationNewMessageEventDTO:
                 let cid = try ChannelId(cid: event.channel.cid)
                 guard let channelDTO = session.channel(cid: cid) else {
                     throw ClientError.ChannelDoesNotExist(cid: cid)

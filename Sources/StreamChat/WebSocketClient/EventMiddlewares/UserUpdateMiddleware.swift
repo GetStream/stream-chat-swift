@@ -9,7 +9,7 @@ struct UserUpdateMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         guard let userUpdatedEvent = event as? UserUpdatedEventDTO else { return event }
         do {
-            try session.saveUser(payload: userUpdatedEvent.user)
+            try session.saveUser(payload: UserResponse(userUpdatedEvent.user))
         } catch {
             log.error("Failed to update user in the database, error: \(error)")
         }

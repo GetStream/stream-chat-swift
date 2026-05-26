@@ -8,16 +8,16 @@ import Foundation
 public final class MessageReminderCreatedEvent: Event {
     /// The message ID associated with the reminder.
     public let messageId: MessageId
-    
+
     /// The reminder that was created.
     public let reminder: MessageReminder
-    
+
     /// The channel identifier where the reminder was created.
     public var cid: ChannelId { reminder.channel.cid }
-    
+
     /// The event timestamp.
     public let createdAt: Date
-    
+
     init(messageId: MessageId, reminder: MessageReminder, createdAt: Date) {
         self.messageId = messageId
         self.reminder = reminder
@@ -25,21 +25,10 @@ public final class MessageReminderCreatedEvent: Event {
     }
 }
 
-final class ReminderCreatedEventDTO: EventDTO {
-    let messageId: MessageId
-    let reminder: ReminderResponseData
-    let createdAt: Date
-    let payload: EventPayload
-    
-    init(from response: EventPayload) throws {
-        messageId = try response.value(at: \.messageId)
-        reminder = try response.value(at: \.reminder)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-    
-    func toDomainEvent(session: any DatabaseSession) -> Event? {
+extension ReminderCreatedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard
+            let reminder = reminder,
             let reminderDTO = try? session.saveReminder(payload: reminder, cache: nil),
             let reminderModel = try? reminderDTO.asModel()
         else { return nil }
@@ -56,16 +45,16 @@ final class ReminderCreatedEventDTO: EventDTO {
 public final class MessageReminderUpdatedEvent: Event {
     /// The message ID associated with the reminder.
     public let messageId: MessageId
-    
+
     /// The reminder that was updated.
     public let reminder: MessageReminder
-    
+
     /// The channel identifier where the reminder was updated.
     public var cid: ChannelId { reminder.channel.cid }
-    
+
     /// The event timestamp.
     public let createdAt: Date
-    
+
     init(messageId: MessageId, reminder: MessageReminder, createdAt: Date) {
         self.messageId = messageId
         self.reminder = reminder
@@ -73,21 +62,10 @@ public final class MessageReminderUpdatedEvent: Event {
     }
 }
 
-final class ReminderUpdatedEventDTO: EventDTO {
-    let messageId: MessageId
-    let reminder: ReminderResponseData
-    let createdAt: Date
-    let payload: EventPayload
-    
-    init(from response: EventPayload) throws {
-        messageId = try response.value(at: \.messageId)
-        reminder = try response.value(at: \.reminder)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-    
-    func toDomainEvent(session: any DatabaseSession) -> Event? {
+extension ReminderUpdatedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard
+            let reminder = reminder,
             let reminderDTO = try? session.saveReminder(payload: reminder, cache: nil),
             let reminderModel = try? reminderDTO.asModel()
         else { return nil }
@@ -104,16 +82,16 @@ final class ReminderUpdatedEventDTO: EventDTO {
 public final class MessageReminderDeletedEvent: Event {
     /// The message ID associated with the reminder.
     public let messageId: MessageId
-    
+
     /// The reminder information before deletion.
     public let reminder: MessageReminder
-    
+
     /// The channel identifier where the reminder was deleted.
     public var cid: ChannelId { reminder.channel.cid }
-    
+
     /// The event timestamp.
     public let createdAt: Date
-    
+
     init(messageId: MessageId, reminder: MessageReminder, createdAt: Date) {
         self.messageId = messageId
         self.reminder = reminder
@@ -121,27 +99,14 @@ public final class MessageReminderDeletedEvent: Event {
     }
 }
 
-final class ReminderDeletedEventDTO: EventDTO {
-    let messageId: MessageId
-    let reminder: ReminderResponseData
-    let createdAt: Date
-    let payload: EventPayload
-    
-    init(from response: EventPayload) throws {
-        messageId = try response.value(at: \.messageId)
-        reminder = try response.value(at: \.reminder)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-    
-    func toDomainEvent(session: any DatabaseSession) -> Event? {
-        // For deletion events, we need to construct the reminder model before deleting it
+extension ReminderDeletedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard
+            let reminder = reminder,
             let reminderDTO = try? session.saveReminder(payload: reminder, cache: nil),
             let reminderModel = try? reminderDTO.asModel()
         else { return nil }
 
-        // Delete the reminder from the database
         session.deleteReminder(messageId: messageId)
 
         return MessageReminderDeletedEvent(
@@ -156,16 +121,16 @@ final class ReminderDeletedEventDTO: EventDTO {
 public final class MessageReminderDueEvent: Event {
     /// The message ID associated with the reminder.
     public let messageId: MessageId
-    
+
     /// The reminder that is due.
     public let reminder: MessageReminder
-    
+
     /// The channel identifier where the reminder is due.
     public var cid: ChannelId { reminder.channel.cid }
-    
+
     /// The event timestamp.
     public let createdAt: Date
-    
+
     init(messageId: MessageId, reminder: MessageReminder, createdAt: Date) {
         self.messageId = messageId
         self.reminder = reminder
@@ -173,21 +138,10 @@ public final class MessageReminderDueEvent: Event {
     }
 }
 
-final class ReminderDueNotificationEventDTO: EventDTO {
-    let messageId: MessageId
-    let reminder: ReminderResponseData
-    let createdAt: Date
-    let payload: EventPayload
-    
-    init(from response: EventPayload) throws {
-        messageId = try response.value(at: \.messageId)
-        reminder = try response.value(at: \.reminder)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-    
-    func toDomainEvent(session: any DatabaseSession) -> Event? {
+extension ReminderNotificationEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard
+            let reminder = reminder,
             let reminderDTO = try? session.saveReminder(payload: reminder, cache: nil),
             let reminderModel = try? reminderDTO.asModel()
         else { return nil }

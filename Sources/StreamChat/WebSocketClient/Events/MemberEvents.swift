@@ -26,30 +26,15 @@ public final class MemberAddedEvent: MemberEvent, ChannelSpecificEvent {
     }
 }
 
-final class MemberAddedEventDTO: EventDTO {
-    let user: UserResponse
-    let cid: ChannelId
-    let member: ChannelMemberResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        member = try response.value(at: \.memberContainer?.member)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard
-            let userDTO = session.user(id: user.id),
-            let memberDTO = session.member(userId: member.resolvedUserId, cid: cid)
-        else { return nil }
+extension MemberAddedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
+        guard let memberDTO = session.member(userId: member.resolvedUserId, cid: channelId) else { return nil }
 
         return try? MemberAddedEvent(
             user: userDTO.asModel(),
-            cid: cid,
+            cid: channelId,
             member: memberDTO.asModel(),
             createdAt: createdAt
         )
@@ -78,30 +63,15 @@ public final class MemberUpdatedEvent: MemberEvent, ChannelSpecificEvent {
     }
 }
 
-final class MemberUpdatedEventDTO: EventDTO {
-    let user: UserResponse
-    let cid: ChannelId
-    let member: ChannelMemberResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        member = try response.value(at: \.memberContainer?.member)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard
-            let userDTO = session.user(id: user.id),
-            let memberDTO = session.member(userId: member.resolvedUserId, cid: cid)
-        else { return nil }
+extension MemberUpdatedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
+        guard let memberDTO = session.member(userId: member.resolvedUserId, cid: channelId) else { return nil }
 
         return try? MemberUpdatedEvent(
             user: userDTO.asModel(),
-            cid: cid,
+            cid: channelId,
             member: memberDTO.asModel(),
             createdAt: createdAt
         )
@@ -126,25 +96,14 @@ public final class MemberRemovedEvent: MemberEvent, ChannelSpecificEvent {
     }
 }
 
-final class MemberRemovedEventDTO: EventDTO {
-    let user: UserResponse
-    let cid: ChannelId
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
+extension MemberRemovedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
 
         return try? MemberRemovedEvent(
             user: userDTO.asModel(),
-            cid: cid,
+            cid: channelId,
             createdAt: createdAt
         )
     }

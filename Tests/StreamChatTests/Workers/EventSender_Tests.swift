@@ -60,7 +60,7 @@ final class EventSender_Tests: XCTestCase {
 
         // Simulate API response with success
         apiClient.test_simulateResponse(Result<EventResponse, Error>.success(
-            .init(duration: "", event: .typeCustomEvent(CustomEvent(createdAt: .unique, custom: [:])))
+            .init(duration: "", event: .typeCustomEvent(CustomEventDTO(createdAt: .unique, custom: [:])))
         ))
 
         // Assert completion is called

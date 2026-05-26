@@ -915,7 +915,6 @@
 				StreamChatTests/WebSocketClient/Events/ChannelEvents_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/DraftEvents_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/EventDecoder_Tests.swift,
-				StreamChatTests/WebSocketClient/Events/EventPayload_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/MemberEvents_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/MessageEvents_Tests.swift,
 				StreamChatTests/WebSocketClient/Events/NotificationEvents_Tests.swift,

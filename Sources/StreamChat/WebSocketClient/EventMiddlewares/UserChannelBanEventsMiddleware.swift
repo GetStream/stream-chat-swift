@@ -10,20 +10,22 @@ struct UserChannelBanEventsMiddleware: EventMiddleware {
         do {
             switch event {
             case let userBannedEvent as UserBannedEventDTO:
-                guard let memberDTO = session.member(userId: userBannedEvent.user.id, cid: userBannedEvent.cid) else {
-                    throw ClientError.MemberDoesNotExist(userId: userBannedEvent.user.id, cid: userBannedEvent.cid)
+                guard let cidString = userBannedEvent.cid, let cid = try? ChannelId(cid: cidString) else { break }
+                guard let memberDTO = session.member(userId: userBannedEvent.user.id, cid: cid) else {
+                    throw ClientError.MemberDoesNotExist(userId: userBannedEvent.user.id, cid: cid)
                 }
 
                 memberDTO.isBanned = true
-                memberDTO.banExpiresAt = userBannedEvent.expiredAt?.bridgeDate
+                memberDTO.banExpiresAt = userBannedEvent.expiration?.bridgeDate
 
-                if let isShadowBan = userBannedEvent.isShadowBan {
+                if let isShadowBan = userBannedEvent.shadow {
                     memberDTO.isShadowBanned = isShadowBan
                 }
 
             case let userUnbannedEvent as UserUnbannedEventDTO:
-                guard let memberDTO = session.member(userId: userUnbannedEvent.user.id, cid: userUnbannedEvent.cid) else {
-                    throw ClientError.MemberDoesNotExist(userId: userUnbannedEvent.user.id, cid: userUnbannedEvent.cid)
+                guard let cidString = userUnbannedEvent.cid, let cid = try? ChannelId(cid: cidString) else { break }
+                guard let memberDTO = session.member(userId: userUnbannedEvent.user.id, cid: cid) else {
+                    throw ClientError.MemberDoesNotExist(userId: userUnbannedEvent.user.id, cid: cid)
                 }
 
                 memberDTO.isBanned = false
@@ -34,7 +36,7 @@ struct UserChannelBanEventsMiddleware: EventMiddleware {
                 let userId = userMessagesDeletedEvent.user.id
                 if let userDTO = session.user(id: userId) {
                     userDTO.messages?.forEach { message in
-                        if userMessagesDeletedEvent.payload.hardDelete {
+                        if userMessagesDeletedEvent.hardDelete ?? false {
                             message.isHardDeleted = true
                         } else {
                             message.deletedAt = userMessagesDeletedEvent.createdAt.bridgeDate

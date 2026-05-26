@@ -67,7 +67,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
         let newReactionJSON = XCTestCase.mockData(fromJSONFile: "ReactionNew")
         let newReactionEvent = try eventDecoder.decode(from: newReactionJSON) as? ReactionNewEventDTO
-        let newReactionPayload = try XCTUnwrap(newReactionEvent?.payload.reaction)
+        let newReactionPayload = try XCTUnwrap(newReactionEvent?.reaction)
 
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
@@ -142,24 +142,23 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
-        // Create event payload
+        // Create event DTO
         let channel: ChannelResponse = .dummy(cid: .unique)
+        let cid = try ChannelId(cid: channel.cid)
         let message: MessageResponse = .dummy(messageId: .unique, authorUserId: .unique)
         let user: UserResponse = .dummy(userId: .unique)
         let reaction: ReactionResponse = .dummy(messageId: message.id, user: user)
-
-        let eventPayload = EventPayload(
-            eventType: .reactionNew,
-            cid: try! ChannelId(cid: channel.cid),
-            user: user,
+        let createdAt: Date = .unique
+        let dto = ReactionNewEventDTO(
             channel: channel,
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            custom: [:],
             message: message,
+            messageId: message.id,
             reaction: reaction,
-            createdAt: .unique
+            user: UserResponseCommonFields(user)
         )
-
-        // Create event DTO
-        let dto = try ReactionNewEventDTO(from: eventPayload)
 
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
@@ -167,41 +166,40 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         // Save event to database
         try session.saveUser(payload: user)
         _ = try session.saveChannel(payload: channel, query: nil, cache: nil)
-        _ = try session.saveMessage(payload: message, for: try! ChannelId(cid: channel.cid), cache: nil)
+        _ = try session.saveMessage(payload: message, for: cid, cache: nil)
         try session.saveReaction(payload: reaction, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ReactionNewEvent)
-        XCTAssertEqual(event.cid, eventPayload.cid)
-        XCTAssertEqual(event.message.id, eventPayload.message?.id)
-        XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.reaction.type, eventPayload.reaction?.reactionType)
-        XCTAssertEqual(event.reaction.score, eventPayload.reaction?.score)
-        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        XCTAssertEqual(event.cid, cid)
+        XCTAssertEqual(event.message.id, message.id)
+        XCTAssertEqual(event.user.id, user.id)
+        XCTAssertEqual(event.reaction.type, reaction.reactionType)
+        XCTAssertEqual(event.reaction.score, reaction.score)
+        XCTAssertEqual(event.createdAt, createdAt)
     }
 
     func test_reactionUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
-        // Create event payload
+        // Create event DTO
         let channel: ChannelResponse = .dummy(cid: .unique)
+        let cid = try ChannelId(cid: channel.cid)
         let message: MessageResponse = .dummy(messageId: .unique, authorUserId: .unique)
         let user: UserResponse = .dummy(userId: .unique)
         let reaction: ReactionResponse = .dummy(messageId: message.id, user: user)
-
-        let eventPayload = EventPayload(
-            eventType: .reactionUpdated,
-            cid: try! ChannelId(cid: channel.cid),
-            user: user,
+        let createdAt: Date = .unique
+        let dto = ReactionUpdatedEventDTO(
             channel: channel,
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            custom: [:],
             message: message,
+            messageId: message.id,
             reaction: reaction,
-            createdAt: .unique
+            user: UserResponseCommonFields(user)
         )
-
-        // Create event DTO
-        let dto = try ReactionUpdatedEventDTO(from: eventPayload)
 
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
@@ -209,41 +207,40 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         // Save event to database
         try session.saveUser(payload: user)
         _ = try session.saveChannel(payload: channel, query: nil, cache: nil)
-        _ = try session.saveMessage(payload: message, for: try! ChannelId(cid: channel.cid), cache: nil)
+        _ = try session.saveMessage(payload: message, for: cid, cache: nil)
         try session.saveReaction(payload: reaction, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ReactionUpdatedEvent)
-        XCTAssertEqual(event.cid, eventPayload.cid)
-        XCTAssertEqual(event.message.id, eventPayload.message?.id)
-        XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.reaction.type, eventPayload.reaction?.reactionType)
-        XCTAssertEqual(event.reaction.score, eventPayload.reaction?.score)
-        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        XCTAssertEqual(event.cid, cid)
+        XCTAssertEqual(event.message.id, message.id)
+        XCTAssertEqual(event.user.id, user.id)
+        XCTAssertEqual(event.reaction.type, reaction.reactionType)
+        XCTAssertEqual(event.reaction.score, reaction.score)
+        XCTAssertEqual(event.createdAt, createdAt)
     }
 
     func test_reactionDeletedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
-        // Create event payload
+        // Create event DTO
         let channel: ChannelResponse = .dummy(cid: .unique)
+        let cid = try ChannelId(cid: channel.cid)
         let message: MessageResponse = .dummy(messageId: .unique, authorUserId: .unique)
         let user: UserResponse = .dummy(userId: .unique)
         let reaction: ReactionResponse = .dummy(messageId: message.id, user: user)
-
-        let eventPayload = EventPayload(
-            eventType: .reactionDeleted,
-            cid: try! ChannelId(cid: channel.cid),
-            user: user,
+        let createdAt: Date = .unique
+        let dto = ReactionDeletedEventDTO(
             channel: channel,
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            custom: [:],
             message: message,
+            messageId: message.id,
             reaction: reaction,
-            createdAt: .unique
+            user: UserResponseCommonFields(user)
         )
-
-        // Create event DTO
-        let dto = try ReactionDeletedEventDTO(from: eventPayload)
 
         // Assert event creation fails due to missing dependencies in database
         XCTAssertNil(dto.toDomainEvent(session: session))
@@ -251,16 +248,16 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         // Save event to database
         try session.saveUser(payload: user)
         _ = try session.saveChannel(payload: channel, query: nil, cache: nil)
-        _ = try session.saveMessage(payload: message, for: try! ChannelId(cid: channel.cid), cache: nil)
+        _ = try session.saveMessage(payload: message, for: cid, cache: nil)
         try session.saveReaction(payload: reaction, query: nil, cache: nil)
 
         // Assert event can be created and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? ReactionDeletedEvent)
-        XCTAssertEqual(event.cid, eventPayload.cid)
-        XCTAssertEqual(event.message.id, eventPayload.message?.id)
-        XCTAssertEqual(event.user.id, eventPayload.user?.id)
-        XCTAssertEqual(event.reaction.type, eventPayload.reaction?.reactionType)
-        XCTAssertEqual(event.reaction.score, eventPayload.reaction?.score)
-        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        XCTAssertEqual(event.cid, cid)
+        XCTAssertEqual(event.message.id, message.id)
+        XCTAssertEqual(event.user.id, user.id)
+        XCTAssertEqual(event.reaction.type, reaction.reactionType)
+        XCTAssertEqual(event.reaction.score, reaction.score)
+        XCTAssertEqual(event.createdAt, createdAt)
     }
 }

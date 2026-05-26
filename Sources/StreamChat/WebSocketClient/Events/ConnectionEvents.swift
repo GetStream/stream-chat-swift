@@ -11,44 +11,31 @@ public protocol ConnectionEvent: Event {
 public final class HealthCheckEvent: ConnectionEvent, EventDTO, Sendable {
     public let connectionId: String
 
-    let payload: EventPayload
-
-    init(from eventResponse: EventPayload) throws {
-        guard let connectionId = eventResponse.connectionId else {
-            throw ClientError.EventDecoding(missingValue: "connectionId", for: Self.self)
-        }
-
-        self.connectionId = connectionId
-        payload = eventResponse
-    }
-
     init(connectionId: String) {
         self.connectionId = connectionId
-        payload = EventPayload(
-            eventType: .healthCheck,
-            connectionId: connectionId,
-            cid: nil,
-            currentUser: nil,
-            channel: nil
-        )
     }
-    
+
     public func healthcheck() -> HealthCheckInfo? {
         HealthCheckInfo(connectionId: connectionId)
     }
 }
 
-final class ConnectionErrorEvent: Event {
+final class ConnectionErrorEvent: Event, Decodable {
     let apiError: APIError
-    
-    init(from eventResponse: EventPayload) throws {
-        guard let apiError = eventResponse.connectionError else {
-            throw ClientError.EventDecoding(missingValue: "error", for: Self.self)
-        }
 
+    init(apiError: APIError) {
         self.apiError = apiError
     }
-    
+
+    private enum CodingKeys: String, CodingKey {
+        case error
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        apiError = try container.decode(APIError.self, forKey: .error)
+    }
+
     func error() -> (any Error)? {
         apiError
     }

@@ -1282,10 +1282,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate flag API response.
-        let flagMessagePayload = FlagResponse(
-            currentUser: .dummy(userId: currentUserId, role: .user),
-            flaggedMessageId: messageId
-        )
+        let flagMessagePayload = FlagResponse(duration: "", itemId: messageId)
         apiClient.test_simulateResponse(.success(flagMessagePayload))
 
         waitForExpectations(timeout: defaultTimeout)
@@ -1395,10 +1392,7 @@ final class MessageUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(flagEndpoint))
 
         // Simulate flag API response with success.
-        let payload = FlagResponse(
-            currentUser: .dummy(userId: currentUserId, role: .user),
-            flaggedMessageId: messageId
-        )
+        let payload = FlagResponse(duration: "", itemId: messageId)
         apiClient.test_simulateResponse(.success(payload))
 
         // Assert the flag database error is propagated.
@@ -1432,10 +1426,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate flag API response with success.
-        let payload = FlagResponse(
-            currentUser: .dummy(userId: currentUserId, role: .user),
-            flaggedMessageId: messageId
-        )
+        let payload = FlagResponse(duration: "", itemId: messageId)
         apiClient.test_simulateResponse(.success(payload))
 
         // Assert `MessageDoesNotExist` error is propagated.

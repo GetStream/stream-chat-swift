@@ -26,11 +26,18 @@ public struct UnknownChannelEvent: Event, Hashable {
 // MARK: - Decodable
 
 extension UnknownChannelEvent: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case cid
+        case user
+        case createdAt = "created_at"
+    }
+
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: EventPayload.CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.init(
-            type: try container.decode(EventType.self, forKey: .eventType),
+            type: try container.decode(EventType.self, forKey: .type),
             cid: try container.decode(ChannelId.self, forKey: .cid),
             userId: try container.decode(UserResponse.self, forKey: .user).id,
             createdAt: try container.decode(Date.self, forKey: .createdAt),

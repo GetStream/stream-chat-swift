@@ -27,37 +27,35 @@ final class UserEvents_Tests: XCTestCase {
     }
 
     func test_watchingEvent() throws {
-        var json = XCTestCase.mockData(fromJSONFile: "UserStartWatching")
-        var event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE"))
-        XCTAssertEqual(event?.user.id, "luke_skywalker")
-        // Not exactly isStarted field on UserStartWatching event,
-        // rather if it the event is START not STOP watching.
-        XCTAssertTrue(event?.isStarted ?? false)
+        let expectedCid = ChannelId(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE")
 
-        json = XCTestCase.mockData(fromJSONFile: "UserStopWatching")
-        event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
-        XCTAssertEqual(event?.user.id, "luke_skywalker")
-        XCTAssertFalse(event?.isStarted ?? false)
-        XCTAssertTrue(event?.watcherCount ?? 0 > 0)
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE"))
+        let startJson = XCTestCase.mockData(fromJSONFile: "UserStartWatching")
+        let startEvent = try eventDecoder.decode(from: startJson) as? UserWatchingStartEventDTO
+        XCTAssertEqual(startEvent?.cid, expectedCid.rawValue)
+        XCTAssertEqual(startEvent?.user.id, "luke_skywalker")
+
+        let stopJson = XCTestCase.mockData(fromJSONFile: "UserStopWatching")
+        let stopEvent = try eventDecoder.decode(from: stopJson) as? UserWatchingStopEventDTO
+        XCTAssertEqual(stopEvent?.user.id, "luke_skywalker")
+        XCTAssertTrue((stopEvent?.watcherCount ?? 0) > 0)
+        XCTAssertEqual(stopEvent?.cid, expectedCid.rawValue)
     }
 
     func test_userBannedEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserBanned")
         let event = try eventDecoder.decode(from: json) as? UserBannedEventDTO
         XCTAssertEqual(event?.user.id, "broken-waterfall-5")
-        XCTAssertEqual(event?.ownerId, "steep-moon-9")
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
+        XCTAssertEqual(event?.createdBy?.id, "steep-moon-9")
+        XCTAssertEqual(event?.cid, "messaging:new_channel_7070")
         XCTAssertEqual(event?.reason, "I don't like you 🤮")
-        XCTAssertEqual(event?.isShadowBan, true)
+        XCTAssertEqual(event?.shadow, true)
     }
 
     func test_userUnbannedEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserUnbanned")
         let event = try eventDecoder.decode(from: json) as? UserUnbannedEventDTO
         XCTAssertEqual(event?.user.id, "broken-waterfall-5")
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "new_channel_7070"))
+        XCTAssertEqual(event?.cid, "messaging:new_channel_7070")
     }
 
     func test_userGloballyBannedEvent() throws {
@@ -80,226 +78,228 @@ final class UserEvents_Tests: XCTestCase {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
-        // Create event payload
-        let eventPayload = EventPayload(
-            eventType: .userPresenceChanged,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
-        )
-
         // Create event DTO
-        let dto = try UserPresenceChangedEventDTO(from: eventPayload)
+        let user: UserResponse = .dummy(userId: .unique)
+        let createdAt: Date = .unique
+        let dto = UserPresenceChangedEventDTO(
+            createdAt: createdAt,
+            custom: [:],
+            user: UserResponseCommonFields(user)
+        )
 
         // Assert event creation fails due to missing dependencies
         XCTAssertNil(dto.toDomainEvent(session: session))
 
         // Save event payload to database
-        try session.saveUser(payload: eventPayload.user!)
+        try session.saveUser(payload: user)
 
         // Assert event can be created from DTO and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserPresenceChangedEvent)
-        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
-        XCTAssertEqual(event.user.id, eventPayload.user!.id)
+        XCTAssertEqual(event.createdAt, createdAt)
+        XCTAssertEqual(event.user.id, user.id)
     }
 
     func test_userUpdatedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
-        // Create event payload
-        let eventPayload = EventPayload(
-            eventType: .userUpdated,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
-        )
-
         // Create event DTO
-        let dto = try UserUpdatedEventDTO(from: eventPayload)
+        let user: UserResponse = .dummy(userId: .unique)
+        let createdAt: Date = .unique
+        let dto = UserUpdatedEventDTO(
+            createdAt: createdAt,
+            custom: [:],
+            user: UserResponsePrivacyFields(user)
+        )
 
         // Assert event creation fails due to missing dependencies
         XCTAssertNil(dto.toDomainEvent(session: session))
 
         // Save event payload to database
-        try session.saveUser(payload: eventPayload.user!)
+        try session.saveUser(payload: user)
 
         // Assert event can be created from DTO and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserUpdatedEvent)
-        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
-        XCTAssertEqual(event.user.id, eventPayload.user!.id)
+        XCTAssertEqual(event.createdAt, createdAt)
+        XCTAssertEqual(event.user.id, user.id)
     }
 
     func test_userStartWatchingEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
-        // Create event payload
-        let eventPayload = EventPayload(
-            eventType: .userStartWatching,
-            cid: .unique,
-            user: .dummy(userId: .unique),
-            watcherCount: 10,
-            createdAt: .unique
-        )
-
         // Create event DTO
-        let dto = try UserWatchingEventDTO(from: eventPayload)
+        let cid: ChannelId = .unique
+        let user: UserResponse = .dummy(userId: .unique)
+        let createdAt: Date = .unique
+        let watcherCount = 10
+        let dto = UserWatchingStartEventDTO(
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            custom: [:],
+            user: UserResponseCommonFields(user),
+            watcherCount: watcherCount
+        )
 
         // Assert event creation fails due to missing dependencies
         XCTAssertNil(dto.toDomainEvent(session: session))
 
         // Save event payload to database
-        try session.saveUser(payload: eventPayload.user!)
+        try session.saveUser(payload: user)
 
         // Assert event can be created from DTO and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserWatchingEvent)
-        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.cid, cid)
         XCTAssertEqual(event.isStarted, true)
-        XCTAssertEqual(event.user.id, eventPayload.user!.id)
-        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
-        XCTAssertEqual(event.watcherCount, eventPayload.watcherCount)
+        XCTAssertEqual(event.user.id, user.id)
+        XCTAssertEqual(event.createdAt, createdAt)
+        XCTAssertEqual(event.watcherCount, watcherCount)
     }
 
     func test_userStopWatchingEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
-        // Create event payload
-        let eventPayload = EventPayload(
-            eventType: .userStopWatching,
-            cid: .unique,
-            user: .dummy(userId: .unique),
-            watcherCount: 10,
-            createdAt: .unique
-        )
-
         // Create event DTO
-        let dto = try UserWatchingEventDTO(from: eventPayload)
+        let cid: ChannelId = .unique
+        let user: UserResponse = .dummy(userId: .unique)
+        let createdAt: Date = .unique
+        let dto = UserWatchingStopEventDTO(
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            custom: [:],
+            user: UserResponseCommonFields(user),
+            watcherCount: 10
+        )
 
         // Assert event creation fails due to missing dependencies
         XCTAssertNil(dto.toDomainEvent(session: session))
 
         // Save event payload to database
-        try session.saveUser(payload: eventPayload.user!)
+        try session.saveUser(payload: user)
 
         // Assert event can be created from DTO and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserWatchingEvent)
-        XCTAssertEqual(event.cid, eventPayload.cid)
+        XCTAssertEqual(event.cid, cid)
         XCTAssertEqual(event.isStarted, false)
-        XCTAssertEqual(event.user.id, eventPayload.user!.id)
-        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        XCTAssertEqual(event.user.id, user.id)
+        XCTAssertEqual(event.createdAt, createdAt)
     }
 
     func test_userBannedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
-        // Create event payload
-        let eventPayload = EventPayload(
-            eventType: .userBanned,
-            cid: .unique,
-            user: .dummy(userId: .unique),
-            createdBy: .dummy(userId: .unique),
-            createdAt: .unique,
-            banReason: .unique,
-            banExpiredAt: .unique
-        )
-
         // Create event DTO
-        let dto = try UserBannedEventDTO(from: eventPayload)
+        let cid: ChannelId = .unique
+        let user: UserResponse = .dummy(userId: .unique)
+        let createdBy: UserResponse = .dummy(userId: .unique)
+        let createdAt: Date = .unique
+        let banReason: String = .unique
+        let banExpiredAt: Date = .unique
+        let dto = UserBannedEventDTO(
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            createdBy: UserResponseCommonFields(createdBy),
+            custom: [:],
+            expiration: banExpiredAt,
+            reason: banReason,
+            user: UserResponseCommonFields(user)
+        )
 
         // Assert event creation fails due to missing dependencies
         XCTAssertNil(dto.toDomainEvent(session: session))
 
         // Save event payload to database
-        try session.saveUser(payload: eventPayload.user!)
+        try session.saveUser(payload: user)
 
         // Assert event can be created from DTO and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserBannedEvent)
-        XCTAssertEqual(event.cid, eventPayload.cid)
-        XCTAssertEqual(event.user.id, eventPayload.user!.id)
-        XCTAssertEqual(event.reason, eventPayload.banReason)
-        XCTAssertEqual(event.ownerId, eventPayload.createdBy?.id)
-        XCTAssertEqual(event.expiredAt, eventPayload.banExpiredAt)
-        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        XCTAssertEqual(event.cid, cid)
+        XCTAssertEqual(event.user.id, user.id)
+        XCTAssertEqual(event.reason, banReason)
+        XCTAssertEqual(event.ownerId, createdBy.id)
+        XCTAssertEqual(event.expiredAt, banExpiredAt)
+        XCTAssertEqual(event.createdAt, createdAt)
     }
 
     func test_userUnbannedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
-        // Create event payload
-        let eventPayload = EventPayload(
-            eventType: .userUnbanned,
-            cid: .unique,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
-        )
-
         // Create event DTO
-        let dto = try UserUnbannedEventDTO(from: eventPayload)
+        let cid: ChannelId = .unique
+        let user: UserResponse = .dummy(userId: .unique)
+        let createdAt: Date = .unique
+        let dto = UserUnbannedEventDTO(
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            custom: [:],
+            user: UserResponseCommonFields(user)
+        )
 
         // Assert event creation fails due to missing dependencies
         XCTAssertNil(dto.toDomainEvent(session: session))
 
         // Save event payload to database
-        try session.saveUser(payload: eventPayload.user!)
+        try session.saveUser(payload: user)
 
         // Assert event can be created from DTO and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserUnbannedEvent)
-        XCTAssertEqual(event.cid, eventPayload.cid)
-        XCTAssertEqual(event.user.id, eventPayload.user!.id)
-        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        XCTAssertEqual(event.cid, cid)
+        XCTAssertEqual(event.user.id, user.id)
+        XCTAssertEqual(event.createdAt, createdAt)
     }
 
     func test_userGloballyBannedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
-        // Create event payload
-        let eventPayload = EventPayload(
-            eventType: .userBanned,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
-        )
-
         // Create event DTO
-        let dto = try UserGloballyBannedEventDTO(from: eventPayload)
+        let user: UserResponse = .dummy(userId: .unique)
+        let createdAt: Date = .unique
+        let bannedDTO = UserBannedEventDTO(
+            createdAt: createdAt,
+            custom: [:],
+            user: UserResponseCommonFields(user)
+        )
+        let dto = UserGloballyBannedEventDTO(from: bannedDTO)
 
         // Assert event creation fails due to missing dependencies
         XCTAssertNil(dto.toDomainEvent(session: session))
 
         // Save event payload to database
-        try session.saveUser(payload: eventPayload.user!)
+        try session.saveUser(payload: user)
 
         // Assert event can be created from DTO and has correct fields
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserGloballyBannedEvent)
-        XCTAssertEqual(event.user.id, eventPayload.user!.id)
-        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        XCTAssertEqual(event.user.id, user.id)
+        XCTAssertEqual(event.createdAt, createdAt)
     }
 
     func test_userGloballyUnbannedEventDTO_toDomainEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
-        // Create event payload
-        let eventPayload = EventPayload(
-            eventType: .userUnbanned,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
-        )
-
         // Create event DTO
-        let dto = try UserGloballyBannedEventDTO(from: eventPayload)
+        let user: UserResponse = .dummy(userId: .unique)
+        let createdAt: Date = .unique
+        let unbannedDTO = UserUnbannedEventDTO(
+            createdAt: createdAt,
+            custom: [:],
+            user: UserResponseCommonFields(user)
+        )
+        let dto = UserGloballyUnbannedEventDTO(from: unbannedDTO)
 
         // Assert event creation fails due to missing dependencies
         XCTAssertNil(dto.toDomainEvent(session: session))
 
         // Save event payload to database
-        try session.saveUser(payload: eventPayload.user!)
+        try session.saveUser(payload: user)
 
         // Assert event can be created from DTO and has correct fields
-        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserGloballyBannedEvent)
-        XCTAssertEqual(event.user.id, eventPayload.user!.id)
-        XCTAssertEqual(event.createdAt, eventPayload.createdAt)
+        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserGloballyUnbannedEvent)
+        XCTAssertEqual(event.user.id, user.id)
+        XCTAssertEqual(event.createdAt, createdAt)
     }
 }

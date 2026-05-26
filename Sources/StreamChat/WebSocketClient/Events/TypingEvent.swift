@@ -33,30 +33,29 @@ public final class TypingEvent: ChannelSpecificEvent {
     }
 }
 
-final class TypingEventDTO: EventDTO {
-    let user: UserResponse
-    let cid: ChannelId
-    let isTyping: Bool
-    let parentId: MessageId?
-    var isThread: Bool { parentId != nil }
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        isTyping = response.eventType == .userStartTyping
-        parentId = try? response.value(at: \.parentId)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
+extension TypingStartEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
 
         return try? TypingEvent(
-            isTyping: isTyping,
-            cid: cid,
+            isTyping: true,
+            cid: channelId,
+            user: userDTO.asModel(),
+            parentId: parentId,
+            createdAt: createdAt
+        )
+    }
+}
+
+extension TypingStopEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
+
+        return try? TypingEvent(
+            isTyping: false,
+            cid: channelId,
             user: userDTO.asModel(),
             parentId: parentId,
             createdAt: createdAt

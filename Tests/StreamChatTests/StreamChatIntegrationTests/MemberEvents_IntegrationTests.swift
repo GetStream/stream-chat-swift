@@ -37,7 +37,7 @@ final class MemberEvents_IntegrationTests: XCTestCase {
 
         // Add a channel so member will be saved
         try client.databaseContainer.writeSynchronously { session in
-            try session.saveChannel(payload: self.dummyPayload(with: unwrappedEvent.cid))
+            try session.saveChannel(payload: self.dummyPayload(with: try ChannelId(cid: XCTUnwrap(unwrappedEvent.cid))))
         }
 
         let completionCalled = expectation(description: "completion called")

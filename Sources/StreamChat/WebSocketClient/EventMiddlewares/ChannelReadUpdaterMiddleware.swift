@@ -15,13 +15,15 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
         case let event as MessageNewEventDTO:
-            incrementUnreadCountIfNeeded(
-                for: event.cid,
-                message: event.message,
-                session: session
-            )
+            if let cidString = event.cid, let cid = try? ChannelId(cid: cidString) {
+                incrementUnreadCountIfNeeded(
+                    for: cid,
+                    message: event.message,
+                    session: session
+                )
+            }
 
-        case let event as NotificationMessageNewEventDTO:
+        case let event as NotificationNewMessageEventDTO:
             if let cid = try? ChannelId(cid: event.channel.cid) {
                 incrementUnreadCountIfNeeded(
                     for: cid,
@@ -37,42 +39,51 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             )
 
         case let event as MessageReadEventDTO:
-            if isThreadReadEvent(eventPayload: event.payload) {
+            if event.thread != nil {
                 break
             }
+            guard let cidString = event.cid, let cid = try? ChannelId(cid: cidString) else { break }
+            guard let userId = event.user?.id else { break }
             resetChannelRead(
-                for: event.cid,
-                userId: event.user.id,
+                for: cid,
+                userId: userId,
                 lastReadAt: event.createdAt,
                 session: session
             )
 
         case let event as NotificationMarkReadEventDTO:
-            if isThreadReadEvent(eventPayload: event.payload) {
+            if event.thread != nil || event.threadId != nil {
                 break
             }
+            guard let cidString = event.cid, let cid = try? ChannelId(cid: cidString) else { break }
+            guard let userId = event.user?.id else { break }
             resetChannelRead(
-                for: event.cid,
-                userId: event.user.id,
+                for: cid,
+                userId: userId,
                 lastReadAt: event.createdAt,
                 session: session
             )
             updateLastReadMessage(
-                for: event.cid,
-                userId: event.user.id,
+                for: cid,
+                userId: userId,
                 lastReadMessageId: event.lastReadMessageId,
                 lastReadAt: event.createdAt,
                 session: session
             )
 
         case let event as NotificationMarkUnreadEventDTO:
+            guard let cidString = event.cid, let cid = try? ChannelId(cid: cidString) else { break }
+            guard let userId = event.user?.id else { break }
+            guard let firstUnreadMessageId = event.firstUnreadMessageId,
+                  let lastReadAt = event.lastReadAt,
+                  let unreadMessagesCount = event.unreadMessages else { break }
             markChannelAsUnread(
-                for: event.cid,
-                userId: event.user.id,
-                from: event.firstUnreadMessageId,
+                for: cid,
+                userId: userId,
+                from: firstUnreadMessageId,
                 lastReadMessageId: event.lastReadMessageId,
-                lastReadAt: event.lastReadAt,
-                unreadMessages: event.unreadMessagesCount,
+                lastReadAt: lastReadAt,
+                unreadMessages: unreadMessagesCount,
                 session: session
             )
 
@@ -87,10 +98,6 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         }
 
         return event
-    }
-
-    private func isThreadReadEvent(eventPayload: EventPayload) -> Bool {
-        eventPayload.threadDetails != nil || eventPayload.threadPartial != nil
     }
 
     private func resetChannelRead(
@@ -178,7 +185,10 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             return log.error("Current user is missing", subsystems: .webSocket)
         }
 
-        guard let channelRead = session.loadOrCreateChannelRead(cid: event.cid, userId: currentUser.user.id) else {
+        guard let cidString = event.cid, let cid = try? ChannelId(cid: cidString) else {
+            return log.error("CID is missing", subsystems: .webSocket)
+        }
+        guard let channelRead = session.loadOrCreateChannelRead(cid: cid, userId: currentUser.user.id) else {
             return log.error("Channel read is missing", subsystems: .webSocket)
         }
 
@@ -196,7 +206,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         }
 
         log.debug(
-            "Message \(event.message.id) decrements unread counts for channel \(event.cid)",
+            "Message \(event.message.id) decrements unread counts for channel \(cid)",
             subsystems: .webSocket
         )
 

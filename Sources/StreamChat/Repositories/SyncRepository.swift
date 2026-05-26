@@ -289,9 +289,9 @@ class SyncRepository: @unchecked Sendable {
         let requestCompletion: @Sendable (Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
             switch result {
             case let .success(payload):
-                log.info("Processing pending events. Count \(payload.eventPayloads.count)", subsystems: .offlineSupport)
+                log.info("Processing pending events. Count \(payload.events.count)", subsystems: .offlineSupport)
                 self?.processMissingEventsPayload(payload) { [weak self] in
-                    self?.updateLastSyncAt(with: payload.eventPayloads.last?.createdAt ?? date, completion: { error in
+                    self?.updateLastSyncAt(with: payload.events.last?.createdAt ?? date, completion: { error in
                         if let error = error {
                             completion(.failure(error))
                         } else {
@@ -341,9 +341,18 @@ class SyncRepository: @unchecked Sendable {
     }
 
     private func processMissingEventsPayload(_ payload: MissingEventsPayload, completion: @escaping @Sendable () -> Void) {
-        eventNotificationCenter.process(payload.eventPayloads.asEvents(), postNotifications: false) {
+        let events: [Event] = payload.events.compactMap { wsEvent in
+            do {
+                let event = try wsEvent.makeEvent()
+                storeWSEvent(wsEvent, on: event as AnyObject)
+                return event
+            } catch {
+                return nil
+            }
+        }
+        eventNotificationCenter.process(events, postNotifications: false) {
             log.info(
-                "Successfully processed pending events. Count \(payload.eventPayloads.count)",
+                "Successfully processed pending events. Count \(payload.events.count)",
                 subsystems: .offlineSupport
             )
             completion()

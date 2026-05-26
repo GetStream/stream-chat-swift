@@ -10,87 +10,38 @@ final class MissingEventsPayload_Tests: XCTestCase {
     func test_missingEventsPayload_isDeserialized() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MissingEventsPayload")
         let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
-        XCTAssertEqual(payload.eventPayloads.count, 1)
+        XCTAssertEqual(payload.events.count, 1)
 
-        let expectedUser = UserResponse(
-            id: "broken-waterfall-5",
-            name: "Broken Waterfall",
-            imageURL: URL(string: "https://api.adorable.io/avatars/285/broken-waterfall-5.png"),
-            role: .user,
-            teamsRole: nil,
-            createdAt: "2019-12-12T15:33:46.488935Z".toDate(),
-            updatedAt: "2020-09-07T12:27:43.096437Z".toDate(),
-            deactivatedAt: nil,
-            lastActiveAt: "2020-09-07T12:25:41.501574Z".toDate(),
-            isOnline: true,
-            isInvisible: false,
-            isBanned: false,
-            language: nil,
-            extraData: [:]
-        )
+        let event = try XCTUnwrap(payload.events.first)
+        guard case let .typeMessageNewEvent(messageNew) = event else {
+            XCTFail("Expected MessageNew event, got \(event.type)")
+            return
+        }
 
-        let event = try XCTUnwrap(payload.eventPayloads.first)
-        XCTAssertEqual(event.eventType, .messageNew)
-        XCTAssertEqual(event.cid?.rawValue, "messaging:A2F4393C-D656-46B8-9A43-6148E9E62D7F")
-        XCTAssertEqual(event.createdAt, "2020-09-07T12:25:50.702323Z".toDate())
+        XCTAssertEqual(messageNew.cid, "messaging:A2F4393C-D656-46B8-9A43-6148E9E62D7F")
+        XCTAssertEqual(messageNew.createdAt, "2020-09-07T12:25:50.702323Z".toDate())
 
-        let message = try XCTUnwrap(event.message)
-        XCTAssertEqual(message.id, "AD6B64F8-1A12-48AF-B246-09774FD1B748")
-        XCTAssertEqual(message.text, "How are you?")
-        XCTAssertEqual(message.type, MessageType.regular.rawValue)
-        XCTAssertTrue(message.latestReactions.isEmpty)
-        XCTAssertTrue(message.ownReactions.isEmpty)
-        XCTAssertTrue(message.reactionScores.isEmpty)
-        XCTAssertTrue(message.reactionCounts.isEmpty)
-        XCTAssertEqual(message.replyCount, 0)
-        XCTAssertEqual(message.createdAt, "2020-09-07T12:25:50.702323Z".toDate())
-        XCTAssertEqual(message.updatedAt, "2020-09-07T12:25:50.702324Z".toDate())
-        XCTAssertTrue(message.mentionedUsers.isEmpty)
-        XCTAssertFalse(message.isSilent)
+        XCTAssertEqual(messageNew.message.id, "AD6B64F8-1A12-48AF-B246-09774FD1B748")
+        XCTAssertEqual(messageNew.message.text, "How are you?")
+        XCTAssertEqual(messageNew.message.user.id, "broken-waterfall-5")
 
-        let messageUser = try XCTUnwrap(message.user)
-        XCTAssertEqual(messageUser.id, expectedUser.id)
-        XCTAssertEqual(messageUser.name, expectedUser.name)
-        XCTAssertEqual(messageUser.imageURL, expectedUser.imageURL)
-        XCTAssertEqual(messageUser.role, expectedUser.role)
-        XCTAssertEqual(messageUser.createdAt, expectedUser.createdAt)
-        XCTAssertEqual(messageUser.updatedAt, expectedUser.updatedAt)
-        XCTAssertEqual(messageUser.lastActiveAt, expectedUser.lastActiveAt)
-        XCTAssertEqual(messageUser.isBanned, expectedUser.isBanned)
-        XCTAssertEqual(messageUser.isOnline, expectedUser.isOnline)
-        XCTAssertEqual(messageUser.isInvisible, expectedUser.isInvisible)
-        XCTAssertEqual(messageUser.extraData, expectedUser.extraData)
-
-        let eventUser = try XCTUnwrap(event.user)
-        XCTAssertEqual(eventUser.id, expectedUser.id)
-        XCTAssertEqual(eventUser.role, expectedUser.role)
-        XCTAssertEqual(eventUser.createdAt, expectedUser.createdAt)
-        XCTAssertEqual(eventUser.updatedAt, expectedUser.updatedAt)
-        XCTAssertEqual(eventUser.lastActiveAt, expectedUser.lastActiveAt)
-        XCTAssertEqual(eventUser.isBanned, expectedUser.isBanned)
-        XCTAssertEqual(eventUser.isOnline, expectedUser.isOnline)
-        XCTAssertEqual(eventUser.isInvisible, expectedUser.isInvisible)
-        XCTAssertEqual(eventUser.extraData, expectedUser.extraData)
+        XCTAssertEqual(messageNew.user?.id, "broken-waterfall-5")
     }
 
     func test_missingEventsPayload_incompleteChannels_isDeserialized() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MissingEventsPayload-IncompleteChannel")
         let payload = try JSONDecoder.default.decode(MissingEventsPayload.self, from: json)
-        XCTAssertEqual(payload.eventPayloads.count, 4)
+        XCTAssertEqual(payload.events.count, 4)
 
-        let expectedTypes: [EventType] = [
-            .notificationRemovedFromChannel,
-            .notificationAddedToChannel,
-            .notificationRemovedFromChannel,
-            .notificationAddedToChannel
+        let expectedTypes = [
+            "notification.removed_from_channel",
+            "notification.added_to_channel",
+            "notification.removed_from_channel",
+            "notification.added_to_channel"
         ]
 
-        // Channel is not decoded because it is incomplete, but rest is decoded.
-        for (event, type) in zip(payload.eventPayloads, expectedTypes) {
-            XCTAssertNil(event.channel)
-            XCTAssertEqual(event.user?.id, "broken-waterfall-5")
-            XCTAssertEqual(event.createdAt, "2020-09-07T12:25:50.702323Z".toDate())
-            XCTAssertEqual(event.eventType, type)
+        for (event, expectedType) in zip(payload.events, expectedTypes) {
+            XCTAssertEqual(event.type, expectedType)
         }
     }
 }

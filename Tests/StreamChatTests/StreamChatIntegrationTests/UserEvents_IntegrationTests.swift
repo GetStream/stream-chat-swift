@@ -31,7 +31,7 @@ final class UserEvents_IntegrationTests: XCTestCase {
 
     func test_UserWatchingStartEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStartWatching")
-        let event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
+        let event = try eventDecoder.decode(from: json) as? UserWatchingStartEventDTO
 
         let channelId: ChannelId = .init(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE")
 
@@ -55,7 +55,7 @@ final class UserEvents_IntegrationTests: XCTestCase {
 
     func test_UserWatchingStoppedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStopWatching")
-        let event = try eventDecoder.decode(from: json) as? UserWatchingEventDTO
+        let event = try eventDecoder.decode(from: json) as? UserWatchingStopEventDTO
 
         let channelId: ChannelId = .init(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE")
 

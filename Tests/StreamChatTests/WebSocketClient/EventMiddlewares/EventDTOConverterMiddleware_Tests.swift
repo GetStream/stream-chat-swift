@@ -25,8 +25,6 @@ final class EventDTOConverterMiddleware_Tests: XCTestCase {
 
     func test_handle_whenEventDTOComes_toDomainResultIsReturned() throws {
         final class EventDTOMock: EventDTO {
-            let payload = EventPayload(eventType: .channelDeleted)
-
             nonisolated(unsafe) var toDomainEvent_session: DatabaseSession?
             nonisolated(unsafe) var toDomainEvent_returnValue: Event?
 

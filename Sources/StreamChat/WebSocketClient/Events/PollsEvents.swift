@@ -4,54 +4,11 @@
 
 import Foundation
 
-protocol PollEventDTO: EventDTO {
-    var poll: PollResponseData? { get }
-    var payload: EventPayload { get }
-    static func createModel(poll: Poll, payload: EventPayload) -> Event?
-}
-
-protocol PollVoteEventDTO: EventDTO {
-    var poll: PollResponseData? { get }
-    var vote: PollVoteResponseData? { get }
-    var payload: EventPayload { get }
-    static func createModel(vote: PollVote, poll: Poll, payload: EventPayload) -> Event?
-}
-
-extension PollVoteEventDTO {
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let vote,
-              let voteDto = try? session.pollVote(id: vote.id, pollId: vote.pollId),
-              let voteModel = try? voteDto.asModel(),
-              let pollDto = try? session.poll(id: vote.pollId),
-              let pollModel = try? pollDto.asModel() else {
-            return nil
-        }
-        return Self.createModel(
-            vote: voteModel,
-            poll: pollModel,
-            payload: payload
-        )
-    }
-}
-
-extension PollEventDTO {
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let poll, let pollDto = try? session.poll(id: poll.id),
-              let pollModel = try? pollDto.asModel() else {
-            return nil
-        }
-        return Self.createModel(
-            poll: pollModel,
-            payload: payload
-        )
-    }
-}
-
 /// A model representing an event where a poll was closed.
 public final class PollClosedEvent: Event {
     /// The poll that was closed.
     public let poll: Poll
-    
+
     /// The date and time when the event was created.
     /// This property is optional and may be `nil`.
     public let createdAt: Date?
@@ -62,46 +19,11 @@ public final class PollClosedEvent: Event {
     }
 }
 
-struct PollClosedEventDTO: PollEventDTO {
-    var poll: PollResponseData?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        poll = response.poll
-    }
-    
-    static func createModel(poll: Poll, payload: EventPayload) -> Event? {
-        PollClosedEvent(poll: poll, createdAt: payload.createdAt)
-    }
-}
-
-/// A model representing an event where a poll was created.
-public final class PollCreatedEvent: Event {
-    /// The poll that was created.
-    public let poll: Poll
-    
-    /// The date and time when the event was created.
-    /// This property is optional and may be `nil`.
-    public let createdAt: Date?
-
-    init(poll: Poll, createdAt: Date?) {
-        self.poll = poll
-        self.createdAt = createdAt
-    }
-}
-
-struct PollCreatedEventDTO: PollEventDTO {
-    var poll: PollResponseData?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        poll = response.poll
-    }
-    
-    static func createModel(poll: Poll, payload: EventPayload) -> Event? {
-        PollCreatedEvent(poll: poll, createdAt: payload.createdAt)
+extension PollClosedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let pollDto = try? session.poll(id: poll.id),
+              let pollModel = try? pollDto.asModel() else { return nil }
+        return PollClosedEvent(poll: pollModel, createdAt: createdAt)
     }
 }
 
@@ -109,7 +31,7 @@ struct PollCreatedEventDTO: PollEventDTO {
 public final class PollDeletedEvent: Event {
     /// The poll that was deleted.
     public let poll: Poll
-    
+
     /// The date and time when the event was created.
     /// This property is optional and may be `nil`.
     public let createdAt: Date?
@@ -120,17 +42,11 @@ public final class PollDeletedEvent: Event {
     }
 }
 
-struct PollDeletedEventDTO: PollEventDTO {
-    var poll: PollResponseData?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        poll = response.poll
-    }
-    
-    static func createModel(poll: Poll, payload: EventPayload) -> Event? {
-        PollDeletedEvent(poll: poll, createdAt: payload.createdAt)
+extension PollDeletedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let pollDto = try? session.poll(id: poll.id),
+              let pollModel = try? pollDto.asModel() else { return nil }
+        return PollDeletedEvent(poll: pollModel, createdAt: createdAt)
     }
 }
 
@@ -138,7 +54,7 @@ struct PollDeletedEventDTO: PollEventDTO {
 public final class PollUpdatedEvent: Event {
     /// The poll that was updated.
     public let poll: Poll
-    
+
     /// The date and time when the event was created.
     /// This property is optional and may be `nil`.
     public let createdAt: Date?
@@ -149,17 +65,11 @@ public final class PollUpdatedEvent: Event {
     }
 }
 
-struct PollUpdatedEventDTO: PollEventDTO {
-    var poll: PollResponseData?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        poll = response.poll
-    }
-    
-    static func createModel(poll: Poll, payload: EventPayload) -> Event? {
-        PollUpdatedEvent(poll: poll, createdAt: payload.createdAt)
+extension PollUpdatedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let pollDto = try? session.poll(id: poll.id),
+              let pollModel = try? pollDto.asModel() else { return nil }
+        return PollUpdatedEvent(poll: pollModel, createdAt: createdAt)
     }
 }
 
@@ -167,10 +77,10 @@ struct PollUpdatedEventDTO: PollEventDTO {
 public final class PollVoteCastedEvent: Event {
     /// The vote that was casted.
     public let vote: PollVote
-    
+
     /// The poll in which the vote was casted.
     public let poll: Poll
-    
+
     /// The date and time when the event was created.
     /// This property is optional and may be `nil`.
     public let createdAt: Date?
@@ -182,19 +92,13 @@ public final class PollVoteCastedEvent: Event {
     }
 }
 
-struct PollVoteCastedEventDTO: PollVoteEventDTO {
-    var vote: PollVoteResponseData?
-    var poll: PollResponseData?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        vote = response.vote
-        poll = response.poll
-    }
-    
-    static func createModel(vote: PollVote, poll: Poll, payload: EventPayload) -> Event? {
-        PollVoteCastedEvent(vote: vote, poll: poll, createdAt: payload.createdAt)
+extension PollVoteCastedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let voteDto = try? session.pollVote(id: pollVote.id, pollId: pollVote.pollId),
+              let voteModel = try? voteDto.asModel(),
+              let pollDto = try? session.poll(id: pollVote.pollId),
+              let pollModel = try? pollDto.asModel() else { return nil }
+        return PollVoteCastedEvent(vote: voteModel, poll: pollModel, createdAt: createdAt)
     }
 }
 
@@ -202,10 +106,10 @@ struct PollVoteCastedEventDTO: PollVoteEventDTO {
 public final class PollVoteChangedEvent: Event {
     /// The vote that was changed.
     public let vote: PollVote
-    
+
     /// The poll in which the vote was changed.
     public let poll: Poll
-    
+
     /// The date and time when the event was created.
     /// This property is optional and may be `nil`.
     public let createdAt: Date?
@@ -217,19 +121,13 @@ public final class PollVoteChangedEvent: Event {
     }
 }
 
-struct PollVoteChangedEventDTO: PollVoteEventDTO {
-    var vote: PollVoteResponseData?
-    var poll: PollResponseData?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        vote = response.vote
-        poll = response.poll
-    }
-    
-    static func createModel(vote: PollVote, poll: Poll, payload: EventPayload) -> Event? {
-        PollVoteChangedEvent(vote: vote, poll: poll, createdAt: payload.createdAt)
+extension PollVoteChangedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let voteDto = try? session.pollVote(id: pollVote.id, pollId: pollVote.pollId),
+              let voteModel = try? voteDto.asModel(),
+              let pollDto = try? session.poll(id: pollVote.pollId),
+              let pollModel = try? pollDto.asModel() else { return nil }
+        return PollVoteChangedEvent(vote: voteModel, poll: pollModel, createdAt: createdAt)
     }
 }
 
@@ -237,10 +135,10 @@ struct PollVoteChangedEventDTO: PollVoteEventDTO {
 public final class PollVoteRemovedEvent: Event {
     /// The vote that was removed.
     public let vote: PollVote
-    
+
     /// The poll from which the vote was removed.
     public let poll: Poll
-    
+
     /// The date and time when the event was created.
     /// This property is optional and may be `nil`.
     public let createdAt: Date?
@@ -252,18 +150,12 @@ public final class PollVoteRemovedEvent: Event {
     }
 }
 
-struct PollVoteRemovedEventDTO: PollVoteEventDTO {
-    var vote: PollVoteResponseData?
-    var poll: PollResponseData?
-    var payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        payload = response
-        vote = response.vote
-        poll = response.poll
-    }
-    
-    static func createModel(vote: PollVote, poll: Poll, payload: EventPayload) -> Event? {
-        PollVoteRemovedEvent(vote: vote, poll: poll, createdAt: payload.createdAt)
+extension PollVoteRemovedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let voteDto = try? session.pollVote(id: pollVote.id, pollId: pollVote.pollId),
+              let voteModel = try? voteDto.asModel(),
+              let pollDto = try? session.poll(id: pollVote.pollId),
+              let pollModel = try? pollDto.asModel() else { return nil }
+        return PollVoteRemovedEvent(vote: voteModel, poll: pollModel, createdAt: createdAt)
     }
 }

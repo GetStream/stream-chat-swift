@@ -26,27 +26,17 @@ public final class DraftUpdatedEvent: Event {
     }
 }
 
-final class DraftUpdatedEventDTO: EventDTO {
-    let cid: ChannelId
-    let draft: DraftResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        draft = try response.value(at: \.draft)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: any DatabaseSession) -> Event? {
+extension DraftUpdatedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let draft = draft else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
         guard
             let messageDTO = session.message(id: draft.message.id),
-            let channelDTO = session.channel(cid: cid) else {
+            let channelDTO = session.channel(cid: channelId) else {
             return nil
         }
         return try? DraftUpdatedEvent(
-            cid: cid,
+            cid: channelId,
             channel: channelDTO.asModel(),
             draftMessage: DraftMessage(messageDTO.asModel()),
             createdAt: createdAt
@@ -72,23 +62,12 @@ public final class DraftDeletedEvent: Event {
     }
 }
 
-final class DraftDeletedEventDTO: EventDTO {
-    let cid: ChannelId
-    let draft: DraftResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        draft = try response.value(at: \.draft)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: any DatabaseSession) -> Event? {
-        DraftDeletedEvent(
-            cid: cid,
-            threadId: draft.parentId,
+extension DraftDeletedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let channelId = cid.flatMap({ try? ChannelId(cid: $0) }) else { return nil }
+        return DraftDeletedEvent(
+            cid: channelId,
+            threadId: draft?.parentId ?? parentId,
             createdAt: createdAt
         )
     }

@@ -38,40 +38,36 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
     }
 
     func test_middleware_forwardsTheEvent_ifDatabaseWriteGeneratesError() throws {
-        let eventPayload: EventPayload = .init(
-            eventType: .userStartWatching,
-            cid: .unique,
-            user: .dummy(userId: .unique),
-            watcherCount: .random(in: 0...10),
-            createdAt: Date.unique
-        )
-
         // Set error to be thrown on write.
         let session = DatabaseSession_Mock(underlyingSession: database.viewContext)
         let error = TestError()
         session.errorToReturn = error
 
         // Simulate and handle user watching event.
-        let event = try UserWatchingEventDTO(from: eventPayload)
+        let event = UserWatchingStartEventDTO(
+            cid: ChannelId.unique.rawValue,
+            createdAt: Date.unique,
+            custom: [:],
+            user: UserResponseCommonFields(.dummy(userId: .unique)),
+            watcherCount: .random(in: 0...10)
+        )
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `UserWatchingEvent` is forwarded even though database error happened.
-        XCTAssertTrue(forwardedEvent is UserWatchingEventDTO)
+        XCTAssertTrue(forwardedEvent is UserWatchingStartEventDTO)
     }
 
     func test_middleware_handlesUserStartWatchingEventCorrectly() throws {
         let cid: ChannelId = .unique
         let userId = UserId.unique
         let watcherCount = Int.random(in: 100...200)
-        // Create userStartWatching event
-        let eventPayload: EventPayload = .init(
-            eventType: .userStartWatching,
-            cid: cid,
-            user: .dummy(userId: userId),
-            watcherCount: watcherCount,
-            createdAt: .unique
+        let event = UserWatchingStartEventDTO(
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            user: UserResponseCommonFields(.dummy(userId: userId)),
+            watcherCount: watcherCount
         )
-        let event = try UserWatchingEventDTO(from: eventPayload)
 
         // Channel and user must exist for the middleware to work
         try database.createChannel(cid: cid, withMessages: false)
@@ -88,7 +84,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         // dummyChannel's watcherCount is 10, we generate 100...200
         // if this assert fails, check dummyChannel's watcherCount
         XCTAssertEqual(loadedChannel?.watcherCount, Int64(watcherCount))
-        XCTAssert(forwardedEvent is UserWatchingEventDTO)
+        XCTAssert(forwardedEvent is UserWatchingStartEventDTO)
     }
 
     func test_middleware_handlesUserStopWatchingEventCorrectly() throws {
@@ -102,14 +98,13 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         let watchingUserId = database.viewContext.channel(cid: cid)!.watchers.first!.id
         let watcherCount = Int.random(in: 100...200)
         // Create userStopWatching event
-        let eventPayload: EventPayload = .init(
-            eventType: .userStopWatching,
-            cid: cid,
-            user: .dummy(userId: watchingUserId),
-            watcherCount: watcherCount,
-            createdAt: .unique
+        let event = UserWatchingStopEventDTO(
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            user: UserResponseCommonFields(.dummy(userId: watchingUserId)),
+            watcherCount: watcherCount
         )
-        let event = try UserWatchingEventDTO(from: eventPayload)
 
         // Simulate incoming event
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
@@ -122,6 +117,6 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
         // dummyChannel's watcherCount is 10, we generate 100...200
         // if this assert fails, check dummyChannel's watcherCount
         XCTAssertEqual(loadedChannel?.watcherCount, Int64(watcherCount))
-        XCTAssert(forwardedEvent is UserWatchingEventDTO)
+        XCTAssert(forwardedEvent is UserWatchingStopEventDTO)
     }
 }

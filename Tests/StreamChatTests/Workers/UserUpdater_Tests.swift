@@ -288,10 +288,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate `flagUser` API response with success.
-        let payload = FlagResponse(
-            currentUser: .dummy(userId: currentUserId, role: .user),
-            flaggedUser: .dummy(userId: flaggedUserId)
-        )
+        let payload = FlagResponse(duration: "", itemId: flaggedUserId)
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeTrue(flagCompletionCalled)
@@ -353,10 +350,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with success.
-        let payload = FlagResponse(
-            currentUser: .dummy(userId: .unique, role: .user),
-            flaggedUser: .dummy(userId: .unique)
-        )
+        let payload = FlagResponse(duration: "", itemId: .unique)
         apiClient.test_simulateResponse(.success(payload))
 
         // Assert database error is propagated.

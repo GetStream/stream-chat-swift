@@ -23,32 +23,28 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
     }
 
     func test_eventWithPayload_isSavedToDB() throws {
-        // Prepare an Event with a payload with channel data
-        struct TestEvent: Event, EventDTO {
-            let payload: EventPayload
-        }
-
         let channelId: ChannelId = .unique
         let channelPayload = dummyPayload(with: channelId)
-
-        let eventPayload = EventPayload(
-            eventType: .notificationAddedToChannel,
-            connectionId: .unique,
-            cid: channelPayload.channel?.channelId,
-            channel: channelPayload.channel
+        let channel = try XCTUnwrap(channelPayload.channel)
+        let dto = NotificationAddedToChannelEventDTO(
+            channel: channel,
+            cid: channelId.rawValue,
+            createdAt: Date(),
+            custom: [:],
+            member: channel.members?.first ?? .dummy()
         )
-
-        let testEvent = TestEvent(payload: eventPayload)
+        // The middleware uses the associated-object WSEvent to drive DB persistence.
+        storeWSEvent(.typeNotificationAddedToChannelEvent(dto), on: dto)
 
         // Let the middleware handle the event
-        let outputEvent = middleware.handle(event: testEvent, session: database.viewContext)
+        let outputEvent = middleware.handle(event: dto, session: database.viewContext)
 
         // Assert the channel data is saved and the event is forwarded
         var loadedChannel: ChatChannel? {
             try? database.viewContext.channel(cid: channelId)?.asModel()
         }
         XCTAssertEqual(loadedChannel?.cid, channelId)
-        XCTAssertEqual(outputEvent?.asEquatable, testEvent.asEquatable)
+        XCTAssertEqual(outputEvent?.asEquatable, dto.asEquatable)
     }
 
     func test_middleware_handlesReactionDeletedEvent() throws {
@@ -76,20 +72,19 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         // pre-condition check
         XCTAssertFalse(message.latestReactions.isEmpty)
 
-        let eventPayload: EventPayload = .init(
-            eventType: .reactionDeleted,
-            cid: cid,
-            user: reactionPayload.userPayload,
-            message: .dummy(
-                messageId: messageId,
-                authorUserId: reactionPayload.userPayload.id
-            ),
+        let event = ReactionDeletedEventDTO(
+            channel: .dummy(cid: cid),
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            message: .dummy(messageId: messageId, authorUserId: reactionPayload.userPayload.id),
+            messageId: messageId,
             reaction: reactionPayload,
-            createdAt: .unique
+            user: UserResponseCommonFields(reactionPayload.userPayload)
         )
+        storeWSEvent(.typeReactionDeletedEvent(event), on: event)
 
         // Simulate `ReactionDeletedEvent` event.
-        let event = try ReactionDeletedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Load the message.
@@ -119,18 +114,18 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             user: user
         )
 
-        // Create event payload.
-        let eventPayload: EventPayload = .init(
-            eventType: .reactionUpdated,
-            cid: cid,
-            user: user,
+        // Create event DTO.
+        let event = ReactionUpdatedEventDTO(
+            channel: .dummy(cid: cid),
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [reactionPayload]),
+            messageId: messageId,
             reaction: reactionPayload,
-            createdAt: .unique
+            user: UserResponseCommonFields(user)
         )
-
-        // Create event with payload.
-        let event = try ReactionUpdatedEventDTO(from: eventPayload)
+        storeWSEvent(.typeReactionUpdatedEvent(event), on: event)
 
         // Simulate `ReactionUpdatedEvent` event.
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
@@ -169,19 +164,19 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             user: UserResponse.dummy(userId: .unique)
         )
 
-        // Create event payload.
+        // Create event DTO.
         let user = UserResponse.dummy(userId: .unique)
-        let eventPayload: EventPayload = .init(
-            eventType: .reactionNew,
-            cid: cid,
-            user: user,
+        let event = ReactionNewEventDTO(
+            channel: .dummy(cid: cid),
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [reactionPayload]),
+            messageId: messageId,
             reaction: reactionPayload,
-            createdAt: .unique
+            user: UserResponseCommonFields(user)
         )
-
-        // Create event with payload.
-        let event = try ReactionNewEventDTO(from: eventPayload)
+        storeWSEvent(.typeReactionNewEvent(event), on: event)
 
         // Simulate `ReactionNewEvent` event.
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
@@ -205,14 +200,14 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
     }
 
     func test_eventWithInvalidPayload_isNotForwarded() throws {
-        // Prepare an Event with an invalid payload data
-        struct TestEvent: Event, EventDTO {
-            let payload: EventPayload
-        }
-
-        // Create dummy event payload
-        let eventPayload = EventPayload(eventType: .userUpdated, user: .dummy(userId: .unique))
-        let testEvent = TestEvent(payload: eventPayload)
+        // Create dummy event DTO
+        let user = UserResponse.dummy(userId: .unique)
+        let testEvent = UserUpdatedEventDTO(
+            createdAt: .unique,
+            custom: [:],
+            user: UserResponsePrivacyFields(user)
+        )
+        storeWSEvent(.typeUserUpdatedEvent(testEvent), on: testEvent)
 
         // Simulate the DB fails to save the payload
         let session = DatabaseSession_Mock(underlyingSession: database.viewContext)

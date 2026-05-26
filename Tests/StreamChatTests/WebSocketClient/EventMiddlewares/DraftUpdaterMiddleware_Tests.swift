@@ -37,29 +37,28 @@ final class DraftUpdaterMiddleware_Tests: XCTestCase {
         let currentUserId = UserId.unique
         let cid = ChannelId.unique
         let draftId = MessageId.unique
-        
-        let eventPayload = EventPayload(
-            eventType: .draftUpdated,
+
+        let draft: DraftResponse = .dummy(
             cid: cid,
-            createdAt: .unique,
-            draft: .dummy(
-                cid: cid,
-                message: .dummy(
-                    id: draftId,
-                    text: "Test draft"
-                )
+            message: .dummy(
+                id: draftId,
+                text: "Test draft"
             )
         )
-        
-        let event = try DraftUpdatedEventDTO(from: eventPayload)
-        
+        let event = DraftUpdatedEventDTO(
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            draft: draft
+        )
+
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
-            
+
             // Verify draft doesn't exist before the event
             XCTAssertNil(session.message(id: draftId))
-            
+
             _ = self.middleware.handle(event: event, session: session)
 
             // Verify draft was saved
@@ -75,68 +74,66 @@ final class DraftUpdaterMiddleware_Tests: XCTestCase {
         let currentUserId = UserId.unique
         let cid = ChannelId.unique
         let draftId = MessageId.unique
-        
-        let eventPayload = EventPayload(
-            eventType: .draftDeleted,
+
+        let draft: DraftResponse = .dummy(
             cid: cid,
-            createdAt: .unique,
-            draft: .dummy(
-                cid: cid,
-                message: .dummy(
-                    id: draftId,
-                    text: "Test draft"
-                )
+            message: .dummy(
+                id: draftId,
+                text: "Test draft"
             )
         )
-        
-        let event = try DraftDeletedEventDTO(from: eventPayload)
-        
+        let event = DraftDeletedEventDTO(
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            draft: draft
+        )
+
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
-            
+
             // Save a draft message first
             try session.saveDraftMessage(
-                payload: eventPayload.draft!,
+                payload: draft,
                 for: cid,
                 cache: nil
             )
-            
+
             // Verify draft exists before deletion
             XCTAssertNotNil(session.message(id: draftId))
-            
+
             _ = self.middleware.handle(event: event, session: session)
 
             // Verify draft was deleted
             XCTAssertNil(session.message(id: draftId))
         }
     }
-    
+
     func test_draftDeletedEvent_whenThreadIdExists_deletesMessageFromThread() throws {
         let currentUserId = UserId.unique
         let cid = ChannelId.unique
         let draftId = MessageId.unique
         let threadId = MessageId.unique
-        
-        let eventPayload = EventPayload(
-            eventType: .draftDeleted,
+
+        let draft: DraftResponse = .dummy(
             cid: cid,
-            createdAt: .unique,
-            draft: .dummy(
-                cid: cid,
-                message: .dummy(
-                    id: draftId,
-                    text: "Test draft"
-                )
+            message: .dummy(
+                id: draftId,
+                text: "Test draft"
             )
         )
-        
-        let event = try DraftDeletedEventDTO(from: eventPayload)
-        
+        let event = DraftDeletedEventDTO(
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            draft: draft
+        )
+
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .user))
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
-            
+
             // Save a thread and draft message
             try session.saveThread(
                 payload: .dummy(
@@ -147,19 +144,19 @@ final class DraftUpdaterMiddleware_Tests: XCTestCase {
                 cache: nil
             )
             try session.saveDraftMessage(
-                payload: eventPayload.draft!,
+                payload: draft,
                 for: cid,
                 cache: nil
             )
-            
+
             // Verify draft exists before deletion
             XCTAssertNotNil(session.message(id: draftId))
-            
+
             _ = self.middleware.handle(event: event, session: session)
 
             // Verify draft was deleted
             XCTAssertNil(session.message(id: draftId))
-            
+
             // Verify thread still exists
             XCTAssertNotNil(session.thread(parentMessageId: threadId, cache: nil))
         }

@@ -7,9 +7,9 @@ import Foundation
 final class MarkReadResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     /// Duration of the request in milliseconds
     var duration: String
-    var event: MarkReadResponseEvent?
+    var event: MarkReadResponseEventDTO?
 
-    init(duration: String, event: MarkReadResponseEvent? = nil) {
+    init(duration: String, event: MarkReadResponseEventDTO? = nil) {
         self.duration = duration
         self.event = event
     }

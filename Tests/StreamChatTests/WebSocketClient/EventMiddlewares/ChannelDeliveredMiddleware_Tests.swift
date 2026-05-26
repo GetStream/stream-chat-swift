@@ -235,35 +235,35 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         let user = UserResponse.dummy(userId: userId)
         let message = MessageResponse.dummy(messageId: messageId, authorUserId: user.id)
         let channel = ChannelResponse.dummy(cid: channelId)
-        
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
-            cid: channelId,
-            user: user,
+
+        return MessageNewEventDTO(
             channel: channel,
+            cid: channelId.rawValue,
+            createdAt: message.createdAt,
+            custom: [:],
             message: message,
-            createdAt: message.createdAt
+            messageId: messageId,
+            user: UserResponseCommonFields(user),
+            watcherCount: 0
         )
-        
-        return try MessageNewEventDTO(from: eventPayload)
     }
 
     private func createNotificationMarkReadEvent(channelId: ChannelId) throws -> NotificationMarkReadEventDTO {
         let user = UserResponse.dummy(userId: .unique)
         let channel = ChannelResponse.dummy(cid: channelId)
-        
-        let eventPayload = EventPayload(
-            eventType: .notificationMarkRead,
-            cid: channelId,
-            user: user,
+
+        return NotificationMarkReadEventDTO(
             channel: channel,
-            unreadCount: .init(channels: 0, messages: 0, threads: 0),
-            createdAt: .unique(after: Date())
+            cid: channelId.rawValue,
+            createdAt: .unique(after: Date()),
+            custom: [:],
+            totalUnreadCount: 0,
+            unreadChannels: 0,
+            unreadCount: 0,
+            user: UserResponseCommonFields(user)
         )
-        
-        return try NotificationMarkReadEventDTO(from: eventPayload)
     }
-    
+
     private func createMessageDeliveredEvent(
         channelId: ChannelId,
         userId: UserId,
@@ -272,17 +272,17 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
     ) throws -> MessageDeliveredEventDTO {
         let user = UserResponse.dummy(userId: userId)
         let channel = ChannelResponse.dummy(cid: channelId)
-        
-        let eventPayload = EventPayload(
-            eventType: .messageDelivered,
-            cid: channelId,
-            user: user,
+
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        return MessageDeliveredEventDTO(
             channel: channel,
+            cid: channelId.rawValue,
             createdAt: .unique(after: Date()),
-            lastDeliveredAt: deliveredAt,
-            lastDeliveredMessageId: messageId
+            custom: [:],
+            lastDeliveredAt: formatter.string(from: deliveredAt),
+            lastDeliveredMessageId: messageId,
+            user: UserResponseCommonFields(user)
         )
-        
-        return try MessageDeliveredEventDTO(from: eventPayload)
     }
 }

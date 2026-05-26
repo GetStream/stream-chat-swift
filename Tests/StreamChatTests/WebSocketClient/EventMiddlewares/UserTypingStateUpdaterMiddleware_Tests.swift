@@ -52,11 +52,11 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         database.write_errorResponse = error
 
         // Simulate typing event
-        let event = TypingEventDTO.startTyping(cid: cid, userId: userId)
+        let event = TypingStartEventDTO.startTyping(cid: cid, userId: userId)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `TypingEvent` is forwarded even though database error happened
-        XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
+        XCTAssertEqual(forwardedEvent as! TypingStartEventDTO, event)
     }
 
     func test_middleware_handlesTypingStartedEventCorrectly() throws {
@@ -76,12 +76,12 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertTrue(channel.currentlyTypingUsers.isEmpty)
 
         // Simulate start typing event
-        let event = TypingEventDTO.startTyping(cid: cid, userId: userId)
+        let event = TypingStartEventDTO.startTyping(cid: cid, userId: userId)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         channel = try self.channel(with: cid)
         // Assert `TypingEvent` is forwarded as it is
-        XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
+        XCTAssertEqual(forwardedEvent as! TypingStartEventDTO, event)
         // Assert channel's currentlyTypingUsers are updated correctly
         XCTAssertEqual(channel.currentlyTypingUsers.first?.id, userId)
         XCTAssertEqual(channel.currentlyTypingUsers.count, 1)
@@ -103,13 +103,13 @@ final class ChannelUserTypingStateUpdaterMiddleware_Tests: XCTestCase {
         }
 
         // Simulate stop typing events
-        let event = TypingEventDTO.stopTyping(cid: cid, userId: userId)
+        let event = TypingStopEventDTO.stopTyping(cid: cid, userId: userId)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Load the channel
         let channel = try self.channel(with: cid)
         // Assert `TypingEvent` is forwarded as it is
-        XCTAssertEqual(forwardedEvent as! TypingEventDTO, event)
+        XCTAssertEqual(forwardedEvent as! TypingStopEventDTO, event)
         // Assert channel's currentlyTypingUsers are updated correctly
         XCTAssertTrue(channel.currentlyTypingUsers.isEmpty)
     }

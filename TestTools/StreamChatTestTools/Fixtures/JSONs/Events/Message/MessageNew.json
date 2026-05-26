@@ -79,7 +79,7 @@
         "shadowed": false,
         "custom": {}
     },
-    "unread_count": 0,
+    "unread_count": 1,
     "unread_channels": 1,
     "type": "message.new",
     "cid": "messaging:general",

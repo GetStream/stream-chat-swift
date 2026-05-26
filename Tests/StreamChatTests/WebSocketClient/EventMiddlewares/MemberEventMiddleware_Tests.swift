@@ -40,21 +40,12 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     // MARK: - MemberAddedEvent
 
     func test_middleware_forwardsMemberAddedEvent_ifDatabaseWriteGeneratesError() throws {
-        // Create MemberAddedEvent payload
-        let eventPayload: EventPayload = .init(
-            eventType: .memberAdded,
-            cid: .unique,
-            user: .dummy(userId: .unique),
-            memberContainer: .dummy(userId: .unique),
-            createdAt: .unique
-        )
-
         // Set error to be thrown on write.
         let error = TestError()
         database.write_errorResponse = error
 
         // Simulate and handle reaction event.
-        let event = try MemberAddedEventDTO(from: eventPayload)
+        let event = makeMemberAddedDTO(cid: .unique, userId: .unique, memberId: .unique)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `MemberAddedEvent` is forwarded even though database error happened.
@@ -66,17 +57,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let memberId = UserId.unique
         let userId = UserId.unique
 
-        // Create MemberAddedEvent payload
-        let eventPayload: EventPayload = .init(
-            eventType: .memberAdded,
-            cid: cid,
-            user: .dummy(userId: userId),
-            memberContainer: .dummy(userId: memberId),
-            createdAt: .unique
-        )
-
-        // Create event with payload.
-        let event = try MemberAddedEventDTO(from: eventPayload)
+        // Create event
+        let event = makeMemberAddedDTO(cid: cid, userId: userId, memberId: memberId)
 
         // Create channel in the database.
         try database.createChannel(cid: cid, withMessages: false)
@@ -115,17 +97,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let cid = ChannelId.unique
         let newMemberId = UserId.unique
 
-        // Create MemberAddedEventDTO payload
-        let eventPayload: EventPayload = .init(
-            eventType: .memberAdded,
-            cid: cid,
-            user: .dummy(userId: newMemberId),
-            memberContainer: .dummy(userId: newMemberId),
-            createdAt: .unique
-        )
-
-        // Create event with payload.
-        let event = try MemberAddedEventDTO(from: eventPayload)
+        // Create event
+        let event = makeMemberAddedDTO(cid: cid, userId: newMemberId, memberId: newMemberId)
 
         // Create query
         let memberListQuery = ChannelMemberListQuery(cid: cid)
@@ -167,17 +140,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let cid = ChannelId.unique
         let newMemberId = UserId.unique
 
-        // Create MemberAddedEventDTO payload
-        let eventPayload: EventPayload = .init(
-            eventType: .memberAdded,
-            cid: cid,
-            user: .dummy(userId: newMemberId),
-            memberContainer: .dummy(userId: newMemberId),
-            createdAt: .unique
-        )
-
-        // Create event with payload.
-        let event = try MemberAddedEventDTO(from: eventPayload)
+        // Create event
+        let event = makeMemberAddedDTO(cid: cid, userId: newMemberId, memberId: newMemberId)
 
         // Create query
         let memberListQuery = ChannelMemberListQuery(cid: cid)
@@ -209,19 +173,12 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // GIVEN
         let newMemberId = UserId.unique
         let channelPayload: ChannelStateResponseFields = .dummy()
-        let eventPayload: EventPayload = .init(
-            eventType: .memberAdded,
-            cid: channelPayload.channel?.channelId,
-            user: .dummy(userId: newMemberId),
-            memberContainer: .dummy(userId: newMemberId),
-            createdAt: .unique
-        )
+        let cid = try XCTUnwrap(channelPayload.channel?.channelId)
+        let event = makeMemberAddedDTO(cid: cid, userId: newMemberId, memberId: newMemberId)
 
         try database.writeSynchronously { session in
             try session.saveChannel(payload: channelPayload)
         }
-
-        let event = try MemberAddedEventDTO(from: eventPayload)
 
         // WHEN
         _ = middleware.handle(event: event, session: mockSession)
@@ -233,21 +190,13 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     // MARK: - MemberRemovedEvent
 
     func test_middleware_forwardsMemberRemovedEvent_ifDatabaseWriteGeneratesError() throws {
-        // Create MemberAddedEvent payload
-        let eventPayload: EventPayload = .init(
-            eventType: .memberRemoved,
-            cid: .unique,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
-        )
-
         // Set error to be thrown on write.
         let session = DatabaseSession_Mock(underlyingSession: database.viewContext)
         let error = TestError()
         session.errorToReturn = error
 
         // Simulate and handle reaction event.
-        let event = try MemberRemovedEventDTO(from: eventPayload)
+        let event = makeMemberRemovedDTO(cid: .unique, userId: .unique)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `MemberRemovedEvent` is forwarded even though database error happened.
@@ -295,16 +244,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Assert that member is linked to the query
         XCTAssertEqual(queryDTO.members.count, 1)
 
-        // Create MemberRemovedEvent payload
-        let eventPayload: EventPayload = .init(
-            eventType: .memberRemoved,
-            cid: cid,
-            user: .dummy(userId: memberId),
-            createdAt: .unique
-        )
-
-        // Create event with payload.
-        let event = try MemberRemovedEventDTO(from: eventPayload)
+        // Create event
+        let event = makeMemberRemovedDTO(cid: cid, userId: memberId)
 
         // Simulate `MemberRemovedEvent` event.
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
@@ -347,38 +288,24 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         }
 
         // WHEN
-        let eventPayload: EventPayload = .init(
-            eventType: .memberRemoved,
-            cid: channelPayload.channel?.channelId,
-            user: member.userPayload,
-            createdAt: .unique
-        )
-        let event = try MemberRemovedEventDTO(from: eventPayload)
+        let cid = try XCTUnwrap(channelPayload.channel?.channelId)
+        let event = makeMemberRemovedDTO(cid: cid, userId: member.resolvedUserId)
         _ = middleware.handle(event: event, session: mockSession)
 
         // THEN
-        XCTAssertEqual(mockSession.markChannelAsUnreadParams?.cid, event.cid)
-        XCTAssertEqual(mockSession.markChannelAsUnreadParams?.userId, event.user.id)
+        XCTAssertEqual(mockSession.markChannelAsUnreadParams?.cid.rawValue, event.cid)
+        XCTAssertEqual(mockSession.markChannelAsUnreadParams?.userId, event.user?.id)
     }
 
     // MARK: - MemberUpdatedEvent
 
     func test_middleware_forwardsMemberUpdatedEvent_ifDatabaseWriteGeneratesError() throws {
-        // Create MemberAddedEvent payload
-        let eventPayload: EventPayload = .init(
-            eventType: .memberUpdated,
-            cid: .unique,
-            user: .dummy(userId: .unique),
-            memberContainer: .dummy(userId: .unique),
-            createdAt: .unique
-        )
-
         // Set error to be thrown on write.
         let error = TestError()
         database.write_errorResponse = error
 
         // Simulate and handle reaction event.
-        let event = try MemberUpdatedEventDTO(from: eventPayload)
+        let event = makeMemberUpdatedDTO(cid: .unique, userId: .unique, memberId: .unique)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `MemberUpdatedEvent` is forwarded even though database error happened.
@@ -403,17 +330,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let memberId = channel.members.first!.user.id
         let memberName = channel.members.first!.user.name
 
-        // Create MemberUpdatedEvent payload
-        let eventPayload: EventPayload = .init(
-            eventType: .memberUpdated,
-            cid: cid,
-            user: .dummy(userId: .unique),
-            memberContainer: .dummy(userId: memberId),
-            createdAt: .unique
-        )
-
-        // Create event with payload.
-        let event = try MemberUpdatedEventDTO(from: eventPayload)
+        // Create event
+        let event = makeMemberUpdatedDTO(cid: cid, userId: .unique, memberId: memberId)
 
         // Simulate `MemberUpdatedEvent` event.
         nonisolated(unsafe) var forwardedEvent: Event?
@@ -442,17 +360,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     func test_handle_whenNotificationAddedToChannelEventComes_forwardsEventAndTriggersChannelUpdate() throws {
         let cid = ChannelId.unique
 
-        // Create NotificationAddedToChannelEvent payload
-        let eventPayload: EventPayload = .init(
-            eventType: .notificationAddedToChannel,
-            cid: cid,
-            memberContainer: .dummy(userId: .unique),
-            channel: .dummy(cid: cid),
-            createdAt: .unique
-        )
-
-        // Create event with payload.
-        let event = try NotificationAddedToChannelEventDTO(from: eventPayload)
+        // Create event
+        let event = makeNotificationAddedToChannelDTO(cid: cid, memberUserId: .unique)
 
         // Create channel in the database.
         try database.writeSynchronously { session in
@@ -494,17 +403,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let cid = ChannelId.unique
         let newMemberId = UserId.unique
 
-        // Create NotificationAddedToChannelEvent payload
-        let eventPayload: EventPayload = .init(
-            eventType: .notificationAddedToChannel,
-            cid: cid,
-            memberContainer: .dummy(userId: newMemberId),
-            channel: .dummy(cid: cid),
-            createdAt: .unique
-        )
-
-        // Create event with payload.
-        let event = try NotificationAddedToChannelEventDTO(from: eventPayload)
+        // Create event
+        let event = makeNotificationAddedToChannelDTO(cid: cid, memberUserId: newMemberId)
 
         // Create query
         let memberListQuery = ChannelMemberListQuery(cid: cid)
@@ -558,17 +458,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         // Get first member id to be removed
         let memberId = try XCTUnwrap(database.viewContext.channel(cid: cid)?.members.first?.user.id)
 
-        // Create NotificationRemovedFromChannelEvent payload
-        let eventPayload: EventPayload = .init(
-            eventType: .notificationRemovedFromChannel,
-            cid: cid,
-            user: .dummy(userId: .unique),
-            memberContainer: .dummy(userId: memberId),
-            createdAt: .unique
-        )
-
-        // Create event with payload.
-        let event = try NotificationRemovedFromChannelEventDTO(from: eventPayload)
+        // Create event
+        let event = makeNotificationRemovedFromChannelDTO(cid: cid, userId: .unique, memberId: memberId)
 
         // Simulate `NotificationRemovedFromChannelEvent` event.
         _ = middleware.handle(event: event, session: database.viewContext)
@@ -586,17 +477,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     func test_middleware_handlesNotificationInvitedEventCorrectly() throws {
         let cid = ChannelId.unique
 
-        // Create NotificationInvitedEvent payload
-        let eventPayload: EventPayload = .init(
-            eventType: .notificationInvited,
-            cid: cid,
-            user: .dummy(userId: .unique),
-            memberContainer: .dummy(userId: .unique),
-            createdAt: .unique
-        )
-
-        // Create event with payload.
-        let event = try NotificationInvitedEventDTO(from: eventPayload)
+        // Create event
+        let event = makeNotificationInvitedDTO(cid: cid, userId: .unique, memberId: .unique)
 
         // Create channel in the database.
         try database.writeSynchronously { session in
@@ -638,17 +520,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         let cid = ChannelId.unique
         let newMemberId = UserId.unique
 
-        // Create NotificationInvitedEvent payload
-        let eventPayload: EventPayload = .init(
-            eventType: .memberAdded,
-            cid: cid,
-            user: .dummy(userId: newMemberId),
-            memberContainer: .dummy(userId: newMemberId),
-            createdAt: .unique
-        )
-
-        // Create event with payload.
-        let event = try NotificationInvitedEventDTO(from: eventPayload)
+        // Create event
+        let event = makeNotificationInvitedDTO(cid: cid, userId: newMemberId, memberId: newMemberId)
 
         // Create query
         let memberListQuery = ChannelMemberListQuery(cid: cid)
@@ -682,17 +555,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     func test_middleware_handlesNotificationInviteAcceptedEventCorrectly() throws {
         let cid = ChannelId.unique
 
-        // Create NotificationInviteAcceptedEvent payload
-        let eventPayload: EventPayload = .init(
-            eventType: .notificationInviteAccepted,
-            user: .dummy(userId: .unique),
-            memberContainer: .dummy(userId: .unique),
-            channel: .dummy(cid: cid),
-            createdAt: .unique
-        )
-
-        // Create event with payload.
-        let event = try NotificationInviteAcceptedEventDTO(from: eventPayload)
+        // Create event
+        let event = makeNotificationInviteAcceptedDTO(cid: cid, userId: .unique, memberId: .unique)
 
         // Create channel in the database.
         try database.writeSynchronously { session in
@@ -735,17 +599,8 @@ final class MemberEventMiddleware_Tests: XCTestCase {
     func test_middleware_handlesNotificationInviteRejectedEventCorrectly() throws {
         let cid = ChannelId.unique
 
-        // Create NotificationInviteRejectedEvent payload
-        let eventPayload: EventPayload = .init(
-            eventType: .notificationInviteRejected,
-            user: .dummy(userId: .unique),
-            memberContainer: .dummy(userId: .unique),
-            channel: .dummy(cid: cid),
-            createdAt: .unique
-        )
-
-        // Create event with payload.
-        let event = try NotificationInviteRejectedEventDTO(from: eventPayload)
+        // Create event
+        let event = makeNotificationInviteRejectedDTO(cid: cid, userId: .unique, memberId: .unique)
 
         // Create channel in the database.
         try database.writeSynchronously { session in
@@ -780,6 +635,93 @@ final class MemberEventMiddleware_Tests: XCTestCase {
         AssertAsync.willBeEqual(
             channelListObserver.observedChanges,
             [.update(cid, index: .init(item: 0, section: 0))]
+        )
+    }
+
+    // MARK: - Helpers
+
+    private func makeMemberAddedDTO(cid: ChannelId, userId: UserId, memberId: UserId) -> MemberAddedEventDTO {
+        MemberAddedEventDTO(
+            channel: .dummy(cid: cid),
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            member: .dummy(user: .dummy(userId: memberId)),
+            user: UserResponseCommonFields(.dummy(userId: userId))
+        )
+    }
+
+    private func makeMemberRemovedDTO(cid: ChannelId, userId: UserId) -> MemberRemovedEventDTO {
+        MemberRemovedEventDTO(
+            channel: .dummy(cid: cid),
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            member: .dummy(user: .dummy(userId: userId)),
+            user: UserResponseCommonFields(.dummy(userId: userId))
+        )
+    }
+
+    private func makeMemberUpdatedDTO(cid: ChannelId, userId: UserId, memberId: UserId) -> MemberUpdatedEventDTO {
+        MemberUpdatedEventDTO(
+            channel: .dummy(cid: cid),
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            member: .dummy(user: .dummy(userId: memberId)),
+            user: UserResponseCommonFields(.dummy(userId: userId))
+        )
+    }
+
+    private func makeNotificationAddedToChannelDTO(cid: ChannelId, memberUserId: UserId) -> NotificationAddedToChannelEventDTO {
+        NotificationAddedToChannelEventDTO(
+            channel: .dummy(cid: cid),
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            member: .dummy(user: .dummy(userId: memberUserId))
+        )
+    }
+
+    private func makeNotificationRemovedFromChannelDTO(cid: ChannelId, userId: UserId, memberId: UserId) -> NotificationRemovedFromChannelEventDTO {
+        NotificationRemovedFromChannelEventDTO(
+            channel: .dummy(cid: cid),
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            member: .dummy(user: .dummy(userId: memberId)),
+            user: UserResponseCommonFields(.dummy(userId: userId))
+        )
+    }
+
+    private func makeNotificationInvitedDTO(cid: ChannelId, userId: UserId, memberId: UserId) -> NotificationInvitedEventDTO {
+        NotificationInvitedEventDTO(
+            channel: .dummy(cid: cid),
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            member: .dummy(user: .dummy(userId: memberId)),
+            user: UserResponseCommonFields(.dummy(userId: userId))
+        )
+    }
+
+    private func makeNotificationInviteAcceptedDTO(cid: ChannelId, userId: UserId, memberId: UserId) -> NotificationInviteAcceptedEventDTO {
+        NotificationInviteAcceptedEventDTO(
+            channel: .dummy(cid: cid),
+            createdAt: .unique,
+            custom: [:],
+            member: .dummy(user: .dummy(userId: memberId)),
+            user: UserResponseCommonFields(.dummy(userId: userId))
+        )
+    }
+
+    private func makeNotificationInviteRejectedDTO(cid: ChannelId, userId: UserId, memberId: UserId) -> NotificationInviteRejectedEventDTO {
+        NotificationInviteRejectedEventDTO(
+            channel: .dummy(cid: cid),
+            createdAt: .unique,
+            custom: [:],
+            member: .dummy(user: .dummy(userId: memberId)),
+            user: UserResponseCommonFields(.dummy(userId: userId))
         )
     }
 }

@@ -10,12 +10,9 @@ public extension Event {
     }
 }
 
-/// An internal protocol marking the Events carrying the payload. This payload can be then used for additional work,
-/// i.e. for storing the data to the database.
+/// An internal protocol for events that can hydrate themselves from the database
+/// to produce their public-facing domain event.
 protocol EventDTO: Event {
-    /// The entire event payload.
-    var payload: EventPayload { get }
-
     /// Converts event DTO to event with evaluated models.
     ///
     /// If some model is missing in database `nil` is returned.

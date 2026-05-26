@@ -29,22 +29,8 @@ public final class NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadC
     }
 }
 
-final class NotificationMessageNewEventDTO: EventDTO {
-    let channel: ChannelResponse
-    let message: MessageResponse
-    let unreadCount: UnreadCountPayload?
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        channel = try response.value(at: \.channel)
-        message = try response.value(at: \.message)
-        createdAt = try response.value(at: \.createdAt)
-        unreadCount = try? response.value(at: \.unreadCount)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension NotificationNewMessageEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard
             let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)),
             let messageDTO = session.message(id: message.id),
@@ -82,13 +68,16 @@ final class NotificationMarkAllReadEventDTO: EventDTO {
     let user: UserResponse
     let unreadCount: UnreadCountPayload
     let createdAt: Date
-    let payload: EventPayload
 
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        unreadCount = try response.value(at: \.unreadCount)
-        payload = response
+    init?(from dto: NotificationMarkReadEventDTO) {
+        guard let userDTO = dto.user else { return nil }
+        user = UserResponse(userDTO)
+        createdAt = dto.createdAt
+        unreadCount = UnreadCountPayload(
+            channels: dto.unreadChannels,
+            messages: dto.totalUnreadCount,
+            threads: dto.unreadThreadMessages
+        )
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
@@ -167,30 +156,15 @@ public final class NotificationMarkUnreadEvent: ChannelSpecificEvent {
     }
 }
 
-final class NotificationMarkReadEventDTO: EventDTO {
-    let user: UserResponse
-    let cid: ChannelId
-    let unreadCount: UnreadCountPayload
-    let createdAt: Date
-    let lastReadMessageId: MessageId?
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        createdAt = try response.value(at: \.createdAt)
-        unreadCount = try response.value(at: \.unreadCount)
-        lastReadMessageId = try? response.value(at: \.lastReadMessageId)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
+extension NotificationMarkReadEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
         guard let currentUser = session.currentUser else { return nil }
 
         return try? NotificationMarkReadEvent(
             user: userDTO.asModel(),
-            cid: cid,
+            cid: channelId,
             unreadCount: UnreadCount(currentUserDTO: currentUser),
             lastReadMessageId: lastReadMessageId,
             createdAt: createdAt
@@ -198,36 +172,18 @@ final class NotificationMarkReadEventDTO: EventDTO {
     }
 }
 
-final class NotificationMarkUnreadEventDTO: EventDTO {
-    let user: UserResponse
-    let cid: ChannelId
-    let createdAt: Date
-    let firstUnreadMessageId: MessageId
-    let lastReadMessageId: MessageId?
-    let lastReadAt: Date
-    let unreadCount: UnreadCountPayload
-    let unreadMessagesCount: Int
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        createdAt = try response.value(at: \.createdAt)
-        firstUnreadMessageId = try response.value(at: \.firstUnreadMessageId)
-        lastReadMessageId = try? response.value(at: \.lastReadMessageId)
-        lastReadAt = try response.value(at: \.lastReadAt)
-        unreadMessagesCount = try response.value(at: \.unreadMessagesCount)
-        unreadCount = try response.value(at: \.unreadCount)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
+extension NotificationMarkUnreadEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
         guard let currentUser = session.currentUser else { return nil }
+        guard let firstUnreadMessageId = firstUnreadMessageId,
+              let lastReadAt = lastReadAt,
+              let unreadMessagesCount = unreadMessages else { return nil }
 
         return try? NotificationMarkUnreadEvent(
             user: userDTO.asModel(),
-            cid: cid,
+            cid: channelId,
             createdAt: createdAt,
             firstUnreadMessageId: firstUnreadMessageId,
             lastReadMessageId: lastReadMessageId,
@@ -252,18 +208,8 @@ public final class NotificationMutesUpdatedEvent: Event {
     }
 }
 
-final class NotificationMutesUpdatedEventDTO: EventDTO {
-    let currentUser: OwnUserResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        currentUser = try response.value(at: \.currentUser)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension NotificationMutesUpdatedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let currentUserDTO = session.currentUser else { return nil }
 
         return try? NotificationMutesUpdatedEvent(
@@ -298,23 +244,8 @@ public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnr
     }
 }
 
-final class NotificationAddedToChannelEventDTO: EventDTO {
-    let channel: ChannelResponse
-    let unreadCount: UnreadCountPayload?
-    // This `member` field is equal to the `membership` field in channel query
-    let member: ChannelMemberResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        channel = try response.value(at: \.channel)
-        unreadCount = try? response.value(at: \.unreadCount)
-        member = try response.value(at: \.memberContainer?.member)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension NotificationAddedToChannelEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard
             let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)),
             let memberDTO = (try? ChannelId(cid: channel.cid)).flatMap({ session.member(userId: member.resolvedUserId, cid: $0) }),
@@ -352,31 +283,15 @@ public final class NotificationRemovedFromChannelEvent: ChannelSpecificEvent {
     }
 }
 
-final class NotificationRemovedFromChannelEventDTO: EventDTO {
-    let cid: ChannelId
-    let user: UserResponse
-    // This `member` field is equal to the `membership` field in channel query
-    let member: ChannelMemberResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        user = try response.value(at: \.user)
-        member = try response.value(at: \.memberContainer?.member)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard
-            let userDTO = session.user(id: user.id),
-            let memberDTO = session.member(userId: member.resolvedUserId, cid: cid)
-        else { return nil }
+extension NotificationRemovedFromChannelEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
+        guard let memberDTO = session.member(userId: member.resolvedUserId, cid: channelId) else { return nil }
 
         return try? NotificationRemovedFromChannelEvent(
             user: userDTO.asModel(),
-            cid: cid,
+            cid: channelId,
             member: memberDTO.asModel(),
             createdAt: createdAt
         )
@@ -397,18 +312,8 @@ public final class NotificationChannelMutesUpdatedEvent: Event {
     }
 }
 
-final class NotificationChannelMutesUpdatedEventDTO: EventDTO {
-    let currentUser: OwnUserResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        currentUser = try response.value(at: \.currentUser)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension NotificationChannelMutesUpdatedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let currentUserDTO = session.currentUser else { return nil }
 
         return try? NotificationChannelMutesUpdatedEvent(
@@ -440,31 +345,15 @@ public final class NotificationInvitedEvent: MemberEvent, ChannelSpecificEvent {
     }
 }
 
-final class NotificationInvitedEventDTO: EventDTO {
-    let user: UserResponse
-    let cid: ChannelId
-    // This `member` field is equal to the `membership` field in channel query
-    let member: ChannelMemberResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        cid = try response.value(at: \.cid)
-        member = try response.value(at: \.memberContainer?.member)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard
-            let userDTO = session.user(id: user.id),
-            let memberDTO = session.member(userId: member.resolvedUserId, cid: cid)
-        else { return nil }
+extension NotificationInvitedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
+        guard let memberDTO = session.member(userId: member.resolvedUserId, cid: channelId) else { return nil }
 
         return try? NotificationInvitedEvent(
             user: userDTO.asModel(),
-            cid: cid,
+            cid: channelId,
             member: memberDTO.asModel(),
             createdAt: createdAt
         )
@@ -496,25 +385,10 @@ public final class NotificationInviteAcceptedEvent: MemberEvent, ChannelSpecific
     }
 }
 
-final class NotificationInviteAcceptedEventDTO: EventDTO {
-    let user: UserResponse
-    let channel: ChannelResponse
-    // This `member` field is equal to the `membership` field in channel query
-    let member: ChannelMemberResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        channel = try response.value(at: \.channel)
-        member = try response.value(at: \.memberContainer?.member)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension NotificationInviteAcceptedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
         guard
-            let userDTO = session.user(id: user.id),
             let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)),
             let memberDTO = (try? ChannelId(cid: channel.cid)).flatMap({ session.member(userId: member.resolvedUserId, cid: $0) })
         else { return nil }
@@ -553,25 +427,10 @@ public final class NotificationInviteRejectedEvent: MemberEvent, ChannelSpecific
     }
 }
 
-final class NotificationInviteRejectedEventDTO: EventDTO {
-    let user: UserResponse
-    let channel: ChannelResponse
-    // This `member` field is equal to the `membership` field in channel query
-    let member: ChannelMemberResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        channel = try response.value(at: \.channel)
-        member = try response.value(at: \.memberContainer?.member)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension NotificationInviteRejectedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
         guard
-            let userDTO = session.user(id: user.id),
             let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)),
             let memberDTO = (try? ChannelId(cid: channel.cid)).flatMap({ session.member(userId: member.resolvedUserId, cid: $0) })
         else { return nil }
@@ -603,23 +462,12 @@ public final class NotificationChannelDeletedEvent: ChannelSpecificEvent {
     }
 }
 
-final class NotificationChannelDeletedEventDTO: EventDTO {
-    let cid: ChannelId
-    let channel: ChannelResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        channel = try response.value(at: \.channel)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension NotificationChannelDeletedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
         guard let channelDTO = (try? ChannelId(cid: channel.cid)).flatMap(session.channel(cid:)) else { return nil }
         return try? NotificationChannelDeletedEvent(
-            cid: cid,
+            cid: channelId,
             channel: channelDTO.asModel(),
             createdAt: createdAt
         )

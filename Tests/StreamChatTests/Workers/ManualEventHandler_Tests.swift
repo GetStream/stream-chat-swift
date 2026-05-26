@@ -58,85 +58,79 @@ final class ManualEventHandler_Tests: XCTestCase {
     // MARK: - Event Handling - Missing CID
     
     func test_handle_eventWithoutCid_returnsNil() throws {
-        // Create a simple event DTO that has no cid
-        struct TestEventDTO: EventDTO {
-            let payload: EventPayload = EventPayload(
-                eventType: .healthCheck,
-                connectionId: .unique
-            )
-        }
-        
-        let eventDTO = TestEventDTO()
+        // Use HealthCheckEvent which doesn't have a cid
+        let eventDTO = HealthCheckEvent(connectionId: .unique)
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
-        
+
         XCTAssertNil(result, "Events without cid should return nil")
     }
-    
+
     // MARK: - Event Handling - Unregistered Channel
-    
+
     func test_handle_unregisteredChannel_returnsNil() throws {
         let unregisteredCid: ChannelId = .unique
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
-            cid: unregisteredCid,
-            user: .dummy(userId: .unique),
+        let eventDTO = MessageNewEventDTO(
+            cid: unregisteredCid.rawValue,
+            createdAt: .unique,
+            custom: [:],
             message: .dummy(messageId: .unique, authorUserId: .unique),
-            createdAt: .unique
+            messageId: .unique,
+            user: UserResponseCommonFields(.dummy(userId: .unique)),
+            watcherCount: 0
         )
-        let eventDTO = try! MessageNewEventDTO(from: eventPayload)
-        
+
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
         XCTAssertNil(result)
     }
-    
+
     // MARK: - Event Handling - Unsupported Event Type
-    
+
     func test_handle_unsupportedEventType_returnsNil() throws {
         // Use a typing event which is not handled by ManualEventHandler
-        let eventPayload = EventPayload(
-            eventType: .userStartTyping,
-            cid: cid,
-            user: .dummy(userId: .unique),
-            createdAt: .unique
+        let eventDTO = TypingStartEventDTO(
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            user: UserResponseCommonFields(.dummy(userId: .unique))
         )
-        let eventDTO = try! TypingEventDTO(from: eventPayload)
-        
+
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
         XCTAssertNil(result, "Unsupported event types should return nil")
     }
-    
+
     // MARK: - Message New Event
-    
+
     func test_handle_messageNewEvent_withValidData_returnsEvent() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique
         let createdAt = Date.unique
-        
-        let eventPayload = EventPayload(
-            eventType: .messageNew,
-            cid: cid,
-            user: .dummy(userId: userId),
+
+        let eventDTO = MessageNewEventDTO(
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: userId),
-            watcherCount: 10,
-            unreadCount: .init(channels: 1, messages: 2, threads: 0),
-            createdAt: createdAt
+            messageId: messageId,
+            unreadChannels: 1,
+            unreadCount: 2,
+            user: UserResponseCommonFields(.dummy(userId: userId)),
+            watcherCount: 10
         )
-        let eventDTO = try! MessageNewEventDTO(from: eventPayload)
-        
+
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
-        
+
         let messageNewEvent = try XCTUnwrap(result as? MessageNewEvent)
         XCTAssertEqual(messageNewEvent.user.id, userId)
         XCTAssertEqual(messageNewEvent.message.id, messageId)
@@ -145,57 +139,57 @@ final class ManualEventHandler_Tests: XCTestCase {
         XCTAssertEqual(messageNewEvent.unreadCount?.messages, 2)
         XCTAssertEqual(messageNewEvent.createdAt, createdAt)
     }
-    
+
     // MARK: - Message Updated Event
-    
+
     func test_handle_messageUpdatedEvent_withValidData_returnsEvent() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique
         let createdAt = Date.unique
-        
-        let eventPayload = EventPayload(
-            eventType: .messageUpdated,
-            cid: cid,
-            user: .dummy(userId: userId),
+
+        let eventDTO = MessageUpdatedEventDTO(
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: userId),
-            createdAt: createdAt
+            messageId: messageId,
+            user: UserResponseCommonFields(.dummy(userId: userId))
         )
-        let eventDTO = try! MessageUpdatedEventDTO(from: eventPayload)
 
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
-        
+
         let messageUpdatedEvent = try XCTUnwrap(result as? MessageUpdatedEvent)
         XCTAssertEqual(messageUpdatedEvent.user.id, userId)
         XCTAssertEqual(messageUpdatedEvent.message.id, messageId)
         XCTAssertEqual(messageUpdatedEvent.cid, cid)
         XCTAssertEqual(messageUpdatedEvent.createdAt, createdAt)
     }
-    
+
     // MARK: - Message Deleted Event
-    
+
     func test_handle_messageDeletedEvent_withValidData_returnsEvent() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique
         let createdAt = Date.unique
-        
-        let eventPayload = EventPayload(
-            eventType: .messageDeleted,
-            cid: cid,
-            user: .dummy(userId: userId),
-            message: .dummy(messageId: messageId, authorUserId: userId),
+
+        let eventDTO = MessageDeletedEventDTO(
+            cid: cid.rawValue,
             createdAt: createdAt,
-            hardDelete: true
+            custom: [:],
+            hardDelete: true,
+            message: .dummy(messageId: messageId, authorUserId: userId),
+            messageId: messageId,
+            user: UserResponseCommonFields(.dummy(userId: userId))
         )
-        let eventDTO = try! MessageDeletedEventDTO(from: eventPayload)
-        
+
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
-        
+
         let messageDeletedEvent = try XCTUnwrap(result as? MessageDeletedEvent)
         XCTAssertEqual(messageDeletedEvent.user?.id, userId)
         XCTAssertEqual(messageDeletedEvent.message.id, messageId)
@@ -203,26 +197,26 @@ final class ManualEventHandler_Tests: XCTestCase {
         XCTAssertEqual(messageDeletedEvent.isHardDelete, true)
         XCTAssertEqual(messageDeletedEvent.createdAt, createdAt)
     }
-    
+
     func test_handle_messageDeletedEvent_withoutUser_returnsEvent() throws {
         let messageId: MessageId = .unique
         let createdAt = Date.unique
-        
-        let eventPayload = EventPayload(
-            eventType: .messageDeleted,
-            cid: cid,
-            user: nil,
-            message: .dummy(messageId: messageId, authorUserId: .unique),
+
+        let eventDTO = MessageDeletedEventDTO(
+            cid: cid.rawValue,
             createdAt: createdAt,
-            hardDelete: false
+            custom: [:],
+            hardDelete: false,
+            message: .dummy(messageId: messageId, authorUserId: .unique),
+            messageId: messageId,
+            user: nil
         )
-        let eventDTO = try! MessageDeletedEventDTO(from: eventPayload)
-        
+
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
-        
+
         let messageDeletedEvent = try XCTUnwrap(result as? MessageDeletedEvent)
         XCTAssertNil(messageDeletedEvent.user)
         XCTAssertEqual(messageDeletedEvent.message.id, messageId)
@@ -230,30 +224,31 @@ final class ManualEventHandler_Tests: XCTestCase {
         XCTAssertEqual(messageDeletedEvent.isHardDelete, false)
         XCTAssertEqual(messageDeletedEvent.createdAt, createdAt)
     }
-    
+
     // MARK: - Reaction New Event
-    
+
     func test_handle_reactionNewEvent_withValidData_returnsEvent() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique
         let reactionType: MessageReactionType = "like"
         let createdAt = Date.unique
-        
-        let eventPayload = EventPayload(
-            eventType: .reactionNew,
-            cid: cid,
-            user: .dummy(userId: userId),
+
+        let eventDTO = ReactionNewEventDTO(
+            channel: .dummy(cid: cid),
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: userId),
+            messageId: messageId,
             reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId)),
-            createdAt: createdAt
+            user: UserResponseCommonFields(.dummy(userId: userId))
         )
-        let eventDTO = try! ReactionNewEventDTO(from: eventPayload)
-        
+
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
-        
+
         let reactionNewEvent = try XCTUnwrap(result as? ReactionNewEvent)
         XCTAssertEqual(reactionNewEvent.user.id, userId)
         XCTAssertEqual(reactionNewEvent.message.id, messageId)
@@ -261,30 +256,31 @@ final class ManualEventHandler_Tests: XCTestCase {
         XCTAssertEqual(reactionNewEvent.reaction.type, reactionType)
         XCTAssertEqual(reactionNewEvent.createdAt, createdAt)
     }
-    
+
     // MARK: - Reaction Updated Event
-    
+
     func test_handle_reactionUpdatedEvent_withValidData_returnsEvent() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique
         let reactionType: MessageReactionType = "love"
         let createdAt = Date.unique
-        
-        let eventPayload = EventPayload(
-            eventType: .reactionUpdated,
-            cid: cid,
-            user: .dummy(userId: userId),
+
+        let eventDTO = ReactionUpdatedEventDTO(
+            channel: .dummy(cid: cid),
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: userId),
+            messageId: messageId,
             reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId)),
-            createdAt: createdAt
+            user: UserResponseCommonFields(.dummy(userId: userId))
         )
-        let eventDTO = try! ReactionUpdatedEventDTO(from: eventPayload)
-        
+
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
-        
+
         let reactionUpdatedEvent = try XCTUnwrap(result as? ReactionUpdatedEvent)
         XCTAssertEqual(reactionUpdatedEvent.user.id, userId)
         XCTAssertEqual(reactionUpdatedEvent.message.id, messageId)
@@ -292,30 +288,31 @@ final class ManualEventHandler_Tests: XCTestCase {
         XCTAssertEqual(reactionUpdatedEvent.reaction.type, reactionType)
         XCTAssertEqual(reactionUpdatedEvent.createdAt, createdAt)
     }
-    
+
     // MARK: - Reaction Deleted Event
-    
+
     func test_handle_reactionDeletedEvent_withValidData_returnsEvent() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique
         let reactionType: MessageReactionType = "angry"
         let createdAt = Date.unique
-        
-        let eventPayload = EventPayload(
-            eventType: .reactionDeleted,
-            cid: cid,
-            user: .dummy(userId: userId),
+
+        let eventDTO = ReactionDeletedEventDTO(
+            channel: .dummy(cid: cid),
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            custom: [:],
             message: .dummy(messageId: messageId, authorUserId: userId),
+            messageId: messageId,
             reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId)),
-            createdAt: createdAt
+            user: UserResponseCommonFields(.dummy(userId: userId))
         )
-        let eventDTO = try! ReactionDeletedEventDTO(from: eventPayload)
-        
+
         nonisolated(unsafe) var result: Event!
         try database.writeSynchronously { _ in
             result = self.handler.handle(eventDTO)
         }
-        
+
         let reactionDeletedEvent = try XCTUnwrap(result as? ReactionDeletedEvent)
         XCTAssertEqual(reactionDeletedEvent.user.id, userId)
         XCTAssertEqual(reactionDeletedEvent.message.id, messageId)

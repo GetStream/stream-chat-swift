@@ -263,9 +263,16 @@ final class EventNotificationCenter_Tests: XCTestCase {
         // Check all messages were created
         XCTAssertEqual(database.viewContext.channel(cid: channelId)?.messages.count, existingPayloads.count)
 
-        let events: [MessageNewEventDTO] = try existingPayloads.map { message -> MessageNewEventDTO in
-            let payload = EventPayload(eventType: .messageNew, cid: channelId, user: UserResponse.dummy(userId: .unique), message: message, createdAt: Date())
-            return try MessageNewEventDTO(from: payload)
+        let events: [MessageNewEventDTO] = existingPayloads.map { message -> MessageNewEventDTO in
+            MessageNewEventDTO(
+                cid: channelId.rawValue,
+                createdAt: Date(),
+                custom: [:],
+                message: message,
+                messageId: message.id,
+                user: UserResponseCommonFields(.dummy(userId: .unique)),
+                watcherCount: 0
+            )
         }
 
         // Create a notification center

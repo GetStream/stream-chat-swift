@@ -28,9 +28,9 @@ final class DraftEvents_Tests: XCTestCase {
     func test_draftUpdatedEvent_decoding() throws {
         let json = XCTestCase.mockData(fromJSONFile: "DraftUpdated")
         let event = try eventDecoder.decode(from: json) as? DraftUpdatedEventDTO
-        XCTAssertEqual(event?.cid, cid)
-        XCTAssertEqual(event?.draft.message.id, draftId)
-        XCTAssertEqual(event?.draft.message.text, "Test draft message")
+        XCTAssertEqual(event?.cid, cid.rawValue)
+        XCTAssertEqual(event?.draft?.message.id, draftId)
+        XCTAssertEqual(event?.draft?.message.text, "Test draft message")
         XCTAssertEqual(event?.createdAt.description, "2024-02-11 15:42:21 +0000")
     }
     
@@ -62,8 +62,8 @@ final class DraftEvents_Tests: XCTestCase {
     func test_draftDeletedEvent_decoding() throws {
         let json = XCTestCase.mockData(fromJSONFile: "DraftDeleted")
         let event = try eventDecoder.decode(from: json) as? DraftDeletedEventDTO
-        XCTAssertEqual(event?.cid, cid)
-        XCTAssertEqual(event?.draft.parentId, threadId)
+        XCTAssertEqual(event?.cid, cid.rawValue)
+        XCTAssertEqual(event?.draft?.parentId, threadId)
         XCTAssertEqual(event?.createdAt.description, "2024-02-11 15:42:21 +0000")
     }
     

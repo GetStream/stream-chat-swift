@@ -34,14 +34,14 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
             updatedAt: Date()
         )
         
-        let eventPayload = EventPayload(
-            eventType: .messageReminderCreated,
+        let event = ReminderCreatedEventDTO(
+            cid: cid.rawValue,
             createdAt: Date(),
+            custom: [:],
             messageId: messageId,
-            reminder: reminderPayload
+            reminder: reminderPayload,
+            userId: "test-user"
         )
-        
-        let event = try ReminderCreatedEventDTO(from: eventPayload)
 
         // Save required data for reminder to reference
         try database.writeSynchronously { session in
@@ -101,14 +101,14 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
             updatedAt: updatedDate
         )
         
-        let eventPayload = EventPayload(
-            eventType: .messageReminderUpdated,
+        let event = ReminderUpdatedEventDTO(
+            cid: cid.rawValue,
             createdAt: Date(),
+            custom: [:],
             messageId: messageId,
-            reminder: updatedReminderPayload
+            reminder: updatedReminderPayload,
+            userId: "test-user"
         )
-        
-        let event = try ReminderUpdatedEventDTO(from: eventPayload)
 
         // Execute
         _ = middleware.handle(event: event, session: database.viewContext)
@@ -146,15 +146,15 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
             try session.saveReminder(payload: initialReminderPayload, cache: nil)
         }
         
-        // Create due notification payload (same as the original in this case)
-        let eventPayload = EventPayload(
-            eventType: .messageReminderDue,
+        // Create due notification event
+        let event = ReminderNotificationEventDTO(
+            cid: cid.rawValue,
             createdAt: Date(),
+            custom: [:],
             messageId: messageId,
-            reminder: initialReminderPayload
+            reminder: initialReminderPayload,
+            userId: "test-user"
         )
-        
-        let event = try ReminderDueNotificationEventDTO(from: eventPayload)
 
         // Execute
         _ = middleware.handle(event: event, session: database.viewContext)
@@ -193,15 +193,15 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         // Verify reminder exists
         XCTAssertNotNil(database.viewContext.message(id: messageId)?.reminder, "Reminder should exist before deletion")
 
-        // Create delete event payload
-        let eventPayload = EventPayload(
-            eventType: .messageReminderDeleted,
+        // Create delete event DTO
+        let event = ReminderDeletedEventDTO(
+            cid: cid.rawValue,
             createdAt: Date(),
+            custom: [:],
             messageId: messageId,
-            reminder: reminderPayload
+            reminder: reminderPayload,
+            userId: "test-user"
         )
-        
-        let event = try ReminderDeletedEventDTO(from: eventPayload)
         
         // Execute
         _ = middleware.handle(event: event, session: database.viewContext)

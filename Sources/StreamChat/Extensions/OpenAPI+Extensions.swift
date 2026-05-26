@@ -3,6 +3,161 @@
 //
 
 import Foundation
+import ObjectiveC.runtime
+
+// MARK: - WSEvent Bridging
+
+// Associated-object storage of the source `WSEvent` set by `EventDecoder` on the
+// inner *EventDTO. `EventDataProcessorMiddleware` reads it back to drive
+// `saveEvent(event: WSEvent)` persistence.
+private nonisolated(unsafe) var wsEventKey: UInt8 = 0
+
+func storeWSEvent(_ event: WSEvent, on object: AnyObject) {
+    objc_setAssociatedObject(object, &wsEventKey, event, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+}
+
+func wsEvent(of object: AnyObject) -> WSEvent? {
+    objc_getAssociatedObject(object, &wsEventKey) as? WSEvent
+}
+
+extension WSEvent {
+    /// The creation timestamp of the inner *EventDTO. Every OpenAPI event carries
+    /// a `createdAt: Date`, retrieved here via Mirror to avoid a 76-case switch.
+    var createdAt: Date? {
+        Mirror(reflecting: rawValue)
+            .children
+            .first(where: { $0.label == "createdAt" })?
+            .value as? Date
+    }
+
+    /// Returns the domain event for this WSEvent case. Most cases just unwrap the
+    /// inner *EventDTO via `rawValue`; a handful of cases are special-cased so
+    /// production code keeps receiving the hand-written event class it expects.
+    func makeEvent() throws -> Event {
+        switch self {
+        case .typeHealthCheckEvent(let dto):
+            return HealthCheckEvent(connectionId: dto.connectionId)
+        case .typeChannelCreatedEvent:
+            // The SDK explicitly ignores channel.created events (it relies on
+            // notification.added_to_channel etc. instead).
+            throw ClientError.IgnoredEventType()
+        case .typeUserBannedEvent(let dto) where dto.cid == nil:
+            // Global ban (no cid) → hand-written UserGloballyBannedEventDTO.
+            return UserGloballyBannedEventDTO(from: dto)
+        case .typeUserUnbannedEvent(let dto) where dto.cid == nil:
+            return UserGloballyUnbannedEventDTO(from: dto)
+        case .typeNotificationMarkReadEvent(let dto) where dto.channel == nil:
+            // No channel → mark all read across all the user's channels.
+            // Falls back to the channel-scoped DTO if user is missing.
+            if let event = NotificationMarkAllReadEventDTO(from: dto) {
+                return event
+            }
+            return rawValue
+        default:
+            return rawValue
+        }
+    }
+}
+
+extension UserResponseCommonFields {
+    convenience init(_ user: UserResponse) {
+        self.init(
+            avgResponseTime: user.avgResponseTime,
+            banned: user.banned,
+            blockedUserIds: user.blockedUserIds,
+            createdAt: user.createdAt,
+            custom: user.custom,
+            deactivatedAt: user.deactivatedAt,
+            deletedAt: user.deletedAt,
+            id: user.id,
+            image: user.image,
+            language: user.language,
+            lastActive: user.lastActive,
+            name: user.name,
+            online: user.online,
+            revokeTokensIssuedBefore: user.revokeTokensIssuedBefore,
+            role: user.role,
+            teams: user.teams,
+            teamsRole: user.teamsRole,
+            updatedAt: user.updatedAt
+        )
+    }
+}
+
+extension UserResponsePrivacyFields {
+    convenience init(_ user: UserResponse) {
+        self.init(
+            avgResponseTime: user.avgResponseTime,
+            banned: user.banned,
+            blockedUserIds: user.blockedUserIds,
+            createdAt: user.createdAt,
+            custom: user.custom,
+            deactivatedAt: user.deactivatedAt,
+            deletedAt: user.deletedAt,
+            id: user.id,
+            image: user.image,
+            invisible: nil,
+            language: user.language,
+            lastActive: user.lastActive,
+            name: user.name,
+            online: user.online,
+            privacySettings: nil,
+            revokeTokensIssuedBefore: user.revokeTokensIssuedBefore,
+            role: user.role,
+            teams: user.teams,
+            teamsRole: user.teamsRole,
+            updatedAt: user.updatedAt
+        )
+    }
+}
+
+extension UserResponse {
+    convenience init(_ user: UserResponseCommonFields) {
+        self.init(
+            avgResponseTime: user.avgResponseTime,
+            banned: user.banned,
+            blockedUserIds: user.blockedUserIds,
+            createdAt: user.createdAt,
+            custom: user.custom,
+            deactivatedAt: user.deactivatedAt,
+            deletedAt: user.deletedAt,
+            id: user.id,
+            image: user.image,
+            language: user.language,
+            lastActive: user.lastActive,
+            name: user.name,
+            online: user.online,
+            revokeTokensIssuedBefore: user.revokeTokensIssuedBefore,
+            role: user.role,
+            teams: user.teams,
+            teamsRole: user.teamsRole,
+            updatedAt: user.updatedAt
+        )
+    }
+
+    convenience init(_ user: UserResponsePrivacyFields) {
+        self.init(
+            avgResponseTime: user.avgResponseTime,
+            banned: user.banned,
+            blockedUserIds: user.blockedUserIds,
+            createdAt: user.createdAt,
+            custom: user.custom,
+            deactivatedAt: user.deactivatedAt,
+            deletedAt: user.deletedAt,
+            id: user.id,
+            image: user.image,
+            language: user.language,
+            lastActive: user.lastActive,
+            name: user.name,
+            online: user.online,
+            revokeTokensIssuedBefore: user.revokeTokensIssuedBefore,
+            role: user.role,
+            teams: user.teams,
+            teamsRole: user.teamsRole,
+            updatedAt: user.updatedAt
+        )
+    }
+}
 
 struct MessageListPayload: Decodable {
     let messages: [MessageResponse]
@@ -169,14 +324,6 @@ extension MembersResponse {
 }
 
 extension ChannelMemberResponse {
-    var member: ChannelMemberResponse? {
-        self
-    }
-
-    var invite: ChannelMemberResponse? {
-        self
-    }
-
     var userPayload: UserResponse? {
         user?.asUserPayload
     }
@@ -207,36 +354,6 @@ extension ChannelMemberResponse {
 
     var extraData: [String: RawJSON]? {
         custom
-    }
-
-    convenience init(
-        member: ChannelMemberResponse?,
-        invite: ChannelMemberResponse?,
-        memberRole: ChannelMemberResponse?
-    ) {
-        let payload = member ?? invite ?? memberRole
-        self.init(
-            archivedAt: payload?.archivedAt,
-            banExpires: payload?.banExpires,
-            banned: payload?.banned ?? false,
-            channelRole: payload?.channelRole ?? MemberRole.member.rawChannelValue,
-            createdAt: payload?.createdAt ?? Date(timeIntervalSince1970: 0),
-            custom: payload?.custom ?? [:],
-            deletedAt: payload?.deletedAt,
-            deletedMessages: payload?.deletedMessages,
-            inviteAcceptedAt: payload?.inviteAcceptedAt,
-            inviteRejectedAt: payload?.inviteRejectedAt,
-            invited: payload?.invited,
-            isModerator: payload?.isModerator,
-            notificationsMuted: payload?.notificationsMuted ?? false,
-            pinnedAt: payload?.pinnedAt,
-            role: payload?.role,
-            shadowBanned: payload?.shadowBanned ?? false,
-            status: payload?.status,
-            updatedAt: payload?.updatedAt ?? Date(timeIntervalSince1970: 0),
-            user: payload?.user,
-            userId: payload?.userId
-        )
     }
 
     convenience init(
@@ -326,10 +443,6 @@ extension ChannelInput {
 extension FlagResponse {
     var flaggedMessageId: MessageId {
         itemId
-    }
-
-    convenience init(currentUser: OwnUserResponse, flaggedMessageId: MessageId) {
-        self.init(duration: "", itemId: flaggedMessageId)
     }
 }
 
@@ -1295,7 +1408,6 @@ extension ChannelResponse {
     var isBlocked: Bool? { blocked }
     var isHidden: Bool? { hidden }
     var cooldownDuration: Int { cooldown ?? 0 }
-    var invitedMembers: [ChannelMemberResponse] { [] }
     var channelId: ChannelId? { try? ChannelId(cid: cid) }
     var asChannelResponse: ChannelResponse { self }
 }
@@ -2156,7 +2268,9 @@ extension SendEventRequest {
     convenience init<Payload: CustomEventPayload>(payload: Payload) {
         let data = try? JSONEncoder.default.encode(payload)
         var custom = data.flatMap { try? JSONDecoder.default.decode([String: RawJSON].self, from: $0) } ?? [:]
-        custom[EventPayload.CodingKeys.eventType.rawValue] = nil
+        // Strip the `type` field that CustomEventPayload encoders include — the
+        // server takes the type from the outer EventRequest.type, not the payload.
+        custom["type"] = nil
         self.init(event: EventRequest(
             custom: custom.isEmpty ? nil : custom,
             type: type(of: payload).eventType.rawValue
@@ -2240,50 +2354,6 @@ extension FlagRequest {
     }
 }
 
-extension FlagResponse {
-    var currentUserPayload: OwnUserResponse {
-        userPayload.asOwnUserResponse
-    }
-
-    var userPayload: UserResponse {
-        UserResponse(
-            id: "",
-            name: nil,
-            imageURL: nil,
-            role: .user,
-            teamsRole: nil,
-            createdAt: Date(timeIntervalSince1970: 0),
-            updatedAt: Date(timeIntervalSince1970: 0),
-            deactivatedAt: nil,
-            lastActiveAt: nil,
-            isOnline: false,
-            isInvisible: false,
-            isBanned: false,
-            language: nil,
-            extraData: [:]
-        )
-    }
-
-    var targetUserPayload: UserResponse {
-        UserResponse(
-            id: "",
-            name: nil,
-            imageURL: nil,
-            role: .user,
-            teamsRole: nil,
-            createdAt: Date(timeIntervalSince1970: 0),
-            updatedAt: Date(timeIntervalSince1970: 0),
-            deactivatedAt: nil,
-            lastActiveAt: nil,
-            isOnline: false,
-            isInvisible: false,
-            isBanned: false,
-            language: nil,
-            extraData: [:]
-        )
-    }
-}
-
 extension UserResponse {
     var asOwnUserResponse: OwnUserResponse {
         OwnUserResponse(
@@ -2308,25 +2378,6 @@ extension UserResponse {
 }
 
 extension FlagResponse {
-    var currentUser: OwnUserResponse {
-        UserResponse(
-            id: "",
-            name: nil,
-            imageURL: nil,
-            role: .user,
-            teamsRole: nil,
-            createdAt: Date(timeIntervalSince1970: 0),
-            updatedAt: Date(timeIntervalSince1970: 0),
-            deactivatedAt: nil,
-            lastActiveAt: nil,
-            isOnline: false,
-            isInvisible: false,
-            isBanned: false,
-            language: nil,
-            extraData: [:]
-        ).asOwnUserResponse
-    }
-
     var flaggedUser: UserResponse {
         UserResponse(
             id: "",
@@ -2344,10 +2395,6 @@ extension FlagResponse {
             language: nil,
             extraData: [:]
         )
-    }
-
-    convenience init(currentUser: OwnUserResponse, flaggedUser: UserResponse) {
-        self.init(duration: "", itemId: flaggedUser.id)
     }
 }
 
@@ -2465,31 +2512,6 @@ extension MarkUnreadRequest {
         }
     }
 }
-
-/*
- extension MessageRequest {
-     var asMessageRequest: MessageRequest {
-         let request = MessageRequest(
-             attachments: attachments.isEmpty ? nil : attachments,
-             custom: extraData.isEmpty ? nil : extraData,
-             id: id,
-             mentionedUsers: mentionedUserIds.isEmpty ? nil : mentionedUserIds,
-             parentId: parentId,
-             pinExpires: pinExpires,
-             pinned: pinned,
-             pollId: pollId,
-             quotedMessageId: quotedMessageId,
-             restrictedVisibility: restrictedVisibility,
-             sharedLocation: location?.asSharedLocationOpenAPI,
-             showInChannel: showReplyInChannel,
-             silent: isSilent,
-             text: text
-         )
-         request.type = type.flatMap { MessageRequest.MessageRequestType(rawValue: $0) }
-         return request
-     }
- }
- */
 
 extension Attachment {
     convenience init(type: AttachmentType, payload: RawJSON) {

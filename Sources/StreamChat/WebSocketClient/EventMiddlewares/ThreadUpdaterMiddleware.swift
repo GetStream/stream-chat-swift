@@ -8,15 +8,17 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
         switch event {
         case let event as MessageReadEventDTO:
-            if let threadDetails = event.payload.threadDetails?.value {
-                session.markThreadAsRead(parentMessageId: threadDetails.parentMessageId, userId: event.user.id, at: event.createdAt)
+            if let thread = event.thread, let userId = event.user?.id {
+                session.markThreadAsRead(parentMessageId: thread.parentMessageId, userId: userId, at: event.createdAt)
             }
         case let event as NotificationMarkUnreadEventDTO:
             // At the moment, this event does not return the thread id, so
             // this is the only way to identify that this event is related to a thread
             let isUnreadThread = event.lastReadMessageId == nil
-            if isUnreadThread {
-                session.markThreadAsUnread(for: event.firstUnreadMessageId, userId: event.user.id)
+            if isUnreadThread,
+               let firstUnreadMessageId = event.firstUnreadMessageId,
+               let userId = event.user?.id {
+                session.markThreadAsUnread(for: firstUnreadMessageId, userId: userId)
             }
         case let event as MessageUpdatedEventDTO:
             guard let parentId = event.message.parentId else { break }
@@ -53,7 +55,7 @@ struct ThreadUpdaterMiddleware: EventMiddleware {
             guard let cid = try? ChannelId(cid: event.channel.cid),
                   let channel = session.channel(cid: cid) else { break }
             deleteThreads(for: channel, session: session)
-        case let event as ThreadMessageNewEventDTO:
+        case let event as NotificationThreadMessageNewEventDTO:
             let messagePayload = event.message
             guard let channelId = try? ChannelId(cid: messagePayload.cid),
                   let parentMessageId = messagePayload.parentId,

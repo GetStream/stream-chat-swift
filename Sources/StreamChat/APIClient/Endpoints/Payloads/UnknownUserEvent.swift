@@ -21,11 +21,17 @@ public struct UnknownUserEvent: Event, Hashable {
 }
 
 extension UnknownUserEvent: Decodable {
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case user
+        case createdAt = "created_at"
+    }
+
     public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: EventPayload.CodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
 
         self.init(
-            type: try container.decode(EventType.self, forKey: .eventType),
+            type: try container.decode(EventType.self, forKey: .type),
             userId: try container.decode(UserResponse.self, forKey: .user).id,
             createdAt: try container.decode(Date.self, forKey: .createdAt),
             payload: try decoder

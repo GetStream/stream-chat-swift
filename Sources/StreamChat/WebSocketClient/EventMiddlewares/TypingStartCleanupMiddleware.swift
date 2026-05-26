@@ -28,30 +28,34 @@ class TypingStartCleanupMiddleware: EventMiddleware {
     }
 
     func handle(event: Event, session: DatabaseSession) -> Event? {
-        // Skip other events and typing events from currentUserId.
         let currentUserId = session.currentUser?.user.id
-        guard let typingEvent = event as? TypingEventDTO, currentUserId != typingEvent.user.id else {
-            return event
-        }
 
-        _typingEventTimeoutTimerControls.mutate {
-            $0[typingEvent.user.id]?.cancel()
-            $0[typingEvent.user.id] = nil
-
-            guard typingEvent.isTyping else { return }
-
-            let stopTyping = { [weak self] in
-                let typingStopEvent = CleanUpTypingEvent(cid: typingEvent.cid, userId: typingEvent.user.id)
-                self?.emitEvent(typingStopEvent)
-            }
-
-            $0[typingEvent.user.id] = timer.schedule(
-                timeInterval: .incomingTypingStartEventTimeout,
-                queue: .global(),
-                onFire: stopTyping
-            )
+        if let startEvent = event as? TypingStartEventDTO {
+            handle(userId: startEvent.user?.id, cidString: startEvent.cid, isStart: true, currentUserId: currentUserId)
+        } else if let stopEvent = event as? TypingStopEventDTO {
+            handle(userId: stopEvent.user?.id, cidString: stopEvent.cid, isStart: false, currentUserId: currentUserId)
         }
 
         return event
+    }
+
+    private func handle(userId: UserId?, cidString: String?, isStart: Bool, currentUserId: UserId?) {
+        guard let userId, currentUserId != userId else { return }
+
+        _typingEventTimeoutTimerControls.mutate {
+            $0[userId]?.cancel()
+            $0[userId] = nil
+
+            guard isStart, let cidString, let cid = try? ChannelId(cid: cidString) else { return }
+
+            $0[userId] = timer.schedule(
+                timeInterval: .incomingTypingStartEventTimeout,
+                queue: .global(),
+                onFire: { [weak self] in
+                    let typingStopEvent = CleanUpTypingEvent(cid: cid, userId: userId)
+                    self?.emitEvent(typingStopEvent)
+                }
+            )
+        }
     }
 }

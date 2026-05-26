@@ -48,42 +48,38 @@ class ManualEventHandler: @unchecked Sendable {
 
     /// Converts a manual event to its domain representation.
     func handle(_ event: Event) -> Event? {
-        guard let eventDTO = event as? EventDTO else {
-            return nil
-        }
+        switch event {
+        case let dto as MessageNewEventDTO:
+            guard let cid = parseCID(dto.cid), isRegistered(channelId: cid) else { return nil }
+            return createMessageNewEvent(from: dto, cid: cid)
 
-        let eventPayload = eventDTO.payload
+        case let dto as MessageUpdatedEventDTO:
+            guard let cid = parseCID(dto.cid), isRegistered(channelId: cid) else { return nil }
+            return createMessageUpdatedEvent(from: dto, cid: cid)
 
-        guard let cid = eventPayload.cid else {
-            return nil
-        }
+        case let dto as MessageDeletedEventDTO:
+            guard let cid = parseCID(dto.cid), isRegistered(channelId: cid) else { return nil }
+            return createMessageDeletedEvent(from: dto, cid: cid)
 
-        guard isRegistered(channelId: cid) else {
-            return nil
-        }
+        case let dto as ReactionNewEventDTO:
+            guard let cid = parseCID(dto.cid), isRegistered(channelId: cid) else { return nil }
+            return createReactionNewEvent(from: dto, cid: cid)
 
-        switch eventPayload.eventType {
-        case .messageNew:
-            return createMessageNewEvent(from: eventPayload, cid: cid)
+        case let dto as ReactionUpdatedEventDTO:
+            guard let cid = parseCID(dto.cid), isRegistered(channelId: cid) else { return nil }
+            return createReactionUpdatedEvent(from: dto, cid: cid)
 
-        case .messageUpdated:
-            return createMessageUpdatedEvent(from: eventPayload, cid: cid)
-
-        case .messageDeleted:
-            return createMessageDeletedEvent(from: eventPayload, cid: cid)
-
-        case .reactionNew:
-            return createReactionNewEvent(from: eventPayload, cid: cid)
-
-        case .reactionUpdated:
-            return createReactionUpdatedEvent(from: eventPayload, cid: cid)
-
-        case .reactionDeleted:
-            return createReactionDeletedEvent(from: eventPayload, cid: cid)
+        case let dto as ReactionDeletedEventDTO:
+            guard let cid = parseCID(dto.cid), isRegistered(channelId: cid) else { return nil }
+            return createReactionDeletedEvent(from: dto, cid: cid)
 
         default:
             return nil
         }
+    }
+
+    private func parseCID(_ cid: String?) -> ChannelId? {
+        cid.flatMap { try? ChannelId(cid: $0) }
     }
 
     private func isRegistered(channelId: ChannelId) -> Bool {
@@ -92,81 +88,67 @@ class ManualEventHandler: @unchecked Sendable {
 
     // MARK: - Event Creation Helpers
 
-    private func createMessageNewEvent(from payload: EventPayload, cid: ChannelId) -> MessageNewEvent? {
+    private func createMessageNewEvent(from dto: MessageNewEventDTO, cid: ChannelId) -> MessageNewEvent? {
         guard
-            let userPayload = payload.user,
-            let messagePayload = payload.message,
-            let createdAt = payload.createdAt,
+            let userFields = dto.user,
             let channel = getLocalChannel(id: cid),
             let currentUserId = database.writableContext.currentUser?.user.id
         else {
             return nil
         }
 
-        let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
+        let message = dto.message.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return MessageNewEvent(
-            user: userPayload.asModel(),
+            user: UserResponse(userFields).asModel(),
             message: message,
             channel: channel,
-            createdAt: createdAt,
-            watcherCount: payload.watcherCount,
-            unreadCount: payload.unreadCount.map {
-                .init(
-                    channels: $0.channels ?? 0,
-                    messages: $0.messages ?? 0,
-                    threads: $0.threads ?? 0
-                )
-            }
+            createdAt: dto.createdAt,
+            watcherCount: dto.watcherCount,
+            unreadCount: dto.unreadCount.map { .init(channels: 0, messages: $0, threads: 0) }
         )
     }
 
-    private func createMessageUpdatedEvent(from payload: EventPayload, cid: ChannelId) -> MessageUpdatedEvent? {
+    private func createMessageUpdatedEvent(from dto: MessageUpdatedEventDTO, cid: ChannelId) -> MessageUpdatedEvent? {
         guard
-            let userPayload = payload.user,
-            let messagePayload = payload.message,
-            let createdAt = payload.createdAt,
+            let userFields = dto.user,
             let currentUserId = database.writableContext.currentUser?.user.id,
             let channel = getLocalChannel(id: cid)
         else { return nil }
 
-        let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
+        let message = dto.message.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return MessageUpdatedEvent(
-            user: userPayload.asModel(),
+            user: UserResponse(userFields).asModel(),
             channel: channel,
             message: message,
-            createdAt: createdAt
+            createdAt: dto.createdAt
         )
     }
 
-    private func createMessageDeletedEvent(from payload: EventPayload, cid: ChannelId) -> MessageDeletedEvent? {
+    private func createMessageDeletedEvent(from dto: MessageDeletedEventDTO, cid: ChannelId) -> MessageDeletedEvent? {
         guard
-            let messagePayload = payload.message,
-            let createdAt = payload.createdAt,
             let currentUserId = database.writableContext.currentUser?.user.id,
             let channel = getLocalChannel(id: cid)
         else { return nil }
 
-        let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
-        let userPayload = payload.user
+        let message = dto.message.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return MessageDeletedEvent(
-            user: userPayload?.asModel(),
+            user: dto.user.map { UserResponse($0).asModel() },
             channel: channel,
             message: message,
-            createdAt: createdAt,
-            isHardDelete: payload.hardDelete,
-            deletedForMe: payload.deletedForMe ?? false
+            createdAt: dto.createdAt,
+            isHardDelete: dto.hardDelete,
+            deletedForMe: dto.deletedForMe ?? false
         )
     }
 
-    private func createReactionNewEvent(from payload: EventPayload, cid: ChannelId) -> ReactionNewEvent? {
+    private func createReactionNewEvent(from dto: ReactionNewEventDTO, cid: ChannelId) -> ReactionNewEvent? {
         guard
-            let userPayload = payload.user,
-            let messagePayload = payload.message,
-            let reactionPayload = payload.reaction,
-            let createdAt = payload.createdAt,
+            let userFields = dto.user,
+            let messagePayload = dto.message,
+            let reactionPayload = dto.reaction,
             let currentUserId = database.writableContext.currentUser?.user.id,
             let channel = getLocalChannel(id: cid)
         else { return nil }
@@ -174,41 +156,38 @@ class ManualEventHandler: @unchecked Sendable {
         let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return ReactionNewEvent(
-            user: userPayload.asModel(),
+            user: UserResponse(userFields).asModel(),
             cid: cid,
             message: message,
             reaction: reactionPayload.asModel(messageId: messagePayload.id),
-            createdAt: createdAt
+            createdAt: dto.createdAt
         )
     }
 
-    private func createReactionUpdatedEvent(from payload: EventPayload, cid: ChannelId) -> ReactionUpdatedEvent? {
+    private func createReactionUpdatedEvent(from dto: ReactionUpdatedEventDTO, cid: ChannelId) -> ReactionUpdatedEvent? {
         guard
-            let userPayload = payload.user,
-            let messagePayload = payload.message,
-            let reactionPayload = payload.reaction,
-            let createdAt = payload.createdAt,
+            let userFields = dto.user,
+            let reactionPayload = dto.reaction,
             let currentUserId = database.writableContext.currentUser?.user.id,
             let channel = getLocalChannel(id: cid)
         else { return nil }
 
-        let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
+        let message = dto.message.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return ReactionUpdatedEvent(
-            user: userPayload.asModel(),
+            user: UserResponse(userFields).asModel(),
             cid: cid,
             message: message,
-            reaction: reactionPayload.asModel(messageId: messagePayload.id),
-            createdAt: createdAt
+            reaction: reactionPayload.asModel(messageId: dto.message.id),
+            createdAt: dto.createdAt
         )
     }
 
-    private func createReactionDeletedEvent(from payload: EventPayload, cid: ChannelId) -> ReactionDeletedEvent? {
+    private func createReactionDeletedEvent(from dto: ReactionDeletedEventDTO, cid: ChannelId) -> ReactionDeletedEvent? {
         guard
-            let userPayload = payload.user,
-            let messagePayload = payload.message,
-            let reactionPayload = payload.reaction,
-            let createdAt = payload.createdAt,
+            let userFields = dto.user,
+            let messagePayload = dto.message,
+            let reactionPayload = dto.reaction,
             let currentUserId = database.writableContext.currentUser?.user.id,
             let channel = getLocalChannel(id: cid)
         else { return nil }
@@ -216,11 +195,11 @@ class ManualEventHandler: @unchecked Sendable {
         let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return ReactionDeletedEvent(
-            user: userPayload.asModel(),
+            user: UserResponse(userFields).asModel(),
             cid: cid,
             message: message,
             reaction: reactionPayload.asModel(messageId: messagePayload.id),
-            createdAt: createdAt
+            createdAt: dto.createdAt
         )
     }
 

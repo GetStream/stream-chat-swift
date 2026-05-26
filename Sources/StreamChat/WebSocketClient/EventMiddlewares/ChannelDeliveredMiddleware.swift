@@ -60,14 +60,17 @@ class ChannelDeliveredMiddleware: EventMiddleware {
             return
         }
 
-        deliveryTracker.submitForDelivery(channelId: event.cid, messageId: event.message.id)
+        if let cidString = event.cid, let cid = try? ChannelId(cid: cidString) {
+            deliveryTracker.submitForDelivery(channelId: cid, messageId: event.message.id)
+        }
     }
     
     /// Handles a notification mark read event by removing the channel from pending delivered channels.
     ///
     /// - Parameter event: The notification mark read event.
     private func handleNotificationMarkReadEvent(_ event: NotificationMarkReadEventDTO) {
-        deliveryTracker.cancel(channelId: event.cid)
+        guard let cidString = event.cid, let cid = try? ChannelId(cid: cidString) else { return }
+        deliveryTracker.cancel(channelId: cid)
     }
     
     /// Handles a message delivered event by updating the local channel read data.
@@ -76,19 +79,29 @@ class ChannelDeliveredMiddleware: EventMiddleware {
     ///   - event: The message delivered event.
     ///   - session: The database session.
     private func handleMessageDeliveredEvent(_ event: MessageDeliveredEventDTO, session: DatabaseSession) {
+        guard let cidString = event.cid, let cid = try? ChannelId(cid: cidString) else { return }
+        guard let userId = event.user?.id else { return }
+        guard let lastDeliveredAtString = event.lastDeliveredAt,
+              let lastDeliveredAtDate = parseISO8601(lastDeliveredAtString) else { return }
+        guard let lastDeliveredMessageId = event.lastDeliveredMessageId else { return }
+
         // Update the delivered message information
-        if let channelRead = session.loadOrCreateChannelRead(
-            cid: event.cid,
-            userId: event.user.id
-        ) {
-            channelRead.lastDeliveredAt = event.lastDeliveredAt.bridgeDate
-            channelRead.lastDeliveredMessageId = event.lastDeliveredMessageId
+        if let channelRead = session.loadOrCreateChannelRead(cid: cid, userId: userId) {
+            channelRead.lastDeliveredAt = lastDeliveredAtDate.bridgeDate
+            channelRead.lastDeliveredMessageId = lastDeliveredMessageId
         }
 
         // Remove pending for delivery if marked delivered from another device
-        if let message = session.message(id: event.lastDeliveredMessageId),
+        if let message = session.message(id: lastDeliveredMessageId),
            message.user.id == session.currentUser?.user.id {
-            deliveryTracker.cancel(channelId: event.cid)
+            deliveryTracker.cancel(channelId: cid)
         }
+    }
+
+    private func parseISO8601(_ string: String) -> Date? {
+        let withFractional = ISO8601DateFormatter()
+        withFractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        if let date = withFractional.date(from: string) { return date }
+        return ISO8601DateFormatter().date(from: string)
     }
 }

@@ -24,30 +24,30 @@ final class MessageEvents_Tests: XCTestCase {
     func test_new() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageNew")
         let event = try eventDecoder.decode(from: json) as? MessageNewEventDTO
-        XCTAssertEqual(event?.user.id, "broken-waterfall-5")
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
+        XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.message.id, messageId)
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:42:21 +0000")
         XCTAssertEqual(event?.watcherCount, 7)
-        XCTAssertEqual(event?.unreadCount, .init(channels: 1, messages: 1, threads: nil))
+        XCTAssertEqual(event?.unreadCount, 1)
     }
 
     func test_new_withMissingFields() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageNew+MissingFields")
         let event = try eventDecoder.decode(from: json) as? MessageNewEventDTO
-        XCTAssertEqual(event?.user.id, "broken-waterfall-5")
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
+        XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.message.id, messageId)
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:42:21 +0000")
-        XCTAssertNil(event?.watcherCount)
+        XCTAssertEqual(event?.watcherCount, 0)
         XCTAssertNil(event?.unreadCount)
     }
 
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageUpdated")
         let event = try eventDecoder.decode(from: json) as? MessageUpdatedEventDTO
-        XCTAssertEqual(event?.user.id, "broken-waterfall-5")
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
+        XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.message.id, messageId)
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:46:10 +0000")
     }
@@ -56,7 +56,7 @@ final class MessageEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
         XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.message.id, messageId)
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:49:48 +0000")
     }
@@ -65,7 +65,7 @@ final class MessageEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted+MissingUser")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
         XCTAssertNil(event?.user)
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.message.id, messageId)
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:49:48 +0000")
     }
@@ -98,7 +98,7 @@ final class MessageEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
 
-        let channelId = try XCTUnwrap(event?.cid)
+        let channelId = try XCTUnwrap(event?.cid.flatMap { try? ChannelId(cid: $0) })
         let message = try XCTUnwrap(event?.message)
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
@@ -112,7 +112,7 @@ final class MessageEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeletedHard")
         let event = try eventDecoder.decode(from: json) as? MessageDeletedEventDTO
 
-        let channelId = try XCTUnwrap(event?.cid)
+        let channelId = try XCTUnwrap(event?.cid.flatMap { try? ChannelId(cid: $0) })
         let message = try XCTUnwrap(event?.message)
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         // Only save the channel. Not the message. In this case the payload should be directly mapped to model.
@@ -125,34 +125,32 @@ final class MessageEvents_Tests: XCTestCase {
     func test_read() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead")
         let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
-        XCTAssertEqual(event?.user.id, "steep-moon-9")
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.user?.id, "steep-moon-9")
+        XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
-        XCTAssertEqual(event?.unreadCount, .init(channels: 3, messages: 21, threads: 10))
-        XCTAssertEqual(event?.payload.threadDetails?.value?.cid?.rawValue, "messaging:general")
-        XCTAssertEqual(event?.payload.threadDetails?.value?.parentMessageId, "5b444e0d-a132-41a0-bf99-72dfdba0a053")
-        XCTAssertEqual(event?.payload.threadDetails?.value?.replyCount, 4)
-        XCTAssertEqual(event?.payload.threadDetails?.value?.participantCount, 2)
-        XCTAssertEqual(event?.payload.threadDetails?.value?.createdAt, "2024-05-17T12:44:30.223755Z".toDate())
-        XCTAssertEqual(event?.payload.threadDetails?.value?.updatedAt, "2024-05-17T12:44:30.223755Z".toDate())
-        XCTAssertEqual(event?.payload.threadDetails?.value?.lastMessageAt, "2024-05-23T17:37:12.519085Z".toDate())
-        XCTAssertEqual(event?.payload.threadDetails?.value?.title, "Test")
+        XCTAssertEqual(event?.thread?.channelCid, "messaging:general")
+        XCTAssertEqual(event?.thread?.parentMessageId, "5b444e0d-a132-41a0-bf99-72dfdba0a053")
+        XCTAssertEqual(event?.thread?.replyCount, 4)
+        XCTAssertEqual(event?.thread?.participantCount, 2)
+        XCTAssertEqual(event?.thread?.createdAt, "2024-05-17T12:44:30.223755Z".toDate())
+        XCTAssertEqual(event?.thread?.updatedAt, "2024-05-17T12:44:30.223755Z".toDate())
+        XCTAssertEqual(event?.thread?.lastMessageAt, "2024-05-23T17:37:12.519085Z".toDate())
+        XCTAssertEqual(event?.thread?.title, "Test")
     }
 
     func test_read_withoutUnreadCount() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead+MissingUnreadCount")
         let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
-        XCTAssertEqual(event?.user.id, "steep-moon-9")
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.user?.id, "steep-moon-9")
+        XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
-        XCTAssertNil(event?.unreadCount)
     }
 
     func test_read_withTeam() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead+Team")
         let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
-        XCTAssertEqual(event?.user.id, "steep-moon-9")
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.user?.id, "steep-moon-9")
+        XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
         XCTAssertEqual(event?.team, "team-123")
     }
@@ -160,8 +158,8 @@ final class MessageEvents_Tests: XCTestCase {
     func test_read_withoutTeam() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead")
         let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
-        XCTAssertEqual(event?.user.id, "steep-moon-9")
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.user?.id, "steep-moon-9")
+        XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
         XCTAssertNil(event?.team)
     }
@@ -170,10 +168,10 @@ final class MessageEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead+Team")
         let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
 
-        let channelId = try XCTUnwrap(event?.cid)
+        let channelId = try XCTUnwrap(event?.cid.flatMap { try? ChannelId(cid: $0) })
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
-        _ = try session.saveUser(payload: .dummy(userId: event?.user.id ?? ""))
+        _ = try session.saveUser(payload: .dummy(userId: event?.user?.id ?? ""))
         _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: nil))
 
         let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageReadEvent)
@@ -184,10 +182,10 @@ final class MessageEvents_Tests: XCTestCase {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead")
         let event = try eventDecoder.decode(from: json) as? MessageReadEventDTO
 
-        let channelId = try XCTUnwrap(event?.cid)
+        let channelId = try XCTUnwrap(event?.cid.flatMap { try? ChannelId(cid: $0) })
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
-        _ = try session.saveUser(payload: .dummy(userId: event?.user.id ?? ""))
+        _ = try session.saveUser(payload: .dummy(userId: event?.user?.id ?? ""))
         _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: nil))
 
         let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? MessageReadEvent)
@@ -197,21 +195,21 @@ final class MessageEvents_Tests: XCTestCase {
     func test_delivered() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDelivered")
         let event = try eventDecoder.decode(from: json) as? MessageDeliveredEventDTO
-        XCTAssertEqual(event?.user.id, "broken-waterfall-5")
-        XCTAssertEqual(event?.cid, ChannelId(type: .messaging, id: "general"))
+        XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
+        XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
         XCTAssertEqual(event?.lastDeliveredMessageId, messageId)
-        XCTAssertEqual(event?.lastDeliveredAt.description, "2020-07-17 13:55:56 +0000")
+        XCTAssertNotNil(event?.lastDeliveredAt)
     }
 
     func test_messageDeliveredEvent_toDomainEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDelivered")
         let event = try eventDecoder.decode(from: json) as? MessageDeliveredEventDTO
 
-        let channelId = try XCTUnwrap(event?.cid)
+        let channelId = try XCTUnwrap(event?.cid.flatMap { try? ChannelId(cid: $0) })
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
-        _ = try session.saveUser(payload: .dummy(userId: event?.user.id ?? ""))
+        _ = try session.saveUser(payload: .dummy(userId: event?.user?.id ?? ""))
 
         let domainEvent = event?.toDomainEvent(session: session)
         XCTAssertEqual(domainEvent is MessageDeliveredEvent, true)

@@ -38,21 +38,12 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     }
 
     func test_middleware_forwardsBanEvent_ifDatabaseWriteGeneratesError() throws {
-        let eventPayload: EventPayload = .init(
-            eventType: .userBanned,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
-            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
-            createdAt: .unique,
-            banExpiredAt: .unique
-        )
+        let event = makeUserBannedDTO(cid: .unique, banExpiredAt: .unique)
 
         // Set error to be thrown on write.
         let error = TestError()
         database.write_errorResponse = error
 
-        // Simulate and handle banned event.
-        let event = try UserBannedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `UserBannedEvent` is forwarded even though database error happened.
@@ -60,19 +51,12 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     }
 
     func test_middleware_forwardsUnbanEvent_ifDatabaseWriteGeneratesError() throws {
-        let eventPayload: EventPayload = .init(
-            eventType: .userUnbanned,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
-            createdAt: .unique
-        )
+        let event = makeUserUnbannedDTO(cid: .unique)
 
         // Set error to be thrown on write.
         let error = TestError()
         database.write_errorResponse = error
 
-        // Simulate and handle banned event.
-        let event = try UserUnbannedEventDTO(from: eventPayload)
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `UserUnbannedEvent` is forwarded even though database error happened.
@@ -80,24 +64,23 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     }
 
     func test_middleware_handlesUserBannedEventCorrectly() throws {
-        // Create event payload
-        let eventPayload: EventPayload = .init(
-            eventType: .userBanned,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
-            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
+        let cid: ChannelId = .unique
+        let banExpiredAt: Date = .unique
+        let user: UserResponse = .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
+        let event = UserBannedEventDTO(
+            cid: cid.rawValue,
             createdAt: .unique,
-            banExpiredAt: .unique
+            createdBy: UserResponseCommonFields(.dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:])),
+            custom: [:],
+            expiration: banExpiredAt,
+            user: UserResponseCommonFields(user)
         )
 
-        // Create event with payload.
-        let event = try UserBannedEventDTO(from: eventPayload)
-
         // Create required objects in the DB
-        try database.createChannel(cid: eventPayload.cid!)
-        try database.createMember(userId: eventPayload.user!.id, cid: eventPayload.cid!)
+        try database.createChannel(cid: cid)
+        try database.createMember(userId: user.id, cid: cid)
 
-        let member = try XCTUnwrap(database.viewContext.member(userId: eventPayload.user!.id, cid: eventPayload.cid!))
+        let member = try XCTUnwrap(database.viewContext.member(userId: user.id, cid: cid))
         XCTAssertEqual(member.isBanned, false)
         XCTAssertEqual(member.isShadowBanned, false)
         XCTAssertEqual(member.banExpiresAt, nil)
@@ -108,31 +91,30 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         // Assert the member ban information is updated
         XCTAssertEqual(member.isBanned, true)
         XCTAssertEqual(member.isShadowBanned, false)
-        XCTAssertEqual(member.banExpiresAt?.bridgeDate, eventPayload.banExpiredAt!)
+        XCTAssertEqual(member.banExpiresAt?.bridgeDate, banExpiredAt)
 
         XCTAssert(forwardedEvent is UserBannedEventDTO)
     }
 
     func test_middleware_handlesUserBannedEventCorrectly_whenShadowBanned() throws {
-        // Create event payload
-        let eventPayload: EventPayload = .init(
-            eventType: .userBanned,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
-            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
+        let cid: ChannelId = .unique
+        let banExpiredAt: Date = .unique
+        let user: UserResponse = .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
+        let event = UserBannedEventDTO(
+            cid: cid.rawValue,
             createdAt: .unique,
-            banExpiredAt: .unique,
-            shadow: true
+            createdBy: UserResponseCommonFields(.dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:])),
+            custom: [:],
+            expiration: banExpiredAt,
+            shadow: true,
+            user: UserResponseCommonFields(user)
         )
 
-        // Create event with payload.
-        let event = try UserBannedEventDTO(from: eventPayload)
-
         // Create required objects in the DB
-        try database.createChannel(cid: eventPayload.cid!)
-        try database.createMember(userId: eventPayload.user!.id, cid: eventPayload.cid!)
+        try database.createChannel(cid: cid)
+        try database.createMember(userId: user.id, cid: cid)
 
-        let member = try XCTUnwrap(database.viewContext.member(userId: eventPayload.user!.id, cid: eventPayload.cid!))
+        let member = try XCTUnwrap(database.viewContext.member(userId: user.id, cid: cid))
         XCTAssertEqual(member.isBanned, false)
         XCTAssertEqual(member.isShadowBanned, false)
         XCTAssertEqual(member.banExpiresAt, nil)
@@ -143,33 +125,31 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         // Assert the member ban information is updated
         XCTAssertEqual(member.isBanned, true)
         XCTAssertEqual(member.isShadowBanned, true)
-        XCTAssertEqual(member.banExpiresAt?.bridgeDate, eventPayload.banExpiredAt!)
+        XCTAssertEqual(member.banExpiresAt?.bridgeDate, banExpiredAt)
 
         XCTAssert(forwardedEvent is UserBannedEventDTO)
     }
 
     func test_middleware_handlesUserUnbannedEventCorrectly() throws {
-        // Create event payload
-        let eventPayload: EventPayload = .init(
-            eventType: .userUnbanned,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
-            createdBy: .dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
-            createdAt: .unique
+        let cid: ChannelId = .unique
+        let user: UserResponse = .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
+        let event = UserUnbannedEventDTO(
+            cid: cid.rawValue,
+            createdAt: .unique,
+            createdBy: UserResponseCommonFields(.dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:])),
+            custom: [:],
+            user: UserResponseCommonFields(user)
         )
 
-        // Create event with payload.
-        let event = try UserUnbannedEventDTO(from: eventPayload)
-
         // Create required objects in the DB
-        try database.createChannel(cid: eventPayload.cid!)
+        try database.createChannel(cid: cid)
         try database.writeSynchronously { session in
             let memberDTO = try session.saveMember(
                 payload: .dummy(
-                    user: .dummy(userId: eventPayload.user!.id),
+                    user: .dummy(userId: user.id),
                     role: .member
                 ),
-                channelId: eventPayload.cid!,
+                channelId: cid,
                 query: nil,
                 cache: nil
             )
@@ -180,7 +160,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             memberDTO.banExpiresAt = .unique
         }
 
-        let member = try XCTUnwrap(database.viewContext.member(userId: eventPayload.user!.id, cid: eventPayload.cid!))
+        let member = try XCTUnwrap(database.viewContext.member(userId: user.id, cid: cid))
         XCTAssertEqual(member.isBanned, true)
         XCTAssertEqual(member.isShadowBanned, true)
         XCTAssertNotEqual(member.banExpiresAt, nil)
@@ -197,33 +177,32 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     }
 
     func test_middleware_handlesUserMessagesDeletedEventCorrectly() throws {
-        // Create event payload
-        let eventPayload: EventPayload = .init(
-            eventType: .userMessagesDeleted,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
-            createdAt: .unique,
-            hardDelete: false
+        let cid: ChannelId = .unique
+        let user: UserResponse = .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
+        let createdAt: Date = .unique
+        let event = UserMessagesDeletedEventDTO(
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            custom: [:],
+            hardDelete: false,
+            user: UserResponseCommonFields(user)
         )
 
-        // Create event with payload.
-        let event = try UserMessagesDeletedEventDTO(from: eventPayload)
-
         // Create required objects in the DB
-        let userId = eventPayload.user!.id
+        let userId = user.id
         let messageId1: MessageId = .unique
         let messageId2: MessageId = .unique
-        
+
         try database.createCurrentUser(id: userId)
-        try database.createChannel(cid: eventPayload.cid!)
-        try database.createMessage(id: messageId1, authorId: userId, cid: eventPayload.cid!)
-        try database.createMessage(id: messageId2, authorId: userId, cid: eventPayload.cid!)
+        try database.createChannel(cid: cid)
+        try database.createMessage(id: messageId1, authorId: userId, cid: cid)
+        try database.createMessage(id: messageId2, authorId: userId, cid: cid)
 
         // Verify user and messages exist
         _ = try XCTUnwrap(database.viewContext.user(id: userId))
         let message1 = try XCTUnwrap(database.viewContext.message(id: messageId1))
         let message2 = try XCTUnwrap(database.viewContext.message(id: messageId2))
-        
+
         // Verify messages are not deleted initially
         XCTAssertNil(message1.deletedAt)
         XCTAssertNil(message2.deletedAt)
@@ -234,8 +213,8 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert the user's messages are marked as deleted
-        XCTAssertEqual(message1.deletedAt?.bridgeDate, eventPayload.createdAt!)
-        XCTAssertEqual(message2.deletedAt?.bridgeDate, eventPayload.createdAt!)
+        XCTAssertEqual(message1.deletedAt?.bridgeDate, createdAt)
+        XCTAssertEqual(message2.deletedAt?.bridgeDate, createdAt)
         // Soft delete should not set isHardDeleted flag
         XCTAssertFalse(message1.isHardDeleted)
         XCTAssertFalse(message2.isHardDeleted)
@@ -244,33 +223,31 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     }
 
     func test_middleware_handlesUserMessagesDeletedEvent_hardDelete_marksMessagesAsHardDeleted() throws {
-        // Create event payload with hard delete
-        let eventPayload: EventPayload = .init(
-            eventType: .userMessagesDeleted,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]),
+        let cid: ChannelId = .unique
+        let user: UserResponse = .dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
+        let event = UserMessagesDeletedEventDTO(
+            cid: cid.rawValue,
             createdAt: .unique,
-            hardDelete: true
+            custom: [:],
+            hardDelete: true,
+            user: UserResponseCommonFields(user)
         )
 
-        // Create event with payload.
-        let event = try UserMessagesDeletedEventDTO(from: eventPayload)
-
         // Create required objects in the DB
-        let userId = eventPayload.user!.id
+        let userId = user.id
         let messageId1: MessageId = .unique
         let messageId2: MessageId = .unique
-        
+
         try database.createCurrentUser(id: userId)
-        try database.createChannel(cid: eventPayload.cid!)
-        try database.createMessage(id: messageId1, authorId: userId, cid: eventPayload.cid!)
-        try database.createMessage(id: messageId2, authorId: userId, cid: eventPayload.cid!)
+        try database.createChannel(cid: cid)
+        try database.createMessage(id: messageId1, authorId: userId, cid: cid)
+        try database.createMessage(id: messageId2, authorId: userId, cid: cid)
 
         // Verify user and messages exist
         _ = try XCTUnwrap(database.viewContext.user(id: userId))
         let message1 = try XCTUnwrap(database.viewContext.message(id: messageId1))
         let message2 = try XCTUnwrap(database.viewContext.message(id: messageId2))
-        
+
         // Verify messages are not hard deleted initially
         XCTAssertFalse(message1.isHardDeleted)
         XCTAssertFalse(message2.isHardDeleted)
@@ -291,20 +268,18 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
     }
 
     func test_userMessagesDeletedEventDTO_toDomainEvent_whenUserExistsInDB_returnsEventWithDBUser() throws {
-        // Create event payload
-        let eventPayload: EventPayload = .init(
-            eventType: .userMessagesDeleted,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "ExistingUser", imageUrl: nil, extraData: [:]),
-            createdAt: .unique,
-            hardDelete: false
+        let user: UserResponse = .dummy(userId: .unique, name: "ExistingUser", imageUrl: nil, extraData: [:])
+        let createdAt: Date = .unique
+        let eventDTO = UserMessagesDeletedEventDTO(
+            cid: ChannelId.unique.rawValue,
+            createdAt: createdAt,
+            custom: [:],
+            hardDelete: false,
+            user: UserResponseCommonFields(user)
         )
 
-        // Create event with payload.
-        let eventDTO = try UserMessagesDeletedEventDTO(from: eventPayload)
-
         // Create user in DB
-        let userId = eventPayload.user!.id
+        let userId = user.id
         try database.createCurrentUser(id: userId)
 
         // Convert to domain event
@@ -316,22 +291,20 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         if let userMessagesDeletedEvent = domainEvent as? UserMessagesDeletedEvent {
             XCTAssertEqual(userMessagesDeletedEvent.user.id, userId)
             XCTAssertEqual(userMessagesDeletedEvent.hardDelete, false)
-            XCTAssertEqual(userMessagesDeletedEvent.createdAt, eventPayload.createdAt)
+            XCTAssertEqual(userMessagesDeletedEvent.createdAt, createdAt)
         }
     }
 
     func test_userMessagesDeletedEventDTO_toDomainEvent_whenUserDoesNotExistInDB_returnsEventWithPayloadUser() throws {
-        // Create event payload for user not in DB
-        let eventPayload: EventPayload = .init(
-            eventType: .userMessagesDeleted,
-            cid: .unique,
-            user: .dummy(userId: .unique, name: "NonExistentUser", imageUrl: nil, extraData: [:]),
-            createdAt: .unique,
-            hardDelete: true
+        let user: UserResponse = .dummy(userId: .unique, name: "NonExistentUser", imageUrl: nil, extraData: [:])
+        let createdAt: Date = .unique
+        let eventDTO = UserMessagesDeletedEventDTO(
+            cid: ChannelId.unique.rawValue,
+            createdAt: createdAt,
+            custom: [:],
+            hardDelete: true,
+            user: UserResponseCommonFields(user)
         )
-
-        // Create event with payload.
-        let eventDTO = try UserMessagesDeletedEventDTO(from: eventPayload)
 
         // Do not create user in DB
 
@@ -342,10 +315,32 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         XCTAssertNotNil(domainEvent)
         XCTAssert(domainEvent is UserMessagesDeletedEvent)
         if let userMessagesDeletedEvent = domainEvent as? UserMessagesDeletedEvent {
-            XCTAssertEqual(userMessagesDeletedEvent.user.id, eventPayload.user!.id)
+            XCTAssertEqual(userMessagesDeletedEvent.user.id, user.id)
             XCTAssertEqual(userMessagesDeletedEvent.user.name, "NonExistentUser")
             XCTAssertEqual(userMessagesDeletedEvent.hardDelete, true)
-            XCTAssertEqual(userMessagesDeletedEvent.createdAt, eventPayload.createdAt)
+            XCTAssertEqual(userMessagesDeletedEvent.createdAt, createdAt)
         }
+    }
+
+    // MARK: - Helpers
+
+    private func makeUserBannedDTO(cid: ChannelId, banExpiredAt: Date? = nil) -> UserBannedEventDTO {
+        UserBannedEventDTO(
+            cid: cid.rawValue,
+            createdAt: .unique,
+            createdBy: UserResponseCommonFields(.dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:])),
+            custom: [:],
+            expiration: banExpiredAt,
+            user: UserResponseCommonFields(.dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]))
+        )
+    }
+
+    private func makeUserUnbannedDTO(cid: ChannelId) -> UserUnbannedEventDTO {
+        UserUnbannedEventDTO(
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            user: UserResponseCommonFields(.dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]))
+        )
     }
 }

@@ -38,19 +38,17 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
     }
 
     func test_whenDatabaseWriteFails_eventIsForwarded() throws {
-        let eventPayload: EventPayload = .init(
-            eventType: .userUpdated,
-            user: .dummy(userId: .unique),
-            createdAt: Date.unique
-        )
-
         // Set error to be thrown on write.
         let session = DatabaseSession_Mock(underlyingSession: database.viewContext)
         let error = TestError()
         session.errorToReturn = error
 
         // Simulate and handle user watching event.
-        let event = try UserUpdatedEventDTO(from: eventPayload)
+        let event = UserUpdatedEventDTO(
+            createdAt: Date.unique,
+            custom: [:],
+            user: UserResponsePrivacyFields(.dummy(userId: .unique))
+        )
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Assert `UserWatchingEvent` is forwarded even though database error happened.
@@ -68,14 +66,13 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
 
         // When
         let updatedUserPayload = UserResponse.dummy(userId: userId, name: "Updated name")
-        let eventPayload: EventPayload = .init(
-            eventType: .userUpdated,
-            user: updatedUserPayload,
-            createdAt: Date.unique
-        )
 
         // Simulate and handle user watching event.
-        let event = try UserUpdatedEventDTO(from: eventPayload)
+        let event = UserUpdatedEventDTO(
+            createdAt: Date.unique,
+            custom: [:],
+            user: UserResponsePrivacyFields(updatedUserPayload)
+        )
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Then
@@ -99,14 +96,13 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
 
         // When
         let updatedUserPayload = UserResponse.dummy(userId: currentUserId, name: "Name 2")
-        let eventPayload: EventPayload = .init(
-            eventType: .userUpdated,
-            user: updatedUserPayload,
-            createdAt: Date.unique
-        )
 
         // Simulate and handle user watching event.
-        let event = try UserUpdatedEventDTO(from: eventPayload)
+        let event = UserUpdatedEventDTO(
+            createdAt: Date.unique,
+            custom: [:],
+            user: UserResponsePrivacyFields(updatedUserPayload)
+        )
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
         // Then

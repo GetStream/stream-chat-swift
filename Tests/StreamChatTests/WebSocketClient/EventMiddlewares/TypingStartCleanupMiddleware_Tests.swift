@@ -47,7 +47,7 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         weak var weakMiddleware = middleware
 
         // Handle a new TypingStart event for the current user and collect resulting events
-        let typingStartEvent = TypingEventDTO.startTyping(userId: currentUser.id)
+        let typingStartEvent = TypingStartEventDTO.startTyping(userId: currentUser.id)
         let forwardedEvent = middleware!.handle(event: typingStartEvent, session: database.viewContext)
         XCTAssertEqual(forwardedEvent?.asEquatable, typingStartEvent.asEquatable)
 
@@ -78,7 +78,7 @@ final class TypingStartCleanupMiddleware_Tests: XCTestCase {
         let otherUser = ChatUser.mock(id: .unique)
         let cid = ChannelId.unique
 
-        let startTyping = TypingEventDTO.startTyping(cid: cid, userId: otherUser.id)
+        let startTyping = TypingStartEventDTO.startTyping(cid: cid, userId: otherUser.id)
         // Handle a new TypingStart event for the current user and collect resulting events
         let forwardedEvent = middleware!.handle(event: startTyping, session: database.viewContext)
         // Assert `TypingStart` event is propagated synchronously

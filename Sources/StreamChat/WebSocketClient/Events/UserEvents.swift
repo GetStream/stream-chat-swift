@@ -18,18 +18,8 @@ public final class UserPresenceChangedEvent: Event {
     }
 }
 
-final class UserPresenceChangedEventDTO: EventDTO {
-    let user: UserResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension UserPresenceChangedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let userDTO = session.user(id: user.id) else { return nil }
 
         return try? UserPresenceChangedEvent(
@@ -53,18 +43,8 @@ public final class UserUpdatedEvent: Event {
     }
 }
 
-final class UserUpdatedEventDTO: EventDTO {
-    let user: UserResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension UserUpdatedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let userDTO = session.user(id: user.id) else { return nil }
 
         return try? UserUpdatedEvent(
@@ -102,32 +82,32 @@ public final class UserWatchingEvent: ChannelSpecificEvent {
     }
 }
 
-final class UserWatchingEventDTO: EventDTO {
-    let cid: ChannelId
-    let user: UserResponse
-    let createdAt: Date
-    let watcherCount: Int
-    let isStarted: Bool
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        watcherCount = try response.value(at: \.watcherCount)
-        isStarted = response.eventType == .userStartWatching
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension UserWatchingStartEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
 
         return try? UserWatchingEvent(
-            cid: cid,
+            cid: channelId,
             createdAt: createdAt,
             user: userDTO.asModel(),
             watcherCount: watcherCount,
-            isStarted: isStarted
+            isStarted: true
+        )
+    }
+}
+
+extension UserWatchingStopEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
+
+        return try? UserWatchingEvent(
+            cid: channelId,
+            createdAt: createdAt,
+            user: userDTO.asModel(),
+            watcherCount: watcherCount,
+            isStarted: false
         )
     }
 }
@@ -151,12 +131,10 @@ public final class UserGloballyBannedEvent: Event {
 final class UserGloballyBannedEventDTO: EventDTO {
     let user: UserResponse
     let createdAt: Date
-    let payload: EventPayload
 
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
+    init(from dto: UserBannedEventDTO) {
+        user = UserResponse(dto.user)
+        createdAt = dto.createdAt
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
@@ -203,38 +181,20 @@ public final class UserBannedEvent: ChannelSpecificEvent {
     }
 }
 
-final class UserBannedEventDTO: EventDTO {
-    let cid: ChannelId
-    let user: UserResponse
-    let ownerId: UserId
-    let createdAt: Date
-    let reason: String?
-    let expiredAt: Date?
-    let payload: EventPayload
-    let isShadowBan: Bool?
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        user = try response.value(at: \.user)
-        ownerId = try response.value(at: \.createdBy?.id)
-        createdAt = try response.value(at: \.createdAt)
-        reason = response.banReason
-        expiredAt = response.banExpiredAt
-        payload = response
-        isShadowBan = response.shadow
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension UserBannedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
+        guard let ownerId = createdBy?.id else { return nil }
 
         return try? UserBannedEvent(
-            cid: cid,
+            cid: channelId,
             user: userDTO.asModel(),
             ownerId: ownerId,
             createdAt: createdAt,
             reason: reason,
-            expiredAt: expiredAt,
-            isShadowBan: isShadowBan
+            expiredAt: expiration,
+            isShadowBan: shadow
         )
     }
 }
@@ -256,12 +216,10 @@ public final class UserGloballyUnbannedEvent: Event {
 final class UserGloballyUnbannedEventDTO: EventDTO {
     let user: UserResponse
     let createdAt: Date
-    let payload: EventPayload
 
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
+    init(from dto: UserUnbannedEventDTO) {
+        user = UserResponse(dto.user)
+        createdAt = dto.createdAt
     }
 
     func toDomainEvent(session: DatabaseSession) -> Event? {
@@ -292,24 +250,13 @@ public final class UserUnbannedEvent: ChannelSpecificEvent {
     }
 }
 
-final class UserUnbannedEventDTO: EventDTO {
-    let cid: ChannelId
-    let user: UserResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        cid = try response.value(at: \.cid)
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension UserUnbannedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
 
         return try? UserUnbannedEvent(
-            cid: cid,
+            cid: channelId,
             user: userDTO.asModel(),
             createdAt: createdAt
         )
@@ -334,30 +281,20 @@ public final class UserMessagesDeletedEvent: Event {
     }
 }
 
-final class UserMessagesDeletedEventDTO: EventDTO {
-    let user: UserResponse
-    let createdAt: Date
-    let payload: EventPayload
-
-    init(from response: EventPayload) throws {
-        user = try response.value(at: \.user)
-        createdAt = try response.value(at: \.createdAt)
-        payload = response
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
+extension UserMessagesDeletedEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         if let userDTO = session.user(id: user.id),
            let userModel = try? userDTO.asModel() {
             return UserMessagesDeletedEvent(
                 user: userModel,
-                hardDelete: payload.hardDelete,
+                hardDelete: hardDelete ?? false,
                 createdAt: createdAt
             )
         }
 
         return UserMessagesDeletedEvent(
-            user: user.asModel(),
-            hardDelete: payload.hardDelete,
+            user: UserResponse(user).asModel(),
+            hardDelete: hardDelete ?? false,
             createdAt: createdAt
         )
     }
