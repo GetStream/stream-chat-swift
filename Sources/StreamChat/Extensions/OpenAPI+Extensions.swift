@@ -2910,17 +2910,6 @@ extension Endpoint {
         )
     }
 
-    /// `sync` is excluded from the OpenAPI migration per product decision and stays manual.
-    static func missingEvents(since: Date, cids: [ChannelId]) -> Endpoint<MissingEventsPayload> {
-        .init(
-            path: .custom("sync"),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: SyncRequest(lastSyncedAt: since, cids: cids)
-        )
-    }
-
     /// WebSocket connect endpoint. The OpenAPI spec exposes `longPoll` for the
     /// long-polling fallback, but the actual WebSocket establishment uses
     /// `?json=<payload>` on `/connect` with a hand-shaped auth body.

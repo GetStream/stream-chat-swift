@@ -562,8 +562,8 @@ class SyncRepository_Tests: XCTestCase {
 }
 
 extension SyncRepository_Tests {
-    func messageEventPayload(cid: ChannelId = .unique, with dates: [Date]) -> MissingEventsPayload {
-        MissingEventsPayload(events: dates.map { date in
+    func messageEventPayload(cid: ChannelId = .unique, with dates: [Date]) -> SyncResponse {
+        SyncResponse(duration: "", events: dates.map { date in
             .typeMessageNewEvent(
                 MessageNewEventDTO(
                     cid: cid.rawValue,
@@ -600,7 +600,7 @@ extension SyncRepository_Tests {
         database.writeSessionCounter = 0
     }
 
-    func waitForSyncLocalStateRun(requestResult: Result<MissingEventsPayload, Error>? = nil) {
+    func waitForSyncLocalStateRun(requestResult: Result<SyncResponse, Error>? = nil) {
         database.writeSessionCounter = 0
         apiClient.clear()
 
@@ -611,7 +611,7 @@ extension SyncRepository_Tests {
 
         if let result = requestResult {
             apiClient.waitForRequest()
-            guard let callback = apiClient.request_completion as? (Result<MissingEventsPayload, Error>) -> Void else {
+            guard let callback = apiClient.request_completion as? (Result<SyncResponse, Error>) -> Void else {
                 XCTFail("A request for /sync should have been executed")
                 return
             }

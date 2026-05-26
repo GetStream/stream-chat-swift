@@ -285,13 +285,17 @@ class SyncRepository: @unchecked Sendable {
             return
         }
 
-        let endpoint: Endpoint<MissingEventsPayload> = .missingEvents(since: date, cids: channelIds)
-        let requestCompletion: @Sendable (Result<MissingEventsPayload, Error>) -> Void = { [weak self] result in
+        let endpoint: Endpoint<SyncResponse> = .sync(
+            syncRequest: SyncRequest(lastSyncedAt: date, cids: channelIds),
+            withInaccessibleCids: nil,
+            watch: nil
+        )
+        let requestCompletion: @Sendable (Result<SyncResponse, Error>) -> Void = { [weak self] result in
             switch result {
-            case let .success(payload):
-                log.info("Processing pending events. Count \(payload.events.count)", subsystems: .offlineSupport)
-                self?.processMissingEventsPayload(payload) { [weak self] in
-                    self?.updateLastSyncAt(with: payload.events.last?.createdAt ?? date, completion: { error in
+            case let .success(response):
+                log.info("Processing pending events. Count \(response.events.count)", subsystems: .offlineSupport)
+                self?.processMissingEventsResponse(response) { [weak self] in
+                    self?.updateLastSyncAt(with: response.events.last?.createdAt ?? date, completion: { error in
                         if let error = error {
                             completion(.failure(error))
                         } else {
@@ -340,8 +344,8 @@ class SyncRepository: @unchecked Sendable {
         }
     }
 
-    private func processMissingEventsPayload(_ payload: MissingEventsPayload, completion: @escaping @Sendable () -> Void) {
-        let events: [Event] = payload.events.compactMap { wsEvent in
+    private func processMissingEventsResponse(_ response: SyncResponse, completion: @escaping @Sendable () -> Void) {
+        let events: [Event] = response.events.compactMap { wsEvent in
             do {
                 let event = try wsEvent.makeEvent()
                 storeWSEvent(wsEvent, on: event as AnyObject)
@@ -352,7 +356,7 @@ class SyncRepository: @unchecked Sendable {
         }
         eventNotificationCenter.process(events, postNotifications: false) {
             log.info(
-                "Successfully processed pending events. Count \(payload.events.count)",
+                "Successfully processed pending events. Count \(response.events.count)",
                 subsystems: .offlineSupport
             )
             completion()
