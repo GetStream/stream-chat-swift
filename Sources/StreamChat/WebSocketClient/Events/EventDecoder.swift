@@ -34,9 +34,7 @@ struct EventDecoder {
         }
         switch wsDecodeResult {
         case .success(let wsEvent):
-            let event = try wsEvent.makeEvent()
-            storeWSEvent(wsEvent, on: event as AnyObject)
-            return event
+            return try decode(from: wsEvent)
         case .failure(let decodeError):
             // If the `type` is one the OpenAPI WSEvent enum knows about,
             // surface a decoding error so callers can distinguish a malformed
@@ -52,6 +50,12 @@ struct EventDecoder {
         } else {
             return try decoder.decode(UnknownUserEvent.self, from: data)
         }
+    }
+
+    func decode(from wsEvent: WSEvent) throws -> Event {
+        let event = try makeEvent(from: wsEvent)
+        storeWSEvent(wsEvent, on: event as AnyObject)
+        return event
     }
 
     /// Injects default values for fields the legacy `EventPayload` decoder used
@@ -163,6 +167,34 @@ struct EventDecoder {
                 "notifications_muted": false,
                 "custom": [:]
             ]
+        }
+    }
+
+    /// Returns the domain event for this WSEvent case. Most cases just unwrap the
+    /// inner *EventDTO via `rawValue`; a handful of cases are special-cased so
+    /// production code keeps receiving the hand-written event class it expects.
+    private func makeEvent(from wsEvent: WSEvent) throws -> Event {
+        switch wsEvent {
+        case .typeHealthCheckEvent(let dto):
+            return HealthCheckEvent(connectionId: dto.connectionId)
+        case .typeChannelCreatedEvent:
+            // The SDK explicitly ignores channel.created events (it relies on
+            // notification.added_to_channel etc. instead).
+            throw ClientError.IgnoredEventType()
+        case .typeUserBannedEvent(let dto) where dto.cid == nil:
+            // Global ban (no cid) -> hand-written UserGloballyBannedEventDTO.
+            return UserGloballyBannedEventDTO(from: dto)
+        case .typeUserUnbannedEvent(let dto) where dto.cid == nil:
+            return UserGloballyUnbannedEventDTO(from: dto)
+        case .typeNotificationMarkReadEvent(let dto) where dto.channel == nil:
+            // No channel -> mark all read across all the user's channels.
+            // Falls back to the channel-scoped DTO if user is missing.
+            if let event = NotificationMarkAllReadEventDTO(from: dto) {
+                return event
+            }
+            return wsEvent.rawValue
+        default:
+            return wsEvent.rawValue
         }
     }
 

@@ -20,45 +20,6 @@ func wsEvent(of object: AnyObject) -> WSEvent? {
     objc_getAssociatedObject(object, &wsEventKey) as? WSEvent
 }
 
-extension WSEvent {
-    /// The creation timestamp of the inner *EventDTO. Every OpenAPI event carries
-    /// a `createdAt: Date`, retrieved here via Mirror to avoid a 76-case switch.
-    var createdAt: Date? {
-        Mirror(reflecting: rawValue)
-            .children
-            .first(where: { $0.label == "createdAt" })?
-            .value as? Date
-    }
-
-    /// Returns the domain event for this WSEvent case. Most cases just unwrap the
-    /// inner *EventDTO via `rawValue`; a handful of cases are special-cased so
-    /// production code keeps receiving the hand-written event class it expects.
-    func makeEvent() throws -> Event {
-        switch self {
-        case .typeHealthCheckEvent(let dto):
-            return HealthCheckEvent(connectionId: dto.connectionId)
-        case .typeChannelCreatedEvent:
-            // The SDK explicitly ignores channel.created events (it relies on
-            // notification.added_to_channel etc. instead).
-            throw ClientError.IgnoredEventType()
-        case .typeUserBannedEvent(let dto) where dto.cid == nil:
-            // Global ban (no cid) → hand-written UserGloballyBannedEventDTO.
-            return UserGloballyBannedEventDTO(from: dto)
-        case .typeUserUnbannedEvent(let dto) where dto.cid == nil:
-            return UserGloballyUnbannedEventDTO(from: dto)
-        case .typeNotificationMarkReadEvent(let dto) where dto.channel == nil:
-            // No channel → mark all read across all the user's channels.
-            // Falls back to the channel-scoped DTO if user is missing.
-            if let event = NotificationMarkAllReadEventDTO(from: dto) {
-                return event
-            }
-            return rawValue
-        default:
-            return rawValue
-        }
-    }
-}
-
 extension UserResponseCommonFields {
     convenience init(_ user: UserResponse) {
         self.init(

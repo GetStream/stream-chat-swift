@@ -179,10 +179,12 @@ class SyncRepository_Tests: XCTestCase {
         repository.startTrackingChat(chat)
 
         let eventDate = Date.unique
+        let syncStartedAt = Date()
         waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(cid: cid, with: [eventDate])))
 
-        // Should use first event's created at date
-        XCTAssertEqual(lastSyncAtValue, eventDate)
+        let lastSyncAt = try XCTUnwrap(lastSyncAtValue)
+        XCTAssertGreaterThanOrEqual(lastSyncAt, syncStartedAt)
+        XCTAssertLessThanOrEqual(lastSyncAt, Date())
         // Write: API Response, lastSyncAt
         XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(repository.activeChannelControllers.count, 1)
@@ -210,10 +212,12 @@ class SyncRepository_Tests: XCTestCase {
         chatListController.refreshLoadedChannelsResult = .success(Set())
 
         let eventDate = Date.unique
+        let syncStartedAt = Date()
         waitForSyncLocalStateRun(requestResult: .success(messageEventPayload(cid: cid, with: [eventDate])))
 
-        // Should use first event's created at date
-        XCTAssertEqual(lastSyncAtValue, eventDate)
+        let lastSyncAt = try XCTUnwrap(lastSyncAtValue)
+        XCTAssertGreaterThanOrEqual(lastSyncAt, syncStartedAt)
+        XCTAssertLessThanOrEqual(lastSyncAt, Date())
         // Write: API Response, lastSyncAt
         XCTAssertEqual(database.writeSessionCounter, 2)
         XCTAssertEqual(repository.activeChannelControllers.count, 0)
@@ -243,15 +247,21 @@ class SyncRepository_Tests: XCTestCase {
         let firstDate = lastSyncDate.addingTimeInterval(1)
         let secondDate = lastSyncDate.addingTimeInterval(2)
         let eventsPayload1 = messageEventPayload(cid: cid, with: [firstDate, secondDate])
+        let firstSyncStartedAt = Date()
         waitForSyncLocalStateRun(requestResult: .success(eventsPayload1))
 
-        XCTAssertNearlySameDate(lastSyncAtValue, secondDate)
+        let firstSyncAt = try XCTUnwrap(lastSyncAtValue)
+        XCTAssertGreaterThanOrEqual(firstSyncAt, firstSyncStartedAt)
+        XCTAssertLessThanOrEqual(firstSyncAt, Date())
 
         let thirdDate = secondDate.addingTimeInterval(1)
         let eventsPayload2 = messageEventPayload(cid: cid, with: [thirdDate])
+        let secondSyncStartedAt = Date()
         waitForSyncLocalStateRun(requestResult: .success(eventsPayload2))
 
-        XCTAssertNearlySameDate(lastSyncAtValue, thirdDate)
+        let secondSyncAt = try XCTUnwrap(lastSyncAtValue)
+        XCTAssertGreaterThanOrEqual(secondSyncAt, secondSyncStartedAt)
+        XCTAssertLessThanOrEqual(secondSyncAt, Date())
         
         repository.stopTrackingChannelController(channelController)
     }

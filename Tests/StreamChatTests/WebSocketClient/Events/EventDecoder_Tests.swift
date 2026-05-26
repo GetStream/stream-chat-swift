@@ -46,6 +46,27 @@ final class EventDecoder_Tests: XCTestCase {
         }
     }
 
+    func test_decode_whenWSEventComes_returnsEventWithStoredWSEvent() throws {
+        let cid = ChannelId.unique
+        let messageId = MessageId.unique
+        let sourceEvent = WSEvent.typeMessageNewEvent(
+            MessageNewEventDTO(
+                cid: cid.rawValue,
+                createdAt: .unique,
+                custom: [:],
+                message: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [], channel: .dummy(cid: cid)),
+                messageId: messageId,
+                user: UserResponseCommonFields(.dummy(userId: "")),
+                watcherCount: 0
+            )
+        )
+
+        let event = try eventDecoder.decode(from: sourceEvent)
+
+        XCTAssertTrue(event is MessageNewEventDTO)
+        XCTAssertEqual(wsEvent(of: event as AnyObject), sourceEvent)
+    }
+
     // MARK: Custom events
 
     func test_decode_whenValidCustomEventPayloadComes_returnsUnknownChannelEvent() throws {

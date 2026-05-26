@@ -295,7 +295,7 @@ class SyncRepository: @unchecked Sendable {
             case let .success(response):
                 log.info("Processing pending events. Count \(response.events.count)", subsystems: .offlineSupport)
                 self?.processMissingEventsResponse(response) { [weak self] in
-                    self?.updateLastSyncAt(with: response.events.last?.createdAt ?? date, completion: { error in
+                    self?.updateLastSyncAt(with: Date(), completion: { error in
                         if let error = error {
                             completion(.failure(error))
                         } else {
@@ -345,11 +345,10 @@ class SyncRepository: @unchecked Sendable {
     }
 
     private func processMissingEventsResponse(_ response: SyncResponse, completion: @escaping @Sendable () -> Void) {
+        let eventDecoder = EventDecoder()
         let events: [Event] = response.events.compactMap { wsEvent in
             do {
-                let event = try wsEvent.makeEvent()
-                storeWSEvent(wsEvent, on: event as AnyObject)
-                return event
+                return try eventDecoder.decode(from: wsEvent)
             } catch {
                 return nil
             }
