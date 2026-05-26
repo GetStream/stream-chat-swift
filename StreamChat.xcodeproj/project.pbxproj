@@ -5419,8 +5419,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/GetStream/stream-core-swift";
 			requirement = {
-				branch = "fix/reconnection-data-race";
-				kind = branch;
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.6.4;
 			};
 		};
 		A3BD4869281FD4500090D511 /* XCRemoteSwiftPackageReference "OHHTTPStubs" */ = {
