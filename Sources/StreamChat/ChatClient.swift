@@ -687,13 +687,8 @@ public class ChatClient: @unchecked Sendable {
     ///   - presence: When `true`, includes presence info (user online state) in the response and
     ///     streams presence updates over the WebSocket for the returned channels' members. Requires
     ///     an active WebSocket connection.
-    ///   - watch: When `true`, starts server-side watching for every returned channel. Watching does
-    ///     **not** gate ordinary channel / member events — those arrive for channels the user is a
-    ///     member of either way. What it enables is the watcher-scoped event stream, most notably
-    ///     typing indicators (`typing.start` / `typing.stop`). Requires an active WebSocket
-    ///     connection. Pass `watch: true` if any UI on top of the groups needs typing indicators;
-    ///     otherwise keep it `false` for performance reasons (less server-side watcher state and
-    ///     fewer events streamed to the client).
+    ///   - watch: When `true`, subscribes to all WebSocket events for the returned channels.
+    ///     Requires an active WebSocket connection.
     ///
     /// - Returns: The ``ChannelGroup`` values returned by the backend. Each carries the group's
     ///   name, its channel ids in the order returned by the backend, and the unread channel count.
@@ -702,7 +697,7 @@ public class ChatClient: @unchecked Sendable {
         groups: [String],
         limit: Int? = nil,
         presence: Bool = false,
-        watch: Bool = false
+        watch: Bool = true
     ) async throws -> [ChannelGroup] {
         let groupRequests: [String: GroupedQueryChannelsRequestGroup]? = groups.isEmpty ? nil : groups.reduce(into: [:]) { result, key in
             result[key] = GroupedQueryChannelsRequestGroup(limit: limit, next: nil)
