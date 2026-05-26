@@ -112,7 +112,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         // Assert the data is stored in the DB
         var queryDTO: ChannelListQueryDTO? {
-            database.viewContext.channelListQuery(filterHash: query.filter.filterHash)
+            database.viewContext.channelListQuery(query: query)
         }
         AssertAsync {
             Assert.willBeTrue(queryDTO != nil)
@@ -134,7 +134,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         var channelsFromQuery: [ChatChannel] {
             database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
+                query: query
             )?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
@@ -170,7 +170,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         var channelsFromQuery: [ChatChannel] {
             database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
+                query: query
             )?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
@@ -206,7 +206,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         var channelsFromQuery: [ChatChannel] {
             database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
+                query: query
             )?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
@@ -410,7 +410,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         var channelsInQuery: [ChatChannel] {
             database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
+                query: query
             )?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
@@ -432,7 +432,7 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
         var channelsInQuery: [ChatChannel] {
             database.viewContext.channelListQuery(
-                filterHash: query.filter.filterHash
+                query: query
             )?.channels.compactMap { try? $0.asModel() } ?? []
         }
 
@@ -449,7 +449,59 @@ final class ChannelListUpdater_Tests: XCTestCase {
 
     private func channels(for query: ChannelListQuery, database: DatabaseContainer) -> Set<ChannelDTO> {
         let request = NSFetchRequest<ChannelListQueryDTO>(entityName: ChannelListQueryDTO.entityName)
-        request.predicate = NSPredicate(format: "filterHash == %@", query.filter.filterHash)
+        request.predicate = NSPredicate(format: "filterHash == %@", query.queryHash)
         return (try? database.viewContext.fetch(request).first)?.channels ?? Set()
+    }
+
+    // MARK: - Update Predefined Filter
+
+    func test_update_predefinedFilterPayload_returnsQueryWithDecodedFilterAndSort() throws {
+        let query = ChannelListQuery(
+            predefinedFilter: "user_per_channel_type_channels",
+            filterValues: ["user_id": "r2-d2"]
+        )
+        let payload = PredefinedFilterPayload(
+            name: "user_per_channel_type_channels",
+            filter: ["type": .string("messaging")],
+            sort: [["field": .string("last_message_at"), "direction": .number(-1)]]
+        )
+        let response = ChannelListPayload(
+            channels: [],
+            predefinedFilter: payload
+        )
+        let expectation = expectation(description: "update completes")
+        nonisolated(unsafe) var captured: Result<ChannelListUpdateResult, Error>?
+
+        listUpdater.update(channelListQuery: query) { result in
+            captured = result
+            expectation.fulfill()
+        }
+        apiClient.test_simulateResponse(.success(response))
+        wait(for: [expectation], timeout: defaultTimeout)
+
+        let result = try XCTUnwrap(captured).get()
+        let updated = try XCTUnwrap(result.updatedQuery)
+        XCTAssertEqual(updated.filter.key, "type")
+        XCTAssertEqual(updated.filter.value as? String, "messaging")
+        XCTAssertEqual(updated.sort.count, 1)
+        XCTAssertEqual(updated.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
+        XCTAssertEqual(updated.sort.first?.direction, -1)
+    }
+
+    func test_update_whenResolvedQueryDoesNotChange_returnsNilQuery() throws {
+        let query = ChannelListQuery(filter: .in(.members, values: [.unique]))
+        let response = ChannelListPayload(channels: [])
+        let expectation = expectation(description: "update completes")
+        nonisolated(unsafe) var captured: Result<ChannelListUpdateResult, Error>?
+
+        listUpdater.update(channelListQuery: query) { result in
+            captured = result
+            expectation.fulfill()
+        }
+        apiClient.test_simulateResponse(.success(response))
+        wait(for: [expectation], timeout: defaultTimeout)
+
+        let result = try XCTUnwrap(captured).get()
+        XCTAssertNil(result.updatedQuery)
     }
 }

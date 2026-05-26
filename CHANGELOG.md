@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add `ChannelListQuery(predefinedFilter:filterValues:sortValues:)` for creating channel list queries with predefined filters
+
 ### 🔄 Changed
 
 # [5.2.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.2.0)

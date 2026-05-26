@@ -58,6 +58,10 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.saveChannelList(payload: payload, query: query)
     }
 
+    func loadPredefinedFilter(for query: ChannelListQuery) -> ChannelListQuery? {
+        underlyingSession.loadPredefinedFilter(for: query)
+    }
+
     func saveQuery(query: ReactionListQuery) throws -> ReactionListQueryDTO? {
         try underlyingSession.saveQuery(query: query)
     }
@@ -375,12 +379,12 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.loadChannelReads(for: userId)
     }
 
-    func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
-        underlyingSession.saveQuery(query: query)
+    func saveQuery(query: ChannelListQuery, predefinedFilter: PredefinedFilterPayload?) -> ChannelListQueryDTO {
+        underlyingSession.saveQuery(query: query, predefinedFilter: predefinedFilter)
     }
 
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO? {
-        underlyingSession.channelListQuery(filterHash: filterHash)
+    func channelListQuery(query: ChannelListQuery) -> ChannelListQueryDTO? {
+        underlyingSession.channelListQuery(query: query)
     }
 
     func loadAllChannelListQueries() -> [ChannelListQueryDTO] {

@@ -7,21 +7,45 @@ import Foundation
 struct ChannelListPayload {
     /// A list of channels response (see `ChannelQuery`).
     let channels: [ChannelPayload]
+
+    /// Server-resolved predefined filter, present only when the query was made with a predefined filter.
+    let predefinedFilter: PredefinedFilterPayload?
+
+    init(channels: [ChannelPayload], predefinedFilter: PredefinedFilterPayload? = nil) {
+        self.channels = channels
+        self.predefinedFilter = predefinedFilter
+    }
 }
 
 extension ChannelListPayload: Decodable {
     enum CodingKeys: String, CodingKey {
         case channels
+        case predefinedFilter = "predefined_filter"
     }
 
     init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let channels = try container
             .decodeArrayIgnoringFailures([ChannelPayload].self, forKey: .channels)
+        let predefinedFilter = try container
+            .decodeIfPresent(PredefinedFilterPayload.self, forKey: .predefinedFilter)
 
         self.init(
-            channels: channels
+            channels: channels,
+            predefinedFilter: predefinedFilter
         )
+    }
+}
+
+final class PredefinedFilterPayload: Decodable, Sendable {
+    let name: String
+    let filter: [String: RawJSON]
+    let sort: [[String: RawJSON]]
+
+    init(name: String, filter: [String: RawJSON], sort: [[String: RawJSON]]) {
+        self.name = name
+        self.filter = filter
+        self.sort = sort
     }
 }
 

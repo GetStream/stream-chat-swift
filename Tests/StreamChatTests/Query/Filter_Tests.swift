@@ -115,4 +115,41 @@ final class Filter_Tests: XCTestCase {
             XCTAssertEqual(filter, decoded)
         }
     }
+
+    // MARK: - Implicit `$eq` decoding
+
+    func test_filterDecoding_implicitEqual_string() throws {
+        let filter: Filter<FilterTestScope> = try #"{"name":"general"}"#.deserializeFilterThrows()
+        XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
+        XCTAssertEqual(filter.key, "name")
+        XCTAssertEqual(filter.value as? String, "general")
+    }
+
+    func test_filterDecoding_implicitEqual_bool() throws {
+        let filter: Filter<FilterTestScope> = try #"{"frozen":true}"#.deserializeFilterThrows()
+        XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
+        XCTAssertEqual(filter.key, "frozen")
+        XCTAssertEqual(filter.value as? Bool, true)
+    }
+
+    func test_filterDecoding_implicitEqual_int() throws {
+        let filter: Filter<FilterTestScope> = try #"{"member_count":5}"#.deserializeFilterThrows()
+        XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
+        XCTAssertEqual(filter.key, "member_count")
+        XCTAssertEqual(filter.value as? Int, 5)
+    }
+
+    func test_filterDecoding_implicitEqual_array() throws {
+        let filter: Filter<FilterTestScope> = try #"{"members":["r2-d2","c-3po"]}"#.deserializeFilterThrows()
+        XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
+        XCTAssertEqual(filter.key, "members")
+        XCTAssertEqual(filter.value as? [String], ["r2-d2", "c-3po"])
+    }
+
+    func test_filterDecoding_longFormStillWorks() throws {
+        let filter: Filter<FilterTestScope> = try #"{"name":{"$eq":"general"}}"#.deserializeFilterThrows()
+        XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
+        XCTAssertEqual(filter.key, "name")
+        XCTAssertEqual(filter.value as? String, "general")
+    }
 }

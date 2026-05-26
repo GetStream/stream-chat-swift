@@ -47,11 +47,18 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
 
     override func update(
         channelListQuery: ChannelListQuery,
-        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
+        completion: (@Sendable (Result<ChannelListUpdateResult, Error>) -> Void)? = nil
     ) {
         _update_queries.mutate { $0.append(channelListQuery) }
-        update_completion = completion
-        update_completion_result?.invoke(with: completion)
+        let resolvedQuery = loadPredefinedFilter(for: channelListQuery)
+        update_completion = { result in
+            let changedQuery: ChannelListQuery? = {
+                guard let resolvedQuery, !resolvedQuery.isFilterEqual(to: channelListQuery) else { return nil }
+                return resolvedQuery
+            }()
+            completion?(result.map { ChannelListUpdateResult(channels: $0, updatedQuery: changedQuery) })
+        }
+        update_completion_result?.invoke(with: update_completion)
     }
 
     override func markAllRead(completion: ((Error?) -> Void)? = nil) {

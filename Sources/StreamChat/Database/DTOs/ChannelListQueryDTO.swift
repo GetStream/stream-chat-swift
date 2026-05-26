@@ -12,14 +12,17 @@ class ChannelListQueryDTO: NSManagedObject {
     /// Serialized `Filter` JSON which can be used in cases the query needs to be repeated, i.e. for newly created channels.
     @NSManaged var filterJSONData: Data
 
+    /// Serialized sort JSON returned by the server for predefined-filter queries.
+    @NSManaged var sortJSONData: Data?
+
     // MARK: - Relationships
 
     @NSManaged var channels: Set<ChannelDTO>
 
-    static func load(filterHash: String, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
+    static func load(query: ChannelListQuery, context: NSManagedObjectContext) -> ChannelListQueryDTO? {
         load(
             keyPath: #keyPath(ChannelListQueryDTO.filterHash),
-            equalTo: filterHash,
+            equalTo: query.queryHash,
             context: context
         ).first as? Self
     }
@@ -35,33 +38,69 @@ class ChannelListQueryDTO: NSManagedObject {
 }
 
 extension NSManagedObjectContext {
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO? {
-        ChannelListQueryDTO.load(filterHash: filterHash, context: self)
+    func channelListQuery(query: ChannelListQuery) -> ChannelListQueryDTO? {
+        ChannelListQueryDTO.load(query: query, context: self)
     }
 
-    func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
-        if let existingDTO = channelListQuery(filterHash: query.filter.filterHash) {
-            return existingDTO
+    /// Returns the query with persisted predefined filter/sort applied.
+    /// `nil` when the input has no `predefinedFilter` or no cached DTO exists.
+    /// Callers compare `filter`/`sort` against the input (see `ChannelListQuery.isFilterEqual(to:)`)
+    /// to detect whether the cached resolution actually differs from the current query.
+    func loadPredefinedFilter(for query: ChannelListQuery) -> ChannelListQuery? {
+        guard let predefinedFilter = query.predefinedFilter, !predefinedFilter.isEmpty,
+              let dto = channelListQuery(query: query) else {
+            return nil
         }
 
-        let request = ChannelListQueryDTO.fetchRequest(
-            keyPath: #keyPath(ChannelListQueryDTO.filterHash),
-            equalTo: query.filter.filterHash
-        )
-        let newDTO = NSEntityDescription.insertNewObject(into: self, for: request)
-        newDTO.filterHash = query.filter.filterHash
+        var updated = query
+        if !dto.filterJSONData.isEmpty,
+           let filter = try? Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: dto.filterJSONData) {
+            updated.filter = filter
+        }
+        if let sortJSONData = dto.sortJSONData,
+           let sort = try? [Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: sortJSONData) {
+            updated.sort = sort
+        }
+        return updated
+    }
 
-        let jsonData: Data
-        do {
-            jsonData = try JSONEncoder.default.encode(query.filter)
-        } catch {
-            log.error("Failed encoding query Filter data with error: \(error).")
-            jsonData = Data()
+    func saveQuery(query: ChannelListQuery, predefinedFilter: PredefinedFilterPayload? = nil) -> ChannelListQueryDTO {
+        let dto: ChannelListQueryDTO
+        if let existingDTO = channelListQuery(query: query) {
+            dto = existingDTO
+        } else {
+            let request = ChannelListQueryDTO.fetchRequest(
+                keyPath: #keyPath(ChannelListQueryDTO.filterHash),
+                equalTo: query.queryHash
+            )
+            let newDTO = NSEntityDescription.insertNewObject(into: self, for: request)
+            newDTO.filterHash = query.queryHash
+
+            let jsonData: Data
+            do {
+                jsonData = try JSONEncoder.default.encode(query.filter)
+            } catch {
+                log.error("Failed encoding query Filter data with error: \(error).")
+                jsonData = Data()
+            }
+            newDTO.filterJSONData = jsonData
+            dto = newDTO
         }
 
-        newDTO.filterJSONData = jsonData
+        if let predefinedFilter {
+            do {
+                dto.filterJSONData = try JSONEncoder.default.encode(predefinedFilter.filter)
+            } catch {
+                log.error("Failed encoding predefined filter from response with error: \(error).")
+            }
+            do {
+                dto.sortJSONData = try JSONEncoder.default.encode(predefinedFilter.sort)
+            } catch {
+                log.error("Failed encoding predefined sort from response with error: \(error).")
+            }
+        }
 
-        return newDTO
+        return dto
     }
 
     func loadAllChannelListQueries() -> [ChannelListQueryDTO] {
