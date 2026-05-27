@@ -8,13 +8,7 @@ import Foundation
 ///
 /// To observe and read the channels that belong to a group, create a
 /// ``ChannelList`` with ``ChatClient/makeChannelList(with:)-(String)`` and read
-/// ``ChannelListState/channels`` from its ``ChannelList/state``:
-///
-/// ```swift
-/// let channelList = client.makeChannelList(with: group.groupKey)
-/// try await channelList.get()
-/// let channels = await channelList.state.channels
-/// ```
+/// ``ChannelListState/channels`` from its ``ChannelList/state``.
 public struct ChannelGroup: Sendable {
     /// The group key as returned by the backend (e.g. `"all"`, `"new"`, `"old"`, `"current"`).
     public let groupKey: String

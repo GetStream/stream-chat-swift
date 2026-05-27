@@ -651,47 +651,19 @@ public class ChatClient: @unchecked Sendable {
     
     // MARK: - Grouped Channels
 
-    /// Fetches a batched set of channel groups (e.g. `"all"`, `"new"`, `"old"`, `"current"`) for
-    /// the current user in a single request.
+    /// Fetches the first page of channels for the requested groups in a single request.
     ///
-    /// Channel groups are server-side buckets — configured per-app — that classify channels by some
-    /// criterion. The group a channel belongs to is carried in `extraData["group"]`. One call to
-    /// this method returns the first page of channels for every requested group, which is
-    /// significantly more efficient than calling ``ChannelList/get()`` per group.
-    ///
-    /// The response for a fetch-all call always includes the special ``GroupedChannelKey/all`` group,
-    /// which aggregates channels from every other group — useful for an "everything" tab.
-    ///
-    /// ### Pairing with `ChannelList`
-    ///
-    /// Build a ``ChannelList`` per group via ``ChatClient/makeChannelList(with:)-(String)`` to
-    /// observe the group's channels and paginate further. The factory also registers each list with
-    /// the sync repository, so calling ``ChannelList/get()`` afterwards is only needed when forcing
-    /// a fresh first-page fetch for a single group.
-    ///
-    /// ```swift
-    /// // Fetch only a subset of groups.
-    /// let subset = try await client.queryGroupedChannels(groups: ["new", "current"], limit: 5)
-    /// for group in subset {
-    ///     let list = client.makeChannelList(with: group.groupKey)
-    ///     // Observe `list.state.channels`; call `list.loadMoreChannels()` for additional pages.
-    /// }
-    /// ```
+    /// To observe and paginate a group's channels, create a ``ChannelList`` for its
+    /// ``ChannelGroup/groupKey`` via ``ChatClient/makeChannelList(with:)-(String)`` and read
+    /// ``ChannelListState/channels``.
     ///
     /// - Parameters:
-    ///   - groups: The group keys to fetch. An empty array fetches every configured group
-    ///     (response includes the synthetic `"all"` aggregate). A non-empty array fetches only
-    ///     those groups; the response will not include the synthetic `"all"` aggregate.
-    ///   - limit: The number of channels to return **per group** on the first page. `nil` uses the
-    ///     backend default.
-    ///   - presence: When `true`, includes presence info (user online state) in the response and
-    ///     streams presence updates over the WebSocket for the returned channels' members. Requires
-    ///     an active WebSocket connection.
-    ///   - watch: When `true`, subscribes to all WebSocket events for the returned channels.
-    ///     Requires an active WebSocket connection.
+    ///   - groups: The group keys to fetch.
+    ///   - limit: The number of channels to return per group. `nil` uses the backend default.
+    ///   - presence: When `true`, includes presence info and streams presence updates over the WebSocket.
+    ///   - watch: When `true`, subscribes to WebSocket events for the returned channels.
     ///
-    /// - Returns: The ``ChannelGroup`` values returned by the backend. Each carries the group's
-    ///   name, its channel ids in the order returned by the backend, and the unread channel count.
+    /// - Returns: The fetched ``ChannelGroup`` values.
     /// - Throws: An error while communicating with the Stream API.
     @discardableResult public func queryGroupedChannels(
         groups: [String],

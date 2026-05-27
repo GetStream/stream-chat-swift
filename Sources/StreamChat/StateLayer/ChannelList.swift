@@ -42,21 +42,9 @@ public class ChannelList: @unchecked Sendable {
     /// An observable object representing the current state of the channel list.
     @MainActor public var state: ChannelListState { stateBuilder.state }
     
-    /// Fetches the first page of channels from the server and registers the list for reconnect sync.
+    /// Fetches the most recent state from the server and updates the local store.
     ///
-    /// - For filter-based lists, ``ChannelListState/channels`` is reset to the first page returned
-    ///   by the channels endpoint.
-    /// - For group-based lists (created via ``ChatClient/makeChannelList(with:)-(String)``), the
-    ///   first page is fetched from the grouped endpoint with no cursor; the request inherits the
-    ///   `watch` / `presence` flags persisted by the most recent
-    ///   ``ChatClient/queryGroupedChannels(groups:limit:presence:watch:)`` call for the group.
-    ///
-    /// Subsequent pages are loaded via ``loadMoreChannels(limit:)``.
-    ///
-    /// - Important: For group-based lists, prefer `get()` only when fetching the first page for a *single* group
-    /// in isolation. When the app needs first pages for multiple groups, call
-    /// ``ChatClient/queryGroupedChannels(groups:limit:presence:watch:)`` instead — it returns every group
-    /// in one request, which is significantly more efficient than calling `get()` per `ChannelList`.
+    /// - Important: Loaded channels in ``ChannelListState/channels`` are reset.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
@@ -69,9 +57,7 @@ public class ChannelList: @unchecked Sendable {
 
     /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.
     ///
-    /// - Important: For filter-based lists, loaded channels are reset when the pagination offset is 0 and
-    /// the cursor is nil. For group-based lists, only ``Pagination/cursor`` is used — the offset is ignored —
-    /// and the grouped endpoint controls the page contents.
+    /// - Important: If the pagination offset is 0 and cursor is nil, then loaded channels are reset.
     ///
     /// - Parameter pagination: The pagination configuration which includes a limit and a cursor or an offset.
     ///
@@ -103,8 +89,7 @@ public class ChannelList: @unchecked Sendable {
 
     /// Loads more channels and updates ``ChannelListState/channels``.
     ///
-    /// - Parameter limit: The limit for the page size. For filter-based lists the default is ``Int/channelsPageSize`` (20);
-    /// for group-based lists, the backend chooses the default and `limit` is forwarded only when provided.
+    /// - Parameter limit: The limit for the page size. The default limit is 20.
     ///
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.

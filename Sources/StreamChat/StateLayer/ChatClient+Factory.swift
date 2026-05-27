@@ -62,7 +62,7 @@ extension ChatClient {
             dynamicFilter: nil,
             client: self
         )
-        // Start tracking immediately, because the first page is meant to be fetches with queryGroupedChannels
+        // Start tracking immediately, because the first page is meant to be fetched with queryGroupedChannels
         syncRepository.startTrackingChannelList(channelList)
         return channelList
     }
