@@ -78,6 +78,23 @@ extension ChannelListSortingKey {
 }
 
 extension ChannelListSortingKey {
+    /// Registry of every hardcoded channel-list sorting key, keyed by the server-side `remoteKey`.
+    ///
+    /// - Important: Always add new sorting keys to the map.
+    static let predefinedSortingKeyMapping: [String: Self] = Dictionary(
+        uniqueKeysWithValues: [
+            .cid,
+            .createdAt,
+            .default,
+            .hasUnread,
+            .lastMessageAt,
+            .memberCount,
+            .pinnedAt,
+            .unreadCount,
+            .updatedAt
+        ].map { ($0.remoteKey, $0) }
+    )
+
     static var defaultSortDescriptor: NSSortDescriptor {
         let dateKeyPath: KeyPath<ChannelDTO, DBDate> = \ChannelDTO.defaultSortingAt
         return .init(keyPath: dateKeyPath, ascending: false)

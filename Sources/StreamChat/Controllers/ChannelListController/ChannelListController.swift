@@ -35,7 +35,7 @@ extension ChatClient {
 /// - Note: For an async-await alternative of the `ChatChannelListController`, please check ``ChannelList`` in the async-await supported [state layer](https://getstream.io/chat/docs/sdk/ios/client/state-layer/state-layer-overview/).
 public class ChatChannelListController: DataController, DelegateCallable, DataStoreProvider, @unchecked Sendable {
     /// The query specifying and filtering the list of channels.
-    public let query: ChannelListQuery
+    public internal(set) var query: ChannelListQuery
 
     /// The `ChatClient` instance this controller belongs to.
     public let client: ChatClient
@@ -82,8 +82,15 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     private(set) lazy var channelListObserver: BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> = {
+        if let updated = worker.loadPredefinedFilter(for: query) {
+            query = updated
+        }
+        return makeChannelListObserver()
+    }()
+
+    private func makeChannelListObserver() -> BackgroundListDatabaseObserver<ChatChannel, ChannelDTO> {
         let request = ChannelDTO.channelListFetchRequest(query: self.query, chatClientConfig: client.config)
-        let observer = self.environment.createChannelListDatabaseObserver(
+        let observer = environment.createChannelListDatabaseObserver(
             client.databaseContainer,
             request,
             { try $0.asModel() },
@@ -101,7 +108,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             }
         }
         return observer
-    }()
+    }
 
     var _basePublishers: Any?
     /// An internal backing object for all publicly available Combine publishers. We use it to simplify the way we expose
@@ -146,14 +153,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         startChannelListObserverIfNeeded()
         channelListLinker.start(with: client.eventNotificationCenter)
         client.syncRepository.startTrackingChannelListController(self)
-        updateChannelList { [weak self] error in
-            guard let completion else { return }
-            self?.callback {
-                completion(error)
-            }
+        updateChannelList { result in
+            completion?(result.error)
         }
     }
-
+    
     // MARK: - Actions
 
     /// Loads next channels from backend.
@@ -179,9 +183,13 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         updatedQuery.pagination = Pagination(pageSize: limit, offset: channels.count)
         worker.update(channelListQuery: updatedQuery) { result in
             switch result {
-            case let .success(channels):
-                self.markChannelsAsDeliveredIfNeeded(channels: channels)
-                self.hasLoadedAllPreviousChannels = channels.count < limit
+            case let .success(updateResult):
+                self.markChannelsAsDeliveredIfNeeded(channels: updateResult.channels)
+                self.hasLoadedAllPreviousChannels = updateResult.channels.count < limit
+                if let updatedQuery = updateResult.updatedQuery {
+                    self.query = updatedQuery
+                    self.updateChannelListObserver()
+                }
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }
@@ -199,28 +207,34 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     // MARK: - Helpers
 
     private func updateChannelList(
-        _ completion: (@MainActor (_ error: Error?) -> Void)? = nil
+        _ completion: (@MainActor (Result<ChannelListUpdateResult, Error>) -> Void)? = nil
     ) {
         let limit = query.pagination.pageSize
         worker.update(
             channelListQuery: query
         ) { [weak self] result in
             switch result {
-            case let .success(channels):
+            case let .success(updateResult):
                 self?.state = .remoteDataFetched
-                self?.hasLoadedAllPreviousChannels = channels.count < limit
-                
+                self?.hasLoadedAllPreviousChannels = updateResult.channels.count < limit
+
                 // Mark channels as delivered if synchronization was successful
-                self?.markChannelsAsDeliveredIfNeeded(channels: channels)
+                self?.markChannelsAsDeliveredIfNeeded(channels: updateResult.channels)
+
+                // Predefined filters can update local query representation
+                if let updatedQuery = updateResult.updatedQuery {
+                    self?.query = updatedQuery
+                    self?.updateChannelListObserver()
+                }
                 
-                self?.callback { completion?(nil) }
+                self?.callback { completion?(.success(updateResult)) }
             case let .failure(error):
                 self?.state = .remoteDataFetchFailed(ClientError(with: error))
-                self?.callback { completion?(error) }
+                self?.callback { completion?(.failure(error)) }
             }
         }
     }
-    
+
     /// Marks channels as delivered if they meet the specified criteria.
     /// - Parameter channels: The channels to evaluate for marking as delivered.
     private func markChannelsAsDeliveredIfNeeded(channels: [ChatChannel]) {
@@ -262,6 +276,16 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         } catch {
             state = .localDataFetchFailed(ClientError(with: error))
             log.error("Failed to perform fetch request with error: \(error). This is an internal error.")
+        }
+    }
+    
+    private func updateChannelListObserver() {
+        channelListObserver = makeChannelListObserver()
+        do {
+            try channelListObserver.startObserving()
+        } catch {
+            state = .localDataFetchFailed(ClientError(with: error))
+            log.error("Failed to update the channel list observer: \(error)")
         }
     }
 }

@@ -20,3 +20,13 @@ extension Dictionary {
         return result
     }
 }
+
+extension Dictionary where Key == String {
+    /// A deterministic `key=value` representation with keys sorted ascending, joined by `,`.
+    /// Useful for building stable hash inputs from unordered dictionaries.
+    var sortedDescription: String {
+        sorted { $0.key < $1.key }
+            .map { "\($0.key)=\($0.value)" }
+            .joined(separator: ",")
+    }
+}

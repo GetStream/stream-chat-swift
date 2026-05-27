@@ -101,11 +101,11 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
             Task {
                 do {
                     let channelIds = try await channelList.refreshLoadedChannels()
-                    log.debug("Synced \(channelIds.count) channels in a channel list (\(channelList.query.filter)", subsystems: .offlineSupport)
+                    log.debug("Synced \(channelIds.count) channels in a channel list", subsystems: .offlineSupport)
                     context.synchedChannelIds.formUnion(channelIds)
                     done(.continue)
                 } catch {
-                    log.error("Failed refreshing channel list (\(channelList.query.filter) with error \(error)", subsystems: .offlineSupport)
+                    log.error("Failed refreshing channel list with error \(error)", subsystems: .offlineSupport)
                     done(.retry)
                 }
             }

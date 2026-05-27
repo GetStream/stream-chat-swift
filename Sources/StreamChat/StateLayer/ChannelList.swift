@@ -9,7 +9,6 @@ public class ChannelList: @unchecked Sendable {
     private let channelListUpdater: ChannelListUpdater
     private let client: ChatClient
     @MainActor private var stateBuilder: StateBuilder<ChannelListState>
-    let query: ChannelListQuery
     
     init(
         query: ChannelListQuery,
@@ -18,7 +17,6 @@ public class ChannelList: @unchecked Sendable {
         environment: Environment = .init()
     ) {
         self.client = client
-        self.query = query
         let channelListUpdater = environment.channelListUpdater(
             client.databaseContainer,
             client.apiClient
@@ -48,11 +46,11 @@ public class ChannelList: @unchecked Sendable {
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
-        let pagination = Pagination(pageSize: query.pagination.pageSize)
+        let pagination = Pagination(pageSize: await state.query.pagination.pageSize)
         try await loadChannels(with: pagination)
         client.syncRepository.startTrackingChannelList(self)
     }
-    
+
     // MARK: - Channel List Pagination
     
     /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.
@@ -64,7 +62,13 @@ public class ChannelList: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channels for the pagination.
     @discardableResult public func loadChannels(with pagination: Pagination) async throws -> [ChatChannel] {
-        try await channelListUpdater.loadChannels(query: query, pagination: pagination)
+        var query = await state.query
+        query.pagination = pagination
+        let result = try await channelListUpdater.update(channelListQuery: query)
+        if let updatedQuery = result.updatedQuery {
+            await state.setQuery(updatedQuery)
+        }
+        return result.channels
     }
     
     /// Loads more channels and updates ``ChannelListState/channels``.
@@ -74,19 +78,17 @@ public class ChannelList: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
     @discardableResult public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
-        let limit = limit ?? query.pagination.pageSize
+        let pageSize = await state.query.pagination.pageSize
+        let limit = limit ?? pageSize
         let count = await state.channels.count
-        return try await channelListUpdater.loadNextChannels(
-            query: query,
-            limit: limit,
-            loadedChannelsCount: count
-        )
+        return try await loadChannels(with: Pagination(pageSize: limit, offset: count))
     }
     
     // MARK: - Internal
     
     func refreshLoadedChannels() async throws -> Set<ChannelId> {
         let count = await state.channels.count
+        let query = await state.query
         return try await channelListUpdater.refreshLoadedChannels(for: query, channelCount: count)
     }
 }

@@ -234,7 +234,7 @@ extension NSManagedObjectContext {
         // the query won't be saved, which will cause any future
         // channels to not become linked to this query
         if let query = query {
-            _ = saveQuery(query: query)
+            _ = saveQuery(query: query, predefinedFilter: payload.predefinedFilter)
         }
 
         return payload.channels.compactMapLoggingError { channelPayload in
@@ -444,7 +444,7 @@ extension NSManagedObjectContext {
     }
 
     func delete(query: ChannelListQuery) {
-        guard let dto = channelListQuery(filterHash: query.filter.filterHash) else { return }
+        guard let dto = channelListQuery(query: query) else { return }
 
         delete(dto)
     }
@@ -477,7 +477,7 @@ extension ChannelDTO {
         
         request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
 
-        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
+        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.queryHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 
         var subpredicates: [NSPredicate] = [

@@ -346,16 +346,20 @@ protocol ChannelDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> ChannelDTO
 
-    /// Loads channel list query with the given filter hash from the database.
-    /// - Parameter filterHash: The filter hash.
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO?
+    /// Loads the persisted query DTO for the given `ChannelListQuery`.
+    /// Looks up by the query's `queryHash`.
+    func channelListQuery(query: ChannelListQuery) -> ChannelListQueryDTO?
+
+    /// Returns the query with persisted predefined filter/sort applied.
+    /// `nil` when the input has no `predefinedFilter` or no cached DTO exists.
+    func loadPredefinedFilter(for query: ChannelListQuery) -> ChannelListQuery?
 
     /// Loads all channel list queries from the database.
     /// - Returns: The array of channel list queries.
     func loadAllChannelListQueries() -> [ChannelListQueryDTO]
 
     @discardableResult
-    func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO
+    func saveQuery(query: ChannelListQuery, predefinedFilter: PredefinedFilterPayload?) -> ChannelListQueryDTO
 
     /// Fetches `ChannelDTO` with the given `cid` from the database.
     func channel(cid: ChannelId) -> ChannelDTO?
@@ -368,6 +372,13 @@ protocol ChannelDatabaseSession {
 
     /// Delete the draft message.
     func deleteDraftMessage(in cid: ChannelId, threadId: MessageId?)
+}
+
+extension ChannelDatabaseSession {
+    @discardableResult
+    func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
+        saveQuery(query: query, predefinedFilter: nil)
+    }
 }
 
 protocol ChannelReadDatabaseSession {

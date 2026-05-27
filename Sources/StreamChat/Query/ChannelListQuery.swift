@@ -17,12 +17,15 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
         case pagination
         case messagesLimit = "message_limit"
         case membersLimit = "member_limit"
+        case predefinedFilter = "predefined_filter"
+        case filterValues = "filter_values"
+        case sortValues = "sort_values"
     }
 
     /// A filter for the query (see `Filter`).
-    public let filter: Filter<ChannelListFilterScope>
+    public internal(set) var filter: Filter<ChannelListFilterScope>
     /// A sorting for the query (see `Sorting`).
-    public let sort: [Sorting<ChannelListSortingKey>]
+    public internal(set) var sort: [Sorting<ChannelListSortingKey>]
     /// A pagination.
     public var pagination: Pagination
     /// A number of messages inside each channel.
@@ -31,6 +34,15 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
     public let membersLimit: Int?
     /// Query options.
     public var options: QueryOptions = [.watch]
+    /// The name of a server-side predefined filter to apply to this query.
+    ///
+    /// When set, the filter and sort templates configured for the predefined filter on the server
+    /// are used, and `filter` / `sort` on this query are ignored by the server.
+    public let predefinedFilter: String?
+    /// Values substituted into the predefined filter's filter template placeholders.
+    public let filterValues: [String: RawJSON]?
+    /// Values substituted into the predefined filter's sort template placeholders.
+    public let sortValues: [String: RawJSON]?
 
     /// Init a channels query.
     /// - Parameters:
@@ -51,14 +63,58 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
         pagination = Pagination(pageSize: pageSize)
         self.messagesLimit = messagesLimit
         self.membersLimit = membersLimit
+        predefinedFilter = nil
+        filterValues = nil
+        sortValues = nil
+    }
+
+    /// Init a channels query that uses a server-side predefined filter.
+    ///
+    /// The predefined filter's filter and sort templates (configured server-side) determine the
+    /// effective filter and sort. Placeholders in those templates are substituted using
+    /// `filterValues` and `sortValues`.
+    ///
+    /// - Parameters:
+    ///   - predefinedFilter: name of the server-side predefined filter to apply.
+    ///   - filterValues: values substituted into the predefined filter's filter template placeholders.
+    ///   - sortValues: values substituted into the predefined filter's sort template placeholders.
+    ///   - pageSize: a page size for pagination.
+    ///   - messagesLimit: a number of messages for the channel to be retrieved. Pass `nil` to omit the request value.
+    ///   - membersLimit: a number of members for the channel to be retrieved. Pass `nil` to omit the request value.
+    public init(
+        predefinedFilter: String,
+        filterValues: [String: RawJSON]? = nil,
+        sortValues: [String: RawJSON]? = nil,
+        pageSize: Int = .channelsPageSize,
+        messagesLimit: Int? = nil,
+        membersLimit: Int? = nil
+    ) {
+        filter = .and([])
+        sort = []
+        pagination = Pagination(pageSize: pageSize)
+        self.messagesLimit = messagesLimit
+        self.membersLimit = membersLimit
+        self.predefinedFilter = predefinedFilter
+        self.filterValues = filterValues
+        self.sortValues = sortValues
     }
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(filter, forKey: .filter)
 
-        if !sort.isEmpty {
-            try container.encode(sort, forKey: .sort)
+        if let predefinedFilter, !predefinedFilter.isEmpty {
+            try container.encode(predefinedFilter, forKey: .predefinedFilter)
+            if let filterValues, !filterValues.isEmpty {
+                try container.encode(filterValues, forKey: .filterValues)
+            }
+            if let sortValues, !sortValues.isEmpty {
+                try container.encode(sortValues, forKey: .sortValues)
+            }
+        } else {
+            try container.encode(filter, forKey: .filter)
+            if !sort.isEmpty {
+                try container.encode(sort, forKey: .sort)
+            }
         }
 
         if let messagesLimit {
@@ -70,6 +126,34 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
         }
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
+    }
+}
+
+extension ChannelListQuery {
+    /// A hash that uniquely identifies this query for Core Data persistence.
+    ///
+    /// For predefined-filter queries the hash is derived from the predefined filter name plus
+    /// `filterValues` and `sortValues` (keys sorted to keep the hash deterministic). For
+    /// traditional queries it falls back to `filter.filterHash`, leaving existing on-disk
+    /// hashes unchanged.
+    var queryHash: String {
+        if let predefinedFilter, !predefinedFilter.isEmpty {
+            return [
+                predefinedFilter,
+                filterValues.flatMap { $0.isEmpty ? nil : $0.sortedDescription },
+                sortValues.flatMap { $0.isEmpty ? nil : $0.sortedDescription }
+            ]
+            .compactMap { $0 }
+            .joined(separator: "-")
+        }
+        return filter.filterHash
+    }
+
+    /// Whether `filter` and `sort` match `other` for purposes of deciding whether the local
+    /// observer needs to be rebuilt after a predefined-filter resolution.
+    func isFilterEqual(to other: ChannelListQuery) -> Bool {
+        filter.filterHash == other.filter.filterHash
+            && sort.map(\.description) == other.sort.map(\.description)
     }
 }
 
@@ -324,4 +408,49 @@ internal extension FilterKey where Scope == ChannelListFilterScope {
             }
         )
     }
+}
+
+// MARK: - Predefined Filter Support
+
+extension ChannelListFilterScope {
+    /// Registry of every hardcoded channel-list `FilterKey`, keyed by the server-side `rawValue`.
+    /// Used to re-attach Core Data wiring after decoding predefined filter JSON.
+    ///
+    /// - Important: Always add new filter keys to the map.
+    static let predefinedFilterKeyMapping: [String: ChannelListFilterKeyCoreDataMetadata] = {
+        func map<Value: FilterValue>(_ key: FilterKey<ChannelListFilterScope, Value>) -> (String, ChannelListFilterKeyCoreDataMetadata) {
+            (key.rawValue, ChannelListFilterKeyCoreDataMetadata(key))
+        }
+        return Dictionary(
+            uniqueKeysWithValues: [
+                map(.archived),
+                map(.blocked),
+                map(.channelRole),
+                map(.cid),
+                map(.createdAt),
+                map(.createdBy),
+                map(.deletedAt),
+                map(.disabled),
+                map(.filterTags),
+                map(.frozen),
+                map(.hasUnread),
+                map(.hidden),
+                map(.id),
+                map(.imageURL),
+                map(.invite),
+                map(.joined),
+                map(.lastMessageAt),
+                map(.lastUpdatedAt),
+                map(.memberCount),
+                map(.memberName),
+                map(.members),
+                map(.muted),
+                map(.name),
+                map(.pinned),
+                map(.team),
+                map(.type),
+                map(.updatedAt)
+            ]
+        )
+    }()
 }

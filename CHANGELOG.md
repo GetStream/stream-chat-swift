@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### ✅ Added
+- Add `ChannelListQuery(predefinedFilter:filterValues:sortValues:)` for creating channel list queries with predefined filters [#4113](https://github.com/GetStream/stream-chat-swift/pull/4113)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix attachment upload overlay text and action buttons being illegible in dark mode [#4111](https://github.com/GetStream/stream-chat-swift/pull/4111)

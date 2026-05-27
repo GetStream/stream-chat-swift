@@ -110,6 +110,17 @@ final class DemoChatChannelListVC: ChatChannelListVC {
     
     lazy var premiumTaggedChannelsQuery: ChannelListQuery = .init(filter: .in(.filterTags, values: ["premium"]))
 
+    lazy var predefinedMessagingChannelsQuery: ChannelListQuery = .init(
+        predefinedFilter: "user_per_channel_type_channels",
+        filterValues: ["channel_type": .string(ChannelType.messaging.rawValue), "user_id": .string(currentUserId)],
+        sortValues: nil
+    )
+
+    lazy var predefinedLivestreamChannelsQuery: ChannelListQuery = .init(
+        predefinedFilter: "user_per_channel_type_channels",
+        filterValues: ["channel_type": .string(ChannelType.livestream.rawValue), "user_id": .string(currentUserId)],
+        sortValues: nil
+    )
     lazy var livestreamChannelsQuery: ChannelListQuery = .init(filter: .equal(.type, to: .livestream))
 
     var demoRouter: DemoChatChannelListRouter? {
@@ -270,6 +281,23 @@ final class DemoChatChannelListVC: ChatChannelListVC {
             }
         )
 
+        let predefinedMessagingChannelsAction = UIAlertAction(
+            title: "Predefined: messaging",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Predefined: messaging"
+                self?.setPredefinedMessagingChannelsQuery()
+            }
+        )
+
+        let predefinedLivestreamChannelsAction = UIAlertAction(
+            title: "Predefined: livestream",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Predefined: livestream"
+                self?.setPredefinedLivestreamChannelsQuery()
+            }
+        )
         let livestreamChannelsAction = UIAlertAction(
             title: "Livestream Channels",
             style: .default
@@ -294,6 +322,8 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 equalMembersAction,
                 channelRoleChannelsAction,
                 taggedChannelsAction,
+                predefinedMessagingChannelsAction,
+                predefinedLivestreamChannelsAction,
                 livestreamChannelsAction
             ].sorted(by: { $0.title ?? "" < $1.title ?? "" }),
             preferredStyle: .actionSheet,
@@ -355,6 +385,14 @@ final class DemoChatChannelListVC: ChatChannelListVC {
         replaceQuery(premiumTaggedChannelsQuery)
     }
 
+    func setPredefinedMessagingChannelsQuery() {
+        replaceQuery(predefinedMessagingChannelsQuery)
+    }
+
+    func setPredefinedLivestreamChannelsQuery() {
+        replaceQuery(predefinedLivestreamChannelsQuery)
+    }
+    
     func setLivestreamChannelsQuery() {
         replaceQuery(livestreamChannelsQuery)
     }
