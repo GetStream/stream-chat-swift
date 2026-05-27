@@ -7,7 +7,7 @@ import UIKit
 
 extension Appearance {
     @MainActor public final class DesignSystemTokens {
-        // MARK: Chat
+        // MARK: - Button
 
         public lazy var buttonHitTargetMinHeight: CGFloat = size48
         public lazy var buttonHitTargetMinWidth: CGFloat = size48
@@ -31,15 +31,27 @@ extension Appearance {
         public lazy var buttonVisualHeightMd: CGFloat = size40
         public lazy var buttonVisualHeightSm: CGFloat = size32
         public lazy var buttonVisualHeightXs: CGFloat = size24
+
+        // MARK: - Composer
+
         public lazy var composerRadiusFixed: CGFloat = radius3xl
         public lazy var composerRadiusFloating: CGFloat = radius3xl
+
+        // MARK: - Dark
+
         public lazy var darkElevation1: BoxShadow = BoxShadow(x: 0, y: 1, blur: 3, spread: 0, color: UIColor(hex: 0x00000033))
         public lazy var darkElevation2: BoxShadow = BoxShadow(x: 0, y: 2, blur: 6, spread: 0, color: UIColor(hex: 0x00000038))
         public lazy var darkElevation3: BoxShadow = BoxShadow(x: 0, y: 4, blur: 12, spread: 0, color: UIColor(hex: 0x0000003d))
         public lazy var darkElevation4: BoxShadow = BoxShadow(x: 0, y: 8, blur: 24, spread: 0, color: UIColor(hex: 0x00000047))
+
+        // MARK: - Device
+
         public lazy var deviceRadius: CGFloat = 62
         public lazy var deviceSafeAreaBottom: CGFloat = space32
         public lazy var deviceSafeAreaTop: CGFloat = 50
+
+        // MARK: - Icon
+
         public lazy var iconSizeLg: CGFloat = size32
         public lazy var iconSizeMd: CGFloat = size20
         public lazy var iconSizeSm: CGFloat = size16
@@ -47,16 +59,25 @@ extension Appearance {
         public lazy var iconStrokeDefault: CGFloat = w150
         public lazy var iconStrokeEmphasis: CGFloat = w200
         public lazy var iconStrokeSubtle: CGFloat = w120
+
+        // MARK: - Light
+
         public lazy var lightElevation1: BoxShadow = BoxShadow(x: 0, y: 1, blur: 3, spread: 0, color: UIColor(hex: 0x0000001f))
         public lazy var lightElevation2: BoxShadow = BoxShadow(x: 0, y: 2, blur: 6, spread: 0, color: UIColor(hex: 0x00000024))
         public lazy var lightElevation3: BoxShadow = BoxShadow(x: 0, y: 4, blur: 12, spread: 0, color: UIColor(hex: 0x00000029))
         public lazy var lightElevation4: BoxShadow = BoxShadow(x: 0, y: 8, blur: 24, spread: 0, color: UIColor(hex: 0x00000033))
+
+        // MARK: - Message
+
         public lazy var messageBubbleRadiusAttachment: CGFloat = radiusLg
         public lazy var messageBubbleRadiusAttachmentInline: CGFloat = radiusMd
         public lazy var messageBubbleRadiusGroupBottom: CGFloat = radius2xl
         public lazy var messageBubbleRadiusGroupMiddle: CGFloat = radius2xl
         public lazy var messageBubbleRadiusGroupTop: CGFloat = radius2xl
         public lazy var messageBubbleRadiusTail: CGFloat = radiusNone
+
+        // MARK: - Radius
+
         public lazy var radius2xl: CGFloat = radius20
         public lazy var radius3xl: CGFloat = radius24
         public lazy var radius4xl: CGFloat = radius32
@@ -68,6 +89,9 @@ extension Appearance {
         public lazy var radiusXl: CGFloat = radius16
         public lazy var radiusXs: CGFloat = radius4
         public lazy var radiusXxs: CGFloat = radius2
+
+        // MARK: - Spacing
+
         public lazy var spacing2xl: CGFloat = space32
         public lazy var spacing3xl: CGFloat = space40
         public lazy var spacingLg: CGFloat = space20
