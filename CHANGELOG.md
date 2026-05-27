@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChatCommonUI
+### ✅ Added
+- Make layout tokens customisable in `Appearance.tokens` [#4114](https://github.com/GetStream/stream-chat-swift/pull/4114)
+
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix attachment upload overlay text and action buttons being illegible in dark mode [#4111](https://github.com/GetStream/stream-chat-swift/pull/4111)
