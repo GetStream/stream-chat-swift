@@ -16,6 +16,13 @@ _May 28, 2026_
 ### 🐞 Fixed
 - Fix attachment upload overlay text and action buttons being illegible in dark mode [#4111](https://github.com/GetStream/stream-chat-swift/pull/4111)
 
+# [4.100.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.100.1)
+_May 22, 2026_
+
+## StreamChat
+### 🐞 Fixed
+- Fix crash in `MarkdownParser` when parsing long messages with many presentation intents [#4099](https://github.com/GetStream/stream-chat-swift/pull/4099)
+
 # [5.3.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.3.0)
 _May 21, 2026_
 
@@ -52,6 +59,13 @@ _May 13, 2026_
 ### 🔄 Changed
 - `Appearance.localizationProvider` now falls back from `Bundle.main` to the SDK bundle, so apps can override keys without installing a custom provider [#4088](https://github.com/GetStream/stream-chat-swift/pull/4088)
 
+# [4.100.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.100.0)
+_May 13, 2026_
+
+## StreamChat
+### ✅ Added
+- Support typing indicators in `LivestreamChannelController` [#4094](https://github.com/GetStream/stream-chat-swift/pull/4094)
+
 # [5.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.1.1)
 _May 08, 2026_
 
@@ -65,6 +79,13 @@ _May 08, 2026_
 ### 🐞 Fixed
 - Fix channel list preview showing "No messages" after a mid-page jump [#4077](https://github.com/GetStream/stream-chat-swift/pull/4077)
 - Fix layout shift on delivery-status transitions in message footer [#4078](https://github.com/GetStream/stream-chat-swift/pull/4078)
+
+# [4.99.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.99.2)
+_May 06, 2026_
+
+## StreamChat
+### 🐞 Fixed
+- Fix `CurrentUserController.setPushPreference` and `snoozePushNotifications` not updating the local push preference state [#4086](https://github.com/GetStream/stream-chat-swift/pull/4086)
 
 # [5.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.1.0)
 _April 23, 2026_
