@@ -8,9 +8,9 @@ import Foundation
 public class ChannelList: @unchecked Sendable {
     private let channelListUpdater: ChannelListUpdater
     private let client: ChatClient
-    let query: ChannelListQuery
     @MainActor private var stateBuilder: StateBuilder<ChannelListState>
-
+    let query: ChannelListQuery
+    
     init(
         query: ChannelListQuery,
         dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
@@ -52,9 +52,9 @@ public class ChannelList: @unchecked Sendable {
         try await loadChannels(with: pagination)
         client.syncRepository.startTrackingChannelList(self)
     }
-
+    
     // MARK: - Channel List Pagination
-
+    
     /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.
     ///
     /// - Important: If the pagination offset is 0 and cursor is nil, then loaded channels are reset.
@@ -66,27 +66,20 @@ public class ChannelList: @unchecked Sendable {
     @discardableResult public func loadChannels(with pagination: Pagination) async throws -> [ChatChannel] {
         if let groupKey = query.groupKey {
             let state = try await channelListUpdater.paginationState(for: groupKey)
-            let perGroup = GroupedQueryChannelsRequestGroup(
-                limit: pagination.pageSize != .unsetPageSize ? pagination.pageSize : nil,
-                next: pagination.cursor
-            )
             let channelGroups = try await channelListUpdater.queryGroupedChannels(
-                groups: [groupKey: perGroup],
+                groups: [groupKey: .init(limit: pagination.pageSize, next: pagination.cursor)],
                 limit: nil,
-                watch: state.watch ?? false,
+                watch: state.watch ?? true,
                 presence: state.presence ?? false
             )
             let group = channelGroups.first { $0.groupKey == groupKey }
             await setHasLoadedAllPreviousChannels(group?.next == nil)
-            guard let channelIds = group?.channelIds, !channelIds.isEmpty else { return [] }
-            return try await client.databaseContainer.read { session in
-                channelIds.compactMap { try? session.channel(cid: $0)?.asModel() }
-            }
+            return group?.channels ?? []
         } else {
             return try await channelListUpdater.loadChannels(query: query, pagination: pagination)
         }
     }
-
+    
     /// Loads more channels and updates ``ChannelListState/channels``.
     ///
     /// - Parameter limit: The limit for the page size. The default limit is 20.
@@ -95,23 +88,24 @@ public class ChannelList: @unchecked Sendable {
     /// - Returns: An array of loaded channels.
     @discardableResult public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
         guard await !state.hasLoadedAllPreviousChannels else { return [] }
+        let limit = limit ?? query.pagination.pageSize
         if let groupKey = query.groupKey {
             let paginationState = try await channelListUpdater.paginationState(for: groupKey)
             guard let cursor = paginationState.next else {
                 await setHasLoadedAllPreviousChannels(true)
                 return []
             }
-            return try await loadChannels(with: Pagination(pageSize: limit ?? .unsetPageSize, cursor: cursor))
+            return try await loadChannels(with: Pagination(pageSize: limit, cursor: cursor))
         } else {
-            let resolved = limit ?? query.pagination.pageSize
-            let channels = try await loadChannels(with: Pagination(pageSize: resolved, offset: await state.channels.count))
-            await setHasLoadedAllPreviousChannels(channels.count < resolved)
+            let count = await state.channels.count
+            let channels = try await loadChannels(with: Pagination(pageSize: limit, offset: count))
+            await setHasLoadedAllPreviousChannels(channels.isEmpty || channels.count < limit)
             return channels
         }
     }
-
+    
     // MARK: - Internal
-
+    
     func refreshLoadedChannels() async throws -> Set<ChannelId> {
         let count = await state.channels.count
         return try await channelListUpdater.refreshLoadedChannels(for: query, channelCount: count)

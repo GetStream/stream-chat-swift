@@ -219,7 +219,7 @@ public extension Filter {
 }
 
 extension Filter {
-    /// A filter that imposes no constraints — matches every value in the scope.
+    /// A filter placeholder value that represents a grouped channels query.
     static var empty: Filter { .and([]) }
 }
 

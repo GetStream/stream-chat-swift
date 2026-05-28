@@ -52,6 +52,19 @@ final class GroupedQueryChannelsRequestGroup: Encodable, Sendable {
         self.limit = limit
         self.next = next
     }
+
+    enum CodingKeys: String, CodingKey {
+        case limit
+        case next
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        if let limit, limit > 0 {
+            try container.encode(limit, forKey: .limit)
+        }
+        try container.encodeIfPresent(next, forKey: .next)
+    }
 }
 
 final class GroupedQueryChannelsPayload: Decodable, Sendable {

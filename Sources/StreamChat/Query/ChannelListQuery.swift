@@ -56,7 +56,7 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
     init(groupKey: String) {
         self.init(filter: .empty)
         self.groupKey = groupKey
-        self.pagination = Pagination(pageSize: .unsetPageSize)
+        self.pagination = Pagination(pageSize: .backendDefaultPageSize)
     }
 
     public func encode(to encoder: Encoder) throws {
@@ -81,8 +81,7 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
     var groupKey: String?
 
     /// The stable identity used for locating / linking the corresponding `ChannelListQueryDTO`.
-    /// Uses `groupKey` when set (stable across date-bearing filters from the grouped endpoint);
-    /// otherwise falls back to `filter.filterHash`.
+    /// - Note: Grouped channels don't use filter and sort of the query.
     var queryHash: String {
         groupKey ?? filter.filterHash
     }

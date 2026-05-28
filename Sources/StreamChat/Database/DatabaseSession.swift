@@ -59,15 +59,10 @@ protocol CurrentUserDatabaseSession {
     func saveCurrentUserUnreadCount(count: UnreadCountPayload) throws
 
     /// Merges per-group unread channel counts into `CurrentUserDTO.unreadChannelCountsByGroup`.
-    /// Keys present in the input replace existing values; keys absent are left untouched. This is
-    /// invoked from both `queryGroupedChannels` responses and WS events carrying
-    /// `grouped_unread_channels` — both paths use merge semantics, so a group that disappears from
-    /// a server-side snapshot will keep its locally-cached count until something explicitly clears it.
-    /// If there is no current user, the error will be thrown.
+    /// Keys present in the input replace existing values; keys absent are left untouched.
     func mergeCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws
 
     /// Adjusts `CurrentUserDTO.unreadChannelCountsByGroup[groupKey]` by `delta`, flooring at 0.
-    /// No-op when there is no current user, no existing dictionary, or no entry for `groupKey`.
     func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int)
 
     /// Updates the `CurrentUserDTO.devices` with the provided `DevicesPayload`

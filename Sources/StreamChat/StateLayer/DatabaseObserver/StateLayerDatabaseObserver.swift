@@ -192,7 +192,7 @@ extension StateLayerDatabaseObserver where ResultType == ListResult {
         try frc.performFetch()
         return items
     }
-
+    
     private func updateItems(_ changes: [ListChange<Item>]?) -> [Item] {
         let items = DatabaseItemConverter.convert(
             dtos: frc.fetchedObjects ?? [],

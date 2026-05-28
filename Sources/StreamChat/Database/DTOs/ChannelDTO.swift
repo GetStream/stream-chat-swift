@@ -281,9 +281,7 @@ extension NSManagedObjectContext {
         dto.deletedAt = payload.deletedAt?.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
         dto.defaultSortingAt = (payload.lastMessageAt ?? payload.createdAt).bridgeDate
-        if let lastMessageAt = payload.lastMessageAt {
-            dto.lastMessageAt = lastMessageAt.bridgeDate
-        }
+        dto.lastMessageAt = payload.lastMessageAt?.bridgeDate
         dto.memberCount = Int64(clamping: payload.memberCount)
         
         if let messageCount = payload.messageCount {
@@ -358,7 +356,7 @@ extension NSManagedObjectContext {
         dto.reads.formUnion(reads)
         
         try payload.messages.forEach { _ = try saveMessage(payload: $0, channelDTO: dto, syncOwnReactions: true, cache: cache) }
-
+        
         var pendingMessages = Set<MessageDTO>()
         try payload.pendingMessages?.forEach {
             let pending = try saveMessage(
@@ -499,13 +497,10 @@ extension ChannelDTO {
         }
 
         request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
-        request.fetchLimit = query.pagination.pageSize == .unsetPageSize ? 0 : query.pagination.pageSize
-        // For grouped queries `pageSize` is `.unsetPageSize`, which would disable batching.
-        // Fall back to the standard channels page size to keep memory bounded as the linked set
-        // grows across pagination.
-        request.fetchBatchSize = query.pagination.pageSize == .unsetPageSize
-            ? .channelsPageSize
-            : query.pagination.pageSize
+        // Backend driven page size is enabled with Int.backendDefaultPageSize (-1). Keep CoreData fetching efficient and use default channels page size.
+        let limit = query.pagination.pageSize > 0 ? query.pagination.pageSize : .channelsPageSize
+        request.fetchLimit = limit
+        request.fetchBatchSize = limit
         return request
     }
     

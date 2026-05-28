@@ -36,8 +36,8 @@ final class Pagination_Tests: XCTestCase {
         AssertJSONEqual(encodedJSON, expectedJSON)
     }
 
-    func test_pagination_unsetPageSize_omitsLimit() throws {
-        let pagination = Pagination(pageSize: .unsetPageSize)
+    func test_pagination_backendDefaultPageSize_omitsLimit() throws {
+        let pagination = Pagination(pageSize: .backendDefaultPageSize)
         let encodedJSON = try JSONEncoder.default.encode(pagination)
         let expectedJSON = try JSONSerialization.data(withJSONObject: [String: Any](), options: [])
         AssertJSONEqual(encodedJSON, expectedJSON)

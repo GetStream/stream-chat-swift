@@ -13,7 +13,7 @@ final class ReadStateHandler: @unchecked Sendable {
     private let messageRepository: MessageRepository
     @Atomic private var markingRead = false
     @Atomic private(set) var isMarkedAsUnread = false
-    
+
     init(
         authenticationRepository: AuthenticationRepository,
         channelUpdater: ChannelUpdater,
@@ -23,7 +23,7 @@ final class ReadStateHandler: @unchecked Sendable {
         self.channelUpdater = channelUpdater
         self.messageRepository = messageRepository
     }
-    
+
     func markRead(_ channel: ChatChannel, completion: @escaping @Sendable (Error?) -> Void) {
         guard !markingRead, let currentUserId = authenticationRepository.currentUserId else {
             completion(nil)

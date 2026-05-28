@@ -16,19 +16,19 @@ public struct ChannelGroup: Sendable {
     /// The total unread channel count in the group.
     public let unreadChannels: Int
 
-    /// The channel ids returned for the group in the order produced by the backend.
-    public let channelIds: [ChannelId]
+    /// Channels returned by the request.
+    public let channels: [ChatChannel]
     
     let next: String?
 
     init(
         groupKey: String,
-        channelIds: [ChannelId],
+        channels: [ChatChannel],
         unreadChannels: Int,
         next: String? = nil
     ) {
         self.groupKey = groupKey
-        self.channelIds = channelIds
+        self.channels = channels
         self.unreadChannels = unreadChannels
         self.next = next
     }
@@ -39,5 +39,5 @@ enum GroupedChannelKey {
     /// Special group key whose list contains channels from every other group.
     static let all = "all"
     /// `ChatChannel.extraData` field that carries the channel's group membership.
-    static let extraData = "group"
+    static let group = "group"
 }

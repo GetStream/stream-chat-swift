@@ -18,10 +18,8 @@ public extension Int {
 }
 
 extension Int {
-    /// Sentinel signalling "no client-side page size" — the request omits `limit` and the backend uses its default.
-    /// Chosen as a negative value so any accidental leak into a request fails fast (the backend rejects/clamps negative
-    /// limits) rather than being interpreted as `limit: 0` (return zero items).
-    static let unsetPageSize = -1
+    /// Page size value for using the backend default.
+    static let backendDefaultPageSize = -1
 }
 
 /// Basic pagination with `pageSize` and `offset`.
@@ -54,7 +52,7 @@ public struct Pagination: Encodable, Equatable, Sendable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        if pageSize != .unsetPageSize {
+        if pageSize != .backendDefaultPageSize {
             try container.encode(pageSize, forKey: .pageSize)
         }
         if let cursor = cursor {

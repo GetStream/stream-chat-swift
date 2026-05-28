@@ -117,7 +117,7 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
         guard !groupedFilterHashes.isEmpty else { return }
 
         let oldGroup = groupedFilterHashes.first { $0 != GroupedChannelKey.all }
-        let newGroup = event.channel.extraData[GroupedChannelKey.extraData]?.stringValue?
+        let newGroup = event.channel.extraData[GroupedChannelKey.group]?.stringValue?
             .trimmingCharacters(in: .whitespacesAndNewlines)
             .lowercased()
 

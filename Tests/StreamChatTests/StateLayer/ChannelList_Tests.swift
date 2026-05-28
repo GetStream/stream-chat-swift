@@ -100,7 +100,7 @@ final class ChannelList_Tests: XCTestCase {
         )
         _ = await channelList.state
         env.channelListUpdaterMock.queryGroupedChannels_result = .success([
-            ChannelGroup(groupKey: "all", channelIds: [], unreadChannels: 0, next: nil)
+            ChannelGroup(groupKey: "all", channels: [], unreadChannels: 0, next: nil)
         ])
 
         try await channelList.get()
@@ -129,7 +129,7 @@ final class ChannelList_Tests: XCTestCase {
         env.channelListUpdaterMock.queryGroupedChannels_result = .success([
             ChannelGroup(
                 groupKey: "all",
-                channelIds: [],
+                channels: [],
                 unreadChannels: 0,
                 next: "cursor-2"
             )
@@ -162,7 +162,7 @@ final class ChannelList_Tests: XCTestCase {
         env.channelListUpdaterMock.queryGroupedChannels_result = .success([
             ChannelGroup(
                 groupKey: "all",
-                channelIds: [],
+                channels: [],
                 unreadChannels: 0,
                 next: "cursor-2"
             )

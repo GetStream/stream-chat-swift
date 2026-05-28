@@ -78,7 +78,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         _fetch_queries.mutate { $0.append(channelListQuery) }
         fetch_completion = completion
     }
-
+    
     override func refreshLoadedChannels(
         for query: ChannelListQuery,
         channelCount: Int,

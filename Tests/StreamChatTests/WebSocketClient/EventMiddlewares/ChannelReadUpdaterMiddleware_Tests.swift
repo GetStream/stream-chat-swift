@@ -1346,7 +1346,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     private func channelUpdatedEvent(group: String?) throws -> ChannelUpdatedEventDTO {
         var extraData: [String: RawJSON] = [:]
         if let group {
-            extraData[GroupedChannelKey.extraData] = .string(group)
+            extraData[GroupedChannelKey.group] = .string(group)
         }
         let updatedChannel = ChannelDetailPayload.dummy(
             cid: channelPayload.channel.cid,

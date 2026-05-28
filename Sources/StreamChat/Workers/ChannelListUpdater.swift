@@ -237,14 +237,14 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
                         queryDTO.next = groupPayload.next
                         queryDTO.watch = watch
                         queryDTO.presence = presence
-                        let channelIds = groupPayload.channels.compactMapLoggingError { channelPayload in
+                        let channels: [ChatChannel] = groupPayload.channels.compactMapLoggingError { channelPayload in
                             let dto = try session.saveChannel(payload: channelPayload)
                             queryDTO.channels.insert(dto)
-                            return channelPayload.channel.cid
+                            return try dto.asModel()
                         }
                         channelGroups.append(ChannelGroup(
                             groupKey: groupKey,
-                            channelIds: channelIds,
+                            channels: channels,
                             unreadChannels: groupPayload.unreadChannels,
                             next: groupPayload.next
                         ))
@@ -322,7 +322,7 @@ extension ChannelListUpdater {
             }
         }
     }
-
+    
     // MARK: -
     
     func loadChannels(query: ChannelListQuery, pagination: Pagination) async throws -> [ChatChannel] {

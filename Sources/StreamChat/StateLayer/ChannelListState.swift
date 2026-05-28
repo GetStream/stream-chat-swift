@@ -33,7 +33,7 @@ import Foundation
         )
         channels = observer.start(with: handlers)
     }
-
+    
     /// The query used for filtering the list of channels.
     public private(set) var query: ChannelListQuery
 

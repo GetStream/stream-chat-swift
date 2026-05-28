@@ -156,7 +156,7 @@ final class ChannelListLinker: Sendable {
     /// Group-based queries are produced by the `/grouped_channels` endpoint and carry **no filter
     /// predicate**: ``ChannelListQuery/init(groupKey:)`` constructs them with `filter: .empty`, and
     /// the backend decides membership purely from the channel's `"group"` extra-data value.
-    /// Linking here is therefore driven **only** by ``GroupedChannelKey/extraData`` ("group") on
+    /// Linking here is therefore driven **only** by ``GroupedChannelKey/group`` ("group") on
     /// the channel — no in-memory filter is consulted and no DB predicate is involved.
     ///
     /// - The special ``GroupedChannelKey/all`` query is a catch-all: every channel that has *any*
@@ -181,7 +181,7 @@ final class ChannelListLinker: Sendable {
             // Group-based queries have no filter predicate; membership is decided entirely from
             // the channel's "group" extra-data value. The "all" group is a catch-all that links
             // every channel carrying any non-empty group value.
-            let currentGroupKey = channel.extraData[GroupedChannelKey.extraData]?.stringValue?
+            let currentGroupKey = channel.extraData[GroupedChannelKey.group]?.stringValue?
                 .trimmingCharacters(in: .whitespacesAndNewlines)
                 .lowercased()
             if let currentGroupKey, !currentGroupKey.isEmpty {

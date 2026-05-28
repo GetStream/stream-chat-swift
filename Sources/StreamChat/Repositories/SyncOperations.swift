@@ -118,21 +118,8 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
     }
 }
 
-/// Refreshes all grouped channel lists (queries with a `groupKey`) with a single shared `/channels` request.
-///
-/// Grouped channel lists share their first page via a backend-side group identifier, so per-list refreshes
-/// would duplicate work and produce inconsistent first pages across active lists. This operation issues one
-/// request that returns the first page for every group with an active `ChannelList` instance, and every
-/// grouped `ChannelList` reads from the resulting cached response. The returned channel ids are added to
-/// `context.synchedChannelIds` so the subsequent `/sync` step skips them.
-///
-/// Groups that were queried via `ChatClient.queryGroupedChannels(groups:…)` but have no active `ChannelList`
-/// are intentionally skipped — there is nothing observing them, so their first page is allowed to grow
-/// stale until the next explicit query. Sync is scoped to what the SDK is actively presenting.
-///
-/// The `watch` and `presence` flags are read from the persisted state of any active grouped query (they are
-/// set together by the initial `queryGroupedChannels` call, so any group's persisted value reflects the latest
-/// caller intent). Reusing them keeps watching / presence subscriptions alive across reconnects.
+/// Refreshes all grouped channel lists with a single batched `queryGroupedChannels` call, recording the
+/// returned channel ids in `context.synchedChannelIds` so the subsequent `/sync` step skips them.
 final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
     init(channelListUpdater: ChannelListUpdater, groupedChannelLists: [ChannelList], context: SyncContext) {
         let groupKeys = Set(groupedChannelLists.compactMap(\.query.groupKey))
@@ -155,7 +142,7 @@ final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
                         watch: state.watch ?? false,
                         presence: state.presence ?? false
                     )
-                    let returnedChannelIds = channelGroups.flatMap(\.channelIds)
+                    let returnedChannelIds = channelGroups.flatMap { $0.channels.map(\.cid) }
                     context.synchedChannelIds.formUnion(returnedChannelIds)
                     log.debug(
                         "Synced \(returnedChannelIds.count) grouped channels across \(channelGroups.count) group(s)",
