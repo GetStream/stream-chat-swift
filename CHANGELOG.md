@@ -3,6 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+### 🔄 Changed
+
+# [5.4.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.4.0)
+_May 28, 2026_
+
 ## StreamChatCommonUI
 ### ✅ Added
 - Make layout tokens customisable in `Appearance.tokens` [#4114](https://github.com/GetStream/stream-chat-swift/pull/4114)
