@@ -4,20 +4,14 @@
 
 import Foundation
 
-/// Subscribes to channel-relevant WS events and links / unlinks channels for the owning query.
-///
-/// Each observer declares an `allowedActions` set that bounds what `linkingAction(for:)` may decide:
-/// - ``NotificationAddedToChannelEvent``, ``MessageNewEvent``, ``NotificationMessageNewEvent``, ``ChannelVisibleEvent`` — link-only.
-///   Membership/visibility gained or activity arrived; never an unlink trigger.
-/// - ``ChannelUpdatedEvent`` — link or unlink. Channel metadata changed (filter-matching attributes, the
-///   `"group"` extra-data value), which can move the channel into or out of this query.
-///
-/// `linkingAction(for:)` resolves the decision against the query type:
-/// - Group-based queries (`query.groupKey != nil`) match `channel.extraData["group"]` against ``GroupedChannelKey/all``
-///   or the query's `groupKey`.
-/// - Filter-based queries either run the optional in-memory `filter` block, or — when automatic filtering
-///   is enabled in `ChatClientConfig` — defer to the DB fetch predicate and always link.
-final class ChannelListLinker: Sendable {
+/// When we receive events, we need to check if a channel should be added or removed from
+/// the current query depending on the following events:
+/// - Channel created: We analyse if the channel should be added to the current query.
+/// - New message sent: This means the channel will reorder and appear on first position,
+///   so we also analyse if it should be added to the current query.
+/// - Channel is updated: We only check if we should remove it from the current query.
+///   We don't try to add it to the current query to not mess with pagination.
+final class ChannelListLinker: Sendable, ChannelListLinking {
     private let clientConfig: ChatClientConfig
     private let databaseContainer: DatabaseContainer
     private nonisolated(unsafe) var eventObservers = [EventObserver]()
@@ -47,30 +41,26 @@ final class ChannelListLinker: Sendable {
         eventObservers = [
             EventObserver(
                 notificationCenter: nc,
-                transform: { $0 as? NotificationAddedToChannelEvent },
-                callback: { [weak self] event in
-                    self?.handle(channel: event.channel, allowedActions: [.link])
-                }
-            ),
+                transform: { $0 as? NotificationAddedToChannelEvent }
+            ) { [weak self] event in self?.linkChannelIfNeeded(event.channel) },
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? MessageNewEvent },
-                callback: { [weak self] event in
-                    self?.handle(channel: event.channel, allowedActions: [.link])
-                }
+                callback: { [weak self] event in self?.linkChannelIfNeeded(event.channel) }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? NotificationMessageNewEvent },
-                callback: { [weak self] event in
-                    self?.handle(channel: event.channel, allowedActions: [.link])
-                }
+                callback: { [weak self] event in self?.linkChannelIfNeeded(event.channel) }
             ),
             EventObserver(
                 notificationCenter: nc,
                 transform: { $0 as? ChannelUpdatedEvent },
                 callback: { [weak self] event in
-                    self?.handle(channel: event.channel, allowedActions: [.link, .unlink])
+                    guard let self else { return }
+                    self.unlinkChannelIfNeeded(event.channel) {
+                        self.linkChannelIfNeeded(event.channel)
+                    }
                 }
             ),
             EventObserver(
@@ -80,26 +70,13 @@ final class ChannelListLinker: Sendable {
                     let context = databaseContainer.backgroundReadOnlyContext
                     context.perform { [self] in
                         guard let channel = try? context.channel(cid: event.cid)?.asModel() else { return }
-                        self?.handle(channel: channel, allowedActions: [.link])
+                        self?.linkChannelIfNeeded(channel)
                     }
                 }
             )
         ]
     }
 
-    private func handle(channel: ChatChannel, allowedActions: Set<LinkingAction>) {
-        let action = linkingAction(for: channel)
-        
-        switch action {
-        case .link where allowedActions.contains(.link):
-            linkChannel(channel)
-        case .unlink where allowedActions.contains(.unlink):
-            unlinkChannel(channel)
-        default:
-            break
-        }
-    }
-    
     private func isInChannelList(
         _ channel: ChatChannel,
         completion: @escaping @Sendable (_ isPresent: Bool, _ belongsToOtherQuery: Bool) -> Void
@@ -117,7 +94,9 @@ final class ChannelListLinker: Sendable {
         }
     }
     
-    private func linkChannel(_ channel: ChatChannel) {
+    /// Handles if a channel should be linked to the current query or not.
+    private func linkChannelIfNeeded(_ channel: ChatChannel) {
+        guard shouldChannelBelongToCurrentQuery(channel) else { return }
         isInChannelList(channel) { [worker, query, channelWatcherHandler] exists, belongsToOtherQuery in
             guard !exists else { return }
             worker.link(channel: channel, with: query) { error in
@@ -140,72 +119,35 @@ final class ChannelListLinker: Sendable {
         }
     }
 
-    private func unlinkChannel(_ channel: ChatChannel) {
+    /// Handles if a channel should be unlinked from the current query or not.
+    private func unlinkChannelIfNeeded(_ channel: ChatChannel, completion: (@Sendable () -> Void)? = nil) {
+        guard !shouldChannelBelongToCurrentQuery(channel) else {
+            completion?()
+            return
+        }
         isInChannelList(channel) { [worker, query] exists, _ in
-            guard exists else { return }
-            worker.unlink(channel: channel, with: query)
+            guard exists else {
+                completion?()
+                return
+            }
+            worker.unlink(channel: channel, with: query) { _ in
+                completion?()
+            }
         }
     }
 
-    /// Decides whether `channel` should be linked into the current query, unlinked from it, or left alone.
-    ///
-    /// The decision branches on whether the query is **group-based** or **filter-based**.
-    ///
-    /// ## Group-based queries (`query.groupKey != nil`)
-    ///
-    /// Group-based queries are produced by the `/grouped_channels` endpoint and carry **no filter
-    /// predicate**: ``ChannelListQuery/init(groupKey:)`` constructs them with `filter: .empty`, and
-    /// the backend decides membership purely from the channel's `"group"` extra-data value.
-    /// Linking here is therefore driven **only** by ``GroupedChannelKey/group`` ("group") on
-    /// the channel — no in-memory filter is consulted and no DB predicate is involved.
-    ///
-    /// - The special ``GroupedChannelKey/all`` query is a catch-all: every channel that has *any*
-    ///   non-empty group value links into it. This mirrors the backend, which always returns the
-    ///   `"all"` bucket alongside the requested groups.
-    /// - Any other `groupKey` links a channel only when its `"group"` value (whitespace-trimmed
-    ///   and lowercased) equals the query's `groupKey`; otherwise the channel is unlinked.
-    /// - Channels with a missing or empty `"group"` value resolve to ``LinkingAction/none``: with
-    ///   no filter to fall back to, the safest move is to leave the query untouched rather than
-    ///   guess.
-    ///
-    /// ## Filter-based queries (`query.groupKey == nil`)
-    ///
-    /// - When an in-memory `filter` block is supplied, it is the single source of truth: link on
-    ///   `true`, unlink on `false`.
-    /// - Otherwise, when ``ChatClientConfig/isChannelAutomaticFilteringEnabled`` is on, the DB
-    ///   fetch predicate already governs visibility, so we always link and let the predicate
-    ///   filter on read.
-    /// - With neither in place, the function returns ``LinkingAction/none``.
-    private func linkingAction(for channel: ChatChannel) -> LinkingAction {
-        if let groupKey = query.groupKey {
-            // Group-based queries have no filter predicate; membership is decided entirely from
-            // the channel's "group" extra-data value. The "all" group is a catch-all that links
-            // every channel carrying any non-empty group value.
-            let currentGroupKey = channel.extraData[GroupedChannelKey.group]?.stringValue?
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-                .lowercased()
-            if let currentGroupKey, !currentGroupKey.isEmpty {
-                return groupKey == currentGroupKey || groupKey == GroupedChannelKey.all ? .link : .unlink
-            }
-            return .none
-        } else {
-            if let filter = filter {
-                return filter(channel) ? .link : .unlink
-            }
-            
-            if clientConfig.isChannelAutomaticFilteringEnabled {
-                // When auto-filtering is enabled the channel will appear or not automatically if the
-                // query matches the DB Predicate. So here we default to saying it always belong to the current query.
-                return .link
-            }
-            
-            return .none
+    /// Checks if the given channel should belong to the current query or not.
+    private func shouldChannelBelongToCurrentQuery(_ channel: ChatChannel) -> Bool {
+        if let filter = filter {
+            return filter(channel)
         }
-    }
-}
 
-extension ChannelListLinker {
-    enum LinkingAction {
-        case link, unlink, none
+        if clientConfig.isChannelAutomaticFilteringEnabled {
+            // When auto-filtering is enabled the channel will appear or not automatically if the
+            // query matches the DB Predicate. So here we default to saying it always belong to the current query.
+            return true
+        }
+
+        return false
     }
 }
