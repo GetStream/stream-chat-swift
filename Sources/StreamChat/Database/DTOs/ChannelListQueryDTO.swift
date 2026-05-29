@@ -12,6 +12,17 @@ class ChannelListQueryDTO: NSManagedObject {
     /// Serialized `Filter` JSON which can be used in cases the query needs to be repeated, i.e. for newly created channels.
     @NSManaged var filterJSONData: Data
 
+    /// Next-page cursor for grouped queries; `nil` when there are no more pages.
+    @NSManaged var next: String?
+
+    /// `watch` flag from the original grouped-channels request, reused on pagination
+    /// and sync refetches. Grouped queries only.
+    @NSManaged var watch: Bool
+
+    /// `presence` flag from the original grouped-channels request, reused on pagination
+    /// and sync refetches. Grouped queries only.
+    @NSManaged var presence: Bool
+
     // MARK: - Relationships
 
     @NSManaged var channels: Set<ChannelDTO>
@@ -35,21 +46,21 @@ class ChannelListQueryDTO: NSManagedObject {
 }
 
 extension NSManagedObjectContext {
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO? {
-        ChannelListQueryDTO.load(filterHash: filterHash, context: self)
+    func channelListQuery(_ query: ChannelListQuery) -> ChannelListQueryDTO? {
+        ChannelListQueryDTO.load(filterHash: query.queryHash, context: self)
     }
 
     func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
-        if let existingDTO = channelListQuery(filterHash: query.filter.filterHash) {
+        if let existingDTO = channelListQuery(query) {
             return existingDTO
         }
 
         let request = ChannelListQueryDTO.fetchRequest(
             keyPath: #keyPath(ChannelListQueryDTO.filterHash),
-            equalTo: query.filter.filterHash
+            equalTo: query.queryHash
         )
         let newDTO = NSEntityDescription.insertNewObject(into: self, for: request)
-        newDTO.filterHash = query.filter.filterHash
+        newDTO.filterHash = query.queryHash
 
         let jsonData: Data
         do {

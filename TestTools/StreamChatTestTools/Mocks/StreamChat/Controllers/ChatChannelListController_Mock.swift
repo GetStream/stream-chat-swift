@@ -32,7 +32,7 @@ class ChatChannelListController_Mock: ChatChannelListController, Spy, @unchecked
         loadNextChannelsIsCalled = true
     }
 
-    override func refreshLoadedChannels(completion: @escaping (Result<Set<ChannelId>, any Error>) -> Void) {
+    override func refreshLoadedChannels(completion: @escaping @Sendable (Result<Set<ChannelId>, any Error>) -> Void) {
         record()
         refreshLoadedChannelsResult.map(completion)
     }

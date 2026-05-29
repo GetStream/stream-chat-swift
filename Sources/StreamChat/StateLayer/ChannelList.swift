@@ -64,7 +64,20 @@ public class ChannelList: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channels for the pagination.
     @discardableResult public func loadChannels(with pagination: Pagination) async throws -> [ChatChannel] {
-        try await channelListUpdater.loadChannels(query: query, pagination: pagination)
+        if let groupKey = query.groupKey {
+            let state = try await channelListUpdater.paginationState(for: groupKey)
+            let channelGroups = try await channelListUpdater.queryGroupedChannels(
+                groups: [groupKey: .init(limit: pagination.pageSize, next: pagination.cursor)],
+                limit: nil,
+                watch: state.watch ?? true,
+                presence: state.presence ?? false
+            )
+            let group = channelGroups.first { $0.groupKey == groupKey }
+            await setHasLoadedAllPreviousChannels(group?.next == nil)
+            return group?.channels ?? []
+        } else {
+            return try await channelListUpdater.loadChannels(query: query, pagination: pagination)
+        }
     }
     
     /// Loads more channels and updates ``ChannelListState/channels``.
@@ -74,13 +87,21 @@ public class ChannelList: @unchecked Sendable {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
     @discardableResult public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
+        guard await !state.hasLoadedAllPreviousChannels else { return [] }
         let limit = limit ?? query.pagination.pageSize
-        let count = await state.channels.count
-        return try await channelListUpdater.loadNextChannels(
-            query: query,
-            limit: limit,
-            loadedChannelsCount: count
-        )
+        if let groupKey = query.groupKey {
+            let paginationState = try await channelListUpdater.paginationState(for: groupKey)
+            guard let cursor = paginationState.next else {
+                await setHasLoadedAllPreviousChannels(true)
+                return []
+            }
+            return try await loadChannels(with: Pagination(pageSize: limit, cursor: cursor))
+        } else {
+            let count = await state.channels.count
+            let channels = try await loadChannels(with: Pagination(pageSize: limit, offset: count))
+            await setHasLoadedAllPreviousChannels(channels.isEmpty || channels.count < limit)
+            return channels
+        }
     }
     
     // MARK: - Internal
@@ -88,6 +109,10 @@ public class ChannelList: @unchecked Sendable {
     func refreshLoadedChannels() async throws -> Set<ChannelId> {
         let count = await state.channels.count
         return try await channelListUpdater.refreshLoadedChannels(for: query, channelCount: count)
+    }
+
+    @MainActor private func setHasLoadedAllPreviousChannels(_ hasLoadedAllPreviousChannels: Bool) {
+        state.hasLoadedAllPreviousChannels = hasLoadedAllPreviousChannels
     }
 }
 

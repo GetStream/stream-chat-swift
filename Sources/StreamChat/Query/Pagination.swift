@@ -17,6 +17,11 @@ public extension Int {
     static let channelWatchersPageSize = 30
 }
 
+extension Int {
+    /// Page size value for using the backend default.
+    static let backendDefaultPageSize = -1
+}
+
 /// Basic pagination with `pageSize` and `offset`.
 /// Used everywhere except `ChannelQuery`. (See `MessagesPagination`)
 public struct Pagination: Encodable, Equatable, Sendable {
@@ -47,7 +52,9 @@ public struct Pagination: Encodable, Equatable, Sendable {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(pageSize, forKey: .pageSize)
+        if pageSize != .backendDefaultPageSize {
+            try container.encode(pageSize, forKey: .pageSize)
+        }
         if let cursor = cursor {
             try container.encode(cursor, forKey: .cursor)
         } else if offset != 0 {

@@ -107,7 +107,7 @@ final class ChannelDeletedEventDTO: EventDTO {
 }
 
 /// Triggered when a channel is truncated.
-public final class ChannelTruncatedEvent: ChannelSpecificEvent {
+public final class ChannelTruncatedEvent: ChannelSpecificEvent, HasUnreadChannelCountsByGroup {
     /// The identifier of deleted channel.
     public var cid: ChannelId { channel.cid }
 
@@ -123,11 +123,21 @@ public final class ChannelTruncatedEvent: ChannelSpecificEvent {
     /// The event timestamp.
     public let createdAt: Date
 
-    init(channel: ChatChannel, user: ChatUser?, message: ChatMessage?, createdAt: Date) {
+    /// Unread channel counts keyed by the backend-provided group identifier.
+    public let unreadChannelCountsByGroup: [String: Int]?
+
+    init(
+        channel: ChatChannel,
+        user: ChatUser?,
+        message: ChatMessage?,
+        createdAt: Date,
+        unreadChannelCountsByGroup: [String: Int]? = nil
+    ) {
         self.channel = channel
         self.user = user
         self.message = message
         self.createdAt = createdAt
+        self.unreadChannelCountsByGroup = unreadChannelCountsByGroup
     }
 }
 
@@ -156,7 +166,8 @@ final class ChannelTruncatedEventDTO: EventDTO {
             channel: channelDTO.asModel(),
             user: userDTO?.asModel(),
             message: messageDTO?.asModel(),
-            createdAt: createdAt
+            createdAt: createdAt,
+            unreadChannelCountsByGroup: session.currentUser?.unreadChannelCountsByGroup
         )
     }
 }

@@ -10,25 +10,32 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     let spyState = SpyState()
 
     @Atomic var update_queries: [ChannelListQuery] = []
-    @Atomic var update_completion: ((Result<[ChatChannel], Error>) -> Void)?
+    @Atomic var update_completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)?
     @Atomic var update_completion_result: Result<[ChatChannel], Error>?
 
     @Atomic var fetch_queries: [ChannelListQuery] = []
-    @Atomic var fetch_completion: ((Result<ChannelListPayload, Error>) -> Void)?
+    @Atomic var fetch_completion: (@Sendable (Result<ChannelListPayload, Error>) -> Void)?
 
     @Atomic var refreshLoadedChannelsResult: Result<Set<ChannelId>, Error>?
 
-    @Atomic var markAllRead_completion: ((Error?) -> Void)?
+    @Atomic var queryGroupedChannels_callCount = 0
+    @Atomic var queryGroupedChannels_groups: [[String: GroupedQueryChannelsRequestGroup]?] = []
+    @Atomic var queryGroupedChannels_limits: [Int?] = []
+    @Atomic var queryGroupedChannels_watchValues: [Bool] = []
+    @Atomic var queryGroupedChannels_presenceValues: [Bool] = []
+    @Atomic var queryGroupedChannels_result: Result<[ChannelGroup], Error>?
 
-    var startWatchingChannels_callCount = 0
+    @Atomic var markAllRead_completion: (@Sendable (Error?) -> Void)?
+
+    @Atomic var startWatchingChannels_callCount = 0
     @Atomic var startWatchingChannels_cids: [ChannelId] = []
-    @Atomic var startWatchingChannels_completion: ((Error?) -> Void)?
-    var startWatchingChannels_completion_success = false
+    @Atomic var startWatchingChannels_completion: (@Sendable (Error?) -> Void)?
+    @Atomic var startWatchingChannels_completion_success = false
 
-    var link_callCount = 0
-    var link_completion: ((Error?) -> Void)?
+    @Atomic var link_callCount = 0
+    @Atomic var link_completion: (@Sendable (Error?) -> Void)?
 
-    var unlink_callCount = 0
+    @Atomic var unlink_callCount = 0
 
     func cleanUp() {
         update_queries.removeAll()
@@ -38,6 +45,12 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         fetch_queries.removeAll()
         fetch_completion = nil
 
+        queryGroupedChannels_callCount = 0
+        queryGroupedChannels_groups.removeAll()
+        queryGroupedChannels_limits.removeAll()
+        queryGroupedChannels_watchValues.removeAll()
+        queryGroupedChannels_presenceValues.removeAll()
+        queryGroupedChannels_result = nil
         markAllRead_completion = nil
 
         startWatchingChannels_cids.removeAll()
@@ -47,20 +60,20 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
 
     override func update(
         channelListQuery: ChannelListQuery,
-        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
+        completion: (@Sendable (Result<[ChatChannel], Error>) -> Void)? = nil
     ) {
         _update_queries.mutate { $0.append(channelListQuery) }
         update_completion = completion
         update_completion_result?.invoke(with: completion)
     }
 
-    override func markAllRead(completion: ((Error?) -> Void)? = nil) {
+    override func markAllRead(completion: (@Sendable (Error?) -> Void)? = nil) {
         markAllRead_completion = completion
     }
 
     override func fetch(
         channelListQuery: ChannelListQuery,
-        completion: @escaping (Result<ChannelListPayload, Error>) -> Void
+        completion: @escaping @Sendable (Result<ChannelListPayload, Error>) -> Void
     ) {
         _fetch_queries.mutate { $0.append(channelListQuery) }
         fetch_completion = completion
@@ -69,31 +82,58 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     override func refreshLoadedChannels(
         for query: ChannelListQuery,
         channelCount: Int,
-        completion: @escaping (Result<Set<ChannelId>, any Error>) -> Void
+        completion: @escaping @Sendable (Result<Set<ChannelId>, any Error>) -> Void
     ) {
         record()
         refreshLoadedChannelsResult?.invoke(with: completion)
     }
 
+    override func queryGroupedChannels(
+        groups: [String: GroupedQueryChannelsRequestGroup]?,
+        limit: Int?,
+        watch: Bool,
+        presence: Bool,
+        completion: @escaping @Sendable (Result<[ChannelGroup], Error>) -> Void
+    ) {
+        _queryGroupedChannels_callCount.mutate { $0 += 1 }
+        _queryGroupedChannels_groups.mutate { $0.append(groups) }
+        _queryGroupedChannels_limits.mutate { $0.append(limit) }
+        _queryGroupedChannels_watchValues.mutate { $0.append(watch) }
+        _queryGroupedChannels_presenceValues.mutate { $0.append(presence) }
+        if let result = queryGroupedChannels_result {
+            DispatchQueue.main.async {
+                completion(result)
+            }
+        } else {
+            super.queryGroupedChannels(
+                groups: groups,
+                limit: limit,
+                watch: watch,
+                presence: presence,
+                completion: completion
+            )
+        }
+    }
+
     override func link(
         channel: ChatChannel,
         with query: ChannelListQuery,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        link_callCount += 1
+        _link_callCount.mutate { $0 += 1 }
         link_completion = completion
     }
 
     override func unlink(
         channel: ChatChannel,
         with query: ChannelListQuery,
-        completion: ((Error?) -> Void)? = nil
+        completion: (@Sendable (Error?) -> Void)? = nil
     ) {
-        unlink_callCount += 1
+        _unlink_callCount.mutate { $0 += 1 }
     }
 
-    override func startWatchingChannels(withIds ids: [ChannelId], completion: ((Error?) -> Void)?) {
-        startWatchingChannels_callCount += 1
+    override func startWatchingChannels(withIds ids: [ChannelId], completion: (@Sendable (Error?) -> Void)?) {
+        _startWatchingChannels_callCount.mutate { $0 += 1 }
         startWatchingChannels_cids = ids
         if startWatchingChannels_completion_success {
             completion?(nil)

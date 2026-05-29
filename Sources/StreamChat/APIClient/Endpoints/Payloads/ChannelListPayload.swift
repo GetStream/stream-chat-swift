@@ -25,6 +25,99 @@ extension ChannelListPayload: Decodable {
     }
 }
 
+final class GroupedQueryChannelsRequestBody: Encodable, Sendable {
+    let limit: Int?
+    let groups: [String: GroupedQueryChannelsRequestGroup]?
+    let watch: Bool
+    let presence: Bool
+
+    init(
+        limit: Int?,
+        groups: [String: GroupedQueryChannelsRequestGroup]?,
+        watch: Bool,
+        presence: Bool
+    ) {
+        self.limit = limit
+        self.groups = groups
+        self.watch = watch
+        self.presence = presence
+    }
+}
+
+final class GroupedQueryChannelsRequestGroup: Encodable, Sendable {
+    let limit: Int?
+    let next: String?
+
+    init(limit: Int?, next: String?) {
+        self.limit = limit
+        self.next = next
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case limit
+        case next
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        if let limit, limit > 0 {
+            try container.encode(limit, forKey: .limit)
+        }
+        try container.encodeIfPresent(next, forKey: .next)
+    }
+}
+
+final class GroupedQueryChannelsPayload: Decodable, Sendable {
+    let groups: [String: GroupedQueryChannelsGroupPayload]
+
+    init(groups: [String: GroupedQueryChannelsGroupPayload]) {
+        self.groups = groups
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case groups
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        groups = try container.decode([String: GroupedQueryChannelsGroupPayload].self, forKey: .groups)
+    }
+}
+
+final class GroupedQueryChannelsGroupPayload: Decodable, Sendable {
+    let channels: [ChannelPayload]
+    let unreadChannels: Int
+    let next: String?
+    let prev: String?
+
+    init(
+        channels: [ChannelPayload],
+        unreadChannels: Int,
+        next: String? = nil,
+        prev: String? = nil
+    ) {
+        self.channels = channels
+        self.unreadChannels = unreadChannels
+        self.next = next
+        self.prev = prev
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case channels
+        case unreadChannels = "unread_channels"
+        case next
+        case prev
+    }
+
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        channels = try container.decodeArrayIgnoringFailures([ChannelPayload].self, forKey: .channels)
+        unreadChannels = try container.decodeIfPresent(Int.self, forKey: .unreadChannels) ?? 0
+        next = try container.decodeIfPresent(String.self, forKey: .next)
+        prev = try container.decodeIfPresent(String.self, forKey: .prev)
+    }
+}
+
 struct ChannelPayload {
     let channel: ChannelDetailPayload
 
