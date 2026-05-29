@@ -125,6 +125,35 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
         XCTAssertNotNil(children.first { $0.key == "type" })
     }
 
+    func test_predefinedFilter_fromJSONData_mixedFieldAndGroupOperator_keepsAllKeysAsImplicitAnd() throws {
+        // A field key (`type`) alongside a group-operator key (`$or`) at the same level. The backend
+        // ANDs both, so neither may be dropped: `type == messaging AND (member-of OR frozen)`.
+        let json = #"{"type":"messaging","$or":[{"members":{"$in":["amy"]}},{"frozen":true}]}"#.data(using: .utf8)!
+
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
+
+        XCTAssertEqual(filter.operator, FilterOperator.and.rawValue)
+        let children = try XCTUnwrap(filter.value as? [Filter<ChannelListFilterScope>])
+        XCTAssertEqual(children.count, 2)
+
+        // The bare field key is enriched as a leaf.
+        let typeChild = try XCTUnwrap(children.first { $0.key == "type" })
+        XCTAssertEqual(typeChild.operator, FilterOperator.equal.rawValue)
+        XCTAssertEqual(typeChild.keyPathString, #keyPath(ChannelDTO.typeRawValue))
+
+        // The group operator is preserved with its children enriched.
+        let orChild = try XCTUnwrap(children.first { $0.operator == FilterOperator.or.rawValue })
+        let orGrandchildren = try XCTUnwrap(orChild.value as? [Filter<ChannelListFilterScope>])
+        XCTAssertEqual(orGrandchildren.count, 2)
+        XCTAssertEqual(
+            orGrandchildren.first { $0.key == "members" }?.keyPathString,
+            #keyPath(ChannelDTO.members.user.id)
+        )
+
+        // Every condition contributes to the predicate (nothing silently dropped).
+        XCTAssertNotNil(filter.predicate)
+    }
+
     func test_predefinedFilter_fromJSONData_nullValue_decodesNilTeam() throws {
         let json = #"{"team":null}"#.data(using: .utf8)!
 
@@ -135,6 +164,43 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
         XCTAssertNil(filter.value as? TeamId)
         XCTAssertEqual(filter.keyPathString, #keyPath(ChannelDTO.team))
         XCTAssertNotNil(filter.predicate)
+    }
+
+    func test_predefinedFilter_fromJSONData_nonNullTeam_decodesValueAndKeyPath() throws {
+        let json = #"{"team":"red"}"#.data(using: .utf8)!
+
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
+
+        XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
+        XCTAssertEqual(filter.key, "team")
+        XCTAssertEqual(filter.value as? String, "red")
+        XCTAssertEqual(filter.keyPathString, #keyPath(ChannelDTO.team))
+        XCTAssertNotNil(filter.predicate)
+    }
+
+    func test_predefinedFilter_fromJSONData_nullTeamInsideGroup_decodesNil() throws {
+        let json = #"{"$and":[{"team":null},{"type":"messaging"}]}"#.data(using: .utf8)!
+
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
+
+        XCTAssertEqual(filter.operator, FilterOperator.and.rawValue)
+        let children = try XCTUnwrap(filter.value as? [Filter<ChannelListFilterScope>])
+        let teamChild = try XCTUnwrap(children.first { $0.key == "team" })
+        XCTAssertNil(teamChild.value as? TeamId)
+        XCTAssertEqual(teamChild.keyPathString, #keyPath(ChannelDTO.team))
+        XCTAssertNotNil(children.first { $0.key == "type" })
+    }
+
+    func test_predefinedFilter_fromJSONData_nullTeamInMultiKey_keepsBothKeys() throws {
+        let json = #"{"team":null,"type":"messaging"}"#.data(using: .utf8)!
+
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
+
+        XCTAssertEqual(filter.operator, FilterOperator.and.rawValue)
+        let children = try XCTUnwrap(filter.value as? [Filter<ChannelListFilterScope>])
+        XCTAssertEqual(children.count, 2)
+        XCTAssertNil(try XCTUnwrap(children.first { $0.key == "team" }).value as? TeamId)
+        XCTAssertNotNil(children.first { $0.key == "type" })
     }
 
     func test_predefinedFilter_fromJSONData_unknownKey_passesThrough() throws {
@@ -190,6 +256,60 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
 
     func test_predefinedFilter_fromJSONData_emptyData_returnsNil() throws {
         XCTAssertNil(try Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: Data()))
+    }
+
+    func test_predefinedFilter_fromJSONData_membersInArray_decodesArrayValueAndKeyPath() throws {
+        let json = #"{"members":{"$in":["amy","leia","r2-d2"]}}"#.data(using: .utf8)!
+
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
+
+        XCTAssertEqual(filter.operator, FilterOperator.in.rawValue)
+        XCTAssertEqual(filter.key, "members")
+        XCTAssertEqual(filter.value as? [String], ["amy", "leia", "r2-d2"])
+        XCTAssertEqual(filter.keyPathString, #keyPath(ChannelDTO.members.user.id))
+        XCTAssertNotNil(filter.predicate)
+    }
+
+    func test_predefinedFilter_fromJSONData_numericGreaterThan_attachesKeyPath() throws {
+        let json = #"{"member_count":{"$gt":5}}"#.data(using: .utf8)!
+
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
+
+        XCTAssertEqual(filter.operator, FilterOperator.greater.rawValue)
+        XCTAssertEqual(filter.key, "member_count")
+        XCTAssertEqual(filter.value as? Int, 5)
+        XCTAssertEqual(filter.keyPathString, #keyPath(ChannelDTO.memberCount))
+        XCTAssertNotNil(filter.predicate)
+    }
+
+    func test_predefinedFilter_fromJSONData_dateValue_roundTripsThroughDecoder() throws {
+        // Build via the DSL + encoder so the ISO8601 string matches CodableHelper's formatter exactly.
+        let date = Date(timeIntervalSince1970: 1_600_000_000)
+        let encoded = try JSONEncoder.default.encode(Filter<ChannelListFilterScope>.less(.createdAt, than: date))
+
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: encoded))
+
+        XCTAssertEqual(filter.operator, FilterOperator.less.rawValue)
+        XCTAssertEqual(filter.key, "created_at")
+        XCTAssertEqual(filter.value as? Date, date)
+        XCTAssertEqual(filter.keyPathString, #keyPath(ChannelDTO.createdAt))
+        XCTAssertNotNil(filter.predicate)
+    }
+
+    func test_predefinedFilter_fromJSONData_predicateMapperKeysInGroup_enrichBoth() throws {
+        let json = #"{"$or":[{"archived":true},{"pinned":true}]}"#.data(using: .utf8)!
+
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
+
+        XCTAssertEqual(filter.operator, FilterOperator.or.rawValue)
+        let children = try XCTUnwrap(filter.value as? [Filter<ChannelListFilterScope>])
+        XCTAssertEqual(children.count, 2)
+        XCTAssertNotNil(try XCTUnwrap(children.first { $0.key == "archived" }).predicateMapper)
+        XCTAssertNotNil(try XCTUnwrap(children.first { $0.key == "pinned" }).predicateMapper)
+
+        let predicate = try XCTUnwrap(filter.predicate)
+        XCTAssertTrue(predicate.predicateFormat.contains("archivedAt"), predicate.predicateFormat)
+        XCTAssertTrue(predicate.predicateFormat.contains("pinnedAt"), predicate.predicateFormat)
     }
 
     func test_predefinedFilterSort_decodesKnownFields() throws {

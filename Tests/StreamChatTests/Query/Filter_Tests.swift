@@ -152,4 +152,92 @@ final class Filter_Tests: XCTestCase {
         XCTAssertEqual(filter.key, "name")
         XCTAssertEqual(filter.value as? String, "general")
     }
+
+    func test_filterDecoding_implicitEqual_double() throws {
+        let filter: Filter<FilterTestScope> = try #"{"test_key_Double":13.5}"#.deserializeFilterThrows()
+        XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
+        XCTAssertEqual(filter.key, "test_key_Double")
+        XCTAssertEqual(filter.value as? Double, 13.5)
+    }
+
+    func test_filterDecoding_implicitEqual_intArray() throws {
+        let filter: Filter<FilterTestScope> = try #"{"test_key_ArrayInt":[1,2,3]}"#.deserializeFilterThrows()
+        XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
+        XCTAssertEqual(filter.key, "test_key_ArrayInt")
+        XCTAssertEqual(filter.value as? [Int], [1, 2, 3])
+    }
+
+    // MARK: - Implicit `$and` decoding
+
+    func test_filterDecoding_mixedFieldAndGroupOperator_decodesAsImplicitAnd() throws {
+        // A field key and a group-operator key at the same level are ANDed; neither is dropped.
+        let filter: Filter<FilterTestScope> = try #"{"name":"general","$or":[{"a":"1"},{"b":"2"}]}"#.deserializeFilterThrows()
+
+        XCTAssertEqual(filter.operator, FilterOperator.and.rawValue)
+        let children = try XCTUnwrap(filter.value as? [Filter<FilterTestScope>])
+        XCTAssertEqual(children.count, 2)
+        XCTAssertNotNil(children.first { $0.key == "name" })
+        XCTAssertNotNil(children.first { $0.operator == FilterOperator.or.rawValue })
+    }
+
+    func test_filterDecoding_multipleGroupOperators_decodeAsImplicitAnd() throws {
+        // Two group operators at the same level are ANDed.
+        let filter: Filter<FilterTestScope> = try #"{"$and":[{"a":"1"}],"$or":[{"b":"2"}]}"#.deserializeFilterThrows()
+
+        XCTAssertEqual(filter.operator, FilterOperator.and.rawValue)
+        let children = try XCTUnwrap(filter.value as? [Filter<FilterTestScope>])
+        XCTAssertEqual(children.count, 2)
+        XCTAssertNotNil(children.first { $0.operator == FilterOperator.and.rawValue })
+        XCTAssertNotNil(children.first { $0.operator == FilterOperator.or.rawValue })
+    }
+
+    func test_filterDecoding_implicitAnd_threeBareKeys_decodesAllLeaves() throws {
+        let filter: Filter<FilterTestScope> = try #"{"a":1,"b":"x","c":true}"#.deserializeFilterThrows()
+
+        XCTAssertEqual(filter.operator, FilterOperator.and.rawValue)
+        let children = try XCTUnwrap(filter.value as? [Filter<FilterTestScope>])
+        XCTAssertEqual(children.count, 3)
+        XCTAssertEqual(children.first { $0.key == "a" }?.value as? Int, 1)
+        XCTAssertEqual(children.first { $0.key == "b" }?.value as? String, "x")
+        XCTAssertEqual(children.first { $0.key == "c" }?.value as? Bool, true)
+    }
+
+    func test_filterDecoding_implicitMultiKeyNestedInsideGroup_decodesAsImplicitAnd() throws {
+        // The multi-key → implicit-`$and` rule must apply at every level, not just the top.
+        let filter: Filter<FilterTestScope> = try #"{"$or":[{"a":1,"b":2},{"c":3}]}"#.deserializeFilterThrows()
+
+        XCTAssertEqual(filter.operator, FilterOperator.or.rawValue)
+        let orChildren = try XCTUnwrap(filter.value as? [Filter<FilterTestScope>])
+        XCTAssertEqual(orChildren.count, 2)
+
+        // The multi-key object decodes to a nested implicit `$and`.
+        let nestedAnd = try XCTUnwrap(orChildren.first { $0.operator == FilterOperator.and.rawValue })
+        let nestedAndChildren = try XCTUnwrap(nestedAnd.value as? [Filter<FilterTestScope>])
+        XCTAssertEqual(nestedAndChildren.count, 2)
+        XCTAssertNotNil(nestedAndChildren.first { $0.key == "a" })
+        XCTAssertNotNil(nestedAndChildren.first { $0.key == "b" })
+
+        // The single-key object stays a plain leaf.
+        XCTAssertNotNil(orChildren.first { $0.key == "c" })
+    }
+
+    func test_filterDecoding_nestedGroups_decodeRecursively() throws {
+        let filter: Filter<FilterTestScope> = try #"{"$and":[{"$or":[{"a":1}]},{"x":1}]}"#.deserializeFilterThrows()
+
+        XCTAssertEqual(filter.operator, FilterOperator.and.rawValue)
+        let children = try XCTUnwrap(filter.value as? [Filter<FilterTestScope>])
+        XCTAssertEqual(children.count, 2)
+        XCTAssertNotNil(children.first { $0.operator == FilterOperator.or.rawValue })
+        XCTAssertNotNil(children.first { $0.key == "x" })
+    }
+
+    func test_filterDecoding_norGroup_decodes() throws {
+        let filter: Filter<FilterTestScope> = try #"{"$nor":[{"a":1},{"b":2}]}"#.deserializeFilterThrows()
+
+        XCTAssertEqual(filter.operator, FilterOperator.nor.rawValue)
+        let children = try XCTUnwrap(filter.value as? [Filter<FilterTestScope>])
+        XCTAssertEqual(children.count, 2)
+        XCTAssertNotNil(children.first { $0.key == "a" })
+        XCTAssertNotNil(children.first { $0.key == "b" })
+    }
 }
