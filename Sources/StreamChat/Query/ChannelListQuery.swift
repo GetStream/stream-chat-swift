@@ -413,13 +413,38 @@ internal extension FilterKey where Scope == ChannelListFilterScope {
 // MARK: - Predefined Filter Support
 
 extension ChannelListFilterScope {
+    /// Maps a decoded predefined filter leaf to a locally filterable one.
+    ///
+    /// Predefined filters are decoded from server-provided JSON, so their leaves only carry the
+    /// remote key and value. The strongly typed `FilterKey` also stores local-only details, such
+    /// as key paths and predicate/value mappers, but those details cannot be decoded from JSON.
+    /// This closure captures one typed key and rebuilds a decoded leaf with that local wiring.
+    typealias PredefinedFilterMapper = @Sendable (Filter<ChannelListFilterScope>) -> Filter<ChannelListFilterScope>
+
     /// Registry of every hardcoded channel-list `FilterKey`, keyed by the server-side `rawValue`.
-    /// Used to re-attach Core Data wiring after decoding predefined filter JSON.
+    ///
+    /// The dictionary stores enrichment closures instead of `FilterKey` values because the keys are
+    /// generic over different `Value` types and cannot be stored together directly.
     ///
     /// - Important: Always add new filter keys to the map.
-    static let predefinedFilterKeyMapping: [String: ChannelListFilterKeyCoreDataMetadata] = {
-        func map<Value: FilterValue>(_ key: FilterKey<ChannelListFilterScope, Value>) -> (String, ChannelListFilterKeyCoreDataMetadata) {
-            (key.rawValue, ChannelListFilterKeyCoreDataMetadata(key))
+    static let predefinedFilterKeyMapping: [String: PredefinedFilterMapper] = {
+        func map<Value: FilterValue>(
+            _ key: FilterKey<ChannelListFilterScope, Value>
+        ) -> (String, PredefinedFilterMapper) {
+            (
+                key.rawValue,
+                { filter in
+                    Filter(
+                        operator: filter.operator,
+                        key: filter.key,
+                        value: filter.value,
+                        valueMapper: key.valueMapper,
+                        keyPathString: key.keyPathString,
+                        isCollectionFilter: key.isCollectionFilter,
+                        predicateMapper: key.predicateMapper
+                    )
+                }
+            )
         }
         return Dictionary(
             uniqueKeysWithValues: [

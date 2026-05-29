@@ -36,35 +36,11 @@ extension Filter where Scope == ChannelListFilterScope {
             )
         }
         guard let key else { return self }
-        guard let coreDataMetadata = ChannelListFilterScope.predefinedFilterKeyMapping[key] else {
+        guard let mapFilter = ChannelListFilterScope.predefinedFilterKeyMapping[key] else {
             StreamCore.log.error("Can't apply CoreData keyPath for channel list filtering key '\(key)'.")
             return self
         }
-        return Filter(
-            operator: `operator`,
-            key: key,
-            value: value,
-            valueMapper: coreDataMetadata.valueMapper,
-            keyPathString: coreDataMetadata.keyPathString,
-            isCollectionFilter: coreDataMetadata.isCollectionFilter,
-            predicateMapper: coreDataMetadata.predicateMapper
-        )
-    }
-}
-
-/// Type-erased Core Data metadata extracted from a typed `FilterKey<ChannelListFilterScope, _>`.
-/// The metadata is what `Filter+predicate.swift` consumes when building `NSPredicate`s.
-struct ChannelListFilterKeyCoreDataMetadata: Sendable {
-    let keyPathString: String?
-    let valueMapper: (@Sendable (Any) -> FilterValue?)?
-    let predicateMapper: (@Sendable (FilterOperator, Any) -> NSPredicate?)?
-    let isCollectionFilter: Bool
-
-    init<Value: FilterValue>(_ key: FilterKey<ChannelListFilterScope, Value>) {
-        keyPathString = key.keyPathString
-        valueMapper = key.valueMapper
-        predicateMapper = key.predicateMapper
-        isCollectionFilter = key.isCollectionFilter
+        return mapFilter(self)
     }
 }
 

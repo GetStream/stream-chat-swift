@@ -83,6 +83,18 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
         XCTAssertEqual(filter.keyPathString, #keyPath(ChannelDTO.members.user.id))
     }
 
+    func test_predefinedFilter_fromJSONData_collectionKey_preservesCollectionFilterFlag() throws {
+        let json = #"{"member.user.name":{"$autocomplete":"Leia"}}"#.data(using: .utf8)!
+
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
+
+        XCTAssertEqual(filter.operator, FilterOperator.autocomplete.rawValue)
+        XCTAssertEqual(filter.key, "member.user.name")
+        XCTAssertEqual(filter.value as? String, "Leia")
+        XCTAssertEqual(filter.keyPathString, #keyPath(ChannelDTO.members.user.name))
+        XCTAssertTrue(filter.isCollectionFilter)
+    }
+
     func test_predefinedFilter_fromJSONData_groupOperator_enrichesAllChildrenMixedForms() throws {
         let json = #"{"$and":[{"type":"messaging"},{"members":{"$in":["r2-d2"]}}]}"#.data(using: .utf8)!
 
