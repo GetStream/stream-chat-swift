@@ -194,17 +194,6 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
     }
     
     /// Queries grouped channel groups for the app.
-    ///
-    /// The `groups` parameter controls which groups are requested and how:
-    /// - `nil` → fetch every configured group; the request body's `groups` field is `nil` and the
-    ///   top-level `limit` applies.
-    /// - non-`nil` → fetch only those groups; the entries are forwarded as-is. Each entry's
-    ///   `next` cursor (if any) paginates that group; `limit` is per-group.
-    ///
-    /// Per-group, the locally-cached channel set is reset whenever the response represents a
-    /// fresh first page for that group (i.e. the request had `next == nil` for it, or the request
-    /// was a fetch-all). Unread-channel counts on `CurrentUserDTO` are merged per group on every
-    /// response — keys present in the payload replace their values, keys absent are left untouched.
     func queryGroupedChannels(
         groups: [String: GroupedQueryChannelsRequestGroup]?,
         limit: Int?,
@@ -322,8 +311,6 @@ extension ChannelListUpdater {
             }
         }
     }
-    
-    // MARK: -
     
     func loadChannels(query: ChannelListQuery, pagination: Pagination) async throws -> [ChatChannel] {
         try await update(channelListQuery: query.withPagination(pagination))
