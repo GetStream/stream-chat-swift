@@ -292,6 +292,34 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(ObjectIdentifier(controller.channelListObserver), observerBefore)
     }
 
+    func test_synchronize_predefinedFilterQuery_whenRemoteResolutionChangesQuery_rebuildsLinkerWithResolvedQuery() throws {
+        let predefinedQuery = ChannelListQuery(
+            predefinedFilter: .unique,
+            filterValues: ["user_id": "r2-d2"]
+        )
+        query = predefinedQuery
+        controller = ChatChannelListController(query: predefinedQuery, client: client, environment: env.environment)
+
+        var resolvedQuery = predefinedQuery
+        resolvedQuery.filter = try XCTUnwrap(
+            Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: #"{"type":"messaging"}"#.data(using: .utf8)!)
+        )
+        resolvedQuery.sort = try [Sorting<ChannelListSortingKey>].predefinedFilterSort(
+            fromJSONData: #"[{"field":"last_message_at","direction":-1}]"#.data(using: .utf8)!
+        )
+        _ = controller.channelListObserver
+        env.channelListUpdater?.update_updatedQuery = resolvedQuery
+
+        let exp = expectation(description: "synchronize completes")
+        controller.synchronize { _ in exp.fulfill() }
+        env.channelListUpdater?.update_completion?(.success([]))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertGreaterThanOrEqual(env.channelListLinkerQueries.count, 2)
+        XCTAssertEqual(env.channelListLinkerQueries.last?.filter.key, "type")
+        XCTAssertEqual(env.channelListLinkerQueries.last?.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
+    }
+
     func test_synchronize_predefinedFilterQuery_whenNetworkFails_keepsCachedResolvedFilterAndReportsError() throws {
         let predefinedQuery = ChannelListQuery(
             predefinedFilter: "user_per_channel_type_channels",
@@ -2185,6 +2213,7 @@ private class TestEnvironment {
     @Atomic var currentUserUpdater: CurrentUserUpdater_Mock?
     @Atomic var deliveryCriteriaValidator: MessageDeliveryCriteriaValidator_Mock?
     @Atomic var channelWatcherHandler: ChannelWatcherHandler_Mock?
+    @Atomic var channelListLinkerQueries: [ChannelListQuery] = []
 
     lazy var environment: ChatChannelListController.Environment =
         .init(
@@ -2196,6 +2225,7 @@ private class TestEnvironment {
                 return self.channelListUpdater!
             },
             channelListLinkerBuilder: { [unowned self] query, filter, config, database, worker, _ in
+                self._channelListLinkerQueries.mutate { $0.append(query) }
                 self.channelWatcherHandler = ChannelWatcherHandler_Mock()
                 self.channelWatcherHandler?.attemptToWatch_completion_success = true
                 return ChannelListLinker(

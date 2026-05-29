@@ -142,6 +142,46 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(stateQuery.sort.first?.direction, -1)
     }
 
+    func test_loadChannels_predefinedFilterQuery_whenRemoteResolutionChangesQuery_rebuildsLinkerWithResolvedQuery() async throws {
+        let predefinedQuery = ChannelListQuery(
+            predefinedFilter: .unique,
+            filterValues: ["user_id": "r2-d2"]
+        )
+        await setUpChannelList(usesMockedChannelUpdater: true, dynamicFilter: { _ in true }, query: predefinedQuery)
+
+        var resolvedQuery = predefinedQuery
+        resolvedQuery.filter = try XCTUnwrap(
+            Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: #"{"type":"messaging"}"#.data(using: .utf8)!)
+        )
+        resolvedQuery.sort = try [Sorting<ChannelListSortingKey>].predefinedFilterSort(
+            fromJSONData: #"[{"field":"last_message_at","direction":-1}]"#.data(using: .utf8)!
+        )
+        env.channelListUpdaterMock.update_updatedQuery = resolvedQuery
+        env.channelListUpdaterMock.update_completion_result = .success([])
+
+        try await channelList.loadChannels(with: .init(pageSize: 5, offset: 0))
+
+        let incomingChannelPayload = makeMatchingChannelPayload(createdAtOffset: 1)
+        let incomingCid = incomingChannelPayload.channel.cid
+        try await env.client.mockDatabaseContainer.write { session in
+            _ = session.saveQuery(query: resolvedQuery)
+            try session.saveChannel(payload: incomingChannelPayload)
+        }
+
+        let event = NotificationAddedToChannelEvent(
+            channel: .mock(cid: incomingCid),
+            unreadCount: nil,
+            member: .mock(id: .unique),
+            createdAt: .unique
+        )
+        let eventExpectation = XCTestExpectation(description: "Event processed")
+        env.client.eventNotificationCenter.process([event], completion: { eventExpectation.fulfill() })
+        await fulfillment(of: [eventExpectation], timeout: defaultTimeout)
+
+        XCTAssertEqual(env.channelListUpdaterMock.link_queries.map(\.filter.key), ["type"])
+        XCTAssertEqual(env.channelListUpdaterMock.link_queries.first?.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
+    }
+
     func test_get_nonPredefinedQuery_leavesQueryUnchanged() async throws {
         await setUpChannelList(usesMockedChannelUpdater: true)
         env.channelListUpdaterMock.update_completion_result = .success([])

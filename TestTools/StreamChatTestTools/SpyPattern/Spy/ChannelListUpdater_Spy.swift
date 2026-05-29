@@ -12,6 +12,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     @Atomic var update_queries: [ChannelListQuery] = []
     @Atomic var update_completion: ((Result<[ChatChannel], Error>) -> Void)?
     @Atomic var update_completion_result: Result<[ChatChannel], Error>?
+    @Atomic var update_updatedQuery: ChannelListQuery?
 
     @Atomic var fetch_queries: [ChannelListQuery] = []
     @Atomic var fetch_completion: ((Result<ChannelListPayload, Error>) -> Void)?
@@ -26,14 +27,17 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     var startWatchingChannels_completion_success = false
 
     var link_callCount = 0
+    @Atomic var link_queries: [ChannelListQuery] = []
     var link_completion: ((Error?) -> Void)?
 
     var unlink_callCount = 0
+    @Atomic var unlink_queries: [ChannelListQuery] = []
 
     func cleanUp() {
         update_queries.removeAll()
         update_completion = nil
         update_completion_result = nil
+        update_updatedQuery = nil
 
         fetch_queries.removeAll()
         fetch_completion = nil
@@ -43,6 +47,13 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         startWatchingChannels_cids.removeAll()
         startWatchingChannels_completion = nil
         startWatchingChannels_completion_success = false
+
+        link_callCount = 0
+        link_queries.removeAll()
+        link_completion = nil
+
+        unlink_callCount = 0
+        unlink_queries.removeAll()
     }
 
     override func update(
@@ -51,8 +62,13 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
     ) {
         _update_queries.mutate { $0.append(channelListQuery) }
         let resolvedQuery = loadPredefinedFilter(for: channelListQuery)
-        update_completion = { result in
+        let updatedQueryOverride = update_updatedQuery
+        update_completion = { [weak self] result in
+            defer { self?.update_completion = nil }
             let changedQuery: ChannelListQuery? = {
+                if let updatedQuery = updatedQueryOverride {
+                    return updatedQuery
+                }
                 guard let resolvedQuery, !resolvedQuery.isFilterEqual(to: channelListQuery) else { return nil }
                 return resolvedQuery
             }()
@@ -88,6 +104,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         completion: ((Error?) -> Void)? = nil
     ) {
         link_callCount += 1
+        _link_queries.mutate { $0.append(query) }
         link_completion = completion
     }
 
@@ -97,6 +114,7 @@ final class ChannelListUpdater_Spy: ChannelListUpdater, Spy, @unchecked Sendable
         completion: ((Error?) -> Void)? = nil
     ) {
         unlink_callCount += 1
+        _unlink_queries.mutate { $0.append(query) }
     }
 
     override func startWatchingChannels(withIds ids: [ChannelId], completion: ((Error?) -> Void)?) {

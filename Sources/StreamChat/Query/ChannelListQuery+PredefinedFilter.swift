@@ -53,7 +53,7 @@ extension Array where Element == Sorting<ChannelListSortingKey> {
         let raw = try JSONDecoder.default.decode([RawSortingItem].self, from: data)
         return raw.compactMap { item in
             guard let key = ChannelListSortingKey.predefinedSortingKeyMapping[item.field] else {
-                StreamCore.log.error("Unknown channel list sorting field '\(item.field)' - dropping from decoded sort array.")
+                StreamCore.log.error("Can't apply CoreData keyPath for channel list sorting field '\(item.field)'.")
                 return nil
             }
             return Sorting(key: key, isAscending: item.direction == 1)
