@@ -8,7 +8,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Add `ChatClient.queryGroupedChannels(groups:limit:presence:watch:)` to fetch grouped channels with per-group unread counts [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 - Add `ChatClient.makeChannelList(with:)` overload for observing a single grouped channels group in the state layer [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 - Add `unreadChannelCountsByGroup` to `CurrentChatUser`, observable for changes via `ConnectedUser` [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
-### 🔄 Changed
 
 # [5.4.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.4.0)
 _May 28, 2026_
