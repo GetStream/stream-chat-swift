@@ -154,7 +154,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         channelListLinker.start(with: client.eventNotificationCenter)
         client.syncRepository.startTrackingChannelListController(self)
         updateChannelList { result in
-            completion?(result.error)
+            self.callback { completion?(result.error) }
         }
     }
     
@@ -221,7 +221,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
                 // Mark channels as delivered if synchronization was successful
                 self?.markChannelsAsDeliveredIfNeeded(channels: updateResult.channels)
 
-                // Predefined filters can update local query representation
+                // Predefined filters can update local query representation (query gets backend defined filter and sort which must be set to FRC)
                 if let updatedQuery = updateResult.updatedQuery {
                     self?.query = updatedQuery
                     self?.updateChannelListObserver()

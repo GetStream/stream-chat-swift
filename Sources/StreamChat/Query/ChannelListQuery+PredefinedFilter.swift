@@ -11,7 +11,12 @@ extension Filter where Scope == ChannelListFilterScope {
     /// Decodes a channel-list filter from persisted JSON and re-attaches Core Data wiring
     /// (keyPath, valueMapper, predicateMapper) for every node whose key matches a known
     /// `FilterKey<ChannelListFilterScope, _>`. Unknown keys pass through unchanged.
-    static func predefinedFilter(fromJSONData data: Data) throws -> Filter {
+    ///
+    /// Returns `nil` for empty `data`: `ChannelListQueryDTO.filterJSONData` falls back to
+    /// empty `Data()` when filter encoding fails, so empty input means "no persisted filter"
+    /// rather than a decode failure.
+    static func predefinedFilter(fromJSONData data: Data) throws -> Filter? {
+        guard !data.isEmpty else { return nil }
         let decoded = try JSONDecoder.default.decode(Filter.self, from: data)
         return decoded.applyCoreDataFilteringKeys()
     }
@@ -25,14 +30,14 @@ extension Filter where Scope == ChannelListFilterScope {
             }
             return Filter(
                 operator: `operator`,
-                key: nil,
+                key: key,
                 value: children.map { $0.applyCoreDataFilteringKeys() },
-                isCollectionFilter: false
+                isCollectionFilter: isCollectionFilter
             )
         }
         guard let key else { return self }
         guard let coreDataMetadata = ChannelListFilterScope.predefinedFilterKeyMapping[key] else {
-            StreamCore.log.error("Unknown channel list filtering key '\(key)' - dropping from local predefined filter.")
+            StreamCore.log.error("Can't apply CoreData keyPath for channel list filtering key '\(key)'.")
             return self
         }
         return Filter(

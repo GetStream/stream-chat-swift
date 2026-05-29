@@ -62,7 +62,7 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
     func test_predefinedFilter_fromJSONData_implicitEqual_attachesKeyPathAndValueMapper() throws {
         let json = #"{"type":"messaging"}"#.data(using: .utf8)!
 
-        let filter = try Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json)
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
 
         XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
         XCTAssertEqual(filter.key, "type")
@@ -75,7 +75,7 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
     func test_predefinedFilter_fromJSONData_inOperator_attachesKeyPath() throws {
         let json = #"{"members":{"$in":["r2-d2"]}}"#.data(using: .utf8)!
 
-        let filter = try Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json)
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
 
         XCTAssertEqual(filter.operator, FilterOperator.in.rawValue)
         XCTAssertEqual(filter.key, "members")
@@ -86,7 +86,7 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
     func test_predefinedFilter_fromJSONData_groupOperator_enrichesAllChildrenMixedForms() throws {
         let json = #"{"$and":[{"type":"messaging"},{"members":{"$in":["r2-d2"]}}]}"#.data(using: .utf8)!
 
-        let filter = try Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json)
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
 
         XCTAssertEqual(filter.operator, FilterOperator.and.rawValue)
         let children = try XCTUnwrap(filter.value as? [Filter<ChannelListFilterScope>])
@@ -104,7 +104,7 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
     func test_predefinedFilter_fromJSONData_multiKeyObject_decodesAsImplicitAnd() throws {
         let json = #"{"members":{"$in":["r2-d2"]},"type":"messaging"}"#.data(using: .utf8)!
 
-        let filter = try Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json)
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
 
         XCTAssertEqual(filter.operator, FilterOperator.and.rawValue)
         let children = try XCTUnwrap(filter.value as? [Filter<ChannelListFilterScope>])
@@ -116,7 +116,7 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
     func test_predefinedFilter_fromJSONData_nullValue_decodesNilTeam() throws {
         let json = #"{"team":null}"#.data(using: .utf8)!
 
-        let filter = try Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json)
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
 
         XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
         XCTAssertEqual(filter.key, "team")
@@ -128,18 +128,38 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
     func test_predefinedFilter_fromJSONData_unknownKey_passesThrough() throws {
         let json = #"{"made_up_field":"x"}"#.data(using: .utf8)!
 
-        let filter = try Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json)
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
 
         XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
         XCTAssertEqual(filter.key, "made_up_field")
         XCTAssertEqual(filter.value as? String, "x")
         XCTAssertNil(filter.keyPathString)
+        // Without Core Data wiring the leaf produces no local predicate (rather than crashing).
+        XCTAssertNil(filter.valueMapper)
+        XCTAssertNil(filter.predicate)
+    }
+
+    func test_predefinedFilter_fromJSONData_groupWithUnknownKey_dropsUnwiredLeafFromPredicate() throws {
+        let json = #"{"$and":[{"type":"messaging"},{"made_up_field":"x"}]}"#.data(using: .utf8)!
+
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
+
+        // The unknown leaf carries no keyPath, so it contributes no predicate; the known leaf still does.
+        let predicate = try XCTUnwrap(filter.predicate)
+        XCTAssertTrue(
+            predicate.predicateFormat.contains("typeRawValue"),
+            "Expected the known `type` leaf to drive the predicate; got: \(predicate.predicateFormat)"
+        )
+        XCTAssertFalse(
+            predicate.predicateFormat.contains("made_up_field"),
+            "Expected the unknown leaf to be dropped from the predicate; got: \(predicate.predicateFormat)"
+        )
     }
 
     func test_predefinedFilter_fromJSONData_predicateMapperKey_isPreserved() throws {
         let json = #"{"archived":true}"#.data(using: .utf8)!
 
-        let filter = try Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json)
+        let filter = try XCTUnwrap(Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: json))
 
         XCTAssertEqual(filter.operator, FilterOperator.equal.rawValue)
         XCTAssertEqual(filter.key, "archived")
@@ -154,6 +174,10 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
             predicate.predicateFormat.contains("!= nil"),
             "Expected archived=true to map to `archivedAt != nil`; got: \(predicate.predicateFormat)"
         )
+    }
+
+    func test_predefinedFilter_fromJSONData_emptyData_returnsNil() throws {
+        XCTAssertNil(try Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: Data()))
     }
 
     func test_predefinedFilterSort_decodesKnownFields() throws {

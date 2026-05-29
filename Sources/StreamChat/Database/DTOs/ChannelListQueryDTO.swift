@@ -53,13 +53,19 @@ extension NSManagedObjectContext {
         }
 
         var updated = query
-        if !dto.filterJSONData.isEmpty,
-           let filter = try? Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: dto.filterJSONData) {
-            updated.filter = filter
+        do {
+            if let filter = try Filter<ChannelListFilterScope>.predefinedFilter(fromJSONData: dto.filterJSONData) {
+                updated.filter = filter
+            }
+        } catch {
+            log.error("Failed decoding predefined filter from persisted data with error: \(error).")
         }
-        if let sortJSONData = dto.sortJSONData,
-           let sort = try? [Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: sortJSONData) {
-            updated.sort = sort
+        if let sortJSONData = dto.sortJSONData {
+            do {
+                updated.sort = try [Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: sortJSONData)
+            } catch {
+                log.error("Failed decoding predefined sort from persisted data with error: \(error).")
+            }
         }
         return updated
     }
