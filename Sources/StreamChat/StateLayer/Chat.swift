@@ -1628,12 +1628,14 @@ extension Chat {
         var readStateHandlerBuilder: @Sendable (
             _ authenticationRepository: AuthenticationRepository,
             _ channelUpdater: ChannelUpdater,
-            _ messageRepository: MessageRepository
+            _ messageRepository: MessageRepository,
+            _ config: ChatClientConfig
         ) -> ReadStateHandler = {
             ReadStateHandler(
                 authenticationRepository: $0,
                 channelUpdater: $1,
-                messageRepository: $2
+                messageRepository: $2,
+                config: $3
             )
         }
         

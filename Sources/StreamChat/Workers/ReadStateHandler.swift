@@ -11,17 +11,20 @@ final class ReadStateHandler: @unchecked Sendable {
     private let authenticationRepository: AuthenticationRepository
     private let channelUpdater: ChannelUpdater
     private let messageRepository: MessageRepository
+    private let config: ChatClientConfig
     @Atomic private var markingRead = false
     @Atomic private(set) var isMarkedAsUnread = false
 
     init(
         authenticationRepository: AuthenticationRepository,
         channelUpdater: ChannelUpdater,
-        messageRepository: MessageRepository
+        messageRepository: MessageRepository,
+        config: ChatClientConfig
     ) {
         self.authenticationRepository = authenticationRepository
         self.channelUpdater = channelUpdater
         self.messageRepository = messageRepository
+        self.config = config
     }
 
     func markRead(_ channel: ChatChannel, completion: @escaping @Sendable (Error?) -> Void) {
@@ -30,6 +33,16 @@ final class ReadStateHandler: @unchecked Sendable {
             return
         }
         markingRead = true
+
+        if config.isLocalUnreadCountEnabled && !channel.config.readEventsEnabled {
+            channelUpdater.markReadLocally(cid: channel.cid, userId: currentUserId) { error in
+                self.markingRead = false
+                self.isMarkedAsUnread = false
+                completion(error)
+            }
+            return
+        }
+
         channelUpdater.markRead(cid: channel.cid, userId: currentUserId) { error in
             self.markingRead = false
             self.isMarkedAsUnread = false

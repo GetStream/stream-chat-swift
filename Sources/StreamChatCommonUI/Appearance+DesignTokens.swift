@@ -7,77 +7,101 @@ import UIKit
 
 extension Appearance {
     @MainActor public final class DesignSystemTokens {
-        // MARK: Chat
+        // MARK: - Button
 
-        public var buttonHitTargetMinHeight: CGFloat { size48 }
-        public var buttonHitTargetMinWidth: CGFloat { size48 }
-        public var buttonPaddingXIconOnlyLg: CGFloat { 14 }
-        public var buttonPaddingXIconOnlyMd: CGFloat { 10 }
-        public var buttonPaddingXIconOnlySm: CGFloat { 6 }
-        public var buttonPaddingXIconOnlyXs: CGFloat { 4 }
-        public var buttonPaddingXWithLabelLg: CGFloat { 16 }
-        public var buttonPaddingXWithLabelMd: CGFloat { 16 }
-        public var buttonPaddingXWithLabelSm: CGFloat { 16 }
-        public var buttonPaddingXWithLabelXs: CGFloat { 12 }
-        public var buttonPaddingYLg: CGFloat { 14 }
-        public var buttonPaddingYMd: CGFloat { 10 }
-        public var buttonPaddingYSm: CGFloat { 6 }
-        public var buttonPaddingYXs: CGFloat { 4 }
-        public var buttonRadiusFull: CGFloat { radiusFull }
-        public var buttonRadiusLg: CGFloat { radiusFull }
-        public var buttonRadiusMd: CGFloat { radiusFull }
-        public var buttonRadiusSm: CGFloat { radiusFull }
-        public var buttonVisualHeightLg: CGFloat { size48 }
-        public var buttonVisualHeightMd: CGFloat { size40 }
-        public var buttonVisualHeightSm: CGFloat { size32 }
-        public var buttonVisualHeightXs: CGFloat { size24 }
-        public var composerRadiusFixed: CGFloat { radius3xl }
-        public var composerRadiusFloating: CGFloat { radius3xl }
-        public var darkElevation1: BoxShadow { BoxShadow(x: 0, y: 1, blur: 3, spread: 0, color: UIColor(hex: 0x00000033)) }
-        public var darkElevation2: BoxShadow { BoxShadow(x: 0, y: 2, blur: 6, spread: 0, color: UIColor(hex: 0x00000038)) }
-        public var darkElevation3: BoxShadow { BoxShadow(x: 0, y: 4, blur: 12, spread: 0, color: UIColor(hex: 0x0000003d)) }
-        public var darkElevation4: BoxShadow { BoxShadow(x: 0, y: 8, blur: 24, spread: 0, color: UIColor(hex: 0x00000047)) }
-        public var deviceRadius: CGFloat { 62 }
-        public var deviceSafeAreaBottom: CGFloat { space32 }
-        public var deviceSafeAreaTop: CGFloat { 50 }
-        public var iconSizeLg: CGFloat { size32 }
-        public var iconSizeMd: CGFloat { size20 }
-        public var iconSizeSm: CGFloat { size16 }
-        public var iconSizeXs: CGFloat { size12 }
-        public var iconStrokeDefault: CGFloat { w150 }
-        public var iconStrokeEmphasis: CGFloat { w200 }
-        public var iconStrokeSubtle: CGFloat { w120 }
-        public var lightElevation1: BoxShadow { BoxShadow(x: 0, y: 1, blur: 3, spread: 0, color: UIColor(hex: 0x0000001f)) }
-        public var lightElevation2: BoxShadow { BoxShadow(x: 0, y: 2, blur: 6, spread: 0, color: UIColor(hex: 0x00000024)) }
-        public var lightElevation3: BoxShadow { BoxShadow(x: 0, y: 4, blur: 12, spread: 0, color: UIColor(hex: 0x00000029)) }
-        public var lightElevation4: BoxShadow { BoxShadow(x: 0, y: 8, blur: 24, spread: 0, color: UIColor(hex: 0x00000033)) }
-        public var messageBubbleRadiusAttachment: CGFloat { radiusLg }
-        public var messageBubbleRadiusAttachmentInline: CGFloat { radiusMd }
-        public var messageBubbleRadiusGroupBottom: CGFloat { radius2xl }
-        public var messageBubbleRadiusGroupMiddle: CGFloat { radius2xl }
-        public var messageBubbleRadiusGroupTop: CGFloat { radius2xl }
-        public var messageBubbleRadiusTail: CGFloat { radiusNone }
-        public var radius2xl: CGFloat { radius20 }
-        public var radius3xl: CGFloat { radius24 }
-        public var radius4xl: CGFloat { radius32 }
-        public var radiusLg: CGFloat { radius12 }
-        public var radiusMax: CGFloat { radiusFull }
-        public var radiusMd: CGFloat { radius8 }
-        public var radiusNone: CGFloat { radius0 }
-        public var radiusSm: CGFloat { radius6 }
-        public var radiusXl: CGFloat { radius16 }
-        public var radiusXs: CGFloat { radius4 }
-        public var radiusXxs: CGFloat { radius2 }
-        public var spacing2xl: CGFloat { space32 }
-        public var spacing3xl: CGFloat { space40 }
-        public var spacingLg: CGFloat { space20 }
-        public var spacingMd: CGFloat { space16 }
-        public var spacingNone: CGFloat { space0 }
-        public var spacingSm: CGFloat { space12 }
-        public var spacingXl: CGFloat { space24 }
-        public var spacingXs: CGFloat { space8 }
-        public var spacingXxs: CGFloat { space4 }
-        public var spacingXxxs: CGFloat { space2 }
+        public lazy var buttonHitTargetMinHeight: CGFloat = size48
+        public lazy var buttonHitTargetMinWidth: CGFloat = size48
+        public lazy var buttonPaddingXIconOnlyLg: CGFloat = 14
+        public lazy var buttonPaddingXIconOnlyMd: CGFloat = 10
+        public lazy var buttonPaddingXIconOnlySm: CGFloat = 6
+        public lazy var buttonPaddingXIconOnlyXs: CGFloat = 4
+        public lazy var buttonPaddingXWithLabelLg: CGFloat = 16
+        public lazy var buttonPaddingXWithLabelMd: CGFloat = 16
+        public lazy var buttonPaddingXWithLabelSm: CGFloat = 16
+        public lazy var buttonPaddingXWithLabelXs: CGFloat = 12
+        public lazy var buttonPaddingYLg: CGFloat = 14
+        public lazy var buttonPaddingYMd: CGFloat = 10
+        public lazy var buttonPaddingYSm: CGFloat = 6
+        public lazy var buttonPaddingYXs: CGFloat = 4
+        public lazy var buttonRadiusFull: CGFloat = radiusFull
+        public lazy var buttonRadiusLg: CGFloat = radiusFull
+        public lazy var buttonRadiusMd: CGFloat = radiusFull
+        public lazy var buttonRadiusSm: CGFloat = radiusFull
+        public lazy var buttonVisualHeightLg: CGFloat = size48
+        public lazy var buttonVisualHeightMd: CGFloat = size40
+        public lazy var buttonVisualHeightSm: CGFloat = size32
+        public lazy var buttonVisualHeightXs: CGFloat = size24
+
+        // MARK: - Composer
+
+        public lazy var composerRadiusFixed: CGFloat = radius3xl
+        public lazy var composerRadiusFloating: CGFloat = radius3xl
+
+        // MARK: - Dark
+
+        public lazy var darkElevation1: BoxShadow = BoxShadow(x: 0, y: 1, blur: 3, spread: 0, color: UIColor(hex: 0x00000033))
+        public lazy var darkElevation2: BoxShadow = BoxShadow(x: 0, y: 2, blur: 6, spread: 0, color: UIColor(hex: 0x00000038))
+        public lazy var darkElevation3: BoxShadow = BoxShadow(x: 0, y: 4, blur: 12, spread: 0, color: UIColor(hex: 0x0000003d))
+        public lazy var darkElevation4: BoxShadow = BoxShadow(x: 0, y: 8, blur: 24, spread: 0, color: UIColor(hex: 0x00000047))
+
+        // MARK: - Device
+
+        public lazy var deviceRadius: CGFloat = 62
+        public lazy var deviceSafeAreaBottom: CGFloat = space32
+        public lazy var deviceSafeAreaTop: CGFloat = 50
+
+        // MARK: - Icon
+
+        public lazy var iconSizeLg: CGFloat = size32
+        public lazy var iconSizeMd: CGFloat = size20
+        public lazy var iconSizeSm: CGFloat = size16
+        public lazy var iconSizeXs: CGFloat = size12
+        public lazy var iconStrokeDefault: CGFloat = w150
+        public lazy var iconStrokeEmphasis: CGFloat = w200
+        public lazy var iconStrokeSubtle: CGFloat = w120
+
+        // MARK: - Light
+
+        public lazy var lightElevation1: BoxShadow = BoxShadow(x: 0, y: 1, blur: 3, spread: 0, color: UIColor(hex: 0x0000001f))
+        public lazy var lightElevation2: BoxShadow = BoxShadow(x: 0, y: 2, blur: 6, spread: 0, color: UIColor(hex: 0x00000024))
+        public lazy var lightElevation3: BoxShadow = BoxShadow(x: 0, y: 4, blur: 12, spread: 0, color: UIColor(hex: 0x00000029))
+        public lazy var lightElevation4: BoxShadow = BoxShadow(x: 0, y: 8, blur: 24, spread: 0, color: UIColor(hex: 0x00000033))
+
+        // MARK: - Message
+
+        public lazy var messageBubbleRadiusAttachment: CGFloat = radiusLg
+        public lazy var messageBubbleRadiusAttachmentInline: CGFloat = radiusMd
+        public lazy var messageBubbleRadiusGroupBottom: CGFloat = radius2xl
+        public lazy var messageBubbleRadiusGroupMiddle: CGFloat = radius2xl
+        public lazy var messageBubbleRadiusGroupTop: CGFloat = radius2xl
+        public lazy var messageBubbleRadiusTail: CGFloat = radiusNone
+
+        // MARK: - Radius
+
+        public lazy var radius2xl: CGFloat = radius20
+        public lazy var radius3xl: CGFloat = radius24
+        public lazy var radius4xl: CGFloat = radius32
+        public lazy var radiusLg: CGFloat = radius12
+        public lazy var radiusMax: CGFloat = radiusFull
+        public lazy var radiusMd: CGFloat = radius8
+        public lazy var radiusNone: CGFloat = radius0
+        public lazy var radiusSm: CGFloat = radius6
+        public lazy var radiusXl: CGFloat = radius16
+        public lazy var radiusXs: CGFloat = radius4
+        public lazy var radiusXxs: CGFloat = radius2
+
+        // MARK: - Spacing
+
+        public lazy var spacing2xl: CGFloat = space32
+        public lazy var spacing3xl: CGFloat = space40
+        public lazy var spacingLg: CGFloat = space20
+        public lazy var spacingMd: CGFloat = space16
+        public lazy var spacingNone: CGFloat = space0
+        public lazy var spacingSm: CGFloat = space12
+        public lazy var spacingXl: CGFloat = space24
+        public lazy var spacingXs: CGFloat = space8
+        public lazy var spacingXxs: CGFloat = space4
+        public lazy var spacingXxxs: CGFloat = space2
 
         // MARK: Foundations
 

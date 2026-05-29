@@ -880,6 +880,24 @@ import XCTest
         XCTAssertTrue(sut.isJumpToUnreadMessagesButtonVisible)
     }
 
+    func test_isJumpToUnreadMessagesButtonVisible_whenIndexPathExistsButUnreadCountIsZero() {
+        // Regression: when no server read state exists, UnreadMessageLookup returns the oldest
+        // message as firstUnreadMessageId even though unreadCount is 0. The banner must not show.
+        sut.components.isJumpToUnreadEnabled = true
+        mockedDelegate.mockedShouldShowJumpToUnread = true
+        mockedDataSource.mockedChannel = .mock(cid: .unique, unreadCount: .mock(messages: 0))
+        let unreadMessageId = MessageId.unique
+        sut.updateJumpToUnreadMessageId(unreadMessageId, lastReadMessageId: nil)
+        mockedDataSource.messages = [
+            ChatMessage.mock(id: unreadMessageId) // IndexPath: 0 - 0
+        ]
+
+        // Message is off-screen – without the fix this would return true
+        mockedListView.mockedIndexPathsForVisibleRows = []
+
+        XCTAssertFalse(sut.isJumpToUnreadMessagesButtonVisible)
+    }
+
     // MARK: updateUnreadMessagesSeparator
 
     func test_updateUnreadMessagesSeparator_whenThereIsNoExistingSeparator() {

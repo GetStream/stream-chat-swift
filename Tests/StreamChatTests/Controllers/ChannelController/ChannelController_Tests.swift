@@ -3830,6 +3830,61 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channelFeatureError.localizedDescription, "Channel feature: read events is disabled for this channel.")
     }
 
+    func test_markRead_whenLocalUnreadCountEnabled_readEventsDisabled_callsMarkReadLocally() throws {
+        // GIVEN
+        var config = ChatClient_Mock.defaultMockedConfig
+        config.isLocalUnreadCountEnabled = true
+        setUp(with: config)
+
+        let lastMessage: MessagePayload = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            cid: channelId
+        )
+
+        let currentUser: CurrentUserPayload = .dummy(userId: .unique, role: .user)
+
+        let channel: ChannelPayload = .dummy(
+            channel: .dummy(
+                cid: channelId,
+                lastMessageAt: lastMessage.createdAt,
+                config: .mock(readEventsEnabled: false),
+                ownCapabilities: []
+            ),
+            messages: [lastMessage],
+            channelReads: [
+                .init(
+                    user: currentUser,
+                    lastReadAt: lastMessage.createdAt.addingTimeInterval(-1),
+                    lastReadMessageId: .unique,
+                    unreadMessagesCount: 0
+                )
+            ]
+        )
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channel)
+        }
+
+        client.setToken(token: .unique(userId: currentUser.id))
+
+        // WHEN
+        nonisolated(unsafe) var completionCalled = false
+        controller.markRead { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // THEN: local path is used, not the remote API path
+        XCTAssertEqual(env.channelUpdater!.markReadLocally_cid, channelId)
+        XCTAssertEqual(env.channelUpdater!.markReadLocally_userId, currentUser.id)
+        XCTAssertNil(env.channelUpdater!.markRead_cid)
+
+        env.channelUpdater!.markReadLocally_completion?(nil)
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
     func test_markRead_whenChannelIsMissing_throws() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery(channelPayload: .unique)

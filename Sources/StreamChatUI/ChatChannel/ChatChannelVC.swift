@@ -91,7 +91,9 @@ open class ChatChannelVC: _ViewController,
         guard isLastMessageVisibleOrSeen else { return false }
         guard isFirstPageLoaded else { return false }
         guard !hasMarkedMessageAsUnread else { return false }
-        guard hasSeenFirstUnreadMessage else { return false }
+        let isLocalReadEnabled = client.config.isLocalUnreadCountEnabled
+            && channelController.channel?.config.readEventsEnabled == false
+        guard hasSeenFirstUnreadMessage || isLocalReadEnabled else { return false }
         
         guard let channel = channelController.channel, let currentUserId = client.currentUserId else { return false }
         guard let read = channel.read(for: currentUserId), let lastMessage = messages.first else {
@@ -544,6 +546,7 @@ open class ChatChannelVC: _ViewController,
     ) {
         updateScrollToBottomButtonCount()
         updateJumpToUnreadRelatedComponents()
+        updateUnreadMessagesBannerRelatedComponents()
 
         if headerView.channelController == nil, let cid = channelController.cid {
             headerView.channelController = client.channelController(for: cid)
@@ -667,7 +670,11 @@ private extension ChatChannelVC {
     }
 
     func updateUnreadMessagesBannerRelatedComponents(channel: ChatChannel? = nil) {
-        let firstUnreadMessageId = channel.flatMap { channelController.getFirstUnreadMessageId(for: $0) } ?? channelController.firstUnreadMessageId
+        let resolvedChannel = channel ?? channelController.channel
+        let hasUnreadMessages = (resolvedChannel?.unreadCount.messages ?? 0) > 0
+        let firstUnreadMessageId = hasUnreadMessages
+            ? (channel.flatMap { channelController.getFirstUnreadMessageId(for: $0) } ?? channelController.firstUnreadMessageId)
+            : nil
         self.firstUnreadMessageId = firstUnreadMessageId
         messageListVC.updateUnreadMessagesSeparator(at: firstUnreadMessageId)
     }
