@@ -51,7 +51,11 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     }
 
     /// The worker used to fetch the remote data and communicate with servers.
-    private let worker: ChannelListUpdater
+    private lazy var worker: ChannelListUpdater = self.environment
+        .channelQueryUpdaterBuilder(
+            client.databaseContainer,
+            client.apiClient
+        )
     
     /// The worker used to update current user data.
     private lazy var currentUserUpdater: CurrentUserUpdater = self.environment
@@ -120,18 +124,10 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
 
     private let filter: (@Sendable (ChatChannel) -> Bool)?
     private let environment: Environment
-    private var channelListLinker: ChannelListLinker
-
-    private func makeChannelListLinker() -> ChannelListLinker {
-        environment.channelListLinkerBuilder(
-            query,
-            filter,
-            client.config,
-            client.databaseContainer,
-            worker,
-            client.channelWatcherHandler
+    private lazy var channelListLinker: ChannelListLinker = self.environment
+        .channelListLinkerBuilder(
+            query, filter, client.config, client.databaseContainer, worker, client.channelWatcherHandler
         )
-    }
 
     /// Creates a new `ChannelListController`.
     ///
@@ -150,16 +146,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         self.filter = filter
         self.environment = environment
         self.deliveryCriteriaValidator = environment.deliveryCriteriaValidatorBuilder()
-        let worker = environment.channelQueryUpdaterBuilder(client.databaseContainer, client.apiClient)
-        self.worker = worker
-        channelListLinker = environment.channelListLinkerBuilder(
-            query,
-            filter,
-            client.config,
-            client.databaseContainer,
-            worker,
-            client.channelWatcherHandler
-        )
         super.init()
     }
 
@@ -295,8 +281,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
     
     private func updateChannelListObserver() {
         channelListObserver = makeChannelListObserver()
-        channelListLinker = makeChannelListLinker()
-        channelListLinker.start(with: client.eventNotificationCenter)
         do {
             try channelListObserver.startObserving()
         } catch {

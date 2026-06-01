@@ -8,12 +8,10 @@ extension ChannelListState {
     final class Observer {
         private var channelListObserver: StateLayerDatabaseObserver<ListResult, ChatChannel, ChannelDTO>
         private let clientConfig: ChatClientConfig
-        private var channelListLinker: ChannelListLinker
+        private let channelListLinker: ChannelListLinker
         private let channelListUpdater: ChannelListUpdater
         private let database: DatabaseContainer
         private let eventNotificationCenter: EventNotificationCenter
-        private let dynamicFilter: (@Sendable (ChatChannel) -> Bool)?
-        private let channelWatcherHandler: ChannelWatcherHandling
         private var query: ChannelListQuery
         private var channelsDidChange: (@Sendable @MainActor ([ChatChannel]) async -> Void)?
 
@@ -31,20 +29,18 @@ extension ChannelListState {
             self.database = database
             self.query = query
             self.eventNotificationCenter = eventNotificationCenter
-            self.dynamicFilter = dynamicFilter
-            self.channelWatcherHandler = channelWatcherHandler
 
             channelListObserver = Self.makeChannelListObserver(
                 for: query,
                 database: database,
                 clientConfig: clientConfig
             )
-            channelListLinker = Self.makeChannelListLinker(
-                for: query,
-                dynamicFilter: dynamicFilter,
+            channelListLinker = ChannelListLinker(
+                query: query,
+                filter: dynamicFilter,
                 clientConfig: clientConfig,
-                channelListUpdater: channelListUpdater,
-                database: database,
+                databaseContainer: database,
+                worker: channelListUpdater,
                 channelWatcherHandler: channelWatcherHandler
             )
         }
@@ -71,16 +67,7 @@ extension ChannelListState {
                 database: database,
                 clientConfig: clientConfig
             )
-            channelListLinker = Self.makeChannelListLinker(
-                for: newQuery,
-                dynamicFilter: dynamicFilter,
-                clientConfig: clientConfig,
-                channelListUpdater: channelListUpdater,
-                database: database,
-                channelWatcherHandler: channelWatcherHandler
-            )
             guard let channelsDidChange else { return [] }
-            channelListLinker.start(with: eventNotificationCenter)
             do {
                 return try channelListObserver.startObserving(didChange: channelsDidChange)
             } catch {
@@ -103,24 +90,6 @@ extension ChannelListState {
                 itemCreator: { try $0.asModel() },
                 itemReuseKeyPaths: (\ChatChannel.cid.rawValue, \ChannelDTO.cid),
                 runtimeSorting: query.runtimeSortingValues
-            )
-        }
-
-        private static func makeChannelListLinker(
-            for query: ChannelListQuery,
-            dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
-            clientConfig: ChatClientConfig,
-            channelListUpdater: ChannelListUpdater,
-            database: DatabaseContainer,
-            channelWatcherHandler: ChannelWatcherHandling
-        ) -> ChannelListLinker {
-            ChannelListLinker(
-                query: query,
-                filter: dynamicFilter,
-                clientConfig: clientConfig,
-                databaseContainer: database,
-                worker: channelListUpdater,
-                channelWatcherHandler: channelWatcherHandler
             )
         }
     }
