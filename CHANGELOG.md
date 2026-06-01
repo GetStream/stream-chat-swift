@@ -3,6 +3,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
+### 🐞 Fixed
+- Respect `shouldShowShadowedMessages` in livestream channels [#4118](https://github.com/GetStream/stream-chat-swift/pull/4118)
+
 ### 🔄 Changed
 
 # [5.4.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.4.0)
