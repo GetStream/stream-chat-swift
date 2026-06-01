@@ -5,7 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## StreamChat
 ### 🐞 Fixed
-- Respect `ChatClientConfig.shouldShowShadowedMessages` in livestream channels [#4118](https://github.com/GetStream/stream-chat-swift/pull/4118)
+- Respect `ChatClientConfig.shouldShowShadowedMessages` in `LivestreamChat` and `LivestreamChannelController` [#4118](https://github.com/GetStream/stream-chat-swift/pull/4118)
 
 ### 🔄 Changed
 
