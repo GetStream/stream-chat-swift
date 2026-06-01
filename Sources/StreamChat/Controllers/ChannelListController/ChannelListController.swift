@@ -153,8 +153,8 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
         startChannelListObserverIfNeeded()
         channelListLinker.start(with: client.eventNotificationCenter)
         client.syncRepository.startTrackingChannelListController(self)
-        updateChannelList { result in
-            self.callback { completion?(result.error) }
+        updateChannelList { [weak self] result in
+            self?.callback { completion?(result.error) }
         }
     }
     
@@ -186,10 +186,6 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             case let .success(updateResult):
                 self.markChannelsAsDeliveredIfNeeded(channels: updateResult.channels)
                 self.hasLoadedAllPreviousChannels = updateResult.channels.count < limit
-                if let updatedQuery = updateResult.updatedQuery {
-                    self.query = updatedQuery
-                    self.updateChannelListObserver()
-                }
                 self.callback { completion?(nil) }
             case let .failure(error):
                 self.callback { completion?(error) }

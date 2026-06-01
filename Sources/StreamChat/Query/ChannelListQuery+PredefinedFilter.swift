@@ -11,10 +11,6 @@ extension Filter where Scope == ChannelListFilterScope {
     /// Decodes a channel-list filter from persisted JSON and re-attaches Core Data wiring
     /// (keyPath, valueMapper, predicateMapper) for every node whose key matches a known
     /// `FilterKey<ChannelListFilterScope, _>`. Unknown keys pass through unchanged.
-    ///
-    /// Returns `nil` for empty `data`: `ChannelListQueryDTO.filterJSONData` falls back to
-    /// empty `Data()` when filter encoding fails, so empty input means "no persisted filter"
-    /// rather than a decode failure.
     static func predefinedFilter(fromJSONData data: Data) throws -> Filter? {
         guard !data.isEmpty else { return nil }
         let decoded = try JSONDecoder.default.decode(Filter.self, from: data)
@@ -48,12 +44,12 @@ extension Filter where Scope == ChannelListFilterScope {
 
 extension Array where Element == Sorting<ChannelListSortingKey> {
     /// Decodes a server-resolved sort array (`[{"field": ..., "direction": -1|1, ...}, ...]`).
-    /// Unknown `field` values are dropped because they cannot map to a typed key.
-    static func predefinedFilterSort(fromJSONData data: Data) throws -> [Sorting<ChannelListSortingKey>] {
+    static func predefinedFilterSort(fromJSONData data: Data) throws -> [Sorting<ChannelListSortingKey>]? {
+        guard !data.isEmpty else { return nil }
         let raw = try JSONDecoder.default.decode([RawSortingItem].self, from: data)
         return raw.compactMap { item in
             guard let key = ChannelListSortingKey.predefinedSortingKeyMapping[item.field] else {
-                StreamCore.log.error("Unknown channel list sorting field '\(item.field)' - dropping from decoded sort array.")
+                StreamCore.log.error("Can't apply CoreData keyPath for channel list sorting key '\(item.field)'.")
                 return nil
             }
             return Sorting(key: key, isAscending: item.direction == 1)

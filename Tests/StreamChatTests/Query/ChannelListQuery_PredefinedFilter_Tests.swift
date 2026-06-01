@@ -320,7 +320,7 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
         ]
         """#.data(using: .utf8)!
 
-        let sort = try [Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: json)
+        let sort = try XCTUnwrap([Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: json))
 
         XCTAssertEqual(sort.count, 2)
         XCTAssertEqual(sort[0].key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
@@ -337,7 +337,7 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
         ]
         """#.data(using: .utf8)!
 
-        let sort = try [Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: json)
+        let sort = try XCTUnwrap([Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: json))
 
         XCTAssertEqual(sort.count, 1)
         XCTAssertEqual(sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
@@ -350,10 +350,14 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
         ]
         """#.data(using: .utf8)!
 
-        let sort = try [Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: json)
+        let sort = try XCTUnwrap([Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: json))
 
         XCTAssertEqual(sort.count, 1)
         XCTAssertEqual(sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
         XCTAssertEqual(sort.first?.direction, -1)
+    }
+
+    func test_predefinedFilterSort_emptyData_returnsNil() throws {
+        XCTAssertNil(try [Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: Data()))
     }
 }

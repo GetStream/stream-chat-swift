@@ -152,8 +152,9 @@ extension ChannelListQuery {
     /// Whether `filter` and `sort` match `other` for purposes of deciding whether the local
     /// observer needs to be rebuilt after a predefined-filter resolution.
     func isFilterEqual(to other: ChannelListQuery) -> Bool {
-        filter.filterHash == other.filter.filterHash
-            && sort.map(\.description) == other.sort.map(\.description)
+        guard filter.filterHash == other.filter.filterHash else { return false }
+        guard sort.map(\.description) == other.sort.map(\.description) else { return false }
+        return true
     }
 }
 

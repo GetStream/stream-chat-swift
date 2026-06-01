@@ -62,7 +62,9 @@ extension NSManagedObjectContext {
         }
         if let sortJSONData = dto.sortJSONData {
             do {
-                updated.sort = try [Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: sortJSONData)
+                if let sort = try [Sorting<ChannelListSortingKey>].predefinedFilterSort(fromJSONData: sortJSONData) {
+                    updated.sort = sort
+                }
             } catch {
                 log.error("Failed decoding predefined sort from persisted data with error: \(error).")
             }
