@@ -67,7 +67,7 @@ public class ChannelList: @unchecked Sendable {
         if let groupKey = query.groupKey {
             let state = try await channelListUpdater.paginationState(for: groupKey)
             let channelGroups = try await channelListUpdater.queryGroupedChannels(
-                groups: [groupKey: .init(limit: pagination.pageSize, next: pagination.cursor)],
+                groups: [groupKey: .init(limit: pagination.pageSize > 0 ? pagination.pageSize : nil, next: pagination.cursor)],
                 limit: nil,
                 watch: state.watch ?? true,
                 presence: state.presence ?? false

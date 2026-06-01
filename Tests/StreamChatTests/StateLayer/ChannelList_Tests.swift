@@ -108,6 +108,7 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(1, env.channelListUpdaterMock.queryGroupedChannels_callCount)
         let groups = env.channelListUpdaterMock.queryGroupedChannels_groups.first ?? nil
         XCTAssertEqual(["all"], groups?.keys.sorted())
+        XCTAssertNil(groups?["all"]?.limit)
         XCTAssertNil(groups?["all"]?.next)
         XCTAssertTrue(env.channelListUpdaterMock.update_queries.isEmpty)
     }
