@@ -50,7 +50,7 @@ public class ChannelList: @unchecked Sendable {
         try await loadChannels(with: pagination)
         client.syncRepository.startTrackingChannelList(self)
     }
-
+    
     // MARK: - Channel List Pagination
     
     /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.

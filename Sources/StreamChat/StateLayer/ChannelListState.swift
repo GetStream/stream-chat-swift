@@ -8,7 +8,7 @@ import Foundation
 /// Represents a list of channels matching to the specified query.
 @MainActor public final class ChannelListState: ObservableObject {
     private let observer: Observer
-
+    
     init(
         query: ChannelListQuery,
         dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
@@ -33,10 +33,10 @@ import Foundation
             with: .init(channelsDidChange: { [weak self] in self?.channels = $0 })
         )
     }
-
+    
     /// The query used for filtering the list of channels.
     public internal(set) var query: ChannelListQuery
-
+    
     /// An array of channels for the specified ``ChannelListQuery``.
     @Published public internal(set) var channels: [ChatChannel] = []
 

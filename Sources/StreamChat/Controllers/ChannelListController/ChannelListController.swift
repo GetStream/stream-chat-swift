@@ -157,7 +157,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             self?.callback { completion?(result.error) }
         }
     }
-    
+
     // MARK: - Actions
 
     /// Loads next channels from backend.
@@ -213,7 +213,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             case let .success(updateResult):
                 self?.state = .remoteDataFetched
                 self?.hasLoadedAllPreviousChannels = updateResult.channels.count < limit
-
+                
                 // Mark channels as delivered if synchronization was successful
                 self?.markChannelsAsDeliveredIfNeeded(channels: updateResult.channels)
 
@@ -230,7 +230,7 @@ public class ChatChannelListController: DataController, DelegateCallable, DataSt
             }
         }
     }
-
+    
     /// Marks channels as delivered if they meet the specified criteria.
     /// - Parameter channels: The channels to evaluate for marking as delivered.
     private func markChannelsAsDeliveredIfNeeded(channels: [ChatChannel]) {

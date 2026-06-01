@@ -11,10 +11,11 @@ extension ChannelListState {
         private let channelListLinker: ChannelListLinker
         private let channelListUpdater: ChannelListUpdater
         private let database: DatabaseContainer
+        private let dynamicFilter: ((ChatChannel) -> Bool)?
         private let eventNotificationCenter: EventNotificationCenter
         private var query: ChannelListQuery
         private var channelsDidChange: (@Sendable @MainActor ([ChatChannel]) async -> Void)?
-
+        
         init(
             query: ChannelListQuery,
             dynamicFilter: (@Sendable (ChatChannel) -> Bool)?,
@@ -27,9 +28,10 @@ extension ChannelListState {
             self.clientConfig = clientConfig
             self.channelListUpdater = channelListUpdater
             self.database = database
+            self.dynamicFilter = dynamicFilter
             self.query = query
             self.eventNotificationCenter = eventNotificationCenter
-
+            
             channelListObserver = Self.makeChannelListObserver(
                 for: query,
                 database: database,
@@ -44,11 +46,11 @@ extension ChannelListState {
                 channelWatcherHandler: channelWatcherHandler
             )
         }
-
+        
         struct Handlers {
             let channelsDidChange: @Sendable @MainActor ([ChatChannel]) async -> Void
         }
-
+        
         func start(with handlers: Handlers) -> [ChatChannel] {
             channelsDidChange = handlers.channelsDidChange
             do {
