@@ -12,8 +12,6 @@ _June 01, 2026_
 ### 🐞 Fixed
 - Respect `ChatClientConfig.shouldShowShadowedMessages` in `LivestreamChat` and `LivestreamChannelController` [#4118](https://github.com/GetStream/stream-chat-swift/pull/4118)
 
-### 🔄 Changed
-
 # [5.4.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.4.0)
 _May 28, 2026_
 
