@@ -173,7 +173,7 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
             return
         }
         channel = cachedChannel
-        messages = cachedChannel.latestMessages
+        messages = cachedChannel.latestMessages.filter(isMessageVisible)
     }
 
     /// Applies the freshly-fetched channel payload to the in-memory state.
@@ -190,7 +190,7 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
 
         let newMessages = payload.messages.compactMap {
             $0.asModel(cid: payload.channel.cid, currentUserId: currentUserId, channelReads: newChannel.reads)
-        }
+        }.filter(isMessageVisible)
 
         updateMessagesArray(with: newMessages, pagination: channelQuery.pagination)
     }
@@ -261,6 +261,13 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
         DispatchQueue.main.async {
             callback(handlers)
         }
+    }
+
+    private func isMessageVisible(_ message: ChatMessage) -> Bool {
+        if message.isShadowed, !client.config.shouldShowShadowedMessages {
+            return false
+        }
+        return true
     }
 
     private func updateMessagesArray(with newMessages: [ChatMessage], pagination: MessagesPagination?) {
@@ -490,6 +497,10 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
             return
         }
 
+        // Skip messages that should not be visible (e.g. shadowed messages while
+        // `shouldShowShadowedMessages` is disabled)
+        guard isMessageVisible(message) else { return }
+
         // If paused and the message is not from the current user, skip processing
         if countSkippedMessagesWhenPaused, isPaused && message.author.id != currentUserId {
             skippedMessagesAmount += 1
@@ -507,6 +518,13 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
 
     private func handleUpdatedMessage(_ updatedMessage: ChatMessage) {
         if let index = messages.firstIndex(where: { $0.id == updatedMessage.id }) {
+            // If the message became hidden (e.g. shadowed while
+            // `shouldShowShadowedMessages` is disabled), remove it
+            guard isMessageVisible(updatedMessage) else {
+                messages.remove(at: index)
+                return
+            }
+
             let existingMessage = messages[index]
             messages[index] = updatedMessage
 
