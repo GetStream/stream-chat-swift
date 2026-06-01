@@ -297,6 +297,8 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
     private func handleChannelEvent(_ event: Event) {
         switch event {
         case let messageNewEvent as MessageNewEvent:
+            guard isMessageVisible(messageNewEvent.message) else { return }
+            
             handleNewMessage(messageNewEvent.message)
 
             // Apply message limit only when not paused
@@ -496,10 +498,6 @@ final class LivestreamChatHandler: LivestreamChatHandling, DataStoreProvider, @u
             handleUpdatedMessage(message)
             return
         }
-
-        // Skip messages that should not be visible (e.g. shadowed messages while
-        // `shouldShowShadowedMessages` is disabled)
-        guard isMessageVisible(message) else { return }
 
         // If paused and the message is not from the current user, skip processing
         if countSkippedMessagesWhenPaused, isPaused && message.author.id != currentUserId {
