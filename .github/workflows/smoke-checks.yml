@@ -71,6 +71,7 @@ jobs:
       - run: bundle exec fastlane rubocop
       - run: bundle exec fastlane run_swift_format strict:true
       - run: bundle exec fastlane validate_public_interface
+      - run: bundle exec fastlane validate_generated_code
 
   build-old-xcode:
     name: Build SDKs (Old Xcode)

@@ -1,0 +1,39 @@
+// Run `make generate` after changing channel-list FilterKey or ChannelListSortingKey members.
+
+import Foundation
+
+extension ChannelListFilterScope {
+    /// Enrichment closures keyed by server-side `rawValue`; each re-attaches a `FilterKey`'s local
+    /// wiring (key path, value/predicate mappers) to a decoded predefined-filter leaf. Stored as
+    /// closures because the keys differ in their generic `Value` type.
+    static let predefinedFilterKeyMapping: [String: @Sendable (Filter<ChannelListFilterScope>) -> Filter<ChannelListFilterScope>] = {
+        func map<Value: FilterValue>(_ key: FilterKey<ChannelListFilterScope, Value>) -> (String, @Sendable (Filter<ChannelListFilterScope>) -> Filter<ChannelListFilterScope>) {
+            (
+                key.rawValue,
+                { filter in
+                    Filter(
+                        operator: filter.operator,
+                        key: filter.key,
+                        value: filter.value,
+                        valueMapper: key.valueMapper,
+                        keyPathString: key.keyPathString,
+                        isCollectionFilter: key.isCollectionFilter,
+                        predicateMapper: key.predicateMapper
+                    )
+                }
+            )
+        }
+        return Dictionary(uniqueKeysWithValues: [
+{% for type in types.all %}{% if type.name == "FilterKey" %}{% for variable in type.staticVariables|sorted:"name" %}            map(.{{ variable.name|replace:"`","" }}),
+{% endfor %}{% endif %}{% endfor %}        ])
+    }()
+}
+
+extension ChannelListSortingKey {
+    static let predefinedSortingKeyMapping: [String: Self] = {
+        func map(_ key: Self) -> (String, Self) { (key.remoteKey, key) }
+        return Dictionary(uniqueKeysWithValues: [
+{% for type in types.all %}{% for variable in type.staticVariables|sorted:"name" %}{% if variable.definedInTypeName.name == "ChannelListSortingKey" and variable.typeName.name == "Self" %}            map(.{{ variable.name|replace:"`","" }}),
+{% endif %}{% endfor %}{% endfor %}        ])
+    }()
+}

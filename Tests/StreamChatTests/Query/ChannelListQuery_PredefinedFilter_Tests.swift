@@ -40,6 +40,8 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
         ]
 
         XCTAssertEqual(Set(ChannelListFilterScope.predefinedFilterKeyMapping.keys), expectedKeys)
+        // Guards against another `FilterKey` scope leaking into the generated mapping.
+        XCTAssertEqual(ChannelListFilterScope.predefinedFilterKeyMapping.count, expectedKeys.count)
     }
 
     func test_predefinedFilterSortingKeys_includeEveryHardcodedChannelListSortingKey() {
@@ -56,6 +58,8 @@ final class ChannelListQuery_PredefinedFilter_Tests: XCTestCase {
         ]
 
         XCTAssertEqual(Set(ChannelListSortingKey.predefinedSortingKeyMapping.keys), expectedKeys)
+        // Guards against another sorting-key model leaking into the generated mapping.
+        XCTAssertEqual(ChannelListSortingKey.predefinedSortingKeyMapping.count, expectedKeys.count)
         XCTAssertTrue(ChannelListSortingKey.predefinedSortingKeyMapping.values.allSatisfy { $0.localKey != nil })
     }
 

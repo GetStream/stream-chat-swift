@@ -3,6 +3,9 @@ MAKEFLAGS += --silent
 bootstrap:
 	./Scripts/bootstrap.sh
 
+generate:
+	sourcery --config Sources/StreamChat/.sourcery.yml
+
 update_dependencies:
 	echo "👉 Updating Nuke"
 	make update_nuke version=10.3.3
