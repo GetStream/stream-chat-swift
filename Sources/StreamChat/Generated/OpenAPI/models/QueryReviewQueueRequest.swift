@@ -5,6 +5,7 @@
 import Foundation
 
 final class QueryReviewQueueRequest: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+    var excludeDefaultActionConfig: Bool?
     /// Filter conditions for review queue items
     var filter: [String: RawJSON]?
     var limit: Int?
@@ -21,7 +22,8 @@ final class QueryReviewQueueRequest: @unchecked Sendable, Codable, JSONEncodable
     /// Whether to return only statistics
     var statsOnly: Bool?
 
-    init(filter: [String: RawJSON]? = nil, limit: Int? = nil, lockCount: Int? = nil, lockDuration: Int? = nil, lockItems: Bool? = nil, next: String? = nil, prev: String? = nil, sort: [SortParamRequest]? = nil, statsOnly: Bool? = nil) {
+    init(excludeDefaultActionConfig: Bool? = nil, filter: [String: RawJSON]? = nil, limit: Int? = nil, lockCount: Int? = nil, lockDuration: Int? = nil, lockItems: Bool? = nil, next: String? = nil, prev: String? = nil, sort: [SortParamRequest]? = nil, statsOnly: Bool? = nil) {
+        self.excludeDefaultActionConfig = excludeDefaultActionConfig
         self.filter = filter
         self.limit = limit
         self.lockCount = lockCount
@@ -34,6 +36,7 @@ final class QueryReviewQueueRequest: @unchecked Sendable, Codable, JSONEncodable
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
+        case excludeDefaultActionConfig = "exclude_default_action_config"
         case filter
         case limit
         case lockCount = "lock_count"
@@ -46,7 +49,8 @@ final class QueryReviewQueueRequest: @unchecked Sendable, Codable, JSONEncodable
     }
 
     static func == (lhs: QueryReviewQueueRequest, rhs: QueryReviewQueueRequest) -> Bool {
-        lhs.filter == rhs.filter &&
+        lhs.excludeDefaultActionConfig == rhs.excludeDefaultActionConfig &&
+            lhs.filter == rhs.filter &&
             lhs.limit == rhs.limit &&
             lhs.lockCount == rhs.lockCount &&
             lhs.lockDuration == rhs.lockDuration &&
@@ -58,6 +62,7 @@ final class QueryReviewQueueRequest: @unchecked Sendable, Codable, JSONEncodable
     }
 
     func hash(into hasher: inout Hasher) {
+        hasher.combine(excludeDefaultActionConfig)
         hasher.combine(filter)
         hasher.combine(limit)
         hasher.combine(lockCount)

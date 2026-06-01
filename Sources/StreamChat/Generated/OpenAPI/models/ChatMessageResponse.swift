@@ -4,92 +4,58 @@
 
 import Foundation
 
-final class MessageResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    /// [RawJSON] of message attachments
+final class ChatMessageResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     var attachments: [Attachment]
-    /// Channel unique identifier in <type>:<id> format
     var cid: String
-    /// Contains provided slash command
     var command: String?
-    /// Date/time of creation
     var createdAt: Date
     var custom: [String: RawJSON]
-    /// Date/time of deletion
     var deletedAt: Date?
     var deletedForMe: Bool?
     var deletedReplyCount: Int
-    var draft: DraftResponse?
-    /// Contains HTML markup of the message. Can only be set when using server-side API
+    var draft: ChatDraftResponse?
     var html: String
-    /// Object with translations. Key `language` contains the original language key. Other keys contain translations
     var i18n: [String: String]?
-    /// Message ID is unique string identifier of the message
     var id: String
-    /// Contains image moderation information
     var imageLabels: [String: [String]]?
-    /// List of 10 latest reactions to this message
-    var latestReactions: [ReactionResponse]
+    var latestReactions: [ChatReactionResponse]
     var member: ChannelMemberResponse?
-    /// Whether the message mentioned the channel tag
     var mentionedChannel: Bool
-    /// List of user group IDs mentioned in the message. Group members who are also channel members will receive push notifications based on their push preferences. Max 10 groups
     var mentionedGroupIds: [String]?
-    /// List of mentioned user group objects.
     var mentionedGroups: [UserGroupResponse]?
-    /// Whether the message mentioned online users with @here tag
     var mentionedHere: Bool
-    /// List of roles mentioned in the message (e.g. admin, channel_moderator, custom roles). Members with matching roles will receive push notifications based on their push preferences. Max 10 roles
     var mentionedRoles: [String]?
-    /// List of mentioned users
     var mentionedUsers: [UserResponse]
     var messageTextUpdatedAt: Date?
-    /// Should be empty if `text` is provided. Can only be set when using server-side API
     var mml: String?
-    var moderation: ModerationV2Response?
-    /// List of 10 latest reactions of authenticated user to this message
-    var ownReactions: [ReactionResponse]
-    /// ID of parent message (thread)
+    var moderation: ChatModerationV2Response?
+    var ownReactions: [ChatReactionResponse]
     var parentId: String?
-    /// Date when pinned message expires
     var pinExpires: Date?
-    /// Whether message is pinned or not
     var pinned: Bool
-    /// Date when message got pinned
     var pinnedAt: Date?
     var pinnedBy: UserResponse?
     var poll: PollResponseData?
-    /// Identifier of the poll to include in the message
     var pollId: String?
-    var quotedMessage: MessageResponse?
+    var quotedMessage: ChatMessageResponse?
     var quotedMessageId: String?
-    /// An object containing number of reactions of each type. Key: reaction type (string), value: number of reactions (int)
     var reactionCounts: [String: Int]
-    var reactionGroups: [String: ReactionGroupResponse?]?
-    /// An object containing scores of reactions of each type. Key: reaction type (string), value: total score of reactions (int)
+    var reactionGroups: [String: ChatReactionGroupResponse?]?
     var reactionScores: [String: Int]
-    var reminder: ReminderResponseData?
-    /// Number of replies to this message
+    var reminder: ChatReminderResponseData?
     var replyCount: Int
-    /// A list of user ids that have restricted visibility to the message, if the list is not empty, the message is only visible to the users in the list
     var restrictedVisibility: [String]
-    /// Whether the message was shadowed or not
     var shadowed: Bool
-    var sharedLocation: SharedLocationResponseData?
-    /// Whether thread reply should be shown in the channel as well
+    var sharedLocation: ChatSharedLocationResponseData?
     var showInChannel: Bool?
-    /// Whether message is silent or not
     var silent: Bool
-    /// Text of the message. Should be empty if `mml` is provided
     var text: String
-    /// List of users who participate in thread
     var threadParticipants: [UserResponse]?
-    /// Contains type of the message. One of: regular, ephemeral, error, reply, system, deleted
     var type: String
-    /// Date/time of the last update
     var updatedAt: Date
     var user: UserResponse
 
-    init(attachments: [Attachment], cid: String, command: String? = nil, createdAt: Date, custom: [String: RawJSON], deletedAt: Date? = nil, deletedForMe: Bool? = nil, deletedReplyCount: Int, draft: DraftResponse? = nil, html: String, i18n: [String: String]? = nil, id: String, imageLabels: [String: [String]]? = nil, latestReactions: [ReactionResponse], member: ChannelMemberResponse? = nil, mentionedChannel: Bool, mentionedGroupIds: [String]? = nil, mentionedGroups: [UserGroupResponse]? = nil, mentionedHere: Bool, mentionedRoles: [String]? = nil, mentionedUsers: [UserResponse], messageTextUpdatedAt: Date? = nil, mml: String? = nil, moderation: ModerationV2Response? = nil, ownReactions: [ReactionResponse], parentId: String? = nil, pinExpires: Date? = nil, pinned: Bool, pinnedAt: Date? = nil, pinnedBy: UserResponse? = nil, poll: PollResponseData? = nil, pollId: String? = nil, quotedMessage: MessageResponse? = nil, quotedMessageId: String? = nil, reactionCounts: [String: Int], reactionGroups: [String: ReactionGroupResponse?]? = nil, reactionScores: [String: Int], reminder: ReminderResponseData? = nil, replyCount: Int, restrictedVisibility: [String], shadowed: Bool, sharedLocation: SharedLocationResponseData? = nil, showInChannel: Bool? = nil, silent: Bool, text: String, threadParticipants: [UserResponse]? = nil, type: String, updatedAt: Date, user: UserResponse) {
+    init(attachments: [Attachment], cid: String, command: String? = nil, createdAt: Date, custom: [String: RawJSON], deletedAt: Date? = nil, deletedForMe: Bool? = nil, deletedReplyCount: Int, draft: ChatDraftResponse? = nil, html: String, i18n: [String: String]? = nil, id: String, imageLabels: [String: [String]]? = nil, latestReactions: [ChatReactionResponse], member: ChannelMemberResponse? = nil, mentionedChannel: Bool, mentionedGroupIds: [String]? = nil, mentionedGroups: [UserGroupResponse]? = nil, mentionedHere: Bool, mentionedRoles: [String]? = nil, mentionedUsers: [UserResponse], messageTextUpdatedAt: Date? = nil, mml: String? = nil, moderation: ChatModerationV2Response? = nil, ownReactions: [ChatReactionResponse], parentId: String? = nil, pinExpires: Date? = nil, pinned: Bool, pinnedAt: Date? = nil, pinnedBy: UserResponse? = nil, poll: PollResponseData? = nil, pollId: String? = nil, quotedMessage: ChatMessageResponse? = nil, quotedMessageId: String? = nil, reactionCounts: [String: Int], reactionGroups: [String: ChatReactionGroupResponse?]? = nil, reactionScores: [String: Int], reminder: ChatReminderResponseData? = nil, replyCount: Int, restrictedVisibility: [String], shadowed: Bool, sharedLocation: ChatSharedLocationResponseData? = nil, showInChannel: Bool? = nil, silent: Bool, text: String, threadParticipants: [UserResponse]? = nil, type: String, updatedAt: Date, user: UserResponse) {
         self.attachments = attachments
         self.cid = cid
         self.command = command
@@ -193,7 +159,7 @@ final class MessageResponse: @unchecked Sendable, Codable, JSONEncodable, Hashab
         case user
     }
 
-    static func == (lhs: MessageResponse, rhs: MessageResponse) -> Bool {
+    static func == (lhs: ChatMessageResponse, rhs: ChatMessageResponse) -> Bool {
         lhs.attachments == rhs.attachments &&
             lhs.cid == rhs.cid &&
             lhs.command == rhs.command &&

@@ -8,6 +8,7 @@ final class RuleBuilderCondition: @unchecked Sendable, Codable, JSONEncodable, H
     var callCustomPropertyParams: CallCustomPropertyParameters?
     var callTypeRuleParams: CallTypeRuleParameters?
     var callViolationCountParams: CallViolationCountParameters?
+    var channelMessageCountRuleParams: ChannelMessageCountRuleParameters?
     var closedCaptionRuleParams: ClosedCaptionRuleParameters?
     var confidence: Float?
     var contentCountRuleParams: ContentCountRuleParameters?
@@ -27,10 +28,11 @@ final class RuleBuilderCondition: @unchecked Sendable, Codable, JSONEncodable, H
     var videoContentParams: VideoContentParameters?
     var videoRuleParams: VideoRuleParameters?
 
-    init(callCustomPropertyParams: CallCustomPropertyParameters? = nil, callTypeRuleParams: CallTypeRuleParameters? = nil, callViolationCountParams: CallViolationCountParameters? = nil, closedCaptionRuleParams: ClosedCaptionRuleParameters? = nil, confidence: Float? = nil, contentCountRuleParams: ContentCountRuleParameters? = nil, contentFlagCountRuleParams: FlagCountRuleParameters? = nil, imageContentParams: ImageContentParameters? = nil, imageRuleParams: ImageRuleParameters? = nil, keyframeRuleParams: KeyframeRuleParameters? = nil, textContentParams: TextContentParameters? = nil, textRuleParams: TextRuleParameters? = nil, userCreatedWithinParams: UserCreatedWithinParameters? = nil, userCustomPropertyParams: UserCustomPropertyParameters? = nil, userFlagCountRuleParams: FlagCountRuleParameters? = nil, userIdenticalContentCountParams: UserIdenticalContentCountParameters? = nil, userRoleParams: UserRoleParameters? = nil, userRuleParams: UserRuleParameters? = nil, videoContentParams: VideoContentParameters? = nil, videoRuleParams: VideoRuleParameters? = nil) {
+    init(callCustomPropertyParams: CallCustomPropertyParameters? = nil, callTypeRuleParams: CallTypeRuleParameters? = nil, callViolationCountParams: CallViolationCountParameters? = nil, channelMessageCountRuleParams: ChannelMessageCountRuleParameters? = nil, closedCaptionRuleParams: ClosedCaptionRuleParameters? = nil, confidence: Float? = nil, contentCountRuleParams: ContentCountRuleParameters? = nil, contentFlagCountRuleParams: FlagCountRuleParameters? = nil, imageContentParams: ImageContentParameters? = nil, imageRuleParams: ImageRuleParameters? = nil, keyframeRuleParams: KeyframeRuleParameters? = nil, textContentParams: TextContentParameters? = nil, textRuleParams: TextRuleParameters? = nil, userCreatedWithinParams: UserCreatedWithinParameters? = nil, userCustomPropertyParams: UserCustomPropertyParameters? = nil, userFlagCountRuleParams: FlagCountRuleParameters? = nil, userIdenticalContentCountParams: UserIdenticalContentCountParameters? = nil, userRoleParams: UserRoleParameters? = nil, userRuleParams: UserRuleParameters? = nil, videoContentParams: VideoContentParameters? = nil, videoRuleParams: VideoRuleParameters? = nil) {
         self.callCustomPropertyParams = callCustomPropertyParams
         self.callTypeRuleParams = callTypeRuleParams
         self.callViolationCountParams = callViolationCountParams
+        self.channelMessageCountRuleParams = channelMessageCountRuleParams
         self.closedCaptionRuleParams = closedCaptionRuleParams
         self.confidence = confidence
         self.contentCountRuleParams = contentCountRuleParams
@@ -54,6 +56,7 @@ final class RuleBuilderCondition: @unchecked Sendable, Codable, JSONEncodable, H
         case callCustomPropertyParams = "call_custom_property_params"
         case callTypeRuleParams = "call_type_rule_params"
         case callViolationCountParams = "call_violation_count_params"
+        case channelMessageCountRuleParams = "channel_message_count_rule_params"
         case closedCaptionRuleParams = "closed_caption_rule_params"
         case confidence
         case contentCountRuleParams = "content_count_rule_params"
@@ -78,6 +81,7 @@ final class RuleBuilderCondition: @unchecked Sendable, Codable, JSONEncodable, H
         lhs.callCustomPropertyParams == rhs.callCustomPropertyParams &&
             lhs.callTypeRuleParams == rhs.callTypeRuleParams &&
             lhs.callViolationCountParams == rhs.callViolationCountParams &&
+            lhs.channelMessageCountRuleParams == rhs.channelMessageCountRuleParams &&
             lhs.closedCaptionRuleParams == rhs.closedCaptionRuleParams &&
             lhs.confidence == rhs.confidence &&
             lhs.contentCountRuleParams == rhs.contentCountRuleParams &&
@@ -102,6 +106,7 @@ final class RuleBuilderCondition: @unchecked Sendable, Codable, JSONEncodable, H
         hasher.combine(callCustomPropertyParams)
         hasher.combine(callTypeRuleParams)
         hasher.combine(callViolationCountParams)
+        hasher.combine(channelMessageCountRuleParams)
         hasher.combine(closedCaptionRuleParams)
         hasher.combine(confidence)
         hasher.combine(contentCountRuleParams)

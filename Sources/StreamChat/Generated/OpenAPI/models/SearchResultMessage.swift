@@ -23,6 +23,7 @@ final class SearchResultMessage: @unchecked Sendable, Codable, JSONEncodable, Ha
     var member: ChannelMemberResponse?
     var mentionedChannel: Bool
     var mentionedGroupIds: [String]?
+    var mentionedGroups: [UserGroupResponse]?
     var mentionedHere: Bool
     var mentionedRoles: [String]?
     var mentionedUsers: [UserResponse]
@@ -55,7 +56,7 @@ final class SearchResultMessage: @unchecked Sendable, Codable, JSONEncodable, Ha
     var updatedAt: Date
     var user: UserResponse
 
-    init(attachments: [Attachment], channel: ChannelResponse? = nil, cid: String, command: String? = nil, createdAt: Date, custom: [String: RawJSON], deletedAt: Date? = nil, deletedForMe: Bool? = nil, deletedReplyCount: Int, draft: DraftResponse? = nil, html: String, i18n: [String: String]? = nil, id: String, imageLabels: [String: [String]]? = nil, latestReactions: [ReactionResponse], member: ChannelMemberResponse? = nil, mentionedChannel: Bool, mentionedGroupIds: [String]? = nil, mentionedHere: Bool, mentionedRoles: [String]? = nil, mentionedUsers: [UserResponse], messageTextUpdatedAt: Date? = nil, mml: String? = nil, moderation: ModerationV2Response? = nil, ownReactions: [ReactionResponse], parentId: String? = nil, pinExpires: Date? = nil, pinned: Bool, pinnedAt: Date? = nil, pinnedBy: UserResponse? = nil, poll: PollResponseData? = nil, pollId: String? = nil, quotedMessage: MessageResponse? = nil, quotedMessageId: String? = nil, reactionCounts: [String: Int], reactionGroups: [String: ReactionGroupResponse?]? = nil, reactionScores: [String: Int], reminder: ReminderResponseData? = nil, replyCount: Int, restrictedVisibility: [String], shadowed: Bool, sharedLocation: SharedLocationResponseData? = nil, showInChannel: Bool? = nil, silent: Bool, text: String, threadParticipants: [UserResponse]? = nil, type: String, updatedAt: Date, user: UserResponse) {
+    init(attachments: [Attachment], channel: ChannelResponse? = nil, cid: String, command: String? = nil, createdAt: Date, custom: [String: RawJSON], deletedAt: Date? = nil, deletedForMe: Bool? = nil, deletedReplyCount: Int, draft: DraftResponse? = nil, html: String, i18n: [String: String]? = nil, id: String, imageLabels: [String: [String]]? = nil, latestReactions: [ReactionResponse], member: ChannelMemberResponse? = nil, mentionedChannel: Bool, mentionedGroupIds: [String]? = nil, mentionedGroups: [UserGroupResponse]? = nil, mentionedHere: Bool, mentionedRoles: [String]? = nil, mentionedUsers: [UserResponse], messageTextUpdatedAt: Date? = nil, mml: String? = nil, moderation: ModerationV2Response? = nil, ownReactions: [ReactionResponse], parentId: String? = nil, pinExpires: Date? = nil, pinned: Bool, pinnedAt: Date? = nil, pinnedBy: UserResponse? = nil, poll: PollResponseData? = nil, pollId: String? = nil, quotedMessage: MessageResponse? = nil, quotedMessageId: String? = nil, reactionCounts: [String: Int], reactionGroups: [String: ReactionGroupResponse?]? = nil, reactionScores: [String: Int], reminder: ReminderResponseData? = nil, replyCount: Int, restrictedVisibility: [String], shadowed: Bool, sharedLocation: SharedLocationResponseData? = nil, showInChannel: Bool? = nil, silent: Bool, text: String, threadParticipants: [UserResponse]? = nil, type: String, updatedAt: Date, user: UserResponse) {
         self.attachments = attachments
         self.channel = channel
         self.cid = cid
@@ -74,6 +75,7 @@ final class SearchResultMessage: @unchecked Sendable, Codable, JSONEncodable, Ha
         self.member = member
         self.mentionedChannel = mentionedChannel
         self.mentionedGroupIds = mentionedGroupIds
+        self.mentionedGroups = mentionedGroups
         self.mentionedHere = mentionedHere
         self.mentionedRoles = mentionedRoles
         self.mentionedUsers = mentionedUsers
@@ -126,6 +128,7 @@ final class SearchResultMessage: @unchecked Sendable, Codable, JSONEncodable, Ha
         case member
         case mentionedChannel = "mentioned_channel"
         case mentionedGroupIds = "mentioned_group_ids"
+        case mentionedGroups = "mentioned_groups"
         case mentionedHere = "mentioned_here"
         case mentionedRoles = "mentioned_roles"
         case mentionedUsers = "mentioned_users"
@@ -178,6 +181,7 @@ final class SearchResultMessage: @unchecked Sendable, Codable, JSONEncodable, Ha
             lhs.member == rhs.member &&
             lhs.mentionedChannel == rhs.mentionedChannel &&
             lhs.mentionedGroupIds == rhs.mentionedGroupIds &&
+            lhs.mentionedGroups == rhs.mentionedGroups &&
             lhs.mentionedHere == rhs.mentionedHere &&
             lhs.mentionedRoles == rhs.mentionedRoles &&
             lhs.mentionedUsers == rhs.mentionedUsers &&
@@ -230,6 +234,7 @@ final class SearchResultMessage: @unchecked Sendable, Codable, JSONEncodable, Ha
         hasher.combine(member)
         hasher.combine(mentionedChannel)
         hasher.combine(mentionedGroupIds)
+        hasher.combine(mentionedGroups)
         hasher.combine(mentionedHere)
         hasher.combine(mentionedRoles)
         hasher.combine(mentionedUsers)

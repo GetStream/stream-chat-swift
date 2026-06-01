@@ -46,7 +46,7 @@ final class ReviewQueueItemResponse: @unchecked Sendable, Codable, JSONEncodable
     /// Detected languages in the content
     var languages: [String]
     var latestModeratorAction: String
-    var message: MessageResponse?
+    var message: ChatMessageResponse?
     var moderationPayload: ModerationPayloadResponse?
     var reaction: Reaction?
     /// Suggested moderation action
@@ -64,7 +64,7 @@ final class ReviewQueueItemResponse: @unchecked Sendable, Codable, JSONEncodable
     /// When the item was last updated
     var updatedAt: Date
 
-    init(actions: [ActionLogResponse], activity: EnrichedActivity? = nil, aiTextSeverity: String, appeal: AppealItemResponse? = nil, assignedTo: UserResponse? = nil, bans: [BanInfoResponse], call: CallResponse? = nil, completedAt: Date? = nil, configKey: String? = nil, createdAt: Date, entityCreator: EntityCreatorResponse? = nil, entityCreatorId: String? = nil, entityId: String, entityType: String, escalated: Bool, escalatedAt: Date? = nil, escalatedBy: String? = nil, escalationMetadata: EscalationMetadata? = nil, feedsV2Activity: EnrichedActivity? = nil, feedsV2Reaction: Reaction? = nil, feedsV3Activity: FeedsV3ActivityResponse? = nil, feedsV3Comment: FeedsV3CommentResponse? = nil, flags: [ModerationFlagResponse], flagsCount: Int, id: String, languages: [String], latestModeratorAction: String, message: MessageResponse? = nil, moderationPayload: ModerationPayloadResponse? = nil, reaction: Reaction? = nil, recommendedAction: String, reviewedAt: Date? = nil, reviewedBy: String, severity: Int, status: String, teams: [String]? = nil, updatedAt: Date) {
+    init(actions: [ActionLogResponse], activity: EnrichedActivity? = nil, aiTextSeverity: String, appeal: AppealItemResponse? = nil, assignedTo: UserResponse? = nil, bans: [BanInfoResponse], call: CallResponse? = nil, completedAt: Date? = nil, configKey: String? = nil, createdAt: Date, entityCreator: EntityCreatorResponse? = nil, entityCreatorId: String? = nil, entityId: String, entityType: String, escalated: Bool, escalatedAt: Date? = nil, escalatedBy: String? = nil, escalationMetadata: EscalationMetadata? = nil, feedsV2Activity: EnrichedActivity? = nil, feedsV2Reaction: Reaction? = nil, feedsV3Activity: FeedsV3ActivityResponse? = nil, feedsV3Comment: FeedsV3CommentResponse? = nil, flags: [ModerationFlagResponse], flagsCount: Int, id: String, languages: [String], latestModeratorAction: String, message: ChatMessageResponse? = nil, moderationPayload: ModerationPayloadResponse? = nil, reaction: Reaction? = nil, recommendedAction: String, reviewedAt: Date? = nil, reviewedBy: String, severity: Int, status: String, teams: [String]? = nil, updatedAt: Date) {
         self.actions = actions
         self.activity = activity
         self.aiTextSeverity = aiTextSeverity

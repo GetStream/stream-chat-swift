@@ -9,9 +9,10 @@ STRIP_ACCESS_MODIFIERS_EXCLUDED_FILES=(
   "$OUTPUT_DIR_CHAT/models/Command.swift"
 )
 rm -rf "$OUTPUT_DIR_CHAT"
+# `make openapi` builds the chat-manager binary into ./build/chat-manager and regenerates the specs.
 ( cd "$CHAT_DIR" ; make openapi ; \
-  go run ./cmd/chat-manager openapi generate-client --language swift           --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" ; \
-  go run ./cmd/chat-manager openapi generate-client --language swift-endpoints --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
+  ./build/chat-manager openapi generate-client --language swift           --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" ; \
+  ./build/chat-manager openapi generate-client --language swift-endpoints --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
 is_access_modifier_stripping_excluded() {
   local file="$1"

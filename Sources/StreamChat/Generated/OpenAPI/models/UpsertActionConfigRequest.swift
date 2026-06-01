@@ -4,24 +4,25 @@
 
 import Foundation
 
-final class ModerationActionConfigResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    /// The action to take
+final class UpsertActionConfigRequest: @unchecked Sendable, Codable, JSONEncodable, Hashable {
+    /// The action to perform (e.g. ban, delete_message, custom)
     var action: String
-    /// Custom data for the action
+    /// Action-specific parameters passed to the action handler
     var custom: [String: RawJSON]?
-    /// Description of what this action does
-    var description: String
-    /// Type of entity this action applies to
+    /// Human-readable label for the dashboard button
+    var description: String?
+    /// Type of entity this action applies to (e.g. stream:chat:v1:message)
     var entityType: String
-    /// Icon for the dashboard
-    var icon: String
+    /// Icon identifier for the dashboard button
+    var icon: String?
+    /// UUID of an existing action config to update; omit to create a new record
     var id: String?
-    /// Display order (lower numbers shown first)
+    /// Display order in the dashboard (0–100, lower numbers shown first)
     var order: Int
-    /// Queue type this action config belongs to
+    /// Queue this config belongs to; null means the default queue
     var queueType: String?
 
-    init(action: String, custom: [String: RawJSON]? = nil, description: String, entityType: String, icon: String, id: String? = nil, order: Int, queueType: String? = nil) {
+    init(action: String, custom: [String: RawJSON]? = nil, description: String? = nil, entityType: String, icon: String? = nil, id: String? = nil, order: Int, queueType: String? = nil) {
         self.action = action
         self.custom = custom
         self.description = description
@@ -43,7 +44,7 @@ final class ModerationActionConfigResponse: @unchecked Sendable, Codable, JSONEn
         case queueType = "queue_type"
     }
 
-    static func == (lhs: ModerationActionConfigResponse, rhs: ModerationActionConfigResponse) -> Bool {
+    static func == (lhs: UpsertActionConfigRequest, rhs: UpsertActionConfigRequest) -> Bool {
         lhs.action == rhs.action &&
             lhs.custom == rhs.custom &&
             lhs.description == rhs.description &&

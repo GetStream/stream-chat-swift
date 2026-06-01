@@ -10,28 +10,23 @@ final class CallResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable 
     var captioning: Bool
     var channelCid: String?
     var cid: String
-    var createdAt: Timestamp
-    var createdBy: UserResponse
+    var createdAt: Date
+    var createdBy: UserResponse?
     var currentSessionId: String
     var custom: [String: RawJSON]
-    var egress: EgressResponse
-    var endedAt: Timestamp?
+    var endedAt: Date?
     var id: String
-    var ingress: CallIngressResponse
     var joinAheadTimeSeconds: Int?
     var recording: Bool
     var routingNumber: String?
-    var session: CallSessionResponse?
-    var settings: CallSettingsResponse
-    var startsAt: Timestamp?
+    var startsAt: Date?
     var team: String?
-    var thumbnails: ThumbnailResponse?
     var transcribing: Bool
     var translating: Bool
     var type: String
-    var updatedAt: Timestamp
+    var updatedAt: Date
 
-    init(backstage: Bool, blockedUserIds: [String], captioning: Bool, channelCid: String? = nil, cid: String, createdAt: Timestamp, createdBy: UserResponse, currentSessionId: String, custom: [String: RawJSON], egress: EgressResponse, endedAt: Timestamp? = nil, id: String, ingress: CallIngressResponse, joinAheadTimeSeconds: Int? = nil, recording: Bool, routingNumber: String? = nil, session: CallSessionResponse? = nil, settings: CallSettingsResponse, startsAt: Timestamp? = nil, team: String? = nil, thumbnails: ThumbnailResponse? = nil, transcribing: Bool, translating: Bool, type: String, updatedAt: Timestamp) {
+    init(backstage: Bool, blockedUserIds: [String], captioning: Bool, channelCid: String? = nil, cid: String, createdAt: Date, createdBy: UserResponse? = nil, currentSessionId: String, custom: [String: RawJSON], endedAt: Date? = nil, id: String, joinAheadTimeSeconds: Int? = nil, recording: Bool, routingNumber: String? = nil, startsAt: Date? = nil, team: String? = nil, transcribing: Bool, translating: Bool, type: String, updatedAt: Date) {
         self.backstage = backstage
         self.blockedUserIds = blockedUserIds
         self.captioning = captioning
@@ -41,18 +36,13 @@ final class CallResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable 
         self.createdBy = createdBy
         self.currentSessionId = currentSessionId
         self.custom = custom
-        self.egress = egress
         self.endedAt = endedAt
         self.id = id
-        self.ingress = ingress
         self.joinAheadTimeSeconds = joinAheadTimeSeconds
         self.recording = recording
         self.routingNumber = routingNumber
-        self.session = session
-        self.settings = settings
         self.startsAt = startsAt
         self.team = team
-        self.thumbnails = thumbnails
         self.transcribing = transcribing
         self.translating = translating
         self.type = type
@@ -69,18 +59,13 @@ final class CallResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable 
         case createdBy = "created_by"
         case currentSessionId = "current_session_id"
         case custom
-        case egress
         case endedAt = "ended_at"
         case id
-        case ingress
         case joinAheadTimeSeconds = "join_ahead_time_seconds"
         case recording
         case routingNumber = "routing_number"
-        case session
-        case settings
         case startsAt = "starts_at"
         case team
-        case thumbnails
         case transcribing
         case translating
         case type
@@ -97,18 +82,13 @@ final class CallResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable 
             lhs.createdBy == rhs.createdBy &&
             lhs.currentSessionId == rhs.currentSessionId &&
             lhs.custom == rhs.custom &&
-            lhs.egress == rhs.egress &&
             lhs.endedAt == rhs.endedAt &&
             lhs.id == rhs.id &&
-            lhs.ingress == rhs.ingress &&
             lhs.joinAheadTimeSeconds == rhs.joinAheadTimeSeconds &&
             lhs.recording == rhs.recording &&
             lhs.routingNumber == rhs.routingNumber &&
-            lhs.session == rhs.session &&
-            lhs.settings == rhs.settings &&
             lhs.startsAt == rhs.startsAt &&
             lhs.team == rhs.team &&
-            lhs.thumbnails == rhs.thumbnails &&
             lhs.transcribing == rhs.transcribing &&
             lhs.translating == rhs.translating &&
             lhs.type == rhs.type &&
@@ -125,18 +105,13 @@ final class CallResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable 
         hasher.combine(createdBy)
         hasher.combine(currentSessionId)
         hasher.combine(custom)
-        hasher.combine(egress)
         hasher.combine(endedAt)
         hasher.combine(id)
-        hasher.combine(ingress)
         hasher.combine(joinAheadTimeSeconds)
         hasher.combine(recording)
         hasher.combine(routingNumber)
-        hasher.combine(session)
-        hasher.combine(settings)
         hasher.combine(startsAt)
         hasher.combine(team)
-        hasher.combine(thumbnails)
         hasher.combine(transcribing)
         hasher.combine(translating)
         hasher.combine(type)

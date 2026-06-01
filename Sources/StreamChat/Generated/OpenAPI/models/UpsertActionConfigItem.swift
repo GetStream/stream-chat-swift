@@ -4,24 +4,17 @@
 
 import Foundation
 
-final class ModerationActionConfigResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    /// The action to take
+final class UpsertActionConfigItem: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     var action: String
-    /// Custom data for the action
     var custom: [String: RawJSON]?
-    /// Description of what this action does
-    var description: String
-    /// Type of entity this action applies to
+    var description: String?
     var entityType: String
-    /// Icon for the dashboard
-    var icon: String
+    var icon: String?
     var id: String?
-    /// Display order (lower numbers shown first)
     var order: Int
-    /// Queue type this action config belongs to
     var queueType: String?
 
-    init(action: String, custom: [String: RawJSON]? = nil, description: String, entityType: String, icon: String, id: String? = nil, order: Int, queueType: String? = nil) {
+    init(action: String, custom: [String: RawJSON]? = nil, description: String? = nil, entityType: String, icon: String? = nil, id: String? = nil, order: Int, queueType: String? = nil) {
         self.action = action
         self.custom = custom
         self.description = description
@@ -43,7 +36,7 @@ final class ModerationActionConfigResponse: @unchecked Sendable, Codable, JSONEn
         case queueType = "queue_type"
     }
 
-    static func == (lhs: ModerationActionConfigResponse, rhs: ModerationActionConfigResponse) -> Bool {
+    static func == (lhs: UpsertActionConfigItem, rhs: UpsertActionConfigItem) -> Bool {
         lhs.action == rhs.action &&
             lhs.custom == rhs.custom &&
             lhs.description == rhs.description &&

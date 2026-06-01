@@ -10,6 +10,9 @@ final class BodyguardRule: @unchecked Sendable, Codable, JSONEncodable, Hashable
         case bounceFlag = "bounce_flag"
         case bounceRemove = "bounce_remove"
         case flag
+        case keep
+        case mask
+        case maskFlag = "mask_flag"
         case remove
         case shadow
         case unknown = "_unknown"

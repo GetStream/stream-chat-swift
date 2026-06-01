@@ -17,9 +17,12 @@ final class ConfigResponse: @unchecked Sendable, Codable, JSONEncodable, Hashabl
     var automodPlatformCircumventionConfig: AutomodPlatformCircumventionConfig?
     var automodSemanticFiltersConfig: AutomodSemanticFiltersConfig?
     var automodToxicityConfig: AutomodToxicityConfig?
+    /// Names of Bodyguard credential profiles registered on this app. The dashboard uses this list to render the profile picker on the AI Text section.
+    var availableBodyguardProfiles: [BodyguardProfileSummary]?
     var blockListConfig: BlockListConfig?
     /// When the configuration was created
     var createdAt: Date
+    var floodConfig: FloodConfig?
     /// Unique identifier for the moderation configuration
     var key: String
     var llmConfig: LLMConfig?
@@ -31,7 +34,7 @@ final class ConfigResponse: @unchecked Sendable, Codable, JSONEncodable, Hashabl
     var velocityFilterConfig: VelocityFilterConfig?
     var videoCallRuleConfig: VideoCallRuleConfig?
 
-    init(aiImageConfig: AIImageConfig? = nil, aiImageLabelDefinitions: [AIImageLabelDefinition]? = nil, aiImageSubclassifications: [String: [String]]? = nil, aiTextConfig: AITextConfig? = nil, aiVideoConfig: AIVideoConfig? = nil, async: Bool, automodPlatformCircumventionConfig: AutomodPlatformCircumventionConfig? = nil, automodSemanticFiltersConfig: AutomodSemanticFiltersConfig? = nil, automodToxicityConfig: AutomodToxicityConfig? = nil, blockListConfig: BlockListConfig? = nil, createdAt: Date, key: String, llmConfig: LLMConfig? = nil, supportedVideoCallHarmTypes: [String], team: String, updatedAt: Date, velocityFilterConfig: VelocityFilterConfig? = nil, videoCallRuleConfig: VideoCallRuleConfig? = nil) {
+    init(aiImageConfig: AIImageConfig? = nil, aiImageLabelDefinitions: [AIImageLabelDefinition]? = nil, aiImageSubclassifications: [String: [String]]? = nil, aiTextConfig: AITextConfig? = nil, aiVideoConfig: AIVideoConfig? = nil, async: Bool, automodPlatformCircumventionConfig: AutomodPlatformCircumventionConfig? = nil, automodSemanticFiltersConfig: AutomodSemanticFiltersConfig? = nil, automodToxicityConfig: AutomodToxicityConfig? = nil, availableBodyguardProfiles: [BodyguardProfileSummary]? = nil, blockListConfig: BlockListConfig? = nil, createdAt: Date, floodConfig: FloodConfig? = nil, key: String, llmConfig: LLMConfig? = nil, supportedVideoCallHarmTypes: [String], team: String, updatedAt: Date, velocityFilterConfig: VelocityFilterConfig? = nil, videoCallRuleConfig: VideoCallRuleConfig? = nil) {
         self.aiImageConfig = aiImageConfig
         self.aiImageLabelDefinitions = aiImageLabelDefinitions
         self.aiImageSubclassifications = aiImageSubclassifications
@@ -41,8 +44,10 @@ final class ConfigResponse: @unchecked Sendable, Codable, JSONEncodable, Hashabl
         self.automodPlatformCircumventionConfig = automodPlatformCircumventionConfig
         self.automodSemanticFiltersConfig = automodSemanticFiltersConfig
         self.automodToxicityConfig = automodToxicityConfig
+        self.availableBodyguardProfiles = availableBodyguardProfiles
         self.blockListConfig = blockListConfig
         self.createdAt = createdAt
+        self.floodConfig = floodConfig
         self.key = key
         self.llmConfig = llmConfig
         self.supportedVideoCallHarmTypes = supportedVideoCallHarmTypes
@@ -62,8 +67,10 @@ final class ConfigResponse: @unchecked Sendable, Codable, JSONEncodable, Hashabl
         case automodPlatformCircumventionConfig = "automod_platform_circumvention_config"
         case automodSemanticFiltersConfig = "automod_semantic_filters_config"
         case automodToxicityConfig = "automod_toxicity_config"
+        case availableBodyguardProfiles = "available_bodyguard_profiles"
         case blockListConfig = "block_list_config"
         case createdAt = "created_at"
+        case floodConfig = "flood_config"
         case key
         case llmConfig = "llm_config"
         case supportedVideoCallHarmTypes = "supported_video_call_harm_types"
@@ -83,8 +90,10 @@ final class ConfigResponse: @unchecked Sendable, Codable, JSONEncodable, Hashabl
             lhs.automodPlatformCircumventionConfig == rhs.automodPlatformCircumventionConfig &&
             lhs.automodSemanticFiltersConfig == rhs.automodSemanticFiltersConfig &&
             lhs.automodToxicityConfig == rhs.automodToxicityConfig &&
+            lhs.availableBodyguardProfiles == rhs.availableBodyguardProfiles &&
             lhs.blockListConfig == rhs.blockListConfig &&
             lhs.createdAt == rhs.createdAt &&
+            lhs.floodConfig == rhs.floodConfig &&
             lhs.key == rhs.key &&
             lhs.llmConfig == rhs.llmConfig &&
             lhs.supportedVideoCallHarmTypes == rhs.supportedVideoCallHarmTypes &&
@@ -104,8 +113,10 @@ final class ConfigResponse: @unchecked Sendable, Codable, JSONEncodable, Hashabl
         hasher.combine(automodPlatformCircumventionConfig)
         hasher.combine(automodSemanticFiltersConfig)
         hasher.combine(automodToxicityConfig)
+        hasher.combine(availableBodyguardProfiles)
         hasher.combine(blockListConfig)
         hasher.combine(createdAt)
+        hasher.combine(floodConfig)
         hasher.combine(key)
         hasher.combine(llmConfig)
         hasher.combine(supportedVideoCallHarmTypes)

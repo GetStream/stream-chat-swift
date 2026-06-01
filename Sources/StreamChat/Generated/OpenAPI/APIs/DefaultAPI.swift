@@ -1296,6 +1296,81 @@ class DefaultAPI: DefaultAPIEndpoints, @unchecked Sendable {
         }
     }
 
+    func getActionConfig(queueType: String?, entityType: String?, excludeDefaults: Bool?, onlyDefaults: Bool?) async throws -> GetActionConfigResponse {
+        let path = "/api/v2/moderation/action_config"
+
+        let queryParams = APIHelper.mapValuesToQueryItems([
+            "queue_type": (wrappedValue: queueType?.encodeToJSON(), isExplode: true),
+            "entity_type": (wrappedValue: entityType?.encodeToJSON(), isExplode: true),
+            "exclude_defaults": (wrappedValue: excludeDefaults?.encodeToJSON(), isExplode: true),
+            "only_defaults": (wrappedValue: onlyDefaults?.encodeToJSON(), isExplode: true)
+        ])
+
+        let urlRequest = try makeRequest(
+            uriPath: path,
+            queryParams: queryParams ?? [],
+            httpMethod: "GET"
+        )
+        return try await send(request: urlRequest) {
+            try self.jsonDecoder.decode(GetActionConfigResponse.self, from: $0)
+        }
+    }
+
+    func upsertActionConfig(upsertActionConfigRequest: UpsertActionConfigRequest) async throws -> UpsertActionConfigResponse {
+        let path = "/api/v2/moderation/action_config"
+
+        let urlRequest = try makeRequest(
+            uriPath: path,
+            httpMethod: "POST",
+            request: upsertActionConfigRequest
+        )
+        return try await send(request: urlRequest) {
+            try self.jsonDecoder.decode(UpsertActionConfigResponse.self, from: $0)
+        }
+    }
+
+    func bulkUpsertActionConfig(bulkUpsertActionConfigRequest: BulkUpsertActionConfigRequest) async throws -> BulkUpsertActionConfigResponse {
+        let path = "/api/v2/moderation/action_config/bulk"
+
+        let urlRequest = try makeRequest(
+            uriPath: path,
+            httpMethod: "POST",
+            request: bulkUpsertActionConfigRequest
+        )
+        return try await send(request: urlRequest) {
+            try self.jsonDecoder.decode(BulkUpsertActionConfigResponse.self, from: $0)
+        }
+    }
+
+    func bulkDeleteActionConfig(bulkDeleteActionConfigRequest: BulkDeleteActionConfigRequest) async throws -> BulkDeleteActionConfigResponse {
+        let path = "/api/v2/moderation/action_config/bulk_delete"
+
+        let urlRequest = try makeRequest(
+            uriPath: path,
+            httpMethod: "POST",
+            request: bulkDeleteActionConfigRequest
+        )
+        return try await send(request: urlRequest) {
+            try self.jsonDecoder.decode(BulkDeleteActionConfigResponse.self, from: $0)
+        }
+    }
+
+    func deleteActionConfig(id: String) async throws -> DeleteActionConfigResponse {
+        var path = "/api/v2/moderation/action_config/{id}"
+
+        let idPreEscape = "\(APIHelper.mapValueToPathItem(id))"
+        let idPostEscape = idPreEscape.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? ""
+        path = path.replacingOccurrences(of: String(format: "{%@}", "id"), with: idPostEscape, options: .literal, range: nil)
+
+        let urlRequest = try makeRequest(
+            uriPath: path,
+            httpMethod: "DELETE"
+        )
+        return try await send(request: urlRequest) {
+            try self.jsonDecoder.decode(DeleteActionConfigResponse.self, from: $0)
+        }
+    }
+
     func appeal(appealRequest: AppealRequest) async throws -> AppealResponse {
         let path = "/api/v2/moderation/appeal"
 
@@ -1335,6 +1410,19 @@ class DefaultAPI: DefaultAPIEndpoints, @unchecked Sendable {
         )
         return try await send(request: urlRequest) {
             try self.jsonDecoder.decode(QueryAppealsResponse.self, from: $0)
+        }
+    }
+
+    func bulkActionAppeals(bulkActionAppealsRequest: BulkActionAppealsRequest) async throws -> BulkActionAppealsResponse {
+        let path = "/api/v2/moderation/appeals/bulk_action"
+
+        let urlRequest = try makeRequest(
+            uriPath: path,
+            httpMethod: "POST",
+            request: bulkActionAppealsRequest
+        )
+        return try await send(request: urlRequest) {
+            try self.jsonDecoder.decode(BulkActionAppealsResponse.self, from: $0)
         }
     }
 
@@ -1698,6 +1786,27 @@ class DefaultAPI: DefaultAPIEndpoints, @unchecked Sendable {
         )
         return try await send(request: urlRequest) {
             try self.jsonDecoder.decode(UpsertPushPreferencesResponse.self, from: $0)
+        }
+    }
+
+    func searchRoles(query: String, limit: Int?, nameGt: String?, roleType: String?, includeGlobalRoles: Bool?) async throws -> SearchRolesResponse {
+        let path = "/api/v2/roles/search"
+
+        let queryParams = APIHelper.mapValuesToQueryItems([
+            "query": (wrappedValue: query.encodeToJSON(), isExplode: true),
+            "limit": (wrappedValue: limit?.encodeToJSON(), isExplode: true),
+            "name_gt": (wrappedValue: nameGt?.encodeToJSON(), isExplode: true),
+            "role_type": (wrappedValue: roleType?.encodeToJSON(), isExplode: true),
+            "include_global_roles": (wrappedValue: includeGlobalRoles?.encodeToJSON(), isExplode: true)
+        ])
+
+        let urlRequest = try makeRequest(
+            uriPath: path,
+            queryParams: queryParams ?? [],
+            httpMethod: "GET"
+        )
+        return try await send(request: urlRequest) {
+            try self.jsonDecoder.decode(SearchRolesResponse.self, from: $0)
         }
     }
 
@@ -2148,11 +2257,23 @@ protocol DefaultAPIEndpoints {
 
     func longPoll(json: WSAuthMessage?) async throws
 
+    func getActionConfig(queueType: String?, entityType: String?, excludeDefaults: Bool?, onlyDefaults: Bool?) async throws -> GetActionConfigResponse
+
+    func upsertActionConfig(upsertActionConfigRequest: UpsertActionConfigRequest) async throws -> UpsertActionConfigResponse
+
+    func bulkUpsertActionConfig(bulkUpsertActionConfigRequest: BulkUpsertActionConfigRequest) async throws -> BulkUpsertActionConfigResponse
+
+    func bulkDeleteActionConfig(bulkDeleteActionConfigRequest: BulkDeleteActionConfigRequest) async throws -> BulkDeleteActionConfigResponse
+
+    func deleteActionConfig(id: String) async throws -> DeleteActionConfigResponse
+
     func appeal(appealRequest: AppealRequest) async throws -> AppealResponse
 
     func getAppeal(id: String) async throws -> GetAppealResponse
 
     func queryAppeals(queryAppealsRequest: QueryAppealsRequest) async throws -> QueryAppealsResponse
+
+    func bulkActionAppeals(bulkActionAppealsRequest: BulkActionAppealsRequest) async throws -> BulkActionAppealsResponse
 
     func ban(banRequest: BanRequest) async throws -> BanResponse
 
@@ -2197,6 +2318,8 @@ protocol DefaultAPIEndpoints {
     func queryPollVotes(pollId: String, userId: String?, queryPollVotesRequest: QueryPollVotesRequest) async throws -> PollVotesResponse
 
     func updatePushNotificationPreferences(upsertPushPreferencesRequest: UpsertPushPreferencesRequest) async throws -> UpsertPushPreferencesResponse
+
+    func searchRoles(query: String, limit: Int?, nameGt: String?, roleType: String?, includeGlobalRoles: Bool?) async throws -> SearchRolesResponse
 
     func deleteFile(url: String?) async throws -> Response
 

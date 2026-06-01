@@ -79,6 +79,9 @@ enum EndpointPath: Codable, Equatable {
     case appeal
     case ban
     case blockUsers
+    case bulkActionAppeals
+    case bulkDeleteActionConfig
+    case bulkUpsertActionConfig
     case castPollVote(messageId: String, pollId: String)
     case createBlockList
     case createDevice
@@ -88,6 +91,7 @@ enum EndpointPath: Codable, Equatable {
     case createPollOption(pollId: String)
     case createReminder(messageId: String)
     case createUserGroup
+    case deleteActionConfig(id: String)
     case deleteBlockList(name: String)
     case deleteChannel(type: String, id: String)
     case deleteChannelFile(type: String, id: String)
@@ -106,6 +110,7 @@ enum EndpointPath: Codable, Equatable {
     case deleteReminder(messageId: String)
     case deleteUserGroup(id: String)
     case flag
+    case getActionConfig
     case getApp
     case getAppeal(id: String)
     case getBlockedUsers
@@ -153,6 +158,7 @@ enum EndpointPath: Codable, Equatable {
     case removeUserGroupMembers(id: String)
     case runMessageAction(id: String)
     case search
+    case searchRoles
     case searchUserGroups
     case sendEvent(type: String, id: String)
     case sendMessage(type: String, id: String)
@@ -186,6 +192,7 @@ enum EndpointPath: Codable, Equatable {
     case uploadChannelImage(type: String, id: String)
     case uploadFile
     case uploadImage
+    case upsertActionConfig
     case upsertConfig
     case custom(String)
 
@@ -199,6 +206,12 @@ enum EndpointPath: Codable, Equatable {
             return "/api/v2/moderation/ban"
         case .blockUsers:
             return "/api/v2/users/block"
+        case .bulkActionAppeals:
+            return "/api/v2/moderation/appeals/bulk_action"
+        case .bulkDeleteActionConfig:
+            return "/api/v2/moderation/action_config/bulk_delete"
+        case .bulkUpsertActionConfig:
+            return "/api/v2/moderation/action_config/bulk"
         case let .castPollVote(messageId, pollId):
             return "/api/v2/chat/messages/\(messageId)/polls/\(pollId)/vote"
         case .createBlockList:
@@ -217,6 +230,8 @@ enum EndpointPath: Codable, Equatable {
             return "/api/v2/chat/messages/\(messageId)/reminders"
         case .createUserGroup:
             return "/api/v2/usergroups"
+        case let .deleteActionConfig(id):
+            return "/api/v2/moderation/action_config/\(id)"
         case let .deleteBlockList(name):
             return "/api/v2/blocklists/\(name)"
         case let .deleteChannel(type, id):
@@ -253,6 +268,8 @@ enum EndpointPath: Codable, Equatable {
             return "/api/v2/usergroups/\(id)"
         case .flag:
             return "/api/v2/moderation/flag"
+        case .getActionConfig:
+            return "/api/v2/moderation/action_config"
         case .getApp:
             return "/api/v2/app"
         case let .getAppeal(id):
@@ -347,6 +364,8 @@ enum EndpointPath: Codable, Equatable {
             return "/api/v2/chat/messages/\(id)/action"
         case .search:
             return "/api/v2/chat/search"
+        case .searchRoles:
+            return "/api/v2/roles/search"
         case .searchUserGroups:
             return "/api/v2/usergroups/search"
         case let .sendEvent(type, id):
@@ -413,6 +432,8 @@ enum EndpointPath: Codable, Equatable {
             return "/api/v2/uploads/file"
         case .uploadImage:
             return "/api/v2/uploads/image"
+        case .upsertActionConfig:
+            return "/api/v2/moderation/action_config"
         case .upsertConfig:
             return "/api/v2/moderation/config"
         case let .custom(path):
@@ -459,6 +480,36 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: false,
             body: blockUsersRequest
+        )
+    }
+
+    static func bulkActionAppeals(bulkActionAppealsRequest: BulkActionAppealsRequest) -> Endpoint<BulkActionAppealsResponse> {
+        .init(
+            path: .bulkActionAppeals,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: bulkActionAppealsRequest
+        )
+    }
+
+    static func bulkDeleteActionConfig(bulkDeleteActionConfigRequest: BulkDeleteActionConfigRequest) -> Endpoint<BulkDeleteActionConfigResponse> {
+        .init(
+            path: .bulkDeleteActionConfig,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: bulkDeleteActionConfigRequest
+        )
+    }
+
+    static func bulkUpsertActionConfig(bulkUpsertActionConfigRequest: BulkUpsertActionConfigRequest) -> Endpoint<BulkUpsertActionConfigResponse> {
+        .init(
+            path: .bulkUpsertActionConfig,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: bulkUpsertActionConfigRequest
         )
     }
 
@@ -550,6 +601,16 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: false,
             body: createUserGroupRequest
+        )
+    }
+
+    static func deleteActionConfig(id: String) -> Endpoint<DeleteActionConfigResponse> {
+        .init(
+            path: .deleteActionConfig(id: id),
+            method: .delete,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: nil
         )
     }
 
@@ -762,6 +823,21 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: false,
             body: flagRequest
+        )
+    }
+
+    static func getActionConfig(queueType: String?, entityType: String?, excludeDefaults: Bool?, onlyDefaults: Bool?) -> Endpoint<GetActionConfigResponse> {
+        .init(
+            path: .getActionConfig,
+            method: .get,
+            queryItems: [
+                "queue_type": APIHelper.convertAnyToString(queueType),
+                "entity_type": APIHelper.convertAnyToString(entityType),
+                "exclude_defaults": APIHelper.convertAnyToString(excludeDefaults),
+                "only_defaults": APIHelper.convertAnyToString(onlyDefaults)
+            ],
+            requiresConnectionId: false,
+            body: nil
         )
     }
 
@@ -1290,6 +1366,22 @@ extension Endpoint {
         )
     }
 
+    static func searchRoles(query: String, limit: Int?, nameGt: String?, roleType: String?, includeGlobalRoles: Bool?) -> Endpoint<SearchRolesResponse> {
+        .init(
+            path: .searchRoles,
+            method: .get,
+            queryItems: [
+                "query": APIHelper.convertAnyToString(query),
+                "limit": APIHelper.convertAnyToString(limit),
+                "name_gt": APIHelper.convertAnyToString(nameGt),
+                "role_type": APIHelper.convertAnyToString(roleType),
+                "include_global_roles": APIHelper.convertAnyToString(includeGlobalRoles)
+            ],
+            requiresConnectionId: false,
+            body: nil
+        )
+    }
+
     static func searchUserGroups(query: String, limit: Int?, nameGt: String?, idGt: String?, teamId: String?) -> Endpoint<SearchUserGroupsResponse> {
         .init(
             path: .searchUserGroups,
@@ -1626,6 +1718,16 @@ extension Endpoint {
             queryItems: nil,
             requiresConnectionId: false,
             body: imageUploadRequest
+        )
+    }
+
+    static func upsertActionConfig(upsertActionConfigRequest: UpsertActionConfigRequest) -> Endpoint<UpsertActionConfigResponse> {
+        .init(
+            path: .upsertActionConfig,
+            method: .post,
+            queryItems: nil,
+            requiresConnectionId: false,
+            body: upsertActionConfigRequest
         )
     }
 

@@ -16,6 +16,7 @@ final class UpsertConfigRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
     var awsRekognitionConfig: AIImageConfig?
     var blockListConfig: BlockListConfig?
     var bodyguardConfig: AITextConfig?
+    var floodConfig: FloodConfig?
     var googleVisionConfig: GoogleVisionConfig?
     /// Unique identifier for the moderation configuration
     var key: String
@@ -26,7 +27,7 @@ final class UpsertConfigRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
     var velocityFilterConfig: VelocityFilterConfig?
     var videoCallRuleConfig: VideoCallRuleConfig?
 
-    init(aiImageConfig: AIImageConfig? = nil, aiTextConfig: AITextConfig? = nil, aiVideoConfig: AIVideoConfig? = nil, async: Bool? = nil, automodPlatformCircumventionConfig: AutomodPlatformCircumventionConfig? = nil, automodSemanticFiltersConfig: AutomodSemanticFiltersConfig? = nil, automodToxicityConfig: AutomodToxicityConfig? = nil, awsRekognitionConfig: AIImageConfig? = nil, blockListConfig: BlockListConfig? = nil, bodyguardConfig: AITextConfig? = nil, googleVisionConfig: GoogleVisionConfig? = nil, key: String, llmConfig: LLMConfig? = nil, ruleBuilderConfig: RuleBuilderConfig? = nil, team: String? = nil, velocityFilterConfig: VelocityFilterConfig? = nil, videoCallRuleConfig: VideoCallRuleConfig? = nil) {
+    init(aiImageConfig: AIImageConfig? = nil, aiTextConfig: AITextConfig? = nil, aiVideoConfig: AIVideoConfig? = nil, async: Bool? = nil, automodPlatformCircumventionConfig: AutomodPlatformCircumventionConfig? = nil, automodSemanticFiltersConfig: AutomodSemanticFiltersConfig? = nil, automodToxicityConfig: AutomodToxicityConfig? = nil, awsRekognitionConfig: AIImageConfig? = nil, blockListConfig: BlockListConfig? = nil, bodyguardConfig: AITextConfig? = nil, floodConfig: FloodConfig? = nil, googleVisionConfig: GoogleVisionConfig? = nil, key: String, llmConfig: LLMConfig? = nil, ruleBuilderConfig: RuleBuilderConfig? = nil, team: String? = nil, velocityFilterConfig: VelocityFilterConfig? = nil, videoCallRuleConfig: VideoCallRuleConfig? = nil) {
         self.aiImageConfig = aiImageConfig
         self.aiTextConfig = aiTextConfig
         self.aiVideoConfig = aiVideoConfig
@@ -37,6 +38,7 @@ final class UpsertConfigRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
         self.awsRekognitionConfig = awsRekognitionConfig
         self.blockListConfig = blockListConfig
         self.bodyguardConfig = bodyguardConfig
+        self.floodConfig = floodConfig
         self.googleVisionConfig = googleVisionConfig
         self.key = key
         self.llmConfig = llmConfig
@@ -57,6 +59,7 @@ final class UpsertConfigRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
         case awsRekognitionConfig = "aws_rekognition_config"
         case blockListConfig = "block_list_config"
         case bodyguardConfig = "bodyguard_config"
+        case floodConfig = "flood_config"
         case googleVisionConfig = "google_vision_config"
         case key
         case llmConfig = "llm_config"
@@ -77,6 +80,7 @@ final class UpsertConfigRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
             lhs.awsRekognitionConfig == rhs.awsRekognitionConfig &&
             lhs.blockListConfig == rhs.blockListConfig &&
             lhs.bodyguardConfig == rhs.bodyguardConfig &&
+            lhs.floodConfig == rhs.floodConfig &&
             lhs.googleVisionConfig == rhs.googleVisionConfig &&
             lhs.key == rhs.key &&
             lhs.llmConfig == rhs.llmConfig &&
@@ -97,6 +101,7 @@ final class UpsertConfigRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
         hasher.combine(awsRekognitionConfig)
         hasher.combine(blockListConfig)
         hasher.combine(bodyguardConfig)
+        hasher.combine(floodConfig)
         hasher.combine(googleVisionConfig)
         hasher.combine(key)
         hasher.combine(llmConfig)

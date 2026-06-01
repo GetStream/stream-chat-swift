@@ -23,6 +23,8 @@ final class CreateDeviceRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
         }
     }
 
+    /// Stable physical device identifier used to deduplicate pushes across push providers (e.g. APNs VoIP and Firebase on the same iOS device). Distinct from 'id', which is the push token.
+    var hardwareId: String?
     /// Device ID
     var id: String
     /// Push provider
@@ -32,7 +34,8 @@ final class CreateDeviceRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
     /// When true the token is for Apple VoIP push notifications
     var voipToken: Bool?
 
-    init(id: String, pushProvider: CreateDeviceRequestPushProvider, pushProviderName: String? = nil, voipToken: Bool? = nil) {
+    init(hardwareId: String? = nil, id: String, pushProvider: CreateDeviceRequestPushProvider, pushProviderName: String? = nil, voipToken: Bool? = nil) {
+        self.hardwareId = hardwareId
         self.id = id
         self.pushProvider = pushProvider
         self.pushProviderName = pushProviderName
@@ -40,6 +43,7 @@ final class CreateDeviceRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
     }
 
     enum CodingKeys: String, CodingKey, CaseIterable {
+        case hardwareId = "hardware_id"
         case id
         case pushProvider = "push_provider"
         case pushProviderName = "push_provider_name"
@@ -47,13 +51,15 @@ final class CreateDeviceRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
     }
 
     static func == (lhs: CreateDeviceRequest, rhs: CreateDeviceRequest) -> Bool {
-        lhs.id == rhs.id &&
+        lhs.hardwareId == rhs.hardwareId &&
+            lhs.id == rhs.id &&
             lhs.pushProvider == rhs.pushProvider &&
             lhs.pushProviderName == rhs.pushProviderName &&
             lhs.voipToken == rhs.voipToken
     }
 
     func hash(into hasher: inout Hasher) {
+        hasher.combine(hardwareId)
         hasher.combine(id)
         hasher.combine(pushProvider)
         hasher.combine(pushProviderName)
