@@ -116,16 +116,28 @@ final class DemoChatChannelListVC: ChatChannelListVC {
         sortValues: nil
     )
 
-    lazy var predefinedArchivedHiddenChannelsQuery: ChannelListQuery = .init(
+    lazy var predefinedArchivedChannelsQuery: ChannelListQuery = .init(
         predefinedFilter: "user_per_channel_type_archived_hidden",
         filterValues: [
             "channel_type": .string(ChannelType.messaging.rawValue),
             "hidden": .bool(false),
             "user_id": .string(currentUserId),
+            "archived": .bool(true)
+        ],
+        sortValues: nil
+    )
+    
+    lazy var predefinedHiddenChannelsQuery: ChannelListQuery = .init(
+        predefinedFilter: "user_per_channel_type_archived_hidden",
+        filterValues: [
+            "channel_type": .string(ChannelType.messaging.rawValue),
+            "hidden": .bool(true),
+            "user_id": .string(currentUserId),
             "archived": .bool(false)
         ],
         sortValues: nil
     )
+    
     lazy var livestreamChannelsQuery: ChannelListQuery = .init(filter: .equal(.type, to: .livestream))
 
     var demoRouter: DemoChatChannelListRouter? {
@@ -295,14 +307,24 @@ final class DemoChatChannelListVC: ChatChannelListVC {
             }
         )
 
-        let predefinedArchivedHiddenChannelsAction = UIAlertAction(
-            title: "Predefined: not archived and hidden",
+        let predefinedArchivedChannelsAction = UIAlertAction(
+            title: "Predefined: archived",
             style: .default,
             handler: { [weak self] _ in
-                self?.title = "Predefined: not archived and hidden"
-                self?.setPredefinedArchivedHiddenChannelsQuery()
+                self?.title = "Predefined: archived"
+                self?.setPredefinedArchivedChannelsQuery()
             }
         )
+        
+        let predefinedHiddenChannelsAction = UIAlertAction(
+            title: "Predefined: hidden",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Predefined: hidden"
+                self?.setPredefinedHiddenChannelsQuery()
+            }
+        )
+        
         let livestreamChannelsAction = UIAlertAction(
             title: "Livestream Channels",
             style: .default
@@ -328,7 +350,8 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 channelRoleChannelsAction,
                 taggedChannelsAction,
                 predefinedMessagingChannelsAction,
-                predefinedArchivedHiddenChannelsAction,
+                predefinedArchivedChannelsAction,
+                predefinedHiddenChannelsAction,
                 livestreamChannelsAction
             ].sorted(by: { $0.title ?? "" < $1.title ?? "" }),
             preferredStyle: .actionSheet,
@@ -394,8 +417,12 @@ final class DemoChatChannelListVC: ChatChannelListVC {
         replaceQuery(predefinedMessagingChannelsQuery)
     }
 
-    func setPredefinedArchivedHiddenChannelsQuery() {
-        replaceQuery(predefinedArchivedHiddenChannelsQuery)
+    func setPredefinedArchivedChannelsQuery() {
+        replaceQuery(predefinedArchivedChannelsQuery)
+    }
+    
+    func setPredefinedHiddenChannelsQuery() {
+        replaceQuery(predefinedHiddenChannelsQuery)
     }
     
     func setLivestreamChannelsQuery() {
