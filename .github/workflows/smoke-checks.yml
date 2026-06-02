@@ -62,6 +62,7 @@ jobs:
       - run: bundle exec fastlane validate_public_interface
       - run: bundle exec fastlane pod_lint
         if: startsWith(github.event.pull_request.head.ref, 'release/')
+      - run: bundle exec fastlane validate_generated_code
 
   build-old-xcode:
     name: Build SDKs (Old Xcode)

@@ -10,14 +10,14 @@ extension StreamChatWrapper {
     // Instantiates chat client
     func setUpChat() {
         // Set the log level
-        LogConfig.level = StreamRuntimeCheck.logLevel ?? .warning
+        LogConfig.level = StreamRuntimeCheck.logLevel ?? .debug
         LogConfig.formatters = [
             PrefixLogFormatter(prefixes: [.info: "ℹ️", .debug: "🛠", .warning: "⚠️", .error: "🚨"])
         ]
         if let subsystems = StreamRuntimeCheck.subsystems {
             LogConfig.subsystems = subsystems
         }
-
+        LogConfig.subsystems = .httpRequests
         // Create Client
         if client == nil {
             client = ChatClient(config: config)

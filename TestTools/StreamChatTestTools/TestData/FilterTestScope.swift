@@ -59,14 +59,15 @@ struct FilterCodingTestPair {
         .lessOrEqualDouble(),
         .inArrayInt(),
         .inArrayDouble(),
-        .notInArrayString(),
+        .inArrayString(),
+        .equalArrayInt(),
         .query(),
         .autocomplete(),
         .existsTrue(),
         .notExists(),
         .containsAndEqual(),
         .greaterOrLess(),
-        .nonEqualNorEqual()
+        .nor()
     ]
 }
 
@@ -192,11 +193,23 @@ extension FilterCodingTestPair {
         return FilterCodingTestPair(json: json, filter: filter)
     }
 
-    static func nonEqualNorEqual() -> FilterCodingTestPair {
-        let json = #"{"$nor":[{"test_key_Bool":{"$ne":true}},{"test_key_Double":{"$eq":678.89999999999998}}]}"#
+    static func inArrayString() -> FilterCodingTestPair {
+        let json = #"{"test_key_ArrayString":{"$in":["a","b"]}}"#
+        let filter: Filter<FilterTestScope> = .in(.testKeyArrayString, values: ["a", "b"])
+        return FilterCodingTestPair(json: json, filter: filter)
+    }
+
+    static func equalArrayInt() -> FilterCodingTestPair {
+        let json = #"{"test_key_ArrayInt":{"$eq":[1,2]}}"#
+        let filter: Filter<FilterTestScope> = .equal(.testKeyArrayInt, values: [1, 2])
+        return FilterCodingTestPair(json: json, filter: filter)
+    }
+
+    static func nor() -> FilterCodingTestPair {
+        let json = #"{"$nor":[{"test_key_Int":{"$eq":1}},{"test_key_Bool":{"$eq":true}}]}"#
         let filter: Filter<FilterTestScope> = .nor([
-            .notEqual(.testKeyBool, to: true),
-            .equal(.testKeyDouble, to: 678.9)
+            .equal(.testKeyInt, to: 1),
+            .equal(.testKeyBool, to: true)
         ])
         return FilterCodingTestPair(json: json, filter: filter)
     }

@@ -110,6 +110,36 @@ final class DemoChatChannelListVC: ChatChannelListVC {
     
     lazy var premiumTaggedChannelsQuery: ChannelListQuery = .init(filter: .in(.filterTags, values: ["premium"]))
 
+    lazy var predefinedMessagingChannelsQuery: ChannelListQuery = .init(
+        predefinedFilter: "user_per_channel_type_channels",
+        filterValues: ["channel_type": .string(ChannelType.messaging.rawValue), "user_id": .string(currentUserId)],
+        sortValues: nil
+    )
+
+    lazy var predefinedArchivedChannelsQuery: ChannelListQuery = .init(
+        predefinedFilter: "user_per_channel_type_archived_hidden",
+        filterValues: [
+            "channel_type": .string(ChannelType.messaging.rawValue),
+            "hidden": .bool(false),
+            "user_id": .string(currentUserId),
+            "archived": .bool(true)
+        ],
+        sortValues: nil
+    )
+    
+    lazy var predefinedHiddenChannelsQuery: ChannelListQuery = .init(
+        predefinedFilter: "user_per_channel_type_archived_hidden",
+        filterValues: [
+            "channel_type": .string(ChannelType.messaging.rawValue),
+            "hidden": .bool(true),
+            "user_id": .string(currentUserId),
+            "archived": .bool(false)
+        ],
+        sortValues: nil
+    )
+    
+    lazy var livestreamChannelsQuery: ChannelListQuery = .init(filter: .equal(.type, to: .livestream))
+
     var demoRouter: DemoChatChannelListRouter? {
         router as? DemoChatChannelListRouter
     }
@@ -268,6 +298,41 @@ final class DemoChatChannelListVC: ChatChannelListVC {
             }
         )
 
+        let predefinedMessagingChannelsAction = UIAlertAction(
+            title: "Messaging (Predefined)",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Messaging (Predefined)"
+                self?.setPredefinedMessagingChannelsQuery()
+            }
+        )
+
+        let predefinedArchivedChannelsAction = UIAlertAction(
+            title: "Archived (Predefined)",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Archived (Predefined)"
+                self?.setPredefinedArchivedChannelsQuery()
+            }
+        )
+        
+        let predefinedHiddenChannelsAction = UIAlertAction(
+            title: "Hidden (Predefined)",
+            style: .default,
+            handler: { [weak self] _ in
+                self?.title = "Hidden (Predefined)"
+                self?.setPredefinedHiddenChannelsQuery()
+            }
+        )
+        
+        let livestreamChannelsAction = UIAlertAction(
+            title: "Livestream Channels",
+            style: .default
+        ) { [weak self] _ in
+            self?.title = "Livestream Channels"
+            self?.setLivestreamChannelsQuery()
+        }
+
         presentAlert(
             title: "Filter Channels",
             actions: [
@@ -283,7 +348,11 @@ final class DemoChatChannelListVC: ChatChannelListVC {
                 archivedChannelsAction,
                 equalMembersAction,
                 channelRoleChannelsAction,
-                taggedChannelsAction
+                taggedChannelsAction,
+                predefinedMessagingChannelsAction,
+                predefinedArchivedChannelsAction,
+                predefinedHiddenChannelsAction,
+                livestreamChannelsAction
             ].sorted(by: { $0.title ?? "" < $1.title ?? "" }),
             preferredStyle: .actionSheet,
             sourceView: filterChannelsButton
@@ -342,6 +411,22 @@ final class DemoChatChannelListVC: ChatChannelListVC {
     
     func setPremiumTaggedChannelsQuery() {
         replaceQuery(premiumTaggedChannelsQuery)
+    }
+
+    func setPredefinedMessagingChannelsQuery() {
+        replaceQuery(predefinedMessagingChannelsQuery)
+    }
+
+    func setPredefinedArchivedChannelsQuery() {
+        replaceQuery(predefinedArchivedChannelsQuery)
+    }
+    
+    func setPredefinedHiddenChannelsQuery() {
+        replaceQuery(predefinedHiddenChannelsQuery)
+    }
+    
+    func setLivestreamChannelsQuery() {
+        replaceQuery(livestreamChannelsQuery)
     }
 
     func setInitialChannelsQuery() {

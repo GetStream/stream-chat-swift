@@ -531,35 +531,75 @@ extension Filter: Codable {
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ArbitraryKey.self)
-        for key in container.allKeys {
-            if key.stringValue.hasPrefix("$") {
-                // The right side should be an array of other filters
-                let filters = try container.decode([Filter].self, forKey: key)
-                self.init(
-                    operator: key.stringValue,
-                    key: nil,
-                    value: filters,
-                    isCollectionFilter: false
-                )
-                return
+        let keys = container.allKeys
 
-            } else {
-                // The right side should be FilterRightSide
-                let rightSide = try container.decode(FilterRightSide.self, forKey: key)
-                self.init(
-                    operator: rightSide.operator,
-                    key: key.stringValue,
-                    value: rightSide.value,
-                    isCollectionFilter: false
-                )
-                return
-            }
+        guard let firstKey = keys.first else {
+            throw DecodingError.dataCorruptedError(
+                forKey: ArbitraryKey(""),
+                in: container,
+                debugDescription: "Filter logic structure is incorrect"
+            )
         }
 
-        throw DecodingError.dataCorruptedError(
-            forKey: container.allKeys.last ?? ArbitraryKey(""),
-            in: container,
-            debugDescription: "Filter logic structure is incorrect"
+        // Multiple keys at one level are implicitly ANDed (Mongo-style), whether each key is a
+        // field (`{"type": "messaging"}`) or a group operator (`{"$or": [...]}`). This mirrors the
+        // backend, whose query parser ANDs every top-level key regardless of kind. Keys are sorted
+        // so the decoded tree is stable regardless of `allKeys` ordering.
+        if keys.count > 1 {
+            self.init(
+                operator: FilterOperator.and.rawValue,
+                key: nil,
+                value: try keys
+                    .sorted { $0.stringValue < $1.stringValue }
+                    .map { try Self.decodeNode(in: container, forKey: $0) },
+                isCollectionFilter: false
+            )
+            return
+        }
+
+        self = try Self.decodeNode(in: container, forKey: firstKey)
+    }
+
+    /// Decodes a single key as either a group-operator node (`$and`/`$or`/`$nor`, whose value is an
+    /// array of sub-filters) or a leaf (`{field: value}` / `{field: {$op: value}}`).
+    private static func decodeNode(
+        in container: KeyedDecodingContainer<ArbitraryKey>,
+        forKey key: ArbitraryKey
+    ) throws -> Filter {
+        if key.stringValue.hasPrefix("$") {
+            // The right side should be an array of other filters
+            let filters = try container.decode([Filter].self, forKey: key)
+            return Filter(
+                operator: key.stringValue,
+                key: nil,
+                value: filters,
+                isCollectionFilter: false
+            )
+        }
+        return try decodeLeaf(in: container, forKey: key)
+    }
+
+    private static func decodeLeaf(
+        in container: KeyedDecodingContainer<ArbitraryKey>,
+        forKey key: ArbitraryKey
+    ) throws -> Filter {
+        // Long form: { key: { $op: value } }
+        if let rightSide = try? container.decode(FilterRightSide.self, forKey: key) {
+            return Filter(
+                operator: rightSide.operator,
+                key: key.stringValue,
+                value: rightSide.value,
+                isCollectionFilter: false
+            )
+        }
+
+        // Short form (implicit $eq): { key: value }
+        let value = try container.decodeFilterValue(forKey: key)
+        return Filter(
+            operator: FilterOperator.equal.rawValue,
+            key: key.stringValue,
+            value: value,
+            isCollectionFilter: false
         )
     }
 }
@@ -614,34 +654,37 @@ private struct FilterRightSide: Decodable {
         }
 
         self.operator = container.allKeys.first!.stringValue
-        var value: FilterValue?
+        self.value = try container.decodeFilterValue(forKey: key)
+    }
+}
 
-        if let dateValue = try? container.decode(Date.self, forKey: key) {
-            value = dateValue
-        } else if let stringValue = try? container.decode(String.self, forKey: key) {
-            value = stringValue
-        } else if let intValue = try? container.decode(Int.self, forKey: key) {
-            value = intValue
-        } else if let doubleValue = try? container.decode(Double.self, forKey: key) {
-            value = doubleValue
-        } else if let boolValue = try? container.decode(Bool.self, forKey: key) {
-            value = boolValue
-        } else if let stringArray = try? container.decode([String].self, forKey: key) {
-            value = stringArray
-        } else if let intArray = try? container.decode([Int].self, forKey: key) {
-            value = intArray
-        } else if let doubleArray = try? container.decode([Double].self, forKey: key) {
-            value = doubleArray
+private extension KeyedDecodingContainer {
+    /// Decodes a scalar (or homogeneous array) JSON value as `FilterValue`.
+    func decodeFilterValue(forKey key: Key) throws -> FilterValue {
+        if (try? decodeNil(forKey: key)) == true {
+            // `Optional<TeamId>` is the only `FilterValue`-conforming optional (see line 86).
+            return TeamId?.none
+        } else if let intValue = try? decode(Int.self, forKey: key) {
+            return intValue
+        } else if let doubleValue = try? decode(Double.self, forKey: key) {
+            return doubleValue
+        } else if let dateValue = try? decode(Date.self, forKey: key) {
+            return dateValue
+        } else if let stringValue = try? decode(String.self, forKey: key) {
+            return stringValue
+        } else if let boolValue = try? decode(Bool.self, forKey: key) {
+            return boolValue
+        } else if let stringArray = try? decode([String].self, forKey: key) {
+            return stringArray
+        } else if let intArray = try? decode([Int].self, forKey: key) {
+            return intArray
+        } else if let doubleArray = try? decode([Double].self, forKey: key) {
+            return doubleArray
         }
-
-        if let value = value {
-            self.value = value
-        } else {
-            throw DecodingError.dataCorruptedError(
-                forKey: key,
-                in: container,
-                debugDescription: "The data can't be decoded as `FilterValue`."
-            )
-        }
+        throw DecodingError.dataCorruptedError(
+            forKey: key,
+            in: self,
+            debugDescription: "The data can't be decoded as `FilterValue`."
+        )
     }
 }

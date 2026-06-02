@@ -193,7 +193,7 @@ class SyncRepository {
             // 2. Refresh channel lists
             operations.append(contentsOf: activeChannelLists.allObjects.map { RefreshChannelListOperation(channelList: $0, context: context) })
             operations.append(contentsOf: activeChannelListControllers.allObjects.map { RefreshChannelListOperation(controller: $0, context: context) })
-            
+
             // 3. /sync (for channels what not part of active channel lists)
             operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
             
