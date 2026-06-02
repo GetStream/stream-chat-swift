@@ -2857,7 +2857,7 @@ extension Endpoint {
     }
 
     /// Unbans a channel member. The OpenAPI `ban` operation is POST-only;
-    /// `DELETE /moderation/ban` has no generated factory.
+    /// `DELETE /moderation/ban` has no generated factory yet.
     static func unbanMember(_ userId: UserId, cid: ChannelId) -> Endpoint<EmptyResponse> {
         .init(
             path: .custom("moderation/ban"),
@@ -2924,17 +2924,8 @@ extension Endpoint {
         )
     }
 
-    /// User mute / unmute — backend uses `target_id` envelope.
-    static func muteUser(_ userId: UserId) -> Endpoint<EmptyResponse> {
-        .init(
-            path: .custom("moderation/mute"),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: false,
-            body: ["target_id": userId]
-        )
-    }
-
+    /// User unmute — OpenAPI only exposes channel unmute, so this endpoint
+    /// remains custom until the user unmute operation is generated.
     static func unmuteUser(_ userId: UserId) -> Endpoint<EmptyResponse> {
         .init(
             path: .custom("moderation/unmute"),
@@ -2945,7 +2936,8 @@ extension Endpoint {
         )
     }
 
-    /// Flag / unflag a user — uses the legacy `target_user_id` envelope.
+    /// Flag / unflag a user. Flag delegates to the generated endpoint; unflag
+    /// stays custom until OpenAPI exposes a generated unflag operation.
     static func flagUser(_ flag: Bool, with userId: UserId, reason: String? = nil, extraData: [String: RawJSON]? = nil) -> Endpoint<FlagResponse> {
         if flag {
             return .flag(flagRequest: FlagRequest(reason: reason, targetUserId: userId, custom: extraData))
@@ -2959,7 +2951,8 @@ extension Endpoint {
         )
     }
 
-    /// Flag / unflag a message — uses the legacy `target_message_id` envelope.
+    /// Flag / unflag a message. Flag delegates to the generated endpoint; unflag
+    /// stays custom until OpenAPI exposes a generated unflag operation.
     static func flagMessage(_ flag: Bool, with messageId: MessageId, reason: String? = nil, extraData: [String: RawJSON]? = nil) -> Endpoint<FlagResponse> {
         if flag {
             return .flag(flagRequest: FlagRequest(reason: reason, targetMessageId: messageId, custom: extraData))

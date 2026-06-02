@@ -13,7 +13,8 @@ class UserUpdater: Worker, @unchecked Sendable {
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
     ///
     func muteUser(_ userId: UserId, completion: (@Sendable (Error?) -> Void)? = nil) {
-        apiClient.request(endpoint: .muteUser(userId)) {
+        let request = MuteRequest(targetIds: [userId])
+        apiClient.request(endpoint: Endpoint<MuteResponse>.mute(muteRequest: request)) {
             completion?($0.error)
         }
     }
