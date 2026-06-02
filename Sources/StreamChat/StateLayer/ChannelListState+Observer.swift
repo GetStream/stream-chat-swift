@@ -8,7 +8,7 @@ extension ChannelListState {
     final class Observer {
         private var channelListObserver: StateLayerDatabaseObserver<ListResult, ChatChannel, ChannelDTO>
         private let clientConfig: ChatClientConfig
-        private let channelListLinker: ChannelListLinker
+        private let channelListLinker: ChannelListLinking
         private let channelListUpdater: ChannelListUpdater
         private let database: DatabaseContainer
         private let dynamicFilter: ((ChatChannel) -> Bool)?
@@ -37,14 +37,22 @@ extension ChannelListState {
                 database: database,
                 clientConfig: clientConfig
             )
-            channelListLinker = ChannelListLinker(
-                query: query,
-                filter: dynamicFilter,
-                clientConfig: clientConfig,
-                databaseContainer: database,
-                worker: channelListUpdater,
-                channelWatcherHandler: channelWatcherHandler
-            )
+            if query.groupKey == nil {
+                channelListLinker = ChannelListLinker(
+                    query: query,
+                    filter: dynamicFilter,
+                    clientConfig: clientConfig,
+                    databaseContainer: database,
+                    worker: channelListUpdater,
+                    channelWatcherHandler: channelWatcherHandler
+                )
+            } else {
+                channelListLinker = GroupedChannelListLinker(
+                    query: query,
+                    databaseContainer: database,
+                    channelWatcherHandler: channelWatcherHandler
+                )
+            }
         }
         
         struct Handlers {
@@ -95,4 +103,8 @@ extension ChannelListState {
             )
         }
     }
+}
+
+protocol ChannelListLinking: Sendable {
+    func start(with eventNotificationCenter: EventNotificationCenter)
 }

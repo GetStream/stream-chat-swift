@@ -155,6 +155,125 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(queryAfter.sort.map(\.description), queryBefore.sort.map(\.description))
     }
 
+    func test_get_whenQueryHasGroupKey_fetchesFirstPageWithoutCursor() async throws {
+        let groupedQuery = ChannelListQuery(groupKey: "all")
+        let environment = env.channelListEnvironment(usesMockedUpdater: true)
+        channelList = await ChannelList(
+            query: groupedQuery,
+            dynamicFilter: nil,
+            client: env.client,
+            environment: environment
+        )
+        _ = await channelList.state
+        env.channelListUpdaterMock.queryGroupedChannels_result = .success([
+            ChannelGroup(groupKey: "all", channels: [], unreadChannels: 0, next: nil)
+        ])
+
+        try await channelList.get()
+
+        XCTAssertEqual(1, env.channelListUpdaterMock.queryGroupedChannels_callCount)
+        let groups = env.channelListUpdaterMock.queryGroupedChannels_groups.first ?? nil
+        XCTAssertEqual(["all"], groups?.keys.sorted())
+        XCTAssertNil(groups?["all"]?.limit)
+        XCTAssertNil(groups?["all"]?.next)
+        XCTAssertTrue(env.channelListUpdaterMock.update_queries.isEmpty)
+    }
+
+    func test_loadMoreChannels_whenQueryHasGroupKey_readsCursorFromQueryDTO() async throws {
+        let groupedQuery = ChannelListQuery(groupKey: "all")
+        let environment = env.channelListEnvironment(usesMockedUpdater: true)
+        channelList = await ChannelList(
+            query: groupedQuery,
+            dynamicFilter: nil,
+            client: env.client,
+            environment: environment
+        )
+        _ = await channelList.state
+        try await env.client.mockDatabaseContainer.write { session in
+            let queryDTO = session.saveQuery(query: groupedQuery)
+            queryDTO.next = "cursor-1"
+        }
+        env.channelListUpdaterMock.queryGroupedChannels_result = .success([
+            ChannelGroup(
+                groupKey: "all",
+                channels: [],
+                unreadChannels: 0,
+                next: "cursor-2"
+            )
+        ])
+
+        _ = try await channelList.loadMoreChannels(limit: 5)
+
+        XCTAssertEqual(1, env.channelListUpdaterMock.queryGroupedChannels_callCount)
+        let groups = env.channelListUpdaterMock.queryGroupedChannels_groups.first ?? nil
+        XCTAssertEqual(["all"], groups?.keys.sorted())
+        XCTAssertEqual("cursor-1", groups?["all"]?.next)
+    }
+
+    func test_loadMoreChannels_whenQueryHasGroupKey_propagatesPersistedWatchAndPresence() async throws {
+        let groupedQuery = ChannelListQuery(groupKey: "all")
+        let environment = env.channelListEnvironment(usesMockedUpdater: true)
+        channelList = await ChannelList(
+            query: groupedQuery,
+            dynamicFilter: nil,
+            client: env.client,
+            environment: environment
+        )
+        _ = await channelList.state
+        try await env.client.mockDatabaseContainer.write { session in
+            let queryDTO = session.saveQuery(query: groupedQuery)
+            queryDTO.next = "cursor-1"
+            queryDTO.watch = true
+            queryDTO.presence = true
+        }
+        env.channelListUpdaterMock.queryGroupedChannels_result = .success([
+            ChannelGroup(
+                groupKey: "all",
+                channels: [],
+                unreadChannels: 0,
+                next: "cursor-2"
+            )
+        ])
+
+        _ = try await channelList.loadMoreChannels(limit: 5)
+
+        XCTAssertEqual([true], env.channelListUpdaterMock.queryGroupedChannels_watchValues)
+        XCTAssertEqual([true], env.channelListUpdaterMock.queryGroupedChannels_presenceValues)
+    }
+
+    func test_loadMoreChannels_whenQueryDTOHasNoNextCursor_marksAsFullyLoaded() async throws {
+        let groupedQuery = ChannelListQuery(groupKey: "all")
+        let environment = env.channelListEnvironment(usesMockedUpdater: true)
+        channelList = await ChannelList(
+            query: groupedQuery,
+            dynamicFilter: nil,
+            client: env.client,
+            environment: environment
+        )
+        _ = await channelList.state
+        try await env.client.mockDatabaseContainer.write { session in
+            _ = session.saveQuery(query: groupedQuery)
+        }
+
+        let returned = try await channelList.loadMoreChannels(limit: 5)
+
+        XCTAssertEqual([], returned)
+        XCTAssertEqual(0, env.channelListUpdaterMock.queryGroupedChannels_callCount)
+        let fullyLoaded = await channelList.state.hasLoadedAllPreviousChannels
+        XCTAssertTrue(fullyLoaded)
+    }
+
+    func test_loadMoreChannels_withoutGroupHandler_usesOffsetPath() async throws {
+        await setUpChannelList(usesMockedChannelUpdater: true, pageSize: 2)
+        let responseChannels = makeChannels(count: 2, createdAtOffset: 0)
+        env.channelListUpdaterMock.update_completion_result = .success(responseChannels)
+
+        _ = try await channelList.loadMoreChannels(limit: 2)
+
+        XCTAssertEqual(0, env.channelListUpdaterMock.queryGroupedChannels_callCount)
+        XCTAssertEqual(1, env.channelListUpdaterMock.update_queries.count)
+    }
+
     // MARK: - Pagination and Channel Updater Arguments
     
     func test_loadChannels_whenChannelUpdaterSucceeds_thenLoadSucceeds() async throws {
@@ -164,11 +283,11 @@ final class ChannelList_Tests: XCTestCase {
         
         let pagination = Pagination(pageSize: pageSize, offset: 0)
         let result = try await channelList.loadChannels(with: pagination)
+        let query = await channelList.state.query
         
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.count, 1)
-        let stateQuery = await channelList.state.query
-        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.filter, stateQuery.filter)
-        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.sort, stateQuery.sort)
+        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.filter, query.filter)
+        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.sort, query.sort)
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.pagination.pageSize, pageSize)
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.pagination.offset, 0)
         XCTAssertEqual(responseChannels, result)
@@ -185,11 +304,11 @@ final class ChannelList_Tests: XCTestCase {
         let responseChannels = makeChannels(count: pageSize, createdAtOffset: 0)
         env.channelListUpdaterMock.update_completion_result = .success(responseChannels)
         let result = try await channelList.loadMoreChannels(limit: pageSize)
+        let query = await channelList.state.query
         
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.count, 1)
-        let stateQuery = await channelList.state.query
-        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.filter, stateQuery.filter)
-        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.sort, stateQuery.sort)
+        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.filter, query.filter)
+        XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.sort, query.sort)
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.pagination.pageSize, pageSize)
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.pagination.offset, 0)
         XCTAssertEqual(responseChannels, result)
@@ -614,13 +733,15 @@ final class ChannelList_Tests: XCTestCase {
         usesMockedChannelUpdater: Bool,
         loadState: Bool = true,
         filter: Filter<ChannelListFilterScope>? = nil,
+        pageSize: Int = .channelsPageSize,
         sort: [Sorting<ChannelListSortingKey>] = [.init(key: .createdAt, isAscending: true)],
         dynamicFilter: (@Sendable (ChatChannel) -> Bool)? = nil,
         query: ChannelListQuery? = nil
     ) {
         let resolvedQuery = query ?? ChannelListQuery(
             filter: filter ?? .in(.members, values: [memberId]),
-            sort: sort
+            sort: sort,
+            pageSize: pageSize
         )
         channelList = ChannelList(
             query: resolvedQuery,

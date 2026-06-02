@@ -906,9 +906,101 @@ private extension LivestreamChatHandler.Handlers {
     }
 }
 
+// MARK: - Shadowed Messages
+
+extension LivestreamChatHandler_Tests {
+    func test_handleChannelPayload_whenShadowedMessagesHidden_filtersShadowedMessages() {
+        let payload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid),
+            messages: [
+                .dummy(messageId: "visible", text: "Visible", isShadowed: false),
+                .dummy(messageId: "shadowed", text: "Shadowed", isShadowed: true)
+            ]
+        )
+
+        handler.handleChannelPayload(payload, channelQuery: ChannelQuery(cid: cid))
+
+        XCTAssertEqual(handler.messages.map(\.id), ["visible"])
+    }
+
+    func test_handleChannelPayload_whenShadowedMessagesShown_keepsShadowedMessages() {
+        setUpHandler(showShadowedMessages: true)
+
+        let payload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid),
+            messages: [
+                .dummy(messageId: "visible", text: "Visible", isShadowed: false),
+                .dummy(messageId: "shadowed", text: "Shadowed", isShadowed: true)
+            ]
+        )
+
+        handler.handleChannelPayload(payload, channelQuery: ChannelQuery(cid: cid))
+
+        XCTAssertEqual(Set(handler.messages.map(\.id)), ["visible", "shadowed"])
+    }
+
+    func test_didReceiveEvent_messageNewEvent_whenShadowedMessagesHidden_isIgnored() {
+        let shadowedMessage = ChatMessage.mock(id: "shadowed", cid: cid, text: "Shadowed", isShadowed: true)
+        handler.didReceiveEvent(makeNewMessageEvent(message: shadowedMessage))
+        XCTAssertTrue(handler.messages.isEmpty)
+    }
+
+    func test_didReceiveEvent_messageNewEvent_whenShadowedMessagesShown_addsMessage() {
+        setUpHandler(showShadowedMessages: true)
+        let shadowedMessage = ChatMessage.mock(id: "shadowed", cid: cid, text: "Shadowed", isShadowed: true)
+        handler.didReceiveEvent(makeNewMessageEvent(message: shadowedMessage))
+        XCTAssertEqual(handler.messages.map(\.id), ["shadowed"])
+    }
+
+    func test_populateFromCacheIfEnabled_whenShadowedMessagesHidden_filtersShadowedMessages() throws {
+        let payload = ChannelPayload.dummy(
+            channel: .dummy(cid: cid),
+            messages: [
+                .dummy(messageId: "visible", text: "Visible", isShadowed: false),
+                .dummy(messageId: "shadowed", text: "Shadowed", isShadowed: true)
+            ]
+        )
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveChannel(payload: payload)
+        }
+
+        handler.populateFromCacheIfEnabled()
+
+        XCTAssertEqual(handler.messages.map(\.id), ["visible"])
+    }
+
+    func test_didReceiveEvent_messageUpdatedEvent_whenMessageBecomesShadowed_removesMessage() {
+        // Seed a visible message.
+        handler.didReceiveEvent(makeNewMessageEvent(id: "msg", text: "Original"))
+        XCTAssertEqual(handler.messages.map(\.id), ["msg"])
+
+        // The same message is updated to a shadowed state and should be removed,
+        // matching the database fetch predicate.
+        let shadowedMessage = ChatMessage.mock(id: "msg", cid: cid, text: "Original", isShadowed: true)
+        handler.didReceiveEvent(MessageUpdatedEvent(
+            user: .mock(id: .unique),
+            channel: .mock(cid: cid),
+            message: shadowedMessage,
+            createdAt: .unique
+        ))
+
+        XCTAssertTrue(handler.messages.isEmpty)
+    }
+}
+
 // MARK: - Helpers
 
 private extension LivestreamChatHandler_Tests {
+    /// Rebuilds `client` and `handler` with the given shadowed-messages setting,
+    /// keeping `tearDown` responsible for their cleanup.
+    func setUpHandler(showShadowedMessages: Bool) {
+        client.cleanUp()
+        var config = ChatClient_Mock.defaultMockedConfig
+        config.shouldShowShadowedMessages = showShadowedMessages
+        client = ChatClient.mock(config: config)
+        handler = LivestreamChatHandler(channelQuery: ChannelQuery(cid: cid), client: client)
+    }
+
     func makeNewMessageEvent(id: MessageId, text: String = "msg", author: ChatUser? = nil, pinned: Bool = false) -> MessageNewEvent {
         let pinDetails: MessagePinDetails? = pinned
             ? .init(pinnedAt: .unique, pinnedBy: .unique, expiresAt: nil)

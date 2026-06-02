@@ -58,6 +58,13 @@ protocol CurrentUserDatabaseSession {
     /// If there is no current user, the error will be thrown.
     func saveCurrentUserUnreadCount(count: UnreadCountPayload) throws
 
+    /// Merges per-group unread channel counts into `CurrentUserDTO.unreadChannelCountsByGroup`.
+    /// Keys present in the input replace existing values; keys absent are left untouched.
+    func mergeCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws
+
+    /// Adjusts `CurrentUserDTO.unreadChannelCountsByGroup[groupKey]` by `delta`, flooring at 0.
+    func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int)
+
     /// Updates the `CurrentUserDTO.devices` with the provided `DevicesPayload`
     /// If there's no current user set, an error will be thrown.
     @discardableResult
@@ -346,9 +353,10 @@ protocol ChannelDatabaseSession {
         cache: PreWarmedCache?
     ) throws -> ChannelDTO
 
-    /// Loads the persisted query DTO for the given `ChannelListQuery`.
-    /// Looks up by the query's `queryHash`.
-    func channelListQuery(query: ChannelListQuery) -> ChannelListQueryDTO?
+    /// Loads the `ChannelListQueryDTO` corresponding to the given `ChannelListQuery`.
+    /// Lookup uses `query.queryHash` — `groupKey` when set, otherwise `filter.filterHash`.
+    /// - Parameter query: The channel list query.
+    func channelListQuery(_ query: ChannelListQuery) -> ChannelListQueryDTO?
 
     /// Returns the query with persisted predefined filter/sort applied.
     /// `nil` when the input has no `predefinedFilter` or no cached DTO exists.
@@ -755,6 +763,10 @@ extension DatabaseSession {
 
         if let unreadCount = payload.unreadCount {
             try saveCurrentUserUnreadCount(count: unreadCount)
+        }
+
+        if let unreadChannelCountsByGroup = payload.unreadChannelCountsByGroup {
+            try mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
         }
 
         if let threadDetailsPayload = payload.threadDetails?.value {

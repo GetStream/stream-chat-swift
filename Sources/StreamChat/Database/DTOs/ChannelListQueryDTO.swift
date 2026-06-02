@@ -15,6 +15,17 @@ class ChannelListQueryDTO: NSManagedObject {
     /// Serialized sort JSON returned by the server for predefined-filter queries.
     @NSManaged var sortJSONData: Data?
 
+    /// Next-page cursor for grouped queries; `nil` when there are no more pages.
+    @NSManaged var next: String?
+
+    /// `watch` flag from the original grouped-channels request, reused on pagination
+    /// and sync refetches. Grouped queries only.
+    @NSManaged var watch: Bool
+
+    /// `presence` flag from the original grouped-channels request, reused on pagination
+    /// and sync refetches. Grouped queries only.
+    @NSManaged var presence: Bool
+
     // MARK: - Relationships
 
     @NSManaged var channels: Set<ChannelDTO>
@@ -38,7 +49,7 @@ class ChannelListQueryDTO: NSManagedObject {
 }
 
 extension NSManagedObjectContext {
-    func channelListQuery(query: ChannelListQuery) -> ChannelListQueryDTO? {
+    func channelListQuery(_ query: ChannelListQuery) -> ChannelListQueryDTO? {
         ChannelListQueryDTO.load(query: query, context: self)
     }
 
@@ -48,7 +59,7 @@ extension NSManagedObjectContext {
     /// to detect whether the cached resolution actually differs from the current query.
     func loadPredefinedFilter(for query: ChannelListQuery) -> ChannelListQuery? {
         guard let predefinedFilter = query.predefinedFilter, !predefinedFilter.isEmpty,
-              let dto = channelListQuery(query: query) else {
+              let dto = channelListQuery(query) else {
             return nil
         }
 
@@ -74,7 +85,7 @@ extension NSManagedObjectContext {
 
     func saveQuery(query: ChannelListQuery, predefinedFilter: PredefinedFilterPayload? = nil) -> ChannelListQueryDTO {
         let dto: ChannelListQueryDTO
-        if let existingDTO = channelListQuery(query: query) {
+        if let existingDTO = channelListQuery(query) {
             dto = existingDTO
         } else {
             let request = ChannelListQueryDTO.fetchRequest(

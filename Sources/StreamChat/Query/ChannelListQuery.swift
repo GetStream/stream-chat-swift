@@ -99,6 +99,12 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
         self.sortValues = sortValues
     }
 
+    init(groupKey: String) {
+        self.init(filter: .empty)
+        self.groupKey = groupKey
+        self.pagination = Pagination(pageSize: .backendDefaultPageSize)
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
 
@@ -127,16 +133,20 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
     }
-}
+    
+    var groupKey: String?
 
-extension ChannelListQuery {
-    /// A hash that uniquely identifies this query for Core Data persistence.
+    /// The stable identity used for locating / linking the corresponding `ChannelListQueryDTO`.
     ///
-    /// For predefined-filter queries the hash is derived from the predefined filter name plus
+    /// For grouped queries the hash is the `groupKey` (grouped channels ignore filter and sort).
+    /// For predefined-filter queries it is derived from the predefined filter name plus
     /// `filterValues` and `sortValues` (keys sorted to keep the hash deterministic). For
     /// traditional queries it falls back to `filter.filterHash`, leaving existing on-disk
     /// hashes unchanged.
     var queryHash: String {
+        if let groupKey {
+            return groupKey
+        }
         if let predefinedFilter, !predefinedFilter.isEmpty {
             return [
                 predefinedFilter,
@@ -148,7 +158,9 @@ extension ChannelListQuery {
         }
         return filter.filterHash
     }
+}
 
+extension ChannelListQuery {
     /// Whether `filter` and `sort` match `other` for purposes of deciding whether the local
     /// observer needs to be rebuilt after a predefined-filter resolution.
     func isFilterEqual(to other: ChannelListQuery) -> Bool {

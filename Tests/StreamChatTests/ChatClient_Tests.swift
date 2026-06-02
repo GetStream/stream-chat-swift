@@ -262,6 +262,75 @@ final class ChatClient_Tests: XCTestCase {
         XCTAssert(testEnv.apiClient?.init_requestEncoder is RequestEncoder_Spy)
     }
 
+    func test_queryGroupedChannels_withSpecificGroups_returnsMappedChannelGroups() async throws {
+        let client = ChatClient.mock(config: inMemoryStorageConfig)
+        try client.databaseContainer.createCurrentUser()
+        let firstCid = ChannelId.unique
+        let secondCid = ChannelId.unique
+
+        let payload = GroupedQueryChannelsPayload(
+            groups: [
+                "new": .init(
+                    channels: [dummyPayload(with: firstCid)],
+                    unreadChannels: 1
+                ),
+                "current": .init(
+                    channels: [dummyPayload(with: secondCid)],
+                    unreadChannels: 2
+                )
+            ]
+        )
+        client.mockAPIClient.test_mockResponseResult(.success(payload))
+
+        let groupedChannels = try await client.queryGroupedChannels(groups: ["new", "current"], limit: 4, presence: false, watch: true)
+
+        XCTAssertEqual(groupedChannels.map(\.groupKey).sorted(), ["current", "new"])
+    }
+
+    func test_queryGroupedChannels_withSpecificGroups_sendsPerGroupBody() async throws {
+        let client = ChatClient.mock(config: inMemoryStorageConfig)
+        try client.databaseContainer.createCurrentUser()
+
+        let payload = GroupedQueryChannelsPayload(
+            groups: [
+                "new": .init(channels: [], unreadChannels: 0),
+                "current": .init(channels: [], unreadChannels: 0)
+            ]
+        )
+        client.mockAPIClient.test_mockResponseResult(.success(payload))
+
+        _ = try await client.queryGroupedChannels(groups: ["new", "current"], limit: 5)
+
+        let body = try XCTUnwrap(client.mockAPIClient.request_endpoint?.bodyAsDictionary())
+        XCTAssertNil(body["limit"], "Top-level limit must be omitted when groups are specified")
+        let groups = try XCTUnwrap(body["groups"] as? [String: [String: Any]])
+        XCTAssertEqual(["current", "new"], groups.keys.sorted())
+        XCTAssertEqual(5, groups["new"]?["limit"] as? Int)
+        XCTAssertEqual(5, groups["current"]?["limit"] as? Int)
+        XCTAssertNil(groups["new"]?["next"])
+        XCTAssertNil(groups["current"]?["next"])
+    }
+
+    func test_queryGroupedChannels_withEmptyGroups_sendsFetchAllBody() async throws {
+        let client = ChatClient.mock(config: inMemoryStorageConfig)
+        try client.databaseContainer.createCurrentUser()
+
+        client.mockAPIClient.test_mockResponseResult(.success(GroupedQueryChannelsPayload(groups: [:])))
+        _ = try await client.queryGroupedChannels(groups: [], limit: 4)
+
+        let body = try XCTUnwrap(client.mockAPIClient.request_endpoint?.bodyAsDictionary())
+        XCTAssertEqual(4, body["limit"] as? Int)
+        XCTAssertNil(body["groups"])
+    }
+
+    func test_makeChannelList_withGroupKey_startsTrackingChannelList() {
+        let client = ChatClient.mock(config: inMemoryStorageConfig)
+
+        let channelList = client.makeChannelList(with: "all")
+
+        XCTAssertTrue(client.syncRepository.activeChannelLists.contains(channelList))
+    }
+
     func test_disconnect_flushesRequestsQueue() throws {
         // Create a chat client
         let client = ChatClient(

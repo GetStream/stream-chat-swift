@@ -46,7 +46,7 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveCurrentDevice(_ deviceId: String) throws {
         try throwErrorIfNeeded()
-        return try saveCurrentDevice(deviceId)
+        return try underlyingSession.saveCurrentDevice(deviceId)
     }
 
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
@@ -115,12 +115,21 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveCurrentUser(payload: CurrentUserPayload) throws -> CurrentUserDTO {
         try throwErrorIfNeeded()
-        return try saveCurrentUser(payload: payload)
+        return try underlyingSession.saveCurrentUser(payload: payload)
     }
 
     func saveCurrentUserUnreadCount(count: UnreadCountPayload) throws {
         try throwErrorIfNeeded()
-        try saveCurrentUserUnreadCount(count: count)
+        try underlyingSession.saveCurrentUserUnreadCount(count: count)
+    }
+
+    func mergeCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws {
+        try throwErrorIfNeeded()
+        try underlyingSession.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
+    }
+
+    func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int) {
+        underlyingSession.adjustUnreadChannelCount(forGroup: groupKey, by: delta)
     }
 
     func deleteDevice(id: DeviceId) {
@@ -383,8 +392,8 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.saveQuery(query: query, predefinedFilter: predefinedFilter)
     }
 
-    func channelListQuery(query: ChannelListQuery) -> ChannelListQueryDTO? {
-        underlyingSession.channelListQuery(query: query)
+    func channelListQuery(_ query: ChannelListQuery) -> ChannelListQueryDTO? {
+        underlyingSession.channelListQuery(query)
     }
 
     func loadAllChannelListQueries() -> [ChannelListQueryDTO] {

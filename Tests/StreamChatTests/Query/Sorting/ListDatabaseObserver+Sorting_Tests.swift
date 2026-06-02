@@ -354,7 +354,7 @@ final class ListDatabaseObserver_Sorting_Tests: XCTestCase {
                 )
             }
 
-            guard let queryDTO = session.channelListQuery(query: self.query) else {
+            guard let queryDTO = session.channelListQuery(self.query) else {
                 return
             }
             for channel in channels {

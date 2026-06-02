@@ -444,7 +444,7 @@ extension NSManagedObjectContext {
     }
 
     func delete(query: ChannelListQuery) {
-        guard let dto = channelListQuery(query: query) else { return }
+        guard let dto = channelListQuery(query) else { return }
 
         delete(dto)
     }
@@ -497,8 +497,10 @@ extension ChannelDTO {
         }
 
         request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
-        request.fetchLimit = query.pagination.pageSize
-        request.fetchBatchSize = query.pagination.pageSize
+        // Backend driven page size is enabled with Int.backendDefaultPageSize (-1). Keep CoreData fetching efficient and use default channels page size.
+        let limit = query.pagination.pageSize > 0 ? query.pagination.pageSize : .channelsPageSize
+        request.fetchLimit = limit
+        request.fetchBatchSize = limit
         return request
     }
     

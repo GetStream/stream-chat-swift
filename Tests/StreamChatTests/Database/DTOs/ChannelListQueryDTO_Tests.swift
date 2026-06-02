@@ -30,7 +30,7 @@ final class ChannelListQueryDTO_Tests: XCTestCase {
         }
 
         try database.readSynchronously { session in
-            let dto = try XCTUnwrap((session as! NSManagedObjectContext).channelListQuery(query: query))
+            let dto = try XCTUnwrap((session as! NSManagedObjectContext).channelListQuery(query))
             let savedFilter = try JSONDecoder.default.decode(Filter<ChannelListFilterScope>.self, from: dto.filterJSONData)
             XCTAssertEqual(savedFilter.filterHash, query.filter.filterHash)
             XCTAssertNil(dto.sortJSONData)
@@ -59,7 +59,7 @@ final class ChannelListQueryDTO_Tests: XCTestCase {
         }
 
         try database.readSynchronously { session in
-            let dto = try XCTUnwrap((session as! NSManagedObjectContext).channelListQuery(query: query))
+            let dto = try XCTUnwrap((session as! NSManagedObjectContext).channelListQuery(query))
             let savedFilter = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.filterJSONData)
             XCTAssertEqual(savedFilter, predefinedFilter.filter)
 
@@ -93,7 +93,7 @@ final class ChannelListQueryDTO_Tests: XCTestCase {
         }
 
         try database.readSynchronously { session in
-            let dto = try XCTUnwrap((session as! NSManagedObjectContext).channelListQuery(query: query))
+            let dto = try XCTUnwrap((session as! NSManagedObjectContext).channelListQuery(query))
             let savedFilter = try JSONDecoder.default.decode([String: RawJSON].self, from: dto.filterJSONData)
             XCTAssertEqual(savedFilter, second.filter)
 
