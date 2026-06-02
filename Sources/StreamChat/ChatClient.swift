@@ -619,7 +619,7 @@ public class ChatClient: @unchecked Sendable {
         eventNotificationCenter.subscribe(handler: handler)
     }
     
-    // MARK: -
+    // MARK: - App Settings
 
     /// Fetches the app settings and updates the ``ChatClient/appSettings``.
     /// - Parameter completion: The completion block once the app settings has finished fetching.
@@ -647,6 +647,39 @@ public class ChatClient: @unchecked Sendable {
         try await withCheckedThrowingContinuation { continuation in
             loadAppSettings { continuation.resume(with: $0) }
         }
+    }
+    
+    // MARK: - Grouped Channels
+
+    /// Fetches the first page of channels for the requested groups in a single request.
+    ///
+    /// To observe and paginate a group's channels, create a ``ChannelList`` for its
+    /// ``ChannelGroup/groupKey`` via ``ChatClient/makeChannelList(with:)-(String)`` and read
+    /// ``ChannelListState/channels``.
+    ///
+    /// - Parameters:
+    ///   - groups: The group keys to fetch.
+    ///   - limit: The number of channels to return per group. `nil` uses the backend default.
+    ///   - presence: When `true`, includes presence info and streams presence updates over the WebSocket.
+    ///   - watch: When `true`, subscribes to WebSocket events for the returned channels.
+    ///
+    /// - Returns: The fetched ``ChannelGroup`` values.
+    /// - Throws: An error while communicating with the Stream API.
+    @discardableResult public func queryGroupedChannels(
+        groups: [String],
+        limit: Int? = nil,
+        presence: Bool = false,
+        watch: Bool = true
+    ) async throws -> [ChannelGroup] {
+        let groupRequests: [String: GroupedQueryChannelsRequestGroup]? = groups.isEmpty ? nil : groups.reduce(into: [:]) { result, key in
+            result[key] = GroupedQueryChannelsRequestGroup(limit: limit, next: nil)
+        }
+        return try await channelListUpdater.queryGroupedChannels(
+            groups: groupRequests,
+            limit: groupRequests == nil ? limit : nil,
+            watch: watch,
+            presence: presence
+        )
     }
     
     // MARK: - Upload attachments

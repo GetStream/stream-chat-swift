@@ -7,6 +7,8 @@ import Foundation
 
 @objc(CurrentUserDTO)
 class CurrentUserDTO: NSManagedObject {
+    /// JSON-encoded `[groupKey: unreadCount]`.
+    @NSManaged var unreadGroupedChannelsCounts: Data?
     @NSManaged var unreadChannelsCount: Int64
     @NSManaged var unreadMessagesCount: Int64
     @NSManaged var unreadThreadsCount: Int64
@@ -144,6 +146,30 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         }
     }
 
+    /// Merges per-group unread channel counts into `CurrentUserDTO.unreadChannelCountsByGroup`.
+    /// Called from `queryGroupedChannels` responses and from WS events carrying
+    /// `grouped_unread_channels`; both paths use merge semantics, so keys absent from the input
+    /// are left untouched and a group that disappears from a server snapshot will keep its
+    /// locally-cached count until something explicitly clears it.
+    func mergeCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws {
+        invalidateCurrentUserCache()
+
+        guard let dto = currentUser else {
+            throw ClientError.CurrentUserDoesNotExist()
+        }
+
+        dto.unreadChannelCountsByGroup = (dto.unreadChannelCountsByGroup ?? [:]).merging(unreadChannelCountsByGroup) { _, new in new }
+    }
+
+    func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int) {
+        invalidateCurrentUserCache()
+        guard let dto = currentUser, var counts = dto.unreadChannelCountsByGroup, let existing = counts[groupKey] else {
+            return
+        }
+        counts[groupKey] = max(0, existing + delta)
+        dto.unreadChannelCountsByGroup = counts
+    }
+
     func saveCurrentUserDevices(_ devices: [DevicePayload], clearExisting: Bool) throws -> [DeviceDTO] {
         invalidateCurrentUserCache()
 
@@ -209,6 +235,18 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
     func deleteCurrentUser() {
         guard let currentUser else { return }
         delete(currentUser)
+    }
+}
+
+extension CurrentUserDTO {
+    var unreadChannelCountsByGroup: [String: Int]? {
+        get {
+            guard let unreadGroupedChannelsCounts else { return nil }
+            return try? JSONDecoder.default.decode([String: Int].self, from: unreadGroupedChannelsCounts)
+        }
+        set {
+            unreadGroupedChannelsCounts = newValue.flatMap { try? JSONEncoder.default.encode($0) }
+        }
     }
 }
 
@@ -282,6 +320,7 @@ extension CurrentChatUser {
                 messages: Int(dto.unreadMessagesCount),
                 threads: Int(dto.unreadThreadsCount)
             ),
+            unreadChannelCountsByGroup: dto.unreadChannelCountsByGroup,
             mutedChannels: mutedChannels,
             privacySettings: .init(
                 typingIndicators: .init(enabled: dto.isTypingIndicatorsEnabled),

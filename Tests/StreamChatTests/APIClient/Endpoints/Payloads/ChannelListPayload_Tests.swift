@@ -62,6 +62,191 @@ final class ChannelListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.channels.count, 2)
     }
 
+    func test_groupedQueryChannelsPayload_decodesGroupsMap() throws {
+        let channelId = ChannelId(type: .messaging, id: "bucket-channel")
+        let json = """
+        {
+          "groups": {
+            "all": {
+              "channels": [
+                {
+                  "channel": {
+                    "cid": "\(channelId.rawValue)",
+                    "id": "\(channelId.id)",
+                    "type": "\(channelId.type.rawValue)",
+                    "name": "Support",
+                    "image": "https://getstream.imgix.net/images/random_svg/stream_logo.svg",
+                    "created_at": "2024-01-01T00:00:00.000Z",
+                    "updated_at": "2024-01-02T00:00:00.000Z",
+                    "frozen": false,
+                    "disabled": false,
+                    "config": {
+                      "typing_events": true,
+                      "read_events": true,
+                      "connect_events": true,
+                      "search": true,
+                      "reactions": true,
+                      "replies": true,
+                      "quotes": true,
+                      "uploads": true,
+                      "url_enrichment": true,
+                      "mutes": true,
+                      "message_retention": "infinite",
+                      "max_message_length": 5000,
+                      "created_at": "2024-01-01T00:00:00.000Z",
+                      "updated_at": "2024-01-02T00:00:00.000Z",
+                      "commands": []
+                    },
+                    "own_capabilities": [],
+                    "member_count": 0
+                  },
+                  "members": [],
+                  "messages": [],
+                  "pinned_messages": [],
+                  "watchers": [],
+                  "watcher_count": 0,
+                  "read": []
+                }
+              ],
+              "unread_channels": 1
+            }
+          },
+          "duration": "12ms"
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
+
+        XCTAssertEqual(payload.groups.keys.sorted(), ["all"])
+        XCTAssertEqual(payload.groups["all"]?.channels.map(\.channel.cid), [channelId])
+        XCTAssertEqual(payload.groups["all"]?.unreadChannels, 1)
+    }
+
+    func test_groupedQueryChannelsPayload_decodesNextAndPrevCursors() throws {
+        let json = """
+        {
+          "groups": {
+            "current": {
+              "channels": [],
+              "unread_channels": 0,
+              "next": "current-next-cursor",
+              "prev": "current-prev-cursor"
+            }
+          },
+          "duration": "5ms"
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
+
+        XCTAssertEqual("current-next-cursor", payload.groups["current"]?.next)
+        XCTAssertEqual("current-prev-cursor", payload.groups["current"]?.prev)
+    }
+
+    func test_groupedQueryChannelsPayload_cursorsAreNilWhenMissing() throws {
+        let json = """
+        {
+          "groups": {
+            "all": { "channels": [], "unread_channels": 0 }
+          },
+          "duration": "5ms"
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
+
+        XCTAssertNil(payload.groups["all"]?.next)
+        XCTAssertNil(payload.groups["all"]?.prev)
+    }
+
+    func test_groupedQueryChannelsRequestBody_allGroups_encodesWithoutGroupsKey() throws {
+        let body = GroupedQueryChannelsRequestBody(limit: 10, groups: nil, watch: true, presence: false)
+
+        let encoded = try JSONEncoder.stream.encode(body)
+        let json = try JSONSerialization.jsonObject(with: encoded) as? [String: Any]
+
+        XCTAssertEqual(10, json?["limit"] as? Int)
+        XCTAssertEqual(true, json?["watch"] as? Bool)
+        XCTAssertEqual(false, json?["presence"] as? Bool)
+        XCTAssertNil(json?["groups"])
+    }
+
+    func test_groupedQueryChannelsRequestBody_paginatedGroup_encodesWithGroupsKeyAndCursor() throws {
+        let body = GroupedQueryChannelsRequestBody(
+            limit: nil,
+            groups: ["old": .init(limit: 5, next: "old-cursor")],
+            watch: false,
+            presence: true
+        )
+
+        let encoded = try JSONEncoder.stream.encode(body)
+        let json = try JSONSerialization.jsonObject(with: encoded) as? [String: Any]
+        let groups = json?["groups"] as? [String: [String: Any]]
+
+        XCTAssertNil(json?["limit"])
+        XCTAssertEqual(false, json?["watch"] as? Bool)
+        XCTAssertEqual(true, json?["presence"] as? Bool)
+        XCTAssertEqual(5, groups?["old"]?["limit"] as? Int)
+        XCTAssertEqual("old-cursor", groups?["old"]?["next"] as? String)
+        XCTAssertNil(groups?["old"]?["prev"])
+    }
+
+    func test_groupedQueryChannelsPayload_defaultsUnreadCountersWhenMissing() throws {
+        let channelId = ChannelId(type: .messaging, id: "bucket-channel")
+        let json = """
+        {
+          "groups": {
+            "expired": {
+              "channels": [
+                {
+                  "channel": {
+                    "cid": "\(channelId.rawValue)",
+                    "id": "\(channelId.id)",
+                    "type": "\(channelId.type.rawValue)",
+                    "created_at": "2024-01-01T00:00:00.000Z",
+                    "updated_at": "2024-01-02T00:00:00.000Z",
+                    "frozen": false,
+                    "disabled": false,
+                    "config": {
+                      "typing_events": true,
+                      "read_events": true,
+                      "connect_events": true,
+                      "search": true,
+                      "reactions": true,
+                      "replies": true,
+                      "quotes": true,
+                      "uploads": true,
+                      "url_enrichment": true,
+                      "mutes": true,
+                      "message_retention": "infinite",
+                      "max_message_length": 5000,
+                      "created_at": "2024-01-01T00:00:00.000Z",
+                      "updated_at": "2024-01-02T00:00:00.000Z",
+                      "commands": []
+                    },
+                    "own_capabilities": [],
+                    "member_count": 0
+                  },
+                  "members": [],
+                  "messages": [],
+                  "pinned_messages": [],
+                  "watchers": [],
+                  "watcher_count": 0,
+                  "read": []
+                }
+              ]
+            }
+          },
+          "duration": "12ms"
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.default.decode(GroupedQueryChannelsPayload.self, from: json)
+
+        XCTAssertEqual(payload.groups["expired"]?.channels.map(\.channel.cid), [channelId])
+        XCTAssertEqual(payload.groups["expired"]?.unreadChannels, 0)
+    }
+
     func saveChannelListPayload(_ payload: ChannelListPayload, database: DatabaseContainer_Spy, timeout: TimeInterval = 20) {
         let writeCompleted = expectation(description: "DB write complete")
         database.write({ session in

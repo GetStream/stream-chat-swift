@@ -98,14 +98,59 @@ final class RefreshChannelListOperation: AsyncOperation, @unchecked Sendable {
                 done(.continue)
                 return
             }
+            guard channelList.query.groupKey == nil else {
+                done(.continue)
+                return
+            }
+            let query = channelList.query
             Task {
                 do {
                     let channelIds = try await channelList.refreshLoadedChannels()
-                    log.debug("Synced \(channelIds.count) channels in a channel list (\(channelList.query.filter)", subsystems: .offlineSupport)
+                    log.debug("Synced \(channelIds.count) channels in a channel list (\(query.filter))", subsystems: .offlineSupport)
                     context.synchedChannelIds.formUnion(channelIds)
                     done(.continue)
                 } catch {
-                    log.error("Failed refreshing channel list (\(channelList.query.filter) with error \(error)", subsystems: .offlineSupport)
+                    log.error("Failed refreshing channel list (\(query.filter)) with error \(error)", subsystems: .offlineSupport)
+                    done(.retry)
+                }
+            }
+        }
+    }
+}
+
+/// Refreshes all grouped channel lists with a single batched `queryGroupedChannels` call, recording the
+/// returned channel ids in `context.synchedChannelIds` so the subsequent `/sync` step skips them.
+final class SyncGroupedChannelsOperation: AsyncOperation, @unchecked Sendable {
+    init(channelListUpdater: ChannelListUpdater, groupedChannelLists: [ChannelList], context: SyncContext) {
+        let groupKeys = Set(groupedChannelLists.compactMap(\.query.groupKey))
+        super.init(maxRetries: syncOperationsMaximumRetries) { [weak channelListUpdater] _, done in
+            // All grouped lists share the same persisted flags (set together by the initial
+            // `queryGroupedChannels` call), so any one of them is a valid source. `sorted().first`
+            // keeps the choice deterministic across runs.
+            guard let channelListUpdater, let sampleGroupKey = groupKeys.sorted().first else {
+                done(.continue)
+                return
+            }
+
+            Task {
+                do {
+                    let state = try await channelListUpdater.paginationState(for: sampleGroupKey)
+                    let groups = Dictionary(uniqueKeysWithValues: groupKeys.map { ($0, GroupedQueryChannelsRequestGroup(limit: nil, next: nil)) })
+                    let channelGroups = try await channelListUpdater.queryGroupedChannels(
+                        groups: groups,
+                        limit: nil,
+                        watch: state.watch ?? false,
+                        presence: state.presence ?? false
+                    )
+                    let returnedChannelIds = channelGroups.flatMap { $0.channels.map(\.cid) }
+                    context.synchedChannelIds.formUnion(returnedChannelIds)
+                    log.debug(
+                        "Synced \(returnedChannelIds.count) grouped channels across \(channelGroups.count) group(s)",
+                        subsystems: .offlineSupport
+                    )
+                    done(.continue)
+                } catch {
+                    log.error("Failed to refresh grouped channels during sync: \(error)", subsystems: .offlineSupport)
                     done(.retry)
                 }
             }

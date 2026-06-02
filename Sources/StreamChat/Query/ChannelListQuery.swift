@@ -53,6 +53,12 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
         self.membersLimit = membersLimit
     }
 
+    init(groupKey: String) {
+        self.init(filter: .empty)
+        self.groupKey = groupKey
+        self.pagination = Pagination(pageSize: .backendDefaultPageSize)
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(filter, forKey: .filter)
@@ -70,6 +76,14 @@ public struct ChannelListQuery: Encodable, Sendable, LocalConvertibleSortingQuer
         }
         try options.encode(to: encoder)
         try pagination.encode(to: encoder)
+    }
+    
+    var groupKey: String?
+
+    /// The stable identity used for locating / linking the corresponding `ChannelListQueryDTO`.
+    /// - Note: Grouped channels don't use filter and sort of the query.
+    var queryHash: String {
+        groupKey ?? filter.filterHash
     }
 }
 

@@ -182,6 +182,38 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(currentUser?.unreadCount.threads, 3)
     }
 
+    func test_mergeCurrentUserUnreadChannelCountsByGroup_storesAndLoadsFromDB() throws {
+        let payload = CurrentUserPayload.dummy(userPayload: .dummy(userId: .unique, role: .admin))
+        let unreadChannelCountsByGroup: [String: Int] = [
+            "direct": 2,
+            "support": 5
+        ]
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: payload)
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
+        }
+
+        let loadedCurrentUser = try database.readSynchronously { try XCTUnwrap($0.currentUser?.asModel()) }
+        XCTAssertEqual(loadedCurrentUser.unreadChannelCountsByGroup, unreadChannelCountsByGroup)
+    }
+
+    func test_mergeCurrentUserUnreadChannelCountsByGroup_mergesIntoExistingValues() throws {
+        let payload = CurrentUserPayload.dummy(userPayload: .dummy(userId: .unique, role: .admin))
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: payload)
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["direct": 2, "support": 5])
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["direct": 10, "billing": 1])
+        }
+
+        let loadedCurrentUser = try database.readSynchronously { try XCTUnwrap($0.currentUser?.asModel()) }
+        XCTAssertEqual(
+            loadedCurrentUser.unreadChannelCountsByGroup,
+            ["direct": 10, "support": 5, "billing": 1]
+        )
+    }
+
     func test_saveCurrentUser_removesChannelMutesNotInPayload() throws {
         // GIVEN
         let userPayload: UserPayload = .dummy(userId: .unique)
