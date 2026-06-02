@@ -4,6 +4,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 # Upcoming
 
 ## StreamChat
+### ✅ Added
+- Add `ChannelListQuery(predefinedFilter:filterValues:sortValues:)` for creating channel list queries with predefined filters [#4120](https://github.com/GetStream/stream-chat-swift/pull/4120)
 ### 🐞 Fixed
 - Fix WebSocket reconnection getting stuck in `.disconnecting` after the device temporarily loses network connectivity [#4109](https://github.com/GetStream/stream-chat-swift/pull/4109)
 
