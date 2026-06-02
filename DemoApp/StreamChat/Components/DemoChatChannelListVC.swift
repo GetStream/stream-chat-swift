@@ -299,28 +299,28 @@ final class DemoChatChannelListVC: ChatChannelListVC {
         )
 
         let predefinedMessagingChannelsAction = UIAlertAction(
-            title: "Predefined: messaging",
+            title: "Messaging (Predefined)",
             style: .default,
             handler: { [weak self] _ in
-                self?.title = "Predefined: messaging"
+                self?.title = "Messaging (Predefined)"
                 self?.setPredefinedMessagingChannelsQuery()
             }
         )
 
         let predefinedArchivedChannelsAction = UIAlertAction(
-            title: "Predefined: archived",
+            title: "Archived (Predefined)",
             style: .default,
             handler: { [weak self] _ in
-                self?.title = "Predefined: archived"
+                self?.title = "Archived (Predefined)"
                 self?.setPredefinedArchivedChannelsQuery()
             }
         )
         
         let predefinedHiddenChannelsAction = UIAlertAction(
-            title: "Predefined: hidden",
+            title: "Hidden (Predefined)",
             style: .default,
             handler: { [weak self] _ in
-                self?.title = "Predefined: hidden"
+                self?.title = "Hidden (Predefined)"
                 self?.setPredefinedHiddenChannelsQuery()
             }
         )
