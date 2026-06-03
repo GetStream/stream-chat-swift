@@ -17,7 +17,7 @@ extension StreamChatWrapper {
         if let subsystems = StreamRuntimeCheck.subsystems {
             LogConfig.subsystems = subsystems
         }
-        
+
         // Create Client
         if client == nil {
             client = ChatClient(config: config)
