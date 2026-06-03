@@ -15,6 +15,15 @@ _June 03, 2026_
 - Add `ChatClient.makeChannelList(with:)` overload for observing a single grouped channels group in the state layer [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 - Add `unreadChannelCountsByGroup` to `CurrentChatUser`, observable for changes via `ConnectedUser` [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 
+# [4.101.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.101.0)
+_June 03, 2026_
+
+## StreamChat
+### ✅ Added
+- Add `ChannelListQuery(predefinedFilter:filterValues:sortValues:)` for creating channel list queries with predefined filters [#4120](https://github.com/GetStream/stream-chat-swift/pull/4120)
+### 🐞 Fixed
+- Fix WebSocket reconnection getting stuck in `.disconnecting` after the device temporarily loses network connectivity [#4109](https://github.com/GetStream/stream-chat-swift/pull/4109)
+
 # [5.4.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.4.1)
 _June 01, 2026_
 
