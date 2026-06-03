@@ -31,7 +31,8 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
     func test_ReactionNewEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionNew")
-        let event = try eventDecoder.decode(from: json) as? ReactionNewEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? ReactionNewEventDTO
 
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
@@ -50,7 +51,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         )
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeFalse(
@@ -63,10 +64,11 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
     func test_ReactionUpdatedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionUpdated")
-        let event = try eventDecoder.decode(from: json) as? ReactionUpdatedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? ReactionUpdatedEventDTO
 
         let newReactionJSON = XCTestCase.mockData(fromJSONFile: "ReactionNew")
-        let newReactionEvent = try eventDecoder.decode(from: newReactionJSON) as? ReactionNewEventDTO
+        let newReactionEvent = try eventDecoder.decodeFixture(from: newReactionJSON).unwrappedEvent as? ReactionNewEventDTO
         let newReactionPayload = try XCTUnwrap(newReactionEvent?.reaction)
 
         // For message to be received, we need to have channel:
@@ -92,7 +94,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         )
 
         let unwrappedUpdate = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedUpdate)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeEqual(
@@ -106,7 +108,8 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
     func test_ReactionDeletedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionDeleted")
-        let event = try eventDecoder.decode(from: json) as? ReactionDeletedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? ReactionDeletedEventDTO
 
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
@@ -125,7 +128,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
         )
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeFalse(

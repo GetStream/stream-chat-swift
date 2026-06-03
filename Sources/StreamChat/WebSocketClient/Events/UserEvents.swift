@@ -128,25 +128,6 @@ public final class UserGloballyBannedEvent: Event {
     }
 }
 
-final class UserGloballyBannedEventDTO: EventDTO {
-    let user: UserResponse
-    let createdAt: Date
-
-    init(from dto: UserBannedEventDTO) {
-        user = UserResponse(dto.user)
-        createdAt = dto.createdAt
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
-
-        return try? UserGloballyBannedEvent(
-            user: userDTO.asModel(),
-            createdAt: createdAt
-        )
-    }
-}
-
 /// Triggered when user is banned in a specific channel
 public final class UserBannedEvent: ChannelSpecificEvent {
     /// The channel identifer user is banned at.
@@ -184,7 +165,12 @@ public final class UserBannedEvent: ChannelSpecificEvent {
 extension UserBannedEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let userDTO = session.user(id: user.id) else { return nil }
-        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else {
+            return try? UserGloballyBannedEvent(
+                user: userDTO.asModel(),
+                createdAt: createdAt
+            )
+        }
         guard let ownerId = createdBy?.id else { return nil }
 
         return try? UserBannedEvent(
@@ -213,25 +199,6 @@ public final class UserGloballyUnbannedEvent: Event {
     }
 }
 
-final class UserGloballyUnbannedEventDTO: EventDTO {
-    let user: UserResponse
-    let createdAt: Date
-
-    init(from dto: UserUnbannedEventDTO) {
-        user = UserResponse(dto.user)
-        createdAt = dto.createdAt
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
-
-        return try? UserGloballyUnbannedEvent(
-            user: userDTO.asModel(),
-            createdAt: createdAt
-        )
-    }
-}
-
 /// Triggered when banned user is unbanned in a specific channel
 public final class UserUnbannedEvent: ChannelSpecificEvent {
     /// The channel identifer user is unbanned at.
@@ -253,7 +220,12 @@ public final class UserUnbannedEvent: ChannelSpecificEvent {
 extension UserUnbannedEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let userDTO = session.user(id: user.id) else { return nil }
-        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else {
+            return try? UserGloballyUnbannedEvent(
+                user: userDTO.asModel(),
+                createdAt: createdAt
+            )
+        }
 
         return try? UserUnbannedEvent(
             cid: channelId,

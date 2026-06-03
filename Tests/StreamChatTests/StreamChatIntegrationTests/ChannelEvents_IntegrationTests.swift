@@ -40,13 +40,14 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_ChannelUpdatedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelUpdated")
-        let event = try eventDecoder.decode(from: json) as? ChannelUpdatedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? ChannelUpdatedEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "new_channel_7070")
 
         let unwrappedEvent = try XCTUnwrap(event)
         let completionCalled = expectation(description: "completion called")
-        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
+        client.eventNotificationCenter.process(decodedEvent) { completionCalled.fulfill() }
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
@@ -57,7 +58,8 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_ChannelDeletedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelDeleted")
-        let event = try eventDecoder.decode(from: json) as? ChannelDeletedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? ChannelDeletedEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-1")
 
@@ -65,7 +67,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
         XCTAssertNil(client.databaseContainer.viewContext.channel(cid: channelId)?.deletedAt)
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willNotBeNil(self.client.databaseContainer.viewContext.channel(cid: channelId)?.deletedAt)
@@ -74,7 +76,8 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_ChannelTruncatedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelTruncated")
-        let event = try eventDecoder.decode(from: json) as? ChannelTruncatedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? ChannelTruncatedEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "new_channel_7011")
 
@@ -82,7 +85,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
         XCTAssertNil(client.databaseContainer.viewContext.channel(cid: channelId)?.truncatedAt)
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willNotBeNil(self.client.databaseContainer.viewContext.channel(cid: channelId)?.truncatedAt)
@@ -91,7 +94,8 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_ChannelVisibleEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelVisible")
-        let event = try eventDecoder.decode(from: json) as? ChannelVisibleEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? ChannelVisibleEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-6")
 
@@ -99,7 +103,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
         XCTAssertEqual(client.databaseContainer.viewContext.channel(cid: channelId)?.isHidden, true)
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeEqual(self.client.databaseContainer.viewContext.channel(cid: channelId)?.isHidden, false)
@@ -108,7 +112,8 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_ChannelHiddenEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelHidden")
-        let event = try eventDecoder.decode(from: json) as? ChannelHiddenEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? ChannelHiddenEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "default-channel-6")
 
@@ -116,7 +121,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
         XCTAssertEqual(client.databaseContainer.viewContext.channel(cid: channelId)?.isHidden, false)
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeEqual(self.client.databaseContainer.viewContext.channel(cid: channelId)?.isHidden, true)
@@ -125,7 +130,8 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_NotificationChannelMutesUpdatedWithNoMutesEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelMutesUpdatedWithNoMutedChannels")
-        let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? NotificationChannelMutesUpdatedEventDTO
 
         try client.databaseContainer.createCurrentUser(id: "luke_skywalker")
 
@@ -156,7 +162,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
         XCTAssertFalse(unwrappedUser.channelMutes.isEmpty)
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeTrue(self.client.databaseContainer.viewContext.currentUser?.channelMutes.isEmpty ?? false)
@@ -165,7 +171,8 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_NotificationChannelMutesUpdatedWithSomeMutesEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelMutesUpdatedWithSomeMutedChannels")
-        let event = try eventDecoder.decode(from: json) as? NotificationChannelMutesUpdatedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? NotificationChannelMutesUpdatedEventDTO
 
         try client.databaseContainer.createCurrentUser(id: "luke_skywalker")
 
@@ -173,7 +180,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
         XCTAssertTrue(unwrappedUser.channelMutes.isEmpty)
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeFalse(self.client.databaseContainer.viewContext.currentUser?.channelMutes.isEmpty ?? true)
@@ -182,7 +189,8 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
 
     func test_NotificationMarkAllReadEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMarkRead")
-        let event = try eventDecoder.decode(from: json) as? NotificationMarkReadEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? NotificationMarkReadEventDTO
 
         let channelId: ChannelId = .init(type: .messaging, id: "general")
         let unwrappedEvent = try XCTUnwrap(event)
@@ -215,7 +223,7 @@ final class ChannelEventsIntegration_Tests: XCTestCase {
             15
         )
 
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeEqual(

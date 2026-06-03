@@ -55,6 +55,14 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
             if event.thread != nil || event.threadId != nil {
                 break
             }
+            // Mark all read
+            if event.cid == nil, event.channel == nil, let userId = event.user?.id {
+                session.loadChannelReads(for: userId).forEach { read in
+                    read.lastReadAt = event.createdAt.bridgeDate
+                    read.unreadMessageCount = 0
+                }
+                break
+            }
             guard let cidString = event.cid, let cid = try? ChannelId(cid: cidString) else { break }
             guard let userId = event.user?.id else { break }
             resetChannelRead(
@@ -86,12 +94,6 @@ struct ChannelReadUpdaterMiddleware: EventMiddleware {
                 unreadMessages: unreadMessagesCount,
                 session: session
             )
-
-        case let event as NotificationMarkAllReadEventDTO:
-            session.loadChannelReads(for: event.user.id).forEach { read in
-                read.lastReadAt = event.createdAt.bridgeDate
-                read.unreadMessageCount = 0
-            }
 
         default:
             break

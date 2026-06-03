@@ -1168,11 +1168,10 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(loadedChannel?.reads.first?.unreadMessagesCount, 10)
         XCTAssertEqual(loadedChannel?.reads.first?.lastReadAt, Date(timeIntervalSince1970: 1))
 
-        // Create a NotificationMarkAllReadEvent
+        // Create a NotificationMarkReadEventDTO with no channel (mark-all-read)
         // with a read date later than original read
         let newReadDate = Date(timeIntervalSince1970: 2)
-        // Create NotificationMarkAllReadEventDTO via converting from NotificationMarkReadEventDTO (no channel = mark-all-read)
-        let markReadDTO = NotificationMarkReadEventDTO(
+        let notificationMarkAllReadEvent = NotificationMarkReadEventDTO(
             createdAt: newReadDate,
             custom: [:],
             totalUnreadCount: 124,
@@ -1181,7 +1180,6 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             unreadThreadMessages: 20,
             user: UserResponseCommonFields(dummyCurrentUser.asUserPayload)
         )
-        let notificationMarkAllReadEvent = try XCTUnwrap(NotificationMarkAllReadEventDTO(from: markReadDTO))
 
         // Let the middleware handle the event
         let handledEvent = middleware.handle(event: notificationMarkAllReadEvent, session: database.viewContext)

@@ -21,7 +21,7 @@ final class ThreadEvents_Tests: XCTestCase {
 
     func test_threadUpdated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ThreadUpdated")
-        let event = try XCTUnwrap(try eventDecoder.decode(from: json) as? ThreadUpdatedEventDTO)
+        let event = try XCTUnwrap(try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ThreadUpdatedEventDTO)
         XCTAssertEqual(event.thread?.parentMessageId, "8873fa5a-ddc2-4361-a2c6-137af90fb53e")
         XCTAssertEqual(event.thread?.parentMessage?.text, "Test")
         XCTAssertEqual(event.thread?.replyCount, 29)
@@ -31,7 +31,7 @@ final class ThreadEvents_Tests: XCTestCase {
 
     func test_threadMessageNew() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ThreadMessageNew")
-        let event = try XCTUnwrap(try eventDecoder.decode(from: json) as? NotificationThreadMessageNewEventDTO)
+        let event = try XCTUnwrap(try eventDecoder.decodeFixture(from: json).unwrappedEvent as? NotificationThreadMessageNewEventDTO)
         XCTAssertEqual(event.message.text, "@Han Solo Ahahah")
         XCTAssertEqual(event.message.parentId, "6967a9d8-eb89-461e-a12a-97ae531d4400")
         // On ThreadMessageNew event, only unread threads are parsed.

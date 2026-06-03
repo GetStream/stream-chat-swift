@@ -3,22 +3,6 @@
 //
 
 import Foundation
-import ObjectiveC.runtime
-
-// MARK: - WSEvent Bridging
-
-// Associated-object storage of the source `WSEvent` set by `EventDecoder` on the
-// inner *EventDTO. `EventDataProcessorMiddleware` reads it back to drive
-// `saveEvent(event: WSEvent)` persistence.
-private nonisolated(unsafe) var wsEventKey: UInt8 = 0
-
-func storeWSEvent(_ event: WSEvent, on object: AnyObject) {
-    objc_setAssociatedObject(object, &wsEventKey, event, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-}
-
-func wsEvent(of object: AnyObject) -> WSEvent? {
-    objc_getAssociatedObject(object, &wsEventKey) as? WSEvent
-}
 
 extension UserResponseCommonFields {
     convenience init(_ user: UserResponse) {

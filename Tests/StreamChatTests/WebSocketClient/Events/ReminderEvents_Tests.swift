@@ -26,7 +26,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderCreatedEvent_decoding() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderCreated")
-        let event = try eventDecoder.decode(from: json) as? ReminderCreatedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReminderCreatedEventDTO
         
         XCTAssertNotNil(event)
         XCTAssertEqual(event?.messageId, "f7af18f2-0a46-431d-8901-19c105de7f0a")
@@ -37,7 +37,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderCreatedEvent_toDomainEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderCreated")
-        let event = try eventDecoder.decode(from: json) as? ReminderCreatedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReminderCreatedEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Save required data
@@ -54,7 +54,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderCreatedEvent_toDomainEvent_whenRemoveChannelOnly_shouldSaveChannelFromEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderCreated")
-        let event = try eventDecoder.decode(from: json) as? ReminderCreatedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReminderCreatedEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
         XCTAssertNil(event?.toDomainEvent(session: session))
@@ -64,7 +64,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderUpdatedEvent_decoding() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderUpdated")
-        let event = try eventDecoder.decode(from: json) as? ReminderUpdatedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReminderUpdatedEventDTO
         
         XCTAssertNotNil(event)
         XCTAssertEqual(event?.messageId, messageId)
@@ -75,7 +75,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderUpdatedEvent_toDomainEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderUpdated")
-        let event = try eventDecoder.decode(from: json) as? ReminderUpdatedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReminderUpdatedEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Save required data
@@ -91,7 +91,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderUpdatedEvent_toDomainEvent_returnsNilWhenMissingData() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderUpdated")
-        let event = try eventDecoder.decode(from: json) as? ReminderUpdatedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReminderUpdatedEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Don't save any data to test nil case
@@ -102,7 +102,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderDeletedEvent_decoding() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderDeleted")
-        let event = try eventDecoder.decode(from: json) as? ReminderDeletedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReminderDeletedEventDTO
         
         XCTAssertNotNil(event)
         XCTAssertEqual(event?.messageId, messageId)
@@ -113,7 +113,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderDeletedEvent_toDomainEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderDeleted")
-        let event = try eventDecoder.decode(from: json) as? ReminderDeletedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReminderDeletedEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Save required data
@@ -129,7 +129,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderDeletedEvent_toDomainEvent_returnsNilWhenMissingData() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderDeleted")
-        let event = try eventDecoder.decode(from: json) as? ReminderDeletedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReminderDeletedEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Don't save any data to test nil case
@@ -140,7 +140,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderDueEvent_decoding() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderDue")
-        let event = try eventDecoder.decode(from: json) as? ReminderNotificationEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReminderNotificationEventDTO
         
         XCTAssertNotNil(event)
         XCTAssertEqual(event?.messageId, messageId)
@@ -151,7 +151,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderDueEvent_toDomainEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderDue")
-        let event = try eventDecoder.decode(from: json) as? ReminderNotificationEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReminderNotificationEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Save required data
@@ -167,7 +167,7 @@ final class ReminderEvents_Tests: XCTestCase {
     
     func test_reminderDueEvent_toDomainEvent_returnsNilWhenMissingData() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReminderDue")
-        let event = try eventDecoder.decode(from: json) as? ReminderNotificationEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReminderNotificationEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Don't save any data to test nil case

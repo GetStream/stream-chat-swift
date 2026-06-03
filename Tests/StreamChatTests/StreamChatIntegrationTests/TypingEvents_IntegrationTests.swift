@@ -31,7 +31,8 @@ final class TypingEvents_IntegrationTests: XCTestCase {
 
     func test_UserStartTypingEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStartTyping")
-        let event = try eventDecoder.decode(from: json) as? TypingStartEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? TypingStartEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "general")
         try client.databaseContainer.createChannel(cid: channelId, withMessages: false, withQuery: false)
@@ -41,7 +42,7 @@ final class TypingEvents_IntegrationTests: XCTestCase {
         XCTAssertTrue(channel.currentlyTypingUsers.isEmpty)
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeFalse(
@@ -52,7 +53,8 @@ final class TypingEvents_IntegrationTests: XCTestCase {
 
     func test_UserStopTypingEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStopTyping")
-        let event = try eventDecoder.decode(from: json) as? TypingStopEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? TypingStopEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "general")
         try client.databaseContainer.createChannel(
@@ -74,7 +76,7 @@ final class TypingEvents_IntegrationTests: XCTestCase {
         XCTAssertFalse(channel.currentlyTypingUsers.isEmpty)
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeTrue(

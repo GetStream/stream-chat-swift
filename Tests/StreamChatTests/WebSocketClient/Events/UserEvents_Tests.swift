@@ -21,7 +21,7 @@ final class UserEvents_Tests: XCTestCase {
 
     func test_userPresenceEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserPresence")
-        let event = try eventDecoder.decode(from: json) as? UserPresenceChangedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? UserPresenceChangedEventDTO
         XCTAssertEqual(event?.user.id, "steep-moon-9")
         XCTAssertEqual(event?.createdAt.description, "2020-07-16 15:44:19 +0000")
     }
@@ -30,12 +30,12 @@ final class UserEvents_Tests: XCTestCase {
         let expectedCid = ChannelId(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE")
 
         let startJson = XCTestCase.mockData(fromJSONFile: "UserStartWatching")
-        let startEvent = try eventDecoder.decode(from: startJson) as? UserWatchingStartEventDTO
+        let startEvent = try eventDecoder.decodeFixture(from: startJson).unwrappedEvent as? UserWatchingStartEventDTO
         XCTAssertEqual(startEvent?.cid, expectedCid.rawValue)
         XCTAssertEqual(startEvent?.user.id, "luke_skywalker")
 
         let stopJson = XCTestCase.mockData(fromJSONFile: "UserStopWatching")
-        let stopEvent = try eventDecoder.decode(from: stopJson) as? UserWatchingStopEventDTO
+        let stopEvent = try eventDecoder.decodeFixture(from: stopJson).unwrappedEvent as? UserWatchingStopEventDTO
         XCTAssertEqual(stopEvent?.user.id, "luke_skywalker")
         XCTAssertTrue((stopEvent?.watcherCount ?? 0) > 0)
         XCTAssertEqual(stopEvent?.cid, expectedCid.rawValue)
@@ -43,7 +43,7 @@ final class UserEvents_Tests: XCTestCase {
 
     func test_userBannedEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserBanned")
-        let event = try eventDecoder.decode(from: json) as? UserBannedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? UserBannedEventDTO
         XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.createdBy?.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, "messaging:new_channel_7070")
@@ -53,23 +53,25 @@ final class UserEvents_Tests: XCTestCase {
 
     func test_userUnbannedEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserUnbanned")
-        let event = try eventDecoder.decode(from: json) as? UserUnbannedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? UserUnbannedEventDTO
         XCTAssertEqual(event?.user.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, "messaging:new_channel_7070")
     }
 
     func test_userGloballyBannedEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserGloballyBanned")
-        let event = try eventDecoder.decode(from: json) as? UserGloballyBannedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? UserBannedEventDTO
         XCTAssertEqual(event?.user.id, "c-3po")
         XCTAssertEqual(event?.createdAt.description, "2022-09-22 07:59:24 +0000")
+        XCTAssertNil(event?.cid)
     }
 
     func test_userGloballyUnbannedEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserGloballyUnbanned")
-        let event = try eventDecoder.decode(from: json) as? UserGloballyUnbannedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? UserUnbannedEventDTO
         XCTAssertEqual(event?.user.id, "c-3po")
         XCTAssertEqual(event?.createdAt.description, "2022-09-22 08:00:15 +0000")
+        XCTAssertNil(event?.cid)
     }
 
     // MARK: DTO -> Event
@@ -251,7 +253,7 @@ final class UserEvents_Tests: XCTestCase {
         XCTAssertEqual(event.createdAt, createdAt)
     }
 
-    func test_userGloballyBannedEventDTO_toDomainEvent() throws {
+    func test_userBannedEventDTO_toDomainEvent_whenMissingCID_returnsGlobalBanEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
@@ -263,21 +265,20 @@ final class UserEvents_Tests: XCTestCase {
             custom: [:],
             user: UserResponseCommonFields(user)
         )
-        let dto = UserGloballyBannedEventDTO(from: bannedDTO)
 
         // Assert event creation fails due to missing dependencies
-        XCTAssertNil(dto.toDomainEvent(session: session))
+        XCTAssertNil(bannedDTO.toDomainEvent(session: session))
 
         // Save event payload to database
         try session.saveUser(payload: user)
 
         // Assert event can be created from DTO and has correct fields
-        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserGloballyBannedEvent)
+        let event = try XCTUnwrap(bannedDTO.toDomainEvent(session: session) as? UserGloballyBannedEvent)
         XCTAssertEqual(event.user.id, user.id)
         XCTAssertEqual(event.createdAt, createdAt)
     }
 
-    func test_userGloballyUnbannedEventDTO_toDomainEvent() throws {
+    func test_userUnbannedEventDTO_toDomainEvent_whenMissingCID_returnsGlobalUnbanEvent() throws {
         // Create database session
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
 
@@ -289,16 +290,15 @@ final class UserEvents_Tests: XCTestCase {
             custom: [:],
             user: UserResponseCommonFields(user)
         )
-        let dto = UserGloballyUnbannedEventDTO(from: unbannedDTO)
 
         // Assert event creation fails due to missing dependencies
-        XCTAssertNil(dto.toDomainEvent(session: session))
+        XCTAssertNil(unbannedDTO.toDomainEvent(session: session))
 
         // Save event payload to database
         try session.saveUser(payload: user)
 
         // Assert event can be created from DTO and has correct fields
-        let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? UserGloballyUnbannedEvent)
+        let event = try XCTUnwrap(unbannedDTO.toDomainEvent(session: session) as? UserGloballyUnbannedEvent)
         XCTAssertEqual(event.user.id, user.id)
         XCTAssertEqual(event.createdAt, createdAt)
     }

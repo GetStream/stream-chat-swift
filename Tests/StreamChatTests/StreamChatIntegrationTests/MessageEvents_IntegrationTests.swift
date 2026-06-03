@@ -31,7 +31,8 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
     func test_MessageNewEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageNew")
-        let event = try eventDecoder.decode(from: json) as? MessageNewEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? MessageNewEventDTO
 
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
@@ -42,7 +43,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
         let unwrappedEvent = try XCTUnwrap(event)
         let completionCalled = expectation(description: "completion called")
-        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
+        client.eventNotificationCenter.process(decodedEvent) { completionCalled.fulfill() }
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
@@ -53,7 +54,8 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
     func test_MessageUpdatedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageUpdated")
-        let event = try eventDecoder.decode(from: json) as? MessageUpdatedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? MessageUpdatedEventDTO
 
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
@@ -76,7 +78,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         )
 
         let unwrappedUpdate = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedUpdate)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeEqual(
@@ -89,7 +91,8 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
     func test_MessageDeletedEventPayload_isHandled() throws {
         let updateJSON = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
-        let updateMessageEvent = try eventDecoder.decode(from: updateJSON) as? MessageDeletedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: updateJSON)
+        let updateMessageEvent = decodedEvent.unwrappedEvent as? MessageDeletedEventDTO
 
         // For message to be received, we need to have channel:
         try client.databaseContainer.createChannel(
@@ -102,7 +105,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         XCTAssertNotNil(client.databaseContainer.viewContext.message(id: "1ff9f6d0-df70-4703-aef0-379f95ad7366"))
 
         let unwrappedEvent = try XCTUnwrap(updateMessageEvent)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willNotBeNil(self.client.databaseContainer.viewContext.message(id: "1ff9f6d0-df70-4703-aef0-379f95ad7366"))
@@ -117,13 +120,14 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
     func test_NotificationMessageNewEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMessageNew")
-        let event = try eventDecoder.decode(from: json) as? NotificationNewMessageEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? NotificationNewMessageEventDTO
 
         XCTAssertNil(client.databaseContainer.viewContext.message(id: "042772db-4af2-460d-beaa-1e49d1b8e3b9"))
 
         let unwrappedEvent = try XCTUnwrap(event)
         let completionCalled = expectation(description: "completion called")
-        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
+        client.eventNotificationCenter.process(decodedEvent) { completionCalled.fulfill() }
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 

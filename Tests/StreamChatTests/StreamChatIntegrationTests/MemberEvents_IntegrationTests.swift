@@ -31,7 +31,8 @@ final class MemberEvents_IntegrationTests: XCTestCase {
 
     func test_MemberAddedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberAdded")
-        let event = try eventDecoder.decode(from: json) as? MemberAddedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? MemberAddedEventDTO
 
         let unwrappedEvent = try XCTUnwrap(event)
 
@@ -41,7 +42,7 @@ final class MemberEvents_IntegrationTests: XCTestCase {
         }
 
         let completionCalled = expectation(description: "completion called")
-        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
+        client.eventNotificationCenter.process(decodedEvent) { completionCalled.fulfill() }
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
@@ -57,11 +58,12 @@ final class MemberEvents_IntegrationTests: XCTestCase {
 
     func test_MemberUpdatedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberUpdated")
-        let event = try eventDecoder.decode(from: json) as? MemberUpdatedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? MemberUpdatedEventDTO
 
         let unwrappedEvent = try XCTUnwrap(event)
         let completionCalled = expectation(description: "completion called")
-        client.eventNotificationCenter.process(unwrappedEvent) { completionCalled.fulfill() }
+        client.eventNotificationCenter.process(decodedEvent) { completionCalled.fulfill() }
 
         wait(for: [completionCalled], timeout: defaultTimeout)
 
@@ -77,7 +79,8 @@ final class MemberEvents_IntegrationTests: XCTestCase {
 
     func test_MemberRemovedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberRemoved")
-        let event = try eventDecoder.decode(from: json) as? MemberRemovedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? MemberRemovedEventDTO
 
         let channelId = ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY")
 
@@ -108,7 +111,7 @@ final class MemberEvents_IntegrationTests: XCTestCase {
         XCTAssertTrue(client.databaseContainer.viewContext.channel(cid: channelId)?.members.count == 2)
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
         AssertAsync.willBeFalse(
             client.databaseContainer.viewContext.channel(cid: channelId)?.members.contains { $0.user.id == "r2-d2" } ?? true
         )

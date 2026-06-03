@@ -25,7 +25,7 @@ final class ReactionEvents_Tests: XCTestCase {
 
     func test_new() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionNew")
-        let event = try eventDecoder.decode(from: json) as? ReactionNewEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReactionNewEventDTO
         XCTAssertEqual(event?.user?.id, userId)
         XCTAssertEqual(event?.cid, cid.rawValue)
         XCTAssertEqual(event?.message?.id, messageId)
@@ -38,7 +38,7 @@ final class ReactionEvents_Tests: XCTestCase {
 
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionUpdated")
-        let event = try eventDecoder.decode(from: json) as? ReactionUpdatedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReactionUpdatedEventDTO
         XCTAssertEqual(event?.user?.id, userId)
         XCTAssertEqual(event?.cid, cid.rawValue)
         XCTAssertEqual(event?.message.id, messageId)
@@ -51,7 +51,7 @@ final class ReactionEvents_Tests: XCTestCase {
 
     func test_deleted() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionDeleted")
-        let event = try eventDecoder.decode(from: json) as? ReactionDeletedEventDTO
+        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? ReactionDeletedEventDTO
         XCTAssertEqual(event?.user?.id, userId)
         XCTAssertEqual(event?.cid, cid.rawValue)
         XCTAssertEqual(event?.message?.id, messageId)

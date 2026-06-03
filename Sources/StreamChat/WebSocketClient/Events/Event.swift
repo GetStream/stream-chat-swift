@@ -10,6 +10,24 @@ public extension Event {
     }
 }
 
+extension WSEvent: @unchecked Sendable, Event {
+    func healthcheck() -> HealthCheckInfo? {
+        guard case .typeHealthCheckEvent(let event) = self else { return nil }
+        return HealthCheckInfo(connectionId: event.connectionId)
+    }
+
+    func error() -> (any Error)? {
+        // TODO: Handle connection.error here once it is generated as a WSEvent case.
+        nil
+    }
+}
+
+extension Event {
+    var unwrappedEvent: Event {
+        (self as? WSEvent)?.rawValue ?? self
+    }
+}
+
 /// An internal protocol for events that can hydrate themselves from the database
 /// to produce their public-facing domain event.
 protocol EventDTO: Event {

@@ -33,11 +33,13 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             custom: [:],
             member: channel.members?.first ?? .dummy()
         )
-        // The middleware uses the associated-object WSEvent to drive DB persistence.
-        storeWSEvent(.typeNotificationAddedToChannelEvent(dto), on: dto)
 
         // Let the middleware handle the event
-        let outputEvent = middleware.handle(event: dto, session: database.viewContext)
+        let outputEvent = middleware.handle(
+            event: dto,
+            wsEvent: .typeNotificationAddedToChannelEvent(dto),
+            session: database.viewContext
+        )
 
         // Assert the channel data is saved and the event is forwarded
         var loadedChannel: ChatChannel? {
@@ -82,10 +84,13 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             reaction: reactionPayload,
             user: UserResponseCommonFields(reactionPayload.userPayload)
         )
-        storeWSEvent(.typeReactionDeletedEvent(event), on: event)
 
         // Simulate `ReactionDeletedEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(
+            event: event,
+            wsEvent: .typeReactionDeletedEvent(event),
+            session: database.viewContext
+        )
 
         // Load the message.
         message = try XCTUnwrap(
@@ -125,10 +130,13 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             reaction: reactionPayload,
             user: UserResponseCommonFields(user)
         )
-        storeWSEvent(.typeReactionUpdatedEvent(event), on: event)
 
         // Simulate `ReactionUpdatedEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(
+            event: event,
+            wsEvent: .typeReactionUpdatedEvent(event),
+            session: database.viewContext
+        )
 
         // Load the message.
         let message = try XCTUnwrap(
@@ -176,10 +184,13 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             reaction: reactionPayload,
             user: UserResponseCommonFields(user)
         )
-        storeWSEvent(.typeReactionNewEvent(event), on: event)
 
         // Simulate `ReactionNewEvent` event.
-        let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
+        let forwardedEvent = middleware.handle(
+            event: event,
+            wsEvent: .typeReactionNewEvent(event),
+            session: database.viewContext
+        )
 
         // Load the message.
         let message = try XCTUnwrap(
@@ -207,14 +218,17 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             custom: [:],
             user: UserResponsePrivacyFields(user)
         )
-        storeWSEvent(.typeUserUpdatedEvent(testEvent), on: testEvent)
 
         // Simulate the DB fails to save the payload
         let session = DatabaseSession_Mock(underlyingSession: database.viewContext)
         session.errorToReturn = TestError()
 
         // Let the middleware handle the event
-        let outputEvent = middleware.handle(event: testEvent, session: session)
+        let outputEvent = middleware.handle(
+            event: testEvent,
+            wsEvent: .typeUserUpdatedEvent(testEvent),
+            session: session
+        )
 
         // Assert the event is not forwarded
         XCTAssertNil(outputEvent)

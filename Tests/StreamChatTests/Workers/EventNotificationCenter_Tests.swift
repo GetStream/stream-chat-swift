@@ -243,6 +243,43 @@ final class EventNotificationCenter_Tests: XCTestCase {
         )
     }
 
+    func test_process_whenWSEventIsReceived_unwrapsEventForMiddlewaresAndPosting() {
+        let cid = ChannelId.unique
+        let messageId = MessageId.unique
+        let dto = MessageNewEventDTO(
+            cid: cid.rawValue,
+            createdAt: .unique,
+            custom: [:],
+            message: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [], channel: .dummy(cid: cid)),
+            messageId: messageId,
+            user: UserResponseCommonFields(.dummy(userId: .unique)),
+            watcherCount: 0
+        )
+        let wsEvent = WSEvent.typeMessageNewEvent(dto)
+        var middlewareEvent: Event?
+        var middlewareWSEvent: WSEvent?
+
+        let center = PersistentEventNotificationCenter(database: database)
+        let eventLogger = EventLogger(center)
+        center.add(middleware: EventMiddleware_Mock(
+            closure: { event, _ in event },
+            wsEventClosure: { event, wsEvent, _ in
+                middlewareEvent = event
+                middlewareWSEvent = wsEvent
+                return event
+            }
+        ))
+
+        center.process(wsEvent)
+
+        AssertAsync {
+            Assert.willBeTrue(middlewareEvent is MessageNewEventDTO)
+            Assert.willBeEqual(middlewareWSEvent, wsEvent)
+            Assert.willBeEqual(eventLogger.events.first?.asEquatable, dto.asEquatable)
+            Assert.willBeFalse(eventLogger.events.first is WSEvent)
+        }
+    }
+
     // Performance tests
 
     func test_measure_processMultipleNewMessageEvents() throws {

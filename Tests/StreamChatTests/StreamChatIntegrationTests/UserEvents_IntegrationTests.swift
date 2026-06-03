@@ -31,7 +31,8 @@ final class UserEvents_IntegrationTests: XCTestCase {
 
     func test_UserWatchingStartEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStartWatching")
-        let event = try eventDecoder.decode(from: json) as? UserWatchingStartEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? UserWatchingStartEventDTO
 
         let channelId: ChannelId = .init(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE")
 
@@ -42,7 +43,7 @@ final class UserEvents_IntegrationTests: XCTestCase {
         )
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeTrue(self.client.databaseContainer.viewContext.channel(cid: channelId)?.watcherCount == 1)
@@ -55,7 +56,8 @@ final class UserEvents_IntegrationTests: XCTestCase {
 
     func test_UserWatchingStoppedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStopWatching")
-        let event = try eventDecoder.decode(from: json) as? UserWatchingStopEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? UserWatchingStopEventDTO
 
         let channelId: ChannelId = .init(type: .messaging, id: "!members-dpwtNCSGs-VaJKfAVaeosq6FNNbvDDWldf231ypDWqE")
 
@@ -66,7 +68,7 @@ final class UserEvents_IntegrationTests: XCTestCase {
         )
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeTrue(self.client.databaseContainer.viewContext.channel(cid: channelId)?.watcherCount == 5)
@@ -79,14 +81,15 @@ final class UserEvents_IntegrationTests: XCTestCase {
 
     func test_UserPresenceChangedPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserPresence")
-        let event = try eventDecoder.decode(from: json) as? UserPresenceChangedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? UserPresenceChangedEventDTO
 
         try! client.databaseContainer.createUser(id: "steep-moon-9")
 
         XCTAssertTrue(client.databaseContainer.viewContext.user(id: "steep-moon-9")?.isOnline ?? false)
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeFalse(self.client.databaseContainer.viewContext.user(id: "steep-moon-9")?.isOnline ?? true)
@@ -96,7 +99,8 @@ final class UserEvents_IntegrationTests: XCTestCase {
     // TODO: Find JSON:
     func test_UserUpdatedPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserUpdated")
-        let event = try eventDecoder.decode(from: json) as? UserUpdatedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? UserUpdatedEventDTO
 
         let previousUpdateDate = Date.unique
 
@@ -107,7 +111,7 @@ final class UserEvents_IntegrationTests: XCTestCase {
         )
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeEqual(
@@ -119,7 +123,8 @@ final class UserEvents_IntegrationTests: XCTestCase {
 
     func test_UserBannedPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserBanned")
-        let event = try eventDecoder.decode(from: json) as? UserBannedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? UserBannedEventDTO
 
         try! client.databaseContainer.createMember(
             userId: "broken-waterfall-5",
@@ -135,7 +140,7 @@ final class UserEvents_IntegrationTests: XCTestCase {
         )
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeTrue(
@@ -148,7 +153,8 @@ final class UserEvents_IntegrationTests: XCTestCase {
 
     func test_UserUnbannedPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserUnbanned")
-        let event = try eventDecoder.decode(from: json) as? UserUnbannedEventDTO
+        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let event = decodedEvent.unwrappedEvent as? UserUnbannedEventDTO
 
         try! client.databaseContainer.createMember(
             userId: "broken-waterfall-5",
@@ -165,7 +171,7 @@ final class UserEvents_IntegrationTests: XCTestCase {
         )
 
         let unwrappedEvent = try XCTUnwrap(event)
-        client.eventNotificationCenter.process(unwrappedEvent)
+        client.eventNotificationCenter.process(decodedEvent)
 
         AssertAsync {
             Assert.willBeFalse(

@@ -64,34 +64,6 @@ public final class NotificationMarkAllReadEvent: Event, HasUnreadCount {
     }
 }
 
-final class NotificationMarkAllReadEventDTO: EventDTO {
-    let user: UserResponse
-    let unreadCount: UnreadCountPayload
-    let createdAt: Date
-
-    init?(from dto: NotificationMarkReadEventDTO) {
-        guard let userDTO = dto.user else { return nil }
-        user = UserResponse(userDTO)
-        createdAt = dto.createdAt
-        unreadCount = UnreadCountPayload(
-            channels: dto.unreadChannels,
-            messages: dto.totalUnreadCount,
-            threads: dto.unreadThreadMessages
-        )
-    }
-
-    func toDomainEvent(session: DatabaseSession) -> Event? {
-        guard let userDTO = session.user(id: user.id) else { return nil }
-        guard let currentUser = session.currentUser else { return nil }
-
-        return try? NotificationMarkAllReadEvent(
-            user: userDTO.asModel(),
-            unreadCount: UnreadCount(currentUserDTO: currentUser),
-            createdAt: createdAt
-        )
-    }
-}
-
 /// Triggered when a channel the current user is member of is marked as read.
 public final class NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount {
     /// The current user.
@@ -159,8 +131,17 @@ public final class NotificationMarkUnreadEvent: ChannelSpecificEvent {
 extension NotificationMarkReadEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
-        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
         guard let currentUser = session.currentUser else { return nil }
+
+        if cid == nil, channel == nil, thread == nil, threadId == nil {
+            return try? NotificationMarkAllReadEvent(
+                user: userDTO.asModel(),
+                unreadCount: UnreadCount(currentUserDTO: currentUser),
+                createdAt: createdAt
+            )
+        }
+
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
 
         return try? NotificationMarkReadEvent(
             user: userDTO.asModel(),

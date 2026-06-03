@@ -22,7 +22,7 @@ final class AIIndicatorEvents_Tests: XCTestCase {
     func test_aiIndicatorUpdate() throws {
         let json = XCTestCase.mockData(fromJSONFile: "AIIndicatorUpdate")
         let dto = try XCTUnwrap(
-            try eventDecoder.decode(from: json) as? AIIndicatorUpdateEventDTO
+            try eventDecoder.decodeFixture(from: json).unwrappedEvent as? AIIndicatorUpdateEventDTO
         )
         XCTAssertEqual(dto.cid, "messaging:general-3ac667a1-6113-4b16-b1e3-50dbff0ffb89")
         XCTAssertEqual(dto.messageId, "aba120c6-c845-4c5a-968d-31ed0429c31e")
@@ -33,7 +33,7 @@ final class AIIndicatorEvents_Tests: XCTestCase {
     func test_aiIndicatorClear() throws {
         let json = XCTestCase.mockData(fromJSONFile: "AIIndicatorClear")
         let dto = try XCTUnwrap(
-            try eventDecoder.decode(from: json) as? AIIndicatorClearEventDTO
+            try eventDecoder.decodeFixture(from: json).unwrappedEvent as? AIIndicatorClearEventDTO
         )
         XCTAssertEqual(
             dto.cid,
@@ -44,7 +44,7 @@ final class AIIndicatorEvents_Tests: XCTestCase {
     func test_aiIndicatorStop() throws {
         let json = XCTestCase.mockData(fromJSONFile: "AIIndicatorStop")
         let dto = try XCTUnwrap(
-            try eventDecoder.decode(from: json) as? AIIndicatorStopEventDTO
+            try eventDecoder.decodeFixture(from: json).unwrappedEvent as? AIIndicatorStopEventDTO
         )
         XCTAssertEqual(
             dto.cid,

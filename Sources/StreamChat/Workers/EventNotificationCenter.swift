@@ -50,26 +50,34 @@ class PersistentEventNotificationCenter: NotificationCenter, EventNotificationCe
     }
 
     func process(_ events: [Event], postNotifications: Bool = true, completion: (@Sendable () -> Void)? = nil) {
+        let unwrappedEvents: [(event: Event, wsEvent: WSEvent?)] = events.map {
+            // WSEvent is the enum whose associated values are the generated EventDTO payloads.
+            if let wsEvent = $0 as? WSEvent {
+                return (event: wsEvent.rawValue, wsEvent: wsEvent)
+            }
+            return (event: $0, wsEvent: nil)
+        }
         let processingEventsDebugMessage: () -> String = {
-            let eventNames = events.map(\.name)
+            let eventNames = unwrappedEvents.map(\.event.name)
             return "Processing Events: \(eventNames)"
         }
         log.debug(processingEventsDebugMessage(), subsystems: .webSocket)
 
-        let messageIds: [MessageId] = events.compactMap {
-            ($0 as? MessageNewEventDTO)?.message.id ?? ($0 as? NotificationNewMessageEventDTO)?.message.id
+        let messageIds: [MessageId] = unwrappedEvents.compactMap {
+            let event = $0.event
+            return (event as? MessageNewEventDTO)?.message.id ?? (event as? NotificationNewMessageEventDTO)?.message.id
         }
 
         nonisolated(unsafe) var eventsToPost = [Event]()
-        nonisolated(unsafe) var middlewareEvents = [Event]()
+        nonisolated(unsafe) var middlewareEvents = [(event: Event, wsEvent: WSEvent?)]()
         nonisolated(unsafe) var manualHandlingEvents = [Event]()
 
         database.write({ session in
-            events.forEach { event in
-                if let manualEvent = self.manualEventHandler.handle(event) {
+            unwrappedEvents.forEach { input in
+                if let manualEvent = self.manualEventHandler.handle(input.event) {
                     manualHandlingEvents.append(manualEvent)
                 } else {
-                    middlewareEvents.append(event)
+                    middlewareEvents.append(input)
                 }
             }
 
@@ -79,7 +87,7 @@ class PersistentEventNotificationCenter: NotificationCenter, EventNotificationCe
 
             eventsToPost.append(contentsOf: manualHandlingEvents)
             eventsToPost.append(contentsOf: middlewareEvents.compactMap {
-                self.middlewares.process(event: $0, session: session)
+                self.middlewares.process(event: $0.event, wsEvent: $0.wsEvent, session: session)
             })
 
             self.newMessageIds = []
