@@ -118,6 +118,7 @@
         <attribute name="filterJSONData" attributeType="Binary"/>
         <attribute name="next" optional="YES" attributeType="String"/>
         <attribute name="presence" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
+        <attribute name="sortJSONData" optional="YES" attributeType="Binary"/>
         <attribute name="watch" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="YES"/>
         <relationship name="channels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ChannelDTO" inverseName="queries" inverseEntity="ChannelDTO"/>
         <fetchIndex name="filterHash">

@@ -204,13 +204,13 @@ class SyncRepository: @unchecked Sendable {
             // 2. Refresh channel lists (non-grouped lists individually, grouped lists via a single shared request)
             let allChannelLists = activeChannelLists.allObjects
             operations.append(contentsOf: allChannelLists
-                .filter { $0.query.groupKey == nil }
+                .filter { $0.groupKey == nil }
                 .map { RefreshChannelListOperation(channelList: $0, context: context) }
             )
             operations.append(contentsOf: activeChannelListControllers.allObjects
                 .map { RefreshChannelListOperation(controller: $0, context: context) }
             )
-            let groupedChannelLists = allChannelLists.filter { $0.query.groupKey != nil }
+            let groupedChannelLists = allChannelLists.filter { $0.groupKey != nil }
             if !groupedChannelLists.isEmpty {
                 operations.append(SyncGroupedChannelsOperation(
                     channelListUpdater: channelListUpdater,

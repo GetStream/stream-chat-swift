@@ -41,7 +41,7 @@ let package = Package(
             dependencies: [
                 .product(name: "StreamCore", package: "stream-core-swift")
             ],
-            exclude: ["Info.plist"],
+            exclude: ["Info.plist", "Generated/PredefinedFilter.stencil"],
             resources: [.copy("Database/StreamChatModel.xcdatamodeld")]
         ),
         .target(

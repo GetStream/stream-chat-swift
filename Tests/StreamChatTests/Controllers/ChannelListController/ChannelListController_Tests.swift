@@ -245,6 +245,96 @@ final class ChannelListController_Tests: XCTestCase {
         XCTAssertEqual(controller.channels.map(\.cid), [channelId])
     }
 
+    // MARK: - Predefined filter resolution
+
+    func test_synchronize_predefinedFilterQuery_createsObserverWithCachedResolvedFilterAndSort() throws {
+        // GIVEN: a controller built with a predefined query (placeholder filter + empty sort)
+        let predefinedQuery = ChannelListQuery(
+            predefinedFilter: "user_per_channel_type_channels",
+            filterValues: ["user_id": "r2-d2"]
+        )
+        query = predefinedQuery
+        controller = ChatChannelListController(query: predefinedQuery, client: client, environment: env.environment)
+
+        // AND: the DTO carries server-resolved filter/sort JSON (different from placeholder)
+        let resolvedFilterJSON = #"{"type":"messaging"}"#.data(using: .utf8)!
+        let resolvedSortJSON = #"[{"field":"last_message_at","direction":-1}]"#.data(using: .utf8)!
+        try client.databaseContainer.writeSynchronously { session in
+            let dto = session.saveQuery(query: predefinedQuery)
+            dto.filterJSONData = resolvedFilterJSON
+            dto.sortJSONData = resolvedSortJSON
+        }
+
+        // Snapshot the observer identity after lazy init. The cached predefined filter is applied before observer creation.
+        let observerBefore = ObjectIdentifier(controller.channelListObserver)
+        XCTAssertEqual(controller.query.filter.key, "type")
+        XCTAssertEqual(controller.query.filter.value as? String, "messaging")
+        XCTAssertEqual(controller.query.sort.count, 1)
+        XCTAssertEqual(controller.query.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
+
+        // WHEN: synchronize completes successfully
+        let exp = expectation(description: "synchronize completes")
+        var receivedError: Error?
+        controller.synchronize { error in
+            receivedError = error
+            exp.fulfill()
+        }
+        env.channelListUpdater?.update_completion?(.success([]))
+        waitForExpectations(timeout: defaultTimeout)
+
+        // THEN: no error, query has resolved values, observer is not rebuilt again for the same effective query
+        XCTAssertNil(receivedError)
+        XCTAssertEqual(controller.query.filter.key, "type")
+        XCTAssertEqual(controller.query.filter.value as? String, "messaging")
+        XCTAssertEqual(controller.query.sort.count, 1)
+        XCTAssertEqual(controller.query.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
+        XCTAssertEqual(controller.query.sort.first?.direction, -1)
+        XCTAssertEqual(ObjectIdentifier(controller.channelListObserver), observerBefore)
+    }
+
+    func test_synchronize_predefinedFilterQuery_whenNetworkFails_keepsCachedResolvedFilterAndReportsError() throws {
+        let predefinedQuery = ChannelListQuery(
+            predefinedFilter: "user_per_channel_type_channels",
+            filterValues: ["user_id": "r2-d2"]
+        )
+        query = predefinedQuery
+        controller = ChatChannelListController(query: predefinedQuery, client: client, environment: env.environment)
+        try client.databaseContainer.writeSynchronously { session in
+            let dto = session.saveQuery(query: predefinedQuery)
+            dto.filterJSONData = #"{"type":"messaging"}"#.data(using: .utf8)!
+            dto.sortJSONData = #"[{"field":"last_message_at","direction":-1}]"#.data(using: .utf8)!
+        }
+        _ = controller.channelListObserver
+
+        let error = TestError()
+        let exp = expectation(description: "synchronize completes")
+        var receivedError: Error?
+        controller.synchronize { error in
+            receivedError = error
+            exp.fulfill()
+        }
+        env.channelListUpdater?.update_completion?(.failure(error))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(receivedError as? TestError, error)
+        XCTAssertEqual(controller.query.filter.key, "type")
+        XCTAssertEqual(controller.query.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
+    }
+
+    func test_synchronize_nonPredefinedQuery_doesNotRebuildObserver() {
+        // GIVEN: a controller built with a non-predefined query (default in setUp)
+        let observerBefore = ObjectIdentifier(controller.channelListObserver)
+
+        // WHEN: synchronize completes successfully
+        let exp = expectation(description: "synchronize completes")
+        controller.synchronize { _ in exp.fulfill() }
+        env.channelListUpdater?.update_completion?(.success([]))
+        waitForExpectations(timeout: defaultTimeout)
+
+        // THEN: the observer instance is unchanged
+        XCTAssertEqual(ObjectIdentifier(controller.channelListObserver), observerBefore)
+    }
+
     // MARK: - Change propagation tests
 
     func test_changesInTheDatabase_arePropagated() throws {
@@ -804,6 +894,32 @@ final class ChannelListController_Tests: XCTestCase {
         AssertAsync.willBeTrue(completionCalled)
         // `weakController` should be deallocated too
         AssertAsync.canBeReleased(&weakController)
+    }
+
+    func test_loadNextChannels_predefinedFilterQuery_appliesResolvedFilterAndRebuildsObserver() throws {
+        let predefinedQuery = ChannelListQuery(
+            predefinedFilter: "user_per_channel_type_channels",
+            filterValues: ["user_id": "r2-d2"]
+        )
+        query = predefinedQuery
+        controller = ChatChannelListController(query: predefinedQuery, client: client, environment: env.environment)
+        try client.databaseContainer.writeSynchronously { session in
+            let dto = session.saveQuery(query: predefinedQuery)
+            dto.filterJSONData = #"{"type":"messaging"}"#.data(using: .utf8)!
+            dto.sortJSONData = #"[{"field":"last_message_at","direction":-1}]"#.data(using: .utf8)!
+        }
+
+        let exp = expectation(description: "load next completes")
+        controller.loadNextChannels { error in
+            XCTAssertNil(error)
+            exp.fulfill()
+        }
+        env.channelListUpdater?.update_completion?(.success([]))
+        waitForExpectations(timeout: defaultTimeout)
+
+        XCTAssertEqual(controller.query.filter.key, "type")
+        XCTAssertEqual(controller.query.filter.value as? String, "messaging")
+        XCTAssertEqual(controller.query.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
     }
 
     // MARK: - Refresh Loaded Channels

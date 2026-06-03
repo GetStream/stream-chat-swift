@@ -234,7 +234,7 @@ extension NSManagedObjectContext {
         // the query won't be saved, which will cause any future
         // channels to not become linked to this query
         if let query = query {
-            _ = saveQuery(query: query)
+            _ = saveQuery(query: query, predefinedFilter: payload.predefinedFilter)
         }
 
         return payload.channels.compactMapLoggingError { channelPayload in
