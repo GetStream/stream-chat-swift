@@ -425,6 +425,45 @@ final class MessageDTO_Tests: XCTestCase {
         )
     }
 
+    func test_messagePayload_enhancedMentions_areStoredAndLoadedAndSerialized() throws {
+        let messageId: MessageId = .unique
+        let channelId: ChannelId = .unique
+
+        try database.createCurrentUser()
+        try database.createChannel(cid: channelId, withMessages: false)
+
+        let messagePayload: MessagePayload = .dummy(
+            messageId: messageId,
+            authorUserId: .unique,
+            channel: .dummy(cid: channelId),
+            mentionedHere: true,
+            mentionedChannel: true,
+            mentionedGroupIds: ["backendsupport"],
+            mentionedRoles: ["admin"]
+        )
+
+        try database.writeSynchronously { session in
+            try session.saveMessage(payload: messagePayload, for: channelId, syncOwnReactions: true, cache: nil)
+        }
+
+        // Verify the model exposes the fields
+        let loadedMessage: ChatMessage = try XCTUnwrap(
+            database.viewContext.message(id: messageId)?.asModel()
+        )
+        XCTAssertTrue(loadedMessage.mentionedHere)
+        XCTAssertTrue(loadedMessage.mentionedChannel)
+        XCTAssertEqual(loadedMessage.mentionedGroupIds, ["backendsupport"])
+        XCTAssertEqual(loadedMessage.mentionedRoles, ["admin"])
+
+        // Verify the request body re-serializes the fields
+        let messageDTO = try XCTUnwrap(database.viewContext.message(id: messageId))
+        let requestBody: MessageRequestBody = messageDTO.asRequestBody()
+        XCTAssertTrue(requestBody.mentionedHere)
+        XCTAssertTrue(requestBody.mentionedChannel)
+        XCTAssertEqual(requestBody.mentionedGroupIds, ["backendsupport"])
+        XCTAssertEqual(requestBody.mentionedRoles, ["admin"])
+    }
+
     func test_messagePayload_isStoredAndLoadedFromDB() throws {
         let userId: UserId = .unique
         let messageId: MessageId = .unique

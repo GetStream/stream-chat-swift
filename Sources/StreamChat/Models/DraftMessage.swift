@@ -146,6 +146,10 @@ extension ChatMessage {
         reactionGroups = [:]
         author = draft.currentUser
         mentionedUsers = draft.mentionedUsers
+        mentionedHere = false
+        mentionedChannel = false
+        mentionedGroupIds = []
+        mentionedRoles = []
         threadParticipants = []
         _attachments = draft.attachments
         latestReplies = []

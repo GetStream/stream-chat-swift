@@ -288,6 +288,10 @@ class MessageUpdater: Worker, @unchecked Sendable {
         parentMessageId: MessageId,
         attachments: [AnyAttachmentPayload],
         mentionedUserIds: [UserId],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
@@ -321,6 +325,10 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 extraData: extraData
             )
 
+            newMessageDTO.mentionedHere = mentionedHere
+            newMessageDTO.mentionedChannel = mentionedChannel
+            newMessageDTO.mentionedGroupIds = mentionedGroupIds
+            newMessageDTO.mentionedRoles = mentionedRoles
             newMessageDTO.showInsideThread = true
             newMessageDTO.localMessageState = .pendingSend
             newMessage = try newMessageDTO.asModel()
@@ -1199,6 +1207,10 @@ extension MessageUpdater {
         parentMessageId: MessageId,
         attachments: [AnyAttachmentPayload],
         mentionedUserIds: [UserId],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         showReplyInChannel: Bool,
         isSilent: Bool,
         quotedMessageId: MessageId?,
@@ -1217,6 +1229,10 @@ extension MessageUpdater {
                 parentMessageId: parentMessageId,
                 attachments: attachments,
                 mentionedUserIds: mentionedUserIds,
+                mentionedHere: mentionedHere,
+                mentionedChannel: mentionedChannel,
+                mentionedGroupIds: mentionedGroupIds,
+                mentionedRoles: mentionedRoles,
                 showReplyInChannel: showReplyInChannel,
                 isSilent: isSilent,
                 quotedMessageId: quotedMessageId,

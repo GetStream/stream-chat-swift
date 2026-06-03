@@ -11,6 +11,72 @@ final class MessagePayload_Tests: XCTestCase {
     let messageJSONWithCorruptedAttachments = XCTestCase.mockData(fromJSONFile: "MessageWithBrokenAttachments")
     let messageCustomData: [String: RawJSON] = ["secret_note": .string("Anakin is Vader!")]
 
+    func test_messagePayload_decodesEnhancedMentions() throws {
+        let json = """
+        {
+            "id": "msg-1",
+            "type": "regular",
+            "user": {
+                "id": "user-1",
+                "role": "user",
+                "online": false,
+                "created_at": "2020-07-16T15:39:03.010717Z",
+                "updated_at": "2020-08-17T13:15:39.895109Z"
+            },
+            "created_at": "2020-07-16T15:39:03.010717Z",
+            "updated_at": "2020-08-17T13:15:39.895109Z",
+            "text": "Hey @here, @backendsupport, and @admin",
+            "reply_count": 0,
+            "attachments": [],
+            "latest_reactions": [],
+            "own_reactions": [],
+            "mentioned_users": [],
+            "mentioned_here": true,
+            "mentioned_channel": true,
+            "mentioned_group_ids": ["backendsupport"],
+            "mentioned_roles": ["admin"]
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.stream.decode(MessagePayload.self, from: json)
+
+        XCTAssertTrue(payload.mentionedHere)
+        XCTAssertTrue(payload.mentionedChannel)
+        XCTAssertEqual(payload.mentionedGroupIds, ["backendsupport"])
+        XCTAssertEqual(payload.mentionedRoles, ["admin"])
+    }
+
+    func test_messagePayload_enhancedMentionsDefaultWhenMissing() throws {
+        let json = """
+        {
+            "id": "msg-1",
+            "type": "regular",
+            "user": {
+                "id": "user-1",
+                "role": "user",
+                "online": false,
+                "created_at": "2020-07-16T15:39:03.010717Z",
+                "updated_at": "2020-08-17T13:15:39.895109Z"
+            },
+            "created_at": "2020-07-16T15:39:03.010717Z",
+            "updated_at": "2020-08-17T13:15:39.895109Z",
+            "text": "Hello",
+            "reply_count": 0,
+            "attachments": [],
+            "latest_reactions": [],
+            "own_reactions": [],
+            "mentioned_users": []
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.stream.decode(MessagePayload.self, from: json)
+
+        XCTAssertFalse(payload.mentionedHere)
+        XCTAssertFalse(payload.mentionedChannel)
+        XCTAssertEqual(payload.mentionedGroupIds, [])
+        XCTAssertEqual(payload.mentionedRoles, [])
+    }
+
     func test_messagePayload_isSerialized_withDefaultExtraData() throws {
         let box = try JSONDecoder.stream.decode(MessagePayload.Boxed.self, from: messageJSON)
         let payload = box.message
@@ -412,6 +478,62 @@ final class MessageRequestBody_Tests: XCTestCase {
             "pinned": true,
             "pin_expires": "2021-05-15T06:43:08.776Z",
             "restricted_visibility": ["test"]
+        ]
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
+        AssertJSONEqual(serializedJSON, expectedJSON)
+    }
+
+    func test_isSerialized_withEnhancedMentions() throws {
+        let payload: MessageRequestBody = .init(
+            id: .unique,
+            user: .dummy(userId: .unique),
+            text: .unique,
+            type: nil,
+            showReplyInChannel: false,
+            isSilent: false,
+            mentionedUserIds: ["user-1"],
+            mentionedHere: true,
+            mentionedChannel: true,
+            mentionedGroupIds: ["backendsupport"],
+            mentionedRoles: ["admin"],
+            extraData: [:]
+        )
+
+        let serializedJSON = try JSONEncoder.stream.encode(payload)
+        let expected: [String: Any] = [
+            "id": payload.id,
+            "text": payload.text,
+            "show_in_channel": false,
+            "silent": false,
+            "pinned": false,
+            "mentioned_users": ["user-1"],
+            "mentioned_here": true,
+            "mentioned_channel": true,
+            "mentioned_group_ids": ["backendsupport"],
+            "mentioned_roles": ["admin"]
+        ]
+        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
+        AssertJSONEqual(serializedJSON, expectedJSON)
+    }
+
+    func test_isSerialized_enhancedMentionsOmittedWhenEmpty() throws {
+        let payload: MessageRequestBody = .init(
+            id: .unique,
+            user: .dummy(userId: .unique),
+            text: .unique,
+            type: nil,
+            showReplyInChannel: false,
+            isSilent: false,
+            extraData: [:]
+        )
+
+        let serializedJSON = try JSONEncoder.stream.encode(payload)
+        let expected: [String: Any] = [
+            "id": payload.id,
+            "text": payload.text,
+            "show_in_channel": false,
+            "silent": false,
+            "pinned": false
         ]
         let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
         AssertJSONEqual(serializedJSON, expectedJSON)

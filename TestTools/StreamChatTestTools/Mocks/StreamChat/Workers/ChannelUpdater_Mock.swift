@@ -91,6 +91,10 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var createNewMessage_arguments: String?
     @Atomic var createNewMessage_attachments: [AnyAttachmentPayload]?
     @Atomic var createNewMessage_mentionedUserIds: [UserId]?
+    @Atomic var createNewMessage_mentionedHere: Bool?
+    @Atomic var createNewMessage_mentionedChannel: Bool?
+    @Atomic var createNewMessage_mentionedGroupIds: [String]?
+    @Atomic var createNewMessage_mentionedRoles: [String]?
     @Atomic var createNewMessage_quotedMessageId: MessageId?
     @Atomic var createNewMessage_pinning: MessagePinning?
     @Atomic var createNewMessage_location: NewLocationInfo?
@@ -253,6 +257,10 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         createNewMessage_arguments = nil
         createNewMessage_attachments = nil
         createNewMessage_mentionedUserIds = nil
+        createNewMessage_mentionedHere = nil
+        createNewMessage_mentionedChannel = nil
+        createNewMessage_mentionedGroupIds = nil
+        createNewMessage_mentionedRoles = nil
         createNewMessage_extraData = nil
         createNewMessage_completion = nil
         createNewMessage_completion_result = nil
@@ -418,6 +426,10 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         arguments: String?,
         attachments: [AnyAttachmentPayload],
         mentionedUserIds: [UserId],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         quotedMessageId: MessageId?,
         skipPush: Bool,
         skipEnrichUrl: Bool,
@@ -437,6 +449,10 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         createNewMessage_arguments = arguments
         createNewMessage_attachments = attachments
         createNewMessage_mentionedUserIds = mentionedUserIds
+        createNewMessage_mentionedHere = mentionedHere
+        createNewMessage_mentionedChannel = mentionedChannel
+        createNewMessage_mentionedGroupIds = mentionedGroupIds
+        createNewMessage_mentionedRoles = mentionedRoles
         createNewMessage_quotedMessageId = quotedMessageId
         createNewMessage_pinning = pinning
         createNewMessage_extraData = extraData

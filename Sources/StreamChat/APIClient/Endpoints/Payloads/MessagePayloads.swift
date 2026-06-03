@@ -25,6 +25,10 @@ enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
     case quotedMessage = "quoted_message"
     case parentMessage = "parent_message"
     case mentionedUsers = "mentioned_users"
+    case mentionedHere = "mentioned_here"
+    case mentionedChannel = "mentioned_channel"
+    case mentionedGroupIds = "mentioned_group_ids"
+    case mentionedRoles = "mentioned_roles"
     case threadParticipants = "thread_participants"
     case replyCount = "reply_count"
     case latestReactions = "latest_reactions"
@@ -93,6 +97,10 @@ final class MessagePayload: Decodable, Sendable {
     let quotedMessage: MessagePayload?
     let quotedMessageId: MessageId?
     let mentionedUsers: [UserPayload]
+    let mentionedHere: Bool
+    let mentionedChannel: Bool
+    let mentionedGroupIds: [String]
+    let mentionedRoles: [String]
     let restrictedVisibility: [UserId]
     let threadParticipants: [UserPayload]
     let replyCount: Int
@@ -147,6 +155,10 @@ final class MessagePayload: Decodable, Sendable {
         showReplyInChannel = try container.decodeIfPresent(Bool.self, forKey: .showReplyInChannel) ?? false
         quotedMessage = try container.decodeIfPresent(MessagePayload.self, forKey: .quotedMessage)
         mentionedUsers = try container.decodeArrayIgnoringFailures([UserPayload].self, forKey: .mentionedUsers)
+        mentionedHere = try container.decodeIfPresent(Bool.self, forKey: .mentionedHere) ?? false
+        mentionedChannel = try container.decodeIfPresent(Bool.self, forKey: .mentionedChannel) ?? false
+        mentionedGroupIds = try container.decodeArrayIfPresentIgnoringFailures([String].self, forKey: .mentionedGroupIds) ?? []
+        mentionedRoles = try container.decodeArrayIfPresentIgnoringFailures([String].self, forKey: .mentionedRoles) ?? []
         // backend returns `thread_participants` only if message is a thread, we are fine with to have it on all messages
         threadParticipants = try container.decodeIfPresent([UserPayload].self, forKey: .threadParticipants) ?? []
         replyCount = try container.decode(Int.self, forKey: .replyCount)
@@ -214,6 +226,10 @@ final class MessagePayload: Decodable, Sendable {
         quotedMessageId: String? = nil,
         quotedMessage: MessagePayload? = nil,
         mentionedUsers: [UserPayload],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         threadParticipants: [UserPayload] = [],
         replyCount: Int,
         restrictedVisibility: [UserId] = [],
@@ -258,6 +274,10 @@ final class MessagePayload: Decodable, Sendable {
         self.showReplyInChannel = showReplyInChannel
         self.quotedMessage = quotedMessage
         self.mentionedUsers = mentionedUsers
+        self.mentionedHere = mentionedHere
+        self.mentionedChannel = mentionedChannel
+        self.mentionedGroupIds = mentionedGroupIds
+        self.mentionedRoles = mentionedRoles
         self.threadParticipants = threadParticipants
         self.replyCount = replyCount
         self.restrictedVisibility = restrictedVisibility
@@ -308,6 +328,10 @@ struct MessageRequestBody: Encodable, Sendable {
     let quotedMessageId: String?
     let attachments: [MessageAttachmentPayload]
     let mentionedUserIds: [UserId]
+    let mentionedHere: Bool
+    let mentionedChannel: Bool
+    let mentionedGroupIds: [String]
+    let mentionedRoles: [String]
     var pinned: Bool
     var pinExpires: Date?
     var pollId: String?
@@ -328,6 +352,10 @@ struct MessageRequestBody: Encodable, Sendable {
         quotedMessageId: String? = nil,
         attachments: [MessageAttachmentPayload] = [],
         mentionedUserIds: [UserId] = [],
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         pinned: Bool = false,
         pinExpires: Date? = nil,
         pollId: String? = nil,
@@ -347,6 +375,10 @@ struct MessageRequestBody: Encodable, Sendable {
         self.quotedMessageId = quotedMessageId
         self.attachments = attachments
         self.mentionedUserIds = mentionedUserIds
+        self.mentionedHere = mentionedHere
+        self.mentionedChannel = mentionedChannel
+        self.mentionedGroupIds = mentionedGroupIds
+        self.mentionedRoles = mentionedRoles
         self.pinned = pinned
         self.pinExpires = pinExpires
         self.pollId = pollId
@@ -378,6 +410,22 @@ struct MessageRequestBody: Encodable, Sendable {
 
         if !mentionedUserIds.isEmpty {
             try container.encode(mentionedUserIds, forKey: .mentionedUsers)
+        }
+
+        if mentionedHere {
+            try container.encode(mentionedHere, forKey: .mentionedHere)
+        }
+
+        if mentionedChannel {
+            try container.encode(mentionedChannel, forKey: .mentionedChannel)
+        }
+
+        if !mentionedGroupIds.isEmpty {
+            try container.encode(mentionedGroupIds, forKey: .mentionedGroupIds)
+        }
+
+        if !mentionedRoles.isEmpty {
+            try container.encode(mentionedRoles, forKey: .mentionedRoles)
         }
 
         try extraData.encode(to: encoder)

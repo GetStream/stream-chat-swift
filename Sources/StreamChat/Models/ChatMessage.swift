@@ -105,6 +105,18 @@ public struct ChatMessage: Identifiable, Sendable {
     /// A list of users that are mentioned in this message.
     public let mentionedUsers: Set<ChatUser>
 
+    /// Whether all online/active channel members were mentioned (`@here`).
+    public let mentionedHere: Bool
+
+    /// Whether all channel members were mentioned (`@channel`).
+    public let mentionedChannel: Bool
+
+    /// The ids of the user groups that were mentioned in this message.
+    public let mentionedGroupIds: [String]
+
+    /// The roles that were mentioned in this message (e.g. `admin`, `moderator`).
+    public let mentionedRoles: [String]
+
     /// A list of users that participated in this message thread.
     /// The last user in the list is the author of the most recent reply.
     public let threadParticipants: [ChatUser]
@@ -217,6 +229,10 @@ public struct ChatMessage: Identifiable, Sendable {
         reactionGroups: [MessageReactionType: ChatMessageReactionGroup],
         author: ChatUser,
         mentionedUsers: Set<ChatUser>,
+        mentionedHere: Bool = false,
+        mentionedChannel: Bool = false,
+        mentionedGroupIds: [String] = [],
+        mentionedRoles: [String] = [],
         threadParticipants: [ChatUser],
         attachments: [AnyChatMessageAttachment],
         latestReplies: [ChatMessage],
@@ -270,6 +286,10 @@ public struct ChatMessage: Identifiable, Sendable {
 
         self.author = author
         self.mentionedUsers = mentionedUsers
+        self.mentionedHere = mentionedHere
+        self.mentionedChannel = mentionedChannel
+        self.mentionedGroupIds = mentionedGroupIds
+        self.mentionedRoles = mentionedRoles
         self.threadParticipants = threadParticipants
         self.latestReplies = latestReplies
         self.latestReactions = latestReactions
@@ -325,6 +345,10 @@ public struct ChatMessage: Identifiable, Sendable {
             reactionGroups: reactionGroups,
             author: author,
             mentionedUsers: mentionedUsers,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             threadParticipants: threadParticipants,
             attachments: attachments ?? allAttachments,
             latestReplies: latestReplies,
@@ -441,6 +465,10 @@ public struct ChatMessage: Identifiable, Sendable {
             reactionGroups: reactionGroups,
             author: author,
             mentionedUsers: mentionedUsers,
+            mentionedHere: mentionedHere,
+            mentionedChannel: mentionedChannel,
+            mentionedGroupIds: mentionedGroupIds,
+            mentionedRoles: mentionedRoles,
             threadParticipants: threadParticipants,
             attachments: attachments ?? [],
             latestReplies: latestReplies,
@@ -625,6 +653,10 @@ extension ChatMessage: Hashable {
         guard lhs.draftReply == rhs.draftReply else { return false }
         guard lhs.sharedLocation == rhs.sharedLocation else { return false }
         guard lhs.reminder == rhs.reminder else { return false }
+        guard lhs.mentionedHere == rhs.mentionedHere else { return false }
+        guard lhs.mentionedChannel == rhs.mentionedChannel else { return false }
+        guard lhs.mentionedGroupIds == rhs.mentionedGroupIds else { return false }
+        guard lhs.mentionedRoles == rhs.mentionedRoles else { return false }
         return true
     }
 
