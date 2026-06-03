@@ -62,6 +62,40 @@ final class ChannelListPayload_Tests: XCTestCase {
         XCTAssertEqual(payload.channels.count, 2)
     }
 
+    func test_channelListPayload_decodesPredefinedFilter() throws {
+        let json = """
+        {
+          "channels": [],
+          "predefined_filter": {
+            "name": "user_per_channel_type_channels",
+            "filter": { "members": { "$in": ["r2-d2"] }, "type": "messaging" },
+            "sort": [
+              { "direction": -1, "field": "last_message_at", "type": "string" },
+              { "direction": -1, "field": "created_at", "type": "string" }
+            ]
+          }
+        }
+        """.data(using: .utf8)!
+
+        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: json)
+
+        let predefined = try XCTUnwrap(payload.predefinedFilter)
+        XCTAssertEqual(predefined.name, "user_per_channel_type_channels")
+        XCTAssertEqual(predefined.filter["type"], .string("messaging"))
+        XCTAssertEqual(predefined.filter["members"], .dictionary(["$in": .array([.string("r2-d2")])]))
+        XCTAssertEqual(predefined.sort.count, 2)
+        XCTAssertEqual(predefined.sort.first?["field"], .string("last_message_at"))
+        XCTAssertEqual(predefined.sort.first?["direction"], .number(-1))
+    }
+
+    func test_channelListPayload_predefinedFilter_isNilWhenAbsent() throws {
+        let json = "{ \"channels\": [] }".data(using: .utf8)!
+
+        let payload = try JSONDecoder.default.decode(ChannelListPayload.self, from: json)
+
+        XCTAssertNil(payload.predefinedFilter)
+    }
+
     func saveChannelListPayload(_ payload: ChannelListPayload, database: DatabaseContainer_Spy, timeout: TimeInterval = 20) {
         let writeCompleted = expectation(description: "DB write complete")
         database.write({ session in

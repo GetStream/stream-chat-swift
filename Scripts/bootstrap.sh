@@ -57,6 +57,19 @@ if [ "${SKIP_SWIFT_BOOTSTRAP:-}" != true ]; then
   sudo sudo rm -f "$BIN_PATH"
   sudo sudo ln -s "$INSTALL_DIR/bin/swiftgen" "$BIN_PATH"
   swiftgen --version
+
+  puts "Install Sourcery v${SOURCERY_VERSION}"
+  DOWNLOAD_URL="https://github.com/krzysztofzablocki/Sourcery/releases/download/${SOURCERY_VERSION}/sourcery-${SOURCERY_VERSION}.zip"
+  DOWNLOAD_PATH="/tmp/sourcery-${SOURCERY_VERSION}.zip"
+  INSTALL_DIR="/usr/local/lib/sourcery"
+  BIN_PATH="/usr/local/bin/sourcery"
+  wget "$DOWNLOAD_URL" -O "$DOWNLOAD_PATH"
+  sudo rm -rf "$INSTALL_DIR"
+  sudo mkdir -p "$INSTALL_DIR"
+  sudo unzip -o "$DOWNLOAD_PATH" -d "$INSTALL_DIR"
+  sudo rm -f "$BIN_PATH"
+  sudo ln -s "$INSTALL_DIR/bin/sourcery" "$BIN_PATH"
+  sourcery --version
 fi
 
 if [[ ${INSTALL_SONAR-default} == true ]]; then

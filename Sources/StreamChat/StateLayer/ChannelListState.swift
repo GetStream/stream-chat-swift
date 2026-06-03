@@ -17,6 +17,7 @@ import Foundation
         eventNotificationCenter: EventNotificationCenter,
         channelWatcherHandler: ChannelWatcherHandling
     ) {
+        let query = channelListUpdater.loadPredefinedFilter(for: query) ?? query
         self.query = query
         observer = Observer(
             query: query,
@@ -33,8 +34,13 @@ import Foundation
     }
     
     /// The query used for filtering the list of channels.
-    public let query: ChannelListQuery
-    
+    public internal(set) var query: ChannelListQuery
+
     /// An array of channels for the specified ``ChannelListQuery``.
     @Published public internal(set) var channels = StreamCollection<ChatChannel>([])
+
+    func setQuery(_ query: ChannelListQuery) {
+        self.query = query
+        channels = observer.reload(with: query)
+    }
 }

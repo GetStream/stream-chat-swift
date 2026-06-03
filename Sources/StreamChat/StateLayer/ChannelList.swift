@@ -10,7 +10,7 @@ public class ChannelList {
     private let client: ChatClient
     private let stateBuilder: StateBuilder<ChannelListState>
     let query: ChannelListQuery
-    
+
     init(
         query: ChannelListQuery,
         dynamicFilter: ((ChatChannel) -> Bool)?,
@@ -36,25 +36,25 @@ public class ChannelList {
             )
         }
     }
-    
+
     // MARK: - Accessing the State
-    
+
     /// An observable object representing the current state of the channel list.
     @MainActor public lazy var state: ChannelListState = stateBuilder.build()
-    
+
     /// Fetches the most recent state from the server and updates the local store.
     ///
     /// - Important: Loaded channels in ``ChannelListState/channels`` are reset.
     ///
     /// - Throws: An error while communicating with the Stream API.
     public func get() async throws {
-        let pagination = Pagination(pageSize: query.pagination.pageSize)
+        let pagination = Pagination(pageSize: await state.query.pagination.pageSize)
         try await loadChannels(with: pagination)
         client.syncRepository.startTrackingChannelList(self)
     }
-    
+
     // MARK: - Channel List Pagination
-    
+
     /// Loads channels for the specified pagination parameters and updates ``ChannelListState/channels``.
     ///
     /// - Important: If the pagination offset is 0 and cursor is nil, then loaded channels are reset.
@@ -64,9 +64,15 @@ public class ChannelList {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of channels for the pagination.
     @discardableResult public func loadChannels(with pagination: Pagination) async throws -> [ChatChannel] {
-        try await channelListUpdater.loadChannels(query: query, pagination: pagination)
+        var query = await state.query
+        query.pagination = pagination
+        let result = try await channelListUpdater.update(channelListQuery: query)
+        if let updatedQuery = result.updatedQuery {
+            await state.setQuery(updatedQuery)
+        }
+        return result.channels
     }
-    
+
     /// Loads more channels and updates ``ChannelListState/channels``.
     ///
     /// - Parameter limit: The limit for the page size. The default limit is 20.
@@ -74,19 +80,17 @@ public class ChannelList {
     /// - Throws: An error while communicating with the Stream API.
     /// - Returns: An array of loaded channels.
     @discardableResult public func loadMoreChannels(limit: Int? = nil) async throws -> [ChatChannel] {
-        let limit = limit ?? query.pagination.pageSize
+        let pageSize = await state.query.pagination.pageSize
+        let limit = limit ?? pageSize
         let count = await state.channels.count
-        return try await channelListUpdater.loadNextChannels(
-            query: query,
-            limit: limit,
-            loadedChannelsCount: count
-        )
+        return try await loadChannels(with: Pagination(pageSize: limit, offset: count))
     }
-    
+
     // MARK: - Internal
-    
+
     func refreshLoadedChannels() async throws -> Set<ChannelId> {
         let count = await state.channels.count
+        let query = await state.query
         return try await channelListUpdater.refreshLoadedChannels(for: query, channelCount: count)
     }
 }
@@ -97,7 +101,7 @@ extension ChannelList {
             _ database: DatabaseContainer,
             _ apiClient: APIClient
         ) -> ChannelListUpdater = ChannelListUpdater.init
-        
+
         var stateBuilder: @MainActor (
             _ query: ChannelListQuery,
             _ dynamicFilter: ((ChatChannel) -> Bool)?,

@@ -86,6 +86,72 @@ final class ChannelList_Tests: XCTestCase {
         await XCTAssertEqual(nextChannelListPayload.channels.map(\.channel.cid.rawValue), channelList.state.channels.map(\.cid.rawValue))
     }
     
+    // MARK: - Predefined filter resolution
+
+    func test_restoringState_predefinedFilterQuery_appliesCachedResolvedFilterBeforeGet() async throws {
+        let predefinedQuery = ChannelListQuery(
+            predefinedFilter: "user_per_channel_type_channels",
+            filterValues: ["user_id": "r2-d2"]
+        )
+        let resolvedFilterJSON = #"{"type":"messaging"}"#.data(using: .utf8)!
+        let resolvedSortJSON = #"[{"field":"last_message_at","direction":-1}]"#.data(using: .utf8)!
+        try await env.client.mockDatabaseContainer.write { session in
+            let dto = session.saveQuery(query: predefinedQuery)
+            dto.filterJSONData = resolvedFilterJSON
+            dto.sortJSONData = resolvedSortJSON
+        }
+
+        await setUpChannelList(usesMockedChannelUpdater: true, query: predefinedQuery)
+
+        let stateQuery = await channelList.state.query
+        XCTAssertEqual(stateQuery.filter.key, "type")
+        XCTAssertEqual(stateQuery.filter.value as? String, "messaging")
+        XCTAssertEqual(stateQuery.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
+    }
+
+    func test_get_predefinedFilterQuery_appliesResolvedFilterAndMirrorsOnList() async throws {
+        // GIVEN: a ChannelList built with a predefined query (placeholder filter + empty sort)
+        let predefinedQuery = ChannelListQuery(
+            predefinedFilter: "user_per_channel_type_channels",
+            filterValues: ["user_id": "r2-d2"]
+        )
+        await setUpChannelList(usesMockedChannelUpdater: true, query: predefinedQuery)
+
+        // AND: the DTO carries server-resolved filter/sort JSON
+        let resolvedFilterJSON = #"{"type":"messaging"}"#.data(using: .utf8)!
+        let resolvedSortJSON = #"[{"field":"last_message_at","direction":-1}]"#.data(using: .utf8)!
+        try await env.client.mockDatabaseContainer.write { session in
+            let dto = session.saveQuery(query: predefinedQuery)
+            dto.filterJSONData = resolvedFilterJSON
+            dto.sortJSONData = resolvedSortJSON
+        }
+        env.channelListUpdaterMock.update_completion_result = .success([])
+
+        // WHEN: get() completes
+        try await channelList.get()
+
+        // THEN: state.query exposes the resolved values
+        let stateQuery = await channelList.state.query
+        XCTAssertEqual(stateQuery.filter.key, "type")
+        XCTAssertEqual(stateQuery.filter.value as? String, "messaging")
+        XCTAssertEqual(stateQuery.sort.count, 1)
+        XCTAssertEqual(stateQuery.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
+        XCTAssertEqual(stateQuery.sort.first?.direction, -1)
+    }
+
+    func test_get_nonPredefinedQuery_leavesQueryUnchanged() async throws {
+        await setUpChannelList(usesMockedChannelUpdater: true)
+        env.channelListUpdaterMock.update_completion_result = .success([])
+
+        let queryBefore = await channelList.state.query
+
+        try await channelList.get()
+
+        let queryAfter = await channelList.state.query
+        XCTAssertEqual(queryAfter.filter.filterHash, queryBefore.filter.filterHash)
+        XCTAssertEqual(queryAfter.sort.map(\.description), queryBefore.sort.map(\.description))
+    }
+
     // MARK: - Pagination and Channel Updater Arguments
     
     func test_loadChannels_whenChannelUpdaterSucceeds_thenLoadSucceeds() async throws {
@@ -122,6 +188,27 @@ final class ChannelList_Tests: XCTestCase {
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.pagination.pageSize, pageSize)
         XCTAssertEqual(env.channelListUpdaterMock.update_queries.first?.pagination.offset, 0)
         XCTAssertEqual(responseChannels, result)
+    }
+
+    func test_loadMoreChannels_predefinedFilterQuery_appliesResolvedFilterAndMirrorsOnList() async throws {
+        let predefinedQuery = ChannelListQuery(
+            predefinedFilter: "user_per_channel_type_channels",
+            filterValues: ["user_id": "r2-d2"]
+        )
+        await setUpChannelList(usesMockedChannelUpdater: true, query: predefinedQuery)
+        try await env.client.mockDatabaseContainer.write { session in
+            let dto = session.saveQuery(query: predefinedQuery)
+            dto.filterJSONData = #"{"type":"messaging"}"#.data(using: .utf8)!
+            dto.sortJSONData = #"[{"field":"last_message_at","direction":-1}]"#.data(using: .utf8)!
+        }
+        env.channelListUpdaterMock.update_completion_result = .success([])
+
+        try await channelList.loadMoreChannels()
+
+        let stateQuery = await channelList.state.query
+        XCTAssertEqual(stateQuery.filter.key, "type")
+        XCTAssertEqual(stateQuery.filter.value as? String, "messaging")
+        XCTAssertEqual(stateQuery.sort.first?.key.remoteKey, ChannelListSortingKey.lastMessageAt.remoteKey)
     }
     
     func test_loadMoreChannels_whenChannelUpdaterFails_thenLoadFails() async throws {
@@ -515,13 +602,15 @@ final class ChannelList_Tests: XCTestCase {
         loadState: Bool = true,
         filter: Filter<ChannelListFilterScope>? = nil,
         sort: [Sorting<ChannelListSortingKey>] = [.init(key: .createdAt, isAscending: true)],
-        dynamicFilter: ((ChatChannel) -> Bool)? = nil
+        dynamicFilter: ((ChatChannel) -> Bool)? = nil,
+        query: ChannelListQuery? = nil
     ) {
+        let resolvedQuery = query ?? ChannelListQuery(
+            filter: filter ?? .in(.members, values: [memberId]),
+            sort: sort
+        )
         channelList = ChannelList(
-            query: ChannelListQuery(
-                filter: filter ?? .in(.members, values: [memberId]),
-                sort: sort
-            ),
+            query: resolvedQuery,
             dynamicFilter: dynamicFilter,
             client: env.client,
             environment: env.channelListEnvironment(usesMockedUpdater: usesMockedChannelUpdater)

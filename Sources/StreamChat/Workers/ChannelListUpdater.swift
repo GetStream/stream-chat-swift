@@ -4,6 +4,18 @@
 
 import CoreData
 
+struct ChannelListUpdateResult: Sendable {
+    let channels: [ChatChannel]
+    let updatedQuery: ChannelListQuery?
+}
+
+extension ChannelListUpdateResult {
+    /// Convenience for tests that don't simulate predefined-filter resolution.
+    init(channels: [ChatChannel]) {
+        self.init(channels: channels, updatedQuery: nil)
+    }
+}
+
 /// Makes a channels query call to the backend and updates the local storage with the results.
 class ChannelListUpdater: Worker {
     /// Makes a channels query call to the backend and updates the local storage with the results.
@@ -14,7 +26,7 @@ class ChannelListUpdater: Worker {
     ///
     func update(
         channelListQuery: ChannelListQuery,
-        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
+        completion: ((Result<ChannelListUpdateResult, Error>) -> Void)? = nil
     ) {
         fetch(channelListQuery: channelListQuery) { [weak self] in
             switch $0 {
@@ -23,8 +35,7 @@ class ChannelListUpdater: Worker {
                 var initialActions: ((DatabaseSession) -> Void)?
                 if isInitialFetch {
                     initialActions = { session in
-                        let filterHash = channelListQuery.filter.filterHash
-                        guard let queryDTO = session.channelListQuery(filterHash: filterHash) else { return }
+                        guard let queryDTO = session.channelListQuery(channelListQuery) else { return }
                         queryDTO.channels.removeAll()
                     }
                 }
@@ -41,12 +52,22 @@ class ChannelListUpdater: Worker {
         }
     }
 
+    /// See `ChannelDatabaseSession.loadPredefinedFilter(for:)` for return semantics.
+    func loadPredefinedFilter(for query: ChannelListQuery) -> ChannelListQuery? {
+        guard let predefinedFilter = query.predefinedFilter, !predefinedFilter.isEmpty else { return nil }
+        do {
+            return try database.readAndWait { $0.loadPredefinedFilter(for: query) }
+        } catch {
+            return nil
+        }
+    }
+
     func refreshLoadedChannels(for query: ChannelListQuery, channelCount: Int, completion: @escaping (Result<Set<ChannelId>, Error>) -> Void) {
         guard channelCount > 0 else {
             completion(.success(Set()))
             return
         }
-        
+
         var allPages = [ChannelListQuery]()
         let pageSize = query.pagination.pageSize > 0 ? query.pagination.pageSize : .channelsPageSize
         for offset in stride(from: 0, to: channelCount, by: pageSize) {
@@ -56,7 +77,7 @@ class ChannelListUpdater: Worker {
         }
         refreshLoadedChannels(for: allPages, refreshedChannelIds: Set(), completion: completion)
     }
-    
+
     func refreshLoadedChannels(for query: ChannelListQuery, channelCount: Int) async throws -> Set<ChannelId> {
         try await withCheckedThrowingContinuation { continuation in
             refreshLoadedChannels(for: query, channelCount: channelCount) { result in
@@ -64,13 +85,13 @@ class ChannelListUpdater: Worker {
             }
         }
     }
-        
+
     private func refreshLoadedChannels(for pageQueries: [ChannelListQuery], refreshedChannelIds: Set<ChannelId>, completion: @escaping (Result<Set<ChannelId>, Error>) -> Void) {
         guard let nextQuery = pageQueries.first else {
             completion(.success(refreshedChannelIds))
             return
         }
-        
+
         let remaining = pageQueries.dropFirst()
         fetch(channelListQuery: nextQuery) { [weak self] result in
             switch result {
@@ -80,10 +101,10 @@ class ChannelListUpdater: Worker {
                     query: nextQuery,
                     completion: { writeResult in
                         switch writeResult {
-                        case .success(let writtenChannels):
+                        case .success(let writeResult):
                             self?.refreshLoadedChannels(
                                 for: Array(remaining),
-                                refreshedChannelIds: refreshedChannelIds.union(writtenChannels.map(\.cid)),
+                                refreshedChannelIds: refreshedChannelIds.union(writeResult.channels.map(\.cid)),
                                 completion: completion
                             )
                         case .failure(let error):
@@ -170,7 +191,7 @@ class ChannelListUpdater: Worker {
 
 extension DatabaseSession {
     func getChannelWithQuery(cid: ChannelId, query: ChannelListQuery) -> (ChannelDTO, ChannelListQueryDTO)? {
-        guard let queryDTO = channelListQuery(filterHash: query.filter.filterHash) else {
+        guard let queryDTO = channelListQuery(query) else {
             log.debug("Channel list query has not yet created \(query)")
             return nil
         }
@@ -189,52 +210,33 @@ private extension ChannelListUpdater {
         payload: ChannelListPayload,
         query: ChannelListQuery,
         initialActions: ((DatabaseSession) -> Void)? = nil,
-        completion: ((Result<[ChatChannel], Error>) -> Void)? = nil
+        completion: ((Result<ChannelListUpdateResult, Error>) -> Void)? = nil
     ) {
         var channels: [ChatChannel] = []
+        var resolvedQuery: ChannelListQuery?
         database.write { session in
             initialActions?(session)
             channels = session.saveChannelList(payload: payload, query: query).compactMap { try? $0.asModel() }
+            if let loadedQuery = session.loadPredefinedFilter(for: query), !loadedQuery.isFilterEqual(to: query) {
+                resolvedQuery = loadedQuery
+            }
         } completion: { error in
             if let error = error {
                 log.error("Failed to save `ChannelListPayload` to the database. Error: \(error)")
                 completion?(.failure(error))
             } else {
-                completion?(.success(channels))
+                completion?(.success(.init(channels: channels, updatedQuery: resolvedQuery)))
             }
         }
     }
 }
 
 extension ChannelListUpdater {
-    @discardableResult func update(channelListQuery: ChannelListQuery) async throws -> [ChatChannel] {
+    func update(channelListQuery: ChannelListQuery) async throws -> ChannelListUpdateResult {
         try await withCheckedThrowingContinuation { continuation in
             update(channelListQuery: channelListQuery) { result in
                 continuation.resume(with: result)
             }
         }
-    }
-    
-    // MARK: -
-    
-    func loadChannels(query: ChannelListQuery, pagination: Pagination) async throws -> [ChatChannel] {
-        try await update(channelListQuery: query.withPagination(pagination))
-    }
-    
-    func loadNextChannels(
-        query: ChannelListQuery,
-        limit: Int,
-        loadedChannelsCount: Int
-    ) async throws -> [ChatChannel] {
-        let pagination = Pagination(pageSize: limit, offset: loadedChannelsCount)
-        return try await update(channelListQuery: query.withPagination(pagination))
-    }
-}
-
-private extension ChannelListQuery {
-    func withPagination(_ pagination: Pagination) -> Self {
-        var query = self
-        query.pagination = pagination
-        return query
     }
 }

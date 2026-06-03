@@ -3,6 +3,9 @@ MAKEFLAGS += --silent
 bootstrap:
 	./Scripts/bootstrap.sh
 
+generate:
+	sourcery --config Sources/StreamChat/.sourcery.yml
+
 all_artifacts:
 	echo "🏁 Starting at $$(date +%T)"
 	make frameworks
