@@ -2479,12 +2479,6 @@ private extension SharedLocationPayload {
     }
 }
 
-extension QueryThreadsResponse {
-    convenience init(threads: [ThreadStateResponse], next: String? = nil) {
-        self.init(duration: "", next: next, prev: nil, threads: threads)
-    }
-}
-
 extension ThreadStateResponse {
     var extraData: [String: RawJSON] { custom }
 

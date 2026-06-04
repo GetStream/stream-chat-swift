@@ -23,12 +23,11 @@ final class ThreadDTO_Tests: XCTestCase {
     }
 
     func test_saveThreadListPayload() throws {
-        let payload = QueryThreadsResponse(
+        let payload = QueryThreadsResponse.dummy(
             threads: [
                 dummyThreadPayload(),
                 dummyThreadPayload()
-            ],
-            next: nil
+            ]
         )
 
         let dto = database.viewContext.saveThreadList(

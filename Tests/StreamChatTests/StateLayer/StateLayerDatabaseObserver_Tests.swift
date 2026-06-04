@@ -345,7 +345,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
                         parentMessageId: parentMessageId
                     )
                 }
-            return QueryThreadsResponse(threads: threads, next: nil)
+            return QueryThreadsResponse.dummy(threads: threads)
         }
         try await client.databaseContainer.write { session in
             session.saveThreadList(payload: makePayload(5))

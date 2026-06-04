@@ -186,7 +186,7 @@ final class ChatThreadListController_Tests: XCTestCase {
             let threadId1 = MessageId.unique
             let threadId2 = MessageId.unique
             let threadId3 = MessageId.unique
-            session.saveThreadList(payload: .init(
+            session.saveThreadList(payload: .dummy(
                 threads: [
                     .dummy(
                         lastMessageAt: date.addingTimeInterval(30),
@@ -206,8 +206,7 @@ final class ChatThreadListController_Tests: XCTestCase {
                         parentMessageId: threadId3,
                         title: "3"
                     )
-                ],
-                next: nil
+                ]
             ))
         }
         wait(for: [delegate.expectation], timeout: defaultTimeout)
@@ -333,9 +332,8 @@ extension ChatThreadListController_Tests {
         // Simulate changes in the DB:
         _ = try waitFor {
             client.databaseContainer.write({ session in
-                session.saveThreadList(payload: .init(
-                    threads: threadsInDB(),
-                    next: nil
+                session.saveThreadList(payload: .dummy(
+                    threads: threadsInDB()
                 ))
             }, completion: $0)
         }

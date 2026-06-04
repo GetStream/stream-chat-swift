@@ -45,7 +45,7 @@ final class ThreadsRepository_Tests: XCTestCase {
 
         let secondMessageId = MessageId.unique
         let thirdMessageId = MessageId.unique
-        let payload = QueryThreadsResponse(
+        let payload = QueryThreadsResponse.dummy(
             threads: [
                 .dummy(
                     channel: .dummy(cid: channelId),
@@ -142,7 +142,7 @@ final class ThreadsRepository_Tests: XCTestCase {
         XCTAssertEqual(loadedPreviousThreads.count, 2)
 
         let firstPageThreadIds = [MessageId.unique, MessageId.unique, MessageId.unique]
-        let payload = QueryThreadsResponse(
+        let payload = QueryThreadsResponse.dummy(
             threads: [
                 .dummy(
                     channel: .dummy(cid: .unique),
@@ -159,8 +159,7 @@ final class ThreadsRepository_Tests: XCTestCase {
                     parentMessage: .dummy(messageId: firstPageThreadIds[2]),
                     parentMessageId: firstPageThreadIds[2]
                 )
-            ],
-            next: nil
+            ]
         )
 
         let query = ThreadListQuery(watch: true)
