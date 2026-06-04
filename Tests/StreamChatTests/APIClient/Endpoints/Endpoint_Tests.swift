@@ -33,7 +33,7 @@ final class Endpoint_Tests: XCTestCase {
             queryItems: ["foo": "bar"],
             requiresConnectionId: false,
             requiresToken: false,
-            body: EmptyBody()
+            body: nil
         )
 
         let data = try JSONEncoder.stream.encode(endpoint)

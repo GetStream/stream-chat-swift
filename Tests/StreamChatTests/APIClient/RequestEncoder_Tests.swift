@@ -45,6 +45,23 @@ final class RequestEncoder_Tests: XCTestCase {
         XCTAssertEqual((bodyObject?["event"] as? [String: Any])?["type"] as? String, "custom")
     }
 
+    func test_encodeWriteRequest_whenBodyIsNil_encodesEmptyJSONObjectBody() throws {
+        for method in [EndpointMethod.post, .patch, .put] {
+            let endpoint = Endpoint<EmptyResponse>(
+                path: .custom("custom/path"),
+                method: method,
+                requiresConnectionId: false,
+                requiresToken: false,
+                body: nil
+            )
+
+            let request = try encoder.encodeRequest(for: endpoint)
+
+            XCTAssertEqual(request.httpMethod, method.rawValue)
+            XCTAssertEqual(request.httpBody, Data("{}".utf8))
+        }
+    }
+
     func test_encodeDeleteRequest_encodesGeneratedQueryItems() throws {
         let endpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(
             id: "message-id",

@@ -235,9 +235,11 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
         case .post, .patch, .put:
             if let data = endpoint.body as? Data {
                 request.httpBody = data
+            } else if let body = endpoint.body {
+                request.httpBody = try JSONEncoder.stream.encode(AnyEncodable(body))
             } else {
-                let body = try JSONEncoder.stream.encode(AnyEncodable(endpoint.body ?? EmptyBody()))
-                request.httpBody = body
+                // The backend expects write requests to include an empty JSON object body.
+                request.httpBody = Data("{}".utf8)
             }
         }
     }

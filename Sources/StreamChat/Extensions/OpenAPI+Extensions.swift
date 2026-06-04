@@ -2764,10 +2764,6 @@ private extension UserResponse {
     }
 }
 
-/// A type representing empty body for `.post` Endpoints.
-/// Our backend currently expects a body (not `nil`), even if it's empty.
-struct EmptyBody: Codable, Equatable {}
-
 // MARK: - Endpoint compatibility wrappers
 
 //
