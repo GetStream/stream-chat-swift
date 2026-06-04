@@ -178,7 +178,7 @@ extension ThreadStateResponse: IdentifiablePayloadProxy {
 
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        parentMessage?.asMessagePayload.fillIds(cache: &cache)
+        parentMessage?.fillIds(cache: &cache)
         channelDetailPayload?.fillIds(cache: &cache)
         createdByPayload.fillIds(cache: &cache)
         latestRepliesPayload.fillIds(cache: &cache)
@@ -190,7 +190,7 @@ extension ThreadStateResponse: IdentifiablePayloadProxy {
 extension ThreadParticipantPayload: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        user?.asUserPayload.fillIds(cache: &cache)
+        user?.fillIds(cache: &cache)
     }
 }
 
@@ -248,7 +248,7 @@ extension ReadStateResponse: IdentifiablePayload {
 
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        user.asUserPayload.fillIds(cache: &cache)
+        user.fillIds(cache: &cache)
     }
 }
 

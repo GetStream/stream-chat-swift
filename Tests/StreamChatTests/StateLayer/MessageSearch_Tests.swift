@@ -135,7 +135,7 @@ final class MessageSearch_Tests: XCTestCase {
             results: messagePayloads.map { payload, cid in
                 SearchResult(message: SearchResultMessage(
                     messageResponse: payload,
-                    channel: ChannelResponse.dummy(cid: cid).asChannelResponse
+                    channel: ChannelResponse.dummy(cid: cid)
                 ))
             }
         )

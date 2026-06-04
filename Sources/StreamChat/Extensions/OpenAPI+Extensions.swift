@@ -214,7 +214,7 @@ extension MembersResponse {
 
 extension ChannelMemberResponse {
     var userPayload: UserResponse? {
-        user?.asUserPayload
+        user
     }
 
     var resolvedUserId: UserId {
@@ -277,7 +277,7 @@ extension ChannelMemberResponse {
             role: role?.rawValue,
             shadowBanned: isShadowBanned ?? false,
             updatedAt: updatedAt,
-            user: user?.asUserResponse,
+            user: user,
             userId: user?.id ?? userId
         )
     }
@@ -337,7 +337,7 @@ extension FlagResponse {
 
 extension UserMuteResponse {
     var mutedUser: UserResponse {
-        target?.asUserPayload ?? UserResponse(
+        target ?? UserResponse(
             id: "",
             name: nil,
             imageURL: nil,
@@ -364,7 +364,7 @@ extension UserMuteResponse {
     }
 
     convenience init(mutedUser: UserResponse, created: Date, updated: Date) {
-        self.init(createdAt: created, target: mutedUser.asUserResponse, updatedAt: updated)
+        self.init(createdAt: created, target: mutedUser, updatedAt: updated)
     }
 }
 
@@ -378,7 +378,7 @@ extension MuteResponse {
     }
 
     var currentUser: OwnUserResponse {
-        ownUser?.asOwnUserResponse ?? UserResponse(
+        ownUser ?? UserResponse(
             id: "",
             name: nil,
             imageURL: nil,
@@ -398,10 +398,6 @@ extension MuteResponse {
 }
 
 extension OwnUserResponse {
-    var asOwnUserResponse: OwnUserResponse {
-        self
-    }
-
     var asUserPayload: UserResponse {
         UserResponse(
             id: id,
@@ -587,11 +583,11 @@ extension MuteChannelResponse {
 
 extension ChannelMute {
     var channelPayload: ChannelResponse? {
-        channel?.asChannelResponse
+        channel
     }
 
     var userPayload: UserResponse? {
-        user?.asUserPayload
+        user
     }
 
     var expiresAt: Date? {
@@ -606,11 +602,11 @@ extension ChannelMute {
         expiresAt: Date? = nil
     ) {
         self.init(
-            channel: mutedChannel.asChannelResponse,
+            channel: mutedChannel,
             createdAt: createdAt,
             expires: expiresAt,
             updatedAt: updatedAt,
-            user: user.asUserResponse
+            user: user
         )
     }
 
@@ -659,7 +655,7 @@ extension DraftResponse {
     }
 
     var channelPayload: ChannelResponse? {
-        channel?.asChannelResponse
+        channel
     }
 
     convenience init(
@@ -672,13 +668,13 @@ extension DraftResponse {
         parentMessage: MessageResponse?
     ) {
         self.init(
-            channel: channelPayload?.asChannelResponse,
+            channel: channelPayload,
             channelCid: cid?.rawValue ?? channelPayload?.cid ?? "",
             createdAt: createdAt,
             message: message,
             parentId: parentId,
-            parentMessage: parentMessage?.asMessageResponse,
-            quotedMessage: quotedMessage?.asMessageResponse
+            parentMessage: parentMessage,
+            quotedMessage: quotedMessage
         )
     }
 }
@@ -701,7 +697,7 @@ extension DraftPayloadResponse {
     }
 
     var mentionedUsersPayload: [UserResponse]? {
-        mentionedUsers?.map(\.asUserPayload)
+        mentionedUsers
     }
 
     var extraData: [String: RawJSON] {
@@ -727,7 +723,7 @@ extension DraftPayloadResponse {
             attachments: attachments,
             custom: extraData,
             id: id,
-            mentionedUsers: mentionedUsers?.map(\.asUserResponse),
+            mentionedUsers: mentionedUsers,
             showInChannel: showReplyInChannel,
             silent: isSilent,
             text: text
@@ -793,7 +789,7 @@ extension ReadStateResponse {
             lastRead: lastReadAt,
             lastReadMessageId: lastReadMessageId,
             unreadMessages: unreadMessagesCount,
-            user: user.asUserResponse
+            user: user
         )
     }
 
@@ -955,7 +951,7 @@ extension ModerationV2Response {
 
 extension CreateGuestResponse {
     convenience init(user: OwnUserResponse, token: Token) {
-        let userResponse = user.asUserPayload.asUserResponse
+        let userResponse = user.asUserPayload
         userResponse.id = token.userId
         self.init(accessToken: token.rawValue, duration: "", user: userResponse)
     }
@@ -970,14 +966,6 @@ extension CreateGuestResponse {
 }
 
 extension UserResponse {
-    var asUserPayload: UserResponse {
-        self
-    }
-
-    var asUserResponse: UserResponse {
-        self
-    }
-
     var imageURL: URL? {
         image.flatMap(URL.init(string:))
     }
@@ -1298,7 +1286,6 @@ extension ChannelResponse {
     var isHidden: Bool? { hidden }
     var cooldownDuration: Int { cooldown ?? 0 }
     var channelId: ChannelId? { try? ChannelId(cid: cid) }
-    var asChannelResponse: ChannelResponse { self }
 }
 
 extension ChannelStateResponseFields {
@@ -1431,9 +1418,6 @@ extension Command {
 extension MessageResponse {
     /// Custom-data key under which the originating campaign id is stored.
     static let campaignIdCustomKey = "created_by_campaign_id"
-
-    var asMessagePayload: MessageResponse { self }
-    var asMessageResponse: MessageResponse { self }
 
     // Compatibility shims for callers written against the legacy MessageResponse class.
     var extraData: [String: RawJSON] {
@@ -1827,7 +1811,7 @@ extension PollResponseData {
             allowUserSuggestedOptions: allowUserSuggestedOptions,
             answersCount: answersCount,
             createdAt: createdAt,
-            createdBy: createdBy?.asUserResponse,
+            createdBy: createdBy,
             createdById: createdBy?.id ?? createdById,
             custom: custom,
             description: description,
@@ -1878,7 +1862,7 @@ extension PollVoteResponseData {
             optionId: optionId ?? "",
             pollId: pollId,
             updatedAt: updatedAt,
-            user: user?.asUserResponse,
+            user: user,
             userId: userId
         )
     }
@@ -2182,7 +2166,7 @@ extension ReactionResponse {
     }
 
     var userPayload: UserResponse {
-        user.asUserPayload
+        user
     }
 
     var extraData: [String: RawJSON] {
@@ -2205,7 +2189,7 @@ extension ReactionResponse {
             score: score,
             type: type.rawValue,
             updatedAt: updatedAt,
-            user: user.asUserResponse,
+            user: user,
             userId: user.id
         )
     }
@@ -2468,22 +2452,11 @@ extension Attachment {
     }
 }
 
-private extension SharedLocationPayload {
-    var asSharedLocationOpenAPI: SharedLocationPayload {
-        SharedLocationPayload(
-            createdByDeviceId: createdByDeviceId,
-            endAt: endAt,
-            latitude: Float(latitude),
-            longitude: Float(longitude)
-        )
-    }
-}
-
 extension ThreadStateResponse {
     var extraData: [String: RawJSON] { custom }
 
     var channelDetailPayload: ChannelResponse? {
-        if let channelPayload = channel?.asChannelResponse {
+        if let channelPayload = channel {
             return channelPayload
         }
         guard let cid = try? ChannelId(cid: channelCid) else { return nil }
@@ -2491,7 +2464,7 @@ extension ThreadStateResponse {
             cid: cid.rawValue,
             config: ChannelConfig().asChannelConfigWithInfo,
             createdAt: createdAt,
-            createdBy: createdBy?.asUserResponse,
+            createdBy: createdBy,
             custom: [:],
             disabled: false,
             frozen: false,
@@ -2504,11 +2477,11 @@ extension ThreadStateResponse {
     }
 
     var createdByPayload: UserResponse {
-        createdBy?.asUserPayload ?? UserResponse.empty
+        createdBy ?? UserResponse.empty
     }
 
     var latestRepliesPayload: [MessageResponse] {
-        latestReplies.compactMap(\.asMessagePayload)
+        latestReplies
     }
 
     var readPayload: [ReadStateResponse] { read ?? [] }
@@ -2535,17 +2508,17 @@ extension ThreadStateResponse {
     ) {
         self.init(
             activeParticipantCount: activeParticipantCount,
-            channel: channel.asChannelResponse,
+            channel: channel,
             channelCid: channel.cid,
             createdAt: createdAt,
-            createdBy: createdBy.asUserResponse,
+            createdBy: createdBy,
             createdByUserId: createdBy.id,
             custom: extraData,
             deletedAt: nil,
             draft: draft,
             lastMessageAt: lastMessageAt,
-            latestReplies: latestReplies.compactMap(\.asMessageResponse),
-            parentMessage: parentMessage.asMessageResponse,
+            latestReplies: latestReplies,
+            parentMessage: parentMessage,
             parentMessageId: parentMessageId,
             participantCount: participantCount,
             read: read,
@@ -2563,7 +2536,7 @@ extension ThreadResponse {
     var extraData: [String: RawJSON] { custom }
 
     var channelDetailPayload: ChannelResponse? {
-        if let channelPayload = channel?.asChannelResponse {
+        if let channelPayload = channel {
             return channelPayload
         }
         guard let cid = try? ChannelId(cid: channelCid) else { return nil }
@@ -2571,7 +2544,7 @@ extension ThreadResponse {
             cid: cid.rawValue,
             config: ChannelConfig().asChannelConfigWithInfo,
             createdAt: createdAt,
-            createdBy: createdBy?.asUserResponse,
+            createdBy: createdBy,
             custom: [:],
             disabled: false,
             frozen: false,
@@ -2584,7 +2557,7 @@ extension ThreadResponse {
     }
 
     var createdByPayload: UserResponse {
-        createdBy?.asUserPayload ?? UserResponse.empty
+        createdBy ?? UserResponse.empty
     }
 
     convenience init(
@@ -2603,15 +2576,15 @@ extension ThreadResponse {
     ) {
         self.init(
             activeParticipantCount: activeParticipantCount,
-            channel: channel.asChannelResponse,
+            channel: channel,
             channelCid: channel.cid,
             createdAt: createdAt,
-            createdBy: createdBy.asUserResponse,
+            createdBy: createdBy,
             createdByUserId: createdBy.id,
             custom: extraData,
             deletedAt: nil,
             lastMessageAt: lastMessageAt,
-            parentMessage: parentMessage.asMessageResponse,
+            parentMessage: parentMessage,
             parentMessageId: parentMessageId,
             participantCount: participantCount,
             replyCount: replyCount,
@@ -2669,7 +2642,7 @@ extension ThreadParticipantPayload {
             lastThreadMessageAt: nil,
             leftThreadAt: nil,
             threadId: threadId,
-            user: user.asUserResponse,
+            user: user,
             userId: user.id
         )
     }

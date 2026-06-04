@@ -125,7 +125,7 @@ extension NSManagedObjectContext {
         
         var user: UserDTO?
         if let payloadUser = payload.user {
-            user = try saveUser(payload: payloadUser.asUserPayload, query: nil, cache: cache)
+            user = try saveUser(payload: payloadUser, query: nil, cache: cache)
         }
         let dto = PollVoteDTO.loadOrCreate(
             voteId: payload.id,

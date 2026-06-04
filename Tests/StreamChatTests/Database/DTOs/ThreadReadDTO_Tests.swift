@@ -94,7 +94,11 @@ final class ThreadReadDTO_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveThread(
-                payload: .dummy(parentMessageId: messageId, replyCount: replyCount),
+                payload: .dummy(
+                    parentMessage: .dummy(messageId: messageId),
+                    parentMessageId: messageId,
+                    replyCount: replyCount
+                ),
                 cache: nil
             )
             try session.saveThreadRead(

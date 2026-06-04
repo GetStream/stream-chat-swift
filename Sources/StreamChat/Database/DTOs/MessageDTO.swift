@@ -1200,7 +1200,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             threadDTO?.parentMessageId = threadId
         }
 
-        if let parentMessage = payload.parentMessage?.asMessagePayload {
+        if let parentMessage = payload.parentMessage {
             dto.parentMessage = try saveMessage(
                 payload: parentMessage,
                 channelDTO: channelDTO,
@@ -1219,7 +1219,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             channelDTO.draftMessage = dto
         }
 
-        if let quotedMessage = payload.quotedMessage?.asMessagePayload {
+        if let quotedMessage = payload.quotedMessage {
             dto.quotedMessage = try saveMessage(
                 payload: quotedMessage,
                 channelDTO: channelDTO,
@@ -1476,7 +1476,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             guard let resultMessage = result.message else { return nil }
             // Search responses include channel data on each message; save it so that
             // the message can be linked to a channel DTO when persisted.
-            if let channelDetail = resultMessage.channel?.asChannelResponse {
+            if let channelDetail = resultMessage.channel {
                 try saveChannel(payload: channelDetail, query: nil, cache: cache)
             }
             return try saveMessage(payload: resultMessage.asMessageResponse, for: query, cache: cache)

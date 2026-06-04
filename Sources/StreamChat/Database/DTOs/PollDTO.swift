@@ -169,7 +169,7 @@ extension NSManagedObjectContext {
         }
         
         if let userPayload = payload.createdBy {
-            pollDto.createdBy = try saveUser(payload: userPayload.asUserPayload, query: nil, cache: cache)
+            pollDto.createdBy = try saveUser(payload: userPayload, query: nil, cache: cache)
         } else {
             pollDto.createdBy = UserDTO.loadOrCreate(id: payload.createdById, context: self, cache: cache)
         }

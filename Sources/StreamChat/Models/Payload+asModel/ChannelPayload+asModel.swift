@@ -125,7 +125,7 @@ extension ReadStateResponse {
             lastReadAt: lastReadAt,
             lastReadMessageId: lastReadMessageId,
             unreadMessagesCount: unreadMessagesCount,
-            user: user.asUserPayload.asModel(),
+            user: user.asModel(),
             lastDeliveredAt: lastDeliveredAt,
             lastDeliveredMessageId: lastDeliveredMessageId
         )

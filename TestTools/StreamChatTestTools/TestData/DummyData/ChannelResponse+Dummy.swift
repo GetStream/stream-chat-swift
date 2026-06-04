@@ -41,7 +41,7 @@ extension ChannelResponse {
             config: config.asChannelConfigWithInfo,
             cooldown: cooldownDuration,
             createdAt: createdAt,
-            createdBy: createdBy?.asUserResponse,
+            createdBy: createdBy,
             custom: custom,
             deletedAt: deletedAt,
             disabled: isDisabled,

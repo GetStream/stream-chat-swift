@@ -221,7 +221,7 @@ extension NSManagedObjectContext {
         guard let channelPayload = payload.channelDetailPayload else {
             throw ClientError("Thread payload is missing channel")
         }
-        guard let parentMessageResponse = payload.parentMessage?.asMessagePayload else {
+        guard let parentMessageResponse = payload.parentMessage else {
             throw ClientError("Thread payload is missing parent message")
         }
         let cid = try ChannelId(cid: channelPayload.cid)
@@ -322,7 +322,7 @@ extension NSManagedObjectContext {
         guard let channelPayload = partialPayload.channelDetailPayload else {
             throw ClientError("Thread partial payload is missing channel")
         }
-        guard let parentMessageResponse = partialPayload.parentMessage?.asMessagePayload else {
+        guard let parentMessageResponse = partialPayload.parentMessage else {
             throw ClientError("Thread partial payload is missing parent message")
         }
         let threadDTO = ThreadDTO.loadOrCreate(

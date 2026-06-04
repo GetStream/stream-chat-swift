@@ -84,7 +84,7 @@ extension NSManagedObjectContext {
     ) throws -> ChannelReadDTO {
         let dto = ChannelReadDTO.loadOrCreate(cid: cid, userId: payload.user.id, context: self, cache: cache)
 
-        dto.user = try saveUser(payload: payload.user.asUserPayload)
+        dto.user = try saveUser(payload: payload.user)
 
         let isLocallyTracked = !dto.isInserted
             && chatClientConfig?.isLocalUnreadCountEnabled == true
