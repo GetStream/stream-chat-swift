@@ -79,6 +79,33 @@ final class ThreadDTO_Tests: XCTestCase {
         XCTAssertEqual(dto.updatedAt, payload.updatedAt.bridgeDate)
     }
 
+    func test_saveThreadPayload_whenParentMessageIsMissing_throws() throws {
+        let payload = ThreadStateResponse.dummy(parentMessageId: .unique)
+
+        try database.readSynchronously { session in
+            XCTAssertThrowsError(
+                try session.saveThread(
+                    payload: payload,
+                    cache: nil
+                )
+            ) { error in
+                XCTAssertTrue(String(describing: error).contains("Thread payload is missing parent message"))
+            }
+        }
+    }
+
+    func test_savePartialThreadPayload_whenParentMessageIsMissing_throws() throws {
+        let payload = ThreadResponse.dummy(parentMessageId: .unique)
+
+        try database.readSynchronously { session in
+            XCTAssertThrowsError(
+                try session.saveThread(partialPayload: payload)
+            ) { error in
+                XCTAssertTrue(String(describing: error).contains("Thread partial payload is missing parent message"))
+            }
+        }
+    }
+
     func test_asModel() throws {
         let payload = ThreadStateResponse(
             parentMessageId: .unique,
@@ -124,13 +151,15 @@ final class ThreadDTO_Tests: XCTestCase {
 
     func test_asModel_sortsLatestRepliesByCreatedAt() throws {
         let now = Date()
+        let parentMessageId = MessageId.unique
         let payload = ThreadStateResponse.dummy(
-            parentMessageId: .unique,
             latestReplies: [
                 .dummy(text: "3", createdAt: now.addingTimeInterval(20)),
                 .dummy(text: "2", createdAt: now.addingTimeInterval(10)),
                 .dummy(text: "1", createdAt: now)
-            ]
+            ],
+            parentMessage: .dummy(messageId: parentMessageId),
+            parentMessageId: parentMessageId
         )
 
         let dto = try database.viewContext.saveThread(

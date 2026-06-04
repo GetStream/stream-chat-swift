@@ -3093,7 +3093,13 @@ final class MessageUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(UpdateThreadPartialResponse(duration: "", thread: .dummy(parentMessageId: threadId))))
+        apiClient.test_simulateResponse(.success(UpdateThreadPartialResponse(
+            duration: "",
+            thread: .dummy(
+                parentMessage: .dummy(messageId: threadId),
+                parentMessageId: threadId
+            )
+        )))
 
         wait(for: [exp], timeout: defaultTimeout)
     }
@@ -3129,7 +3135,13 @@ final class MessageUpdater_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        apiClient.test_simulateResponse(.success(GetThreadResponse(duration: "", thread: .dummy(parentMessageId: threadId, title: "TEST"))))
+        apiClient.test_simulateResponse(.success(GetThreadResponse.dummy(
+            thread: ThreadStateResponse.dummy(
+                parentMessage: MessageResponse.dummy(messageId: threadId),
+                parentMessageId: threadId,
+                title: "TEST"
+            )
+        )))
 
         wait(for: [exp], timeout: defaultTimeout)
     }

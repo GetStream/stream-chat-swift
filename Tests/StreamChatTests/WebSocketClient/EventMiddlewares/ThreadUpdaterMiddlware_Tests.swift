@@ -85,8 +85,10 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: parentMessageId,
-                    latestReplies: [.dummy(), .dummy()]
+                    channel: .dummy(cid: cid),
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(messageId: parentMessageId),
+                    parentMessageId: parentMessageId
                 ),
                 cache: nil
             )
@@ -129,8 +131,10 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: parentMessageId,
-                    latestReplies: [.dummy(), .dummy()]
+                    channel: .dummy(cid: cid),
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(messageId: parentMessageId),
+                    parentMessageId: parentMessageId
                 ),
                 cache: nil
             )
@@ -164,8 +168,10 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: parentMessageId,
-                    latestReplies: [.dummy(), .dummy()]
+                    channel: .dummy(cid: cid),
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(messageId: parentMessageId),
+                    parentMessageId: parentMessageId
                 ),
                 cache: nil
             )
@@ -215,8 +221,10 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: parentMessageId,
-                    latestReplies: [.dummy(), .dummy()]
+                    channel: .dummy(cid: cid),
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(messageId: parentMessageId),
+                    parentMessageId: parentMessageId
                 ),
                 cache: nil
             )
@@ -254,17 +262,19 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             let channelDTO = try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: .unique,
                     channel: .dummy(cid: cid),
-                    latestReplies: [.dummy(), .dummy()]
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(),
+                    parentMessageId: .unique
                 ),
                 cache: nil
             )
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: .unique,
                     channel: .dummy(cid: cid),
-                    latestReplies: [.dummy(), .dummy()]
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(),
+                    parentMessageId: .unique
                 ),
                 cache: nil
             )
@@ -294,17 +304,19 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             let channelDTO = try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: .unique,
                     channel: .dummy(cid: cid),
-                    latestReplies: [.dummy(), .dummy()]
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(),
+                    parentMessageId: .unique
                 ),
                 cache: nil
             )
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: .unique,
                     channel: .dummy(cid: cid),
-                    latestReplies: [.dummy(), .dummy()]
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(),
+                    parentMessageId: .unique
                 ),
                 cache: nil
             )
@@ -338,9 +350,10 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: parentMessageId,
                     channel: .dummy(cid: cid),
-                    latestReplies: [.dummy(), .dummy()]
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(messageId: parentMessageId),
+                    parentMessageId: parentMessageId
                 ),
                 cache: nil
             )
@@ -374,9 +387,10 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: parentMessageId,
                     channel: .dummy(cid: cid),
-                    latestReplies: [.dummy(), .dummy()]
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(messageId: parentMessageId),
+                    parentMessageId: parentMessageId
                 ),
                 cache: nil
             )
@@ -410,9 +424,10 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: parentMessageId,
                     channel: .dummy(cid: cid),
-                    latestReplies: [.dummy(), .dummy()]
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(messageId: parentMessageId),
+                    parentMessageId: parentMessageId
                 ),
                 cache: nil
             )
@@ -445,9 +460,10 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: parentMessageId,
                     channel: .dummy(cid: cid),
-                    latestReplies: [.dummy(), .dummy()]
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(messageId: parentMessageId),
+                    parentMessageId: parentMessageId
                 ),
                 cache: nil
             )
@@ -480,9 +496,10 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: parentMessageId,
                     channel: .dummy(cid: cid),
-                    latestReplies: [.dummy(), .dummy()]
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(messageId: parentMessageId),
+                    parentMessageId: parentMessageId
                 ),
                 cache: nil
             )

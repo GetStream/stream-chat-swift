@@ -43,27 +43,38 @@ final class ThreadsRepository_Tests: XCTestCase {
             )
         }
 
+        let secondMessageId = MessageId.unique
+        let thirdMessageId = MessageId.unique
         let payload = QueryThreadsResponse(
             threads: [
                 .dummy(
-                    parentMessageId: messageId,
                     channel: .dummy(cid: channelId),
-                    replyCount: 3,
+                    latestReplies: [.dummy(), .dummy()],
+                    parentMessage: .dummy(messageId: messageId),
+                    parentMessageId: messageId,
                     participantCount: 3,
+                    read: [
+                        dummyThreadReadPayload(unreadMessagesCount: 3),
+                        dummyThreadReadPayload(unreadMessagesCount: 3)
+                    ],
+                    replyCount: 3,
                     threadParticipants: [
                         dummyThreadParticipantPayload(),
                         dummyThreadParticipantPayload(),
                         dummyThreadParticipantPayload()
                     ],
-                    title: "Test",
-                    latestReplies: [.dummy(), .dummy()],
-                    read: [
-                        dummyThreadReadPayload(unreadMessagesCount: 3),
-                        dummyThreadReadPayload(unreadMessagesCount: 3)
-                    ]
+                    title: "Test"
                 ),
-                .dummy(parentMessageId: .unique, channel: .dummy(cid: channelId)),
-                .dummy(parentMessageId: .unique, channel: .dummy(cid: .unique))
+                .dummy(
+                    channel: .dummy(cid: channelId),
+                    parentMessage: .dummy(messageId: secondMessageId),
+                    parentMessageId: secondMessageId
+                ),
+                .dummy(
+                    channel: .dummy(cid: .unique),
+                    parentMessage: .dummy(messageId: thirdMessageId),
+                    parentMessageId: thirdMessageId
+                )
             ],
             next: .unique
         )
@@ -115,7 +126,11 @@ final class ThreadsRepository_Tests: XCTestCase {
             // Save previous threads
             try previousThreads.forEach { previousThreadId in
                 try session.saveThread(
-                    payload: .dummy(parentMessageId: previousThreadId, channel: .dummy(cid: channelId)),
+                    payload: ThreadStateResponse.dummy(
+                        channel: .dummy(cid: channelId),
+                        parentMessage: .dummy(messageId: previousThreadId),
+                        parentMessageId: previousThreadId
+                    ),
                     cache: nil
                 )
             }
@@ -126,11 +141,24 @@ final class ThreadsRepository_Tests: XCTestCase {
         }
         XCTAssertEqual(loadedPreviousThreads.count, 2)
 
+        let firstPageThreadIds = [MessageId.unique, MessageId.unique, MessageId.unique]
         let payload = QueryThreadsResponse(
             threads: [
-                .dummy(parentMessageId: .unique, channel: .dummy(cid: .unique)),
-                .dummy(parentMessageId: .unique, channel: .dummy(cid: .unique)),
-                .dummy(parentMessageId: .unique, channel: .dummy(cid: .unique))
+                .dummy(
+                    channel: .dummy(cid: .unique),
+                    parentMessage: .dummy(messageId: firstPageThreadIds[0]),
+                    parentMessageId: firstPageThreadIds[0]
+                ),
+                .dummy(
+                    channel: .dummy(cid: .unique),
+                    parentMessage: .dummy(messageId: firstPageThreadIds[1]),
+                    parentMessageId: firstPageThreadIds[1]
+                ),
+                .dummy(
+                    channel: .dummy(cid: .unique),
+                    parentMessage: .dummy(messageId: firstPageThreadIds[2]),
+                    parentMessageId: firstPageThreadIds[2]
+                )
             ],
             next: nil
         )

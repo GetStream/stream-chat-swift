@@ -2513,35 +2513,6 @@ extension ThreadStateResponse {
         createdBy?.asUserPayload ?? UserResponse.empty
     }
 
-    var parentMessagePayload: MessageResponse? {
-        parentMessage?.asMessagePayload ?? MessageResponse(
-            attachments: [],
-            cid: channelCid,
-            createdAt: createdAt,
-            custom: [:],
-            deletedReplyCount: 0,
-            html: "",
-            id: parentMessageId,
-            latestReactions: [],
-            mentionedChannel: false,
-            mentionedHere: false,
-            mentionedUsers: [],
-            ownReactions: [],
-            pinned: false,
-            reactionCounts: [:],
-            reactionScores: [:],
-            replyCount: replyCount ?? 0,
-            restrictedVisibility: [],
-            shadowed: false,
-            showInChannel: false,
-            silent: false,
-            text: "",
-            type: MessageType.regular.rawValue,
-            updatedAt: updatedAt,
-            user: createdByPayload
-        )
-    }
-
     var latestRepliesPayload: [MessageResponse] {
         latestReplies.compactMap(\.asMessagePayload)
     }
@@ -2620,35 +2591,6 @@ extension ThreadResponse {
 
     var createdByPayload: UserResponse {
         createdBy?.asUserPayload ?? UserResponse.empty
-    }
-
-    var parentMessagePayload: MessageResponse? {
-        parentMessage?.asMessagePayload ?? MessageResponse(
-            attachments: [],
-            cid: channelCid,
-            createdAt: createdAt,
-            custom: [:],
-            deletedReplyCount: 0,
-            html: "",
-            id: parentMessageId,
-            latestReactions: [],
-            mentionedChannel: false,
-            mentionedHere: false,
-            mentionedUsers: [],
-            ownReactions: [],
-            pinned: false,
-            reactionCounts: [:],
-            reactionScores: [:],
-            replyCount: replyCount ?? 0,
-            restrictedVisibility: [],
-            shadowed: false,
-            showInChannel: false,
-            silent: false,
-            text: "",
-            type: MessageType.regular.rawValue,
-            updatedAt: updatedAt,
-            user: createdByPayload
-        )
     }
 
     convenience init(

@@ -338,7 +338,13 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
     func test_reuseThreads_whenSomeChange_thenOthersAreReused() async throws {
         let makePayload: (Int) -> QueryThreadsResponse = { count in
             let threads = (0..<count)
-                .map { ThreadStateResponse.dummy(parentMessageId: "\($0)") }
+                .map {
+                    let parentMessageId = "\($0)"
+                    return ThreadStateResponse.dummy(
+                        parentMessage: .dummy(messageId: parentMessageId),
+                        parentMessageId: parentMessageId
+                    )
+                }
             return QueryThreadsResponse(threads: threads, next: nil)
         }
         try await client.databaseContainer.write { session in

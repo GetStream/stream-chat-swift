@@ -247,6 +247,31 @@ final class IdentifiablePayload_Tests: XCTestCase {
         XCTAssertEqual(userIds, ["u3"])
     }
 
+    func test_ThreadStateResponse_whenParentMessageIsMissing_doesNotCacheSyntheticParentMessage() throws {
+        let parentMessageId = MessageId.unique
+        let payload = ThreadStateResponse.dummy(
+            parentMessageId: parentMessageId
+        )
+
+        let cache = payload.recursivelyGetAllIds()
+
+        XCTAssertEqual(cache[ThreadDTO.className], [parentMessageId])
+        XCTAssertFalse(cache[MessageDTO.className]?.contains(parentMessageId) ?? false)
+    }
+
+    func test_ThreadStateResponse_whenParentMessageExists_cachesParentMessage() throws {
+        let parentMessageId = MessageId.unique
+        let payload = ThreadStateResponse.dummy(
+            parentMessage: .dummy(messageId: parentMessageId),
+            parentMessageId: parentMessageId
+        )
+
+        let cache = payload.recursivelyGetAllIds()
+
+        XCTAssertEqual(cache[ThreadDTO.className], [parentMessageId])
+        XCTAssertTrue(cache[MessageDTO.className]?.contains(parentMessageId) ?? false)
+    }
+
     func test_bigQueryChannelsResponse_recursivelyIdentifiablePayload() throws {
         let channelsCount = 4 // ChannelResponse
         let userCount = 4 // UserResponse

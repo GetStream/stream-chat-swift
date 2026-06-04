@@ -269,7 +269,11 @@ final class MessageEvents_IntegrationTests: XCTestCase {
             cid: cid.rawValue,
             createdAt: createdAt,
             custom: [:],
-            thread: .dummy(parentMessageId: parentMessageId, channel: .dummy(cid: cid)),
+            thread: .dummy(
+                channel: .dummy(cid: cid),
+                parentMessage: .dummy(messageId: parentMessageId),
+                parentMessageId: parentMessageId
+            ),
             user: UserResponseCommonFields(user)
         )
 
@@ -280,7 +284,14 @@ final class MessageEvents_IntegrationTests: XCTestCase {
         _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
 
         // Save the thread to the database
-        _ = try session.saveThread(payload: .dummy(parentMessageId: parentMessageId, channel: .dummy(cid: cid)), cache: nil)
+        _ = try session.saveThread(
+            payload: .dummy(
+                channel: .dummy(cid: cid),
+                parentMessage: .dummy(messageId: parentMessageId),
+                parentMessageId: parentMessageId
+            ),
+            cache: nil
+        )
 
         _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: unreadCount))
 

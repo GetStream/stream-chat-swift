@@ -6,75 +6,98 @@ import Foundation
 @testable import StreamChat
 import XCTest
 
+extension GetThreadResponse {
+    static func dummy(
+        duration: String = "",
+        thread: ThreadStateResponse = .dummy()
+    ) -> GetThreadResponse {
+        .init(duration: duration, thread: thread)
+    }
+}
+
 extension ThreadStateResponse {
     /// Returns dummy thread payload with the given values.
     static func dummy(
-        parentMessageId: MessageId,
-        parentMessage: MessageResponse? = nil,
-        channel: ChannelResponse = .dummy(),
-        createdBy: UserResponse = .dummy(userId: .newUniqueId),
-        replyCount: Int = 0,
-        participantCount: Int = 0,
         activeParticipantCount: Int = 0,
-        threadParticipants: [ThreadParticipantPayload] = [],
-        lastMessageAt: Date? = nil,
+        channel: ChannelResponse = .dummy(),
+        channelCid: String? = nil,
         createdAt: Date = .unique,
-        updatedAt: Date? = .unique,
-        title: String? = nil,
-        latestReplies: [MessageResponse] = [],
-        read: [ReadStateResponse] = [],
+        createdBy: UserResponse = .dummy(userId: .newUniqueId),
+        createdByUserId: String? = nil,
+        custom: [String: RawJSON] = [:],
+        deletedAt: Date? = nil,
         draft: DraftResponse? = nil,
-        extraData: [String: RawJSON] = [:]
+        lastMessageAt: Date? = nil,
+        latestReplies: [MessageResponse] = [],
+        parentMessage: MessageResponse? = nil,
+        parentMessageId: MessageId = .unique,
+        participantCount: Int = 0,
+        read: [ReadStateResponse] = [],
+        replyCount: Int = 0,
+        threadParticipants: [ThreadParticipantPayload] = [],
+        title: String = "",
+        updatedAt: Date = .unique
     ) -> Self {
         .init(
-            parentMessageId: parentMessageId,
-            parentMessage: .dummy(messageId: parentMessageId),
-            channel: channel,
-            createdBy: createdBy,
-            replyCount: replyCount,
-            participantCount: participantCount,
             activeParticipantCount: activeParticipantCount,
-            threadParticipants: threadParticipants,
-            lastMessageAt: lastMessageAt,
+            channel: channel.asChannelResponse,
+            channelCid: channelCid ?? channel.cid,
             createdAt: createdAt,
-            updatedAt: updatedAt,
-            title: title,
-            latestReplies: latestReplies,
-            read: read,
+            createdBy: createdBy.asUserResponse,
+            createdByUserId: createdByUserId ?? createdBy.id,
+            custom: custom,
+            deletedAt: deletedAt,
             draft: draft,
-            extraData: extraData
+            lastMessageAt: lastMessageAt,
+            latestReplies: latestReplies.compactMap(\.asMessageResponse),
+            parentMessage: parentMessage?.asMessageResponse,
+            parentMessageId: parentMessageId,
+            participantCount: participantCount,
+            read: read,
+            replyCount: replyCount,
+            threadParticipants: threadParticipants,
+            title: title,
+            updatedAt: updatedAt
         )
     }
 }
 
 extension ThreadResponse {
     static func dummy(
-        parentMessageId: MessageId,
-        parentMessage: MessageResponse? = nil,
-        channel: ChannelResponse = .dummy(),
-        createdBy: UserResponse = .dummy(userId: .newUniqueId),
-        replyCount: Int = 0,
-        participantCount: Int = 0,
         activeParticipantCount: Int = 0,
-        lastMessageAt: Date? = nil,
+        channel: ChannelResponse = .dummy(),
+        channelCid: String? = nil,
         createdAt: Date = .unique,
-        updatedAt: Date? = .unique,
-        title: String? = nil,
-        extraData: [String: RawJSON] = [:]
+        createdBy: UserResponse = .dummy(userId: .newUniqueId),
+        createdByUserId: String? = nil,
+        custom: [String: RawJSON] = [:],
+        deletedAt: Date? = nil,
+        lastMessageAt: Date? = nil,
+        parentMessage: MessageResponse? = nil,
+        parentMessageId: MessageId = .unique,
+        participantCount: Int = 0,
+        replyCount: Int = 0,
+        threadParticipants: [ThreadParticipantPayload]? = nil,
+        title: String = "",
+        updatedAt: Date = .unique
     ) -> ThreadResponse {
         .init(
-            parentMessageId: parentMessageId,
-            parentMessage: parentMessage ?? .dummy(messageId: parentMessageId),
-            channel: channel,
-            createdBy: createdBy,
-            replyCount: replyCount,
-            participantCount: participantCount,
             activeParticipantCount: activeParticipantCount,
-            lastMessageAt: lastMessageAt,
+            channel: channel.asChannelResponse,
+            channelCid: channelCid ?? channel.cid,
             createdAt: createdAt,
-            updatedAt: updatedAt,
+            createdBy: createdBy.asUserResponse,
+            createdByUserId: createdByUserId ?? createdBy.id,
+            custom: custom,
+            deletedAt: deletedAt,
+            lastMessageAt: lastMessageAt,
+            parentMessage: parentMessage?.asMessageResponse,
+            parentMessageId: parentMessageId,
+            participantCount: participantCount,
+            replyCount: replyCount,
+            threadParticipants: threadParticipants,
             title: title,
-            extraData: extraData
+            updatedAt: updatedAt
         )
     }
 }

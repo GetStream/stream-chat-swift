@@ -137,9 +137,9 @@ final class DraftUpdaterMiddleware_Tests: XCTestCase {
             // Save a thread and draft message
             try session.saveThread(
                 payload: .dummy(
-                    parentMessageId: threadId,
                     channel: .dummy(cid: cid),
-                    latestReplies: []
+                    parentMessage: .dummy(messageId: threadId),
+                    parentMessageId: threadId
                 ),
                 cache: nil
             )

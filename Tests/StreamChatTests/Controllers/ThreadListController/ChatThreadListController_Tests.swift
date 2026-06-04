@@ -183,21 +183,27 @@ final class ChatThreadListController_Tests: XCTestCase {
 
         try client.databaseContainer.writeSynchronously { session in
             let date = Date.unique
+            let threadId1 = MessageId.unique
+            let threadId2 = MessageId.unique
+            let threadId3 = MessageId.unique
             session.saveThreadList(payload: .init(
                 threads: [
                     .dummy(
-                        parentMessageId: .unique,
                         lastMessageAt: date.addingTimeInterval(30),
+                        parentMessage: .dummy(messageId: threadId1),
+                        parentMessageId: threadId1,
                         title: "1"
                     ),
                     .dummy(
-                        parentMessageId: .unique,
                         lastMessageAt: date.addingTimeInterval(20),
+                        parentMessage: .dummy(messageId: threadId2),
+                        parentMessageId: threadId2,
                         title: "2"
                     ),
                     .dummy(
-                        parentMessageId: .unique,
                         lastMessageAt: date.addingTimeInterval(1),
+                        parentMessage: .dummy(messageId: threadId3),
+                        parentMessageId: threadId3,
                         title: "3"
                     )
                 ],
@@ -220,18 +226,21 @@ final class ChatThreadListController_Tests: XCTestCase {
             .equal(.channelDisabled, to: true),
             threadsInDB: [
                 .dummy(
-                    parentMessageId: threadId1,
                     channel: .dummy(cid: .unique, isDisabled: true),
+                    parentMessage: .dummy(messageId: threadId1),
+                    parentMessageId: threadId1,
                     title: "Disabled Channel Thread 1"
                 ),
                 .dummy(
-                    parentMessageId: threadId2,
                     channel: .dummy(cid: .unique, isDisabled: false),
+                    parentMessage: .dummy(messageId: threadId2),
+                    parentMessageId: threadId2,
                     title: "Enabled Channel Thread 1"
                 ),
                 .dummy(
-                    parentMessageId: threadId3,
                     channel: .dummy(cid: .unique, isDisabled: true),
+                    parentMessage: .dummy(messageId: threadId3),
+                    parentMessageId: threadId3,
                     title: "Disabled Channel Thread 2"
                 )
             ],
@@ -248,18 +257,21 @@ final class ChatThreadListController_Tests: XCTestCase {
             .equal(.channelDisabled, to: false),
             threadsInDB: [
                 .dummy(
-                    parentMessageId: threadId1,
                     channel: .dummy(cid: .unique, isDisabled: true),
+                    parentMessage: .dummy(messageId: threadId1),
+                    parentMessageId: threadId1,
                     title: "Disabled Channel Thread 1"
                 ),
                 .dummy(
-                    parentMessageId: threadId2,
                     channel: .dummy(cid: .unique, isDisabled: false),
+                    parentMessage: .dummy(messageId: threadId2),
+                    parentMessageId: threadId2,
                     title: "Enabled Channel Thread 1"
                 ),
                 .dummy(
-                    parentMessageId: threadId3,
                     channel: .dummy(cid: .unique, isDisabled: false),
+                    parentMessage: .dummy(messageId: threadId3),
+                    parentMessageId: threadId3,
                     title: "Enabled Channel Thread 2"
                 )
             ],

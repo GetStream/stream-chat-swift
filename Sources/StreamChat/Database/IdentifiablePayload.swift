@@ -173,9 +173,12 @@ extension QueryThreadsResponse: IdentifiablePayloadProxy {
 }
 
 extension ThreadStateResponse: IdentifiablePayloadProxy {
+    var databaseId: DatabaseId? { parentMessageId }
+    static let modelClass: (IdentifiableDatabaseObject).Type? = ThreadDTO.self
+
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        parentMessagePayload?.fillIds(cache: &cache)
+        parentMessage?.asMessagePayload.fillIds(cache: &cache)
         channelDetailPayload?.fillIds(cache: &cache)
         createdByPayload.fillIds(cache: &cache)
         latestRepliesPayload.fillIds(cache: &cache)
