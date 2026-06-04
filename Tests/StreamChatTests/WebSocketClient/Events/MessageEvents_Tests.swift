@@ -71,6 +71,7 @@ final class MessageEvents_Tests: XCTestCase {
         _ = try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
         _ = try session.saveMessage(payload: messagePayload, for: cid, cache: nil)
         _ = try session.saveCurrentUser(payload: .dummy(userPayload: .dummy(userId: .unique), unreadCount: unreadCount))
+        try session.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
         try session.saveEvent(event: .typeMessageNewEvent(dto))
 
         let event = try XCTUnwrap(dto.toDomainEvent(session: session) as? MessageNewEvent)

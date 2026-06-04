@@ -92,12 +92,13 @@ final class ManualEventHandler_Tests: XCTestCase {
     // MARK: - Event Handling - Unsupported Event Type
 
     func test_handle_unsupportedEventType_returnsNil() throws {
-        // Use a typing event which is not handled by ManualEventHandler
-        let eventDTO = TypingStartEventDTO(
+        // Use a user watching event which is not handled by ManualEventHandler.
+        let eventDTO = UserWatchingStartEventDTO(
             cid: cid.rawValue,
             createdAt: .unique,
             custom: [:],
-            user: UserResponseCommonFields(.dummy(userId: .unique))
+            user: UserResponseCommonFields(.dummy(userId: .unique)),
+            watcherCount: 1
         )
 
         nonisolated(unsafe) var result: Event!

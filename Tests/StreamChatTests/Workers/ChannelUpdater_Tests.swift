@@ -571,7 +571,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { _ in
             expectation.fulfill()
         })
-        apiClient.test_simulateResponse(.success(dummyPayload(with: cid, messages: midPageMessages)))
+        apiClient.test_simulateResponse(.success(dummyPayload(with: cid, messages: midPageMessages).asChannelStateResponse))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -639,7 +639,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         channelUpdater.update(channelQuery: query, isInRecoveryMode: false, completion: { _ in
             expectation.fulfill()
         })
-        apiClient.test_simulateResponse(.success(dummyPayload(with: cid, messages: midPageMessages)))
+        apiClient.test_simulateResponse(.success(dummyPayload(with: cid, messages: midPageMessages).asChannelStateResponse))
         waitForExpectations(timeout: defaultTimeout)
 
         // The cached newest 5 messages remain linked to the channel — that is what
