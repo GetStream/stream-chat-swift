@@ -60,7 +60,7 @@ extension MessageResponse {
         _ = moderationDetails
         var custom = extraData
         if let campaignId {
-            custom[MessagePayloadsCodingKeys.campaignId.rawValue] = .string(campaignId)
+            custom[MessageResponse.campaignIdCustomKey] = .string(campaignId)
         }
         let resolvedType = type ?? (parentId == nil ? .regular : showReplyInChannel == true ? .regular : .reply)
         return MessageResponse(

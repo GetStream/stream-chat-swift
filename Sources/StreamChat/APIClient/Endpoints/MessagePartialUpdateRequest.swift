@@ -34,8 +34,16 @@ struct MessagePartialUpdateRequest: Encodable {
         }
     }
 
+    enum CodingKeys: String, CodingKey {
+        case skipEnrichUrl = "skip_enrich_url"
+        case userId = "user_id"
+        case user
+        case set
+        case unset
+    }
+
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: MessagePayloadsCodingKeys.self)
+        var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encodeIfPresent(skipEnrichUrl, forKey: .skipEnrichUrl)
         try container.encodeIfPresent(userId, forKey: .userId)
         try container.encodeIfPresent(user, forKey: .user)

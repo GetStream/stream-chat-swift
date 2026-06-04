@@ -108,62 +108,6 @@ struct MessageListPayload: Decodable {
     let messages: [MessageResponse]
 }
 
-enum MessagePayloadsCodingKeys: String, CodingKey, CaseIterable {
-    case id
-    case cid
-    case channelId = "channel_cid"
-    case type
-    case user
-    case userId = "user_id"
-    case createdAt = "created_at"
-    case updatedAt = "updated_at"
-    case deletedAt = "deleted_at"
-    case text
-    case command
-    case args
-    case attachments
-    case parentId = "parent_id"
-    case showReplyInChannel = "show_in_channel"
-    case quotedMessageId = "quoted_message_id"
-    case quotedMessage = "quoted_message"
-    case parentMessage = "parent_message"
-    case mentionedUsers = "mentioned_users"
-    case threadParticipants = "thread_participants"
-    case replyCount = "reply_count"
-    case latestReactions = "latest_reactions"
-    case ownReactions = "own_reactions"
-    case reactionScores = "reaction_scores"
-    case reactionCounts = "reaction_counts"
-    case reactionGroups = "reaction_groups"
-    case isSilent = "silent"
-    case channel
-    case pinned
-    case pinnedBy = "pinned_by"
-    case pinnedAt = "pinned_at"
-    case pinExpires = "pin_expires"
-    case html
-    case i18n
-    case mml
-    case imageLabels = "image_labels"
-    case shadowed
-    case moderationDetails = "moderation_details" // moderation v1 key
-    case moderation // moderation v2 key
-    case messageTextUpdatedAt = "message_text_updated_at"
-    case message
-    case poll
-    case pollId = "poll_id"
-    case set
-    case unset
-    case skipEnrichUrl = "skip_enrich_url"
-    case restrictedVisibility = "restricted_visibility"
-    case draft
-    case location = "shared_location"
-    case reminder
-    case member
-    case deletedForMe = "deleted_for_me"
-    case campaignId = "created_by_campaign_id"
-}
-
 enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
     case id
     case name
@@ -1485,6 +1429,9 @@ extension Command {
 }
 
 extension MessageResponse {
+    /// Custom-data key under which the originating campaign id is stored.
+    static let campaignIdCustomKey = "created_by_campaign_id"
+
     var asMessagePayload: MessageResponse { self }
     var asMessageResponse: MessageResponse { self }
 
@@ -1504,7 +1451,7 @@ extension MessageResponse {
     var translations: [TranslationLanguage: String]? { i18n?.translated }
     var originalLanguage: String? { i18n?.originalLanguage }
     var campaignId: String? {
-        if case let .string(value) = custom[MessagePayloadsCodingKeys.campaignId.rawValue] {
+        if case let .string(value) = custom[Self.campaignIdCustomKey] {
             return value
         }
         return nil
