@@ -51,6 +51,21 @@ extension ChatClient {
     ) -> ChannelList {
         ChannelList(query: query, dynamicFilter: dynamicFilter, client: self)
     }
+
+    /// Creates an instance of ``ChannelList`` which represents an array of channels matching to the specified group.
+    ///
+    /// - Important: The initial state for the group must be fetched with ``ChatClient/queryGroupedChannels(groups:limit:presence:watch:)``
+    /// which does a batch fetch for all the groups.
+    public func makeChannelList(with groupKey: String) -> ChannelList {
+        let channelList = ChannelList(
+            query: .init(groupKey: groupKey),
+            dynamicFilter: nil,
+            client: self
+        )
+        // Start tracking immediately, because the first page is meant to be fetched with queryGroupedChannels
+        syncRepository.startTrackingChannelList(channelList)
+        return channelList
+    }
 }
 
 // MARK: - Factory Methods for Creating Chats
@@ -215,6 +230,38 @@ extension ChatClient {
             messageOrdering: messageOrdering,
             memberSorting: memberSorting
         )
+    }
+}
+
+// MARK: - Factory Methods for Creating LivestreamChats
+
+extension ChatClient {
+    /// An instance of ``LivestreamChat`` which represents a livestream channel with the specified channel id.
+    ///
+    /// ``LivestreamChat`` is optimized for livestream channels and operates fully in-memory without local
+    /// database persistence. It is more performant than ``Chat`` but exposes fewer features (no read updates, no threads).
+    ///
+    /// - Note: It is the caller's responsibility to call ``LivestreamChat/get()`` for receiving the most recent state from the server.
+    ///
+    /// - Parameter cid: The id of the channel.
+    ///
+    /// - Returns: An instance of ``LivestreamChat`` representing the channel.
+    public func makeLivestreamChat(for cid: ChannelId) -> LivestreamChat {
+        makeLivestreamChat(with: ChannelQuery(cid: cid))
+    }
+
+    /// An instance of ``LivestreamChat`` which represents a livestream channel matching the channel query.
+    ///
+    /// ``LivestreamChat`` is optimized for livestream channels and operates fully in-memory without local
+    /// database persistence. It is more performant than ``Chat`` but exposes fewer features (no read updates, no threads).
+    ///
+    /// - Note: It is the caller's responsibility to call ``LivestreamChat/get()`` for receiving the most recent state from the server.
+    ///
+    /// - Parameter channelQuery: The channel query used for looking up the channel.
+    ///
+    /// - Returns: An instance of ``LivestreamChat`` representing the channel.
+    public func makeLivestreamChat(with channelQuery: ChannelQuery) -> LivestreamChat {
+        LivestreamChat(channelQuery: channelQuery, client: self)
     }
 }
 

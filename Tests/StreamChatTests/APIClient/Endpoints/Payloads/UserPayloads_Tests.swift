@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class UserPayload_Tests: XCTestCase {
+final class UserResponse_Tests: XCTestCase {
     let currentUserJSON = XCTestCase.mockData(fromJSONFile: "CurrentUser")
     let otherUserJSON = XCTestCase.mockData(fromJSONFile: "OtherUser")
 

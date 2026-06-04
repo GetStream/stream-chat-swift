@@ -40,6 +40,7 @@ class SyncRepository: @unchecked Sendable {
     let activeChannelControllers = ThreadSafeWeakCollection<ChatChannelController>()
     let activeChannelListControllers = ThreadSafeWeakCollection<ChatChannelListController>()
     let activeChats = ThreadSafeWeakCollection<Chat>()
+    let activeLivestreamChats = ThreadSafeWeakCollection<LivestreamChat>()
     let activeLivestreamControllers = ThreadSafeWeakCollection<LivestreamChannelController>()
     let activeChannelLists = ThreadSafeWeakCollection<ChannelList>()
 
@@ -100,6 +101,15 @@ class SyncRepository: @unchecked Sendable {
         activeLivestreamControllers.remove(controller)
     }
 
+    func startTrackingLivestreamChat(_ livestreamChat: LivestreamChat) {
+        guard !activeLivestreamChats.contains(livestreamChat) else { return }
+        activeLivestreamChats.add(livestreamChat)
+    }
+
+    func stopTrackingLivestreamChat(_ livestreamChat: LivestreamChat) {
+        activeLivestreamChats.remove(livestreamChat)
+    }
+
     func startTrackingChannelList(_ channelList: ChannelList) {
         guard !activeChannelLists.contains(channelList) else { return }
         activeChannelLists.add(channelList)
@@ -120,6 +130,7 @@ class SyncRepository: @unchecked Sendable {
 
     func removeAllTracked() {
         activeChats.removeAllObjects()
+        activeLivestreamChats.removeAllObjects()
         activeChannelControllers.removeAllObjects()
         activeChannelLists.removeAllObjects()
         activeChannelListControllers.removeAllObjects()
@@ -160,7 +171,7 @@ class SyncRepository: @unchecked Sendable {
     ///
     /// Background mode (other regular API requests are allowed to run at the same time)
     /// 1. Collect all the **active** channel ids (from instances of `Chat`, `ChannelList`, `ChatChannelController`, `ChatChannelListController`)
-    /// 2. Refresh channel lists (channels for current pages in `ChannelList`, `ChatChannelListController`)
+    /// 2. Refresh channel lists (channels for current pages in `ChannelList`, `ChatChannelListController`, including grouped lists)
     /// 3. Apply updates from the /sync endpoint for channels not in active channel lists (max 2000 events is supported)
     ///      * channel controllers targeting other channels
     ///      * no channel lists active, but channel controllers are
@@ -190,10 +201,24 @@ class SyncRepository: @unchecked Sendable {
             /// 1. Collect all the **active** channel ids
             operations.append(ActiveChannelIdsOperation(syncRepository: self, context: context))
             
-            // 2. Refresh channel lists
-            operations.append(contentsOf: activeChannelLists.allObjects.map { RefreshChannelListOperation(channelList: $0, context: context) })
-            operations.append(contentsOf: activeChannelListControllers.allObjects.map { RefreshChannelListOperation(controller: $0, context: context) })
-            
+            // 2. Refresh channel lists (non-grouped lists individually, grouped lists via a single shared request)
+            let allChannelLists = activeChannelLists.allObjects
+            operations.append(contentsOf: allChannelLists
+                .filter { $0.groupKey == nil }
+                .map { RefreshChannelListOperation(channelList: $0, context: context) }
+            )
+            operations.append(contentsOf: activeChannelListControllers.allObjects
+                .map { RefreshChannelListOperation(controller: $0, context: context) }
+            )
+            let groupedChannelLists = allChannelLists.filter { $0.groupKey != nil }
+            if !groupedChannelLists.isEmpty {
+                operations.append(SyncGroupedChannelsOperation(
+                    channelListUpdater: channelListUpdater,
+                    groupedChannelLists: groupedChannelLists,
+                    context: context
+                ))
+            }
+
             // 3. /sync (for channels what not part of active channel lists)
             operations.append(SyncEventsOperation(syncRepository: self, context: context, recovery: false))
             
@@ -204,6 +229,9 @@ class SyncRepository: @unchecked Sendable {
             })
             operations.append(contentsOf: activeChats.allObjects.map {
                 WatchChannelOperation(chat: $0, context: context)
+            })
+            operations.append(contentsOf: activeLivestreamChats.allObjects.map {
+                WatchChannelOperation(livestreamChat: $0, context: context)
             })
             operations.append(contentsOf: activeLivestreamControllers.allObjects.map {
                 WatchChannelOperation(livestreamController: $0, context: context, recovery: false)

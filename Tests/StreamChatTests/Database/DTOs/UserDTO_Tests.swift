@@ -124,10 +124,10 @@ final class UserDTO_Tests: XCTestCase {
         }
 
         // Load the user from the db and check the fields are correct
-        let loadedUserPayload = database.viewContext.user(id: userId)?.asRequestBody()
+        let loadedUserResponse = database.viewContext.user(id: userId)?.asRequestBody()
 
-        XCTAssertEqual(payload.id, loadedUserPayload?.id)
-        XCTAssertEqual(payload.extraData, loadedUserPayload?.extraData)
+        XCTAssertEqual(payload.id, loadedUserResponse?.id)
+        XCTAssertEqual(payload.extraData, loadedUserResponse?.extraData)
     }
 
     func test_DTO_resetsItsEphemeralValues() throws {

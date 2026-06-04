@@ -6,7 +6,7 @@ import StreamChat
 import StreamChatUI
 import UIKit
 
-final class YTChatComposerViewController: ComposerVC {
+class YTChatComposerViewController: ComposerVC {
     // We need to cast the composerView to our new `YTChatMessageComposerView`
     // so that we can have access to the new `emojiButton`.
     var ytMessageComposerView: YTChatMessageComposerView? {

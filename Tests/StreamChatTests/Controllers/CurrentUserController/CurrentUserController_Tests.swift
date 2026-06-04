@@ -187,7 +187,7 @@ final class CurrentUserController_Tests: XCTestCase {
         controller.synchronize()
 
         let extraData: [String: RawJSON] = [:]
-        let currentUserPayload: OwnUserResponse = .dummy(
+        let currentUserResponse: OwnUserResponse = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
@@ -199,12 +199,12 @@ final class CurrentUserController_Tests: XCTestCase {
 
         // Simulate saving current user to a database
         try client.databaseContainer.writeSynchronously {
-            try $0.saveCurrentUser(payload: currentUserPayload)
+            try $0.saveCurrentUser(payload: currentUserResponse)
         }
 
         // Assert delegate received correct entity change
         AssertAsync {
-            Assert.willBeEqual(delegate.didChangeCurrentUser_change?.fieldChange(\.id), .create(currentUserPayload.id))
+            Assert.willBeEqual(delegate.didChangeCurrentUser_change?.fieldChange(\.id), .create(currentUserResponse.id))
             Assert.willBeEqual(delegate.didChangeCurrentUser_change?.fieldChange(\.extraData), .create(extraData))
         }
     }
@@ -214,7 +214,7 @@ final class CurrentUserController_Tests: XCTestCase {
         controller.synchronize()
 
         var extraData: [String: RawJSON] = [:]
-        nonisolated(unsafe) var currentUserPayload: OwnUserResponse = .dummy(
+        nonisolated(unsafe) var currentUserResponse: OwnUserResponse = .dummy(
             userId: .unique,
             role: .user,
             extraData: extraData
@@ -226,25 +226,25 @@ final class CurrentUserController_Tests: XCTestCase {
 
         // Simulate saving current user to a database
         try client.databaseContainer.writeSynchronously {
-            try $0.saveCurrentUser(payload: currentUserPayload)
+            try $0.saveCurrentUser(payload: currentUserResponse)
         }
 
         // Update current user data
         extraData = [:]
-        currentUserPayload = .dummy(
-            userId: currentUserPayload.id,
-            role: currentUserPayload.userRole,
+        currentUserResponse = .dummy(
+            userId: currentUserResponse.id,
+            role: currentUserResponse.userRole,
             extraData: extraData
         )
 
         // Simulate updating current user in a database
         try client.databaseContainer.writeSynchronously {
-            try $0.saveCurrentUser(payload: currentUserPayload)
+            try $0.saveCurrentUser(payload: currentUserResponse)
         }
 
         // Assert delegate received correct entity change
         AssertAsync {
-            Assert.willBeEqual(delegate.didChangeCurrentUser_change?.fieldChange(\.id), .update(currentUserPayload.id))
+            Assert.willBeEqual(delegate.didChangeCurrentUser_change?.fieldChange(\.id), .update(currentUserResponse.id))
             Assert.willBeEqual(delegate.didChangeCurrentUser_change?.fieldChange(\.extraData), .update(extraData))
         }
     }
@@ -261,12 +261,12 @@ final class CurrentUserController_Tests: XCTestCase {
 
         // Simulate saving current user to a database
         try client.databaseContainer.writeSynchronously {
-            let currentUserPayload: OwnUserResponse = .dummy(
+            let currentUserResponse: OwnUserResponse = .dummy(
                 userId: .unique,
                 role: .user,
                 unreadCount: unreadCount
             )
-            try $0.saveCurrentUser(payload: currentUserPayload)
+            try $0.saveCurrentUser(payload: currentUserResponse)
         }
 
         wait(for: [delegate.didChangeCurrentUserUnreadCountExpectation], timeout: defaultTimeout)

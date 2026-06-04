@@ -30,7 +30,7 @@ final class ConnectedUser_Tests: XCTestCase {
         
         let changedName = "Name"
         let apiResult = UpdateUsersResponse(
-            user: currentUserPayload(
+            user: currentUserResponse(
                 name: changedName,
                 role: .user
             )
@@ -66,7 +66,7 @@ final class ConnectedUser_Tests: XCTestCase {
     func test_loadDevices_whenExistingFetchedDevices_thenDatabaseIsResetToFetchedDevices() async throws {
         // Set initial state where we have devices stored in DB
         try await env.client.databaseContainer.write { session in
-            try session.saveCurrentUser(payload: self.currentUserPayload(deviceCount: 2))
+            try session.saveCurrentUser(payload: self.currentUserResponse(deviceCount: 2))
         }
         
         // Fetch devices which resets the device list
@@ -189,7 +189,7 @@ final class ConnectedUser_Tests: XCTestCase {
     @MainActor private func setUpConnectedUser(usesMockedUpdaters: Bool, loadState: Bool = true, initialDeviceCount: Int = 0) async throws {
         nonisolated(unsafe) var user: CurrentChatUser!
         try await env.client.databaseContainer.write { session in
-            user = try session.saveCurrentUser(payload: self.currentUserPayload(deviceCount: initialDeviceCount)).asModel()
+            user = try session.saveCurrentUser(payload: self.currentUserResponse(deviceCount: initialDeviceCount)).asModel()
         }
         env.client.mockAuthenticationRepository.mockedCurrentUserId = connectedUserId
         connectedUser = ConnectedUser(
@@ -204,7 +204,7 @@ final class ConnectedUser_Tests: XCTestCase {
         }
     }
     
-    private func currentUserPayload(name: String = "InitialName", deviceCount: Int = 0, role: UserRole = .admin) -> OwnUserResponse {
+    private func currentUserResponse(name: String = "InitialName", deviceCount: Int = 0, role: UserRole = .admin) -> OwnUserResponse {
         let devices = (0..<deviceCount).map { _ in DeviceResponse.dummy }
         return OwnUserResponse.dummy(
             userId: connectedUserId,

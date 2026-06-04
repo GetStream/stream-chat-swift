@@ -50,7 +50,7 @@ final class MessageState_Tests: XCTestCase {
     // MARK: - Observing Reactions
     
     func test_restoringReactions_whenReactionsStored_thenInitialStateIsSet() async throws {
-        let messagePayload = makeMessagePayload(reactionCount: 3, messageId: messageId)
+        let messagePayload = makeMessageResponse(reactionCount: 3, messageId: messageId)
         try await env.client.databaseContainer.write { session in
             try session.saveMessage(
                 payload: messagePayload,
@@ -60,7 +60,7 @@ final class MessageState_Tests: XCTestCase {
             )
             // Add reactions to other messages for ensuring MessageState does not pick them up
             try session.saveMessage(
-                payload: self.makeMessagePayload(reactionCount: 3, messageId: self.unrelatedMessageId),
+                payload: self.makeMessageResponse(reactionCount: 3, messageId: self.unrelatedMessageId),
                 for: self.channelId,
                 syncOwnReactions: true,
                 cache: nil
@@ -76,7 +76,7 @@ final class MessageState_Tests: XCTestCase {
         try await setUpMessageState()
         XCTAssertEqual(0, await messageState.reactions.count)
         
-        let messagePayload = makeMessagePayload(reactionCount: 3, messageId: messageId)
+        let messagePayload = makeMessageResponse(reactionCount: 3, messageId: messageId)
         try await env.client.databaseContainer.write { session in
             try session.saveMessage(
                 payload: messagePayload,
@@ -86,7 +86,7 @@ final class MessageState_Tests: XCTestCase {
             )
             // Add reactions to other messages for ensuring MessageState does not pick them up
             try session.saveMessage(
-                payload: self.makeMessagePayload(reactionCount: 3, messageId: self.unrelatedMessageId),
+                payload: self.makeMessageResponse(reactionCount: 3, messageId: self.unrelatedMessageId),
                 for: self.channelId,
                 syncOwnReactions: true,
                 cache: nil
@@ -209,7 +209,7 @@ final class MessageState_Tests: XCTestCase {
         return ChannelStateResponseFields.dummy(channel: .dummy(cid: channelId), messages: messages)
     }
     
-    private func makeMessagePayload(reactionCount: Int, messageId: MessageId) -> MessageResponse {
+    private func makeMessageResponse(reactionCount: Int, messageId: MessageId) -> MessageResponse {
         let reactions = (0..<reactionCount)
             .reversed() // last updated ones first
             .map {

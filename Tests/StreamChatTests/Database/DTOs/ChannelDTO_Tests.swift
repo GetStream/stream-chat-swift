@@ -134,7 +134,7 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_saveChannel_channelReadsAreSavedBeforeMessages() throws {
         // GIVEN
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
-        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserPayload)
+        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse)
 
         let anotherMember: ChannelMemberResponse = .dummy(user: .dummy(userId: .unique))
         let anotherMemberRead: ReadStateResponse = .init(
@@ -675,7 +675,7 @@ final class ChannelDTO_Tests: XCTestCase {
             createdAt: Date.distantPast,
             updatedAt: .unique,
             pinned: true,
-            mentionedUsers: [dummyCurrentUser.asUserPayload]
+            mentionedUsers: [dummyCurrentUser.asUserResponse]
         )
         let payload = dummyPayload(with: channelId, numberOfMessages: 1, pinnedMessages: [oldPinnedMessage])
 
@@ -697,7 +697,7 @@ final class ChannelDTO_Tests: XCTestCase {
             createdAt: Date(),
             updatedAt: .unique,
             pinned: true,
-            mentionedUsers: [dummyCurrentUser.asUserPayload]
+            mentionedUsers: [dummyCurrentUser.asUserResponse]
         )
         let payload = dummyPayload(with: channelId, numberOfMessages: 1, pinnedMessages: [pinnedMessage])
 
@@ -762,7 +762,7 @@ final class ChannelDTO_Tests: XCTestCase {
     }
 
     func test_lastMessageFromCurrentUser() throws {
-        let user: UserResponse = dummyCurrentUser.asUserPayload
+        let user: UserResponse = dummyCurrentUser.asUserResponse
         let channelId: ChannelId = .unique
         let message1: MessageResponse = .dummy(
             type: .regular,
@@ -803,7 +803,7 @@ final class ChannelDTO_Tests: XCTestCase {
     }
 
     func test_lastMessageFromCurrentUser_whenLastMessageIsThreadReply() throws {
-        let user: UserResponse = dummyCurrentUser.asUserPayload
+        let user: UserResponse = dummyCurrentUser.asUserResponse
         let channelId: ChannelId = .unique
         let mainMessageId: String = .unique
         let mainMessage = MessageResponse.dummy(
@@ -814,7 +814,7 @@ final class ChannelDTO_Tests: XCTestCase {
             text: .unique,
             createdAt: Date.distantPast,
             updatedAt: .unique,
-            mentionedUsers: [dummyCurrentUser.asUserPayload]
+            mentionedUsers: [dummyCurrentUser.asUserResponse]
         )
 
         let threadMessage = MessageResponse.dummy(
@@ -825,7 +825,7 @@ final class ChannelDTO_Tests: XCTestCase {
             text: .unique,
             createdAt: Date(),
             updatedAt: .unique,
-            mentionedUsers: [dummyCurrentUser.asUserPayload]
+            mentionedUsers: [dummyCurrentUser.asUserResponse]
         )
 
         let channel = dummyPayload(with: channelId, messages: [mainMessage, threadMessage])
@@ -1050,10 +1050,10 @@ final class ChannelDTO_Tests: XCTestCase {
 
     func test_channelUnreadCount_calculatedCorrectly() throws {
         // GIVEN
-        let currentUserPayload: OwnUserResponse = .dummy(userId: .unique, role: .user)
+        let currentUserResponse: OwnUserResponse = .dummy(userId: .unique, role: .user)
 
         let currentUserReadStateResponse: ReadStateResponse = .init(
-            user: currentUserPayload.asUserPayload,
+            user: currentUserResponse.asUserResponse,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
             unreadMessagesCount: 0
@@ -1063,15 +1063,15 @@ final class ChannelDTO_Tests: XCTestCase {
             messageId: .unique,
             authorUserId: .unique,
             createdAt: currentUserReadStateResponse.lastReadAt.addingTimeInterval(5),
-            mentionedUsers: [currentUserPayload.asUserPayload]
+            mentionedUsers: [currentUserResponse.asUserResponse]
         )
 
         let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: .unique),
             watcherCount: 0,
             watchers: [],
-            members: [.dummy(user: currentUserPayload.asUserPayload)],
-            membership: .dummy(user: currentUserPayload.asUserPayload),
+            members: [.dummy(user: currentUserResponse.asUserResponse)],
+            membership: .dummy(user: currentUserResponse.asUserResponse),
             messages: [messageMentioningCurrentUser],
             pinnedMessages: [],
             channelReads: [currentUserReadStateResponse],
@@ -1081,11 +1081,11 @@ final class ChannelDTO_Tests: XCTestCase {
         let unreadMessages = 5
 
         try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: currentUserPayload)
+            try session.saveCurrentUser(payload: currentUserResponse)
             try session.saveChannel(payload: channelPayload)
 
             let read = try XCTUnwrap(
-                session.loadChannelRead(cid: channelPayload.channel?.channelId ?? .unique, userId: currentUserPayload.id)
+                session.loadChannelRead(cid: channelPayload.channel?.channelId ?? .unique, userId: currentUserResponse.id)
             )
             read.unreadMessageCount = Int32(unreadMessages)
         }
@@ -1357,22 +1357,22 @@ final class ChannelDTO_Tests: XCTestCase {
         let cid = ChannelId.unique
 
         // GIVEN
-        let quoted3MessagePayload: MessageResponse = .dummy(
+        let quoted3MessageResponse: MessageResponse = .dummy(
             messageId: .unique,
             cid: cid
         )
 
-        let quoted2MessagePayload: MessageResponse = .dummy(
+        let quoted2MessageResponse: MessageResponse = .dummy(
             messageId: .unique,
-            quotedMessageId: quoted3MessagePayload.id,
-            quotedMessage: quoted3MessagePayload,
+            quotedMessageId: quoted3MessageResponse.id,
+            quotedMessage: quoted3MessageResponse,
             cid: cid
         )
 
         let message1Payload: MessageResponse = .dummy(
             messageId: .unique,
-            quotedMessageId: quoted2MessagePayload.id,
-            quotedMessage: quoted2MessagePayload,
+            quotedMessageId: quoted2MessageResponse.id,
+            quotedMessage: quoted2MessageResponse,
             cid: cid
         )
 
@@ -1395,7 +1395,7 @@ final class ChannelDTO_Tests: XCTestCase {
         // THEN
         let message1 = try XCTUnwrap(channel.latestMessages.first { $0.id == message1Payload.id })
         let quoted2Message = try XCTUnwrap(message1.quotedMessage)
-        XCTAssertEqual(quoted2Message.id, quoted2MessagePayload.id)
+        XCTAssertEqual(quoted2Message.id, quoted2MessageResponse.id)
 
         let quoted3Message = quoted2Message.quotedMessage
         // 3rd level of depth is not mapped
@@ -1429,7 +1429,7 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_saveChannel_savesAndLoadsDraftMessage() throws {
         // GIVEN
         let cid: ChannelId = .unique
-        let draftMessagePayload = DraftPayloadResponse(
+        let draftMessageResponse = DraftPayloadResponse(
             id: .unique,
             text: "Draft message text",
             command: nil,
@@ -1447,7 +1447,7 @@ final class ChannelDTO_Tests: XCTestCase {
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),
-                message: draftMessagePayload,
+                message: draftMessageResponse,
                 quotedMessage: nil,
                 parentId: nil,
                 parentMessage: nil
@@ -1464,9 +1464,9 @@ final class ChannelDTO_Tests: XCTestCase {
         // THEN
         let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
         let draftMessage = try XCTUnwrap(channel.draftMessage)
-        XCTAssertEqual(draftMessage.id, draftMessagePayload.id)
-        XCTAssertEqual(draftMessage.text, draftMessagePayload.text)
-        XCTAssertEqual(draftMessage.extraData, draftMessagePayload.extraData)
+        XCTAssertEqual(draftMessage.id, draftMessageResponse.id)
+        XCTAssertEqual(draftMessage.text, draftMessageResponse.text)
+        XCTAssertEqual(draftMessage.extraData, draftMessageResponse.extraData)
         XCTAssertEqual(channel.activeLiveLocations.first?.latitude, 10)
         XCTAssertEqual(channel.activeLiveLocations.first?.longitude, 10)
     }
@@ -1474,7 +1474,7 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_saveChannel_whenDraftMessageIsNil_removesExistingDraft() throws {
         // GIVEN
         let cid: ChannelId = .unique
-        let draftMessagePayload = DraftPayloadResponse(
+        let draftMessageResponse = DraftPayloadResponse(
             id: .unique,
             text: "Draft message text",
             command: nil,
@@ -1492,7 +1492,7 @@ final class ChannelDTO_Tests: XCTestCase {
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),
-                message: draftMessagePayload,
+                message: draftMessageResponse,
                 quotedMessage: nil,
                 parentId: nil,
                 parentMessage: nil
@@ -1526,12 +1526,12 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_saveChannel_draftMessageWithQuotedMessage() throws {
         // GIVEN
         let cid: ChannelId = .unique
-        let quotedMessagePayload: MessageResponse = .dummy(
+        let quotedMessageResponse: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             text: "Quoted message"
         )
-        let draftMessagePayload = DraftPayloadResponse(
+        let draftMessageResponse = DraftPayloadResponse(
             id: .unique,
             text: "Draft message text",
             command: nil,
@@ -1549,8 +1549,8 @@ final class ChannelDTO_Tests: XCTestCase {
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),
-                message: draftMessagePayload,
-                quotedMessage: quotedMessagePayload,
+                message: draftMessageResponse,
+                quotedMessage: quotedMessageResponse,
                 parentId: nil,
                 parentMessage: nil
             )
@@ -1566,19 +1566,19 @@ final class ChannelDTO_Tests: XCTestCase {
         let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
         let draftMessage = try XCTUnwrap(channel.draftMessage)
         let quotedMessage = try XCTUnwrap(draftMessage.quotedMessage)
-        XCTAssertEqual(quotedMessage.id, quotedMessagePayload.id)
-        XCTAssertEqual(quotedMessage.text, quotedMessagePayload.text)
+        XCTAssertEqual(quotedMessage.id, quotedMessageResponse.id)
+        XCTAssertEqual(quotedMessage.text, quotedMessageResponse.text)
     }
 
     func test_saveChannel_draftMessageWithParentMessage() throws {
         // GIVEN
         let cid: ChannelId = .unique
-        let parentMessagePayload: MessageResponse = .dummy(
+        let parentMessageResponse: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             text: "Parent message"
         )
-        let draftMessagePayload = DraftPayloadResponse(
+        let draftMessageResponse = DraftPayloadResponse(
             id: .unique,
             text: "Draft message text",
             command: nil,
@@ -1596,10 +1596,10 @@ final class ChannelDTO_Tests: XCTestCase {
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),
-                message: draftMessagePayload,
+                message: draftMessageResponse,
                 quotedMessage: nil,
-                parentId: parentMessagePayload.id,
-                parentMessage: parentMessagePayload
+                parentId: parentMessageResponse.id,
+                parentMessage: parentMessageResponse
             )
         )
 
@@ -1612,9 +1612,9 @@ final class ChannelDTO_Tests: XCTestCase {
         // THEN
         let channel = try XCTUnwrap(database.viewContext.channel(cid: cid)?.asModel())
         let draftMessage = try XCTUnwrap(channel.draftMessage)
-        XCTAssertEqual(draftMessage.threadId, parentMessagePayload.id)
+        XCTAssertEqual(draftMessage.threadId, parentMessageResponse.id)
         let parentMessageId = try XCTUnwrap(draftMessage.threadId)
-        XCTAssertEqual(parentMessageId, parentMessagePayload.id)
+        XCTAssertEqual(parentMessageId, parentMessageResponse.id)
     }
 }
 

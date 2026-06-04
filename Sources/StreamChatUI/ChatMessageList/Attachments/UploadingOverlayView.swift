@@ -62,7 +62,7 @@ open class UploadingOverlayView: _View, ThemeProvider {
         super.setUpAppearance()
 
         uploadingProgressLabel.numberOfLines = 0
-        uploadingProgressLabel.textColor = appearance.colorPalette.textOnInverse
+        uploadingProgressLabel.textColor = appearance.colorPalette.textOnAccent
         uploadingProgressLabel.font = appearance.fonts.footnote
 
         bottomContainer.backgroundColor = appearance.colorPalette.backgroundCoreScrim

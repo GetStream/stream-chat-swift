@@ -58,20 +58,20 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
     func test_whenDatabaseWriteDoesNotFail_userInformationIsUpdated() throws {
         // Given
         let userId = UserId.unique
-        let initialUserPayload = UserResponse.dummy(userId: userId, name: "Initial name")
+        let initialUserResponse = UserResponse.dummy(userId: userId, name: "Initial name")
         try database.writeSynchronously {
-            try $0.saveUser(payload: initialUserPayload)
+            try $0.saveUser(payload: initialUserResponse)
         }
         XCTAssertEqual(database.viewContext.user(id: userId)?.name, "Initial name")
 
         // When
-        let updatedUserPayload = UserResponse.dummy(userId: userId, name: "Updated name")
+        let updatedUserResponse = UserResponse.dummy(userId: userId, name: "Updated name")
 
         // Simulate and handle user watching event.
         let event = UserUpdatedEventDTO(
             createdAt: Date.unique,
             custom: [:],
-            user: UserResponsePrivacyFields(updatedUserPayload)
+            user: UserResponsePrivacyFields(updatedUserResponse)
         )
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
@@ -95,13 +95,13 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.currentUser?.user.name, "Name 1")
 
         // When
-        let updatedUserPayload = UserResponse.dummy(userId: currentUserId, name: "Name 2")
+        let updatedUserResponse = UserResponse.dummy(userId: currentUserId, name: "Name 2")
 
         // Simulate and handle user watching event.
         let event = UserUpdatedEventDTO(
             createdAt: Date.unique,
             custom: [:],
-            user: UserResponsePrivacyFields(updatedUserPayload)
+            user: UserResponsePrivacyFields(updatedUserResponse)
         )
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 

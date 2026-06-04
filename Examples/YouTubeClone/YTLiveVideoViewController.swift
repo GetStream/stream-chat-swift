@@ -19,6 +19,7 @@ final class YTLiveVideoViewController: UIViewController {
 
     private lazy var chatViewController: UIViewController = {
         let chatController = YTLiveChatViewController()
+        chatController.livestreamChat = ChatClient.makeYTLivestreamChat()
         return chatController
     }()
 

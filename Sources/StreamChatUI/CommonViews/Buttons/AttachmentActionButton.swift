@@ -54,11 +54,11 @@ open class AttachmentActionButton: _Button, AppearanceProvider {
         let image: UIImage? = content.flatMap {
             switch $0 {
             case .uploaded:
-                return appearance.images.whiteCheckmark.tinted(with: appearance.colorPalette.textOnInverse)
+                return appearance.images.whiteCheckmark.tinted(with: appearance.colorPalette.textOnAccent)
             case .restart:
-                return appearance.images.restart.tinted(with: appearance.colorPalette.textOnInverse)
+                return appearance.images.restart.tinted(with: appearance.colorPalette.textOnAccent)
             case .cancel:
-                return appearance.images.close.tinted(with: appearance.colorPalette.textOnInverse)
+                return appearance.images.close.tinted(with: appearance.colorPalette.textOnAccent)
             }
         }
         setImage(image, for: .normal)

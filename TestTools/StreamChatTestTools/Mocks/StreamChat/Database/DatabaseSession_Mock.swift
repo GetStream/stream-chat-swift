@@ -46,7 +46,7 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveCurrentDevice(_ deviceId: String) throws {
         try throwErrorIfNeeded()
-        return try saveCurrentDevice(deviceId)
+        return try underlyingSession.saveCurrentDevice(deviceId)
     }
 
     func saveCurrentUserDevices(_ devices: [DeviceResponse], clearExisting: Bool) throws -> [DeviceDTO] {
@@ -56,6 +56,10 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveChannelList(payload: QueryChannelsResponse, query: ChannelListQuery?) -> [ChannelDTO] {
         underlyingSession.saveChannelList(payload: payload, query: query)
+    }
+
+    func loadPredefinedFilter(for query: ChannelListQuery) -> ChannelListQuery? {
+        underlyingSession.loadPredefinedFilter(for: query)
     }
 
     func saveQuery(query: ReactionListQuery) throws -> ReactionListQueryDTO? {
@@ -111,12 +115,21 @@ class DatabaseSession_Mock: DatabaseSession {
 
     func saveCurrentUser(payload: OwnUserResponse) throws -> CurrentUserDTO {
         try throwErrorIfNeeded()
-        return try saveCurrentUser(payload: payload)
+        return try underlyingSession.saveCurrentUser(payload: payload)
     }
 
     func saveCurrentUserUnreadCount(count: UnreadCountPayload) throws {
         try throwErrorIfNeeded()
-        try saveCurrentUserUnreadCount(count: count)
+        try underlyingSession.saveCurrentUserUnreadCount(count: count)
+    }
+
+    func mergeCurrentUserUnreadChannelCountsByGroup(_ unreadChannelCountsByGroup: [String: Int]) throws {
+        try throwErrorIfNeeded()
+        try underlyingSession.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
+    }
+
+    func adjustUnreadChannelCount(forGroup groupKey: String, by delta: Int) {
+        underlyingSession.adjustUnreadChannelCount(forGroup: groupKey, by: delta)
     }
 
     func deleteDevice(id: DeviceId) {
@@ -375,12 +388,12 @@ class DatabaseSession_Mock: DatabaseSession {
         underlyingSession.loadChannelReads(for: userId)
     }
 
-    func saveQuery(query: ChannelListQuery) -> ChannelListQueryDTO {
-        underlyingSession.saveQuery(query: query)
+    func saveQuery(query: ChannelListQuery, predefinedFilter: ParsedPredefinedFilterResponse?) -> ChannelListQueryDTO {
+        underlyingSession.saveQuery(query: query, predefinedFilter: predefinedFilter)
     }
 
-    func channelListQuery(filterHash: String) -> ChannelListQueryDTO? {
-        underlyingSession.channelListQuery(filterHash: filterHash)
+    func channelListQuery(_ query: ChannelListQuery) -> ChannelListQueryDTO? {
+        underlyingSession.channelListQuery(query)
     }
 
     func loadAllChannelListQueries() -> [ChannelListQueryDTO] {

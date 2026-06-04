@@ -45,7 +45,9 @@ extension Sorting: Equatable where Key: Equatable {}
 extension Sorting: Hashable where Key: Hashable {}
 
 /// A sorting key that can be converted to local DB query or local runtime sorting.
-public struct LocalConvertibleSortingKey<Model>: SortingKey, Encodable, Equatable {
+///
+/// Remove the `@unchecked` annotation once the `InferSendableFromCaptures` upcoming feature (SE-0418) is enabled.
+public struct LocalConvertibleSortingKey<Model>: SortingKey, Encodable, Equatable, @unchecked Sendable {
     let keyPath: PartialKeyPath<Model>?
     let localKey: String?
     let remoteKey: String

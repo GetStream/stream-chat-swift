@@ -12,15 +12,15 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     fileprivate var database: DatabaseContainer_Spy!
 
     var channelPayload: ChannelStateResponseFields!
-    var currentUserPayload: OwnUserResponse!
+    var currentUserResponse: UserResponse!
     var currentUserReadPayload: ReadStateResponse!
-    var anotherUserPayload: UserResponse!
+    var anotherUserResponse: UserResponse!
 
     var currentUserReadDTO: ChannelReadDTO? {
         guard let cid = channelPayload.channel?.channelId else { return nil }
         return database.viewContext.loadChannelRead(
             cid: cid,
-            userId: currentUserPayload.id
+            userId: currentUserResponse.id
         )
     }
 
@@ -32,11 +32,11 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             center?.newMessageIds ?? []
         })
 
-        currentUserPayload = .dummy(userId: .unique, role: .user)
-        anotherUserPayload = .dummy(userId: .unique)
+        currentUserResponse = .dummy(userId: .unique, role: .user)
+        anotherUserResponse = .dummy(userId: .unique)
 
         currentUserReadPayload = .init(
-            user: currentUserPayload.asUserPayload,
+            user: currentUserResponse,
             lastReadAt: .init(),
             lastReadMessageId: .unique,
             unreadMessagesCount: 5,
@@ -48,8 +48,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             channel: .dummy(cid: .unique),
             watcherCount: 0,
             watchers: [],
-            members: [.dummy(user: currentUserPayload.asUserPayload), .dummy(user: anotherUserPayload)],
-            membership: .dummy(user: currentUserPayload.asUserPayload),
+            members: [.dummy(user: currentUserResponse), .dummy(user: anotherUserResponse)],
+            membership: .dummy(user: currentUserResponse),
             messages: [],
             pendingMessages: [],
             pinnedMessages: [],
@@ -61,7 +61,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         )
 
         try! database.writeSynchronously { session in
-            try! session.saveCurrentUser(payload: self.currentUserPayload)
+            try! session.saveCurrentUser(payload: .dummy(userPayload: self.currentUserResponse))
             try! session.saveChannel(payload: self.channelPayload)
         }
     }
@@ -69,8 +69,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
     override func tearDown() {
         database = nil
         AssertAsync.canBeReleased(&database)
-        currentUserPayload = nil
-        anotherUserPayload = nil
+        currentUserResponse = nil
+        anotherUserResponse = nil
         currentUserReadPayload = nil
         channelPayload = nil
 
@@ -83,7 +83,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // GIVEN
         let channelMute = ChannelMute(
             mutedChannel: channelPayload.channel!,
-            user: currentUserPayload.asUserPayload,
+            user: currentUserResponse,
             createdAt: .init(),
             updatedAt: .init()
         )
@@ -97,7 +97,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             type: .deleted,
             messageId: .unique,
             parentId: .unique,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
             deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
         )
@@ -110,7 +110,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: message,
             messageId: message.id,
-            user: UserResponseCommonFields(anotherUserPayload)
+            user: UserResponseCommonFields(anotherUserResponse)
         )
 
         try database.writeSynchronously { session in
@@ -128,7 +128,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             type: .deleted,
             messageId: .unique,
             parentId: nil,
-            authorUserId: currentUserPayload.id,
+            authorUserId: currentUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
             deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
         )
@@ -141,7 +141,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: messageFromCurrentUser,
             messageId: messageFromCurrentUser.id,
-            user: UserResponseCommonFields(currentUserPayload.asUserPayload)
+            user: UserResponseCommonFields(currentUserResponse)
         )
 
         try database.writeSynchronously { session in
@@ -157,7 +157,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // GIVEN
         try database.writeSynchronously { session in
             let currentUser = try XCTUnwrap(session.currentUser)
-            let userToMute = try XCTUnwrap(session.user(id: self.anotherUserPayload.id))
+            let userToMute = try XCTUnwrap(session.user(id: self.anotherUserResponse.id))
             currentUser.mutedUsers.insert(userToMute)
         }
 
@@ -165,7 +165,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageFromMutedUser: MessageResponse = .dummy(
             type: .deleted,
             messageId: .unique,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
             deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
         )
@@ -178,7 +178,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: messageFromMutedUser,
             messageId: messageFromMutedUser.id,
-            user: UserResponseCommonFields(anotherUserPayload)
+            user: UserResponseCommonFields(anotherUserResponse)
         )
 
         try database.writeSynchronously { session in
@@ -195,7 +195,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let softDeletedMessage: MessageResponse = .dummy(
             type: .deleted,
             messageId: .unique,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
             deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
         )
@@ -208,7 +208,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: softDeletedMessage,
             messageId: softDeletedMessage.id,
-            user: UserResponseCommonFields(anotherUserPayload)
+            user: UserResponseCommonFields(anotherUserResponse)
         )
 
         try database.writeSynchronously { session in
@@ -224,7 +224,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // WHEN
         let silentMessage: MessageResponse = .dummy(
             messageId: .unique,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
             deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2),
             isSilent: true
@@ -238,7 +238,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: silentMessage,
             messageId: silentMessage.id,
-            user: UserResponseCommonFields(anotherUserPayload)
+            user: UserResponseCommonFields(anotherUserResponse)
         )
 
         try database.writeSynchronously { session in
@@ -257,7 +257,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             messageId: .unique,
             parentId: .unique,
             showReplyInChannel: false,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
             deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
         )
@@ -270,7 +270,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: threadReply,
             messageId: threadReply.id,
-            user: UserResponseCommonFields(anotherUserPayload)
+            user: UserResponseCommonFields(anotherUserResponse)
         )
 
         try database.writeSynchronously { session in
@@ -287,7 +287,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let systemMessage: MessageResponse = .dummy(
             type: .system,
             messageId: .unique,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
             deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
         )
@@ -300,7 +300,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: systemMessage,
             messageId: systemMessage.id,
-            user: UserResponseCommonFields(anotherUserPayload)
+            user: UserResponseCommonFields(anotherUserResponse)
         )
 
         try database.writeSynchronously { session in
@@ -316,7 +316,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // WHEN
         let message: MessageResponse = .dummy(
             messageId: .unique,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(-1),
             deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1)
         )
@@ -329,7 +329,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: message,
             messageId: message.id,
-            user: UserResponseCommonFields(anotherUserPayload)
+            user: UserResponseCommonFields(anotherUserResponse)
         )
 
         try database.writeSynchronously { session in
@@ -346,7 +346,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let message: MessageResponse = .dummy(
             type: .regular,
             messageId: .unique,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
             deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
         )
@@ -359,7 +359,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: message,
             messageId: message.id,
-            user: UserResponseCommonFields(anotherUserPayload)
+            user: UserResponseCommonFields(anotherUserResponse)
         )
 
         try database.writeSynchronously { session in
@@ -378,7 +378,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             messageId: .unique,
             parentId: .unique,
             showReplyInChannel: true,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
             deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
         )
@@ -391,7 +391,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             
             message: message,
             messageId: message.id,
-            user: UserResponseCommonFields(anotherUserPayload)
+            user: UserResponseCommonFields(anotherUserResponse)
         )
 
         try database.writeSynchronously { session in
@@ -403,13 +403,196 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount - 1)
     }
 
+    // MARK: - message.new (no existing ChannelReadDTO — readEventsEnabled = false scenario)
+
+    func test_messageNewEvent_whenNoChannelReadExists_createsReadDTOAndIncrementsCount() throws {
+        // Simulates a channel where readEventsEnabled = false on the server.
+        // The server omits the current user's read state from the channel payload,
+        // so no ChannelReadDTO exists when the first message arrives.
+
+        // GIVEN: channel saved without any read entry for the current user
+        let cid = ChannelId.unique
+        let channelWithoutReads = ChannelStateResponseFields.dummy(
+            channel: .dummy(cid: cid),
+            watcherCount: 0,
+            watchers: [],
+            members: [.dummy(user: currentUserResponse)],
+            membership: .dummy(user: currentUserResponse),
+            messages: [],
+            pendingMessages: [],
+            pinnedMessages: [],
+            channelReads: [],
+            isHidden: false,
+            draft: nil,
+            activeLiveLocations: [],
+            pushPreference: nil
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelWithoutReads)
+        }
+
+        // Verify precondition: no read DTO exists yet
+        XCTAssertNil(database.viewContext.loadChannelRead(cid: cid, userId: currentUserResponse.id))
+
+        // WHEN: a new message arrives from another user
+        let messageId = MessageId.unique
+        let message: MessageResponse = .dummy(
+            messageId: messageId,
+            authorUserId: anotherUserResponse.id,
+            createdAt: Date()
+        )
+        let event = messageNewEvent(
+            cid: cid,
+            user: anotherUserResponse,
+            message: message,
+            createdAt: message.createdAt
+        )
+        center.newMessageIdsMock = [messageId]
+
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        // THEN: a read DTO is created on-the-fly and the unread count is 1
+        let read = try XCTUnwrap(
+            database.viewContext.loadChannelRead(cid: cid, userId: currentUserResponse.id)
+        )
+        XCTAssertEqual(Int(read.unreadMessageCount), 1)
+    }
+
+    func test_messageNewEvent_whenNoChannelReadExists_ownMessage_doesNotIncrementCount() throws {
+        // GIVEN: channel without read state
+        let cid = ChannelId.unique
+        let channelWithoutReads = ChannelStateResponseFields.dummy(
+            channel: .dummy(cid: cid),
+            watcherCount: 0,
+            watchers: [],
+            members: [.dummy(user: currentUserResponse)],
+            membership: .dummy(user: currentUserResponse),
+            messages: [],
+            pendingMessages: [],
+            pinnedMessages: [],
+            channelReads: [],
+            isHidden: false,
+            draft: nil,
+            activeLiveLocations: [],
+            pushPreference: nil
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelWithoutReads)
+        }
+
+        // WHEN: the current user sends a message
+        let messageId = MessageId.unique
+        let ownMessage: MessageResponse = .dummy(
+            messageId: messageId,
+            authorUserId: currentUserResponse.id,
+            createdAt: Date()
+        )
+        let event = messageNewEvent(
+            cid: cid,
+            user: currentUserResponse,
+            message: ownMessage,
+            createdAt: ownMessage.createdAt
+        )
+        center.newMessageIdsMock = [messageId]
+
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        // THEN: own messages do not increment the unread count
+        let read = try XCTUnwrap(
+            database.viewContext.loadChannelRead(cid: cid, userId: currentUserResponse.id)
+        )
+        XCTAssertEqual(Int(read.unreadMessageCount), 0)
+    }
+
+    func test_messageNewEvent_afterMarkReadLocally_onlyCountsMessagesReceivedAfterMark() throws {
+        // Simulates the full local-tracking lifecycle for a channel with readEventsEnabled = false:
+        // 1. message arrives → unread = 1
+        // 2. user opens channel → markChannelAsRead (lastReadAt = now)
+        // 3. another message arrives → unread = 1 again (not 2)
+
+        let cid = ChannelId.unique
+        let channelWithoutReads = ChannelStateResponseFields.dummy(
+            channel: .dummy(cid: cid),
+            watcherCount: 0,
+            watchers: [],
+            members: [.dummy(user: currentUserResponse)],
+            membership: .dummy(user: currentUserResponse),
+            messages: [],
+            pendingMessages: [],
+            pinnedMessages: [],
+            channelReads: [],
+            isHidden: false,
+            draft: nil,
+            activeLiveLocations: [],
+            pushPreference: nil
+        )
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: channelWithoutReads)
+        }
+
+        // Step 1: first message arrives
+        let firstMessageId = MessageId.unique
+        let firstMessage: MessageResponse = .dummy(
+            messageId: firstMessageId,
+            authorUserId: anotherUserResponse.id,
+            createdAt: Date()
+        )
+        let firstEvent = messageNewEvent(
+            cid: cid,
+            user: anotherUserResponse,
+            message: firstMessage,
+            createdAt: firstMessage.createdAt
+        )
+        center.newMessageIdsMock = [firstMessageId]
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: firstEvent, session: session)
+        }
+
+        var read = try XCTUnwrap(database.viewContext.loadChannelRead(cid: cid, userId: currentUserResponse.id))
+        XCTAssertEqual(Int(read.unreadMessageCount), 1, "Unread count should be 1 after first message")
+
+        // Step 2: user opens channel — markReadLocally sets lastReadAt = now and count = 0
+        let markReadAt = Date()
+        try database.writeSynchronously { session in
+            session.markChannelAsRead(cid: cid, userId: self.currentUserResponse.id, at: markReadAt)
+        }
+
+        read = try XCTUnwrap(database.viewContext.loadChannelRead(cid: cid, userId: currentUserResponse.id))
+        XCTAssertEqual(Int(read.unreadMessageCount), 0, "Unread count should be 0 after markRead")
+
+        // Step 3: second message arrives after the mark
+        let secondMessageId = MessageId.unique
+        let secondMessage: MessageResponse = .dummy(
+            messageId: secondMessageId,
+            authorUserId: anotherUserResponse.id,
+            createdAt: markReadAt.addingTimeInterval(1)
+        )
+        let secondEvent = messageNewEvent(
+            cid: cid,
+            user: anotherUserResponse,
+            message: secondMessage,
+            createdAt: secondMessage.createdAt
+        )
+        center.newMessageIdsMock = [secondMessageId]
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: secondEvent, session: session)
+        }
+
+        read = try XCTUnwrap(database.viewContext.loadChannelRead(cid: cid, userId: currentUserResponse.id))
+        XCTAssertEqual(Int(read.unreadMessageCount), 1, "Only messages after markRead should be counted")
+    }
+
     // MARK: - message.new
 
     func test_messageNewEvent_whenChannelIsMuted_doesNotIncrementUnreadCount() throws {
         // GIVEN
         let channelMute = ChannelMute(
             mutedChannel: channelPayload.channel!,
-            user: currentUserPayload.asUserPayload,
+            user: currentUserResponse,
             createdAt: .init(),
             updatedAt: .init()
         )
@@ -423,7 +606,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             type: .regular,
             messageId: .unique,
             parentId: .unique,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1)
         )
 
@@ -434,7 +617,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: message,
             messageId: message.id,
-            user: UserResponseCommonFields(anotherUserPayload),
+            user: UserResponseCommonFields(anotherUserResponse),
             watcherCount: 0
         )
 
@@ -452,7 +635,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageFromCurrentUser: MessageResponse = .dummy(
             messageId: .unique,
             parentId: nil,
-            authorUserId: currentUserPayload.id,
+            authorUserId: currentUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
             isSilent: false
         )
@@ -464,7 +647,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: messageFromCurrentUser,
             messageId: messageFromCurrentUser.id,
-            user: UserResponseCommonFields(currentUserPayload.asUserPayload),
+            user: UserResponseCommonFields(currentUserResponse),
             watcherCount: 0
         )
 
@@ -481,7 +664,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // GIVEN
         try database.writeSynchronously { session in
             let currentUser = try XCTUnwrap(session.currentUser)
-            let userToMute = try XCTUnwrap(session.user(id: self.anotherUserPayload.id))
+            let userToMute = try XCTUnwrap(session.user(id: self.anotherUserResponse.id))
             currentUser.mutedUsers.insert(userToMute)
         }
 
@@ -489,7 +672,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let messageFromMutedUser: MessageResponse = .dummy(
             type: .regular,
             messageId: .unique,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1)
         )
 
@@ -500,7 +683,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: messageFromMutedUser,
             messageId: messageFromMutedUser.id,
-            user: UserResponseCommonFields(anotherUserPayload),
+            user: UserResponseCommonFields(anotherUserResponse),
             watcherCount: 0
         )
 
@@ -517,7 +700,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         // WHEN
         let silentMessage: MessageResponse = .dummy(
             messageId: .unique,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
             isSilent: true
         )
@@ -529,7 +712,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: silentMessage,
             messageId: silentMessage.id,
-            user: UserResponseCommonFields(anotherUserPayload),
+            user: UserResponseCommonFields(anotherUserResponse),
             watcherCount: 0
         )
 
@@ -549,7 +732,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             messageId: .unique,
             parentId: .unique,
             showReplyInChannel: false,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1)
         )
 
@@ -560,7 +743,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: threadReplyPayload,
             messageId: threadReplyPayload.id,
-            user: UserResponseCommonFields(anotherUserPayload),
+            user: UserResponseCommonFields(anotherUserResponse),
             watcherCount: 0
         )
 
@@ -578,7 +761,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let systemMessage: MessageResponse = .dummy(
             type: .system,
             messageId: .unique,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1)
         )
         
@@ -592,7 +775,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: systemMessage,
             messageId: systemMessage.id,
-            user: UserResponseCommonFields(anotherUserPayload),
+            user: UserResponseCommonFields(anotherUserResponse),
             watcherCount: 0
         )
 
@@ -610,7 +793,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let shadowedMessage: MessageResponse = .dummy(
             type: .regular,
             messageId: .unique,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
             isShadowed: true
         )
@@ -622,7 +805,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: shadowedMessage,
             messageId: shadowedMessage.id,
-            user: UserResponseCommonFields(anotherUserPayload),
+            user: UserResponseCommonFields(anotherUserResponse),
             watcherCount: 0
         )
 
@@ -640,7 +823,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let regularMessageEarlierThanLastRead: MessageResponse = .dummy(
             messageId: .unique,
             parentId: nil,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(-1)
         )
 
@@ -651,7 +834,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: regularMessageEarlierThanLastRead,
             messageId: regularMessageEarlierThanLastRead.id,
-            user: UserResponseCommonFields(anotherUserPayload),
+            user: UserResponseCommonFields(anotherUserResponse),
             watcherCount: 0
         )
 
@@ -751,7 +934,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         try [
             // 1. The current user message shouldn't increase the unread count
-            (user: dummyCurrentUser.asUserPayload, expectedCount: 10),
+            (user: UserResponse.dummy(userId: dummyCurrentUser.id), expectedCount: 10),
             // 2. Other user's message should increase the unread count
             (user: dummyUser(id: .unique), expectedCount: 11)
 
@@ -876,7 +1059,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             cid: channelId.rawValue,
             createdAt: newReadDate,
             custom: [:],
-            user: UserResponseCommonFields(dummyCurrentUser.asUserPayload)
+            user: UserResponseCommonFields(.dummy(userId: dummyCurrentUser.id))
         )
 
         // Let the middleware handle the event
@@ -966,7 +1149,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             createdAt: newReadDate,
             custom: [:],
             thread: .dummy(parentMessageId: .unique),
-            user: UserResponseCommonFields(dummyCurrentUser.asUserPayload)
+            user: UserResponseCommonFields(.dummy(userId: dummyCurrentUser.id))
         )
 
         // Let the middleware handle the event
@@ -1033,7 +1216,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             totalUnreadCount: 0,
             unreadChannels: 0,
             unreadCount: 0,
-            user: UserResponseCommonFields(dummyCurrentUser.asUserPayload)
+            user: UserResponseCommonFields(.dummy(userId: dummyCurrentUser.id))
         )
 
         // Let the middleware handle the event
@@ -1081,7 +1264,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             totalUnreadCount: 0,
             unreadChannels: 0,
             unreadCount: 0,
-            user: UserResponseCommonFields(dummyCurrentUser.asUserPayload)
+            user: UserResponseCommonFields(.dummy(userId: dummyCurrentUser.id))
         )
 
         // Let the middleware handle the event
@@ -1178,7 +1361,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             unreadChannels: 19,
             unreadCount: 124,
             unreadThreadMessages: 20,
-            user: UserResponseCommonFields(dummyCurrentUser.asUserPayload)
+            user: UserResponseCommonFields(.dummy(userId: dummyCurrentUser.id))
         )
 
         // Let the middleware handle the event
@@ -1229,13 +1412,170 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         }
     }
 
+    // MARK: - ChannelUpdated group-change adjusts grouped unread counts
+
+    func test_channelUpdatedEvent_groupChange_withUnread_adjustsBothCounts() throws {
+        try database.writeSynchronously { session in
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3, "all": 8])
+            self.linkChannelToGroupedQueries(["new", "all"], session: session)
+        }
+
+        let event = try channelUpdatedEvent(group: "current")
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        XCTAssertEqual(
+            ["new": 4, "current": 4, "all": 8],
+            database.viewContext.currentUser?.unreadChannelCountsByGroup
+        )
+    }
+
+    func test_channelUpdatedEvent_groupUnchanged_doesNotAdjust() throws {
+        try database.writeSynchronously { session in
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "all": 8])
+            self.linkChannelToGroupedQueries(["new", "all"], session: session)
+        }
+
+        let event = try channelUpdatedEvent(group: "new")
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        XCTAssertEqual(
+            ["new": 5, "all": 8],
+            database.viewContext.currentUser?.unreadChannelCountsByGroup
+        )
+    }
+
+    func test_channelUpdatedEvent_zeroUnread_doesNotAdjust() throws {
+        try database.writeSynchronously { session in
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3, "all": 8])
+            self.linkChannelToGroupedQueries(["new", "all"], session: session)
+            // Drop the channel's unread count to zero via the read; mark the channel dirty so its
+            // `willSave` recomputes `currentUserUnreadMessagesCount` from the updated read.
+            if let readDTO = session.loadChannelRead(
+                cid: self.channelPayload.channel!.channelId!,
+                userId: self.currentUserResponse.id
+            ) {
+                readDTO.unreadMessageCount = 0
+            }
+            if let channelDTO = session.channel(cid: self.channelPayload.channel!.channelId!) {
+                channelDTO.currentUserUnreadMessagesCount = 0
+            }
+        }
+
+        let event = try channelUpdatedEvent(group: "current")
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        XCTAssertEqual(
+            ["new": 5, "current": 3, "all": 8],
+            database.viewContext.currentUser?.unreadChannelCountsByGroup
+        )
+    }
+
+    func test_channelUpdatedEvent_noGroupedQueryReferencingChannel_doesNotAdjust() throws {
+        try database.writeSynchronously { session in
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "current": 3, "all": 8])
+            // Intentionally do not link the channel to any grouped query.
+        }
+
+        let event = try channelUpdatedEvent(group: "current")
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        XCTAssertEqual(
+            ["new": 5, "current": 3, "all": 8],
+            database.viewContext.currentUser?.unreadChannelCountsByGroup
+        )
+    }
+
+    func test_channelUpdatedEvent_unreadCountsByGroupNotPopulated_doesNotAdjust() throws {
+        try database.writeSynchronously { session in
+            self.linkChannelToGroupedQueries(["new", "all"], session: session)
+            // Intentionally do not call mergeCurrentUserUnreadChannelCountsByGroup.
+        }
+
+        let event = try channelUpdatedEvent(group: "current")
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        XCTAssertNil(database.viewContext.currentUser?.unreadChannelCountsByGroup)
+    }
+
+    func test_channelUpdatedEvent_newGroupIsAll_onlyDecrementsOld() throws {
+        try database.writeSynchronously { session in
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["new": 5, "all": 8])
+            self.linkChannelToGroupedQueries(["new", "all"], session: session)
+        }
+
+        let event = try channelUpdatedEvent(group: "all")
+        try database.writeSynchronously { session in
+            _ = self.middleware.handle(event: event, session: session)
+        }
+
+        // "new" decrements; "all" is intentionally never adjusted directly.
+        XCTAssertEqual(
+            ["new": 4, "all": 8],
+            database.viewContext.currentUser?.unreadChannelCountsByGroup
+        )
+    }
+
+    private func channelUpdatedEvent(group: String?) throws -> ChannelUpdatedEventDTO {
+        var extraData: [String: RawJSON] = [:]
+        if let group {
+            extraData[GroupedChannelKey.group] = .string(group)
+        }
+        let updatedChannel = ChannelResponse.dummy(
+            cid: channelPayload.channel!.channelId!,
+            extraData: extraData
+        )
+        return ChannelUpdatedEventDTO(
+            channel: updatedChannel,
+            cid: channelPayload.channel!.cid,
+            createdAt: .unique,
+            custom: [:],
+            user: UserResponseCommonFields(anotherUserResponse)
+        )
+    }
+
+    private func linkChannelToGroupedQueries(_ groupKeys: [String], session: DatabaseSession) {
+        for key in groupKeys {
+            let queryDTO = session.saveQuery(query: ChannelListQuery(groupKey: key))
+            if let channelDTO = session.channel(cid: channelPayload.channel!.channelId!) {
+                queryDTO.channels.insert(channelDTO)
+            }
+        }
+    }
+
+    private func messageNewEvent(
+        cid: ChannelId,
+        user: UserResponse,
+        message: MessageResponse,
+        createdAt: Date
+    ) -> MessageNewEventDTO {
+        MessageNewEventDTO(
+            cid: cid.rawValue,
+            createdAt: createdAt,
+            custom: [:],
+            message: message,
+            messageId: message.id,
+            user: UserResponseCommonFields(user),
+            watcherCount: 0
+        )
+    }
+
     private func newMessageEvent(type: MessageType) throws -> MessageNewEventDTO {
         let regularMessage: MessageResponse = .dummy(
             type: type,
             messageId: .unique,
             parentId: type == .reply ? .unique : nil,
             showReplyInChannel: type == .reply,
-            authorUserId: anotherUserPayload.id,
+            authorUserId: anotherUserResponse.id,
             createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
             isSilent: false
         )
@@ -1247,7 +1587,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             custom: [:],
             message: regularMessage,
             messageId: regularMessage.id,
-            user: UserResponseCommonFields(anotherUserPayload),
+            user: UserResponseCommonFields(anotherUserResponse),
             watcherCount: 0
         )
     }

@@ -148,7 +148,7 @@ final class ThreadDTO_Tests: XCTestCase {
 
     func test_saveThreadPayload_withDraftReply() throws {
         // GIVEN
-        let draftMessagePayload = DraftPayloadResponse(
+        let draftMessageResponse = DraftPayloadResponse(
             id: .unique,
             text: "Draft reply text",
             command: nil,
@@ -164,7 +164,7 @@ final class ThreadDTO_Tests: XCTestCase {
             cid: .unique,
             channelPayload: nil,
             createdAt: .init(),
-            message: draftMessagePayload,
+            message: draftMessageResponse,
             quotedMessage: nil,
             parentId: nil,
             parentMessage: nil
@@ -210,7 +210,7 @@ final class ThreadDTO_Tests: XCTestCase {
     func test_saveThreadPayload_whenDraftIsNil_removesExistingDraft() throws {
         // GIVEN
         // First save a thread with a draft
-        let draftMessagePayload = DraftPayloadResponse(
+        let draftMessageResponse = DraftPayloadResponse(
             id: .unique,
             text: "Draft reply text",
             command: nil,
@@ -226,7 +226,7 @@ final class ThreadDTO_Tests: XCTestCase {
             cid: .unique,
             channelPayload: nil,
             createdAt: .init(),
-            message: draftMessagePayload,
+            message: draftMessageResponse,
             quotedMessage: nil,
             parentId: nil,
             parentMessage: nil
@@ -265,7 +265,7 @@ final class ThreadDTO_Tests: XCTestCase {
         // Save the same thread without a draft
         let payloadWithoutDraft = ThreadStateResponse(
             parentMessageId: payloadWithDraft.parentMessageId,
-            parentMessage: payloadWithDraft.parentMessagePayload!,
+            parentMessage: payloadWithDraft.parentMessage!,
             channel: payloadWithDraft.channelDetailPayload!,
             createdBy: payloadWithDraft.createdByPayload,
             replyCount: payloadWithDraft.replyCount ?? 0,

@@ -126,8 +126,10 @@ open class ChatMessageListVC: _ViewController,
             return false
         }
 
+        guard unreadCount.messages > 0 else { return false }
+
         guard let firstUnreadIndexPath = jumpToUnreadMessageIndexPath else {
-            return unreadCount.messages > 0
+            return true
         }
 
         // If the message is visible on screen, we don't show the button

@@ -189,7 +189,8 @@ extension ChatState {
         readStateHandler = environment.readStateHandlerBuilder(
             client.authenticationRepository,
             channelUpdater,
-            client.messageRepository
+            client.messageRepository,
+            client.config
         )
         observer = Observer(
             cid: channelId,

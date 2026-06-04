@@ -21,7 +21,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         super.tearDown()
     }
 
-    func test_currentUserPayload_customRolesEncoding() throws {
+    func test_currentUserResponse_customRolesEncoding() throws {
         let payload: OwnUserResponse = .dummy(userPayload: .dummy(userId: .unique, role: UserRole("banana-master")))
 
         // Asynchronously save the payload to the db
@@ -37,7 +37,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(UserRole("banana-master"), loadedCurrentUser.userRole)
     }
 
-    func test_currentUserPayload_isStoredAndLoadedFromDB() throws {
+    func test_currentUserResponse_isStoredAndLoadedFromDB() throws {
         let userPayload: UserResponse = .dummy(
             userId: .unique,
             extraData: ["k": .string("v")],
@@ -150,13 +150,13 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
 
     func test_savingCurrentUser_whenUnreadThreadsCountNil_doesNotOverrideThreadsCount() throws {
         let userId = UserId.unique
-        let previousUserPayload = OwnUserResponse.dummy(userId: userId, role: .admin, unreadCount: .init(
+        let previousUserResponse = OwnUserResponse.dummy(userId: userId, role: .admin, unreadCount: .init(
             channels: 3,
             messages: 2,
             threads: 3
         ))
         try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: previousUserPayload)
+            try session.saveCurrentUser(payload: previousUserResponse)
         }
 
         var currentUser: CurrentChatUser? {
@@ -167,19 +167,51 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(currentUser?.unreadCount.messages, 2)
         XCTAssertEqual(currentUser?.unreadCount.threads, 3)
 
-        let newUserPayload = OwnUserResponse.dummy(userId: userId, role: .admin, unreadCount: .init(
+        let newUserResponse = OwnUserResponse.dummy(userId: userId, role: .admin, unreadCount: .init(
             channels: 3,
             messages: 2,
             threads: nil
         ))
         try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: newUserPayload)
+            try session.saveCurrentUser(payload: newUserResponse)
         }
 
         // Values remain the same even tho threads was nil
         XCTAssertEqual(currentUser?.unreadCount.channels, 3)
         XCTAssertEqual(currentUser?.unreadCount.messages, 2)
         XCTAssertEqual(currentUser?.unreadCount.threads, 3)
+    }
+
+    func test_mergeCurrentUserUnreadChannelCountsByGroup_storesAndLoadsFromDB() throws {
+        let payload = OwnUserResponse.dummy(userPayload: .dummy(userId: .unique, role: .admin))
+        let unreadChannelCountsByGroup: [String: Int] = [
+            "direct": 2,
+            "support": 5
+        ]
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: payload)
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(unreadChannelCountsByGroup)
+        }
+
+        let loadedCurrentUser = try database.readSynchronously { try XCTUnwrap($0.currentUser?.asModel()) }
+        XCTAssertEqual(loadedCurrentUser.unreadChannelCountsByGroup, unreadChannelCountsByGroup)
+    }
+
+    func test_mergeCurrentUserUnreadChannelCountsByGroup_mergesIntoExistingValues() throws {
+        let payload = OwnUserResponse.dummy(userPayload: .dummy(userId: .unique, role: .admin))
+
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: payload)
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["direct": 2, "support": 5])
+            try session.mergeCurrentUserUnreadChannelCountsByGroup(["direct": 10, "billing": 1])
+        }
+
+        let loadedCurrentUser = try database.readSynchronously { try XCTUnwrap($0.currentUser?.asModel()) }
+        XCTAssertEqual(
+            loadedCurrentUser.unreadChannelCountsByGroup,
+            ["direct": 10, "support": 5, "billing": 1]
+        )
     }
 
     func test_saveCurrentUser_removesChannelMutesNotInPayload() throws {
@@ -275,7 +307,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         AssertAsync.canBeReleased(&context)
     }
 
-    func test_currentUserPayload_defaultPrivacySettingsValues() throws {
+    func test_currentUserResponse_defaultPrivacySettingsValues() throws {
         let userPayload: UserResponse = .dummy(
             userId: .unique,
             extraData: ["k": .string("v")],

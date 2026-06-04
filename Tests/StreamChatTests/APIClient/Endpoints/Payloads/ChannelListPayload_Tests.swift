@@ -369,8 +369,8 @@ final class ChannelStateResponseFields_Tests: XCTestCase {
         let memberPayload = ChannelMemberResponse.dummy(user: UserResponse.dummy(userId: "member-user-id"), role: .member)
         let watcherPayload = UserResponse.dummy(userId: "watcher-user-id", name: "Channel Watcher")
         let messagePayload = MessageResponse.dummy(messageId: "message-id", authorUserId: "author-id")
-        let pinnedMessagePayload = MessageResponse.dummy(messageId: "pinned-message-id", authorUserId: "pinned-author-id")
-        let pendingMessagePayload = MessageResponse.dummy(messageId: "pending-message-id", authorUserId: "pending-author-id")
+        let pinnedMessageResponse = MessageResponse.dummy(messageId: "pinned-message-id", authorUserId: "pinned-author-id")
+        let pendingMessageResponse = MessageResponse.dummy(messageId: "pending-message-id", authorUserId: "pending-author-id")
         
         let channelReadPayload = ReadStateResponse(
             user: UserResponse.dummy(userId: "reader-user-id", name: "Reader User"),
@@ -417,8 +417,8 @@ final class ChannelStateResponseFields_Tests: XCTestCase {
             members: [memberPayload],
             membership: membershipPayload,
             messages: [messagePayload],
-            pendingMessages: [pendingMessagePayload],
-            pinnedMessages: [pinnedMessagePayload],
+            pendingMessages: [pendingMessageResponse],
+            pinnedMessages: [pinnedMessageResponse],
             channelReads: [channelReadPayload],
             isHidden: true,
             draft: nil,

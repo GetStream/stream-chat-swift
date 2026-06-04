@@ -5,7 +5,7 @@
 import Foundation
 
 /// Triggered when a new message is sent to a channel the current user is member of.
-public final class NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadCount {
+public final class NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadCount, HasUnreadChannelCountsByGroup {
     /// The identifier of a channel a message is sent to.
     public var cid: ChannelId { channel.cid }
 
@@ -21,11 +21,21 @@ public final class NotificationMessageNewEvent: ChannelSpecificEvent, HasUnreadC
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
 
-    init(channel: ChatChannel, message: ChatMessage, createdAt: Date, unreadCount: UnreadCount?) {
+    /// Unread channel counts keyed by the backend-provided group identifier.
+    public let unreadChannelCountsByGroup: [String: Int]?
+
+    init(
+        channel: ChatChannel,
+        message: ChatMessage,
+        createdAt: Date,
+        unreadCount: UnreadCount?,
+        unreadChannelCountsByGroup: [String: Int]? = nil
+    ) {
         self.channel = channel
         self.message = message
         self.createdAt = createdAt
         self.unreadCount = unreadCount
+        self.unreadChannelCountsByGroup = unreadChannelCountsByGroup
     }
 }
 
@@ -41,7 +51,8 @@ extension NotificationNewMessageEventDTO: EventDTO {
             channel: channelDTO.asModel(),
             message: messageDTO.asModel(),
             createdAt: createdAt,
-            unreadCount: UnreadCount(currentUserDTO: currentUser)
+            unreadCount: UnreadCount(currentUserDTO: currentUser),
+            unreadChannelCountsByGroup: currentUser.unreadChannelCountsByGroup
         )
     }
 }
@@ -65,7 +76,7 @@ public final class NotificationMarkAllReadEvent: Event, HasUnreadCount {
 }
 
 /// Triggered when a channel the current user is member of is marked as read.
-public final class NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount {
+public final class NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCount, HasUnreadChannelCountsByGroup {
     /// The current user.
     public let user: ChatUser
 
@@ -75,23 +86,34 @@ public final class NotificationMarkReadEvent: ChannelSpecificEvent, HasUnreadCou
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount?
 
+    /// Unread channel counts keyed by the backend-provided group identifier.
+    public let unreadChannelCountsByGroup: [String: Int]?
+
     /// The id of the last read message id
     public let lastReadMessageId: MessageId?
 
     /// The event timestamp.
     public let createdAt: Date
 
-    init(user: ChatUser, cid: ChannelId, unreadCount: UnreadCount?, lastReadMessageId: MessageId?, createdAt: Date) {
+    init(
+        user: ChatUser,
+        cid: ChannelId,
+        unreadCount: UnreadCount?,
+        unreadChannelCountsByGroup: [String: Int]? = nil,
+        lastReadMessageId: MessageId?,
+        createdAt: Date
+    ) {
         self.user = user
         self.cid = cid
         self.unreadCount = unreadCount
+        self.unreadChannelCountsByGroup = unreadChannelCountsByGroup
         self.lastReadMessageId = lastReadMessageId
         self.createdAt = createdAt
     }
 }
 
 /// Triggered when a channel the current user is member of is marked as unread.
-public final class NotificationMarkUnreadEvent: ChannelSpecificEvent {
+public final class NotificationMarkUnreadEvent: ChannelSpecificEvent, HasUnreadChannelCountsByGroup {
     /// The current user.
     public let user: ChatUser
 
@@ -113,10 +135,23 @@ public final class NotificationMarkUnreadEvent: ChannelSpecificEvent {
     /// The unread counts of the current user.
     public let unreadCount: UnreadCount
 
+    /// Unread channel counts keyed by the backend-provided group identifier.
+    public let unreadChannelCountsByGroup: [String: Int]?
+
     /// The number of unread messages for the channel
     public let unreadMessagesCount: Int
 
-    init(user: ChatUser, cid: ChannelId, createdAt: Date, firstUnreadMessageId: MessageId, lastReadMessageId: MessageId?, lastReadAt: Date, unreadCount: UnreadCount, unreadMessagesCount: Int) {
+    init(
+        user: ChatUser,
+        cid: ChannelId,
+        createdAt: Date,
+        firstUnreadMessageId: MessageId,
+        lastReadMessageId: MessageId?,
+        lastReadAt: Date,
+        unreadCount: UnreadCount,
+        unreadChannelCountsByGroup: [String: Int]? = nil,
+        unreadMessagesCount: Int
+    ) {
         self.user = user
         self.cid = cid
         self.createdAt = createdAt
@@ -124,6 +159,7 @@ public final class NotificationMarkUnreadEvent: ChannelSpecificEvent {
         self.lastReadMessageId = lastReadMessageId
         self.lastReadAt = lastReadAt
         self.unreadCount = unreadCount
+        self.unreadChannelCountsByGroup = unreadChannelCountsByGroup
         self.unreadMessagesCount = unreadMessagesCount
     }
 }
@@ -147,6 +183,7 @@ extension NotificationMarkReadEventDTO: EventDTO {
             user: userDTO.asModel(),
             cid: channelId,
             unreadCount: UnreadCount(currentUserDTO: currentUser),
+            unreadChannelCountsByGroup: currentUser.unreadChannelCountsByGroup,
             lastReadMessageId: lastReadMessageId,
             createdAt: createdAt
         )
@@ -170,6 +207,7 @@ extension NotificationMarkUnreadEventDTO: EventDTO {
             lastReadMessageId: lastReadMessageId,
             lastReadAt: lastReadAt,
             unreadCount: UnreadCount(currentUserDTO: currentUser),
+            unreadChannelCountsByGroup: currentUser.unreadChannelCountsByGroup,
             unreadMessagesCount: unreadMessagesCount
         )
     }
@@ -217,7 +255,12 @@ public final class NotificationAddedToChannelEvent: ChannelSpecificEvent, HasUnr
     /// The event timestamp.
     public let createdAt: Date
 
-    init(channel: ChatChannel, unreadCount: UnreadCount?, member: ChatChannelMember, createdAt: Date) {
+    init(
+        channel: ChatChannel,
+        unreadCount: UnreadCount?,
+        member: ChatChannelMember,
+        createdAt: Date
+    ) {
         self.channel = channel
         self.unreadCount = unreadCount
         self.member = member
@@ -426,7 +469,7 @@ extension NotificationInviteRejectedEventDTO: EventDTO {
 }
 
 /// Triggered when a channel is deleted, this event is delivered to all channel members
-public final class NotificationChannelDeletedEvent: ChannelSpecificEvent {
+public final class NotificationChannelDeletedEvent: ChannelSpecificEvent, HasUnreadChannelCountsByGroup {
     /// The cid of the deleted channel
     public let cid: ChannelId
 
@@ -436,10 +479,19 @@ public final class NotificationChannelDeletedEvent: ChannelSpecificEvent {
     /// The event timestamp.
     public let createdAt: Date
 
-    init(cid: ChannelId, channel: ChatChannel, createdAt: Date) {
+    /// Unread channel counts keyed by the backend-provided group identifier.
+    public let unreadChannelCountsByGroup: [String: Int]?
+
+    init(
+        cid: ChannelId,
+        channel: ChatChannel,
+        createdAt: Date,
+        unreadChannelCountsByGroup: [String: Int]? = nil
+    ) {
         self.cid = cid
         self.channel = channel
         self.createdAt = createdAt
+        self.unreadChannelCountsByGroup = unreadChannelCountsByGroup
     }
 }
 
@@ -450,7 +502,8 @@ extension NotificationChannelDeletedEventDTO: EventDTO {
         return try? NotificationChannelDeletedEvent(
             cid: channelId,
             channel: channelDTO.asModel(),
-            createdAt: createdAt
+            createdAt: createdAt,
+            unreadChannelCountsByGroup: session.currentUser?.unreadChannelCountsByGroup
         )
     }
 }

@@ -40,7 +40,7 @@ final class DemoChatMessageContentView: ChatMessageContentView {
         super.layout(options: options)
 
         if options.contains(.pinInfo) {
-            backgroundColor = UIColor(red: 0.984, green: 0.957, blue: 0.867, alpha: 1)
+            backgroundColor = appearance.colorPalette.backgroundCoreHighlight
             pinInfoLabel = UILabel()
             pinInfoLabel?.font = appearance.fonts.footnote
             pinInfoLabel?.textColor = appearance.colorPalette.textTertiary

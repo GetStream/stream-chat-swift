@@ -7,15 +7,16 @@ import StreamChatUI
 import UIKit
 
 extension ChatClient {
-    /// The channel name that we want to use for the livestream chat
-    static let livestreamChannelName = "ytlivestream"
+    /// The channel id used for the YT livestream demo chat.
+    static let livestreamChannelId = ChannelId(
+        type: .livestream,
+        id: "ytlivestream"
+    )
 
     /// The singleton instance of `ChatClient`
     @MainActor static let shared: ChatClient = {
         var components = Components()
 
-        components.channelVC = YTLiveChatViewController.self
-        components.messageListVC = YTLiveChatMessageListViewController.self
         components.messageComposerVC = YTChatComposerViewController.self
         components.messageComposerView = YTChatMessageComposerView.self
         components.scrollToBottomButton = YTScrollToLatestMessageButton.self
@@ -31,15 +32,12 @@ extension ChatClient {
         let client = ChatClient(config: config)
         return client
     }()
-}
 
-extension ChatChannelController {
-    static var liveStreamChannelController: ChatChannelController {
-        ChatClient.shared.channelController(
-            for: ChannelId(
-                type: .livestream,
-                id: ChatClient.livestreamChannelName
-            )
-        )
+    /// Creates a configured `LivestreamChat` for the YT livestream demo channel.
+    @MainActor static func makeYTLivestreamChat() -> LivestreamChat {
+        let livestreamChat = ChatClient.shared.makeLivestreamChat(for: ChatClient.livestreamChannelId)
+        livestreamChat.maxMessageLimitOptions = .recommended
+        livestreamChat.countSkippedMessagesWhenPaused = true
+        return livestreamChat
     }
 }

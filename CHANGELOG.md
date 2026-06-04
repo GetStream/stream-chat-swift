@@ -5,6 +5,105 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+# [5.5.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.5.0)
+_June 03, 2026_
+
+## StreamChat
+### ✅ Added
+- Add `ChannelListQuery(predefinedFilter:filterValues:sortValues:)` for creating channel list queries with predefined filters [#4113](https://github.com/GetStream/stream-chat-swift/pull/4113)
+- Add `ChatClient.queryGroupedChannels(groups:limit:presence:watch:)` to fetch grouped channels with per-group unread counts [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
+- Add `ChatClient.makeChannelList(with:)` overload for observing a single grouped channels group in the state layer [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
+- Add `unreadChannelCountsByGroup` to `CurrentChatUser`, observable for changes via `ConnectedUser` [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
+
+# [5.4.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.4.1)
+_June 01, 2026_
+
+## StreamChat
+### 🐞 Fixed
+- Respect `ChatClientConfig.shouldShowShadowedMessages` in `LivestreamChat` and `LivestreamChannelController` [#4118](https://github.com/GetStream/stream-chat-swift/pull/4118)
+
+# [5.4.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.4.0)
+_May 28, 2026_
+
+## StreamChatCommonUI
+### ✅ Added
+- Make layout tokens customisable in `Appearance.tokens` [#4114](https://github.com/GetStream/stream-chat-swift/pull/4114)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix attachment upload overlay text and action buttons being illegible in dark mode [#4111](https://github.com/GetStream/stream-chat-swift/pull/4111)
+
+# [4.100.1](https://github.com/GetStream/stream-chat-swift/releases/tag/4.100.1)
+_May 22, 2026_
+
+## StreamChat
+### 🐞 Fixed
+- Fix crash in `MarkdownParser` when parsing long messages with many presentation intents [#4099](https://github.com/GetStream/stream-chat-swift/pull/4099)
+
+# [5.3.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.3.0)
+_May 21, 2026_
+
+## StreamChat
+### ✅ Added
+- Add `LivestreamChat`, the state-layer counterpart of `LivestreamChannelController` [#4103](https://github.com/GetStream/stream-chat-swift/pull/4103)
+### 🐞 Fixed
+- Fix crash in `MarkdownParser` when parsing long messages with many presentation intents [#4098](https://github.com/GetStream/stream-chat-swift/pull/4098)
+### 🔄 Changed
+- Deprecate `LivestreamChannelController.pin(messageId:pinning:completion:)` in favor of `pin(messageId:completion:)`. The `pinning` parameter had no effect [#4103](https://github.com/GetStream/stream-chat-swift/pull/4103)
+
+## StreamChatCommonUI
+### 🐞 Fixed
+- Forward CDN authentication headers when generating local video preview thumbnails [#4105](https://github.com/GetStream/stream-chat-swift/pull/4105)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix UIKit attachment previews flickering when adding reactions to messages with cached CDN images [#4106](https://github.com/GetStream/stream-chat-swift/pull/4106)
+
+# [5.2.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.2.0)
+_May 13, 2026_
+
+## StreamChat
+### ✅ Added
+- Support typing indicators in `LivestreamChannelController` [#4094](https://github.com/GetStream/stream-chat-swift/pull/4094)
+- `UploadedFile` now carries an optional `attachment` so custom `CDNStorage` implementations can mutate the attachment payload [#4091](https://github.com/GetStream/stream-chat-swift/pull/4091)
+### 🐞 Fixed
+- Fix `PartialKeyPath: Sendable` retroactive conformance conflict with other modules [#4090](https://github.com/GetStream/stream-chat-swift/pull/4090)
+
+## StreamChatCommonUI
+### ✅ Added
+- Expose brand (50–900) and chrome (0–1000) color ramps on `Appearance.ColorPalette` [#4093](https://github.com/GetStream/stream-chat-swift/pull/4093)
+- Expose `UIColor(light:dark:)` for building trait-aware overrides on `Appearance.ColorPalette` [#4093](https://github.com/GetStream/stream-chat-swift/pull/4093)
+### 🔄 Changed
+- `Appearance.localizationProvider` now falls back from `Bundle.main` to the SDK bundle, so apps can override keys without installing a custom provider [#4088](https://github.com/GetStream/stream-chat-swift/pull/4088)
+
+# [4.100.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.100.0)
+_May 13, 2026_
+
+## StreamChat
+### ✅ Added
+- Support typing indicators in `LivestreamChannelController` [#4094](https://github.com/GetStream/stream-chat-swift/pull/4094)
+
+# [5.1.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.1.1)
+_May 08, 2026_
+
+## StreamChat
+### 🐞 Fixed
+- Fix image cache misses caused by non-deterministic caching keys in `StreamCDNRequester` [#4075](https://github.com/GetStream/stream-chat-swift/pull/4075)
+- Fix `ChatChannel.latestMessages` being wiped on mid-page pagination [#4077](https://github.com/GetStream/stream-chat-swift/pull/4077)
+- Fix `CurrentUserController.setPushPreference` and `snoozePushNotifications` not updating the local push preference state [#4085](https://github.com/GetStream/stream-chat-swift/pull/4085)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix channel list preview showing "No messages" after a mid-page jump [#4077](https://github.com/GetStream/stream-chat-swift/pull/4077)
+- Fix layout shift on delivery-status transitions in message footer [#4078](https://github.com/GetStream/stream-chat-swift/pull/4078)
+
+# [4.99.2](https://github.com/GetStream/stream-chat-swift/releases/tag/4.99.2)
+_May 06, 2026_
+
+## StreamChat
+### 🐞 Fixed
+- Fix `CurrentUserController.setPushPreference` and `snoozePushNotifications` not updating the local push preference state [#4086](https://github.com/GetStream/stream-chat-swift/pull/4086)
+
 # [5.1.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.1.0)
 _April 23, 2026_
 

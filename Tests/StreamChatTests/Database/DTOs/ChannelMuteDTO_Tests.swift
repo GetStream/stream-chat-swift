@@ -22,14 +22,14 @@ final class ChannelMuteDTO_Tests: XCTestCase {
     }
 
     func test_channelMutePayload_isStoredAndLoadedFromDB() throws {
-        let currentUserPayload: OwnUserResponse = .dummy(
+        let currentUserResponse: OwnUserResponse = .dummy(
             userId: .unique,
             role: .user
         )
 
         let mutePayload: ChannelMute = .init(
             mutedChannel: .dummy(cid: .unique),
-            user: currentUserPayload,
+            user: currentUserResponse,
             createdAt: .unique,
             updatedAt: .unique,
             expiresAt: .unique
@@ -37,7 +37,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let mutedChannel = try XCTUnwrap(mutePayload.channelPayload)
 
         try database.writeSynchronously { session in
-            try session.saveCurrentUser(payload: currentUserPayload)
+            try session.saveCurrentUser(payload: currentUserResponse)
             try session.saveChannelMute(payload: mutePayload)
         }
 

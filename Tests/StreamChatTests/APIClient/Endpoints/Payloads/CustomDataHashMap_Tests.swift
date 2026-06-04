@@ -39,11 +39,11 @@ final class CustomDataHashMap_Tests: XCTestCase {
     }
 
     func test_messageJSONDecodeWithoutAnyCustomData() throws {
-        try! assertEmptyCustomData(MessageResponse.self, "MessagePayload")
+        try! assertEmptyCustomData(MessageResponse.self, "MessageResponse")
     }
 
     func test_messageJSONDecodeWithCustomData() throws {
-        try! assertCustomData(MessageResponse.self, "MessagePayloadWithCustom")
+        try! assertCustomData(MessageResponse.self, "MessageResponseWithCustom")
     }
 
     func test_messageReactionJSONDecodeWithoutAnyCustomData() throws {
@@ -55,19 +55,19 @@ final class CustomDataHashMap_Tests: XCTestCase {
     }
 
     func test_userJSONDecodeWithoutAnyCustomData() throws {
-        try! assertEmptyCustomData(UserResponse.self, "UserPayload")
+        try! assertEmptyCustomData(UserResponse.self, "UserResponse")
     }
 
     func test_userJSONDecodeWithCustomData() throws {
-        try! assertCustomData(UserResponse.self, "UserPayloadWithCustom")
+        try! assertCustomData(UserResponse.self, "UserResponseWithCustom")
     }
 
     func test_currentUserJSONDecodeWithoutAnyCustomData() throws {
-        try! assertEmptyCustomData(OwnUserResponse.self, "CurrentUserPayload")
+        try! assertEmptyCustomData(OwnUserResponse.self, "OwnUserResponse")
     }
 
     func test_currentUserJSONDecodeWithCustomData() throws {
-        try! assertCustomData(OwnUserResponse.self, "CurrentUserPayloadWithCustom")
+        try! assertCustomData(OwnUserResponse.self, "OwnUserResponseWithCustom")
     }
 }
 

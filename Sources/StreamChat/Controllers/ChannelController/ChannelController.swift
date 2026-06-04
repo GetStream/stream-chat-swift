@@ -79,7 +79,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
     private lazy var readStateHandler: ReadStateHandler = self.environment.readStateHandlerBuilder(
         client.authenticationRepository,
         updater,
-        client.messageRepository
+        client.messageRepository,
+        client.config
     )
 
     /// A Boolean value that returns whether the oldest messages have all been loaded or not.
@@ -1301,8 +1302,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        /// Read events are not enabled for this channel
-        guard channel.canReceiveReadEvents == true else {
+        let localReadEnabled = client.config.isLocalUnreadCountEnabled && !channel.config.readEventsEnabled
+        guard channel.canReceiveReadEvents || localReadEnabled else {
             channelFeatureDisabled(feature: "read events", completion: completion)
             return
         }
@@ -1880,14 +1881,6 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             }
         }
     }
-
-    deinit {
-        guard self.isJumpingToMessage, let cid = self.cid else { return }
-        dataStore.database.write { session in
-            let channelDTO = session.channel(cid: cid)
-            channelDTO?.cleanAllMessagesExcludingLocalOnly()
-        }
-    }
 }
 
 // MARK: - Environment
@@ -1915,7 +1908,8 @@ extension ChatChannelController {
         var readStateHandlerBuilder: (
             _ authenticationRepository: AuthenticationRepository,
             _ channelUpdater: ChannelUpdater,
-            _ messageRepository: MessageRepository
+            _ messageRepository: MessageRepository,
+            _ config: ChatClientConfig
         ) -> ReadStateHandler = ReadStateHandler.init
     }
 }
@@ -1932,7 +1926,10 @@ public enum MessageOrdering: Sendable {
 // MARK: - Helpers
 
 private extension ChatChannelController {
-    func synchronize(isInRecoveryMode: Bool, _ completion: (@MainActor (_ error: Error?) -> Void)? = nil) {
+    func synchronize(
+        isInRecoveryMode: Bool,
+        _ completion: (@MainActor (_ error: Error?) -> Void)? = nil
+    ) {
         let channelCreatedCallback = isChannelAlreadyCreated ? nil : channelCreated(forwardErrorTo: setLocalStateBasedOnError)
         updater.update(
             channelQuery: channelQuery,

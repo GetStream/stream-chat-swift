@@ -6,9 +6,9 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class FlagUserPayload_Tests: XCTestCase {
+final class FlagUserResponse_Tests: XCTestCase {
     func test_json_isDeserialized_withDefaultExtraData() throws {
-        let json = XCTestCase.mockData(fromJSONFile: "FlagUserPayload+DefaultExtraData")
+        let json = XCTestCase.mockData(fromJSONFile: "FlagUserResponse+DefaultExtraData")
         let payload = try JSONDecoder.default.decode(FlagResponse.self, from: json)
 
         // Assert moderation item id is deserialized correctly.
@@ -16,7 +16,7 @@ final class FlagUserPayload_Tests: XCTestCase {
     }
 
     func test_json_isDeserialized_withCustomData() throws {
-        let json = XCTestCase.mockData(fromJSONFile: "FlagUserPayload+CustomExtraData")
+        let json = XCTestCase.mockData(fromJSONFile: "FlagUserResponse+CustomExtraData")
         let payload = try JSONDecoder.default.decode(FlagResponse.self, from: json)
 
         // Assert moderation item id is deserialized correctly.

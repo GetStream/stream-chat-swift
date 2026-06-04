@@ -21,6 +21,9 @@ open class ChatMessageDeliveryStatusCheckmarkView: _View, ThemeProvider {
     open private(set) lazy var imageView = UIImageView()
         .withoutAutoresizingMaskConstraints
 
+    /// The size of the checkmark icon.
+    open var checkmarkSize: CGSize { CGSize(width: 16, height: 16) }
+
     override open func setUpAppearance() {
         super.setUpAppearance()
 
@@ -31,6 +34,9 @@ open class ChatMessageDeliveryStatusCheckmarkView: _View, ThemeProvider {
         super.setUpLayout()
 
         embed(imageView)
+        imageView
+            .width(checkmarkSize.width)
+            .height(checkmarkSize.height)
     }
 
     override open func updateContent() {

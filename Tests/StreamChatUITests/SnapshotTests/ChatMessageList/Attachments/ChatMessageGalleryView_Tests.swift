@@ -135,9 +135,59 @@ import XCTest
         AssertSnapshot(galleryView, variants: [.defaultLight])
     }
 
+    func test_imagePreview_whenImageIsCached_hidesLoadingIndicatorSynchronously() throws {
+        let url = TestImages.yoda.url
+        let cachingKey = "cached-yoda"
+        let image = try XCTUnwrap(UIImage(data: Data(contentsOf: url)))
+        let request = ImageRequest(
+            urlRequest: URLRequest(url: url),
+            processors: [],
+            userInfo: [.imageIdKey: cachingKey]
+        )
+        ImagePipeline.shared.cache[request] = ImageContainer(image: image)
+        defer { ImagePipeline.shared.cache[request] = nil }
+
+        var components = Components.mock
+        components.mediaLoader = StreamMediaLoader(
+            downloader: StreamImageDownloader(),
+            cdnRequester: StaticCachingKeyCDNRequester(cachingKey: cachingKey)
+        )
+        let preview = ChatMessageGalleryView.ImagePreview().withoutAutoresizingMaskConstraints
+        preview.components = components
+        preview.content = .mock(id: .unique, imageURL: url)
+
+        UIView().addSubview(preview)
+
+        XCTAssertFalse(preview.loadingIndicator.isVisible)
+    }
+
     private func preview(for attachment: ChatMessageImageAttachment) -> UIView {
         let preview = ChatMessageGalleryView.ImagePreview().withoutAutoresizingMaskConstraints
         preview.content = attachment
         return preview
+    }
+}
+
+private final class StaticCachingKeyCDNRequester: CDNRequester, @unchecked Sendable {
+    let cachingKey: String
+
+    init(cachingKey: String) {
+        self.cachingKey = cachingKey
+    }
+
+    func imageRequest(
+        for url: URL,
+        options: ImageRequestOptions,
+        completion: @escaping (Result<CDNRequest, Error>) -> Void
+    ) {
+        completion(.success(CDNRequest(url: url, cachingKey: cachingKey)))
+    }
+
+    func fileRequest(
+        for url: URL,
+        options: FileRequestOptions,
+        completion: @escaping (Result<CDNRequest, Error>) -> Void
+    ) {
+        completion(.success(CDNRequest(url: url)))
     }
 }

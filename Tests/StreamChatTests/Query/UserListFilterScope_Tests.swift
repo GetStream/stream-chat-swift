@@ -10,19 +10,19 @@ final class UserListFilterScope_Tests: XCTestCase {
     typealias Key<T: FilterValue> = FilterKey<UserListFilterScope, T>
 
     func test_filterKeys_matchChannelCodingKeys() {
-        XCTAssertEqual(Key<UserId>.id.rawValue, UserPayloadsCodingKeys.id.rawValue)
-        XCTAssertEqual(Key<String>.name.rawValue, UserPayloadsCodingKeys.name.rawValue)
-        XCTAssertEqual(Key<URL>.imageURL.rawValue, UserPayloadsCodingKeys.imageURL.rawValue)
-        XCTAssertEqual(Key<UserRole>.role.rawValue, UserPayloadsCodingKeys.role.rawValue)
-        XCTAssertEqual(Key<Bool>.isOnline.rawValue, UserPayloadsCodingKeys.isOnline.rawValue)
-        XCTAssertEqual(Key<Bool>.isBanned.rawValue, UserPayloadsCodingKeys.isBanned.rawValue)
-        XCTAssertEqual(Key<Date>.createdAt.rawValue, UserPayloadsCodingKeys.createdAt.rawValue)
-        XCTAssertEqual(Key<Date>.updatedAt.rawValue, UserPayloadsCodingKeys.updatedAt.rawValue)
-        XCTAssertEqual(Key<Date>.lastActiveAt.rawValue, UserPayloadsCodingKeys.lastActiveAt.rawValue)
-        XCTAssertEqual(Key<Bool>.isInvisible.rawValue, UserPayloadsCodingKeys.isInvisible.rawValue)
-        XCTAssertEqual(Key<Int>.unreadChannelsCount.rawValue, UserPayloadsCodingKeys.unreadChannelsCount.rawValue)
-        XCTAssertEqual(Key<Int>.unreadMessagesCount.rawValue, UserPayloadsCodingKeys.unreadMessagesCount.rawValue)
-        XCTAssertEqual(Key<Bool>.isAnonymous.rawValue, UserPayloadsCodingKeys.isAnonymous.rawValue)
-        XCTAssertEqual(Key<TeamId>.teams.rawValue, UserPayloadsCodingKeys.teams.rawValue)
+        XCTAssertEqual(Key<UserId>.id.rawValue, "id")
+        XCTAssertEqual(Key<String>.name.rawValue, "name")
+        XCTAssertEqual(Key<URL>.imageURL.rawValue, "image")
+        XCTAssertEqual(Key<UserRole>.role.rawValue, "role")
+        XCTAssertEqual(Key<Bool>.isOnline.rawValue, "online")
+        XCTAssertEqual(Key<Bool>.isBanned.rawValue, "banned")
+        XCTAssertEqual(Key<Date>.createdAt.rawValue, "created_at")
+        XCTAssertEqual(Key<Date>.updatedAt.rawValue, "updated_at")
+        XCTAssertEqual(Key<Date>.lastActiveAt.rawValue, "last_active")
+        XCTAssertEqual(Key<Bool>.isInvisible.rawValue, "invisible")
+        XCTAssertEqual(Key<Int>.unreadChannelsCount.rawValue, "unread_channels")
+        XCTAssertEqual(Key<Int>.unreadMessagesCount.rawValue, "total_unread_count")
+        XCTAssertEqual(Key<Bool>.isAnonymous.rawValue, "anon")
+        XCTAssertEqual(Key<TeamId>.teams.rawValue, "teams")
     }
 }

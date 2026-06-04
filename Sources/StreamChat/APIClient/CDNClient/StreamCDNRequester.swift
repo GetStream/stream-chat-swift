@@ -89,7 +89,9 @@ public final class StreamCDNRequester: CDNRequester, Sendable {
         }
 
         let persistedParameters = ["w", "h", "resize", "crop"]
-        let newParameters = components.queryItems?.filter { persistedParameters.contains($0.name) } ?? []
+        let newParameters = (components.queryItems ?? [])
+            .filter { persistedParameters.contains($0.name) }
+            .sorted { $0.name < $1.name }
         components.queryItems = newParameters.isEmpty ? nil : newParameters
         return components.string ?? key
     }

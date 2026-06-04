@@ -212,6 +212,7 @@ class AppConfigViewController: UITableViewController {
         case reconnectionTimeout
         case shouldShowShadowedMessages
         case isChannelAutomaticFilteringEnabled
+        case isLocalUnreadCountEnabled
     }
 
     enum UserConfigOption: String, CaseIterable {
@@ -388,6 +389,10 @@ class AppConfigViewController: UITableViewController {
         case .isChannelAutomaticFilteringEnabled:
             cell.accessoryView = makeSwitchButton(chatClientConfig.isChannelAutomaticFilteringEnabled) { [weak self] newValue in
                 self?.chatClientConfig.isChannelAutomaticFilteringEnabled = newValue
+            }
+        case .isLocalUnreadCountEnabled:
+            cell.accessoryView = makeSwitchButton(chatClientConfig.isLocalUnreadCountEnabled) { [weak self] newValue in
+                self?.chatClientConfig.isLocalUnreadCountEnabled = newValue
             }
         }
     }

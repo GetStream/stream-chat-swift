@@ -121,6 +121,36 @@ final class StreamMediaLoader_Video_Tests: XCTestCase {
         waitForExpectations(timeout: 2)
     }
 
+    // MARK: - Asset options
+
+    func test_assetOptions_withHeaders_forwardsHeadersViaHTTPHeaderFieldsKey() {
+        let headers = ["Authorization": "Bearer abc", "X-Custom": "value"]
+        let cdnRequest = CDNRequest(
+            url: URL(string: "https://cdn.example.com/video.mp4")!,
+            headers: headers
+        )
+
+        let options = sut.assetOptions(for: cdnRequest)
+
+        let forwarded = options?["AVURLAssetHTTPHeaderFieldsKey"] as? [String: String]
+        XCTAssertEqual(forwarded, headers)
+    }
+
+    func test_assetOptions_withNilHeaders_returnsNil() {
+        let cdnRequest = CDNRequest(url: URL(string: "https://cdn.example.com/video.mp4")!)
+
+        XCTAssertNil(sut.assetOptions(for: cdnRequest))
+    }
+
+    func test_assetOptions_withEmptyHeaders_returnsNil() {
+        let cdnRequest = CDNRequest(
+            url: URL(string: "https://cdn.example.com/video.mp4")!,
+            headers: [:]
+        )
+
+        XCTAssertNil(sut.assetOptions(for: cdnRequest))
+    }
+
     // MARK: - Video preview caching
 
     func test_loadVideoPreview_secondCall_usesCacheAndSkipsCDN() {

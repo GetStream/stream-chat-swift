@@ -6,7 +6,7 @@
 @testable import StreamChatTestTools
 import XCTest
 
-final class MemberPayload_Tests: XCTestCase {
+final class ChannelMemberResponse_Tests: XCTestCase {
     let memberJSON = XCTestCase.mockData(fromJSONFile: "Member")
     let memberRoleJSON = XCTestCase.mockData(fromJSONFile: "MemberRole")
 

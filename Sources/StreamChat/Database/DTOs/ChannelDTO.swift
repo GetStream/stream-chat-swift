@@ -101,9 +101,17 @@ class ChannelDTO: NSManagedObject {
             }
         }
 
-        // Change to the `truncatedAt` value have effect on messages, we need to mark them dirty manually
-        // to triggers related FRC updates
-        if changedValues().keys.contains("truncatedAt") {
+        // Changes to `truncatedAt` or to the message-page bounds (`oldestMessageAt` /
+        // `newestMessageAt`) affect which linked messages belong to the channel's
+        // active page (see `MessageDTO.channelMessagesPredicate`). NSFetchedResultsController
+        // does not re-evaluate cached rows when only the parent ChannelDTO changes,
+        // so mark linked messages as dirty to nudge any active FRC into re-running
+        // its predicate against them.
+        let changedKeys = changedValues().keys
+        let pageBoundsDidChange = changedKeys.contains("truncatedAt")
+            || changedKeys.contains("oldestMessageAt")
+            || changedKeys.contains("newestMessageAt")
+        if pageBoundsDidChange {
             messages
                 .filter { !$0.hasChanges }
                 .forEach {
@@ -111,12 +119,12 @@ class ChannelDTO: NSManagedObject {
                     $0.willChangeValue(for: \.id)
                     $0.didChangeValue(for: \.id)
                 }
+        }
 
-            // When truncating the channel, we need to reset the newestMessageAt so that
-            // the channel can render newer messages in the UI.
-            if newestMessageAt != nil {
-                newestMessageAt = nil
-            }
+        // When truncating the channel, we need to reset the newestMessageAt so that
+        // the channel can render newer messages in the UI.
+        if changedKeys.contains("truncatedAt"), newestMessageAt != nil {
+            newestMessageAt = nil
         }
         
         // Update the date for sorting every time new message in this channel arrive.
@@ -226,7 +234,7 @@ extension NSManagedObjectContext {
         // the query won't be saved, which will cause any future
         // channels to not become linked to this query
         if let query = query {
-            _ = saveQuery(query: query)
+            _ = saveQuery(query: query, predefinedFilter: payload.predefinedFilter)
         }
 
         return payload.channels.compactMapLoggingError { channelPayload in
@@ -438,7 +446,7 @@ extension NSManagedObjectContext {
     }
 
     func delete(query: ChannelListQuery) {
-        guard let dto = channelListQuery(filterHash: query.filter.filterHash) else { return }
+        guard let dto = channelListQuery(query) else { return }
 
         delete(dto)
     }
@@ -471,7 +479,7 @@ extension ChannelDTO {
         
         request.sortDescriptors = sortDescriptors.isEmpty ? [ChannelListSortingKey.defaultSortDescriptor] : sortDescriptors
 
-        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.filter.filterHash)
+        let matchingQuery = NSPredicate(format: "ANY queries.filterHash == %@", query.queryHash)
         let notDeleted = NSPredicate(format: "deletedAt == nil")
 
         var subpredicates: [NSPredicate] = [
@@ -491,8 +499,10 @@ extension ChannelDTO {
         }
 
         request.predicate = NSCompoundPredicate(type: .and, subpredicates: subpredicates)
-        request.fetchLimit = query.pagination.pageSize
-        request.fetchBatchSize = query.pagination.pageSize
+        // Backend driven page size is enabled with Int.backendDefaultPageSize (-1). Keep CoreData fetching efficient and use default channels page size.
+        let limit = query.pagination.pageSize > 0 ? query.pagination.pageSize : .channelsPageSize
+        request.fetchLimit = limit
+        request.fetchBatchSize = limit
         return request
     }
     

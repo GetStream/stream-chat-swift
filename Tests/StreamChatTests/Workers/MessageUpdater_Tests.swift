@@ -1282,8 +1282,8 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate flag API response.
-        let flagMessagePayload = FlagResponse(duration: "", itemId: messageId)
-        apiClient.test_simulateResponse(.success(flagMessagePayload))
+        let flagMessageResponse = FlagResponse(duration: "", itemId: messageId)
+        apiClient.test_simulateResponse(.success(flagMessageResponse))
 
         waitForExpectations(timeout: defaultTimeout)
 
@@ -1311,7 +1311,7 @@ final class MessageUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(unflagEndpoint))
 
         // Simulate unflag API response.
-        apiClient.test_simulateResponse(.success(flagMessagePayload))
+        apiClient.test_simulateResponse(.success(flagMessageResponse))
 
         // Assert unflag completion is called.
         AssertAsync.willBeTrue(unflagCompletionCalled)

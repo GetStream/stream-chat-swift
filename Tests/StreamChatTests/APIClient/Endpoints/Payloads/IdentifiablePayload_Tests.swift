@@ -150,13 +150,13 @@ final class IdentifiablePayload_Tests: XCTestCase {
         XCTAssertTrue(ChannelResponse.modelClass == ChannelDTO.self)
     }
 
-    func test_UserPayload_isIdentifiablePayload() {
+    func test_UserResponse_isIdentifiablePayload() {
         let payload = UserResponse.dummy(userId: "1")
         XCTAssertEqual(payload.databaseId, "1")
         XCTAssertTrue(UserResponse.modelClass == UserDTO.self)
     }
 
-    func test_MessagePayload_isIdentifiablePayload() {
+    func test_MessageResponse_isIdentifiablePayload() {
         let payload = MessageResponse.dummy(messageId: "m1", authorUserId: "u1")
         XCTAssertEqual(payload.databaseId, "m1")
         XCTAssertTrue(MessageResponse.modelClass == MessageDTO.self)
@@ -172,7 +172,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
         XCTAssertTrue(ReactionResponse.modelClass == MessageReactionDTO.self)
     }
 
-    func test_MemberPayload_isIdentifiablePayload() {
+    func test_ChannelMemberResponse_isIdentifiablePayload() {
         let payload = ChannelMemberResponse.dummy(user: UserResponse.dummy(userId: "u2"))
         XCTAssertNil(payload.databaseId)
         XCTAssertTrue(ChannelMemberResponse.modelClass == MemberDTO.self)

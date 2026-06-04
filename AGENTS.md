@@ -269,6 +269,14 @@ Compatibility & distribution
 - The default integration branch is `develop`. Feature branches are merged into `develop`.
 - Update `CHANGELOG.md` under the `# Upcoming` section when making client-facing changes (follow the Keep a Changelog format with `### Added`, `### Fixed`, `### Changed` subsections).
 - The changelog has separate subsections for **StreamChat**, **StreamChatUI**, and **StreamChatCommonUI**.
+- Only update `CHANGELOG.md` **after the PR has been opened**, so the entry can include the PR link (e.g. `[#1234](https://github.com/GetStream/stream-chat-swift/pull/1234)`). Push the changelog update as a follow-up commit on the same branch.
+- Keep changelog entries as short and high-level as possible. Describe the user-visible outcome in one line and do not explain implementation details, file names, or internal APIs.
+
+### Commits
+
+- Start commit subject lines with a capital letter.
+- Do not end commit subject lines with a period.
+- Keep the subject line concise (ideally under 72 characters); put additional context in the body separated by a blank line.
 
 ### Pull Requests
 

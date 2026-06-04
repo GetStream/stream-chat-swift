@@ -363,6 +363,74 @@ final class StreamMediaLoader_UIKit_Tests: XCTestCase {
         task.cancel()
         XCTAssertTrue(task.isCancelled)
     }
+
+    @MainActor
+    func test_streamImageDownloader_whenImageIsInMemoryCache_completesSynchronously() {
+        let image = UIImage.make(withColor: .red)
+        let url = URL(string: "https://example.com/image.jpg")!
+        let cachingKey = "stable-cache-key"
+        let urlRequest = URLRequest(url: url)
+        let request = ImageRequest(
+            urlRequest: urlRequest,
+            processors: [],
+            userInfo: [.imageIdKey: cachingKey]
+        )
+        ImagePipeline.shared.cache[request] = ImageContainer(image: image)
+        defer { ImagePipeline.shared.cache[request] = nil }
+
+        var result: Result<DownloadedImage, Error>?
+        let sut = StreamImageDownloader()
+
+        sut.downloadImage(
+            url: url,
+            options: ImageDownloadingOptions(cachingKey: cachingKey)
+        ) {
+            result = $0
+        }
+
+        switch result {
+        case let .success(downloaded):
+            XCTAssertEqual(downloaded.image.pngData(), image.pngData())
+        case let .failure(error):
+            XCTFail("Expected cached image, got \(error)")
+        case nil:
+            XCTFail("Expected cached image to complete synchronously")
+        }
+    }
+
+    @MainActor
+    func test_streamImageDownloader_whenSignedURLChanges_usesCachingKeyForSynchronousMemoryCacheHit() {
+        let image = UIImage.make(withColor: .red)
+        let cachedURL = URL(string: "https://stream-io-cdn.com/image.jpg?Signature=old")!
+        let reloadedURL = URL(string: "https://stream-io-cdn.com/image.jpg?Signature=new")!
+        let cachingKey = "https://stream-io-cdn.com/image.jpg"
+        let cachedRequest = ImageRequest(
+            urlRequest: URLRequest(url: cachedURL),
+            processors: [],
+            userInfo: [.imageIdKey: cachingKey]
+        )
+        ImagePipeline.shared.cache[cachedRequest] = ImageContainer(image: image)
+        defer { ImagePipeline.shared.cache[cachedRequest] = nil }
+
+        var result: Result<DownloadedImage, Error>?
+        let sut = StreamImageDownloader()
+
+        sut.downloadImage(
+            url: reloadedURL,
+            options: ImageDownloadingOptions(cachingKey: cachingKey)
+        ) {
+            result = $0
+        }
+
+        switch result {
+        case let .success(downloaded):
+            XCTAssertEqual(downloaded.image.pngData(), image.pngData())
+        case let .failure(error):
+            XCTFail("Expected cached image, got \(error)")
+        case nil:
+            XCTFail("Expected equivalent signed URL to complete synchronously from cache")
+        }
+    }
 }
 
 // MARK: - Mocks

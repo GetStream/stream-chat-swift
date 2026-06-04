@@ -94,14 +94,16 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
         options: VideoLoadOptions,
         completion: @escaping @MainActor (Result<MediaLoaderVideoAsset, Error>) -> Void
     ) {
-        cdnRequester.fileRequest(for: url, options: .init()) { result in
+        cdnRequester.fileRequest(for: url, options: .init()) { [weak self] result in
+            guard let self else {
+                StreamConcurrency.onMain {
+                    completion(.failure(ClientError.Unknown("MediaLoader was deallocated")))
+                }
+                return
+            }
             switch result {
             case let .success(cdnRequest):
-                var assetOptions: [String: Any] = [:]
-                if let headers = cdnRequest.headers, !headers.isEmpty {
-                    assetOptions["AVURLAssetHTTPHeaderFieldsKey"] = headers
-                }
-                let asset = AVURLAsset(url: cdnRequest.url, options: assetOptions.isEmpty ? nil : assetOptions)
+                let asset = self.makeAVURLAsset(from: cdnRequest)
                 StreamConcurrency.onMain {
                     completion(.success(MediaLoaderVideoAsset(asset: asset)))
                 }
@@ -169,6 +171,23 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
 
     // MARK: - Private
 
+    /// Builds the options dictionary used when constructing the `AVURLAsset`
+    /// for a video URL returned by the CDN.
+    ///
+    /// Returns `nil` when there are no headers to forward. Otherwise returns a
+    /// dictionary containing `AVURLAssetHTTPHeaderFieldsKey` so the asset's
+    /// underlying network requests carry the CDN-provided authentication headers.
+    func assetOptions(for cdnRequest: CDNRequest) -> [String: Any]? {
+        guard let headers = cdnRequest.headers, !headers.isEmpty else { return nil }
+        return ["AVURLAssetHTTPHeaderFieldsKey": headers]
+    }
+
+    /// Constructs an `AVURLAsset` from a `CDNRequest`, forwarding any CDN headers
+    /// so the asset's network requests are authenticated against signed CDNs.
+    private func makeAVURLAsset(from cdnRequest: CDNRequest) -> AVURLAsset {
+        AVURLAsset(url: cdnRequest.url, options: assetOptions(for: cdnRequest))
+    }
+
     private func generateVideoPreview(
         for url: URL,
         options: VideoLoadOptions,
@@ -182,10 +201,10 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
                 return
             }
 
-            let adjustedUrl: URL
+            let asset: AVURLAsset
             switch result {
             case let .success(cdnRequest):
-                adjustedUrl = cdnRequest.url
+                asset = self.makeAVURLAsset(from: cdnRequest)
             case let .failure(error):
                 StreamConcurrency.onMain {
                     completion(.failure(error))
@@ -193,7 +212,6 @@ open class StreamMediaLoader: MediaLoader, @unchecked Sendable {
                 return
             }
 
-            let asset = AVURLAsset(url: adjustedUrl)
             let imageGenerator = AVAssetImageGenerator(asset: asset)
             let frameTime = CMTime(seconds: 0.1, preferredTimescale: 600)
 

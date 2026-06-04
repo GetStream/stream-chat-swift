@@ -73,6 +73,14 @@ class ManualEventHandler: @unchecked Sendable {
             guard let cid = parseCID(dto.cid), isRegistered(channelId: cid) else { return nil }
             return createReactionDeletedEvent(from: dto, cid: cid)
 
+        case let dto as TypingStartEventDTO:
+            guard let cid = parseCID(dto.cid), isRegistered(channelId: cid) else { return nil }
+            return createTypingEvent(isTyping: true, userFields: dto.user, parentId: dto.parentId, createdAt: dto.createdAt, cid: cid)
+
+        case let dto as TypingStopEventDTO:
+            guard let cid = parseCID(dto.cid), isRegistered(channelId: cid) else { return nil }
+            return createTypingEvent(isTyping: false, userFields: dto.user, parentId: dto.parentId, createdAt: dto.createdAt, cid: cid)
+
         default:
             return nil
         }
@@ -180,6 +188,24 @@ class ManualEventHandler: @unchecked Sendable {
             message: message,
             reaction: reactionPayload.asModel(messageId: dto.message.id),
             createdAt: dto.createdAt
+        )
+    }
+
+    private func createTypingEvent(
+        isTyping: Bool,
+        userFields: UserResponseCommonFields?,
+        parentId: MessageId?,
+        createdAt: Date,
+        cid: ChannelId
+    ) -> TypingEvent? {
+        guard let userFields else { return nil }
+
+        return TypingEvent(
+            isTyping: isTyping,
+            cid: cid,
+            user: UserResponse(userFields).asModel(),
+            parentId: parentId,
+            createdAt: createdAt
         )
     }
 

@@ -32,6 +32,17 @@ public final class StreamImageDownloader: ImageDownloading, Sendable {
             userInfo: options.cachingKey.map { [.imageIdKey: $0] }
         )
 
+        if let cachedImage = ImagePipeline.shared.cache[request], !cachedImage.isPreview {
+            let downloadedImage = DownloadedImage(
+                image: cachedImage.image,
+                animatedImageData: cachedImage.type == .gif ? cachedImage.data : nil
+            )
+            StreamConcurrency.onMain {
+                completion(.success(downloadedImage))
+            }
+            return
+        }
+
         ImagePipeline.shared.loadImage(with: request) { result in
             StreamConcurrency.onMain {
                 switch result {

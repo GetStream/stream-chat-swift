@@ -953,23 +953,23 @@ final class ChannelController_Tests: XCTestCase {
         }
 
         // Create a new message payload that's newer than `channel.lastMessageAt`
-        let newerMessagePayload: MessageResponse = .dummy(
+        let newerMessageResponse: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: userId,
             createdAt: .unique(after: channelPayload.channel?.lastMessageAt ?? Date())
         )
         // Save the message payload and check `channel.lastMessageAt` is updated
         writeAndWaitForMessageUpdates(count: 6) {
-            try $0.saveMessage(payload: newerMessagePayload, for: channelId, syncOwnReactions: true, cache: nil)
+            try $0.saveMessage(payload: newerMessageResponse, for: channelId, syncOwnReactions: true, cache: nil)
         }
         try client.mockDatabaseContainer.readSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: channelId))
-            XCTAssertEqual(dto.lastMessageAt?.bridgeDate, newerMessagePayload.createdAt)
+            XCTAssertEqual(dto.lastMessageAt?.bridgeDate, newerMessageResponse.createdAt)
         }
 
         // Check if the message ordering is correct
         // First message should be the newest message
-        AssertAsync.willBeEqual(controller.messages[0].id, newerMessagePayload.id)
+        AssertAsync.willBeEqual(controller.messages[0].id, newerMessageResponse.id)
         // Third message is the failed one
         AssertAsync.willBeEqual(controller.messages[2].id, oldMessageId)
     }
@@ -1079,14 +1079,14 @@ final class ChannelController_Tests: XCTestCase {
 
         // Simulate an incoming message
         let newMessageId: MessageId = .unique
-        let newMessagePayload: MessageResponse = .dummy(
+        let newMessageResponse: MessageResponse = .dummy(
             messageId: newMessageId,
             authorUserId: .unique,
             createdAt: Date()
         )
         _ = try waitFor {
             client.databaseContainer.write({ session in
-                try session.saveMessage(payload: newMessagePayload, for: self.channelId, syncOwnReactions: true, cache: nil)
+                try session.saveMessage(payload: newMessageResponse, for: self.channelId, syncOwnReactions: true, cache: nil)
             }, completion: $0)
         }
 
@@ -3830,6 +3830,61 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channelFeatureError.localizedDescription, "Channel feature: read events is disabled for this channel.")
     }
 
+    func test_markRead_whenLocalUnreadCountEnabled_readEventsDisabled_callsMarkReadLocally() throws {
+        // GIVEN
+        var config = ChatClient_Mock.defaultMockedConfig
+        config.isLocalUnreadCountEnabled = true
+        setUp(with: config)
+
+        let lastMessage: MessageResponse = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            cid: channelId
+        )
+
+        let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
+
+        let channel: ChannelStateResponseFields = .dummy(
+            channel: .dummy(
+                cid: channelId,
+                lastMessageAt: lastMessage.createdAt,
+                config: .mock(readEventsEnabled: false),
+                ownCapabilities: []
+            ),
+            messages: [lastMessage],
+            channelReads: [
+                .init(
+                    user: currentUser,
+                    lastReadAt: lastMessage.createdAt.addingTimeInterval(-1),
+                    lastReadMessageId: .unique,
+                    unreadMessagesCount: 0
+                )
+            ]
+        )
+
+        try client.databaseContainer.writeSynchronously { session in
+            try session.saveCurrentUser(payload: currentUser)
+            try session.saveChannel(payload: channel)
+        }
+
+        client.setToken(token: .unique(userId: currentUser.id))
+
+        // WHEN
+        nonisolated(unsafe) var completionCalled = false
+        controller.markRead { error in
+            XCTAssertNil(error)
+            completionCalled = true
+        }
+
+        // THEN: local path is used, not the remote API path
+        XCTAssertEqual(env.channelUpdater!.markReadLocally_cid, channelId)
+        XCTAssertEqual(env.channelUpdater!.markReadLocally_userId, currentUser.id)
+        XCTAssertNil(env.channelUpdater!.markRead_cid)
+
+        env.channelUpdater!.markReadLocally_completion?(nil)
+        AssertAsync.willBeTrue(completionCalled)
+    }
+
     func test_markRead_whenChannelIsMissing_throws() throws {
         //  Create `ChannelController` for new channel
         let query = ChannelQuery.unique
@@ -3943,13 +3998,13 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_markRead_propagatesErrorFromUpdater() throws {
         let payload = dummyPayload(with: channelId, numberOfMessages: 3, ownCapabilities: [ChannelCapability.readEvents.rawValue])
-        let dummyUserPayload: OwnUserResponse = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
+        let dummyUserResponse: OwnUserResponse = .dummy(userId: payload.channelReads.first!.user.id, role: .user)
 
         // This is needed to determine if the channel needs to be marked as read
-        client.setToken(token: .unique(userId: dummyUserPayload.id))
+        client.setToken(token: .unique(userId: dummyUserResponse.id))
 
         writeAndWaitForMessageUpdates(count: 0, channelChanges: true) { session in
-            try session.saveCurrentUser(payload: dummyUserPayload)
+            try session.saveCurrentUser(payload: dummyUserResponse)
             try session.saveChannel(payload: payload)
         }
 
@@ -4481,7 +4536,7 @@ final class ChannelController_Tests: XCTestCase {
     func test_currentCooldownTime_whenSlowModeIsActive_andLastMessageFromCurrentUserExists_thenCooldownTimeIsGreaterThanZero(
     ) throws {
         // GIVEN
-        let user: UserResponse = dummyCurrentUser.asUserPayload
+        let user: UserResponse = dummyCurrentUser.asUserResponse
         let message: MessageResponse = .dummy(messageId: .unique, authorUserId: user.id, createdAt: Date())
         let channelPayload = dummyPayload(with: channelId, messages: [message], cooldownDuration: 5)
 
@@ -4500,7 +4555,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_currentCooldownTime_whenSlowModeIsNotActive_thenCooldownTimeIsZero() throws {
         // GIVEN
-        let user: UserResponse = dummyCurrentUser.asUserPayload
+        let user: UserResponse = dummyCurrentUser.asUserResponse
         let channelPayload = dummyPayload(with: channelId, cooldownDuration: 0)
 
         try client.databaseContainer.createCurrentUser(id: user.id)
@@ -4518,7 +4573,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_currentCooldownTime_doesNotReturnNegativeValues() throws {
         // GIVEN
-        let user: UserResponse = dummyCurrentUser.asUserPayload
+        let user: UserResponse = dummyCurrentUser.asUserResponse
 
         let message: MessageResponse = .dummy(
             messageId: .unique,
@@ -5317,7 +5372,7 @@ final class ChannelController_Tests: XCTestCase {
 
     // MARK: deinit
 
-    func test_deinit_whenIsJumpingToMessage_deletesAllMessages() throws {
+    func test_deinit_whenIsJumpingToMessage_doesNotDeleteAnyMessage() throws {
         // GIVEN
         controller = ChatChannelController(
             channelQuery: .init(cid: channelId),
@@ -5337,24 +5392,19 @@ final class ChannelController_Tests: XCTestCase {
             let dto = try XCTUnwrap(session.channel(cid: self.channelId))
             XCTAssertEqual(dto.messages.count, messages.count)
         }
-        
-        let deinitWriteExpectation = XCTestExpectation(description: "Deinit")
-        client.mockDatabaseContainer.didWrite = {
-            deinitWriteExpectation.fulfill()
-        }
-        
+
         // WHEN
+        // Mid-page jump state must not wipe the cache on deinit, otherwise
+        // `channel.latestMessages` (used for the channel list preview) would be lost.
         env.channelUpdater?.mockPaginationState.hasLoadedAllNextMessages = false
 
         // THEN
         env.channelUpdater?.cleanUp()
         controller = nil
-        
-        wait(for: [deinitWriteExpectation], timeout: defaultTimeout)
-        
+
         try client.mockDatabaseContainer.readSynchronously { session in
             let dto = try XCTUnwrap(session.channel(cid: self.channelId))
-            XCTAssertEqual(0, dto.messages.count)
+            XCTAssertEqual(messages.count, dto.messages.count)
         }
     }
 
@@ -5802,8 +5852,8 @@ extension ChannelController_Tests {
                 do {
                     try client.databaseContainer.writeSynchronously { session in
                         // Create a channel with the provided payload
-                        let dummyUserPayload: OwnUserResponse = .dummy(userId: .unique, role: .user)
-                        try session.saveCurrentUser(payload: dummyUserPayload)
+                        let dummyUserResponse: OwnUserResponse = .dummy(userId: .unique, role: .user)
+                        try session.saveCurrentUser(payload: dummyUserResponse)
                         try session.saveChannel(payload: channelPayload)
                         self.env?.channelUpdater?.mockPaginationState.hasLoadedAllNextMessages = withAllNextMessagesLoaded
                     }

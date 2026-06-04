@@ -47,13 +47,18 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         actions: ChannelUpdateActions? = nil,
         completion: (@Sendable (Result<ChannelStateResponseFields, Error>) -> Void)? = nil
     ) {
+        // Drop any stale mid-page slice (and its bounds) synchronously before issuing
+        // the request, so any database observers the caller starts in parallel with
+        // `update` see a clean cache rather than briefly emitting the previous
+        // mid-page snapshot.
+        cleanStaleMidPageStateIfNeeded(for: channelQuery, isInRecoveryMode: isInRecoveryMode)
+
         let pagination = channelQuery.pagination
         paginationStateHandler.begin(pagination: pagination)
 
         let didLoadFirstPage = channelQuery.pagination?.parameter == nil
-        let didJumpToMessage: Bool = channelQuery.pagination?.parameter?.isJumpingToMessage == true
         let resetMembersAndReads = didLoadFirstPage
-        let resetMessages = didLoadFirstPage || didJumpToMessage
+        let resetMessages = didLoadFirstPage
         let resetWatchers = didLoadFirstPage
         let isChannelCreate = onChannelCreated != nil
 
@@ -586,6 +591,13 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         channelRepository.markRead(cid: cid, userId: userId, completion: completion)
     }
 
+    /// Marks a channel as read locally, without making a network request.
+    ///
+    /// Used when server-side read events are disabled (e.g. livestream channels).
+    func markReadLocally(cid: ChannelId, userId: UserId, completion: (@Sendable (Error?) -> Void)? = nil) {
+        channelRepository.markReadLocally(cid: cid, userId: userId, completion: completion)
+    }
+
     /// Marks a subset of the messages of the channel as unread. All the following messages, including the one that is
     /// passed as parameter, will be marked as not read.
     /// - Parameters:
@@ -864,11 +876,53 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     // MARK: - private
 
     private func messagePayload(text: String?, currentUserId: UserId?) -> MessageRequest? {
-        guard let text, let currentUserId else { return nil }
+        guard let text, currentUserId != nil else { return nil }
         return MessageRequest(
             id: .newUniqueId,
             text: text
         )
+    }
+
+    /// When the channel was last left in a mid-page state (the user jumped to a message and
+    /// navigated away before scrolling back to the bottom), the local cache still holds the
+    /// mid-page slice and the corresponding `oldestMessageAt`/`newestMessageAt` bounds.
+    ///
+    /// On a fresh first-page fetch we want the message list to start empty and only get
+    /// populated by the incoming first-page response, instead of briefly rendering the stale
+    /// mid-page slice that the database observers would otherwise pick up. We achieve that
+    /// by dropping the cached messages and resetting the bounds before the observers fire.
+    ///
+    /// The cleanup runs synchronously on the writable context so that observers started by the
+    /// caller in parallel with `update` see a clean cache. The closure short-circuits when the
+    /// channel is not in a mid-page state, so the common path is a single uncontested
+    /// `performAndWait` followed by an early return.
+    private func cleanStaleMidPageStateIfNeeded(
+        for channelQuery: ChannelQuery,
+        isInRecoveryMode: Bool
+    ) {
+        let isFirstPageFetch = channelQuery.pagination?.parameter == nil
+        guard !isInRecoveryMode,
+              isFirstPageFetch,
+              let cid = channelQuery.cid else {
+            return
+        }
+
+        let writableContext = database.writableContext
+        writableContext.performAndWait {
+            guard let channelDTO = writableContext.channel(cid: cid),
+                  channelDTO.newestMessageAt != nil else { return }
+            channelDTO.cleanAllMessagesExcludingLocalOnly()
+            channelDTO.oldestMessageAt = nil
+            channelDTO.newestMessageAt = nil
+            do {
+                if writableContext.hasChanges {
+                    try writableContext.save()
+                }
+            } catch {
+                log.error("Failed to clean stale mid-page state: \(error)", subsystems: .database)
+                writableContext.reset()
+            }
+        }
     }
 }
 
