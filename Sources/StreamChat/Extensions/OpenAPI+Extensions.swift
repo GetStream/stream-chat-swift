@@ -2718,10 +2718,6 @@ extension ThreadResponse {
 }
 
 extension ThreadParticipantPayload {
-    var userPayload: UserResponse {
-        user?.asUserPayload ?? UserResponse.empty
-    }
-
     convenience init(
         user: UserResponse,
         threadId: String,

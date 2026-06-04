@@ -187,7 +187,7 @@ extension ThreadStateResponse: IdentifiablePayloadProxy {
 extension ThreadParticipantPayload: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        userPayload.fillIds(cache: &cache)
+        user?.asUserPayload.fillIds(cache: &cache)
     }
 }
 

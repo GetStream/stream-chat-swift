@@ -68,7 +68,9 @@ extension NSManagedObjectContext {
             context: self,
             cache: cache
         )
-        dto.user = try saveUser(payload: payload.userPayload)
+        if let userPayload = payload.user?.asUserPayload {
+            dto.user = try saveUser(payload: userPayload)
+        }
         dto.lastReadAt = payload.lastReadAt.bridgeDate
         dto.createdAt = payload.createdAt.bridgeDate
         dto.threadId = threadId

@@ -43,6 +43,30 @@ final class ThreadParticipantDTO_Tests: XCTestCase {
         XCTAssertEqual(dto.thread.parentMessageId, payload.threadId)
     }
 
+    func test_saveThreadParticipantPayload_whenUserIsMissing_preservesUserId() throws {
+        let userId: UserId = .unique
+        let threadId: MessageId = .unique
+        let payload = ThreadParticipantPayload(
+            appPk: 0,
+            channelCid: "",
+            createdAt: .unique,
+            custom: [:],
+            lastReadAt: .unique,
+            threadId: threadId,
+            user: nil,
+            userId: userId
+        )
+
+        let dto = try database.viewContext.saveThreadParticipant(
+            payload: payload,
+            threadId: threadId,
+            cache: nil
+        )
+
+        XCTAssertEqual(dto.user.id, userId)
+        XCTAssertNotEqual(dto.user.id, "")
+    }
+
     func test_asModel() throws {
         let dto = ThreadParticipantDTO(context: database.viewContext)
         dto.lastReadAt = .unique
