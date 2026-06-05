@@ -179,7 +179,7 @@ extension ThreadStateResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
         parentMessage?.fillIds(cache: &cache)
-        channelDetailPayload?.fillIds(cache: &cache)
+        channel?.fillIds(cache: &cache)
         (createdBy ?? UserResponse.empty).fillIds(cache: &cache)
         latestReplies.fillIds(cache: &cache)
         (threadParticipants ?? []).fillIds(cache: &cache)

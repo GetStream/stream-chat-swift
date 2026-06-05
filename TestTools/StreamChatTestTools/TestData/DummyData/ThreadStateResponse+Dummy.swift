@@ -116,7 +116,7 @@ extension ThreadResponse {
     ) -> ThreadResponse {
         .init(
             activeParticipantCount: activeParticipantCount,
-            channel: nil,
+            channel: .dummy(cid: cid),
             channelCid: cid.rawValue,
             createdAt: createdAt,
             createdBy: nil,

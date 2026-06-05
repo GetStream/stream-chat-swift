@@ -218,7 +218,7 @@ extension NSManagedObjectContext {
         payload: ThreadStateResponse,
         cache: PreWarmedCache?
     ) throws -> ThreadDTO {
-        guard let channelPayload = payload.channelDetailPayload else {
+        guard let channelPayload = payload.channel else {
             throw ClientError("Thread payload is missing channel")
         }
         guard let parentMessageResponse = payload.parentMessage else {
@@ -319,7 +319,7 @@ extension NSManagedObjectContext {
 
     @discardableResult
     func saveThread(partialPayload: ThreadResponse) throws -> ThreadDTO {
-        guard let channelPayload = partialPayload.channelDetailPayload else {
+        guard let channelPayload = partialPayload.channel else {
             throw ClientError("Thread partial payload is missing channel")
         }
         guard let parentMessageResponse = partialPayload.parentMessage else {

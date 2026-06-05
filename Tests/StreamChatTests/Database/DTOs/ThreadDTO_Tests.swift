@@ -141,7 +141,7 @@ final class ThreadDTO_Tests: XCTestCase {
         XCTAssertEqual(model.reads.count, 1)
         XCTAssertEqual(model.parentMessageId, payload.parentMessageId)
         XCTAssertEqual(model.parentMessage.id, payload.parentMessage?.id)
-        XCTAssertEqual(model.channel.cid.rawValue, payload.channelDetailPayload?.cid)
+        XCTAssertEqual(model.channel.cid.rawValue, payload.channel?.cid)
         XCTAssertEqual(model.createdBy.id, payload.createdBy?.id)
         XCTAssertEqual(model.lastMessageAt, payload.lastMessageAt)
         XCTAssertEqual(model.createdAt, payload.createdAt)
@@ -293,7 +293,7 @@ final class ThreadDTO_Tests: XCTestCase {
         // Save the same thread without a draft
         let payloadWithoutDraft = ThreadStateResponse.dummy(
             activeParticipantCount: 2,
-            channel: payloadWithDraft.channelDetailPayload!,
+            channel: payloadWithDraft.channel!,
             createdAt: payloadWithDraft.createdAt,
             createdBy: payloadWithDraft.createdBy ?? UserResponse.empty,
             custom: payloadWithDraft.custom,

@@ -1457,52 +1457,8 @@ extension Attachment {
     }
 }
 
-extension ThreadStateResponse {
-    var channelDetailPayload: ChannelResponse? {
-        if let channelPayload = channel {
-            return channelPayload
-        }
-        guard let cid = try? ChannelId(cid: channelCid) else { return nil }
-        return ChannelResponse(
-            cid: cid.rawValue,
-            config: ChannelConfig().asChannelConfigWithInfo,
-            createdAt: createdAt,
-            createdBy: createdBy,
-            custom: [:],
-            disabled: false,
-            frozen: false,
-            id: cid.id,
-            lastMessageAt: lastMessageAt,
-            memberCount: 0,
-            type: cid.type.rawValue,
-            updatedAt: updatedAt
-        )
-    }
-}
-
 extension ThreadResponse {
     var cid: ChannelId? { try? ChannelId(cid: channelCid) }
-
-    var channelDetailPayload: ChannelResponse? {
-        if let channelPayload = channel {
-            return channelPayload
-        }
-        guard let cid = try? ChannelId(cid: channelCid) else { return nil }
-        return ChannelResponse(
-            cid: cid.rawValue,
-            config: ChannelConfig().asChannelConfigWithInfo,
-            createdAt: createdAt,
-            createdBy: createdBy,
-            custom: [:],
-            disabled: false,
-            frozen: false,
-            id: cid.id,
-            lastMessageAt: lastMessageAt,
-            memberCount: 0,
-            type: cid.type.rawValue,
-            updatedAt: updatedAt
-        )
-    }
 
     var createdByPayload: UserResponse {
         createdBy ?? UserResponse.empty
