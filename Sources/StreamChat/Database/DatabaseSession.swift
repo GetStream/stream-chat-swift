@@ -559,6 +559,15 @@ protocol ThreadReadDatabaseSession {
     )
 }
 
+protocol UserGroupDatabaseSession {
+    /// Saves a user group with the provided payload.
+    @discardableResult
+    func saveUserGroup(payload: UserGroupPayload) throws -> UserGroupDTO
+
+    /// Deletes a user group with the provided identifier.
+    func deleteUserGroup(id: String)
+}
+
 protocol ReminderDatabaseSession {
     /// Saves a reminder with the provided payload.
     /// - Parameters:
@@ -711,6 +720,7 @@ protocol DatabaseSession: UserDatabaseSession,
     ThreadReadDatabaseSession,
     PollDatabaseSession,
     ReminderDatabaseSession,
+    UserGroupDatabaseSession,
     LocationDatabaseSession,
     PollDatabaseSession {}
 

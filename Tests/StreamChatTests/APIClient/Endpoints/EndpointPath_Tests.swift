@@ -79,6 +79,25 @@ final class EndpointPathTests: XCTestCase {
         XCTAssertFalse(EndpointPath.pushPreferences.shouldBeQueuedOffline)
     }
 
+    func test_userGroups_shouldNOTBeQueuedOffline() {
+        XCTAssertFalse(EndpointPath.userGroups.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.userGroupSearch.shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.userGroup(id: "group").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.userGroupMembers(id: "group").shouldBeQueuedOffline)
+        XCTAssertFalse(EndpointPath.userGroupMembersDelete(id: "group").shouldBeQueuedOffline)
+    }
+
+    func test_userGroups_value() {
+        XCTAssertEqual(EndpointPath.userGroups.value, "usergroups")
+        XCTAssertEqual(EndpointPath.userGroupSearch.value, "usergroups/search")
+        XCTAssertEqual(EndpointPath.userGroup(id: "backendsupport").value, "usergroups/backendsupport")
+        XCTAssertEqual(EndpointPath.userGroupMembers(id: "backendsupport").value, "usergroups/backendsupport/members")
+        XCTAssertEqual(
+            EndpointPath.userGroupMembersDelete(id: "backendsupport").value,
+            "usergroups/backendsupport/members/delete"
+        )
+    }
+
     func test_pushPreferences_value() {
         let path = EndpointPath.pushPreferences.value
         XCTAssertEqual(path, "push_preferences")
@@ -122,6 +141,11 @@ final class EndpointPathTests: XCTestCase {
         assertResultEncodingAndDecoding(.thread(messageId: "1"))
         assertResultEncodingAndDecoding(.appSettings)
         assertResultEncodingAndDecoding(.pushPreferences)
+        assertResultEncodingAndDecoding(.userGroups)
+        assertResultEncodingAndDecoding(.userGroupSearch)
+        assertResultEncodingAndDecoding(.userGroup(id: "group"))
+        assertResultEncodingAndDecoding(.userGroupMembers(id: "group"))
+        assertResultEncodingAndDecoding(.userGroupMembersDelete(id: "group"))
 
         assertResultEncodingAndDecoding(.channels)
         assertResultEncodingAndDecoding(.createChannel("channel_idc"))
