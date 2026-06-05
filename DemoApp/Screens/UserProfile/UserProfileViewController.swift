@@ -22,6 +22,7 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         case readReceiptsEnabled
         case deliveryReceiptsEnabled
         case pushPreferences
+        case userGroups
         case detailedUnreadCounts
         case avgResponseTime
     }
@@ -133,6 +134,12 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
             cell.accessoryView = makeButton(title: "Configure", action: { [weak self] in
                 self?.showPushPreferences()
             })
+        case .userGroups:
+            cell.textLabel?.text = "User Groups"
+            cell.detailTextLabel?.text = "List, search, and manage user groups"
+            cell.accessoryView = makeButton(title: "Open", action: { [weak self] in
+                self?.showUserGroups()
+            })
         case .detailedUnreadCounts:
             cell.textLabel?.text = "Detailed Unread Counts"
             cell.accessoryView = makeButton(title: "View Details", action: { [weak self] in
@@ -193,6 +200,18 @@ class UserProfileViewController: UITableViewController, CurrentChatUserControlle
         present(hostingController, animated: true)
     }
     
+    private func showUserGroups() {
+        if #available(iOS 15, *) {
+            let hostingController = UIHostingController(
+                rootView: UserGroupsConfigView(client: currentUserController.client)
+            )
+            hostingController.title = "User Groups"
+            navigationController?.pushViewController(hostingController, animated: true)
+        } else {
+            presentAlert(title: "User Groups", message: "This screen requires iOS 15 or later.")
+        }
+    }
+
     private func showPushPreferences() {
         let pushPreferencesView = PushPreferencesView(
             onSetPreferences: { [weak self] level, completion in
