@@ -35,13 +35,13 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         currentUserResponse = .dummy(userId: .unique, role: .user)
         anotherUserResponse = .dummy(userId: .unique)
 
-        currentUserReadPayload = .init(
-            user: currentUserResponse,
-            lastReadAt: .init(),
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 5,
+        currentUserReadPayload = .dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: .init(),
+            lastReadMessageId: .unique,
+            unreadMessages: 5,
+            user: currentUserResponse
         )
 
         channelPayload = ChannelStateResponseFields.dummy(
@@ -81,11 +81,11 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageDeletedEvent_whenChannelIsMuted_doesNotDecrementUnreadCount() throws {
         // GIVEN
-        let channelMute = ChannelMute(
-            mutedChannel: channelPayload.channel!,
-            user: currentUserResponse,
+        let channelMute = ChannelMute.dummy(
+            channel: channelPayload.channel!,
             createdAt: .init(),
-            updatedAt: .init()
+            updatedAt: .init(),
+            user: currentUserResponse
         )
 
         try database.writeSynchronously { session in
@@ -590,11 +590,11 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
     func test_messageNewEvent_whenChannelIsMuted_doesNotIncrementUnreadCount() throws {
         // GIVEN
-        let channelMute = ChannelMute(
-            mutedChannel: channelPayload.channel!,
-            user: currentUserResponse,
+        let channelMute = ChannelMute.dummy(
+            channel: channelPayload.channel!,
             createdAt: .init(),
-            updatedAt: .init()
+            updatedAt: .init(),
+            user: currentUserResponse
         )
 
         try database.writeSynchronously { session in

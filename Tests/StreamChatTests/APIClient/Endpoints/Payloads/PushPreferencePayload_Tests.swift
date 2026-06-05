@@ -77,8 +77,8 @@ final class PushPreferencePayload_Tests: XCTestCase {
     func test_pushPreferenceRequestPayload_encoding() throws {
         // GIVEN
         let requestPayload = PushPreferenceInput(
-            chatLevel: "mentions",
-            channelId: "messaging:test-channel",
+            channelCid: "messaging:test-channel",
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: "mentions"),
             disabledUntil: "2024-12-31T23:59:59.999Z".toDate(),
             removeDisable: true
         )

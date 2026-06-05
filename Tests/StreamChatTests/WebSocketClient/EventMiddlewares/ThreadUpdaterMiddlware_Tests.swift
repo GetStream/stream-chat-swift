@@ -93,10 +93,10 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
                 cache: nil
             )
             try session.saveThreadRead(
-                payload: .init(
-                    user: .dummy(userId: currentUserId),
-                    lastReadAt: .unique,
-                    unreadMessagesCount: 1
+                payload: .dummy(
+                    lastRead: .unique,
+                    unreadMessages: 1,
+                    user: .dummy(userId: currentUserId)
                 ),
                 parentMessageId: parentMessageId,
                 cache: nil
@@ -176,10 +176,10 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
                 cache: nil
             )
             try session.saveThreadRead(
-                payload: .init(
-                    user: .dummy(userId: currentUserId),
-                    lastReadAt: .unique,
-                    unreadMessagesCount: 1
+                payload: .dummy(
+                    lastRead: .unique,
+                    unreadMessages: 1,
+                    user: .dummy(userId: currentUserId)
                 ),
                 parentMessageId: parentMessageId,
                 cache: nil
@@ -229,10 +229,10 @@ final class ThreadUpdaterMiddleware_Tests: XCTestCase {
                 cache: nil
             )
             try session.saveThreadRead(
-                payload: .init(
-                    user: .dummy(userId: currentUserId),
-                    lastReadAt: .unique,
-                    unreadMessagesCount: 1
+                payload: .dummy(
+                    lastRead: .unique,
+                    unreadMessages: 1,
+                    user: .dummy(userId: currentUserId)
                 ),
                 parentMessageId: parentMessageId,
                 cache: nil

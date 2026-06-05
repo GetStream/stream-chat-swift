@@ -26,11 +26,11 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         // Setup
         let messageId = "test-message-id"
         let cid = ChannelId(type: .messaging, id: "test-channel")
-        let reminderPayload = ReminderResponseData(
+        let reminderPayload = ReminderResponseData.dummy(
             channelCid: cid,
+            createdAt: Date(),
             messageId: messageId,
             remindAt: nil,
-            createdAt: Date(),
             updatedAt: Date()
         )
         
@@ -72,11 +72,11 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         let updatedDate = Date() // now
         
         // First create the reminder
-        let initialReminderPayload = ReminderResponseData(
+        let initialReminderPayload = ReminderResponseData.dummy(
             channelCid: cid,
+            createdAt: initialDate,
             messageId: messageId,
             remindAt: initialDate,
-            createdAt: initialDate,
             updatedAt: initialDate
         )
         
@@ -93,11 +93,11 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         }
         
         // Create update payload
-        let updatedReminderPayload = ReminderResponseData(
+        let updatedReminderPayload = ReminderResponseData.dummy(
             channelCid: cid,
+            createdAt: initialDate,
             messageId: messageId,
             remindAt: updatedDate,
-            createdAt: initialDate,
             updatedAt: updatedDate
         )
         
@@ -126,11 +126,11 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         let initialDate = Date().addingTimeInterval(-3600) // 1 hour ago
         
         // First create the reminder
-        let initialReminderPayload = ReminderResponseData(
+        let initialReminderPayload = ReminderResponseData.dummy(
             channelCid: cid,
+            createdAt: initialDate,
             messageId: messageId,
             remindAt: initialDate,
-            createdAt: initialDate,
             updatedAt: initialDate
         )
         
@@ -170,11 +170,11 @@ final class ReminderUpdaterMiddleware_Tests: XCTestCase {
         let cid = ChannelId(type: .messaging, id: "test-channel")
         
         // First create the reminder
-        let reminderPayload = ReminderResponseData(
+        let reminderPayload = ReminderResponseData.dummy(
             channelCid: cid,
+            createdAt: Date(),
             messageId: messageId,
             remindAt: Date(),
-            createdAt: Date(),
             updatedAt: Date()
         )
         

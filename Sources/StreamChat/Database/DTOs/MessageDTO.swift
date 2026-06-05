@@ -751,15 +751,15 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
             message.location = try? saveLocation(
                 payload: .init(
-                    channelId: cid.rawValue,
-                    messageId: id,
-                    userId: currentUserDTO.user.id,
-                    latitude: location.latitude,
-                    longitude: location.longitude,
+                    channelCid: cid.rawValue,
                     createdAt: Date(),
-                    updatedAt: Date(),
+                    createdByDeviceId: deviceId,
                     endAt: location.endAt,
-                    createdByDeviceId: deviceId
+                    latitude: Float(location.latitude),
+                    longitude: Float(location.longitude),
+                    messageId: id,
+                    updatedAt: Date(),
+                    userId: currentUserDTO.user.id
                 ),
                 cache: nil
             )
@@ -1612,10 +1612,10 @@ extension MessageDTO {
             restrictedVisibility: restrictedVisibilityArray,
             sharedLocation: location.map {
                 .init(
-                    latitude: $0.latitude,
-                    longitude: $0.longitude,
+                    createdByDeviceId: $0.deviceId,
                     endAt: $0.endAt?.bridgeDate,
-                    createdByDeviceId: $0.deviceId
+                    latitude: Float($0.latitude),
+                    longitude: Float($0.longitude)
                 )
             },
             showInChannel: showReplyInChannel,

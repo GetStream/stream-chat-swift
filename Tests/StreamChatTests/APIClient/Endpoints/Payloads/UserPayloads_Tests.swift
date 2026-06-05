@@ -246,11 +246,12 @@ final class UserResponse_Tests: XCTestCase {
 
 final class UserRequestBody_Tests: XCTestCase {
     func test_isSerialized() throws {
+        let imageURL = URL.unique()
         let payload: UserRequest = .init(
+            custom: [:],
             id: .unique,
-            name: .unique,
-            imageURL: .unique(),
-            extraData: [:]
+            image: imageURL.absoluteString,
+            name: .unique
         )
 
         let serialized = try JSONEncoder.stream.encode(payload)

@@ -73,7 +73,7 @@ final class UserListUpdater_Tests: XCTestCase {
         // Simualte API response with user data
         let dummyUser1 = dummyUser
         let id = dummyUser1.id
-        let payload = QueryUsersResponse(users: [dummyUser1])
+        let payload = QueryUsersResponse.dummy(users: [dummyUser1])
         apiClient.test_simulateResponse(.success(payload))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
@@ -112,7 +112,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simualte API response with user data
         let dummyUser1 = dummyUser
-        let payload = QueryUsersResponse(users: [dummyUser1])
+        let payload = QueryUsersResponse.dummy(users: [dummyUser1])
         apiClient.test_simulateResponse(.success(payload))
 
         wait(for: [exp], timeout: defaultTimeout)
@@ -128,7 +128,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simulate API response with user data
         let userId = UserId.unique
-        let payload = QueryUsersResponse(users: [.dummy(userId: userId)])
+        let payload = QueryUsersResponse.dummy(users: [.dummy(userId: userId)])
         apiClient.test_simulateResponse(.success(payload))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
@@ -144,7 +144,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simulate API response with user data
         let newUserId = UserId.unique
-        let newPayload = QueryUsersResponse(users: [.dummy(userId: newUserId)])
+        let newPayload = QueryUsersResponse.dummy(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
 
         wait(for: [completionCalled2], timeout: defaultTimeout)
@@ -181,7 +181,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simulate API response with user data
         let userId = UserId.unique
-        let payload = QueryUsersResponse(users: [.dummy(userId: userId)])
+        let payload = QueryUsersResponse.dummy(users: [.dummy(userId: userId)])
         apiClient.test_simulateResponse(.success(payload))
 
         wait(for: [completionCalled], timeout: defaultTimeout)
@@ -199,7 +199,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simulate API response with user data
         let newUserId = UserId.unique
-        let newPayload = QueryUsersResponse(users: [.dummy(userId: newUserId)])
+        let newPayload = QueryUsersResponse.dummy(users: [.dummy(userId: newUserId)])
         apiClient.test_simulateResponse(.success(newPayload))
 
         wait(for: [completionCalled2], timeout: defaultTimeout)
@@ -242,7 +242,7 @@ final class UserListUpdater_Tests: XCTestCase {
 
         // Simulate API response with user data
         let user = dummyUser(id: dummyUserId)
-        let payload = QueryUsersResponse(users: [user])
+        let payload = QueryUsersResponse.dummy(users: [user])
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeTrue(completionCalled)
@@ -278,7 +278,7 @@ final class UserListUpdater_Tests: XCTestCase {
         })
 
         // Simualte API response with user data
-        let payload = QueryUsersResponse(users: [dummyUser])
+        let payload = QueryUsersResponse.dummy(users: [dummyUser])
         apiClient.test_simulateResponse(.success(payload))
 
         AssertAsync.willBeEqual(

@@ -137,11 +137,11 @@ final class ChannelDTO_Tests: XCTestCase {
         let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse)
 
         let anotherMember: ChannelMemberResponse = .dummy(user: .dummy(userId: .unique))
-        let anotherMemberRead: ReadStateResponse = .init(
-            user: anotherMember.user!,
-            lastReadAt: .init(),
+        let anotherMemberRead: ReadStateResponse = .dummy(
+            lastRead: .init(),
             lastReadMessageId: .unique,
-            unreadMessagesCount: 0
+            unreadMessages: 0,
+            user: anotherMember.user!
         )
 
         let ownMessage: MessageResponse = .dummy(
@@ -199,11 +199,11 @@ final class ChannelDTO_Tests: XCTestCase {
             authorUserId: currentUserId,
             createdAt: message1Timestamp
         )
-        let read1 = ReadStateResponse(
-            user: .dummy(userId: .unique),
-            lastReadAt: message1Timestamp,
+        let read1 = ReadStateResponse.dummy(
+            lastRead: message1Timestamp,
             lastReadMessageId: message1.id,
-            unreadMessagesCount: 0
+            unreadMessages: 0,
+            user: .dummy(userId: .unique)
         )
 
         nonisolated(unsafe) var channelPayload: ChannelStateResponseFields = .dummy(
@@ -221,11 +221,11 @@ final class ChannelDTO_Tests: XCTestCase {
             authorUserId: currentUserId,
             createdAt: message2Timestamp
         )
-        let read2 = ReadStateResponse(
-            user: .dummy(userId: .unique),
-            lastReadAt: message2Timestamp,
+        let read2 = ReadStateResponse.dummy(
+            lastRead: message2Timestamp,
             lastReadMessageId: message2.id,
-            unreadMessagesCount: 0
+            unreadMessages: 0,
+            user: .dummy(userId: .unique)
         )
 
         channelPayload = .dummy(
@@ -1052,11 +1052,11 @@ final class ChannelDTO_Tests: XCTestCase {
         // GIVEN
         let currentUserResponse: OwnUserResponse = .dummy(userId: .unique, role: .user)
 
-        let currentUserReadStateResponse: ReadStateResponse = .init(
-            user: currentUserResponse.asUserResponse,
-            lastReadAt: .init(),
+        let currentUserReadStateResponse: ReadStateResponse = .dummy(
+            lastRead: .init(),
             lastReadMessageId: .unique,
-            unreadMessagesCount: 0
+            unreadMessages: 0,
+            user: currentUserResponse.asUserResponse
         )
 
         let messageMentioningCurrentUser: MessageResponse = .dummy(
@@ -1105,20 +1105,18 @@ final class ChannelDTO_Tests: XCTestCase {
         let cid = ChannelId.unique
         let userId: UserId = .unique
         let user = UserResponse.dummy(userId: userId)
-        let memberPayload = ChannelMemberResponse(
+        let memberPayload = ChannelMemberResponse.dummy(
             user: user,
-            userId: user.id,
-            role: nil,
             createdAt: .unique,
             updatedAt: .unique,
+            role: .member,
             notificationsMuted: true
         )
-        let membershipPayload = ChannelMemberResponse(
+        let membershipPayload = ChannelMemberResponse.dummy(
             user: user,
-            userId: user.id,
-            role: nil,
             createdAt: .unique,
             updatedAt: .unique,
+            role: .member,
             notificationsMuted: false // incorrectly false
         )
         let channelPayload = ChannelStateResponseFields.dummy(
@@ -1429,7 +1427,7 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_saveChannel_savesAndLoadsDraftMessage() throws {
         // GIVEN
         let cid: ChannelId = .unique
-        let draftMessageResponse = DraftPayloadResponse(
+        let draftMessageResponse = DraftPayloadResponse.dummy(
             id: .unique,
             text: "Draft message text",
             command: nil,
@@ -1443,7 +1441,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
         let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
-            draft: DraftResponse(
+            draft: .dummy(
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),
@@ -1474,7 +1472,7 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_saveChannel_whenDraftMessageIsNil_removesExistingDraft() throws {
         // GIVEN
         let cid: ChannelId = .unique
-        let draftMessageResponse = DraftPayloadResponse(
+        let draftMessageResponse = DraftPayloadResponse.dummy(
             id: .unique,
             text: "Draft message text",
             command: nil,
@@ -1488,7 +1486,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
         let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
-            draft: DraftResponse(
+            draft: .dummy(
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),
@@ -1531,7 +1529,7 @@ final class ChannelDTO_Tests: XCTestCase {
             authorUserId: .unique,
             text: "Quoted message"
         )
-        let draftMessageResponse = DraftPayloadResponse(
+        let draftMessageResponse = DraftPayloadResponse.dummy(
             id: .unique,
             text: "Draft message text",
             command: nil,
@@ -1545,7 +1543,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
         let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
-            draft: DraftResponse(
+            draft: .dummy(
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),
@@ -1578,7 +1576,7 @@ final class ChannelDTO_Tests: XCTestCase {
             authorUserId: .unique,
             text: "Parent message"
         )
-        let draftMessageResponse = DraftPayloadResponse(
+        let draftMessageResponse = DraftPayloadResponse.dummy(
             id: .unique,
             text: "Draft message text",
             command: nil,
@@ -1592,7 +1590,7 @@ final class ChannelDTO_Tests: XCTestCase {
 
         let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid),
-            draft: DraftResponse(
+            draft: .dummy(
                 cid: cid,
                 channelPayload: nil,
                 createdAt: .init(),

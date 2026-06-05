@@ -369,11 +369,11 @@ final class DatabaseContainer_Tests: XCTestCase {
             try session.saveCurrentUser(payload: .dummy(userId: currentUserId, role: .admin))
             try session.saveLocation(payload: .dummy(latitude: 10, longitude: 10), cache: nil)
             try session.saveCurrentDevice("123")
-            try session.saveChannelMute(payload: .init(
-                mutedChannel: .dummy(cid: cid),
-                user: UserResponse.dummy(userId: currentUserId),
+            try session.saveChannelMute(payload: .dummy(
+                channel: .dummy(cid: cid),
                 createdAt: .unique,
-                updatedAt: .unique
+                updatedAt: .unique,
+                user: UserResponse.dummy(userId: currentUserId)
             ))
             let mutedUserId = UserId.unique
             let mutedUserDTO = try session.saveUser(payload: .dummy(userId: mutedUserId))
@@ -395,11 +395,11 @@ final class DatabaseContainer_Tests: XCTestCase {
             let messages: [MessageResponse] = [
                 .dummy(
                     reactionGroups: [
-                        "like": ReactionGroupResponse(
-                            sumScores: 1,
+                        "like": ReactionGroupResponse.dummy(
                             count: 1,
                             firstReactionAt: .unique,
-                            lastReactionAt: .unique
+                            lastReactionAt: .unique,
+                            sumScores: 1
                         )
                     ],
                     moderationDetails: .dummy(originalText: "yo", action: "spam")
@@ -425,11 +425,11 @@ final class DatabaseContainer_Tests: XCTestCase {
                     cache: nil
                 )
                 try session.saveReminder(
-                    payload: .init(
+                    payload: .dummy(
                         channelCid: cid,
+                        createdAt: .unique,
                         messageId: message.id,
                         remindAt: .unique,
-                        createdAt: .unique,
                         updatedAt: .unique
                     ),
                     cache: nil

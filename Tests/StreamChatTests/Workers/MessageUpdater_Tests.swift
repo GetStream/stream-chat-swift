@@ -198,7 +198,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try session.saveMessage(
                 payload: .dummy(
                     messageId: messageId,
-                    moderationDetails: .init(
+                    moderationDetails: .dummy(
                         originalText: "",
                         action: MessageModerationAction.bounce.rawValue,
                         textHarms: nil,
@@ -988,7 +988,7 @@ final class MessageUpdater_Tests: XCTestCase {
     // MARK: Load replies
 
     func test_loadReplies_makesCorrectAPICall() {
-        let repliesPayload: GetRepliesResponse = .init(messages: [
+        let repliesPayload: GetRepliesResponse = .dummy(messages: [
             .dummy(messageId: .unique, authorUserId: .unique)
         ])
         let messageId: MessageId = .unique
@@ -1043,7 +1043,7 @@ final class MessageUpdater_Tests: XCTestCase {
     }
 
     func test_loadReplies_propagatesDatabaseError() throws {
-        let repliesPayload: GetRepliesResponse = .init(messages: [
+        let repliesPayload: GetRepliesResponse = .dummy(messages: [
             .dummy(messageId: .unique, authorUserId: .unique)
         ])
         let cid = ChannelId.unique
@@ -1086,7 +1086,7 @@ final class MessageUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with success
-        let repliesPayload: GetRepliesResponse = .init(
+        let repliesPayload: GetRepliesResponse = .dummy(
             messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique) }
         )
         apiClient.test_simulateResponse(Result<GetRepliesResponse, Error>.success(repliesPayload))
@@ -1103,7 +1103,7 @@ final class MessageUpdater_Tests: XCTestCase {
     func test_loadReplies_shouldSetNewestReplyAt() throws {
         let pagination = MessagesPagination(pageSize: 3, parameter: .around(.unique))
         let expectedNewestReplyAt = Date.unique
-        let repliesPayload: GetRepliesResponse = .init(
+        let repliesPayload: GetRepliesResponse = .dummy(
             messages: [
                 .dummy(),
                 .dummy(),
@@ -1118,7 +1118,7 @@ final class MessageUpdater_Tests: XCTestCase {
 
     func test_loadReplies_whenNewestFetchedMessageIsNil_shouldSetNewestReplyAtToNil() throws {
         let pagination = MessagesPagination(pageSize: 3, parameter: nil)
-        let repliesPayload: GetRepliesResponse = .init(
+        let repliesPayload: GetRepliesResponse = .dummy(
             messages: [
                 .dummy(),
                 .dummy(),
@@ -2484,7 +2484,7 @@ final class MessageUpdater_Tests: XCTestCase {
             try session.saveMessage(
                 payload: .dummy(
                     messageId: messageId,
-                    moderationDetails: .init(
+                    moderationDetails: .dummy(
                         originalText: "",
                         action: MessageModerationAction.bounce.rawValue,
                         textHarms: nil,
@@ -2648,7 +2648,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert endpoint is called.
         let endpoint = Endpoint<MessageActionResponse>.runMessageAction(
             id: messageId,
-            messageActionRequest: MessageActionRequest(cid: cid, messageId: messageId, action: action)
+            messageActionRequest: MessageActionRequest(formData: [action.name: action.value])
         )
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
 
@@ -2710,7 +2710,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert endpoint is called.
         let endpoint = Endpoint<MessageActionResponse>.runMessageAction(
             id: messageId,
-            messageActionRequest: MessageActionRequest(cid: cid, messageId: messageId, action: action)
+            messageActionRequest: MessageActionRequest(formData: [action.name: action.value])
         )
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
 
@@ -2851,7 +2851,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert endpoint is called.
         let endpoint = Endpoint<MessageActionResponse>.runMessageAction(
             id: messageId,
-            messageActionRequest: MessageActionRequest(cid: cid, messageId: messageId, action: action)
+            messageActionRequest: MessageActionRequest(formData: [action.name: action.value])
         )
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
 
@@ -3309,8 +3309,8 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Prepare API response
-        let payload = SharedLocationResponseData(
-            channelId: cid.rawValue,
+        let payload = SharedLocationResponseData.dummy(
+            channelId: cid,
             messageId: messageId,
             userId: userId,
             latitude: updatedLatitude,
@@ -3445,8 +3445,8 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Prepare API response
-        let payload = SharedLocationResponseData(
-            channelId: cid.rawValue,
+        let payload = SharedLocationResponseData.dummy(
+            channelId: cid,
             messageId: messageId,
             userId: .unique,
             latitude: latitude,
@@ -3614,7 +3614,7 @@ extension MessageUpdater_Tests {
         }
 
         // Simulate API response with success
-        let repliesPayload: GetRepliesResponse = .init(
+        let repliesPayload: GetRepliesResponse = .dummy(
             messages: messageIds.map { .dummy(messageId: $0, authorUserId: .unique) }
         )
         apiClient.test_simulateResponse(Result<GetRepliesResponse, Error>.success(repliesPayload))

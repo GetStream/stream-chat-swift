@@ -23,10 +23,10 @@ final class ThreadReadDTO_Tests: XCTestCase {
     }
 
     func test_saveThreadReadPayload() throws {
-        let payload = ReadStateResponse(
-            user: .dummy(userId: .unique),
-            lastReadAt: .unique,
-            unreadMessagesCount: 10
+        let payload = ReadStateResponse.dummy(
+            lastRead: .unique,
+            unreadMessages: 10,
+            user: .dummy(userId: .unique)
         )
 
         let dto = try database.viewContext.saveThreadRead(
@@ -62,10 +62,10 @@ final class ThreadReadDTO_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveThreadRead(
-                payload: .init(
-                    user: .dummy(userId: userId),
-                    lastReadAt: .unique,
-                    unreadMessagesCount: 10
+                payload: .dummy(
+                    lastRead: .unique,
+                    unreadMessages: 10,
+                    user: .dummy(userId: userId)
                 ),
                 parentMessageId: messageId,
                 cache: nil
@@ -102,10 +102,10 @@ final class ThreadReadDTO_Tests: XCTestCase {
                 cache: nil
             )
             try session.saveThreadRead(
-                payload: .init(
-                    user: .dummy(userId: userId),
-                    lastReadAt: .unique,
-                    unreadMessagesCount: 0
+                payload: .dummy(
+                    lastRead: .unique,
+                    unreadMessages: 0,
+                    user: .dummy(userId: userId)
                 ),
                 parentMessageId: messageId,
                 cache: nil

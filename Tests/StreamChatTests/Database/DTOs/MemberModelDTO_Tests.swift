@@ -42,14 +42,13 @@ final class MemberModelDTO_Tests: XCTestCase {
             extraData: ["k": .string("v")]
         )
 
-        let payload: ChannelMemberResponse = .init(
+        let payload: ChannelMemberResponse = .dummy(
             user: userPayload,
-            userId: userPayload.id,
-            role: .moderator,
             createdAt: .unique,
             updatedAt: .unique,
+            role: .moderator,
+            isMemberBanned: true,
             banExpiresAt: .unique,
-            isBanned: true,
             isShadowBanned: true,
             notificationsMuted: true,
             extraData: ["is_premium": .bool(true)]
@@ -111,12 +110,11 @@ final class MemberModelDTO_Tests: XCTestCase {
             extraData: .init()
         )
 
-        let payload: ChannelMemberResponse = .init(
+        let payload: ChannelMemberResponse = .dummy(
             user: userPayload,
-            userId: userPayload.id,
-            role: .moderator,
             createdAt: .unique,
-            updatedAt: .unique
+            updatedAt: .unique,
+            role: .moderator
         )
 
         try database.writeSynchronously { session in
@@ -152,7 +150,7 @@ final class MemberModelDTO_Tests: XCTestCase {
 
     func test_saveMembers_whenFirstPage_clearPreviousMembersFromQuery() throws {
         let cid: ChannelId = .unique
-        let members: MembersResponse = .init(members: [.dummy(), .dummy()])
+        let members: MembersResponse = .dummy(members: [.dummy(), .dummy()])
         let query = ChannelMemberListQuery(cid: cid, filter: .equal(.isModerator, to: true))
 
         // Save previous members
@@ -173,7 +171,7 @@ final class MemberModelDTO_Tests: XCTestCase {
 
     func test_saveMembers_whenAnotherPage_doesNotClearPreviousMembersFromQuery() throws {
         let cid: ChannelId = .unique
-        let members: MembersResponse = .init(members: [.dummy(), .dummy()])
+        let members: MembersResponse = .dummy(members: [.dummy(), .dummy()])
         nonisolated(unsafe) var query = ChannelMemberListQuery(cid: cid)
         query.pagination = .init(pageSize: 20, offset: 25)
 
@@ -235,7 +233,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         toQuery query: ChannelMemberListQuery,
         cid: ChannelId
     ) throws -> [ChatChannelMember] {
-        let members: MembersResponse = .init(members: [.dummy(), .dummy(), .dummy(), .dummy()])
+        let members: MembersResponse = .dummy(members: [.dummy(), .dummy(), .dummy(), .dummy()])
         try database.writeSynchronously { session in
             try session.saveChannel(payload: self.dummyPayload(with: cid))
             session.saveMembers(payload: members, channelId: cid, query: query)

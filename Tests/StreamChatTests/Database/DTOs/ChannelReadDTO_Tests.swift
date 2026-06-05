@@ -31,13 +31,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let lastReadMessageId = MessageId.unique
         let unreadMessagesCount = 8
         let channelId = ChannelId.unique
-        let payload = ReadStateResponse(
-            user: dummyUser(id: userId),
-            lastReadAt: lastReadAt,
-            lastReadMessageId: lastReadMessageId,
-            unreadMessagesCount: unreadMessagesCount,
+        let payload = ReadStateResponse.dummy(
             lastDeliveredAt: .unique,
-            lastDeliveredMessageId: .unique
+            lastDeliveredMessageId: .unique,
+            lastRead: lastReadAt,
+            lastReadMessageId: lastReadMessageId,
+            unreadMessages: unreadMessagesCount,
+            user: dummyUser(id: userId)
         )
 
         // WHEN
@@ -66,11 +66,11 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let database = DatabaseContainer_Spy(kind: .inMemory, chatClientConfig: config)
 
         // Seed the channel with a properly-populated read so the user DTO exists in the store.
-        let initialRead = ReadStateResponse(
-            user: dummyUser(id: userId),
-            lastReadAt: Date.distantPast,
+        let initialRead = ReadStateResponse.dummy(
+            lastRead: Date.distantPast,
             lastReadMessageId: nil,
-            unreadMessagesCount: 0
+            unreadMessages: 0,
+            user: dummyUser(id: userId)
         )
         let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid, config: .mock(readEventsEnabled: false)),
@@ -87,13 +87,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
         }
 
         // Server sends a sync payload with unreadMessagesCount = 0.
-        let serverPayload = ReadStateResponse(
-            user: dummyUser(id: userId),
-            lastReadAt: Date(),
-            lastReadMessageId: MessageId.unique,
-            unreadMessagesCount: 0,
+        let serverPayload = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: Date(),
+            lastReadMessageId: MessageId.unique,
+            unreadMessages: 0,
+            user: dummyUser(id: userId)
         )
         try database.writeSynchronously { session in
             _ = try session.saveChannelRead(payload: serverPayload, for: cid, cache: nil)
@@ -121,13 +121,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
             try session.saveChannel(payload: channelPayload)
         }
 
-        let serverPayload = ReadStateResponse(
-            user: dummyUser(id: userId),
-            lastReadAt: Date(),
-            lastReadMessageId: MessageId.unique,
-            unreadMessagesCount: 5,
+        let serverPayload = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: Date(),
+            lastReadMessageId: MessageId.unique,
+            unreadMessages: 5,
+            user: dummyUser(id: userId)
         )
         try database.writeSynchronously { session in
             _ = try session.saveChannelRead(payload: serverPayload, for: cid, cache: nil)
@@ -146,11 +146,11 @@ final class ChannelReadDTO_Tests: XCTestCase {
         config.isLocalUnreadCountEnabled = false
         let database = DatabaseContainer_Spy(kind: .inMemory, chatClientConfig: config)
 
-        let initialRead = ReadStateResponse(
-            user: dummyUser(id: userId),
-            lastReadAt: Date.distantPast,
+        let initialRead = ReadStateResponse.dummy(
+            lastRead: Date.distantPast,
             lastReadMessageId: nil,
-            unreadMessagesCount: 0
+            unreadMessages: 0,
+            user: dummyUser(id: userId)
         )
         let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid, config: .mock(readEventsEnabled: false)),
@@ -165,13 +165,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
             read?.unreadMessageCount = 7
         }
 
-        let serverPayload = ReadStateResponse(
-            user: dummyUser(id: userId),
-            lastReadAt: Date(),
-            lastReadMessageId: MessageId.unique,
-            unreadMessagesCount: 0,
+        let serverPayload = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: Date(),
+            lastReadMessageId: MessageId.unique,
+            unreadMessages: 0,
+            user: dummyUser(id: userId)
         )
         try database.writeSynchronously { session in
             _ = try session.saveChannelRead(payload: serverPayload, for: cid, cache: nil)
@@ -190,11 +190,11 @@ final class ChannelReadDTO_Tests: XCTestCase {
         config.isLocalUnreadCountEnabled = true
         let database = DatabaseContainer_Spy(kind: .inMemory, chatClientConfig: config)
 
-        let initialRead = ReadStateResponse(
-            user: dummyUser(id: userId),
-            lastReadAt: Date.distantPast,
+        let initialRead = ReadStateResponse.dummy(
+            lastRead: Date.distantPast,
             lastReadMessageId: nil,
-            unreadMessagesCount: 0
+            unreadMessages: 0,
+            user: dummyUser(id: userId)
         )
         let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: cid, config: .mock(readEventsEnabled: true)),
@@ -209,13 +209,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
             read?.unreadMessageCount = 9
         }
 
-        let serverPayload = ReadStateResponse(
-            user: dummyUser(id: userId),
-            lastReadAt: Date(),
-            lastReadMessageId: MessageId.unique,
-            unreadMessagesCount: 1,
+        let serverPayload = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: Date(),
+            lastReadMessageId: MessageId.unique,
+            unreadMessages: 1,
+            user: dummyUser(id: userId)
         )
         try database.writeSynchronously { session in
             _ = try session.saveChannelRead(payload: serverPayload, for: cid, cache: nil)
@@ -229,13 +229,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
     func test_markChannelAsRead_whenReadExists_isIsUpdated() throws {
         // GIVEN
-        let read = ReadStateResponse(
-            user: UserResponse.dummy(userId: .unique),
-            lastReadAt: .init(),
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 10,
+        let read = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: .init(),
+            lastReadMessageId: .unique,
+            unreadMessages: 10,
+            user: UserResponse.dummy(userId: .unique)
         )
 
         let channel: ChannelStateResponseFields = .dummy(
@@ -325,13 +325,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
             authorUserId: anotherUser.id,
             createdAt: .init()
         )
-        let anotherUserRead = ReadStateResponse(
-            user: anotherUser,
-            lastReadAt: anotherUserMessage.createdAt.addingTimeInterval(-1),
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 0,
+        let anotherUserRead = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: anotherUserMessage.createdAt.addingTimeInterval(-1),
+            lastReadMessageId: .unique,
+            unreadMessages: 0,
+            user: anotherUser
         )
 
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
@@ -524,13 +524,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let messageId = MessageId.unique
 
         let member: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
-        let read = ReadStateResponse(
-            user: member.user!,
-            lastReadAt: .init(),
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 10,
+        let read = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: .init(),
+            lastReadMessageId: .unique,
+            unreadMessages: 10,
+            user: member.user!
         )
 
         let channel: ChannelStateResponseFields = .dummy(
@@ -563,13 +563,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let messageDate = Date()
 
         let member: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
-        let read = ReadStateResponse(
-            user: member.user!,
-            lastReadAt: .init(),
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 10,
+        let read = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: .init(),
+            lastReadMessageId: .unique,
+            unreadMessages: 10,
+            user: member.user!
         )
 
         let channel: ChannelStateResponseFields = .dummy(
@@ -602,13 +602,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let lastReadMessageId = MessageId.unique
 
         let member: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
-        let read = ReadStateResponse(
-            user: member.user!,
-            lastReadAt: .init(),
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 10,
+        let read = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: .init(),
+            lastReadMessageId: .unique,
+            unreadMessages: 10,
+            user: member.user!
         )
         let firstMessageDate = Date()
         let messages: [MessageResponse] = [messageId, .unique, .unique].enumerated().map { index, id in
@@ -649,13 +649,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let lastReadMessageId = MessageId.unique
 
         let member: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
-        let read = ReadStateResponse(
-            user: member.user!,
-            lastReadAt: .init(),
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 10,
+        let read = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: .init(),
+            lastReadMessageId: .unique,
+            unreadMessages: 10,
+            user: member.user!
         )
         let firstMessageDate = Date()
         let messages: [MessageResponse] = [.unique, .unique, .unique].enumerated().map { index, id in
@@ -696,13 +696,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let lastReadMessageId = MessageId.unique
 
         let member: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
-        let read = ReadStateResponse(
-            user: member.user!,
-            lastReadAt: .init(),
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 10,
+        let read = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: .init(),
+            lastReadMessageId: .unique,
+            unreadMessages: 10,
+            user: member.user!
         )
         let firstMessageDate = Date()
         let messages: [MessageResponse] = [messageId, .unique, .unique].enumerated().map { index, id in
@@ -753,13 +753,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let lastReadMessageId = MessageId.unique
 
         let member: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
-        let read = ReadStateResponse(
-            user: member.user!,
-            lastReadAt: .init(),
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 10,
+        let read = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: .init(),
+            lastReadMessageId: .unique,
+            unreadMessages: 10,
+            user: member.user!
         )
         let firstMessageDate = Date()
         let messages: [MessageResponse] = [.unique, .unique, .unique].enumerated().map { index, id in
@@ -806,13 +806,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
     func test_markChannelAsUnread_whenReadExists_removesIt() throws {
         // GIVEN
         let member: ChannelMemberResponse = .dummy()
-        let read = ReadStateResponse(
-            user: member.user!,
-            lastReadAt: .init(),
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 10,
+        let read = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: .init(),
+            lastReadMessageId: .unique,
+            unreadMessages: 10,
+            user: member.user!
         )
 
         let channel: ChannelStateResponseFields = .dummy(
@@ -847,13 +847,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
     func test_loadOrCreateChannelRead_channelReadExists_returnsExpectedResult() throws {
         // GIVEN
         let lastReadAt = Date.unique
-        let read = ReadStateResponse(
-            user: UserResponse.dummy(userId: .unique),
-            lastReadAt: lastReadAt,
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 10,
+        let read = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: lastReadAt,
+            lastReadMessageId: .unique,
+            unreadMessages: 10,
+            user: UserResponse.dummy(userId: .unique)
         )
 
         let channel: ChannelStateResponseFields = .dummy(

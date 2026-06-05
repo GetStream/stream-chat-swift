@@ -13,18 +13,30 @@ extension ChannelMemberResponse {
         updatedAt: Date = .unique,
         role: MemberRole = .member,
         isMemberBanned: Bool = false,
+        banExpiresAt: Date? = nil,
+        isShadowBanned: Bool = false,
         archivedAt: Date? = nil,
-        pinnedAt: Date? = nil
+        pinnedAt: Date? = nil,
+        notificationsMuted: Bool = false,
+        extraData: [String: RawJSON] = [:]
     ) -> ChannelMemberResponse {
         .init(
-            user: user,
-            userId: user.id,
-            role: role,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            isBanned: isMemberBanned,
             archivedAt: archivedAt,
-            pinnedAt: pinnedAt
+            banExpires: banExpiresAt,
+            banned: isMemberBanned,
+            channelRole: role.rawChannelValue,
+            createdAt: createdAt,
+            custom: extraData,
+            inviteAcceptedAt: nil,
+            inviteRejectedAt: nil,
+            invited: nil,
+            notificationsMuted: notificationsMuted,
+            pinnedAt: pinnedAt,
+            role: role.rawValue,
+            shadowBanned: isShadowBanned,
+            updatedAt: updatedAt,
+            user: user,
+            userId: user.id
         )
     }
 }
@@ -32,5 +44,14 @@ extension ChannelMemberResponse {
 extension ChannelMemberResponse {
     static func dummy(userId: UserId = .unique) -> ChannelMemberResponse {
         .dummy(user: UserResponse.dummy(userId: userId))
+    }
+}
+
+extension MembersResponse {
+    static func dummy(
+        duration: String = "",
+        members: [ChannelMemberResponse] = []
+    ) -> MembersResponse {
+        .init(duration: duration, members: members)
     }
 }

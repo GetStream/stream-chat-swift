@@ -16,13 +16,14 @@ extension ReactionResponse {
         extraData: [String: RawJSON] = [:]
     ) -> ReactionResponse {
         .init(
-            type: type,
-            score: score,
-            messageId: messageId,
             createdAt: createdAt,
+            custom: extraData,
+            messageId: messageId,
+            score: score,
+            type: type.rawValue,
             updatedAt: updatedAt,
             user: user,
-            extraData: extraData
+            userId: user.id
         )
     }
 }

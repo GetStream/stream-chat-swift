@@ -188,7 +188,7 @@ final class MemberList_Tests: XCTestCase {
                     )
                 )
             }
-        return MembersResponse(members: members)
+        return .dummy(members: members)
     }
 }
 

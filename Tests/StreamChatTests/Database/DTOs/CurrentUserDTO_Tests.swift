@@ -53,17 +53,17 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
                 .dummy(userId: .unique)
             ],
             mutedChannels: [
-                .init(
-                    mutedChannel: .dummy(cid: .unique),
-                    user: userPayload,
+                .dummy(
+                    channel: .dummy(cid: .unique),
                     createdAt: .unique,
-                    updatedAt: .unique
+                    updatedAt: .unique,
+                    user: userPayload
                 ),
-                .init(
-                    mutedChannel: .dummy(cid: .unique),
-                    user: userPayload,
+                .dummy(
+                    channel: .dummy(cid: .unique),
                     createdAt: .unique,
-                    updatedAt: .unique
+                    updatedAt: .unique,
+                    user: userPayload
                 )
             ],
             privacySettings: .init(settings: .init(
@@ -217,17 +217,17 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
     func test_saveCurrentUser_removesChannelMutesNotInPayload() throws {
         // GIVEN
         let userPayload: UserResponse = .dummy(userId: .unique)
-        let mute1 = ChannelMute(
-            mutedChannel: .dummy(cid: .unique),
-            user: userPayload,
+        let mute1 = ChannelMute.dummy(
+            channel: .dummy(cid: .unique),
             createdAt: .unique,
-            updatedAt: .unique
+            updatedAt: .unique,
+            user: userPayload
         )
-        let mute2 = ChannelMute(
-            mutedChannel: .dummy(cid: .unique),
-            user: userPayload,
+        let mute2 = ChannelMute.dummy(
+            channel: .dummy(cid: .unique),
             createdAt: .unique,
-            updatedAt: .unique
+            updatedAt: .unique,
+            user: userPayload
         )
 
         let payloadWithMutes: OwnUserResponse = .dummy(
@@ -243,11 +243,11 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(try! database.viewContext.count(for: allMutesRequest), 2)
 
         // WHEN
-        let mute3 = ChannelMute(
-            mutedChannel: .dummy(cid: .unique),
-            user: userPayload,
+        let mute3 = ChannelMute.dummy(
+            channel: .dummy(cid: .unique),
             createdAt: .unique,
-            updatedAt: .unique
+            updatedAt: .unique,
+            user: userPayload
         )
         let payloadWithUpdatedMutes: OwnUserResponse = .dummy(
             userPayload: userPayload,

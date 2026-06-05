@@ -32,20 +32,20 @@ final class MessageDTO_Tests: XCTestCase {
             authorUserId: anotherUser.id,
             createdAt: .init()
         )
-        let anotherUserRead: ReadStateResponse = .init(
-            user: anotherUser,
-            lastReadAt: anotherUserMessage.createdAt,
+        let anotherUserRead: ReadStateResponse = .dummy(
+            lastRead: anotherUserMessage.createdAt,
             lastReadMessageId: .unique,
-            unreadMessagesCount: 0
+            unreadMessages: 0,
+            user: anotherUser
         )
 
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
         let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse)
-        let currentUserRead: ReadStateResponse = .init(
-            user: currentUser.asUserResponse,
-            lastReadAt: anotherUserMessage.createdAt.addingTimeInterval(10),
+        let currentUserRead: ReadStateResponse = .dummy(
+            lastRead: anotherUserMessage.createdAt.addingTimeInterval(10),
             lastReadMessageId: .unique,
-            unreadMessagesCount: 0
+            unreadMessages: 0,
+            user: currentUser.asUserResponse
         )
 
         let channelPayload: ChannelStateResponseFields = .dummy(
@@ -95,30 +95,30 @@ final class MessageDTO_Tests: XCTestCase {
             authorUserId: currentUser.id,
             createdAt: .init()
         )
-        let currentUserRead: ReadStateResponse = .init(
-            user: currentUser.asUserResponse,
-            lastReadAt: currentUserMessage.createdAt,
+        let currentUserRead: ReadStateResponse = .dummy(
+            lastRead: currentUserMessage.createdAt,
             lastReadMessageId: .unique,
-            unreadMessagesCount: 0
+            unreadMessages: 0,
+            user: currentUser.asUserResponse
         )
 
-        let member1ReadEarlierOwnMessage: ReadStateResponse = .init(
-            user: .dummy(userId: .unique),
-            lastReadAt: currentUserMessage.createdAt.addingTimeInterval(-10),
+        let member1ReadEarlierOwnMessage: ReadStateResponse = .dummy(
+            lastRead: currentUserMessage.createdAt.addingTimeInterval(-10),
             lastReadMessageId: .unique,
-            unreadMessagesCount: 0
+            unreadMessages: 0,
+            user: .dummy(userId: .unique)
         )
-        let member2ReadAtOwnMessage: ReadStateResponse = .init(
-            user: .dummy(userId: .unique),
-            lastReadAt: currentUserMessage.createdAt.addingTimeInterval(2),
+        let member2ReadAtOwnMessage: ReadStateResponse = .dummy(
+            lastRead: currentUserMessage.createdAt.addingTimeInterval(2),
             lastReadMessageId: .unique,
-            unreadMessagesCount: 0
+            unreadMessages: 0,
+            user: .dummy(userId: .unique)
         )
-        let member3ReadLaterOwnMessage: ReadStateResponse = .init(
-            user: .dummy(userId: .unique),
-            lastReadAt: currentUserMessage.createdAt.addingTimeInterval(10),
+        let member3ReadLaterOwnMessage: ReadStateResponse = .dummy(
+            lastRead: currentUserMessage.createdAt.addingTimeInterval(10),
             lastReadMessageId: .unique,
-            unreadMessagesCount: 0
+            unreadMessages: 0,
+            user: .dummy(userId: .unique)
         )
 
         let channelPayload: ChannelStateResponseFields = .dummy(
@@ -460,17 +460,17 @@ final class MessageDTO_Tests: XCTestCase {
             pinExpires: .unique,
             isShadowed: true,
             reactionGroups: [
-                "love": .init(
-                    sumScores: 2,
+                "love": .dummy(
                     count: 2,
                     firstReactionAt: .unique,
-                    lastReactionAt: .unique
+                    lastReactionAt: .unique,
+                    sumScores: 2
                 ),
-                "like": .init(
-                    sumScores: 1,
+                "like": .dummy(
                     count: 1,
                     firstReactionAt: .unique,
-                    lastReactionAt: .unique
+                    lastReactionAt: .unique,
+                    sumScores: 1
                 )
             ],
             translations: [.english: .unique],
@@ -986,20 +986,20 @@ final class MessageDTO_Tests: XCTestCase {
             pinnedAt: .unique,
             pinExpires: .unique,
             reactionGroups: [
-                "love": .init(
-                    sumScores: 2,
+                "love": .dummy(
                     count: 2,
                     firstReactionAt: .unique,
-                    lastReactionAt: .unique
+                    lastReactionAt: .unique,
+                    sumScores: 2
                 ),
-                "like": .init(
-                    sumScores: 1,
+                "like": .dummy(
                     count: 1,
                     firstReactionAt: .unique,
-                    lastReactionAt: .unique
+                    lastReactionAt: .unique,
+                    sumScores: 1
                 )
             ],
-            moderation: .init(
+            moderation: .dummy(
                 originalText: "Original",
                 action: "bounce",
                 textHarms: ["textHarm"],
@@ -1109,7 +1109,7 @@ final class MessageDTO_Tests: XCTestCase {
         let messagePayload: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: .unique,
-            moderation: .init(
+            moderation: .dummy(
                 originalText: "Original",
                 action: "bounce",
                 textHarms: ["textHarm"],
@@ -3999,8 +3999,8 @@ final class MessageDTO_Tests: XCTestCase {
                 let messagePayload: MessageResponse = .dummy(
                     messageId: id,
                     authorUserId: userId,
-                    sharedLocation: .init(
-                        channelId: channelId.rawValue,
+                    sharedLocation: .dummy(
+                        channelId: channelId,
                         messageId: id,
                         userId: .unique,
                         latitude: 50,
@@ -4059,8 +4059,8 @@ final class MessageDTO_Tests: XCTestCase {
             let sentMessageResponse: MessageResponse = .dummy(
                 messageId: .unique,
                 authorUserId: currentUserId,
-                sharedLocation: .init(
-                    channelId: channelId.rawValue,
+                sharedLocation: .dummy(
+                    channelId: channelId,
                     messageId: .unique,
                     userId: .unique,
                     latitude: 50,
@@ -4085,8 +4085,8 @@ final class MessageDTO_Tests: XCTestCase {
             let pendingSendMessageResponse: MessageResponse = .dummy(
                 messageId: .unique,
                 authorUserId: currentUserId,
-                sharedLocation: .init(
-                    channelId: channelId.rawValue,
+                sharedLocation: .dummy(
+                    channelId: channelId,
                     messageId: .unique,
                     userId: .unique,
                     latitude: 51,
@@ -4110,8 +4110,8 @@ final class MessageDTO_Tests: XCTestCase {
             let sendingFailedMessageResponse: MessageResponse = .dummy(
                 messageId: .unique,
                 authorUserId: currentUserId,
-                sharedLocation: .init(
-                    channelId: channelId.rawValue,
+                sharedLocation: .dummy(
+                    channelId: channelId,
                     messageId: .unique,
                     userId: .unique,
                     latitude: 52,
@@ -4135,8 +4135,8 @@ final class MessageDTO_Tests: XCTestCase {
             let pendingSyncMessageResponse: MessageResponse = .dummy(
                 messageId: .unique,
                 authorUserId: currentUserId,
-                sharedLocation: .init(
-                    channelId: channelId.rawValue,
+                sharedLocation: .dummy(
+                    channelId: channelId,
                     messageId: .unique,
                     userId: .unique,
                     latitude: 53,
@@ -4455,11 +4455,11 @@ final class MessageDTO_Tests: XCTestCase {
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
         let channelDetailPayload = ChannelResponse.dummy(cid: cid)
         let channelPayload: ChannelStateResponseFields = .dummy(channel: channelDetailPayload)
-        let draftPayload = DraftResponse(
+        let draftPayload = DraftResponse.dummy(
             cid: cid,
             channelPayload: channelDetailPayload,
             createdAt: .init(),
-            message: .init(
+            message: .dummy(
                 id: .unique,
                 text: "Draft message",
                 command: nil,
@@ -4500,11 +4500,11 @@ final class MessageDTO_Tests: XCTestCase {
         let parentMessageId = MessageId.unique
         let parentMessage = MessageResponse.dummy(messageId: parentMessageId)
         
-        let draftPayload = DraftResponse(
+        let draftPayload = DraftResponse.dummy(
             cid: cid,
             channelPayload: channelDetailPayload,
             createdAt: .init(),
-            message: .init(
+            message: .dummy(
                 id: .unique,
                 text: "Draft reply",
                 command: nil,
@@ -4585,11 +4585,11 @@ final class MessageDTO_Tests: XCTestCase {
         let channelDetailPayload = ChannelResponse.dummy(cid: cid)
         let channelPayload: ChannelStateResponseFields = .dummy(channel: channelDetailPayload)
         let draftId = MessageId.unique
-        let draftPayload = DraftResponse(
+        let draftPayload = DraftResponse.dummy(
             cid: cid,
             channelPayload: channelDetailPayload,
             createdAt: .init(),
-            message: .init(
+            message: .dummy(
                 id: draftId,
                 text: "Draft message",
                 command: nil,
@@ -4613,11 +4613,11 @@ final class MessageDTO_Tests: XCTestCase {
         }
 
         // Then save it without attachment.
-        let draftPayloadWithoutAttachment = DraftResponse(
+        let draftPayloadWithoutAttachment = DraftResponse.dummy(
             cid: cid,
             channelPayload: channelDetailPayload,
             createdAt: .init(),
-            message: .init(
+            message: .dummy(
                 id: draftId,
                 text: "Draft message",
                 command: nil,
@@ -4653,11 +4653,11 @@ final class MessageDTO_Tests: XCTestCase {
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
         let channelDetailPayload = ChannelResponse.dummy(cid: cid)
         let channelPayload: ChannelStateResponseFields = .dummy(channel: channelDetailPayload)
-        let draftPayload = DraftResponse(
+        let draftPayload = DraftResponse.dummy(
             cid: cid,
             channelPayload: channelDetailPayload,
             createdAt: .init(),
-            message: .init(
+            message: .dummy(
                 id: .unique,
                 text: "Draft message",
                 command: nil,
@@ -4698,11 +4698,11 @@ final class MessageDTO_Tests: XCTestCase {
         let parentMessageId = MessageId.unique
         let parentMessage = MessageResponse.dummy(messageId: parentMessageId)
         
-        let draftPayload = DraftResponse(
+        let draftPayload = DraftResponse.dummy(
             cid: cid,
             channelPayload: channelDetailPayload,
             createdAt: .init(),
-            message: .init(
+            message: .dummy(
                 id: .unique,
                 text: "Draft reply",
                 command: nil,

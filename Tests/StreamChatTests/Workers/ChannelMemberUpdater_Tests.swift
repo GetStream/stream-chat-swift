@@ -54,11 +54,11 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
             AnyEndpoint(
                 Endpoint<BanResponse>.ban(
                     banRequest: BanRequest(
-                        userId: userId,
-                        cid: cid,
+                        channelCid: cid.rawValue,
+                        reason: reason,
                         shadow: false,
-                        timeoutInMinutes: timeoutInMinutes,
-                        reason: reason
+                        targetUserId: userId,
+                        timeout: timeoutInMinutes
                     )
                 )
             )

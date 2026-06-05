@@ -47,7 +47,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
             message: .dummy(text: "Draft 2")
         )
         
-        let payload = QueryDraftsResponse(drafts: [draftPayload1, draftPayload2], next: "next_page")
+        let payload = QueryDraftsResponse.dummy(drafts: [draftPayload1, draftPayload2], next: "next_page")
 
         let completionCalled = expectation(description: "completion called")
         repository.loadDrafts(query: query) { result in
@@ -174,7 +174,7 @@ final class DraftMessagesRepository_Tests: XCTestCase {
         repository.getDraft(for: channelId, threadId: threadId) { _ in }
         wait(for: [apiClient.request_expectation], timeout: defaultTimeout)
         
-        apiClient.test_simulateResponse(.success(GetDraftResponse(draft: draftPayload)))
+        apiClient.test_simulateResponse(.success(GetDraftResponse.dummy(draft: draftPayload)))
         
         let referenceEndpoint: Endpoint<GetDraftResponse> = .getDraft(
             type: channelId.type.rawValue,

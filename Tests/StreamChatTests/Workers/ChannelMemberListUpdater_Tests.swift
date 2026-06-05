@@ -56,7 +56,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
 
         // Simulate members response.
-        let payload = MembersResponse(members: [
+        let payload = MembersResponse.dummy(members: [
             .dummy(user: .dummy(userId: .unique)),
             .dummy(user: .dummy(userId: .unique)),
             .dummy(user: .dummy(userId: .unique))
@@ -101,7 +101,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
 
         // Simulate members response.
-        let payload = MembersResponse(members: [
+        let payload = MembersResponse.dummy(members: [
             .dummy(user: .dummy(userId: .unique)),
             .dummy(user: .dummy(userId: .unique)),
             .dummy(user: .dummy(userId: .unique))
@@ -215,7 +215,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         database.write_errorResponse = databaseError
 
         // Simulate members response with success.
-        let payload = MembersResponse(members: [
+        let payload = MembersResponse.dummy(members: [
             .dummy(user: .dummy(userId: .unique)),
             .dummy(user: .dummy(userId: .unique)),
             .dummy(user: .dummy(userId: .unique))

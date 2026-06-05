@@ -12,7 +12,8 @@ extension UserMuteResponse {
         extraData: [String: RawJSON] = [:]
     ) -> Self {
         .init(
-            mutedUser: .init(
+            createdAt: .unique,
+            target: .init(
                 id: userId,
                 name: .unique,
                 imageURL: .unique(),
@@ -29,8 +30,41 @@ extension UserMuteResponse {
                 language: nil,
                 extraData: extraData
             ),
-            created: .unique,
-            updated: .unique
+            updatedAt: .unique
+        )
+    }
+}
+
+extension ChannelMute {
+    static func dummy(
+        channel: ChannelResponse = .dummy(),
+        createdAt: Date = .unique,
+        expires: Date? = nil,
+        updatedAt: Date = .unique,
+        user: UserResponse = .dummy(userId: .unique)
+    ) -> ChannelMute {
+        .init(
+            channel: channel,
+            createdAt: createdAt,
+            expires: expires,
+            updatedAt: updatedAt,
+            user: user
+        )
+    }
+}
+
+extension MuteChannelResponse {
+    static func dummy(
+        channelMute: ChannelMute,
+        channelMutes: [ChannelMute]? = nil,
+        duration: String = "",
+        ownUser: OwnUserResponse? = nil
+    ) -> MuteChannelResponse {
+        .init(
+            channelMute: channelMute,
+            channelMutes: channelMutes,
+            duration: duration,
+            ownUser: ownUser
         )
     }
 }

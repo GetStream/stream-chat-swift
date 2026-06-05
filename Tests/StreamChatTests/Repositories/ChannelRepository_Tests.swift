@@ -204,7 +204,7 @@ final class ChannelRepository_Tests: XCTestCase {
         let referenceEndpoint = Endpoint<Response>.markUnread(
             type: cid.type.rawValue,
             id: cid.id,
-            markUnreadRequest: MarkUnreadRequest(criteria: .messageId(messageId), userId: userId)
+            markUnreadRequest: MarkUnreadRequest(messageId: messageId)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
         XCTAssertEqual(database.writeSessionCounter, 1)
@@ -231,7 +231,7 @@ final class ChannelRepository_Tests: XCTestCase {
         let referenceEndpoint = Endpoint<Response>.markUnread(
             type: cid.type.rawValue,
             id: cid.id,
-            markUnreadRequest: MarkUnreadRequest(criteria: .messageId(messageId), userId: userId)
+            markUnreadRequest: MarkUnreadRequest(messageId: messageId)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
         XCTAssertEqual(database.writeSessionCounter, 0)

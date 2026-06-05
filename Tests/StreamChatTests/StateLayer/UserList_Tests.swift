@@ -115,7 +115,7 @@ final class UserList_Tests: XCTestCase {
         let users = (0..<count)
             .map { $0 + offset }
             .map { UserResponse.dummy(userId: "\($0)", name: "name_\($0)") }
-        return QueryUsersResponse(users: users)
+        return .dummy(users: users)
     }
 }
 

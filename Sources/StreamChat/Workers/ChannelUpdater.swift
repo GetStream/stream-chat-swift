@@ -342,7 +342,11 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         apiClient.request(endpoint: Endpoint<TruncateChannelResponse>.truncateChannel(
             type: cid.type.rawValue,
             id: cid.id,
-            truncateChannelRequest: TruncateChannelRequest(hardDelete: hardDelete, message: requestBody, skipPush: skipPush)
+            truncateChannelRequest: TruncateChannelRequest(
+                hardDelete: hardDelete,
+                message: requestBody,
+                skipPush: skipPush
+            )
         )) {
             if let error = $0.error {
                 log.error(error)

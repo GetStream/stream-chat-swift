@@ -13,6 +13,6 @@ extension UserRequest {
         imageURL: URL? = .unique(),
         extraData: [String: RawJSON] = [:]
     ) -> UserRequest {
-        .init(id: userId, name: name, imageURL: imageURL, extraData: extraData)
+        .init(custom: extraData, id: userId, image: imageURL?.absoluteString, name: name)
     }
 }

@@ -45,10 +45,7 @@ final class RemindersRepository_Tests: XCTestCase {
         }
         
         // Mock response
-        let response = QueryRemindersResponse(
-            reminders: [],
-            next: nil
-        )
+        let response = QueryRemindersResponse.dummy(next: nil, reminders: [])
         
         apiClient.test_simulateResponse(.success(response))
 
@@ -80,18 +77,15 @@ final class RemindersRepository_Tests: XCTestCase {
         )
 
         // Create a reminder payload
-        let reminderPayload = ReminderResponseData(
+        let reminderPayload = ReminderResponseData.dummy(
             channelCid: cid,
+            createdAt: createdAt,
             messageId: messageId,
             remindAt: remindAt,
-            createdAt: createdAt,
             updatedAt: updatedAt
         )
         
-        let response = QueryRemindersResponse(
-            reminders: [reminderPayload],
-            next: nil
-        )
+        let response = QueryRemindersResponse.dummy(next: nil, reminders: [reminderPayload])
 
         // Create a message to add reminder to
         try database.createMessage(id: messageId, cid: cid, text: "Test message")
@@ -176,11 +170,11 @@ final class RemindersRepository_Tests: XCTestCase {
             exp.fulfill()
         }
         
-        apiClient.test_mockResponseResult(Result<ReminderResponseData, Error>.success(.init(
+        apiClient.test_mockResponseResult(Result<ReminderResponseData, Error>.success(.dummy(
             channelCid: cid,
+            createdAt: .unique,
             messageId: messageId,
             remindAt: remindAt,
-            createdAt: .unique,
             updatedAt: .unique
         )))
         
@@ -272,11 +266,11 @@ final class RemindersRepository_Tests: XCTestCase {
 
         try database.writeSynchronously { session in
             try session.saveReminder(
-                payload: .init(
+                payload: .dummy(
                     channelCid: cid,
+                    createdAt: .unique,
                     messageId: messageId,
                     remindAt: .unique,
-                    createdAt: .unique,
                     updatedAt: .unique
                 ),
                 cache: nil
@@ -293,12 +287,12 @@ final class RemindersRepository_Tests: XCTestCase {
             exp.fulfill()
         }
         
-        apiClient.test_mockResponseResult(.success(UpdateReminderResponse(
-            reminder: .init(
+        apiClient.test_mockResponseResult(.success(UpdateReminderResponse.dummy(
+            reminder: .dummy(
                 channelCid: cid,
+                createdAt: .unique,
                 messageId: messageId,
                 remindAt: newRemindAt,
-                createdAt: .unique,
                 updatedAt: .unique
             )
         )))
@@ -324,11 +318,11 @@ final class RemindersRepository_Tests: XCTestCase {
         
         try database.writeSynchronously { session in
             try session.saveReminder(
-                payload: .init(
+                payload: .dummy(
                     channelCid: cid,
+                    createdAt: .unique,
                     messageId: messageId,
                     remindAt: .unique,
-                    createdAt: .unique,
                     updatedAt: .unique
                 ),
                 cache: nil
@@ -363,11 +357,11 @@ final class RemindersRepository_Tests: XCTestCase {
         
         try database.writeSynchronously { session in
             try session.saveReminder(
-                payload: .init(
+                payload: .dummy(
                     channelCid: cid,
+                    createdAt: .unique,
                     messageId: messageId,
                     remindAt: originalRemindAt,
-                    createdAt: .unique,
                     updatedAt: .unique
                 ),
                 cache: nil
@@ -418,11 +412,11 @@ final class RemindersRepository_Tests: XCTestCase {
         
         try database.writeSynchronously { session in
             try session.saveReminder(
-                payload: .init(
+                payload: .dummy(
                     channelCid: cid,
+                    createdAt: .unique,
                     messageId: messageId,
                     remindAt: .unique,
-                    createdAt: .unique,
                     updatedAt: .unique
                 ),
                 cache: nil
@@ -457,11 +451,11 @@ final class RemindersRepository_Tests: XCTestCase {
         
         try database.writeSynchronously { session in
             try session.saveReminder(
-                payload: .init(
+                payload: .dummy(
                     channelCid: cid,
+                    createdAt: .unique,
                     messageId: messageId,
                     remindAt: .unique,
-                    createdAt: .unique,
                     updatedAt: .unique
                 ),
                 cache: nil
@@ -499,11 +493,11 @@ final class RemindersRepository_Tests: XCTestCase {
         
         try database.writeSynchronously { session in
             try session.saveReminder(
-                payload: .init(
+                payload: .dummy(
                     channelCid: cid,
+                    createdAt: .unique,
                     messageId: messageId,
                     remindAt: .unique,
-                    createdAt: .unique,
                     updatedAt: .unique
                 ),
                 cache: nil

@@ -1770,8 +1770,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         let channelPreference = PushPreferenceInput(
-            chatLevel: level.rawValue,
-            channelId: channelId.rawValue,
+            channelCid: channelId.rawValue,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: level.rawValue),
             disabledUntil: nil,
             removeDisable: true
         )
@@ -1799,8 +1799,8 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
         }
 
         let channelPreference = PushPreferenceInput(
-            chatLevel: PushPreferenceLevel.all.rawValue,
-            channelId: channelId.rawValue,
+            channelCid: channelId.rawValue,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: PushPreferenceLevel.all.rawValue),
             disabledUntil: date,
             removeDisable: nil
         )

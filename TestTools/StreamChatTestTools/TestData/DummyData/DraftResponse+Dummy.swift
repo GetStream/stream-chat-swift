@@ -5,6 +5,25 @@
 import Foundation
 @testable import StreamChat
 
+extension QueryDraftsResponse {
+    static func dummy(
+        drafts: [DraftResponse] = [],
+        duration: String = "",
+        next: String? = nil
+    ) -> QueryDraftsResponse {
+        .init(drafts: drafts, duration: duration, next: next)
+    }
+}
+
+extension GetDraftResponse {
+    static func dummy(
+        draft: DraftResponse = .dummy(),
+        duration: String = ""
+    ) -> GetDraftResponse {
+        .init(draft: draft, duration: duration)
+    }
+}
+
 extension DraftResponse {
     /// Returns dummy draft payload with the given values.
     static func dummy(
@@ -17,13 +36,13 @@ extension DraftResponse {
         parentMessage: MessageResponse? = nil
     ) -> DraftResponse {
         .init(
-            cid: cid,
-            channelPayload: channelPayload,
+            channel: channelPayload,
+            channelCid: cid?.rawValue ?? channelPayload?.cid ?? "",
             createdAt: createdAt,
             message: message,
-            quotedMessage: quotedMessage,
             parentId: parentId,
-            parentMessage: parentMessage
+            parentMessage: parentMessage,
+            quotedMessage: quotedMessage
         )
     }
 }
@@ -41,15 +60,13 @@ extension DraftPayloadResponse {
         isSilent: Bool = false
     ) -> DraftPayloadResponse {
         .init(
-            id: id,
-            text: text,
-            command: command,
-            args: args,
-            showReplyInChannel: showReplyInChannel,
-            mentionedUsers: mentionedUsers,
-            extraData: extraData,
             attachments: attachments,
-            isSilent: isSilent
+            custom: extraData,
+            id: id,
+            mentionedUsers: mentionedUsers,
+            showInChannel: showReplyInChannel,
+            silent: isSilent,
+            text: text
         )
     }
 }

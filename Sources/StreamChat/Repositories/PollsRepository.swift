@@ -33,7 +33,7 @@ class PollsRepository: @unchecked Sendable {
             enforceUniqueVote: enforceUniqueVote,
             maxVotesAllowed: maxVotesAllowed,
             name: name,
-            options: options?.compactMap { PollOptionInput(text: $0.text, custom: $0.extraData) },
+            options: options?.compactMap { PollOptionInput(custom: $0.extraData, text: $0.text) },
             votingVisibility: votingVisibility.flatMap { CreatePollRequest.CreatePollRequestVotingVisibility(rawValue: $0) }
         )
         apiClient.request(
@@ -61,11 +61,9 @@ class PollsRepository: @unchecked Sendable {
         guard let optionId, !optionId.isEmpty else {
             // No optimistic updates for answers.
             let request = CastPollVoteRequest(
-                pollId: pollId,
-                vote: .init(
+                vote: VoteData(
                     answerText: answerText,
-                    optionId: optionId,
-                    option: nil
+                    optionId: optionId
                 )
             )
             apiClient.request(
@@ -106,11 +104,9 @@ class PollsRepository: @unchecked Sendable {
                 return
             }
             let request = CastPollVoteRequest(
-                pollId: pollId,
-                vote: .init(
+                vote: VoteData(
                     answerText: answerText,
-                    optionId: optionId,
-                    option: nil
+                    optionId: optionId
                 )
             )
             self?.apiClient.request(
@@ -194,8 +190,8 @@ class PollsRepository: @unchecked Sendable {
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         let request = UpdatePollPartialRequest(
-            pollId: pollId,
-            set: ["is_closed": .bool(true)]
+            set: ["is_closed": .bool(true)],
+            unset: nil
         )
         apiClient.request(
             endpoint: Endpoint<PollResponse>.updatePollPartial(pollId: pollId, updatePollPartialRequest: request)
@@ -228,10 +224,8 @@ class PollsRepository: @unchecked Sendable {
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
         let request = CreatePollOptionRequest(
-            pollId: pollId,
-            text: text,
-            position: position,
-            custom: custom
+            custom: custom,
+            text: text
         )
         apiClient.request(
             endpoint: Endpoint<PollOptionResponse>.createPollOption(pollId: pollId, createPollOptionRequest: request),

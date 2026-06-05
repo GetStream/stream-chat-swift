@@ -857,8 +857,8 @@ final class CurrentUserController_Tests: XCTestCase {
         // GIVEN
         let level: PushPreferenceLevel = .mentions
         let expectedPreference = PushPreferenceInput(
-            chatLevel: level.rawValue,
-            channelId: nil,
+            channelCid: nil,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: level.rawValue),
             disabledUntil: nil,
             removeDisable: true
         )
@@ -915,8 +915,8 @@ final class CurrentUserController_Tests: XCTestCase {
         // GIVEN
         let date = Date().addingTimeInterval(3600)
         let expectedPreference = PushPreferenceInput(
-            chatLevel: PushPreferenceLevel.all.rawValue,
-            channelId: nil,
+            channelCid: nil,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: PushPreferenceLevel.all.rawValue),
             disabledUntil: date,
             removeDisable: nil
         )

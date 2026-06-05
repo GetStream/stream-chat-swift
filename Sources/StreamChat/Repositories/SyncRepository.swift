@@ -314,7 +314,7 @@ class SyncRepository: @unchecked Sendable {
         }
 
         let endpoint: Endpoint<SyncResponse> = .sync(
-            syncRequest: SyncRequest(lastSyncedAt: date, cids: channelIds),
+            syncRequest: SyncRequest(channelCids: channelIds.map(\.rawValue), lastSyncAt: date),
             withInaccessibleCids: nil,
             watch: nil
         )

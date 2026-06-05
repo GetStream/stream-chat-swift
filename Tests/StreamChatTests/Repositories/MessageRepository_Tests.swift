@@ -337,7 +337,7 @@ final class MessageRepositoryTests: XCTestCase {
     func test_getMessage_propagatesDatabaseError() throws {
         let messagePayload: GetMessageResponse = .init(
             duration: "",
-            message: MessageWithChannelResponse(messageResponse: .dummy(messageId: .unique, authorUserId: .unique), channel: ChannelResponse.dummy(cid: .unique))
+            message: .dummy(message: .dummy(messageId: .unique, authorUserId: .unique), channel: ChannelResponse.dummy(cid: .unique))
         )
         let channelId = ChannelId.unique
 
@@ -381,7 +381,7 @@ final class MessageRepositoryTests: XCTestCase {
         // Simulate API response with success
         let messagePayload: GetMessageResponse = .init(
             duration: "",
-            message: MessageWithChannelResponse(messageResponse: .dummy(messageId: messageId, authorUserId: currentUserId), channel: ChannelResponse.dummy(cid: .unique))
+            message: .dummy(message: .dummy(messageId: messageId, authorUserId: currentUserId), channel: ChannelResponse.dummy(cid: .unique))
         )
         apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
@@ -412,7 +412,7 @@ final class MessageRepositoryTests: XCTestCase {
         // Simulate API response with success
         let messagePayload: GetMessageResponse = .init(
             duration: "",
-            message: MessageWithChannelResponse(messageResponse: .dummy(messageId: messageId, authorUserId: currentUserId), channel: ChannelResponse.dummy(cid: .unique))
+            message: .dummy(message: .dummy(messageId: messageId, authorUserId: currentUserId), channel: ChannelResponse.dummy(cid: .unique))
         )
         apiClient.test_simulateResponse(Result<GetMessageResponse, Error>.success(messagePayload))
 
@@ -771,8 +771,8 @@ final class MessageRepositoryTests: XCTestCase {
             id: messageId1,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
+            location: .dummy(
+                channelId: cid,
                 messageId: messageId1,
                 userId: .unique,
                 latitude: 1,
@@ -787,8 +787,8 @@ final class MessageRepositoryTests: XCTestCase {
             id: messageId2,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
+            location: .dummy(
+                channelId: cid,
                 messageId: messageId2,
                 userId: .unique,
                 latitude: 1,

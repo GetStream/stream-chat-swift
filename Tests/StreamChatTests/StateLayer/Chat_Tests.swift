@@ -1103,7 +1103,7 @@ final class Chat_Tests: XCTestCase {
         
         let messageId = String.unique
         let messagePayload = try XCTUnwrap(makeChannelStateResponseFields(messageCount: 1, createdAtOffset: 0).messages.first)
-        let apiResponse = GetMessageResponse(duration: "", message: MessageWithChannelResponse(messageResponse: messagePayload, channel: ChannelResponse.dummy(cid: .unique)))
+        let apiResponse = GetMessageResponse(duration: "", message: .dummy(message: messagePayload, channel: ChannelResponse.dummy(cid: .unique)))
         env.client.mockAPIClient.test_mockResponseResult(.success(apiResponse))
         let messageState = try await chat.messageState(for: messageId)
         
@@ -1338,13 +1338,13 @@ final class Chat_Tests: XCTestCase {
                     lastMessageAt: messages.last?.createdAt
                 ),
                 channelReads: [
-                    ReadStateResponse(
-                        user: UserResponse.dummy(userId: self.currentUserId),
-                        lastReadAt: messages.first?.createdAt ?? .distantPast,
-                        lastReadMessageId: nil,
-                        unreadMessagesCount: 2,
+                    .dummy(
                         lastDeliveredAt: nil,
-                        lastDeliveredMessageId: nil
+                        lastDeliveredMessageId: nil,
+                        lastRead: messages.first?.createdAt ?? .distantPast,
+                        lastReadMessageId: nil,
+                        unreadMessages: 2,
+                        user: UserResponse.dummy(userId: self.currentUserId)
                     )
                 ]
             )
@@ -1378,13 +1378,13 @@ final class Chat_Tests: XCTestCase {
                     lastMessageAt: lastMessage.createdAt
                 ),
                 channelReads: [
-                    ReadStateResponse(
-                        user: UserResponse.dummy(userId: self.currentUserId),
-                        lastReadAt: lastMessage.createdAt,
-                        lastReadMessageId: nil,
-                        unreadMessagesCount: 0,
+                    .dummy(
                         lastDeliveredAt: nil,
-                        lastDeliveredMessageId: nil
+                        lastDeliveredMessageId: nil,
+                        lastRead: lastMessage.createdAt,
+                        lastReadMessageId: nil,
+                        unreadMessages: 0,
+                        user: UserResponse.dummy(userId: self.currentUserId)
                     )
                 ]
             )
@@ -1416,13 +1416,13 @@ final class Chat_Tests: XCTestCase {
                     lastMessageAt: lastMessage.createdAt
                 ),
                 channelReads: [
-                    ReadStateResponse(
-                        user: UserResponse.dummy(userId: self.currentUserId),
-                        lastReadAt: lastMessage.createdAt,
-                        lastReadMessageId: nil,
-                        unreadMessagesCount: 0,
+                    .dummy(
                         lastDeliveredAt: nil,
-                        lastDeliveredMessageId: nil
+                        lastDeliveredMessageId: nil,
+                        lastRead: lastMessage.createdAt,
+                        lastReadMessageId: nil,
+                        unreadMessages: 0,
+                        user: UserResponse.dummy(userId: self.currentUserId)
                     )
                 ]
             )
@@ -2018,13 +2018,13 @@ final class Chat_Tests: XCTestCase {
                 let user = UserResponse.dummy(
                     userId: String(format: "%03d", $0 + createdAtOffset)
                 )
-                let read = ReadStateResponse(
-                    user: user,
-                    lastReadAt: .unique,
-                    lastReadMessageId: nil,
-                    unreadMessagesCount: 0,
+                let read = ReadStateResponse.dummy(
                     lastDeliveredAt: nil,
-                    lastDeliveredMessageId: nil
+                    lastDeliveredMessageId: nil,
+                    lastRead: .unique,
+                    lastReadMessageId: nil,
+                    unreadMessages: 0,
+                    user: user
                 )
                 let member = ChannelMemberResponse.dummy(
                     user: user,
@@ -2058,7 +2058,7 @@ final class Chat_Tests: XCTestCase {
                     createdAt: Date(timeIntervalSinceReferenceDate: TimeInterval($0))
                 )
             }
-        return MembersResponse(members: members)
+        return .dummy(members: members)
     }
     
     private func makeReactionsPayload(messageId: MessageId, count: Int, offset: Int) -> GetReactionsResponse {
@@ -2092,7 +2092,7 @@ final class Chat_Tests: XCTestCase {
                     cid: channelId
                 )
             }
-        return GetRepliesResponse(messages: messages)
+        return .dummy(messages: messages)
     }
 }
 

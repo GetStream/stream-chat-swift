@@ -38,23 +38,23 @@ final class ThreadDTO_Tests: XCTestCase {
     }
 
     func test_saveThreadPayload() throws {
-        let payload = ThreadStateResponse(
-            parentMessageId: .unique,
-            parentMessage: .dummy(),
-            channel: .dummy(),
-            createdBy: .dummy(userId: .unique),
-            replyCount: 10,
-            participantCount: 10,
+        let payload = ThreadStateResponse.dummy(
             activeParticipantCount: 2,
-            threadParticipants: [dummyThreadParticipantPayload()],
-            lastMessageAt: .unique,
+            channel: .dummy(),
             createdAt: .unique,
-            updatedAt: .unique,
-            title: "Test",
-            latestReplies: [.dummy(), .dummy()],
-            read: [dummyThreadReadPayload()],
+            createdBy: .dummy(userId: .unique),
+            custom: [:],
             draft: nil,
-            extraData: [:]
+            lastMessageAt: .unique,
+            latestReplies: [.dummy(), .dummy()],
+            parentMessage: .dummy(),
+            parentMessageId: .unique,
+            participantCount: 10,
+            read: [dummyThreadReadPayload()],
+            replyCount: 10,
+            threadParticipants: [dummyThreadParticipantPayload()],
+            title: "Test",
+            updatedAt: .unique
         )
 
         let dto = try database.viewContext.saveThread(
@@ -106,23 +106,23 @@ final class ThreadDTO_Tests: XCTestCase {
     }
 
     func test_asModel() throws {
-        let payload = ThreadStateResponse(
-            parentMessageId: .unique,
-            parentMessage: .dummy(),
-            channel: .dummy(),
-            createdBy: .dummy(userId: .unique),
-            replyCount: 10,
-            participantCount: 10,
+        let payload = ThreadStateResponse.dummy(
             activeParticipantCount: 2,
-            threadParticipants: [dummyThreadParticipantPayload()],
-            lastMessageAt: .unique,
+            channel: .dummy(),
             createdAt: .unique,
-            updatedAt: .unique,
-            title: "Test",
-            latestReplies: [.dummy(), .dummy()],
-            read: [dummyThreadReadPayload()],
+            createdBy: .dummy(userId: .unique),
+            custom: [:],
             draft: nil,
-            extraData: [:]
+            lastMessageAt: .unique,
+            latestReplies: [.dummy(), .dummy()],
+            parentMessage: .dummy(),
+            parentMessageId: .unique,
+            participantCount: 10,
+            read: [dummyThreadReadPayload()],
+            replyCount: 10,
+            threadParticipants: [dummyThreadParticipantPayload()],
+            title: "Test",
+            updatedAt: .unique
         )
 
         let dto = try database.viewContext.saveThread(
@@ -176,7 +176,7 @@ final class ThreadDTO_Tests: XCTestCase {
 
     func test_saveThreadPayload_withDraftReply() throws {
         // GIVEN
-        let draftMessageResponse = DraftPayloadResponse(
+        let draftMessageResponse = DraftPayloadResponse.dummy(
             id: .unique,
             text: "Draft reply text",
             command: nil,
@@ -188,7 +188,7 @@ final class ThreadDTO_Tests: XCTestCase {
             isSilent: false
         )
 
-        let draftPayload = DraftResponse(
+        let draftPayload = DraftResponse.dummy(
             cid: .unique,
             channelPayload: nil,
             createdAt: .init(),
@@ -198,23 +198,23 @@ final class ThreadDTO_Tests: XCTestCase {
             parentMessage: nil
         )
 
-        let payload = ThreadStateResponse(
-            parentMessageId: .unique,
-            parentMessage: .dummy(),
-            channel: .dummy(),
-            createdBy: .dummy(userId: .unique),
-            replyCount: 10,
-            participantCount: 10,
+        let payload = ThreadStateResponse.dummy(
             activeParticipantCount: 2,
-            threadParticipants: [dummyThreadParticipantPayload()],
-            lastMessageAt: .unique,
+            channel: .dummy(),
             createdAt: .unique,
-            updatedAt: .unique,
-            title: "Test",
-            latestReplies: [.dummy(), .dummy()],
-            read: [dummyThreadReadPayload()],
+            createdBy: .dummy(userId: .unique),
+            custom: [:],
             draft: draftPayload,
-            extraData: [:]
+            lastMessageAt: .unique,
+            latestReplies: [.dummy(), .dummy()],
+            parentMessage: .dummy(),
+            parentMessageId: .unique,
+            participantCount: 10,
+            read: [dummyThreadReadPayload()],
+            replyCount: 10,
+            threadParticipants: [dummyThreadParticipantPayload()],
+            title: "Test",
+            updatedAt: .unique
         )
 
         _ = try database.viewContext.saveCurrentUser(payload: .dummy(userId: .unique, role: .admin))
@@ -238,7 +238,7 @@ final class ThreadDTO_Tests: XCTestCase {
     func test_saveThreadPayload_whenDraftIsNil_removesExistingDraft() throws {
         // GIVEN
         // First save a thread with a draft
-        let draftMessageResponse = DraftPayloadResponse(
+        let draftMessageResponse = DraftPayloadResponse.dummy(
             id: .unique,
             text: "Draft reply text",
             command: nil,
@@ -250,7 +250,7 @@ final class ThreadDTO_Tests: XCTestCase {
             isSilent: false
         )
 
-        let draftPayload = DraftResponse(
+        let draftPayload = DraftResponse.dummy(
             cid: .unique,
             channelPayload: nil,
             createdAt: .init(),
@@ -260,23 +260,23 @@ final class ThreadDTO_Tests: XCTestCase {
             parentMessage: nil
         )
 
-        let payloadWithDraft = ThreadStateResponse(
-            parentMessageId: .unique,
-            parentMessage: .dummy(),
-            channel: .dummy(),
-            createdBy: .dummy(userId: .unique),
-            replyCount: 10,
-            participantCount: 10,
+        let payloadWithDraft = ThreadStateResponse.dummy(
             activeParticipantCount: 2,
-            threadParticipants: [dummyThreadParticipantPayload()],
-            lastMessageAt: .unique,
+            channel: .dummy(),
             createdAt: .unique,
-            updatedAt: .unique,
-            title: "Test",
-            latestReplies: [.dummy(), .dummy()],
-            read: [dummyThreadReadPayload()],
+            createdBy: .dummy(userId: .unique),
+            custom: [:],
             draft: draftPayload,
-            extraData: [:]
+            lastMessageAt: .unique,
+            latestReplies: [.dummy(), .dummy()],
+            parentMessage: .dummy(),
+            parentMessageId: .unique,
+            participantCount: 10,
+            read: [dummyThreadReadPayload()],
+            replyCount: 10,
+            threadParticipants: [dummyThreadParticipantPayload()],
+            title: "Test",
+            updatedAt: .unique
         )
 
         _ = try database.viewContext.saveCurrentUser(payload: .dummy(userId: .unique, role: .admin))
@@ -291,23 +291,23 @@ final class ThreadDTO_Tests: XCTestCase {
 
         // WHEN
         // Save the same thread without a draft
-        let payloadWithoutDraft = ThreadStateResponse(
-            parentMessageId: payloadWithDraft.parentMessageId,
-            parentMessage: payloadWithDraft.parentMessage!,
-            channel: payloadWithDraft.channelDetailPayload!,
-            createdBy: payloadWithDraft.createdBy ?? UserResponse.empty,
-            replyCount: payloadWithDraft.replyCount ?? 0,
-            participantCount: payloadWithDraft.participantCount,
+        let payloadWithoutDraft = ThreadStateResponse.dummy(
             activeParticipantCount: 2,
-            threadParticipants: payloadWithDraft.threadParticipants ?? [],
-            lastMessageAt: payloadWithDraft.lastMessageAt,
+            channel: payloadWithDraft.channelDetailPayload!,
             createdAt: payloadWithDraft.createdAt,
-            updatedAt: payloadWithDraft.updatedAt,
-            title: payloadWithDraft.title,
-            latestReplies: payloadWithDraft.latestReplies,
-            read: payloadWithDraft.read ?? [],
+            createdBy: payloadWithDraft.createdBy ?? UserResponse.empty,
+            custom: payloadWithDraft.custom,
             draft: nil,
-            extraData: payloadWithDraft.custom
+            lastMessageAt: payloadWithDraft.lastMessageAt,
+            latestReplies: payloadWithDraft.latestReplies,
+            parentMessage: payloadWithDraft.parentMessage!,
+            parentMessageId: payloadWithDraft.parentMessageId,
+            participantCount: payloadWithDraft.participantCount,
+            read: payloadWithDraft.read ?? [],
+            replyCount: payloadWithDraft.replyCount ?? 0,
+            threadParticipants: payloadWithDraft.threadParticipants ?? [],
+            title: payloadWithDraft.title,
+            updatedAt: payloadWithDraft.updatedAt
         )
 
         let updatedDto = try database.viewContext.saveThread(

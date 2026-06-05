@@ -115,11 +115,11 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         apiClient.request(
             endpoint: Endpoint<BanResponse>.ban(
                 banRequest: BanRequest(
-                    userId: userId,
-                    cid: cid,
+                    channelCid: cid.rawValue,
+                    reason: reason,
                     shadow: shadow,
-                    timeoutInMinutes: timeoutInMinutes,
-                    reason: reason
+                    targetUserId: userId,
+                    timeout: timeoutInMinutes
                 )
             )
         ) {

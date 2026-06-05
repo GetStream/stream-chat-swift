@@ -23,11 +23,18 @@ final class ThreadParticipantDTO_Tests: XCTestCase {
     }
 
     func test_saveThreadParticipantPayload() throws {
+        let user = UserResponse.dummy(userId: .unique)
         let payload = ThreadParticipantPayload(
-            user: .dummy(userId: .unique),
-            threadId: .unique,
+            appPk: 0,
+            channelCid: "",
             createdAt: .unique,
-            lastReadAt: .unique
+            custom: [:],
+            lastReadAt: .unique,
+            lastThreadMessageAt: nil,
+            leftThreadAt: nil,
+            threadId: .unique,
+            user: user,
+            userId: user.id
         )
 
         let dto = try database.viewContext.saveThreadParticipant(

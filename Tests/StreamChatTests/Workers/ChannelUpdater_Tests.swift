@@ -1084,12 +1084,12 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate API response with success
         apiClient.test_simulateResponse(
             Result<MuteChannelResponse, Error>.success(
-                .init(
-                    channelMute: .init(
-                        mutedChannel: .dummy(cid: cid),
-                        user: UserResponse.dummy(userId: .unique),
+                .dummy(
+                    channelMute: .dummy(
+                        channel: .dummy(cid: cid),
                         createdAt: .unique,
-                        updatedAt: .unique
+                        updatedAt: .unique,
+                        user: UserResponse.dummy(userId: .unique)
                     )
                 )
             )
@@ -1115,12 +1115,12 @@ final class ChannelUpdater_Tests: XCTestCase {
         // Simulate API response with success
         apiClient.test_simulateResponse(
             Result<MuteChannelResponse, Error>.success(
-                .init(
-                    channelMute: .init(
-                        mutedChannel: .dummy(),
-                        user: UserResponse.dummy(userId: .unique),
+                .dummy(
+                    channelMute: .dummy(
+                        channel: .dummy(),
                         createdAt: .unique,
-                        updatedAt: .unique
+                        updatedAt: .unique,
+                        user: UserResponse.dummy(userId: .unique)
                     )
                 )
             )
@@ -1181,11 +1181,11 @@ final class ChannelUpdater_Tests: XCTestCase {
             try session.saveCurrentUser(payload: .dummy(userId: userId, role: .admin))
             try session.saveChannel(payload: .dummy(channel: .dummy(cid: cid)))
             try session.saveChannelMute(
-                payload: .init(
-                    mutedChannel: .dummy(cid: cid),
-                    user: UserResponse.dummy(userId: userId),
+                payload: .dummy(
+                    channel: .dummy(cid: cid),
                     createdAt: .unique,
-                    updatedAt: .unique
+                    updatedAt: .unique,
+                    user: UserResponse.dummy(userId: userId)
                 )
             )
         }
@@ -2522,8 +2522,8 @@ final class ChannelUpdater_Tests: XCTestCase {
         // GIVEN
         let cid: ChannelId = .unique
         let preference = PushPreferenceInput(
-            chatLevel: "mentions",
-            channelId: cid.rawValue,
+            channelCid: cid.rawValue,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: "mentions"),
             disabledUntil: nil,
             removeDisable: true
         )
@@ -2543,22 +2543,22 @@ final class ChannelUpdater_Tests: XCTestCase {
         // GIVEN
         let cid: ChannelId = .unique
         let preference = PushPreferenceInput(
-            chatLevel: "all",
-            channelId: cid.rawValue,
+            channelCid: cid.rawValue,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: "all"),
             disabledUntil: nil,
             removeDisable: true
         )
 
-        let response = UpsertPushPreferencesResponse(
-            userPreferences: [:],
-            channelPreferences: [
+        let response = UpsertPushPreferencesResponse.dummy(
+            userChannelPreferences: [
                 "userId": [
                     cid.rawValue: ChannelPushPreferencesResponse(
                         chatLevel: "all",
                         disabledUntil: nil
                     )
                 ]
-            ]
+            ],
+            userPreferences: [:]
         )
 
         // WHEN
@@ -2578,8 +2578,8 @@ final class ChannelUpdater_Tests: XCTestCase {
         // GIVEN
         let cid: ChannelId = .unique
         let preference = PushPreferenceInput(
-            chatLevel: "mentions",
-            channelId: cid.rawValue,
+            channelCid: cid.rawValue,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: "mentions"),
             disabledUntil: nil,
             removeDisable: true
         )
@@ -2603,16 +2603,13 @@ final class ChannelUpdater_Tests: XCTestCase {
         // GIVEN
         let cid: ChannelId = .unique
         let preference = PushPreferenceInput(
-            chatLevel: "mentions",
-            channelId: cid.rawValue,
+            channelCid: cid.rawValue,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: "mentions"),
             disabledUntil: nil,
             removeDisable: true
         )
 
-        let response = UpsertPushPreferencesResponse(
-            userPreferences: [:],
-            channelPreferences: [:]
-        )
+        let response = UpsertPushPreferencesResponse.dummy()
 
         // WHEN
         nonisolated(unsafe) var completionError: Error?
@@ -2641,22 +2638,22 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertNil(database.viewContext.channel(cid: cid)?.pushPreference)
 
         let preference = PushPreferenceInput(
-            chatLevel: "mentions",
-            channelId: cid.rawValue,
+            channelCid: cid.rawValue,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: "mentions"),
             disabledUntil: nil,
             removeDisable: true
         )
 
-        let response = UpsertPushPreferencesResponse(
-            userPreferences: [:],
-            channelPreferences: [
+        let response = UpsertPushPreferencesResponse.dummy(
+            userChannelPreferences: [
                 "userId": [
                     cid.rawValue: ChannelPushPreferencesResponse(
                         chatLevel: "mentions",
                         disabledUntil: nil
                     )
                 ]
-            ]
+            ],
+            userPreferences: [:]
         )
 
         // WHEN
@@ -2707,22 +2704,22 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(database.viewContext.channel(cid: cid)?.pushPreference?.chatLevel, "none")
 
         let preference = PushPreferenceInput(
-            chatLevel: "all",
-            channelId: cid.rawValue,
+            channelCid: cid.rawValue,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: "all"),
             disabledUntil: nil,
             removeDisable: true
         )
 
-        let response = UpsertPushPreferencesResponse(
-            userPreferences: [:],
-            channelPreferences: [
+        let response = UpsertPushPreferencesResponse.dummy(
+            userChannelPreferences: [
                 "userId": [
                     cid.rawValue: ChannelPushPreferencesResponse(
                         chatLevel: "all",
                         disabledUntil: nil
                     )
                 ]
-            ]
+            ],
+            userPreferences: [:]
         )
 
         // WHEN

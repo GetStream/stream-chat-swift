@@ -7,12 +7,17 @@ import Foundation
 
 extension DeviceResponse {
     static var dummy: DeviceResponse {
-        .init(id: .unique, createdAt: .unique)
+        .init(
+            createdAt: .unique,
+            id: .unique,
+            pushProvider: "",
+            userId: ""
+        )
     }
 }
 
 extension ListDevicesResponse {
     static var dummy: ListDevicesResponse {
-        .init(devices: [DeviceResponse.dummy, DeviceResponse.dummy])
+        .init(devices: [DeviceResponse.dummy, DeviceResponse.dummy], duration: "")
     }
 }

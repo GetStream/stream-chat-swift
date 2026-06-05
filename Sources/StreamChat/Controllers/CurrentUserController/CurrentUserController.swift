@@ -478,8 +478,8 @@ public extension CurrentChatUserController {
         completion: (@MainActor (Result<PushPreference, Error>) -> Void)? = nil
     ) {
         let userPreference = PushPreferenceInput(
-            chatLevel: level.rawValue,
-            channelId: nil,
+            channelCid: nil,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: level.rawValue),
             disabledUntil: nil,
             removeDisable: true
         )
@@ -500,8 +500,8 @@ public extension CurrentChatUserController {
         completion: (@MainActor (Result<PushPreference, Error>) -> Void)? = nil
     ) {
         let userPreference = PushPreferenceInput(
-            chatLevel: PushPreferenceLevel.all.rawValue,
-            channelId: nil,
+            channelCid: nil,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: PushPreferenceLevel.all.rawValue),
             disabledUntil: date,
             removeDisable: nil
         )

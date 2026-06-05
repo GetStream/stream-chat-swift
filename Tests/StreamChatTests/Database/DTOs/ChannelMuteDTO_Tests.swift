@@ -27,13 +27,13 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             role: .user
         )
 
-        let mutePayload: ChannelMute = .init(
-            mutedChannel: .dummy(cid: .unique),
-            user: currentUserResponse,
+        let mutePayload: ChannelMute = .dummy(
+            channel: .dummy(cid: .unique),
             createdAt: .unique,
             updatedAt: .unique,
-            expiresAt: .unique
+            user: currentUserResponse.asUserPayload
         )
+        mutePayload.expires = .unique
         let mutedChannel = try XCTUnwrap(mutePayload.channel)
 
         try database.writeSynchronously { session in
@@ -52,13 +52,13 @@ final class ChannelMuteDTO_Tests: XCTestCase {
 
     func test_saveChannelMute_whenThereIsNoCurrentUser_throws() throws {
         // GIVEN
-        let mute: ChannelMute = .init(
-            mutedChannel: .dummy(cid: .unique),
-            user: UserResponse.dummy(userId: .unique),
+        let mute: ChannelMute = .dummy(
+            channel: .dummy(cid: .unique),
             createdAt: .unique,
             updatedAt: .unique,
-            expiresAt: .unique
+            user: UserResponse.dummy(userId: .unique)
         )
+        mute.expires = .unique
 
         // WHEN
         XCTAssertThrowsError(try database.viewContext.saveChannelMute(payload: mute)) { error in
@@ -71,13 +71,13 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         // GIVEN
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
         let channel: ChannelResponse = .dummy(cid: .unique)
-        let mute: ChannelMute = .init(
-            mutedChannel: channel,
-            user: currentUser,
+        let mute: ChannelMute = .dummy(
+            channel: channel,
             createdAt: .unique,
             updatedAt: .unique,
-            expiresAt: .unique
+            user: currentUser.asUserPayload
         )
+        mute.expires = .unique
 
         var loadedMuteDTO: ChannelMuteDTO? {
             ChannelMuteDTO.load(cid: try! ChannelId(cid: channel.cid), context: database.viewContext)
@@ -103,13 +103,13 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         // GIVEN
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
         let channel: ChannelResponse = .dummy(cid: .unique)
-        let initialMute: ChannelMute = .init(
-            mutedChannel: channel,
-            user: currentUser,
+        let initialMute: ChannelMute = .dummy(
+            channel: channel,
             createdAt: .unique,
             updatedAt: .unique,
-            expiresAt: .unique
+            user: currentUser.asUserPayload
         )
+        initialMute.expires = .unique
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUser)
@@ -117,13 +117,13 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         }
 
         // WHEN
-        let updatedMute: ChannelMute = .init(
-            mutedChannel: channel,
-            user: currentUser,
+        let updatedMute: ChannelMute = .dummy(
+            channel: channel,
             createdAt: .unique,
             updatedAt: .unique,
-            expiresAt: .unique
+            user: currentUser.asUserPayload
         )
+        updatedMute.expires = .unique
         try database.writeSynchronously { session in
             try session.saveChannelMute(payload: updatedMute)
         }

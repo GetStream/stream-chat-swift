@@ -48,8 +48,8 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
             id: messageId,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
+            location: .dummy(
+                channelId: cid,
                 messageId: messageId,
                 userId: currentUserId,
                 latitude: 10.0,
@@ -83,8 +83,8 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
             id: messageId1,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
+            location: .dummy(
+                channelId: cid,
                 messageId: messageId1,
                 userId: currentUserId,
                 latitude: 10.0,
@@ -101,8 +101,8 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
             id: messageId2,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
+            location: .dummy(
+                channelId: cid,
                 messageId: messageId2,
                 userId: currentUserId,
                 latitude: 30.0,
@@ -138,8 +138,8 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
             id: messageId,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
+            location: .dummy(
+                channelId: cid,
                 messageId: messageId,
                 userId: currentUserId,
                 latitude: 10.0,
@@ -182,8 +182,8 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
             id: messageId,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
+            location: .dummy(
+                channelId: cid,
                 messageId: messageId,
                 userId: currentUserId,
                 latitude: 10.0,
@@ -214,8 +214,8 @@ final class ActiveLiveLocationsEndTimeTracker_Tests: XCTestCase {
             id: messageId,
             authorId: currentUserId,
             cid: cid,
-            location: .init(
-                channelId: cid.rawValue,
+            location: .dummy(
+                channelId: cid,
                 messageId: messageId,
                 userId: currentUserId,
                 latitude: 10.0,

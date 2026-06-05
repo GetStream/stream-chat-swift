@@ -138,7 +138,7 @@ final class UserSearch_Tests: XCTestCase {
         let users = (0..<count)
             .map { $0 + offset }
             .map { UserResponse.dummy(userId: "\($0)", name: "name_\(String(format: "%03d", $0))") }
-        return QueryUsersResponse(users: users)
+        return .dummy(users: users)
     }
 }
 

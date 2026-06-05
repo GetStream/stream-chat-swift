@@ -169,7 +169,7 @@ final class PollController_Tests: XCTestCase {
             ownVotes.append(XCTestCase().dummyPollVotePayload(pollId: pollId, userId: user.id, user: user))
         }
         
-        let response = PollVotesResponse(duration: "", votes: ownVotes)
+        let response = PollVotesResponse.dummy(votes: ownVotes)
         let query = controller.ownVotesQuery
         try client.databaseContainer.writeSynchronously { session in
             try session.savePollVotes(payload: response, query: query, cache: nil)

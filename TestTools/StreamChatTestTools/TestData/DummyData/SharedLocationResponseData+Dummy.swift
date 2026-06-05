@@ -19,15 +19,24 @@ extension SharedLocationResponseData {
         createdByDeviceId: DeviceId = .unique
     ) -> SharedLocationResponseData {
         .init(
-            channelId: channelId.rawValue,
-            messageId: messageId,
-            userId: userId,
-            latitude: latitude,
-            longitude: longitude,
+            channelCid: channelId.rawValue,
             createdAt: createdAt,
-            updatedAt: updatedAt,
+            createdByDeviceId: createdByDeviceId,
             endAt: endAt,
-            createdByDeviceId: createdByDeviceId
+            latitude: Float(latitude),
+            longitude: Float(longitude),
+            messageId: messageId,
+            updatedAt: updatedAt,
+            userId: userId
         )
+    }
+}
+
+extension SharedLocationsResponse {
+    static func dummy(
+        activeLiveLocations: [SharedLocationResponseData] = [],
+        duration: String = ""
+    ) -> SharedLocationsResponse {
+        .init(activeLiveLocations: activeLiveLocations, duration: duration)
     }
 }

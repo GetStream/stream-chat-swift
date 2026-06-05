@@ -81,3 +81,36 @@ extension OwnUserResponse {
         )
     }
 }
+
+extension QueryUsersResponse {
+    static func dummy(
+        duration: String = "",
+        users: [UserResponse] = []
+    ) -> QueryUsersResponse {
+        .init(duration: duration, users: users.map(\.asFullUserResponse))
+    }
+}
+
+extension UpdateUsersResponse {
+    static func dummy(
+        duration: String = "",
+        membershipDeletionTaskId: String = "",
+        user: OwnUserResponse
+    ) -> UpdateUsersResponse {
+        .init(duration: duration, membershipDeletionTaskId: membershipDeletionTaskId, users: [user.id: user.asFullUserResponse])
+    }
+}
+
+extension UpsertPushPreferencesResponse {
+    static func dummy(
+        duration: String = "",
+        userChannelPreferences: [String: [String: ChannelPushPreferencesResponse?]] = [:],
+        userPreferences: [String: PushPreferencesResponse?] = [:]
+    ) -> UpsertPushPreferencesResponse {
+        .init(
+            duration: duration,
+            userChannelPreferences: userChannelPreferences,
+            userPreferences: userPreferences
+        )
+    }
+}

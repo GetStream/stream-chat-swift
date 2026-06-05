@@ -176,7 +176,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with empty users list
-        let response = Result<QueryUsersResponse, Error>.success(.init(users: []))
+        let response = Result<QueryUsersResponse, Error>.success(.dummy(users: []))
         apiClient.test_simulateResponse(response)
 
         // Assert the `UserDoesNotExist` is received
@@ -193,7 +193,7 @@ final class UserUpdater_Tests: XCTestCase {
         }
 
         // Simulate API response with multiple users
-        let response = Result<QueryUsersResponse, Error>.success(.init(users: [
+        let response = Result<QueryUsersResponse, Error>.success(.dummy(users: [
             .dummy(userId: userId),
             .dummy(userId: userId),
             .dummy(userId: userId)
@@ -225,7 +225,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate API response with one user
         let userPayload = UserResponse.dummy(userId: .unique)
-        let response = Result<QueryUsersResponse, Error>.success(.init(users: [userPayload]))
+        let response = Result<QueryUsersResponse, Error>.success(.dummy(users: [userPayload]))
         apiClient.test_simulateResponse(response)
 
         // Assert the database error is propagated
@@ -241,7 +241,7 @@ final class UserUpdater_Tests: XCTestCase {
 
         // Simulate API response with empty users list
         let userPayload = UserResponse.dummy(userId: .unique)
-        let response = Result<QueryUsersResponse, Error>.success(.init(users: [userPayload]))
+        let response = Result<QueryUsersResponse, Error>.success(.dummy(users: [userPayload]))
         apiClient.test_simulateResponse(response)
 
         AssertAsync.willBeTrue(completionIsCalled)

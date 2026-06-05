@@ -237,14 +237,13 @@ final class MessageReactionDTO_Tests: XCTestCase {
         nonisolated(unsafe) var id: String!
         try database.writeSynchronously { session in
             let reaction = try session.saveReaction(
-                payload: ReactionResponse(
+                payload: ReactionResponse.dummy(
                     type: type,
                     score: 1,
                     messageId: messageId,
                     createdAt: Date(),
                     updatedAt: Date(),
-                    user: .dummy(userId: userId),
-                    extraData: [:]
+                    user: .dummy(userId: userId)
                 ),
                 query: nil,
                 cache: nil

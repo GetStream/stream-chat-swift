@@ -183,33 +183,6 @@ extension UploadChannelResponse {
     var thumbURL: URL? {
         thumbUrl.flatMap(URL.init(string:))
     }
-
-    convenience init(fileURL: URL, thumbURL: URL?) {
-        self.init(duration: "", file: fileURL.absoluteString, thumbUrl: thumbURL?.absoluteString)
-    }
-}
-
-extension DeviceResponse {
-    convenience init(id: DeviceId, createdAt: Date? = .init()) {
-        self.init(
-            createdAt: createdAt ?? Date(timeIntervalSince1970: 0),
-            id: id,
-            pushProvider: "",
-            userId: ""
-        )
-    }
-}
-
-extension ListDevicesResponse {
-    convenience init(devices: [DeviceResponse]) {
-        self.init(devices: devices, duration: "")
-    }
-}
-
-extension MembersResponse {
-    convenience init(members: [ChannelMemberResponse]) {
-        self.init(duration: "", members: members)
-    }
 }
 
 extension ChannelMemberResponse {
@@ -219,43 +192,6 @@ extension ChannelMemberResponse {
 
     var memberRole: MemberRole? {
         MemberRole(rawChannelValue: channelRole)
-    }
-
-    convenience init(
-        user: UserResponse?,
-        userId: String,
-        role: MemberRole?,
-        createdAt: Date,
-        updatedAt: Date,
-        banExpiresAt: Date? = nil,
-        isBanned: Bool? = nil,
-        isShadowBanned: Bool? = nil,
-        isInvited: Bool? = nil,
-        inviteAcceptedAt: Date? = nil,
-        inviteRejectedAt: Date? = nil,
-        archivedAt: Date? = nil,
-        pinnedAt: Date? = nil,
-        notificationsMuted: Bool = false,
-        extraData: [String: RawJSON]? = nil
-    ) {
-        self.init(
-            archivedAt: archivedAt,
-            banExpires: banExpiresAt,
-            banned: isBanned ?? false,
-            channelRole: role?.rawChannelValue ?? MemberRole.member.rawChannelValue,
-            createdAt: createdAt,
-            custom: extraData ?? [:],
-            inviteAcceptedAt: inviteAcceptedAt,
-            inviteRejectedAt: inviteRejectedAt,
-            invited: isInvited,
-            notificationsMuted: notificationsMuted,
-            pinnedAt: pinnedAt,
-            role: role?.rawValue,
-            shadowBanned: isShadowBanned ?? false,
-            updatedAt: updatedAt,
-            user: user,
-            userId: user?.id ?? userId
-        )
     }
 }
 
@@ -329,10 +265,6 @@ extension UserMuteResponse {
             language: nil,
             extraData: [:]
         )
-    }
-
-    convenience init(mutedUser: UserResponse, created: Date, updated: Date) {
-        self.init(createdAt: created, target: mutedUser, updatedAt: updated)
     }
 }
 
@@ -507,46 +439,6 @@ extension UserPrivacySettingsPayload {
     }
 }
 
-extension MuteChannelResponse {
-    convenience init(channelMute: ChannelMute, channelMutes: [ChannelMute]? = nil, ownUser: OwnUserResponse? = nil) {
-        self.init(channelMute: channelMute, channelMutes: channelMutes, duration: "", ownUser: ownUser)
-    }
-}
-
-extension ChannelMute {
-    convenience init(
-        mutedChannel: ChannelResponse,
-        user: UserResponse,
-        createdAt: Date,
-        updatedAt: Date,
-        expiresAt: Date? = nil
-    ) {
-        self.init(
-            channel: mutedChannel,
-            createdAt: createdAt,
-            expires: expiresAt,
-            updatedAt: updatedAt,
-            user: user
-        )
-    }
-
-    convenience init(
-        mutedChannel: ChannelResponse,
-        user: OwnUserResponse,
-        createdAt: Date,
-        updatedAt: Date,
-        expiresAt: Date? = nil
-    ) {
-        self.init(
-            mutedChannel: mutedChannel,
-            user: user.asUserPayload,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            expiresAt: expiresAt
-        )
-    }
-}
-
 extension PrivacySettingsResponse {
     var asUserPrivacySettingsPayload: UserPrivacySettingsPayload {
         UserPrivacySettingsPayload(
@@ -557,65 +449,9 @@ extension PrivacySettingsResponse {
     }
 }
 
-extension QueryDraftsResponse {
-    convenience init(drafts: [DraftResponse], next: String? = nil) {
-        self.init(drafts: drafts, duration: "", next: next)
-    }
-}
-
-extension GetDraftResponse {
-    convenience init(draft: DraftResponse) {
-        self.init(draft: draft, duration: "")
-    }
-}
-
 extension DraftResponse {
     var cid: ChannelId? {
         try? ChannelId(cid: channelCid)
-    }
-
-    convenience init(
-        cid: ChannelId?,
-        channelPayload: ChannelResponse?,
-        createdAt: Date,
-        message: DraftPayloadResponse,
-        quotedMessage: MessageResponse?,
-        parentId: String?,
-        parentMessage: MessageResponse?
-    ) {
-        self.init(
-            channel: channelPayload,
-            channelCid: cid?.rawValue ?? channelPayload?.cid ?? "",
-            createdAt: createdAt,
-            message: message,
-            parentId: parentId,
-            parentMessage: parentMessage,
-            quotedMessage: quotedMessage
-        )
-    }
-}
-
-extension DraftPayloadResponse {
-    convenience init(
-        id: String,
-        text: String,
-        command: String?,
-        args: String?,
-        showReplyInChannel: Bool,
-        mentionedUsers: [UserResponse]?,
-        extraData: [String: RawJSON],
-        attachments: [Attachment]?,
-        isSilent: Bool
-    ) {
-        self.init(
-            attachments: attachments,
-            custom: extraData,
-            id: id,
-            mentionedUsers: mentionedUsers,
-            showInChannel: showReplyInChannel,
-            silent: isSilent,
-            text: text
-        )
     }
 }
 
@@ -654,120 +490,15 @@ extension CreateDraftRequest {
     }
 }
 
-extension ReadStateResponse {
-    convenience init(
-        user: UserResponse,
-        lastReadAt: Date,
-        lastReadMessageId: MessageId? = nil,
-        unreadMessagesCount: Int,
-        lastDeliveredAt: Date? = nil,
-        lastDeliveredMessageId: MessageId? = nil
-    ) {
-        self.init(
-            lastDeliveredAt: lastDeliveredAt,
-            lastDeliveredMessageId: lastDeliveredMessageId,
-            lastRead: lastReadAt,
-            lastReadMessageId: lastReadMessageId,
-            unreadMessages: unreadMessagesCount,
-            user: user
-        )
-    }
-
-    convenience init(
-        user: OwnUserResponse,
-        lastReadAt: Date,
-        lastReadMessageId: MessageId? = nil,
-        unreadMessagesCount: Int,
-        lastDeliveredAt: Date? = nil,
-        lastDeliveredMessageId: MessageId? = nil
-    ) {
-        self.init(
-            user: user.asUserPayload,
-            lastReadAt: lastReadAt,
-            lastReadMessageId: lastReadMessageId,
-            unreadMessagesCount: unreadMessagesCount,
-            lastDeliveredAt: lastDeliveredAt,
-            lastDeliveredMessageId: lastDeliveredMessageId
-        )
-    }
-}
-
-extension WrappedUnreadCountsResponse {
-    convenience init(
-        totalUnreadCount: Int,
-        totalUnreadThreadsCount: Int,
-        totalUnreadCountByTeam: [TeamId: Int]?,
-        channels: [UnreadCountsChannel],
-        channelType: [UnreadCountsChannelType],
-        threads: [UnreadCountsThread]
-    ) {
-        self.init(
-            channelType: channelType,
-            channels: channels,
-            duration: "",
-            threads: threads,
-            totalUnreadCount: totalUnreadCount,
-            totalUnreadCountByTeam: totalUnreadCountByTeam,
-            totalUnreadThreadsCount: totalUnreadThreadsCount
-        )
-    }
-}
-
 extension UnreadCountsChannel {
     var channelIdValue: ChannelId {
         (try? ChannelId(cid: channelId)) ?? ChannelId(type: .messaging, id: channelId)
-    }
-
-    convenience init(channelId: ChannelId, unreadCount: Int, lastRead: Date?) {
-        self.init(
-            channelId: channelId.rawValue,
-            lastRead: lastRead ?? Date(timeIntervalSince1970: 0),
-            unreadCount: unreadCount
-        )
     }
 }
 
 extension UnreadCountsChannelType {
     var channelTypeValue: ChannelType {
         ChannelType(rawValue: channelType)
-    }
-
-    convenience init(channelType: ChannelType, channelCount: Int, unreadCount: Int) {
-        self.init(channelCount: channelCount, channelType: channelType.rawValue, unreadCount: unreadCount)
-    }
-}
-
-extension UnreadCountsThread {
-    convenience init(parentMessageId: MessageId, lastRead: Date?, lastReadMessageId: MessageId?, unreadCount: Int) {
-        self.init(
-            lastRead: lastRead ?? Date(timeIntervalSince1970: 0),
-            lastReadMessageId: lastReadMessageId ?? "",
-            parentMessageId: parentMessageId,
-            unreadCount: unreadCount
-        )
-    }
-}
-
-extension ReactionGroupResponse {
-    convenience init(
-        sumScores: Int,
-        count: Int,
-        firstReactionAt: Date,
-        lastReactionAt: Date
-    ) {
-        self.init(
-            count: count,
-            firstReactionAt: firstReactionAt,
-            lastReactionAt: lastReactionAt,
-            latestReactionsBy: [],
-            sumScores: sumScores
-        )
-    }
-}
-
-extension DeliveredMessagePayload {
-    convenience init(cid: ChannelId, id: MessageId) {
-        self.init(cid: cid.rawValue, id: id)
     }
 }
 
@@ -804,28 +535,6 @@ extension UpdateMemberPartialRequest {
             set[MemberUpdateField.pinned.rawValue] = .bool(pinned)
         }
         self.init(set: set.isEmpty ? nil : set)
-    }
-}
-
-extension ModerationV2Response {
-    convenience init(
-        originalText: String,
-        action: String,
-        textHarms: [String]?,
-        imageHarms: [String]?,
-        blocklistMatched: String?,
-        semanticFilterMatched: String?,
-        platformCircumvented: Bool?
-    ) {
-        self.init(
-            action: action,
-            blocklistMatched: blocklistMatched,
-            imageHarms: imageHarms,
-            originalText: originalText,
-            platformCircumvented: platformCircumvented,
-            semanticFilterMatched: semanticFilterMatched,
-            textHarms: textHarms
-        )
     }
 }
 
@@ -963,19 +672,11 @@ extension QueryUsersResponse {
     var userPayloads: [UserResponse] {
         users.map(\.asUserPayload)
     }
-
-    convenience init(users: [UserResponse]) {
-        self.init(duration: "", users: users.map(\.asFullUserResponse))
-    }
 }
 
 extension UserRequest {
     var imageURL: URL? {
         image.flatMap(URL.init(string:))
-    }
-
-    convenience init(id: String, name: String?, imageURL: URL?, extraData: [String: RawJSON]) {
-        self.init(custom: extraData, id: id, image: imageURL?.absoluteString, name: name)
     }
 }
 
@@ -1047,10 +748,6 @@ extension UpdateUserPartialRequest {
 extension UpdateUsersResponse {
     var user: OwnUserResponse {
         (try? validatedUser()) ?? UserResponse.empty.asOwnUserResponse
-    }
-
-    convenience init(user: OwnUserResponse) {
-        self.init(duration: "", membershipDeletionTaskId: "", users: [user.id: user.asFullUserResponse])
     }
 
     func validatedUser() throws -> OwnUserResponse {
@@ -1261,60 +958,6 @@ extension MessageResponse {
 }
 
 extension MessageWithChannelResponse {
-    convenience init(messageResponse: MessageResponse, channel: ChannelResponse) {
-        self.init(
-            attachments: messageResponse.attachments,
-            channel: channel,
-            cid: messageResponse.cid,
-            command: messageResponse.command,
-            createdAt: messageResponse.createdAt,
-            custom: messageResponse.custom,
-            deletedAt: messageResponse.deletedAt,
-            deletedForMe: messageResponse.deletedForMe,
-            deletedReplyCount: messageResponse.deletedReplyCount,
-            draft: messageResponse.draft,
-            html: messageResponse.html,
-            i18n: messageResponse.i18n,
-            id: messageResponse.id,
-            imageLabels: messageResponse.imageLabels,
-            latestReactions: messageResponse.latestReactions,
-            member: messageResponse.member,
-            mentionedChannel: messageResponse.mentionedChannel,
-            mentionedGroupIds: messageResponse.mentionedGroupIds,
-            mentionedHere: messageResponse.mentionedHere,
-            mentionedRoles: messageResponse.mentionedRoles,
-            mentionedUsers: messageResponse.mentionedUsers,
-            messageTextUpdatedAt: messageResponse.messageTextUpdatedAt,
-            mml: messageResponse.mml,
-            moderation: messageResponse.moderation,
-            ownReactions: messageResponse.ownReactions,
-            parentId: messageResponse.parentId,
-            pinExpires: messageResponse.pinExpires,
-            pinned: messageResponse.pinned,
-            pinnedAt: messageResponse.pinnedAt,
-            pinnedBy: messageResponse.pinnedBy,
-            poll: messageResponse.poll,
-            pollId: messageResponse.pollId,
-            quotedMessage: messageResponse.quotedMessage,
-            quotedMessageId: messageResponse.quotedMessageId,
-            reactionCounts: messageResponse.reactionCounts,
-            reactionGroups: messageResponse.reactionGroups,
-            reactionScores: messageResponse.reactionScores,
-            reminder: messageResponse.reminder,
-            replyCount: messageResponse.replyCount,
-            restrictedVisibility: messageResponse.restrictedVisibility,
-            shadowed: messageResponse.shadowed,
-            sharedLocation: messageResponse.sharedLocation,
-            showInChannel: messageResponse.showInChannel,
-            silent: messageResponse.silent,
-            text: messageResponse.text,
-            threadParticipants: messageResponse.threadParticipants,
-            type: messageResponse.type,
-            updatedAt: messageResponse.updatedAt,
-            user: messageResponse.user
-        )
-    }
-
     var asMessageResponse: MessageResponse {
         MessageResponse(
             attachments: attachments,
@@ -1390,60 +1033,6 @@ extension MessageActionResponse {
 }
 
 extension SearchResultMessage {
-    convenience init(messageResponse: MessageResponse, channel: ChannelResponse? = nil) {
-        self.init(
-            attachments: messageResponse.attachments,
-            channel: channel,
-            cid: messageResponse.cid,
-            command: messageResponse.command,
-            createdAt: messageResponse.createdAt,
-            custom: messageResponse.custom,
-            deletedAt: messageResponse.deletedAt,
-            deletedForMe: messageResponse.deletedForMe,
-            deletedReplyCount: messageResponse.deletedReplyCount,
-            draft: messageResponse.draft,
-            html: messageResponse.html,
-            i18n: messageResponse.i18n,
-            id: messageResponse.id,
-            imageLabels: messageResponse.imageLabels,
-            latestReactions: messageResponse.latestReactions,
-            member: messageResponse.member,
-            mentionedChannel: messageResponse.mentionedChannel,
-            mentionedGroupIds: messageResponse.mentionedGroupIds,
-            mentionedHere: messageResponse.mentionedHere,
-            mentionedRoles: messageResponse.mentionedRoles,
-            mentionedUsers: messageResponse.mentionedUsers,
-            messageTextUpdatedAt: messageResponse.messageTextUpdatedAt,
-            mml: messageResponse.mml,
-            moderation: messageResponse.moderation,
-            ownReactions: messageResponse.ownReactions,
-            parentId: messageResponse.parentId,
-            pinExpires: messageResponse.pinExpires,
-            pinned: messageResponse.pinned,
-            pinnedAt: messageResponse.pinnedAt,
-            pinnedBy: messageResponse.pinnedBy,
-            poll: messageResponse.poll,
-            pollId: messageResponse.pollId,
-            quotedMessage: messageResponse.quotedMessage,
-            quotedMessageId: messageResponse.quotedMessageId,
-            reactionCounts: messageResponse.reactionCounts,
-            reactionGroups: messageResponse.reactionGroups,
-            reactionScores: messageResponse.reactionScores,
-            reminder: messageResponse.reminder,
-            replyCount: messageResponse.replyCount,
-            restrictedVisibility: messageResponse.restrictedVisibility,
-            shadowed: messageResponse.shadowed,
-            sharedLocation: messageResponse.sharedLocation,
-            showInChannel: messageResponse.showInChannel,
-            silent: messageResponse.silent,
-            text: messageResponse.text,
-            threadParticipants: messageResponse.threadParticipants,
-            type: messageResponse.type,
-            updatedAt: messageResponse.updatedAt,
-            user: messageResponse.user
-        )
-    }
-
     var asMessageResponse: MessageResponse {
         MessageResponse(
             attachments: attachments,
@@ -1498,199 +1087,15 @@ extension SearchResultMessage {
     }
 }
 
-extension SharedLocationResponseData {
-    convenience init(
-        channelId: String,
-        messageId: String,
-        userId: String,
-        latitude: Double,
-        longitude: Double,
-        createdAt: Date,
-        updatedAt: Date,
-        endAt: Date?,
-        createdByDeviceId: String
-    ) {
-        self.init(
-            channelCid: channelId,
-            createdAt: createdAt,
-            createdByDeviceId: createdByDeviceId,
-            endAt: endAt,
-            latitude: Float(latitude),
-            longitude: Float(longitude),
-            messageId: messageId,
-            updatedAt: updatedAt,
-            userId: userId
-        )
-    }
-}
-
 extension ReminderResponseData {
     var channelId: ChannelId? {
         try? ChannelId(cid: channelCid)
-    }
-
-    convenience init(
-        channelCid: ChannelId,
-        messageId: MessageId,
-        message: MessageResponse? = nil,
-        channel: ChannelResponse? = nil,
-        remindAt: Date?,
-        createdAt: Date,
-        updatedAt: Date
-    ) {
-        self.init(
-            channelCid: channelCid.rawValue,
-            createdAt: createdAt,
-            messageId: messageId,
-            remindAt: remindAt,
-            updatedAt: updatedAt,
-            userId: ""
-        )
-    }
-}
-
-extension UpdateReminderResponse {
-    convenience init(reminder: ReminderResponseData) {
-        self.init(duration: "", reminder: reminder)
-    }
-}
-
-extension QueryRemindersResponse {
-    convenience init(reminders: [ReminderResponseData], next: String?) {
-        self.init(duration: "", next: next, reminders: reminders)
-    }
-}
-
-extension SharedLocationPayload {
-    convenience init(latitude: Double, longitude: Double, endAt: Date?, createdByDeviceId: String) {
-        self.init(
-            createdByDeviceId: createdByDeviceId,
-            endAt: endAt,
-            latitude: Float(latitude),
-            longitude: Float(longitude)
-        )
-    }
-}
-
-extension UpdateLiveLocationRequest {
-    convenience init(messageId: String, latitude: Double, longitude: Double, createdByDeviceId: String) {
-        self.init(
-            latitude: Float(latitude),
-            longitude: Float(longitude),
-            messageId: messageId
-        )
-    }
-
-    convenience init(messageId: String, createdByDeviceId: String) {
-        self.init(endAt: Date(), messageId: messageId)
-    }
-}
-
-extension SharedLocationsResponse {
-    convenience init(locations: [SharedLocationResponseData]) {
-        self.init(activeLiveLocations: locations, duration: "")
-    }
-}
-
-extension PollResponseData {
-    convenience init(
-        allowAnswers: Bool,
-        allowUserSuggestedOptions: Bool,
-        answersCount: Int,
-        createdAt: Date,
-        createdById: String,
-        description: String,
-        enforceUniqueVote: Bool,
-        id: String,
-        name: String,
-        updatedAt: Date,
-        voteCount: Int,
-        latestAnswers: [PollVoteResponseData?]?,
-        options: [PollOptionResponseData?],
-        ownVotes: [PollVoteResponseData?],
-        custom: [String: RawJSON],
-        latestVotesByOption: [String: [PollVoteResponseData]]?,
-        voteCountsByOption: [String: Int],
-        isClosed: Bool? = nil,
-        maxVotesAllowed: Int? = nil,
-        votingVisibility: String? = nil,
-        createdBy: UserResponse? = nil
-    ) {
-        self.init(
-            allowAnswers: allowAnswers,
-            allowUserSuggestedOptions: allowUserSuggestedOptions,
-            answersCount: answersCount,
-            createdAt: createdAt,
-            createdBy: createdBy,
-            createdById: createdBy?.id ?? createdById,
-            custom: custom,
-            description: description,
-            enforceUniqueVote: enforceUniqueVote,
-            id: id,
-            isClosed: isClosed,
-            latestAnswers: latestAnswers?.compactMap { $0 } ?? [],
-            latestVotesByOption: latestVotesByOption ?? [:],
-            maxVotesAllowed: maxVotesAllowed,
-            name: name,
-            options: options.compactMap { $0 },
-            ownVotes: ownVotes.compactMap { $0 },
-            updatedAt: updatedAt,
-            voteCount: voteCount,
-            voteCountsByOption: voteCountsByOption,
-            votingVisibility: votingVisibility ?? ""
-        )
-    }
-}
-
-extension PollOptionResponseData {
-    convenience init(id: String, text: String, custom: [String: RawJSON]?) {
-        self.init(custom: custom ?? [:], id: id, text: text)
     }
 }
 
 extension PollVoteResponseData {
     var optionalOptionId: String? {
         optionId.isEmpty ? nil : optionId
-    }
-
-    convenience init(
-        createdAt: Date,
-        id: String,
-        optionId: String?,
-        pollId: String,
-        updatedAt: Date,
-        answerText: String? = nil,
-        isAnswer: Bool? = false,
-        userId: String? = nil,
-        user: UserResponse? = nil
-    ) {
-        self.init(
-            answerText: answerText,
-            createdAt: createdAt,
-            id: id,
-            isAnswer: isAnswer,
-            optionId: optionId ?? "",
-            pollId: pollId,
-            updatedAt: updatedAt,
-            user: user,
-            userId: userId
-        )
-    }
-}
-
-extension PushPreferenceInput {
-    convenience init(
-        chatLevel: String?,
-        channelId: String?,
-        disabledUntil: Date?,
-        removeDisable: Bool?
-    ) {
-        self.init(
-            channelCid: channelId,
-            chatLevel: chatLevel.flatMap { PushPreferenceInputChatLevel(rawValue: $0) },
-            disabledUntil: disabledUntil,
-            removeDisable: removeDisable
-        )
     }
 }
 
@@ -1716,17 +1121,6 @@ extension UpsertPushPreferencesResponse {
     var channelPreferences: [String: [String: ChannelPushPreferencesResponse]] {
         userChannelPreferences.mapValues { $0.compactMapValues { $0 } }
     }
-
-    convenience init(
-        userPreferences: [String: PushPreferencesResponse?],
-        channelPreferences: [String: [String: ChannelPushPreferencesResponse]]
-    ) {
-        self.init(
-            duration: "",
-            userChannelPreferences: channelPreferences,
-            userPreferences: userPreferences.compactMapValues { $0 }
-        )
-    }
 }
 
 extension [String: PushPreferencesResponse?] {
@@ -1749,36 +1143,6 @@ extension [String: [String: ChannelPushPreferencesResponse]] {
                 guard let channelId = try? ChannelId(cid: key) else { return nil }
                 return (channelId, value.asModel())
             })
-    }
-}
-
-extension QueryPollsResponse {
-    convenience init(duration: String, polls: [PollResponseData], next: String? = nil, prev: String? = nil) {
-        self.init(duration: duration, next: next, polls: polls, prev: prev)
-    }
-}
-
-extension PollVoteResponse {
-    convenience init(duration: String, vote: PollVoteResponseData? = nil) {
-        self.init(duration: duration, poll: nil, vote: vote)
-    }
-}
-
-extension PollVotesResponse {
-    convenience init(duration: String, votes: [PollVoteResponseData?], next: String? = nil, prev: String? = nil) {
-        self.init(duration: duration, next: next, prev: prev, votes: votes.compactMap { $0 })
-    }
-}
-
-extension MessageActionRequest {
-    convenience init(cid: ChannelId, messageId: MessageId, action: AttachmentAction) {
-        self.init(formData: [action.name: action.value])
-    }
-}
-
-extension GetRepliesResponse {
-    convenience init(messages: [MessageResponse]) {
-        self.init(duration: "", messages: messages)
     }
 }
 
@@ -1964,55 +1328,9 @@ extension SendEventRequest {
     }
 }
 
-extension SendReactionRequest {
-    convenience init(enforceUnique: Bool, skipPush: Bool, reaction: ReactionRequest) {
-        self.init(enforceUnique: enforceUnique, reaction: reaction, skipPush: skipPush)
-    }
-}
-
 extension ReactionResponse {
     var reactionType: MessageReactionType {
         MessageReactionType(rawValue: type)
-    }
-
-    convenience init(
-        type: MessageReactionType,
-        score: Int,
-        messageId: String,
-        createdAt: Date,
-        updatedAt: Date,
-        user: UserResponse,
-        extraData: [String: RawJSON]
-    ) {
-        self.init(
-            createdAt: createdAt,
-            custom: extraData,
-            messageId: messageId,
-            score: score,
-            type: type.rawValue,
-            updatedAt: updatedAt,
-            user: user,
-            userId: user.id
-        )
-    }
-}
-
-extension ReactionRequest {
-    convenience init(
-        type: MessageReactionType,
-        score: Int,
-        emojiCode: String?,
-        extraData: [String: RawJSON]
-    ) {
-        var custom = extraData
-        if let emojiCode {
-            custom["emoji_code"] = .string(emojiCode)
-        }
-        self.init(
-            custom: custom.isEmpty ? nil : custom,
-            score: score,
-            type: type.rawValue
-        )
     }
 }
 
@@ -2073,121 +1391,6 @@ extension FlagResponse {
             language: nil,
             extraData: [:]
         )
-    }
-}
-
-extension PollOptionInput {
-    convenience init(text: String? = nil, custom: [String: RawJSON]? = nil) {
-        self.init(custom: custom, text: text)
-    }
-}
-
-extension CreatePollOptionRequest {
-    convenience init(pollId: String, text: String, position: Int? = nil, custom: [String: RawJSON]? = nil) {
-        self.init(custom: custom, text: text)
-    }
-}
-
-extension TruncateChannelRequest {
-    convenience init(skipPush: Bool, hardDelete: Bool, message: MessageRequest?) {
-        self.init(
-            hardDelete: hardDelete,
-            message: message,
-            skipPush: skipPush
-        )
-    }
-}
-
-extension BanRequest {
-    convenience init(
-        userId: UserId,
-        cid: ChannelId,
-        shadow: Bool,
-        timeoutInMinutes: Int? = nil,
-        reason: String? = nil
-    ) {
-        self.init(
-            channelCid: cid.rawValue,
-            reason: reason,
-            shadow: shadow,
-            targetUserId: userId,
-            timeout: timeoutInMinutes
-        )
-    }
-}
-
-extension CastPollVoteRequest {
-    convenience init(pollId: String, vote: VoteData? = nil) {
-        self.init(vote: vote)
-    }
-}
-
-extension VoteData {
-    convenience init(
-        answerText: String? = nil,
-        optionId: String? = nil,
-        option: PollOptionRequest? = nil
-    ) {
-        self.init(answerText: answerText, optionId: optionId)
-    }
-}
-
-extension UpdatePollRequest {
-    convenience init(
-        id: String,
-        name: String,
-        allowAnswers: Bool? = nil,
-        allowUserSuggestedOptions: Bool? = nil,
-        description: String? = nil,
-        enforceUniqueVote: Bool? = nil,
-        isClosed: Bool? = nil,
-        maxVotesAllowed: Int? = nil,
-        votingVisibility: String? = nil,
-        options: [PollOptionRequest?]? = nil,
-        custom: [String: RawJSON]? = nil
-    ) {
-        self.init(
-            allowAnswers: allowAnswers,
-            allowUserSuggestedOptions: allowUserSuggestedOptions,
-            custom: custom,
-            description: description,
-            enforceUniqueVote: enforceUniqueVote,
-            id: id,
-            isClosed: isClosed,
-            maxVotesAllowed: maxVotesAllowed,
-            name: name,
-            options: options?.compactMap { $0 },
-            votingVisibility: votingVisibility.flatMap { UpdatePollRequestVotingVisibility(rawValue: $0) }
-        )
-    }
-}
-
-extension UpdatePollOptionRequest {
-    convenience init(id: String, pollId: String, text: String, custom: [String: RawJSON]? = nil) {
-        self.init(custom: custom, id: id, text: text)
-    }
-}
-
-extension UpdatePollPartialRequest {
-    convenience init(pollId: String, unset: [String]? = nil, set: [String: RawJSON]? = nil) {
-        self.init(set: set, unset: unset)
-    }
-}
-
-extension SyncRequest {
-    convenience init(lastSyncedAt: Date, cids: [ChannelId]) {
-        self.init(channelCids: cids.map(\.rawValue), lastSyncAt: lastSyncedAt)
-    }
-}
-
-extension MarkUnreadRequest {
-    convenience init(criteria: MarkUnreadCriteria, userId: String) {
-        switch criteria {
-        case let .messageId(messageId):
-            self.init(messageId: messageId)
-        case let .messageTimestamp(messageTimestamp):
-            self.init(messageTimestamp: messageTimestamp)
-        }
     }
 }
 
@@ -2275,47 +1478,6 @@ extension ThreadStateResponse {
             updatedAt: updatedAt
         )
     }
-
-    convenience init(
-        parentMessageId: MessageId,
-        parentMessage: MessageResponse,
-        channel: ChannelResponse,
-        createdBy: UserResponse,
-        replyCount: Int,
-        participantCount: Int,
-        activeParticipantCount: Int,
-        threadParticipants: [ThreadParticipantPayload],
-        lastMessageAt: Date?,
-        createdAt: Date,
-        updatedAt: Date?,
-        title: String?,
-        latestReplies: [MessageResponse],
-        read: [ReadStateResponse],
-        draft: DraftResponse?,
-        extraData: [String: RawJSON]
-    ) {
-        self.init(
-            activeParticipantCount: activeParticipantCount,
-            channel: channel,
-            channelCid: channel.cid,
-            createdAt: createdAt,
-            createdBy: createdBy,
-            createdByUserId: createdBy.id,
-            custom: extraData,
-            deletedAt: nil,
-            draft: draft,
-            lastMessageAt: lastMessageAt,
-            latestReplies: latestReplies,
-            parentMessage: parentMessage,
-            parentMessageId: parentMessageId,
-            participantCount: participantCount,
-            read: read,
-            replyCount: replyCount,
-            threadParticipants: threadParticipants,
-            title: title ?? "",
-            updatedAt: updatedAt ?? createdAt
-        )
-    }
 }
 
 extension ThreadResponse {
@@ -2344,93 +1506,6 @@ extension ThreadResponse {
 
     var createdByPayload: UserResponse {
         createdBy ?? UserResponse.empty
-    }
-
-    convenience init(
-        parentMessageId: MessageId,
-        parentMessage: MessageResponse,
-        channel: ChannelResponse,
-        createdBy: UserResponse,
-        replyCount: Int,
-        participantCount: Int,
-        activeParticipantCount: Int,
-        lastMessageAt: Date?,
-        createdAt: Date,
-        updatedAt: Date?,
-        title: String?,
-        extraData: [String: RawJSON]
-    ) {
-        self.init(
-            activeParticipantCount: activeParticipantCount,
-            channel: channel,
-            channelCid: channel.cid,
-            createdAt: createdAt,
-            createdBy: createdBy,
-            createdByUserId: createdBy.id,
-            custom: extraData,
-            deletedAt: nil,
-            lastMessageAt: lastMessageAt,
-            parentMessage: parentMessage,
-            parentMessageId: parentMessageId,
-            participantCount: participantCount,
-            replyCount: replyCount,
-            threadParticipants: nil,
-            title: title ?? "",
-            updatedAt: updatedAt ?? createdAt
-        )
-    }
-
-    convenience init(
-        cid: ChannelId,
-        parentMessageId: MessageId,
-        replyCount: Int,
-        participantCount: Int,
-        activeParticipantCount: Int?,
-        lastMessageAt: Date?,
-        createdAt: Date,
-        updatedAt: Date,
-        title: String?
-    ) {
-        self.init(
-            activeParticipantCount: activeParticipantCount ?? 0,
-            channel: nil,
-            channelCid: cid.rawValue,
-            createdAt: createdAt,
-            createdBy: nil,
-            createdByUserId: "",
-            custom: [:],
-            deletedAt: nil,
-            lastMessageAt: lastMessageAt,
-            parentMessage: nil,
-            parentMessageId: parentMessageId,
-            participantCount: participantCount,
-            replyCount: replyCount,
-            threadParticipants: nil,
-            title: title ?? "",
-            updatedAt: updatedAt
-        )
-    }
-}
-
-extension ThreadParticipantPayload {
-    convenience init(
-        user: UserResponse,
-        threadId: String,
-        createdAt: Date,
-        lastReadAt: Date?
-    ) {
-        self.init(
-            appPk: 0,
-            channelCid: "",
-            createdAt: createdAt,
-            custom: [:],
-            lastReadAt: lastReadAt ?? Date(timeIntervalSince1970: 0),
-            lastThreadMessageAt: nil,
-            leftThreadAt: nil,
-            threadId: threadId,
-            user: user,
-            userId: user.id
-        )
     }
 }
 

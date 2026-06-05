@@ -109,7 +109,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
     // Identifiable
 
     func test_UserListPayload_isIdentifiablePayload() {
-        let payload = QueryUsersResponse(users: [])
+        let payload = QueryUsersResponse.dummy(users: [])
         XCTAssertNil(payload.databaseId)
         XCTAssertNil(QueryUsersResponse.modelClass)
     }
@@ -127,7 +127,7 @@ final class IdentifiablePayload_Tests: XCTestCase {
     }
 
     func test_MembersResponse_isIdentifiablePayload() {
-        let payload = MembersResponse(members: [])
+        let payload = MembersResponse.dummy(members: [])
         XCTAssertNil(payload.databaseId)
         XCTAssertNil(MembersResponse.modelClass)
     }
@@ -179,13 +179,13 @@ final class IdentifiablePayload_Tests: XCTestCase {
     }
 
     func test_ReadStateResponse_isIdentifiablePayload() {
-        let payload = ReadStateResponse(
-            user: UserResponse.dummy(userId: "u3"),
-            lastReadAt: Date(),
-            lastReadMessageId: .unique,
-            unreadMessagesCount: 2,
+        let payload = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: Date(),
+            lastReadMessageId: .unique,
+            unreadMessages: 2,
+            user: UserResponse.dummy(userId: "u3")
         )
         XCTAssertNil(payload.databaseId)
         XCTAssertTrue(ReadStateResponse.modelClass == ChannelReadDTO.self)
@@ -390,25 +390,23 @@ final class IdentifiablePayload_Tests: XCTestCase {
                     text: .unique,
                     extraData: [:],
                     latestReactions: (0..<messageReactionsCount).map {
-                        ReactionResponse(
+                        ReactionResponse.dummy(
                             type: "like",
                             score: 1,
                             messageId: messageId,
                             createdAt: .unique(after: messageCreatedDate),
                             updatedAt: .unique(after: messageCreatedDate),
-                            user: users[$0],
-                            extraData: [:]
+                            user: users[$0]
                         )
                     },
                     ownReactions: (0..<messageReactionsCount).map {
-                        ReactionResponse(
+                        ReactionResponse.dummy(
                             type: "love",
                             score: 1,
                             messageId: messageId,
                             createdAt: .unique(after: messageCreatedDate),
                             updatedAt: .unique(after: messageCreatedDate),
-                            user: users[$0],
-                            extraData: [:]
+                            user: users[$0]
                         )
                     },
                     createdAt: messageCreatedDate,
@@ -436,13 +434,13 @@ final class IdentifiablePayload_Tests: XCTestCase {
                 pendingMessages: [],
                 pinnedMessages: [],
                 channelReads: (0..<channelReadCount).map { i in
-                    ReadStateResponse(
-                        user: users[i],
-                        lastReadAt: .unique(after: channelDetail.createdAt),
-                        lastReadMessageId: .unique,
-                        unreadMessagesCount: (0..<10).randomElement()!,
+                    ReadStateResponse.dummy(
                         lastDeliveredAt: nil,
-                        lastDeliveredMessageId: nil
+                        lastDeliveredMessageId: nil,
+                        lastRead: .unique(after: channelDetail.createdAt),
+                        lastReadMessageId: .unique,
+                        unreadMessages: (0..<10).randomElement()!,
+                        user: users[i]
                     )
                 },
                 isHidden: false,

@@ -122,7 +122,12 @@ extension XCTestCase {
     }
 
     var dummyChannelRead: ReadStateResponse {
-        ReadStateResponse(user: dummyCurrentUser.asUserPayload, lastReadAt: Date(timeIntervalSince1970: 1), lastReadMessageId: .unique, unreadMessagesCount: 10, lastDeliveredAt: nil, lastDeliveredMessageId: nil)
+        .dummy(
+            lastRead: Date(timeIntervalSince1970: 1),
+            lastReadMessageId: .unique,
+            unreadMessages: 10,
+            user: dummyCurrentUser.asUserPayload
+        )
     }
 
     func dummyPayload(
@@ -252,12 +257,17 @@ extension XCTestCase {
     }
 
     var dummyChannelReadWithNoExtraData: ReadStateResponse {
-        ReadStateResponse(user: dummyUser, lastReadAt: .unique, lastReadMessageId: .unique, unreadMessagesCount: .random(in: 0...10), lastDeliveredAt: nil, lastDeliveredMessageId: nil)
+        .dummy(
+            lastRead: .unique,
+            lastReadMessageId: .unique,
+            unreadMessages: .random(in: 0...10),
+            user: dummyUser
+        )
     }
 
     func dummyPayloadWithNoExtraData(with channelId: ChannelId) -> ChannelStateResponseFields {
         let member: ChannelMemberResponse =
-            .init(
+            .dummy(
                 user: .init(
                     id: .unique,
                     name: .unique,
@@ -275,10 +285,9 @@ extension XCTestCase {
                     language: nil,
                     extraData: [:]
                 ),
-                userId: .unique,
-                role: .member,
                 createdAt: .unique,
-                updatedAt: .unique
+                updatedAt: .unique,
+                role: .member
             )
 
         let detail = ChannelResponse.dummy(
@@ -357,23 +366,23 @@ extension XCTestCase {
         draft: DraftResponse? = nil,
         extraData: [String: RawJSON] = [:]
     ) -> ThreadStateResponse {
-        .init(
-            parentMessageId: parentMessageId,
-            parentMessage: parentMessage,
-            channel: channel,
-            createdBy: createdBy,
-            replyCount: replyCount,
-            participantCount: participantCount,
+        .dummy(
             activeParticipantCount: activeParticipantCount,
-            threadParticipants: threadParticipants,
-            lastMessageAt: lastMessageAt,
+            channel: channel,
             createdAt: createdAt,
-            updatedAt: updatedAt,
-            title: title,
-            latestReplies: latestReplies,
-            read: read,
+            createdBy: createdBy,
+            custom: extraData,
             draft: draft,
-            extraData: extraData
+            lastMessageAt: lastMessageAt,
+            latestReplies: latestReplies,
+            parentMessage: parentMessage,
+            parentMessageId: parentMessageId,
+            participantCount: participantCount,
+            read: read,
+            replyCount: replyCount,
+            threadParticipants: threadParticipants,
+            title: title ?? "",
+            updatedAt: updatedAt ?? createdAt
         )
     }
 
@@ -382,10 +391,10 @@ extension XCTestCase {
         lastReadAt: Date? = .unique,
         unreadMessagesCount: Int = 0
     ) -> ReadStateResponse {
-        .init(
-            user: user,
-            lastReadAt: lastReadAt ?? Date(timeIntervalSince1970: 0),
-            unreadMessagesCount: unreadMessagesCount
+        .dummy(
+            lastRead: lastReadAt ?? Date(timeIntervalSince1970: 0),
+            unreadMessages: unreadMessagesCount,
+            user: user
         )
     }
 
@@ -396,10 +405,16 @@ extension XCTestCase {
         lastReadAt: Date? = .unique
     ) -> ThreadParticipantPayload {
         .init(
-            user: user,
-            threadId: threadId,
+            appPk: 0,
+            channelCid: "",
             createdAt: createdAt,
-            lastReadAt: lastReadAt
+            custom: [:],
+            lastReadAt: lastReadAt ?? Date(timeIntervalSince1970: 0),
+            lastThreadMessageAt: nil,
+            leftThreadAt: nil,
+            threadId: threadId,
+            user: user,
+            userId: user.id
         )
     }
     
@@ -431,23 +446,23 @@ extension XCTestCase {
             allowUserSuggestedOptions: allowUserSuggestedOptions,
             answersCount: answersCount,
             createdAt: createdAt,
+            createdBy: user,
             createdById: user?.id ?? createdById,
+            custom: custom,
             description: description,
             enforceUniqueVote: enforceUniqueVote,
             id: id,
+            isClosed: isClosed,
+            latestAnswers: latestAnswers?.compactMap { $0 } ?? [],
+            latestVotesByOption: latestVotesByOption,
+            maxVotesAllowed: maxVotesAllowed,
             name: name,
+            options: options.compactMap { $0 },
+            ownVotes: ownVotes.compactMap { $0 },
             updatedAt: updatedAt,
             voteCount: voteCount,
-            latestAnswers: latestAnswers,
-            options: options,
-            ownVotes: ownVotes,
-            custom: custom,
-            latestVotesByOption: latestVotesByOption,
             voteCountsByOption: voteCountsByOption,
-            isClosed: isClosed,
-            maxVotesAllowed: maxVotesAllowed,
-            votingVisibility: votingVisibility,
-            createdBy: user
+            votingVisibility: votingVisibility ?? ""
         )
     }
     
@@ -457,9 +472,9 @@ extension XCTestCase {
         custom: [String: RawJSON] = [:]
     ) -> PollOptionResponseData {
         .init(
+            custom: custom,
             id: id,
-            text: text,
-            custom: custom
+            text: text
         )
     }
     
@@ -475,16 +490,48 @@ extension XCTestCase {
         user: UserResponse? = .dummy(userId: .unique)
     ) -> PollVoteResponseData {
         .init(
+            answerText: answerText,
             createdAt: createdAt,
             id: id,
-            optionId: optionId,
+            isAnswer: isAnswer,
+            optionId: optionId ?? "",
             pollId: pollId,
             updatedAt: updatedAt,
-            answerText: answerText,
-            isAnswer: isAnswer,
-            userId: userId,
-            user: user
+            user: user,
+            userId: userId
         )
+    }
+}
+
+extension QueryPollsResponse {
+    static func dummy(
+        duration: String = "",
+        next: String? = nil,
+        polls: [PollResponseData] = [],
+        prev: String? = nil
+    ) -> QueryPollsResponse {
+        .init(duration: duration, next: next, polls: polls, prev: prev)
+    }
+}
+
+extension PollVoteResponse {
+    static func dummy(
+        duration: String = "",
+        poll: PollResponseData? = nil,
+        vote: PollVoteResponseData? = nil
+    ) -> PollVoteResponse {
+        .init(duration: duration, poll: poll, vote: vote)
+    }
+}
+
+extension PollVotesResponse {
+    static func dummy(
+        duration: String = "",
+        next: String? = nil,
+        prev: String? = nil,
+        votes: [PollVoteResponseData] = []
+    ) -> PollVotesResponse {
+        .init(duration: duration, next: next, prev: prev, votes: votes)
     }
 }
 
@@ -495,8 +542,8 @@ private extension ChannelMemberResponse {
 
     static func withLastActivity(at date: Date) -> ChannelMemberResponse {
         let userId = String.unique
-        return .init(
-            user: .init(
+        return .dummy(
+            user: UserResponse(
                 id: userId,
                 name: .unique,
                 imageURL: nil,
@@ -513,10 +560,9 @@ private extension ChannelMemberResponse {
                 language: nil,
                 extraData: [:]
             ),
-            userId: userId,
-            role: .moderator,
             createdAt: .unique,
-            updatedAt: .unique
+            updatedAt: .unique,
+            role: .moderator
         )
     }
 }

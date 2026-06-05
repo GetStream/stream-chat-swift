@@ -1821,24 +1821,24 @@ final class ChannelListController_Tests: XCTestCase {
                 .dummy(
                     channel: .dummy(cid: cid1),
                     channelReads: [
-                        .init(
-                            user: UserResponse.dummy(userId: currentUserId),
-                            lastReadAt: .unique,
-                            lastReadMessageId: nil,
-                            unreadMessagesCount: 3,
+                        .dummy(
                             lastDeliveredAt: nil,
-                            lastDeliveredMessageId: nil
+                            lastDeliveredMessageId: nil,
+                            lastRead: .unique,
+                            lastReadMessageId: nil,
+                            unreadMessages: 3,
+                            user: UserResponse.dummy(userId: currentUserId)
                         )
                     ]
                 ),
                 .dummy(channel: .dummy(team: .unique), channelReads: [
-                    .init(
-                        user: UserResponse.dummy(userId: .unique),
-                        lastReadAt: .unique,
-                        lastReadMessageId: nil,
-                        unreadMessagesCount: 10,
+                    .dummy(
                         lastDeliveredAt: nil,
-                        lastDeliveredMessageId: nil
+                        lastDeliveredMessageId: nil,
+                        lastRead: .unique,
+                        lastReadMessageId: nil,
+                        unreadMessages: 10,
+                        user: UserResponse.dummy(userId: .unique)
                     )
                 ]),
                 .dummy(channel: .dummy(team: .unique)),
@@ -1846,13 +1846,13 @@ final class ChannelListController_Tests: XCTestCase {
                 .dummy(
                     channel: .dummy(cid: cid2),
                     channelReads: [
-                        .init(
-                            user: UserResponse.dummy(userId: currentUserId),
-                            lastReadAt: .unique,
-                            lastReadMessageId: nil,
-                            unreadMessagesCount: 20,
+                        .dummy(
                             lastDeliveredAt: nil,
-                            lastDeliveredMessageId: nil
+                            lastDeliveredMessageId: nil,
+                            lastRead: .unique,
+                            lastReadMessageId: nil,
+                            unreadMessages: 20,
+                            user: UserResponse.dummy(userId: currentUserId)
                         )
                     ]
                 )
@@ -1880,13 +1880,13 @@ final class ChannelListController_Tests: XCTestCase {
                 .dummy(
                     channel: .dummy(cid: cid1, createdAt: createdAt.addingTimeInterval(100)),
                     channelReads: [
-                        .init(
-                            user: UserResponse.dummy(userId: currentUserId),
-                            lastReadAt: .unique,
-                            lastReadMessageId: nil,
-                            unreadMessagesCount: 3,
+                        .dummy(
                             lastDeliveredAt: nil,
-                            lastDeliveredMessageId: nil
+                            lastDeliveredMessageId: nil,
+                            lastRead: .unique,
+                            lastReadMessageId: nil,
+                            unreadMessages: 3,
+                            user: UserResponse.dummy(userId: currentUserId)
                         )
                     ]
                 ),
@@ -1895,13 +1895,13 @@ final class ChannelListController_Tests: XCTestCase {
                 .dummy(
                     channel: .dummy(cid: cid2, createdAt: createdAt),
                     channelReads: [
-                        .init(
-                            user: UserResponse.dummy(userId: currentUserId),
-                            lastReadAt: .unique,
-                            lastReadMessageId: nil,
-                            unreadMessagesCount: 20,
+                        .dummy(
                             lastDeliveredAt: nil,
-                            lastDeliveredMessageId: nil
+                            lastDeliveredMessageId: nil,
+                            lastRead: .unique,
+                            lastReadMessageId: nil,
+                            unreadMessages: 20,
+                            user: UserResponse.dummy(userId: currentUserId)
                         )
                     ]
                 )
@@ -1934,11 +1934,11 @@ final class ChannelListController_Tests: XCTestCase {
                 userId: userId,
                 role: .admin
             ))
-            try session.saveChannelMute(payload: .init(
-                mutedChannel: mutedChannel,
-                user: UserResponse.dummy(userId: userId),
+            try session.saveChannelMute(payload: .dummy(
+                channel: mutedChannel,
                 createdAt: .unique,
-                updatedAt: .unique
+                updatedAt: .unique,
+                user: UserResponse.dummy(userId: userId)
             ))
         }
 

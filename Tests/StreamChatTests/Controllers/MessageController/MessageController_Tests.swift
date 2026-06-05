@@ -1290,7 +1290,7 @@ final class MessageController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network response
-        env.messageUpdater.loadReplies_completion?(.success(GetRepliesResponse(messages: [])))
+        env.messageUpdater.loadReplies_completion?(.success(.dummy(messages: [])))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.loadReplies_completion = nil
 
@@ -1370,7 +1370,7 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+        env.messageUpdater.loadReplies_completion?(.success(.dummy(messages: [.dummy()])))
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 0)
@@ -1384,7 +1384,7 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+        env.messageUpdater.loadReplies_completion?(.success(.dummy(messages: [.dummy()])))
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 0)
@@ -1403,7 +1403,7 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [])))
+        env.messageUpdater.loadReplies_completion?(.success(.dummy(messages: [])))
         waitForExpectations(timeout: defaultTimeout)
         
         XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 1)
@@ -1450,7 +1450,7 @@ final class MessageController_Tests: XCTestCase {
         controller = nil
 
         // Simulate successful network response
-        env.messageUpdater.loadReplies_completion?(.success(GetRepliesResponse(messages: [])))
+        env.messageUpdater.loadReplies_completion?(.success(.dummy(messages: [])))
         // Release reference of completion so we can deallocate stuff
         env.messageUpdater.loadReplies_completion = nil
 
@@ -1488,7 +1488,7 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+        env.messageUpdater.loadReplies_completion?(.success(.dummy(messages: [.dummy()])))
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 0)
@@ -1505,7 +1505,7 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+        env.messageUpdater.loadReplies_completion?(.success(.dummy(messages: [.dummy()])))
         waitForExpectations(timeout: defaultTimeout)
 
         XCTAssertEqual(env.messageUpdater.loadReplies_callCount, 0)
@@ -1521,7 +1521,7 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        env.messageUpdater.loadReplies_completion?(.success(.init(
+        env.messageUpdater.loadReplies_completion?(.success(.dummy(
             messages: [.dummy(), .dummy(), .dummy()]
         )))
 
@@ -1560,7 +1560,7 @@ final class MessageController_Tests: XCTestCase {
 
         let oldestReply = MessageResponse.dummy()
         let newestReply = MessageResponse.dummy()
-        env.messageUpdater.loadReplies_completion?(.success(.init(
+        env.messageUpdater.loadReplies_completion?(.success(.dummy(
             messages: [oldestReply, .dummy(), newestReply]
         )))
 
@@ -1580,7 +1580,7 @@ final class MessageController_Tests: XCTestCase {
             exp.fulfill()
         }
 
-        env.messageUpdater.loadReplies_completion?(.success(.init(messages: [.dummy()])))
+        env.messageUpdater.loadReplies_completion?(.success(.dummy(messages: [.dummy()])))
 
         waitForExpectations(timeout: defaultTimeout)
 

@@ -76,7 +76,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // Simulate API response
-        let currentUserUpdateResponse = UpdateUsersResponse(
+        let currentUserUpdateResponse = UpdateUsersResponse.dummy(
             user: OwnUserResponse.dummy(
                 userId: userPayload.id,
                 name: expectedName,
@@ -182,7 +182,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // Simulate API response
-        let currentUserUpdateResponse = UpdateUsersResponse(
+        let currentUserUpdateResponse = UpdateUsersResponse.dummy(
             user: OwnUserResponse.dummy(
                 userId: userPayload.id,
                 name: expectedName,
@@ -300,7 +300,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
 
         // Simulate API response
-        let currentUserUpdateResponse = UpdateUsersResponse(
+        let currentUserUpdateResponse = UpdateUsersResponse.dummy(
             user: userPayload
         )
         apiClient.test_simulateResponse(.success(currentUserUpdateResponse))
@@ -742,37 +742,37 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(endpoint))
         
         // Create test payload for the response
-        let payload = WrappedUnreadCountsResponse(
-            totalUnreadCount: 10,
-            totalUnreadThreadsCount: 3,
-            totalUnreadCountByTeam: ["Benfica": 3],
-            channels: [
-                UnreadCountsChannel(
-                    channelId: .init(type: .messaging, id: "channel1"),
-                    unreadCount: 5,
-                    lastRead: Date()
-                ),
-                UnreadCountsChannel(
-                    channelId: .init(type: .messaging, id: "channel2"),
-                    unreadCount: 5,
-                    lastRead: Date()
-                )
-            ],
+        let payload = WrappedUnreadCountsResponse.dummy(
             channelType: [
-                UnreadCountsChannelType(
-                    channelType: .messaging,
+                .dummy(
                     channelCount: 2,
+                    channelType: .messaging,
                     unreadCount: 10
                 )
             ],
+            channels: [
+                .dummy(
+                    channelId: .init(type: .messaging, id: "channel1"),
+                    lastRead: Date(),
+                    unreadCount: 5
+                ),
+                .dummy(
+                    channelId: .init(type: .messaging, id: "channel2"),
+                    lastRead: Date(),
+                    unreadCount: 5
+                )
+            ],
             threads: [
-                UnreadCountsThread(
-                    parentMessageId: "thread1",
+                .dummy(
                     lastRead: Date(),
                     lastReadMessageId: "message1",
+                    parentMessageId: "thread1",
                     unreadCount: 3
                 )
-            ]
+            ],
+            totalUnreadCount: 10,
+            totalUnreadCountByTeam: ["Benfica": 3],
+            totalUnreadThreadsCount: 3
         )
         
         // Simulate API response
@@ -822,7 +822,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             SharedLocationResponseData.dummy(latitude: 10, longitude: 20, endAt: Date().addingTimeInterval(100)),
             SharedLocationResponseData.dummy(latitude: 30, longitude: 40, endAt: Date().addingTimeInterval(200))
         ]
-        let response = SharedLocationsResponse(locations: payloads)
+        let response = SharedLocationsResponse.dummy(activeLiveLocations: payloads)
         nonisolated(unsafe) var result: Result<[SharedLocation], Error>?
         
         // WHEN
@@ -893,8 +893,8 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     func test_setPushPreference_makesCorrectAPICall() throws {
         // GIVEN
         let preference = PushPreferenceInput(
-            chatLevel: "mentions",
-            channelId: nil,
+            channelCid: nil,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: "mentions"),
             disabledUntil: nil,
             removeDisable: true
         )
@@ -913,20 +913,20 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     func test_setPushPreference_successfulResponse_savesToDatabase() throws {
         // GIVEN
         let preference = PushPreferenceInput(
-            chatLevel: "all",
-            channelId: nil,
+            channelCid: nil,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: "all"),
             disabledUntil: nil,
             removeDisable: true
         )
 
-        let response = UpsertPushPreferencesResponse(
+        let response = UpsertPushPreferencesResponse.dummy(
+            userChannelPreferences: [:],
             userPreferences: [
                 "userId": PushPreferencesResponse(
                     chatLevel: "all",
                     disabledUntil: nil
                 )
-            ],
-            channelPreferences: [:]
+            ]
         )
 
         // WHEN
@@ -945,8 +945,8 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     func test_setPushPreference_propagatesNetworkError() {
         // GIVEN
         let preference = PushPreferenceInput(
-            chatLevel: "mentions",
-            channelId: nil,
+            channelCid: nil,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: "mentions"),
             disabledUntil: nil,
             removeDisable: true
         )
@@ -969,16 +969,13 @@ final class CurrentUserUpdater_Tests: XCTestCase {
     func test_setPushPreference_whenNoUserPreferences_returnsError() {
         // GIVEN
         let preference = PushPreferenceInput(
-            chatLevel: "mentions",
-            channelId: nil,
+            channelCid: nil,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: "mentions"),
             disabledUntil: nil,
             removeDisable: true
         )
 
-        let response = UpsertPushPreferencesResponse(
-            userPreferences: [:],
-            channelPreferences: [:]
-        )
+        let response = UpsertPushPreferencesResponse.dummy()
 
         // WHEN
         nonisolated(unsafe) var completionError: Error?

@@ -12,7 +12,7 @@ final class SyncEndpoint_Tests: XCTestCase {
         let cid = ChannelId(type: .messaging, id: "general")
 
         let endpoint: Endpoint<SyncResponse> = .sync(
-            syncRequest: SyncRequest(lastSyncedAt: since, cids: [cid]),
+            syncRequest: SyncRequest(channelCids: [cid.rawValue], lastSyncAt: since),
             withInaccessibleCids: true,
             watch: false
         )
@@ -22,6 +22,6 @@ final class SyncEndpoint_Tests: XCTestCase {
         XCTAssertEqual(endpoint.queryItems?["with_inaccessible_cids"] ?? nil, APIHelper.convertAnyToString(true))
         XCTAssertEqual(endpoint.queryItems?["watch"] ?? nil, APIHelper.convertAnyToString(false))
         XCTAssertTrue(endpoint.requiresConnectionId)
-        XCTAssertEqual(endpoint.body as? SyncRequest, SyncRequest(lastSyncedAt: since, cids: [cid]))
+        XCTAssertEqual(endpoint.body as? SyncRequest, SyncRequest(channelCids: [cid.rawValue], lastSyncAt: since))
     }
 }

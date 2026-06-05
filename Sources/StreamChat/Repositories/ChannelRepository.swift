@@ -98,11 +98,19 @@ class ChannelRepository: @unchecked Sendable {
         lastReadMessageId: MessageId?,
         completion: (@Sendable (Result<ChatChannel, Error>) -> Void)? = nil
     ) {
+        let markUnreadRequest: MarkUnreadRequest
+        switch unreadCriteria {
+        case let .messageId(messageId):
+            markUnreadRequest = MarkUnreadRequest(messageId: messageId)
+        case let .messageTimestamp(messageTimestamp):
+            markUnreadRequest = MarkUnreadRequest(messageTimestamp: messageTimestamp)
+        }
+
         apiClient.request(
             endpoint: Endpoint<Response>.markUnread(
                 type: cid.type.rawValue,
                 id: cid.id,
-                markUnreadRequest: MarkUnreadRequest(criteria: unreadCriteria, userId: userId)
+                markUnreadRequest: markUnreadRequest
             )
         ) { [weak self] result in
             if let error = result.error {

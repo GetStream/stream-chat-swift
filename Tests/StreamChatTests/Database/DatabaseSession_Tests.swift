@@ -748,8 +748,8 @@ final class DatabaseSession_Tests: XCTestCase {
         nonisolated(unsafe) var voteId: String!
         let currentUserId = String.unique
         let secondOptionId = "789"
-        let firstOption = PollOptionResponseData(id: pollOptionId, text: "First", custom: [:])
-        let secondOption = PollOptionResponseData(id: secondOptionId, text: "Second", custom: [:])
+        let firstOption = PollOptionResponseData(custom: [:], id: pollOptionId, text: "First")
+        let secondOption = PollOptionResponseData(custom: [:], id: secondOptionId, text: "Second")
         
         let payload = XCTestCase().dummyPollVotePayload(optionId: pollOptionId, pollId: pollId)
         
@@ -805,7 +805,7 @@ final class DatabaseSession_Tests: XCTestCase {
         let pollOptionId = "345"
         let pollId = "123"
         let currentUserId = String.unique
-        let firstOption = PollOptionResponseData(id: pollOptionId, text: "First", custom: [:])
+        let firstOption = PollOptionResponseData(custom: [:], id: pollOptionId, text: "First")
                 
         try database.createCurrentUser(id: currentUserId)
         

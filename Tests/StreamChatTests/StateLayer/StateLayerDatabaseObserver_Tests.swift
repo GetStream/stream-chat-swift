@@ -381,7 +381,7 @@ final class StateLayerDatabaseObserver_Tests: XCTestCase {
         let makePayload: (Int) -> QueryUsersResponse = { count in
             let users = (0..<count)
                 .map { UserResponse.dummy(userId: "\($0)", name: "name_\($0)") }
-            return QueryUsersResponse(users: users)
+            return .dummy(users: users)
         }
         let query = UserListQuery(
             filter: .query(.id, text: .unique),

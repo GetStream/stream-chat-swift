@@ -146,25 +146,23 @@ final class QueryChannelsResponse_Tests: XCTestCase {
                     text: .unique,
                     extraData: [:],
                     latestReactions: messageIndex % 2 == 0 ? (0..<3).map { _ in
-                        ReactionResponse(
+                        ReactionResponse.dummy(
                             type: "like",
                             score: 1,
                             messageId: messageId,
                             createdAt: .unique(after: messageCreatedDate),
                             updatedAt: .unique(after: messageCreatedDate),
-                            user: channelUsers.randomElement()!,
-                            extraData: [:]
+                            user: channelUsers.randomElement()!
                         )
                     } : [],
                     ownReactions: messageIndex % 2 == 0 ? (0..<3).map { _ in
-                        ReactionResponse(
+                        ReactionResponse.dummy(
                             type: "like",
                             score: 1,
                             messageId: messageId,
                             createdAt: .unique(after: messageCreatedDate),
                             updatedAt: .unique(after: messageCreatedDate),
-                            user: messageAuthor,
-                            extraData: [:]
+                            user: messageAuthor
                         )
                     } : [],
                     createdAt: messageCreatedDate,
@@ -192,13 +190,13 @@ final class QueryChannelsResponse_Tests: XCTestCase {
                 pendingMessages: [],
                 pinnedMessages: [],
                 channelReads: (0..<channelReadCount).map { i in
-                    ReadStateResponse(
-                        user: channelUsers[i],
-                        lastReadAt: .unique(after: channelCreatedDate),
-                        lastReadMessageId: .unique,
-                        unreadMessagesCount: (0..<10).randomElement()!,
+                    ReadStateResponse.dummy(
                         lastDeliveredAt: nil,
-                        lastDeliveredMessageId: nil
+                        lastDeliveredMessageId: nil,
+                        lastRead: .unique(after: channelCreatedDate),
+                        lastReadMessageId: .unique,
+                        unreadMessages: (0..<10).randomElement()!,
+                        user: channelUsers[i]
                     )
                 },
                 isHidden: false,
@@ -371,13 +369,13 @@ final class ChannelStateResponseFields_Tests: XCTestCase {
         let pinnedMessageResponse = MessageResponse.dummy(messageId: "pinned-message-id", authorUserId: "pinned-author-id")
         let pendingMessageResponse = MessageResponse.dummy(messageId: "pending-message-id", authorUserId: "pending-author-id")
         
-        let channelReadPayload = ReadStateResponse(
-            user: UserResponse.dummy(userId: "reader-user-id", name: "Reader User"),
-            lastReadAt: Date(timeIntervalSince1970: 1_609_459_400),
-            lastReadMessageId: "last-read-message-id",
-            unreadMessagesCount: 5,
+        let channelReadPayload = ReadStateResponse.dummy(
             lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            lastDeliveredMessageId: nil,
+            lastRead: Date(timeIntervalSince1970: 1_609_459_400),
+            lastReadMessageId: "last-read-message-id",
+            unreadMessages: 5,
+            user: UserResponse.dummy(userId: "reader-user-id", name: "Reader User")
         )
         
         let membershipPayload = ChannelMemberResponse.dummy(user: UserResponse.dummy(userId: currentUserId), role: .admin)

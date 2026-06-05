@@ -318,11 +318,11 @@ final class ChannelController_Tests: XCTestCase {
             oldestMessageId: oldestMessageId,
             newestMessageId: newestMessageId,
             channelReads: [
-                ReadStateResponse(
-                    user: .dummy(userId: userId),
-                    lastReadAt: .unique,
+                .dummy(
+                    lastRead: .unique,
                     lastReadMessageId: nil,
-                    unreadMessagesCount: 0
+                    unreadMessages: 0,
+                    user: .dummy(userId: userId)
                 )
             ]
         )
@@ -334,11 +334,11 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenNotAllPreviousMessagesAreLoaded() throws {
         let userId = UserId.unique
-        let channelRead = ReadStateResponse(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = ReadStateResponse.dummy(
+            lastRead: .unique,
             lastReadMessageId: nil,
-            unreadMessagesCount: 3
+            unreadMessages: 3,
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -357,11 +357,11 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_firstUnreadMessageId_whenReadsContainsCurrentUserId_whenLastReadMessageIdIsNil_whenAllPreviousMessagesAreLoaded() throws {
         let userId = UserId.unique
-        let channelRead = ReadStateResponse(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = ReadStateResponse.dummy(
+            lastRead: .unique,
             lastReadMessageId: nil,
-            unreadMessagesCount: 3
+            unreadMessages: 3,
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -404,11 +404,11 @@ final class ChannelController_Tests: XCTestCase {
         let notLoadedLastReadMessageId = MessageId.unique
 
         let userId = UserId.unique
-        let channelRead = ReadStateResponse(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = ReadStateResponse.dummy(
+            lastRead: .unique,
             lastReadMessageId: notLoadedLastReadMessageId,
-            unreadMessagesCount: 3
+            unreadMessages: 3,
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -428,11 +428,11 @@ final class ChannelController_Tests: XCTestCase {
         let notLoadedLastReadMessageId = MessageId.unique
 
         let userId = UserId.unique
-        let channelRead = ReadStateResponse(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = ReadStateResponse.dummy(
+            lastRead: .unique,
             lastReadMessageId: notLoadedLastReadMessageId,
-            unreadMessagesCount: 3
+            unreadMessages: 3,
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -455,11 +455,11 @@ final class ChannelController_Tests: XCTestCase {
         let newestMessageId = MessageId.unique
 
         let userId = UserId.unique
-        let channelRead = ReadStateResponse(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = ReadStateResponse.dummy(
+            lastRead: .unique,
             lastReadMessageId: newestMessageId,
-            unreadMessagesCount: 3
+            unreadMessages: 3,
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -479,11 +479,11 @@ final class ChannelController_Tests: XCTestCase {
         let newestMessageId = MessageId.unique
 
         let userId = UserId.unique
-        let channelRead = ReadStateResponse(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = ReadStateResponse.dummy(
+            lastRead: .unique,
             lastReadMessageId: oldestMessageId,
-            unreadMessagesCount: 3
+            unreadMessages: 3,
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -504,11 +504,11 @@ final class ChannelController_Tests: XCTestCase {
         let ownMessageId = MessageId.unique
 
         let userId = UserId.unique
-        let channelRead = ReadStateResponse(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = ReadStateResponse.dummy(
+            lastRead: .unique,
             lastReadMessageId: notOwnMessageId,
-            unreadMessagesCount: 3
+            unreadMessages: 3,
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -535,11 +535,11 @@ final class ChannelController_Tests: XCTestCase {
         let notOwnNextValidId = MessageId.unique
 
         let userId = UserId.unique
-        let channelRead = ReadStateResponse(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = ReadStateResponse.dummy(
+            lastRead: .unique,
             lastReadMessageId: notOwnMessageId,
-            unreadMessagesCount: 3
+            unreadMessages: 3,
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)
@@ -1507,11 +1507,11 @@ final class ChannelController_Tests: XCTestCase {
                 try $0.saveChannel(payload: payload, query: nil, cache: nil)
                 // Create a read for the channel
                 try $0.saveChannelRead(
-                    payload: ReadStateResponse(
-                        user: self.dummyUser(id: userId),
-                        lastReadAt: originalReadDate,
+                    payload: .dummy(
+                        lastRead: originalReadDate,
                         lastReadMessageId: .unique,
-                        unreadMessagesCount: .unique // This value doesn't matter at all. It's not updated by events. We cam ignore it.
+                        unreadMessages: .unique, // This value doesn't matter at all. It's not updated by events. We cam ignore it.
+                        user: self.dummyUser(id: userId)
                     ),
                     for: self.channelId,
                     cache: nil
@@ -3853,11 +3853,11 @@ final class ChannelController_Tests: XCTestCase {
             ),
             messages: [lastMessage],
             channelReads: [
-                .init(
-                    user: currentUser,
-                    lastReadAt: lastMessage.createdAt.addingTimeInterval(-1),
+                .dummy(
+                    lastRead: lastMessage.createdAt.addingTimeInterval(-1),
                     lastReadMessageId: .unique,
-                    unreadMessagesCount: 0
+                    unreadMessages: 0,
+                    user: currentUser.asUserPayload
                 )
             ]
         )
@@ -3965,11 +3965,11 @@ final class ChannelController_Tests: XCTestCase {
             channel: .dummy(cid: channelId, lastMessageAt: lastMessage.createdAt, ownCapabilities: [ChannelCapability.readEvents.rawValue]),
             messages: [lastMessage],
             channelReads: [
-                .init(
-                    user: currentUser,
-                    lastReadAt: lastMessage.createdAt.addingTimeInterval(-1),
+                .dummy(
+                    lastRead: lastMessage.createdAt.addingTimeInterval(-1),
                     lastReadMessageId: .unique,
-                    unreadMessagesCount: 0
+                    unreadMessages: 0,
+                    user: currentUser.asUserPayload
                 )
             ]
         )
@@ -4095,11 +4095,11 @@ final class ChannelController_Tests: XCTestCase {
             channel: .dummy(cid: channelId, lastMessageAt: lastMessage.createdAt, ownCapabilities: [ChannelCapability.readEvents.rawValue]),
             messages: [lastMessage],
             channelReads: [
-                .init(
-                    user: currentUser,
-                    lastReadAt: lastMessage.createdAt.addingTimeInterval(-1),
+                .dummy(
+                    lastRead: lastMessage.createdAt.addingTimeInterval(-1),
                     lastReadMessageId: nil,
-                    unreadMessagesCount: 0
+                    unreadMessages: 0,
+                    user: currentUser.asUserPayload
                 )
             ]
         )
@@ -5573,8 +5573,8 @@ final class ChannelController_Tests: XCTestCase {
                 payload: .dummy(
                     messageId: existingMessageId,
                     authorUserId: userId,
-                    sharedLocation: .init(
-                        channelId: self.channelId.rawValue,
+                    sharedLocation: .dummy(
+                        channelId: self.channelId,
                         messageId: existingMessageId,
                         userId: .unique,
                         latitude: location.latitude,
@@ -5656,8 +5656,8 @@ final class ChannelController_Tests: XCTestCase {
         let cid: ChannelId = channelId
         let level: PushPreferenceLevel = .mentions
         let expectedPreference = PushPreferenceInput(
-            chatLevel: level.rawValue,
-            channelId: cid.rawValue,
+            channelCid: cid.rawValue,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: level.rawValue),
             disabledUntil: nil,
             removeDisable: true
         )
@@ -5716,8 +5716,8 @@ final class ChannelController_Tests: XCTestCase {
         let cid: ChannelId = channelId
         let date = Date().addingTimeInterval(3600)
         let expectedPreference = PushPreferenceInput(
-            chatLevel: PushPreferenceLevel.all.rawValue,
-            channelId: cid.rawValue,
+            channelCid: cid.rawValue,
+            chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: PushPreferenceLevel.all.rawValue),
             disabledUntil: date,
             removeDisable: nil
         )
@@ -5912,11 +5912,11 @@ extension ChannelController_Tests {
         line: UInt = #line
     ) throws {
         let userId = UserId.unique
-        let channelRead = ReadStateResponse(
-            user: .dummy(userId: userId),
-            lastReadAt: .unique,
+        let channelRead = ReadStateResponse.dummy(
+            lastRead: .unique,
             lastReadMessageId: nil,
-            unreadMessagesCount: 3
+            unreadMessages: 3,
+            user: .dummy(userId: userId)
         )
         let token = Token(rawValue: "", userId: userId, expiration: nil)
         controller.client.authenticationRepository.setMockToken(token)

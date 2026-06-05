@@ -115,15 +115,22 @@ extension ThreadResponse {
         title: String? = nil
     ) -> ThreadResponse {
         .init(
-            cid: cid,
-            parentMessageId: parentMessageId,
-            replyCount: replyCount,
-            participantCount: participantCount,
             activeParticipantCount: activeParticipantCount,
-            lastMessageAt: lastMessageAt,
+            channel: nil,
+            channelCid: cid.rawValue,
             createdAt: createdAt,
-            updatedAt: updatedAt,
-            title: title
+            createdBy: nil,
+            createdByUserId: "",
+            custom: [:],
+            deletedAt: nil,
+            lastMessageAt: lastMessageAt,
+            parentMessage: nil,
+            parentMessageId: parentMessageId,
+            participantCount: participantCount,
+            replyCount: replyCount,
+            threadParticipants: nil,
+            title: title ?? "",
+            updatedAt: updatedAt
         )
     }
 }

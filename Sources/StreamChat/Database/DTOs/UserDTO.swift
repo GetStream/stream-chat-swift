@@ -205,7 +205,7 @@ extension UserDTO {
             )
             extraData = [:]
         }
-        return .init(id: id, name: name, imageURL: imageURL, extraData: extraData)
+        return .init(userId: id, name: name, imageURL: imageURL, extraData: extraData)
     }
 }
 

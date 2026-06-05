@@ -43,19 +43,21 @@ extension ChannelStateResponseFields {
 }
 
 extension ReadStateResponse {
-    convenience init(
-        user: UserResponse,
-        lastReadAt: Date,
+    static func dummy(
+        lastDeliveredAt: Date? = nil,
+        lastDeliveredMessageId: MessageId? = nil,
+        lastRead: Date = .unique,
         lastReadMessageId: MessageId? = nil,
-        unreadMessagesCount: Int
-    ) {
-        self.init(
-            user: user,
-            lastReadAt: lastReadAt,
+        unreadMessages: Int = 0,
+        user: UserResponse = .dummy(userId: .unique)
+    ) -> ReadStateResponse {
+        .init(
+            lastDeliveredAt: lastDeliveredAt,
+            lastDeliveredMessageId: lastDeliveredMessageId,
+            lastRead: lastRead,
             lastReadMessageId: lastReadMessageId,
-            unreadMessagesCount: unreadMessagesCount,
-            lastDeliveredAt: nil,
-            lastDeliveredMessageId: nil
+            unreadMessages: unreadMessages,
+            user: user
         )
     }
 }

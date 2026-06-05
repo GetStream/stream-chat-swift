@@ -91,12 +91,12 @@ class RemindersRepository: @unchecked Sendable {
         database.write { session in
             let now = Date()
             let reminderPayload = ReminderResponseData(
-                channelCid: cid,
-                messageId: messageId,
-                message: nil,
-                remindAt: remindAt,
+                channelCid: cid.rawValue,
                 createdAt: now,
-                updatedAt: now
+                messageId: messageId,
+                remindAt: remindAt,
+                updatedAt: now,
+                userId: ""
             )
             try session.saveReminder(payload: reminderPayload, cache: nil)
         } completion: { _ in
@@ -198,12 +198,12 @@ class RemindersRepository: @unchecked Sendable {
             if let reminderDTO = messageDTO.reminder {
                 // Store the original state for potential rollback
                 originalPayload = ReminderResponseData(
-                    channelCid: cid,
-                    messageId: messageId,
-                    message: nil,
-                    remindAt: reminderDTO.remindAt?.bridgeDate,
+                    channelCid: cid.rawValue,
                     createdAt: reminderDTO.createdAt.bridgeDate,
-                    updatedAt: reminderDTO.updatedAt.bridgeDate
+                    messageId: messageId,
+                    remindAt: reminderDTO.remindAt?.bridgeDate,
+                    updatedAt: reminderDTO.updatedAt.bridgeDate,
+                    userId: ""
                 )
             }
             

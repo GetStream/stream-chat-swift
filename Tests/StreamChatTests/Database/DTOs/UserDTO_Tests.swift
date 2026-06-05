@@ -288,12 +288,11 @@ final class UserDTO_Tests: XCTestCase {
 
         let userPayload: UserResponse = .dummy(userId: userId)
 
-        let payload: ChannelMemberResponse = .init(
+        let payload: ChannelMemberResponse = .dummy(
             user: userPayload,
-            userId: userPayload.id,
-            role: .moderator,
             createdAt: .init(timeIntervalSince1970: 4000),
-            updatedAt: .init(timeIntervalSince1970: 5000)
+            updatedAt: .init(timeIntervalSince1970: 5000),
+            role: .moderator
         )
 
         try database.writeSynchronously { session in

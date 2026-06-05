@@ -358,17 +358,15 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 return
             }
 
-            guard let currentUser = session.currentUser,
-                  let currentDeviceId = currentUser.currentDevice?.id else {
+            guard session.currentUser?.currentDevice?.id != nil else {
                 completion(.failure(ClientError.CurrentUserDoesNotExist()))
                 return
             }
 
             let request = UpdateLiveLocationRequest(
-                messageId: messageId,
-                latitude: locationInfo.latitude,
-                longitude: locationInfo.longitude,
-                createdByDeviceId: currentDeviceId
+                latitude: Float(locationInfo.latitude),
+                longitude: Float(locationInfo.longitude),
+                messageId: messageId
             )
 
             let updateEndpoint = Endpoint<SharedLocationResponse>.updateLiveLocation(updateLiveLocationRequest: request)
@@ -410,15 +408,11 @@ class MessageUpdater: Worker, @unchecked Sendable {
         }
 
         database.backgroundReadOnlyContext.perform { [weak self] in
-            guard let currentUser = self?.database.backgroundReadOnlyContext.currentUser,
-                  let currentDeviceId = currentUser.currentDevice?.id else {
+            guard self?.database.backgroundReadOnlyContext.currentUser?.currentDevice?.id != nil else {
                 completion(.failure(ClientError.CurrentUserDoesNotExist()))
                 return
             }
-            let request = UpdateLiveLocationRequest(
-                messageId: messageId,
-                createdByDeviceId: currentDeviceId
-            )
+            let request = UpdateLiveLocationRequest(endAt: Date(), messageId: messageId)
             let updateEndpoint = Endpoint<SharedLocationResponse>.updateLiveLocation(updateLiveLocationRequest: request)
             let endpoint = Endpoint<SharedLocationResponseData>(
                 path: updateEndpoint.path,
@@ -978,7 +972,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 } else {
                     let endpoint = Endpoint<MessageActionResponse>.runMessageAction(
                         id: messageId,
-                        messageActionRequest: MessageActionRequest(cid: cid, messageId: messageId, action: action)
+                        messageActionRequest: MessageActionRequest(formData: [action.name: action.value])
                     )
                     self.apiClient.request(endpoint: endpoint) {
                         switch $0 {
