@@ -16,18 +16,17 @@ final class ChannelMemberResponse_Tests: XCTestCase {
         XCTAssertEqual(payload.memberRole, .owner)
         XCTAssertEqual(payload.createdAt, "2020-06-05T12:53:09.862721Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-05T12:53:09.862721Z".toDate())
-        XCTAssertEqual(payload.banExpiresAt, "2021-03-08T15:42:31.355923Z".toDate())
-        XCTAssertEqual(payload.isBanned, true)
-        XCTAssertEqual(payload.isShadowBanned, true)
+        XCTAssertEqual(payload.banExpires, "2021-03-08T15:42:31.355923Z".toDate())
+        XCTAssertEqual(payload.banned, true)
+        XCTAssertEqual(payload.shadowBanned, true)
         XCTAssertEqual(payload.notificationsMuted, true)
         XCTAssertEqual(payload.custom["is_premium"], true)
-        XCTAssertEqual(payload.extraData?["is_premium"], true)
 
-        let user = try XCTUnwrap(payload.userPayload)
+        let user = try XCTUnwrap(payload.user)
         XCTAssertEqual(user.id, "broken-waterfall-5")
-        XCTAssertEqual(user.isBanned, false)
+        XCTAssertEqual(user.banned, false)
         XCTAssertEqual(user.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
-        XCTAssertEqual(user.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
+        XCTAssertEqual(user.lastActive, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(user.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertEqual(user.name, "Broken Waterfall")
         XCTAssertEqual(
@@ -35,7 +34,7 @@ final class ChannelMemberResponse_Tests: XCTestCase {
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
         )
         XCTAssertEqual(user.userRole, .user)
-        XCTAssertEqual(user.isOnline, true)
+        XCTAssertEqual(user.online, true)
     }
 
     func test_memberJSON_channelRole_isCustomRole() throws {

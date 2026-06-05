@@ -277,7 +277,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
             switch result {
             case let .success(payload):
                 self.database.write { session in
-                    try payload.locations.map {
+                    try payload.activeLiveLocations.map {
                         try session.saveLocation(payload: $0, cache: nil).asModel()
                     }
                 } completion: { result in

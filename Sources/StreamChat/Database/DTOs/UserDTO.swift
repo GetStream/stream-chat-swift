@@ -148,9 +148,9 @@ extension NSManagedObjectContext: UserDatabaseSession {
 
         dto.name = payload.name
         dto.imageURL = payload.imageURL
-        dto.isBanned = payload.isBanned
-        dto.isOnline = payload.isOnline
-        dto.lastActivityAt = payload.lastActiveAt?.bridgeDate
+        dto.isBanned = payload.banned
+        dto.isOnline = payload.online
+        dto.lastActivityAt = payload.lastActive?.bridgeDate
         dto.userCreatedAt = payload.createdAt.bridgeDate
         dto.userRoleRaw = payload.userRole.rawValue
         dto.userUpdatedAt = payload.updatedAt.bridgeDate
@@ -162,7 +162,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
         }
 
         do {
-            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+            dto.extraData = try JSONEncoder.default.encode(payload.custom)
         } catch {
             log.error(
                 "Failed to decode extra payload for User with id: <\(payload.id)>, using default value instead. "

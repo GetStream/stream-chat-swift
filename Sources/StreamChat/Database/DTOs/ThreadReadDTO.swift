@@ -96,8 +96,8 @@ extension NSManagedObjectContext {
             cache: cache
         )
         dto.user = try saveUser(payload: payload.user)
-        dto.lastReadAt = payload.lastReadAt.bridgeDate
-        dto.unreadMessagesCount = Int64(payload.unreadMessagesCount)
+        dto.lastReadAt = payload.lastRead.bridgeDate
+        dto.unreadMessagesCount = Int64(payload.unreadMessages)
         return dto
     }
 

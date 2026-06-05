@@ -295,19 +295,19 @@ final class ThreadDTO_Tests: XCTestCase {
             parentMessageId: payloadWithDraft.parentMessageId,
             parentMessage: payloadWithDraft.parentMessage!,
             channel: payloadWithDraft.channelDetailPayload!,
-            createdBy: payloadWithDraft.createdByPayload,
+            createdBy: payloadWithDraft.createdBy ?? UserResponse.empty,
             replyCount: payloadWithDraft.replyCount ?? 0,
             participantCount: payloadWithDraft.participantCount,
             activeParticipantCount: 2,
-            threadParticipants: payloadWithDraft.threadParticipantPayloads,
+            threadParticipants: payloadWithDraft.threadParticipants ?? [],
             lastMessageAt: payloadWithDraft.lastMessageAt,
             createdAt: payloadWithDraft.createdAt,
             updatedAt: payloadWithDraft.updatedAt,
             title: payloadWithDraft.title,
-            latestReplies: payloadWithDraft.latestRepliesPayload,
-            read: payloadWithDraft.readPayload,
+            latestReplies: payloadWithDraft.latestReplies,
+            read: payloadWithDraft.read ?? [],
             draft: nil,
-            extraData: payloadWithDraft.extraData
+            extraData: payloadWithDraft.custom
         )
 
         let updatedDto = try database.viewContext.saveThread(

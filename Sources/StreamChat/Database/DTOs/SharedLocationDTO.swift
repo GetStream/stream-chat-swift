@@ -93,7 +93,7 @@ extension NSManagedObjectContext {
         )
 
         locationDTO.messageId = payload.messageId
-        locationDTO.channelId = payload.channelId
+        locationDTO.channelId = payload.channelCid
         locationDTO.deviceId = payload.createdByDeviceId
         locationDTO.latitude = Double(payload.latitude)
         locationDTO.longitude = Double(payload.longitude)

@@ -13,9 +13,9 @@ final class UserResponse_Tests: XCTestCase {
     func test_currentUserJSON_isSerialized_withDefaultExtraData() throws {
         let payload = try JSONDecoder.default.decode(UserResponse.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
-        XCTAssertEqual(payload.isBanned, false)
+        XCTAssertEqual(payload.banned, false)
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
-        XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
+        XCTAssertEqual(payload.lastActive, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertEqual(payload.avgResponseTime, 20)
         XCTAssertNil(payload.deactivatedAt)
@@ -25,7 +25,7 @@ final class UserResponse_Tests: XCTestCase {
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
         )
         XCTAssertEqual(payload.userRole, .user)
-        XCTAssertEqual(payload.isOnline, true)
+        XCTAssertEqual(payload.online, true)
         XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.language, "pt")
     }
@@ -33,27 +33,27 @@ final class UserResponse_Tests: XCTestCase {
     func test_currentUserJSON_isSerialized_withCustomExtraData() throws {
         let payload = try JSONDecoder.default.decode(UserResponse.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
-        XCTAssertEqual(payload.isBanned, false)
+        XCTAssertEqual(payload.banned, false)
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
-        XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
+        XCTAssertEqual(payload.lastActive, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertNil(payload.deactivatedAt)
         XCTAssertEqual(payload.userRole, .user)
-        XCTAssertEqual(payload.isOnline, true)
+        XCTAssertEqual(payload.online, true)
         XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.language, "pt")
 
-        XCTAssertEqual(payload.extraData, ["secret_note": .string("Anaking is Vader!")])
+        XCTAssertEqual(payload.custom, ["secret_note": .string("Anaking is Vader!")])
     }
 
     func test_otherUserJSON_isSerialized_withDefaultExtraData() throws {
         let payload = try JSONDecoder.default.decode(UserResponse.self, from: otherUserJSON)
         XCTAssertEqual(payload.id, "bitter-cloud-0")
-        XCTAssertEqual(payload.isBanned, true)
-        XCTAssertEqual(payload.isOnline, true)
+        XCTAssertEqual(payload.banned, true)
+        XCTAssertEqual(payload.online, true)
         XCTAssertEqual(payload.name, "Bitter cloud")
         XCTAssertEqual(payload.createdAt, "2020-06-09T18:33:04.070518Z".toDate())
-        XCTAssertEqual(payload.lastActiveAt, "2020-06-09T18:33:04.075114Z".toDate())
+        XCTAssertEqual(payload.lastActive, "2020-06-09T18:33:04.075114Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-09T18:33:04.078929Z".toDate())
         XCTAssertEqual(payload.avgResponseTime, 5)
         XCTAssertNil(payload.deactivatedAt)
@@ -64,7 +64,7 @@ final class UserResponse_Tests: XCTestCase {
         XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.language, "pt")
         XCTAssertEqual(payload.userRole, .guest)
-        XCTAssertEqual(payload.isOnline, true)
+        XCTAssertEqual(payload.online, true)
         XCTAssertEqual(payload.teamsRolePayload, ["ios": "guest"])
     }
 
@@ -91,7 +91,7 @@ final class UserResponse_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(UserResponse.self, from: json)
 
         XCTAssertEqual(payload.id, "open-api-user")
-        XCTAssertEqual(payload.extraData, ["secret_note": .string("Anakin is Vader!")])
+        XCTAssertEqual(payload.custom, ["secret_note": .string("Anakin is Vader!")])
         XCTAssertEqual(payload.language, "pt")
         XCTAssertEqual(payload.teams, ["RED", "GREEN"])
     }
@@ -100,11 +100,11 @@ final class UserResponse_Tests: XCTestCase {
         let deactivatedUserJSON = XCTestCase.mockData(fromJSONFile: "DeactivatedUser")
         let payload = try JSONDecoder.default.decode(UserResponse.self, from: deactivatedUserJSON)
         XCTAssertEqual(payload.id, "deactivated-5")
-        XCTAssertEqual(payload.isBanned, false)
-        XCTAssertEqual(payload.isOnline, true)
+        XCTAssertEqual(payload.banned, false)
+        XCTAssertEqual(payload.online, true)
         XCTAssertEqual(payload.name, "Deactivated Waterfall")
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
-        XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
+        XCTAssertEqual(payload.lastActive, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertEqual(payload.deactivatedAt, "2017-05-09T13:32:30.628Z".toDate())
         XCTAssertEqual(
@@ -113,7 +113,7 @@ final class UserResponse_Tests: XCTestCase {
         )
         XCTAssertEqual(payload.teams.count, 3)
         XCTAssertEqual(payload.userRole, .user)
-        XCTAssertEqual(payload.isOnline, true)
+        XCTAssertEqual(payload.online, true)
     }
 
     func test_unread_isSerialized() throws {
@@ -318,9 +318,9 @@ final class UserUpdateResponse_Tests: XCTestCase {
         XCTAssertEqual(user.userRole, .user)
         XCTAssertEqual(user.createdAt, "2020-12-07T11:36:47.059906Z".toDate())
         XCTAssertEqual(user.updatedAt, "2021-01-11T10:36:24.488391Z".toDate())
-        XCTAssertEqual(user.lastActiveAt, "2021-01-08T19:16:54.380686Z".toDate())
-        XCTAssertEqual(user.isBanned, false)
-        XCTAssertEqual(user.isOnline, false)
+        XCTAssertEqual(user.lastActive, "2021-01-08T19:16:54.380686Z".toDate())
+        XCTAssertEqual(user.banned, false)
+        XCTAssertEqual(user.online, false)
         XCTAssertEqual(user.name, "Luke")
         let expectedImage = "https://vignette.wikia.nocookie.net/starwars/images/2/20/LukeTLJ.jpg"
         XCTAssertEqual(user.imageURL?.absoluteString, expectedImage)

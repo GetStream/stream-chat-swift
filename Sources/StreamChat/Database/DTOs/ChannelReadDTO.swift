@@ -91,9 +91,9 @@ extension NSManagedObjectContext {
             && !dto.channel.config.readEventsEnabled
 
         if !isLocallyTracked {
-            dto.lastReadAt = payload.lastReadAt.bridgeDate
+            dto.lastReadAt = payload.lastRead.bridgeDate
             dto.lastReadMessageId = payload.lastReadMessageId
-            dto.unreadMessageCount = Int32(payload.unreadMessagesCount)
+            dto.unreadMessageCount = Int32(payload.unreadMessages)
         }
         dto.lastDeliveredAt = payload.lastDeliveredAt?.bridgeDate
         dto.lastDeliveredMessageId = payload.lastDeliveredMessageId

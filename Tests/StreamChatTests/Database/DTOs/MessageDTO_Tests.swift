@@ -507,7 +507,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelPayload.imageURL, loadedChannel?.imageURL)
         XCTAssertEqual(channelPayload.memberCount, loadedChannel?.memberCount)
         XCTAssertEqual(channelPayload.extraData, loadedChannel?.extraData)
-        XCTAssertEqual(channelPayload.typeRawValue, loadedChannel?.type.rawValue)
+        XCTAssertEqual(channelPayload.type, loadedChannel?.type.rawValue)
         XCTAssertNearlySameDate(loadedChannel?.lastMessageAt, messagePayload.createdAt)
         XCTAssertNearlySameDate(channelPayload.createdAt, loadedChannel?.createdAt)
         XCTAssertNearlySameDate(channelPayload.updatedAt, loadedChannel?.updatedAt)
@@ -535,9 +535,9 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(channelPayload.createdBy!.id, loadedChannel?.createdBy?.id)
         XCTAssertEqual(channelPayload.createdBy!.createdAt, loadedChannel?.createdBy?.userCreatedAt)
         XCTAssertEqual(channelPayload.createdBy!.updatedAt, loadedChannel?.createdBy?.userUpdatedAt)
-        XCTAssertEqual(channelPayload.createdBy!.lastActiveAt, loadedChannel?.createdBy?.lastActiveAt)
-        XCTAssertEqual(channelPayload.createdBy!.isOnline, loadedChannel?.createdBy?.isOnline)
-        XCTAssertEqual(channelPayload.createdBy!.isBanned, loadedChannel?.createdBy?.isBanned)
+        XCTAssertEqual(channelPayload.createdBy!.lastActive, loadedChannel?.createdBy?.lastActiveAt)
+        XCTAssertEqual(channelPayload.createdBy!.online, loadedChannel?.createdBy?.isOnline)
+        XCTAssertEqual(channelPayload.createdBy!.banned, loadedChannel?.createdBy?.isBanned)
         XCTAssertEqual(channelPayload.createdBy!.userRole, loadedChannel?.createdBy?.userRole)
         XCTAssertEqual(channelPayload.createdBy!.extraData, loadedChannel?.createdBy?.extraData)
 
@@ -552,10 +552,10 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertNotNil(messagePayload.messageTextUpdatedAt)
         XCTAssertEqual(messagePayload.text, loadedMessage?.text)
         XCTAssertEqual(loadedMessage?.command, messagePayload.command)
-        XCTAssertEqual(loadedMessage?.args, messagePayload.args)
+        XCTAssertNil(loadedMessage?.args)
         XCTAssertEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
         XCTAssertEqual(messagePayload.quotedMessage?.id, loadedMessage?.quotedMessage?.id)
-        XCTAssertEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
+        XCTAssertEqual(messagePayload.showInChannel ?? false, loadedMessage?.showReplyInChannel)
         XCTAssertEqual(messagePayload.pinned, loadedMessage?.pinned)
         XCTAssertNearlySameDate(messagePayload.pinExpires, loadedMessage?.pinExpires?.bridgeDate)
         XCTAssertNearlySameDate(messagePayload.pinnedAt, loadedMessage?.pinnedAt?.bridgeDate)
@@ -574,8 +574,8 @@ final class MessageDTO_Tests: XCTestCase {
         })
         XCTAssertEqual(messagePayload.reactionScores, loadedMessage?.reactionScores)
         XCTAssertEqual(loadedMessage?.latestReactions.count, messagePayload.latestReactions.count)
-        XCTAssertEqual(messagePayload.isSilent, loadedMessage?.isSilent)
-        XCTAssertEqual(messagePayload.isShadowed, loadedMessage?.isShadowed)
+        XCTAssertEqual(messagePayload.silent, loadedMessage?.isSilent)
+        XCTAssertEqual(messagePayload.shadowed, loadedMessage?.isShadowed)
         XCTAssertEqual(
             Set(messagePayload.attachmentIDs(cid: channelId)),
             loadedMessage.flatMap { Set($0.attachments.compactMap(\.attachmentID)) }
@@ -698,9 +698,9 @@ final class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.deletedAt?.bridgeDate, loadedMessage?.deletedAt)
             Assert.willBeEqual(messagePayload.text, loadedMessage?.text)
             Assert.willBeEqual(loadedMessage?.command, messagePayload.command)
-            Assert.willBeEqual(loadedMessage?.args, messagePayload.args)
+            Assert.willBeNil(loadedMessage?.args)
             Assert.willBeEqual(messagePayload.parentId, loadedMessage?.parentMessageId)
-            Assert.willBeEqual(messagePayload.showReplyInChannel, loadedMessage?.showReplyInChannel)
+            Assert.willBeEqual(messagePayload.showInChannel ?? false, loadedMessage?.showReplyInChannel)
             Assert.willBeEqual(messagePayload.pinned, loadedMessage?.pinned)
             Assert.willBeEqual(messagePayload.pinExpires?.bridgeDate, loadedMessage?.pinExpires!)
             Assert.willBeEqual(messagePayload.pinnedAt?.bridgeDate, loadedMessage?.pinnedAt!)
@@ -721,7 +721,7 @@ final class MessageDTO_Tests: XCTestCase {
             Assert.willBeEqual(messagePayload.reactionCounts, loadedMessage?.reactionCounts)
             Assert.willBeEqual(loadedMessage?.latestReactions.count, messagePayload.latestReactions.count)
             Assert.willBeEqual(loadedMessage?.ownReactions.count, messagePayload.ownReactions.count)
-            Assert.willBeEqual(messagePayload.isSilent, loadedMessage?.isSilent)
+            Assert.willBeEqual(messagePayload.silent, loadedMessage?.isSilent)
             Assert.willBeEqual(
                 Set(messagePayload.attachmentIDs(cid: channelId)),
                 loadedMessage.flatMap { Set($0.attachments.compactMap(\.attachmentID)) }
@@ -896,8 +896,6 @@ final class MessageDTO_Tests: XCTestCase {
 
     func test_messagePayloadNotStored_withoutChannelInfo() throws {
         let payload: MessageResponse = .dummy(messageId: .unique, authorUserId: .unique)
-        assert(payload.channel == nil, "Channel must be `nil`")
-
         XCTAssertThrowsError(
             try database.writeSynchronously {
                 // Both `payload.channel` and `cid` are nil
@@ -1032,16 +1030,16 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertNearlySameDate(loadedMessage.deletedAt, messagePayload.deletedAt)
         XCTAssertEqual(loadedMessage.text, messagePayload.text)
         XCTAssertEqual(loadedMessage.command, messagePayload.command)
-        XCTAssertEqual(loadedMessage.arguments, messagePayload.args)
+        XCTAssertNil(loadedMessage.arguments)
         XCTAssertEqual(loadedMessage.parentMessageId, messagePayload.parentId)
-        XCTAssertEqual(loadedMessage.showReplyInChannel, messagePayload.showReplyInChannel)
+        XCTAssertEqual(loadedMessage.showReplyInChannel, messagePayload.showInChannel ?? false)
         XCTAssertEqual(loadedMessage.mentionedUsers.map(\.id), messagePayload.mentionedUsers.map(\.id))
         XCTAssertEqual(loadedMessage.threadParticipants.map(\.id), (messagePayload.threadParticipants ?? []).map(\.id))
         XCTAssertEqual(loadedMessage.replyCount, messagePayload.replyCount)
         XCTAssertEqual(loadedMessage.extraData, messagePayload.extraData)
         XCTAssertEqual(loadedMessage.reactionScores, messagePayload.reactionScores.mapKeys(MessageReactionType.init(rawValue:)))
         XCTAssertEqual(loadedMessage.reactionCounts, messagePayload.reactionCounts.mapKeys(MessageReactionType.init(rawValue:)))
-        XCTAssertEqual(loadedMessage.isSilent, messagePayload.isSilent)
+        XCTAssertEqual(loadedMessage.isSilent, messagePayload.silent)
         XCTAssertEqual(loadedMessage.latestReactions.count, 3)
         XCTAssertEqual(loadedMessage.currentUserReactions.count, 2)
         XCTAssertEqual(loadedMessage.isPinned, true)
@@ -1104,6 +1102,48 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(messagePayload.reactionGroups?["like"]??.sumScores, loadedLikeReactionGroup.sumScores)
         XCTAssertEqual(messagePayload.reactionGroups?["like"]??.firstReactionAt, loadedLikeReactionGroup.firstReactionAt)
         XCTAssertEqual(messagePayload.reactionGroups?["like"]??.lastReactionAt, loadedLikeReactionGroup.lastReactionAt)
+    }
+
+    func test_messageResponseAsModel_whenModerationActionIsBounce_derivesModerationDetailsAndBounce() throws {
+        // GIVEN a message response carrying V2 moderation details for a bounce
+        let messagePayload: MessageResponse = .dummy(
+            messageId: .unique,
+            authorUserId: .unique,
+            moderation: .init(
+                originalText: "Original",
+                action: "bounce",
+                textHarms: ["textHarm"],
+                imageHarms: ["imageHarm"],
+                blocklistMatched: "block",
+                semanticFilterMatched: "semantic",
+                platformCircumvented: true
+            )
+        )
+
+        // WHEN converting the response directly to a model (no DB round-trip)
+        let message = messagePayload.asModel(cid: .unique, currentUserId: .unique, channelReads: [])
+
+        // THEN moderation details and bounce state are derived from `moderation`
+        XCTAssertEqual(message.moderationDetails?.originalText, "Original")
+        XCTAssertEqual(message.moderationDetails?.action, MessageModerationAction.bounce)
+        XCTAssertEqual(message.moderationDetails?.textHarms, ["textHarm"])
+        XCTAssertEqual(message.moderationDetails?.imageHarms, ["imageHarm"])
+        XCTAssertEqual(message.moderationDetails?.blocklistMatched, "block")
+        XCTAssertEqual(message.moderationDetails?.semanticFilterMatched, "semantic")
+        XCTAssertEqual(message.moderationDetails?.platformCircumvented, true)
+        XCTAssertTrue(message.isBounced)
+    }
+
+    func test_messageResponseAsModel_whenModerationIsNil_hasNoModerationDetails() throws {
+        // GIVEN a message response without moderation
+        let messagePayload: MessageResponse = .dummy(messageId: .unique, authorUserId: .unique)
+
+        // WHEN converting the response directly to a model
+        let message = messagePayload.asModel(cid: .unique, currentUserId: .unique, channelReads: [])
+
+        // THEN there are no moderation details and the message is not bounced
+        XCTAssertNil(message.moderationDetails)
+        XCTAssertFalse(message.isBounced)
     }
 
     func test_newMessage_asRequestBody() throws {
@@ -4303,7 +4343,7 @@ final class MessageDTO_Tests: XCTestCase {
     private func createMessage(with message: MessageResponse) throws -> MessageDTO {
         let context = database.viewContext
         _ = try context.saveCurrentUser(payload: .dummy(userPayload: message.user))
-        let cid = message.channel.flatMap { try? ChannelId(cid: $0.cid) } ?? (try? ChannelId(cid: message.cid)) ?? ChannelId.unique
+        let cid = (try? ChannelId(cid: message.cid)) ?? ChannelId.unique
         try context.saveChannel(payload: ChannelResponse.dummy(cid: cid), query: nil, cache: nil)
         return try XCTUnwrap(
             context.saveMessage(payload: message, for: cid, cache: nil)
@@ -4720,7 +4760,7 @@ final class MessageDTO_Tests: XCTestCase {
         let draftReply = try XCTUnwrap(message.draftReply)
         XCTAssertEqual(draftReply.id, draftMessageResponse.id)
         XCTAssertEqual(draftReply.text, draftMessageResponse.text)
-        XCTAssertEqual(draftReply.extraData, draftMessageResponse.extraData)
+        XCTAssertEqual(draftReply.extraData, draftMessageResponse.custom)
     }
 
     func test_saveMessage_whenDraftReplyIsNil_removesExistingDraft() throws {

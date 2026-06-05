@@ -64,25 +64,25 @@ final class MemberModelDTO_Tests: XCTestCase {
         var loadedMember: ChatChannelMember? {
             try? database.viewContext.member(userId: userId, cid: channelId)?.asModel()
         }
-        let payloadUser = try XCTUnwrap(payload.userPayload)
+        let payloadUser = try XCTUnwrap(payload.user)
 
         AssertAsync {
             Assert.willBeEqual(payload.memberRole, loadedMember?.memberRole)
             Assert.willBeEqual(payload.createdAt, loadedMember?.memberCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedMember?.memberUpdatedAt)
-            Assert.willBeEqual(payload.isBanned, loadedMember?.isBannedFromChannel)
-            Assert.willBeEqual(payload.banExpiresAt, loadedMember?.banExpiresAt)
-            Assert.willBeEqual(payload.isShadowBanned, loadedMember?.isShadowBannedFromChannel)
+            Assert.willBeEqual(payload.banned, loadedMember?.isBannedFromChannel)
+            Assert.willBeEqual(payload.banExpires, loadedMember?.banExpiresAt)
+            Assert.willBeEqual(payload.shadowBanned, loadedMember?.isShadowBannedFromChannel)
             Assert.willBeEqual(payload.notificationsMuted, loadedMember?.notificationsMuted)
 
             Assert.willBeEqual(payloadUser.id, loadedMember?.id)
-            Assert.willBeEqual(payloadUser.isOnline, loadedMember?.isOnline)
-            Assert.willBeEqual(payloadUser.isBanned, loadedMember?.isBanned)
+            Assert.willBeEqual(payloadUser.online, loadedMember?.isOnline)
+            Assert.willBeEqual(payloadUser.banned, loadedMember?.isBanned)
             Assert.willBeEqual(payloadUser.userRole, loadedMember?.userRole)
             Assert.willBeEqual(payloadUser.createdAt, loadedMember?.userCreatedAt)
             Assert.willBeEqual(payloadUser.updatedAt, loadedMember?.userUpdatedAt)
-            Assert.willBeEqual(payloadUser.lastActiveAt, loadedMember?.lastActiveAt)
-            Assert.willBeEqual(payloadUser.extraData, loadedMember?.extraData)
+            Assert.willBeEqual(payloadUser.lastActive, loadedMember?.lastActiveAt)
+            Assert.willBeEqual(payloadUser.custom, loadedMember?.extraData)
             Assert.willBeEqual(Set(payloadUser.teams), loadedMember?.teams)
             Assert.willBeEqual(payloadUser.language, loadedMember?.language?.languageCode)
             Assert.willBeEqual(true, loadedMember?.memberExtraData["is_premium"]?.boolValue)

@@ -56,6 +56,7 @@ extension MessageResponse {
         let readBy = channelReads.filter { read in
             read.user.id != messageUserId && read.lastReadAt.timeIntervalSince1970 >= createdAtInterval
         }
+        let moderationDetails = moderation.map { MessageModerationDetails(fromV2: $0) }
         
         return ChatMessage(
             id: id,
@@ -67,15 +68,15 @@ extension MessageResponse {
             locallyCreatedAt: nil,
             updatedAt: updatedAt,
             deletedAt: deletedAt,
-            arguments: args,
+            arguments: nil,
             parentMessageId: parentId,
-            showReplyInChannel: showReplyInChannel,
+            showReplyInChannel: showInChannel ?? false,
             replyCount: replyCount,
             extraData: extraData,
             quotedMessage: quotedMessage,
-            isBounced: moderationDetails?.action == MessageModerationAction.bounce.rawValue,
-            isSilent: isSilent,
-            isShadowed: isShadowed,
+            isBounced: moderationDetails?.action == MessageModerationAction.bounce,
+            isSilent: silent,
+            isShadowed: shadowed,
             deletedForMe: deletedForMe ?? false,
             reactionScores: reactionScores.mapKeys(MessageReactionType.init(rawValue:)),
             reactionCounts: reactionCounts.mapKeys(MessageReactionType.init(rawValue:)),
@@ -107,15 +108,7 @@ extension MessageResponse {
             ) : nil,
             translations: translations,
             originalLanguage: originalLanguage.flatMap { TranslationLanguage(languageCode: $0) },
-            moderationDetails: moderationDetails.map { .init(
-                originalText: $0.originalText,
-                action: .init(rawValue: $0.action),
-                textHarms: $0.textHarms,
-                imageHarms: $0.imageHarms,
-                blocklistMatched: $0.blocklistMatched,
-                semanticFilterMatched: $0.semanticFilterMatched,
-                platformCircumvented: $0.platformCircumvented
-            ) },
+            moderationDetails: moderationDetails,
             readBy: Set(readBy.map(\.user)),
             poll: nil,
             textUpdatedAt: messageTextUpdatedAt,
@@ -127,7 +120,7 @@ extension MessageResponse {
                     updatedAt: $0.updatedAt
                 )
             },
-            sharedLocation: location.map {
+            sharedLocation: sharedLocation.map {
                 .init(
                     messageId: $0.messageId,
                     channelId: cid,
@@ -150,13 +143,13 @@ extension ReactionResponse {
     /// - Returns: A ChatMessageReaction instance.
     func asModel(messageId: MessageId) -> ChatMessageReaction {
         ChatMessageReaction(
-            id: [userPayload.id, messageId, reactionType.rawValue].joined(separator: "/"),
+            id: [user.id, messageId, reactionType.rawValue].joined(separator: "/"),
             type: reactionType,
             score: score,
             createdAt: createdAt,
             updatedAt: updatedAt,
-            author: userPayload.asModel(),
-            extraData: extraData
+            author: user.asModel(),
+            extraData: custom
         )
     }
 }

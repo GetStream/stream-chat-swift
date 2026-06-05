@@ -94,7 +94,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         
         let dto = CurrentUserDTO.loadOrCreate(context: self)
         dto.user = try saveUser(payload: payload.asUserPayload)
-        dto.isInvisible = payload.isInvisible
+        dto.isInvisible = payload.invisible
 
         // If not privacy setting is provided by the backend then we treat as enabled by default.
         // This is a bit different than the rest of the backend responses, but it was done like this
@@ -104,17 +104,17 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
         dto.isDeliveryReceiptsEnabled = payload.privacySettings?.deliveryReceipts?.enabled ?? true
 
         // Save push preference
-        if let pushPreference = payload.pushPreference {
+        if let pushPreference = payload.pushPreferences {
             dto.pushPreference = try savePushPreference(id: payload.id, payload: pushPreference)
         }
 
-        let mutedUsers = try payload.mutedUsers.map { try saveUser(payload: $0.mutedUser) }
+        let mutedUsers = try payload.mutes.map { try saveUser(payload: $0.mutedUser) }
         dto.mutedUsers = Set(mutedUsers)
         
         dto.blockedUserIds = payload.blockedUserIdsSet
 
         let channelMutes = Set(
-            try payload.mutedChannels.map { try saveChannelMute(payload: $0) }
+            try payload.channelMutes.map { try saveChannelMute(payload: $0) }
         )
         dto.channelMutes.subtracting(channelMutes).forEach { delete($0) }
         dto.channelMutes = channelMutes

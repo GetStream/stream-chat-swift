@@ -162,7 +162,7 @@ extension NSManagedObjectContext {
         let dto = MessageReactionDTO.loadOrCreate(
             message: messageDTO,
             type: payload.reactionType,
-            user: try saveUser(payload: payload.userPayload),
+            user: try saveUser(payload: payload.user),
             context: self,
             cache: cache
         )
@@ -170,7 +170,7 @@ extension NSManagedObjectContext {
         dto.score = Int64(clamping: payload.score)
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
-        dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+        dto.extraData = try JSONEncoder.default.encode(payload.custom)
         dto.localState = nil
         dto.version = nil
 

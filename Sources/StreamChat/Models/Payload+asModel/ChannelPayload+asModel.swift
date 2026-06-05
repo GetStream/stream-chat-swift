@@ -19,13 +19,13 @@ extension ChannelStateResponseFields {
         let mappedMembers = members.compactMap { $0.asModel(channelId: cid) }
 
         // Map latest messages
-        let reads = channelReads.map { $0.asModel() }
+        let reads = (read ?? []).map { $0.asModel() }
         let latestMessages = messages.compactMap {
             $0.asModel(cid: cid, currentUserId: currentUserId, channelReads: reads)
         }
 
         // Map reads
-        let mappedReads = channelReads.map { $0.asModel() }
+        let mappedReads = (read ?? []).map { $0.asModel() }
 
         // Map watchers
         let mappedWatchers = watchers?.map { $0.asModel() } ?? []
@@ -44,9 +44,9 @@ extension ChannelStateResponseFields {
             config: channelPayload?.config?.asChannelConfig ?? .init(),
             filterTags: Set(channelPayload?.filterTags ?? []),
             ownCapabilities: Set(channelPayload?.ownCapabilities?.compactMap { ChannelCapability(rawValue: $0.rawValue) } ?? []),
-            isFrozen: channelPayload?.isFrozen ?? false,
-            isDisabled: channelPayload?.isDisabled ?? false,
-            isBlocked: channelPayload?.isBlocked ?? false,
+            isFrozen: channelPayload?.frozen ?? false,
+            isDisabled: channelPayload?.disabled ?? false,
+            isBlocked: channelPayload?.blocked ?? false,
             lastActiveMembers: Array(mappedMembers),
             membership: membership?.asModel(channelId: cid),
             currentlyTypingUsers: currentlyTypingUsers ?? [],
@@ -57,7 +57,7 @@ extension ChannelStateResponseFields {
             memberCount: channelPayload?.memberCount ?? 0,
             messageCount: channelPayload?.messageCount,
             reads: mappedReads,
-            cooldownDuration: channelPayload?.cooldownDuration ?? 0,
+            cooldownDuration: channelPayload?.cooldown ?? 0,
             extraData: channelPayload?.extraData ?? [:],
             latestMessages: latestMessages,
             lastMessageFromCurrentUser: latestMessages.first { $0.isSentByCurrentUser },
@@ -80,7 +80,7 @@ extension ChannelMemberResponse {
     /// - Parameter channelId: The channel ID the member belongs to
     /// - Returns: A ChatChannelMember instance, or nil if user is missing
     func asModel(channelId: ChannelId) -> ChatChannelMember? {
-        guard let userPayload = userPayload else { return nil }
+        guard let userPayload = user else { return nil }
         let user = userPayload.asModel()
 
         return ChatChannelMember(
@@ -102,17 +102,17 @@ extension ChannelMemberResponse {
             memberRole: memberRole ?? .member,
             memberCreatedAt: createdAt,
             memberUpdatedAt: updatedAt,
-            isInvited: isInvited ?? false,
+            isInvited: invited ?? false,
             inviteAcceptedAt: inviteAcceptedAt,
             inviteRejectedAt: inviteRejectedAt,
             archivedAt: archivedAt,
             pinnedAt: pinnedAt,
-            isBannedFromChannel: isBanned ?? false,
-            banExpiresAt: banExpiresAt,
-            isShadowBannedFromChannel: isShadowBanned ?? false,
+            isBannedFromChannel: banned,
+            banExpiresAt: banExpires,
+            isShadowBannedFromChannel: shadowBanned,
             notificationsMuted: notificationsMuted,
             avgResponseTime: user.avgResponseTime,
-            memberExtraData: extraData ?? [:]
+            memberExtraData: custom
         )
     }
 }
@@ -122,9 +122,9 @@ extension ReadStateResponse {
     /// - Returns: A ChatChannelRead instance
     func asModel() -> ChatChannelRead {
         ChatChannelRead(
-            lastReadAt: lastReadAt,
+            lastReadAt: lastRead,
             lastReadMessageId: lastReadMessageId,
-            unreadMessagesCount: unreadMessagesCount,
+            unreadMessagesCount: unreadMessages,
             user: user.asModel(),
             lastDeliveredAt: lastDeliveredAt,
             lastDeliveredMessageId: lastDeliveredMessageId

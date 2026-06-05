@@ -213,36 +213,12 @@ extension MembersResponse {
 }
 
 extension ChannelMemberResponse {
-    var userPayload: UserResponse? {
-        user
-    }
-
     var resolvedUserId: UserId {
-        userPayload?.id ?? userId ?? ""
+        user?.id ?? userId ?? ""
     }
 
     var memberRole: MemberRole? {
         MemberRole(rawChannelValue: channelRole)
-    }
-
-    var banExpiresAt: Date? {
-        banExpires
-    }
-
-    var isBanned: Bool? {
-        banned
-    }
-
-    var isShadowBanned: Bool? {
-        shadowBanned
-    }
-
-    var isInvited: Bool? {
-        invited
-    }
-
-    var extraData: [String: RawJSON]? {
-        custom
     }
 
     convenience init(
@@ -355,14 +331,6 @@ extension UserMuteResponse {
         )
     }
 
-    var created: Date {
-        createdAt
-    }
-
-    var updated: Date {
-        updatedAt
-    }
-
     convenience init(mutedUser: UserResponse, created: Date, updated: Date) {
         self.init(createdAt: created, target: mutedUser, updatedAt: updated)
     }
@@ -408,35 +376,35 @@ extension OwnUserResponse {
             createdAt: createdAt,
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
-            isOnline: isOnline,
-            isInvisible: isInvisible,
-            isBanned: isBanned,
+            lastActiveAt: lastActive,
+            isOnline: online,
+            isInvisible: invisible,
+            isBanned: banned,
             teams: teams,
             language: language.isEmpty ? nil : language,
             avgResponseTime: avgResponseTime,
-            extraData: extraData
+            extraData: custom
         )
     }
 
     var asFullUserResponse: FullUserResponse {
         FullUserResponse(
             avgResponseTime: avgResponseTime,
-            banned: isBanned,
+            banned: banned,
             blockedUserIds: blockedUserIds ?? [],
             channelMutes: channelMutes,
             createdAt: createdAt,
-            custom: extraData,
+            custom: custom,
             deactivatedAt: deactivatedAt,
             devices: devices,
             id: id,
             image: image,
-            invisible: isInvisible,
+            invisible: invisible,
             language: language,
             lastActive: lastActive,
             mutes: mutes,
             name: name,
-            online: isOnline,
+            online: online,
             privacySettings: privacySettings,
             role: role,
             shadowBanned: false,
@@ -462,34 +430,6 @@ extension OwnUserResponse {
         teamsRole?.mapValues { UserRole(rawValue: $0) }
     }
 
-    var lastActiveAt: Date? {
-        lastActive
-    }
-
-    var isOnline: Bool {
-        online
-    }
-
-    var isInvisible: Bool {
-        invisible
-    }
-
-    var isBanned: Bool {
-        banned
-    }
-
-    var extraData: [String: RawJSON] {
-        custom
-    }
-
-    var mutedUsers: [UserMuteResponse] {
-        mutes
-    }
-
-    var mutedChannels: [ChannelMute] {
-        channelMutes
-    }
-
     var unreadCountPayload: UnreadCountPayload? {
         UnreadCountPayload(
             channels: unreadChannels,
@@ -500,10 +440,6 @@ extension OwnUserResponse {
 
     var blockedUserIdsSet: Set<UserId> {
         Set(blockedUserIds ?? [])
-    }
-
-    var pushPreference: PushPreferencesResponse? {
-        pushPreferences
     }
 
     convenience init(
@@ -572,28 +508,12 @@ extension UserPrivacySettingsPayload {
 }
 
 extension MuteChannelResponse {
-    var primaryChannelMute: ChannelMute? {
-        channelMute ?? channelMutes?.first
-    }
-
     convenience init(channelMute: ChannelMute, channelMutes: [ChannelMute]? = nil, ownUser: OwnUserResponse? = nil) {
         self.init(channelMute: channelMute, channelMutes: channelMutes, duration: "", ownUser: ownUser)
     }
 }
 
 extension ChannelMute {
-    var channelPayload: ChannelResponse? {
-        channel
-    }
-
-    var userPayload: UserResponse? {
-        user
-    }
-
-    var expiresAt: Date? {
-        expires
-    }
-
     convenience init(
         mutedChannel: ChannelResponse,
         user: UserResponse,
@@ -654,10 +574,6 @@ extension DraftResponse {
         try? ChannelId(cid: channelCid)
     }
 
-    var channelPayload: ChannelResponse? {
-        channel
-    }
-
     convenience init(
         cid: ChannelId?,
         channelPayload: ChannelResponse?,
@@ -680,34 +596,6 @@ extension DraftResponse {
 }
 
 extension DraftPayloadResponse {
-    var command: String? {
-        nil
-    }
-
-    var args: String? {
-        nil
-    }
-
-    var showReplyInChannel: Bool {
-        showInChannel ?? false
-    }
-
-    var isSilent: Bool {
-        silent ?? false
-    }
-
-    var mentionedUsersPayload: [UserResponse]? {
-        mentionedUsers
-    }
-
-    var extraData: [String: RawJSON] {
-        custom
-    }
-
-    var attachmentPayloads: [Attachment]? {
-        attachments
-    }
-
     convenience init(
         id: String,
         text: String,
@@ -767,14 +655,6 @@ extension CreateDraftRequest {
 }
 
 extension ReadStateResponse {
-    var lastReadAt: Date {
-        lastRead
-    }
-
-    var unreadMessagesCount: Int {
-        unreadMessages
-    }
-
     convenience init(
         user: UserResponse,
         lastReadAt: Date,
@@ -978,26 +858,6 @@ extension UserResponse {
         teamsRole?.mapValues { UserRole(rawValue: $0) }
     }
 
-    var lastActiveAt: Date? {
-        lastActive
-    }
-
-    var isOnline: Bool {
-        online
-    }
-
-    var isInvisible: Bool {
-        false
-    }
-
-    var isBanned: Bool {
-        banned
-    }
-
-    var extraData: [String: RawJSON] {
-        custom
-    }
-
     convenience init(
         id: String,
         name: String?,
@@ -1069,13 +929,13 @@ extension FullUserResponse {
             createdAt: createdAt,
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
-            isOnline: isOnline,
-            isInvisible: isInvisible,
-            isBanned: isBanned,
+            lastActiveAt: lastActive,
+            isOnline: online,
+            isInvisible: invisible,
+            isBanned: banned,
             teams: teams,
             language: language.isEmpty ? nil : language,
-            extraData: extraData,
+            extraData: custom,
             devices: devices,
             mutedUsers: mutes,
             mutedChannels: channelMutes,
@@ -1084,10 +944,6 @@ extension FullUserResponse {
             blockedUserIds: Set(blockedUserIds),
             pushPreference: nil
         )
-    }
-
-    var asUserResponse: UserResponse {
-        asUserPayload
     }
 
     var imageURL: URL? {
@@ -1100,26 +956,6 @@ extension FullUserResponse {
 
     var teamsRolePayload: [String: UserRole]? {
         teamsRole?.mapValues { UserRole(rawValue: $0) }
-    }
-
-    var lastActiveAt: Date? {
-        lastActive
-    }
-
-    var isOnline: Bool {
-        online
-    }
-
-    var isInvisible: Bool {
-        invisible
-    }
-
-    var isBanned: Bool {
-        banned
-    }
-
-    var extraData: [String: RawJSON] {
-        custom
     }
 }
 
@@ -1136,10 +972,6 @@ extension QueryUsersResponse {
 extension UserRequest {
     var imageURL: URL? {
         image.flatMap(URL.init(string:))
-    }
-
-    var extraData: [String: RawJSON] {
-        custom ?? [:]
     }
 
     convenience init(id: String, name: String?, imageURL: URL?, extraData: [String: RawJSON]) {
@@ -1240,21 +1072,21 @@ extension UserResponse {
     var asFullUserResponse: FullUserResponse {
         FullUserResponse(
             avgResponseTime: avgResponseTime,
-            banned: isBanned,
+            banned: banned,
             blockedUserIds: [],
             channelMutes: [],
             createdAt: createdAt,
-            custom: extraData,
+            custom: custom,
             deactivatedAt: deactivatedAt,
             devices: [],
             id: id,
             image: imageURL?.absoluteString,
-            invisible: isInvisible,
+            invisible: false,
             language: language,
-            lastActive: lastActiveAt,
+            lastActive: lastActive,
             mutes: [],
             name: name,
-            online: isOnline,
+            online: online,
             role: userRole.rawValue,
             shadowBanned: false,
             teams: teams,
@@ -1279,18 +1111,11 @@ extension ChannelResponse {
         return c
     }
 
-    var typeRawValue: String { type }
-    var isDisabled: Bool { disabled }
-    var isFrozen: Bool { frozen }
-    var isBlocked: Bool? { blocked }
-    var isHidden: Bool? { hidden }
-    var cooldownDuration: Int { cooldown ?? 0 }
     var channelId: ChannelId? { try? ChannelId(cid: cid) }
 }
 
 extension ChannelStateResponseFields {
     // Compatibility shims for the legacy ChannelStateResponseFields struct.
-    var channelReads: [ReadStateResponse] { read ?? [] }
     var newestMessage: MessageResponse? {
         guard let first = messages.first, let last = messages.last else { return nil }
         return first.createdAt > last.createdAt ? first : last
@@ -1425,13 +1250,6 @@ extension MessageResponse {
         set { custom = newValue }
     }
 
-    var isSilent: Bool { silent }
-    var isShadowed: Bool { shadowed }
-    var showReplyInChannel: Bool { showInChannel ?? false }
-    var args: String? { nil }
-    var location: SharedLocationResponseData? { sharedLocation }
-    var moderationDetails: ModerationV2Response? { nil }
-    var channel: ChannelResponse? { nil }
     var translations: [TranslationLanguage: String]? { i18n?.translated }
     var originalLanguage: String? { i18n?.originalLanguage }
     var campaignId: String? {
@@ -1681,10 +1499,6 @@ extension SearchResultMessage {
 }
 
 extension SharedLocationResponseData {
-    var channelId: String {
-        channelCid
-    }
-
     convenience init(
         channelId: String,
         messageId: String,
@@ -1773,10 +1587,6 @@ extension UpdateLiveLocationRequest {
 }
 
 extension SharedLocationsResponse {
-    var locations: [SharedLocationResponseData] {
-        activeLiveLocations
-    }
-
     convenience init(locations: [SharedLocationResponseData]) {
         self.init(activeLiveLocations: locations, duration: "")
     }
@@ -2165,14 +1975,6 @@ extension ReactionResponse {
         MessageReactionType(rawValue: type)
     }
 
-    var userPayload: UserResponse {
-        user
-    }
-
-    var extraData: [String: RawJSON] {
-        custom
-    }
-
     convenience init(
         type: MessageReactionType,
         score: Int,
@@ -2241,13 +2043,13 @@ extension UserResponse {
             createdAt: createdAt,
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
-            isOnline: isOnline,
-            isInvisible: isInvisible,
-            isBanned: isBanned,
+            lastActiveAt: lastActive,
+            isOnline: online,
+            isInvisible: false,
+            isBanned: banned,
             teams: teams,
             language: language.isEmpty ? nil : language,
-            extraData: extraData,
+            extraData: custom,
             pushPreference: nil
         )
     }
@@ -2453,8 +2255,6 @@ extension Attachment {
 }
 
 extension ThreadStateResponse {
-    var extraData: [String: RawJSON] { custom }
-
     var channelDetailPayload: ChannelResponse? {
         if let channelPayload = channel {
             return channelPayload
@@ -2475,18 +2275,6 @@ extension ThreadStateResponse {
             updatedAt: updatedAt
         )
     }
-
-    var createdByPayload: UserResponse {
-        createdBy ?? UserResponse.empty
-    }
-
-    var latestRepliesPayload: [MessageResponse] {
-        latestReplies
-    }
-
-    var readPayload: [ReadStateResponse] { read ?? [] }
-
-    var threadParticipantPayloads: [ThreadParticipantPayload] { threadParticipants ?? [] }
 
     convenience init(
         parentMessageId: MessageId,
@@ -2532,8 +2320,6 @@ extension ThreadStateResponse {
 
 extension ThreadResponse {
     var cid: ChannelId? { try? ChannelId(cid: channelCid) }
-
-    var extraData: [String: RawJSON] { custom }
 
     var channelDetailPayload: ChannelResponse? {
         if let channelPayload = channel {
@@ -2648,7 +2434,7 @@ extension ThreadParticipantPayload {
     }
 }
 
-private extension UserResponse {
+extension UserResponse {
     static var empty: UserResponse {
         UserResponse(
             id: "",

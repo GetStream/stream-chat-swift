@@ -908,9 +908,9 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.textUpdatedAt = payload.messageTextUpdatedAt?.bridgeDate
         dto.type = payload.type
         dto.command = payload.command
-        dto.args = payload.args
+        dto.args = nil
         dto.parentMessageId = payload.parentId
-        dto.showReplyInChannel = payload.showReplyInChannel
+        dto.showReplyInChannel = payload.showInChannel ?? false
         dto.replyCount = Int32(payload.replyCount)
         if let role = payload.member?.channelRole {
             dto.channelRole = role
@@ -926,8 +926,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.extraData = Data()
         }
 
-        dto.isSilent = payload.isSilent
-        dto.isShadowed = payload.isShadowed
+        dto.isSilent = payload.silent
+        dto.isShadowed = payload.shadowed
         if let deletedForMe = payload.deletedForMe {
             dto.deletedForMe = deletedForMe
         }
@@ -982,7 +982,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             }
         }
 
-        if let location = payload.location {
+        if let location = payload.sharedLocation {
             dto.location = try saveLocation(payload: location, cache: cache)
         }
 
@@ -1068,12 +1068,6 @@ extension NSManagedObjectContext: MessageDatabaseSession {
                 isV1: false,
                 context: self
             )
-        } else if let moderationDetailsPayload = payload.moderationDetails {
-            dto.moderationDetails = MessageModerationDetailsDTO.create(
-                from: moderationDetailsPayload,
-                isV1: true,
-                context: self
-            )
         } else {
             dto.moderationDetails = nil
         }
@@ -1119,23 +1113,16 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         skipDraftUpdate: Bool = false,
         cache: PreWarmedCache?
     ) throws -> MessageDTO {
-        guard payload.channel != nil || cid != nil else {
+        guard cid != nil else {
             throw ClientError.MessagePayloadSavingFailure("""
-            Either `payload.channel` or `cid` must be provided to sucessfuly save the message payload.
-            - `payload.channel` value: \(String(describing: payload.channel))
+            `cid` must be provided to sucessfuly save the message payload.
             - `cid` value: \(String(describing: cid))
             """)
         }
 
-        if let cid = cid, let payloadCid = payload.channel?.cid {
-            log.assert(cid.rawValue == payloadCid, "`cid` provided is different from the `payload.channel.cid`.")
-        }
-
         var channelDTO: ChannelDTO?
 
-        if let channelPayload = payload.channel {
-            channelDTO = try saveChannel(payload: channelPayload, query: nil, cache: cache)
-        } else if let cid = cid {
+        if let cid = cid {
             channelDTO = ChannelDTO.load(cid: cid, context: self)
         } else {
             let description = "Should never happen because either `cid` or `payload.channel` should be present."
@@ -1166,7 +1153,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     ) throws -> MessageDTO {
         let draftDetailsPayload = payload.message
         let channelDTO: ChannelDTO?
-        if let channelPayload = payload.channelPayload {
+        if let channelPayload = payload.channel {
             channelDTO = try saveChannel(payload: channelPayload, query: nil, cache: cache)
         } else {
             channelDTO = ChannelDTO.load(cid: cid, context: self)
@@ -1186,11 +1173,11 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         dto.reactionScores = [:]
         dto.reactionCounts = [:]
         dto.type = MessageType.regular.rawValue
-        dto.command = draftDetailsPayload.command
-        dto.args = draftDetailsPayload.args
+        dto.command = nil
+        dto.args = nil
         dto.parentMessageId = payload.parentId
-        dto.showReplyInChannel = draftDetailsPayload.showReplyInChannel
-        dto.isSilent = draftDetailsPayload.isSilent
+        dto.showReplyInChannel = draftDetailsPayload.showInChannel ?? false
+        dto.isSilent = draftDetailsPayload.silent ?? false
         dto.user = user
         dto.channel = channelDTO
         dto.isDraft = true
@@ -1231,12 +1218,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             dto.quotedMessage = nil
         }
 
-        if let mentionedUsers = draftDetailsPayload.mentionedUsersPayload {
+        if let mentionedUsers = draftDetailsPayload.mentionedUsers {
             dto.mentionedUsers = try Set(mentionedUsers.map { try saveUser(payload: $0) })
             dto.mentionedUserIds = mentionedUsers.map(\.id)
         }
 
-        if let attachments = draftDetailsPayload.attachmentPayloads {
+        if let attachments = draftDetailsPayload.attachments {
             dto.attachments = Set(
                 try attachments.enumerated().map { index, attachment in
                     let id = AttachmentId(cid: cid, messageId: draftDetailsPayload.id, index: index)
@@ -1246,7 +1233,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         do {
-            dto.extraData = try JSONEncoder.default.encode(draftDetailsPayload.extraData)
+            dto.extraData = try JSONEncoder.default.encode(draftDetailsPayload.custom)
         } catch {
             log.error(
                 "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "

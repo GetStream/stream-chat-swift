@@ -261,7 +261,7 @@ extension NSManagedObjectContext {
             )
             dto.extraData = Data()
         }
-        dto.typeRawValue = payload.typeRawValue
+        dto.typeRawValue = payload.type
         dto.id = cid.id
         dto.config = (payload.config?.asChannelConfig ?? .init()).asDTO(context: self, cid: dto.cid)
         if let filterTags = payload.filterTags {
@@ -305,22 +305,22 @@ extension NSManagedObjectContext {
             }
         }
 
-        dto.isDisabled = payload.isDisabled
-        dto.isFrozen = payload.isFrozen
+        dto.isDisabled = payload.disabled
+        dto.isFrozen = payload.frozen
         
         // Backend only returns a boolean
         // for blocked 1:1 channels on channel list query
-        if let isBlocked = payload.isBlocked {
+        if let isBlocked = payload.blocked {
             dto.isBlocked = isBlocked
         }
 
         // Backend only returns a boolean for hidden state
         // on channel query and channel list query
-        if let isHidden = payload.isHidden {
+        if let isHidden = payload.hidden {
             dto.isHidden = isHidden
         }
 
-        dto.cooldownDuration = payload.cooldownDuration
+        dto.cooldownDuration = payload.cooldown ?? 0
         dto.team = payload.team
 
         if let createdByPayload = payload.createdBy {
@@ -354,7 +354,7 @@ extension NSManagedObjectContext {
 
         // Save reads (note that returned reads are for currently fetched members)
         let reads = Set(
-            try payload.channelReads.map {
+            try (payload.read ?? []).map {
                 try saveChannelRead(payload: $0, for: cid, cache: cache)
             }
         )

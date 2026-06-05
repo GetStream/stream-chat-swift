@@ -12,19 +12,19 @@ extension UserResponse {
             id: id,
             name: name,
             imageURL: imageURL,
-            isOnline: isOnline,
-            isBanned: isBanned,
+            isOnline: online,
+            isBanned: banned,
             isFlaggedByCurrentUser: false,
             userRole: userRole,
             teamsRole: teamsRolePayload,
             createdAt: createdAt,
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
+            lastActiveAt: lastActive,
             teams: Set(teams),
             language: language.isEmpty ? nil : TranslationLanguage(languageCode: language),
             avgResponseTime: avgResponseTime,
-            extraData: extraData
+            extraData: custom
         )
     }
 }

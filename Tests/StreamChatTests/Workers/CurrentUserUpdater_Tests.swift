@@ -840,7 +840,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         XCTAssertEqual(sharedLocations?.count, payloads.count)
         for (model, payload) in zip(sharedLocations ?? [], payloads) {
             XCTAssertEqual(model.messageId, payload.messageId)
-            XCTAssertEqual(model.channelId.rawValue, payload.channelId)
+            XCTAssertEqual(model.channelId.rawValue, payload.channelCid)
             XCTAssertEqual(model.latitude, Double(payload.latitude))
             XCTAssertEqual(model.longitude, Double(payload.longitude))
             XCTAssertEqual(model.endAt?.timeIntervalSince1970, payload.endAt?.timeIntervalSince1970)

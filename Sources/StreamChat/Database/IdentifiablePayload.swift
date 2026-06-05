@@ -151,7 +151,7 @@ extension ChannelStateResponseFields: IdentifiablePayloadProxy {
         membership?.fillIds(cache: &cache)
         messages.fillIds(cache: &cache)
         pinnedMessages.fillIds(cache: &cache)
-        channelReads.fillIds(cache: &cache)
+        (read ?? []).fillIds(cache: &cache)
     }
 }
 
@@ -180,10 +180,10 @@ extension ThreadStateResponse: IdentifiablePayloadProxy {
         addId(cache: &cache)
         parentMessage?.fillIds(cache: &cache)
         channelDetailPayload?.fillIds(cache: &cache)
-        createdByPayload.fillIds(cache: &cache)
-        latestRepliesPayload.fillIds(cache: &cache)
-        threadParticipantPayloads.fillIds(cache: &cache)
-        readPayload.fillIds(cache: &cache)
+        (createdBy ?? UserResponse.empty).fillIds(cache: &cache)
+        latestReplies.fillIds(cache: &cache)
+        (threadParticipants ?? []).fillIds(cache: &cache)
+        (read ?? []).fillIds(cache: &cache)
     }
 }
 
@@ -221,14 +221,14 @@ extension MessageResponse: IdentifiablePayload {
 
 extension ReactionResponse: IdentifiablePayload {
     var databaseId: DatabaseId? {
-        MessageReactionDTO.createId(userId: userPayload.id, messageId: messageId, type: reactionType)
+        MessageReactionDTO.createId(userId: user.id, messageId: messageId, type: reactionType)
     }
 
     static let modelClass: (IdentifiableDatabaseObject).Type? = MessageReactionDTO.self
 
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        userPayload.fillIds(cache: &cache)
+        user.fillIds(cache: &cache)
     }
 }
 
@@ -238,7 +238,7 @@ extension ChannelMemberResponse: IdentifiablePayload {
 
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
         addId(cache: &cache)
-        userPayload?.fillIds(cache: &cache)
+        user?.fillIds(cache: &cache)
     }
 }
 

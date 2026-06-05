@@ -53,7 +53,7 @@ extension NSManagedObjectContext {
         guard let currentUser = currentUser else {
             throw ClientError.CurrentUserDoesNotExist()
         }
-        guard let channelPayload = payload.channelPayload else {
+        guard let channelPayload = payload.channel else {
             throw ClientError.Unknown("Channel mute payload is missing channel data.")
         }
 
@@ -64,7 +64,7 @@ extension NSManagedObjectContext {
         dto.currentUser = currentUser
         dto.createdAt = payload.createdAt.bridgeDate
         dto.updatedAt = payload.updatedAt.bridgeDate
-        dto.expiresAt = payload.expiresAt?.bridgeDate
+        dto.expiresAt = payload.expires?.bridgeDate
 
         return dto
     }

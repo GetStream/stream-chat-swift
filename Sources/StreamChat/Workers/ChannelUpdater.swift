@@ -237,7 +237,7 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         ) { [weak self] (result: Result<MuteChannelResponse, Error>) in
             switch result {
             case .success(let payload):
-                guard let channelMute = payload.primaryChannelMute else {
+                guard let channelMute = payload.channelMute ?? payload.channelMutes?.first else {
                     completion?(ClientError.Unknown("Mute channel response is missing channel mute data."))
                     return
                 }

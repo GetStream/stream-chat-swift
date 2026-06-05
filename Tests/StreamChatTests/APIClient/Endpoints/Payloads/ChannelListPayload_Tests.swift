@@ -237,13 +237,12 @@ final class ChannelStateResponseFields_Tests: XCTestCase {
         XCTAssertNil(firstMessage.deletedAt)
         XCTAssertEqual(firstMessage.text, "sadfadf")
         XCTAssertNil(firstMessage.command)
-        XCTAssertNil(firstMessage.args)
         XCTAssertNil(firstMessage.parentId)
-        XCTAssertFalse(firstMessage.showReplyInChannel)
+        XCTAssertFalse(firstMessage.showInChannel ?? false)
         XCTAssert(firstMessage.mentionedUsers.isEmpty)
         XCTAssert(firstMessage.reactionScores.isEmpty)
         XCTAssertEqual(firstMessage.replyCount, 0)
-        XCTAssertFalse(firstMessage.isSilent)
+        XCTAssertFalse(firstMessage.silent)
 
         XCTAssertEqual(payload.pendingMessages?.count ?? 0, 1)
         let pendingMessage = try XCTUnwrap(payload.pendingMessages?.first)
@@ -255,13 +254,13 @@ final class ChannelStateResponseFields_Tests: XCTestCase {
         XCTAssertEqual(channel.cid, "messaging:general")
         XCTAssertEqual(channel.createdAt, "2019-05-10T14:03:49.505006Z".toDate())
         XCTAssertNotNil(channel.createdBy)
-        XCTAssertEqual(channel.typeRawValue, "messaging")
-        XCTAssertEqual(channel.isDisabled, true)
-        XCTAssertEqual(channel.isFrozen, true)
+        XCTAssertEqual(channel.type, "messaging")
+        XCTAssertEqual(channel.disabled, true)
+        XCTAssertEqual(channel.frozen, true)
         XCTAssertEqual(channel.memberCount, 4)
         XCTAssertEqual(channel.messageCount, 5)
         XCTAssertEqual(channel.updatedAt, "2019-05-10T14:03:49.505006Z".toDate())
-        XCTAssertEqual(channel.cooldownDuration, 10)
+        XCTAssertEqual(channel.cooldown ?? 0, 10)
         XCTAssertEqual(channel.team, "GREEN")
 
         XCTAssertEqual(channel.name, "The water cooler")
@@ -270,9 +269,9 @@ final class ChannelStateResponseFields_Tests: XCTestCase {
             "https://images.unsplash.com/photo-1512138664757-360e0aad5132?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2851&q=80"
         )
 
-        let firstChannelRead = payload.channelReads.first!
-        XCTAssertEqual(firstChannelRead.lastReadAt, "2020-06-10T07:43:11.812841984Z".toDate())
-        XCTAssertEqual(firstChannelRead.unreadMessagesCount, 0)
+        let firstChannelRead = (payload.read ?? []).first!
+        XCTAssertEqual(firstChannelRead.lastRead, "2020-06-10T07:43:11.812841984Z".toDate())
+        XCTAssertEqual(firstChannelRead.unreadMessages, 0)
         XCTAssertEqual(firstChannelRead.user.id, "broken-waterfall-5")
 
         let config = try XCTUnwrap(channel.config?.asChannelConfig)

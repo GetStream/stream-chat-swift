@@ -98,8 +98,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             messageId: .unique,
             parentId: .unique,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
-            deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1),
+            deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
         let event = MessageDeletedEventDTO(
@@ -119,7 +119,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageDeletedEvent_whenMessageIsSentByCurrentUser_doesNotDecrementUnreadCount() throws {
@@ -129,8 +129,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             messageId: .unique,
             parentId: nil,
             authorUserId: currentUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
-            deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1),
+            deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
         let event = MessageDeletedEventDTO(
@@ -150,7 +150,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageDeletedEvent_whenDeletedMessageIsSentByMutedUser_doesNotDecrementUnreadCount() throws {
@@ -166,8 +166,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             type: .deleted,
             messageId: .unique,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
-            deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1),
+            deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
         let event = MessageDeletedEventDTO(
@@ -187,7 +187,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageDeletedEvent_whenMessageIsSoftDeleted_doesNotDecrementUnreadCount() throws {
@@ -196,8 +196,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             type: .deleted,
             messageId: .unique,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
-            deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1),
+            deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
         let event = MessageDeletedEventDTO(
@@ -217,7 +217,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageDeletedEvent_whenMessageIsSilent_doesNotDecrementUnreadCount() throws {
@@ -225,8 +225,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let silentMessage: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
-            deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2),
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1),
+            deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2),
             isSilent: true
         )
 
@@ -247,7 +247,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageDeletedEvent_whenMessageIsThreadReply_doesNotDecrementUnreadCount() throws {
@@ -258,8 +258,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             parentId: .unique,
             showReplyInChannel: false,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
-            deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1),
+            deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
         let event = MessageDeletedEventDTO(
@@ -279,7 +279,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageDeletedEvent_whenMessageIsSystem_decrementsUnreadCount() throws {
@@ -288,8 +288,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             type: .system,
             messageId: .unique,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
-            deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1),
+            deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
         let event = MessageDeletedEventDTO(
@@ -309,7 +309,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount - 1)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages - 1)
     }
 
     func test_messageDeletedEvent_whenMessageIsRead_doesNotDecrementUnreadCount() throws {
@@ -317,8 +317,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let message: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(-1),
-            deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(-1),
+            deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(1)
         )
 
         let event = MessageDeletedEventDTO(
@@ -338,7 +338,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageDeletedEvent_whenMessageIsRegular_decrementsUnreadMessagesCount() throws {
@@ -347,8 +347,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             type: .regular,
             messageId: .unique,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
-            deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1),
+            deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
         let event = MessageDeletedEventDTO(
@@ -368,7 +368,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount - 1)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages - 1)
     }
 
     func test_messageDeletedEvent_whenMessageIsThreadReplySentToMainChannel_decrementsUnreadMessagesCount() throws {
@@ -379,8 +379,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             parentId: .unique,
             showReplyInChannel: true,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
-            deletedAt: currentUserReadPayload.lastReadAt.addingTimeInterval(2)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1),
+            deletedAt: currentUserReadPayload.lastRead.addingTimeInterval(2)
         )
 
         let event = MessageDeletedEventDTO(
@@ -400,7 +400,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount - 1)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages - 1)
     }
 
     // MARK: - message.new (no existing ChannelReadDTO — readEventsEnabled = false scenario)
@@ -607,7 +607,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             messageId: .unique,
             parentId: .unique,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1)
         )
 
         let messageNewEvent = MessageNewEventDTO(
@@ -627,7 +627,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageNewEvent_whenMessageIsSentByCurrentUser_doesNotIncrementUnreadCount() throws {
@@ -636,7 +636,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             messageId: .unique,
             parentId: nil,
             authorUserId: currentUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1),
             isSilent: false
         )
 
@@ -657,7 +657,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageNewEvent_whenMessageIsSentByMutedUser_doesNotIncrementUnreadCount() throws {
@@ -673,7 +673,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             type: .regular,
             messageId: .unique,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1)
         )
 
         let messageNewEvent = MessageNewEventDTO(
@@ -693,7 +693,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageNewEvent_whenMessageIsSilent_doesNotIncrementUnreadCount() throws {
@@ -701,7 +701,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let silentMessage: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1),
             isSilent: true
         )
 
@@ -722,7 +722,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageNewEvent_whenMessageIsThreadReply_doesNotIncrementUnreadCount() throws {
@@ -733,7 +733,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             parentId: .unique,
             showReplyInChannel: false,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1)
         )
 
         let messageNewEvent = MessageNewEventDTO(
@@ -753,7 +753,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageNewEvent_whenMessageIsSystem_incrementsUnreadCount() throws {
@@ -762,7 +762,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             type: .system,
             messageId: .unique,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1)
         )
         
         // Mark id as new message
@@ -785,7 +785,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount + 1)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages + 1)
     }
 
     func test_messageNewEvent_whenMessageIsShadowed_doesNotIncrementUnreadCount() throws {
@@ -794,7 +794,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             type: .regular,
             messageId: .unique,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1),
             isShadowed: true
         )
 
@@ -815,7 +815,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageNewEvent_whenMessageIsRead_doesNotIncrementUnreadCount() throws {
@@ -824,7 +824,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             messageId: .unique,
             parentId: nil,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(-1)
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(-1)
         )
 
         let messageNewEvent = MessageNewEventDTO(
@@ -844,7 +844,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageNewEvent_whenMessageIsRegular_incrementsUnreadMessagesCount_messageNotInDatabase() throws {
@@ -860,7 +860,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount + 1)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages + 1)
     }
 
     func test_messageNewEvent_whenMessageIsRegular_incrementsUnreadMessagesCount_messageAlreadyInDatabase() throws {
@@ -876,7 +876,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_messageNewEvent_whenMessageIsThreadReplySentToMainChannel_incrementsUnreadMessagesCount_messageNotInDatabase() throws {
@@ -892,7 +892,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount + 1)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages + 1)
     }
 
     func test_messageNewEvent_whenMessageIsThreadReplySentToMainChannel_incrementsUnreadMessagesCount_messageAlreadyInDatabase() throws {
@@ -908,7 +908,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // THEN
         let read = try XCTUnwrap(currentUserReadDTO)
-        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessagesCount)
+        XCTAssertEqual(Int(read.unreadMessageCount), currentUserReadPayload.unreadMessages)
     }
 
     func test_notificationMessageNewEvent_increasesChannelReadUnreadCount() throws {
@@ -1037,7 +1037,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let channelId = ChannelId.unique
         let payload = dummyPayload(with: channelId)
 
-        assert(payload.channelReads.count == 1)
+        assert((payload.read ?? []).count == 1)
 
         // Save dummy payload to database
         try database.writeSynchronously { (session) in
@@ -1080,7 +1080,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let channelId = ChannelId.unique
         let payload = dummyPayload(with: channelId)
 
-        assert(payload.channelReads.count == 1)
+        assert((payload.read ?? []).count == 1)
 
         // Save dummy payload to database
         try database.writeSynchronously { (session) in
@@ -1126,7 +1126,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let channelId = ChannelId.unique
         let payload = dummyPayload(with: channelId)
 
-        assert(payload.channelReads.count == 1)
+        assert((payload.read ?? []).count == 1)
 
         // Save dummy payload to database
         try database.writeSynchronously { (session) in
@@ -1169,7 +1169,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let channelId = ChannelId.unique
         let payload = dummyPayload(with: channelId)
 
-        assert(payload.channelReads.count == 1)
+        assert((payload.read ?? []).count == 1)
 
         // Save dummy payload to database
         try database.writeSynchronously { (session) in
@@ -1236,7 +1236,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let channelId = ChannelId.unique
         let payload = dummyPayload(with: channelId)
 
-        assert(payload.channelReads.count == 1)
+        assert((payload.read ?? []).count == 1)
 
         // Save dummy payload to database
         try database.writeSynchronously { (session) in
@@ -1284,7 +1284,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let channelId = ChannelId.unique
         let payload = dummyPayload(with: channelId)
 
-        assert(payload.channelReads.count == 1)
+        assert((payload.read ?? []).count == 1)
 
         // Save dummy payload to database
         try database.writeSynchronously { (session) in
@@ -1335,7 +1335,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let channelId = ChannelId.unique
         let payload = dummyPayload(with: channelId)
 
-        assert(payload.channelReads.count == 1)
+        assert((payload.read ?? []).count == 1)
 
         // Save dummy payload to database
         try database.writeSynchronously { (session) in
@@ -1381,7 +1381,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
         let channelId = ChannelId.unique
         let payload = dummyPayload(with: channelId)
 
-        assert(payload.channelReads.count == 1)
+        assert((payload.read ?? []).count == 1)
 
         // Save dummy payload to database
         try database.writeSynchronously { (session) in
@@ -1407,8 +1407,8 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
 
         // Assert that the read event entity is not updated
         AssertAsync {
-            Assert.staysEqual(loadedChannel?.reads.first?.unreadMessagesCount, payload.channelReads.first?.unreadMessagesCount)
-            Assert.staysEqual(loadedChannel?.reads.first?.lastReadAt, payload.channelReads.first?.lastReadAt)
+            Assert.staysEqual(loadedChannel?.reads.first?.unreadMessagesCount, (payload.read ?? []).first?.unreadMessages)
+            Assert.staysEqual(loadedChannel?.reads.first?.lastReadAt, (payload.read ?? []).first?.lastRead)
         }
     }
 
@@ -1576,7 +1576,7 @@ final class ChannelReadUpdaterMiddleware_Tests: XCTestCase {
             parentId: type == .reply ? .unique : nil,
             showReplyInChannel: type == .reply,
             authorUserId: anotherUserResponse.id,
-            createdAt: currentUserReadPayload.lastReadAt.addingTimeInterval(1),
+            createdAt: currentUserReadPayload.lastRead.addingTimeInterval(1),
             isSilent: false
         )
 

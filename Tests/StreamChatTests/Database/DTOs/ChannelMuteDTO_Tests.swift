@@ -34,7 +34,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             updatedAt: .unique,
             expiresAt: .unique
         )
-        let mutedChannel = try XCTUnwrap(mutePayload.channelPayload)
+        let mutedChannel = try XCTUnwrap(mutePayload.channel)
 
         try database.writeSynchronously { session in
             try session.saveCurrentUser(payload: currentUserResponse)
@@ -44,7 +44,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let channel: ChatChannel = try XCTUnwrap(database.viewContext.channel(cid: try ChannelId(cid: mutedChannel.cid))?.asModel())
         XCTAssertEqual(channel.muteDetails?.createdAt, mutePayload.createdAt)
         XCTAssertEqual(channel.muteDetails?.updatedAt, mutePayload.updatedAt)
-        XCTAssertEqual(channel.muteDetails?.expiresAt, mutePayload.expiresAt)
+        XCTAssertEqual(channel.muteDetails?.expiresAt, mutePayload.expires)
 
         let currentUser: CurrentChatUser = try XCTUnwrap(database.viewContext.currentUser?.asModel())
         XCTAssertEqual(currentUser.mutedChannels, [channel])
@@ -94,7 +94,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         let muteDTO = try XCTUnwrap(loadedMuteDTO)
         XCTAssertEqual(muteDTO.createdAt.bridgeDate, mute.createdAt)
         XCTAssertEqual(muteDTO.updatedAt.bridgeDate, mute.updatedAt)
-        XCTAssertEqual(muteDTO.expiresAt?.bridgeDate, mute.expiresAt)
+        XCTAssertEqual(muteDTO.expiresAt?.bridgeDate, mute.expires)
         XCTAssertEqual(muteDTO.currentUser.user.id, currentUser.id)
         XCTAssertEqual(muteDTO.channel.cid, channel.cid)
     }
@@ -134,7 +134,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
         )
         XCTAssertEqual(muteDTO.createdAt.bridgeDate, updatedMute.createdAt)
         XCTAssertEqual(muteDTO.updatedAt.bridgeDate, updatedMute.updatedAt)
-        XCTAssertEqual(muteDTO.expiresAt?.bridgeDate, updatedMute.expiresAt)
+        XCTAssertEqual(muteDTO.expiresAt?.bridgeDate, updatedMute.expires)
         XCTAssertEqual(muteDTO.currentUser.user.id, currentUser.id)
         XCTAssertEqual(muteDTO.channel.cid, channel.cid)
     }

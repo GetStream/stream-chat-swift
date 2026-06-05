@@ -37,12 +37,12 @@ final class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.id, loadedUserDTO.id)
             Assert.willBeEqual(payload.name, loadedUserDTO.name)
             Assert.willBeEqual(payload.imageURL, loadedUserDTO.imageURL)
-            Assert.willBeEqual(payload.isOnline, loadedUserDTO.isOnline)
-            Assert.willBeEqual(payload.isBanned, loadedUserDTO.isBanned)
+            Assert.willBeEqual(payload.online, loadedUserDTO.isOnline)
+            Assert.willBeEqual(payload.banned, loadedUserDTO.isBanned)
             Assert.willBeEqual(payload.userRole.rawValue, loadedUserDTO.userRoleRaw)
             Assert.willBeEqual(payload.createdAt, loadedUserDTO.userCreatedAt.bridgeDate)
             Assert.willBeEqual(payload.updatedAt, loadedUserDTO.userUpdatedAt.bridgeDate)
-            Assert.willBeEqual(payload.lastActiveAt, loadedUserDTO.lastActivityAt?.bridgeDate)
+            Assert.willBeEqual(payload.lastActive, loadedUserDTO.lastActivityAt?.bridgeDate)
             Assert.willBeEqual(payload.teams, loadedUserDTO.teams)
             Assert.willBeEqual(loadedUserDTO.language, "pt")
             Assert.willBeEqual(
@@ -101,12 +101,12 @@ final class UserDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.id, loadedUserModel.id)
             Assert.willBeEqual(payload.name, loadedUserModel.name)
             Assert.willBeEqual(payload.imageURL, loadedUserModel.imageURL)
-            Assert.willBeEqual(payload.isOnline, loadedUserModel.isOnline)
-            Assert.willBeEqual(payload.isBanned, loadedUserModel.isBanned)
+            Assert.willBeEqual(payload.online, loadedUserModel.isOnline)
+            Assert.willBeEqual(payload.banned, loadedUserModel.isBanned)
             Assert.willBeEqual(payload.userRole, loadedUserModel.userRole)
             Assert.willBeEqual(payload.createdAt, loadedUserModel.userCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedUserModel.userUpdatedAt)
-            Assert.willBeEqual(payload.lastActiveAt, loadedUserModel.lastActiveAt)
+            Assert.willBeEqual(payload.lastActive, loadedUserModel.lastActiveAt)
             Assert.willBeEqual(payload.teams.sorted(), loadedUserModel.teams.sorted())
             Assert.willBeEqual(payload.extraData, loadedUserModel.extraData)
             Assert.willBeEqual(payload.language, loadedUserModel.language!.languageCode)
@@ -127,7 +127,7 @@ final class UserDTO_Tests: XCTestCase {
         let loadedUserResponse = database.viewContext.user(id: userId)?.asRequestBody()
 
         XCTAssertEqual(payload.id, loadedUserResponse?.id)
-        XCTAssertEqual(payload.extraData, loadedUserResponse?.extraData)
+        XCTAssertEqual(payload.custom, loadedUserResponse?.custom ?? [:])
     }
 
     func test_DTO_resetsItsEphemeralValues() throws {
@@ -217,7 +217,7 @@ final class UserDTO_Tests: XCTestCase {
 
         // Get parameters and sort.
         let lastActiveDates = [payload1, payload2, payload3, payload4]
-            .compactMap(\.lastActiveAt)
+            .compactMap(\.lastActive)
             .sorted(by: { $0 > $1 })
 
         let ids = [payload1, payload2, payload3, payload4]

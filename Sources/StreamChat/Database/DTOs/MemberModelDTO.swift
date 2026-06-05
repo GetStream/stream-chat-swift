@@ -116,7 +116,7 @@ extension NSManagedObjectContext {
         let dto = MemberDTO.loadOrCreate(userId: payload.resolvedUserId, channelId: channelId, context: self, cache: cache)
 
         // Save user-part of member first
-        if let userPayload = payload.userPayload {
+        if let userPayload = payload.user {
             dto.user = try saveUser(payload: userPayload)
         }
 
@@ -127,19 +127,17 @@ extension NSManagedObjectContext {
 
         dto.memberCreatedAt = payload.createdAt.bridgeDate
         dto.memberUpdatedAt = payload.updatedAt.bridgeDate
-        dto.isBanned = payload.isBanned ?? false
-        dto.isShadowBanned = payload.isShadowBanned ?? false
-        dto.banExpiresAt = payload.banExpiresAt?.bridgeDate
-        dto.isInvited = payload.isInvited ?? false
+        dto.isBanned = payload.banned
+        dto.isShadowBanned = payload.shadowBanned
+        dto.banExpiresAt = payload.banExpires?.bridgeDate
+        dto.isInvited = payload.invited ?? false
         dto.inviteAcceptedAt = payload.inviteAcceptedAt?.bridgeDate
         dto.inviteRejectedAt = payload.inviteRejectedAt?.bridgeDate
         dto.archivedAt = payload.archivedAt?.bridgeDate
         dto.pinnedAt = payload.pinnedAt?.bridgeDate
         dto.notificationsMuted = payload.notificationsMuted
 
-        if let extraData = payload.extraData {
-            dto.extraData = try? JSONEncoder.default.encode(extraData)
-        }
+        dto.extraData = try? JSONEncoder.default.encode(payload.custom)
 
         if let query = query {
             let queryDTO = try saveQuery(query)

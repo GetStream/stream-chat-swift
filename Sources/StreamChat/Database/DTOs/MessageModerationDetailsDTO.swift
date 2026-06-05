@@ -50,6 +50,20 @@ extension MessageModerationDetails {
             platformCircumvented: dto.platformCircumvented
         )
     }
+
+    /// Maps a V2 moderation response (`MessageResponse.moderation`) directly to the domain model,
+    /// mirroring the persistence path so in-memory and DB-loaded messages agree on the moderation action.
+    init(fromV2 moderation: ModerationV2Response) {
+        self.init(
+            originalText: moderation.originalText,
+            action: MessageModerationAction(fromV2: moderation.action),
+            textHarms: moderation.textHarms,
+            imageHarms: moderation.imageHarms,
+            blocklistMatched: moderation.blocklistMatched,
+            semanticFilterMatched: moderation.semanticFilterMatched,
+            platformCircumvented: moderation.platformCircumvented ?? false
+        )
+    }
 }
 
 private extension MessageModerationAction {

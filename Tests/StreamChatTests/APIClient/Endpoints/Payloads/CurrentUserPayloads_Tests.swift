@@ -19,9 +19,9 @@ final class OwnUserResponse_Tests: XCTestCase {
     func test_currentUserJSON_isDecodedCorrectly() throws {
         let payload = try JSONDecoder.default.decode(OwnUserResponse.self, from: currentUserJSON)
         XCTAssertEqual(payload.id, "broken-waterfall-5")
-        XCTAssertEqual(payload.isBanned, false)
+        XCTAssertEqual(payload.banned, false)
         XCTAssertEqual(payload.createdAt, "2019-12-12T15:33:46.488935Z".toDate())
-        XCTAssertEqual(payload.lastActiveAt, "2020-06-10T13:24:00.501797Z".toDate())
+        XCTAssertEqual(payload.lastActive, "2020-06-10T13:24:00.501797Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-10T14:11:29.946106Z".toDate())
         XCTAssertEqual(payload.name, "Broken Waterfall")
         XCTAssertEqual(payload.teams.count, 3)
@@ -30,21 +30,21 @@ final class OwnUserResponse_Tests: XCTestCase {
             URL(string: "https://getstream.io/random_svg/?id=broken-waterfall-5&amp;name=Broken+waterfall")!
         )
         XCTAssertEqual(payload.userRole, .user)
-        XCTAssertEqual(payload.isOnline, true)
+        XCTAssertEqual(payload.online, true)
         XCTAssertEqual(payload.devices.map(\.id), [
             "cjqZTUHaQIykfH-706Xefw:APA91bF0Ig0gi4ro6w3iPfmE8",
             "e25wfsxcnyA:APA91bFgZR_hfd6GvR42OqCUgIhvpBajjxw7"
         ])
-        XCTAssertEqual(payload.mutedUsers.map(\.mutedUser.id), ["dawn-grass-7"])
-        XCTAssertEqual(payload.extraData, ["secret_note": .string("Anaking is Vader!")])
-        XCTAssertEqual(payload.mutedChannels.count, 1)
-        XCTAssertEqual(payload.mutedChannels[0].userPayload?.id, "broken-waterfall-5")
-        XCTAssertEqual(payload.mutedChannels[0].channelPayload?.cid, "messaging:B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF")
-        XCTAssertEqual(payload.mutedChannels[0].createdAt, "2021-03-22T10:23:52.516225Z".toDate())
-        XCTAssertEqual(payload.mutedChannels[0].updatedAt, "2021-04-22T10:23:52.516225Z".toDate())
-        XCTAssertEqual(payload.isInvisible, true)
-        XCTAssertNotNil(payload.pushPreference)
-        XCTAssertEqual(payload.pushPreference?.chatLevel, "mentions")
-        XCTAssertEqual(payload.pushPreference?.disabledUntil, "2024-12-31T23:59:59.999Z".toDate())
+        XCTAssertEqual(payload.mutes.map(\.mutedUser.id), ["dawn-grass-7"])
+        XCTAssertEqual(payload.custom, ["secret_note": .string("Anaking is Vader!")])
+        XCTAssertEqual(payload.channelMutes.count, 1)
+        XCTAssertEqual(payload.channelMutes[0].user?.id, "broken-waterfall-5")
+        XCTAssertEqual(payload.channelMutes[0].channel?.cid, "messaging:B1DFF9C5-E6A6-4BFA-9375-DC5E8C6852FF")
+        XCTAssertEqual(payload.channelMutes[0].createdAt, "2021-03-22T10:23:52.516225Z".toDate())
+        XCTAssertEqual(payload.channelMutes[0].updatedAt, "2021-04-22T10:23:52.516225Z".toDate())
+        XCTAssertEqual(payload.invisible, true)
+        XCTAssertNotNil(payload.pushPreferences)
+        XCTAssertEqual(payload.pushPreferences?.chatLevel, "mentions")
+        XCTAssertEqual(payload.pushPreferences?.disabledUntil, "2024-12-31T23:59:59.999Z".toDate())
     }
 }

@@ -10,7 +10,7 @@ protocol DecodableEntity: Decodable {
 }
 
 extension MessageResponse: DecodableEntity {}
-extension ReactionResponse: DecodableEntity {}
-extension UserResponse: DecodableEntity {}
-extension OwnUserResponse: DecodableEntity {}
+extension ReactionResponse: DecodableEntity { var extraData: [String: RawJSON] { custom } }
+extension UserResponse: DecodableEntity { var extraData: [String: RawJSON] { custom } }
+extension OwnUserResponse: DecodableEntity { var extraData: [String: RawJSON] { custom } }
 extension ChannelResponse: DecodableEntity {}

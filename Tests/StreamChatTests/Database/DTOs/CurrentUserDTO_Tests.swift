@@ -77,8 +77,8 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
             )
         )
 
-        let mutedUserIDs = Set(payload.mutedUsers.map(\.mutedUser.id))
-        let mutedChannelIDs = Set(payload.mutedChannels.compactMap(\.channelPayload?.cid))
+        let mutedUserIDs = Set(payload.mutes.map(\.mutedUser.id))
+        let mutedChannelIDs = Set(payload.channelMutes.compactMap(\.channel?.cid))
 
         // Asynchronously save the payload to the db
         try database.writeSynchronously { session in
@@ -91,13 +91,13 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         )
 
         XCTAssertEqual(payload.id, loadedCurrentUser.id)
-        XCTAssertEqual(payload.isOnline, loadedCurrentUser.isOnline)
-        XCTAssertEqual(payload.isInvisible, loadedCurrentUser.isInvisible)
-        XCTAssertEqual(payload.isBanned, loadedCurrentUser.isBanned)
+        XCTAssertEqual(payload.online, loadedCurrentUser.isOnline)
+        XCTAssertEqual(payload.invisible, loadedCurrentUser.isInvisible)
+        XCTAssertEqual(payload.banned, loadedCurrentUser.isBanned)
         XCTAssertEqual(payload.userRole, loadedCurrentUser.userRole)
         XCTAssertEqual(payload.createdAt, loadedCurrentUser.userCreatedAt)
         XCTAssertEqual(payload.updatedAt, loadedCurrentUser.userUpdatedAt)
-        XCTAssertEqual(payload.lastActiveAt, loadedCurrentUser.lastActiveAt)
+        XCTAssertEqual(payload.lastActive, loadedCurrentUser.lastActiveAt)
         XCTAssert(loadedCurrentUser.unreadCount.isEqual(toPayload: payload.unreadCountPayload) == true)
         XCTAssertEqual(payload.extraData, loadedCurrentUser.extraData)
         XCTAssertEqual(mutedUserIDs, Set(loadedCurrentUser.mutedUsers.map(\.id)))
@@ -109,8 +109,8 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.readReceipts?.enabled)
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.typingIndicators?.enabled)
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.deliveryReceipts?.enabled)
-        XCTAssertEqual(payload.pushPreference?.chatLevel, loadedCurrentUser.pushPreference?.level.rawValue)
-        XCTAssertNearlySameDate(payload.pushPreference?.disabledUntil, loadedCurrentUser.pushPreference?.disabledUntil)
+        XCTAssertEqual(payload.pushPreferences?.chatLevel, loadedCurrentUser.pushPreference?.level.rawValue)
+        XCTAssertNearlySameDate(payload.pushPreferences?.disabledUntil, loadedCurrentUser.pushPreference?.disabledUntil)
     }
 
     func test_savingCurrentUser_removesCurrentDevice() throws {
@@ -261,7 +261,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(try! database.viewContext.count(for: allMutesRequest), 2)
         XCTAssertEqual(
             Set(database.viewContext.currentUser?.channelMutes.map(\.channel.cid) ?? []),
-            Set(payloadWithUpdatedMutes.mutedChannels.compactMap(\.channelPayload?.cid))
+            Set(payloadWithUpdatedMutes.channelMutes.compactMap(\.channel?.cid))
         )
     }
 

@@ -79,10 +79,10 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: .unique,
             custom: [:],
-            message: .dummy(messageId: messageId, authorUserId: reactionPayload.userPayload.id),
+            message: .dummy(messageId: messageId, authorUserId: reactionPayload.user.id),
             messageId: messageId,
             reaction: reactionPayload,
-            user: UserResponseCommonFields(reactionPayload.userPayload)
+            user: UserResponseCommonFields(reactionPayload.user)
         )
 
         // Simulate `ReactionDeletedEvent` event.
@@ -147,7 +147,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let reaction = try XCTUnwrap(
             database.viewContext.reaction(
                 messageId: reactionPayload.messageId,
-                userId: reactionPayload.userPayload.id,
+                userId: reactionPayload.user.id,
                 type: reactionPayload.reactionType
             )?.asModel()
         )
@@ -201,7 +201,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         let reaction = try XCTUnwrap(
             database.viewContext.reaction(
                 messageId: messageId,
-                userId: reactionPayload.userPayload.id,
+                userId: reactionPayload.user.id,
                 type: reactionPayload.reactionType
             )?.asModel()
         )

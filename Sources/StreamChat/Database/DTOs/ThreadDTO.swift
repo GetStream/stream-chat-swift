@@ -242,7 +242,7 @@ extension NSManagedObjectContext {
             cache: cache
         )
 
-        let latestRepliesDTO: [MessageDTO] = try payload.latestRepliesPayload.map { replyPayload in
+        let latestRepliesDTO: [MessageDTO] = try payload.latestReplies.map { replyPayload in
             let replyDTO = try saveMessage(
                 payload: replyPayload,
                 channelDTO: channelDTO,
@@ -252,7 +252,7 @@ extension NSManagedObjectContext {
             return replyDTO
         }
 
-        let threadParticipantsDTO: [ThreadParticipantDTO] = try payload.threadParticipantPayloads.map { participantPayload in
+        let threadParticipantsDTO: [ThreadParticipantDTO] = try (payload.threadParticipants ?? []).map { participantPayload in
             let participantDTO = try saveThreadParticipant(
                 payload: participantPayload,
                 threadId: payload.parentMessageId,
@@ -261,7 +261,7 @@ extension NSManagedObjectContext {
             return participantDTO
         }
 
-        let readsDTO: [ThreadReadDTO] = try payload.readPayload.map { readPayload in
+        let readsDTO: [ThreadReadDTO] = try (payload.read ?? []).map { readPayload in
             let readDTO = try saveThreadRead(
                 payload: readPayload,
                 parentMessageId: payload.parentMessageId,
@@ -270,19 +270,19 @@ extension NSManagedObjectContext {
             return readDTO
         }
 
-        let createdByUserDTO = try saveUser(payload: payload.createdByPayload)
+        let createdByUserDTO = try saveUser(payload: payload.createdBy ?? UserResponse.empty)
 
         let extraData: Data
         do {
-            extraData = try JSONEncoder.default.encode(payload.extraData)
+            extraData = try JSONEncoder.default.encode(payload.custom)
         } catch {
             extraData = Data()
         }
 
         var currentUserUnreadCount = 0
         if let currentUserId = currentUser?.user.id {
-            let currentUserRead = payload.readPayload.first(where: { $0.user.id == currentUserId })
-            currentUserUnreadCount = currentUserRead?.unreadMessagesCount ?? 0
+            let currentUserRead = (payload.read ?? []).first(where: { $0.user.id == currentUserId })
+            currentUserUnreadCount = currentUserRead?.unreadMessages ?? 0
         }
 
         if let draft = payload.draft {
@@ -346,7 +346,7 @@ extension NSManagedObjectContext {
 
         let extraData: Data
         do {
-            extraData = try JSONEncoder.default.encode(partialPayload.extraData)
+            extraData = try JSONEncoder.default.encode(partialPayload.custom)
         } catch {
             extraData = Data()
         }

@@ -248,7 +248,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         }
 
         // WHEN
-        let newLastReadAt = read.lastReadAt.addingTimeInterval(10)
+        let newLastReadAt = read.lastRead.addingTimeInterval(10)
         database.viewContext.markChannelAsRead(
             cid: (channel.channel?.channelId ?? .unique),
             userId: read.user.id,
@@ -339,12 +339,12 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let ownMessageReadByAnotherUser: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
-            createdAt: anotherUserRead.lastReadAt.addingTimeInterval(-5)
+            createdAt: anotherUserRead.lastRead.addingTimeInterval(-5)
         )
         let ownMessageUnreadByAnotherUser: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
-            createdAt: anotherUserRead.lastReadAt.addingTimeInterval(5)
+            createdAt: anotherUserRead.lastRead.addingTimeInterval(5)
         )
 
         let channel: ChannelStateResponseFields = .dummy(
@@ -875,8 +875,8 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // THEN
         XCTAssertEqual(loadedRead.user.id, read.user.id)
-        XCTAssertEqual(loadedRead.lastReadAt.bridgeDate, read.lastReadAt)
-        XCTAssertTrue(loadedRead.unreadMessageCount == read.unreadMessagesCount)
+        XCTAssertEqual(loadedRead.lastReadAt.bridgeDate, read.lastRead)
+        XCTAssertTrue(loadedRead.unreadMessageCount == read.unreadMessages)
     }
 
     func test_loadOrCreateChannelRead_channelReadNotExist_returnsExpectedResult() throws {

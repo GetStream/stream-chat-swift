@@ -37,7 +37,7 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
                     throw ClientError.ChannelDoesNotExist(cid: cid)
                 }
 
-                if !event.message.isShadowed && event.message.campaignId == nil && !channelDTO.isBlocked {
+                if !event.message.shadowed && event.message.campaignId == nil && !channelDTO.isBlocked {
                     channelDTO.isHidden = false
                 }
 
@@ -49,7 +49,7 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
                     throw ClientError.ChannelDoesNotExist(cid: cid)
                 }
 
-                if !event.message.isShadowed && event.message.campaignId == nil && !channelDTO.isBlocked {
+                if !event.message.shadowed && event.message.campaignId == nil && !channelDTO.isBlocked {
                     channelDTO.isHidden = false
                 }
 
