@@ -58,7 +58,7 @@ extension ChannelStateResponseFields {
             messageCount: channelPayload?.messageCount,
             reads: mappedReads,
             cooldownDuration: channelPayload?.cooldown ?? 0,
-            extraData: channelPayload?.extraData ?? [:],
+            extraData: channelPayload?.custom ?? [:],
             latestMessages: latestMessages,
             lastMessageFromCurrentUser: latestMessages.first { $0.isSentByCurrentUser },
             pinnedMessages: pinnedMessages.compactMap {

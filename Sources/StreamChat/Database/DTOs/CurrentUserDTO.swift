@@ -108,7 +108,7 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
             dto.pushPreference = try savePushPreference(id: payload.id, payload: pushPreference)
         }
 
-        let mutedUsers = try payload.mutes.map { try saveUser(payload: $0.mutedUser) }
+        let mutedUsers = try payload.mutes.compactMap(\.target).map { try saveUser(payload: $0) }
         dto.mutedUsers = Set(mutedUsers)
         
         dto.blockedUserIds = payload.blockedUserIdsSet

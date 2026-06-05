@@ -314,7 +314,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(
             UpdateUsersResponse.self, from: currentUserUpdateResponseJSON
         )
-        let user = payload.user
+        let user = try payload.validatedUser()
         XCTAssertEqual(user.id, "luke_skywalker")
         XCTAssertEqual(user.userRole, .user)
         XCTAssertEqual(user.createdAt, "2020-12-07T11:36:47.059906Z".toDate())

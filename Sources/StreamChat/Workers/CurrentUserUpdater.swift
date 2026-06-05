@@ -60,7 +60,7 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
                 switch $0 {
                 case let .success(response):
                     self?.database.write({ (session) in
-                        try session.saveCurrentUser(payload: response.user)
+                        try session.saveCurrentUser(payload: response.validatedUser())
                     }) { completion?($0) }
                 case let .failure(error):
                     completion?(error)

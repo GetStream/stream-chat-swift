@@ -917,7 +917,7 @@ extension NSManagedObjectContext: MessageDatabaseSession {
         }
 
         do {
-            dto.extraData = try JSONEncoder.default.encode(payload.extraData)
+            dto.extraData = try JSONEncoder.default.encode(payload.custom)
         } catch {
             log.error(
                 "Failed to decode extra payload for Message with id: <\(dto.id)>, using default value instead. "
@@ -1059,8 +1059,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             parentMessageDTO.replies.insert(dto)
         }
 
-        dto.translations = payload.translations?.mapKeys { $0.languageCode }
-        dto.originalLanguage = payload.originalLanguage
+        dto.translations = payload.i18n?.translated.mapKeys { $0.languageCode }
+        dto.originalLanguage = payload.i18n?.originalLanguage
 
         if let moderationPayload = payload.moderation {
             dto.moderationDetails = MessageModerationDetailsDTO.create(

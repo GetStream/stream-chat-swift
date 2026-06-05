@@ -569,7 +569,7 @@ final class MessageDTO_Tests: XCTestCase {
             (loadedMessage?.threadParticipants.array as? [UserDTO])?.map(\.id)
         )
         XCTAssertEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
-        XCTAssertEqual(messagePayload.extraData, loadedMessage.map {
+        XCTAssertEqual(messagePayload.custom, loadedMessage.map {
             try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData!)
         })
         XCTAssertEqual(messagePayload.reactionScores, loadedMessage?.reactionScores)
@@ -580,7 +580,7 @@ final class MessageDTO_Tests: XCTestCase {
             Set(messagePayload.attachmentIDs(cid: channelId)),
             loadedMessage.flatMap { Set($0.attachments.compactMap(\.attachmentID)) }
         )
-        XCTAssertEqual(messagePayload.translations?.mapKeys(\.languageCode), loadedMessage?.translations)
+        XCTAssertEqual(messagePayload.i18n?.translated.mapKeys(\.languageCode), loadedMessage?.translations)
         XCTAssertEqual("es", loadedMessage?.originalLanguage)
 
         // Reaction Groups
@@ -714,7 +714,7 @@ final class MessageDTO_Tests: XCTestCase {
                 (loadedMessage?.threadParticipants.array as? [UserDTO])?.map(\.id)
             )
             Assert.willBeEqual(Int32(messagePayload.replyCount), loadedMessage?.replyCount)
-            Assert.willBeEqual(messagePayload.extraData, loadedMessage.map {
+            Assert.willBeEqual(messagePayload.custom, loadedMessage.map {
                 try? JSONDecoder.default.decode([String: RawJSON].self, from: $0.extraData!)
             })
             Assert.willBeEqual(messagePayload.reactionScores, loadedMessage?.reactionScores)
@@ -1036,7 +1036,7 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMessage.mentionedUsers.map(\.id), messagePayload.mentionedUsers.map(\.id))
         XCTAssertEqual(loadedMessage.threadParticipants.map(\.id), (messagePayload.threadParticipants ?? []).map(\.id))
         XCTAssertEqual(loadedMessage.replyCount, messagePayload.replyCount)
-        XCTAssertEqual(loadedMessage.extraData, messagePayload.extraData)
+        XCTAssertEqual(loadedMessage.extraData, messagePayload.custom)
         XCTAssertEqual(loadedMessage.reactionScores, messagePayload.reactionScores.mapKeys(MessageReactionType.init(rawValue:)))
         XCTAssertEqual(loadedMessage.reactionCounts, messagePayload.reactionCounts.mapKeys(MessageReactionType.init(rawValue:)))
         XCTAssertEqual(loadedMessage.isSilent, messagePayload.silent)
@@ -1050,7 +1050,7 @@ final class MessageDTO_Tests: XCTestCase {
         // Quoted message
         XCTAssertEqual(loadedMessage.quotedMessage?.id, messagePayload.quotedMessage?.id)
         XCTAssertEqual(loadedMessage.quotedMessage?.author.id, messagePayload.quotedMessage?.user.id)
-        XCTAssertEqual(loadedMessage.quotedMessage?.extraData, messagePayload.quotedMessage?.extraData)
+        XCTAssertEqual(loadedMessage.quotedMessage?.extraData, messagePayload.quotedMessage?.custom)
         // Moderation
         XCTAssertEqual(loadedMessage.moderationDetails?.originalText, "Original")
         XCTAssertEqual(loadedMessage.moderationDetails?.action, MessageModerationAction.bounce)

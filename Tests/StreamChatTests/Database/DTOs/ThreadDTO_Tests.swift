@@ -295,7 +295,7 @@ final class ThreadDTO_Tests: XCTestCase {
             activeParticipantCount: 2,
             channel: payloadWithDraft.channel!,
             createdAt: payloadWithDraft.createdAt,
-            createdBy: payloadWithDraft.createdBy ?? UserResponse.empty,
+            createdBy: payloadWithDraft.createdBy ?? .dummy(userId: .unique),
             custom: payloadWithDraft.custom,
             draft: nil,
             lastMessageAt: payloadWithDraft.lastMessageAt,

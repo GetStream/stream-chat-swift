@@ -163,26 +163,24 @@ class UserUpdater: Worker, @unchecked Sendable {
         )
         apiClient.request(endpoint: endpoint) {
             switch $0 {
-            case let .success(payload):
+            case .success:
                 self.database.write({ session in
-                    let userDTO = try session.saveUser(payload: payload.flaggedUser.id.isEmpty
-                        ? UserResponse(
-                            id: userId,
-                            name: nil,
-                            imageURL: nil,
-                            role: .user,
-                            teamsRole: nil,
-                            createdAt: Date(timeIntervalSince1970: 0),
-                            updatedAt: Date(timeIntervalSince1970: 0),
-                            deactivatedAt: nil,
-                            lastActiveAt: nil,
-                            isOnline: false,
-                            isInvisible: false,
-                            isBanned: false,
-                            language: nil,
-                            extraData: [:]
-                        )
-                        : payload.flaggedUser)
+                    let userDTO = try session.saveUser(payload: UserResponse(
+                        id: userId,
+                        name: nil,
+                        imageURL: nil,
+                        role: .user,
+                        teamsRole: nil,
+                        createdAt: Date(timeIntervalSince1970: 0),
+                        updatedAt: Date(timeIntervalSince1970: 0),
+                        deactivatedAt: nil,
+                        lastActiveAt: nil,
+                        isOnline: false,
+                        isInvisible: false,
+                        isBanned: false,
+                        language: nil,
+                        extraData: [:]
+                    ))
 
                     let currentUserDTO = session.currentUser
                     if flag {

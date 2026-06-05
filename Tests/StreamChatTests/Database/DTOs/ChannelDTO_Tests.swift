@@ -444,7 +444,7 @@ final class ChannelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payload.messages[0].deletedAt, loadedChannel.latestMessages.first?.deletedAt)
             Assert.willBeNil(loadedChannel.latestMessages.first?.arguments)
             Assert.willBeEqual(payload.messages[0].command, loadedChannel.latestMessages.first?.command)
-            Assert.willBeEqual(payload.messages[0].extraData, loadedChannel.latestMessages.first?.extraData)
+            Assert.willBeEqual(payload.messages[0].custom, loadedChannel.latestMessages.first?.extraData)
             Assert.willBeEqual(payload.messages[0].silent, loadedChannel.latestMessages.first?.isSilent)
             Assert.willBeEqual(payload.messages[0].mentionedUsers.count, loadedChannel.latestMessages.first?.mentionedUsers.count)
             Assert.willBeEqual(payload.messages[0].parentId, loadedChannel.latestMessages.first?.parentMessageId)

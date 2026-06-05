@@ -270,7 +270,10 @@ extension NSManagedObjectContext {
             return readDTO
         }
 
-        let createdByUserDTO = try saveUser(payload: payload.createdBy ?? UserResponse.empty)
+        guard let createdByPayload = payload.createdBy else {
+            throw ClientError("Thread payload is missing creator")
+        }
+        let createdByUserDTO = try saveUser(payload: createdByPayload)
 
         let extraData: Data
         do {
@@ -342,7 +345,10 @@ extension NSManagedObjectContext {
             cache: nil
         )
 
-        let createdByUserDTO = try saveUser(payload: partialPayload.createdByPayload)
+        guard let createdByPayload = partialPayload.createdBy else {
+            throw ClientError("Thread partial payload is missing creator")
+        }
+        let createdByUserDTO = try saveUser(payload: createdByPayload)
 
         let extraData: Data
         do {

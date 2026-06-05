@@ -241,62 +241,6 @@ extension ChannelInput {
     }
 }
 
-extension FlagResponse {
-    var flaggedMessageId: MessageId {
-        itemId
-    }
-}
-
-extension UserMuteResponse {
-    var mutedUser: UserResponse {
-        target ?? UserResponse(
-            id: "",
-            name: nil,
-            imageURL: nil,
-            role: .user,
-            teamsRole: nil,
-            createdAt: Date(timeIntervalSince1970: 0),
-            updatedAt: Date(timeIntervalSince1970: 0),
-            deactivatedAt: nil,
-            lastActiveAt: nil,
-            isOnline: false,
-            isInvisible: false,
-            isBanned: false,
-            language: nil,
-            extraData: [:]
-        )
-    }
-}
-
-extension MuteResponse {
-    var mutedUser: UserMuteResponse {
-        mutes?.first ?? UserMuteResponse(
-            createdAt: Date(timeIntervalSince1970: 0),
-            target: nil,
-            updatedAt: Date(timeIntervalSince1970: 0)
-        )
-    }
-
-    var currentUser: OwnUserResponse {
-        ownUser ?? UserResponse(
-            id: "",
-            name: nil,
-            imageURL: nil,
-            role: .user,
-            teamsRole: nil,
-            createdAt: Date(timeIntervalSince1970: 0),
-            updatedAt: Date(timeIntervalSince1970: 0),
-            deactivatedAt: nil,
-            lastActiveAt: nil,
-            isOnline: false,
-            isInvisible: false,
-            isBanned: false,
-            language: nil,
-            extraData: [:]
-        ).asOwnUserResponse
-    }
-}
-
 extension OwnUserResponse {
     var asUserPayload: UserResponse {
         UserResponse(
@@ -746,10 +690,6 @@ extension UpdateUserPartialRequest {
 }
 
 extension UpdateUsersResponse {
-    var user: OwnUserResponse {
-        (try? validatedUser()) ?? UserResponse.empty.asOwnUserResponse
-    }
-
     func validatedUser() throws -> OwnUserResponse {
         guard let user = users.first?.value else {
             throw ClientError.Unexpected("Missing updated user.")
@@ -801,12 +741,6 @@ extension ChannelResponse {
     // Compatibility shims for callers written against the legacy channel detail payload class.
     var name: String? { custom["name"]?.stringValue }
     var imageURL: URL? { custom["image"]?.stringValue.flatMap(URL.init(string:)) }
-    var extraData: [String: RawJSON] {
-        var c = custom
-        c["name"] = nil
-        c["image"] = nil
-        return c
-    }
 
     var channelId: ChannelId? { try? ChannelId(cid: cid) }
 }
@@ -941,14 +875,6 @@ extension MessageResponse {
     /// Custom-data key under which the originating campaign id is stored.
     static let campaignIdCustomKey = "created_by_campaign_id"
 
-    // Compatibility shims for callers written against the legacy MessageResponse class.
-    var extraData: [String: RawJSON] {
-        get { custom }
-        set { custom = newValue }
-    }
-
-    var translations: [TranslationLanguage: String]? { i18n?.translated }
-    var originalLanguage: String? { i18n?.originalLanguage }
     var campaignId: String? {
         if case let .string(value) = custom[Self.campaignIdCustomKey] {
             return value
@@ -1010,26 +936,6 @@ extension MessageWithChannelResponse {
             user: user
         )
     }
-}
-
-extension GetMessageResponse {
-    var asMessageResponse: MessageResponse { message.asMessageResponse }
-}
-
-extension SendMessageResponsePayload {
-    var asMessageResponse: MessageResponse { message }
-}
-
-extension DeleteMessageResponse {
-    var asMessageResponse: MessageResponse { message }
-}
-
-extension UpdateMessagePartialResponse {
-    var asMessageResponse: MessageResponse? { message }
-}
-
-extension MessageActionResponse {
-    var asMessageResponse: MessageResponse? { message }
 }
 
 extension SearchResultMessage {
@@ -1146,13 +1052,9 @@ extension [String: [String: ChannelPushPreferencesResponse]] {
     }
 }
 
-private func openAPIModel<Model: Decodable, Value: Encodable>(from value: Value, as type: Model.Type = Model.self) -> Model? {
-    (try? JSONEncoder.stream.encode(value))
-        .flatMap { try? JSONDecoder.stream.decode(Model.self, from: $0) }
-}
-
 private func rawJSONDictionary<Value: Encodable>(from value: Value) -> [String: RawJSON]? {
-    openAPIModel(from: value, as: [String: RawJSON].self)
+    (try? JSONEncoder.stream.encode(value))
+        .flatMap { try? JSONDecoder.stream.decode([String: RawJSON].self, from: $0) }
 }
 
 private extension RawJSON {
@@ -1167,28 +1069,41 @@ private extension RawJSON {
     }
 }
 
+extension PaginationParams {
+    convenience init(_ pagination: Pagination) {
+        // Mirrors `Pagination.encode`: omit limit at the backend default, omit offset when 0 or a cursor is present.
+        self.init(
+            limit: pagination.pageSize == .backendDefaultPageSize ? nil : pagination.pageSize,
+            offset: pagination.cursor == nil && pagination.offset != 0 ? pagination.offset : nil
+        )
+    }
+}
+
+extension MessagePaginationParams {
+    convenience init(_ pagination: MessagesPagination) {
+        self.init(limit: pagination.pageSize)
+        switch pagination.parameter {
+        case let .greaterThan(id): idGt = id
+        case let .greaterThanOrEqual(id): idGte = id
+        case let .lessThan(id): idLt = id
+        case let .lessThanOrEqual(id): idLte = id
+        case let .around(id): idAround = id
+        case .none: break
+        }
+    }
+}
+
 extension ChannelGetOrCreateRequest {
     convenience init(query: ChannelQuery) {
-        if let request = openAPIModel(from: query, as: ChannelGetOrCreateRequest.self) {
-            self.init(
-                data: request.data,
-                hideForCreator: request.hideForCreator,
-                members: request.members,
-                messages: request.messages,
-                presence: request.presence,
-                state: request.state,
-                threadUnreadCounts: request.threadUnreadCounts,
-                watch: request.watch,
-                watchers: request.watchers
-            )
-        } else {
-            self.init(
-                data: query.channelPayload,
-                presence: query.options.contains(.presence) ? true : nil,
-                state: query.options.contains(.state) ? true : nil,
-                watch: query.options.contains(.watch) ? true : nil
-            )
-        }
+        self.init(
+            data: query.channelPayload,
+            members: query.membersPagination.map { PaginationParams($0) },
+            messages: query.pagination.map { MessagePaginationParams($0) },
+            presence: query.options.contains(.presence) ? true : nil,
+            state: query.options.contains(.state) ? true : nil,
+            watch: query.options.contains(.watch) ? true : nil,
+            watchers: query.watchersLimit.map { PaginationParams(Pagination(pageSize: $0)) }
+        )
     }
 }
 
@@ -1214,24 +1129,43 @@ extension UpdateChannelPartialRequest {
     }
 }
 
+extension ConfigOverridesRequest {
+    convenience init(_ channelConfig: ChannelConfigPayload) {
+        self.init(
+            blocklist: channelConfig.blocklist,
+            blocklistBehavior: channelConfig.blocklistBehavior.map { .init(rawValue: $0.rawValue) ?? .unknown },
+            chatPreferences: channelConfig.chatPreferences,
+            commands: channelConfig.commands,
+            countMessages: channelConfig.countMessages,
+            grants: channelConfig.grants,
+            maxMessageLength: channelConfig.maxMessageLength,
+            pushLevel: channelConfig.pushLevel.map { .init(rawValue: $0.rawValue) ?? .unknown },
+            quotes: channelConfig.quotes,
+            reactions: channelConfig.reactions,
+            replies: channelConfig.replies,
+            sharedLocations: channelConfig.sharedLocations,
+            typingEvents: channelConfig.typingEvents,
+            uploads: channelConfig.uploads,
+            urlEnrichment: channelConfig.urlEnrichment,
+            userMessageReminders: channelConfig.userMessageReminders
+        )
+    }
+}
+
 extension ChannelInputRequest {
     convenience init(channelInput: ChannelInput) {
-        if let request = openAPIModel(from: channelInput, as: ChannelInputRequest.self) {
-            self.init(
-                autoTranslationEnabled: request.autoTranslationEnabled,
-                autoTranslationLanguage: request.autoTranslationLanguage,
-                configOverrides: request.configOverrides,
-                createdBy: request.createdBy,
-                custom: request.custom,
-                disabled: request.disabled,
-                frozen: request.frozen,
-                invites: request.invites,
-                members: request.members,
-                team: request.team
-            )
-        } else {
-            self.init(custom: rawJSONDictionary(from: channelInput))
-        }
+        self.init(
+            autoTranslationEnabled: channelInput.autoTranslationEnabled,
+            autoTranslationLanguage: channelInput.autoTranslationLanguage,
+            configOverrides: channelInput.configOverrides.map { ConfigOverridesRequest($0) },
+            createdBy: channelInput.createdBy,
+            custom: channelInput.custom,
+            disabled: channelInput.disabled,
+            frozen: channelInput.frozen,
+            invites: channelInput.invites,
+            members: channelInput.members,
+            team: channelInput.team
+        )
     }
 }
 
@@ -1373,27 +1307,6 @@ extension UserResponse {
     }
 }
 
-extension FlagResponse {
-    var flaggedUser: UserResponse {
-        UserResponse(
-            id: "",
-            name: nil,
-            imageURL: nil,
-            role: .user,
-            teamsRole: nil,
-            createdAt: Date(timeIntervalSince1970: 0),
-            updatedAt: Date(timeIntervalSince1970: 0),
-            deactivatedAt: nil,
-            lastActiveAt: nil,
-            isOnline: false,
-            isInvisible: false,
-            isBanned: false,
-            language: nil,
-            extraData: [:]
-        )
-    }
-}
-
 extension Attachment {
     convenience init(type: AttachmentType, payload: RawJSON) {
         let attachment: Attachment? = {
@@ -1459,31 +1372,6 @@ extension Attachment {
 
 extension ThreadResponse {
     var cid: ChannelId? { try? ChannelId(cid: channelCid) }
-
-    var createdByPayload: UserResponse {
-        createdBy ?? UserResponse.empty
-    }
-}
-
-extension UserResponse {
-    static var empty: UserResponse {
-        UserResponse(
-            id: "",
-            name: nil,
-            imageURL: nil,
-            role: .user,
-            teamsRole: nil,
-            createdAt: Date(timeIntervalSince1970: 0),
-            updatedAt: Date(timeIntervalSince1970: 0),
-            deactivatedAt: nil,
-            lastActiveAt: nil,
-            isOnline: false,
-            isInvisible: false,
-            isBanned: false,
-            language: nil,
-            extraData: [:]
-        )
-    }
 }
 
 // MARK: - Endpoint compatibility wrappers

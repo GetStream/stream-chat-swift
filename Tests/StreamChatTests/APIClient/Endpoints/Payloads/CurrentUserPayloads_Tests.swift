@@ -35,7 +35,7 @@ final class OwnUserResponse_Tests: XCTestCase {
             "cjqZTUHaQIykfH-706Xefw:APA91bF0Ig0gi4ro6w3iPfmE8",
             "e25wfsxcnyA:APA91bFgZR_hfd6GvR42OqCUgIhvpBajjxw7"
         ])
-        XCTAssertEqual(payload.mutes.map(\.mutedUser.id), ["dawn-grass-7"])
+        XCTAssertEqual(payload.mutes.compactMap(\.target?.id), ["dawn-grass-7"])
         XCTAssertEqual(payload.custom, ["secret_note": .string("Anaking is Vader!")])
         XCTAssertEqual(payload.channelMutes.count, 1)
         XCTAssertEqual(payload.channelMutes[0].user?.id, "broken-waterfall-5")

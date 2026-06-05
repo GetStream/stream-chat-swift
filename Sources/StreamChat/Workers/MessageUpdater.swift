@@ -568,7 +568,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 switch result {
                 case let .success(payload):
                     self.database.write({ session in
-                        guard let messageDTO = session.message(id: payload.flaggedMessageId) else {
+                        guard let messageDTO = session.message(id: payload.itemId) else {
                             throw ClientError.MessageDoesNotExist(messageId: messageId)
                         }
 
