@@ -34,9 +34,8 @@ class DraftMessagesRepository: @unchecked Sendable {
                 nonisolated(unsafe) var drafts: [DraftMessage] = []
                 self?.database.write({ session in
                     drafts = try response.drafts.compactMap {
-                        guard let channelId = $0.channel?.channelId ?? $0.cid else {
-                            return nil
-                        }
+                        let channelCid = $0.channel?.cid ?? $0.channelCid
+                        let channelId = try ChannelId(cid: channelCid)
                         return DraftMessage(try session
                             .saveDraftMessage(payload: $0, for: channelId, cache: nil)
                             .asModel())

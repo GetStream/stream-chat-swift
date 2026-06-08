@@ -68,7 +68,10 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
                 switch $0 {
                 case let .success(response):
                     self?.database.write({ (session) in
-                        try session.saveCurrentUser(payload: response.validatedUser())
+                        guard let user = response.users.first?.value else {
+                            throw ClientError.Unexpected("Missing updated user.")
+                        }
+                        try session.saveCurrentUser(payload: user.asOwnUserResponse())
                     }) { completion?($0) }
                 case let .failure(error):
                     completion?(error)
@@ -230,10 +233,14 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
         ) { [weak self] (result: Result<UpsertPushPreferencesResponse, Error>) in
             switch result {
             case let .success(response):
-                guard let currentUserPushPref = response.userPreferences.asModel().first else {
+                guard let currentUserPushPreferencePayload = response.userPreferences.values.compactMap({ $0 }).first else {
                     completion(.failure(ClientError.CurrentUserDoesNotExist()))
                     return
                 }
+                let currentUserPushPreference = PushPreference(
+                    level: PushPreferenceLevel(rawValue: currentUserPushPreferencePayload.chatLevel ?? PushPreferenceLevel.all.rawValue),
+                    disabledUntil: currentUserPushPreferencePayload.disabledUntil
+                )
                 self?.database.write { session in
                     guard let currentUserDTO = session.currentUser else {
                         log.error("Cannot save push preference: no current user in the database")
@@ -241,14 +248,11 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
                     }
                     let savedDTO = try session.savePushPreference(
                         id: currentUserDTO.user.id,
-                        payload: .init(
-                            chatLevel: currentUserPushPref.level.rawValue,
-                            disabledUntil: currentUserPushPref.disabledUntil
-                        )
+                        payload: currentUserPushPreferencePayload
                     )
                     currentUserDTO.pushPreference = savedDTO
                 }
-                completion(.success(currentUserPushPref))
+                completion(.success(currentUserPushPreference))
             case let .failure(error):
                 completion(.failure(error))
             }

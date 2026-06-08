@@ -905,27 +905,35 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
     func test_setPushPreference_successfulResponse_savesToDatabase() throws {
         // GIVEN
+        let userId = UserId.unique
+        let disabledUntil = "2024-12-31T23:59:59.999Z".toDate()
+        try database.writeSynchronously {
+            try $0.saveCurrentUser(payload: .dummy(userId: userId, role: .user))
+        }
+
         let preference = PushPreferenceInput(
             channelCid: nil,
             chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: "all"),
-            disabledUntil: nil,
+            disabledUntil: disabledUntil,
             removeDisable: true
         )
 
         let response = UpsertPushPreferencesResponse.dummy(
             userChannelPreferences: [:],
             userPreferences: [
-                "userId": PushPreferencesResponse(
-                    chatLevel: "all",
-                    disabledUntil: nil
+                userId: .dummy(
+                    chatLevel: nil,
+                    disabledUntil: disabledUntil
                 )
             ]
         )
 
         // WHEN
         nonisolated(unsafe) var completionCalled = false
+        nonisolated(unsafe) var receivedPreference: PushPreference?
         currentUserUpdater.setPushPreference(preference) { result in
             XCTAssertNil(result.error)
+            receivedPreference = try? result.get()
             completionCalled = true
         }
 
@@ -933,6 +941,14 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // THEN
         AssertAsync.willBeTrue(completionCalled)
+        AssertAsync.willBeEqual(receivedPreference?.level, .all)
+        AssertAsync.willBeEqual(receivedPreference?.disabledUntil, disabledUntil)
+
+        var currentUser: CurrentChatUser? {
+            try? database.viewContext.currentUser?.asModel()
+        }
+        AssertAsync.willBeEqual(currentUser?.pushPreference?.level, .all)
+        AssertAsync.willBeEqual(currentUser?.pushPreference?.disabledUntil, disabledUntil)
     }
 
     func test_setPushPreference_propagatesNetworkError() {

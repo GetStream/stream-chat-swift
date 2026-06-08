@@ -70,3 +70,14 @@ public protocol CustomEventPayload: Codable, Hashable, Sendable {
     /// A type all events holding this payload have.
     static var eventType: EventType { get }
 }
+
+extension CustomEventPayload {
+    func asSendEventRequest() -> SendEventRequest {
+        let data = try? JSONEncoder.default.encode(self)
+        let custom = data.flatMap { try? JSONDecoder.default.decode([String: RawJSON].self, from: $0) } ?? [:]
+        return SendEventRequest(event: EventRequest(
+            custom: custom.isEmpty ? nil : custom,
+            type: Self.eventType.rawValue
+        ))
+    }
+}

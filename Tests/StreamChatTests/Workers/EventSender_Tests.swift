@@ -42,7 +42,7 @@ final class EventSender_Tests: XCTestCase {
         let referenceEndpoint = Endpoint<EventResponse>.sendEvent(
             type: cid.type.rawValue,
             id: cid.id,
-            sendEventRequest: SendEventRequest(payload: payload)
+            sendEventRequest: payload.asSendEventRequest()
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }

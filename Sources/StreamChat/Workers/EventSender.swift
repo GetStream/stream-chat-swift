@@ -20,7 +20,7 @@ class EventSender: Worker, @unchecked Sendable {
         apiClient.request(endpoint: Endpoint<EventResponse>.sendEvent(
             type: cid.type.rawValue,
             id: cid.id,
-            sendEventRequest: SendEventRequest(payload: payload)
+            sendEventRequest: payload.asSendEventRequest()
         )) {
             completion?($0.error)
         }

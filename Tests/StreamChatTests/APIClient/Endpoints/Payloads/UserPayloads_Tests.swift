@@ -253,7 +253,7 @@ final class UserRequestBody_Tests: XCTestCase {
             "custom": [:],
             "id": payload.id,
             "name": payload.name!,
-            "image": payload.imageURL!.absoluteString
+            "image": payload.image!
         ]
 
         AssertJSONEqual(serialized, expected)
@@ -266,7 +266,7 @@ final class UserUpdateResponse_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(
             UpdateUsersResponse.self, from: currentUserUpdateResponseJSON
         )
-        let user = try payload.validatedUser()
+        let user = try XCTUnwrap(payload.users.first?.value).asOwnUserResponse()
         XCTAssertEqual(user.id, "luke_skywalker")
         XCTAssertEqual(user.userRole, .user)
         XCTAssertEqual(user.createdAt, "2020-12-07T11:36:47.059906Z".toDate())
@@ -285,6 +285,6 @@ final class UserUpdateResponse_Tests: XCTestCase {
         let currentUserUpdateResponseJSON = XCTestCase.mockData(fromJSONFile: "UserUpdateResponse+MissingUser")
         XCTAssertThrowsError(try JSONDecoder.default.decode(
             UpdateUsersResponse.self, from: currentUserUpdateResponseJSON
-        ).validatedUser())
+        ))
     }
 }

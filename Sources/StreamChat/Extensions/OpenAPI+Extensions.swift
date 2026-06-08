@@ -309,12 +309,6 @@ extension UserPrivacySettingsPayload {
     }
 }
 
-extension DraftResponse {
-    var cid: ChannelId? {
-        try? ChannelId(cid: channelCid)
-    }
-}
-
 extension CreateGuestResponse {
     func validatedToken() throws -> Token {
         let token = try Token(rawValue: accessToken)
@@ -402,21 +396,6 @@ extension QueryUsersResponse {
     }
 }
 
-extension UserRequest {
-    var imageURL: URL? {
-        image.flatMap(URL.init(string:))
-    }
-}
-
-extension UpdateUsersResponse {
-    func validatedUser() throws -> OwnUserResponse {
-        guard let user = users.first?.value else {
-            throw ClientError.Unexpected("Missing updated user.")
-        }
-        return user.asOwnUserResponse()
-    }
-}
-
 extension UserResponse {
     func asFullUserResponse() -> FullUserResponse {
         FullUserResponse(
@@ -429,7 +408,7 @@ extension UserResponse {
             deactivatedAt: deactivatedAt,
             devices: [],
             id: id,
-            image: imageURL?.absoluteString,
+            image: image,
             invisible: false,
             language: language,
             lastActive: lastActive,
@@ -539,7 +518,7 @@ extension ChannelConfigWithInfo {
             sharedLocationsEnabled: sharedLocations,
             messageRetention: "",
             maxMessageLength: maxMessageLength,
-            commands: commands.map(\.asCommand),
+            commands: commands.map { Command(name: $0.name, description: $0.description, set: $0.set, args: $0.args) },
             createdAt: createdAt,
             updatedAt: updatedAt
         )
@@ -577,12 +556,6 @@ extension ChannelConfig {
             urlEnrichment: urlEnrichmentEnabled,
             userMessageReminders: messageRemindersEnabled
         )
-    }
-}
-
-extension CommandPayload {
-    var asCommand: Command {
-        .init(name: name, description: description, set: set, args: args)
     }
 }
 
@@ -704,131 +677,6 @@ extension SearchResultMessage {
             type: type,
             updatedAt: updatedAt,
             user: user
-        )
-    }
-}
-
-extension PushPreferencesResponse {
-    func asModel() -> PushPreference {
-        .init(
-            level: PushPreferenceLevel(rawValue: chatLevel ?? PushPreferenceLevel.all.rawValue),
-            disabledUntil: disabledUntil
-        )
-    }
-}
-
-extension ChannelPushPreferencesResponse {
-    func asModel() -> PushPreference {
-        .init(
-            level: PushPreferenceLevel(rawValue: chatLevel ?? PushPreferenceLevel.all.rawValue),
-            disabledUntil: disabledUntil
-        )
-    }
-}
-
-extension UpsertPushPreferencesResponse {
-    var channelPreferences: [String: [String: ChannelPushPreferencesResponse]] {
-        userChannelPreferences.mapValues { $0.compactMapValues { $0 } }
-    }
-}
-
-extension [String: PushPreferencesResponse?] {
-    func asModel() -> [PushPreference] {
-        values.compactMap { $0?.asModel() }
-    }
-}
-
-extension [String: PushPreferencesResponse] {
-    func asModel() -> [PushPreference] {
-        values.map { $0.asModel() }
-    }
-}
-
-extension [String: [String: ChannelPushPreferencesResponse]] {
-    func asModel() -> [ChannelId: PushPreference] {
-        .init(uniqueKeysWithValues: values
-            .flatMap { $0 }
-            .compactMap { key, value in
-                guard let channelId = try? ChannelId(cid: key) else { return nil }
-                return (channelId, value.asModel())
-            })
-    }
-}
-
-extension UpdateChannelPartialRequest {
-    convenience init(channelInput: ChannelInput, unsetProperties: [String]) throws {
-        self.init(set: try channelInput.asRawJSONDictionary(), unset: unsetProperties)
-    }
-}
-
-extension ConfigOverridesRequest {
-    convenience init(_ channelConfig: ChannelConfigPayload) {
-        self.init(
-            blocklist: channelConfig.blocklist,
-            blocklistBehavior: channelConfig.blocklistBehavior.map { .init(rawValue: $0.rawValue) ?? .unknown },
-            chatPreferences: channelConfig.chatPreferences,
-            commands: channelConfig.commands,
-            countMessages: channelConfig.countMessages,
-            grants: channelConfig.grants,
-            maxMessageLength: channelConfig.maxMessageLength,
-            pushLevel: channelConfig.pushLevel.map { .init(rawValue: $0.rawValue) ?? .unknown },
-            quotes: channelConfig.quotes,
-            reactions: channelConfig.reactions,
-            replies: channelConfig.replies,
-            sharedLocations: channelConfig.sharedLocations,
-            typingEvents: channelConfig.typingEvents,
-            uploads: channelConfig.uploads,
-            urlEnrichment: channelConfig.urlEnrichment,
-            userMessageReminders: channelConfig.userMessageReminders
-        )
-    }
-}
-
-extension SendEventRequest {
-    convenience init<Payload: CustomEventPayload>(payload: Payload) {
-        let data = try? JSONEncoder.default.encode(payload)
-        var custom = data.flatMap { try? JSONDecoder.default.decode([String: RawJSON].self, from: $0) } ?? [:]
-        // Strip the `type` field that CustomEventPayload encoders include — the
-        // server takes the type from the outer EventRequest.type, not the payload.
-        custom["type"] = nil
-        self.init(event: EventRequest(
-            custom: custom.isEmpty ? nil : custom,
-            type: type(of: payload).eventType.rawValue
-        ))
-    }
-}
-
-extension UserResponse {
-    func asOwnUserResponse() -> OwnUserResponse {
-        OwnUserResponse(
-            avgResponseTime: avgResponseTime,
-            banned: banned,
-            blockedUserIds: blockedUserIds,
-            channelMutes: [],
-            createdAt: createdAt,
-            custom: custom,
-            deactivatedAt: deactivatedAt,
-            deletedAt: deletedAt,
-            devices: [],
-            id: id,
-            image: image,
-            invisible: false,
-            language: language,
-            lastActive: lastActive,
-            mutes: [],
-            name: name,
-            online: online,
-            privacySettings: nil,
-            pushPreferences: nil,
-            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
-            role: role,
-            teams: teams,
-            teamsRole: teamsRole,
-            totalUnreadCount: 0,
-            unreadChannels: 0,
-            unreadCount: 0,
-            unreadThreads: 0,
-            updatedAt: updatedAt
         )
     }
 }

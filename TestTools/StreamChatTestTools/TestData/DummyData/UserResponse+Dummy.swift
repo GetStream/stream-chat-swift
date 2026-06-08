@@ -162,6 +162,30 @@ extension UpdateUsersResponse {
     }
 }
 
+extension PushPreferencesResponse {
+    static func dummy(
+        chatLevel: String? = PushPreferenceLevel.all.rawValue,
+        disabledUntil: Date? = nil
+    ) -> PushPreferencesResponse {
+        .init(
+            chatLevel: chatLevel,
+            disabledUntil: disabledUntil
+        )
+    }
+}
+
+extension ChannelPushPreferencesResponse {
+    static func dummy(
+        chatLevel: String? = PushPreferenceLevel.all.rawValue,
+        disabledUntil: Date? = nil
+    ) -> ChannelPushPreferencesResponse {
+        .init(
+            chatLevel: chatLevel,
+            disabledUntil: disabledUntil
+        )
+    }
+}
+
 extension UpsertPushPreferencesResponse {
     static func dummy(
         duration: String = "",

@@ -17,7 +17,7 @@ final class DraftPayloads_Tests: XCTestCase {
         let json = try JSONDecoder.default.decode(GetDraftResponse.self, from: .draftMessage)
         
         // Then
-        XCTAssertEqual(json.draft.cid?.rawValue, "messaging:!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E")
+        XCTAssertEqual(json.draft.channelCid, "messaging:!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E")
         XCTAssertEqual(json.draft.message.id, "eb8ab3c9-5ade-4b4d-b32d-3d7f037682c0")
         XCTAssertEqual(json.draft.message.text, "Hi @Leia Organa ahah")
         XCTAssertEqual(json.draft.message.mentionedUsers?.count, 1)
@@ -52,7 +52,7 @@ final class DraftPayloads_Tests: XCTestCase {
         
         // Then
         XCTAssertEqual(response.drafts.count, 1)
-        XCTAssertEqual(response.drafts[0].cid?.rawValue, "messaging:123")
+        XCTAssertEqual(response.drafts[0].channelCid, "messaging:123")
         XCTAssertEqual(response.drafts[0].message.id, "draft-1")
         XCTAssertEqual(response.drafts[0].message.text, "Hello world")
         XCTAssertEqual(response.next, "next-page-token")

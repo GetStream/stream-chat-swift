@@ -999,7 +999,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let referenceEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
             type: cid.type.rawValue,
             id: cid.id,
-            updateChannelPartialRequest: try UpdateChannelPartialRequest(channelInput: updates, unsetProperties: unsetProperties)
+            updateChannelPartialRequest: UpdateChannelPartialRequest(set: try updates.asRawJSONDictionary(), unset: unsetProperties)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
@@ -2539,22 +2539,27 @@ final class ChannelUpdater_Tests: XCTestCase {
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 
-    func test_setPushPreference_successfulResponse_savesToDatabase() {
+    func test_setPushPreference_successfulResponse_savesToDatabase() throws {
         // GIVEN
         let cid: ChannelId = .unique
+        let disabledUntil = "2024-12-31T23:59:59.999Z".toDate()
+        try database.writeSynchronously { session in
+            try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
+        }
+
         let preference = PushPreferenceInput(
             channelCid: cid.rawValue,
             chatLevel: PushPreferenceInput.PushPreferenceInputChatLevel(rawValue: "all"),
-            disabledUntil: nil,
+            disabledUntil: disabledUntil,
             removeDisable: true
         )
 
         let response = UpsertPushPreferencesResponse.dummy(
             userChannelPreferences: [
-                "userId": [
-                    cid.rawValue: ChannelPushPreferencesResponse(
-                        chatLevel: "all",
-                        disabledUntil: nil
+                cid.rawValue: [
+                    "userId": .dummy(
+                        chatLevel: nil,
+                        disabledUntil: disabledUntil
                     )
                 ]
             ],
@@ -2563,8 +2568,10 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // WHEN
         nonisolated(unsafe) var completionCalled = false
+        nonisolated(unsafe) var receivedPreference: PushPreference?
         channelUpdater.setPushPreference(preference, cid: cid) { result in
             XCTAssertNil(result.error)
+            receivedPreference = try? result.get()
             completionCalled = true
         }
 
@@ -2572,6 +2579,12 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         // THEN
         AssertAsync.willBeTrue(completionCalled)
+        AssertAsync.willBeEqual(receivedPreference?.level, .all)
+        AssertAsync.willBeEqual(receivedPreference?.disabledUntil, disabledUntil)
+
+        let channel = database.viewContext.channel(cid: cid)
+        AssertAsync.willBeEqual(channel?.pushPreference?.chatLevel, PushPreferenceLevel.all.rawValue)
+        AssertAsync.willBeEqual(channel?.pushPreference?.disabledUntil?.bridgeDate, disabledUntil)
     }
 
     func test_setPushPreference_propagatesNetworkError() {
@@ -2646,8 +2659,8 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         let response = UpsertPushPreferencesResponse.dummy(
             userChannelPreferences: [
-                "userId": [
-                    cid.rawValue: ChannelPushPreferencesResponse(
+                cid.rawValue: [
+                    "userId": .dummy(
                         chatLevel: "mentions",
                         disabledUntil: nil
                     )
@@ -2712,8 +2725,8 @@ final class ChannelUpdater_Tests: XCTestCase {
 
         let response = UpsertPushPreferencesResponse.dummy(
             userChannelPreferences: [
-                "userId": [
-                    cid.rawValue: ChannelPushPreferencesResponse(
+                cid.rawValue: [
+                    "userId": .dummy(
                         chatLevel: "all",
                         disabledUntil: nil
                     )
