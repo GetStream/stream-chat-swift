@@ -154,22 +154,22 @@ final class UserResponse_Tests: XCTestCase {
         let extraData: [String: RawJSON] = ["custom_field": .string("custom_value")]
         
         let payload = UserResponse(
-            id: userId,
-            name: name,
-            imageURL: imageURL,
-            role: role,
-            teamsRole: teamsRole,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
-            isOnline: isOnline,
-            isInvisible: false,
-            isBanned: isBanned,
-            teams: teams,
-            language: language,
             avgResponseTime: avgResponseTime,
-            extraData: extraData
+            banned: isBanned,
+            blockedUserIds: [],
+            createdAt: createdAt,
+            custom: extraData,
+            deactivatedAt: deactivatedAt,
+            id: userId,
+            image: imageURL.absoluteString,
+            language: language,
+            lastActive: lastActiveAt,
+            name: name,
+            online: isOnline,
+            role: role.rawValue,
+            teams: teams,
+            teamsRole: teamsRole.mapValues(\.rawValue),
+            updatedAt: updatedAt
         )
         
         // When: Converting to ChatUser model
@@ -203,22 +203,16 @@ final class UserResponse_Tests: XCTestCase {
         let extraData: [String: RawJSON] = [:]
         
         let payload = UserResponse(
-            id: userId,
-            name: nil,
-            imageURL: nil,
-            role: role,
-            teamsRole: nil,
+            banned: true,
+            blockedUserIds: [],
             createdAt: createdAt,
-            updatedAt: updatedAt,
-            deactivatedAt: nil,
-            lastActiveAt: nil,
-            isOnline: false,
-            isInvisible: true,
-            isBanned: true,
+            custom: extraData,
+            id: userId,
+            language: "",
+            online: false,
+            role: role.rawValue,
             teams: [],
-            language: nil,
-            avgResponseTime: nil,
-            extraData: extraData
+            updatedAt: updatedAt
         )
         
         // When: Converting to ChatUser model

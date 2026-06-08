@@ -56,21 +56,19 @@ final class UserDTO_Tests: XCTestCase {
         let userId: UserId = .unique
 
         let payload: UserResponse = .init(
-            id: userId,
-            name: .unique,
-            imageURL: .unique(),
-            role: .admin,
-            teamsRole: nil,
+            banned: true,
+            blockedUserIds: [],
             createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isInvisible: true,
-            isBanned: true,
+            custom: [:],
+            id: userId,
+            image: URL.unique().absoluteString,
+            language: "",
+            lastActive: .unique,
+            name: .unique,
+            online: true,
+            role: UserRole.admin.rawValue,
             teams: [],
-            language: nil,
-            extraData: [:]
+            updatedAt: .unique
         )
 
         try database.writeSynchronously { session in

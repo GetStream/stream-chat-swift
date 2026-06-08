@@ -14,21 +14,19 @@ extension UserMuteResponse {
         .init(
             createdAt: .unique,
             target: .init(
-                id: userId,
-                name: .unique,
-                imageURL: .unique(),
-                role: .user,
-                teamsRole: nil,
+                banned: true,
+                blockedUserIds: [],
                 createdAt: .unique,
-                updatedAt: .unique,
-                deactivatedAt: nil,
-                lastActiveAt: .unique,
-                isOnline: true,
-                isInvisible: true,
-                isBanned: true,
+                custom: extraData,
+                id: userId,
+                image: URL.unique().absoluteString,
+                language: "",
+                lastActive: .unique,
+                name: .unique,
+                online: true,
+                role: UserRole.user.rawValue,
                 teams: [],
-                language: nil,
-                extraData: extraData
+                updatedAt: .unique
             ),
             updatedAt: .unique
         )

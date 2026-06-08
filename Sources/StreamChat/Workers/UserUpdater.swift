@@ -166,20 +166,16 @@ class UserUpdater: Worker, @unchecked Sendable {
             case .success:
                 self.database.write({ session in
                     let userDTO = try session.saveUser(payload: UserResponse(
-                        id: userId,
-                        name: nil,
-                        imageURL: nil,
-                        role: .user,
-                        teamsRole: nil,
+                        banned: false,
+                        blockedUserIds: [],
                         createdAt: Date(timeIntervalSince1970: 0),
-                        updatedAt: Date(timeIntervalSince1970: 0),
-                        deactivatedAt: nil,
-                        lastActiveAt: nil,
-                        isOnline: false,
-                        isInvisible: false,
-                        isBanned: false,
-                        language: nil,
-                        extraData: [:]
+                        custom: [:],
+                        id: userId,
+                        language: "",
+                        online: false,
+                        role: UserRole.user.rawValue,
+                        teams: [],
+                        updatedAt: Date(timeIntervalSince1970: 0)
                     ))
 
                     let currentUserDTO = session.currentUser

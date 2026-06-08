@@ -25,21 +25,20 @@ final class MemberModelDTO_Tests: XCTestCase {
         let channelId = ChannelId(type: .init(rawValue: "messsaging"), id: UUID().uuidString)
 
         let userPayload: UserResponse = .init(
-            id: userId,
-            name: .unique,
-            imageURL: .unique(),
-            role: .admin,
-            teamsRole: ["ios": "guest"],
+            banned: true,
+            blockedUserIds: [],
             createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isInvisible: true,
-            isBanned: true,
-            teams: ["RED", "GREEN"],
+            custom: ["k": .string("v")],
+            id: userId,
+            image: URL.unique().absoluteString,
             language: "pt",
-            extraData: ["k": .string("v")]
+            lastActive: .unique,
+            name: .unique,
+            online: true,
+            role: UserRole.admin.rawValue,
+            teams: ["RED", "GREEN"],
+            teamsRole: ["ios": "guest"],
+            updatedAt: .unique
         )
 
         let payload: ChannelMemberResponse = .dummy(
@@ -94,20 +93,20 @@ final class MemberModelDTO_Tests: XCTestCase {
         let channelId: ChannelId = .unique
 
         let userPayload: UserResponse = .init(
-            id: userId,
-            name: .unique,
-            imageURL: .unique(),
-            role: .admin,
-            teamsRole: ["ios": "guest"],
+            banned: true,
+            blockedUserIds: [],
             createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isInvisible: true,
-            isBanned: true,
-            language: nil,
-            extraData: .init()
+            custom: .init(),
+            id: userId,
+            image: URL.unique().absoluteString,
+            language: "",
+            lastActive: .unique,
+            name: .unique,
+            online: true,
+            role: UserRole.admin.rawValue,
+            teams: [],
+            teamsRole: ["ios": "guest"],
+            updatedAt: .unique
         )
 
         let payload: ChannelMemberResponse = .dummy(

@@ -75,20 +75,19 @@ final class DatabaseSession_Tests: XCTestCase {
         let channelPayload: ChannelResponse = dummyPayload(with: channelId).channel!
 
         let userPayload: UserResponse = .init(
-            id: .unique,
-            name: .unique,
-            imageURL: .unique(),
-            role: .admin,
-            teamsRole: nil,
+            banned: true,
+            blockedUserIds: [],
             createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isInvisible: true,
-            isBanned: true,
-            language: nil,
-            extraData: [:]
+            custom: [:],
+            id: .unique,
+            image: URL.unique().absoluteString,
+            language: "",
+            lastActive: .unique,
+            name: .unique,
+            online: true,
+            role: UserRole.admin.rawValue,
+            teams: [],
+            updatedAt: .unique
         )
 
         let messagePayload = MessageResponse.dummy(

@@ -195,22 +195,22 @@ extension ChannelInput {
 extension OwnUserResponse {
     func asUserResponse() -> UserResponse {
         UserResponse(
-            id: id,
-            name: name,
-            imageURL: imageURL,
-            role: userRole,
-            teamsRole: teamsRolePayload,
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActive,
-            isOnline: online,
-            isInvisible: invisible,
-            isBanned: banned,
-            teams: teams,
-            language: language.isEmpty ? nil : language,
             avgResponseTime: avgResponseTime,
-            extraData: custom
+            banned: banned,
+            blockedUserIds: [],
+            createdAt: createdAt,
+            custom: custom,
+            deactivatedAt: deactivatedAt,
+            id: id,
+            image: imageURL?.absoluteString,
+            language: language,
+            lastActive: lastActive,
+            name: name,
+            online: online,
+            role: role,
+            teams: teams,
+            teamsRole: teamsRole,
+            updatedAt: updatedAt
         )
     }
 
@@ -461,65 +461,27 @@ extension UserResponse {
     var teamsRolePayload: [String: UserRole]? {
         teamsRole?.mapValues { UserRole(rawValue: $0) }
     }
-
-    convenience init(
-        id: String,
-        name: String?,
-        imageURL: URL?,
-        role: UserRole,
-        teamsRole: [String: UserRole]?,
-        createdAt: Date,
-        updatedAt: Date,
-        deactivatedAt: Date?,
-        lastActiveAt: Date?,
-        isOnline: Bool,
-        isInvisible: Bool,
-        isBanned: Bool,
-        teams: [TeamId] = [],
-        language: String?,
-        avgResponseTime: Int? = nil,
-        extraData: [String: RawJSON]
-    ) {
-        self.init(
-            avgResponseTime: avgResponseTime,
-            banned: isBanned,
-            blockedUserIds: [],
-            createdAt: createdAt,
-            custom: extraData,
-            deactivatedAt: deactivatedAt,
-            id: id,
-            image: imageURL?.absoluteString,
-            language: language ?? "",
-            lastActive: lastActiveAt,
-            name: name,
-            online: isOnline,
-            role: role.rawValue,
-            teams: teams,
-            teamsRole: teamsRole?.mapValues(\.rawValue),
-            updatedAt: updatedAt
-        )
-    }
 }
 
 extension FullUserResponse {
     func asUserResponse() -> UserResponse {
         UserResponse(
-            id: id,
-            name: name,
-            imageURL: image.flatMap(URL.init(string:)),
-            role: UserRole(rawValue: role),
-            teamsRole: teamsRole?.mapValues { UserRole(rawValue: $0) },
-            createdAt: createdAt,
-            updatedAt: updatedAt,
-            deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActive,
-            isOnline: online,
-            isInvisible: false,
-            isBanned: banned,
-            teams: teams,
-            language: language,
             avgResponseTime: avgResponseTime,
-            extraData: custom
+            banned: banned,
+            blockedUserIds: [],
+            createdAt: createdAt,
+            custom: custom,
+            deactivatedAt: deactivatedAt,
+            id: id,
+            image: image.flatMap(URL.init(string:))?.absoluteString,
+            language: language,
+            lastActive: lastActive,
+            name: name,
+            online: online,
+            role: role,
+            teams: teams,
+            teamsRole: teamsRole,
+            updatedAt: updatedAt
         )
     }
 

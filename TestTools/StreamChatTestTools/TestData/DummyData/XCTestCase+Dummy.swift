@@ -37,21 +37,19 @@ extension XCTestCase {
 
     func dummyUser(id: String) -> UserResponse {
         UserResponse(
-            id: id,
-            name: .unique,
-            imageURL: .unique(),
-            role: .user,
-            teamsRole: nil,
+            banned: true,
+            blockedUserIds: [],
             createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
-            isOnline: true,
-            isInvisible: true,
-            isBanned: true,
+            custom: [:],
+            id: id,
+            image: URL.unique().absoluteString,
+            language: "",
+            lastActive: .unique,
+            name: .unique,
+            online: true,
+            role: UserRole.user.rawValue,
             teams: [],
-            language: nil,
-            extraData: [:]
+            updatedAt: .unique
         )
     }
 
@@ -269,21 +267,18 @@ extension XCTestCase {
         let member: ChannelMemberResponse =
             .dummy(
                 user: .init(
-                    id: .unique,
-                    name: .unique,
-                    imageURL: nil,
-                    role: .admin,
-                    teamsRole: nil,
+                    banned: true,
+                    blockedUserIds: [],
                     createdAt: .unique,
-                    updatedAt: .unique,
-                    deactivatedAt: nil,
-                    lastActiveAt: .unique,
-                    isOnline: true,
-                    isInvisible: true,
-                    isBanned: true,
+                    custom: [:],
+                    id: .unique,
+                    language: "",
+                    lastActive: .unique,
+                    name: .unique,
+                    online: true,
+                    role: UserRole.admin.rawValue,
                     teams: [],
-                    language: nil,
-                    extraData: [:]
+                    updatedAt: .unique
                 ),
                 createdAt: .unique,
                 updatedAt: .unique,
@@ -544,21 +539,18 @@ private extension ChannelMemberResponse {
         let userId = String.unique
         return .dummy(
             user: UserResponse(
-                id: userId,
-                name: .unique,
-                imageURL: nil,
-                role: .admin,
-                teamsRole: nil,
+                banned: true,
+                blockedUserIds: [],
                 createdAt: .unique,
-                updatedAt: .unique,
-                deactivatedAt: nil,
-                lastActiveAt: date,
-                isOnline: true,
-                isInvisible: true,
-                isBanned: true,
+                custom: [:],
+                id: userId,
+                language: "",
+                lastActive: date,
+                name: .unique,
+                online: true,
+                role: UserRole.admin.rawValue,
                 teams: [],
-                language: nil,
-                extraData: [:]
+                updatedAt: .unique
             ),
             createdAt: .unique,
             updatedAt: .unique,
@@ -570,21 +562,18 @@ private extension ChannelMemberResponse {
 private extension UserResponse {
     static func withLastActivity(at date: Date) -> UserResponse {
         .init(
-            id: .unique,
-            name: .unique,
-            imageURL: nil,
-            role: .admin,
-            teamsRole: nil,
+            banned: true,
+            blockedUserIds: [],
             createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: date,
-            isOnline: true,
-            isInvisible: true,
-            isBanned: true,
+            custom: [:],
+            id: .unique,
+            language: "",
+            lastActive: date,
+            name: .unique,
+            online: true,
+            role: UserRole.admin.rawValue,
             teams: [],
-            language: nil,
-            extraData: [:]
+            updatedAt: .unique
         )
     }
 }

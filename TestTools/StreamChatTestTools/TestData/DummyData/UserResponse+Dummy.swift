@@ -22,21 +22,21 @@ extension UserResponse {
         deactivatedAt: Date? = nil
     ) -> UserResponse {
         .init(
-            id: userId,
-            name: name,
-            imageURL: imageUrl,
-            role: role,
-            teamsRole: teamsRole,
+            banned: isBanned,
+            blockedUserIds: [],
             createdAt: .unique,
-            updatedAt: updatedAt,
+            custom: extraData,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: .unique,
-            isOnline: isOnline,
-            isInvisible: true,
-            isBanned: isBanned,
+            id: userId,
+            image: imageUrl?.absoluteString,
+            language: language ?? "",
+            lastActive: .unique,
+            name: name,
+            online: isOnline,
+            role: role.rawValue,
             teams: teams,
-            language: language,
-            extraData: extraData
+            teamsRole: teamsRole?.mapValues(\.rawValue),
+            updatedAt: updatedAt
         )
     }
 }
