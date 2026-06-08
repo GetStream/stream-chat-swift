@@ -41,6 +41,70 @@ extension UserResponse {
     }
 }
 
+extension UserResponseCommonFields {
+    static func dummy(
+        userId: UserId,
+        name: String? = .unique,
+        imageUrl: URL? = .unique(),
+        role: UserRole = .admin,
+        teamsRole: [String: UserRole]? = nil,
+        extraData: [String: RawJSON] = [:],
+        teams: [TeamId] = [.unique, .unique, .unique],
+        language: String? = nil,
+        isOnline: Bool = true,
+        isBanned: Bool = false,
+        updatedAt: Date = .unique,
+        deactivatedAt: Date? = nil
+    ) -> UserResponseCommonFields {
+        UserResponse.dummy(
+            userId: userId,
+            name: name,
+            imageUrl: imageUrl,
+            role: role,
+            teamsRole: teamsRole,
+            extraData: extraData,
+            teams: teams,
+            language: language,
+            isOnline: isOnline,
+            isBanned: isBanned,
+            updatedAt: updatedAt,
+            deactivatedAt: deactivatedAt
+        ).asUserResponseCommonFields()
+    }
+}
+
+extension UserResponsePrivacyFields {
+    static func dummy(
+        userId: UserId,
+        name: String? = .unique,
+        imageUrl: URL? = .unique(),
+        role: UserRole = .admin,
+        teamsRole: [String: UserRole]? = nil,
+        extraData: [String: RawJSON] = [:],
+        teams: [TeamId] = [.unique, .unique, .unique],
+        language: String? = nil,
+        isOnline: Bool = true,
+        isBanned: Bool = false,
+        updatedAt: Date = .unique,
+        deactivatedAt: Date? = nil
+    ) -> UserResponsePrivacyFields {
+        UserResponse.dummy(
+            userId: userId,
+            name: name,
+            imageUrl: imageUrl,
+            role: role,
+            teamsRole: teamsRole,
+            extraData: extraData,
+            teams: teams,
+            language: language,
+            isOnline: isOnline,
+            isBanned: isBanned,
+            updatedAt: updatedAt,
+            deactivatedAt: deactivatedAt
+        ).asUserResponsePrivacyFields()
+    }
+}
+
 extension OwnUserResponse {
     static func dummy(
         userId: UserId,
@@ -87,7 +151,7 @@ extension QueryUsersResponse {
         duration: String = "",
         users: [UserResponse] = []
     ) -> QueryUsersResponse {
-        .init(duration: duration, users: users.map(\.asFullUserResponse))
+        .init(duration: duration, users: users.map { $0.asFullUserResponse() })
     }
 }
 
@@ -97,7 +161,7 @@ extension UpdateUsersResponse {
         membershipDeletionTaskId: String = "",
         user: OwnUserResponse
     ) -> UpdateUsersResponse {
-        .init(duration: duration, membershipDeletionTaskId: membershipDeletionTaskId, users: [user.id: user.asFullUserResponse])
+        .init(duration: duration, membershipDeletionTaskId: membershipDeletionTaskId, users: [user.id: user.asFullUserResponse()])
     }
 }
 

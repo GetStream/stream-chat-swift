@@ -47,7 +47,7 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
         let event = UserUpdatedEventDTO(
             createdAt: Date.unique,
             custom: [:],
-            user: UserResponsePrivacyFields(.dummy(userId: .unique))
+            user: UserResponsePrivacyFields.dummy(userId: .unique)
         )
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
@@ -71,7 +71,7 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
         let event = UserUpdatedEventDTO(
             createdAt: Date.unique,
             custom: [:],
-            user: UserResponsePrivacyFields(updatedUserResponse)
+            user: updatedUserResponse.asUserResponsePrivacyFields()
         )
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 
@@ -101,7 +101,7 @@ final class UserUpdateMiddleware_Tests: XCTestCase {
         let event = UserUpdatedEventDTO(
             createdAt: Date.unique,
             custom: [:],
-            user: UserResponsePrivacyFields(updatedUserResponse)
+            user: updatedUserResponse.asUserResponsePrivacyFields()
         )
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
 

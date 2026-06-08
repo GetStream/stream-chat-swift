@@ -44,7 +44,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: .unique,
             custom: [:],
-            user: UserResponseCommonFields(.dummy(userId: .unique))
+            user: UserResponseCommonFields.dummy(userId: .unique)
         )
 
         // Set error to be thrown on write.
@@ -68,7 +68,7 @@ final class ChannelTruncatedEventMiddleware_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: .unique,
             custom: [:],
-            user: UserResponseCommonFields(.dummy(userId: .unique))
+            user: UserResponseCommonFields.dummy(userId: .unique)
         )
 
         try database.createChannel(cid: cid, withMessages: true, truncatedAt: nil)

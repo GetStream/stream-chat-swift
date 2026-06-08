@@ -57,7 +57,7 @@ final class MemberEvents_Tests: XCTestCase {
             createdAt: createdAt,
             custom: [:],
             member: member,
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -90,7 +90,7 @@ final class MemberEvents_Tests: XCTestCase {
             createdAt: createdAt,
             custom: [:],
             member: member,
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -122,7 +122,7 @@ final class MemberEvents_Tests: XCTestCase {
             createdAt: createdAt,
             custom: [:],
             member: .dummy(),
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
 
         // Assert event creation fails due to missing dependencies in database

@@ -78,7 +78,7 @@ final class ManualEventHandler_Tests: XCTestCase {
             custom: [:],
             message: .dummy(messageId: .unique, authorUserId: .unique),
             messageId: .unique,
-            user: UserResponseCommonFields(.dummy(userId: .unique)),
+            user: UserResponseCommonFields.dummy(userId: .unique),
             watcherCount: 0
         )
 
@@ -97,7 +97,7 @@ final class ManualEventHandler_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: .unique,
             custom: [:],
-            user: UserResponseCommonFields(.dummy(userId: .unique)),
+            user: UserResponseCommonFields.dummy(userId: .unique),
             watcherCount: 1
         )
 
@@ -123,7 +123,7 @@ final class ManualEventHandler_Tests: XCTestCase {
             messageId: messageId,
             unreadChannels: 1,
             unreadCount: 2,
-            user: UserResponseCommonFields(.dummy(userId: userId)),
+            user: UserResponseCommonFields.dummy(userId: userId),
             watcherCount: 10
         )
 
@@ -154,7 +154,7 @@ final class ManualEventHandler_Tests: XCTestCase {
             custom: [:],
             message: .dummy(messageId: messageId, authorUserId: userId),
             messageId: messageId,
-            user: UserResponseCommonFields(.dummy(userId: userId))
+            user: UserResponseCommonFields.dummy(userId: userId)
         )
 
         nonisolated(unsafe) var result: Event!
@@ -183,7 +183,7 @@ final class ManualEventHandler_Tests: XCTestCase {
             hardDelete: true,
             message: .dummy(messageId: messageId, authorUserId: userId),
             messageId: messageId,
-            user: UserResponseCommonFields(.dummy(userId: userId))
+            user: UserResponseCommonFields.dummy(userId: userId)
         )
 
         nonisolated(unsafe) var result: Event!
@@ -242,7 +242,7 @@ final class ManualEventHandler_Tests: XCTestCase {
             message: .dummy(messageId: messageId, authorUserId: userId),
             messageId: messageId,
             reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId)),
-            user: UserResponseCommonFields(.dummy(userId: userId))
+            user: UserResponseCommonFields.dummy(userId: userId)
         )
 
         nonisolated(unsafe) var result: Event!
@@ -274,7 +274,7 @@ final class ManualEventHandler_Tests: XCTestCase {
             message: .dummy(messageId: messageId, authorUserId: userId),
             messageId: messageId,
             reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId)),
-            user: UserResponseCommonFields(.dummy(userId: userId))
+            user: UserResponseCommonFields.dummy(userId: userId)
         )
 
         nonisolated(unsafe) var result: Event!
@@ -306,7 +306,7 @@ final class ManualEventHandler_Tests: XCTestCase {
             message: .dummy(messageId: messageId, authorUserId: userId),
             messageId: messageId,
             reaction: .dummy(type: reactionType, messageId: messageId, user: .dummy(userId: userId)),
-            user: UserResponseCommonFields(.dummy(userId: userId))
+            user: UserResponseCommonFields.dummy(userId: userId)
         )
 
         nonisolated(unsafe) var result: Event!

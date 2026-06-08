@@ -4,102 +4,102 @@
 
 import Foundation
 
+extension UserResponse {
+    func asUserResponseCommonFields() -> UserResponseCommonFields {
+        UserResponseCommonFields(
+            avgResponseTime: avgResponseTime,
+            banned: banned,
+            blockedUserIds: blockedUserIds,
+            createdAt: createdAt,
+            custom: custom,
+            deactivatedAt: deactivatedAt,
+            deletedAt: deletedAt,
+            id: id,
+            image: image,
+            language: language,
+            lastActive: lastActive,
+            name: name,
+            online: online,
+            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
+            role: role,
+            teams: teams,
+            teamsRole: teamsRole,
+            updatedAt: updatedAt
+        )
+    }
+
+    func asUserResponsePrivacyFields() -> UserResponsePrivacyFields {
+        UserResponsePrivacyFields(
+            avgResponseTime: avgResponseTime,
+            banned: banned,
+            blockedUserIds: blockedUserIds,
+            createdAt: createdAt,
+            custom: custom,
+            deactivatedAt: deactivatedAt,
+            deletedAt: deletedAt,
+            id: id,
+            image: image,
+            invisible: nil,
+            language: language,
+            lastActive: lastActive,
+            name: name,
+            online: online,
+            privacySettings: nil,
+            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
+            role: role,
+            teams: teams,
+            teamsRole: teamsRole,
+            updatedAt: updatedAt
+        )
+    }
+}
+
 extension UserResponseCommonFields {
-    convenience init(_ user: UserResponse) {
-        self.init(
-            avgResponseTime: user.avgResponseTime,
-            banned: user.banned,
-            blockedUserIds: user.blockedUserIds,
-            createdAt: user.createdAt,
-            custom: user.custom,
-            deactivatedAt: user.deactivatedAt,
-            deletedAt: user.deletedAt,
-            id: user.id,
-            image: user.image,
-            language: user.language,
-            lastActive: user.lastActive,
-            name: user.name,
-            online: user.online,
-            revokeTokensIssuedBefore: user.revokeTokensIssuedBefore,
-            role: user.role,
-            teams: user.teams,
-            teamsRole: user.teamsRole,
-            updatedAt: user.updatedAt
+    func asUserResponse() -> UserResponse {
+        UserResponse(
+            avgResponseTime: avgResponseTime,
+            banned: banned,
+            blockedUserIds: blockedUserIds,
+            createdAt: createdAt,
+            custom: custom,
+            deactivatedAt: deactivatedAt,
+            deletedAt: deletedAt,
+            id: id,
+            image: image,
+            language: language,
+            lastActive: lastActive,
+            name: name,
+            online: online,
+            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
+            role: role,
+            teams: teams,
+            teamsRole: teamsRole,
+            updatedAt: updatedAt
         )
     }
 }
 
 extension UserResponsePrivacyFields {
-    convenience init(_ user: UserResponse) {
-        self.init(
-            avgResponseTime: user.avgResponseTime,
-            banned: user.banned,
-            blockedUserIds: user.blockedUserIds,
-            createdAt: user.createdAt,
-            custom: user.custom,
-            deactivatedAt: user.deactivatedAt,
-            deletedAt: user.deletedAt,
-            id: user.id,
-            image: user.image,
-            invisible: nil,
-            language: user.language,
-            lastActive: user.lastActive,
-            name: user.name,
-            online: user.online,
-            privacySettings: nil,
-            revokeTokensIssuedBefore: user.revokeTokensIssuedBefore,
-            role: user.role,
-            teams: user.teams,
-            teamsRole: user.teamsRole,
-            updatedAt: user.updatedAt
-        )
-    }
-}
-
-extension UserResponse {
-    convenience init(_ user: UserResponseCommonFields) {
-        self.init(
-            avgResponseTime: user.avgResponseTime,
-            banned: user.banned,
-            blockedUserIds: user.blockedUserIds,
-            createdAt: user.createdAt,
-            custom: user.custom,
-            deactivatedAt: user.deactivatedAt,
-            deletedAt: user.deletedAt,
-            id: user.id,
-            image: user.image,
-            language: user.language,
-            lastActive: user.lastActive,
-            name: user.name,
-            online: user.online,
-            revokeTokensIssuedBefore: user.revokeTokensIssuedBefore,
-            role: user.role,
-            teams: user.teams,
-            teamsRole: user.teamsRole,
-            updatedAt: user.updatedAt
-        )
-    }
-
-    convenience init(_ user: UserResponsePrivacyFields) {
-        self.init(
-            avgResponseTime: user.avgResponseTime,
-            banned: user.banned,
-            blockedUserIds: user.blockedUserIds,
-            createdAt: user.createdAt,
-            custom: user.custom,
-            deactivatedAt: user.deactivatedAt,
-            deletedAt: user.deletedAt,
-            id: user.id,
-            image: user.image,
-            language: user.language,
-            lastActive: user.lastActive,
-            name: user.name,
-            online: user.online,
-            revokeTokensIssuedBefore: user.revokeTokensIssuedBefore,
-            role: user.role,
-            teams: user.teams,
-            teamsRole: user.teamsRole,
-            updatedAt: user.updatedAt
+    func asUserResponse() -> UserResponse {
+        UserResponse(
+            avgResponseTime: avgResponseTime,
+            banned: banned,
+            blockedUserIds: blockedUserIds,
+            createdAt: createdAt,
+            custom: custom,
+            deactivatedAt: deactivatedAt,
+            deletedAt: deletedAt,
+            id: id,
+            image: image,
+            language: language,
+            lastActive: lastActive,
+            name: name,
+            online: online,
+            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
+            role: role,
+            teams: teams,
+            teamsRole: teamsRole,
+            updatedAt: updatedAt
         )
     }
 }
@@ -193,7 +193,7 @@ extension ChannelInput {
 }
 
 extension OwnUserResponse {
-    var asUserPayload: UserResponse {
+    func asUserResponse() -> UserResponse {
         UserResponse(
             id: id,
             name: name,
@@ -214,7 +214,7 @@ extension OwnUserResponse {
         )
     }
 
-    var asFullUserResponse: FullUserResponse {
+    func asFullUserResponse() -> FullUserResponse {
         FullUserResponse(
             avgResponseTime: avgResponseTime,
             banned: banned,
@@ -435,7 +435,7 @@ extension UpdateMemberPartialRequest {
 
 extension CreateGuestResponse {
     convenience init(user: OwnUserResponse, token: Token) {
-        let userResponse = user.asUserPayload
+        let userResponse = user.asUserResponse()
         userResponse.id = token.userId
         self.init(accessToken: token.rawValue, duration: "", user: userResponse)
     }
@@ -502,7 +502,7 @@ extension UserResponse {
 }
 
 extension FullUserResponse {
-    var asUserPayload: UserResponse {
+    func asUserResponse() -> UserResponse {
         UserResponse(
             id: id,
             name: name,
@@ -523,7 +523,7 @@ extension FullUserResponse {
         )
     }
 
-    var asOwnUserResponse: OwnUserResponse {
+    func asOwnUserResponse() -> OwnUserResponse {
         OwnUserResponse(
             id: id,
             name: name,
@@ -553,7 +553,7 @@ extension FullUserResponse {
 
 extension QueryUsersResponse {
     var userPayloads: [UserResponse] {
-        users.map(\.asUserPayload)
+        users.map { $0.asUserResponse() }
     }
 }
 
@@ -633,7 +633,7 @@ extension UpdateUsersResponse {
         guard let user = users.first?.value else {
             throw ClientError.Unexpected("Missing updated user.")
         }
-        return user.asOwnUserResponse
+        return user.asOwnUserResponse()
     }
 }
 
@@ -645,7 +645,7 @@ private extension Encodable {
 }
 
 extension UserResponse {
-    var asFullUserResponse: FullUserResponse {
+    func asFullUserResponse() -> FullUserResponse {
         FullUserResponse(
             avgResponseTime: avgResponseTime,
             banned: banned,
@@ -1163,7 +1163,7 @@ extension FlagRequest {
 }
 
 extension UserResponse {
-    var asOwnUserResponse: OwnUserResponse {
+    func asOwnUserResponse() -> OwnUserResponse {
         OwnUserResponse(
             id: id,
             name: name,

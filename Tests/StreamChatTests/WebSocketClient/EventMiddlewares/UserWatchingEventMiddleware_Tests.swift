@@ -48,7 +48,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
             cid: ChannelId.unique.rawValue,
             createdAt: Date.unique,
             custom: [:],
-            user: UserResponseCommonFields(.dummy(userId: .unique)),
+            user: UserResponseCommonFields.dummy(userId: .unique),
             watcherCount: .random(in: 0...10)
         )
         let forwardedEvent = middleware.handle(event: event, session: database.viewContext)
@@ -65,7 +65,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: .unique,
             custom: [:],
-            user: UserResponseCommonFields(.dummy(userId: userId)),
+            user: UserResponseCommonFields.dummy(userId: userId),
             watcherCount: watcherCount
         )
 
@@ -102,7 +102,7 @@ final class UserWatchingEventMiddleware_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: .unique,
             custom: [:],
-            user: UserResponseCommonFields(.dummy(userId: watchingUserId)),
+            user: UserResponseCommonFields.dummy(userId: watchingUserId),
             watcherCount: watcherCount
         )
 

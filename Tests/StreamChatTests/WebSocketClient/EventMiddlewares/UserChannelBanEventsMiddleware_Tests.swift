@@ -70,10 +70,10 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         let event = UserBannedEventDTO(
             cid: cid.rawValue,
             createdAt: .unique,
-            createdBy: UserResponseCommonFields(.dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:])),
+            createdBy: UserResponseCommonFields.dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
             custom: [:],
             expiration: banExpiredAt,
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
 
         // Create required objects in the DB
@@ -103,11 +103,11 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         let event = UserBannedEventDTO(
             cid: cid.rawValue,
             createdAt: .unique,
-            createdBy: UserResponseCommonFields(.dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:])),
+            createdBy: UserResponseCommonFields.dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
             custom: [:],
             expiration: banExpiredAt,
             shadow: true,
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
 
         // Create required objects in the DB
@@ -136,9 +136,9 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         let event = UserUnbannedEventDTO(
             cid: cid.rawValue,
             createdAt: .unique,
-            createdBy: UserResponseCommonFields(.dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:])),
+            createdBy: UserResponseCommonFields.dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
             custom: [:],
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
 
         // Create required objects in the DB
@@ -185,7 +185,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             createdAt: createdAt,
             custom: [:],
             hardDelete: false,
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
 
         // Create required objects in the DB
@@ -230,7 +230,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             custom: [:],
             hardDelete: true,
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
 
         // Create required objects in the DB
@@ -275,7 +275,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             createdAt: createdAt,
             custom: [:],
             hardDelete: false,
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
 
         // Create user in DB
@@ -303,7 +303,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             createdAt: createdAt,
             custom: [:],
             hardDelete: true,
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
 
         // Do not create user in DB
@@ -328,10 +328,10 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
         UserBannedEventDTO(
             cid: cid.rawValue,
             createdAt: .unique,
-            createdBy: UserResponseCommonFields(.dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:])),
+            createdBy: UserResponseCommonFields.dummy(userId: .unique, name: "Leia", imageUrl: nil, extraData: [:]),
             custom: [:],
             expiration: banExpiredAt,
-            user: UserResponseCommonFields(.dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]))
+            user: UserResponseCommonFields.dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
         )
     }
 
@@ -340,7 +340,7 @@ final class UserChannelBanEventsMiddleware_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: .unique,
             custom: [:],
-            user: UserResponseCommonFields(.dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:]))
+            user: UserResponseCommonFields.dummy(userId: .unique, name: "Luke", imageUrl: nil, extraData: [:])
         )
     }
 }

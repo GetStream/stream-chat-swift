@@ -30,7 +30,6 @@ final class ChannelList_Tests: XCTestCase {
     // MARK: - Restoring State from the Core Data Store
     
     func test_restoringState_whenDatabaseHasEntries_thenStateIsUpdated() async throws {
-
         let channelListPayload = makeMatchingQueryChannelsResponse(channelCount: 5, createdAtOffset: 0)
         let query = await channelList.state.query
 
@@ -42,7 +41,6 @@ final class ChannelList_Tests: XCTestCase {
     }
     
     func test_restoringState_whenDatabaseHasEntriesWhichShouldBeIgnored_thenStateOnlyIncludesQueryMatchingResults() async throws {
-
         let matchingQueryChannelsResponse = makeMatchingQueryChannelsResponse(channelCount: 5, createdAtOffset: 0)
         let deletedChannelPayload = makeMatchingChannelStateResponseFields(createdAtOffset: 5)
         let query = await channelList.state.query
@@ -367,7 +365,6 @@ final class ChannelList_Tests: XCTestCase {
         let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
             session.saveChannelList(payload: existingQueryChannelsResponse, query: query)
-
         }
         await setUpChannelList(usesMockedChannelUpdater: false)
         
@@ -457,9 +454,7 @@ final class ChannelList_Tests: XCTestCase {
             }
         let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-
             session.saveChannelList(payload: incomingQueryChannelsResponse, query: query)
-
         }
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         cancellable.cancel()
@@ -489,9 +484,7 @@ final class ChannelList_Tests: XCTestCase {
             }
         let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-
             session.saveChannelList(payload: incomingQueryChannelsResponse, query: query)
-
         }
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         cancellable.cancel()
@@ -529,9 +522,7 @@ final class ChannelList_Tests: XCTestCase {
             }
         let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-
             session.saveChannelList(payload: incomingQueryChannelsResponse, query: query)
-
         }
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         cancellable.cancel()
@@ -568,9 +559,7 @@ final class ChannelList_Tests: XCTestCase {
             }
         let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
-
             session.saveChannelList(payload: incomingQueryChannelsResponse, query: query)
-
         }
         await fulfillment(of: [expectation], timeout: defaultTimeout)
         cancellable.cancel()
@@ -621,7 +610,7 @@ final class ChannelList_Tests: XCTestCase {
             totalUnreadCount: 0,
             unreadChannels: 0,
             unreadCount: 0,
-            user: UserResponseCommonFields(.dummy(userId: memberId))
+            user: UserResponseCommonFields.dummy(userId: memberId)
         )
         let expectation = XCTestExpectation()
         env.client.eventNotificationCenter.process(notificationMarkReadEvent, postNotification: true) {
@@ -648,7 +637,6 @@ final class ChannelList_Tests: XCTestCase {
         let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
             session.saveChannelList(payload: existingQueryChannelsResponse, query: query)
-
         }
         
         // New channel event
@@ -692,7 +680,6 @@ final class ChannelList_Tests: XCTestCase {
         let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
             session.saveChannelList(payload: existingQueryChannelsResponse, query: query)
-
         }
         // Ensure that the channel is in the state
         XCTAssertEqual(existingQueryChannelsResponse.channels.compactMap { $0.channel?.cid }, await channelList.state.channels.map(\.cid.rawValue))
@@ -728,7 +715,6 @@ final class ChannelList_Tests: XCTestCase {
         let query = await channelList.state.query
         try await env.client.mockDatabaseContainer.write { session in
             session.saveChannelList(payload: existingQueryChannelsResponse, query: query)
-
         }
         
         // Ensure that the channel is in the state

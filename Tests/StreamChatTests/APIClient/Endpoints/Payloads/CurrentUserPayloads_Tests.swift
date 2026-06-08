@@ -47,4 +47,33 @@ final class OwnUserResponse_Tests: XCTestCase {
         XCTAssertEqual(payload.pushPreferences?.chatLevel, "mentions")
         XCTAssertEqual(payload.pushPreferences?.disabledUntil, "2024-12-31T23:59:59.999Z".toDate())
     }
+
+    func test_ownUserPayload_asUserResponse_preservesUserFields() {
+        let payload = OwnUserResponse.dummy(
+            userId: .unique,
+            name: "Leia",
+            imageURL: URL(string: "https://example.com/leia.png"),
+            isOnline: true,
+            isInvisible: false,
+            isBanned: false,
+            role: .admin,
+            teamsRole: ["ios": .admin],
+            extraData: ["rank": .string("general")],
+            teams: ["rebels"],
+            language: "en"
+        )
+
+        let converted = payload.asUserResponse()
+
+        XCTAssertEqual(converted.id, payload.id)
+        XCTAssertEqual(converted.name, payload.name)
+        XCTAssertEqual(converted.image, payload.image)
+        XCTAssertEqual(converted.role, payload.role)
+        XCTAssertEqual(converted.teamsRole, payload.teamsRole)
+        XCTAssertEqual(converted.custom, payload.custom)
+        XCTAssertEqual(converted.teams, payload.teams)
+        XCTAssertEqual(converted.language, payload.language)
+        XCTAssertEqual(converted.online, payload.online)
+        XCTAssertEqual(converted.banned, payload.banned)
+    }
 }

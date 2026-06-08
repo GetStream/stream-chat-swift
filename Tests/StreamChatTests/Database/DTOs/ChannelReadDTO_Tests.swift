@@ -335,7 +335,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         )
 
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
-        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse)
+        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse())
         let ownMessageReadByAnotherUser: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
@@ -385,7 +385,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let anotherUserMember: ChannelMemberResponse = .dummy(user: anotherUser)
 
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
-        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse)
+        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse())
 
         let messageFromAnotherUser: MessageResponse = .dummy(
             messageId: .unique,
@@ -437,7 +437,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let anotherUserMember: ChannelMemberResponse = .dummy(user: anotherUser)
 
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
-        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse)
+        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse())
 
         let messageFromAnotherUser: MessageResponse = .dummy(
             messageId: .unique,

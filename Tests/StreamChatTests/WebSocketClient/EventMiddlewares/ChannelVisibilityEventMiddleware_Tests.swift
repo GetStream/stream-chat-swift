@@ -280,7 +280,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             clearHistory: clearHistory,
             createdAt: .unique,
             custom: [:],
-            user: UserResponseCommonFields(.dummy(userId: .unique))
+            user: UserResponseCommonFields.dummy(userId: .unique)
         )
     }
 
@@ -290,7 +290,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             cid: cid.rawValue,
             createdAt: .unique,
             custom: [:],
-            user: UserResponseCommonFields(.dummy(userId: .unique))
+            user: UserResponseCommonFields.dummy(userId: .unique)
         )
     }
 
@@ -301,7 +301,7 @@ final class ChannelVisibilityEventMiddleware_Tests: XCTestCase {
             custom: [:],
             message: message,
             messageId: message.id,
-            user: UserResponseCommonFields(.dummy(userId: .unique)),
+            user: UserResponseCommonFields.dummy(userId: .unique),
             watcherCount: 0
         )
     }

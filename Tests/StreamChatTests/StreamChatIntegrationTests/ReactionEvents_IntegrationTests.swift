@@ -160,7 +160,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
             message: message,
             messageId: message.id,
             reaction: reaction,
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -201,7 +201,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
             message: message,
             messageId: message.id,
             reaction: reaction,
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
 
         // Assert event creation fails due to missing dependencies in database
@@ -242,7 +242,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
             message: message,
             messageId: message.id,
             reaction: reaction,
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
 
         // Assert event creation fails due to missing dependencies in database

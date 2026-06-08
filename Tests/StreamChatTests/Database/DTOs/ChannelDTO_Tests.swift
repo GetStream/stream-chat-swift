@@ -134,7 +134,7 @@ final class ChannelDTO_Tests: XCTestCase {
     func test_saveChannel_channelReadsAreSavedBeforeMessages() throws {
         // GIVEN
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
-        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse)
+        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse())
 
         let anotherMember: ChannelMemberResponse = .dummy(user: .dummy(userId: .unique))
         let anotherMemberRead: ReadStateResponse = .dummy(
@@ -675,7 +675,7 @@ final class ChannelDTO_Tests: XCTestCase {
             createdAt: Date.distantPast,
             updatedAt: .unique,
             pinned: true,
-            mentionedUsers: [dummyCurrentUser.asUserResponse]
+            mentionedUsers: [dummyCurrentUser.asUserResponse()]
         )
         let payload = dummyPayload(with: channelId, numberOfMessages: 1, pinnedMessages: [oldPinnedMessage])
 
@@ -697,7 +697,7 @@ final class ChannelDTO_Tests: XCTestCase {
             createdAt: Date(),
             updatedAt: .unique,
             pinned: true,
-            mentionedUsers: [dummyCurrentUser.asUserResponse]
+            mentionedUsers: [dummyCurrentUser.asUserResponse()]
         )
         let payload = dummyPayload(with: channelId, numberOfMessages: 1, pinnedMessages: [pinnedMessage])
 
@@ -762,7 +762,7 @@ final class ChannelDTO_Tests: XCTestCase {
     }
 
     func test_lastMessageFromCurrentUser() throws {
-        let user: UserResponse = dummyCurrentUser.asUserResponse
+        let user: UserResponse = dummyCurrentUser.asUserResponse()
         let channelId: ChannelId = .unique
         let message1: MessageResponse = .dummy(
             type: .regular,
@@ -803,7 +803,7 @@ final class ChannelDTO_Tests: XCTestCase {
     }
 
     func test_lastMessageFromCurrentUser_whenLastMessageIsThreadReply() throws {
-        let user: UserResponse = dummyCurrentUser.asUserResponse
+        let user: UserResponse = dummyCurrentUser.asUserResponse()
         let channelId: ChannelId = .unique
         let mainMessageId: String = .unique
         let mainMessage = MessageResponse.dummy(
@@ -814,7 +814,7 @@ final class ChannelDTO_Tests: XCTestCase {
             text: .unique,
             createdAt: Date.distantPast,
             updatedAt: .unique,
-            mentionedUsers: [dummyCurrentUser.asUserResponse]
+            mentionedUsers: [dummyCurrentUser.asUserResponse()]
         )
 
         let threadMessage = MessageResponse.dummy(
@@ -825,7 +825,7 @@ final class ChannelDTO_Tests: XCTestCase {
             text: .unique,
             createdAt: Date(),
             updatedAt: .unique,
-            mentionedUsers: [dummyCurrentUser.asUserResponse]
+            mentionedUsers: [dummyCurrentUser.asUserResponse()]
         )
 
         let channel = dummyPayload(with: channelId, messages: [mainMessage, threadMessage])
@@ -1056,22 +1056,22 @@ final class ChannelDTO_Tests: XCTestCase {
             lastRead: .init(),
             lastReadMessageId: .unique,
             unreadMessages: 0,
-            user: currentUserResponse.asUserResponse
+            user: currentUserResponse.asUserResponse()
         )
 
         let messageMentioningCurrentUser: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: .unique,
             createdAt: currentUserReadStateResponse.lastRead.addingTimeInterval(5),
-            mentionedUsers: [currentUserResponse.asUserResponse]
+            mentionedUsers: [currentUserResponse.asUserResponse()]
         )
 
         let channelPayload = ChannelStateResponseFields.dummy(
             channel: .dummy(cid: .unique),
             watcherCount: 0,
             watchers: [],
-            members: [.dummy(user: currentUserResponse.asUserResponse)],
-            membership: .dummy(user: currentUserResponse.asUserResponse),
+            members: [.dummy(user: currentUserResponse.asUserResponse())],
+            membership: .dummy(user: currentUserResponse.asUserResponse()),
             messages: [messageMentioningCurrentUser],
             pinnedMessages: [],
             channelReads: [currentUserReadStateResponse],

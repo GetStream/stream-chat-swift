@@ -305,7 +305,7 @@ final class DatabaseSession_Tests: XCTestCase {
             custom: [:],
             message: messagePayload,
             messageId: messageId,
-            user: UserResponseCommonFields(.dummy(userId: currentUserId))
+            user: UserResponseCommonFields.dummy(userId: currentUserId)
         )
         try database.writeSynchronously { session in
             try session.saveEvent(event: .typeMessageUpdatedEvent(dto))
@@ -343,7 +343,7 @@ final class DatabaseSession_Tests: XCTestCase {
                     pinned: true
                 ),
                 messageId: messageId,
-                user: UserResponseCommonFields(.dummy(userId: .unique))
+                user: UserResponseCommonFields.dummy(userId: .unique)
             )
         )
         try database.writeSynchronously { session in

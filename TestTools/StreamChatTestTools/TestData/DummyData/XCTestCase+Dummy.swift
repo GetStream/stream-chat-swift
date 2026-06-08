@@ -71,7 +71,7 @@ extension XCTestCase {
             latestReactions: [],
             mentionedChannel: false,
             mentionedHere: false,
-            mentionedUsers: [dummyCurrentUser.asUserPayload],
+            mentionedUsers: [dummyCurrentUser.asUserResponse()],
             ownReactions: [],
             pinned: false,
             reactionCounts: ["like": 1],
@@ -102,7 +102,7 @@ extension XCTestCase {
             latestReactions: [],
             mentionedChannel: false,
             mentionedHere: false,
-            mentionedUsers: [dummyCurrentUser.asUserPayload],
+            mentionedUsers: [dummyCurrentUser.asUserResponse()],
             ownReactions: [],
             pinExpires: .unique,
             pinned: true,
@@ -126,7 +126,7 @@ extension XCTestCase {
             lastRead: Date(timeIntervalSince1970: 1),
             lastReadMessageId: .unique,
             unreadMessages: 10,
-            user: dummyCurrentUser.asUserPayload
+            user: dummyCurrentUser.asUserResponse()
         )
     }
 

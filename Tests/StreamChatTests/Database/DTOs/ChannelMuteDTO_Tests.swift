@@ -31,7 +31,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             channel: .dummy(cid: .unique),
             createdAt: .unique,
             updatedAt: .unique,
-            user: currentUserResponse.asUserPayload
+            user: currentUserResponse.asUserResponse()
         )
         mutePayload.expires = .unique
         let mutedChannel = try XCTUnwrap(mutePayload.channel)
@@ -75,7 +75,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             channel: channel,
             createdAt: .unique,
             updatedAt: .unique,
-            user: currentUser.asUserPayload
+            user: currentUser.asUserResponse()
         )
         mute.expires = .unique
 
@@ -107,7 +107,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             channel: channel,
             createdAt: .unique,
             updatedAt: .unique,
-            user: currentUser.asUserPayload
+            user: currentUser.asUserResponse()
         )
         initialMute.expires = .unique
 
@@ -121,7 +121,7 @@ final class ChannelMuteDTO_Tests: XCTestCase {
             channel: channel,
             createdAt: .unique,
             updatedAt: .unique,
-            user: currentUser.asUserPayload
+            user: currentUser.asUserResponse()
         )
         updatedMute.expires = .unique
         try database.writeSynchronously { session in

@@ -252,7 +252,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
             custom: [:],
             message: .dummy(messageId: messageId, authorUserId: .unique, latestReactions: [], channel: .dummy(cid: cid)),
             messageId: messageId,
-            user: UserResponseCommonFields(.dummy(userId: .unique)),
+            user: UserResponseCommonFields.dummy(userId: .unique),
             watcherCount: 0
         )
         let wsEvent = WSEvent.typeMessageNewEvent(dto)
@@ -307,7 +307,7 @@ final class EventNotificationCenter_Tests: XCTestCase {
                 custom: [:],
                 message: message,
                 messageId: message.id,
-                user: UserResponseCommonFields(.dummy(userId: .unique)),
+                user: UserResponseCommonFields.dummy(userId: .unique),
                 watcherCount: 0
             )
         }

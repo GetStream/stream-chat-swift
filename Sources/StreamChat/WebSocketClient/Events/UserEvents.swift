@@ -265,7 +265,7 @@ extension UserMessagesDeletedEventDTO: EventDTO {
         }
 
         return UserMessagesDeletedEvent(
-            user: UserResponse(user).asModel(),
+            user: user.asUserResponse().asModel(),
             hardDelete: hardDelete ?? false,
             createdAt: createdAt
         )

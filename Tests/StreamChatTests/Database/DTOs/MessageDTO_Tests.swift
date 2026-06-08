@@ -40,12 +40,12 @@ final class MessageDTO_Tests: XCTestCase {
         )
 
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
-        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse)
+        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse())
         let currentUserRead: ReadStateResponse = .dummy(
             lastRead: anotherUserMessage.createdAt.addingTimeInterval(10),
             lastReadMessageId: .unique,
             unreadMessages: 0,
-            user: currentUser.asUserResponse
+            user: currentUser.asUserResponse()
         )
 
         let channelPayload: ChannelStateResponseFields = .dummy(
@@ -89,7 +89,7 @@ final class MessageDTO_Tests: XCTestCase {
     func test_saveMessage_messageSentByCurrentUser_hasReadsFromOtherMembers() throws {
         // GIVEN
         let currentUser: OwnUserResponse = .dummy(userId: .unique, role: .user)
-        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse)
+        let currentUserMember: ChannelMemberResponse = .dummy(user: currentUser.asUserResponse())
         let currentUserMessage: MessageResponse = .dummy(
             messageId: .unique,
             authorUserId: currentUser.id,
@@ -99,7 +99,7 @@ final class MessageDTO_Tests: XCTestCase {
             lastRead: currentUserMessage.createdAt,
             lastReadMessageId: .unique,
             unreadMessages: 0,
-            user: currentUser.asUserResponse
+            user: currentUser.asUserResponse()
         )
 
         let member1ReadEarlierOwnMessage: ReadStateResponse = .dummy(

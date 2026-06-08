@@ -647,7 +647,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             custom: [:],
             member: .dummy(user: .dummy(userId: memberId)),
-            user: UserResponseCommonFields(.dummy(userId: userId))
+            user: UserResponseCommonFields.dummy(userId: userId)
         )
     }
 
@@ -658,7 +658,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             custom: [:],
             member: .dummy(user: .dummy(userId: userId)),
-            user: UserResponseCommonFields(.dummy(userId: userId))
+            user: UserResponseCommonFields.dummy(userId: userId)
         )
     }
 
@@ -669,7 +669,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             custom: [:],
             member: .dummy(user: .dummy(userId: memberId)),
-            user: UserResponseCommonFields(.dummy(userId: userId))
+            user: UserResponseCommonFields.dummy(userId: userId)
         )
     }
 
@@ -690,7 +690,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             custom: [:],
             member: .dummy(user: .dummy(userId: memberId)),
-            user: UserResponseCommonFields(.dummy(userId: userId))
+            user: UserResponseCommonFields.dummy(userId: userId)
         )
     }
 
@@ -701,7 +701,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             custom: [:],
             member: .dummy(user: .dummy(userId: memberId)),
-            user: UserResponseCommonFields(.dummy(userId: userId))
+            user: UserResponseCommonFields.dummy(userId: userId)
         )
     }
 
@@ -711,7 +711,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             custom: [:],
             member: .dummy(user: .dummy(userId: memberId)),
-            user: UserResponseCommonFields(.dummy(userId: userId))
+            user: UserResponseCommonFields.dummy(userId: userId)
         )
     }
 
@@ -721,7 +721,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
             createdAt: .unique,
             custom: [:],
             member: .dummy(user: .dummy(userId: memberId)),
-            user: UserResponseCommonFields(.dummy(userId: userId))
+            user: UserResponseCommonFields.dummy(userId: userId)
         )
     }
 }

@@ -243,7 +243,7 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
             custom: [:],
             message: message,
             messageId: messageId,
-            user: UserResponseCommonFields(user),
+            user: user.asUserResponseCommonFields(),
             watcherCount: 0
         )
     }
@@ -260,7 +260,7 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
             totalUnreadCount: 0,
             unreadChannels: 0,
             unreadCount: 0,
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
     }
 
@@ -282,7 +282,7 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
             custom: [:],
             lastDeliveredAt: formatter.string(from: deliveredAt),
             lastDeliveredMessageId: messageId,
-            user: UserResponseCommonFields(user)
+            user: user.asUserResponseCommonFields()
         )
     }
 }

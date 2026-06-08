@@ -719,7 +719,7 @@ extension SyncRepository_Tests {
                     custom: [:],
                     message: .dummy(messageId: "\(date)", authorUserId: .unique, latestReactions: [], channel: .dummy(cid: cid)),
                     messageId: "\(date)",
-                    user: UserResponseCommonFields(.dummy(userId: "")),
+                    user: UserResponseCommonFields.dummy(userId: ""),
                     watcherCount: 0
                 )
             )

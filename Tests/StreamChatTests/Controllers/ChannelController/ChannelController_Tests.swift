@@ -3857,7 +3857,7 @@ final class ChannelController_Tests: XCTestCase {
                     lastRead: lastMessage.createdAt.addingTimeInterval(-1),
                     lastReadMessageId: .unique,
                     unreadMessages: 0,
-                    user: currentUser.asUserPayload
+                    user: currentUser.asUserResponse()
                 )
             ]
         )
@@ -3969,7 +3969,7 @@ final class ChannelController_Tests: XCTestCase {
                     lastRead: lastMessage.createdAt.addingTimeInterval(-1),
                     lastReadMessageId: .unique,
                     unreadMessages: 0,
-                    user: currentUser.asUserPayload
+                    user: currentUser.asUserResponse()
                 )
             ]
         )
@@ -4099,7 +4099,7 @@ final class ChannelController_Tests: XCTestCase {
                     lastRead: lastMessage.createdAt.addingTimeInterval(-1),
                     lastReadMessageId: nil,
                     unreadMessages: 0,
-                    user: currentUser.asUserPayload
+                    user: currentUser.asUserResponse()
                 )
             ]
         )
@@ -4536,7 +4536,7 @@ final class ChannelController_Tests: XCTestCase {
     func test_currentCooldownTime_whenSlowModeIsActive_andLastMessageFromCurrentUserExists_thenCooldownTimeIsGreaterThanZero(
     ) throws {
         // GIVEN
-        let user: UserResponse = dummyCurrentUser.asUserResponse
+        let user: UserResponse = dummyCurrentUser.asUserResponse()
         let message: MessageResponse = .dummy(messageId: .unique, authorUserId: user.id, createdAt: Date())
         let channelPayload = dummyPayload(with: channelId, messages: [message], cooldownDuration: 5)
 
@@ -4555,7 +4555,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_currentCooldownTime_whenSlowModeIsNotActive_thenCooldownTimeIsZero() throws {
         // GIVEN
-        let user: UserResponse = dummyCurrentUser.asUserResponse
+        let user: UserResponse = dummyCurrentUser.asUserResponse()
         let channelPayload = dummyPayload(with: channelId, cooldownDuration: 0)
 
         try client.databaseContainer.createCurrentUser(id: user.id)
@@ -4573,7 +4573,7 @@ final class ChannelController_Tests: XCTestCase {
 
     func test_currentCooldownTime_doesNotReturnNegativeValues() throws {
         // GIVEN
-        let user: UserResponse = dummyCurrentUser.asUserResponse
+        let user: UserResponse = dummyCurrentUser.asUserResponse()
 
         let message: MessageResponse = .dummy(
             messageId: .unique,
