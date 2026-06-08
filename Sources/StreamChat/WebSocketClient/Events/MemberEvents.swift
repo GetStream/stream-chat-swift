@@ -30,7 +30,8 @@ extension MemberAddedEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
         guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
-        guard let memberDTO = session.member(userId: member.resolvedUserId, cid: channelId) else { return nil }
+        guard let userId = member.userId,
+              let memberDTO = session.member(userId: userId, cid: channelId) else { return nil }
 
         return try? MemberAddedEvent(
             user: userDTO.asModel(),
@@ -67,7 +68,8 @@ extension MemberUpdatedEventDTO: EventDTO {
     func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
         guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
         guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
-        guard let memberDTO = session.member(userId: member.resolvedUserId, cid: channelId) else { return nil }
+        guard let userId = member.userId,
+              let memberDTO = session.member(userId: userId, cid: channelId) else { return nil }
 
         return try? MemberUpdatedEvent(
             user: userDTO.asModel(),

@@ -13,7 +13,7 @@ final class ChannelMemberResponse_Tests: XCTestCase {
     func test_memberJSON_isSerialized() throws {
         let payload = try JSONDecoder.default.decode(ChannelMemberResponse.self, from: memberJSON)
 
-        XCTAssertEqual(payload.memberRole, .owner)
+        XCTAssertEqual(MemberRole(rawChannelValue: payload.channelRole), .owner)
         XCTAssertEqual(payload.createdAt, "2020-06-05T12:53:09.862721Z".toDate())
         XCTAssertEqual(payload.updatedAt, "2020-06-05T12:53:09.862721Z".toDate())
         XCTAssertEqual(payload.banExpires, "2021-03-08T15:42:31.355923Z".toDate())
@@ -39,6 +39,6 @@ final class ChannelMemberResponse_Tests: XCTestCase {
 
     func test_memberJSON_channelRole_isCustomRole() throws {
         let payload = try JSONDecoder.default.decode(ChannelMemberResponse.self, from: memberRoleJSON)
-        XCTAssertEqual(payload.memberRole, "custom_role")
+        XCTAssertEqual(MemberRole(rawChannelValue: payload.channelRole), "custom_role")
     }
 }

@@ -279,13 +279,13 @@ final class ChannelReadDTO_Tests: XCTestCase {
         let readAt = Date()
         database.viewContext.markChannelAsRead(
             cid: (channel.channel?.channelId ?? .unique),
-            userId: member.resolvedUserId,
+            userId: member.userId!,
             at: readAt
         )
 
         // THEN
         let createdReadDTO = try XCTUnwrap(
-            ChannelReadDTO.load(cid: (channel.channel?.channelId ?? .unique), userId: member.resolvedUserId, context: database.viewContext)
+            ChannelReadDTO.load(cid: (channel.channel?.channelId ?? .unique), userId: member.userId!, context: database.viewContext)
         )
         XCTAssertNearlySameDate(createdReadDTO.lastReadAt.bridgeDate, readAt)
         XCTAssertEqual(createdReadDTO.unreadMessageCount, 0)
@@ -312,7 +312,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
         )
 
         // THEN
-        let readDTO = ChannelReadDTO.load(cid: (channel.channel?.channelId ?? .unique), userId: member.resolvedUserId, context: database.viewContext)
+        let readDTO = ChannelReadDTO.load(cid: (channel.channel?.channelId ?? .unique), userId: member.userId!, context: database.viewContext)
         XCTAssertNil(readDTO)
     }
 
@@ -831,7 +831,7 @@ final class ChannelReadDTO_Tests: XCTestCase {
 
         // WHEN
         try database.writeSynchronously { session in
-            session.markChannelAsUnread(cid: (channel.channel?.channelId ?? .unique), by: member.resolvedUserId)
+            session.markChannelAsUnread(cid: (channel.channel?.channelId ?? .unique), by: member.userId!)
         }
 
         // THEN

@@ -13,4 +13,4 @@ extension MessageResponse: DecodableEntity { var extraData: [String: RawJSON] { 
 extension ReactionResponse: DecodableEntity { var extraData: [String: RawJSON] { custom } }
 extension UserResponse: DecodableEntity { var extraData: [String: RawJSON] { custom } }
 extension OwnUserResponse: DecodableEntity { var extraData: [String: RawJSON] { custom } }
-extension ChannelResponse: DecodableEntity { var extraData: [String: RawJSON] { custom } }
+extension ChannelResponse: DecodableEntity {}

@@ -66,7 +66,7 @@ final class MemberModelDTO_Tests: XCTestCase {
         let payloadUser = try XCTUnwrap(payload.user)
 
         AssertAsync {
-            Assert.willBeEqual(payload.memberRole, loadedMember?.memberRole)
+            Assert.willBeEqual(MemberRole(rawChannelValue: payload.channelRole), loadedMember?.memberRole)
             Assert.willBeEqual(payload.createdAt, loadedMember?.memberCreatedAt)
             Assert.willBeEqual(payload.updatedAt, loadedMember?.memberUpdatedAt)
             Assert.willBeEqual(payload.banned, loadedMember?.isBannedFromChannel)

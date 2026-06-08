@@ -289,7 +289,7 @@ final class MemberEventMiddleware_Tests: XCTestCase {
 
         // WHEN
         let cid = try XCTUnwrap(channelPayload.channel?.channelId)
-        let event = makeMemberRemovedDTO(cid: cid, userId: member.resolvedUserId)
+        let event = makeMemberRemovedDTO(cid: cid, userId: member.userId!)
         _ = middleware.handle(event: event, session: mockSession)
 
         // THEN

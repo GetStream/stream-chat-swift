@@ -113,7 +113,10 @@ extension NSManagedObjectContext {
         query: ChannelMemberListQuery?,
         cache: PreWarmedCache?
     ) throws -> MemberDTO {
-        let dto = MemberDTO.loadOrCreate(userId: payload.resolvedUserId, channelId: channelId, context: self, cache: cache)
+        guard let userId = payload.userId else {
+            throw ClientError("Member payload is missing a user id")
+        }
+        let dto = MemberDTO.loadOrCreate(userId: userId, channelId: channelId, context: self, cache: cache)
 
         // Save user-part of member first
         if let userPayload = payload.user {
@@ -121,9 +124,8 @@ extension NSManagedObjectContext {
         }
 
         // Save member specific data
-        if let role = payload.memberRole {
-            dto.channelRoleRaw = role.rawChannelValue
-        }
+        let role = MemberRole(rawChannelValue: payload.channelRole)
+        dto.channelRoleRaw = role.rawChannelValue
 
         dto.memberCreatedAt = payload.createdAt.bridgeDate
         dto.memberUpdatedAt = payload.updatedAt.bridgeDate

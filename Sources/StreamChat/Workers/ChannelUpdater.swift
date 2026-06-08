@@ -210,7 +210,10 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                     let memberListQueryDTO = try session.saveQuery(memberListQuery)
                     memberListQueryDTO.members.formUnion(updatedChannel.members)
 
-                    paginatedMembers = payload.members.compactMapLoggingError { try session.member(userId: $0.resolvedUserId, cid: cid)?.asModel() }
+                    paginatedMembers = payload.members.compactMapLoggingError {
+                        guard let userId = $0.userId else { return nil }
+                        return try session.member(userId: userId, cid: cid)?.asModel()
+                    }
                 } completion: { error in
                     if let paginatedMembers {
                         completion(.success(paginatedMembers))

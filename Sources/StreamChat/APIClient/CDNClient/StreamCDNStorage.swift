@@ -232,8 +232,13 @@ final class StreamCDNStorage: CDNStorage, @unchecked Sendable {
                         response: response,
                         error: error
                     )
-                    let file = UploadedFile(fileURL: response.fileURL, thumbnailURL: response.thumbURL)
-
+                    guard let fileURL = response.file.flatMap(URL.init(string:)) else {
+                        throw ClientError.Unknown("Upload response is missing a valid file URL")
+                    }
+                    let file = UploadedFile(
+                        fileURL: fileURL,
+                        thumbnailURL: response.thumbUrl.flatMap(URL.init(string:))
+                    )
                     completion(.success(file))
                 } catch {
                     completion(.failure(error))

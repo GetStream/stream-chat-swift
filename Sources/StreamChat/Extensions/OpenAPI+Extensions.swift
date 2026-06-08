@@ -108,35 +108,6 @@ struct MessageListPayload: Decodable {
     let messages: [MessageResponse]
 }
 
-enum UserPayloadsCodingKeys: String, CodingKey, CaseIterable {
-    case id
-    case name
-    case imageURL = "image"
-    case role
-    case isOnline = "online"
-    case isBanned = "banned"
-    case createdAt = "created_at"
-    case updatedAt = "updated_at"
-    case deactivatedAt = "deactivated_at"
-    case lastActiveAt = "last_active"
-    case isInvisible = "invisible"
-    case teams
-    case unreadChannelsCount = "unread_channels"
-    case unreadMessagesCount = "total_unread_count"
-    case unreadThreads = "unread_threads"
-    case mutedUsers = "mutes"
-    case mutedChannels = "channel_mutes"
-    case isAnonymous = "anon"
-    case devices
-    case unreadCount = "unread_count"
-    case language
-    case privacySettings = "privacy_settings"
-    case blockedUserIds = "blocked_user_ids"
-    case teamsRole = "teams_role"
-    case avgResponseTime = "avg_response_time"
-    case pushPreference = "push_preferences"
-}
-
 private enum MessageTranslationsPayloadKeys {
     static let originalLanguage = "language"
     static let translatedSuffix = "_text"
@@ -172,26 +143,6 @@ extension Dictionary where Key == String, Value == String {
             i18n[$0.key.languageCode + MessageTranslationsPayloadKeys.translatedSuffix] = $0.value
         }
         return i18n
-    }
-}
-
-extension UploadChannelResponse {
-    var fileURL: URL {
-        URL(string: file ?? "")!
-    }
-
-    var thumbURL: URL? {
-        thumbUrl.flatMap(URL.init(string:))
-    }
-}
-
-extension ChannelMemberResponse {
-    var resolvedUserId: UserId {
-        user?.id ?? userId ?? ""
-    }
-
-    var memberRole: MemberRole? {
-        MemberRole(rawChannelValue: channelRole)
     }
 }
 
@@ -743,6 +694,15 @@ extension ChannelResponse {
     var imageURL: URL? { custom["image"]?.stringValue.flatMap(URL.init(string:)) }
 
     var channelId: ChannelId? { try? ChannelId(cid: cid) }
+
+    /// The channel's custom data with the reserved `name` and `image` keys removed,
+    /// since those are surfaced as dedicated `name`/`imageURL` properties.
+    var extraData: [String: RawJSON] {
+        var extraData = custom
+        extraData["name"] = nil
+        extraData["image"] = nil
+        return extraData
+    }
 }
 
 extension ChannelStateResponseFields {
@@ -1060,11 +1020,6 @@ private func rawJSONDictionary<Value: Encodable>(from value: Value) -> [String: 
 private extension RawJSON {
     var stringValue: String? {
         if case let .string(value) = self { return value }
-        return nil
-    }
-
-    var intValue: Int? {
-        if case let .number(value) = self { return Int(value) }
         return nil
     }
 }

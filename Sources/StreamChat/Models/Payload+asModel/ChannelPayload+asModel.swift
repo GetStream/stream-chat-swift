@@ -58,7 +58,7 @@ extension ChannelStateResponseFields {
             messageCount: channelPayload?.messageCount,
             reads: mappedReads,
             cooldownDuration: channelPayload?.cooldown ?? 0,
-            extraData: channelPayload?.custom ?? [:],
+            extraData: channelPayload?.extraData ?? [:],
             latestMessages: latestMessages,
             lastMessageFromCurrentUser: latestMessages.first { $0.isSentByCurrentUser },
             pinnedMessages: pinnedMessages.compactMap {
@@ -99,7 +99,7 @@ extension ChannelMemberResponse {
             teams: user.teams,
             language: user.language,
             extraData: user.extraData,
-            memberRole: memberRole ?? .member,
+            memberRole: MemberRole(rawChannelValue: channelRole),
             memberCreatedAt: createdAt,
             memberUpdatedAt: updatedAt,
             isInvited: invited ?? false,
