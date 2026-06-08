@@ -41,7 +41,7 @@ final class ReminderEvents_Tests: XCTestCase {
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Save required data
-        let channelId = event?.reminder?.channelId ?? cid
+        let channelId = event?.reminder.flatMap { try? ChannelId(cid: $0.channelCid) } ?? cid
         let messageId = event?.messageId ?? "test-message-id"
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
         _ = try session.saveMessage(payload: .dummy(messageId: messageId, authorUserId: "test-user"), for: channelId, cache: nil)

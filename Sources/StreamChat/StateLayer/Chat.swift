@@ -1397,13 +1397,12 @@ public class Chat: @unchecked Sendable {
     ) async throws {
         try await channelUpdater.update(
             cid: cid,
-            channelPayload: .init(
+            channelPayload: ChannelInputRequest(
                 name: name,
                 imageURL: imageURL,
                 team: team,
                 members: members,
                 invites: invites,
-                filterTags: filterTags,
                 extraData: extraData
             )
         )

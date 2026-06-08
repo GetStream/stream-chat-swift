@@ -3199,17 +3199,12 @@ final class MessageUpdater_Tests: XCTestCase {
         )
 
         // Assert correct endpoint is called
+        var expectedSet: [String: RawJSON] = extraData
+        expectedSet["text"] = .string(text)
+        expectedSet["attachments"] = .array(expectedAttachmentPayloads.compactMap(\.rawJSON))
         let expectedEndpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
             id: messageId,
-            updateMessagePartialRequest: try UpdateMessagePartialRequest(
-                .init(
-                    set: .init(
-                        text: text,
-                        extraData: extraData,
-                        attachments: expectedAttachmentPayloads
-                    )
-                )
-            )
+            updateMessagePartialRequest: UpdateMessagePartialRequest(set: expectedSet)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         

@@ -157,7 +157,7 @@ extension ChannelInput {
         extraData: [String: RawJSON]
     ) {
         self.init(
-            custom: Self.customData(name: name, imageURL: imageURL, extraData: extraData),
+            custom: makeChannelCustomData(name: name, imageURL: imageURL, extraData: extraData),
             filterTags: filterTags.isEmpty ? nil : Array(filterTags),
             invites: invites.isEmpty ? nil : invites.map { ChannelMemberRequest(userId: $0) },
             members: members.union(invites).isEmpty ? nil : members.union(invites).map { ChannelMemberRequest(userId: $0) },
@@ -179,16 +179,35 @@ extension ChannelInput {
         extraData["image"] = nil
         return extraData
     }
+}
 
-    private static func customData(name: String?, imageURL: URL?, extraData: [String: RawJSON]) -> [String: RawJSON]? {
-        var custom = extraData
-        if let name {
-            custom["name"] = .string(name)
-        }
-        if let imageURL {
-            custom["image"] = .string(imageURL.absoluteString)
-        }
-        return custom.isEmpty ? nil : custom
+private func makeChannelCustomData(name: String?, imageURL: URL?, extraData: [String: RawJSON]) -> [String: RawJSON]? {
+    var custom = extraData
+    if let name {
+        custom["name"] = .string(name)
+    }
+    if let imageURL {
+        custom["image"] = .string(imageURL.absoluteString)
+    }
+    return custom.isEmpty ? nil : custom
+}
+
+extension ChannelInputRequest {
+    convenience init(
+        name: String?,
+        imageURL: URL?,
+        team: String?,
+        members: Set<UserId>,
+        invites: Set<UserId>,
+        extraData: [String: RawJSON]
+    ) {
+        let allMembers = members.union(invites)
+        self.init(
+            custom: makeChannelCustomData(name: name, imageURL: imageURL, extraData: extraData),
+            invites: invites.isEmpty ? nil : invites.map { ChannelMemberRequest(userId: $0) },
+            members: allMembers.isEmpty ? nil : allMembers.map { ChannelMemberRequest(userId: $0) },
+            team: team
+        )
     }
 }
 
@@ -532,7 +551,7 @@ extension ChannelConfig {
         .init(
             automod: .unknown,
             automodBehavior: .unknown,
-            commands: commands.map(\.asCommandOpenAPI),
+            commands: commands.map { CommandPayload(args: $0.args, description: $0.description, name: $0.name, set: $0.set) },
             connectEvents: connectEventsEnabled,
             countMessages: false,
             createdAt: createdAt,
@@ -564,12 +583,6 @@ extension ChannelConfig {
 extension CommandPayload {
     var asCommand: Command {
         .init(name: name, description: description, set: set, args: args)
-    }
-}
-
-extension Command {
-    var asCommandOpenAPI: CommandPayload {
-        .init(args: args, description: description, name: name, set: set)
     }
 }
 
@@ -695,18 +708,6 @@ extension SearchResultMessage {
     }
 }
 
-extension ReminderResponseData {
-    var channelId: ChannelId? {
-        try? ChannelId(cid: channelCid)
-    }
-}
-
-extension PollVoteResponseData {
-    var optionalOptionId: String? {
-        optionId.isEmpty ? nil : optionId
-    }
-}
-
 extension PushPreferencesResponse {
     func asModel() -> PushPreference {
         .init(
@@ -754,60 +755,6 @@ extension [String: [String: ChannelPushPreferencesResponse]] {
     }
 }
 
-extension PaginationParams {
-    convenience init(_ pagination: Pagination) {
-        // Mirrors `Pagination.encode`: omit limit at the backend default, omit offset when 0 or a cursor is present.
-        self.init(
-            limit: pagination.pageSize == .backendDefaultPageSize ? nil : pagination.pageSize,
-            offset: pagination.cursor == nil && pagination.offset != 0 ? pagination.offset : nil
-        )
-    }
-}
-
-extension MessagePaginationParams {
-    convenience init(_ pagination: MessagesPagination) {
-        self.init(limit: pagination.pageSize)
-        switch pagination.parameter {
-        case let .greaterThan(id): idGt = id
-        case let .greaterThanOrEqual(id): idGte = id
-        case let .lessThan(id): idLt = id
-        case let .lessThanOrEqual(id): idLte = id
-        case let .around(id): idAround = id
-        case .none: break
-        }
-    }
-}
-
-extension ChannelGetOrCreateRequest {
-    convenience init(query: ChannelQuery) {
-        self.init(
-            data: query.channelPayload,
-            members: query.membersPagination.map { PaginationParams($0) },
-            messages: query.pagination.map { MessagePaginationParams($0) },
-            presence: query.options.contains(.presence) ? true : nil,
-            state: query.options.contains(.state) ? true : nil,
-            watch: query.options.contains(.watch) ? true : nil,
-            watchers: query.watchersLimit.map { PaginationParams(Pagination(pageSize: $0)) }
-        )
-    }
-}
-
-extension QueryMembersPayload {
-    convenience init(query: ChannelMemberListQuery) {
-        let sort = query.sort.map {
-            SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey)
-        }
-        self.init(
-            filterConditions: query.filter?.toRawJSONDictionary() ?? [:],
-            id: query.cid.id,
-            limit: query.pagination.pageSize,
-            offset: query.pagination.offset == 0 ? nil : query.pagination.offset,
-            sort: sort.isEmpty ? nil : sort,
-            type: query.cid.type.rawValue
-        )
-    }
-}
-
 extension UpdateChannelPartialRequest {
     convenience init(channelInput: ChannelInput, unsetProperties: [String]) throws {
         self.init(set: try channelInput.asRawJSONDictionary(), unset: unsetProperties)
@@ -837,55 +784,6 @@ extension ConfigOverridesRequest {
     }
 }
 
-extension ChannelInputRequest {
-    convenience init(channelInput: ChannelInput) {
-        self.init(
-            autoTranslationEnabled: channelInput.autoTranslationEnabled,
-            autoTranslationLanguage: channelInput.autoTranslationLanguage,
-            configOverrides: channelInput.configOverrides.map { ConfigOverridesRequest($0) },
-            createdBy: channelInput.createdBy,
-            custom: channelInput.custom,
-            disabled: channelInput.disabled,
-            frozen: channelInput.frozen,
-            invites: channelInput.invites,
-            members: channelInput.members,
-            team: channelInput.team
-        )
-    }
-}
-
-extension ChannelMemberRequest {
-    convenience init(memberInfo: MemberInfoRequest) {
-        self.init(custom: memberInfo.extraData, userId: memberInfo.userId)
-    }
-}
-
-extension UpdateMessagePartialRequest {
-    convenience init(_ request: MessagePartialUpdateRequest) throws {
-        self.init(
-            set: try request.set?.asRawJSONDictionary(),
-            skipEnrichUrl: request.skipEnrichUrl,
-            unset: request.unset
-        )
-    }
-}
-
-extension SearchPayload {
-    convenience init(query: MessageSearchQuery) {
-        let sort = query.sort.map {
-            SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey)
-        }
-        self.init(
-            filterConditions: query.channelFilter.toRawJSONDictionary(),
-            limit: query.pagination?.pageSize,
-            messageFilterConditions: query.messageFilter.toRawJSONDictionary(),
-            next: query.pagination?.cursor,
-            offset: query.pagination.flatMap { $0.cursor == nil && $0.offset != 0 ? $0.offset : nil },
-            sort: sort.isEmpty ? nil : sort
-        )
-    }
-}
-
 extension SendEventRequest {
     convenience init<Payload: CustomEventPayload>(payload: Payload) {
         let data = try? JSONEncoder.default.encode(payload)
@@ -897,22 +795,6 @@ extension SendEventRequest {
             custom: custom.isEmpty ? nil : custom,
             type: type(of: payload).eventType.rawValue
         ))
-    }
-}
-
-extension FlagRequest {
-    convenience init(
-        reason: String? = nil,
-        targetMessageId: String? = nil,
-        targetUserId: String? = nil,
-        custom: [String: RawJSON]? = nil
-    ) {
-        self.init(
-            custom: custom,
-            entityId: targetMessageId ?? targetUserId ?? "",
-            entityType: targetMessageId == nil ? "user" : "message",
-            reason: reason
-        )
     }
 }
 
@@ -1078,7 +960,7 @@ extension Endpoint {
     /// Channel query endpoint used by `ChannelRepository.getChannel` and the
     /// channel-already-exists hot path.
     static func channelQuery(_ query: ChannelQuery, requiresConnectionId: Bool? = nil) -> Endpoint<ChannelStateResponse> {
-        let request = ChannelGetOrCreateRequest(query: query)
+        let request = query.asChannelGetOrCreateRequest()
         return .init(
             path: query.id.map { .getOrCreateChannel(type: query.type.rawValue, id: $0) } ?? .getOrCreateDistinctChannel(type: query.type.rawValue),
             method: .post,
@@ -1115,14 +997,14 @@ extension Endpoint {
     /// stays custom until OpenAPI exposes a generated unflag operation.
     static func flagUser(_ flag: Bool, with userId: UserId, reason: String? = nil, extraData: [String: RawJSON]? = nil) -> Endpoint<FlagResponse> {
         if flag {
-            return .flag(flagRequest: FlagRequest(reason: reason, targetUserId: userId, custom: extraData))
+            return .flag(flagRequest: FlagRequest(custom: extraData, entityId: userId, entityType: "user", reason: reason))
         }
         return .init(
             path: .custom("moderation/\(flag ? "flag" : "unflag")"),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: FlagRequest(reason: reason, targetMessageId: nil, targetUserId: userId, custom: extraData)
+            body: FlagRequest(custom: extraData, entityId: userId, entityType: "user", reason: reason)
         )
     }
 
@@ -1130,14 +1012,14 @@ extension Endpoint {
     /// stays custom until OpenAPI exposes a generated unflag operation.
     static func flagMessage(_ flag: Bool, with messageId: MessageId, reason: String? = nil, extraData: [String: RawJSON]? = nil) -> Endpoint<FlagResponse> {
         if flag {
-            return .flag(flagRequest: FlagRequest(reason: reason, targetMessageId: messageId, custom: extraData))
+            return .flag(flagRequest: FlagRequest(custom: extraData, entityId: messageId, entityType: "message", reason: reason))
         }
         return .init(
             path: .custom("moderation/\(flag ? "flag" : "unflag")"),
             method: .post,
             queryItems: nil,
             requiresConnectionId: false,
-            body: FlagRequest(reason: reason, targetMessageId: messageId, targetUserId: nil, custom: extraData)
+            body: FlagRequest(custom: extraData, entityId: messageId, entityType: "message", reason: reason)
         )
     }
 }

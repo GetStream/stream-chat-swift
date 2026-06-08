@@ -143,3 +143,17 @@ struct ChannelInvitePayload: Encodable {
     /// Additional message.
     let message: Message?
 }
+
+extension ChannelQuery {
+    func asChannelGetOrCreateRequest() -> ChannelGetOrCreateRequest {
+        ChannelGetOrCreateRequest(
+            data: channelPayload,
+            members: membersPagination.map { $0.asPaginationParams() },
+            messages: pagination.map { $0.asMessagePaginationParams() },
+            presence: options.contains(.presence) ? true : nil,
+            state: options.contains(.state) ? true : nil,
+            watch: options.contains(.watch) ? true : nil,
+            watchers: watchersLimit.map { Pagination(pageSize: $0).asPaginationParams() }
+        )
+    }
+}

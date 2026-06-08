@@ -135,11 +135,11 @@ class ChannelUpdater: Worker, @unchecked Sendable {
     /// - Parameters:
     ///   - channelPayload: New channel data.
     ///   - completion: Called when the API call is finished. Called with `Error` if the remote update fails.
-    func updateChannel(cid: ChannelId, channelPayload: ChannelInput, completion: (@Sendable (Error?) -> Void)? = nil) {
+    func updateChannel(cid: ChannelId, channelPayload: ChannelInputRequest, completion: (@Sendable (Error?) -> Void)? = nil) {
         apiClient.request(endpoint: Endpoint<UpdateChannelResponse>.updateChannel(
             type: cid.type.rawValue,
             id: cid.id,
-            updateChannelRequest: UpdateChannelRequest(data: ChannelInputRequest(channelInput: channelPayload))
+            updateChannelRequest: UpdateChannelRequest(data: channelPayload)
         )) {
             completion?($0.error)
         }
@@ -1213,7 +1213,7 @@ extension ChannelUpdater {
         }
     }
 
-    func update(cid: ChannelId, channelPayload: ChannelInput) async throws {
+    func update(cid: ChannelId, channelPayload: ChannelInputRequest) async throws {
         try await withCheckedThrowingContinuation { continuation in
             updateChannel(cid: cid, channelPayload: channelPayload) { error in
                 continuation.resume(with: error)

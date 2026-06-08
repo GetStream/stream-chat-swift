@@ -94,7 +94,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         )
         query.pagination = .init(pageSize: 10, offset: 5)
 
-        let payload = QueryMembersPayload(query: query)
+        let payload = query.asQueryMembersPayload()
 
         XCTAssertEqual(payload.filterConditions, ["id": .dictionary(["$eq": .string("luke")])])
         XCTAssertEqual(payload.id, "general")

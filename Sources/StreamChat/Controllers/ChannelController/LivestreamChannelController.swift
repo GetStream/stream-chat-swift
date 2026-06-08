@@ -542,7 +542,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
     ) {
         apiClient.request(
             endpoint: Endpoint<FlagResponse>.flag(
-                flagRequest: FlagRequest(reason: reason, targetMessageId: messageId, custom: extraData)
+                flagRequest: FlagRequest(custom: extraData, entityId: messageId, entityType: "message", reason: reason)
             )
         ) { [weak self] result in
             self?.callback {
@@ -562,7 +562,7 @@ public class LivestreamChannelController: AppStateObserverDelegate, @unchecked S
     ) {
         apiClient.request(
             endpoint: Endpoint<FlagResponse>.flag(
-                flagRequest: FlagRequest(targetMessageId: messageId)
+                flagRequest: FlagRequest(entityId: messageId, entityType: "message")
             )
         ) { [weak self] result in
             self?.callback {

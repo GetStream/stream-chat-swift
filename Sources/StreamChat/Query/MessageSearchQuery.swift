@@ -150,3 +150,21 @@ extension MessageSearchQuery {
         return [.init(key: messageKey, isAscending: entry.isAscending)]
     }
 }
+
+// MARK: - Payload conversion
+
+extension MessageSearchQuery {
+    func asSearchPayload() -> SearchPayload {
+        let sort = sort.map {
+            SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey)
+        }
+        return SearchPayload(
+            filterConditions: channelFilter.toRawJSONDictionary(),
+            limit: pagination?.pageSize,
+            messageFilterConditions: messageFilter.toRawJSONDictionary(),
+            next: pagination?.cursor,
+            offset: pagination.flatMap { $0.cursor == nil && $0.offset != 0 ? $0.offset : nil },
+            sort: sort.isEmpty ? nil : sort
+        )
+    }
+}

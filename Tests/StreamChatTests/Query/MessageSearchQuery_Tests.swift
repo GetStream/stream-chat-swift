@@ -85,7 +85,7 @@ final class MessageSearchQuery_OpenAPIPayload_Tests: XCTestCase {
             pageSize: 10
         )
 
-        let payload = SearchPayload(query: query)
+        let payload = query.asSearchPayload()
 
         XCTAssertEqual(payload.filterConditions, ["cid": .dictionary(["$eq": .string("messaging:general")])])
         XCTAssertEqual(

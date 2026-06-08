@@ -100,7 +100,7 @@ public struct ChannelMemberListQuery: Encodable, Sendable {
         if let filter = filter {
             try container.encode(filter, forKey: .filter)
         } else {
-            try container.encode(EmptyObject(), forKey: .filter)
+            try container.encode([String: RawJSON](), forKey: .filter)
         }
 
         try container.encode(cid.id, forKey: .channelId)
@@ -140,5 +140,18 @@ extension ChannelMemberListQuery {
     }
 }
 
-// Backend expects empty object for "filter_conditions" in case no filter specified.
-private struct EmptyObject: Encodable {}
+extension ChannelMemberListQuery {
+    func asQueryMembersPayload() -> QueryMembersPayload {
+        let sort = self.sort.map {
+            SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey)
+        }
+        return QueryMembersPayload(
+            filterConditions: filter?.toRawJSONDictionary() ?? [:],
+            id: cid.id,
+            limit: pagination.pageSize,
+            offset: pagination.offset == 0 ? nil : pagination.offset,
+            sort: sort.isEmpty ? nil : sort,
+            type: cid.type.rawValue
+        )
+    }
+}

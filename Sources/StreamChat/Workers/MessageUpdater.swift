@@ -210,22 +210,14 @@ class MessageUpdater: Worker, @unchecked Sendable {
             )
         }
 
-        let request: UpdateMessagePartialRequest
-        do {
-            request = try UpdateMessagePartialRequest(
-                MessagePartialUpdateRequest(
-                    set: MessagePartialUpdateRequest.SetProperties(
-                        text: text,
-                        extraData: extraData,
-                        attachments: attachmentPayloads
-                    ),
-                    unset: unset
-                )
-            )
-        } catch {
-            completion?(.failure(error))
-            return
+        var set: [String: RawJSON] = extraData ?? [:]
+        if let text {
+            set["text"] = .string(text)
         }
+        if let attachmentPayloads {
+            set["attachments"] = .array(attachmentPayloads.compactMap(\.rawJSON))
+        }
+        let request = UpdateMessagePartialRequest(set: set, unset: unset)
 
         apiClient.request(
             endpoint: Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
@@ -736,18 +728,9 @@ class MessageUpdater: Worker, @unchecked Sendable {
             case .failure(let unpinError):
                 completion?(.failure(unpinError))
             case .success(let message):
-                let request: UpdateMessagePartialRequest
-                do {
-                    request = try UpdateMessagePartialRequest(.init(set: .init(pinned: false)))
-                } catch {
-                    self?.pinLocalMessage(on: messageId, pinning: pinning) { _ in
-                        completion?(.failure(error))
-                    }
-                    return
-                }
                 let endpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
                     id: messageId,
-                    updateMessagePartialRequest: request
+                    updateMessagePartialRequest: UpdateMessagePartialRequest(set: ["pinned": .bool(false)])
                 )
 
                 self?.apiClient.request(endpoint: endpoint) { [weak self] result in
@@ -1019,7 +1002,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
     }
 
     func search(query: MessageSearchQuery, policy: UpdatePolicy = .merge, completion: (@Sendable (Result<MessageSearchResults, Error>) -> Void)? = nil) {
-        apiClient.request(endpoint: Endpoint<SearchResponse>.search(payload: SearchPayload(query: query))) { result in
+        apiClient.request(endpoint: Endpoint<SearchResponse>.search(payload: query.asSearchPayload())) { result in
             switch result {
             case let .success(payload):
                 nonisolated(unsafe) var messages = [ChatMessage]()

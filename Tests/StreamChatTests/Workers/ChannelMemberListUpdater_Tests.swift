@@ -52,7 +52,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
 
         // Assert members endpoint is called.
-        let membersEndpoint = Endpoint<MembersResponse>.queryMembers(payload: QueryMembersPayload(query: query))
+        let membersEndpoint = Endpoint<MembersResponse>.queryMembers(payload: query.asQueryMembersPayload())
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
 
         // Simulate members response.
@@ -94,7 +94,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         let dummyChannelStateResponseFields = dummyPayload(with: query.cid)
         apiClient.test_simulateResponse(.success(dummyChannelStateResponseFields.asChannelStateResponse))
 
-        let membersEndpoint = Endpoint<MembersResponse>.queryMembers(payload: QueryMembersPayload(query: query))
+        let membersEndpoint = Endpoint<MembersResponse>.queryMembers(payload: query.asQueryMembersPayload())
         AssertAsync {
             // Assert members endpoint is called.
             Assert.willBeEqual(self.apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
@@ -185,7 +185,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
 
         // Assert members endpoint is called.
-        let membersEndpoint = Endpoint<MembersResponse>.queryMembers(payload: QueryMembersPayload(query: query))
+        let membersEndpoint = Endpoint<MembersResponse>.queryMembers(payload: query.asQueryMembersPayload())
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
 
         // Simulate members response with failure.
@@ -207,7 +207,7 @@ final class ChannelMemberListUpdater_Tests: XCTestCase {
         }
 
         // Assert members endpoint is called.
-        let membersEndpoint = Endpoint<MembersResponse>.queryMembers(payload: QueryMembersPayload(query: query))
+        let membersEndpoint = Endpoint<MembersResponse>.queryMembers(payload: query.asQueryMembersPayload())
         AssertAsync.willBeEqual(apiClient.request_endpoint, AnyEndpoint(membersEndpoint))
 
         // Update database to throw the error.

@@ -275,13 +275,12 @@ public class ChatChannelController: DataController, DelegateCallable, DataStoreP
             return
         }
 
-        let payload: ChannelInput = .init(
+        let payload = ChannelInputRequest(
             name: name,
             imageURL: imageURL,
             team: team,
             members: members,
             invites: invites,
-            filterTags: filterTags,
             extraData: extraData
         )
 

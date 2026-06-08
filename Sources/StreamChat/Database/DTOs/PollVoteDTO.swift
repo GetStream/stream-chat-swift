@@ -143,7 +143,7 @@ extension NSManagedObjectContext {
         dto.pollId = payload.pollId
         dto.isAnswer = payload.isAnswer ?? false
         dto.answerText = payload.answerText
-        dto.optionId = payload.optionalOptionId
+        dto.optionId = payload.optionId.isEmpty ? nil : payload.optionId
         
         if let query = query {
             let queryDTO = try saveQuery(query: query)

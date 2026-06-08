@@ -902,7 +902,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     func test_updateChannel_makesCorrectAPICall() {
         let cid = ChannelId.unique
-        let channelPayload: ChannelInput = .unique
+        let channelPayload: ChannelInputRequest = .dummy()
 
         // Simulate `updateChannel(channelPayload:, completion:)` call
         channelUpdater.updateChannel(cid: cid, channelPayload: channelPayload)
@@ -911,7 +911,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let referenceEndpoint = Endpoint<UpdateChannelResponse>.updateChannel(
             type: cid.type.rawValue,
             id: cid.id,
-            updateChannelRequest: UpdateChannelRequest(data: ChannelInputRequest(channelInput: channelPayload))
+            updateChannelRequest: UpdateChannelRequest(data: channelPayload)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
@@ -919,7 +919,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_updateChannel_successfulResponse_isPropagatedToCompletion() {
         // Simulate `updateChannel(channelPayload:, completion:)` call
         nonisolated(unsafe) var completionCalled = false
-        channelUpdater.updateChannel(cid: .unique, channelPayload: .unique) { error in
+        channelUpdater.updateChannel(cid: .unique, channelPayload: .dummy()) { error in
             XCTAssertNil(error)
             completionCalled = true
         }
@@ -937,7 +937,7 @@ final class ChannelUpdater_Tests: XCTestCase {
     func test_updateChannel_errorResponse_isPropagatedToCompletion() {
         // Simulate `updateChannel(channelPayload:, completion:)` call
         nonisolated(unsafe) var completionCalledError: Error?
-        channelUpdater.updateChannel(cid: .unique, channelPayload: .unique) { completionCalledError = $0 }
+        channelUpdater.updateChannel(cid: .unique, channelPayload: .dummy()) { completionCalledError = $0 }
 
         // Simulate API response with failure
         let error = TestError()

@@ -102,7 +102,7 @@ public struct UserListQuery: Encodable, Sendable {
         if let filter = filter {
             try container.encode(filter, forKey: .filter)
         } else {
-            try container.encode(EmptyObject(), forKey: .filter)
+            try container.encode([String: RawJSON](), forKey: .filter)
         }
 
         if !sort.isEmpty {
@@ -141,6 +141,3 @@ public extension UserListQuery {
         return query
     }
 }
-
-// Backend expects empty object for "filter_conditions" in case no filter specified.
-private struct EmptyObject: Encodable {}

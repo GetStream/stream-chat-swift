@@ -12,7 +12,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
     @Atomic var update_completion: ((Result<ChannelStateResponseFields, Error>) -> Void)?
     @Atomic var update_callCount = 0
 
-    @Atomic var updateChannel_payload: ChannelInput?
+    @Atomic var updateChannel_payload: ChannelInputRequest?
     @Atomic var updateChannel_cid: ChannelId?
     @Atomic var updateChannel_completion: ((Error?) -> Void)?
     @Atomic var updateChannel_completion_result: Result<Void, Error>?
@@ -349,7 +349,7 @@ final class ChannelUpdater_Mock: ChannelUpdater, @unchecked Sendable {
         update_callCount += 1
     }
 
-    override func updateChannel(cid: ChannelId, channelPayload: ChannelInput, completion: ((Error?) -> Void)? = nil) {
+    override func updateChannel(cid: ChannelId, channelPayload: ChannelInputRequest, completion: ((Error?) -> Void)? = nil) {
         updateChannel_cid = cid
         updateChannel_payload = channelPayload
         updateChannel_completion = completion

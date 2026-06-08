@@ -17,7 +17,7 @@ class ChannelMemberListUpdater: Worker, @unchecked Sendable {
                 return
             }
 
-            self?.apiClient.request(endpoint: Endpoint<MembersResponse>.queryMembers(payload: QueryMembersPayload(query: query))) { [weak self] membersResult in
+            self?.apiClient.request(endpoint: Endpoint<MembersResponse>.queryMembers(payload: query.asQueryMembersPayload())) { [weak self] membersResult in
                 switch membersResult {
                 case let .success(memberListPayload):
                     nonisolated(unsafe) var members = [ChatChannelMember]()

@@ -2723,7 +2723,7 @@ extension LivestreamChannelController_Tests {
         
         // Then
         let expectedEndpoint = Endpoint<FlagResponse>.flag(
-            flagRequest: FlagRequest(reason: reason, targetMessageId: messageId, custom: extraData)
+            flagRequest: FlagRequest.dummy(custom: extraData, entityId: messageId, entityType: "message", reason: reason)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(flagError)
@@ -2739,7 +2739,7 @@ extension LivestreamChannelController_Tests {
         
         // Then
         let expectedEndpoint = Endpoint<FlagResponse>.flag(
-            flagRequest: FlagRequest(reason: nil, targetMessageId: messageId, custom: nil)
+            flagRequest: FlagRequest.dummy(entityId: messageId, entityType: "message")
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
@@ -2764,7 +2764,7 @@ extension LivestreamChannelController_Tests {
         
         // Then
         let expectedEndpoint = Endpoint<FlagResponse>.flag(
-            flagRequest: FlagRequest(targetMessageId: messageId)
+            flagRequest: FlagRequest.dummy(entityId: messageId, entityType: "message")
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
         XCTAssertNil(unflagError)

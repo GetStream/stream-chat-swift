@@ -303,7 +303,7 @@ final class PollsRepository_Tests: XCTestCase {
             castPollVoteRequest: .init(vote: .init(answerText: answer))
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
-        XCTAssertEqual(payload.optionalOptionId, nil)
+        XCTAssertTrue(payload.optionId.isEmpty)
         XCTAssertEqual(payload.answerText, answer)
     }
     
