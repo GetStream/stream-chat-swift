@@ -5,6 +5,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+## StreamChatUI
+### 🐞 Fixed
+- Fix group channel avatars changing while the channel list is displayed when the last active members are updated [#4124](https://github.com/GetStream/stream-chat-swift/pull/4124)
+
 # [5.5.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.5.0)
 _June 03, 2026_
 
