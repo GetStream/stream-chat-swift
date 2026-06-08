@@ -37,20 +37,28 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
             return
         }
 
-        let payload = UpdateUserPartialRequest(
-            name: name,
-            imageURL: imageURL,
-            privacySettings: privacySettings.map { UserPrivacySettingsPayload(settings: $0) },
-            role: role,
-            teamsRole: teamsRole,
-            extraData: userExtraData
-        )
+        var set = userExtraData ?? [:]
+        if let name {
+            set["name"] = .string(name)
+        }
+        if let imageURL {
+            set["image"] = .string(imageURL.absoluteString)
+        }
+        if let privacySettings {
+            set["privacy_settings"] = privacySettings.asPrivacySettingsResponse.rawJSON
+        }
+        if let role {
+            set["role"] = .string(role.rawValue)
+        }
+        if let teamsRole {
+            set["teams_role"] = teamsRole.mapValues(\.rawValue).rawJSON
+        }
 
         let body = UpdateUsersPartialRequest(
             users: [
                 UpdateUserPartialRequest(
                     id: currentUserId,
-                    set: payload.set,
+                    set: set.isEmpty ? nil : set,
                     unset: Array(unset)
                 )
             ]

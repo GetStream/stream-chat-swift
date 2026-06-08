@@ -149,7 +149,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
     func test_partialUpdate_makesCorrectAPICall() {
         let userId: UserId = .unique
         let cid: ChannelId = .unique
-        let updates = UpdateMemberPartialRequest(extraData: ["key": .string("value")])
+        let updates = UpdateMemberPartialRequest(set: ["key": .string("value")])
         let unset: [String] = ["field1"]
 
         // Simulate `partialUpdate` call
@@ -255,7 +255,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
                 Endpoint<UpdateMemberPartialResponse>.updateMemberPartial(
                     type: cid.type.rawValue,
                     id: cid.id,
-                    updateMemberPartialRequest: UpdateMemberPartialRequest(set: UpdateMemberPartialRequest(pinned: true).set, unset: nil)
+                    updateMemberPartialRequest: UpdateMemberPartialRequest(set: ["pinned": .bool(true)], unset: nil)
                 )
             )
         )
@@ -364,7 +364,7 @@ final class ChannelMemberUpdater_Tests: XCTestCase {
                 Endpoint<UpdateMemberPartialResponse>.updateMemberPartial(
                     type: cid.type.rawValue,
                     id: cid.id,
-                    updateMemberPartialRequest: UpdateMemberPartialRequest(set: UpdateMemberPartialRequest(archived: true).set, unset: nil)
+                    updateMemberPartialRequest: UpdateMemberPartialRequest(set: ["archived": .bool(true)], unset: nil)
                 )
             )
         )

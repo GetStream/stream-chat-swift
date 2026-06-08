@@ -182,8 +182,8 @@ public struct UnreadThread: Sendable {
 
 extension WrappedUnreadCountsResponse {
     func asModel() -> CurrentUserUnreads {
-        let unreadChannels: [UnreadChannel] = channels.map { .init(
-            channelId: $0.channelIdValue,
+        let unreadChannels: [UnreadChannel] = channels.compactMapLoggingError { .init(
+            channelId: try ChannelId(cid: $0.channelId),
             unreadMessagesCount: $0.unreadCount,
             lastRead: $0.lastRead
         ) }
@@ -201,7 +201,7 @@ extension WrappedUnreadCountsResponse {
             ) },
             unreadChannelsByType: channelType.map {
                 .init(
-                    channelType: $0.channelTypeValue,
+                    channelType: ChannelType(rawValue: $0.channelType),
                     unreadChannelCount: $0.channelCount,
                     unreadMessagesCount: $0.unreadCount
                 )

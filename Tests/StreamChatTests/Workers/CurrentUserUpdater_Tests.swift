@@ -56,6 +56,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let expectedName = String.unique
         let expectedImageUrl = URL.unique()
         let expectedRole = UserRole.guest
+        let expectedNote = String.unique
 
         // Call update user
         currentUserUpdater.updateUserData(
@@ -68,7 +69,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
             ),
             role: expectedRole,
             teamsRole: ["ios": "guest"],
-            userExtraData: nil,
+            userExtraData: ["secret_note": .string(expectedNote)],
             unset: ["image"],
             completion: { error in
                 XCTAssertNil(error)
@@ -92,21 +93,21 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         apiClient.test_simulateResponse(.success(currentUserUpdateResponse))
 
         // Assert that request is made to the correct endpoint
-        let expectedPayload: UpdateUserPartialRequest = .init(
-            name: expectedName,
-            imageURL: expectedImageUrl,
-            privacySettings: .init(
+        let expectedSet: [String: RawJSON] = [
+            "name": .string(expectedName),
+            "image": .string(expectedImageUrl.absoluteString),
+            "privacy_settings": UserPrivacySettings(
                 typingIndicators: .init(enabled: true),
                 readReceipts: .init(enabled: true)
-            ),
-            role: expectedRole,
-            teamsRole: ["ios": "guest"],
-            extraData: [:]
-        )
+            ).asPrivacySettingsResponse.rawJSON!,
+            "role": .string(expectedRole.rawValue),
+            "teams_role": .dictionary(["ios": .string("guest")]),
+            "secret_note": .string(expectedNote)
+        ]
         let expectedEndpoint: Endpoint<UpdateUsersResponse> = Endpoint<UpdateUsersResponse>
             .updateUsersPartial(updateUsersPartialRequest: UpdateUsersPartialRequest(
                 users: [
-                    UpdateUserPartialRequest(id: expectedId, set: expectedPayload.set, unset: ["image"])
+                    UpdateUserPartialRequest(id: expectedId, set: expectedSet, unset: ["image"])
                 ]
             ))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
@@ -132,18 +133,10 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         )
         
         // Assert that request is made to the correct endpoint
-        let expectedPayload: UpdateUserPartialRequest = .init(
-            name: nil,
-            imageURL: nil,
-            privacySettings: nil,
-            role: nil,
-            teamsRole: nil,
-            extraData: nil
-        )
         let expectedEndpoint: Endpoint<UpdateUsersResponse> = Endpoint<UpdateUsersResponse>
             .updateUsersPartial(updateUsersPartialRequest: UpdateUsersPartialRequest(
                 users: [
-                    UpdateUserPartialRequest(id: userPayload.id, set: expectedPayload.set, unset: ["image"])
+                    UpdateUserPartialRequest(id: userPayload.id, set: nil, unset: ["image"])
                 ]
             ))
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))

@@ -2092,7 +2092,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdater!.partialUpdate_userId)
         XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(UpdateMemberPartialRequest(archived: true), env.memberUpdater!.partialUpdate_updates)
+        XCTAssertEqual(UpdateMemberPartialRequest(set: ["archived": .bool(true)]), env.memberUpdater!.partialUpdate_updates)
     }
     
     func test_unarchive_callsChannelUpdater() throws {
@@ -2131,7 +2131,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(client.currentUserId, env.memberUpdater!.partialUpdate_userId)
         XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(UpdateMemberPartialRequest(archived: true), env.memberUpdater!.partialUpdate_updates)
+        XCTAssertEqual(UpdateMemberPartialRequest(set: ["archived": .bool(true)]), env.memberUpdater!.partialUpdate_updates)
     }
     
     func test_unarchive_propagatesErrorFromUpdater() throws {
@@ -5036,7 +5036,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(currentUserId, env.memberUpdater!.partialUpdate_userId)
         XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(UpdateMemberPartialRequest(pinned: true), env.memberUpdater!.partialUpdate_updates)
+        XCTAssertEqual(UpdateMemberPartialRequest(set: ["pinned": .bool(true)]), env.memberUpdater!.partialUpdate_updates)
     }
     
     func test_unpin_callsChannelUpdater() throws {
@@ -5075,7 +5075,7 @@ final class ChannelController_Tests: XCTestCase {
         XCTAssertEqual(channelId, env.memberUpdater!.partialUpdate_cid)
         XCTAssertEqual(client.currentUserId, env.memberUpdater!.partialUpdate_userId)
         XCTAssertEqual(nil, env.memberUpdater!.partialUpdate_unset)
-        XCTAssertEqual(UpdateMemberPartialRequest(pinned: true), env.memberUpdater!.partialUpdate_updates)
+        XCTAssertEqual(UpdateMemberPartialRequest(set: ["pinned": .bool(true)]), env.memberUpdater!.partialUpdate_updates)
     }
     
     func test_unpin_propagatesErrorFromUpdater() throws {

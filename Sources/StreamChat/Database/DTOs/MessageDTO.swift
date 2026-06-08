@@ -1640,19 +1640,26 @@ extension MessageDTO {
             .sorted { ($0.attachmentID?.index ?? 0) < ($1.attachmentID?.index ?? 0) }
             .compactMap { $0.asRequestPayload() }
 
-        return .init(
+        var custom = extraData
+        if let command {
+            custom["command"] = .string(command)
+        }
+        if let args {
+            custom["args"] = .string(args)
+        }
+
+        let message = MessageRequest(
+            attachments: uploadedAttachments.isEmpty ? nil : uploadedAttachments,
+            custom: custom.isEmpty ? nil : custom,
             id: id,
-            text: text,
-            command: command,
-            args: args,
+            mentionedUsers: mentionedUserIds.isEmpty ? nil : mentionedUserIds,
             parentId: parentMessageId,
-            showReplyInChannel: showReplyInChannel,
-            isSilent: isSilent,
             quotedMessageId: quotedMessage?.id,
-            attachments: uploadedAttachments,
-            mentionedUserIds: mentionedUserIds,
-            extraData: extraData
+            showInChannel: showReplyInChannel,
+            silent: isSilent,
+            text: text
         )
+        return CreateDraftRequest(message: message)
     }
 
     /// The message has been successfully sent to the server.

@@ -51,8 +51,8 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         partialUpdate(
             userId: userId,
             in: cid,
-            updates: isPinned ? UpdateMemberPartialRequest(pinned: true) : nil,
-            unset: isPinned ? nil : [UpdateMemberPartialRequest.MemberUpdateField.pinned.rawValue],
+            updates: isPinned ? UpdateMemberPartialRequest(set: ["pinned": .bool(true)]) : nil,
+            unset: isPinned ? nil : ["pinned"],
             completion: { completion($0.error) }
         )
     }
@@ -78,8 +78,8 @@ class ChannelMemberUpdater: Worker, @unchecked Sendable {
         partialUpdate(
             userId: userId,
             in: cid,
-            updates: isArchived ? UpdateMemberPartialRequest(archived: true) : nil,
-            unset: isArchived ? nil : [UpdateMemberPartialRequest.MemberUpdateField.archived.rawValue],
+            updates: isArchived ? UpdateMemberPartialRequest(set: ["archived": .bool(true)]) : nil,
+            unset: isArchived ? nil : ["archived"],
             completion: { completion($0.error) }
         )
     }

@@ -61,19 +61,18 @@ final class DraftPayloads_Tests: XCTestCase {
     func test_draftMessageRequestBody_encoding() throws {
         // Given
         let requestBody = CreateDraftRequest(
-            id: "draft-id",
-            text: "Hello @user1",
-            command: "/giphy",
-            args: "hello",
-            parentId: "parent-123",
-            showReplyInChannel: true,
-            isSilent: false,
-            quotedMessageId: "quoted-123",
-            attachments: [],
-            mentionedUserIds: ["user1"],
-            extraData: ["custom_field": .string("value")]
+            message: MessageRequest(
+                custom: ["custom_field": .string("value")],
+                id: "draft-id",
+                mentionedUsers: ["user1"],
+                parentId: "parent-123",
+                quotedMessageId: "quoted-123",
+                showInChannel: true,
+                silent: false,
+                text: "Hello @user1"
+            )
         )
-        
+
         // When
         let encodedData = try JSONEncoder.default.encode(requestBody)
         let decodedJSON = try JSONDecoder.default.decode([String: RawJSON].self, from: encodedData)
@@ -88,7 +87,5 @@ final class DraftPayloads_Tests: XCTestCase {
         XCTAssertEqual(message["quoted_message_id"]?.stringValue, "quoted-123")
         XCTAssertEqual(message["mentioned_users"]?.stringArrayValue, ["user1"])
         XCTAssertEqual(message["custom"]?.dictionaryValue?["custom_field"]?.stringValue, "value")
-        XCTAssertEqual(message["custom"]?.dictionaryValue?["command"]?.stringValue, "/giphy")
-        XCTAssertEqual(message["custom"]?.dictionaryValue?["args"]?.stringValue, "hello")
     }
 }

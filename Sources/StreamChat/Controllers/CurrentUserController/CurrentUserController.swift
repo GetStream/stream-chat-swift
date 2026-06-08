@@ -308,7 +308,7 @@ public extension CurrentChatUserController {
         currentMemberUpdater.partialUpdate(
             userId: currentUserId,
             in: channelId,
-            updates: UpdateMemberPartialRequest(extraData: extraData),
+            updates: UpdateMemberPartialRequest(set: extraData),
             unset: unsetProperties
         ) { result in
             self.callback {

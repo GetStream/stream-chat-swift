@@ -120,28 +120,25 @@ extension OwnUserResponse {
         deactivatedAt: Date? = nil,
         privacySettings: UserPrivacySettingsPayload? = nil
     ) -> OwnUserResponse {
-        .init(
-            id: userId,
+        .dummy(
+            userId: userId,
             name: name,
             imageURL: imageUrl,
-            role: role,
-            teamsRole: teamsRole,
-            createdAt: .unique,
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: .unique,
-            isOnline: true,
             isInvisible: true,
             isBanned: isBanned,
+            role: role,
+            teamsRole: teamsRole,
+            unreadCount: nil,
+            extraData: extraData,
             teams: teams,
             language: language,
-            extraData: extraData,
             privacySettings: privacySettings ?? .init(
                 typingIndicators: .init(enabled: true),
                 readReceipts: .init(enabled: true),
                 deliveryReceipts: .init(enabled: true)
-            ),
-            pushPreference: nil
+            )
         )
     }
 }

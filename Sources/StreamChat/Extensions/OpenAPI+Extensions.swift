@@ -268,58 +268,14 @@ extension OwnUserResponse {
     var blockedUserIdsSet: Set<UserId> {
         Set(blockedUserIds ?? [])
     }
+}
 
-    convenience init(
-        id: String,
-        name: String?,
-        imageURL: URL?,
-        role: UserRole,
-        teamsRole: [String: UserRole]?,
-        createdAt: Date,
-        updatedAt: Date,
-        deactivatedAt: Date?,
-        lastActiveAt: Date?,
-        isOnline: Bool,
-        isInvisible: Bool,
-        isBanned: Bool,
-        teams: [TeamId] = [],
-        language: String?,
-        extraData: [String: RawJSON],
-        devices: [DeviceResponse] = [],
-        mutedUsers: [UserMuteResponse] = [],
-        mutedChannels: [ChannelMute] = [],
-        unreadCount: UnreadCountPayload? = nil,
-        privacySettings: UserPrivacySettingsPayload? = nil,
-        blockedUserIds: Set<UserId> = [],
-        pushPreference: PushPreferencesResponse?
-    ) {
-        self.init(
-            avgResponseTime: nil,
-            banned: isBanned,
-            blockedUserIds: Array(blockedUserIds),
-            channelMutes: mutedChannels,
-            createdAt: createdAt,
-            custom: extraData,
-            deactivatedAt: deactivatedAt,
-            devices: devices,
-            id: id,
-            image: imageURL?.absoluteString,
-            invisible: isInvisible,
-            language: language ?? "",
-            lastActive: lastActiveAt,
-            mutes: mutedUsers,
-            name: name,
-            online: isOnline,
-            privacySettings: privacySettings?.asPrivacySettingsResponse,
-            pushPreferences: pushPreference,
-            role: role.rawValue,
-            teams: teams,
-            teamsRole: teamsRole?.mapValues(\.rawValue),
-            totalUnreadCount: unreadCount?.messages ?? 0,
-            unreadChannels: unreadCount?.channels ?? 0,
-            unreadCount: unreadCount?.messages ?? 0,
-            unreadThreads: unreadCount?.threads ?? -1,
-            updatedAt: updatedAt
+extension UserPrivacySettings {
+    var asPrivacySettingsResponse: PrivacySettingsResponse {
+        PrivacySettingsResponse(
+            deliveryReceipts: deliveryReceipts.map { .init(enabled: $0.enabled) },
+            readReceipts: readReceipts.map { .init(enabled: $0.enabled) },
+            typingIndicators: typingIndicators.map { .init(enabled: $0.enabled) }
         )
     }
 }
@@ -334,112 +290,13 @@ extension UserPrivacySettingsPayload {
     }
 }
 
-extension PrivacySettingsResponse {
-    var asUserPrivacySettingsPayload: UserPrivacySettingsPayload {
-        UserPrivacySettingsPayload(
-            typingIndicators: typingIndicators.map { .init(enabled: $0.enabled) },
-            readReceipts: readReceipts.map { .init(enabled: $0.enabled) },
-            deliveryReceipts: deliveryReceipts.map { .init(enabled: $0.enabled) }
-        )
-    }
-}
-
 extension DraftResponse {
     var cid: ChannelId? {
         try? ChannelId(cid: channelCid)
     }
 }
 
-extension CreateDraftRequest {
-    convenience init(
-        id: String,
-        text: String,
-        command: String?,
-        args: String?,
-        parentId: String?,
-        showReplyInChannel: Bool,
-        isSilent: Bool,
-        quotedMessageId: String?,
-        attachments: [Attachment],
-        mentionedUserIds: [UserId],
-        extraData: [String: RawJSON]
-    ) {
-        let message = MessageRequest(
-            attachments: attachments.isEmpty ? nil : attachments,
-            custom: extraData.isEmpty ? nil : extraData,
-            id: id,
-            mentionedUsers: mentionedUserIds.isEmpty ? nil : mentionedUserIds,
-            parentId: parentId,
-            quotedMessageId: quotedMessageId,
-            showInChannel: showReplyInChannel,
-            silent: isSilent,
-            text: text
-        )
-        if let command {
-            message.custom = (message.custom ?? [:]).merging(["command": .string(command)]) { _, new in new }
-        }
-        if let args {
-            message.custom = (message.custom ?? [:]).merging(["args": .string(args)]) { _, new in new }
-        }
-        self.init(message: message)
-    }
-}
-
-extension UnreadCountsChannel {
-    var channelIdValue: ChannelId {
-        (try? ChannelId(cid: channelId)) ?? ChannelId(type: .messaging, id: channelId)
-    }
-}
-
-extension UnreadCountsChannelType {
-    var channelTypeValue: ChannelType {
-        ChannelType(rawValue: channelType)
-    }
-}
-
-extension UpdateMemberPartialRequest {
-    enum MemberUpdateField: String, CaseIterable {
-        case archived
-        case pinned
-    }
-
-    var archived: Bool? {
-        self.set?[MemberUpdateField.archived.rawValue]?.boolValue
-    }
-
-    var pinned: Bool? {
-        self.set?[MemberUpdateField.pinned.rawValue]?.boolValue
-    }
-
-    var extraData: [String: RawJSON]? {
-        guard var extraData = self.set else { return nil }
-        MemberUpdateField.allCases.forEach { extraData[$0.rawValue] = nil }
-        return extraData.isEmpty ? nil : extraData
-    }
-
-    convenience init(
-        archived: Bool? = nil,
-        pinned: Bool? = nil,
-        extraData: [String: RawJSON]? = nil
-    ) {
-        var set = extraData ?? [:]
-        if let archived {
-            set[MemberUpdateField.archived.rawValue] = .bool(archived)
-        }
-        if let pinned {
-            set[MemberUpdateField.pinned.rawValue] = .bool(pinned)
-        }
-        self.init(set: set.isEmpty ? nil : set)
-    }
-}
-
 extension CreateGuestResponse {
-    convenience init(user: OwnUserResponse, token: Token) {
-        let userResponse = user.asUserResponse()
-        userResponse.id = token.userId
-        self.init(accessToken: token.rawValue, duration: "", user: userResponse)
-    }
-
     func validatedToken() throws -> Token {
         let token = try Token(rawValue: accessToken)
         guard user.id == token.userId else {
@@ -487,28 +344,35 @@ extension FullUserResponse {
 
     func asOwnUserResponse() -> OwnUserResponse {
         OwnUserResponse(
-            id: id,
-            name: name,
-            imageURL: image.flatMap(URL.init(string:)),
-            role: UserRole(rawValue: role),
-            teamsRole: teamsRole?.mapValues { UserRole(rawValue: $0) },
+            avgResponseTime: avgResponseTime,
+            banned: banned,
+            blockedUserIds: blockedUserIds,
+            channelMutes: channelMutes,
             createdAt: createdAt,
-            updatedAt: updatedAt,
+            custom: custom,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActive,
-            isOnline: online,
-            isInvisible: invisible,
-            isBanned: banned,
-            teams: teams,
-            language: language.isEmpty ? nil : language,
-            extraData: custom,
+            deletedAt: deletedAt,
             devices: devices,
-            mutedUsers: mutes,
-            mutedChannels: channelMutes,
-            unreadCount: .init(channels: unreadChannels, messages: unreadCount, threads: unreadThreads),
-            privacySettings: privacySettings?.asUserPrivacySettingsPayload,
-            blockedUserIds: Set(blockedUserIds),
-            pushPreference: nil
+            id: id,
+            image: image,
+            invisible: invisible,
+            language: language,
+            lastActive: lastActive,
+            latestHiddenChannels: latestHiddenChannels,
+            mutes: mutes,
+            name: name,
+            online: online,
+            privacySettings: privacySettings,
+            pushPreferences: nil,
+            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
+            role: role,
+            teams: teams,
+            teamsRole: teamsRole,
+            totalUnreadCount: totalUnreadCount,
+            unreadChannels: unreadChannels,
+            unreadCount: unreadCount,
+            unreadThreads: unreadThreads,
+            updatedAt: updatedAt
         )
     }
 }
@@ -525,84 +389,12 @@ extension UserRequest {
     }
 }
 
-extension UpdateUserPartialRequest {
-    var name: String? {
-        self.set?["name"]?.stringValue
-    }
-
-    var imageURL: URL? {
-        self.set?["image"]?.stringValue.flatMap(URL.init(string:))
-    }
-
-    var privacySettings: UserPrivacySettingsPayload? {
-        guard let value = self.set?["privacy_settings"],
-              let data = try? JSONEncoder.default.encode(value),
-              let response = try? JSONDecoder.default.decode(PrivacySettingsResponse.self, from: data) else {
-            return nil
-        }
-        return response.asUserPrivacySettingsPayload
-    }
-
-    var role: UserRole? {
-        self.set?["role"]?.stringValue.map(UserRole.init(rawValue:))
-    }
-
-    var teamsRole: [TeamId: UserRole]? {
-        guard let value = self.set?["teams_role"],
-              let data = try? JSONEncoder.default.encode(value),
-              let raw = try? JSONDecoder.default.decode([String: String].self, from: data) else {
-            return nil
-        }
-        return raw.mapValues { UserRole(rawValue: $0) }
-    }
-
-    var extraData: [String: RawJSON]? {
-        let reservedKeys = ["name", "image", "privacy_settings", "role", "teams_role"]
-        let customData = (self.set ?? [:]).removingValues(forKeys: reservedKeys)
-        return customData.isEmpty ? nil : customData
-    }
-
-    convenience init(
-        name: String?,
-        imageURL: URL?,
-        privacySettings: UserPrivacySettingsPayload?,
-        role: UserRole?,
-        teamsRole: [TeamId: UserRole]?,
-        extraData: [String: RawJSON]?
-    ) {
-        var set = extraData ?? [:]
-        if let name {
-            set["name"] = .string(name)
-        }
-        if let imageURL {
-            set["image"] = .string(imageURL.absoluteString)
-        }
-        if let privacySettings {
-            set["privacy_settings"] = privacySettings.asPrivacySettingsResponse.rawJSON
-        }
-        if let role {
-            set["role"] = .string(role.rawValue)
-        }
-        if let teamsRole {
-            set["teams_role"] = teamsRole.mapValues(\.rawValue).rawJSON
-        }
-        self.init(id: "", set: set.isEmpty ? nil : set, unset: nil)
-    }
-}
-
 extension UpdateUsersResponse {
     func validatedUser() throws -> OwnUserResponse {
         guard let user = users.first?.value else {
             throw ClientError.Unexpected("Missing updated user.")
         }
         return user.asOwnUserResponse()
-    }
-}
-
-private extension Encodable {
-    var rawJSON: RawJSON? {
-        guard let data = try? JSONEncoder.default.encode(self) else { return nil }
-        return try? JSONDecoder.default.decode(RawJSON.self, from: data)
     }
 }
 
@@ -1127,22 +919,34 @@ extension FlagRequest {
 extension UserResponse {
     func asOwnUserResponse() -> OwnUserResponse {
         OwnUserResponse(
-            id: id,
-            name: name,
-            imageURL: imageURL,
-            role: userRole,
-            teamsRole: teamsRolePayload,
+            avgResponseTime: avgResponseTime,
+            banned: banned,
+            blockedUserIds: blockedUserIds,
+            channelMutes: [],
             createdAt: createdAt,
-            updatedAt: updatedAt,
+            custom: custom,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActive,
-            isOnline: online,
-            isInvisible: false,
-            isBanned: banned,
+            deletedAt: deletedAt,
+            devices: [],
+            id: id,
+            image: image,
+            invisible: false,
+            language: language,
+            lastActive: lastActive,
+            mutes: [],
+            name: name,
+            online: online,
+            privacySettings: nil,
+            pushPreferences: nil,
+            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
+            role: role,
             teams: teams,
-            language: language.isEmpty ? nil : language,
-            extraData: custom,
-            pushPreference: nil
+            teamsRole: teamsRole,
+            totalUnreadCount: 0,
+            unreadChannels: 0,
+            unreadCount: 0,
+            unreadThreads: 0,
+            updatedAt: updatedAt
         )
     }
 }
@@ -1264,9 +1068,7 @@ extension Endpoint {
                         invisible: userInfo.isInvisible,
                         language: userInfo.language?.languageCode,
                         name: userInfo.name,
-                        privacySettings: userInfo.privacySettings.map {
-                            UserPrivacySettingsPayload(settings: $0).asPrivacySettingsResponse
-                        }
+                        privacySettings: userInfo.privacySettings.map(\.asPrivacySettingsResponse)
                     )
                 )
             ]

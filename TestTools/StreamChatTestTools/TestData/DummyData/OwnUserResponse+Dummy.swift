@@ -9,12 +9,12 @@ extension OwnUserResponse {
     /// Returns a dummy current user payload with the given UserId and extra data
     static func dummy(
         userId: UserId,
-        name: String = .unique,
+        name: String? = .unique,
         imageURL: URL? = nil,
         createdAt: Date = .unique,
         updatedAt: Date = .unique,
         deactivatedAt: Date? = nil,
-        lastActiveAt: Date = .unique,
+        lastActiveAt: Date? = .unique,
         isOnline: Bool = true,
         isInvisible: Bool = true,
         isBanned: Bool = true,
@@ -27,29 +27,36 @@ extension OwnUserResponse {
         teams: [TeamId] = [],
         language: String? = nil,
         mutedChannels: [ChannelMute] = [],
+        privacySettings: UserPrivacySettingsPayload? = nil,
         pushPreference: PushPreferencesResponse? = nil
     ) -> OwnUserResponse {
-        .init(
-            id: userId,
-            name: name,
-            imageURL: imageURL,
-            role: role,
-            teamsRole: teamsRole,
+        OwnUserResponse(
+            avgResponseTime: nil,
+            banned: isBanned,
+            blockedUserIds: [],
+            channelMutes: mutedChannels,
             createdAt: createdAt,
-            updatedAt: updatedAt,
+            custom: extraData,
             deactivatedAt: deactivatedAt,
-            lastActiveAt: lastActiveAt,
-            isOnline: isOnline,
-            isInvisible: isInvisible,
-            isBanned: isBanned,
-            teams: teams,
-            language: language,
-            extraData: extraData,
             devices: devices,
-            mutedUsers: mutedUsers,
-            mutedChannels: mutedChannels,
-            unreadCount: unreadCount,
-            pushPreference: pushPreference
+            id: userId,
+            image: imageURL?.absoluteString,
+            invisible: isInvisible,
+            language: language ?? "",
+            lastActive: lastActiveAt,
+            mutes: mutedUsers,
+            name: name,
+            online: isOnline,
+            privacySettings: privacySettings?.asPrivacySettingsResponse,
+            pushPreferences: pushPreference,
+            role: role.rawValue,
+            teams: teams,
+            teamsRole: teamsRole?.mapValues(\.rawValue),
+            totalUnreadCount: unreadCount?.messages ?? 0,
+            unreadChannels: unreadCount?.channels ?? 0,
+            unreadCount: unreadCount?.messages ?? 0,
+            unreadThreads: unreadCount?.threads ?? 0,
+            updatedAt: updatedAt
         )
     }
 
@@ -63,12 +70,10 @@ extension OwnUserResponse {
         privacySettings: UserPrivacySettingsPayload? = nil,
         pushPreference: PushPreferencesResponse? = nil
     ) -> OwnUserResponse {
-        .init(
-            id: userPayload.id,
+        .dummy(
+            userId: userPayload.id,
             name: userPayload.name,
             imageURL: userPayload.imageURL,
-            role: userPayload.userRole,
-            teamsRole: userPayload.teamsRolePayload,
             createdAt: userPayload.createdAt,
             updatedAt: userPayload.updatedAt,
             deactivatedAt: userPayload.deactivatedAt,
@@ -76,13 +81,15 @@ extension OwnUserResponse {
             isOnline: userPayload.online,
             isInvisible: false,
             isBanned: userPayload.banned,
-            teams: userPayload.teams,
-            language: userPayload.language.isEmpty ? nil : userPayload.language,
+            role: userPayload.userRole,
+            teamsRole: userPayload.teamsRolePayload,
+            unreadCount: unreadCount,
             extraData: userPayload.custom,
             devices: devices,
             mutedUsers: mutedUsers,
+            teams: userPayload.teams,
+            language: userPayload.language.isEmpty ? nil : userPayload.language,
             mutedChannels: mutedChannels,
-            unreadCount: unreadCount,
             privacySettings: privacySettings,
             pushPreference: pushPreference
         )

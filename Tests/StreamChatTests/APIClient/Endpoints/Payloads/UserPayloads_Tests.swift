@@ -260,48 +260,6 @@ final class UserRequestBody_Tests: XCTestCase {
     }
 }
 
-final class UserUpdateRequestBody_Tests: XCTestCase {
-    func test_isSerialized() throws {
-        let value = String.unique
-
-        let payload: UpdateUserPartialRequest = .init(
-            name: .unique,
-            imageURL: .unique(),
-            privacySettings: .init(
-                typingIndicators: .init(enabled: true),
-                readReceipts: .init(enabled: true),
-                deliveryReceipts: .init(enabled: false)
-            ),
-            role: .admin,
-            teamsRole: ["ios": "guest"],
-            extraData: ["secret_note": .string(value)]
-        )
-
-        let expected: [String: Any] = [
-            "id": "",
-            "set": [
-                "name": payload.name!,
-                "image": payload.imageURL!.absoluteString,
-                "privacy_settings": [
-                    "typing_indicators": ["enabled": true],
-                    "read_receipts": ["enabled": true],
-                    "delivery_receipts": ["enabled": false]
-                ],
-                "role": UserRole.admin.rawValue,
-                "secret_note": value,
-                "teams_role": [
-                    "ios": "guest"
-                ]
-            ]
-        ]
-
-        let encodedJSON = try JSONEncoder.default.encode(payload)
-        let expectedJSON = try JSONSerialization.data(withJSONObject: expected, options: [])
-
-        AssertJSONEqual(encodedJSON, expectedJSON)
-    }
-}
-
 final class UserUpdateResponse_Tests: XCTestCase {
     func test_currentUserUpdateResponseJSON_isSerialized() throws {
         let currentUserUpdateResponseJSON = XCTestCase.mockData(fromJSONFile: "UserUpdateResponse")

@@ -12,22 +12,13 @@ extension XCTestCase {
     // MARK: - Dummy data with extra data
 
     var dummyCurrentUser: OwnUserResponse {
-        OwnUserResponse(
-            id: "dummyCurrentUser",
-            name: .unique,
-            imageURL: nil,
-            role: .user,
-            teamsRole: nil,
-            createdAt: .unique,
-            updatedAt: .unique,
-            deactivatedAt: nil,
-            lastActiveAt: .unique,
+        OwnUserResponse.dummy(
+            userId: "dummyCurrentUser",
             isOnline: true,
             isInvisible: false,
             isBanned: false,
-            language: nil,
-            extraData: [:],
-            pushPreference: nil
+            role: .user,
+            unreadCount: nil
         )
     }
 

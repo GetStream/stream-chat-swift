@@ -70,4 +70,10 @@ extension Encodable {
         let data = try JSONEncoder.stream.encode(self)
         return try JSONDecoder.stream.decodeRawJSON(from: data)
     }
+
+    /// Encodes the value and re-decodes it into a `RawJSON` value.
+    var rawJSON: RawJSON? {
+        guard let data = try? JSONEncoder.default.encode(self) else { return nil }
+        return try? JSONDecoder.default.decode(RawJSON.self, from: data)
+    }
 }

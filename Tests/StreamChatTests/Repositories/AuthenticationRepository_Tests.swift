@@ -682,11 +682,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // API Result
         apiClient.test_mockUnmanagedResponseResult(
-            Result<CreateGuestResponse, Error>.success(CreateGuestResponse(
-                user: OwnUserResponse.dummy(userId: "", role: .user),
-                token: apiToken
-            )
-            )
+            Result<CreateGuestResponse, Error>.success(CreateGuestResponse.dummy(token: apiToken))
         )
 
         let completionExpectation = expectation(description: "Connect completion")
@@ -725,11 +721,7 @@ final class AuthenticationRepository_Tests: XCTestCase {
 
         // API Result
         apiClient.test_mockUnmanagedResponseResult(
-            Result<CreateGuestResponse, Error>.success(CreateGuestResponse(
-                user: OwnUserResponse.dummy(userId: "", role: .user),
-                token: apiToken
-            )
-            )
+            Result<CreateGuestResponse, Error>.success(CreateGuestResponse.dummy(token: apiToken))
         )
 
         let completionExpectation = expectation(description: "Connect completion")
