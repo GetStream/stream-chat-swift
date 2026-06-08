@@ -31,9 +31,26 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
     /// Set to `nil` to perform processing synchronously on the calling thread.
     open var imageProcessingQueue: DispatchQueue? = .global(qos: .userInitiated)
 
+    /// The cached merged avatar together with the channel id it was rendered for.
+    ///
+    /// The merged avatar is computed only once per channel and then reused. This keeps the
+    /// avatar stable when the channel's last active members change while it's displayed
+    /// (for example, due to member activity updates). It's recomputed only when the view is
+    /// bound to a different channel, e.g. on cell reuse.
+    private var cachedMergedAvatar: (channelId: ChannelId, image: UIImage)?
+
     override open func setUpLayout() {
         super.setUpLayout()
         embed(presenceAvatarView)
+    }
+
+    override open func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        if previousTraitCollection?.userInterfaceStyle != traitCollection.userInterfaceStyle {
+            // The merged avatar can include appearance-dependent initials placeholders, so the
+            // cache must be invalidated when the interface style changes to re-render it.
+            cachedMergedAvatar = nil
+        }
+        super.traitCollectionDidChange(previousTraitCollection)
     }
 
     override open func updateContent() {
@@ -94,6 +111,13 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
         // The channel is a non-DM channel, hide the online indicator
         presenceAvatarView.isOnlineIndicatorVisible = false
 
+        // Reuse the previously rendered avatar for this channel so that updates to the
+        // channel's last active members don't change the avatar while it's displayed.
+        if let cachedMergedAvatar, cachedMergedAvatar.channelId == channel.cid {
+            loadIntoAvatarImageView(from: nil, placeholder: cachedMergedAvatar.image)
+            return
+        }
+
         let lastActiveMembers = self.lastActiveMembers()
 
         // If there are no members other than the current user in the channel, load a placeholder
@@ -132,6 +156,13 @@ open class ChatChannelAvatarView: _View, ThemeProvider {
 
                 StreamConcurrency.onMain {
                     guard let self, channelId == self.content.channel?.cid else { return }
+                    // If a merged avatar for this channel was already cached (e.g. by an
+                    // earlier in-flight computation), keep it to avoid changing the avatar.
+                    if let cachedMergedAvatar = self.cachedMergedAvatar, cachedMergedAvatar.channelId == channelId {
+                        self.loadIntoAvatarImageView(from: nil, placeholder: cachedMergedAvatar.image)
+                        return
+                    }
+                    self.cachedMergedAvatar = (channelId, combinedImage)
                     self.loadIntoAvatarImageView(from: nil, placeholder: combinedImage)
                 }
             }
