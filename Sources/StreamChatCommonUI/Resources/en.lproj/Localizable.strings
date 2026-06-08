@@ -247,8 +247,6 @@
 
 /// Shown in the message poll view on the button to add a poll comment.
 "polls.button.add-comment" = "Add Comment";
-/// Shown in the message poll view on the button to view the poll comments.
-"polls.button.view-comments" = "View %d Comments";
 /// Shown in the message poll view on the button to to show all options.
 "polls.button.all-options" = "See %d More Options";
 /// Shown in the message poll results on the button to show more votes.
