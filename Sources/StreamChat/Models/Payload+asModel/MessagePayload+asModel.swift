@@ -143,8 +143,8 @@ extension ReactionResponse {
     /// - Returns: A ChatMessageReaction instance.
     func asModel(messageId: MessageId) -> ChatMessageReaction {
         ChatMessageReaction(
-            id: [user.id, messageId, reactionType.rawValue].joined(separator: "/"),
-            type: reactionType,
+            id: [user.id, messageId, type].joined(separator: "/"),
+            type: MessageReactionType(rawValue: type),
             score: score,
             createdAt: createdAt,
             updatedAt: updatedAt,

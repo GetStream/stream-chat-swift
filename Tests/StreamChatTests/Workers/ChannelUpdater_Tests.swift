@@ -987,7 +987,7 @@ final class ChannelUpdater_Tests: XCTestCase {
 
     // MARK: - Partial channel update
 
-    func test_partialChannelUpdate_makesCorrectAPICall() {
+    func test_partialChannelUpdate_makesCorrectAPICall() throws {
         let cid = ChannelId.unique
         let updates: ChannelInput = .unique
         let unsetProperties: [String] = ["user.id", "channel_store"]
@@ -999,7 +999,7 @@ final class ChannelUpdater_Tests: XCTestCase {
         let referenceEndpoint = Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
             type: cid.type.rawValue,
             id: cid.id,
-            updateChannelPartialRequest: UpdateChannelPartialRequest(channelInput: updates, unsetProperties: unsetProperties)
+            updateChannelPartialRequest: try UpdateChannelPartialRequest(channelInput: updates, unsetProperties: unsetProperties)
         )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }

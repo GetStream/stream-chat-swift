@@ -40,7 +40,7 @@ extension ReactionNewEventDTO: EventDTO {
             let reactionDTO = session.reaction(
                 messageId: message.id,
                 userId: user.id,
-                type: reaction.reactionType
+                type: MessageReactionType(rawValue: reaction.type)
             )
         else { return nil }
 
@@ -90,7 +90,7 @@ extension ReactionUpdatedEventDTO: EventDTO {
             let reactionDTO = session.reaction(
                 messageId: message.id,
                 userId: user.id,
-                type: reaction.reactionType
+                type: MessageReactionType(rawValue: reaction.type)
             )
         else { return nil }
 
@@ -140,7 +140,7 @@ extension ReactionDeletedEventDTO: EventDTO {
             let reactionDTO = session.reaction(
                 messageId: message.id,
                 userId: user.id,
-                type: reaction.reactionType
+                type: MessageReactionType(rawValue: reaction.type)
             )
         else { return nil }
 

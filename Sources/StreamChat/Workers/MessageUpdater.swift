@@ -210,19 +210,27 @@ class MessageUpdater: Worker, @unchecked Sendable {
             )
         }
 
+        let request: UpdateMessagePartialRequest
+        do {
+            request = try UpdateMessagePartialRequest(
+                MessagePartialUpdateRequest(
+                    set: MessagePartialUpdateRequest.SetProperties(
+                        text: text,
+                        extraData: extraData,
+                        attachments: attachmentPayloads
+                    ),
+                    unset: unset
+                )
+            )
+        } catch {
+            completion?(.failure(error))
+            return
+        }
+
         apiClient.request(
             endpoint: Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
                 id: messageId,
-                updateMessagePartialRequest: UpdateMessagePartialRequest(
-                    MessagePartialUpdateRequest(
-                        set: MessagePartialUpdateRequest.SetProperties(
-                            text: text,
-                            extraData: extraData,
-                            attachments: attachmentPayloads
-                        ),
-                        unset: unset
-                    )
-                )
+                updateMessagePartialRequest: request
             )
         ) { [weak self] result in
             switch result {
@@ -728,9 +736,18 @@ class MessageUpdater: Worker, @unchecked Sendable {
             case .failure(let unpinError):
                 completion?(.failure(unpinError))
             case .success(let message):
+                let request: UpdateMessagePartialRequest
+                do {
+                    request = try UpdateMessagePartialRequest(.init(set: .init(pinned: false)))
+                } catch {
+                    self?.pinLocalMessage(on: messageId, pinning: pinning) { _ in
+                        completion?(.failure(error))
+                    }
+                    return
+                }
                 let endpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
                     id: messageId,
-                    updateMessagePartialRequest: UpdateMessagePartialRequest(.init(set: .init(pinned: false)))
+                    updateMessagePartialRequest: request
                 )
 
                 self?.apiClient.request(endpoint: endpoint) { [weak self] result in

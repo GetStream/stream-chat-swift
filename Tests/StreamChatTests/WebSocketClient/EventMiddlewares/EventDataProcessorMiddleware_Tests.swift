@@ -148,7 +148,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             database.viewContext.reaction(
                 messageId: reactionPayload.messageId,
                 userId: reactionPayload.user.id,
-                type: reactionPayload.reactionType
+                type: MessageReactionType(rawValue: reactionPayload.type)
             )?.asModel()
         )
 
@@ -202,7 +202,7 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
             database.viewContext.reaction(
                 messageId: messageId,
                 userId: reactionPayload.user.id,
-                type: reactionPayload.reactionType
+                type: MessageReactionType(rawValue: reactionPayload.type)
             )?.asModel()
         )
 

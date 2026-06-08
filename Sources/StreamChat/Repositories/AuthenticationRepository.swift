@@ -406,10 +406,10 @@ class AuthenticationRepository: @unchecked Sendable {
         let endpoint = Endpoint<CreateGuestResponse>.createGuest(
             createGuestRequest: CreateGuestRequest(
                 user: UserRequest(
-                    userId: userInfo.id,
-                    name: userInfo.name,
-                    imageURL: userInfo.imageURL,
-                    extraData: userInfo.extraData
+                    custom: userInfo.extraData.isEmpty ? nil : userInfo.extraData,
+                    id: userInfo.id,
+                    image: userInfo.imageURL?.absoluteString,
+                    name: userInfo.name
                 )
             )
         )

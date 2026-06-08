@@ -1152,7 +1152,7 @@ extension DatabaseSession {
                let currentUser = self.currentUser,
                currentUser.user.id == user.id,
                let messageId = dto.message?.id,
-               let reactionType = dto.reaction?.reactionType,
+               let reactionType = dto.reaction.map({ MessageReactionType(rawValue: $0.type) }),
                let dto = reaction(messageId: messageId, userId: user.id, type: reactionType) {
                 dto.message.ownReactions.removeAll(where: { $0 == dto.id })
                 delete(reaction: dto)

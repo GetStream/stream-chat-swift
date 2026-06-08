@@ -527,9 +527,9 @@ extension FullUserResponse {
         OwnUserResponse(
             id: id,
             name: name,
-            imageURL: imageURL,
-            role: userRole,
-            teamsRole: teamsRolePayload,
+            imageURL: image.flatMap(URL.init(string:)),
+            role: UserRole(rawValue: role),
+            teamsRole: teamsRole?.mapValues { UserRole(rawValue: $0) },
             createdAt: createdAt,
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
@@ -548,18 +548,6 @@ extension FullUserResponse {
             blockedUserIds: Set(blockedUserIds),
             pushPreference: nil
         )
-    }
-
-    var imageURL: URL? {
-        image.flatMap(URL.init(string:))
-    }
-
-    var userRole: UserRole {
-        UserRole(rawValue: role)
-    }
-
-    var teamsRolePayload: [String: UserRole]? {
-        teamsRole?.mapValues { UserRole(rawValue: $0) }
     }
 }
 
@@ -1012,18 +1000,6 @@ extension [String: [String: ChannelPushPreferencesResponse]] {
     }
 }
 
-private func rawJSONDictionary<Value: Encodable>(from value: Value) -> [String: RawJSON]? {
-    (try? JSONEncoder.stream.encode(value))
-        .flatMap { try? JSONDecoder.stream.decode([String: RawJSON].self, from: $0) }
-}
-
-private extension RawJSON {
-    var stringValue: String? {
-        if case let .string(value) = self { return value }
-        return nil
-    }
-}
-
 extension PaginationParams {
     convenience init(_ pagination: Pagination) {
         // Mirrors `Pagination.encode`: omit limit at the backend default, omit offset when 0 or a cursor is present.
@@ -1079,8 +1055,8 @@ extension QueryMembersPayload {
 }
 
 extension UpdateChannelPartialRequest {
-    convenience init(channelInput: ChannelInput, unsetProperties: [String]) {
-        self.init(set: rawJSONDictionary(from: channelInput), unset: unsetProperties)
+    convenience init(channelInput: ChannelInput, unsetProperties: [String]) throws {
+        self.init(set: try channelInput.asRawJSONDictionary(), unset: unsetProperties)
     }
 }
 
@@ -1131,9 +1107,9 @@ extension ChannelMemberRequest {
 }
 
 extension UpdateMessagePartialRequest {
-    convenience init(_ request: MessagePartialUpdateRequest) {
+    convenience init(_ request: MessagePartialUpdateRequest) throws {
         self.init(
-            set: request.set.flatMap { rawJSONDictionary(from: $0) },
+            set: try request.set?.asRawJSONDictionary(),
             skipEnrichUrl: request.skipEnrichUrl,
             unset: request.unset
         )
@@ -1156,53 +1132,6 @@ extension SearchPayload {
     }
 }
 
-private extension ChannelMemberListSortingKey {
-    var remoteKey: String {
-        switch self {
-        case .channelRole:
-            return "channel_role"
-        case .createdAt:
-            return "created_at"
-        case .name:
-            return "name"
-        case .userId:
-            return "user_id"
-        }
-    }
-}
-
-private extension MessageSearchSortingKey {
-    var remoteKey: String {
-        switch self {
-        case .createdAt:
-            return "created_at"
-        case .id:
-            return "id"
-        case .relevance:
-            return "relevance"
-        case .updatedAt:
-            return "updated_at"
-        }
-    }
-}
-
-extension CreateDeviceRequest.CreateDeviceRequestPushProvider {
-    init(pushProvider: PushProvider) {
-        self = Self(rawValue: pushProvider.rawValue) ?? .unknown
-    }
-}
-
-extension UserRequest {
-    convenience init(userId: UserId, name: String?, imageURL: URL?, extraData: [String: RawJSON]) {
-        self.init(
-            custom: extraData.isEmpty ? nil : extraData,
-            id: userId,
-            image: imageURL?.absoluteString,
-            name: name
-        )
-    }
-}
-
 extension SendEventRequest {
     convenience init<Payload: CustomEventPayload>(payload: Payload) {
         let data = try? JSONEncoder.default.encode(payload)
@@ -1214,12 +1143,6 @@ extension SendEventRequest {
             custom: custom.isEmpty ? nil : custom,
             type: type(of: payload).eventType.rawValue
         ))
-    }
-}
-
-extension ReactionResponse {
-    var reactionType: MessageReactionType {
-        MessageReactionType(rawValue: type)
     }
 }
 
@@ -1323,10 +1246,6 @@ extension Attachment {
         dict.removeValue(forKey: "custom")
         return .dictionary(dict)
     }
-}
-
-extension ThreadResponse {
-    var cid: ChannelId? { try? ChannelId(cid: channelCid) }
 }
 
 // MARK: - Endpoint compatibility wrappers

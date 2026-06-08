@@ -88,14 +88,14 @@ final class MessageReactionDTO_Tests: XCTestCase {
             database.viewContext.reaction(
                 messageId: payload.messageId,
                 userId: payload.user.id,
-                type: payload.reactionType
+                type: MessageReactionType(rawValue: payload.type)
             )
         ).asModel()
 
         // Assert model is built up correctly.
         XCTAssertEqual(model.createdAt, payload.createdAt)
         XCTAssertEqual(model.updatedAt, payload.updatedAt)
-        XCTAssertEqual(model.type, payload.reactionType)
+        XCTAssertEqual(model.type, MessageReactionType(rawValue: payload.type))
         XCTAssertEqual(model.score, payload.score)
         XCTAssertEqual(model.extraData, payload.extraData)
         XCTAssertEqual(model.author.id, payload.user.id)
@@ -123,7 +123,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
             database.viewContext.reaction(
                 messageId: payload.messageId,
                 userId: payload.user.id,
-                type: payload.reactionType
+                type: MessageReactionType(rawValue: payload.type)
             )
         ).asModel()
 
@@ -132,7 +132,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         // Assert other fields have correct values.
         XCTAssertEqual(model.createdAt, payload.createdAt)
         XCTAssertEqual(model.updatedAt, payload.updatedAt)
-        XCTAssertEqual(model.type, payload.reactionType)
+        XCTAssertEqual(model.type, MessageReactionType(rawValue: payload.type))
         XCTAssertEqual(model.score, payload.score)
         XCTAssertEqual(model.author.id, payload.user.id)
     }
@@ -161,7 +161,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
                 session.reaction(
                     messageId: payload.messageId,
                     userId: payload.user.id,
-                    type: payload.reactionType
+                    type: MessageReactionType(rawValue: payload.type)
                 )
             )
 
@@ -173,7 +173,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         let dto = database.viewContext.reaction(
             messageId: payload.messageId,
             userId: payload.user.id,
-            type: payload.reactionType
+            type: MessageReactionType(rawValue: payload.type)
         )
 
         // Assert dto is `nil`.
@@ -275,7 +275,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
             database.viewContext.reaction(
                 messageId: payload.messageId,
                 userId: payload.user.id,
-                type: payload.reactionType
+                type: MessageReactionType(rawValue: payload.type)
             )
         )
 
@@ -287,7 +287,7 @@ final class MessageReactionDTO_Tests: XCTestCase {
         // Assert loaded message reaction has valid fields.
         XCTAssertEqual(dto.createdAt?.bridgeDate, payload.createdAt)
         XCTAssertEqual(dto.updatedAt?.bridgeDate, payload.updatedAt)
-        XCTAssertEqual(dto.type, payload.reactionType.rawValue)
+        XCTAssertEqual(dto.type, payload.type)
         XCTAssertEqual(dto.score, Int64(payload.score))
         XCTAssertEqual(dto.extraData, reactionExtraData)
         XCTAssertEqual(dto.message.id, payload.messageId)

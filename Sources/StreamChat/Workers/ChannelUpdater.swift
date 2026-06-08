@@ -156,10 +156,17 @@ class ChannelUpdater: Worker, @unchecked Sendable {
         unsetProperties: [String],
         completion: (@Sendable (Error?) -> Void)? = nil
     ) {
+        let request: UpdateChannelPartialRequest
+        do {
+            request = try UpdateChannelPartialRequest(channelInput: updates, unsetProperties: unsetProperties)
+        } catch {
+            completion?(error)
+            return
+        }
         apiClient.request(endpoint: Endpoint<UpdateChannelPartialResponse>.updateChannelPartial(
             type: cid.type.rawValue,
             id: cid.id,
-            updateChannelPartialRequest: UpdateChannelPartialRequest(channelInput: updates, unsetProperties: unsetProperties)
+            updateChannelPartialRequest: request
         )) {
             completion?($0.error)
         }

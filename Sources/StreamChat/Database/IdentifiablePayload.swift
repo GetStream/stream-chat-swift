@@ -221,7 +221,7 @@ extension MessageResponse: IdentifiablePayload {
 
 extension ReactionResponse: IdentifiablePayload {
     var databaseId: DatabaseId? {
-        MessageReactionDTO.createId(userId: user.id, messageId: messageId, type: reactionType)
+        MessageReactionDTO.createId(userId: user.id, messageId: messageId, type: MessageReactionType(rawValue: type))
     }
 
     static let modelClass: (IdentifiableDatabaseObject).Type? = MessageReactionDTO.self

@@ -21,16 +21,20 @@ public enum MessageSearchSortingKey: String, SortingKey {
 
     public func encode(to encoder: Encoder) throws {
         var container = encoder.singleValueContainer()
-        let value: String
+        try container.encode(remoteKey)
+    }
 
+    var remoteKey: String {
         switch self {
-        case .createdAt: value = "created_at"
-        case .updatedAt: value = "updated_at"
-        case .relevance: value = "relevance"
-        case .id: value = "id"
+        case .createdAt:
+            return "created_at"
+        case .id:
+            return "id"
+        case .relevance:
+            return "relevance"
+        case .updatedAt:
+            return "updated_at"
         }
-
-        try container.encode(value)
     }
 
     private var canUseAsSortDescriptor: Bool {

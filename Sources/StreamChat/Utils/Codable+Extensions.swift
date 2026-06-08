@@ -61,3 +61,13 @@ extension Encodable {
         try container.encode(self)
     }
 }
+
+// MARK: - Encodable RawJSON
+
+extension Encodable {
+    /// Encodes the value and re-decodes it into a `RawJSON` dictionary.
+    func asRawJSONDictionary() throws -> [String: RawJSON] {
+        let data = try JSONEncoder.stream.encode(self)
+        return try JSONDecoder.stream.decodeRawJSON(from: data)
+    }
+}

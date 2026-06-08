@@ -3201,7 +3201,7 @@ final class MessageUpdater_Tests: XCTestCase {
         // Assert correct endpoint is called
         let expectedEndpoint = Endpoint<UpdateMessagePartialResponse>.updateMessagePartial(
             id: messageId,
-            updateMessagePartialRequest: UpdateMessagePartialRequest(
+            updateMessagePartialRequest: try UpdateMessagePartialRequest(
                 .init(
                     set: .init(
                         text: text,

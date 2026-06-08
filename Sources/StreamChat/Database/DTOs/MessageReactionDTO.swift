@@ -161,7 +161,7 @@ extension NSManagedObjectContext {
 
         let dto = MessageReactionDTO.loadOrCreate(
             message: messageDTO,
-            type: payload.reactionType,
+            type: MessageReactionType(rawValue: payload.type),
             user: try saveUser(payload: payload.user),
             context: self,
             cache: cache

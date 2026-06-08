@@ -340,7 +340,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
         let expectedEndpoint = Endpoint<Response>.createDevice(
             createDeviceRequest: CreateDeviceRequest(
                 id: deviceId,
-                pushProvider: .init(pushProvider: pushProvider),
+                pushProvider: .init(rawValue: pushProvider.rawValue) ?? .unknown,
                 pushProviderName: providerName
             )
         )

@@ -205,7 +205,7 @@ extension UserDTO {
             )
             extraData = [:]
         }
-        return .init(userId: id, name: name, imageURL: imageURL, extraData: extraData)
+        return .init(custom: extraData.isEmpty ? nil : extraData, id: id, image: imageURL?.absoluteString, name: name)
     }
 }
 
