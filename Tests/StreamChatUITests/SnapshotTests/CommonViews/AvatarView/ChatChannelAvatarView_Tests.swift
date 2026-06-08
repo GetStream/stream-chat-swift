@@ -305,6 +305,38 @@ import XCTest
         XCTAssertGreaterThan(imageMergerSpy.mergeCallCount, 0, "The avatar should be recomputed when a member shown in it is replaced even if the member count is unchanged")
     }
 
+    func test_loadMergedAvatars_recomputesAvatar_whenAMemberIsAddedWhileFewerThanTheMaximumAreShown() {
+        let cid = ChannelId.unique
+        let imageMergerSpy = ImageMergerSpy()
+
+        let view = ChatChannelAvatarView().withoutAutoresizingMaskConstraints
+        view.components = .mock
+        view.imageProcessingQueue = nil
+        view.imageMerger = imageMergerSpy
+        let window = UIWindow()
+        window.addSubview(view)
+
+        let memberA: ChatChannelMember = .mock(id: .unique, imageURL: TestImages.yoda.url)
+        let memberB: ChatChannelMember = .mock(id: .unique, imageURL: TestImages.chewbacca.url)
+        let memberC: ChatChannelMember = .mock(id: .unique, imageURL: TestImages.r2.url)
+
+        // The avatar shows two members, fewer than the maximum of four.
+        view.content = (
+            channel: groupChannel(cid: cid, members: [memberA, memberB]),
+            currentUserId: currentUserId
+        )
+        XCTAssertGreaterThan(imageMergerSpy.mergeCallCount, 0)
+
+        // A member is added. Since the avatar wasn't full, the new member should be shown.
+        imageMergerSpy.reset()
+        view.content = (
+            channel: groupChannel(cid: cid, members: [memberA, memberB, memberC]),
+            currentUserId: currentUserId
+        )
+
+        XCTAssertGreaterThan(imageMergerSpy.mergeCallCount, 0, "The avatar should be recomputed when a member is added while it shows fewer than the maximum number of members")
+    }
+
     func test_loadMergedAvatars_doesNotRecomputeAvatar_whenANonShownMemberLeavesTheChannel() {
         let cid = ChannelId.unique
         let imageMergerSpy = ImageMergerSpy()
