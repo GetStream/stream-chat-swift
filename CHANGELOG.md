@@ -3,12 +3,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
-### 🔄 Changed
-
 ## StreamChatUI
 ### 🐞 Fixed
 - Fix the poll comments button showing "1 comments" instead of "1 comment" for a single comment [#4123](https://github.com/GetStream/stream-chat-swift/pull/4123)
 - Fix the message highlight sometimes only blinking when jumping to a message [#4125](https://github.com/GetStream/stream-chat-swift/pull/4125)
+- Fix group channel avatars changing while the channel list is displayed when the last active members are updated [#4124](https://github.com/GetStream/stream-chat-swift/pull/4124)
 
 # [5.5.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.5.0)
 _June 03, 2026_
