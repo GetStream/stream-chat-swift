@@ -755,7 +755,6 @@
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelEditDetailPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelListPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelMemberListPayload_Tests.swift,
-				StreamChatTests/APIClient/Endpoints/Payloads/ChannelMemberUnbanRequestPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/ChannelReadPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/CurrentUserPayloads_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/CustomDataHashMap_Tests.swift,
