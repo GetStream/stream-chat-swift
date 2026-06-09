@@ -55,7 +55,7 @@ extension OwnUserResponse {
             totalUnreadCount: unreadCount?.messages ?? 0,
             unreadChannels: unreadCount?.channels ?? 0,
             unreadCount: unreadCount?.messages ?? 0,
-            unreadThreads: unreadCount?.threads ?? 0,
+            unreadThreads: unreadCount?.threads ?? -1,
             updatedAt: updatedAt
         )
     }
@@ -82,7 +82,7 @@ extension OwnUserResponse {
             isInvisible: false,
             isBanned: userPayload.banned,
             role: userPayload.userRole,
-            teamsRole: userPayload.teamsRolePayload,
+            teamsRole: userPayload.teamsUserRole,
             unreadCount: unreadCount,
             extraData: userPayload.custom,
             devices: devices,

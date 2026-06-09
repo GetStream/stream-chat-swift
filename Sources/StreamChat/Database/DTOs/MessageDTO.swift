@@ -1090,12 +1090,12 @@ extension NSManagedObjectContext: MessageDatabaseSession {
     // swiftlint:enable function_body_length
 
     func saveMessages(
-        messagesPayload: MessageListPayload,
+        messages: [MessageResponse],
         for cid: ChannelId?,
         syncOwnReactions: Bool = true
     ) -> [MessageDTO] {
-        let cache = messagesPayload.getPayloadToModelIdMappings(context: self)
-        return messagesPayload.messages.compactMapLoggingError {
+        let cache = messages.getPayloadToModelIdMappings(context: self)
+        return messages.compactMapLoggingError {
             try saveMessage(
                 payload: $0,
                 for: cid,

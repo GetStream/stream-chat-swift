@@ -280,8 +280,8 @@ class DatabaseSession_Mock: DatabaseSession {
         )
     }
 
-    func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO] {
-        underlyingSession.saveMessages(messagesPayload: messagesPayload, for: cid, syncOwnReactions: syncOwnReactions)
+    func saveMessages(messages: [MessageResponse], for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO] {
+        underlyingSession.saveMessages(messages: messages, for: cid, syncOwnReactions: syncOwnReactions)
     }
 
     func saveMessageSearch(payload: SearchResponse, for query: MessageSearchQuery) -> [MessageDTO] {

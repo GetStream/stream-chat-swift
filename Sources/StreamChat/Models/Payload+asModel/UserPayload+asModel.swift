@@ -16,7 +16,7 @@ extension UserResponse {
             isBanned: banned,
             isFlaggedByCurrentUser: false,
             userRole: userRole,
-            teamsRole: teamsRolePayload,
+            teamsRole: teamsUserRole,
             createdAt: createdAt,
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,

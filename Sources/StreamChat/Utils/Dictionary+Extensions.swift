@@ -19,6 +19,8 @@ extension Dictionary {
         result.removeValues(forKeys: keys)
         return result
     }
+
+    var nilIfEmpty: Self? { isEmpty ? nil : self }
 }
 
 extension Dictionary where Key == String {

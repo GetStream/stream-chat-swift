@@ -146,7 +146,7 @@ protocol MessageDatabaseSession {
     /// The `syncOwnReactions` should be set to `true` when the payload comes from an API response and `false` when the payload
     /// is received via WS events. For performance reasons the API does not populate the `message.own_reactions` when sending events
     @discardableResult
-    func saveMessages(messagesPayload: MessageListPayload, for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO]
+    func saveMessages(messages: [MessageResponse], for cid: ChannelId?, syncOwnReactions: Bool) -> [MessageDTO]
 
     /// Saves a message into the local DB.
     /// - Parameters:

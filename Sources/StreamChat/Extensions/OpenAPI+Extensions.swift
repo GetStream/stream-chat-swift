@@ -126,24 +126,16 @@ extension ChannelInput {
         extraData: [String: RawJSON]
     ) {
         self.init(
-            custom: makeChannelCustomData(name: name, imageURL: imageURL, extraData: extraData),
+            custom: extraData.merging([
+                "name": name.map(RawJSON.string),
+                "image": imageURL.map { .string($0.absoluteString) }
+            ].compactMapValues { $0 }, uniquingKeysWith: { $1 }).nilIfEmpty,
             filterTags: filterTags.isEmpty ? nil : Array(filterTags),
             invites: invites.isEmpty ? nil : invites.map { ChannelMemberRequest(userId: $0) },
             members: members.union(invites).isEmpty ? nil : members.union(invites).map { ChannelMemberRequest(userId: $0) },
             team: team
         )
     }
-}
-
-private func makeChannelCustomData(name: String?, imageURL: URL?, extraData: [String: RawJSON]) -> [String: RawJSON]? {
-    var custom = extraData
-    if let name {
-        custom["name"] = .string(name)
-    }
-    if let imageURL {
-        custom["image"] = .string(imageURL.absoluteString)
-    }
-    return custom.isEmpty ? nil : custom
 }
 
 extension ChannelInputRequest {
@@ -157,7 +149,10 @@ extension ChannelInputRequest {
     ) {
         let allMembers = members.union(invites)
         self.init(
-            custom: makeChannelCustomData(name: name, imageURL: imageURL, extraData: extraData),
+            custom: extraData.merging([
+                "name": name.map(RawJSON.string),
+                "image": imageURL.map { .string($0.absoluteString) }
+            ].compactMapValues { $0 }, uniquingKeysWith: { $1 }).nilIfEmpty,
             invites: invites.isEmpty ? nil : invites.map { ChannelMemberRequest(userId: $0) },
             members: allMembers.isEmpty ? nil : allMembers.map { ChannelMemberRequest(userId: $0) },
             team: team
@@ -282,7 +277,7 @@ extension UserResponse {
         UserRole(rawValue: role)
     }
 
-    var teamsRolePayload: [String: UserRole]? {
+    var teamsUserRole: [String: UserRole]? {
         teamsRole?.mapValues { UserRole(rawValue: $0) }
     }
 }
@@ -297,7 +292,7 @@ extension FullUserResponse {
             custom: custom,
             deactivatedAt: deactivatedAt,
             id: id,
-            image: image.flatMap(URL.init(string:))?.absoluteString,
+            image: image,
             language: language,
             lastActive: lastActive,
             name: name,

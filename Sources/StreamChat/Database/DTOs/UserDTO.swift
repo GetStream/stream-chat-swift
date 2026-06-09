@@ -156,7 +156,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
         dto.userUpdatedAt = payload.updatedAt.bridgeDate
         dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
         dto.language = payload.language.isEmpty ? nil : payload.language
-        dto.teamsRole = payload.teamsRolePayload?.mapValues { $0.rawValue }
+        dto.teamsRole = payload.teamsUserRole?.mapValues { $0.rawValue }
         if let avgResponseTime = payload.avgResponseTime {
             dto.avgResponseTime = .init(integerLiteral: avgResponseTime)
         }

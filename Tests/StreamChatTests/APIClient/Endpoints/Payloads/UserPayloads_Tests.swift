@@ -65,7 +65,7 @@ final class UserResponse_Tests: XCTestCase {
         XCTAssertEqual(payload.language, "pt")
         XCTAssertEqual(payload.userRole, .guest)
         XCTAssertEqual(payload.online, true)
-        XCTAssertEqual(payload.teamsRolePayload, ["ios": "guest"])
+        XCTAssertEqual(payload.teamsUserRole, ["ios": "guest"])
     }
 
     func test_openAPIUserJSON_customData_isExposedAsExtraData() throws {

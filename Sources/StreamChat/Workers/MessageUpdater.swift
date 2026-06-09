@@ -491,7 +491,7 @@ class MessageUpdater: Worker, @unchecked Sendable {
                     }
 
                     let replies = session.saveMessages(
-                        messagesPayload: MessageListPayload(messages: payload.messages),
+                        messages: payload.messages,
                         for: cid,
                         syncOwnReactions: true
                     )
