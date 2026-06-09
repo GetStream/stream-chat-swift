@@ -74,7 +74,7 @@ extension MessageResponse {
             deletedReplyCount: 0,
             draft: draft,
             html: "",
-            i18n: [String: String].messageTranslations(translations: translations, originalLanguage: originalLanguage),
+            i18n: MessageTranslations(translations: translations, originalLanguage: originalLanguage)?.i18n,
             id: messageId,
             latestReactions: latestReactions,
             member: member,

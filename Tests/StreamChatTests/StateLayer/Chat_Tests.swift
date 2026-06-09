@@ -1508,13 +1508,14 @@ final class Chat_Tests: XCTestCase {
         )
         
         let payload = try XCTUnwrap(env.channelUpdaterMock.partialChannelUpdate_updates)
-        XCTAssertEqual(payload.name, name)
-        XCTAssertEqual(payload.imageURL, imageURL)
+        XCTAssertEqual(
+            payload.custom,
+            ["name": .string(name), "image": .string(imageURL.absoluteString), "custom": .string("value")]
+        )
         XCTAssertEqual(payload.team, team)
         XCTAssertEqual(Set(payload.members?.map(\.userId) ?? []), Set(members).union(invites))
         XCTAssertEqual(Set(payload.invites?.map(\.userId) ?? []), Set(invites))
         XCTAssertEqual(Set(payload.filterTags ?? []), filterTags)
-        XCTAssertEqual(payload.extraData, extraData)
         XCTAssertEqual(env.channelUpdaterMock.partialChannelUpdate_unsetProperties, unsetProperties)
     }
     

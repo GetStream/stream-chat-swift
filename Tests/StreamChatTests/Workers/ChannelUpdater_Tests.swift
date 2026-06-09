@@ -2705,10 +2705,8 @@ final class ChannelUpdater_Tests: XCTestCase {
             try session.saveChannel(payload: .dummy(cid: cid), query: nil, cache: nil)
             let pushPreferenceDTO = try session.savePushPreference(
                 id: cid.rawValue,
-                payload: .init(
-                    chatLevel: "none",
-                    disabledUntil: nil
-                )
+                chatLevel: "none",
+                disabledUntil: nil
             )
             session.channel(cid: cid)?.pushPreference = pushPreferenceDTO
         }

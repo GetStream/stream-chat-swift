@@ -108,41 +108,10 @@ struct MessageListPayload: Decodable {
     let messages: [MessageResponse]
 }
 
-private enum MessageTranslationsPayloadKeys {
-    static let originalLanguage = "language"
-    static let translatedSuffix = "_text"
-}
-
-extension Dictionary where Key == String, Value == String {
-    var originalLanguage: String? {
-        self[MessageTranslationsPayloadKeys.originalLanguage]
-    }
-
-    var translated: [TranslationLanguage: String] {
-        reduce(into: [:]) { translatedDictionary, keyValuePair in
-            let key = keyValuePair.key
-            guard key != MessageTranslationsPayloadKeys.originalLanguage else { return }
-            guard let suffixRange = key.range(of: MessageTranslationsPayloadKeys.translatedSuffix) else {
-                log.warning("Unknown key in `translate` response: \(key), cannot decode", subsystems: .httpRequests)
-                return
-            }
-
-            let languageCode = String(key.prefix(upTo: suffixRange.lowerBound))
-            translatedDictionary[TranslationLanguage(languageCode: languageCode)] = keyValuePair.value
-        }
-    }
-
-    static func messageTranslations(
-        translations: [TranslationLanguage: String]?,
-        originalLanguage: String?
-    ) -> [String: String]? {
-        guard translations != nil || originalLanguage != nil else { return nil }
-
-        var i18n = originalLanguage.map { [MessageTranslationsPayloadKeys.originalLanguage: $0] } ?? [:]
-        translations?.forEach {
-            i18n[$0.key.languageCode + MessageTranslationsPayloadKeys.translatedSuffix] = $0.value
-        }
-        return i18n
+extension MessageResponse {
+    /// The message translations, wrapped for convenient access.
+    var translations: MessageTranslations? {
+        i18n.map { MessageTranslations(i18n: $0) }
     }
 }
 
@@ -163,21 +132,6 @@ extension ChannelInput {
             members: members.union(invites).isEmpty ? nil : members.union(invites).map { ChannelMemberRequest(userId: $0) },
             team: team
         )
-    }
-
-    var name: String? {
-        custom?["name"]?.stringValue
-    }
-
-    var imageURL: URL? {
-        custom?["image"]?.stringValue.flatMap(URL.init(string:))
-    }
-
-    var extraData: [String: RawJSON] {
-        var extraData = custom ?? [:]
-        extraData["name"] = nil
-        extraData["image"] = nil
-        return extraData
     }
 }
 
@@ -442,14 +396,6 @@ extension ChannelResponse {
         extraData["name"] = nil
         extraData["image"] = nil
         return extraData
-    }
-}
-
-extension ChannelStateResponseFields {
-    // Compatibility shims for the legacy ChannelStateResponseFields struct.
-    var newestMessage: MessageResponse? {
-        guard let first = messages.first, let last = messages.last else { return nil }
-        return first.createdAt > last.createdAt ? first : last
     }
 }
 

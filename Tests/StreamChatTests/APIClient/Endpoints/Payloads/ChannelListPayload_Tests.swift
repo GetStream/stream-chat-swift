@@ -303,58 +303,6 @@ final class ChannelStateResponseFields_Tests: XCTestCase {
         XCTAssertEqual(payload.activeLiveLocations?.count, 1)
         XCTAssertNotNil(payload.pushPreferences)
     }
-
-    func test_newestMessage_whenMessagesAreSortedDesc() throws {
-        // GIVEN
-        let earlierMessage: MessageResponse = .dummy(
-            messageId: .unique,
-            authorUserId: .unique,
-            createdAt: .init()
-        )
-
-        let laterMessage: MessageResponse = .dummy(
-            messageId: .unique,
-            authorUserId: .unique,
-            createdAt: earlierMessage.createdAt.addingTimeInterval(10)
-        )
-
-        // WHEN
-        let payload: ChannelStateResponseFields = .dummy(
-            messages: [
-                laterMessage,
-                earlierMessage
-            ]
-        )
-
-        // THEN
-        XCTAssertEqual(payload.newestMessage?.id, laterMessage.id)
-    }
-
-    func test_newestMessage_whenMessagesAreSortedAsc() throws {
-        // GIVEN
-        let earlierMessage: MessageResponse = .dummy(
-            messageId: .unique,
-            authorUserId: .unique,
-            createdAt: .init()
-        )
-
-        let laterMessage: MessageResponse = .dummy(
-            messageId: .unique,
-            authorUserId: .unique,
-            createdAt: earlierMessage.createdAt.addingTimeInterval(10)
-        )
-
-        // WHEN
-        let payload: ChannelStateResponseFields = .dummy(
-            messages: [
-                earlierMessage,
-                laterMessage
-            ]
-        )
-
-        // THEN
-        XCTAssertEqual(payload.newestMessage?.id, laterMessage.id)
-    }
     
     // MARK: - ChannelStateResponseFields.asModel() Tests
     

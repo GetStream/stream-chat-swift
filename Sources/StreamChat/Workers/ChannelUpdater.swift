@@ -798,10 +798,6 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                     completion(.failure(ClientError.ChannelDoesNotExist(cid: cid)))
                     return
                 }
-                let pushPreferencePayload = PushPreferencesResponse(
-                    chatLevel: channelPushPreferencePayload.chatLevel,
-                    disabledUntil: channelPushPreferencePayload.disabledUntil
-                )
                 let channelPushPreference = PushPreference(
                     level: PushPreferenceLevel(rawValue: channelPushPreferencePayload.chatLevel ?? PushPreferenceLevel.all.rawValue),
                     disabledUntil: channelPushPreferencePayload.disabledUntil
@@ -809,7 +805,8 @@ class ChannelUpdater: Worker, @unchecked Sendable {
                 self?.database.write({
                     let dto = try $0.savePushPreference(
                         id: cid.rawValue,
-                        payload: pushPreferencePayload
+                        chatLevel: channelPushPreferencePayload.chatLevel,
+                        disabledUntil: channelPushPreferencePayload.disabledUntil
                     )
                     $0.channel(cid: cid)?.pushPreference = dto
                 }, completion: { error in

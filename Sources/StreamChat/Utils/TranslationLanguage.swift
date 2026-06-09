@@ -133,3 +133,48 @@ public extension TranslationLanguage {
         .vietnamese
     ]
 }
+
+// MARK: -
+
+/// Wraps a raw `i18n` dictionary received from the API.
+final class MessageTranslations: Sendable {
+    private enum Keys {
+        static let originalLanguage = "language"
+        static let translatedSuffix = "_text"
+    }
+    
+    let i18n: [String: String]
+    
+    init(i18n: [String: String]) {
+        self.i18n = i18n
+    }
+    
+    /// Builds the payload from domain values, or `nil` when there is nothing to send.
+    init?(translations: [TranslationLanguage: String]?, originalLanguage: String?) {
+        guard translations != nil || originalLanguage != nil else { return nil }
+        var i18n = originalLanguage.map { [Keys.originalLanguage: $0] } ?? [:]
+        translations?.forEach {
+            i18n[$0.key.languageCode + Keys.translatedSuffix] = $0.value
+        }
+        self.i18n = i18n
+    }
+    
+    /// The original language code of the message.
+    var originalLanguage: String? {
+        i18n[Keys.originalLanguage]
+    }
+    
+    /// The available translations keyed by language.
+    var translated: [TranslationLanguage: String] {
+        i18n.reduce(into: [:]) { translatedDictionary, keyValuePair in
+            let key = keyValuePair.key
+            guard key != Keys.originalLanguage else { return }
+            guard let suffixRange = key.range(of: Keys.translatedSuffix) else {
+                log.warning("Unknown key in `translate` response: \(key), cannot decode", subsystems: .httpRequests)
+                return
+            }
+            let languageCode = String(key.prefix(upTo: suffixRange.lowerBound))
+            translatedDictionary[TranslationLanguage(languageCode: languageCode)] = keyValuePair.value
+        }
+    }
+}

@@ -761,6 +761,8 @@ final class ChannelController_Tests: XCTestCase {
 
         let cid: ChannelId = .unique
         let team: String = .unique
+        let name: String = .unique
+        let imageURL: URL = .unique()
         let members: Set<UserId> = [.unique]
         let invites: Set<UserId> = [.unique]
 
@@ -768,8 +770,8 @@ final class ChannelController_Tests: XCTestCase {
         for isCurrentUserMember in [true, false] {
             let controller = try client.channelController(
                 createChannelWithId: cid,
-                name: .unique,
-                imageURL: .unique(),
+                name: name,
+                imageURL: imageURL,
                 team: team,
                 members: members,
                 isCurrentUserMember: isCurrentUserMember,
@@ -785,7 +787,10 @@ final class ChannelController_Tests: XCTestCase {
                 Set(controller.channelQuery.channelPayload?.members?.map(\.userId) ?? [])
             )
             XCTAssertEqual(invites, Set(controller.channelQuery.channelPayload?.invites?.map(\.userId) ?? []))
-            XCTAssertEqual([:], controller.channelQuery.channelPayload?.extraData)
+            XCTAssertEqual(
+                controller.channelQuery.channelPayload?.custom,
+                ["name": .string(name), "image": .string(imageURL.absoluteString)]
+            )
         }
     }
 
@@ -846,6 +851,8 @@ final class ChannelController_Tests: XCTestCase {
 
         for isCurrentUserMember in [true, false] {
             let team: String = .unique
+            let name: String = .unique
+            let imageURL: URL = .unique()
             let members: Set<UserId> = [.unique]
             let channelType: ChannelType = .custom(.unique)
 
@@ -854,8 +861,8 @@ final class ChannelController_Tests: XCTestCase {
                 createDirectMessageChannelWith: members,
                 type: channelType,
                 isCurrentUserMember: isCurrentUserMember,
-                name: .unique,
-                imageURL: .unique(),
+                name: name,
+                imageURL: imageURL,
                 team: team,
                 extraData: [:]
             )
@@ -867,7 +874,10 @@ final class ChannelController_Tests: XCTestCase {
                 members.union(isCurrentUserMember ? [currentUserId] : []),
                 Set(controller.channelQuery.channelPayload?.members?.map(\.userId) ?? [])
             )
-            XCTAssertEqual(controller.channelQuery.channelPayload?.extraData, [:])
+            XCTAssertEqual(
+                controller.channelQuery.channelPayload?.custom,
+                ["name": .string(name), "image": .string(imageURL.absoluteString)]
+            )
         }
     }
 
@@ -1806,12 +1816,13 @@ final class ChannelController_Tests: XCTestCase {
 
         waitForExpectations(timeout: defaultTimeout)
 
-        XCTAssertEqual(updater.partialChannelUpdate_updates?.name, name)
-        XCTAssertEqual(updater.partialChannelUpdate_updates?.imageURL, imageURL)
+        XCTAssertEqual(
+            updater.partialChannelUpdate_updates?.custom,
+            ["name": .string(name), "scope": .string("test")]
+        )
         XCTAssertEqual(updater.partialChannelUpdate_updates?.team, team)
         XCTAssertEqual(Set(updater.partialChannelUpdate_updates?.members?.map(\.userId) ?? []), members.union(invites))
         XCTAssertEqual(Set(updater.partialChannelUpdate_updates?.invites?.map(\.userId) ?? []), invites)
-        XCTAssertEqual(updater.partialChannelUpdate_updates?.extraData, extraData)
         XCTAssertEqual(updater.partialChannelUpdate_unsetProperties, unsetProperties)
         XCTAssertNil(receivedError)
     }

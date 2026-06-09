@@ -105,7 +105,11 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
 
         // Save push preference
         if let pushPreference = payload.pushPreferences {
-            dto.pushPreference = try savePushPreference(id: payload.id, payload: pushPreference)
+            dto.pushPreference = try savePushPreference(
+                id: payload.id,
+                chatLevel: pushPreference.chatLevel,
+                disabledUntil: pushPreference.disabledUntil
+            )
         }
 
         let mutedUsers = try payload.mutes.compactMap(\.target).map { try saveUser(payload: $0) }

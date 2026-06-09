@@ -248,7 +248,8 @@ class CurrentUserUpdater: Worker, @unchecked Sendable {
                     }
                     let savedDTO = try session.savePushPreference(
                         id: currentUserDTO.user.id,
-                        payload: currentUserPushPreferencePayload
+                        chatLevel: currentUserPushPreferencePayload.chatLevel,
+                        disabledUntil: currentUserPushPreferencePayload.disabledUntil
                     )
                     currentUserDTO.pushPreference = savedDTO
                 }

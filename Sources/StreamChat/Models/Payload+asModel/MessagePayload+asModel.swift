@@ -106,8 +106,8 @@ extension MessageResponse {
                 pinnedBy: pinnedBy?.asModel() ?? author,
                 expiresAt: pinExpires
             ) : nil,
-            translations: i18n?.translated,
-            originalLanguage: i18n?.originalLanguage.flatMap { TranslationLanguage(languageCode: $0) },
+            translations: translations?.translated,
+            originalLanguage: translations?.originalLanguage.flatMap { TranslationLanguage(languageCode: $0) },
             moderationDetails: moderationDetails,
             readBy: Set(readBy.map(\.user)),
             poll: nil,

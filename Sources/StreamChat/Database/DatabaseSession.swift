@@ -76,9 +76,10 @@ protocol CurrentUserDatabaseSession {
     /// Saves the push preference for the given id.
     /// - Parameters:
     ///   - id: The channel ID or the currentUser ID.
-    ///   - payload: The push preference payload.
+    ///   - chatLevel: The push notification level. Defaults to `all` when `nil`.
+    ///   - disabledUntil: The date until which push notifications are disabled, if any.
     @discardableResult
-    func savePushPreference(id: String, payload: PushPreferencesResponse) throws -> PushPreferenceDTO
+    func savePushPreference(id: String, chatLevel: String?, disabledUntil: Date?) throws -> PushPreferenceDTO
 
     /// Removes the device with the given id from DB.
     func deleteDevice(id: DeviceId)

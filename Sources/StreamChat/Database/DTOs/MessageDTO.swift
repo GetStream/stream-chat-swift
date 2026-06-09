@@ -1059,8 +1059,8 @@ extension NSManagedObjectContext: MessageDatabaseSession {
             parentMessageDTO.replies.insert(dto)
         }
 
-        dto.translations = payload.i18n?.translated.mapKeys { $0.languageCode }
-        dto.originalLanguage = payload.i18n?.originalLanguage
+        dto.translations = payload.translations?.translated.mapKeys { $0.languageCode }
+        dto.originalLanguage = payload.translations?.originalLanguage
 
         if let moderationPayload = payload.moderation {
             dto.moderationDetails = MessageModerationDetailsDTO.create(
