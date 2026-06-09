@@ -291,7 +291,7 @@ extension AttachmentDTO {
             return nil
         }
 
-        return .init(type: attachmentType, payload: payload)
+        return .make(type: attachmentType, payload: payload)
     }
 }
 

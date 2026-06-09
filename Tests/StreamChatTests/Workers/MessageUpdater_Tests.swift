@@ -3175,7 +3175,7 @@ final class MessageUpdater_Tests: XCTestCase {
                   let payloadRawJSON = try? JSONDecoder.default.decode(RawJSON.self, from: payloadData) else {
                 return nil
             }
-            return Attachment(
+            return Attachment.make(
                 type: attachment.type,
                 payload: payloadRawJSON
             )

@@ -466,52 +466,6 @@ extension ChannelConfigWithInfo {
     }
 }
 
-extension ChannelConfig {
-    var asChannelConfigWithInfo: ChannelConfigWithInfo {
-        .init(
-            automod: .unknown,
-            automodBehavior: .unknown,
-            commands: commands.map { CommandPayload(args: $0.args, description: $0.description, name: $0.name, set: $0.set) },
-            connectEvents: connectEventsEnabled,
-            countMessages: false,
-            createdAt: createdAt,
-            customEvents: false,
-            deliveryEvents: deliveryEventsEnabled,
-            markMessagesPending: false,
-            maxMessageLength: maxMessageLength,
-            mutes: mutesEnabled,
-            name: "",
-            polls: pollsEnabled,
-            pushNotifications: false,
-            quotes: quotesEnabled,
-            reactions: reactionsEnabled,
-            readEvents: readEventsEnabled,
-            reminders: messageRemindersEnabled,
-            replies: repliesEnabled,
-            search: searchEnabled,
-            sharedLocations: sharedLocationsEnabled,
-            skipLastMsgUpdateForSystemMsgs: skipLastMsgAtUpdateForSystemMsg,
-            typingEvents: typingEventsEnabled,
-            updatedAt: updatedAt,
-            uploads: uploadsEnabled,
-            urlEnrichment: urlEnrichmentEnabled,
-            userMessageReminders: messageRemindersEnabled
-        )
-    }
-}
-
-extension MessageResponse {
-    /// Custom-data key under which the originating campaign id is stored.
-    static let campaignIdCustomKey = "created_by_campaign_id"
-
-    var campaignId: String? {
-        if case let .string(value) = custom[Self.campaignIdCustomKey] {
-            return value
-        }
-        return nil
-    }
-}
-
 extension MessageWithChannelResponse {
     var asMessageResponse: MessageResponse {
         MessageResponse(
@@ -623,41 +577,18 @@ extension SearchResultMessage {
 }
 
 extension Attachment {
-    convenience init(type: AttachmentType, payload: RawJSON) {
-        let attachment: Attachment? = {
-            guard let data = try? JSONEncoder.default.encode(payload) else { return nil }
-            return try? JSONDecoder.default.decode(Attachment.self, from: data)
-        }()
-        if let attachment {
-            self.init(
-                actions: attachment.actions,
-                assetUrl: attachment.assetUrl,
-                authorIcon: attachment.authorIcon,
-                authorLink: attachment.authorLink,
-                authorName: attachment.authorName,
-                color: attachment.color,
-                custom: attachment.custom,
-                fallback: attachment.fallback,
-                fields: attachment.fields,
-                footer: attachment.footer,
-                footerIcon: attachment.footerIcon,
-                giphy: attachment.giphy,
-                imageUrl: attachment.imageUrl,
-                ogScrapeUrl: attachment.ogScrapeUrl,
-                originalHeight: attachment.originalHeight,
-                originalWidth: attachment.originalWidth,
-                pretext: attachment.pretext,
-                text: attachment.text,
-                thumbUrl: attachment.thumbUrl,
-                title: attachment.title,
-                titleLink: attachment.titleLink
-            )
+    static func make(type: AttachmentType, payload: RawJSON) -> Attachment {
+        let attachment: Attachment
+        if let data = try? JSONEncoder.default.encode(payload),
+           let decoded = try? JSONDecoder.default.decode(Attachment.self, from: data) {
+            attachment = decoded
         } else {
             var dict = payload.dictionaryValue ?? [:]
             dict.removeValue(forKey: AttachmentCodingKeys.type.rawValue)
-            self.init(custom: dict)
+            attachment = Attachment(custom: dict)
         }
-        self.type = type.rawValue
+        attachment.type = type.rawValue
+        return attachment
     }
 
     var attachmentType: AttachmentType {

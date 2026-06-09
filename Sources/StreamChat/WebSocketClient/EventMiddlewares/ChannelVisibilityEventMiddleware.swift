@@ -63,3 +63,15 @@ struct ChannelVisibilityEventMiddleware: EventMiddleware {
         return event
     }
 }
+
+extension MessageResponse {
+    /// Custom-data key under which the originating campaign id is stored.
+    static let campaignIdCustomKey = "created_by_campaign_id"
+
+    var campaignId: String? {
+        if case let .string(value) = custom[Self.campaignIdCustomKey] {
+            return value
+        }
+        return nil
+    }
+}

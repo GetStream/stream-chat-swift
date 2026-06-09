@@ -59,8 +59,8 @@ extension Attachment {
         title: String = .unique,
         imageURL: URL = URL(string: "https://getstream.io/some.jpg")!,
         imagePreviewURL: URL = URL(string: "https://getstream.io/some_preview.jpg")!
-    ) -> Self {
-        .init(
+    ) -> Attachment {
+        .make(
             type: .image,
             payload: .dictionary([
                 "title": .string(title),
@@ -74,8 +74,8 @@ extension Attachment {
         title: String = .unique,
         assetURL: URL = URL(string: "https://getstream.io/some.pdf")!,
         file: AttachmentFile = .init(type: .pdf, size: 1024, mimeType: "application/pdf")
-    ) -> Self {
-        .init(
+    ) -> Attachment {
+        .make(
             type: .file,
             payload: .dictionary([
                 "title": .string(title),
@@ -90,11 +90,11 @@ extension Attachment {
         title: String = .unique,
         previewURL: URL = URL(string: "https://getstream.io/some.gif")!,
         actions: [AttachmentAction] = []
-    ) -> Self {
+    ) -> Attachment {
         let actionsData = try! JSONEncoder.default.encode(actions)
         let actionsJSON = try! JSONDecoder.default.decode(RawJSON.self, from: actionsData)
 
-        return .init(
+        return .make(
             type: .giphy,
             payload: .dictionary([
                 "title": .string(title),
@@ -112,8 +112,8 @@ extension Attachment {
         imageURL: URL = URL(string: "https://getstream.io/some.pdf")!,
         previewURL: URL = URL(string: "https://getstream.io/some_preview.pdf")!,
         titleURL: URL = URL(string: "https://getstream.io/page")!
-    ) -> Self {
-        .init(
+    ) -> Attachment {
+        .make(
             type: .linkPreview,
             payload: .dictionary([
                 "title": .string(title),
@@ -131,8 +131,8 @@ extension Attachment {
         title: String = .unique,
         videoURL: URL = URL(string: "https://getstream.io/video.mov")!,
         file: AttachmentFile = .init(type: .mov, size: 1024, mimeType: "video/mov")
-    ) -> Self {
-        .init(
+    ) -> Attachment {
+        .make(
             type: .video,
             payload: .dictionary([
                 "title": .string(title),
@@ -147,8 +147,8 @@ extension Attachment {
         title: String = .unique,
         audioURL: URL = URL(string: "https://getstream.io/audio.mp3")!,
         file: AttachmentFile = .init(type: .mov, size: 1024, mimeType: "audio/mp3")
-    ) -> Self {
-        .init(
+    ) -> Attachment {
+        .make(
             type: .audio,
             payload: .dictionary([
                 "title": .string(title),
@@ -163,8 +163,8 @@ extension Attachment {
         title: String = .unique,
         audioURL: URL = URL(string: "https://getstream.io/recording.aac")!,
         file: AttachmentFile = .init(type: .mov, size: 1024, mimeType: "audio/aac")
-    ) -> Self {
-        .init(
+    ) -> Attachment {
+        .make(
             type: .voiceRecording,
             payload: .dictionary([
                 "title": .string(title),

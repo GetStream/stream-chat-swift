@@ -950,7 +950,7 @@ final class MessageDTO_Tests: XCTestCase {
         let linkAttachmentPayload: Attachment = .link()
         let videoAttachmentPayload: Attachment = .video()
         let testPayload = TestAttachmentPayload.unique
-        let testAttachmentPayload: Attachment = .init(
+        let testAttachmentPayload: Attachment = .make(
             type: TestAttachmentPayload.type,
             payload: .dictionary([
                 "name": .string(testPayload.name),
