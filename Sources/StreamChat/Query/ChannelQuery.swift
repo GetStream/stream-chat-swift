@@ -124,26 +124,6 @@ extension ChannelQuery: APIPathConvertible {
     var apiPath: String { cid?.apiPath ?? type.rawValue }
 }
 
-/// An answer for an invite to a channel.
-struct ChannelInvitePayload: Encodable {
-    struct Message: Encodable {
-        let message: String?
-    }
-
-    private enum CodingKeys: String, CodingKey {
-        case accept = "accept_invite"
-        case reject = "reject_invite"
-        case message
-    }
-
-    /// Accept the invite.
-    let accept: Bool?
-    /// Reject the invite.
-    let reject: Bool?
-    /// Additional message.
-    let message: Message?
-}
-
 extension ChannelQuery {
     func asChannelGetOrCreateRequest() -> ChannelGetOrCreateRequest {
         ChannelGetOrCreateRequest(

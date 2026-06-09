@@ -327,13 +327,7 @@ extension ClientError {
             super.init("There is no `PollDTO` instance in the DB matching id: \(pollId).")
         }
     }
-    
-    final class PollOptionDoesNotExist: ClientError, @unchecked Sendable {
-        init(optionId: String) {
-            super.init("There is no `PollOptionDTO` instance in the DB matching id: \(optionId).")
-        }
-    }
-    
+
     final class PollVoteDoesNotExist: ClientError, @unchecked Sendable {
         init(voteId: String) {
             super.init("There is no `PollVoteDTO` instance in the DB matching id: \(voteId).")
