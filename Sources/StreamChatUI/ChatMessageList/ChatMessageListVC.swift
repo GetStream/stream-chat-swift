@@ -184,6 +184,13 @@ open class ChatMessageListVC: _ViewController,
     /// A closure that will be performed when a message is scrolled to it and appears on the screen.
     private(set) var onMessageHighlight: ((IndexPath) -> Void)?
 
+    /// The id of the message that is currently highlighted (while jumping to it). Used to re-apply
+    /// the highlight when the cell is reconfigured, so it survives cell reloads/reuse.
+    private(set) var highlightedMessageId: MessageId?
+
+    /// Work item used to fade out the message highlight after the hold duration.
+    private var highlightFadeOutWorkItem: DispatchWorkItem?
+
     /// A boolean value that determines whether date separators should be shown between each message.
     open var isDateSeparatorEnabled: Bool {
         components.messageListDateSeparatorEnabled
@@ -718,16 +725,46 @@ open class ChatMessageListVC: _ViewController,
     }
 
     /// Highlight the the message cell, for example, when jumping to a message.
+    ///
+    /// The highlight is tracked by message id and re-applied whenever the cell is (re)configured,
+    /// so it survives the cell reloads/reuse that can happen while jumping to a message (otherwise
+    /// the highlight could flash and instantly vanish). It is then faded out after a short hold.
     open func highlightCell(at indexPath: IndexPath) {
-        guard let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell else {
+        guard let messageId = dataSource?.chatMessageListVC(self, messageAt: indexPath)?.id else {
             return
         }
-        let previousBackgroundColor = cell.messageContentView?.backgroundColor
-        let highlightColor = appearance.colorPalette.backgroundCoreHighlight
-        cell.messageContentView?.backgroundColor = highlightColor
-        UIView.animate(withDuration: 0.2, delay: 0.6) {
-            cell.messageContentView?.backgroundColor = previousBackgroundColor
+
+        // If a different message was being highlighted, clear it so it doesn't stay highlighted.
+        if let previousId = highlightedMessageId, previousId != messageId {
+            updateHighlightBackgroundColor(nil, forMessageId: previousId)
         }
+
+        highlightedMessageId = messageId
+        updateHighlightBackgroundColor(appearance.colorPalette.backgroundCoreHighlight, forMessageId: messageId)
+
+        // Fade the highlight out after the hold. Driven by a work item independent of the cell
+        // instance, and cancelled/rescheduled if the same message is highlighted again, so
+        // repeated or overlapping highlights always show for their full duration.
+        highlightFadeOutWorkItem?.cancel()
+        let workItem = DispatchWorkItem { [weak self] in
+            guard let self, self.highlightedMessageId == messageId else { return }
+            self.highlightedMessageId = nil
+            UIView.animate(withDuration: 0.2) {
+                self.updateHighlightBackgroundColor(nil, forMessageId: messageId)
+            }
+        }
+        highlightFadeOutWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6, execute: workItem)
+    }
+
+    /// Sets the background color of the message content view of the cell currently displaying the
+    /// given message id, if it is on screen.
+    private func updateHighlightBackgroundColor(_ color: UIColor?, forMessageId messageId: MessageId) {
+        guard let indexPath = getIndexPath(forMessageId: messageId),
+              let cell = listView.cellForRow(at: indexPath) as? ChatMessageCell else {
+            return
+        }
+        cell.messageContentView?.backgroundColor = color
     }
 
     /// Jump to the first page of the message list.
@@ -802,6 +839,12 @@ open class ChatMessageListVC: _ViewController,
         cell.messageContentView?.channel = channel
         cell.messageContentView?.content = message
         cell.messageContentView?.currentUserId = client.currentUserId
+
+        // Re-apply the highlight if this message is currently being highlighted, so it is not
+        // lost when the cell is reloaded/reused while jumping to the message.
+        if message.id == highlightedMessageId {
+            cell.messageContentView?.backgroundColor = appearance.colorPalette.backgroundCoreHighlight
+        }
 
         /// Process cell decorations
         cell.setDecoration(for: .header, decorationView: delegate?.chatMessageListVC(self, headerViewForMessage: message, at: indexPath))
