@@ -109,7 +109,7 @@ extension Array: IdentifiablePayload where Element: IdentifiablePayload {
 
 extension QueryUsersResponse: IdentifiablePayloadProxy {
     func fillIds(cache: inout [DatabaseType: Set<DatabaseId>]) {
-        userPayloads.fillIds(cache: &cache)
+        userResponses.fillIds(cache: &cache)
     }
 }
 

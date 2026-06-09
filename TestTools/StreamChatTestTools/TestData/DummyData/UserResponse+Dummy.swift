@@ -118,7 +118,7 @@ extension OwnUserResponse {
         isBanned: Bool = false,
         updatedAt: Date = .unique,
         deactivatedAt: Date? = nil,
-        privacySettings: UserPrivacySettingsPayload? = nil
+        privacySettings: PrivacySettingsResponse? = nil
     ) -> OwnUserResponse {
         .dummy(
             userId: userId,
@@ -134,11 +134,7 @@ extension OwnUserResponse {
             extraData: extraData,
             teams: teams,
             language: language,
-            privacySettings: privacySettings ?? .init(
-                typingIndicators: .init(enabled: true),
-                readReceipts: .init(enabled: true),
-                deliveryReceipts: .init(enabled: true)
-            )
+            privacySettings: privacySettings ?? PrivacySettingsResponse.dummy()
         )
     }
 }
@@ -156,9 +152,9 @@ extension UpdateUsersResponse {
     static func dummy(
         duration: String = "",
         membershipDeletionTaskId: String = "",
-        user: OwnUserResponse
+        user: FullUserResponse
     ) -> UpdateUsersResponse {
-        .init(duration: duration, membershipDeletionTaskId: membershipDeletionTaskId, users: [user.id: user.asFullUserResponse()])
+        .init(duration: duration, membershipDeletionTaskId: membershipDeletionTaskId, users: [user.id: user])
     }
 }
 

@@ -5303,7 +5303,7 @@ final class ChannelController_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: .dummy(
                 userId: userId,
                 privacySettings: .init(
-                    typingIndicators: .init(enabled: true), readReceipts: nil
+                    readReceipts: nil, typingIndicators: .init(enabled: true)
                 )
             ))
         }
@@ -5324,7 +5324,7 @@ final class ChannelController_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: .dummy(
                 userId: userId,
                 privacySettings: .init(
-                    typingIndicators: .init(enabled: true), readReceipts: nil
+                    readReceipts: nil, typingIndicators: .init(enabled: true)
                 )
             ))
         }
@@ -5345,7 +5345,7 @@ final class ChannelController_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: .dummy(
                 userId: userId,
                 privacySettings: .init(
-                    typingIndicators: .init(enabled: false), readReceipts: nil
+                    readReceipts: nil, typingIndicators: .init(enabled: false)
                 )
             ))
         }
@@ -5366,7 +5366,7 @@ final class ChannelController_Tests: XCTestCase {
             try $0.saveCurrentUser(payload: .dummy(
                 userId: userId,
                 privacySettings: .init(
-                    typingIndicators: .init(enabled: false), readReceipts: nil
+                    readReceipts: nil, typingIndicators: .init(enabled: false)
                 )
             ))
         }

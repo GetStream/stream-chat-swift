@@ -30,7 +30,8 @@ final class ConnectedUser_Tests: XCTestCase {
         
         let changedName = "Name"
         let apiResult = UpdateUsersResponse.dummy(
-            user: currentUserResponse(
+            user: .dummy(
+                userId: connectedUserId,
                 name: changedName,
                 role: .user
             )

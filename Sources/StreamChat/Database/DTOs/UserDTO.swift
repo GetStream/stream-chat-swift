@@ -152,11 +152,11 @@ extension NSManagedObjectContext: UserDatabaseSession {
         dto.isOnline = payload.online
         dto.lastActivityAt = payload.lastActive?.bridgeDate
         dto.userCreatedAt = payload.createdAt.bridgeDate
-        dto.userRoleRaw = payload.userRole.rawValue
+        dto.userRoleRaw = payload.role
         dto.userUpdatedAt = payload.updatedAt.bridgeDate
         dto.userDeactivatedAt = payload.deactivatedAt?.bridgeDate
         dto.language = payload.language.isEmpty ? nil : payload.language
-        dto.teamsRole = payload.teamsUserRole?.mapValues { $0.rawValue }
+        dto.teamsRole = payload.teamsRole
         if let avgResponseTime = payload.avgResponseTime {
             dto.avgResponseTime = .init(integerLiteral: avgResponseTime)
         }
@@ -183,7 +183,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
     @discardableResult
     func saveUsers(payload: QueryUsersResponse, query: UserListQuery?) -> [UserDTO] {
         let cache = payload.getPayloadToModelIdMappings(context: self)
-        return payload.userPayloads.compactMapLoggingError {
+        return payload.userResponses.compactMapLoggingError {
             try saveUser(payload: $0, query: query, cache: cache)
         }
     }

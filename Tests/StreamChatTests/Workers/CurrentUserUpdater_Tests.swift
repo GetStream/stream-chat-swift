@@ -78,15 +78,15 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Simulate API response
         let currentUserUpdateResponse = UpdateUsersResponse.dummy(
-            user: OwnUserResponse.dummy(
+            user: FullUserResponse.dummy(
                 userId: userPayload.id,
                 name: expectedName,
                 imageUrl: expectedImageUrl,
                 role: expectedRole,
                 teamsRole: ["ios": "guest"],
                 privacySettings: .init(
-                    typingIndicators: .init(enabled: true),
-                    readReceipts: .init(enabled: true)
+                    readReceipts: .init(enabled: true),
+                    typingIndicators: .init(enabled: true)
                 )
             )
         )
@@ -176,14 +176,14 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Simulate API response
         let currentUserUpdateResponse = UpdateUsersResponse.dummy(
-            user: OwnUserResponse.dummy(
+            user: FullUserResponse.dummy(
                 userId: userPayload.id,
                 name: expectedName,
                 imageUrl: expectedImageUrl,
                 role: expectedRole,
                 privacySettings: .init(
-                    typingIndicators: .init(enabled: false),
-                    readReceipts: .init(enabled: false)
+                    readReceipts: .init(enabled: false),
+                    typingIndicators: .init(enabled: false)
                 )
             )
         )
@@ -294,7 +294,7 @@ final class CurrentUserUpdater_Tests: XCTestCase {
 
         // Simulate API response
         let currentUserUpdateResponse = UpdateUsersResponse.dummy(
-            user: userPayload
+            user: .dummy(userId: userPayload.id, role: .user)
         )
         apiClient.test_simulateResponse(.success(currentUserUpdateResponse))
 

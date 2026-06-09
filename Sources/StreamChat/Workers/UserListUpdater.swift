@@ -97,7 +97,7 @@ extension UserListUpdater {
                 continuation.resume(with: result)
             }
         }
-        return payload.userPayloads.map { $0.asModel() }
+        return payload.userResponses.map { $0.asModel() }
     }
     
     func loadUsers(

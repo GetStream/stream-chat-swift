@@ -66,11 +66,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
                     user: userPayload
                 )
             ],
-            privacySettings: .init(settings: .init(
-                typingIndicators: .init(enabled: false),
-                readReceipts: .init(enabled: false),
-                deliveryReceipts: .init(enabled: false)
-            )),
+            privacySettings: .dummy(readReceipts: false, typingIndicators: false, deliveryReceipts: false),
             pushPreference: .init(
                 chatLevel: "mentions",
                 disabledUntil: Date().addingTimeInterval(3600)

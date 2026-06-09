@@ -122,7 +122,7 @@ class UserUpdater: Worker, @unchecked Sendable {
                         return
                     }
 
-                    guard let user = payload.userPayloads.first else {
+                    guard let user = payload.userResponses.first else {
                         completion?(ClientError.UserDoesNotExist(userId: userId))
                         return
                     }

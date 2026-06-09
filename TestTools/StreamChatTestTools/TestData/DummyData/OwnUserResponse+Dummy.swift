@@ -27,7 +27,7 @@ extension OwnUserResponse {
         teams: [TeamId] = [],
         language: String? = nil,
         mutedChannels: [ChannelMute] = [],
-        privacySettings: UserPrivacySettingsPayload? = nil,
+        privacySettings: PrivacySettingsResponse? = nil,
         pushPreference: PushPreferencesResponse? = nil
     ) -> OwnUserResponse {
         OwnUserResponse(
@@ -47,7 +47,7 @@ extension OwnUserResponse {
             mutes: mutedUsers,
             name: name,
             online: isOnline,
-            privacySettings: privacySettings?.asPrivacySettingsResponse,
+            privacySettings: privacySettings,
             pushPreferences: pushPreference,
             role: role.rawValue,
             teams: teams,
@@ -67,7 +67,7 @@ extension OwnUserResponse {
         devices: [DeviceResponse] = [],
         mutedUsers: [UserMuteResponse] = [],
         mutedChannels: [ChannelMute] = [],
-        privacySettings: UserPrivacySettingsPayload? = nil,
+        privacySettings: PrivacySettingsResponse? = nil,
         pushPreference: PushPreferencesResponse? = nil
     ) -> OwnUserResponse {
         .dummy(
