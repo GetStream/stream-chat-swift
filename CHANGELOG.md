@@ -3,7 +3,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 # Upcoming
 
+## StreamChat
 ### 🔄 Changed
+- Process `StreamChatModel.xcdatamodeld` as a package resource so the compiled Core Data model is bundled instead of copying the raw model source
 
 # [4.101.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.101.0)
 _June 03, 2026_

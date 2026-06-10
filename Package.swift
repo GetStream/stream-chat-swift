@@ -31,7 +31,7 @@ let package = Package(
         .target(
             name: "StreamChat",
             exclude: ["Info.plist", "Generated/PredefinedFilter.stencil"],
-            resources: [.copy("Database/StreamChatModel.xcdatamodeld")]
+            resources: [.process("Database/StreamChatModel.xcdatamodeld")]
         ),
         .target(
             name: "StreamChatUI",
