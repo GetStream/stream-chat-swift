@@ -113,7 +113,9 @@ extension NSManagedObjectContext {
         query: ChannelMemberListQuery?,
         cache: PreWarmedCache?
     ) throws -> MemberDTO {
-        guard let userId = payload.userId else {
+        // Membership payloads carry the nested user object without the redundant
+        // top-level user_id field.
+        guard let userId = payload.userId ?? payload.user?.id else {
             throw ClientError("Member payload is missing a user id")
         }
         let dto = MemberDTO.loadOrCreate(userId: userId, channelId: channelId, context: self, cache: cache)
@@ -127,10 +129,18 @@ extension NSManagedObjectContext {
         let role = MemberRole(rawChannelValue: payload.channelRole)
         dto.channelRoleRaw = role.rawChannelValue
 
-        dto.memberCreatedAt = payload.createdAt.bridgeDate
-        dto.memberUpdatedAt = payload.updatedAt.bridgeDate
-        dto.isBanned = payload.banned
-        dto.isShadowBanned = payload.shadowBanned
+        if let memberCreatedAt = payload.createdAt?.bridgeDate {
+            dto.memberCreatedAt = memberCreatedAt
+        }
+        if let memberUpdatedAt = payload.updatedAt?.bridgeDate {
+            dto.memberUpdatedAt = memberUpdatedAt
+        }
+        if let isBanned = payload.banned {
+            dto.isBanned = isBanned
+        }
+        if let isShadowBanned = payload.shadowBanned {
+            dto.isShadowBanned = isShadowBanned
+        }
         dto.banExpiresAt = payload.banExpires?.bridgeDate
         dto.isInvited = payload.invited ?? false
         dto.inviteAcceptedAt = payload.inviteAcceptedAt?.bridgeDate
@@ -139,7 +149,9 @@ extension NSManagedObjectContext {
         dto.pinnedAt = payload.pinnedAt?.bridgeDate
         dto.notificationsMuted = payload.notificationsMuted
 
-        dto.extraData = try? JSONEncoder.default.encode(payload.custom)
+        if let custom = payload.custom {
+            dto.extraData = try? JSONEncoder.default.encode(custom)
+        }
 
         if let query = query {
             let queryDTO = try saveQuery(query)

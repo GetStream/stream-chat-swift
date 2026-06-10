@@ -21,16 +21,22 @@ public final class HealthCheckEvent: ConnectionEvent, EventDTO, Sendable {
 }
 
 /// The `connection.ok` hello event sent by the v2 connect endpoint after the
-/// auth frame is accepted. Only `connection_id` is decoded; the `me` and `chat`
-/// payloads are intentionally ignored (parity with the previous health.check
-/// hello, which was never persisted either).
+/// auth frame is accepted. The `me` payload creates the current user in the
+/// database (`EventDataProcessorMiddleware`) — channel saving requires it.
 /// TODO: Remove once connection.ok is generated as a WSEvent case.
 final class ConnectedEvent: Event, Decodable {
     let connectionId: String
+    let me: OwnUserResponse?
+
+    init(connectionId: String, me: OwnUserResponse?) {
+        self.connectionId = connectionId
+        self.me = me
+    }
 
     private enum CodingKeys: String, CodingKey {
         case type
         case connectionId = "connection_id"
+        case me
     }
 
     init(from decoder: Decoder) throws {
@@ -44,6 +50,7 @@ final class ConnectedEvent: Event, Decodable {
             )
         }
         connectionId = try container.decode(String.self, forKey: .connectionId)
+        me = try container.decodeIfPresent(OwnUserResponse.self, forKey: .me)
     }
 
     func healthcheck() -> HealthCheckInfo? {

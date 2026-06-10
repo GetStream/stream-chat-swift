@@ -7,7 +7,14 @@ import Foundation
 /// A middleware which saves the incoming data from the Event to the database.
 struct EventDataProcessorMiddleware: EventMiddleware {
     func handle(event: Event, session: DatabaseSession) -> Event? {
-        event
+        if let connectedEvent = event as? ConnectedEvent, let me = connectedEvent.me {
+            do {
+                try session.saveCurrentUser(payload: me)
+            } catch {
+                log.error("Failed saving the current user from the connection event to DB. Error: \(error)")
+            }
+        }
+        return event
     }
 
     func handle(event: Event, wsEvent: WSEvent, session: DatabaseSession) -> Event? {

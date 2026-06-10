@@ -100,19 +100,19 @@ extension ChannelMemberResponse {
             language: user.language,
             extraData: user.extraData,
             memberRole: MemberRole(rawChannelValue: channelRole),
-            memberCreatedAt: createdAt,
-            memberUpdatedAt: updatedAt,
+            memberCreatedAt: createdAt ?? Date(),
+            memberUpdatedAt: updatedAt ?? Date(),
             isInvited: invited ?? false,
             inviteAcceptedAt: inviteAcceptedAt,
             inviteRejectedAt: inviteRejectedAt,
             archivedAt: archivedAt,
             pinnedAt: pinnedAt,
-            isBannedFromChannel: banned,
+            isBannedFromChannel: banned ?? false,
             banExpiresAt: banExpires,
-            isShadowBannedFromChannel: shadowBanned,
+            isShadowBannedFromChannel: shadowBanned ?? false,
             notificationsMuted: notificationsMuted,
             avgResponseTime: user.avgResponseTime,
-            memberExtraData: custom
+            memberExtraData: custom ?? [:]
         )
     }
 }

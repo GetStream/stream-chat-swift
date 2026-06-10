@@ -124,7 +124,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         // Declare some channel member payloads
         let member1: ChannelMemberResponse = .dummy()
         let member2: ChannelMemberResponse = .dummy(
-            createdAt: member1.createdAt.addingTimeInterval(10)
+            createdAt: member1.createdAt!.addingTimeInterval(10)
         )
 
         // Declare channel payload
@@ -173,7 +173,7 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         // Declare some channel member payloads
         let member1: ChannelMemberResponse = .dummy()
         let member2: ChannelMemberResponse = .dummy(
-            createdAt: member1.createdAt.addingTimeInterval(10)
+            createdAt: member1.createdAt!.addingTimeInterval(10)
         )
 
         // Declare channel payload
@@ -274,11 +274,11 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         )
         let member2: ChannelMemberResponse = .dummy(
             user: .dummy(userId: .unique, name: "B"),
-            createdAt: member1.createdAt.addingTimeInterval(10)
+            createdAt: member1.createdAt!.addingTimeInterval(10)
         )
         let member3: ChannelMemberResponse = .dummy(
             user: .dummy(userId: .unique, name: "B"),
-            createdAt: member1.createdAt.addingTimeInterval(-10)
+            createdAt: member1.createdAt!.addingTimeInterval(-10)
         )
 
         // Declare channel payload
@@ -335,11 +335,11 @@ final class ChannelMemberListQuery_Tests: XCTestCase {
         )
         let member2: ChannelMemberResponse = .dummy(
             user: .dummy(userId: .unique, name: "B"),
-            createdAt: member1.createdAt.addingTimeInterval(10)
+            createdAt: member1.createdAt!.addingTimeInterval(10)
         )
         let member3: ChannelMemberResponse = .dummy(
             user: .dummy(userId: .unique, name: "B"),
-            createdAt: member1.createdAt.addingTimeInterval(-10)
+            createdAt: member1.createdAt!.addingTimeInterval(-10)
         )
 
         // Declare channel payload

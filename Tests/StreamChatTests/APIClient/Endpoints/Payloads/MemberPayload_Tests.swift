@@ -20,7 +20,7 @@ final class ChannelMemberResponse_Tests: XCTestCase {
         XCTAssertEqual(payload.banned, true)
         XCTAssertEqual(payload.shadowBanned, true)
         XCTAssertEqual(payload.notificationsMuted, true)
-        XCTAssertEqual(payload.custom["is_premium"], true)
+        XCTAssertEqual(payload.custom?["is_premium"], true)
 
         let user = try XCTUnwrap(payload.user)
         XCTAssertEqual(user.id, "broken-waterfall-5")

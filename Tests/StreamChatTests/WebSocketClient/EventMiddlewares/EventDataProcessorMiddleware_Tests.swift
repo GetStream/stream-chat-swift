@@ -22,6 +22,25 @@ final class EventDataProcessorMiddleware_Tests: XCTestCase {
         super.tearDown()
     }
 
+    func test_connectedEvent_savesCurrentUser() throws {
+        let userId: UserId = .unique
+        let event = ConnectedEvent(connectionId: .unique, me: .dummy(userId: userId, role: .user))
+
+        let outputEvent = middleware.handle(event: event, session: database.viewContext)
+
+        XCTAssertEqual(database.viewContext.currentUser?.user.id, userId)
+        XCTAssertEqual(outputEvent?.asEquatable, event.asEquatable)
+    }
+
+    func test_connectedEvent_withoutMe_isForwardedWithoutSaving() throws {
+        let event = ConnectedEvent(connectionId: .unique, me: nil)
+
+        let outputEvent = middleware.handle(event: event, session: database.viewContext)
+
+        XCTAssertNil(database.viewContext.currentUser)
+        XCTAssertEqual(outputEvent?.asEquatable, event.asEquatable)
+    }
+
     func test_eventWithPayload_isSavedToDB() throws {
         let channelId: ChannelId = .unique
         let channelPayload = dummyPayload(with: channelId)

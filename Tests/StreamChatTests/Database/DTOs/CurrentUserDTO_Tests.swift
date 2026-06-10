@@ -37,6 +37,70 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(UserRole("banana-master"), loadedCurrentUser.userRole)
     }
 
+    func test_saveCurrentUser_whenMutesAreMissingNestedData_keepsExistingMutes() throws {
+        let userPayload: UserResponse = .dummy(userId: .unique)
+        let mutedUserId: UserId = .unique
+        let mutedChannelId: ChannelId = .unique
+        let initialPayload: OwnUserResponse = .dummy(
+            userPayload: userPayload,
+            mutedUsers: [.dummy(userId: mutedUserId)],
+            mutedChannels: [
+                .dummy(
+                    channel: .dummy(cid: mutedChannelId),
+                    createdAt: .unique,
+                    updatedAt: .unique,
+                    user: userPayload
+                )
+            ]
+        )
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: initialPayload)
+        }
+
+        // The v2 connect hello sends mute entries without the nested target user
+        // and channel data.
+        let stubPayload: OwnUserResponse = .dummy(
+            userPayload: userPayload,
+            mutedUsers: [UserMuteResponse(createdAt: .unique, updatedAt: .unique)],
+            mutedChannels: [ChannelMute(createdAt: .unique, updatedAt: .unique)]
+        )
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: stubPayload)
+        }
+
+        let currentUser = try XCTUnwrap(database.viewContext.currentUser)
+        XCTAssertEqual(currentUser.mutedUsers.map(\.id), [mutedUserId])
+        XCTAssertEqual(currentUser.channelMutes.map(\.channel.cid), [mutedChannelId.rawValue])
+    }
+
+    func test_saveCurrentUser_whenMutesAreEmpty_removesExistingMutes() throws {
+        let userPayload: UserResponse = .dummy(userId: .unique)
+        let initialPayload: OwnUserResponse = .dummy(
+            userPayload: userPayload,
+            mutedUsers: [.dummy(userId: .unique)],
+            mutedChannels: [
+                .dummy(
+                    channel: .dummy(cid: .unique),
+                    createdAt: .unique,
+                    updatedAt: .unique,
+                    user: userPayload
+                )
+            ]
+        )
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: initialPayload)
+        }
+
+        let emptyMutesPayload: OwnUserResponse = .dummy(userPayload: userPayload)
+        try database.writeSynchronously { session in
+            try session.saveCurrentUser(payload: emptyMutesPayload)
+        }
+
+        let currentUser = try XCTUnwrap(database.viewContext.currentUser)
+        XCTAssertTrue(currentUser.mutedUsers.isEmpty)
+        XCTAssertTrue(currentUser.channelMutes.isEmpty)
+    }
+
     func test_currentUserResponse_isStoredAndLoadedFromDB() throws {
         let userPayload: UserResponse = .dummy(
             userId: .unique,

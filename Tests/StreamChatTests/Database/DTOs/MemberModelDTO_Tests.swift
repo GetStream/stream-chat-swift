@@ -127,6 +127,22 @@ final class MemberModelDTO_Tests: XCTestCase {
         XCTAssertEqual(loadedMember?.extraData, [:])
     }
 
+    func test_saveMember_whenUserIdMissing_fallsBackToNestedUserId() throws {
+        let userId: UserId = .unique
+        let channelId: ChannelId = .unique
+
+        // Membership payloads carry the nested user object without the top-level user_id.
+        let payload: ChannelMemberResponse = .dummy(user: .dummy(userId: userId))
+        payload.userId = nil
+
+        try database.writeSynchronously { session in
+            try session.saveMember(payload: payload, channelId: channelId)
+        }
+
+        let loadedMember = try XCTUnwrap(database.viewContext.member(userId: userId, cid: channelId))
+        XCTAssertEqual(loadedMember.user.id, userId)
+    }
+
     func test_saveMember_savesQuery_and_linksMember_ifQueryIsProvided() throws {
         let userId: UserId = .unique
         let cid: ChannelId = .unique

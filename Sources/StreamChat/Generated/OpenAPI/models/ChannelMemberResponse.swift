@@ -9,12 +9,12 @@ final class ChannelMemberResponse: @unchecked Sendable, Codable, JSONEncodable, 
     /// Expiration date of the ban
     var banExpires: Date?
     /// Whether member is banned this channel or not
-    var banned: Bool
+    var banned: Bool?
     /// Role of the member in the channel
     var channelRole: String
     /// Date/time of creation
-    var createdAt: Date
-    var custom: [String: RawJSON]
+    var createdAt: Date?
+    var custom: [String: RawJSON]?
     var deletedAt: Date?
     var deletedMessages: [String]?
     /// Date when invite was accepted
@@ -30,14 +30,14 @@ final class ChannelMemberResponse: @unchecked Sendable, Codable, JSONEncodable, 
     /// Permission level of the member in the channel (DEPRECATED: use channel_role instead). One of: member, moderator, admin, owner
     var role: String?
     /// Whether member is shadow banned in this channel or not
-    var shadowBanned: Bool
+    var shadowBanned: Bool?
     var status: String?
     /// Date/time of the last update
-    var updatedAt: Date
+    var updatedAt: Date?
     var user: UserResponse?
     var userId: String?
 
-    init(archivedAt: Date? = nil, banExpires: Date? = nil, banned: Bool, channelRole: String, createdAt: Date, custom: [String: RawJSON], deletedAt: Date? = nil, deletedMessages: [String]? = nil, inviteAcceptedAt: Date? = nil, inviteRejectedAt: Date? = nil, invited: Bool? = nil, isModerator: Bool? = nil, notificationsMuted: Bool, pinnedAt: Date? = nil, role: String? = nil, shadowBanned: Bool, status: String? = nil, updatedAt: Date, user: UserResponse? = nil, userId: String? = nil) {
+    init(archivedAt: Date? = nil, banExpires: Date? = nil, banned: Bool? = nil, channelRole: String, createdAt: Date? = nil, custom: [String: RawJSON]? = nil, deletedAt: Date? = nil, deletedMessages: [String]? = nil, inviteAcceptedAt: Date? = nil, inviteRejectedAt: Date? = nil, invited: Bool? = nil, isModerator: Bool? = nil, notificationsMuted: Bool, pinnedAt: Date? = nil, role: String? = nil, shadowBanned: Bool? = nil, status: String? = nil, updatedAt: Date? = nil, user: UserResponse? = nil, userId: String? = nil) {
         self.archivedAt = archivedAt
         self.banExpires = banExpires
         self.banned = banned

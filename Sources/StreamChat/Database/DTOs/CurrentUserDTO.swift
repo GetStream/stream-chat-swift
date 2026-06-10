@@ -112,16 +112,23 @@ extension NSManagedObjectContext: CurrentUserDatabaseSession {
             )
         }
 
-        let mutedUsers = try payload.mutes.compactMap(\.target).map { try saveUser(payload: $0) }
-        dto.mutedUsers = Set(mutedUsers)
-        
+        // The v2 connect hello sends mute entries without the nested target user and
+        // channel data. Keep the locally known mutes in that case instead of wiping them.
+        let mutesWithTarget = payload.mutes.compactMap(\.target)
+        if payload.mutes.isEmpty || !mutesWithTarget.isEmpty {
+            dto.mutedUsers = Set(try mutesWithTarget.map { try saveUser(payload: $0) })
+        }
+
         dto.blockedUserIds = Set(payload.blockedUserIds ?? [])
 
-        let channelMutes = Set(
-            try payload.channelMutes.map { try saveChannelMute(payload: $0) }
-        )
-        dto.channelMutes.subtracting(channelMutes).forEach { delete($0) }
-        dto.channelMutes = channelMutes
+        let channelMutesWithChannel = payload.channelMutes.filter { $0.channel != nil }
+        if payload.channelMutes.isEmpty || !channelMutesWithChannel.isEmpty {
+            let channelMutes = Set(
+                try channelMutesWithChannel.map { try saveChannelMute(payload: $0) }
+            )
+            dto.channelMutes.subtracting(channelMutes).forEach { delete($0) }
+            dto.channelMutes = channelMutes
+        }
 
         if let unreadCount = payload.unreadCountPayload {
             try saveCurrentUserUnreadCount(count: unreadCount)

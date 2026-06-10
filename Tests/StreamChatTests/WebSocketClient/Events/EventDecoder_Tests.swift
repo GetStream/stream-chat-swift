@@ -111,24 +111,42 @@ final class EventDecoder_Tests: XCTestCase {
         XCTAssertEqual(wsEvent.healthcheck()?.connectionId, connectionId)
     }
 
-    func test_decode_whenConnectionOkComes_returnsConnectedEventWithHealthCheckInfo() throws {
-        // The v2 connect hello carries `me` and `chat` payloads which are intentionally
-        // ignored — only `connection_id` matters for the handshake.
+    func test_decode_whenConnectionOkComes_returnsConnectedEventWithHealthCheckInfoAndMe() throws {
+        // The v2 connect hello carries the own user in `me`. Mute entries arrive
+        // without nested target/channel data and dates are unix-nanosecond numbers.
         let connectionId = String.unique
         let json = """
         {
             "type": "connection.ok",
             "connection_id": "\(connectionId)",
-            "created_at": "2026-06-09T12:29:16.309363616Z",
+            "created_at": 1781082614102925808,
             "me": {
                 "id": "luke_skywalker",
+                "name": "Luke Skywalker",
                 "role": "user",
-                "created_at": "2020-12-07T11:36:47.059906Z",
-                "updated_at": "2021-01-12T18:09:13.411699Z"
+                "banned": false,
+                "online": true,
+                "invisible": false,
+                "language": "en",
+                "teams": [],
+                "custom": {},
+                "devices": [],
+                "mutes": [
+                    {"created_at": 1765825016623238000, "updated_at": 1765825016623238000}
+                ],
+                "channel_mutes": [
+                    {"created_at": 1780313582149449000, "updated_at": 1780313582149449000}
+                ],
+                "total_unread_count": 1,
+                "unread_channels": 1,
+                "unread_count": 1,
+                "unread_threads": 0,
+                "created_at": 1712222771805899000,
+                "updated_at": 1779616625240451000
             },
             "chat": {
-                "total_unread_count": 0,
-                "unread_channels": 0,
+                "total_unread_count": 1,
+                "unread_channels": 1,
                 "unread_threads": 0,
                 "mutes": [],
                 "channel_mutes": []
@@ -141,6 +159,27 @@ final class EventDecoder_Tests: XCTestCase {
         let connectedEvent = try XCTUnwrap(event as? ConnectedEvent)
         XCTAssertEqual(connectedEvent.connectionId, connectionId)
         XCTAssertEqual(connectedEvent.healthcheck()?.connectionId, connectionId)
+        let me = try XCTUnwrap(connectedEvent.me)
+        XCTAssertEqual(me.id, "luke_skywalker")
+        XCTAssertEqual(me.totalUnreadCount, 1)
+        XCTAssertEqual(me.channelMutes.count, 1)
+    }
+
+    func test_decode_whenConnectionOkHasNoMe_returnsConnectedEvent() throws {
+        let connectionId = String.unique
+        let json = """
+        {
+            "type": "connection.ok",
+            "connection_id": "\(connectionId)",
+            "created_at": 1781082614102925808
+        }
+        """.data(using: .utf8)!
+
+        let event = try eventDecoder.decode(from: json)
+
+        let connectedEvent = try XCTUnwrap(event as? ConnectedEvent)
+        XCTAssertEqual(connectedEvent.connectionId, connectionId)
+        XCTAssertNil(connectedEvent.me)
     }
 
     func test_decode_whenConnectionOkHasNoConnectionId_throwsEventDecodingError() throws {

@@ -92,6 +92,29 @@ qualify_stream_core_types() {
   done
 }
 
+make_channel_member_response_partial_fields_optional() {
+  # INTERIM: ChannelMemberResponse is reused as the partial `member` on messages (MessageResponse.member,
+  # ChatMessageResponse.member, SearchResultMessage.member). There the server sends only `channel_role` +
+  # `notifications_muted`, but the spec marks banned/created_at/updated_at/custom/shadow_banned as required,
+  # so synthesized Codable throws keyNotFound("banned") and the whole channels response fails to decode.
+  # Make those 5 optional so the partial decodes; full members (channel.members, member events) still
+  # populate them. Proper fix belongs upstream (separate partial schema, or drop these from the schema's
+  # required list). Must run AFTER strip_public_open_access_modifiers so the property line has no `public `.
+  local file="$OUTPUT_DIR_CHAT/models/ChannelMemberResponse.swift"
+  # Property declarations (anchored to end-of-line; `shadowBanned`/`banExpires` are not matched by `banned`).
+  sed -i '' -E 's/^([[:space:]]*)var banned: Bool$/\1var banned: Bool?/' "$file"
+  sed -i '' -E 's/^([[:space:]]*)var createdAt: Date$/\1var createdAt: Date?/' "$file"
+  sed -i '' -E 's/^([[:space:]]*)var custom: \[String: RawJSON\]$/\1var custom: [String: RawJSON]?/' "$file"
+  sed -i '' -E 's/^([[:space:]]*)var shadowBanned: Bool$/\1var shadowBanned: Bool?/' "$file"
+  sed -i '' -E 's/^([[:space:]]*)var updatedAt: Date$/\1var updatedAt: Date?/' "$file"
+  # Initializer params (followed by `,` or `)`): add `? = nil` default.
+  sed -i '' -E 's/banned: Bool([,)])/banned: Bool? = nil\1/' "$file"
+  sed -i '' -E 's/createdAt: Date([,)])/createdAt: Date? = nil\1/' "$file"
+  sed -i '' -E 's/custom: \[String: RawJSON\]([,)])/custom: [String: RawJSON]? = nil\1/' "$file"
+  sed -i '' -E 's/shadowBanned: Bool([,)])/shadowBanned: Bool? = nil\1/' "$file"
+  sed -i '' -E 's/updatedAt: Date([,)])/updatedAt: Date? = nil\1/' "$file"
+}
+
 # Hardcoded clashes while StreamChat source models remain the default.
 # Model collisions.
 delete_generated_filename APIError
@@ -114,5 +137,6 @@ fix_invalid_empty_enum_cases
 fix_untyped_arrays
 qualify_stream_core_types
 strip_public_open_access_modifiers
+make_channel_member_response_partial_fields_optional
 
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
