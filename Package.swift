@@ -42,7 +42,7 @@ let package = Package(
                 .product(name: "StreamCore", package: "stream-core-swift")
             ],
             exclude: ["Info.plist", "Generated/PredefinedFilter.stencil"],
-            resources: [.copy("Database/StreamChatModel.xcdatamodeld")]
+            resources: [.process("Database/StreamChatModel.xcdatamodeld")]
         ),
         .target(
             name: "StreamChatUI",
