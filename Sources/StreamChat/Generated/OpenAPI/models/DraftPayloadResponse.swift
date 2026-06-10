@@ -5,7 +5,7 @@
 import Foundation
 
 final class DraftPayloadResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    /// [RawJSON] of message attachments
+    /// Array of message attachments
     var attachments: [Attachment]?
     var custom: [String: RawJSON]
     /// Contains HTML markup of the message

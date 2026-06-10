@@ -7,7 +7,7 @@ import Foundation
 final class QueryUsersResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     /// Duration of the request in milliseconds
     var duration: String
-    /// [RawJSON] of users as result of filters applied.
+    /// Array of users as result of filters applied.
     var users: [FullUserResponse]
 
     init(duration: String, users: [FullUserResponse]) {

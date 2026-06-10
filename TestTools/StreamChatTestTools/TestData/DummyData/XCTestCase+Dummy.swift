@@ -489,17 +489,6 @@ extension XCTestCase {
     }
 }
 
-extension QueryPollsResponse {
-    static func dummy(
-        duration: String = "",
-        next: String? = nil,
-        polls: [PollResponseData] = [],
-        prev: String? = nil
-    ) -> QueryPollsResponse {
-        .init(duration: duration, next: next, polls: polls, prev: prev)
-    }
-}
-
 extension PollVoteResponse {
     static func dummy(
         duration: String = "",

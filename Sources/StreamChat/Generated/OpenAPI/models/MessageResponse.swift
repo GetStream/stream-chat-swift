@@ -5,7 +5,7 @@
 import Foundation
 
 final class MessageResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    /// [RawJSON] of message attachments
+    /// Array of message attachments
     var attachments: [Attachment]
     /// Channel unique identifier in <type>:<id> format
     var cid: String

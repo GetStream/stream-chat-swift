@@ -7,7 +7,7 @@ import Foundation
 final class UpdatePollPartialRequest: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     /// Sets new field values
     var set: [String: RawJSON]?
-    /// [RawJSON] of field names to unset
+    /// Array of field names to unset
     var unset: [String]?
 
     init(set: [String: RawJSON]? = nil, unset: [String]? = nil) {

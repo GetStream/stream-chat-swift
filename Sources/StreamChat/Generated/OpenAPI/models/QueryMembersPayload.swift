@@ -11,7 +11,7 @@ final class QueryMembersPayload: @unchecked Sendable, Codable, JSONEncodable, Ha
     var limit: Int?
     var members: [ChannelMemberRequest]?
     var offset: Int?
-    /// [RawJSON] of sort parameters
+    /// Array of sort parameters
     var sort: [SortParamRequest]?
     var type: String
 

@@ -15,6 +15,5 @@ final class WebSocketConnectEndpoint_Tests: XCTestCase {
         XCTAssertNil(endpoint.queryItems)
         XCTAssertFalse(endpoint.requiresConnectionId)
         XCTAssertNil(endpoint.body)
-        XCTAssertNotEqual(endpoint.path.value, Endpoint<EmptyResponse>.longPoll(json: nil).path.value)
     }
 }

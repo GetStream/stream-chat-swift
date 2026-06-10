@@ -14,6 +14,9 @@ rm -rf "$OUTPUT_DIR_CHAT"
   ./build/chat-manager openapi generate-client --language swift           --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" ; \
   ./build/chat-manager openapi generate-client --language swift-endpoints --spec ./releases/v2/chat-clientside-api.yaml --output "$OUTPUT_DIR_CHAT" )
 
+# The generated async API client is unused — the SDK ships its own APIClient + Endpoint factories.
+rm -rf "$OUTPUT_DIR_CHAT/APIs"
+
 is_access_modifier_stripping_excluded() {
   local file="$1"
   local excluded_file
@@ -72,26 +75,6 @@ fix_invalid_empty_enum_cases() {
   find "$OUTPUT_DIR_CHAT" -name '*.swift' -exec sed -i '' -E "s/^([[:space:]]*)case[[:space:]]*=[[:space:]]*\"''\"/\\1case empty = \"''\"/" {} +
 }
 
-fix_untyped_arrays() {
-  # The OpenAPI spec has fields whose schema lacks an `items` entry, so the generator emits `Array` with no
-  # element type. Replace these bare occurrences with `[RawJSON]` so the model stays compilable.
-  find "$OUTPUT_DIR_CHAT" -name '*.swift' -exec sed -i '' -E 's/[[:<:]]Array[[:>:]]/[RawJSON]/g' {} +
-}
-
-qualify_stream_core_types() {
-  # StreamChat defines a local `EmptyResponse` that only conforms to Decodable and shadows StreamCore's Codable
-  # variant required by the generated `send<Response: Codable>`. Qualify with the module name so the Codable
-  # variant is used in generated APIs.
-  find "$OUTPUT_DIR_CHAT/APIs" -name '*.swift' -exec sed -i '' -E 's/[[:<:]]EmptyResponse[[:>:]]/StreamCore.EmptyResponse/g' {} +
-  # Add `import StreamCore` to any generated file that uses a StreamCore-qualified type.
-  find "$OUTPUT_DIR_CHAT/APIs" -name '*.swift' | while IFS= read -r file; do
-    if grep -q 'StreamCore\.' "$file" && ! grep -qE '^import StreamCore$' "$file"; then
-      sed -i '' -E $'/^import Foundation$/a\\\nimport StreamCore
-' "$file"
-    fi
-  done
-}
-
 make_channel_member_response_partial_fields_optional() {
   # INTERIM: ChannelMemberResponse is reused as the partial `member` on messages (MessageResponse.member,
   # ChatMessageResponse.member, SearchResultMessage.member). There the server sends only `channel_role` +
@@ -132,10 +115,93 @@ while IFS= read -r event_type; do
   rename_generated "$event_type" "${event_type}DTO"
 done < <(find "$OUTPUT_DIR_CHAT/models" -name '*Event.swift' ! -name 'WSEvent.swift' ! -name 'WSClientEvent.swift' -exec basename {} .swift \; | sort)
 
+# Endpoint factories the SDK never calls. Deleting one removes the factory
+# function, its `EndpointPath` case, and the case's `value` switch entry.
+# If the SDK starts using one of these, remove it from the list and regenerate.
+delete_unused_endpoint_factory() {
+  local name="$1"
+  local file="$OUTPUT_DIR_CHAT/DefaultEndpoints.swift"
+  sed -i '' -E "/^[[:space:]]+static func ${name}\(/,/^[[:space:]]+\}[[:space:]]*$/d" "$file"
+  sed -i '' -E "/^[[:space:]]+case ${name}(\(|[[:space:]]*$)/d" "$file"
+  sed -i '' -E "/^[[:space:]]+case (let )?\.${name}[(:]/,/^[[:space:]]+return /d" "$file"
+}
+
+UNUSED_ENDPOINT_FACTORIES=(
+  addUserGroupMembers appeal bulkActionAppeals bulkDeleteActionConfig
+  bulkUpsertActionConfig createBlockList createUserGroup deleteActionConfig
+  deleteBlockList deleteChannels deleteConfig deletePollOption deleteUserGroup
+  getActionConfig getAppeal getConfig getManyMessages getPoll getPollOption
+  getUserGroup listBlockLists listUserGroups longPoll queryAppeals
+  queryBannedUsers queryFutureChannelBans queryMessageFlags
+  queryModerationConfigs queryPolls queryReviewQueue removeUserGroupMembers
+  searchRoles searchUserGroups submitAction updateBlockList updatePoll
+  updatePollOption updateUserGroup updateUsers upsertActionConfig upsertConfig
+)
+for factory in "${UNUSED_ENDPOINT_FACTORIES[@]}"; do
+  delete_unused_endpoint_factory "$factory"
+done
+
+# Models that are not referenced from non-generated Sources nor reachable from
+# the kept endpoint factories, transitively over cross-model references.
+# If the SDK starts using one of these (directly or via a newly kept factory),
+# remove it — and anything it references — from the list and regenerate.
+UNUSED_MODELS=(
+  AIImageConfig AIImageLabelDefinition AITextConfig AIVideoConfig
+  AWSRekognitionRule ActionSequence AddUserGroupMembersRequest
+  AddUserGroupMembersResponse AppealRequest AppealResponse
+  AutomodDetailsResponse AutomodPlatformCircumventionConfig AutomodRule
+  AutomodSemanticFiltersConfig AutomodSemanticFiltersRule AutomodToxicityConfig
+  BanActionRequestPayload BanOptions BlockActionRequestPayload BlockListConfig
+  BlockListResponse BlockListRule BodyguardProfileSummary BodyguardRule
+  BodyguardSeverityRule BulkActionAppealsRequest BulkActionAppealsResponse
+  BulkAppealError BulkAppealResult BulkDeleteActionConfigRequest
+  BulkDeleteActionConfigResponse BulkUpsertActionConfigRequest
+  BulkUpsertActionConfigResponse BypassActionRequest CallActionOptions
+  CallCustomPropertyParameters CallRuleActionSequence CallTypeRuleParameters
+  CallViolationCountParameters ChannelMessageCountRuleParameters
+  ClosedCaptionRuleParameters ConfigResponse ContentCountRuleParameters
+  CreateBlockListRequest CreateBlockListResponse CreateUserGroupRequest
+  CreateUserGroupResponse CustomActionRequestPayload DeleteActionConfigResponse
+  DeleteActivityRequestPayload DeleteChannelsRequest DeleteChannelsResponse
+  DeleteChannelsResultResponse DeleteCommentRequestPayload
+  DeleteMessageRequestPayload DeleteModerationConfigResponse
+  DeleteReactionRequestPayload DeleteUserRequestPayload EscalatePayload
+  FilterConfigResponse FlagCountRuleParameters FlagDetailsResponse
+  FlagFeedbackResponse FlagMessageDetailsResponse FlagUserOptions FloodConfig
+  FloodIdenticalConfig FloodSimilarConfig FutureChannelBanResponse
+  GetActionConfigResponse GetAppealResponse GetConfigResponse
+  GetManyMessagesResponse GetUserGroupResponse GoogleVisionConfig HarmConfig
+  ImageContentParameters ImageRuleParameters KeyframeRuleParameters LLMConfig
+  LLMRule LabelResponse ListBlockListResponse ListUserGroupsResponse
+  MarkReviewedRequestPayload MessageFlagResponse MessageModerationResult
+  ModerationActionConfigResponse ModerationResponse OCRRule PollOptionRequest
+  QueryAppealsRequest QueryAppealsResponse QueryBannedUsersPayload
+  QueryBannedUsersResponse QueryFutureChannelBansPayload
+  QueryFutureChannelBansResponse QueryMessageFlagsPayload
+  QueryMessageFlagsResponse QueryModerationConfigsRequest
+  QueryModerationConfigsResponse QueryPollsRequest QueryPollsResponse
+  QueryReviewQueueRequest QueryReviewQueueResponse RejectAppealRequestPayload
+  RemoveUserGroupMembersRequest RemoveUserGroupMembersResponse
+  RestoreActionRequestPayload RuleBuilderAction RuleBuilderCondition
+  RuleBuilderConditionGroup RuleBuilderConfig RuleBuilderRule
+  SearchRolesResponse SearchUserGroupsResponse ShadowBlockActionRequestPayload
+  SubmitActionRequest SubmitActionResponse TextContentParameters
+  TextRuleParameters UnbanActionRequestPayload UnblockActionRequestPayload
+  UpdateBlockListRequest UpdateBlockListResponse UpdatePollOptionRequest
+  UpdatePollRequest UpdateUserGroupRequest UpdateUserGroupResponse
+  UpdateUsersRequest UpsertActionConfigItem UpsertActionConfigRequest
+  UpsertActionConfigResponse UpsertConfigRequest UpsertConfigResponse
+  UserCreatedWithinParameters UserCustomPropertyParameters
+  UserIdenticalContentCountParameters UserRoleParameters UserRuleParameters
+  VelocityFilterConfig VelocityFilterConfigRule VideoCallRuleConfig
+  VideoContentParameters VideoRuleParameters WSClientEvent
+)
+for model in "${UNUSED_MODELS[@]}"; do
+  delete_generated_filename "$model"
+done
+
 escape_swift_keywords_in_cases
 fix_invalid_empty_enum_cases
-fix_untyped_arrays
-qualify_stream_core_types
 strip_public_open_access_modifiers
 make_channel_member_response_partial_fields_optional
 

@@ -5,7 +5,7 @@
 import Foundation
 
 final class GetBlockedUsersResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable {
-    /// [RawJSON] of blocked user object
+    /// Array of blocked user object
     var blocks: [BlockedUserResponse]
     /// Duration of the request in milliseconds
     var duration: String

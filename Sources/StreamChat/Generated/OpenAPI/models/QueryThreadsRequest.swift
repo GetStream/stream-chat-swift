@@ -15,7 +15,7 @@ final class QueryThreadsRequest: @unchecked Sendable, Codable, JSONEncodable, Ha
     var prev: String?
     /// Limit the number of replies returned per each thread
     var replyLimit: Int?
-    /// [RawJSON] of sort parameters
+    /// Array of sort parameters
     var sort: [SortParamRequest]?
     /// Start watching the channel this thread belongs to
     var watch: Bool?

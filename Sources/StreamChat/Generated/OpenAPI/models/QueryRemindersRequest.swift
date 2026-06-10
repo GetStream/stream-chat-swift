@@ -10,7 +10,7 @@ final class QueryRemindersRequest: @unchecked Sendable, Codable, JSONEncodable, 
     var limit: Int?
     var next: String?
     var prev: String?
-    /// [RawJSON] of sort parameters
+    /// Array of sort parameters
     var sort: [SortParamRequest]?
 
     init(filter: [String: RawJSON]? = nil, limit: Int? = nil, next: String? = nil, prev: String? = nil, sort: [SortParamRequest]? = nil) {
