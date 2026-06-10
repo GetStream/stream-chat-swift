@@ -61,14 +61,17 @@ final class ChannelEndpoints_Tests: XCTestCase {
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertTrue(endpoint.requiresConnectionId)
-        XCTAssertNotNil(endpoint.body)
+        XCTAssertEqual(
+            endpoint.body as? ChannelGetOrCreateRequest,
+            ChannelGetOrCreateRequest(state: true, watch: true, watchers: PaginationParams(limit: 30))
+        )
     }
 
     func test_pinnedMessagesWrapper_buildsCompatibilityEndpoint() {
         let cid = ChannelId(type: .messaging, id: "general")
         let endpoint: Endpoint<MessageListPayload> = .pinnedMessages(cid: cid, query: .init(pageSize: 10))
 
-        XCTAssertEqual(endpoint.path.value, "channels/messaging/general/pinned_messages")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/chat/channels/messaging/general/pinned_messages")
         XCTAssertEqual(endpoint.method, .get)
         XCTAssertFalse(endpoint.requiresConnectionId)
         XCTAssertNotNil(endpoint.body)

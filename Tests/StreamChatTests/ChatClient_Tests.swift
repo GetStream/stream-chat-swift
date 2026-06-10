@@ -577,12 +577,13 @@ final class ChatClient_Tests: XCTestCase {
                 chatClient.connectUser(userInfo: .init(id: currentUserId), token: .unique(userId: currentUserId))
                 
                 let expectedWebSocketEndpoint = AnyEndpoint(
-                    Endpoint<EmptyResponse>.webSocketConnect(userInfo: UserInfo(id: currentUserId))
+                    Endpoint<EmptyResponse>.webSocketConnect()
                 )
                 // 1. Check `currentUserId` is fetched synchronously
-                // 2. `webSocket` has correct connect endpoint
+                // 2. `webSocket` has correct connect endpoint and user info
                 if chatClient.currentUserId == currentUserId,
-                   chatClient.connectionRepository.webSocketConnectEndpoint.value.map(AnyEndpoint.init) == expectedWebSocketEndpoint {
+                   chatClient.connectionRepository.webSocketConnectEndpoint.value.map(AnyEndpoint.init) == expectedWebSocketEndpoint,
+                   chatClient.connectionRepository.connectUserInfo.value?.id == currentUserId {
                     expectation.fulfill()
                 }
             }

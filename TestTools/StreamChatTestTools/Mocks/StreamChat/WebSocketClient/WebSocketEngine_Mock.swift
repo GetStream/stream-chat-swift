@@ -21,6 +21,9 @@ final class WebSocketEngine_Mock: WebSocketEngine, @unchecked Sendable {
     /// How many times was `sendPing()` called
     @Atomic var sendPing_calledCount = 0
 
+    /// Messages passed to `send(jsonMessage:)`
+    @Atomic var sendJsonMessage_calls: [Codable] = []
+
     convenience init() {
         self.init(request: .init(url: URL(string: "test_url")!), sessionConfiguration: .ephemeral, callbackQueue: .main)
     }
@@ -45,7 +48,9 @@ final class WebSocketEngine_Mock: WebSocketEngine, @unchecked Sendable {
     
     func send(message: any SendableEvent) {}
     
-    func send(jsonMessage: any Codable) {}
+    func send(jsonMessage: any Codable) {
+        _sendJsonMessage_calls.mutate { $0.append(jsonMessage) }
+    }
 
     func sendPing() {
         sendPing_calledCount += 1

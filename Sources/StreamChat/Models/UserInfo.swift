@@ -44,6 +44,20 @@ public struct UserInfo: Identifiable, Sendable {
     }
 }
 
+extension UserInfo {
+    var asConnectUserDetailsRequest: ConnectUserDetailsRequest {
+        ConnectUserDetailsRequest(
+            custom: extraData,
+            id: id,
+            image: imageURL?.absoluteString,
+            invisible: isInvisible,
+            language: language?.languageCode,
+            name: name,
+            privacySettings: privacySettings.map(\.asPrivacySettingsResponse)
+        )
+    }
+}
+
 /// The privacy settings of the user.
 public struct UserPrivacySettings: Sendable {
     /// The settings for typing indicator events.

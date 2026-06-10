@@ -204,11 +204,11 @@ final class ConnectionRepository_Tests: XCTestCase {
         XCTAssertNil(repository.webSocketConnectEndpoint.value)
         repository.updateWebSocketEndpoint(with: token, userInfo: nil)
 
-        // UserInfo should take priority
         XCTAssertEqual(
             repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
-            AnyEndpoint(Endpoint<EmptyResponse>.webSocketConnect(userInfo: UserInfo(id: tokenUserId)))
+            AnyEndpoint(Endpoint<EmptyResponse>.webSocketConnect())
         )
+        XCTAssertEqual(repository.connectUserInfo.value?.id, tokenUserId)
     }
 
     func test_updateWebSocketEndpointWithTokenAndUserInfo() throws {
@@ -220,11 +220,12 @@ final class ConnectionRepository_Tests: XCTestCase {
         XCTAssertNil(repository.webSocketConnectEndpoint.value)
         repository.updateWebSocketEndpoint(with: token, userInfo: userInfo)
 
-        // UserInfo should take priority
         XCTAssertEqual(
             repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
-            AnyEndpoint(Endpoint<EmptyResponse>.webSocketConnect(userInfo: UserInfo(id: userInfoUserId)))
+            AnyEndpoint(Endpoint<EmptyResponse>.webSocketConnect())
         )
+        // UserInfo should take priority
+        XCTAssertEqual(repository.connectUserInfo.value?.id, userInfoUserId)
     }
 
     func test_updateWebSocketEndpointWithUserId() throws {
@@ -234,8 +235,84 @@ final class ConnectionRepository_Tests: XCTestCase {
 
         XCTAssertEqual(
             repository.webSocketConnectEndpoint.value.map(AnyEndpoint.init),
-            AnyEndpoint(Endpoint<EmptyResponse>.webSocketConnect(userInfo: UserInfo(id: userId)))
+            AnyEndpoint(Endpoint<EmptyResponse>.webSocketConnect())
         )
+        XCTAssertEqual(repository.connectUserInfo.value?.id, userId)
+    }
+
+    // MARK: WebSocket auth frame
+
+    func test_webSocketConnectionEstablished_sendsAuthFrame() throws {
+        let engine = WebSocketEngine_Mock()
+        let webSocketClient = WebSocketClient_Mock(webSocketEngine: engine)
+        let tokenProvider = ConnectionDetailsProviderDelegate_Spy()
+        let token = Token.unique(userId: "user-id")
+        tokenProvider.provideTokenResult = .success(token)
+        webSocketRequestEncoder.connectionDetailsProviderDelegate = tokenProvider
+        let repository = ConnectionRepository(
+            isClientInActiveMode: true,
+            syncRepository: syncRepository,
+            webSocketEncoder: webSocketRequestEncoder,
+            webSocketClient: webSocketClient,
+            apiClient: apiClient,
+            timerType: DefaultTimer.self
+        )
+        let userInfo = UserInfo(id: "user-id", name: "Some User", isInvisible: true)
+        repository.updateWebSocketEndpoint(with: token, userInfo: userInfo)
+
+        webSocketClient.onWSConnectionEstablished?()
+
+        XCTAssertEqual(engine.sendJsonMessage_calls.count, 1)
+        let authMessage = try XCTUnwrap(engine.sendJsonMessage_calls.first as? WSAuthMessage)
+        XCTAssertEqual(authMessage.products, ["chat"])
+        XCTAssertEqual(authMessage.token, token.rawValue)
+        XCTAssertEqual(authMessage.userDetails.id, userInfo.id)
+        XCTAssertEqual(authMessage.userDetails.name, "Some User")
+        XCTAssertEqual(authMessage.userDetails.invisible, true)
+    }
+
+    func test_webSocketConnectionEstablished_whenNoUserInfo_fallsBackToTokenUserId() throws {
+        let engine = WebSocketEngine_Mock()
+        let webSocketClient = WebSocketClient_Mock(webSocketEngine: engine)
+        let tokenProvider = ConnectionDetailsProviderDelegate_Spy()
+        let token = Token.unique(userId: "token-user-id")
+        tokenProvider.provideTokenResult = .success(token)
+        webSocketRequestEncoder.connectionDetailsProviderDelegate = tokenProvider
+        let repository = ConnectionRepository(
+            isClientInActiveMode: true,
+            syncRepository: syncRepository,
+            webSocketEncoder: webSocketRequestEncoder,
+            webSocketClient: webSocketClient,
+            apiClient: apiClient,
+            timerType: DefaultTimer.self
+        )
+        repository.updateWebSocketEndpoint(with: token, userInfo: nil)
+
+        webSocketClient.onWSConnectionEstablished?()
+
+        let authMessage = try XCTUnwrap(engine.sendJsonMessage_calls.first as? WSAuthMessage)
+        XCTAssertEqual(authMessage.userDetails.id, token.userId)
+    }
+
+    func test_webSocketConnectionEstablished_whenTokenMissing_doesNotSendFrame() throws {
+        let engine = WebSocketEngine_Mock()
+        let webSocketClient = WebSocketClient_Mock(webSocketEngine: engine)
+        let tokenProvider = ConnectionDetailsProviderDelegate_Spy()
+        tokenProvider.provideTokenResult = .failure(ClientError.MissingToken())
+        webSocketRequestEncoder.connectionDetailsProviderDelegate = tokenProvider
+        let repository = ConnectionRepository(
+            isClientInActiveMode: true,
+            syncRepository: syncRepository,
+            webSocketEncoder: webSocketRequestEncoder,
+            webSocketClient: webSocketClient,
+            apiClient: apiClient,
+            timerType: DefaultTimer.self
+        )
+        repository.updateWebSocketEndpoint(with: .unique(), userInfo: UserInfo(id: .unique))
+
+        webSocketClient.onWSConnectionEstablished?()
+
+        XCTAssertTrue(engine.sendJsonMessage_calls.isEmpty)
     }
 
     // MARK: Handle connection update

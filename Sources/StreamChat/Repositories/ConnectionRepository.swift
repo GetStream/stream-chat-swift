@@ -23,6 +23,7 @@ class ConnectionRepository: @unchecked Sendable {
     }
 
     let webSocketConnectEndpoint = AllocatedUnfairLock<Endpoint<EmptyResponse>?>(nil)
+    let connectUserInfo = AllocatedUnfairLock<UserInfo?>(nil)
     let isClientInActiveMode: Bool
     private let syncRepository: SyncRepository
     private let webSocketEncoder: RequestEncoder?
@@ -44,6 +45,14 @@ class ConnectionRepository: @unchecked Sendable {
         self.webSocketClient = webSocketClient
         self.apiClient = apiClient
         self.timerType = timerType
+
+        // The v2 connect protocol authenticates with the first frame sent over
+        // the opened socket. Set up in init so that reconnects triggered directly
+        // on the web socket client (e.g. by the connection recovery handler) are
+        // covered as well.
+        webSocketClient?.onWSConnectionEstablished = { [weak self] in
+            self?.sendWebSocketAuthFrame()
+        }
     }
 
     func initialize() {
@@ -119,14 +128,16 @@ class ConnectionRepository: @unchecked Sendable {
 
     /// Updates the WebSocket endpoint to use the passed token and user information for the connection
     func updateWebSocketEndpoint(with token: Token, userInfo: UserInfo?) {
-        webSocketConnectEndpoint.value = .webSocketConnect(userInfo: userInfo ?? .init(id: token.userId))
+        connectUserInfo.value = userInfo ?? UserInfo(id: token.userId)
+        webSocketConnectEndpoint.value = .webSocketConnect()
     }
 
     /// Updates the WebSocket endpoint to use the passed user id
     func updateWebSocketEndpoint(with currentUserId: UserId) {
-        webSocketConnectEndpoint.value = .webSocketConnect(userInfo: UserInfo(id: currentUserId))
+        connectUserInfo.value = UserInfo(id: currentUserId)
+        webSocketConnectEndpoint.value = .webSocketConnect()
     }
-    
+
     private func updateWebSocketConnectURLRequest() {
         guard let webSocketClient, let webSocketEncoder, let webSocketConnectEndpoint = webSocketConnectEndpoint.value else { return }
         let request: URLRequest? = {
@@ -139,6 +150,28 @@ class ConnectionRepository: @unchecked Sendable {
         }()
         guard let request else { return }
         webSocketClient.connectRequest = request
+    }
+
+    private func sendWebSocketAuthFrame() {
+        guard let webSocketClient, let webSocketEncoder else { return }
+        guard let delegate = webSocketEncoder.connectionDetailsProviderDelegate else {
+            log.error("Skipping the WebSocket auth frame because the connection details provider is not set", subsystems: .webSocket)
+            return
+        }
+        let userInfo = connectUserInfo.value
+        delegate.provideToken(timeout: 10) { result in
+            switch result {
+            case .success(let token):
+                let authMessage = WSAuthMessage(
+                    products: ["chat"],
+                    token: token.rawValue,
+                    userDetails: (userInfo ?? UserInfo(id: token.userId)).asConnectUserDetailsRequest
+                )
+                webSocketClient.engine?.send(jsonMessage: authMessage)
+            case .failure(let error):
+                log.error("Failed to send the WebSocket auth frame because of a missing token", subsystems: .webSocket, error: error)
+            }
+        }
     }
 
     func handleConnectionUpdate(

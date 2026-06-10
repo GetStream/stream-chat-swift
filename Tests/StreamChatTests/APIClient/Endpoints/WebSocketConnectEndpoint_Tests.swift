@@ -8,15 +8,13 @@ import XCTest
 
 final class WebSocketConnectEndpoint_Tests: XCTestCase {
     func test_webSocketConnect_buildsCompatibilityEndpoint() {
-        let userInfo = UserInfo(id: "user-id", name: "User", imageURL: nil, isInvisible: true, extraData: [:])
+        let endpoint: Endpoint<EmptyResponse> = .webSocketConnect()
 
-        let endpoint: Endpoint<EmptyResponse> = .webSocketConnect(userInfo: userInfo)
-
-        XCTAssertEqual(endpoint.path.value, "connect")
+        XCTAssertEqual(endpoint.path.value, "/api/v2/connect")
         XCTAssertEqual(endpoint.method, .get)
         XCTAssertNil(endpoint.queryItems)
         XCTAssertFalse(endpoint.requiresConnectionId)
-        XCTAssertNotNil(endpoint.body)
+        XCTAssertNil(endpoint.body)
         XCTAssertNotEqual(endpoint.path.value, Endpoint<EmptyResponse>.longPoll(json: nil).path.value)
     }
 }

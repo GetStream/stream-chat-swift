@@ -88,6 +88,73 @@ final class EventDecoder_Tests: XCTestCase {
         XCTAssertEqual(wsEvent.healthcheck()?.connectionId, connectionId)
     }
 
+    func test_decode_whenHealthCheckPayloadComes_returnsHealthCheckEvent() throws {
+        // Decoded directly (not from a fixture) so the v2 wire format is exercised as-is.
+        // The v2 transport encodes dates as unix-nanosecond numbers, which also
+        // exercises the numeric branch of the date decoding strategy.
+        let connectionId = String.unique
+        let json = """
+        {
+            "connection_id": "\(connectionId)",
+            "cid": "*",
+            "type": "health.check",
+            "custom": {},
+            "created_at": 1781082614102925808
+        }
+        """.data(using: .utf8)!
+
+        let event = try eventDecoder.decode(from: json)
+
+        let wsEvent = try XCTUnwrap(event as? WSEvent)
+        let healthCheck = try XCTUnwrap(wsEvent.rawValue as? HealthCheckEventDTO)
+        XCTAssertEqual(healthCheck.connectionId, connectionId)
+        XCTAssertEqual(wsEvent.healthcheck()?.connectionId, connectionId)
+    }
+
+    func test_decode_whenConnectionOkComes_returnsConnectedEventWithHealthCheckInfo() throws {
+        // The v2 connect hello carries `me` and `chat` payloads which are intentionally
+        // ignored — only `connection_id` matters for the handshake.
+        let connectionId = String.unique
+        let json = """
+        {
+            "type": "connection.ok",
+            "connection_id": "\(connectionId)",
+            "created_at": "2026-06-09T12:29:16.309363616Z",
+            "me": {
+                "id": "luke_skywalker",
+                "role": "user",
+                "created_at": "2020-12-07T11:36:47.059906Z",
+                "updated_at": "2021-01-12T18:09:13.411699Z"
+            },
+            "chat": {
+                "total_unread_count": 0,
+                "unread_channels": 0,
+                "unread_threads": 0,
+                "mutes": [],
+                "channel_mutes": []
+            }
+        }
+        """.data(using: .utf8)!
+
+        let event = try eventDecoder.decode(from: json)
+
+        let connectedEvent = try XCTUnwrap(event as? ConnectedEvent)
+        XCTAssertEqual(connectedEvent.connectionId, connectionId)
+        XCTAssertEqual(connectedEvent.healthcheck()?.connectionId, connectionId)
+    }
+
+    func test_decode_whenConnectionOkHasNoConnectionId_throwsEventDecodingError() throws {
+        let json = """
+        {
+            "type": "connection.ok"
+        }
+        """.data(using: .utf8)!
+
+        XCTAssertThrowsError(try eventDecoder.decode(from: json)) { error in
+            XCTAssertTrue(error is ClientError.EventDecoding)
+        }
+    }
+
     func test_decode_whenChannelCreatedWSEventComes_returnsWrappedRawEvent() throws {
         let cid = ChannelId.unique
         let sourceEvent = WSEvent.typeChannelCreatedEvent(

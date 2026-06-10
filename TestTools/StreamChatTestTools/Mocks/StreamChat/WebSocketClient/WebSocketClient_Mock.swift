@@ -12,6 +12,9 @@ final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
     let init_eventDecoder: AnyEventDecoder
     let init_eventNotificationCenter: PersistentEventNotificationCenter
     let init_environment: WebSocketClient.Environment
+    let init_webSocketEngine: WebSocketEngine?
+
+    override var engine: WebSocketEngine? { init_webSocketEngine ?? super.engine }
 
     var connect_calledCounter = 0
     var connect_called: Bool { connect_calledCounter > 0 }
@@ -51,6 +54,7 @@ final class WebSocketClient_Mock: WebSocketClient, @unchecked Sendable {
         init_eventDecoder = eventDecoder
         init_eventNotificationCenter = eventNotificationCenter
         init_environment = environment
+        init_webSocketEngine = webSocketEngine
 
         super.init(
             sessionConfiguration: sessionConfiguration,

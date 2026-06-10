@@ -20,6 +20,37 @@ public final class HealthCheckEvent: ConnectionEvent, EventDTO, Sendable {
     }
 }
 
+/// The `connection.ok` hello event sent by the v2 connect endpoint after the
+/// auth frame is accepted. Only `connection_id` is decoded; the `me` and `chat`
+/// payloads are intentionally ignored (parity with the previous health.check
+/// hello, which was never persisted either).
+/// TODO: Remove once connection.ok is generated as a WSEvent case.
+final class ConnectedEvent: Event, Decodable {
+    let connectionId: String
+
+    private enum CodingKeys: String, CodingKey {
+        case type
+        case connectionId = "connection_id"
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let type = try container.decode(String.self, forKey: .type)
+        guard type == EventType.connectionOk.rawValue else {
+            throw DecodingError.dataCorruptedError(
+                forKey: .type,
+                in: container,
+                debugDescription: "Expected the \(EventType.connectionOk.rawValue) event type"
+            )
+        }
+        connectionId = try container.decode(String.self, forKey: .connectionId)
+    }
+
+    func healthcheck() -> HealthCheckInfo? {
+        HealthCheckInfo(connectionId: connectionId)
+    }
+}
+
 final class ConnectionErrorEvent: Event, Decodable {
     let apiError: APIError
 
