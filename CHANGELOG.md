@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## StreamChat
 ### 🔄 Changed
 - Process `StreamChatModel.xcdatamodeld` as a package resource so the compiled Core Data model is bundled instead of copying the raw model source [#4128](https://github.com/GetStream/stream-chat-swift/pull/4128)
+- Update StreamCore to 0.7.0, which fixes `Sendable` errors when building with Xcode 27 [#4129](https://github.com/GetStream/stream-chat-swift/pull/4129)
 
 ## StreamChatUI
 ### 🐞 Fixed
