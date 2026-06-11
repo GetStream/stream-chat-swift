@@ -53,10 +53,10 @@ final class UserListPayload_Tests: XCTestCase {
         )
 
         let payload = try JSONDecoder.default.decode(QueryUsersResponse.self, from: json)
-        let user = try XCTUnwrap(payload.userResponses.first)
+        let user = try XCTUnwrap(payload.users.first)
 
         XCTAssertEqual(user.id, "open-api-user")
-        XCTAssertEqual(user.extraData, ["secret_note": .string("Anakin is Vader!")])
+        XCTAssertEqual(user.custom, ["secret_note": .string("Anakin is Vader!")])
         XCTAssertEqual(user.language, "pt")
         XCTAssertEqual(user.teams, ["RED", "GREEN"])
     }

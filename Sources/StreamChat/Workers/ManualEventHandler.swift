@@ -108,7 +108,7 @@ class ManualEventHandler: @unchecked Sendable {
         let message = dto.message.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return MessageNewEvent(
-            user: userFields.asUserResponse().asModel(),
+            user: userFields.asModel(),
             message: message,
             channel: channel,
             createdAt: dto.createdAt,
@@ -127,7 +127,7 @@ class ManualEventHandler: @unchecked Sendable {
         let message = dto.message.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return MessageUpdatedEvent(
-            user: userFields.asUserResponse().asModel(),
+            user: userFields.asModel(),
             channel: channel,
             message: message,
             createdAt: dto.createdAt
@@ -143,7 +143,7 @@ class ManualEventHandler: @unchecked Sendable {
         let message = dto.message.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return MessageDeletedEvent(
-            user: dto.user.map { $0.asUserResponse().asModel() },
+            user: dto.user.map { $0.asModel() },
             channel: channel,
             message: message,
             createdAt: dto.createdAt,
@@ -164,7 +164,7 @@ class ManualEventHandler: @unchecked Sendable {
         let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return ReactionNewEvent(
-            user: userFields.asUserResponse().asModel(),
+            user: userFields.asModel(),
             cid: cid,
             message: message,
             reaction: reactionPayload.asModel(messageId: messagePayload.id),
@@ -183,7 +183,7 @@ class ManualEventHandler: @unchecked Sendable {
         let message = dto.message.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return ReactionUpdatedEvent(
-            user: userFields.asUserResponse().asModel(),
+            user: userFields.asModel(),
             cid: cid,
             message: message,
             reaction: reactionPayload.asModel(messageId: dto.message.id),
@@ -203,7 +203,7 @@ class ManualEventHandler: @unchecked Sendable {
         return TypingEvent(
             isTyping: isTyping,
             cid: cid,
-            user: userFields.asUserResponse().asModel(),
+            user: userFields.asModel(),
             parentId: parentId,
             createdAt: createdAt
         )
@@ -221,7 +221,7 @@ class ManualEventHandler: @unchecked Sendable {
         let message = messagePayload.asModel(cid: cid, currentUserId: currentUserId, channelReads: channel.reads)
 
         return ReactionDeletedEvent(
-            user: userFields.asUserResponse().asModel(),
+            user: userFields.asModel(),
             cid: cid,
             message: message,
             reaction: reactionPayload.asModel(messageId: messagePayload.id),

@@ -148,6 +148,109 @@ extension QueryUsersResponse {
     }
 }
 
+extension OwnUserResponse {
+    func asUserResponse() -> UserResponse {
+        UserResponse(
+            avgResponseTime: avgResponseTime,
+            banned: banned,
+            blockedUserIds: blockedUserIds ?? [],
+            createdAt: createdAt,
+            custom: custom,
+            deactivatedAt: deactivatedAt,
+            id: id,
+            image: image,
+            language: language,
+            lastActive: lastActive,
+            name: name,
+            online: online,
+            role: role,
+            teams: teams,
+            teamsRole: teamsRole,
+            updatedAt: updatedAt
+        )
+    }
+}
+
+extension UserResponse {
+    func asUserResponseCommonFields() -> UserResponseCommonFields {
+        UserResponseCommonFields(
+            avgResponseTime: avgResponseTime,
+            banned: banned,
+            blockedUserIds: blockedUserIds,
+            createdAt: createdAt,
+            custom: custom,
+            deactivatedAt: deactivatedAt,
+            deletedAt: deletedAt,
+            id: id,
+            image: image,
+            language: language,
+            lastActive: lastActive,
+            name: name,
+            online: online,
+            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
+            role: role,
+            teams: teams,
+            teamsRole: teamsRole,
+            updatedAt: updatedAt
+        )
+    }
+
+    func asUserResponsePrivacyFields() -> UserResponsePrivacyFields {
+        UserResponsePrivacyFields(
+            avgResponseTime: avgResponseTime,
+            banned: banned,
+            blockedUserIds: blockedUserIds,
+            createdAt: createdAt,
+            custom: custom,
+            deactivatedAt: deactivatedAt,
+            deletedAt: deletedAt,
+            id: id,
+            image: image,
+            invisible: nil,
+            language: language,
+            lastActive: lastActive,
+            name: name,
+            online: online,
+            privacySettings: nil,
+            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
+            role: role,
+            teams: teams,
+            teamsRole: teamsRole,
+            updatedAt: updatedAt
+        )
+    }
+
+    func asFullUserResponse() -> FullUserResponse {
+        FullUserResponse(
+            avgResponseTime: avgResponseTime,
+            banned: banned,
+            blockedUserIds: blockedUserIds,
+            channelMutes: [],
+            createdAt: createdAt,
+            custom: custom,
+            deactivatedAt: deactivatedAt,
+            devices: [],
+            id: id,
+            image: image,
+            invisible: false,
+            language: language,
+            lastActive: lastActive,
+            mutes: [],
+            name: name,
+            online: online,
+            role: userRole.rawValue,
+            shadowBanned: false,
+            teams: teams,
+            teamsRole: teamsRole,
+            totalUnreadCount: 0,
+            unreadChannels: 0,
+            unreadCount: 0,
+            unreadThreads: 0,
+            updatedAt: updatedAt
+        )
+    }
+}
+
 extension UpdateUsersResponse {
     static func dummy(
         duration: String = "",

@@ -26,7 +26,7 @@ protocol UserDatabaseSession {
     /// Saves the provided payload to the DB. Return's the matching `UserDTO` if the save was successful. Throws an error
     /// if the save fails.
     @discardableResult
-    func saveUser(payload: UserResponse, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO
+    func saveUser(payload: some UserResponseFields, query: UserListQuery?, cache: PreWarmedCache?) throws -> UserDTO
 
     /// Saves the provided payload to the DB. Return's the matching `UserDTO`s  if the save was successful. Ignores unsaved elements.
     @discardableResult
@@ -740,7 +740,7 @@ extension DatabaseSession {
     }
 
     @discardableResult
-    func saveUser(payload: UserResponse) throws -> UserDTO {
+    func saveUser(payload: some UserResponseFields) throws -> UserDTO {
         try saveUser(payload: payload, query: nil, cache: nil)
     }
 
@@ -824,52 +824,52 @@ extension DatabaseSession {
         // MARK: User events
 
         case .typeUserPresenceChangedEvent(let dto):
-            try saveUser(payload: dto.user.asUserResponse(), query: nil, cache: nil)
+            try saveUser(payload: dto.user, query: nil, cache: nil)
 
         case .typeUserUpdatedEvent(let dto):
-            try saveUser(payload: dto.user.asUserResponse(), query: nil, cache: nil)
+            try saveUser(payload: dto.user, query: nil, cache: nil)
 
         case .typeUserBannedEvent(let dto):
             if let createdBy = dto.createdBy {
-                try saveUser(payload: createdBy.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: createdBy, query: nil, cache: nil)
             }
 
         case .typeUserUnbannedEvent(let dto):
-            try saveUser(payload: dto.user.asUserResponse(), query: nil, cache: nil)
+            try saveUser(payload: dto.user, query: nil, cache: nil)
             if let createdBy = dto.createdBy {
-                try saveUser(payload: createdBy.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: createdBy, query: nil, cache: nil)
             }
 
         case .typeUserMessagesDeletedEvent(let dto):
-            try saveUser(payload: dto.user.asUserResponse(), query: nil, cache: nil)
+            try saveUser(payload: dto.user, query: nil, cache: nil)
 
         case .typeTypingStartEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
 
         case .typeTypingStopEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
 
         case .typeUserWatchingStartEvent(let dto):
-            try saveUser(payload: dto.user.asUserResponse(), query: nil, cache: nil)
+            try saveUser(payload: dto.user, query: nil, cache: nil)
 
         case .typeUserWatchingStopEvent(let dto):
-            try saveUser(payload: dto.user.asUserResponse(), query: nil, cache: nil)
+            try saveUser(payload: dto.user, query: nil, cache: nil)
 
         // MARK: Channel events
 
         case .typeChannelCreatedEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
 
         case .typeChannelUpdatedEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
             // Channel update may carry an embedded system message — create-if-missing semantics.
@@ -892,25 +892,25 @@ extension DatabaseSession {
 
         case .typeChannelDeletedEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
 
         case .typeChannelHiddenEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
 
         case .typeChannelVisibleEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
 
         case .typeChannelTruncatedEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
             // System truncation message — create-if-missing.
@@ -934,19 +934,19 @@ extension DatabaseSession {
 
         case .typeMemberAddedEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
 
         case .typeMemberRemovedEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
 
         case .typeMemberUpdatedEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
 
@@ -954,7 +954,7 @@ extension DatabaseSession {
 
         case .typeMessageNewEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             if let channel = dto.channel {
                 try saveChannel(payload: channel, query: nil, cache: nil)
@@ -982,7 +982,7 @@ extension DatabaseSession {
 
         case .typeMessageUpdatedEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             // Update only saves the message if it already exists locally OR if it's now visible to the current user.
             if let cidString = dto.cid,
@@ -1046,7 +1046,7 @@ extension DatabaseSession {
 
         case .typeMessageReadEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             if let channel = dto.channel {
                 try saveChannel(payload: channel, query: nil, cache: nil)
@@ -1057,7 +1057,7 @@ extension DatabaseSession {
 
         case .typeMessageDeliveredEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             if let channel = dto.channel {
                 try saveChannel(payload: channel, query: nil, cache: nil)
@@ -1067,7 +1067,7 @@ extension DatabaseSession {
 
         case .typeReactionNewEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
             // Persist the message — the event payload carries the updated
@@ -1103,7 +1103,7 @@ extension DatabaseSession {
 
         case .typeReactionUpdatedEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
             if let cidString = dto.cid,
@@ -1131,7 +1131,7 @@ extension DatabaseSession {
 
         case .typeReactionDeletedEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
             // Save the updated message so its `latest_reactions` reflects the
@@ -1186,7 +1186,7 @@ extension DatabaseSession {
 
         case .typeNotificationMarkReadEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             if let channel = dto.channel {
                 try saveChannel(payload: channel, query: nil, cache: nil)
@@ -1197,7 +1197,7 @@ extension DatabaseSession {
 
         case .typeNotificationMarkUnreadEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             if let channel = dto.channel {
                 try saveChannel(payload: channel, query: nil, cache: nil)
@@ -1214,7 +1214,7 @@ extension DatabaseSession {
 
         case .typeNotificationRemovedFromChannelEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
 
@@ -1241,19 +1241,19 @@ extension DatabaseSession {
 
         case .typeNotificationInvitedEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
 
         case .typeNotificationInviteAcceptedEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
 
         case .typeNotificationInviteRejectedEvent(let dto):
             if let user = dto.user {
-                try saveUser(payload: user.asUserResponse(), query: nil, cache: nil)
+                try saveUser(payload: user, query: nil, cache: nil)
             }
             try saveChannel(payload: dto.channel, query: nil, cache: nil)
 

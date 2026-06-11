@@ -78,7 +78,7 @@ final class ThreadParticipantDTO_Tests: XCTestCase {
         let dto = ThreadParticipantDTO(context: database.viewContext)
         dto.lastReadAt = .unique
         dto.threadId = .unique
-        dto.user = try database.viewContext.saveUser(payload: .dummy(
+        dto.user = try database.viewContext.saveUser(payload: UserResponse.dummy(
             userId: .unique
         ))
         dto.createdAt = .unique

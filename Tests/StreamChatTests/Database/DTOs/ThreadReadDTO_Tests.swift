@@ -44,7 +44,7 @@ final class ThreadReadDTO_Tests: XCTestCase {
         let dto = ThreadReadDTO(context: database.viewContext)
         dto.lastReadAt = .unique
         dto.unreadMessagesCount = 10
-        dto.user = try database.viewContext.saveUser(payload: .dummy(
+        dto.user = try database.viewContext.saveUser(payload: UserResponse.dummy(
             userId: .unique
         ))
 

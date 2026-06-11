@@ -4,6 +4,46 @@
 
 import Foundation
 
+/// Common fields shared by all generated user response models so that user data
+/// can be persisted and converted to domain models without intermediate copies.
+protocol UserResponseFields: Sendable {
+    var id: String { get }
+    var name: String? { get }
+    var image: String? { get }
+    var banned: Bool { get }
+    var online: Bool { get }
+    var role: String { get }
+    var teamsRole: [String: String]? { get }
+    var language: String { get }
+    var createdAt: Date { get }
+    var updatedAt: Date { get }
+    var deactivatedAt: Date? { get }
+    var lastActive: Date? { get }
+    var teams: [String] { get }
+    var avgResponseTime: Int? { get }
+    var custom: [String: RawJSON] { get }
+}
+
+extension FullUserResponse: UserResponseFields {}
+extension OwnUserResponse: UserResponseFields {}
+extension UserResponse: UserResponseFields {}
+extension UserResponseCommonFields: UserResponseFields {}
+extension UserResponsePrivacyFields: UserResponseFields {}
+
+extension UserResponseFields {
+    var imageURL: URL? {
+        image.flatMap(URL.init(string:))
+    }
+
+    var userRole: UserRole {
+        UserRole(rawValue: role)
+    }
+
+    var teamsUserRole: [String: UserRole]? {
+        teamsRole?.mapValues { UserRole(rawValue: $0) }
+    }
+}
+
 extension CreateGuestResponse {
     func validatedToken() throws -> Token {
         let token = try Token(rawValue: accessToken)
@@ -48,71 +88,15 @@ extension FullUserResponse {
             updatedAt: updatedAt
         )
     }
-
-    func asUserResponse() -> UserResponse {
-        UserResponse(
-            avgResponseTime: avgResponseTime,
-            banned: banned,
-            blockedUserIds: [],
-            createdAt: createdAt,
-            custom: custom,
-            deactivatedAt: deactivatedAt,
-            id: id,
-            image: image,
-            language: language,
-            lastActive: lastActive,
-            name: name,
-            online: online,
-            role: role,
-            teams: teams,
-            teamsRole: teamsRole,
-            updatedAt: updatedAt
-        )
-    }
 }
 
 extension OwnUserResponse {
-    func asUserResponse() -> UserResponse {
-        UserResponse(
-            avgResponseTime: avgResponseTime,
-            banned: banned,
-            blockedUserIds: [],
-            createdAt: createdAt,
-            custom: custom,
-            deactivatedAt: deactivatedAt,
-            id: id,
-            image: imageURL?.absoluteString,
-            language: language,
-            lastActive: lastActive,
-            name: name,
-            online: online,
-            role: role,
-            teams: teams,
-            teamsRole: teamsRole,
-            updatedAt: updatedAt
-        )
-    }
-
-    var imageURL: URL? {
-        image.flatMap(URL.init(string:))
-    }
-
     var unreadCountPayload: UnreadCountPayload? {
         UnreadCountPayload(
             channels: unreadChannels,
             messages: unreadCount,
             threads: unreadThreads >= 0 ? unreadThreads : nil
         )
-    }
-
-    var userRole: UserRole {
-        UserRole(rawValue: role)
-    }
-}
-
-extension QueryUsersResponse {
-    var userResponses: [UserResponse] {
-        users.map { $0.asUserResponse() }
     }
 }
 
@@ -122,148 +106,6 @@ extension UserPrivacySettings {
             deliveryReceipts: deliveryReceipts.map { .init(enabled: $0.enabled) },
             readReceipts: readReceipts.map { .init(enabled: $0.enabled) },
             typingIndicators: typingIndicators.map { .init(enabled: $0.enabled) }
-        )
-    }
-}
-
-extension UserResponse {
-    func asFullUserResponse() -> FullUserResponse {
-        FullUserResponse(
-            avgResponseTime: avgResponseTime,
-            banned: banned,
-            blockedUserIds: [],
-            channelMutes: [],
-            createdAt: createdAt,
-            custom: custom,
-            deactivatedAt: deactivatedAt,
-            devices: [],
-            id: id,
-            image: image,
-            invisible: false,
-            language: language,
-            lastActive: lastActive,
-            mutes: [],
-            name: name,
-            online: online,
-            role: userRole.rawValue,
-            shadowBanned: false,
-            teams: teams,
-            teamsRole: teamsRole,
-            totalUnreadCount: 0,
-            unreadChannels: 0,
-            unreadCount: 0,
-            unreadThreads: 0,
-            updatedAt: updatedAt
-        )
-    }
-
-    func asUserResponseCommonFields() -> UserResponseCommonFields {
-        UserResponseCommonFields(
-            avgResponseTime: avgResponseTime,
-            banned: banned,
-            blockedUserIds: blockedUserIds,
-            createdAt: createdAt,
-            custom: custom,
-            deactivatedAt: deactivatedAt,
-            deletedAt: deletedAt,
-            id: id,
-            image: image,
-            language: language,
-            lastActive: lastActive,
-            name: name,
-            online: online,
-            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
-            role: role,
-            teams: teams,
-            teamsRole: teamsRole,
-            updatedAt: updatedAt
-        )
-    }
-
-    func asUserResponsePrivacyFields() -> UserResponsePrivacyFields {
-        UserResponsePrivacyFields(
-            avgResponseTime: avgResponseTime,
-            banned: banned,
-            blockedUserIds: blockedUserIds,
-            createdAt: createdAt,
-            custom: custom,
-            deactivatedAt: deactivatedAt,
-            deletedAt: deletedAt,
-            id: id,
-            image: image,
-            invisible: nil,
-            language: language,
-            lastActive: lastActive,
-            name: name,
-            online: online,
-            privacySettings: nil,
-            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
-            role: role,
-            teams: teams,
-            teamsRole: teamsRole,
-            updatedAt: updatedAt
-        )
-    }
-
-    var imageURL: URL? {
-        image.flatMap(URL.init(string:))
-    }
-
-    var teamsUserRole: [String: UserRole]? {
-        teamsRole?.mapValues { UserRole(rawValue: $0) }
-    }
-
-    var userRole: UserRole {
-        UserRole(rawValue: role)
-    }
-}
-
-extension UserResponseCommonFields {
-    func asUserResponse() -> UserResponse {
-        UserResponse(
-            avgResponseTime: avgResponseTime,
-            banned: banned,
-            blockedUserIds: blockedUserIds,
-            createdAt: createdAt,
-            custom: custom,
-            deactivatedAt: deactivatedAt,
-            deletedAt: deletedAt,
-            id: id,
-            image: image,
-            language: language,
-            lastActive: lastActive,
-            name: name,
-            online: online,
-            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
-            role: role,
-            teams: teams,
-            teamsRole: teamsRole,
-            updatedAt: updatedAt
-        )
-    }
-}
-
-extension UserResponsePrivacyFields {
-    func asUserResponse() -> UserResponse {
-        UserResponse(
-            avgResponseTime: avgResponseTime,
-            banned: banned,
-            blockedUserIds: blockedUserIds,
-            createdAt: createdAt,
-            custom: custom,
-            deactivatedAt: deactivatedAt,
-            deletedAt: deletedAt,
-            id: id,
-            image: image,
-            language: language,
-            lastActive: lastActive,
-            name: name,
-            online: online,
-            revokeTokensIssuedBefore: revokeTokensIssuedBefore,
-            role: role,
-            teams: teams,
-            teamsRole: teamsRole,
-            updatedAt: updatedAt
         )
     }
 }

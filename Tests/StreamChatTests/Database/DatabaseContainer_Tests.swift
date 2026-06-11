@@ -287,7 +287,7 @@ final class DatabaseContainer_Tests: XCTestCase {
         try container.createCurrentUser()
         try container.writeSynchronously { session in
             let user = try session.saveUser(
-                payload: .dummy(
+                payload: UserResponse.dummy(
                     userId: userId,
                     isOnline: true
                 )
@@ -376,7 +376,7 @@ final class DatabaseContainer_Tests: XCTestCase {
                 user: UserResponse.dummy(userId: currentUserId)
             ))
             let mutedUserId = UserId.unique
-            let mutedUserDTO = try session.saveUser(payload: .dummy(userId: mutedUserId))
+            let mutedUserDTO = try session.saveUser(payload: UserResponse.dummy(userId: mutedUserId))
             session.currentUser?.mutedUsers = Set([mutedUserDTO])
             try session.savePushPreference(id: "currentUserId", chatLevel: "mentions", disabledUntil: nil)
             session.saveThreadList(
@@ -390,8 +390,8 @@ final class DatabaseContainer_Tests: XCTestCase {
                     ]
                 )
             )
-            try session.saveUser(payload: .dummy(userId: .unique), query: .user(withID: currentUserId), cache: nil)
-            try session.saveUser(payload: .dummy(userId: .unique))
+            try session.saveUser(payload: UserResponse.dummy(userId: .unique), query: .user(withID: currentUserId), cache: nil)
+            try session.saveUser(payload: UserResponse.dummy(userId: .unique))
             let messages: [MessageResponse] = [
                 .dummy(
                     reactionGroups: [
