@@ -313,27 +313,20 @@ public final class MessageDeliveredEvent: ChannelSpecificEvent {
     }
 }
 
-extension MessageDeliveredEventDTO: EventDTO { private static func isoFormatter() -> ISO8601DateFormatter {
-    let f = ISO8601DateFormatter()
-    f.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-    return f
-}
+extension MessageDeliveredEventDTO: EventDTO {
+    func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
+        guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
+        guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
+        guard let channelDTO = session.channel(cid: channelId) else { return nil }
+        guard let lastDeliveredMessageId = lastDeliveredMessageId else { return nil }
+        guard let lastDeliveredAt = lastDeliveredAt else { return nil }
 
-func toDomainEvent(session: any DatabaseSession) -> (any Event)? {
-    guard let user = user, let userDTO = session.user(id: user.id) else { return nil }
-    guard let cidString = cid, let channelId = try? ChannelId(cid: cidString) else { return nil }
-    guard let channelDTO = session.channel(cid: channelId) else { return nil }
-    guard let lastDeliveredMessageId = lastDeliveredMessageId else { return nil }
-    guard let lastDeliveredAtString = lastDeliveredAt,
-          let lastDeliveredAtDate = Self.isoFormatter().date(from: lastDeliveredAtString)
-          ?? ISO8601DateFormatter().date(from: lastDeliveredAtString) else { return nil }
-
-    return try? MessageDeliveredEvent(
-        user: userDTO.asModel(),
-        channel: channelDTO.asModel(),
-        createdAt: createdAt,
-        lastDeliveredMessageId: lastDeliveredMessageId,
-        lastDeliveredAt: lastDeliveredAtDate
-    )
-}
+        return try? MessageDeliveredEvent(
+            user: userDTO.asModel(),
+            channel: channelDTO.asModel(),
+            createdAt: createdAt,
+            lastDeliveredMessageId: lastDeliveredMessageId,
+            lastDeliveredAt: lastDeliveredAt
+        )
+    }
 }

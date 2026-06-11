@@ -156,7 +156,7 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         let channelRead = channelDTO.reads.first { $0.user.id == userId }
         XCTAssertNotNil(channelRead)
         XCTAssertEqual(channelRead?.lastDeliveredMessageId, messageId)
-        XCTAssertNotNil(channelRead?.lastDeliveredAt)
+        XCTAssertNearlySameDate(channelRead?.lastDeliveredAt?.bridgeDate, deliveredAt)
     }
     
     func test_handleMessageDeliveredEvent_createsNewChannelReadIfNotExists() throws {
@@ -188,7 +188,7 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         let channelRead = channelDTO.reads.first!
         XCTAssertEqual(channelRead.user.id, userId)
         XCTAssertEqual(channelRead.lastDeliveredMessageId, messageId)
-        XCTAssertNotNil(channelRead.lastDeliveredAt)
+        XCTAssertNearlySameDate(channelRead.lastDeliveredAt?.bridgeDate, deliveredAt)
     }
 
     func test_handleMessageDeliveredEvent_whenFromCurrentUser_cancelsDelivery() throws {
@@ -222,6 +222,7 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
 
         // THEN
         XCTAssertEqual(deliveryTracker.cancel_callCount, 1)
+        XCTAssertEqual(deliveryTracker.cancel_channelId, channelId)
     }
 
     // MARK: - Helper Methods
@@ -273,14 +274,12 @@ final class ChannelDeliveredMiddleware_Tests: XCTestCase {
         let user = UserResponse.dummy(userId: userId)
         let channel = ChannelResponse.dummy(cid: channelId)
 
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return MessageDeliveredEventDTO(
             channel: channel,
             cid: channelId.rawValue,
             createdAt: .unique(after: Date()),
             custom: [:],
-            lastDeliveredAt: formatter.string(from: deliveredAt),
+            lastDeliveredAt: deliveredAt,
             lastDeliveredMessageId: messageId,
             user: user.asUserResponseCommonFields()
         )

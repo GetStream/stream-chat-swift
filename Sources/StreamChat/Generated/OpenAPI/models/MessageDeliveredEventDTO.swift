@@ -21,7 +21,7 @@ final class MessageDeliveredEventDTO: @unchecked Sendable, Event, Codable, JSONE
     var createdAt: Date
     var custom: [String: RawJSON]
     /// The time when the message was delivered
-    var lastDeliveredAt: String?
+    var lastDeliveredAt: Date?
     /// The ID of the last delivered message
     var lastDeliveredMessageId: String?
     var receivedAt: Date?
@@ -31,7 +31,7 @@ final class MessageDeliveredEventDTO: @unchecked Sendable, Event, Codable, JSONE
     var type: String = "message.delivered"
     var user: UserResponseCommonFields?
 
-    init(channel: ChannelResponse? = nil, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], lastDeliveredAt: String? = nil, lastDeliveredMessageId: String? = nil, receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
+    init(channel: ChannelResponse? = nil, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], lastDeliveredAt: Date? = nil, lastDeliveredMessageId: String? = nil, receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
         self.channel = channel
         self.channelCustom = channelCustom
         self.channelId = channelId

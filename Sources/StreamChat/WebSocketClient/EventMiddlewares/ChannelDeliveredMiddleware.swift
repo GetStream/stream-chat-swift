@@ -81,13 +81,12 @@ class ChannelDeliveredMiddleware: EventMiddleware {
     private func handleMessageDeliveredEvent(_ event: MessageDeliveredEventDTO, session: DatabaseSession) {
         guard let cidString = event.cid, let cid = try? ChannelId(cid: cidString) else { return }
         guard let userId = event.user?.id else { return }
-        guard let lastDeliveredAtString = event.lastDeliveredAt,
-              let lastDeliveredAtDate = parseISO8601(lastDeliveredAtString) else { return }
+        guard let lastDeliveredAt = event.lastDeliveredAt else { return }
         guard let lastDeliveredMessageId = event.lastDeliveredMessageId else { return }
 
         // Update the delivered message information
         if let channelRead = session.loadOrCreateChannelRead(cid: cid, userId: userId) {
-            channelRead.lastDeliveredAt = lastDeliveredAtDate.bridgeDate
+            channelRead.lastDeliveredAt = lastDeliveredAt.bridgeDate
             channelRead.lastDeliveredMessageId = lastDeliveredMessageId
         }
 
@@ -96,12 +95,5 @@ class ChannelDeliveredMiddleware: EventMiddleware {
            message.user.id == session.currentUser?.user.id {
             deliveryTracker.cancel(channelId: cid)
         }
-    }
-
-    private func parseISO8601(_ string: String) -> Date? {
-        let withFractional = ISO8601DateFormatter()
-        withFractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-        if let date = withFractional.date(from: string) { return date }
-        return ISO8601DateFormatter().date(from: string)
     }
 }

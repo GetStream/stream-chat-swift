@@ -234,19 +234,20 @@ final class MessageEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
         XCTAssertEqual(event?.lastDeliveredMessageId, messageId)
-        XCTAssertNotNil(event?.lastDeliveredAt)
+        XCTAssertEqual(event?.lastDeliveredAt, "2020-07-17T13:55:56.253358328Z".toDate())
     }
 
     func test_messageDeliveredEvent_toDomainEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDelivered")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageDeliveredEventDTO
+        let event = try XCTUnwrap(eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageDeliveredEventDTO)
 
-        let channelId = try XCTUnwrap(event?.cid.flatMap { try? ChannelId(cid: $0) })
+        let channelId = try XCTUnwrap(event.cid.flatMap { try? ChannelId(cid: $0) })
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         _ = try session.saveChannel(payload: .dummy(cid: channelId), query: nil, cache: nil)
-        _ = try session.saveUser(payload: UserResponse.dummy(userId: event?.user?.id ?? ""))
+        _ = try session.saveUser(payload: UserResponse.dummy(userId: event.user?.id ?? ""))
 
-        let domainEvent = event?.toDomainEvent(session: session)
-        XCTAssertEqual(domainEvent is MessageDeliveredEvent, true)
+        let domainEvent = try XCTUnwrap(event.toDomainEvent(session: session) as? MessageDeliveredEvent)
+        XCTAssertEqual(domainEvent.lastDeliveredMessageId, messageId)
+        XCTAssertEqual(domainEvent.lastDeliveredAt, try XCTUnwrap(event.lastDeliveredAt))
     }
 }

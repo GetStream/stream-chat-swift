@@ -98,6 +98,16 @@ make_channel_member_response_partial_fields_optional() {
   sed -i '' -E 's/updatedAt: Date([,)])/updatedAt: Date? = nil\1/' "$file"
 }
 
+make_message_delivered_last_delivered_at_date() {
+  # INTERIM: The upstream OpenAPI source currently describes message.delivered
+  # last_delivered_at as a plain string, while the wire value is an RFC3339
+  # timestamp and ReadStateResponse.last_delivered_at is already generated as Date?.
+  # Keep this local workaround until ../chat fixes the schema/runtime source.
+  local file="$OUTPUT_DIR_CHAT/models/MessageDeliveredEventDTO.swift"
+  sed -i '' -E 's/^([[:space:]]*)var lastDeliveredAt: String\?$/\1var lastDeliveredAt: Date?/' "$file"
+  sed -i '' -E 's/lastDeliveredAt: String\? = nil/lastDeliveredAt: Date? = nil/' "$file"
+}
+
 # Hardcoded clashes while StreamChat source models remain the default.
 # Model collisions.
 delete_generated_filename APIError
@@ -204,5 +214,6 @@ escape_swift_keywords_in_cases
 fix_invalid_empty_enum_cases
 strip_public_open_access_modifiers
 make_channel_member_response_partial_fields_optional
+make_message_delivered_last_delivered_at_date
 
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
