@@ -251,6 +251,9 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
         }
 
         let bodyQueryItems = json.compactMap { (key, value) -> URLQueryItem? in
+            // Nil values (JSON null) mean the query item should be omitted
+            if value is NSNull { return nil }
+
             // If the `value` is a JSON, encode it like that
             if let jsonValue = value as? [String: Any] {
                 do {

@@ -78,6 +78,35 @@ final class RequestEncoder_Tests: XCTestCase {
         XCTAssertEqual(components.queryItems?.first(where: { $0.name == "deleted_by" })?.value, "moderator")
         XCTAssertEqual(components.queryItems?.first(where: { $0.name == "delete_for_me" })?.value, "false")
     }
+
+    func test_encodeDeleteRequest_omitsNilQueryItems() throws {
+        let endpoint: Endpoint<DeleteMessageResponse> = .deleteMessage(
+            id: "message-id",
+            hard: true,
+            deletedBy: nil,
+            deleteForMe: nil
+        )
+
+        let request = try encoder.encodeRequest(for: endpoint.withoutToken)
+        let components = try XCTUnwrap(URLComponents(url: try XCTUnwrap(request.url), resolvingAgainstBaseURL: false))
+
+        XCTAssertEqual(components.queryItems?.first(where: { $0.name == "hard" })?.value, "true")
+        XCTAssertNil(components.queryItems?.first(where: { $0.name == "deleted_by" }))
+        XCTAssertNil(components.queryItems?.first(where: { $0.name == "delete_for_me" }))
+    }
+
+    func test_encodePostRequest_omitsNilQueryItems() throws {
+        let endpoint: Endpoint<SyncResponse> = .sync(
+            syncRequest: SyncRequest(channelCids: ["messaging:general"], lastSyncAt: Date(timeIntervalSince1970: 1_700_000_000)),
+            withInaccessibleCids: nil,
+            watch: nil
+        )
+
+        let request = try encoder.encodeRequest(for: endpoint.withoutToken)
+        let components = try XCTUnwrap(URLComponents(url: try XCTUnwrap(request.url), resolvingAgainstBaseURL: false))
+
+        XCTAssertEqual(components.queryItems?.map(\.name), ["api_key"])
+    }
 }
 
 private extension Endpoint {
