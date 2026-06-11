@@ -17,10 +17,21 @@ public struct AnyEndpoint: Equatable {
     public init<T: Decodable>(_ endpoint: Endpoint<T>) {
         path = endpoint.path
         method = endpoint.method
-        queryItems = endpoint.queryItems?.asAnyEncodable
+        queryItems = endpoint.queryItems?.mapValues { $0.map(Self.canonicalizingJSONKeyOrder) }.asAnyEncodable
         requiresConnectionId = endpoint.requiresConnectionId
         body = endpoint.body?.asAnyEncodable
         payloadType = T.self
+    }
+
+    // JSON-encoded query item values have nondeterministic key order, so two
+    // independently built endpoints only compare equal after sorting the keys.
+    private static func canonicalizingJSONKeyOrder(_ value: String) -> String {
+        guard value.hasPrefix("{") || value.hasPrefix("["),
+              let object = try? JSONSerialization.jsonObject(with: Data(value.utf8)),
+              let data = try? JSONSerialization.data(withJSONObject: object, options: [.sortedKeys]),
+              let canonical = String(data: data, encoding: .utf8)
+        else { return value }
+        return canonical
     }
 
     public static func == (lhs: AnyEndpoint, rhs: AnyEndpoint) -> Bool {

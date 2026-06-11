@@ -7,13 +7,14 @@
 import XCTest
 
 final class UserEndpoints_Tests: XCTestCase {
-    func test_queryUsers_buildsGeneratedEndpoint() {
+    func test_queryUsers_buildsGeneratedEndpoint() throws {
         let payload = QueryUsersPayload(filterConditions: ["id": .string("user-id")], limit: 10, presence: true)
         let endpoint: Endpoint<QueryUsersResponse> = .queryUsers(payload: payload)
 
         XCTAssertEqual(endpoint.path.value, "/api/v2/users")
         XCTAssertEqual(endpoint.method, .get)
-        XCTAssertNotNil(endpoint.queryItems?["payload"] ?? nil)
+        let payloadJSON = try XCTUnwrap(endpoint.queryItems?["payload"] ?? nil)
+        XCTAssertEqual(try JSONDecoder.stream.decode(QueryUsersPayload.self, from: Data(payloadJSON.utf8)), payload)
         XCTAssertFalse(endpoint.requiresConnectionId)
         XCTAssertNil(endpoint.body)
     }

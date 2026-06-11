@@ -663,7 +663,7 @@ extension Endpoint {
                 "id_lte": APIHelper.convertAnyToString(idLte),
                 "id_lt": APIHelper.convertAnyToString(idLt),
                 "id_around": APIHelper.convertAnyToString(idAround),
-                "sort": APIHelper.convertAnyToString(sort)
+                "sort": sort.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(data: $0, encoding: .utf8) }
             ],
             requiresConnectionId: false,
             body: nil
@@ -810,7 +810,7 @@ extension Endpoint {
             path: .queryMembers,
             method: .get,
             queryItems: [
-                "payload": APIHelper.convertAnyToString(payload)
+                "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(data: $0, encoding: .utf8) }
             ],
             requiresConnectionId: false,
             body: nil
@@ -864,7 +864,7 @@ extension Endpoint {
             path: .queryUsers,
             method: .get,
             queryItems: [
-                "payload": APIHelper.convertAnyToString(payload)
+                "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(data: $0, encoding: .utf8) }
             ],
             requiresConnectionId: false,
             body: nil
@@ -886,7 +886,7 @@ extension Endpoint {
             path: .search,
             method: .get,
             queryItems: [
-                "payload": APIHelper.convertAnyToString(payload)
+                "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(data: $0, encoding: .utf8) }
             ],
             requiresConnectionId: false,
             body: nil

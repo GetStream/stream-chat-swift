@@ -7,13 +7,14 @@
 import XCTest
 
 final class MemberEndpoints_Tests: XCTestCase {
-    func test_queryMembers_buildsGeneratedEndpoint() {
+    func test_queryMembers_buildsGeneratedEndpoint() throws {
         let payload = QueryMembersPayload(filterConditions: [:], id: "general", limit: 25, type: "messaging")
         let endpoint: Endpoint<MembersResponse> = .queryMembers(payload: payload)
 
         XCTAssertEqual(endpoint.path.value, "/api/v2/chat/members")
         XCTAssertEqual(endpoint.method, .get)
-        XCTAssertNotNil(endpoint.queryItems?["payload"] ?? nil)
+        let payloadJSON = try XCTUnwrap(endpoint.queryItems?["payload"] ?? nil)
+        XCTAssertEqual(try JSONDecoder.stream.decode(QueryMembersPayload.self, from: Data(payloadJSON.utf8)), payload)
         XCTAssertFalse(endpoint.requiresConnectionId)
         XCTAssertNil(endpoint.body)
     }

@@ -32,6 +32,23 @@ final class RequestEncoder_Tests: XCTestCase {
         XCTAssertNil(request.httpBody)
     }
 
+    func test_encodeGetRequest_encodesPayloadObjectAsJSON() throws {
+        let payload = QueryUsersPayload(
+            filterConditions: ["id": .string("user-id")],
+            limit: 30,
+            presence: true
+        )
+        let endpoint: Endpoint<QueryUsersResponse> = .queryUsers(payload: payload)
+
+        let request = try encoder.encodeRequest(for: endpoint.withoutToken)
+        let components = try XCTUnwrap(URLComponents(url: try XCTUnwrap(request.url), resolvingAgainstBaseURL: false))
+
+        XCTAssertEqual(request.httpMethod, "GET")
+        XCTAssertEqual(components.path, "/api/v2/users")
+        let payloadJSON = try XCTUnwrap(components.queryItems?.first(where: { $0.name == "payload" })?.value)
+        XCTAssertEqual(try JSONDecoder.stream.decode(QueryUsersPayload.self, from: Data(payloadJSON.utf8)), payload)
+    }
+
     func test_encodePostRequest_encodesBody() throws {
         let body = SendEventRequest(event: EventRequest(type: "custom"))
         let endpoint: Endpoint<EventResponse> = .sendEvent(type: "messaging", id: "general", sendEventRequest: body)
