@@ -121,6 +121,10 @@ public extension EventType {
     
     // MARK: - polls
 
+    /// When a poll was created.
+    @available(*, deprecated, message: "The server never delivers poll.created; new polls arrive through message.new with the poll attached.")
+    static let pollCreated: Self = "poll.created"
+
     /// When a poll was closed.
     static let pollClosed: Self = "poll.closed"
 

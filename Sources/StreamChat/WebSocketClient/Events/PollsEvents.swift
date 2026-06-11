@@ -4,6 +4,22 @@
 
 import Foundation
 
+/// A model representing an event where a poll was created.
+@available(*, deprecated, message: "The server never delivers poll.created; new polls arrive through message.new with the poll attached.")
+public final class PollCreatedEvent: Event {
+    /// The poll that was created.
+    public let poll: Poll
+
+    /// The date and time when the event was created.
+    /// This property is optional and may be `nil`.
+    public let createdAt: Date?
+
+    init(poll: Poll, createdAt: Date?) {
+        self.poll = poll
+        self.createdAt = createdAt
+    }
+}
+
 /// A model representing an event where a poll was closed.
 public final class PollClosedEvent: Event {
     /// The poll that was closed.

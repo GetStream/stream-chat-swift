@@ -769,6 +769,7 @@
 				StreamChatTests/APIClient/Endpoints/Payloads/MemberPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/MessageAttachmentPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/MessageReactionPayload_Tests.swift,
+				StreamChatTests/APIClient/Endpoints/Payloads/MessageResponse_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/MutedChannelPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/PollPayload_Tests.swift,
 				StreamChatTests/APIClient/Endpoints/Payloads/PushPreferencePayload_Tests.swift,
