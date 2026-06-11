@@ -19,6 +19,13 @@ final class UserEndpoints_Tests: XCTestCase {
         XCTAssertNil(endpoint.body)
     }
 
+    func test_queryUsers_whenRequiresConnectionIdOverride_buildsGeneratedEndpoint() {
+        let payload = QueryUsersPayload(filterConditions: ["id": .string("user-id")], limit: 10, presence: true)
+        let endpoint: Endpoint<QueryUsersResponse> = .queryUsers(payload: payload, requiresConnectionId: true)
+
+        XCTAssertTrue(endpoint.requiresConnectionId)
+    }
+
     func test_updateUsersPartial_buildsGeneratedEndpoint() {
         let request = UpdateUsersPartialRequest(users: [
             UpdateUserPartialRequest(id: "user-id", set: ["name": .string("User")], unset: ["image"])

@@ -149,7 +149,10 @@ final class UserUpdater_Tests: XCTestCase {
             presence: query.options.contains(.presence),
             sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
         )
-        let expectedEndpoint: Endpoint<QueryUsersResponse> = .queryUsers(payload: payload)
+        let expectedEndpoint: Endpoint<QueryUsersResponse> = .queryUsers(
+            payload: payload,
+            requiresConnectionId: query.options.contains(.presence)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(expectedEndpoint))
     }
 

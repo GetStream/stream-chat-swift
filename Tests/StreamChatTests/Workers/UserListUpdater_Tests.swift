@@ -57,7 +57,10 @@ final class UserListUpdater_Tests: XCTestCase {
             presence: query.options.contains(.presence),
             sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
         )
-        let referenceEndpoint: Endpoint<QueryUsersResponse> = .queryUsers(payload: payload)
+        let referenceEndpoint: Endpoint<QueryUsersResponse> = .queryUsers(
+            payload: payload,
+            requiresConnectionId: query.options.contains(.presence)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -264,8 +267,20 @@ final class UserListUpdater_Tests: XCTestCase {
             presence: query.options.contains(.presence),
             sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
         )
-        let referenceEndpoint: Endpoint<QueryUsersResponse> = .queryUsers(payload: payload)
+        let referenceEndpoint: Endpoint<QueryUsersResponse> = .queryUsers(
+            payload: payload,
+            requiresConnectionId: query.options.contains(.presence)
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_fetch_withoutPresence_makesAPICallWithoutConnectionIdRequirement() {
+        var query = UserListQuery(filter: .equal(.id, to: "Luke"))
+        query.options = []
+
+        listUpdater.fetch(userListQuery: query, completion: { _ in })
+
+        XCTAssertEqual(apiClient.request_endpoint?.requiresConnectionId, false)
     }
 
     func test_fetch_whenSuccess_payloadIsPropagatedToCompletion() {

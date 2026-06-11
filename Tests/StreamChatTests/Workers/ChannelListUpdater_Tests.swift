@@ -56,7 +56,10 @@ final class ChannelListUpdater_Tests: XCTestCase {
             state: query.options.contains(.state),
             watch: query.options.contains(.watch)
         )
-        let referenceEndpoint: Endpoint<QueryChannelsResponse> = .queryChannels(queryChannelsRequest: request)
+        let referenceEndpoint: Endpoint<QueryChannelsResponse> = .queryChannels(
+            queryChannelsRequest: request,
+            requiresConnectionId: query.options.contains(oneOf: [.presence, .watch])
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
     }
 
@@ -251,8 +254,20 @@ final class ChannelListUpdater_Tests: XCTestCase {
             state: query.options.contains(.state),
             watch: query.options.contains(.watch)
         )
-        let referenceEndpoint: Endpoint<QueryChannelsResponse> = .queryChannels(queryChannelsRequest: request)
+        let referenceEndpoint: Endpoint<QueryChannelsResponse> = .queryChannels(
+            queryChannelsRequest: request,
+            requiresConnectionId: query.options.contains(oneOf: [.presence, .watch])
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_fetch_whenOnlyStateOption_doesNotRequireConnectionId() {
+        var query = ChannelListQuery(filter: .in(.members, values: [.unique]))
+        query.options = .state
+
+        listUpdater.fetch(channelListQuery: query, completion: { _ in })
+
+        XCTAssertFalse(apiClient.request_endpoint?.requiresConnectionId ?? true)
     }
 
     func test_fetch_successfulResponse_isPropagatedToCompletion() {
@@ -391,7 +406,10 @@ final class ChannelListUpdater_Tests: XCTestCase {
             state: expectedQuery.options.contains(.state),
             watch: expectedQuery.options.contains(.watch)
         )
-        let expectedEndpoint: Endpoint<QueryChannelsResponse> = .queryChannels(queryChannelsRequest: request)
+        let expectedEndpoint: Endpoint<QueryChannelsResponse> = .queryChannels(
+            queryChannelsRequest: request,
+            requiresConnectionId: expectedQuery.options.contains(oneOf: [.presence, .watch])
+        )
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
         XCTAssertEqual(
             Set(cids.compactMap { try? database.viewContext.channel(cid: $0)?.asModel().cid }),
@@ -427,7 +445,10 @@ final class ChannelListUpdater_Tests: XCTestCase {
             state: expectedQuery.options.contains(.state),
             watch: expectedQuery.options.contains(.watch)
         )
-        let expectedEndpoint: Endpoint<QueryChannelsResponse> = .queryChannels(queryChannelsRequest: request)
+        let expectedEndpoint: Endpoint<QueryChannelsResponse> = .queryChannels(
+            queryChannelsRequest: request,
+            requiresConnectionId: expectedQuery.options.contains(oneOf: [.presence, .watch])
+        )
         XCTAssertEqual(AnyEndpoint(expectedEndpoint), apiClient.request_endpoint)
         XCTAssertNotNil(actualError)
     }
@@ -493,6 +514,17 @@ final class ChannelListUpdater_Tests: XCTestCase {
         let body = try XCTUnwrap(apiClient.request_endpoint?.bodyAsDictionary())
         XCTAssertEqual(10, body["limit"] as? Int)
         XCTAssertNil(body["groups"])
+        XCTAssertFalse(apiClient.request_endpoint?.requiresConnectionId ?? true)
+    }
+
+    func test_queryGroupedChannels_whenPresenceOrWatchEnabled_requiresConnectionId() {
+        listUpdater.queryGroupedChannels(groups: nil, limit: 10, watch: true, presence: false, completion: { _ in })
+        XCTAssertTrue(apiClient.request_endpoint?.requiresConnectionId ?? false)
+
+        apiClient.cleanUp()
+
+        listUpdater.queryGroupedChannels(groups: nil, limit: 10, watch: false, presence: true, completion: { _ in })
+        XCTAssertTrue(apiClient.request_endpoint?.requiresConnectionId ?? false)
     }
 
     func test_queryGroupedChannels_paginated_sendsBodyWithGroupsKeyAndCursor() throws {

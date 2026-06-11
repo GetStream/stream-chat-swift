@@ -7,14 +7,21 @@ import Foundation
 extension Endpoint {
     /// Channel query endpoint used by `ChannelRepository.getChannel` and the
     /// channel-already-exists hot path.
-    static func channelQuery(_ query: ChannelQuery, requiresConnectionId: Bool? = nil) -> Endpoint<ChannelStateResponse> {
+    static func channelQuery(_ query: ChannelQuery) -> Endpoint<ChannelStateResponse> {
         let request = query.asChannelGetOrCreateRequest()
-        return .init(
-            path: query.id.map { .getOrCreateChannel(type: query.type.rawValue, id: $0) } ?? .getOrCreateDistinctChannel(type: query.type.rawValue),
-            method: .post,
-            queryItems: nil,
-            requiresConnectionId: requiresConnectionId ?? query.options.contains(oneOf: [.presence, .state, .watch]),
-            body: request
+        let requiresConnectionId = query.options.contains(oneOf: [.presence, .watch])
+        if let id = query.id {
+            return .getOrCreateChannel(
+                type: query.type.rawValue,
+                id: id,
+                channelGetOrCreateRequest: request,
+                requiresConnectionId: requiresConnectionId
+            )
+        }
+        return .getOrCreateDistinctChannel(
+            type: query.type.rawValue,
+            channelGetOrCreateRequest: request,
+            requiresConnectionId: requiresConnectionId
         )
     }
 

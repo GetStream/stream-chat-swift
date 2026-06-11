@@ -112,7 +112,10 @@ class UserUpdater: Worker, @unchecked Sendable {
             sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
         )
         apiClient
-            .request(endpoint: Endpoint<QueryUsersResponse>.queryUsers(payload: payload)) { (result: Result<QueryUsersResponse, Error>) in
+            .request(endpoint: Endpoint<QueryUsersResponse>.queryUsers(
+                payload: payload,
+                requiresConnectionId: query.options.contains(.presence)
+            )) { (result: Result<QueryUsersResponse, Error>) in
                 switch result {
                 case let .success(payload):
                     guard payload.users.count <= 1 else {

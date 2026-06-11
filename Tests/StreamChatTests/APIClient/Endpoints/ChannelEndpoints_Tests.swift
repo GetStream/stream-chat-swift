@@ -20,9 +20,10 @@ final class ChannelEndpoints_Tests: XCTestCase {
 
     func test_channelQueryWrapper_buildsCompatibilityEndpoint() {
         let cid = ChannelId(type: .messaging, id: "general")
-        let query = ChannelQuery(cid: cid)
+        var query = ChannelQuery(cid: cid)
+        query.options = []
 
-        let endpoint: Endpoint<ChannelStateResponse> = .channelQuery(query, requiresConnectionId: false)
+        let endpoint: Endpoint<ChannelStateResponse> = .channelQuery(query)
 
         XCTAssertEqual(endpoint.path.value, "/api/v2/chat/channels/messaging/general/query")
         XCTAssertEqual(endpoint.method, .post)
@@ -31,7 +32,7 @@ final class ChannelEndpoints_Tests: XCTestCase {
     }
 
     func test_channelQueryWrapper_buildsGeneratedDistinctChannelEndpoint() {
-        let query = ChannelQuery(
+        var query = ChannelQuery(
             id: nil,
             type: .messaging,
             channelPayload: .init(
@@ -44,13 +45,33 @@ final class ChannelEndpoints_Tests: XCTestCase {
                 extraData: [:]
             )
         )
+        query.options = []
 
-        let endpoint: Endpoint<ChannelStateResponse> = .channelQuery(query, requiresConnectionId: false)
+        let endpoint: Endpoint<ChannelStateResponse> = .channelQuery(query)
 
         XCTAssertEqual(endpoint.path.value, "/api/v2/chat/channels/messaging/query")
         XCTAssertEqual(endpoint.method, .post)
         XCTAssertFalse(endpoint.requiresConnectionId)
         XCTAssertNotNil(endpoint.body)
+    }
+
+    func test_channelQueryWrapper_whenPresenceOrWatchEnabled_requiresConnectionId() {
+        var presenceQuery = ChannelQuery(cid: ChannelId(type: .messaging, id: "general"))
+        presenceQuery.options = .presence
+        XCTAssertTrue(Endpoint<ChannelStateResponse>.channelQuery(presenceQuery).requiresConnectionId)
+
+        var watchQuery = ChannelQuery(cid: ChannelId(type: .messaging, id: "general"))
+        watchQuery.options = .watch
+        XCTAssertTrue(Endpoint<ChannelStateResponse>.channelQuery(watchQuery).requiresConnectionId)
+    }
+
+    func test_channelQueryWrapper_whenOnlyStateEnabled_doesNotRequireConnectionId() {
+        var query = ChannelQuery(cid: ChannelId(type: .messaging, id: "general"))
+        query.options = .state
+
+        let endpoint = Endpoint<ChannelStateResponse>.channelQuery(query)
+
+        XCTAssertFalse(endpoint.requiresConnectionId)
     }
 
     func test_channelWatchersWrapper_buildsGeneratedChannelQueryEndpoint() {

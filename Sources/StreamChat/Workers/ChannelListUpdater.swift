@@ -164,7 +164,8 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
         )
         apiClient.request(
             endpoint: Endpoint<QueryChannelsResponse>.queryChannels(
-                queryChannelsRequest: request
+                queryChannelsRequest: request,
+                requiresConnectionId: channelListQuery.options.contains(oneOf: [.presence, .watch])
             ),
             completion: completion
         )
@@ -245,7 +246,10 @@ class ChannelListUpdater: Worker, @unchecked Sendable {
             presence: presence,
             watch: watch
         )
-        let endpoint: Endpoint<GroupedQueryChannelsResponse> = .groupedQueryChannels(groupedQueryChannelsRequest: request)
+        let endpoint: Endpoint<GroupedQueryChannelsResponse> = .groupedQueryChannels(
+            groupedQueryChannelsRequest: request,
+            requiresConnectionId: presence || watch
+        )
         apiClient.request(endpoint: endpoint) { [database] result in
             switch result {
             case let .failure(error):

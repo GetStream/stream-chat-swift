@@ -320,182 +320,182 @@ enum EndpointPath: Codable, Equatable {
 }
 
 extension Endpoint {
-    static func ban(banRequest: BanRequest) -> Endpoint<BanResponse> {
+    static func ban(banRequest: BanRequest, requiresConnectionId: Bool = false) -> Endpoint<BanResponse> {
         .init(
             path: .ban,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: banRequest
         )
     }
 
-    static func blockUsers(blockUsersRequest: BlockUsersRequest) -> Endpoint<BlockUsersResponse> {
+    static func blockUsers(blockUsersRequest: BlockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<BlockUsersResponse> {
         .init(
             path: .blockUsers,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: blockUsersRequest
         )
     }
 
-    static func castPollVote(messageId: String, pollId: String, castPollVoteRequest: CastPollVoteRequest) -> Endpoint<PollVoteResponse> {
+    static func castPollVote(messageId: String, pollId: String, castPollVoteRequest: CastPollVoteRequest, requiresConnectionId: Bool = false) -> Endpoint<PollVoteResponse> {
         .init(
             path: .castPollVote(messageId: messageId, pollId: pollId),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: castPollVoteRequest
         )
     }
 
-    static func createDevice(createDeviceRequest: CreateDeviceRequest) -> Endpoint<Response> {
+    static func createDevice(createDeviceRequest: CreateDeviceRequest, requiresConnectionId: Bool = false) -> Endpoint<Response> {
         .init(
             path: .createDevice,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: createDeviceRequest
         )
     }
 
-    static func createDraft(type: String, id: String, createDraftRequest: CreateDraftRequest) -> Endpoint<CreateDraftResponse> {
+    static func createDraft(type: String, id: String, createDraftRequest: CreateDraftRequest, requiresConnectionId: Bool = false) -> Endpoint<CreateDraftResponse> {
         .init(
             path: .createDraft(type: type, id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: createDraftRequest
         )
     }
 
-    static func createGuest(createGuestRequest: CreateGuestRequest) -> Endpoint<CreateGuestResponse> {
+    static func createGuest(createGuestRequest: CreateGuestRequest, requiresConnectionId: Bool = false) -> Endpoint<CreateGuestResponse> {
         .init(
             path: .createGuest,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             requiresToken: false,
             body: createGuestRequest
         )
     }
 
-    static func createPoll(createPollRequest: CreatePollRequest) -> Endpoint<PollResponse> {
+    static func createPoll(createPollRequest: CreatePollRequest, requiresConnectionId: Bool = false) -> Endpoint<PollResponse> {
         .init(
             path: .createPoll,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: createPollRequest
         )
     }
 
-    static func createPollOption(pollId: String, createPollOptionRequest: CreatePollOptionRequest) -> Endpoint<PollOptionResponse> {
+    static func createPollOption(pollId: String, createPollOptionRequest: CreatePollOptionRequest, requiresConnectionId: Bool = false) -> Endpoint<PollOptionResponse> {
         .init(
             path: .createPollOption(pollId: pollId),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: createPollOptionRequest
         )
     }
 
-    static func createReminder(messageId: String, createReminderRequest: CreateReminderRequest) -> Endpoint<ReminderResponseData> {
+    static func createReminder(messageId: String, createReminderRequest: CreateReminderRequest, requiresConnectionId: Bool = false) -> Endpoint<ReminderResponseData> {
         .init(
             path: .createReminder(messageId: messageId),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: createReminderRequest
         )
     }
 
-    static func deleteChannel(type: String, id: String, hardDelete: Bool?) -> Endpoint<DeleteChannelResponse> {
+    static func deleteChannel(type: String, id: String, hardDelete: Bool?, requiresConnectionId: Bool = false) -> Endpoint<DeleteChannelResponse> {
         .init(
             path: .deleteChannel(type: type, id: id),
             method: .delete,
             queryItems: [
                 "hard_delete": APIHelper.convertAnyToString(hardDelete)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func deleteChannelFile(type: String, id: String, url: String?) -> Endpoint<Response> {
+    static func deleteChannelFile(type: String, id: String, url: String?, requiresConnectionId: Bool = false) -> Endpoint<Response> {
         .init(
             path: .deleteChannelFile(type: type, id: id),
             method: .delete,
             queryItems: [
                 "url": APIHelper.convertAnyToString(url)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func deleteChannelImage(type: String, id: String, url: String?) -> Endpoint<Response> {
+    static func deleteChannelImage(type: String, id: String, url: String?, requiresConnectionId: Bool = false) -> Endpoint<Response> {
         .init(
             path: .deleteChannelImage(type: type, id: id),
             method: .delete,
             queryItems: [
                 "url": APIHelper.convertAnyToString(url)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func deleteDevice(id: String) -> Endpoint<Response> {
+    static func deleteDevice(id: String, requiresConnectionId: Bool = false) -> Endpoint<Response> {
         .init(
             path: .deleteDevice,
             method: .delete,
             queryItems: [
                 "id": APIHelper.convertAnyToString(id)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func deleteDraft(type: String, id: String, parentId: String?) -> Endpoint<Response> {
+    static func deleteDraft(type: String, id: String, parentId: String?, requiresConnectionId: Bool = false) -> Endpoint<Response> {
         .init(
             path: .deleteDraft(type: type, id: id),
             method: .delete,
             queryItems: [
                 "parent_id": APIHelper.convertAnyToString(parentId)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func deleteFile(url: String?) -> Endpoint<Response> {
+    static func deleteFile(url: String?, requiresConnectionId: Bool = false) -> Endpoint<Response> {
         .init(
             path: .deleteFile,
             method: .delete,
             queryItems: [
                 "url": APIHelper.convertAnyToString(url)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func deleteImage(url: String?) -> Endpoint<Response> {
+    static func deleteImage(url: String?, requiresConnectionId: Bool = false) -> Endpoint<Response> {
         .init(
             path: .deleteImage,
             method: .delete,
             queryItems: [
                 "url": APIHelper.convertAnyToString(url)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func deleteMessage(id: String, hard: Bool?, deletedBy: String?, deleteForMe: Bool?) -> Endpoint<DeleteMessageResponse> {
+    static func deleteMessage(id: String, hard: Bool?, deletedBy: String?, deleteForMe: Bool?, requiresConnectionId: Bool = false) -> Endpoint<DeleteMessageResponse> {
         .init(
             path: .deleteMessage(id: id),
             method: .delete,
@@ -504,142 +504,142 @@ extension Endpoint {
                 "deleted_by": APIHelper.convertAnyToString(deletedBy),
                 "delete_for_me": APIHelper.convertAnyToString(deleteForMe)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func deletePoll(pollId: String, userId: String?) -> Endpoint<Response> {
+    static func deletePoll(pollId: String, userId: String?, requiresConnectionId: Bool = false) -> Endpoint<Response> {
         .init(
             path: .deletePoll(pollId: pollId),
             method: .delete,
             queryItems: [
                 "user_id": APIHelper.convertAnyToString(userId)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func deletePollVote(messageId: String, pollId: String, voteId: String, userId: String?) -> Endpoint<PollVoteResponse> {
+    static func deletePollVote(messageId: String, pollId: String, voteId: String, userId: String?, requiresConnectionId: Bool = false) -> Endpoint<PollVoteResponse> {
         .init(
             path: .deletePollVote(messageId: messageId, pollId: pollId, voteId: voteId),
             method: .delete,
             queryItems: [
                 "user_id": APIHelper.convertAnyToString(userId)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func deleteReaction(id: String, type: String, userId: String?) -> Endpoint<DeleteReactionResponse> {
+    static func deleteReaction(id: String, type: String, userId: String?, requiresConnectionId: Bool = false) -> Endpoint<DeleteReactionResponse> {
         .init(
             path: .deleteReaction(id: id, type: type),
             method: .delete,
             queryItems: [
                 "user_id": APIHelper.convertAnyToString(userId)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func deleteReminder(messageId: String) -> Endpoint<DeleteReminderResponse> {
+    static func deleteReminder(messageId: String, requiresConnectionId: Bool = false) -> Endpoint<DeleteReminderResponse> {
         .init(
             path: .deleteReminder(messageId: messageId),
             method: .delete,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func flag(flagRequest: FlagRequest) -> Endpoint<FlagResponse> {
+    static func flag(flagRequest: FlagRequest, requiresConnectionId: Bool = false) -> Endpoint<FlagResponse> {
         .init(
             path: .flag,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: flagRequest
         )
     }
 
-    static func getApp() -> Endpoint<GetApplicationResponse> {
+    static func getApp(requiresConnectionId: Bool = false) -> Endpoint<GetApplicationResponse> {
         .init(
             path: .getApp,
             method: .get,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func getBlockedUsers() -> Endpoint<GetBlockedUsersResponse> {
+    static func getBlockedUsers(requiresConnectionId: Bool = false) -> Endpoint<GetBlockedUsersResponse> {
         .init(
             path: .getBlockedUsers,
             method: .get,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func getDraft(type: String, id: String, parentId: String?) -> Endpoint<GetDraftResponse> {
+    static func getDraft(type: String, id: String, parentId: String?, requiresConnectionId: Bool = false) -> Endpoint<GetDraftResponse> {
         .init(
             path: .getDraft(type: type, id: id),
             method: .get,
             queryItems: [
                 "parent_id": APIHelper.convertAnyToString(parentId)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func getMessage(id: String) -> Endpoint<GetMessageResponse> {
+    static func getMessage(id: String, requiresConnectionId: Bool = false) -> Endpoint<GetMessageResponse> {
         .init(
             path: .getMessage(id: id),
             method: .get,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func getOG(url: String) -> Endpoint<GetOGResponse> {
+    static func getOG(url: String, requiresConnectionId: Bool = false) -> Endpoint<GetOGResponse> {
         .init(
             path: .getOG,
             method: .get,
             queryItems: [
                 "url": APIHelper.convertAnyToString(url)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func getOrCreateChannel(type: String, id: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest) -> Endpoint<ChannelStateResponse> {
+    static func getOrCreateChannel(type: String, id: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest, requiresConnectionId: Bool = true) -> Endpoint<ChannelStateResponse> {
         .init(
             path: .getOrCreateChannel(type: type, id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: true,
+            requiresConnectionId: requiresConnectionId,
             body: channelGetOrCreateRequest
         )
     }
 
-    static func getOrCreateDistinctChannel(type: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest) -> Endpoint<ChannelStateResponse> {
+    static func getOrCreateDistinctChannel(type: String, channelGetOrCreateRequest: ChannelGetOrCreateRequest, requiresConnectionId: Bool = true) -> Endpoint<ChannelStateResponse> {
         .init(
             path: .getOrCreateDistinctChannel(type: type),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: true,
+            requiresConnectionId: requiresConnectionId,
             body: channelGetOrCreateRequest
         )
     }
 
-    static func getReactions(id: String, limit: Int?, offset: Int?) -> Endpoint<GetReactionsResponse> {
+    static func getReactions(id: String, limit: Int?, offset: Int?, requiresConnectionId: Bool = false) -> Endpoint<GetReactionsResponse> {
         .init(
             path: .getReactions(id: id),
             method: .get,
@@ -647,12 +647,12 @@ extension Endpoint {
                 "limit": APIHelper.convertAnyToString(limit),
                 "offset": APIHelper.convertAnyToString(offset)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func getReplies(parentId: String, limit: Int?, idGte: String?, idGt: String?, idLte: String?, idLt: String?, idAround: String?, sort: [SortParamRequest]?) -> Endpoint<GetRepliesResponse> {
+    static func getReplies(parentId: String, limit: Int?, idGte: String?, idGt: String?, idLte: String?, idLt: String?, idAround: String?, sort: [SortParamRequest]?, requiresConnectionId: Bool = false) -> Endpoint<GetRepliesResponse> {
         .init(
             path: .getReplies(parentId: parentId),
             method: .get,
@@ -665,12 +665,12 @@ extension Endpoint {
                 "id_around": APIHelper.convertAnyToString(idAround),
                 "sort": sort.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(data: $0, encoding: .utf8) }
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func getThread(messageId: String, watch: Bool?, replyLimit: Int?, participantLimit: Int?, memberLimit: Int?) -> Endpoint<GetThreadResponse> {
+    static func getThread(messageId: String, watch: Bool?, replyLimit: Int?, participantLimit: Int?, memberLimit: Int?, requiresConnectionId: Bool = true) -> Endpoint<GetThreadResponse> {
         .init(
             path: .getThread(messageId: messageId),
             method: .get,
@@ -680,270 +680,270 @@ extension Endpoint {
                 "participant_limit": APIHelper.convertAnyToString(participantLimit),
                 "member_limit": APIHelper.convertAnyToString(memberLimit)
             ],
-            requiresConnectionId: true,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func getUserLiveLocations() -> Endpoint<SharedLocationsResponse> {
+    static func getUserLiveLocations(requiresConnectionId: Bool = false) -> Endpoint<SharedLocationsResponse> {
         .init(
             path: .getUserLiveLocations,
             method: .get,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func groupedQueryChannels(groupedQueryChannelsRequest: GroupedQueryChannelsRequest) -> Endpoint<GroupedQueryChannelsResponse> {
+    static func groupedQueryChannels(groupedQueryChannelsRequest: GroupedQueryChannelsRequest, requiresConnectionId: Bool = true) -> Endpoint<GroupedQueryChannelsResponse> {
         .init(
             path: .groupedQueryChannels,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: true,
+            requiresConnectionId: requiresConnectionId,
             body: groupedQueryChannelsRequest
         )
     }
 
-    static func hideChannel(type: String, id: String, hideChannelRequest: HideChannelRequest) -> Endpoint<HideChannelResponse> {
+    static func hideChannel(type: String, id: String, hideChannelRequest: HideChannelRequest, requiresConnectionId: Bool = false) -> Endpoint<HideChannelResponse> {
         .init(
             path: .hideChannel(type: type, id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: hideChannelRequest
         )
     }
 
-    static func listDevices() -> Endpoint<ListDevicesResponse> {
+    static func listDevices(requiresConnectionId: Bool = false) -> Endpoint<ListDevicesResponse> {
         .init(
             path: .listDevices,
             method: .get,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest) -> Endpoint<MarkReadResponse> {
+    static func markChannelsRead(markChannelsReadRequest: MarkChannelsReadRequest, requiresConnectionId: Bool = false) -> Endpoint<MarkReadResponse> {
         .init(
             path: .markChannelsRead,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: markChannelsReadRequest
         )
     }
 
-    static func markDelivered(markDeliveredRequest: MarkDeliveredRequest) -> Endpoint<MarkDeliveredResponse> {
+    static func markDelivered(markDeliveredRequest: MarkDeliveredRequest, requiresConnectionId: Bool = false) -> Endpoint<MarkDeliveredResponse> {
         .init(
             path: .markDelivered,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: markDeliveredRequest
         )
     }
 
-    static func markRead(type: String, id: String, markReadRequest: MarkReadRequest) -> Endpoint<MarkReadResponse> {
+    static func markRead(type: String, id: String, markReadRequest: MarkReadRequest, requiresConnectionId: Bool = false) -> Endpoint<MarkReadResponse> {
         .init(
             path: .markRead(type: type, id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: markReadRequest
         )
     }
 
-    static func markUnread(type: String, id: String, markUnreadRequest: MarkUnreadRequest) -> Endpoint<Response> {
+    static func markUnread(type: String, id: String, markUnreadRequest: MarkUnreadRequest, requiresConnectionId: Bool = false) -> Endpoint<Response> {
         .init(
             path: .markUnread(type: type, id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: markUnreadRequest
         )
     }
 
-    static func mute(muteRequest: MuteRequest) -> Endpoint<MuteResponse> {
+    static func mute(muteRequest: MuteRequest, requiresConnectionId: Bool = false) -> Endpoint<MuteResponse> {
         .init(
             path: .mute,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: muteRequest
         )
     }
 
-    static func muteChannel(muteChannelRequest: MuteChannelRequest) -> Endpoint<MuteChannelResponse> {
+    static func muteChannel(muteChannelRequest: MuteChannelRequest, requiresConnectionId: Bool = false) -> Endpoint<MuteChannelResponse> {
         .init(
             path: .muteChannel,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: muteChannelRequest
         )
     }
 
-    static func queryChannels(queryChannelsRequest: QueryChannelsRequest) -> Endpoint<QueryChannelsResponse> {
+    static func queryChannels(queryChannelsRequest: QueryChannelsRequest, requiresConnectionId: Bool = true) -> Endpoint<QueryChannelsResponse> {
         .init(
             path: .queryChannels,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: true,
+            requiresConnectionId: requiresConnectionId,
             body: queryChannelsRequest
         )
     }
 
-    static func queryDrafts(queryDraftsRequest: QueryDraftsRequest) -> Endpoint<QueryDraftsResponse> {
+    static func queryDrafts(queryDraftsRequest: QueryDraftsRequest, requiresConnectionId: Bool = false) -> Endpoint<QueryDraftsResponse> {
         .init(
             path: .queryDrafts,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: queryDraftsRequest
         )
     }
 
-    static func queryMembers(payload: QueryMembersPayload?) -> Endpoint<MembersResponse> {
+    static func queryMembers(payload: QueryMembersPayload?, requiresConnectionId: Bool = false) -> Endpoint<MembersResponse> {
         .init(
             path: .queryMembers,
             method: .get,
             queryItems: [
                 "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(data: $0, encoding: .utf8) }
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func queryPollVotes(pollId: String, userId: String?, queryPollVotesRequest: QueryPollVotesRequest) -> Endpoint<PollVotesResponse> {
+    static func queryPollVotes(pollId: String, userId: String?, queryPollVotesRequest: QueryPollVotesRequest, requiresConnectionId: Bool = false) -> Endpoint<PollVotesResponse> {
         .init(
             path: .queryPollVotes(pollId: pollId),
             method: .post,
             queryItems: [
                 "user_id": APIHelper.convertAnyToString(userId)
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: queryPollVotesRequest
         )
     }
 
-    static func queryReactions(id: String, queryReactionsRequest: QueryReactionsRequest) -> Endpoint<QueryReactionsResponse> {
+    static func queryReactions(id: String, queryReactionsRequest: QueryReactionsRequest, requiresConnectionId: Bool = false) -> Endpoint<QueryReactionsResponse> {
         .init(
             path: .queryReactions(id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: queryReactionsRequest
         )
     }
 
-    static func queryReminders(queryRemindersRequest: QueryRemindersRequest) -> Endpoint<QueryRemindersResponse> {
+    static func queryReminders(queryRemindersRequest: QueryRemindersRequest, requiresConnectionId: Bool = false) -> Endpoint<QueryRemindersResponse> {
         .init(
             path: .queryReminders,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: queryRemindersRequest
         )
     }
 
-    static func queryThreads(queryThreadsRequest: QueryThreadsRequest) -> Endpoint<QueryThreadsResponse> {
+    static func queryThreads(queryThreadsRequest: QueryThreadsRequest, requiresConnectionId: Bool = true) -> Endpoint<QueryThreadsResponse> {
         .init(
             path: .queryThreads,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: true,
+            requiresConnectionId: requiresConnectionId,
             body: queryThreadsRequest
         )
     }
 
-    static func queryUsers(payload: QueryUsersPayload?) -> Endpoint<QueryUsersResponse> {
+    static func queryUsers(payload: QueryUsersPayload?, requiresConnectionId: Bool = false) -> Endpoint<QueryUsersResponse> {
         .init(
             path: .queryUsers,
             method: .get,
             queryItems: [
                 "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(data: $0, encoding: .utf8) }
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func runMessageAction(id: String, messageActionRequest: MessageActionRequest) -> Endpoint<MessageActionResponse> {
+    static func runMessageAction(id: String, messageActionRequest: MessageActionRequest, requiresConnectionId: Bool = false) -> Endpoint<MessageActionResponse> {
         .init(
             path: .runMessageAction(id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: messageActionRequest
         )
     }
 
-    static func search(payload: SearchPayload?) -> Endpoint<SearchResponse> {
+    static func search(payload: SearchPayload?, requiresConnectionId: Bool = false) -> Endpoint<SearchResponse> {
         .init(
             path: .search,
             method: .get,
             queryItems: [
                 "payload": payload.flatMap { try? CodableHelper.encode($0).get() }.flatMap { String(data: $0, encoding: .utf8) }
             ],
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func sendEvent(type: String, id: String, sendEventRequest: SendEventRequest) -> Endpoint<EventResponse> {
+    static func sendEvent(type: String, id: String, sendEventRequest: SendEventRequest, requiresConnectionId: Bool = false) -> Endpoint<EventResponse> {
         .init(
             path: .sendEvent(type: type, id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: sendEventRequest
         )
     }
 
-    static func sendMessage(type: String, id: String, sendMessageRequest: SendMessageRequest) -> Endpoint<SendMessageResponsePayload> {
+    static func sendMessage(type: String, id: String, sendMessageRequest: SendMessageRequest, requiresConnectionId: Bool = false) -> Endpoint<SendMessageResponsePayload> {
         .init(
             path: .sendMessage(type: type, id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: sendMessageRequest
         )
     }
 
-    static func sendReaction(id: String, sendReactionRequest: SendReactionRequest) -> Endpoint<SendReactionResponse> {
+    static func sendReaction(id: String, sendReactionRequest: SendReactionRequest, requiresConnectionId: Bool = false) -> Endpoint<SendReactionResponse> {
         .init(
             path: .sendReaction(id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: sendReactionRequest
         )
     }
 
-    static func showChannel(type: String, id: String) -> Endpoint<ShowChannelResponse> {
+    static func showChannel(type: String, id: String, requiresConnectionId: Bool = false) -> Endpoint<ShowChannelResponse> {
         .init(
             path: .showChannel(type: type, id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func stopWatchingChannel(type: String, id: String) -> Endpoint<Response> {
+    static func stopWatchingChannel(type: String, id: String, requiresConnectionId: Bool = true) -> Endpoint<Response> {
         .init(
             path: .stopWatchingChannel(type: type, id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: true,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func sync(syncRequest: SyncRequest, withInaccessibleCids: Bool?, watch: Bool?) -> Endpoint<SyncResponse> {
+    static func sync(syncRequest: SyncRequest, withInaccessibleCids: Bool?, watch: Bool?, requiresConnectionId: Bool = true) -> Endpoint<SyncResponse> {
         .init(
             path: .sync,
             method: .post,
@@ -951,207 +951,207 @@ extension Endpoint {
                 "with_inaccessible_cids": APIHelper.convertAnyToString(withInaccessibleCids),
                 "watch": APIHelper.convertAnyToString(watch)
             ],
-            requiresConnectionId: true,
+            requiresConnectionId: requiresConnectionId,
             body: syncRequest
         )
     }
 
-    static func translateMessage(id: String, translateMessageRequest: TranslateMessageRequest) -> Endpoint<MessageActionResponse> {
+    static func translateMessage(id: String, translateMessageRequest: TranslateMessageRequest, requiresConnectionId: Bool = false) -> Endpoint<MessageActionResponse> {
         .init(
             path: .translateMessage(id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: translateMessageRequest
         )
     }
 
-    static func truncateChannel(type: String, id: String, truncateChannelRequest: TruncateChannelRequest) -> Endpoint<TruncateChannelResponse> {
+    static func truncateChannel(type: String, id: String, truncateChannelRequest: TruncateChannelRequest, requiresConnectionId: Bool = false) -> Endpoint<TruncateChannelResponse> {
         .init(
             path: .truncateChannel(type: type, id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: truncateChannelRequest
         )
     }
 
-    static func unblockUsers(unblockUsersRequest: UnblockUsersRequest) -> Endpoint<UnblockUsersResponse> {
+    static func unblockUsers(unblockUsersRequest: UnblockUsersRequest, requiresConnectionId: Bool = false) -> Endpoint<UnblockUsersResponse> {
         .init(
             path: .unblockUsers,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: unblockUsersRequest
         )
     }
 
-    static func unmuteChannel(unmuteChannelRequest: UnmuteChannelRequest) -> Endpoint<UnmuteResponse> {
+    static func unmuteChannel(unmuteChannelRequest: UnmuteChannelRequest, requiresConnectionId: Bool = false) -> Endpoint<UnmuteResponse> {
         .init(
             path: .unmuteChannel,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: unmuteChannelRequest
         )
     }
 
-    static func unreadCounts() -> Endpoint<WrappedUnreadCountsResponse> {
+    static func unreadCounts(requiresConnectionId: Bool = false) -> Endpoint<WrappedUnreadCountsResponse> {
         .init(
             path: .unreadCounts,
             method: .get,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: nil
         )
     }
 
-    static func updateChannel(type: String, id: String, updateChannelRequest: UpdateChannelRequest) -> Endpoint<UpdateChannelResponse> {
+    static func updateChannel(type: String, id: String, updateChannelRequest: UpdateChannelRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateChannelResponse> {
         .init(
             path: .updateChannel(type: type, id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: updateChannelRequest
         )
     }
 
-    static func updateChannelPartial(type: String, id: String, updateChannelPartialRequest: UpdateChannelPartialRequest) -> Endpoint<UpdateChannelPartialResponse> {
+    static func updateChannelPartial(type: String, id: String, updateChannelPartialRequest: UpdateChannelPartialRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateChannelPartialResponse> {
         .init(
             path: .updateChannelPartial(type: type, id: id),
             method: .patch,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: updateChannelPartialRequest
         )
     }
 
-    static func updateLiveLocation(updateLiveLocationRequest: UpdateLiveLocationRequest) -> Endpoint<SharedLocationResponse> {
+    static func updateLiveLocation(updateLiveLocationRequest: UpdateLiveLocationRequest, requiresConnectionId: Bool = false) -> Endpoint<SharedLocationResponse> {
         .init(
             path: .updateLiveLocation,
             method: .put,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: updateLiveLocationRequest
         )
     }
 
-    static func updateMemberPartial(type: String, id: String, updateMemberPartialRequest: UpdateMemberPartialRequest) -> Endpoint<UpdateMemberPartialResponse> {
+    static func updateMemberPartial(type: String, id: String, updateMemberPartialRequest: UpdateMemberPartialRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateMemberPartialResponse> {
         .init(
             path: .updateMemberPartial(type: type, id: id),
             method: .patch,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: updateMemberPartialRequest
         )
     }
 
-    static func updateMessage(id: String, updateMessageRequest: UpdateMessageRequest) -> Endpoint<UpdateMessageResponse> {
+    static func updateMessage(id: String, updateMessageRequest: UpdateMessageRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateMessageResponse> {
         .init(
             path: .updateMessage(id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: updateMessageRequest
         )
     }
 
-    static func updateMessagePartial(id: String, updateMessagePartialRequest: UpdateMessagePartialRequest) -> Endpoint<UpdateMessagePartialResponse> {
+    static func updateMessagePartial(id: String, updateMessagePartialRequest: UpdateMessagePartialRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateMessagePartialResponse> {
         .init(
             path: .updateMessagePartial(id: id),
             method: .put,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: updateMessagePartialRequest
         )
     }
 
-    static func updatePollPartial(pollId: String, updatePollPartialRequest: UpdatePollPartialRequest) -> Endpoint<PollResponse> {
+    static func updatePollPartial(pollId: String, updatePollPartialRequest: UpdatePollPartialRequest, requiresConnectionId: Bool = false) -> Endpoint<PollResponse> {
         .init(
             path: .updatePollPartial(pollId: pollId),
             method: .patch,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: updatePollPartialRequest
         )
     }
 
-    static func updatePushNotificationPreferences(upsertPushPreferencesRequest: UpsertPushPreferencesRequest) -> Endpoint<UpsertPushPreferencesResponse> {
+    static func updatePushNotificationPreferences(upsertPushPreferencesRequest: UpsertPushPreferencesRequest, requiresConnectionId: Bool = false) -> Endpoint<UpsertPushPreferencesResponse> {
         .init(
             path: .updatePushNotificationPreferences,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: upsertPushPreferencesRequest
         )
     }
 
-    static func updateReminder(messageId: String, updateReminderRequest: UpdateReminderRequest) -> Endpoint<UpdateReminderResponse> {
+    static func updateReminder(messageId: String, updateReminderRequest: UpdateReminderRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateReminderResponse> {
         .init(
             path: .updateReminder(messageId: messageId),
             method: .patch,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: updateReminderRequest
         )
     }
 
-    static func updateThreadPartial(messageId: String, updateThreadPartialRequest: UpdateThreadPartialRequest) -> Endpoint<UpdateThreadPartialResponse> {
+    static func updateThreadPartial(messageId: String, updateThreadPartialRequest: UpdateThreadPartialRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateThreadPartialResponse> {
         .init(
             path: .updateThreadPartial(messageId: messageId),
             method: .patch,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: updateThreadPartialRequest
         )
     }
 
-    static func updateUsersPartial(updateUsersPartialRequest: UpdateUsersPartialRequest) -> Endpoint<UpdateUsersResponse> {
+    static func updateUsersPartial(updateUsersPartialRequest: UpdateUsersPartialRequest, requiresConnectionId: Bool = false) -> Endpoint<UpdateUsersResponse> {
         .init(
             path: .updateUsersPartial,
             method: .patch,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: updateUsersPartialRequest
         )
     }
 
-    static func uploadChannelFile(type: String, id: String, uploadChannelFileRequest: UploadChannelFileRequest) -> Endpoint<UploadChannelFileResponse> {
+    static func uploadChannelFile(type: String, id: String, uploadChannelFileRequest: UploadChannelFileRequest, requiresConnectionId: Bool = false) -> Endpoint<UploadChannelFileResponse> {
         .init(
             path: .uploadChannelFile(type: type, id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: uploadChannelFileRequest
         )
     }
 
-    static func uploadChannelImage(type: String, id: String, uploadChannelRequest: UploadChannelRequest) -> Endpoint<UploadChannelResponse> {
+    static func uploadChannelImage(type: String, id: String, uploadChannelRequest: UploadChannelRequest, requiresConnectionId: Bool = false) -> Endpoint<UploadChannelResponse> {
         .init(
             path: .uploadChannelImage(type: type, id: id),
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: uploadChannelRequest
         )
     }
 
-    static func uploadFile(fileUploadRequest: FileUploadRequest) -> Endpoint<FileUploadResponse> {
+    static func uploadFile(fileUploadRequest: FileUploadRequest, requiresConnectionId: Bool = false) -> Endpoint<FileUploadResponse> {
         .init(
             path: .uploadFile,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: fileUploadRequest
         )
     }
 
-    static func uploadImage(imageUploadRequest: ImageUploadRequest) -> Endpoint<ImageUploadResponse> {
+    static func uploadImage(imageUploadRequest: ImageUploadRequest, requiresConnectionId: Bool = false) -> Endpoint<ImageUploadResponse> {
         .init(
             path: .uploadImage,
             method: .post,
             queryItems: nil,
-            requiresConnectionId: false,
+            requiresConnectionId: requiresConnectionId,
             body: imageUploadRequest
         )
     }

@@ -15,8 +15,7 @@ class ChannelRepository: @unchecked Sendable {
     }
     
     func getChannel(for query: ChannelQuery, store: Bool, completion: @escaping @Sendable (Result<ChatChannel, Error>) -> Void) {
-        let requiresConnectionId = query.options != .state && query.options.contains(oneOf: [.presence, .state, .watch])
-        apiClient.request(endpoint: .channelQuery(query, requiresConnectionId: requiresConnectionId)) { [database] result in
+        apiClient.request(endpoint: .channelQuery(query)) { [database] result in
             switch result {
             case .success(let channelPayload):
                 database.write(converting: { session in

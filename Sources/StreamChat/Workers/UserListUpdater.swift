@@ -62,7 +62,10 @@ class UserListUpdater: Worker, @unchecked Sendable {
             sort: userListQuery.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.rawValue) }
         )
         apiClient.request(
-            endpoint: Endpoint<QueryUsersResponse>.queryUsers(payload: payload),
+            endpoint: Endpoint<QueryUsersResponse>.queryUsers(
+                payload: payload,
+                requiresConnectionId: userListQuery.options.contains(.presence)
+            ),
             completion: completion
         )
     }

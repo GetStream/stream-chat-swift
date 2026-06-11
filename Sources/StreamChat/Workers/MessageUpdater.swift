@@ -1115,7 +1115,8 @@ class MessageUpdater: Worker, @unchecked Sendable {
                 watch: query.watch,
                 replyLimit: query.replyLimit,
                 participantLimit: query.participantLimit,
-                memberLimit: nil
+                memberLimit: nil,
+                requiresConnectionId: query.watch
             )
         ) { result in
             switch result {

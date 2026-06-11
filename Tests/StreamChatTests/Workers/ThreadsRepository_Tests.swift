@@ -102,7 +102,10 @@ final class ThreadsRepository_Tests: XCTestCase {
             sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
             watch: query.watch
         )
-        let referenceEndpoint: Endpoint<QueryThreadsResponse> = .queryThreads(queryThreadsRequest: request)
+        let referenceEndpoint: Endpoint<QueryThreadsResponse> = .queryThreads(
+            queryThreadsRequest: request,
+            requiresConnectionId: query.watch
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
 
         let loadedThreads = payload.threads.map {
@@ -184,7 +187,10 @@ final class ThreadsRepository_Tests: XCTestCase {
             sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
             watch: query.watch
         )
-        let referenceEndpoint: Endpoint<QueryThreadsResponse> = .queryThreads(queryThreadsRequest: request)
+        let referenceEndpoint: Endpoint<QueryThreadsResponse> = .queryThreads(
+            queryThreadsRequest: request,
+            requiresConnectionId: query.watch
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
 
         let loadedThreads = payload.threads.map {
@@ -218,7 +224,18 @@ final class ThreadsRepository_Tests: XCTestCase {
             sort: query.sort.map { SortParamRequest(direction: $0.isAscending ? 1 : -1, field: $0.key.remoteKey) },
             watch: query.watch
         )
-        let referenceEndpoint: Endpoint<QueryThreadsResponse> = .queryThreads(queryThreadsRequest: request)
+        let referenceEndpoint: Endpoint<QueryThreadsResponse> = .queryThreads(
+            queryThreadsRequest: request,
+            requiresConnectionId: query.watch
+        )
         XCTAssertEqual(apiClient.request_endpoint, AnyEndpoint(referenceEndpoint))
+    }
+
+    func test_loadThreads_whenWatchIsFalse_doesNotRequireConnectionId() {
+        let query = ThreadListQuery(watch: false)
+
+        repository.loadThreads(query: query) { _ in }
+
+        XCTAssertFalse(apiClient.request_endpoint?.requiresConnectionId ?? true)
     }
 }

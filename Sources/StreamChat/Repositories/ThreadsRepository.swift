@@ -35,7 +35,10 @@ class ThreadsRepository: @unchecked Sendable {
             watch: query.watch
         )
         apiClient.request(
-            endpoint: Endpoint<QueryThreadsResponse>.queryThreads(queryThreadsRequest: request)
+            endpoint: Endpoint<QueryThreadsResponse>.queryThreads(
+                queryThreadsRequest: request,
+                requiresConnectionId: query.watch
+            )
         ) { [weak self] result in
             switch result {
             case .success(let threadListPayload):

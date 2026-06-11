@@ -3134,6 +3134,7 @@ final class MessageUpdater_Tests: XCTestCase {
             XCTAssertEqual(result.value?.title, "TEST")
             exp.fulfill()
         }
+        XCTAssertFalse(apiClient.request_endpoint?.requiresConnectionId ?? true)
 
         apiClient.test_simulateResponse(.success(GetThreadResponse.dummy(
             thread: ThreadStateResponse.dummy(
@@ -3144,6 +3145,14 @@ final class MessageUpdater_Tests: XCTestCase {
         )))
 
         wait(for: [exp], timeout: defaultTimeout)
+    }
+
+    func test_loadThread_whenWatchIsTrue_requiresConnectionId() {
+        let threadId = MessageId.unique
+
+        messageUpdater.loadThread(query: .init(messageId: threadId, watch: true)) { _ in }
+
+        XCTAssertTrue(apiClient.request_endpoint?.requiresConnectionId ?? false)
     }
 
     func test_loadThread_whenFailure() throws {
