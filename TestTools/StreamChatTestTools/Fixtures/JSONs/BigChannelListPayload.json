@@ -13593,9 +13593,10 @@
                             "type": "file",
                             "title": "API response.rtf",
                             "asset_url": "https://us-east.stream-io-cdn.com/1168686/attachments/ad16ec57-d92b-4367-a090-e20e5266179c.API%20response.rtf?Expires=1650463981&Signature=KiMfowv0jpApA2Tg05WFcwdfRCvuYSADWQB7fV0iH8aMUEdOhO4gdZBEKAB-LqsLdhQ4pr6L0a-ET-tHFdZb4hA8UVuBTQSF-OgAaTj0sRdbrcoS046G7dwdCM1La7~bn7erAZ9sscpEjqqQPumw6lqPvq0jAAdmEQvCkekrxKlrli7n18cOT9R9DOb~X2E~qlitO~9DebQ6hzl~XPx4lCDgmiHR3FrIWqDtZbqbzncobr6pwK2Go7P3rAcgNR6AMiSCrcMdx6XGyA8vgBX-CqnEYSvSzbfb0Mn4wpTJ9lWMqsoDK83Jc3inc~hyFTW2iMb7kdTb~mSnuGDf3MQbqA__&Key-Pair-Id=APKAIHG36VEWPDULE23Q",
-                            "file_size": 1831,
-                            "mime_type": "text/rtf",
-                            "custom": {}
+                            "custom": {
+                                "file_size": 1831,
+                                "mime_type": "text/rtf"
+                            }
                         }
                     ],
                     "latest_reactions": [],
@@ -13665,9 +13666,10 @@
                             "type": "file",
                             "title": "IMG_3562.heic",
                             "asset_url": "https://us-east.stream-io-cdn.com/1168686/attachments/d57865f3-6ef7-4b3d-86f5-664c2cd30ed8.IMG_3562.heic?Expires=1650463998&Signature=mAwnnNtIRiEJcNNZ3x~d0GgnKd7GWazrv9tMaLpS4-ZFY8w2gl498HGKDUr-usbILHYoW24KmjqAqPWL2H7yafBOw3IouZ~BhzzqQYXY5r5~boRkr6Xwjji-ntLuJKDihmRcTu6bfRxy59OyxHRTuMSHT9~113Act4MQk3y0Et9H7AEdlcU3-faEuBNSem-VKI9l5QCZOhbPHbsqHHDXmuPUu3W7ktN5M2zSw7RbCEMQiIK1H9VwSulyDqn81HOCqVQjikmToOLXoOuqt5Mee3WMgY2wQQSNFGX6Pd6iDeREUfVORKPnAWyDzR1nS8m2ZhS--ECNbSvtpJ5swmhRnQ__&Key-Pair-Id=APKAIHG36VEWPDULE23Q",
-                            "file_size": 4370952,
-                            "mime_type": "application/octet-stream",
-                            "custom": {}
+                            "custom": {
+                                "file_size": 4370952,
+                                "mime_type": "application/octet-stream"
+                            }
                         }
                     ],
                     "latest_reactions": [],
@@ -13718,9 +13720,10 @@
                             "type": "file",
                             "title": "Palette.plist",
                             "asset_url": "https://us-east.stream-io-cdn.com/1168686/attachments/71d0217a-c238-4c4d-86b1-6f2a598ccd2f.Palette.plist?Expires=1650464158&Signature=AkVo7f3KzpUpiWthA7jvRydhm0EP0tNnam9wguMYElMCiglP8HKIcN8LDgN1ZliZP~rqD4DHvHSHPTfIdwlc1NPIj9cSX1j~usXLLUVMCMAREb4v0KFYVX2ztNDw~pQoRICtT1QaR4Mm~zske3X2BlaPEj-Q3ZQ9uP6P32okjw8ojYB-SHbahXThVmivXzoTj6zop0vQdY3r-wRESm3nDWgMi8BUDauhkpF7t7xCYhXI3NM73iRZm7FFxXCi3h5qOTSmbXMIUGCgdSgeuwo-dQ6aFx93KP50GVKuE09sm4x~pcS8eEtzqlYp5BPZeWXI9oQ6tTR39NE3AdbuWXVasA__&Key-Pair-Id=APKAIHG36VEWPDULE23Q",
-                            "file_size": 42,
-                            "mime_type": "application/octet-stream",
-                            "custom": {}
+                            "custom": {
+                                "file_size": 42,
+                                "mime_type": "application/octet-stream"
+                            }
                         }
                     ],
                     "latest_reactions": [],
@@ -15710,17 +15713,19 @@
                             "type": "file",
                             "title": "API response.rtf",
                             "asset_url": "https://us-east.stream-io-cdn.com/1168686/attachments/7b2fc62b-7d9a-423d-ac1c-86824747f289.API%20response.rtf?Expires=1650472529&Signature=HC56O0FhgNjG7TghOIYYW-sKXVX-chxlB5GOlfoUjCON~s7WBpEGHxD2WGmwxeaSTaSm7qNB~FvMZHbt1zFyC4QMsy39pLAjDZYhsF6xG8JMHQPztQoNZsw7ajO3psJF5IxmzoYo7zQhnWl3z2igVUKXOh4cuVv7zWfboYRdF6w2tCSBIgumRgDFhPxyfnsVKIipgHaQmp5s~mNS6ujYlLtgbQNtQe6l5RJ1WChtX-8uOBXh9bY3xQXmPPyPT44MiBmixRlkJABHclZfan~uMdP4jlRCpT~lLi7MhChof1r-P22z-N2lQ1~jx0Ux1GxcdUnSpJcUvovITlQtLjYpMg__&Key-Pair-Id=APKAIHG36VEWPDULE23Q",
-                            "file_size": 1831,
-                            "mime_type": "text/rtf",
-                            "custom": {}
+                            "custom": {
+                                "file_size": 1831,
+                                "mime_type": "text/rtf"
+                            }
                         },
                         {
                             "type": "file",
                             "title": "API response 2.rtf",
                             "asset_url": "https://us-east.stream-io-cdn.com/1168686/attachments/b406300b-4914-4bc5-901a-c4d6501801f8.API%20response%202.rtf?Expires=1650472529&Signature=EkMQs2Cae13lwFoW9APcEuLSoUyrhQkCcnDLS~PEPKzIsY6fxrdK9M8K6oYK6w~AwV387vcMbMXhgYXCsleWTij2BCs5xLiKfcONmZqLG9GrCwAWSuUBbYKRu-rGcwX3tpxR7-stjlQt~shsVduMpYnZnkhV67aR0uUBYFPoXYLkZ7ttwYNX6wv406~njdhAsHp5QiIT-VNpcKdak5Z9~EepwoPCCLxwhbCD-EV9oU37kxFx6w12gOh5~ViZn4eg6Ji-yJC7ewmRvwzRrpu6p6~prakDwJa9FAIO0p~tIj-6wXC0Y1sdKcqca8Ov-Yf~1egVJIfwzKy9NauV-5WAgw__&Key-Pair-Id=APKAIHG36VEWPDULE23Q",
-                            "file_size": 1831,
-                            "mime_type": "text/rtf",
-                            "custom": {}
+                            "custom": {
+                                "file_size": 1831,
+                                "mime_type": "text/rtf"
+                            }
                         },
                         {
                             "type": "image",
@@ -52940,9 +52945,10 @@
                             "type": "video",
                             "title": "VID_20220316_101602.mp4",
                             "asset_url": "https://us-east.stream-io-cdn.com/1168686/attachments/6ac1ac78-21b6-4962-857e-d62d1e527106.VID_20220316_101602.mp4?Expires=1650793294&Signature=jhaD5i6Q~22P0nlb7VqC5ZdU-pLrWOs9UBnLa8vEvKw02yLLbuOyF7~rLAkOFcRZDEz9sQQ039xGi3HdbHJZVpdIS3ioSMKiMUW2RDAGrALDGgN9vi7OiKVJhVVtJvfp0jt-Mo2rbtc0amh-oMxoW1GRZD8vsaBZLW7-0AVggUo~2Y47-KvrNxhfOp-cMZmuh8IrgFdsYsWRpDfIh~P68xnPdMgcbytEtfEzhESFfyYuA-p2lCdM4IH0RtoZkSnR1dhVKlRCg5spjrct4J0ffFi9Xwv3vQjRrogBC0W0eBD8KLP151zRKL3~Kz2j23wvHfIzCjgO6Suz~ToPSG~kEw__&Key-Pair-Id=APKAIHG36VEWPDULE23Q",
-                            "file_size": 23775347,
-                            "mime_type": "video/mp4",
-                            "custom": {}
+                            "custom": {
+                                "file_size": 23775347,
+                                "mime_type": "video/mp4"
+                            }
                         }
                     ],
                     "latest_reactions": [

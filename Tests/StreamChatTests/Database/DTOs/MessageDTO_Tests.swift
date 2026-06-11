@@ -1244,6 +1244,44 @@ final class MessageDTO_Tests: XCTestCase {
         XCTAssertEqual(requestBody.type, nil)
     }
 
+    func test_asRequestBody_encodesAttachmentStandardFieldsTopLevel_andCustomFieldsNested() throws {
+        let cid: ChannelId = .unique
+        let messageId: MessageId = .unique
+
+        try database.createCurrentUser(id: .unique)
+        try database.createChannel(cid: cid, withMessages: false)
+        try database.createMessage(id: messageId, cid: cid)
+
+        try database.writeSynchronously { session in
+            let message = try XCTUnwrap(session.message(id: messageId))
+            let attachment = try session.saveAttachment(
+                payload: .make(
+                    type: .image,
+                    payload: .dictionary([
+                        "image_url": .string("https://getstream.io/some.jpg"),
+                        "my_field": .string("my_value")
+                    ])
+                ),
+                id: .init(cid: cid, messageId: messageId, index: 0)
+            )
+            attachment.localState = nil
+            message.attachments.insert(attachment)
+        }
+
+        let requestBody: MessageRequest = try database.readSynchronously { session in
+            try XCTUnwrap(session.message(id: messageId)).asRequestBody()
+        }
+
+        let encoded = try JSONEncoder.stream.encode(requestBody)
+        let json = try JSONDecoder.stream.decode(RawJSON.self, from: encoded)
+        let attachmentJSON = try XCTUnwrap(json.dictionaryValue?["attachments"]?.arrayValue?.first?.dictionaryValue)
+
+        XCTAssertEqual(attachmentJSON["type"], .string("image"))
+        XCTAssertEqual(attachmentJSON["image_url"], .string("https://getstream.io/some.jpg"))
+        XCTAssertNil(attachmentJSON["my_field"])
+        XCTAssertEqual(attachmentJSON["custom"], .dictionary(["my_field": .string("my_value")]))
+    }
+
     func test_newMessage_asRequestBody_whenSystemMessage() throws {
         let currentUserId: UserId = .unique
         let cid: ChannelId = .unique

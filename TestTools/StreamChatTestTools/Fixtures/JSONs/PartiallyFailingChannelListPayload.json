@@ -2797,9 +2797,10 @@
                             "type": "file",
                             "title": "Dummy.rtf",
                             "asset_url": "https://us-east.stream-io-cdn.com/102399/attachments/d8b20cbf-dfa6-40bf-8b95-e9fa37ed5c84.Dummy.rtf?Key-Pair-Id=APKAIHG36VEWPDULE23Q&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy1lYXN0LnN0cmVhbS1pby1jZG4uY29tLzEwMjM5OS9hdHRhY2htZW50cy9kOGIyMGNiZi1kZmE2LTQwYmYtOGI5NS1lOWZhMzdlZDVjODQuRHVtbXkucnRmKiIsIkNvbmRpdGlvbiI6eyJEYXRlTGVzc1RoYW4iOnsiQVdTOkVwb2NoVGltZSI6MTY4MDU3NjY2Mn19fV19&Signature=e2vtmM9NYUkMtK2OWv3GDDgcUOE0Z-QXJX~fO2PIW3L7D7fR9ikebcxpshyIpojqVI3A6yslTYDVvH60epDu0hpT5PkkVllwucNdc~SyDd7oQOuz4BLQZLZJKd41tCs2oH2jreeY3DXmgQlwX4WeqIHbuTd0cGG7NjIEM8j5WxMtdlOVxtx2pP~j0HEkUw~ZoMD2Cc1otvE8h5Iaah-jkUibC59AFNDTv2ZtdnYFIeXXeMAZcgSjozeXAlQ9vTAFFOnP7y8jcu3eBOIO-IQ8fukghrYsbEOvoruVxbQmkay1S5p4NtELYZ3mUZKJ5tvywuaqI7LjtGzFMe~toh5U6g__",
-                            "mime_type": "text/rtf",
-                            "file_size": 399,
-                            "custom": {}
+                            "custom": {
+                                "file_size": 399,
+                                "mime_type": "text/rtf"
+                            }
                         }
                     ],
                     "latest_reactions": [],
@@ -2851,9 +2852,10 @@
                             "type": "file",
                             "title": "TESTFILE1.cat",
                             "asset_url": "https://us-east.stream-io-cdn.com/102399/attachments/d79de240-2f95-4f88-9861-80e616e2eec3.TESTFILE1.cat?Key-Pair-Id=APKAIHG36VEWPDULE23Q&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy1lYXN0LnN0cmVhbS1pby1jZG4uY29tLzEwMjM5OS9hdHRhY2htZW50cy9kNzlkZTI0MC0yZjk1LTRmODgtOTg2MS04MGU2MTZlMmVlYzMuVEVTVEZJTEUxLmNhdCoiLCJDb25kaXRpb24iOnsiRGF0ZUxlc3NUaGFuIjp7IkFXUzpFcG9jaFRpbWUiOjE2ODA1Nzc0MjB9fX1dfQ__&Signature=Cftsmk4GSJqhkMOGU44LZGV8ZzkBHThm8ihaOdeQQMX46HPP~WH6Whfk-qKgzFgp~mf7G~DUAImjfIow84wwO2BrRe66nEiBggReyEaomLsSwq~W-nDHPiyXjR9qvmHLbjQjKk8~NQvQ4VT8J2MZ6gsWBS7ICLf8w0SbqxyUM36bRKNAMAR232AnEGW6j3hG9oX-gmb~f8VeDo8qnXUe-erBZ3qx2TsSBCqYAiT4BLDWLRGSjcY61hXUEq4YOmVIWplM~qYNU-CUSBIwNAh8kgLybblCmzWoZW1tUj4MxEkDVxVQLG-SmZsJiLGxy9FFkoU~IlAD0OSzHIU26HG3rA__",
-                            "file_size": 1048576,
-                            "mime_type": "application/octet-stream",
-                            "custom": {}
+                            "custom": {
+                                "file_size": 1048576,
+                                "mime_type": "application/octet-stream"
+                            }
                         }
                     ],
                     "latest_reactions": [],
@@ -4825,9 +4827,10 @@
                             "type": "file",
                             "title": "sample4.mp3",
                             "asset_url": "https://us-east.stream-io-cdn.com/102399/attachments/b8f20f6c-db55-41e3-841e-3db9baca2888.sample4.mp3?Key-Pair-Id=APKAIHG36VEWPDULE23Q&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy1lYXN0LnN0cmVhbS1pby1jZG4uY29tLzEwMjM5OS9hdHRhY2htZW50cy9iOGYyMGY2Yy1kYjU1LTQxZTMtODQxZS0zZGI5YmFjYTI4ODguc2FtcGxlNC5tcDMqIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjgwMjYxOTQzfX19XX0_&Signature=HxuxA3jJA7hAYisT6emsZXin621ceCB~luA3SgaEBUZRRCymVj2IUDPjBNuNanCGmAiOmzjEaC28Sc70kWHBQkgOlceV2CR1wUDMUckK1m3hUZ9eZ8suef9o~VJUm-rwQcGTqz6XQ3infez5~GSMcRJ9QX6N40k68PHXz5I0JP7Uepsa9hMFrl6RkYcbS5E7xJ52JlVIDMeCIXTo85EAcqaL2s9cM0uzVo2JtHmvFwKB7Pf5b~TpFaFuhKKLjioowpkcbSLobfk~9l9QzSCiEASCogNH8O~kPhqWRgM65q1Mu6~Cdl7E232~daDAIkFf-mE9YqzSu8-Dgibq6N~-cg__",
-                            "file_size": 3912350,
-                            "mime_type": "audio/mp3",
-                            "custom": {}
+                            "custom": {
+                                "file_size": 3912350,
+                                "mime_type": "audio/mp3"
+                            }
                         }
                     ],
                     "latest_reactions": [],
@@ -4879,9 +4882,10 @@
                             "type": "video",
                             "title": "70074517201__AE89B5AA-D055-4F70-BBFA-7F657D40FBB1.MOV",
                             "asset_url": "https://us-east.stream-io-cdn.com/102399/attachments/0628165a-130b-4484-a8b6-0848fb9e680e.70074517201__AE89B5AA-D055-4F70-BBFA-7F6.MOV?Key-Pair-Id=APKAIHG36VEWPDULE23Q&Policy=eyJTdGF0ZW1lbnQiOlt7IlJlc291cmNlIjoiaHR0cHM6Ly91cy1lYXN0LnN0cmVhbS1pby1jZG4uY29tLzEwMjM5OS9hdHRhY2htZW50cy8wNjI4MTY1YS0xMzBiLTQ0ODQtYThiNi0wODQ4ZmI5ZTY4MGUuNzAwNzQ1MTcyMDFfX0FFODlCNUFBLUQwNTUtNEY3MC1CQkZBLTdGNi5NT1YqIiwiQ29uZGl0aW9uIjp7IkRhdGVMZXNzVGhhbiI6eyJBV1M6RXBvY2hUaW1lIjoxNjgwMjYxOTgwfX19XX0_&Signature=DU2Q7FwTH1pMLYJxCOV65hAqGNB0NnEHH~pAFb-u6pp~ImNgEENqGVswo8Xw4zDGfDHs4vt0ANkx3jyKotgoqLXq3YdJ1dkUVanxc8SkA7L-Dltp7C3c11MSIHis2Lk6Whln1FzLmzvKCnlI9r9LwjHDeqmhallMI2H4mPISd0z6v0NUN9oTLYJvG~2aTjiuKp4HFKgWWaZcJPG8vX0ojCZlfG19AuzNKpGgPszx4s2Cdshjz3ZiFMnwyt0KkxFycfkKW0pSNHWtjvQI-1OagYOgRTz87rKHVvjXX-b1WILJQZhfkN1ZGyTl324YIE2u~2JAR4D7FuusUhkFU~Ev0g__",
-                            "file_size": 459830,
-                            "mime_type": "video/quicktime",
-                            "custom": {}
+                            "custom": {
+                                "file_size": 459830,
+                                "mime_type": "video/quicktime"
+                            }
                         }
                     ],
                     "latest_reactions": [],

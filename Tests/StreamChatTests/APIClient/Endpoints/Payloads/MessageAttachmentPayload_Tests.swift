@@ -65,6 +65,65 @@ final class MessageAttachmentPayload_Tests: XCTestCase {
         let payload = try JSONDecoder.default.decode(Attachment.self, from: json)
         XCTAssertEqual(payload.attachmentType, .unknown)
     }
+
+    // MARK: - Attachment.make
+
+    func test_make_keepsStandardFieldsTopLevel_andNestsCustomFieldsUnderCustom() throws {
+        let attachment = Attachment.make(
+            type: .image,
+            payload: .dictionary([
+                "type": .string("image"),
+                "image_url": .string("https://getstream.io/some.jpg"),
+                "fallback": .string("some.jpg"),
+                "my_field": .string("my_value")
+            ])
+        )
+
+        XCTAssertEqual(attachment.type, "image")
+        XCTAssertEqual(attachment.imageUrl, "https://getstream.io/some.jpg")
+        XCTAssertEqual(attachment.fallback, "some.jpg")
+        XCTAssertEqual(attachment.custom, ["my_field": .string("my_value")])
+
+        // The encoded wire shape keeps standard fields top-level and nests custom fields.
+        let encoded = try JSONDecoder.default.decode(RawJSON.self, from: JSONEncoder.default.encode(attachment))
+        XCTAssertEqual(encoded.dictionaryValue?["image_url"], .string("https://getstream.io/some.jpg"))
+        XCTAssertEqual(encoded.dictionaryValue?["fallback"], .string("some.jpg"))
+        XCTAssertEqual(encoded.dictionaryValue?["my_field"], nil)
+        XCTAssertEqual(encoded.dictionaryValue?["custom"], .dictionary(["my_field": .string("my_value")]))
+    }
+
+    func test_make_nestsFileSizeAndMimeTypeUnderCustom() throws {
+        // file_size and mime_type are not part of the typed attachment schema and
+        // belong inside `custom` on the wire.
+        let attachment = Attachment.make(
+            type: .file,
+            payload: .dictionary([
+                "title": .string("some.pdf"),
+                "asset_url": .string("https://getstream.io/some.pdf"),
+                "mime_type": .string("application/pdf"),
+                "file_size": .number(1024)
+            ])
+        )
+
+        XCTAssertEqual(attachment.type, "file")
+        XCTAssertEqual(attachment.title, "some.pdf")
+        XCTAssertEqual(attachment.assetUrl, "https://getstream.io/some.pdf")
+        XCTAssertEqual(attachment.custom, [
+            "mime_type": .string("application/pdf"),
+            "file_size": .number(1024)
+        ])
+    }
+
+    func test_make_payloadFlattensBackToStoredShape() throws {
+        let flat: [String: RawJSON] = [
+            "image_url": .string("https://getstream.io/some.jpg"),
+            "my_field": .string("my_value")
+        ]
+
+        let attachment = Attachment.make(type: .image, payload: .dictionary(flat))
+
+        XCTAssertEqual(attachment.payload, .dictionary(flat))
+    }
 }
 
 extension RawJSON {
