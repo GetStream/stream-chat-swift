@@ -5,6 +5,7 @@
 import Foundation
 @testable import StreamChat
 @testable import StreamChatTestTools
+@testable import StreamCore
 import XCTest
 
 final class PinnedMessagesQuery_IntegrationTests: XCTestCase {
@@ -70,6 +71,46 @@ final class PinnedMessagesQuery_IntegrationTests: XCTestCase {
                     "field": "pinned_at"
                 ] as [String: Any]
             ] as NSArray
+        ])
+    }
+
+    func test_pinnedMessagesRequest_withTimestampPagination_usesGeneratedQueryDateEncoding() throws {
+        let cid: ChannelId = .unique
+        let timestamp = Date(timeIntervalSince1970: 1_700_000_000)
+        let query = PinnedMessagesQuery(
+            pageSize: 10,
+            pagination: .later(timestamp, inclusive: true)
+        )
+        let endpoint: Endpoint<MessageListPayload> = .pinnedMessages(
+            cid: cid,
+            query: query
+        )
+        let tokenProvider = ConnectionDetailsProviderDelegate_Spy()
+        tokenProvider.provideTokenResult = .success(.unique(userId: .unique))
+        let baseURL = BaseURL.dublin.restAPIBaseURL
+        let requestEncoder = DefaultRequestEncoder(
+            baseURL: baseURL,
+            apiKey: .init(.unique)
+        )
+        requestEncoder.connectionDetailsProviderDelegate = tokenProvider
+
+        let urlRequestResult = try waitFor {
+            requestEncoder.encodeRequest(for: endpoint, completion: $0)
+        }
+        let urlRequest = try urlRequestResult.get()
+        let url = try XCTUnwrap(urlRequest.url)
+        let urlComponents = try XCTUnwrap(URLComponents(string: url.absoluteString))
+        let payload = try XCTUnwrap(
+            urlComponents
+                .queryItems?
+                .first(where: { $0.name == "payload" })?
+                .value?
+                .data(using: .utf8)
+        )
+
+        AssertJSONEqual(payload, [
+            "limit": "10",
+            "pinned_at_after_or_equal": OpenISO8601DateFormatter().string(from: timestamp)
         ])
     }
 }

@@ -96,14 +96,17 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
             var url = try encodeRequestURL(for: endpoint)
             url = try url.appendingQueryItems(["api_key": apiKey.apiKeyString])
 
+            // Encode endpoint-specific query items
+            if let queryItems = endpoint.queryItems {
+                let urlQueryItems = queryItems.compactMap { key, value in
+                    value.map { URLQueryItem(name: key, value: $0) }
+                }
+                url = try url.appendingQueryItems(urlQueryItems)
+            }
+
             // Create a request
             request = URLRequest(url: url)
             request.httpMethod = endpoint.method.rawValue
-
-            // Encode endpoint-specific query items
-            if let queryItems = endpoint.queryItems {
-                try encodeJSONToQueryItems(request: &request, data: queryItems)
-            }
 
             try encodeRequestBody(request: &request, endpoint: endpoint)
         } catch {
@@ -230,8 +233,7 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
     private func encodeRequestBody<T: Decodable>(request: inout URLRequest, endpoint: Endpoint<T>) throws {
         switch endpoint.method {
         case .get, .delete:
-            guard let body = endpoint.body else { return }
-            try encodeJSONToQueryItems(request: &request, data: body)
+            log.assert(endpoint.body == nil, "GET and DELETE requests must not have a body.", subsystems: .httpRequests)
         case .post, .patch, .put:
             if let data = endpoint.body as? Data {
                 request.httpBody = data
@@ -242,37 +244,6 @@ class DefaultRequestEncoder: RequestEncoder, @unchecked Sendable {
                 request.httpBody = Data("{}".utf8)
             }
         }
-    }
-
-    private func encodeJSONToQueryItems(request: inout URLRequest, data: Encodable & Sendable) throws {
-        let data = try (data as? Data) ?? JSONEncoder.stream.encode(AnyEncodable(data))
-        guard let json = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            throw ClientError.InvalidJSON("Data is not a valid JSON: \(String(data: data, encoding: .utf8) ?? "nil")")
-        }
-
-        let bodyQueryItems = json.compactMap { (key, value) -> URLQueryItem? in
-            // Nil values (JSON null) mean the query item should be omitted
-            if value is NSNull { return nil }
-
-            // If the `value` is a JSON, encode it like that
-            if let jsonValue = value as? [String: Any] {
-                do {
-                    let jsonStringValue = try JSONSerialization.data(withJSONObject: jsonValue)
-                    return URLQueryItem(name: key, value: String(data: jsonStringValue, encoding: .utf8))
-                } catch {
-                    log.error(
-                        "Skipping encoding data for key:`\(key)` because it's not a valid JSON: "
-                            + "\(String(data: data, encoding: .utf8) ?? "nil")", subsystems: .httpRequests
-                    )
-                }
-            }
-
-            return URLQueryItem(name: key, value: String(describing: value))
-        }
-
-        log.assert(request.url != nil, "Request URL must not be `nil`.", subsystems: .httpRequests)
-
-        request.url = try request.url!.appendingQueryItems(bodyQueryItems)
     }
 }
 

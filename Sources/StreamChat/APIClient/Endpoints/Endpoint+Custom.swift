@@ -72,9 +72,11 @@ extension Endpoint {
         .init(
             path: .custom("/api/v2/chat/channels/\(cid.apiPath)/pinned_messages"),
             method: .get,
-            queryItems: nil,
+            queryItems: [
+                "payload": (try? CodableHelper.encode(query).get()).flatMap { String(data: $0, encoding: .utf8) }
+            ],
             requiresConnectionId: false,
-            body: ["payload": query]
+            body: nil
         )
     }
 
