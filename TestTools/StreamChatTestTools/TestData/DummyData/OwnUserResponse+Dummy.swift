@@ -87,7 +87,7 @@ extension OwnUserResponse {
             extraData: userPayload.custom,
             devices: devices,
             mutedUsers: mutedUsers,
-            teams: userPayload.teams,
+            teams: userPayload.teams ?? [],
             language: userPayload.language.isEmpty ? nil : userPayload.language,
             mutedChannels: mutedChannels,
             privacySettings: privacySettings,

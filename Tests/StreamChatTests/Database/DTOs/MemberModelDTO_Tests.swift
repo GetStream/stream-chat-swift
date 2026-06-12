@@ -81,7 +81,7 @@ final class MemberModelDTO_Tests: XCTestCase {
             Assert.willBeEqual(payloadUser.updatedAt, loadedMember?.userUpdatedAt)
             Assert.willBeEqual(payloadUser.lastActive, loadedMember?.lastActiveAt)
             Assert.willBeEqual(payloadUser.custom, loadedMember?.extraData)
-            Assert.willBeEqual(Set(payloadUser.teams), loadedMember?.teams)
+            Assert.willBeEqual(Set(payloadUser.teams ?? []), loadedMember?.teams)
             Assert.willBeEqual(payloadUser.language, loadedMember?.language?.languageCode)
             Assert.willBeEqual(true, loadedMember?.memberExtraData["is_premium"]?.boolValue)
             Assert.willBeEqual(payloadUser.teamsUserRole, loadedMember?.teamsRole)

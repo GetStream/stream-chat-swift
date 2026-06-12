@@ -8,7 +8,7 @@ final class UserResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable 
     var avgResponseTime: Int?
     /// Whether a user is banned or not
     var banned: Bool
-    var blockedUserIds: [String]
+    var blockedUserIds: [String]?
     /// Date/time of creation
     var createdAt: Date
     /// Custom data for this object
@@ -33,12 +33,12 @@ final class UserResponse: @unchecked Sendable, Codable, JSONEncodable, Hashable 
     /// Determines the set of user permissions
     var role: String
     /// List of teams user is a part of
-    var teams: [String]
+    var teams: [String]?
     var teamsRole: [String: String]?
     /// Date/time of the last update
     var updatedAt: Date
 
-    init(avgResponseTime: Int? = nil, banned: Bool, blockedUserIds: [String], createdAt: Date, custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, id: String, image: String? = nil, language: String, lastActive: Date? = nil, name: String? = nil, online: Bool, revokeTokensIssuedBefore: Date? = nil, role: String, teams: [String], teamsRole: [String: String]? = nil, updatedAt: Date) {
+    init(avgResponseTime: Int? = nil, banned: Bool, blockedUserIds: [String]? = nil, createdAt: Date, custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, id: String, image: String? = nil, language: String, lastActive: Date? = nil, name: String? = nil, online: Bool, revokeTokensIssuedBefore: Date? = nil, role: String, teams: [String]? = nil, teamsRole: [String: String]? = nil, updatedAt: Date) {
         self.avgResponseTime = avgResponseTime
         self.banned = banned
         self.blockedUserIds = blockedUserIds

@@ -40,6 +40,45 @@ final class MemberEvents_Tests: XCTestCase {
         XCTAssertEqual(event?.cid, "messaging:!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY")
     }
 
+    // The backend sends member events without the `channel` object and without
+    // `teams`/`blocked_user_ids` on user objects; decode directly (no fixture
+    // normalization) to exercise the raw production shape.
+
+    func test_added_withMissingChannelAndUserListFields() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "MemberAdded+MissingFields")
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MemberAddedEventDTO
+        let dto = try XCTUnwrap(event)
+        XCTAssertNil(dto.channel)
+        XCTAssertEqual(dto.cid, "messaging:new_channel_9125")
+        XCTAssertEqual(dto.member.userId, "steep-moon-9")
+        XCTAssertNil(dto.user?.teams)
+        XCTAssertNil(dto.user?.blockedUserIds)
+        XCTAssertNil(dto.member.user?.teams)
+        XCTAssertNil(dto.member.user?.blockedUserIds)
+    }
+
+    func test_updated_withMissingChannelAndUserListFields() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "MemberUpdated+MissingFields")
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MemberUpdatedEventDTO
+        let dto = try XCTUnwrap(event)
+        XCTAssertNil(dto.channel)
+        XCTAssertEqual(dto.cid, "messaging:new_channel_9125")
+        XCTAssertEqual(dto.member.userId, "steep-moon-9")
+        XCTAssertNil(dto.user?.teams)
+        XCTAssertNil(dto.user?.blockedUserIds)
+    }
+
+    func test_removed_withMissingChannelAndUserListFields() throws {
+        let json = XCTestCase.mockData(fromJSONFile: "MemberRemoved+MissingFields")
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MemberRemovedEventDTO
+        let dto = try XCTUnwrap(event)
+        XCTAssertNil(dto.channel)
+        XCTAssertEqual(dto.cid, "messaging:new_channel_9125")
+        XCTAssertEqual(dto.user?.id, "steep-moon-9")
+        XCTAssertNil(dto.user?.teams)
+        XCTAssertNil(dto.user?.blockedUserIds)
+    }
+
     // MARK: DTO -> Event
 
     func test_memberAddedEventDTO_toDomainEvent() throws {

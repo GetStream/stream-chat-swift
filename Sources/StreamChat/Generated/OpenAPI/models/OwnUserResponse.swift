@@ -27,7 +27,7 @@ final class OwnUserResponse: @unchecked Sendable, Codable, JSONEncodable, Hashab
     var pushPreferences: PushPreferencesResponse?
     var revokeTokensIssuedBefore: Date?
     var role: String
-    var teams: [String]
+    var teams: [String]?
     var teamsRole: [String: String]?
     var totalUnreadCount: Int
     var totalUnreadCountByTeam: [String: Int]?
@@ -36,7 +36,7 @@ final class OwnUserResponse: @unchecked Sendable, Codable, JSONEncodable, Hashab
     var unreadThreads: Int
     var updatedAt: Date
 
-    init(avgResponseTime: Int? = nil, banned: Bool, blockedUserIds: [String]? = nil, channelMutes: [ChannelMute], createdAt: Date, custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, devices: [DeviceResponse], id: String, image: String? = nil, invisible: Bool, language: String, lastActive: Date? = nil, latestHiddenChannels: [String]? = nil, mutes: [UserMuteResponse], name: String? = nil, online: Bool, privacySettings: PrivacySettingsResponse? = nil, pushPreferences: PushPreferencesResponse? = nil, revokeTokensIssuedBefore: Date? = nil, role: String, teams: [String], teamsRole: [String: String]? = nil, totalUnreadCount: Int, totalUnreadCountByTeam: [String: Int]? = nil, unreadChannels: Int, unreadCount: Int, unreadThreads: Int, updatedAt: Date) {
+    init(avgResponseTime: Int? = nil, banned: Bool, blockedUserIds: [String]? = nil, channelMutes: [ChannelMute], createdAt: Date, custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, devices: [DeviceResponse], id: String, image: String? = nil, invisible: Bool, language: String, lastActive: Date? = nil, latestHiddenChannels: [String]? = nil, mutes: [UserMuteResponse], name: String? = nil, online: Bool, privacySettings: PrivacySettingsResponse? = nil, pushPreferences: PushPreferencesResponse? = nil, revokeTokensIssuedBefore: Date? = nil, role: String, teams: [String]? = nil, teamsRole: [String: String]? = nil, totalUnreadCount: Int, totalUnreadCountByTeam: [String: Int]? = nil, unreadChannels: Int, unreadCount: Int, unreadThreads: Int, updatedAt: Date) {
         self.avgResponseTime = avgResponseTime
         self.banned = banned
         self.blockedUserIds = blockedUserIds

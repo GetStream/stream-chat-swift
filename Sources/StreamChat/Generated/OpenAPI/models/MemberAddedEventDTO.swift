@@ -5,7 +5,7 @@
 import Foundation
 
 final class MemberAddedEventDTO: @unchecked Sendable, Event, Codable, JSONEncodable, Hashable {
-    var channel: ChannelResponse
+    var channel: ChannelResponse?
     var channelCustom: [String: RawJSON]?
     /// The ID of the channel to which the member was added
     var channelId: String?
@@ -28,7 +28,7 @@ final class MemberAddedEventDTO: @unchecked Sendable, Event, Codable, JSONEncoda
     var type: String = "member.added"
     var user: UserResponseCommonFields?
 
-    init(channel: ChannelResponse, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], member: ChannelMemberResponse, receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
+    init(channel: ChannelResponse? = nil, channelCustom: [String: RawJSON]? = nil, channelId: String? = nil, channelMemberCount: Int? = nil, channelMessageCount: Int? = nil, channelType: String? = nil, cid: String? = nil, createdAt: Date, custom: [String: RawJSON], member: ChannelMemberResponse, receivedAt: Date? = nil, team: String? = nil, user: UserResponseCommonFields? = nil) {
         self.channel = channel
         self.channelCustom = channelCustom
         self.channelId = channelId

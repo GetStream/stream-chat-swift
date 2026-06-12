@@ -8,7 +8,7 @@ final class FullUserResponse: @unchecked Sendable, Codable, JSONEncodable, Hasha
     var avgResponseTime: Int?
     var banExpires: Date?
     var banned: Bool
-    var blockedUserIds: [String]
+    var blockedUserIds: [String]?
     var channelMutes: [ChannelMute]
     var createdAt: Date
     var custom: [String: RawJSON]
@@ -28,7 +28,7 @@ final class FullUserResponse: @unchecked Sendable, Codable, JSONEncodable, Hasha
     var revokeTokensIssuedBefore: Date?
     var role: String
     var shadowBanned: Bool
-    var teams: [String]
+    var teams: [String]?
     var teamsRole: [String: String]?
     var totalUnreadCount: Int
     var unreadChannels: Int
@@ -36,7 +36,7 @@ final class FullUserResponse: @unchecked Sendable, Codable, JSONEncodable, Hasha
     var unreadThreads: Int
     var updatedAt: Date
 
-    init(avgResponseTime: Int? = nil, banExpires: Date? = nil, banned: Bool, blockedUserIds: [String], channelMutes: [ChannelMute], createdAt: Date, custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, devices: [DeviceResponse], id: String, image: String? = nil, invisible: Bool, language: String, lastActive: Date? = nil, latestHiddenChannels: [String]? = nil, mutes: [UserMuteResponse], name: String? = nil, online: Bool, privacySettings: PrivacySettingsResponse? = nil, revokeTokensIssuedBefore: Date? = nil, role: String, shadowBanned: Bool, teams: [String], teamsRole: [String: String]? = nil, totalUnreadCount: Int, unreadChannels: Int, unreadCount: Int, unreadThreads: Int, updatedAt: Date) {
+    init(avgResponseTime: Int? = nil, banExpires: Date? = nil, banned: Bool, blockedUserIds: [String]? = nil, channelMutes: [ChannelMute], createdAt: Date, custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, devices: [DeviceResponse], id: String, image: String? = nil, invisible: Bool, language: String, lastActive: Date? = nil, latestHiddenChannels: [String]? = nil, mutes: [UserMuteResponse], name: String? = nil, online: Bool, privacySettings: PrivacySettingsResponse? = nil, revokeTokensIssuedBefore: Date? = nil, role: String, shadowBanned: Bool, teams: [String]? = nil, teamsRole: [String: String]? = nil, totalUnreadCount: Int, unreadChannels: Int, unreadCount: Int, unreadThreads: Int, updatedAt: Date) {
         self.avgResponseTime = avgResponseTime
         self.banExpires = banExpires
         self.banned = banned

@@ -19,7 +19,7 @@ protocol UserResponseFields: Sendable {
     var updatedAt: Date { get }
     var deactivatedAt: Date? { get }
     var lastActive: Date? { get }
-    var teams: [String] { get }
+    var teams: [String]? { get }
     var avgResponseTime: Int? { get }
     var custom: [String: RawJSON] { get }
 }

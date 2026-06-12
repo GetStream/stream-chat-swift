@@ -7,7 +7,7 @@ import Foundation
 final class UserResponsePrivacyFields: @unchecked Sendable, Codable, JSONEncodable, Hashable {
     var avgResponseTime: Int?
     var banned: Bool
-    var blockedUserIds: [String]
+    var blockedUserIds: [String]?
     var createdAt: Date
     var custom: [String: RawJSON]
     var deactivatedAt: Date?
@@ -22,11 +22,11 @@ final class UserResponsePrivacyFields: @unchecked Sendable, Codable, JSONEncodab
     var privacySettings: PrivacySettingsResponse?
     var revokeTokensIssuedBefore: Date?
     var role: String
-    var teams: [String]
+    var teams: [String]?
     var teamsRole: [String: String]?
     var updatedAt: Date
 
-    init(avgResponseTime: Int? = nil, banned: Bool, blockedUserIds: [String], createdAt: Date, custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, id: String, image: String? = nil, invisible: Bool? = nil, language: String, lastActive: Date? = nil, name: String? = nil, online: Bool, privacySettings: PrivacySettingsResponse? = nil, revokeTokensIssuedBefore: Date? = nil, role: String, teams: [String], teamsRole: [String: String]? = nil, updatedAt: Date) {
+    init(avgResponseTime: Int? = nil, banned: Bool, blockedUserIds: [String]? = nil, createdAt: Date, custom: [String: RawJSON], deactivatedAt: Date? = nil, deletedAt: Date? = nil, id: String, image: String? = nil, invisible: Bool? = nil, language: String, lastActive: Date? = nil, name: String? = nil, online: Bool, privacySettings: PrivacySettingsResponse? = nil, revokeTokensIssuedBefore: Date? = nil, role: String, teams: [String]? = nil, teamsRole: [String: String]? = nil, updatedAt: Date) {
         self.avgResponseTime = avgResponseTime
         self.banned = banned
         self.blockedUserIds = blockedUserIds

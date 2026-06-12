@@ -936,19 +936,25 @@ extension DatabaseSession {
             if let user = dto.user {
                 try saveUser(payload: user, query: nil, cache: nil)
             }
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
+            if let channel = dto.channel {
+                try saveChannel(payload: channel, query: nil, cache: nil)
+            }
 
         case .typeMemberRemovedEvent(let dto):
             if let user = dto.user {
                 try saveUser(payload: user, query: nil, cache: nil)
             }
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
+            if let channel = dto.channel {
+                try saveChannel(payload: channel, query: nil, cache: nil)
+            }
 
         case .typeMemberUpdatedEvent(let dto):
             if let user = dto.user {
                 try saveUser(payload: user, query: nil, cache: nil)
             }
-            try saveChannel(payload: dto.channel, query: nil, cache: nil)
+            if let channel = dto.channel {
+                try saveChannel(payload: channel, query: nil, cache: nil)
+            }
 
         // MARK: Message events
 

@@ -163,7 +163,7 @@ final class CurrentUserModelDTO_Tests: XCTestCase {
         XCTAssertEqual(mutedUserIDs, Set(loadedCurrentUser.mutedUsers.map(\.id)))
         XCTAssertEqual(payload.devices.count, loadedCurrentUser.devices.count)
         XCTAssertEqual(payload.devices.first?.id, loadedCurrentUser.devices.first?.id)
-        XCTAssertEqual(Set(payload.teams), loadedCurrentUser.teams)
+        XCTAssertEqual(Set(payload.teams ?? []), loadedCurrentUser.teams)
         XCTAssertEqual(mutedChannelIDs, Set(loadedCurrentUser.mutedChannels.map(\.cid.rawValue)))
         XCTAssertEqual(payload.language, loadedCurrentUser.language?.languageCode)
         XCTAssertEqual(false, loadedCurrentUser.privacySettings.readReceipts?.enabled)

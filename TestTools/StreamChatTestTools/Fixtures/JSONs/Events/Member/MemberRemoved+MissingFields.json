@@ -1,0 +1,53 @@
+{
+    "type": "member.removed",
+    "cid": "messaging:new_channel_9125",
+    "channel_id": "new_channel_9125",
+    "channel_type": "messaging",
+    "channel_last_message_at": "2020-07-20T16:42:15.165817Z",
+    "created_at": "2020-07-20T16:42:20.04917036Z",
+    "custom": {},
+    "member": {
+        "user_id": "steep-moon-9",
+        "user": {
+            "id": "steep-moon-9",
+            "role": "admin",
+            "teams_role": {},
+            "custom": {
+                "name": "Steep Moon"
+            },
+            "created_at": "2019-12-12T15:34:00.762372Z",
+            "updated_at": "2020-07-20T16:39:07.169076Z",
+            "last_active": "2020-07-20T16:39:07.169076Z",
+            "banned": false,
+            "online": false,
+            "language": "en",
+            "avg_response_time": 442790
+        },
+        "status": "member",
+        "created_at": "2020-07-20T16:42:20.040635Z",
+        "updated_at": "2020-07-20T16:42:20.040635Z",
+        "banned": false,
+        "shadow_banned": false,
+        "is_global_banned": false,
+        "archived_at": null,
+        "pinned_at": null,
+        "role": "admin",
+        "channel_role": "channel_member",
+        "notifications_muted": false
+    },
+    "user": {
+        "id": "steep-moon-9",
+        "role": "admin",
+        "teams_role": {},
+        "custom": {
+            "name": "Steep Moon"
+        },
+        "created_at": "2019-12-12T15:34:00.762372Z",
+        "updated_at": "2020-07-20T16:39:07.169076Z",
+        "last_active": "2020-07-20T16:39:07.169076Z",
+        "banned": false,
+        "online": false,
+        "language": "en",
+        "avg_response_time": 442790
+    }
+}

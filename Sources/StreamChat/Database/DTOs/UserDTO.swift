@@ -171,7 +171,7 @@ extension NSManagedObjectContext: UserDatabaseSession {
             dto.extraData = Data()
         }
 
-        dto.teams = payload.teams
+        dto.teams = payload.teams ?? []
 
         // payloadHash doesn't cover the query
         if let query = query, let queryDTO = try saveQuery(query: query) {

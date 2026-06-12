@@ -21,7 +21,7 @@ extension UserResponseFields {
             updatedAt: updatedAt,
             deactivatedAt: deactivatedAt,
             lastActiveAt: lastActive,
-            teams: Set(teams),
+            teams: Set(teams ?? []),
             language: language.isEmpty ? nil : TranslationLanguage(languageCode: language),
             avgResponseTime: avgResponseTime,
             extraData: custom

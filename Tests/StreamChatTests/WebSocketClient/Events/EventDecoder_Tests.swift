@@ -535,7 +535,6 @@ enum EventDecoderFixtureNormalizer {
     private static let eventTypesRequiringChannel: Set<String> = [
         "channel.created", "channel.deleted", "channel.hidden", "channel.truncated",
         "channel.updated", "channel.visible",
-        "member.added", "member.removed", "member.updated",
         "notification.added_to_channel", "notification.channel_deleted",
         "notification.channel_truncated", "notification.invite_accepted",
         "notification.invited", "notification.invite_rejected",

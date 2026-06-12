@@ -108,6 +108,54 @@ make_message_delivered_last_delivered_at_date() {
   sed -i '' -E 's/lastDeliveredAt: String\? = nil/lastDeliveredAt: Date? = nil/' "$file"
 }
 
+make_member_event_channel_optional() {
+  # INTERIM: The backend sends member.added/member.updated/member.removed without
+  # the full `channel` object (only cid/channel_id/channel_type/channel_last_message_at),
+  # but the spec marks `channel` required, so synthesized Codable throws
+  # keyNotFound("channel") and the whole WSEvent fails to decode. Member events
+  # only — Notification*/Reaction*/Channel* events do receive the channel and
+  # middlewares rely on it. Proper fix belongs upstream (drop `channel` from the
+  # member event schemas' required lists).
+  # Must run AFTER strip_public_open_access_modifiers so the lines have no `public `.
+  local file
+  for file in \
+    "$OUTPUT_DIR_CHAT/models/MemberAddedEventDTO.swift" \
+    "$OUTPUT_DIR_CHAT/models/MemberRemovedEventDTO.swift" \
+    "$OUTPUT_DIR_CHAT/models/MemberUpdatedEventDTO.swift"; do
+    # Property declaration (anchored to end-of-line; `channelCustom:` etc. are not matched).
+    sed -i '' -E 's/^([[:space:]]*)var channel: ChannelResponse$/\1var channel: ChannelResponse?/' "$file"
+    # Initializer param (followed by `,` or `)`): add `? = nil` default.
+    sed -i '' -E 's/channel: ChannelResponse([,)])/channel: ChannelResponse? = nil\1/' "$file"
+  done
+}
+
+make_user_response_team_fields_optional() {
+  # INTERIM: The backend's custom JSON encoder drops nil slices/maps regardless of
+  # `omitempty`, so user objects can arrive without `teams`/`blocked_user_ids` even
+  # though the spec marks them required (member events' top-level `user` and
+  # `member.user` do in practice; message.new users include them). Make both
+  # optional on every UserResponseFields conformer: the protocol's `teams`
+  # requirement becomes `[String]?` and a non-optional stored property cannot
+  # witness an optional requirement, so all five models must change together.
+  # (OwnUserResponse.blockedUserIds is already optional — that sed is a no-op there.)
+  # Must run AFTER strip_public_open_access_modifiers so the lines have no `public `.
+  local file
+  for file in \
+    "$OUTPUT_DIR_CHAT/models/FullUserResponse.swift" \
+    "$OUTPUT_DIR_CHAT/models/OwnUserResponse.swift" \
+    "$OUTPUT_DIR_CHAT/models/UserResponse.swift" \
+    "$OUTPUT_DIR_CHAT/models/UserResponseCommonFields.swift" \
+    "$OUTPUT_DIR_CHAT/models/UserResponsePrivacyFields.swift"; do
+    # Property declarations (anchored to end-of-line; `teamsRole: [String: String]?`
+    # and `latestHiddenChannels: [String]?` are not matched).
+    sed -i '' -E 's/^([[:space:]]*)var blockedUserIds: \[String\]$/\1var blockedUserIds: [String]?/' "$file"
+    sed -i '' -E 's/^([[:space:]]*)var teams: \[String\]$/\1var teams: [String]?/' "$file"
+    # Initializer params (followed by `,` or `)`): add `? = nil` default.
+    sed -i '' -E 's/blockedUserIds: \[String\]([,)])/blockedUserIds: [String]? = nil\1/' "$file"
+    sed -i '' -E 's/teams: \[String\]([,)])/teams: [String]? = nil\1/' "$file"
+  done
+}
+
 # Hardcoded clashes while StreamChat source models remain the default.
 # Model collisions.
 delete_generated_filename APIError
@@ -215,5 +263,7 @@ fix_invalid_empty_enum_cases
 strip_public_open_access_modifiers
 make_channel_member_response_partial_fields_optional
 make_message_delivered_last_delivered_at_date
+make_member_event_channel_optional
+make_user_response_team_fields_optional
 
 swiftformat --config "$REPO_ROOT/.swiftformat" "$OUTPUT_DIR_CHAT"
