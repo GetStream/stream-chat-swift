@@ -75,6 +75,7 @@
         "custom": {}
     },
     "type": "reminder.created",
+    "cid": "messaging:!members-vhPyEGDAjFA4JyC7fxDg3LsMFLGqKhXOKqZM-Y681_E",
     "user_id": "han_solo",
     "banned": false,
     "shadow_banned": false,

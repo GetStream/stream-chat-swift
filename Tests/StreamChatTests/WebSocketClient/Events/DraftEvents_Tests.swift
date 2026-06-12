@@ -27,7 +27,7 @@ final class DraftEvents_Tests: XCTestCase {
     
     func test_draftUpdatedEvent_decoding() throws {
         let json = XCTestCase.mockData(fromJSONFile: "DraftUpdated")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? DraftUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? DraftUpdatedEventDTO
         XCTAssertEqual(event?.cid, cid.rawValue)
         XCTAssertEqual(event?.draft?.message.id, draftId)
         XCTAssertEqual(event?.draft?.message.text, "Test draft message")
@@ -36,7 +36,7 @@ final class DraftEvents_Tests: XCTestCase {
     
     func test_draftUpdatedEvent_toDomainEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "DraftUpdated")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? DraftUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? DraftUpdatedEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Save required data
@@ -50,7 +50,7 @@ final class DraftEvents_Tests: XCTestCase {
     
     func test_draftUpdatedEvent_toDomainEvent_returnsNilWhenMissingData() throws {
         let json = XCTestCase.mockData(fromJSONFile: "DraftUpdated")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? DraftUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? DraftUpdatedEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         // Don't save any data to test nil case
@@ -61,7 +61,7 @@ final class DraftEvents_Tests: XCTestCase {
     
     func test_draftDeletedEvent_decoding() throws {
         let json = XCTestCase.mockData(fromJSONFile: "DraftDeleted")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? DraftDeletedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? DraftDeletedEventDTO
         XCTAssertEqual(event?.cid, cid.rawValue)
         XCTAssertEqual(event?.draft?.parentId, threadId)
         XCTAssertEqual(event?.createdAt.description, "2024-02-11 15:42:21 +0000")
@@ -69,7 +69,7 @@ final class DraftEvents_Tests: XCTestCase {
     
     func test_draftDeletedEvent_toDomainEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "DraftDeleted")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? DraftDeletedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? DraftDeletedEventDTO
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
         
         let domainEvent = try XCTUnwrap(event?.toDomainEvent(session: session) as? DraftDeletedEvent)

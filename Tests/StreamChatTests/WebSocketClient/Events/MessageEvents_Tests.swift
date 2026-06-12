@@ -23,7 +23,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_new() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageNew")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageNewEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageNewEventDTO
         XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.message.id, messageId)
@@ -34,7 +34,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_new_withMissingFields() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageNew+MissingFields")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageNewEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageNewEventDTO
         XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.message.id, messageId)
@@ -92,7 +92,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageUpdated")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageUpdatedEventDTO
         XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.message.id, messageId)
@@ -101,7 +101,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_messageDeletedEvent_clientSide() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageDeletedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageDeletedEventDTO
         XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.message.id, messageId)
@@ -110,7 +110,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_messageDeletedEvent_serverSide() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted+MissingUser")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageDeletedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageDeletedEventDTO
         XCTAssertNil(event?.user)
         XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.message.id, messageId)
@@ -131,31 +131,31 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_messageDeletedEvent_whenNotHardDelete_hardDeleteIsFalse() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageDeletedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageDeletedEventDTO
         XCTAssertEqual(event?.hardDelete, false)
     }
 
     func test_messageDeletedEvent_whenHardDelete_hardDeleteIsTrue() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeletedHard")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageDeletedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageDeletedEventDTO
         XCTAssertEqual(event?.hardDelete, true)
     }
 
     func test_messageDeletedEvent_whenDeletedForMe_deletedForMeIsTrue() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeletedForMe")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageDeletedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageDeletedEventDTO
         XCTAssertEqual(event?.deletedForMe, true)
     }
 
     func test_messageDeletedEvent_whenNotDeletedForMe_deletedForMeIsNil() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageDeletedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageDeletedEventDTO
         XCTAssertEqual(event?.deletedForMe, nil)
     }
 
     func test_messageDeletedEvent_toDomainEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageDeletedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageDeletedEventDTO
 
         let channelId = try XCTUnwrap(event?.cid.flatMap { try? ChannelId(cid: $0) })
         let message = try XCTUnwrap(event?.message)
@@ -169,7 +169,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_messageDeletedEvent_toDomainEvent_whenIsHardDeleted_whenMessageNotInLocalDB() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDeletedHard")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageDeletedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageDeletedEventDTO
 
         let channelId = try XCTUnwrap(event?.cid.flatMap { try? ChannelId(cid: $0) })
         let message = try XCTUnwrap(event?.message)
@@ -195,7 +195,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_read() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageReadEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageReadEventDTO
         XCTAssertEqual(event?.user?.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
@@ -211,7 +211,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_read_withoutUnreadCount() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead+MissingUnreadCount")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageReadEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageReadEventDTO
         XCTAssertEqual(event?.user?.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
@@ -219,7 +219,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_read_withTeam() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead+Team")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageReadEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageReadEventDTO
         XCTAssertEqual(event?.user?.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
@@ -228,7 +228,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_read_withoutTeam() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageReadEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageReadEventDTO
         XCTAssertEqual(event?.user?.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
@@ -237,7 +237,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_messageReadEvent_toDomainEvent_withTeam() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead+Team")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageReadEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageReadEventDTO
 
         let channelId = try XCTUnwrap(event?.cid.flatMap { try? ChannelId(cid: $0) })
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
@@ -251,7 +251,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_messageReadEvent_toDomainEvent_withoutTeam() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageRead")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageReadEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageReadEventDTO
 
         let channelId = try XCTUnwrap(event?.cid.flatMap { try? ChannelId(cid: $0) })
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
@@ -265,7 +265,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_delivered() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDelivered")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageDeliveredEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MessageDeliveredEventDTO
         XCTAssertEqual(event?.user?.id, "broken-waterfall-5")
         XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.createdAt.description, "2020-07-17 13:55:56 +0000")
@@ -275,7 +275,7 @@ final class MessageEvents_Tests: XCTestCase {
 
     func test_messageDeliveredEvent_toDomainEvent() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageDelivered")
-        let event = try XCTUnwrap(eventDecoder.decodeFixture(from: json).unwrappedEvent as? MessageDeliveredEventDTO)
+        let event = try XCTUnwrap(eventDecoder.decode(from: json).unwrappedEvent as? MessageDeliveredEventDTO)
 
         let channelId = try XCTUnwrap(event.cid.flatMap { try? ChannelId(cid: $0) })
         let session = DatabaseContainer_Spy(kind: .inMemory).viewContext

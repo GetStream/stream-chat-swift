@@ -31,7 +31,7 @@ final class MemberEvents_IntegrationTests: XCTestCase {
 
     func test_MemberAddedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberAdded")
-        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let decodedEvent = try eventDecoder.decode(from: json)
         let event = decodedEvent.unwrappedEvent as? MemberAddedEventDTO
 
         let unwrappedEvent = try XCTUnwrap(event)
@@ -58,7 +58,7 @@ final class MemberEvents_IntegrationTests: XCTestCase {
 
     func test_MemberUpdatedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberUpdated")
-        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let decodedEvent = try eventDecoder.decode(from: json)
         let event = decodedEvent.unwrappedEvent as? MemberUpdatedEventDTO
 
         let unwrappedEvent = try XCTUnwrap(event)
@@ -79,7 +79,7 @@ final class MemberEvents_IntegrationTests: XCTestCase {
 
     func test_MemberRemovedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberRemoved")
-        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let decodedEvent = try eventDecoder.decode(from: json)
         let event = decodedEvent.unwrappedEvent as? MemberRemovedEventDTO
 
         let channelId = ChannelId(type: .messaging, id: "!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY")

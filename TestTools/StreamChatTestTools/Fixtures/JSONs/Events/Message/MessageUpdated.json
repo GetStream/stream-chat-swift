@@ -79,5 +79,6 @@
     },
     "type": "message.updated",
     "cid": "messaging:general",
+    "message_id": "1ff9f6d0-df70-4703-aef0-379f95ad7366",
     "custom": {}
 }

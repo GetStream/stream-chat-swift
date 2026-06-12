@@ -31,7 +31,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
     func test_ReactionNewEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionNew")
-        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let decodedEvent = try eventDecoder.decode(from: json)
         let event = decodedEvent.unwrappedEvent as? ReactionNewEventDTO
 
         // For message to be received, we need to have channel:
@@ -64,11 +64,11 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
     func test_ReactionUpdatedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionUpdated")
-        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let decodedEvent = try eventDecoder.decode(from: json)
         let event = decodedEvent.unwrappedEvent as? ReactionUpdatedEventDTO
 
         let newReactionJSON = XCTestCase.mockData(fromJSONFile: "ReactionNew")
-        let newReactionEvent = try eventDecoder.decodeFixture(from: newReactionJSON).unwrappedEvent as? ReactionNewEventDTO
+        let newReactionEvent = try eventDecoder.decode(from: newReactionJSON).unwrappedEvent as? ReactionNewEventDTO
         let newReactionPayload = try XCTUnwrap(newReactionEvent?.reaction)
 
         // For message to be received, we need to have channel:
@@ -108,7 +108,7 @@ final class ReactionEvents_IntegrationTests: XCTestCase {
 
     func test_ReactionDeletedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ReactionDeleted")
-        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let decodedEvent = try eventDecoder.decode(from: json)
         let event = decodedEvent.unwrappedEvent as? ReactionDeletedEventDTO
 
         // For message to be received, we need to have channel:

@@ -31,7 +31,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
     func test_MessageNewEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageNew")
-        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let decodedEvent = try eventDecoder.decode(from: json)
         let event = decodedEvent.unwrappedEvent as? MessageNewEventDTO
 
         // For message to be received, we need to have channel:
@@ -54,7 +54,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
     func test_MessageUpdatedEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MessageUpdated")
-        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let decodedEvent = try eventDecoder.decode(from: json)
         let event = decodedEvent.unwrappedEvent as? MessageUpdatedEventDTO
 
         // For message to be received, we need to have channel:
@@ -91,7 +91,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
     func test_MessageDeletedEventPayload_isHandled() throws {
         let updateJSON = XCTestCase.mockData(fromJSONFile: "MessageDeleted")
-        let decodedEvent = try eventDecoder.decodeFixture(from: updateJSON)
+        let decodedEvent = try eventDecoder.decode(from: updateJSON)
         let updateMessageEvent = decodedEvent.unwrappedEvent as? MessageDeletedEventDTO
 
         // For message to be received, we need to have channel:
@@ -120,7 +120,7 @@ final class MessageEvents_IntegrationTests: XCTestCase {
 
     func test_NotificationMessageNewEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMessageNew")
-        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let decodedEvent = try eventDecoder.decode(from: json)
         let event = decodedEvent.unwrappedEvent as? NotificationNewMessageEventDTO
 
         XCTAssertNil(client.databaseContainer.viewContext.message(id: "042772db-4af2-460d-beaa-1e49d1b8e3b9"))

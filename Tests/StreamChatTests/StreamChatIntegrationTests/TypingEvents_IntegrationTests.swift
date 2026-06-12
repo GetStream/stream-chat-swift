@@ -31,7 +31,7 @@ final class TypingEvents_IntegrationTests: XCTestCase {
 
     func test_UserStartTypingEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStartTyping")
-        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let decodedEvent = try eventDecoder.decode(from: json)
         let event = decodedEvent.unwrappedEvent as? TypingStartEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "general")
@@ -53,7 +53,7 @@ final class TypingEvents_IntegrationTests: XCTestCase {
 
     func test_UserStopTypingEventPayload_isHandled() throws {
         let json = XCTestCase.mockData(fromJSONFile: "UserStopTyping")
-        let decodedEvent = try eventDecoder.decodeFixture(from: json)
+        let decodedEvent = try eventDecoder.decode(from: json)
         let event = decodedEvent.unwrappedEvent as? TypingStopEventDTO
 
         let channelId: ChannelId = ChannelId(type: .messaging, id: "general")

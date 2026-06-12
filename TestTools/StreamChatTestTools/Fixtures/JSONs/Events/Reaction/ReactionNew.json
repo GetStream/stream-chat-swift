@@ -167,5 +167,15 @@
     },
     "type": "reaction.new",
     "cid": "messaging:general",
+    "channel": {
+        "cid": "messaging:general",
+        "id": "general",
+        "type": "messaging",
+        "created_at": "2020-07-20T17:09:56.717804443Z",
+        "updated_at": "2020-07-20T17:09:56.717804443Z",
+        "disabled": false,
+        "frozen": false,
+        "custom": {}
+    },
     "custom": {}
 }

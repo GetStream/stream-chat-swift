@@ -21,21 +21,21 @@ final class MemberEvents_Tests: XCTestCase {
 
     func test_added() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberAdded")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MemberAddedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MemberAddedEventDTO
         XCTAssertEqual(event?.member.userId, "steep-moon-9")
         XCTAssertEqual(event?.cid, "messaging:new_channel_9125")
     }
 
     func test_updated() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberUpdated")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MemberUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MemberUpdatedEventDTO
         XCTAssertEqual(event?.member.userId, "count_dooku")
         XCTAssertEqual(event?.cid, "messaging:!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY")
     }
 
     func test_removed() throws {
         let json = XCTestCase.mockData(fromJSONFile: "MemberRemoved")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? MemberRemovedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? MemberRemovedEventDTO
         XCTAssertEqual(event?.user?.id, "r2-d2")
         XCTAssertEqual(event?.cid, "messaging:!members-jkE22mnWM5tjzHPBurvjoVz0spuz4FULak93veyK0lY")
     }

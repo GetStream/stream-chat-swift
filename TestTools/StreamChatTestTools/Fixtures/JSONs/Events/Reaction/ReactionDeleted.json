@@ -158,5 +158,15 @@
     },
     "type": "reaction.deleted",
     "cid": "messaging:general",
+    "channel": {
+        "cid": "messaging:general",
+        "id": "general",
+        "type": "messaging",
+        "created_at": "2020-07-20T17:11:45.925050982Z",
+        "updated_at": "2020-07-20T17:11:45.925050982Z",
+        "disabled": false,
+        "frozen": false,
+        "custom": {}
+    },
     "custom": {}
 }

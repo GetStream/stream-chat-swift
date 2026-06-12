@@ -21,7 +21,7 @@ final class NotificationsEvents_Tests: XCTestCase {
 
     func test_messageNew() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMessageNew")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? NotificationNewMessageEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? NotificationNewMessageEventDTO
         XCTAssertEqual(event?.message.user.id, "steep-moon-9")
         XCTAssertEqual(event?.channel.cid, "messaging:general")
         XCTAssertEqual(event?.message.id, "042772db-4af2-460d-beaa-1e49d1b8e3b9")
@@ -32,7 +32,7 @@ final class NotificationsEvents_Tests: XCTestCase {
 
     func test_notificationMessageNew_withMissingFields() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMessageNew+MissingFields")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? NotificationNewMessageEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? NotificationNewMessageEventDTO
         XCTAssertEqual(event?.message.user.id, "steep-moon-9")
         XCTAssertEqual(event?.channel.cid, "messaging:general")
         XCTAssertEqual(event?.message.id, "042772db-4af2-460d-beaa-1e49d1b8e3b9")
@@ -42,7 +42,7 @@ final class NotificationsEvents_Tests: XCTestCase {
 
     func test_markAllRead() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMarkAllRead")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? NotificationMarkReadEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? NotificationMarkReadEventDTO
         XCTAssertEqual(event?.user?.id, "steep-moon-9")
         XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertNil(event?.channel)
@@ -53,7 +53,7 @@ final class NotificationsEvents_Tests: XCTestCase {
 
     func test_markRead() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMarkRead")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? NotificationMarkReadEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? NotificationMarkReadEventDTO
         XCTAssertEqual(event?.cid, "messaging:general")
         XCTAssertEqual(event?.user?.id, "steep-moon-9")
         XCTAssertEqual(event?.unreadCount, 55)
@@ -61,7 +61,7 @@ final class NotificationsEvents_Tests: XCTestCase {
 
     func test_markUnread() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMarkUnread")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? NotificationMarkUnreadEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? NotificationMarkUnreadEventDTO
         XCTAssertEqual(event?.cid, "messaging:A9643A22-A")
         XCTAssertEqual(event?.user?.id, "luke_skywalker")
         XCTAssertEqual(event?.firstUnreadMessageId, "leia_organa-1f9b7fe0-989f-4fa6-87e8-9c9e788fb2c3")
@@ -72,7 +72,7 @@ final class NotificationsEvents_Tests: XCTestCase {
 
     func test_markUnread_withMissingFields() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationMarkUnread+MissingFields")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? NotificationMarkUnreadEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? NotificationMarkUnreadEventDTO
         XCTAssertEqual(event?.cid, "messaging:A9643A22-A")
         XCTAssertEqual(event?.user?.id, "luke_skywalker")
         XCTAssertEqual(event?.firstUnreadMessageId, "leia_organa-1f9b7fe0-989f-4fa6-87e8-9c9e788fb2c3")
@@ -83,21 +83,21 @@ final class NotificationsEvents_Tests: XCTestCase {
 
     func test_channelSomeMutedChannels() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelMutesUpdatedWithSomeMutedChannels")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? NotificationChannelMutesUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? NotificationChannelMutesUpdatedEventDTO
         XCTAssertEqual(event?.me.id, "luke_skywalker")
         XCTAssertEqual(event?.me.channelMutes.isEmpty, false)
     }
 
     func test_channelNoMutedChannels() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelMutesUpdatedWithNoMutedChannels")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? NotificationChannelMutesUpdatedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? NotificationChannelMutesUpdatedEventDTO
         XCTAssertEqual(event?.me.id, "luke_skywalker")
         XCTAssertEqual(event?.me.channelMutes.isEmpty, true)
     }
 
     func test_addToChannel() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationAddedToChannel")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? NotificationAddedToChannelEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? NotificationAddedToChannelEventDTO
         XCTAssertEqual(event?.channel.cid, "messaging:!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E")
         XCTAssertEqual(
             event?.channel.cid,
@@ -107,7 +107,7 @@ final class NotificationsEvents_Tests: XCTestCase {
 
     func test_notificationAddedToChannelEventDTO_withMissingFields() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationAddedToChannel+MissingFields")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? NotificationAddedToChannelEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? NotificationAddedToChannelEventDTO
         XCTAssertEqual(event?.channel.cid, "messaging:!members-hu_6SE2Rniuu3O709FqAEEtVcJxW3tWr97l_hV33a-E")
         XCTAssertEqual(
             event?.channel.cid,
@@ -117,13 +117,13 @@ final class NotificationsEvents_Tests: XCTestCase {
 
     func test_removedFromChannel() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationRemovedFromChannel")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? NotificationRemovedFromChannelEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? NotificationRemovedFromChannelEventDTO
         XCTAssertEqual(event?.cid, "messaging:91DC91CC-0")
     }
 
     func test_channelDeleted() throws {
         let json = XCTestCase.mockData(fromJSONFile: "NotificationChannelDeleted")
-        let event = try eventDecoder.decodeFixture(from: json).unwrappedEvent as? NotificationChannelDeletedEventDTO
+        let event = try eventDecoder.decode(from: json).unwrappedEvent as? NotificationChannelDeletedEventDTO
 
         XCTAssertEqual(event?.channel.cid, "messaging:!members-BSM7Tb6_XBXTGOaqZXCFh_4c4UQsYomWNkgQ0YgiGJw")
         XCTAssertEqual(event?.createdAt.description, "2021-12-28 13:05:20 +0000")
