@@ -6,7 +6,12 @@ import Foundation
 
 extension ChannelConfigWithInfo {
     var asChannelConfig: ChannelConfig {
-        .init(
+        let commands: [Command] = (commands ?? []).map {
+            Command(name: $0.name, description: $0.description, set: $0.set, args: $0.args)
+        }
+        let createdAt: Date = createdAt ?? Date()
+        let updatedAt: Date = updatedAt ?? Date()
+        return ChannelConfig(
             reactionsEnabled: reactions ?? false,
             typingEventsEnabled: typingEvents ?? false,
             readEventsEnabled: readEvents ?? false,
@@ -24,9 +29,9 @@ extension ChannelConfigWithInfo {
             sharedLocationsEnabled: sharedLocations ?? false,
             messageRetention: "",
             maxMessageLength: maxMessageLength ?? 0,
-            commands: (commands ?? []).map { Command(name: $0.name, description: $0.description, set: $0.set, args: $0.args) },
-            createdAt: createdAt ?? .init(),
-            updatedAt: updatedAt ?? .init()
+            commands: commands,
+            createdAt: createdAt,
+            updatedAt: updatedAt
         )
     }
 }
