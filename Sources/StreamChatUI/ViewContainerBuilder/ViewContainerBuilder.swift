@@ -112,7 +112,11 @@ public func HContainer(
 }
 
 /// A flexible space that expands along the major axis of its containing stack layout.
+///
+/// - Note: `@_disfavoredOverload` keeps SwiftUI's `Spacer` the preferred candidate in
+///   `ViewBuilder` contexts when both StreamChatUI and SwiftUI are imported.
 @MainActor
+@_disfavoredOverload
 public func Spacer() -> UIView {
     let view = UIStackView()
     view.translatesAutoresizingMaskIntoConstraints = false
