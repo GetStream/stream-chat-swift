@@ -33,7 +33,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", exact: "1.0.0"),
-        .package(url: "https://github.com/GetStream/stream-core-swift.git", from: "0.6.4")
+        .package(url: "https://github.com/GetStream/stream-core-swift.git", from: "0.7.0")
     ],
     targets: [
         .target(
@@ -42,7 +42,7 @@ let package = Package(
                 .product(name: "StreamCore", package: "stream-core-swift")
             ],
             exclude: ["Info.plist", "Generated/PredefinedFilter.stencil"],
-            resources: [.copy("Database/StreamChatModel.xcdatamodeld")]
+            resources: [.process("Database/StreamChatModel.xcdatamodeld")]
         ),
         .target(
             name: "StreamChatUI",

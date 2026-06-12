@@ -5,6 +5,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### 🔄 Changed
 
+# [5.5.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.5.1)
+_June 11, 2026_
+
+## StreamChat
+### 🔄 Changed
+- Process `StreamChatModel.xcdatamodeld` as a package resource so the compiled Core Data model is bundled instead of copying the raw model source [#4128](https://github.com/GetStream/stream-chat-swift/pull/4128)
+- Update StreamCore to 0.7.0, which fixes `Sendable` errors when building with Xcode 27 [#4129](https://github.com/GetStream/stream-chat-swift/pull/4129)
+
+## StreamChatUI
+### 🐞 Fixed
+- Fix the poll comments button showing "1 comments" instead of "1 comment" for a single comment [#4123](https://github.com/GetStream/stream-chat-swift/pull/4123)
+- Fix the message highlight sometimes only blinking when jumping to a message [#4125](https://github.com/GetStream/stream-chat-swift/pull/4125)
+- Fix group channel avatars changing while the channel list is displayed when the last active members are updated [#4124](https://github.com/GetStream/stream-chat-swift/pull/4124)
+
 # [5.5.0](https://github.com/GetStream/stream-chat-swift/releases/tag/5.5.0)
 _June 03, 2026_
 
@@ -14,6 +28,15 @@ _June 03, 2026_
 - Add `ChatClient.queryGroupedChannels(groups:limit:presence:watch:)` to fetch grouped channels with per-group unread counts [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 - Add `ChatClient.makeChannelList(with:)` overload for observing a single grouped channels group in the state layer [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
 - Add `unreadChannelCountsByGroup` to `CurrentChatUser`, observable for changes via `ConnectedUser` [#4076](https://github.com/GetStream/stream-chat-swift/pull/4076)
+
+# [4.101.0](https://github.com/GetStream/stream-chat-swift/releases/tag/4.101.0)
+_June 03, 2026_
+
+## StreamChat
+### ✅ Added
+- Add `ChannelListQuery(predefinedFilter:filterValues:sortValues:)` for creating channel list queries with predefined filters [#4120](https://github.com/GetStream/stream-chat-swift/pull/4120)
+### 🐞 Fixed
+- Fix WebSocket reconnection getting stuck in `.disconnecting` after the device temporarily loses network connectivity [#4109](https://github.com/GetStream/stream-chat-swift/pull/4109)
 
 # [5.4.1](https://github.com/GetStream/stream-chat-swift/releases/tag/5.4.1)
 _June 01, 2026_

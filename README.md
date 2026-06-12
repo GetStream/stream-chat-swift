@@ -12,7 +12,7 @@
 </p>
 <p align="center">
   <img id="stream-chat-label" alt="StreamChat" src="https://img.shields.io/badge/StreamChat-6.96%20MB-blue"/>
-  <img id="stream-chat-ui-label" alt="StreamChatUI" src="https://img.shields.io/badge/StreamChatUI-4.25%20MB-blue"/>
+  <img id="stream-chat-ui-label" alt="StreamChatUI" src="https://img.shields.io/badge/StreamChatUI-4.27%20MB-blue"/>
   <img id="stream-chat-common-ui-label" alt="StreamChatCommonUI" src="https://img.shields.io/badge/StreamChatCommonUI-0.84%20MB-blue"/>
 </p>
 

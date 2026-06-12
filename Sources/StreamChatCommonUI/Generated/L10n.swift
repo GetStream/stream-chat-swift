@@ -415,7 +415,7 @@ public enum L10n {
       public static var showAll: String { L10n.tr("Localizable", "polls.button.show-all") }
       /// Suggest an Option
       public static var suggestOption: String { L10n.tr("Localizable", "polls.button.suggest-option") }
-      /// View %d Comments
+      /// Plural format key: "%#@comments@"
       public static func viewComments(_ p1: Int) -> String {
         return L10n.tr("Localizable", "polls.button.view-comments", p1)
       }
