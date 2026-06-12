@@ -80,6 +80,20 @@ final class ChannelEvents_Tests: XCTestCase {
         XCTAssertFalse(domainEvent.isHistoryCleared)
     }
 
+    func test_ChannelVisibleEvent_syncReplay_decoding() throws {
+        // /chat/sync replays channel.visible with NO `channel` object at all.
+        let json = XCTestCase.mockData(fromJSONFile: "ChannelVisible+SyncReplay")
+        let event = try XCTUnwrap(try eventDecoder.decode(from: json).unwrappedEvent as? ChannelVisibleEventDTO)
+        XCTAssertEqual(event.cid, "messaging:1568ED7D-1")
+        XCTAssertNil(event.channel)
+
+        let session = DatabaseContainer_Spy(kind: .inMemory).viewContext
+        let user: UserResponse = .dummy(userId: "r2-d2")
+        try session.saveUser(payload: user)
+        let domainEvent = try XCTUnwrap(event.toDomainEvent(session: session) as? ChannelVisibleEvent)
+        XCTAssertEqual(domainEvent.cid.rawValue, "messaging:1568ED7D-1")
+    }
+
     func test_ChannelVisibleEvent_decoding() throws {
         let json = XCTestCase.mockData(fromJSONFile: "ChannelVisible")
         let event = try eventDecoder.decode(from: json).unwrappedEvent as? ChannelVisibleEventDTO

@@ -161,10 +161,11 @@ make_sync_replayed_event_fields_optional() {
   # where enrichment fields carry `omitempty`, while the spec is generated from the
   # typed live-WS event structs that mark them required. Replayed events therefore
   # arrive without `message_id`/`watcher_count`/`hard_delete`/`clear_history`/
-  # reaction `channel`, and one such event throws keyNotFound and fails the whole
-  # SyncResponse decode. Make those fields optional on every event type /sync can
-  # replay (message.*, reaction.*, channel.hidden); channel.*/notification.*
-  # replays do carry `channel`/`member`, so those stay required. Proper fix
+  # reaction `channel`/channel.visible `channel`, and one such event throws
+  # keyNotFound and fails the whole SyncResponse decode. Make those fields optional
+  # on every event type /sync can replay (message.*, reaction.*, channel.hidden,
+  # channel.visible); the other channel.*/notification.* replays do carry
+  # `channel`/`member` (their middlewares rely on it), so those stay required. Proper fix
   # belongs upstream (drop the enrichment-only fields from the event schemas'
   # required lists, or re-enrich replayed events).
   # Must run AFTER strip_public_open_access_modifiers so the lines have no `public `.
@@ -184,10 +185,14 @@ make_sync_replayed_event_fields_optional() {
 
   # Reaction events: replayed without the full `channel` object (reaction.new/
   # reaction.deleted already generate `messageId` as optional).
+  # channel.visible: replayed with NO `channel` key at all (unlike channel.hidden,
+  # which carries a hollow channel handled by make_channel_config_with_info_fields_optional).
+  # Its consumers (toDomainEvent / ChannelVisibilityEventMiddleware) use only cid/user.
   for file in \
     "$OUTPUT_DIR_CHAT/models/ReactionNewEventDTO.swift" \
     "$OUTPUT_DIR_CHAT/models/ReactionUpdatedEventDTO.swift" \
-    "$OUTPUT_DIR_CHAT/models/ReactionDeletedEventDTO.swift"; do
+    "$OUTPUT_DIR_CHAT/models/ReactionDeletedEventDTO.swift" \
+    "$OUTPUT_DIR_CHAT/models/ChannelVisibleEventDTO.swift"; do
     sed -i '' -E 's/^([[:space:]]*)var channel: ChannelResponse$/\1var channel: ChannelResponse?/' "$file"
     sed -i '' -E 's/channel: ChannelResponse([,)])/channel: ChannelResponse? = nil\1/' "$file"
   done

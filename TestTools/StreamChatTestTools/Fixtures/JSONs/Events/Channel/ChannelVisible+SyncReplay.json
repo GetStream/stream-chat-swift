@@ -1,0 +1,29 @@
+{
+    "channel_id": "1568ED7D-1",
+    "channel_type": "messaging",
+    "cid": "messaging:1568ED7D-1",
+    "created_at": 1781257981342694665,
+    "custom": {},
+    "type": "channel.visible",
+    "user": {
+        "avg_response_time": 274378,
+        "banned": false,
+        "blocked_user_ids": [
+            "chewbacca"
+        ],
+        "created_at": 1712223894206412000,
+        "custom": {
+            "birthland": "Naboo"
+        },
+        "id": "r2-d2",
+        "image": "https://vignette.wikia.nocookie.net/starwars/images/e/eb/ArtooTFA2-Fathead.png",
+        "language": "en",
+        "last_active": 1781258347505220037,
+        "name": "R2-D2",
+        "online": true,
+        "role": "user",
+        "teams": [],
+        "updated_at": 1780897365845488000
+    },
+    "user_id": "r2-d2"
+}
